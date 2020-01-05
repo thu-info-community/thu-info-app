@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp">
+
+    <TextView
+            android:id="@+id/text_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+            android:id="@+id/learn_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/learn"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/text_home"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <GridLayout
+            android:id="@+id/learn_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/learn_text"
+            android:columnCount="4"
+            android:orientation="horizontal"
+            android:rowCount="1">
+
+        <Button
+                android:id="@+id/calender_btn"
+                android:text="@string/calender"/>
+
+    </GridLayout>
+
+    <View
+            android:id="@+id/learn_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/learn_grid"/>
+
+    <TextView
+            android:id="@+id/query_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/query"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/learn_line"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <GridLayout
+            android:id="@+id/query_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/query_text"
+            android:columnCount="4"
+            android:orientation="horizontal"
+            android:rowCount="1">
+
+        <Button
+                android:id="@+id/ecard_btn"
+                android:text="@string/ecard"/>
+
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

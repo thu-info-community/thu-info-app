@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">THUInfo</string>
+    <string name="title_home">主页</string>
+    <string name="title_dashboard">动态</string>
+    <string name="title_schedule">计划</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="prompt_remember">自动登录</string>
+    <string name="invalid_username">请输入用户名</string>
+    <string name="invalid_password">请输入密码</string>
+    <string name="login_failed">登录失败</string>
+    <string name="welcome">欢迎！</string>
+
+    <!-- Strings related to main utilities -->
+    <string name="calender">教学日历</string>
+    <string name="learn">学习</string>
+    <string name="query">综合查询</string>
+    <string name="ecard">消费查询</string>
+</resources>
