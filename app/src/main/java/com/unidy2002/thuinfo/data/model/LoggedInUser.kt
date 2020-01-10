@@ -7,8 +7,14 @@ data class LoggedInUser(val userId: String) {
     lateinit var eCardTicket: String
     lateinit var calenderTicket: String
     lateinit var calender: Calender
+    lateinit var eCardCookie: String
+    lateinit var eCardTable: EcardTable
 
     fun calenderInitialized(): Boolean {
         return this::calender.isInitialized
+    }
+
+    fun eCardInitialized(): Boolean {
+        return this::eCardTable.isInitialized
     }
 }

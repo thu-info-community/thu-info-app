@@ -37,9 +37,9 @@ class Calender(source: String) {
 
     private val segmenter = JiebaSegmenter()
 
-    private val stopWord = setOf("的", "地", "得", "基础")
+    private val stopWord = setOf("的", "基础")
 
-    private val avoidEnd = setOf('与')
+    private val avoidEnd = setOf('与', '和', '以', '及')
 
     val maxLength = 7
 
@@ -136,11 +136,11 @@ class Calender(source: String) {
         return customShortenMap[name] ?: with(autoShortenMap[name]) {
             if (this == null) {
                 var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
-                with(Regex("《.*》").findAll(temp)) {
+                with(Regex("《.*?》").findAll(temp)) {
                     if (this.count() != 0) {
                         temp = ""
                         this.forEach {
-                            temp += it.value
+                            temp += it.value.drop(1).dropLast(1)
                         }
                     }
                 }
@@ -169,9 +169,9 @@ class Calender(source: String) {
                         var pos = 1
                         while (pos < segmented.size && temp.length + segmented[pos].length <= maxLength)
                             temp += segmented[pos++]
+                        while (temp.last() in avoidEnd)
+                            temp = temp.dropLast(1)
                     }
-                    while (temp.last() in avoidEnd)
-                        temp = temp.dropLast(1)
                 }
                 temp = customShortenMap[temp] ?: temp
                 autoShortenMap[name] = Pair(true, temp)
@@ -185,9 +185,4 @@ class Calender(source: String) {
             }
         }
     }
-
-    fun debug(s: String) {
-        println(shorten(s))
-    }
-
 }

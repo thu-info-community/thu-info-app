@@ -21,6 +21,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main{
+            res.srcDirs = [
+                    'src/main/res/layout/home',
+                    'src/main/res/layout',
+                    'src/main/res'
+            ]
+        }
+    }
 }
 
 dependencies {
@@ -38,4 +47,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'com.huaban:jieba-analysis:1.0.2'
+    implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
+    implementation 'com.github.huangyanbin:smartTable:2.2.0'
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://www.jitpack.io' }
+    }
 }
