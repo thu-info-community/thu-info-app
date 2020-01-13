@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">THUInfo</string>
     <string name="title_home">主页</string>
-    <string name="title_dashboard">动态</string>
+    <string name="title_news">动态</string>
     <string name="title_schedule">计划</string>
 
     <!-- Strings related to login -->

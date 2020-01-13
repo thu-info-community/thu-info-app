@@ -7,41 +7,45 @@ import java.sql.Date
 import java.sql.Time
 
 
-class Calender(source: String) {
+class Calender {
 
     data class Lesson(
-        val title: String,
-        val abbr: String,
-        val locale: String,
-        val date: Date,
-        val begin: Int,
-        val end: Int
+        var title: String,
+        var abbr: String,
+        var locale: String,
+        var date: Date,
+        var begin: Int,
+        var end: Int
     )
 
-    val lessonList = mutableListOf<Lesson>()
+    val lessonList: MutableList<Lesson>
 
     data class Exam(
-        val title: String,
-        val abbr: String,
-        val locale: String,
-        val date: Date,
-        val begin: Time,
-        val end: Time
+        var title: String,
+        var abbr: String,
+        var locale: String,
+        var date: Date,
+        var begin: Time,
+        var end: Time
     )
 
-    val examList = mutableListOf<Exam>()
+    val examList: MutableList<Exam>
 
-    val autoShortenMap = mutableMapOf<String, Pair<Boolean, String>>()
+    val autoShortenMap: MutableMap<String, Pair<Boolean, String>>
 
-    val customShortenMap = mutableMapOf<String, String>()
+    val customShortenMap: MutableMap<String, String>
 
-    private val segmenter = JiebaSegmenter()
+    val colorMap: MutableMap<String, Int>
+
+    private lateinit var segmenter: JiebaSegmenter
 
     private val stopWord = setOf("的", "基础")
 
     private val avoidEnd = setOf('与', '和', '以', '及')
 
-    val maxLength = 7
+    private val maxLength = 7
+
+    private val colorCount = 7
 
     private val beginMap = mapOf(
         "08:00" to 1,
@@ -77,42 +81,76 @@ class Calender(source: String) {
         "21:45" to 14
     )
 
-    init {
-        try {
-            val jsonArray = parseArray(source)
-            for (e in jsonArray) {
-                try {
-                    val o = e as JSONObject
-                    when (o["fl"] as String) {
-                        "上课" ->
+    constructor(
+        lessonList: MutableList<Lesson>,
+        examList: MutableList<Exam>,
+        autoShortenMap: MutableMap<String, Pair<Boolean, String>>,
+        customShortenMap: MutableMap<String, String>,
+        colorMap: MutableMap<String, Int>
+    ) {
+        this.lessonList = lessonList
+        this.examList = examList
+        this.autoShortenMap = autoShortenMap
+        this.customShortenMap = customShortenMap
+        this.colorMap = colorMap
+    }
+
+    constructor(source: String) {
+        val jsonArray = parseArray(source)
+        segmenter = JiebaSegmenter()
+        lessonList = mutableListOf()
+        examList = mutableListOf()
+        autoShortenMap = mutableMapOf()
+        customShortenMap = mutableMapOf()
+        colorMap = mutableMapOf()
+        for (e in jsonArray) {
+            try {
+                val o = e as JSONObject
+                when (o["fl"] as String) {
+                    "上课" -> {
+                        val title = o["nr"] as String
+                        val locale = shortenLocale(o["dd"] as? String ?: "网络异常")
+                        val date = Date.valueOf(o["nq"] as String)
+                        val begin = parseBegin(o["kssj"] as String)
+                        val end = parseEnd(o["jssj"] as String)
+                        if (lessonList.isNotEmpty() &&
+                            title == lessonList.last().title &&
+                            locale == lessonList.last().locale &&
+                            date == lessonList.last().date &&
+                            begin <= lessonList.last().end + 1
+                        ) {
+                            lessonList.last().end = end
+                        } else {
                             lessonList.add(
                                 Lesson(
-                                    o["nr"] as String,
-                                    shorten(o["nr"] as String),
-                                    o["dd"] as? String ?: "网络异常",
-                                    Date.valueOf(o["nq"] as String),
-                                    parseBegin(o["kssj"] as String),
-                                    parseEnd(o["jssj"] as String)
+                                    title,
+                                    shortenTitle(title),
+                                    locale,
+                                    date,
+                                    begin,
+                                    end
                                 )
                             )
-                        "考试" ->
-                            examList.add(
-                                Exam(
-                                    o["nr"] as String,
-                                    shorten(o["nr"] as String),
-                                    o["dd"] as? String ?: "网络异常",
-                                    Date.valueOf(o["nq"] as String),
-                                    Time.valueOf(o["kssj"] as String + ":00"),
-                                    Time.valueOf(o["jssj"] as String + ":00")
-                                )
-                            )
+                        }
+                        if (colorMap[title] == null) {
+                            colorMap[title] = colorMap.size % colorCount
+                        }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                    "考试" ->
+                        examList.add(
+                            Exam(
+                                o["nr"] as String,
+                                shortenTitle(o["nr"] as String),
+                                shortenLocale(o["dd"] as? String ?: "网络异常"),
+                                Date.valueOf(o["nq"] as String),
+                                Time.valueOf(o["kssj"] as String + ":00"),
+                                Time.valueOf(o["jssj"] as String + ":00")
+                            )
+                        )
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -132,7 +170,7 @@ class Calender(source: String) {
         }
     }
 
-    private fun shorten(name: String): String {
+    private fun shortenTitle(name: String): String {
         return customShortenMap[name] ?: with(autoShortenMap[name]) {
             if (this == null) {
                 var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
@@ -184,5 +222,10 @@ class Calender(source: String) {
                 }
             }
         }
+    }
+
+    private fun shortenLocale(name: String): String {
+        return name
+            .replace(Regex(".教|[\\s]"), "")
     }
 }

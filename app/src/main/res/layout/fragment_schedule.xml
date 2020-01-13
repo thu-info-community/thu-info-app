@@ -5,16 +5,198 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <TextView
-            android:id="@+id/text_schedule"
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
+            android:layout_height="match_parent">
+
+        <GridLayout
+                android:id="@+id/table_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:rowCount="15"
+                android:columnCount="8"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+            <TextView
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:id="@+id/pivot"
+                    android:text="@string/_1"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_2"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_3"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_4"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_5"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_6"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_7"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_8"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_9"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_10"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_11"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_12"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_13"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+            <TextView
+                    android:text="@string/_14"
+                    android:gravity="center"
+                    android:layout_height="45dp"
+                    android:layout_columnWeight="0.2"
+                    />
+
+
+            <TextView
+                    android:text="@string/mon"
+                    android:id="@+id/content"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/tue"
+                    android:layout_row="0"
+                    android:layout_column="2"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/wed"
+                    android:layout_row="0"
+                    android:layout_column="3"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/thu"
+                    android:layout_row="0"
+                    android:layout_column="4"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/fri"
+                    android:layout_row="0"
+                    android:layout_column="5"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/sat"
+                    android:layout_row="0"
+                    android:layout_column="6"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:text="@string/sun"
+                    android:layout_row="0"
+                    android:layout_column="7"
+                    android:gravity="center"
+                    android:layout_height="20dp"
+                    android:layout_columnWeight="1"
+                    />
+        </GridLayout>
+    </ScrollView>
+
+
+    <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

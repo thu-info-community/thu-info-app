@@ -30,7 +30,8 @@
 
         <Button
                 android:id="@+id/calender_btn"
-                android:text="@string/calender"/>
+                android:text="@string/calender"
+                android:enabled="false"/>
 
     </GridLayout>
 

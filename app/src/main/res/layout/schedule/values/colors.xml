@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="schedule_colors">
+        <item>#F44336</item>
+        <item>#FFC107</item>
+        <item>#673AB7</item>
+        <item>#03A9F4</item>
+        <item>#009688</item>
+        <item>#3F51B5</item>
+        <item>#CDDC39</item>
+    </array>
+</resources>

@@ -1,5 +1,6 @@
 package com.unidy2002.thuinfo.data.lib
 
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.unidy2002.thuinfo.data.model.Calender
@@ -7,7 +8,10 @@ import com.unidy2002.thuinfo.data.model.EcardTable
 import com.unidy2002.thuinfo.data.model.LoggedInUser
 import com.unidy2002.thuinfo.userModel
 import jxl.Workbook
-import java.io.*
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -67,7 +71,7 @@ class Network {
                     userModel.eCardCookie = cookieReceiver!!
                         .replace(" path=/", "")
                         .replace(",", "")
-                    Log.d("ECARD COOKIE", userModel.eCardCookie)
+                    Log.i("ECARD COOKIE", userModel.eCardCookie)
                 }
 
                 // Parse EXCEL file
@@ -100,6 +104,69 @@ class Network {
         return true
     }
 
+    fun getCalender(context: Context) {
+        if (!userModel.calenderInitialized()) {
+            val dbManager = DBManager.getInstance(context)
+            with(dbManager.lessonList) {
+                if (isEmpty()) {
+                    if (userModel.calenderTicket != "") {
+                        // Link user with zhjw
+                        Connect().execute(
+                            userModel.calenderTicket, "zhjw.cic.tsinghua.edu.cn",
+                            null, userModel.zhjwSessionId
+                        )
+                        getLock()
+
+                        // Get calender
+                        Connect().execute(
+                            "http://zhjw.cic.tsinghua.edu.cn/jxmh_out.do?m=bks_jxrl_all&p_start_date=20190901&p_end_date=20200131&jsoncallback=m",
+                            "zhjw.cic.tsinghua.edu.cn",
+                            "http://info.tsinghua.edu.cn/render.userLayoutRootNode.uP",
+                            userModel.zhjwSessionId
+                        )
+                        getLock()
+
+                        try {
+                            val calenderReader =
+                                BufferedReader(InputStreamReader(inputStreamReceiver!!, StandardCharsets.UTF_8))
+                            val stringBuilder = StringBuilder()
+                            var readLine: String?
+                            while (calenderReader.readLine().also { readLine = it } != null)
+                                stringBuilder.append(readLine)
+                            val result =
+                                stringBuilder.substring(stringBuilder.indexOf("(") + 1, stringBuilder.lastIndexOf(")"))
+                            inputStreamReceiver!!.close()
+                            calenderReader.close()
+                            userModel.calender = Calender(result)
+
+                            for (lesson in userModel.calender.lessonList)
+                                dbManager.addLesson(lesson)
+                            for (exam in userModel.calender.examList)
+                                dbManager.addExam(exam)
+                            for (auto in userModel.calender.autoShortenMap)
+                                dbManager.addAuto(auto.key, auto.value.first, auto.value.second)
+                            for (custom in userModel.calender.customShortenMap)
+                                dbManager.addCustom(custom.key, custom.value)
+                            for (custom in userModel.calender.colorMap)
+                                dbManager.addColor(custom.key, custom.value)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                } else {
+                    userModel.calender =
+                        Calender(
+                            this,
+                            dbManager.examList,
+                            dbManager.autoShortenMap,
+                            dbManager.customShortenMap,
+                            dbManager.colorMap
+                        )
+                }
+            }
+        }
+    }
+
     companion object {
         val lock = Object()
         var cookieReceiver: String? = null
@@ -118,8 +185,11 @@ class Network {
 
             // Login to tsinghua info
             Connect().execute(
-                "https://info.tsinghua.edu.cn/Login", "info.tsinghua.edu.cn", "http://info.tsinghua.edu.cn/index.jsp",
-                "", "redirect=NO&userName=" + loggedInUser.userId + "&password=" + password + "&x=0&y=0"
+                "https://info.tsinghua.edu.cn/Login",
+                "info.tsinghua.edu.cn",
+                "http://info.tsinghua.edu.cn/index.jsp",
+                "",
+                "redirect=NO&userName=" + loggedInUser.userId + "&password=" + password + "&x=0&y=0"
             )
             getLock()
 
@@ -127,7 +197,8 @@ class Network {
                 loggedInUser.loginCookie = cookieReceiver!!.substring(this, cookieReceiver!!.indexOf(";", this))
             }
             inputStreamReceiver!!.close()
-            Log.d("MSG", "LOGIN COOKIE: " + loggedInUser.loginCookie)
+            //loggedInUser.loginCookie = "UPORTALINFONEW=confuseconfuseconfuse"
+            Log.i("LOGIN COOKIE", loggedInUser.loginCookie)
 
             // Get zhjw session id
             Connect().execute(
@@ -138,7 +209,7 @@ class Network {
 
             loggedInUser.zhjwSessionId = cookieReceiver!!
             inputStreamReceiver!!.close()
-            Log.d("MSG", "ZHJW SESSION: " + loggedInUser.zhjwSessionId)
+            Log.i("ZHJW SESSION", loggedInUser.zhjwSessionId)
 
             // Get the tickets
             Connect().execute(
@@ -154,14 +225,20 @@ class Network {
                     while (reader.readLine().also { readLine = it } != null) {
                         if (readLine!!.contains("a name=\"9-824\"")) {
                             loggedInUser.eCardTicket =
-                                readLine!!.substring(readLine!!.indexOf("src") + 5, readLine!!.indexOf("\" id=\"9-824"))
+                                readLine!!.substring(
+                                    readLine!!.indexOf("src") + 5,
+                                    readLine!!.indexOf("\" id=\"9-824")
+                                )
                                     .replace("amp;", "")
-                            Log.d("ECARD TICKET", loggedInUser.eCardTicket)
+                            Log.i("ECARD TICKET", loggedInUser.eCardTicket)
                         } else if (readLine!!.contains("a name=\"9-792\"")) {
                             loggedInUser.calenderTicket =
-                                readLine!!.substring(readLine!!.indexOf("src") + 5, readLine!!.indexOf("\" id=\"9-792"))
+                                readLine!!.substring(
+                                    readLine!!.indexOf("src") + 5,
+                                    readLine!!.indexOf("\" id=\"9-792")
+                                )
                                     .replace("amp;", "")
-                            Log.d("CALEN TICKET", loggedInUser.calenderTicket)
+                            Log.i("CALEN TICKET", loggedInUser.calenderTicket)
                         }
                     }
                 } catch (e: Exception) {
@@ -174,43 +251,6 @@ class Network {
                         reader.close()
                     } catch (e: Exception) {
                         e.printStackTrace()
-                    }
-                }
-
-                // Calender related
-                thread(start = true) {
-                    if (loggedInUser.calenderTicket != "") {
-                        // Link user with zhjw
-                        Connect().execute(
-                            loggedInUser.calenderTicket, "zhjw.cic.tsinghua.edu.cn",
-                            null, loggedInUser.zhjwSessionId
-                        )
-                        getLock()
-
-                        // Get calender
-                        Connect().execute(
-                            "http://zhjw.cic.tsinghua.edu.cn/jxmh_out.do?m=bks_jxrl_all&p_start_date=20190901&p_end_date=20200131&jsoncallback=m",
-                            "zhjw.cic.tsinghua.edu.cn",
-                            "http://info.tsinghua.edu.cn/render.userLayoutRootNode.uP",
-                            loggedInUser.zhjwSessionId
-                        )
-                        getLock()
-
-                        try {
-                            val calenderReader =
-                                BufferedReader(InputStreamReader(inputStreamReceiver!!, StandardCharsets.UTF_8))
-                            val stringBuilder = StringBuilder()
-                            var readLine: String?
-                            while (calenderReader.readLine().also { readLine = it } != null)
-                                stringBuilder.append(readLine)
-                            val result =
-                                stringBuilder.substring(stringBuilder.indexOf("(") + 1, stringBuilder.lastIndexOf(")"))
-                            inputStreamReceiver!!.close()
-                            calenderReader.close()
-                            loggedInUser.calender = Calender(result)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
                     }
                 }
             }
