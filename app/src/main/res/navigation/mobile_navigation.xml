@@ -12,8 +12,8 @@
             tools:layout="@layout/fragment_home"/>
 
     <fragment
-            android:id="@+id/navigation_dashboard"
-            android:name="com.unidy2002.thuinfo.ui.dashboard.NewsFragment"
+            android:id="@+id/navigation_news"
+            android:name="com.unidy2002.thuinfo.ui.news.NewsFragment"
             android:label="@string/title_news"
             tools:layout="@layout/fragment_news"/>
 
