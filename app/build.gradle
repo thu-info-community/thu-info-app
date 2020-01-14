@@ -57,6 +57,8 @@ dependencies {
     implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
     implementation 'com.github.huangyanbin:smartTable:2.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'org.jsoup:jsoup:1.12.1'
 }
 
 allprojects {

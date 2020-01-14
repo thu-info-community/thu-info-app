@@ -1,24 +1,29 @@
 package com.unidy2002.thuinfo.ui.news
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.model.NewsCard
+import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.lib.Network.Companion.MODE.*
 import com.unidy2002.thuinfo.data.model.NewsCardAdapter
-
+import com.unidy2002.thuinfo.data.model.NewsCardAdapter.Companion.updating
+import com.unidy2002.thuinfo.data.model.NewsCardAdapter.OnLoadMoreListener
+import com.unidy2002.thuinfo.userModel
+import kotlin.concurrent.thread
 
 class NewsFragment : Fragment() {
 
     private lateinit var newsViewModel: NewsViewModel
-
-    private val newsCardList: MutableList<NewsCard> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,38 +34,52 @@ class NewsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_news, container, false)
     }
 
-    private fun initialize() {
-        repeat(10) {
-            newsCardList.add(
-                NewsCard(
-                    0,
-                    "2020-01-13",
-                    "教务处",
-                    "为丰富学生选择，加强教学资源共享，促进学术和学生交流，清华大学与北京大学两校教务部门研究决定互相……",
-                    ""
-                )
-            )
-        }
+    private val handler = Handler()
+
+    private fun updateUI() {
+        view?.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)!!.isRefreshing = false
+        view?.findViewById<ProgressBar>(R.id.news_loading)?.visibility = View.GONE
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)!!
+        (recyclerView.adapter as NewsCardAdapter).append(userModel.newsContainer.newsCardList)
+        updating = false
     }
 
     override fun onStart() {
-        initialize()
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = NewsCardAdapter(newsCardList).apply {
+        recyclerView.adapter = NewsCardAdapter().apply {
             setOnItemClickListener(object : NewsCardAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
                     Toast.makeText(context, "Click $position", Toast.LENGTH_SHORT).show()
                 }
             })
-
             setOnItemLongClickListener(object : NewsCardAdapter.OnItemLongClickListener {
                 override fun onLongClick(position: Int) {
                     Toast.makeText(context, "Long click $position", Toast.LENGTH_SHORT).show()
                 }
             })
         }
-
+        recyclerView.addOnScrollListener(object : OnLoadMoreListener() {
+            override fun onLoading(countItem: Int, lastItem: Int) {
+                thread(start = true) {
+                    Network().getNews(MORE)
+                    handler.post { updateUI() }
+                }
+            }
+        })
+        val refresh = view?.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)!!
+        refresh.isRefreshing = false
+        refresh.setColorSchemeResources(R.color.colorAccent)
+        refresh.setOnRefreshListener {
+            thread(start = true) {
+                Network().getNews(REFRESH)
+                handler.post { updateUI() }
+            }
+        }
+        thread(start = true) {
+            Network().getNews(NONE)
+            handler.post { updateUI() }
+        }
         super.onStart()
     }
 }

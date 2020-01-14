@@ -3,7 +3,7 @@ package com.unidy2002.thuinfo.data.lib
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
-import com.unidy2002.thuinfo.data.model.Calender
+import com.unidy2002.thuinfo.data.model.Calendar
 import com.unidy2002.thuinfo.data.model.EcardTable
 import com.unidy2002.thuinfo.data.model.LoggedInUser
 import com.unidy2002.thuinfo.userModel
@@ -137,25 +137,25 @@ class Network {
                                 stringBuilder.substring(stringBuilder.indexOf("(") + 1, stringBuilder.lastIndexOf(")"))
                             inputStreamReceiver!!.close()
                             calenderReader.close()
-                            userModel.calender = Calender(result)
+                            userModel.calendar = Calendar(result)
 
-                            for (lesson in userModel.calender.lessonList)
+                            for (lesson in userModel.calendar.lessonList)
                                 dbManager.addLesson(lesson)
-                            for (exam in userModel.calender.examList)
+                            for (exam in userModel.calendar.examList)
                                 dbManager.addExam(exam)
-                            for (auto in userModel.calender.autoShortenMap)
+                            for (auto in userModel.calendar.autoShortenMap)
                                 dbManager.addAuto(auto.key, auto.value.first, auto.value.second)
-                            for (custom in userModel.calender.customShortenMap)
+                            for (custom in userModel.calendar.customShortenMap)
                                 dbManager.addCustom(custom.key, custom.value)
-                            for (custom in userModel.calender.colorMap)
+                            for (custom in userModel.calendar.colorMap)
                                 dbManager.addColor(custom.key, custom.value)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
                 } else {
-                    userModel.calender =
-                        Calender(
+                    userModel.calendar =
+                        Calendar(
                             this,
                             dbManager.examList,
                             dbManager.autoShortenMap,
@@ -164,6 +164,17 @@ class Network {
                         )
                 }
             }
+        }
+    }
+
+    fun getNews(mode: MODE) {
+        when (mode) {
+            MODE.NONE ->
+                userModel.newsContainer.getNews(10, false)
+            MODE.REFRESH ->
+                userModel.newsContainer.getNews(10, true)
+            MODE.MORE ->
+                userModel.newsContainer.getNews(10, false)
         }
     }
 
@@ -178,6 +189,10 @@ class Network {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+
+        enum class MODE {
+            NONE, REFRESH, MORE
         }
 
         fun login(loggedInUser: LoggedInUser, password: String) {

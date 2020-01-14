@@ -2,10 +2,9 @@ package com.unidy2002.thuinfo.data.lib
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.unidy2002.thuinfo.data.model.Calender.Exam
-import com.unidy2002.thuinfo.data.model.Calender.Lesson
+import com.unidy2002.thuinfo.data.model.Calendar.Exam
+import com.unidy2002.thuinfo.data.model.Calendar.Lesson
 import java.sql.Date
 import java.sql.Time
 import java.util.*

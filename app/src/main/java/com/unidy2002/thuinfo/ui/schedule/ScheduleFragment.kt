@@ -43,7 +43,7 @@ class ScheduleFragment : Fragment() {
         val simpleDateFormat = SimpleDateFormat("MM.dd", Locale.CHINA)
         for (c in 1..7) {
             var last = 0
-            userModel.calender.lessonList.filter { it.date.time == mon.time + (c - 1) * day }.forEach {
+            userModel.calendar.lessonList.filter { it.date.time == mon.time + (c - 1) * day }.forEach {
                 if (it.begin - last > 1) {
                     val textView = TextView(context)
                     textView.text = ""
@@ -59,7 +59,7 @@ class ScheduleFragment : Fragment() {
                 textView.gravity = Gravity.CENTER
                 textView.isSingleLine = false
                 textView.setBackgroundColor(
-                    resources.getIntArray(R.array.schedule_colors)[userModel.calender.colorMap[it.title] ?: 0]
+                    resources.getIntArray(R.array.schedule_colors)[userModel.calendar.colorMap[it.title] ?: 0]
                 )
                 val layoutParams = GridLayout.LayoutParams()
                 layoutParams.rowSpec = GridLayout.spec(it.begin, it.end - it.begin + 1, GridLayout.FILL)

@@ -7,7 +7,7 @@ import java.sql.Date
 import java.sql.Time
 
 
-class Calender {
+class Calendar {
 
     data class Lesson(
         var title: String,
