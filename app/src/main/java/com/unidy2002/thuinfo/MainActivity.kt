@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo
 
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,8 +21,6 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule
@@ -30,5 +29,15 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+    }
+
+    override fun onBackPressed() {
+        with(findViewById<WebView>(R.id.web_view)) {
+            if (this != null && this.canGoBack()) {
+                this.goBack()
+            } else {
+                super.onBackPressed()
+            }
+        }
     }
 }

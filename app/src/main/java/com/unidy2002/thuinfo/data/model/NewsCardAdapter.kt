@@ -29,7 +29,7 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class FooterViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    private var newsCardList = mutableListOf<NewsCard>()
+    var newsCardList = mutableListOf<NewsCard>()
 
     fun append(newList: MutableList<NewsCard>) {
         val start = newsCardList.size

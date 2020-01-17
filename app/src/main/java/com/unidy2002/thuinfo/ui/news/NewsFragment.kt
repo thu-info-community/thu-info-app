@@ -2,6 +2,7 @@ package com.unidy2002.thuinfo.ui.news
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -50,7 +52,11 @@ class NewsFragment : Fragment() {
         recyclerView.adapter = NewsCardAdapter().apply {
             setOnItemClickListener(object : NewsCardAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
-                    Toast.makeText(context, "Click $position", Toast.LENGTH_SHORT).show()
+                    Log.d("MSG", this@apply.newsCardList[position].href.replace("amp;", ""))
+                    val bundle = Bundle()
+                    bundle.putString("url", this@apply.newsCardList[position].href.replace("amp;", ""))
+                    NavHostFragment.findNavController(this@NewsFragment)
+                        .navigate(R.id.webFragment, bundle)
                 }
             })
             setOnItemLongClickListener(object : NewsCardAdapter.OnItemLongClickListener {

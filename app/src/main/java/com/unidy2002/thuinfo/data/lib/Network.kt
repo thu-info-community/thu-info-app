@@ -43,8 +43,10 @@ class Network {
                     out.flush()
                     out.close()
                 }
+                // Log.d("DEBUG", "${params[0]} - ${connection.responseCode}")
                 connectionReceiver = connection
                 cookieReceiver = connection.headerFields["Set-Cookie"]?.toString()?.drop(1)?.dropLast(1)
+                // locationReceiver = connection.headerFields["Location"]?.toString()
                 inputStreamReceiver = connection.inputStream
                 synchronized(lock) { lock.notify() }
                 connection
@@ -222,6 +224,7 @@ class Network {
             )
             getLock()
 
+            // cookieReceiver = cookieReceiver?.substring(0, cookieReceiver?.indexOf(';')!!)
             loggedInUser.zhjwSessionId = cookieReceiver!!
             inputStreamReceiver!!.close()
             Log.i("ZHJW SESSION", loggedInUser.zhjwSessionId)

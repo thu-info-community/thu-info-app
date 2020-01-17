@@ -21,5 +21,16 @@
             android:id="@+id/navigation_schedule"
             android:name="com.unidy2002.thuinfo.ui.schedule.ScheduleFragment"
             android:label="@string/title_schedule"
-            tools:layout="@layout/fragment_schedule"/>
+            tools:layout="@layout/fragment_schedule">
+    </fragment>
+
+    <fragment
+            android:id="@+id/webFragment"
+            android:name="com.unidy2002.thuinfo.ui.news.WebFragment"
+            android:label="@string/title_news"/>
+
+    <fragment
+            android:id="@+id/ecardTableFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.EcardTableFragment"
+            android:label="@string/card_record"/>
 </navigation>

@@ -15,8 +15,8 @@
     <string name="welcome">欢迎！</string>
 
     <!-- Strings related to main utilities -->
-    <string name="calender">教学日历</string>
-    <string name="learn">学习</string>
-    <string name="query">综合查询</string>
-    <string name="ecard">消费查询</string>
+    <string name="quick_gpa">均绩速查</string>
+    <string name="score">成绩</string>
+    <string name="ecard">卡</string>
+    <string name="card_record">消费查询</string>
 </resources>
