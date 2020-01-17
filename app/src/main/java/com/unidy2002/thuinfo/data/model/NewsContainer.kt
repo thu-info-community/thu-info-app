@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.data.model
 
 import android.util.Log
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import org.jsoup.Jsoup
 import java.lang.Exception
 import java.text.SimpleDateFormat
@@ -21,54 +22,59 @@ class NewsContainer {
         var currentPage: Int = -1,
         val currentBuffer: MutableList<NewsCard> = mutableListOf(),
         var currentIndex: Int = 0
-    ) {
-        private val prefix = "http://postinfo.tsinghua.edu.cn/f/"
-        private val suffix = "/more?page="
+    )
 
-        private fun getData() {
-            currentBuffer.clear()
-            if (type != NewsOriginType.POST_INFO_T) {
-                try {
-                    Jsoup.connect("$prefix$url$suffix$currentPage").get().select("li").filter {
-                        it.children().isNotEmpty() && it.child(0).tagName() == "em"
-                    }.forEach {
-                        currentBuffer.add(
-                            NewsCard(
-                                originId,
-                                SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
-                                it.ownText().drop(1).dropLast(1),
-                                it.child(1).text(),
-                                "加载中……",
-                                it.child(1).attr("abs:href")
-                            )
+    private val prefix =
+        "http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/"
+    private val suffix = "/more?page="
+
+    private fun getData(newsOrigin: NewsOrigin) {
+        newsOrigin.currentBuffer.clear()
+        if (newsOrigin.type != NewsOriginType.POST_INFO_T) {
+            try {
+                Jsoup.connect("$prefix${newsOrigin.url}$suffix${newsOrigin.currentPage}").cookie(
+                    "wengine_vpn_ticket",
+                    LoginActivity.loginViewModel.getLoggedInUser().vpnTicket
+                        .run { substring(this.indexOf('=') + 1) }
+                ).get().select("li").filter {
+                    it.children().isNotEmpty() && it.child(0).tagName() == "em"
+                }.forEach {
+                    newsOrigin.currentBuffer.add(
+                        NewsCard(
+                            newsOrigin.originId,
+                            SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
+                            it.ownText().drop(1).dropLast(1),
+                            it.child(1).text(),
+                            "加载中……",
+                            it.child(1).attr("abs:href")
                         )
-                    }
-                } catch (e: Exception) {
-                    Log.e("CONNECTION", "Error when connecting $prefix$url$suffix$currentPage.")
-                    e.printStackTrace()
+                    )
                 }
+            } catch (e: Exception) {
+                Log.e("CONNECTION", "Error when connecting $prefix${newsOrigin.url}$suffix${newsOrigin.currentPage}.")
+                e.printStackTrace()
             }
         }
-
-        private fun getNewBuffer(): NewsCard? =
-            if (currentBuffer.isEmpty() && currentPage != -1)
-                null
-            else {
-                currentPage++
-                currentIndex = 0
-                getData()
-                if (currentBuffer.isEmpty())
-                    null
-                else
-                    currentBuffer[0]
-            }
-
-        fun getCurrentCard(): NewsCard? =
-            if (currentIndex < currentBuffer.size)
-                currentBuffer[currentIndex]
-            else
-                getNewBuffer()
     }
+
+    private fun getNewBuffer(newsOrigin: NewsOrigin): NewsCard? =
+        if (newsOrigin.currentBuffer.isEmpty() && newsOrigin.currentPage != -1)
+            null
+        else {
+            newsOrigin.currentPage++
+            newsOrigin.currentIndex = 0
+            getData(newsOrigin)
+            if (newsOrigin.currentBuffer.isEmpty())
+                null
+            else
+                newsOrigin.currentBuffer[0]
+        }
+
+    private fun getCurrentCard(newsOrigin: NewsOrigin): NewsCard? =
+        if (newsOrigin.currentIndex < newsOrigin.currentBuffer.size)
+            newsOrigin.currentBuffer[newsOrigin.currentIndex]
+        else
+            getNewBuffer(newsOrigin)
 
     fun getNews(maximum: Int, clear: Boolean) {
         if (clear) {
@@ -82,7 +88,7 @@ class NewsContainer {
             }
         }
         repeat(maximum) {
-            newsOriginList.mapNotNull { it.getCurrentCard() }.maxBy { it.getComparableDate() }?.run {
+            newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }?.run {
                 newsCardList.add(this)
                 newsOriginList[this.originId].currentIndex++
             }

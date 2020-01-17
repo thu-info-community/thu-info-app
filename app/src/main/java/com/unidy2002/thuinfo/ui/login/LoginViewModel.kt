@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.LoginRepository
 import com.unidy2002.thuinfo.data.Result
+import java.lang.NullPointerException
 
 class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel() {
 
@@ -41,12 +42,16 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    // A placeholder username validation check
+    fun getLoggedInUser() =
+        if (loginRepository.isLoggedIn)
+            loginRepository.loggedInUser!!
+        else
+            throw NullPointerException("User not logged in!")
+
     private fun isUserNameValid(username: String): Boolean {
-        return username.isNotBlank()
+        return username.matches(Regex("[0-9]+"))
     }
 
-    // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.isNotBlank()
     }

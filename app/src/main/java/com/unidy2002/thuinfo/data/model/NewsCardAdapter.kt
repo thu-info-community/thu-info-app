@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.userModel
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -65,7 +65,7 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     else -> R.mipmap.ic_launcher_round
                 }
             )
-            cardViewHolder.username.text = userModel.newsContainer.newsOriginList[newsCard.originId].name
+            cardViewHolder.username.text = LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsOriginList[newsCard.originId].name
             cardViewHolder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
             cardViewHolder.title.text = newsCard.title
             cardViewHolder.brief.text = SpannableStringBuilder(newsCard.sender).apply {

@@ -13,7 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
-import com.unidy2002.thuinfo.userModel
+import com.unidy2002.thuinfo.data.model.LoggedInUser
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.sql.Date
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,6 +24,9 @@ import kotlin.concurrent.thread
 class ScheduleFragment : Fragment() {
 
     private lateinit var scheduleViewModel: ScheduleViewModel
+
+    private val loggedInUser: LoggedInUser
+        get() = LoginActivity.loginViewModel.getLoggedInUser()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +47,7 @@ class ScheduleFragment : Fragment() {
         val simpleDateFormat = SimpleDateFormat("MM.dd", Locale.CHINA)
         for (c in 1..7) {
             var last = 0
-            userModel.calendar.lessonList.filter { it.date.time == mon.time + (c - 1) * day }.forEach {
+            loggedInUser.calendar.lessonList.filter { it.date.time == mon.time + (c - 1) * day }.forEach {
                 if (it.begin - last > 1) {
                     val textView = TextView(context)
                     textView.text = ""
@@ -59,7 +63,7 @@ class ScheduleFragment : Fragment() {
                 textView.gravity = Gravity.CENTER
                 textView.isSingleLine = false
                 textView.setBackgroundColor(
-                    resources.getIntArray(R.array.schedule_colors)[userModel.calendar.colorMap[it.title] ?: 0]
+                    resources.getIntArray(R.array.schedule_colors)[loggedInUser.calendar.colorMap[it.title] ?: 0]
                 )
                 val layoutParams = GridLayout.LayoutParams()
                 layoutParams.rowSpec = GridLayout.spec(it.begin, it.end - it.begin + 1, GridLayout.FILL)
@@ -99,7 +103,7 @@ class ScheduleFragment : Fragment() {
         super.onStart()
         thread(start = true) {
             Network().getCalender(context!!)
-            if (userModel.calenderInitialized()) {
+            if (loggedInUser.calenderInitialized()) {
                 handler.post { updateUI() }
             }
         }

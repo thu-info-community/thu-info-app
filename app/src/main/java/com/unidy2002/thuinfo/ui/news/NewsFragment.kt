@@ -20,7 +20,7 @@ import com.unidy2002.thuinfo.data.lib.Network.Companion.MODE.*
 import com.unidy2002.thuinfo.data.model.NewsCardAdapter
 import com.unidy2002.thuinfo.data.model.NewsCardAdapter.Companion.updating
 import com.unidy2002.thuinfo.data.model.NewsCardAdapter.OnLoadMoreListener
-import com.unidy2002.thuinfo.userModel
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
 class NewsFragment : Fragment() {
@@ -42,7 +42,7 @@ class NewsFragment : Fragment() {
         view?.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)!!.isRefreshing = false
         view?.findViewById<ProgressBar>(R.id.news_loading)?.visibility = View.GONE
         val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)!!
-        (recyclerView.adapter as NewsCardAdapter).append(userModel.newsContainer.newsCardList)
+        (recyclerView.adapter as NewsCardAdapter).append(LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsCardList)
         updating = false
     }
 

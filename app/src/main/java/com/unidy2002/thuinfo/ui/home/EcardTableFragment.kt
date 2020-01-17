@@ -15,7 +15,7 @@ import com.bin.david.form.core.SmartTable
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.EcardTable
-import com.unidy2002.thuinfo.userModel
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
 
@@ -29,6 +29,7 @@ class EcardTableFragment : Fragment() {
     }
 
     private fun updateUI() {
+        val loggedInUser=LoginActivity.loginViewModel.getLoggedInUser()
         val incomeValue = view?.findViewById<TextView>(R.id.income_value)
         val expenditureValue = view?.findViewById<TextView>(R.id.expenditure_value)
         val remainderValue = view?.findViewById<TextView>(R.id.remainder_value)
@@ -36,11 +37,11 @@ class EcardTableFragment : Fragment() {
         val loading = view?.findViewById<ProgressBar>(R.id.loading)
         val why = view?.findViewById<Button>(R.id.why)
         val refresh = view?.findViewById<Button>(R.id.refresh)
-        table?.setData(userModel.eCardTable.eCardList)
+        table?.setData(loggedInUser.eCardTable.eCardList)
         table?.isEnabled = true
-        incomeValue?.text = String.format("%.2f", userModel.eCardTable.income)
-        expenditureValue?.text = String.format("%.2f", userModel.eCardTable.expenditure)
-        remainderValue?.text = String.format("%.2f", userModel.eCardTable.remainder)
+        incomeValue?.text = String.format("%.2f", loggedInUser.eCardTable.income)
+        expenditureValue?.text = String.format("%.2f", loggedInUser.eCardTable.expenditure)
+        remainderValue?.text = String.format("%.2f", loggedInUser.eCardTable.remainder)
         loading?.visibility = ProgressBar.GONE
         why?.isEnabled = true
         refresh?.isEnabled = true

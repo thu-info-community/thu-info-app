@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,10 +9,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.unidy2002.thuinfo.data.model.LoggedInUser
-
-
-lateinit var userModel: LoggedInUser
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,5 +36,10 @@ class MainActivity : AppCompatActivity() {
                 super.onBackPressed()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.home) this.onBackPressed()
+        return super.onOptionsItemSelected(item)
     }
 }

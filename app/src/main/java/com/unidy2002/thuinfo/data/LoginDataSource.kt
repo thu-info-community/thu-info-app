@@ -12,7 +12,7 @@ class LoginDataSource {
     fun login(username: String, password: String): Result<LoggedInUser> {
         return try {
             val loggedInUser = LoggedInUser(username)
-            Network.login(loggedInUser, password)
+            Network().login(loggedInUser, password)
             Result.Success(loggedInUser)
         } catch (e: Throwable) {
             Result.Error(IOException("Error logging in", e))

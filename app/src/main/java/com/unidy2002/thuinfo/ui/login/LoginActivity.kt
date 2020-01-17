@@ -15,11 +15,12 @@ import androidx.lifecycle.ViewModelProviders
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.LoggedInUser
-import com.unidy2002.thuinfo.userModel
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
+    companion object {
+        lateinit var loginViewModel: LoginViewModel
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +61,6 @@ class LoginActivity : AppCompatActivity() {
                 remember.isEnabled = true
             } else if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-                userModel = loginResult.success
                 setResult(Activity.RESULT_OK)
                 finish()
             }
