@@ -33,6 +33,18 @@
                 android:text="@string/quick_gpa"
                 android:enabled="false"/>
 
+        <Button
+                android:id="@+id/report_btn"
+                android:text="@string/report"/>
+
+        <Button
+                android:id="@+id/physical_exam_btn"
+                android:text="@string/physical_exam_result"/>
+
+        <Button
+                android:id="@+id/jogging_btn"
+                android:text="@string/sunny_jogging"/>
+
     </GridLayout>
 
     <View

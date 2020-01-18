@@ -2,6 +2,9 @@ package com.unidy2002.thuinfo.ui.home
 
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +32,7 @@ class EcardTableFragment : Fragment() {
     }
 
     private fun updateUI() {
-        val loggedInUser=LoginActivity.loginViewModel.getLoggedInUser()
+        val loggedInUser = LoginActivity.loginViewModel.getLoggedInUser()
         val incomeValue = view?.findViewById<TextView>(R.id.income_value)
         val expenditureValue = view?.findViewById<TextView>(R.id.expenditure_value)
         val remainderValue = view?.findViewById<TextView>(R.id.remainder_value)
@@ -39,9 +42,21 @@ class EcardTableFragment : Fragment() {
         val refresh = view?.findViewById<Button>(R.id.refresh)
         table?.setData(loggedInUser.eCardTable.eCardList)
         table?.isEnabled = true
-        incomeValue?.text = String.format("%.2f", loggedInUser.eCardTable.income)
-        expenditureValue?.text = String.format("%.2f", loggedInUser.eCardTable.expenditure)
-        remainderValue?.text = String.format("%.2f", loggedInUser.eCardTable.remainder)
+        incomeValue?.text = with(String.format("%.2f", loggedInUser.eCardTable.income)) {
+            SpannableString(this).apply {
+                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+        expenditureValue?.text = with(String.format("%.2f", loggedInUser.eCardTable.expenditure)) {
+            SpannableString(this).apply {
+                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+        remainderValue?.text = with(String.format("%.2f", loggedInUser.eCardTable.remainder)) {
+            SpannableString(this).apply {
+                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
         loading?.visibility = ProgressBar.GONE
         why?.isEnabled = true
         refresh?.isEnabled = true

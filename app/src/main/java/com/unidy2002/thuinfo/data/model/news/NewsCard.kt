@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.news
 
 import java.util.Date
 import java.util.Calendar

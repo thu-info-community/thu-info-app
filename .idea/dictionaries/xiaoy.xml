@@ -2,8 +2,12 @@
   <dictionary name="xiaoy">
     <words>
       <w>bangongtongzhi</w>
+      <w>bbmp</w>
+      <w>bbmpfs</w>
       <w>calen</w>
+      <w>cpfjf</w>
       <w>ecard</w>
+      <w>fhltzfs</w>
       <w>gson</w>
       <w>haibao</w>
       <w>jiaowugonggao</w>
@@ -15,20 +19,36 @@
       <w>keyantongzhi</w>
       <w>khtml</w>
       <w>kssj</w>
+      <w>ldty</w>
+      <w>ldtyfs</w>
+      <w>mcyy</w>
       <w>mozilla</w>
       <w>mtrl</w>
       <w>qirixinxihuizong</w>
       <w>segmenter</w>
+      <w>sfmc</w>
+      <w>sgtzfs</w>
       <w>thuinfo</w>
       <w>tsinghua</w>
+      <w>tykcj</w>
       <w>unidy</w>
       <w>uportal</w>
       <w>uportalinfonew</w>
       <w>webvpn</w>
       <w>wengine</w>
+      <w>wsmp</w>
+      <w>wsmpfs</w>
+      <w>yqmp</w>
+      <w>yqmpfs</w>
+      <w>ytxs</w>
+      <w>ytxsfs</w>
+      <w>ywqz</w>
+      <w>ywqzfs</w>
       <w>zhaobiaoxinxi</w>
       <w>zhjw</w>
       <w>zhongyaogonggao</w>
+      <w>zwtqq</w>
+      <w>zwtqqfs</w>
     </words>
   </dictionary>
 </component>

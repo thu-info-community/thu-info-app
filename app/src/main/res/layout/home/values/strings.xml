@@ -20,4 +20,9 @@
     <string name="_12">12</string>
     <string name="_13">13</string>
     <string name="_14">14</string>
+    <string name="report">成绩单</string>
+    <string name="grade">等第</string>
+    <string name="dot_mark">·</string>
+    <string name="physical_exam_result">体测成绩</string>
+    <string name="sunny_jogging">阳光长跑</string>
 </resources>

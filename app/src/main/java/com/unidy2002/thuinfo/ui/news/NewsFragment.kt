@@ -17,9 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.lib.Network.Companion.MODE.*
-import com.unidy2002.thuinfo.data.model.NewsCardAdapter
-import com.unidy2002.thuinfo.data.model.NewsCardAdapter.Companion.updating
-import com.unidy2002.thuinfo.data.model.NewsCardAdapter.OnLoadMoreListener
+import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter
+import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter.Companion.updating
+import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter.OnLoadMoreListener
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
@@ -39,15 +39,15 @@ class NewsFragment : Fragment() {
     private val handler = Handler()
 
     private fun updateUI() {
-        view?.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)!!.isRefreshing = false
+        view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)?.isRefreshing = false
         view?.findViewById<ProgressBar>(R.id.news_loading)?.visibility = View.GONE
-        val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)!!
-        (recyclerView.adapter as NewsCardAdapter).append(LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsCardList)
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.news_recycler_view)
+        (recyclerView?.adapter as? NewsCardAdapter)?.append(LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsCardList)
         updating = false
     }
 
     override fun onStart() {
-        val recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_view)!!
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.news_recycler_view)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = NewsCardAdapter().apply {
             setOnItemClickListener(object : NewsCardAdapter.OnItemClickListener {
@@ -73,7 +73,7 @@ class NewsFragment : Fragment() {
                 }
             }
         })
-        val refresh = view?.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)!!
+        val refresh = view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)!!
         refresh.isRefreshing = false
         refresh.setColorSchemeResources(R.color.colorAccent)
         refresh.setOnRefreshListener {

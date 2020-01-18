@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <GridLayout
+                android:id="@+id/physical_exam_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:rowCount="26"
+                android:columnCount="2">
+
+            <TextView
+                    android:id="@+id/physical_exam_pivot"
+                    android:layout_columnWeight="1"
+                    />
+
+            <TextView
+                    android:layout_columnWeight="1"
+                    />
+        </GridLayout>
+    </ScrollView>
+
+    <ProgressBar
+            android:id="@+id/physical_exam_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

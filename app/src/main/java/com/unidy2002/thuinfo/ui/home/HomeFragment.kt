@@ -19,8 +19,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -43,6 +42,18 @@ class HomeFragment : Fragment() {
                 }
             }
         }*/
+        view?.findViewById<Button>(R.id.report_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.reportViewerFragment)
+        }
+        view?.findViewById<Button>(R.id.physical_exam_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.physicalExamFragment)
+        }
+        view?.findViewById<Button>(R.id.jogging_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.joggingTableFragment)
+        }
         super.onStart()
     }
 }

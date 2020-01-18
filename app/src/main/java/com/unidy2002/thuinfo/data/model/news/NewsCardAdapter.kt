@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.news
 
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
@@ -65,7 +65,8 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     else -> R.mipmap.ic_launcher_round
                 }
             )
-            cardViewHolder.username.text = LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsOriginList[newsCard.originId].name
+            cardViewHolder.username.text =
+                LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsOriginList[newsCard.originId].name
             cardViewHolder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
             cardViewHolder.title.text = newsCard.title
             cardViewHolder.brief.text = SpannableStringBuilder(newsCard.sender).apply {

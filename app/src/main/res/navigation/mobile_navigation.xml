@@ -27,10 +27,30 @@
     <fragment
             android:id="@+id/webFragment"
             android:name="com.unidy2002.thuinfo.ui.news.WebFragment"
-            android:label="@string/title_news"/>
+            android:label="@string/title_news"
+            tools:layout="@layout/web_fragment"/>
 
     <fragment
             android:id="@+id/ecardTableFragment"
             android:name="com.unidy2002.thuinfo.ui.home.EcardTableFragment"
-            android:label="@string/card_record"/>
+            android:label="@string/card_record"
+            tools:layout="@layout/ecard_table"/>
+
+    <fragment
+            android:id="@+id/reportViewerFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ReportViewerFragment"
+            android:label="@string/report"
+            tools:layout="@layout/report_viewer"/>
+
+    <fragment
+            android:id="@+id/physicalExamFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.PhysicalExamFragment"
+            android:label="@string/physical_exam_result"
+            tools:layout="@layout/fragment_physical_exam"/>
+
+    <fragment
+            android:id="@+id/joggingTableFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.JoggingTableFragment"
+            android:label="@string/sunny_jogging"
+            tools:layout="@layout/jogging_table_view"/>
 </navigation>
