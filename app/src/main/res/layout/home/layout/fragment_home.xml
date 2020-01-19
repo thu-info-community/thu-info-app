@@ -56,6 +56,41 @@
             app:layout_constraintTop_toBottomOf="@id/score_grid"/>
 
     <TextView
+            android:id="@+id/res_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/res_string"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/score_line"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <GridLayout
+            android:id="@+id/res_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/res_text"
+            android:columnCount="4"
+            android:orientation="horizontal"
+            android:rowCount="1">
+
+        <Button
+                android:id="@+id/classroom_btn"
+                android:text="@string/classroom_res"/>
+
+    </GridLayout>
+
+    <View
+            android:id="@+id/res_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/res_grid"/>
+
+    <TextView
             android:id="@+id/ecard_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +99,7 @@
             android:layout_marginEnd="5dp"
             android:text="@string/ecard"
             android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/score_line"
+            app:layout_constraintTop_toBottomOf="@id/res_line"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
     <GridLayout

@@ -53,4 +53,15 @@
             android:name="com.unidy2002.thuinfo.ui.home.JoggingTableFragment"
             android:label="@string/sunny_jogging"
             tools:layout="@layout/jogging_table_view"/>
+
+    <fragment
+            android:id="@+id/classroomWelcomeFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ClassroomWelcomeFragment"
+            android:label="@string/classroom_res"
+            tools:layout="@layout/fragment_classroom_welcome"/>
+
+    <fragment
+            android:id="@+id/classroomResTable"
+            android:name="com.unidy2002.thuinfo.ui.home.ClassroomResTable"
+            tools:layout="@layout/fragment_classroom_table"/>
 </navigation>

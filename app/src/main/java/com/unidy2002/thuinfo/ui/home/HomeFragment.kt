@@ -30,10 +30,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStart() {
-        view?.findViewById<Button>(R.id.ecard_query_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.ecardTableFragment)
-        }
         /*view?.findViewById<Button>(R.id.gpa_btn)?.setOnClickListener {
             thread(start = true) {
                 with(Network().getGPA().toString()) {
@@ -59,6 +55,14 @@ class HomeFragment : Fragment() {
         view?.findViewById<Button>(R.id.jogging_btn)?.setOnClickListener {
             NavHostFragment.findNavController(this)
                 .navigate(R.id.joggingTableFragment)
+        }
+        view?.findViewById<Button>(R.id.classroom_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.classroomWelcomeFragment)
+        }
+        view?.findViewById<Button>(R.id.ecard_query_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.ecardTableFragment)
         }
         view?.findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
             val handler = Handler()

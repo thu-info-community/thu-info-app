@@ -10,10 +10,8 @@ import com.unidy2002.thuinfo.data.model.report.CourseScore
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jxl.Workbook
 import org.jsoup.Jsoup
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import org.jsoup.nodes.Element
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
@@ -341,6 +339,46 @@ class Network {
         }
     }
 
+    fun getClassroomState(classroom: String, week: Int): List<Pair<String, List<Int>>> {
+        return try {
+            ConnectParams(
+                "http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/pk.classroomctrl.do?m=qyClassroomState&classroom=$classroom&weeknumber=$week",
+                "webvpn.tsinghua.edu.cn",
+                null,
+                loggedInUser.vpnTicket,
+                true
+            ).connect()
+            val reader = BufferedReader(InputStreamReader(inputStreamReceiver!!, "GBK"))
+            var readLine: String?
+            val stringBuilder = StringBuilder()
+            while (reader.readLine().also { readLine = it } != null)
+                stringBuilder.append(readLine).append('\n')
+
+            fun mapClassName(element: Element) =
+                with(element.classNames().apply { remove("colBound") }) {
+                    when (this.size) {
+                        0 -> 5
+                        1 ->
+                            when (this.first()) {
+                                "onteaching" -> 1
+                                "onexam" -> 2
+                                "onborrowed" -> 3
+                                "ondisabled" -> 4
+                                else -> 0
+                            }
+                        else -> 0
+                    }
+                }
+
+            Jsoup.parse(stringBuilder.toString()).getElementById("scrollContent").child(0).children()
+                .flatMap { it.children() }
+                .map { (it.child(0).ownText() to it.children().drop(1).map(::mapClassName)) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            listOf()
+        }
+    }
+
     fun login(loggedInUser: LoggedInUser, password: String) {
         // Get vpn ticket
         ConnectParams(
@@ -449,6 +487,7 @@ class Network {
         }
 
         // Get the tickets
+        //TODO: The root may not be 综合 page
         ConnectParams(
             "http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
             "webvpn.tsinghua.edu.cn",
