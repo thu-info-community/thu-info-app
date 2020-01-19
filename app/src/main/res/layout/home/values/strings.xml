@@ -25,4 +25,5 @@
     <string name="dot_mark">·</string>
     <string name="physical_exam_result">体测成绩</string>
     <string name="sunny_jogging">阳光长跑</string>
+    <string name="lose_card_string">一键挂失</string>
 </resources>

@@ -310,10 +310,34 @@ class Network {
                     it.child(5).ownText().toInt(),
                     it.child(6).ownText().toInt()
                 )
-            }.also { println(it) }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             listOf()
+        }
+    }
+
+    fun loseCard(): Int? {
+        try {
+            ConnectParams(
+                "http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/RambleConsumeLog.do?losscard=true",
+                "webvpn.tsinghua.edu.cn",
+                null,
+                loggedInUser.vpnTicket,
+                true
+            ).connect()
+            val reader = BufferedReader(InputStreamReader(inputStreamReceiver!!))
+            var readLine: String?
+            while (reader.readLine().also { readLine = it } != null) {
+                if (readLine!!.contains("var result")) {
+                    readLine = readLine!!.substring(readLine!!.indexOf('=') + 1).trim()
+                    return if (readLine == "null") null else readLine?.toInt()
+                }
+            }
+            return null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
     }
 

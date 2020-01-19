@@ -80,6 +80,10 @@
                 android:id="@+id/ecard_query_btn"
                 android:text="@string/card_record"/>
 
+        <Button
+                android:id="@+id/lose_card_btn"
+                android:text="@string/lose_card_string"/>
+
     </GridLayout>
 
     <View
