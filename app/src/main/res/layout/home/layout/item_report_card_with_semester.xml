@@ -16,6 +16,17 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
+    <TextView
+            android:id="@+id/semester_gpa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/report_card_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
     <ImageView
             android:id="@+id/report_card_image"
             android:layout_width="32dp"

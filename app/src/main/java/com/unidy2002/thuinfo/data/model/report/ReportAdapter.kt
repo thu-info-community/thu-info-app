@@ -18,58 +18,89 @@ class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Ada
 
     class CardViewWithSemesterHolder(view: View) : CardViewHolder(view) {
         var semester: TextView = view.findViewById(R.id.semester_tag)
+        var semesterGPA: TextView = view.findViewById(R.id.semester_gpa)
+    }
+
+    class CardFooter(view: View) : RecyclerView.ViewHolder(view) {
+        var gpa: TextView = view.findViewById(R.id.total_gpa)
     }
 
     override fun getItemViewType(position: Int) =
-        if (position == 0 || reportList[position].semester != reportList[position - 1].semester) 1 else 0
+        if (position == itemCount - 1)
+            2
+        else if (position == 0 || reportList[position].semester != reportList[position - 1].semester)
+            1
+        else
+            0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        if (viewType == 1)
-            CardViewWithSemesterHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_report_card_with_semester, parent, false)
-            )
-        else
-            CardViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_report_card, parent, false)
-            )
+        when (viewType) {
+            2 ->
+                CardFooter(
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_report_card_footer, parent, false)
+                )
+            1 ->
+                CardViewWithSemesterHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_report_card_with_semester, parent, false)
+                )
+            else ->
+                CardViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_report_card, parent, false)
+                )
+        }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val cardViewHolder = holder as CardViewHolder
-        val scoreCard = reportList[position]
-        cardViewHolder.grade.setImageResource(
-            when (scoreCard.grade) {
-                "A+" -> R.drawable.a_plus
-                "A" -> R.drawable.a_sharp
-                "A-" -> R.drawable.a_minus
-                "B+" -> R.drawable.b_plus
-                "B" -> R.drawable.b_sharp
-                "B-" -> R.drawable.b_minus
-                "C+" -> R.drawable.c_plus
-                "C" -> R.drawable.c_sharp
-                "C-" -> R.drawable.c_minus
-                "D+" -> R.drawable.d_plus
-                "D" -> R.drawable.d_sharp
-                "F" -> R.drawable.fail
-                "P" -> R.drawable.pass
-                "W" -> R.drawable.withdrew
-                "I" -> R.drawable.incomplete
-                "EX" -> R.drawable.exempted
-                else -> R.drawable.unknown
-            }
-        )
-        cardViewHolder.courseName.text = scoreCard.name
-        cardViewHolder.courseCredit.text = scoreCard.credit.toString()
-        if (scoreCard.point == null) {
-            cardViewHolder.coursePoint.text = "N/A"
-            cardViewHolder.coursePoint.textSize = 18F
+        if (position == itemCount - 1) {
+            (holder as CardFooter).gpa.text =
+                reportList.filter { it.point != null }.run {
+                    val credits = sumBy { it.credit }
+                    val points = sumByDouble { it.point!! * it.credit }
+                    if (points == 0.0) "N/A" else String.format("%.2f", points / credits)
+                }
         } else {
-            cardViewHolder.coursePoint.text = scoreCard.point.toString()
-        }
-        if (getItemViewType(position) == 1) {
-            val cardViewWithSemesterHolder = cardViewHolder as CardViewWithSemesterHolder
-            cardViewWithSemesterHolder.semester.text = scoreCard.semester
+            val cardViewHolder = holder as CardViewHolder
+            val scoreCard = reportList[position]
+            cardViewHolder.grade.setImageResource(
+                when (scoreCard.grade) {
+                    "A+" -> R.drawable.a_plus
+                    "A" -> R.drawable.a_sharp
+                    "A-" -> R.drawable.a_minus
+                    "B+" -> R.drawable.b_plus
+                    "B" -> R.drawable.b_sharp
+                    "B-" -> R.drawable.b_minus
+                    "C+" -> R.drawable.c_plus
+                    "C" -> R.drawable.c_sharp
+                    "C-" -> R.drawable.c_minus
+                    "D+" -> R.drawable.d_plus
+                    "D" -> R.drawable.d_sharp
+                    "F" -> R.drawable.fail
+                    "P" -> R.drawable.pass
+                    "W" -> R.drawable.withdrew
+                    "I" -> R.drawable.incomplete
+                    "EX" -> R.drawable.exempted
+                    else -> R.drawable.unknown
+                }
+            )
+            cardViewHolder.courseName.text = scoreCard.name
+            cardViewHolder.courseCredit.text = scoreCard.credit.toString()
+            if (scoreCard.point == null) {
+                cardViewHolder.coursePoint.text = "N/A"
+                cardViewHolder.coursePoint.textSize = 18F
+            } else {
+                cardViewHolder.coursePoint.text = scoreCard.point.toString()
+            }
+            if (getItemViewType(position) == 1) {
+                val cardViewWithSemesterHolder = cardViewHolder as CardViewWithSemesterHolder
+                cardViewWithSemesterHolder.semester.text = scoreCard.semester
+                cardViewWithSemesterHolder.semesterGPA.text =
+                    reportList.filter { it.semester == scoreCard.semester && it.point != null }.run {
+                        val credits = sumBy { it.credit }
+                        val points = sumByDouble { it.point!! * it.credit }
+                        if (points == 0.0) "N/A" else String.format("%.2f", points / credits)
+                    }
+            }
         }
     }
 
-    override fun getItemCount() = reportList.size
+    override fun getItemCount() = reportList.size + 1
 }
