@@ -18,9 +18,7 @@ import com.bin.david.form.core.SmartTable
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.ECardRecord
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
-
 
 class ECardTableFragment : Fragment() {
     override fun onCreateView(
@@ -31,45 +29,31 @@ class ECardTableFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_e_card_table, container, false)
     }
 
-    private fun updateUI() {
-        val loggedInUser = LoginActivity.loginViewModel.getLoggedInUser()
-        val incomeValue = view?.findViewById<TextView>(R.id.income_value)
-        val expenditureValue = view?.findViewById<TextView>(R.id.expenditure_value)
-        val remainderValue = view?.findViewById<TextView>(R.id.remainder_value)
-        val table = view?.findViewById<SmartTable<ECardRecord.ECardElement>>(R.id.table)
-        val loading = view?.findViewById<ProgressBar>(R.id.loading)
-        val why = view?.findViewById<Button>(R.id.why)
-        val refresh = view?.findViewById<Button>(R.id.refresh)
-        table?.setData(loggedInUser.eCardRecord.eCardList)
-        table?.isEnabled = true
-        incomeValue?.text = with(String.format("%.2f", loggedInUser.eCardRecord.income)) {
-            SpannableString(this).apply {
-                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    private fun updateUI(result: ECardRecord?) {
+        if (result == null) {
+            Toast.makeText(context, "网络异常", Toast.LENGTH_LONG).show()
+        } else {
+            view?.findViewById<SmartTable<ECardRecord.ECardElement>>(R.id.table)?.apply {
+                setData(result.eCardList)
+                isEnabled = true
             }
+            fun span(value: Double) =
+                SpannableString(String.format("%.2f", value)).apply {
+                    setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            view?.findViewById<TextView>(R.id.income_value)?.text = span(result.income)
+            view?.findViewById<TextView>(R.id.expenditure_value)?.text = span(result.expenditure)
+            view?.findViewById<TextView>(R.id.remainder_value)?.text = span(result.remainder)
         }
-        expenditureValue?.text = with(String.format("%.2f", loggedInUser.eCardRecord.expenditure)) {
-            SpannableString(this).apply {
-                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-        }
-        remainderValue?.text = with(String.format("%.2f", loggedInUser.eCardRecord.remainder)) {
-            SpannableString(this).apply {
-                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-        }
-        loading?.visibility = ProgressBar.GONE
-        why?.isEnabled = true
-        refresh?.isEnabled = true
+        view?.findViewById<ProgressBar>(R.id.loading)?.visibility = ProgressBar.GONE
+        view?.findViewById<Button>(R.id.why)?.isEnabled = true
+        view?.findViewById<Button>(R.id.refresh)?.isEnabled = true
     }
 
     private val handler = Handler()
 
     private fun getData() {
-        if (Network().getEcard(false)) {
-            handler.post { updateUI() }
-        } else {
-            handler.post { Toast.makeText(context, "网络异常", Toast.LENGTH_LONG).show() }
-        }
+        Network().getEcard().run { handler.post { updateUI(this) } }
     }
 
     override fun onStart() {

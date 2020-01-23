@@ -9,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
 class HomeFragment : Fragment() {
@@ -28,6 +30,8 @@ class HomeFragment : Fragment() {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
+
+    private val handler = Handler()
 
     override fun onStart() {
         view?.findViewById<Button>(R.id.report_btn)?.setOnClickListener {
@@ -51,7 +55,6 @@ class HomeFragment : Fragment() {
                 .navigate(R.id.eCardTableFragment)
         }
         view?.findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
-            val handler = Handler()
             AlertDialog.Builder(view?.context!!)
                 .setTitle("您确定要挂失吗？")
                 .setMessage("该操作无法撤销。")
@@ -78,7 +81,33 @@ class HomeFragment : Fragment() {
                 .show()
         }
         view?.findViewById<Button>(R.id.logout_btn)?.setOnClickListener {
-            thread(start = true) { Network().logout() }
+            thread(start = true) {
+                Network().logout()
+                handler.post {
+                    if (LoginActivity.loginViewModel.getLoggedInUser().rememberPassword) {
+                        AlertDialog.Builder(view?.context!!)
+                            .setTitle("是否清除记住的密码？")
+                            .setPositiveButton("保留") { _, _ ->
+                                activity?.finish()
+                            }
+                            .setNegativeButton("清除") { _, _ ->
+                                val sharedPreferences =
+                                    activity?.getSharedPreferences("UserId", AppCompatActivity.MODE_PRIVATE)!!.edit()
+                                sharedPreferences.putString("remember", "false")
+                                sharedPreferences.remove("username")
+                                sharedPreferences.remove("password")
+                                sharedPreferences.apply()
+                                activity?.finish()
+                            }
+                            .setOnDismissListener {
+                                activity?.finish()
+                            }
+                            .show()
+                    } else {
+                        activity?.finish()
+                    }
+                }
+            }
         }
         super.onStart()
     }

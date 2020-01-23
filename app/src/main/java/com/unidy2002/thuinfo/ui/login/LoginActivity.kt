@@ -141,6 +141,8 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+
+        model.rememberPassword = findViewById<CheckBox>(R.id.remember).isChecked
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

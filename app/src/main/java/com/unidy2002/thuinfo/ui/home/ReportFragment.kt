@@ -29,7 +29,7 @@ class ReportFragment : Fragment() {
         thread(start = true) {
             val report = Network().getReport()
             handler.post {
-                view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report)
+                view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report ?: listOf())
                 view?.findViewById<SwipeRefreshLayout>(R.id.report_swipe_refresh)?.isRefreshing = false
             }
         }

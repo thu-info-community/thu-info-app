@@ -10,7 +10,6 @@ import android.widget.GridLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.marginEnd
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
@@ -21,8 +20,8 @@ class PhysicalExamFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_physical_exam, container, false)
 
-    private fun updateUI(result: Map<String, String?>) {
-        if (result.isEmpty()) {
+    private fun updateUI(result: Map<String, String?>?) {
+        if (result == null) {
             Toast.makeText(context, "尚未开放体测成绩查询", Toast.LENGTH_LONG).show()
         } else {
             view?.findViewById<GridLayout>(R.id.physical_exam_grid)?.apply {
@@ -53,7 +52,7 @@ class PhysicalExamFragment : Fragment() {
 
     override fun onStart() {
         thread(start = true) {
-            val result = Network().getPhysicalExaminationResult()
+            val result = Network().getPhysicalExamResult()
             handler.post { updateUI(result) }
         }
         super.onStart()

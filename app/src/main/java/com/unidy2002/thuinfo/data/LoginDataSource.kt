@@ -11,16 +11,22 @@ class LoginDataSource {
 
     fun login(username: String, password: String): Result<LoggedInUser> {
         return try {
-            val loggedInUser = LoggedInUser(username)
-            Network().login(loggedInUser, password)
+            val loggedInUser = LoggedInUser(username, password)
+            Network().login(loggedInUser)
             Result.Success(loggedInUser)
-        } catch (e: Throwable) {
+        } catch (e: Network.UserLoginError) {
+            Result.Error(e)
+        } catch (e: Exception) {
             e.printStackTrace()
-            Result.Error(IOException("Error logging in", e))
+            Result.Error(Exception("Error logging in", e))
         }
     }
 
     fun logout() {
-        // TODO: revoke authentication
+        try {
+            Network().logout()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

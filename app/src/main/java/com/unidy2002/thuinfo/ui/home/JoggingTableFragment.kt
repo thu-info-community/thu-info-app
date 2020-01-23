@@ -23,8 +23,8 @@ class JoggingTableFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_jogging_table, container, false)
     }
 
-    private fun updateUI(joggingList: List<JoggingRecord>) {
-        if (joggingList.isEmpty())
+    private fun updateUI(joggingList: List<JoggingRecord>?) {
+        if (joggingList == null)
             Toast.makeText(context, "网络异常，请重试", Toast.LENGTH_SHORT).show()
         else
             view?.findViewById<SmartTable<JoggingRecord>>(R.id.jogging_table)?.setData(joggingList)

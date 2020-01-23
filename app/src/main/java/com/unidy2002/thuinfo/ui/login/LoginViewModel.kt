@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.LoginRepository
 import com.unidy2002.thuinfo.data.Result
+import com.unidy2002.thuinfo.data.lib.Network
 import java.lang.NullPointerException
 
 class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel() {
@@ -17,19 +18,17 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
     val loginResult: LiveData<LoginResult> = _loginResult
 
     fun login(username: String, password: String) {
-
-        Thread(Runnable {
-            val result = loginRepository.login(username, password)
-
-            _loginResult.postValue(
-                if (result is Result.Success) {
+        val result = loginRepository.login(username, password)
+        _loginResult.postValue(
+            when {
+                result is Result.Success ->
                     LoginResult(success = result.data)
-                } else {
+                (result as Result.Error).exception is Network.UserLoginError ->
+                    LoginResult(error = R.string.login_error)
+                else ->
                     LoginResult(error = R.string.login_failed)
-                }
-            )
-        }).start()
-
+            }
+        )
     }
 
     fun loginDataChanged(username: String, password: String) {
@@ -54,5 +53,9 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
 
     private fun isPasswordValid(password: String): Boolean {
         return password.isNotBlank()
+    }
+
+    fun logout() {
+        loginRepository.logout()
     }
 }
