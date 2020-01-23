@@ -17,9 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.lib.Network.Companion.MODE.*
-import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter
-import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter.Companion.updating
-import com.unidy2002.thuinfo.data.model.news.NewsCardAdapter.OnLoadMoreListener
+import com.unidy2002.thuinfo.data.model.news.NewsAdapter
+import com.unidy2002.thuinfo.data.model.news.NewsAdapter.Companion.updating
+import com.unidy2002.thuinfo.data.model.news.NewsAdapter.OnLoadMoreListener
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
@@ -42,24 +42,23 @@ class NewsFragment : Fragment() {
         view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)?.isRefreshing = false
         view?.findViewById<ProgressBar>(R.id.news_loading)?.visibility = View.GONE
         val recyclerView = view?.findViewById<RecyclerView>(R.id.news_recycler_view)
-        (recyclerView?.adapter as? NewsCardAdapter)?.append(LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsCardList)
+        (recyclerView?.adapter as? NewsAdapter)?.append(LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsList)
         updating = false
     }
 
     override fun onStart() {
         val recyclerView = view?.findViewById<RecyclerView>(R.id.news_recycler_view)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = NewsCardAdapter().apply {
-            setOnItemClickListener(object : NewsCardAdapter.OnItemClickListener {
+        recyclerView.adapter = NewsAdapter().apply {
+            setOnItemClickListener(object : NewsAdapter.OnItemClickListener {
                 override fun onClick(position: Int) {
-                    Log.d("MSG", this@apply.newsCardList[position].href.replace("amp;", ""))
                     val bundle = Bundle()
                     bundle.putString("url", this@apply.newsCardList[position].href.replace("amp;", ""))
                     NavHostFragment.findNavController(this@NewsFragment)
                         .navigate(R.id.webFragment, bundle)
                 }
             })
-            setOnItemLongClickListener(object : NewsCardAdapter.OnItemLongClickListener {
+            setOnItemLongClickListener(object : NewsAdapter.OnItemLongClickListener {
                 override fun onLongClick(position: Int) {
                     Toast.makeText(context, "Long click $position", Toast.LENGTH_SHORT).show()
                 }

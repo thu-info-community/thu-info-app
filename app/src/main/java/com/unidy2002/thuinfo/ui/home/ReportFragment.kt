@@ -14,13 +14,13 @@ import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.report.ReportAdapter
 import kotlin.concurrent.thread
 
-class ReportViewerFragment : Fragment() {
+class ReportFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.report_viewer, container, false)
+        return inflater.inflate(R.layout.fragment_report, container, false)
     }
 
     private val handler = Handler()

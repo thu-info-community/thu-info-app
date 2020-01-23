@@ -22,10 +22,10 @@ class ClassroomWelcomeFragment : Fragment() {
                 NavHostFragment
                     .findNavController(this)
                     .navigate(
-                        R.id.classroomResTable,
+                        R.id.classroomTableFragment,
                         Bundle().apply {
                             putString(
-                                "name", encode((it as Button).text.toString(), "GBK") // TODO: 蒙楼好像出了点问题……？
+                                "name", encode((it as Button).text.toString(), "GBK")
                             )
                         }
                     )

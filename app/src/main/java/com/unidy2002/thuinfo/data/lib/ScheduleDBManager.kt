@@ -3,14 +3,15 @@ package com.unidy2002.thuinfo.data.lib
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.unidy2002.thuinfo.data.model.Calendar.Exam
-import com.unidy2002.thuinfo.data.model.Calendar.Lesson
+import com.unidy2002.thuinfo.data.model.PersonalCalendar.Exam
+import com.unidy2002.thuinfo.data.model.PersonalCalendar.Lesson
 import java.sql.Date
 import java.sql.Time
 import java.util.*
 
-class DBManager private constructor(context: Context) {
-    private val writableDatabase: SQLiteDatabase
+class ScheduleDBManager private constructor(context: Context) {
+    private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
+
     fun addLesson(lesson: Lesson) {
         val contentValues = ContentValues()
         contentValues.put("title", lesson.title)
@@ -125,21 +126,16 @@ class DBManager private constructor(context: Context) {
         }
 
     companion object {
-        private var instance: DBManager? = null
-        fun getInstance(context: Context): DBManager {
+        private var instance: ScheduleDBManager? = null
+        fun getInstance(context: Context): ScheduleDBManager {
             if (instance == null) {
-                synchronized(DBManager::class.java) {
+                synchronized(ScheduleDBManager::class.java) {
                     if (instance == null) {
-                        instance = DBManager(context)
+                        instance = ScheduleDBManager(context)
                     }
                 }
             }
             return instance!!
         }
-    }
-
-    init {
-        val dbHelper = DBHelper(context, 1)
-        writableDatabase = dbHelper.writableDatabase
     }
 }

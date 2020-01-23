@@ -22,7 +22,7 @@
                 android:id="@+id/card_avatar"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@mipmap/ic_launcher"
                 android:layout_margin="10dp"
                 android:contentDescription="@string/avatar"/>
 

@@ -18,7 +18,7 @@ import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var avatar: ImageView = view.findViewById(R.id.card_avatar)
         var username: TextView = view.findViewById(R.id.username)
@@ -29,9 +29,9 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class FooterViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    var newsCardList = mutableListOf<NewsCard>()
+    var newsCardList = mutableListOf<NewsItem>()
 
-    fun append(newList: MutableList<NewsCard>) {
+    fun append(newList: MutableList<NewsItem>) {
         val start = newsCardList.size
         newsCardList = newList
         notifyItemRangeInserted(start, newList.size - start + 1)
@@ -44,9 +44,9 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         viewType: Int
     ) =
         if (viewType == 1)
-            FooterViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.news_footer, parent, false))
+            FooterViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_news_footer, parent, false))
         else
-            CardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.news_card, parent, false))
+            CardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_news_card, parent, false))
 
     override fun onBindViewHolder(
         holder: RecyclerView.ViewHolder,
@@ -62,7 +62,7 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     2 -> R.drawable.avatar02
                     3 -> R.drawable.avatar03
                     4 -> R.drawable.avatar04
-                    else -> R.mipmap.ic_launcher_round
+                    else -> R.mipmap.ic_launcher
                 }
             )
             cardViewHolder.username.text =
@@ -89,10 +89,7 @@ class NewsCardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount() =
-        if (newsCardList.isEmpty())
-            0
-        else
-            newsCardList.size + 1
+        if (newsCardList.isEmpty()) 0 else newsCardList.size + 1
 
     interface OnItemClickListener {
         fun onClick(position: Int)

@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.classroom
 
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +25,11 @@ class ClassroomTableAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.classroom_row, parent, false))
+        ViewHolder(
+            LayoutInflater.from(
+                parent.context
+            ).inflate(R.layout.item_classroom_row, parent, false)
+        )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val viewHolder = holder as ViewHolder

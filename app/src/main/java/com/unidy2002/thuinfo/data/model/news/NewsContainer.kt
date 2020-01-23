@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NewsContainer {
-    val newsCardList: MutableList<NewsCard> = mutableListOf()
+    val newsList: MutableList<NewsItem> = mutableListOf()
 
     enum class NewsOriginType {
         POST_INFO_L, POST_INFO_T
@@ -20,7 +20,7 @@ class NewsContainer {
         val type: NewsOriginType,
         val originId: Int,
         var currentPage: Int = -1,
-        val currentBuffer: MutableList<NewsCard> = mutableListOf(),
+        val currentBuffer: MutableList<NewsItem> = mutableListOf(),
         var currentIndex: Int = 0
     )
 
@@ -40,7 +40,7 @@ class NewsContainer {
                     it.children().isNotEmpty() && it.child(0).tagName() == "em"
                 }.forEach {
                     newsOrigin.currentBuffer.add(
-                        NewsCard(
+                        NewsItem(
                             newsOrigin.originId,
                             SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
                             it.ownText().drop(1).dropLast(1),
@@ -57,7 +57,7 @@ class NewsContainer {
         }
     }
 
-    private fun getNewBuffer(newsOrigin: NewsOrigin): NewsCard? =
+    private fun getNewBuffer(newsOrigin: NewsOrigin): NewsItem? =
         if (newsOrigin.currentBuffer.isEmpty() && newsOrigin.currentPage != -1)
             null
         else {
@@ -70,7 +70,7 @@ class NewsContainer {
                 newsOrigin.currentBuffer[0]
         }
 
-    private fun getCurrentCard(newsOrigin: NewsOrigin): NewsCard? =
+    private fun getCurrentCard(newsOrigin: NewsOrigin): NewsItem? =
         if (newsOrigin.currentIndex < newsOrigin.currentBuffer.size)
             newsOrigin.currentBuffer[newsOrigin.currentIndex]
         else
@@ -78,7 +78,7 @@ class NewsContainer {
 
     fun getNews(maximum: Int, clear: Boolean) {
         if (clear) {
-            newsCardList.clear()
+            newsList.clear()
             newsOriginList.forEach {
                 apply {
                     it.currentPage = -1
@@ -89,7 +89,7 @@ class NewsContainer {
         }
         repeat(maximum) {
             newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }?.run {
-                newsCardList.add(this)
+                newsList.add(this)
                 newsOriginList[this.originId].currentIndex++
             }
         }

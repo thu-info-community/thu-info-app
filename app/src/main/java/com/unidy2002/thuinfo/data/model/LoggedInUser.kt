@@ -6,15 +6,15 @@ data class LoggedInUser(val userId: String) {
     lateinit var displayName: String
     lateinit var vpnTicket: String
     lateinit var eCardTicket: String
-    lateinit var calendar: Calendar
-    lateinit var eCardTable: EcardTable
+    lateinit var personalCalendar: PersonalCalendar
+    lateinit var eCardRecord: ECardRecord
 
     fun calenderInitialized(): Boolean {
-        return this::calendar.isInitialized
+        return this::personalCalendar.isInitialized
     }
 
     fun eCardInitialized(): Boolean {
-        return this::eCardTable.isInitialized
+        return this::eCardRecord.isInitialized
     }
 
     var newsContainer = NewsContainer()

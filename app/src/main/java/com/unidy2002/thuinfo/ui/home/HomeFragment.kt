@@ -30,23 +30,9 @@ class HomeFragment : Fragment() {
     }
 
     override fun onStart() {
-        /*view?.findViewById<Button>(R.id.gpa_btn)?.setOnClickListener {
-            thread(start = true) {
-                with(Network().getGPA().toString()) {
-                    handler.post {
-                        AlertDialog.Builder(view?.context!!)
-                            .setTitle(this)
-                            .setMessage(
-                                "再接再厉~"
-                            )
-                            .show()
-                    }
-                }
-            }
-        }*/
         view?.findViewById<Button>(R.id.report_btn)?.setOnClickListener {
             NavHostFragment.findNavController(this)
-                .navigate(R.id.reportViewerFragment)
+                .navigate(R.id.reportFragment)
         }
         view?.findViewById<Button>(R.id.physical_exam_btn)?.setOnClickListener {
             NavHostFragment.findNavController(this)
@@ -62,7 +48,7 @@ class HomeFragment : Fragment() {
         }
         view?.findViewById<Button>(R.id.ecard_query_btn)?.setOnClickListener {
             NavHostFragment.findNavController(this)
-                .navigate(R.id.ecardTableFragment)
+                .navigate(R.id.eCardTableFragment)
         }
         view?.findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
             val handler = Handler()
@@ -90,6 +76,9 @@ class HomeFragment : Fragment() {
                 }
                 .setNegativeButton("取消") { _, _ -> }
                 .show()
+        }
+        view?.findViewById<Button>(R.id.logout_btn)?.setOnClickListener {
+            thread(start = true) { Network().logout() }
         }
         super.onStart()
     }

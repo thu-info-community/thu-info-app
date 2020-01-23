@@ -15,6 +15,7 @@ class LoginDataSource {
             Network().login(loggedInUser, password)
             Result.Success(loggedInUser)
         } catch (e: Throwable) {
+            e.printStackTrace()
             Result.Error(IOException("Error logging in", e))
         }
     }

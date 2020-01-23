@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.LoggedInUser
+import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
 
@@ -89,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
                         password.isEnabled = false
                         login.isEnabled = false
                         remember.isEnabled = false
-                        loginViewModel.login(username.text.toString(), password.text.toString())
+                        thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
                     }
                 }
                 false
@@ -101,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 password.isEnabled = false
                 login.isEnabled = false
                 remember.isEnabled = false
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
             }
         }
 

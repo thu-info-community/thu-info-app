@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
 
-class ReportAdapter(private val courseList: List<CourseScore>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     open class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var grade: ImageView = view.findViewById(R.id.report_card_image)
         var courseName: TextView = view.findViewById(R.id.report_course_name)
@@ -21,21 +21,21 @@ class ReportAdapter(private val courseList: List<CourseScore>) : RecyclerView.Ad
     }
 
     override fun getItemViewType(position: Int) =
-        if (position == 0 || courseList[position].semester != courseList[position - 1].semester) 1 else 0
+        if (position == 0 || reportList[position].semester != reportList[position - 1].semester) 1 else 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         if (viewType == 1)
             CardViewWithSemesterHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.report_card_with_semester, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.item_report_card_with_semester, parent, false)
             )
         else
             CardViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.report_card, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.item_report_card, parent, false)
             )
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val cardViewHolder = holder as CardViewHolder
-        val scoreCard = courseList[position]
+        val scoreCard = reportList[position]
         cardViewHolder.grade.setImageResource(
             when (scoreCard.grade) {
                 "A+" -> R.drawable.a_plus
@@ -71,5 +71,5 @@ class ReportAdapter(private val courseList: List<CourseScore>) : RecyclerView.Ad
         }
     }
 
-    override fun getItemCount() = courseList.size
+    override fun getItemCount() = reportList.size
 }

@@ -28,19 +28,19 @@
             android:id="@+id/webFragment"
             android:name="com.unidy2002.thuinfo.ui.news.WebFragment"
             android:label="@string/title_news"
-            tools:layout="@layout/web_fragment"/>
+            tools:layout="@layout/fragment_web"/>
 
     <fragment
-            android:id="@+id/ecardTableFragment"
-            android:name="com.unidy2002.thuinfo.ui.home.EcardTableFragment"
+            android:id="@+id/eCardTableFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ECardTableFragment"
             android:label="@string/card_record"
-            tools:layout="@layout/ecard_table"/>
+            tools:layout="@layout/fragment_e_card_table"/>
 
     <fragment
-            android:id="@+id/reportViewerFragment"
-            android:name="com.unidy2002.thuinfo.ui.home.ReportViewerFragment"
+            android:id="@+id/reportFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ReportFragment"
             android:label="@string/report"
-            tools:layout="@layout/report_viewer"/>
+            tools:layout="@layout/fragment_report"/>
 
     <fragment
             android:id="@+id/physicalExamFragment"
@@ -52,7 +52,7 @@
             android:id="@+id/joggingTableFragment"
             android:name="com.unidy2002.thuinfo.ui.home.JoggingTableFragment"
             android:label="@string/sunny_jogging"
-            tools:layout="@layout/jogging_table_view"/>
+            tools:layout="@layout/fragment_jogging_table"/>
 
     <fragment
             android:id="@+id/classroomWelcomeFragment"
@@ -61,7 +61,7 @@
             tools:layout="@layout/fragment_classroom_welcome"/>
 
     <fragment
-            android:id="@+id/classroomResTable"
-            android:name="com.unidy2002.thuinfo.ui.home.ClassroomResTable"
+            android:id="@+id/classroomTableFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ClassroomTableFragment"
             tools:layout="@layout/fragment_classroom_table"/>
 </navigation>

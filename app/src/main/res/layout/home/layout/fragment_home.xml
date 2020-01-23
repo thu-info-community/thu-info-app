@@ -24,14 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/score_text"
-            android:columnCount="4"
+            android:columnCount="3"
             android:orientation="horizontal"
             android:rowCount="1">
-
-        <Button
-                android:id="@+id/gpa_btn"
-                android:text="@string/quick_gpa"
-                android:enabled="false"/>
 
         <Button
                 android:id="@+id/report_btn"
@@ -72,13 +67,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/res_text"
-            android:columnCount="4"
+            android:columnCount="3"
             android:orientation="horizontal"
             android:rowCount="1">
 
         <Button
                 android:id="@+id/classroom_btn"
                 android:text="@string/classroom_res"/>
+
+        <Button
+                android:id="@+id/logout_btn"
+                android:text="登出"/>
 
     </GridLayout>
 
@@ -107,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/ecard_text"
-            android:columnCount="4"
+            android:columnCount="3"
             android:orientation="horizontal"
             android:rowCount="1">
 

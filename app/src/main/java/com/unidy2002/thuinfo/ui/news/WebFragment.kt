@@ -17,7 +17,7 @@ class WebFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.web_fragment, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_web, container, false)
 
     override fun onStart() {
         CookieManager.getInstance().setCookie("webvpn.tsinghua.edu.cn", LoginActivity.loginViewModel.getLoggedInUser().vpnTicket)

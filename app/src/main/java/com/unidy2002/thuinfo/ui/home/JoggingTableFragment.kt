@@ -20,7 +20,7 @@ class JoggingTableFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.jogging_table_view, container, false)
+        return inflater.inflate(R.layout.fragment_jogging_table, container, false)
     }
 
     private fun updateUI(joggingList: List<JoggingRecord>) {

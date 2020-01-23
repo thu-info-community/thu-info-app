@@ -3,8 +3,7 @@ package com.unidy2002.thuinfo.data.model.news
 import java.util.Date
 import java.util.Calendar
 
-
-data class NewsCard(
+data class NewsItem(
     val originId: Int,
     val date: Date,
     val sender: String,

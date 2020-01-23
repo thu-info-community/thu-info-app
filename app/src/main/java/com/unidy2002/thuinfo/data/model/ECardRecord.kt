@@ -3,9 +3,7 @@ package com.unidy2002.thuinfo.data.model
 import com.bin.david.form.annotation.SmartColumn
 import com.bin.david.form.annotation.SmartTable
 
-class EcardTable(
-    val eCardList: MutableList<ECardElement> = mutableListOf()
-) {
+class ECardRecord(val eCardList: MutableList<ECardElement> = mutableListOf()) {
     @SmartTable(name = "消费明细表")
     class ECardElement(
         @field:SmartColumn(id = 0, name = "地点") private val locale: String,

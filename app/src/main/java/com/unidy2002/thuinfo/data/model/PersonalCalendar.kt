@@ -3,12 +3,11 @@ package com.unidy2002.thuinfo.data.model
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
 import com.huaban.analysis.jieba.JiebaSegmenter
+import com.unidy2002.thuinfo.R
 import java.sql.Date
 import java.sql.Time
 
-
-class Calendar {
-
+class PersonalCalendar {
     data class Lesson(
         var title: String,
         var abbr: String,

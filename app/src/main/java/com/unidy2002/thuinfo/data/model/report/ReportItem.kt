@@ -1,6 +1,6 @@
 package com.unidy2002.thuinfo.data.model.report
 
-data class CourseScore(
+data class ReportItem(
     val name: String,
     val credit: Int,
     val grade: String?,

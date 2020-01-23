@@ -4,7 +4,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class DBHelper(context: Context?, version: Int) : SQLiteOpenHelper(context, db_name, null, version) {
+class ScheduleDBHelper(context: Context?, version: Int) :
+    SQLiteOpenHelper(context, "calender.db", null, version) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             "create table lesson (\n" +
@@ -43,8 +44,4 @@ class DBHelper(context: Context?, version: Int) : SQLiteOpenHelper(context, db_n
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-
-    companion object {
-        const val db_name = "calender.db"
-    }
 }

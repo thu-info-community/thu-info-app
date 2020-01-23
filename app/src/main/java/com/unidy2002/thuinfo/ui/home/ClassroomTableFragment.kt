@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
-import com.unidy2002.thuinfo.data.model.ClassroomTableAdapter
+import com.unidy2002.thuinfo.data.model.classroom.ClassroomTableAdapter
 import kotlin.concurrent.thread
 
-class ClassroomResTable : Fragment() {
+class ClassroomTableFragment : Fragment() {
     private var prev: List<Pair<String, List<Int>>>? = null
     private var curr: List<Pair<String, List<Int>>>? = null
     private var next: List<Pair<String, List<Int>>>? = null
@@ -33,11 +33,12 @@ class ClassroomResTable : Fragment() {
     private fun updateUI() {
         val classroomTableView = view?.findViewById<RecyclerView>(R.id.classroom_table_view)
         curr?.run {
-            classroomTableView?.adapter = ClassroomTableAdapter(
-                this,
-                context!!.resources.getIntArray(R.array.classroom_colors).toList(),
-                currentDay
-            )
+            classroomTableView?.adapter =
+                ClassroomTableAdapter(
+                    this,
+                    context!!.resources.getIntArray(R.array.classroom_colors).toList(),
+                    currentDay
+                )
         }
         view?.findViewById<TextView>(R.id.classroom_date)?.text =
             getString(R.string.classroom_header_string, currentWeek, currentDay + 1)
@@ -74,7 +75,11 @@ class ClassroomResTable : Fragment() {
 
         view?.findViewById<RecyclerView>(R.id.classroom_table_view)?.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = ClassroomTableAdapter(listOf(), listOf(), 0)
+            adapter = ClassroomTableAdapter(
+                listOf(),
+                listOf(),
+                0
+            )
         }
 
         view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)?.apply {
