@@ -2,14 +2,13 @@ package com.unidy2002.thuinfo.ui.news
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +31,7 @@ class NewsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel::class.java)
+        newsViewModel = ViewModelProvider(this).get(NewsViewModel::class.java)
         return inflater.inflate(R.layout.fragment_news, container, false)
     }
 

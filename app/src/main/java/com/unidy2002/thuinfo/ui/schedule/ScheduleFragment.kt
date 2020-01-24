@@ -10,7 +10,7 @@ import android.widget.GridLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.LoggedInUser
@@ -34,7 +34,7 @@ class ScheduleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         scheduleViewModel =
-            ViewModelProviders.of(this).get(ScheduleViewModel::class.java)
+            ViewModelProvider(this).get(ScheduleViewModel::class.java)
         return inflater.inflate(R.layout.fragment_schedule, container, false)
     }
 
