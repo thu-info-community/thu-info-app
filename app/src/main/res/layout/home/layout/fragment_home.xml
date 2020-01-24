@@ -75,10 +75,6 @@
                 android:id="@+id/classroom_btn"
                 android:text="@string/classroom_res"/>
 
-        <Button
-                android:id="@+id/logout_btn"
-                android:text="登出"/>
-
     </GridLayout>
 
     <View
