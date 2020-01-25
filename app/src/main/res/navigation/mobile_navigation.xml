@@ -21,8 +21,7 @@
             android:id="@+id/navigation_schedule"
             android:name="com.unidy2002.thuinfo.ui.schedule.ScheduleFragment"
             android:label="@string/title_schedule"
-            tools:layout="@layout/fragment_schedule">
-    </fragment>
+            tools:layout="@layout/fragment_schedule"/>
 
     <fragment
             android:id="@+id/webFragment"

@@ -53,7 +53,7 @@ class ECardTableFragment : Fragment() {
     private val handler = Handler()
 
     private fun getData() {
-        Network().getEcard().run { handler.post { updateUI(this) } }
+        Network().getECard().run { handler.post { updateUI(this) } }
     }
 
     override fun onStart() {

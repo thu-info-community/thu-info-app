@@ -8,6 +8,7 @@ import com.unidy2002.thuinfo.data.model.ECardRecord
 import com.unidy2002.thuinfo.data.model.JoggingRecord
 import com.unidy2002.thuinfo.data.model.LoggedInUser
 import com.unidy2002.thuinfo.data.model.PersonalCalendar
+import com.unidy2002.thuinfo.data.model.news.NewsHTML
 import com.unidy2002.thuinfo.data.model.report.ReportItem
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jxl.Workbook
@@ -341,7 +342,7 @@ class Network {
             }
         }
 
-    fun getEcard(): ECardRecord? =
+    fun getECard(): ECardRecord? =
         retryTemplate(824) {
             connect(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/ExDetailsDown.do",
@@ -385,7 +386,7 @@ class Network {
             }
         }
 
-    fun getNews(mode: MODE) {
+    fun getNews(mode: MODE, param: Int = 0) {
         when (mode) {
             MODE.NONE ->
                 loggedInUser.newsContainer.getNews(10, false)
@@ -393,58 +394,136 @@ class Network {
                 loggedInUser.newsContainer.getNews(10, true)
             MODE.MORE ->
                 loggedInUser.newsContainer.getNews(10, false)
+            MODE.FILTER -> {
+                loggedInUser.newsContainer.changeState(param)
+                loggedInUser.newsContainer.getNews(10, true)
+            }
         }
     }
 
-    fun getPrettyPrintHTML(url: String): String =
-        with(loggedInUser.vpnTicket.run { substring(this.indexOf('=') + 1) }) {
-            when {
-                url.contains("jwcbg") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().body()
-                        .child(1).child(0).child(0).child(0).child(0).run {
-                            child(2).child(0).child(0).child(0).child(0).toString() +
-                                    child(4).child(0).child(0).child(0).child(1)
-                                        .child(0).child(1).child(0).child(1).child(0)
-                                        .child(0).child(0).children().toString()
+    fun getPrettyPrintHTML(url: String): NewsHTML? =
+        try {
+            Jsoup.connect(url).cookie(
+                "wengine_vpn_ticket",
+                loggedInUser.vpnTicket.run { substring(this.indexOf('=') + 1) }
+            ).get().run {
+                when {
+                    url.contains("jwcbg") ->
+                        body().child(1).child(0).child(0).child(0).child(0).run {
+                            NewsHTML(
+                                child(2).child(0).child(0).text(),
+                                child(4).child(0).child(0).child(0).child(1)
+                                    .child(0).child(1).child(0).child(1).child(0)
+                                    .child(0).child(0).children()
+                            )
                         }
-                url.contains("kybg") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().body()
-                        .child(2).child(0).child(0).child(1).child(3).child(0)
-                        .children().toString()
-                url.contains("gjc") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().body()
-                        .child(1).child(0).child(0).child(0).child(1).child(0)
-                        .child(4).child(0).child(0).child(0).child(0).child(0)
-                        .children().toString()
-                url.contains("77726476706e69737468656265737421e8ef439b69336153301c9aa596522b20e1a870705b76e399") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().select("td.td4")
-                        .first().children().toString()
-                url.contains("77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().getElementById("center").run {
-                        child(1).toString() + child(3).toString()
-                    }
-                url.contains("77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().select("div.cont_doc_box")
-                        .first().toString()
-                url.contains("bwb") || url.contains("wkjsc") || url.contains("cwc") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().body()
-                        .child(1).child(0).child(0).child(0).child(0).child(0)
-                        .child(0).child(0).child(0).run {
-                            child(2).child(0).child(0).child(0).child(0).toString() +
-                                    child(3).child(0).children().toString()
+                    url.contains("kybg") ->
+                        body().child(2).child(0).child(0).child(1).child(3).child(0).run {
+                            NewsHTML(
+                                child(0).text(),
+                                child(1).child(0).children()
+                            )
                         }
-                url.contains("77726476706e69737468656265737421f8e60f8834396657761d88e29d51367b523e") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().select("section.r_cont")
-                        .first().run { child(2).toString() + child(4).children().toString() }
-                url.contains("fgc") ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().getElementById("content2")
-                        .child(0).run {
-                            child(2).child(0).child(0).child(0).toString() +
-                                    child(3).child(0).child(0).children().toString()
+                    url.contains("gjc") ->
+                        body().child(1).child(0).child(0).child(0).child(1).child(0)
+                            .child(4).child(0).child(0).child(0).child(0).child(0).run {
+                                NewsHTML(
+                                    child(1).text(),
+                                    children().drop(2).dropLast(1)
+                                )
+                            }
+                    url.contains("77726476706e69737468656265737421e8ef439b69336153301c9aa596522b20e1a870705b76e399") ->
+                        NewsHTML(
+                            "",
+                            select("td.td4").first().children()
+                        )
+                    url.contains("77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0") ->
+                        getElementById("center").run {
+                            NewsHTML(
+                                child(1).text(),
+                                child(3).child(0).children()
+                            )
                         }
-                else ->
-                    Jsoup.connect(url).cookie("wengine_vpn_ticket", this).get().body().toString()
+                    url.contains("77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8") ->
+                        select("div.cont_doc_box").first().run {
+                            NewsHTML(
+                                child(0).child(0).text(),
+                                child(1).children()
+                            )
+                        }
+                    url.contains("77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3") ->
+                        body().child(1).child(0).child(0).child(0).child(0).child(0)
+                            .child(0).child(0).child(0).run {
+                                NewsHTML(
+                                    child(2).child(0).child(0).child(0).text(),
+                                    child(3).child(0).child(0).child(0).children()
+                                )
+                            }
+                    url.contains("77726476706e69737468656265737421f8e60f8834396657761d88e29d51367b523e") ->
+                        select("section.r_cont").first().run {
+                            NewsHTML(
+                                child(2).text(),
+                                child(4).children()
+                            )
+                        }
+                    url.contains("fgc") ->
+                        getElementById("content2").child(0).run {
+                            NewsHTML(
+                                child(2).text(),
+                                child(3).child(0).child(0).children().drop(1)
+                            )
+                        }
+                    url.contains("rscbg") ->
+                        body().child(1).child(0).child(0).child(1).child(0).child(0)
+                            .child(2).child(0).child(0).child(0).child(0).child(0).run {
+                                NewsHTML(
+                                    child(0).text(),
+                                    child(1).child(0).child(2).child(0).children()
+                                )
+                            }
+                    url.contains("77726476706e69737468656265737421e7e056d234297b437c0bc7b88b5c2d3212b31e4d37621d4714d6") ->
+                        NewsHTML(
+                            "",
+                            select("div.main").first().child(0).children()
+                        )
+                    url.contains("ghxt") ->
+                        body().child(2).child(0).child(1).child(0).child(0).child(0).run {
+                            NewsHTML(
+                                child(1).text(),
+                                child(4).child(0).child(0).child(0).children()
+                            )
+                        }
+                    url.contains("eleres") ->
+                        select("table.bulletTable").first().child(0).run {
+                            NewsHTML(
+                                child(0).child(1).text(),
+                                child(1).child(1).child(0).child(0).child(0).child(0).children()
+                            )
+                        }
+                    url.contains("77726476706e69737468656265737421e8e442d23323615e79009cadd6502720f9b87b") ->
+                        select("div.xm-con").first().run {
+                            NewsHTML(
+                                child(1).text(),
+                                child(3).children()
+                            )
+                        }
+                    url.contains("jdbsc") ->
+                        body().child(2).child(0).child(0).child(2).child(0).child(0)
+                            .child(0).child(0).child(0).run {
+                                NewsHTML(
+                                    child(0).child(0).child(1).text(),
+                                    child(1).child(0).child(0).child(0).children()
+                                )
+                            }
+                    url.contains("77726476706e69737468656265737421e3f5468534367f1e6d119aafd641303ceb8f9190006d6afc78336870") ->
+                        throw Exception("招标招租")
+                    else ->
+                        NewsHTML("", listOf(body().also { if (text().trim().isEmpty()) throw Exception() }))
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
 
     fun getCalender(context: Context) {
@@ -516,9 +595,7 @@ class Network {
         ).inputStream.close()
     }
 
-    companion object {
-        enum class MODE { NONE, REFRESH, MORE }
-    }
+    enum class MODE { NONE, REFRESH, MORE, FILTER }
 
     class UserLoginError : Exception()
 

@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.ui.news
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,17 +22,16 @@ class WebFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_web, container, false)
 
-    val handler = Handler()
-
     private fun loadURL(view: WebView, url: String) {
         thread(start = true) {
-            try {
-                val result = Network().getPrettyPrintHTML(url)
-                handler.post {
-                    view.loadDataWithBaseURL(url, result, "text/html", "utf-8", null)
+            Network().getPrettyPrintHTML(url).run {
+                view.handler.post {
+                    if (this == null) {
+                        view.loadUrl(url)
+                    } else {
+                        view.loadDataWithBaseURL(url, toString(), "text/html", "utf-8", null)
+                    }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }

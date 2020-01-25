@@ -116,9 +116,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateUiWithUser(model: LoggedInUser) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-
         val remember = findViewById<CheckBox>(R.id.remember)
         if (remember.isChecked) {
             val username = findViewById<EditText>(R.id.username)
@@ -135,12 +132,6 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent()
         intent.setClass(this, MainActivity::class.java)
         startActivity(intent)
-
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
 
         model.rememberPassword = findViewById<CheckBox>(R.id.remember).isChecked
     }

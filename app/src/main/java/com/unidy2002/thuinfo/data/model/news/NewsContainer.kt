@@ -10,6 +10,8 @@ import java.util.*
 class NewsContainer {
     val newsList: MutableList<NewsItem> = mutableListOf()
 
+    var state = -1
+
     enum class NewsOriginType {
         POST_INFO_L, POST_INFO_T
     }
@@ -88,11 +90,19 @@ class NewsContainer {
             }
         }
         repeat(maximum) {
-            newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }?.run {
-                newsList.add(this)
-                newsOriginList[this.originId].currentIndex++
-            }
+            (if (state == -1)
+                newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }
+            else
+                getCurrentCard(newsOriginList[state]))
+                ?.run {
+                    newsList.add(this)
+                    newsOriginList[this.originId].currentIndex++
+                }
         }
+    }
+
+    fun changeState(param: Int) {
+        state = if (state == param) -1 else param
     }
 
     val newsOriginList: List<NewsOrigin> = listOf(

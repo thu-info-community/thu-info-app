@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.data.model.news
 
 import android.graphics.Typeface
+import android.os.Handler
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.StyleSpan
@@ -14,9 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,10 +34,13 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var newsCardList = mutableListOf<NewsItem>()
 
-    fun append(newList: MutableList<NewsItem>) {
+    fun push(newList: MutableList<NewsItem>, force: Boolean) {
         val start = newsCardList.size
         newsCardList = newList
-        notifyItemRangeInserted(start, newList.size - start + 1)
+        if (force)
+            notifyDataSetChanged()
+        else
+            notifyItemRangeInserted(start, newList.size - start + 1)
     }
 
     override fun getItemViewType(position: Int) = if (position == newsCardList.size) 1 else 0
@@ -55,41 +61,82 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (getItemViewType(position) == 0) {
             val cardViewHolder = holder as CardViewHolder
             val newsCard = newsCardList[position]
-            cardViewHolder.avatar.setImageResource(
-                when (newsCard.originId) {
-                    0 -> R.drawable.avatar00
-                    1 -> R.drawable.avatar01
-                    2 -> R.drawable.avatar02
-                    3 -> R.drawable.avatar03
-                    4 -> R.drawable.avatar04
-                    else -> R.mipmap.ic_launcher
+            cardViewHolder.avatar.apply {
+                setImageResource(
+                    when (newsCard.originId) {
+                        0 -> R.drawable.avatar00
+                        1 -> R.drawable.avatar01
+                        2 -> R.drawable.avatar02
+                        3 -> R.drawable.avatar03
+                        4 -> R.drawable.avatar04
+                        else -> R.mipmap.ic_launcher
+                    }
+                )
+                setOnClickListener {
+                    if (this@NewsAdapter::avatarClickListener.isInitialized) {
+                        avatarClickListener.onClick(newsCard.originId)
+                    }
                 }
-            )
+            }
+
             cardViewHolder.username.text =
                 LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsOriginList[newsCard.originId].name
             cardViewHolder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
             cardViewHolder.title.text = newsCard.title
-            cardViewHolder.brief.text = SpannableStringBuilder(newsCard.sender).apply {
-                setSpan(StyleSpan(Typeface.BOLD), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }.append("：" + newsCard.brief)
+            cardViewHolder.brief.apply {
+                text = SpannableStringBuilder(newsCard.sender).apply {
+                    setSpan(StyleSpan(Typeface.BOLD), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }.append("：" + newsCard.brief)
+                setLines(4 - cardViewHolder.title.lineCount)
+            }
 
-            cardViewHolder.itemView.setOnClickListener {
-                if (this::clickListener.isInitialized) {
-                    clickListener.onClick(position)
+            cardViewHolder.itemView.apply {
+                setOnClickListener {
+                    if (this@NewsAdapter::clickListener.isInitialized) {
+                        clickListener.onClick(position)
+                    }
+                }
+
+                setOnLongClickListener {
+                    if (this@NewsAdapter::longClickListener.isInitialized) {
+                        longClickListener.onLongClick(position)
+                    }
+                    true
                 }
             }
 
-            cardViewHolder.itemView.setOnLongClickListener {
-                if (this::longClickListener.isInitialized) {
-                    longClickListener.onLongClick(position)
+            if (!newsCard.loading) {
+                newsCard.loading = true
+                thread(start = true) {
+                    Network().getPrettyPrintHTML(newsCard.href).run {
+                        newsCard.brief = this
+                            ?.brief
+                            ?.run {
+                                if (this != newsCard.title && this.indexOf(newsCard.title) == 0)
+                                    this.substring(newsCard.title.length)
+                                else
+                                    this
+                            }
+                            ?: "加载失败"
+                        handler.post { notifyItemChanged(position) }
+                    }
                 }
-                true
             }
         }
     }
 
     override fun getItemCount() =
         if (newsCardList.isEmpty()) 0 else newsCardList.size + 1
+
+    interface OnAvatarClickListener {
+        fun onClick(param: Int)
+    }
+
+    private lateinit var avatarClickListener: OnAvatarClickListener
+
+    fun setOnAvatarClickListener(listener: OnAvatarClickListener) {
+        this.avatarClickListener = listener
+    }
 
     interface OnItemClickListener {
         fun onClick(position: Int)
@@ -130,6 +177,8 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
     }
+
+    private val handler = Handler()
 
     companion object {
         var updating = false
