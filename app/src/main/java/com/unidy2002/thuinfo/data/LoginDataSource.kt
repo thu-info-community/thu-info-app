@@ -1,8 +1,7 @@
 package com.unidy2002.thuinfo.data
 
-import com.unidy2002.thuinfo.data.model.LoggedInUser
-import java.io.IOException
 import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.model.LoggedInUser
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.

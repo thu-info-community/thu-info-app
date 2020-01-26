@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.navigation_logout -> {
                     thread(start = true) {
-                        Network().logout()
+                        LoginActivity.loginViewModel.logout()
                         handler.post {
                             if (LoginActivity.loginViewModel.getLoggedInUser().rememberPassword) {
                                 AlertDialog.Builder(this)

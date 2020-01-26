@@ -14,11 +14,9 @@
     <string name="invalid_password">请输入密码</string>
     <string name="login_error">学号或密码错误</string>
     <string name="login_failed">登录失败</string>
-    <string name="welcome">欢迎！</string>
     <string name="logout">退出登录</string>
 
     <!-- Strings related to main utilities -->
-    <string name="quick_gpa">均绩速查</string>
     <string name="score">成绩</string>
     <string name="ecard">卡</string>
     <string name="card_record">消费查询</string>

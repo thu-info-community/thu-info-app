@@ -522,7 +522,8 @@ class Network {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            if (e.message != "招标招租")
+                e.printStackTrace()
             null
         }
 
