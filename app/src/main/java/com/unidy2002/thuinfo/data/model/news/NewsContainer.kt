@@ -1,14 +1,18 @@
 package com.unidy2002.thuinfo.data.model.news
 
+import android.content.Context
 import android.util.Log
+import com.unidy2002.thuinfo.data.lib.NewsDBManager
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import org.jsoup.Jsoup
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewsContainer {
+class NewsContainer(val context: Context) {
     val newsList: MutableList<NewsItem> = mutableListOf()
+
+    val newsDBManager = NewsDBManager.getInstance(context)
 
     var state = -1
 
@@ -41,14 +45,18 @@ class NewsContainer {
                 ).get().select("li").filter {
                     it.children().isNotEmpty() && it.child(0).tagName() == "em"
                 }.forEach {
+                    val title = it.child(1).text()
+                    val href = it.child(1).attr("abs:href")
+                    val brief = newsDBManager.get(title, href)
                     newsOrigin.currentBuffer.add(
                         NewsItem(
                             newsOrigin.originId,
                             SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
                             it.ownText().drop(1).dropLast(1),
-                            it.child(1).text(),
-                            "加载中……",
-                            it.child(1).attr("abs:href")
+                            title,
+                            brief ?: "加载中……",
+                            href,
+                            brief != null
                         )
                     )
                 }

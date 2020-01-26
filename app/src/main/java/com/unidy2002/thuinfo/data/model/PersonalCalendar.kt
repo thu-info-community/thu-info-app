@@ -2,8 +2,7 @@ package com.unidy2002.thuinfo.data.model
 
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
-import com.huaban.analysis.jieba.JiebaSegmenter
-import com.unidy2002.thuinfo.R
+import jackmego.com.jieba_android.JiebaSegmenter
 import java.sql.Date
 import java.sql.Time
 
@@ -96,7 +95,7 @@ class PersonalCalendar {
 
     constructor(source: String) {
         val jsonArray = parseArray(source)
-        segmenter = JiebaSegmenter()
+        segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         lessonList = mutableListOf()
         examList = mutableListOf()
         autoShortenMap = mutableMapOf()
@@ -199,7 +198,7 @@ class PersonalCalendar {
                 }
                 temp = temp.replace(Regex("[A-Za-z0-9]*$"), "")
                 if (temp.length > maxLength) {
-                    val segmented = segmenter.sentenceProcess(temp)
+                    val segmented = segmenter.getDividedString(temp)
                     segmented.removeAll(stopWord)
                     if (segmented.isNotEmpty()) {
                         temp = segmented[0]

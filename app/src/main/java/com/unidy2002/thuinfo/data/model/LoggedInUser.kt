@@ -12,7 +12,7 @@ data class LoggedInUser(val userId: String, val password: String) {
         return this::personalCalendar.isInitialized
     }
 
-    var newsContainer = NewsContainer()
+    lateinit var newsContainer: NewsContainer
 
     val connectionState = mutableMapOf(792 to false, 824 to false)
 }

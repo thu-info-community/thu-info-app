@@ -15,7 +15,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.model.news.NewsContainer
 import com.unidy2002.thuinfo.ui.login.LoginActivity
+import jackmego.com.jieba_android.JiebaSegmenter
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -39,6 +41,9 @@ class MainActivity : AppCompatActivity() {
         thread(start = true) { Network().getTicket(792) }
         thread(start = true) { Network().getTicket(824) }
 
+        JiebaSegmenter.init(applicationContext)
+
+        LoginActivity.loginViewModel.getLoggedInUser().newsContainer = NewsContainer(applicationContext)
     }
 
     private val handler = Handler()

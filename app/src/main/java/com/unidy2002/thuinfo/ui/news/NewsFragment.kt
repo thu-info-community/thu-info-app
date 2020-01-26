@@ -21,6 +21,10 @@ import com.unidy2002.thuinfo.data.model.news.NewsAdapter.OnLoadMoreListener
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
+/* TODO: the filter part may cause problems of inconsistency, which may compromise user experience
+ *       (which is already awful enough)
+ */
+
 class NewsFragment : Fragment() {
 
     private lateinit var newsViewModel: NewsViewModel
@@ -79,12 +83,10 @@ class NewsFragment : Fragment() {
                 })
                 setOnAvatarClickListener(object : NewsAdapter.OnAvatarClickListener {
                     override fun onClick(param: Int) {
+                        view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)?.isRefreshing = true
+                        if (LoginActivity.loginViewModel.getLoggedInUser().newsContainer.state == -1)
+                            Toast.makeText(context, "再次点击图标可退回汇总模式", Toast.LENGTH_LONG).show()
                         thread(start = true) {
-                            this@NewsFragment.handler.post {
-                                view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)?.isRefreshing = true
-                                if (LoginActivity.loginViewModel.getLoggedInUser().newsContainer.state != -1)
-                                    Toast.makeText(context, "再次点击图标可退回汇总模式", Toast.LENGTH_LONG).show()
-                            }
                             Network().getNews(FILTER, param)
                             this@NewsFragment.handler.post { updateUI(true) }
                         }

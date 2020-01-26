@@ -9,10 +9,9 @@ data class NewsItem(
     val sender: String,
     val title: String,
     var brief: String,
-    val href: String
+    val href: String,
+    var loaded: Boolean
 ) {
-    var loading = false
-
     fun getComparableDate(): Date =
         if (originId > 0)
             date

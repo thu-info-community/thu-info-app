@@ -79,15 +79,14 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
 
-            cardViewHolder.username.text =
-                LoginActivity.loginViewModel.getLoggedInUser().newsContainer.newsOriginList[newsCard.originId].name
+            cardViewHolder.username.text = newsContainer.newsOriginList[newsCard.originId].name
             cardViewHolder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
             cardViewHolder.title.text = newsCard.title
             cardViewHolder.brief.apply {
                 text = SpannableStringBuilder(newsCard.sender).apply {
                     setSpan(StyleSpan(Typeface.BOLD), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }.append("：" + newsCard.brief)
-                setLines(4 - cardViewHolder.title.lineCount)
+                setLines(4 - cardViewHolder.title.lineCount.run { if (this == 0) 2 else this })
             }
 
             cardViewHolder.itemView.apply {
@@ -105,8 +104,8 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
 
-            if (!newsCard.loading) {
-                newsCard.loading = true
+            if (!newsCard.loaded) {
+                newsCard.loaded = true
                 thread(start = true) {
                     Network().getPrettyPrintHTML(newsCard.href).run {
                         newsCard.brief = this
@@ -116,6 +115,9 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                                     this.substring(newsCard.title.length)
                                 else
                                     this
+                            }
+                            ?.also {
+                                newsContainer.newsDBManager.add(newsCard.title, newsCard.href, it)
                             }
                             ?: "加载失败"
                         handler.post { notifyItemChanged(position) }
@@ -179,6 +181,9 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private val handler = Handler()
+
+    private val newsContainer: NewsContainer
+        get() = LoginActivity.loginViewModel.getLoggedInUser().newsContainer
 
     companion object {
         var updating = false

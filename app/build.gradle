@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.alibaba:fastjson:1.1.71.android'
-    implementation 'com.huaban:jieba-analysis:1.0.2'
+    implementation 'jackmego.com.jieba_android:jieba_android-release:0.1.0'
     implementation 'net.sourceforge.jexcelapi:jxl:2.6.12'
     implementation 'com.github.huangyanbin:smartTable:2.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
