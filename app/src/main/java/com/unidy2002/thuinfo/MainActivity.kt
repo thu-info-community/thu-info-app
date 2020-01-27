@@ -40,24 +40,33 @@ class MainActivity : AppCompatActivity() {
 
         thread(start = true) { Network().getTicket(792) }
         thread(start = true) { Network().getTicket(824) }
+        thread(start = true) {
+            Network().getTicket(-1)
+            try {
+                handler.post { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
         JiebaSegmenter.init(applicationContext)
 
-        LoginActivity.loginViewModel.getLoggedInUser().newsContainer = NewsContainer(applicationContext)
+        loggedInUser.newsContainer = NewsContainer(applicationContext)
     }
 
     private val handler = Handler()
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        findViewById<TextView>(R.id.username_text).text = LoginActivity.loginViewModel.getLoggedInUser().displayName
-        findViewById<TextView>(R.id.user_id_text).text = LoginActivity.loginViewModel.getLoggedInUser().userId
+        findViewById<TextView>(R.id.username_text).text = loggedInUser.displayName
+        findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
+        findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory
         findViewById<NavigationView>(R.id.side_nav_view).setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_logout -> {
                     thread(start = true) {
-                        LoginActivity.loginViewModel.logout()
+                        Network().logout()
                         handler.post {
-                            if (LoginActivity.loginViewModel.getLoggedInUser().rememberPassword) {
+                            if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
                                     .setTitle("是否清除记住的密码？")
                                     .setPositiveButton("保留") { _, _ ->
@@ -101,5 +110,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    private val loggedInUser
+        get() = LoginActivity.loginViewModel.getLoggedInUser()
 
 }

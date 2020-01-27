@@ -63,4 +63,10 @@
             android:id="@+id/classroomTableFragment"
             android:name="com.unidy2002.thuinfo.ui.home.ClassroomTableFragment"
             tools:layout="@layout/fragment_classroom_table"/>
+
+    <fragment
+            android:id="@+id/dormScoreFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.DormScoreFragment"
+            android:label="@string/dorm_score_string"
+            tools:layout="@layout/fragment_dorm_score"/>
 </navigation>

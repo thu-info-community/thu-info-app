@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -71,7 +72,8 @@ class ClassroomTableFragment : Fragment() {
     }
 
     override fun onStart() {
-        classroom = arguments?.getString("name")!!
+        classroom = arguments!!.getString("name")!!
+        (activity as AppCompatActivity).supportActionBar?.title = arguments!!.getString("title")!!
 
         view?.findViewById<RecyclerView>(R.id.classroom_table_view)?.apply {
             layoutManager = LinearLayoutManager(context)

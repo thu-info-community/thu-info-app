@@ -28,6 +28,11 @@
     <string name="lose_card_string">一键挂失</string>
     <string name="classroom_res">教室资源</string>
     <string name="res_string">资源</string>
+    <string name="community_string">社区</string>
+    <string name="dorm_laf_string">失物招领</string>
+    <string name="dorm_mail_string">我的邮条</string>
+    <string name="dorm_repair_string">网上报修</string>
+    <string name="dorm_score_string">卫生成绩</string>
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="classroom_header_string">"第%1$d周，周%2$d</string>

@@ -124,5 +124,55 @@
             android:background="@color/colorAccent"
             app:layout_constraintTop_toBottomOf="@id/ecard_grid"/>
 
+    <TextView
+            android:id="@+id/community_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/community_string"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/ecard_line"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <GridLayout
+            android:id="@+id/community_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/community_text"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:rowCount="1">
+
+        <Button
+                android:id="@+id/dorm_laf_btn"
+                android:text="@string/dorm_laf_string"
+                android:enabled="false"/>
+
+        <Button
+                android:id="@+id/dorm_repair_btn"
+                android:text="@string/dorm_repair_string"
+                android:enabled="false"/>
+
+        <Button
+                android:id="@+id/dorm_mail_btn"
+                android:text="@string/dorm_mail_string"
+                android:enabled="false"/>
+
+        <Button
+                android:id="@+id/dorm_score_btn"
+                android:text="@string/dorm_score_string"/>
+
+    </GridLayout>
+
+    <View
+            android:id="@+id/community_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/community_grid"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

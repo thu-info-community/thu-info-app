@@ -78,6 +78,10 @@ class HomeFragment : Fragment() {
                 .setNegativeButton("取消") { _, _ -> }
                 .show()
         }
+        view?.findViewById<Button>(R.id.dorm_score_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.dormScoreFragment)
+        }
         super.onStart()
     }
 }

@@ -24,9 +24,9 @@ class ClassroomWelcomeFragment : Fragment() {
                     .navigate(
                         R.id.classroomTableFragment,
                         Bundle().apply {
-                            putString(
-                                "name", encode((it as Button).text.toString(), "GBK")
-                            )
+                            it as Button
+                            putString("title", it.text.toString())
+                            putString("name", encode(it.text.toString(), "GBK"))
                         }
                     )
             }

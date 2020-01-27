@@ -18,6 +18,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.lang.System.currentTimeMillis
+import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
@@ -26,18 +27,20 @@ class Network {
     private val loggedInUser: LoggedInUser
         get() = LoginActivity.loginViewModel.getLoggedInUser()
 
-    private fun connect(
+    private fun <T : HttpURLConnection> connect(
         url: String,
         referer: String? = null,
         cookie: String? = null,
-        post: String? = null
-    ) = (URL(url).openConnection() as HttpsURLConnection).apply {
+        post: String? = null,
+        followRedirects: Boolean = true
+    ) = (URL(url).openConnection() as T).apply {
         setRequestProperty(
             "User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
         )
         referer?.run { setRequestProperty("referer", this) }
         cookie?.run { setRequestProperty("cookie", this) }
+        instanceFollowRedirects = followRedirects
         post?.run {
             doOutput = true
             requestMethod = "POST"
@@ -51,13 +54,13 @@ class Network {
 
     fun login(loggedInUser: LoggedInUser) {
         // Get vpn ticket
-        loggedInUser.vpnTicket = connect("https://webvpn.tsinghua.edu.cn/login")
+        loggedInUser.vpnTicket = connect<HttpsURLConnection>("https://webvpn.tsinghua.edu.cn/login")
             .getHeaderField("Set-Cookie")
             .run { substring(0, this.indexOf(';')) }
             .also { Log.i("VPN TICKET", it) }
 
         // Login to webvpn
-        connect(
+        connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
             "https://webvpn.tsinghua.edu.cn/login",
             loggedInUser.vpnTicket,
@@ -69,7 +72,7 @@ class Network {
                 if (readLine!!.matches(Regex(".*var logoutOtherToken = '.+'.*"))) {
                     readLine = readLine!!.substring(readLine!!.indexOf('\'') + 1)
                     readLine = readLine!!.substring(0, readLine!!.indexOf('\''))
-                    connect(
+                    connect<HttpsURLConnection>(
                         "https://webvpn.tsinghua.edu.cn/do-confirm-login",
                         "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
                         loggedInUser.vpnTicket,
@@ -85,7 +88,7 @@ class Network {
         }
 
         // Login to tsinghua info
-        connect(
+        connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login",
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
             loggedInUser.vpnTicket,
@@ -93,19 +96,18 @@ class Network {
         ).inputStream.close()
 
         // Invalidate zhjw session
-        connect(
+        connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/servlet/InvalidateSession",
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
             loggedInUser.vpnTicket
         ).inputStream.close()
 
         // Get username
-        connect(
+        connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?id=2612",
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/bks_grzm.jsp",
             loggedInUser.vpnTicket
         ).inputStream.run {
-            loggedInUser.displayName = ""
             try {
                 val reader = BufferedReader(InputStreamReader(this, "GBK"))
                 var readLine: String?
@@ -138,37 +140,70 @@ class Network {
     fun getTicket(target: Int) {
         loggedInUser.connectionState[target] = true
         try {
-            connect(
-                "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
-                "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1",
-                loggedInUser.vpnTicket
-            ).inputStream.run {
-                val reader = BufferedReader(InputStreamReader(this, "GBK"))
-                var readLine: String?
-                try {
-                    while (reader.readLine().also { readLine = it } != null) {
-                        if (readLine!!.contains("a name=\"9-$target\"")) {
-                            readLine!!
-                                .substring(
-                                    readLine!!.indexOf("src") + 5, readLine!!.indexOf("\" id=\"9-$target")
-                                )
-                                .replace("amp;", "")
-                                .run {
-                                    connect(
-                                        this,
-                                        "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
-                                        loggedInUser.vpnTicket
-                                    ).inputStream.close()
-                                    Log.i("TICKET $target", this)
-                                }
-                            break
+            when (target) {
+                -1 -> {
+                    val id =
+                        (currentTimeMillis() * currentTimeMillis() % loggedInUser.userId.hashCode()) * Math.random()
+                            .also { Log.d("Random id", it.toString()) }
+                    val url =
+                        "http://m.myhome.tsinghua.edu.cn/weixin/weixin_user_authenticate.aspx?url=%2fweixin%2fweixin_personal_information.aspx&weixin_appid=$id"
+                    connect<HttpURLConnection>(url)
+                    loggedInUser.communityTicket = connect<HttpURLConnection>(
+                        url,
+                        url,
+                        post = "__VIEWSTATE=%2FwEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb%2FU6Ev%2FSwndECOSr8NHmdI%3D&__VIEWSTATEGENERATOR=7FA746C3&__EVENTVALIDATION=%2FwEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ%2FYcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB%2BBCrnQ%3D%3D&weixin_user_authenticateCtrl1%24txtUserName=${loggedInUser.userId}&weixin_user_authenticateCtrl1%24txtPassword=${loggedInUser.password}&weixin_user_authenticateCtrl1%24btnLogin=%B5%C7%C2%BC",
+                        followRedirects = false
+                    ).headerFields["Set-Cookie"]?.get(0)?.run { substring(0, indexOf(';')) }
+                        ?.also { Log.i("Community ticket", it) }
+                        ?: throw Exception("Enter community failed.")
+                    connect<HttpURLConnection>(
+                        "http://m.myhome.tsinghua.edu.cn/weixin/weixin_personal_information.aspx",
+                        url,
+                        loggedInUser.communityTicket
+                    ).inputStream.run {
+                        val reader = BufferedReader(InputStreamReader(this, "gb2312"))
+                        var readLine: String?
+                        while (reader.readLine().also { readLine = it } != null) {
+                            if (readLine!!.contains("楼号"))
+                                loggedInUser.dormitory = readLine!!.run { substring(indexOf('>') + 1, indexOf("</")) }
+                                    .also { Log.i("Dormitory", it) }
                         }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    reader.close()
-                    close()
+                }
+                else -> {
+                    connect<HttpsURLConnection>(
+                        "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
+                        "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1",
+                        loggedInUser.vpnTicket
+                    ).inputStream.run {
+                        val reader = BufferedReader(InputStreamReader(this, "GBK"))
+                        var readLine: String?
+                        try {
+                            while (reader.readLine().also { readLine = it } != null) {
+                                if (readLine!!.contains("a name=\"9-$target\"")) {
+                                    readLine!!
+                                        .substring(
+                                            readLine!!.indexOf("src") + 5, readLine!!.indexOf("\" id=\"9-$target")
+                                        )
+                                        .replace("amp;", "")
+                                        .run {
+                                            connect<HttpsURLConnection>(
+                                                this,
+                                                "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
+                                                loggedInUser.vpnTicket
+                                            ).inputStream.close()
+                                            Log.i("TICKET $target", this)
+                                        }
+                                    break
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        } finally {
+                            reader.close()
+                            close()
+                        }
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -197,7 +232,7 @@ class Network {
 
     fun getReport(): List<ReportItem>? =
         retryTemplate(792) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw",
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
                 loggedInUser.vpnTicket
@@ -234,7 +269,7 @@ class Network {
 
     fun getPhysicalExamResult(): Map<String, String?>? =
         retryTemplate(792) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?vpn-12-o1-zhjw.cic.tsinghua.edu.cn&m=jsonCj",
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=tc_bkscjcx",
                 loggedInUser.vpnTicket
@@ -283,7 +318,7 @@ class Network {
 
     fun getJoggingRecord(): List<JoggingRecord>? =
         retryTemplate(792) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_kw_xscjb.do?m=queryXsCjAll",
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh.do?url=jxmh.do&m=bks_tyjx_tcyy",
                 loggedInUser.vpnTicket
@@ -309,7 +344,7 @@ class Network {
 
     fun getClassroomState(classroom: String, week: Int): List<Pair<String, List<Int>>>? =
         retryTemplate(792) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/pk.classroomctrl.do?m=qyClassroomState&classroom=$classroom&weeknumber=$week",
                 null,
                 loggedInUser.vpnTicket
@@ -338,13 +373,13 @@ class Network {
 
                 Jsoup.parse(stringBuilder.toString()).getElementById("scrollContent").child(0).children()
                     .flatMap { it.children() }
-                    .map { (it.child(0).ownText() to it.children().drop(1).map(::mapClassName)) }
+                    .map { (it.child(0).textNodes()[1].text() to it.children().drop(1).map(::mapClassName)) }
             }
         }
 
     fun getECard(): ECardRecord? =
         retryTemplate(824) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/ExDetailsDown.do",
                 null,
                 loggedInUser.vpnTicket
@@ -369,7 +404,7 @@ class Network {
 
     fun loseCard(): Int? =
         retryTemplate(824) {
-            connect(
+            connect<HttpsURLConnection>(
                 "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/RambleConsumeLog.do?losscard=true",
                 null,
                 loggedInUser.vpnTicket
@@ -533,7 +568,7 @@ class Network {
             with(scheduleDBManager.lessonList) {
                 if (isEmpty()) {
                     try {
-                        connect(
+                        connect<HttpsURLConnection>(
                             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=20190901&p_end_date=20200131&jsoncallback=m",
                             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
                             loggedInUser.vpnTicket
@@ -588,8 +623,30 @@ class Network {
         }
     }
 
+    fun getDormScore(): String? =
+        retryTemplate(-1) {
+            connect<HttpURLConnection>(
+                "http://m.myhome.tsinghua.edu.cn/weixin/weixin_health_linechart.aspx?id=0",
+                "http://m.myhome.tsinghua.edu.cn/weixin/index.aspx",
+                loggedInUser.communityTicket
+            ).inputStream.run {
+                val reader = BufferedReader(InputStreamReader(this, "gb2312"))
+                var readLine: String?
+                while (reader.readLine().also { readLine = it } != null) {
+                    if (readLine!!.contains("Chart1"))
+                        return@run readLine!!.run {
+                            "http://m.myhome.tsinghua.edu.cn" + substring(
+                                indexOf("src=") + 5,
+                                indexOf("\" alt=")
+                            )
+                        }.also { Log.i("Dorm score", it) }
+                }
+                null
+            }
+        }
+
     fun logout() {
-        connect(
+        connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/logout",
             null,
             loggedInUser.vpnTicket
