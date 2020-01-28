@@ -36,6 +36,7 @@
     <string name="minus">-</string>
     <string name="plus">+</string>
     <string name="classroom_header_string">"第%1$d周，周%2$d</string>
+    <string name="email_string">邮箱</string>
 
     <!-- classroom names -->
     <string name="一教">一教</string>

@@ -55,17 +55,16 @@ class WebFragment : Fragment() {
             setDownloadListener { url, _, contentDisposition, mimetype, _ ->
                 try { // TODO: 中文文件名乱码
                     downloadBySystem(url, contentDisposition, mimetype, activity!!)
+                    activity?.registerReceiver(
+                        DownloadCompleteReceiver(),
+                        IntentFilter().apply { addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE) }
+                    )
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
             loadURL(this, arguments!!.getString("url")!!)
         }
-
-        activity?.registerReceiver(
-            DownloadCompleteReceiver(),
-            IntentFilter().apply { addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE) }
-        )
 
         super.onStart()
     }

@@ -25,19 +25,18 @@ class PhysicalExamFragment : Fragment() {
             Toast.makeText(context, "尚未开放体测成绩查询", Toast.LENGTH_LONG).show()
         } else {
             view?.findViewById<GridLayout>(R.id.physical_exam_grid)?.apply {
-                val resultList = result.toList()
                 val standardWidth = view?.findViewById<TextView>(R.id.physical_exam_pivot)!!.width
-                for (i in resultList.indices) {
+                result.forEach { (key, value) ->
                     addView(
                         TextView(context).apply {
-                            text = resultList[i].first
+                            text = key
                             width = standardWidth
                             gravity = Gravity.END
                             setPadding(15)
                         })
                     addView(
                         TextView(context).apply {
-                            text = resultList[i].second
+                            text = value
                             width = standardWidth
                             gravity = Gravity.START
                             setPadding(15)

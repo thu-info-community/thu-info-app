@@ -83,27 +83,11 @@ class LoginActivity : AppCompatActivity() {
             }
 
             setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        loading.visibility = View.VISIBLE
-                        username.isEnabled = false
-                        password.isEnabled = false
-                        login.isEnabled = false
-                        remember.isEnabled = false
-                        thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
-                    }
-                }
+                if (actionId == EditorInfo.IME_ACTION_DONE) doLogin()
                 false
             }
 
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                username.isEnabled = false
-                password.isEnabled = false
-                login.isEnabled = false
-                remember.isEnabled = false
-                thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
-            }
+            login.setOnClickListener { doLogin() }
         }
 
         val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE)
@@ -115,11 +99,22 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun doLogin() {
+        val username = findViewById<EditText>(R.id.username)
+        val password = findViewById<EditText>(R.id.password)
+        findViewById<ProgressBar>(R.id.loading).visibility = View.VISIBLE
+        findViewById<Button>(R.id.login).isEnabled = false
+        findViewById<CheckBox>(R.id.remember).isEnabled = false
+        username.isEnabled = false
+        password.isEnabled = false
+        thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
+    }
+
     private fun updateUiWithUser(model: LoggedInUser) {
         val remember = findViewById<CheckBox>(R.id.remember)
+        val username = findViewById<EditText>(R.id.username)
+        val password = findViewById<EditText>(R.id.password)
         if (remember.isChecked) {
-            val username = findViewById<EditText>(R.id.username)
-            val password = findViewById<EditText>(R.id.password)
             val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE).edit()
             sharedPreferences.putString("remember", "true")
             sharedPreferences.putString("username", username.text.toString())
@@ -127,6 +122,11 @@ class LoginActivity : AppCompatActivity() {
             sharedPreferences.apply()
         } else {
             getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
+        }
+
+        getSharedPreferences(loginViewModel.getLoggedInUser().userId, MODE_PRIVATE).run {
+            getString("username", null)?.run { loginViewModel.getLoggedInUser().userName = this }
+            getString("email", null)?.run { loginViewModel.getLoggedInUser().emailAddress = this }
         }
 
         val intent = Intent()

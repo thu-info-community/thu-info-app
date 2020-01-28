@@ -1,12 +1,14 @@
 package com.unidy2002.thuinfo
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.webkit.WebView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -16,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
+import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jackmego.com.jieba_android.JiebaSegmenter
 import kotlin.concurrent.thread
@@ -23,13 +26,14 @@ import kotlin.concurrent.thread
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        val navController = findNavController(R.id.nav_host_fragment)
+        navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule
@@ -57,11 +61,13 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler()
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        findViewById<TextView>(R.id.username_text).text = loggedInUser.displayName
+        findViewById<TextView>(R.id.username_text).text = loggedInUser.fullName
         findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
         findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory
         findViewById<NavigationView>(R.id.side_nav_view).setNavigationItemSelectedListener {
             when (it.itemId) {
+                R.id.navigation_email ->
+                    startActivity(Intent().apply { setClass(this@MainActivity, EmailActivity::class.java) })
                 R.id.navigation_logout -> {
                     thread(start = true) {
                         Network().logout()
@@ -80,9 +86,7 @@ class MainActivity : AppCompatActivity() {
                                         sharedPreferences.apply()
                                         finish()
                                     }
-                                    .setOnDismissListener {
-                                        finish()
-                                    }
+                                    .setCancelable(false)
                                     .show()
                             } else {
                                 finish()
@@ -106,12 +110,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
+    override fun onSupportNavigateUp() = navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
 
-    private val loggedInUser
-        get() = LoginActivity.loginViewModel.getLoggedInUser()
+    private val loggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 
 }

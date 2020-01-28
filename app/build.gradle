@@ -27,6 +27,7 @@ android {
                     'src/main/res/layout/home',
                     'src/main/res/layout/news',
                     'src/main/res/layout/schedule',
+                    'src/main/res/layout/email',
                     'src/main/res/layout',
                     'src/main/res'
             ]
@@ -61,12 +62,17 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.sun.mail:android-mail:1.6.1'
+    implementation 'com.sun.mail:android-activation:1.6.1'
+    configurations { all*.exclude group: 'javax.activation', module: 'activation' }
 }
 
 allprojects {
     repositories {
-        maven { url 'https://www.jitpack.io' }
         mavenCentral()
         google()
+        jcenter()
+        maven { url 'https://www.jitpack.io' }
+        maven { url "https://maven.java.net/content/groups/public/" }
     }
 }

@@ -114,10 +114,10 @@ class Network {
                 try {
                     while (reader.readLine().also { readLine = it } != null) {
                         if (readLine!!.contains("<td class=\"report1_3\">")) {
-                            loggedInUser.displayName = readLine!!.substring(
+                            loggedInUser.fullName = readLine!!.substring(
                                 readLine!!.indexOf('>') + 1, readLine!!.indexOf("</")
                             )
-                            Log.i("USERNAME", loggedInUser.displayName)
+                            Log.i("Full name", loggedInUser.fullName)
                             break
                         }
                     }
