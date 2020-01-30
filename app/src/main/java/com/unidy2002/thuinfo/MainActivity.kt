@@ -25,6 +25,7 @@ import com.unidy2002.thuinfo.data.lib.getInboxUnread
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.login.LoginActivity
+import com.unidy2002.thuinfo.ui.report.ReportActivity
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
 import kotlin.Exception
@@ -91,6 +92,8 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.navigation_email ->
                     startActivity(Intent().apply { setClass(this@MainActivity, EmailActivity::class.java) })
+                R.id.navigation_report ->
+                    startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
                 R.id.navigation_logout -> {
                     thread(start = true) {
                         Network().logout()

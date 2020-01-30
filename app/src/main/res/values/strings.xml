@@ -4,6 +4,7 @@
     <string name="title_news">动态</string>
     <string name="title_schedule">计划</string>
     <string name="string_loading">加载中……</string>
+    <string name="report_string">反馈</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">学号</string>

@@ -6,6 +6,10 @@
             android:title="@string/email_string"/>
 
     <item
+            android:id="@+id/navigation_report"
+            android:title="@string/report_string"/>
+
+    <item
             android:id="@+id/navigation_logout"
             android:title="@string/logout"/>
 

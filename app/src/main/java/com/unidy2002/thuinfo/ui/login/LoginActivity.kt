@@ -12,9 +12,15 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import cn.leancloud.AVOSCloud
+import cn.leancloud.AVObject
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.LoggedInUser
+import com.unidy2002.thuinfo.data.util.appId
+import com.unidy2002.thuinfo.data.util.appKey
+import com.unidy2002.thuinfo.data.util.serverURL
+import com.unidy2002.thuinfo.ui.report.ReportActivity
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
@@ -96,6 +102,24 @@ class LoginActivity : AppCompatActivity() {
             password.setText(sharedPreferences.getString("password", ""))
             remember.isChecked = true
             login.callOnClick()
+        }
+
+        try { // In order to find the appropriate min sdk
+            getSharedPreferences("config", MODE_PRIVATE).run {
+                if (getBoolean("first_install", true)) {
+                    AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
+                    AVObject("API_COUNT").run {
+                        put("api", android.os.Build.VERSION.SDK_INT)
+                        saveInBackground().subscribe()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        findViewById<Button>(R.id.login_to_report).setOnClickListener {
+            startActivity(Intent().apply { setClass(this@LoginActivity, ReportActivity::class.java) })
         }
     }
 
