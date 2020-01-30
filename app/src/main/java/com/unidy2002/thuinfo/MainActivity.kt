@@ -4,10 +4,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.webkit.WebView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.get
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -17,40 +20,60 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.lib.connectImap
+import com.unidy2002.thuinfo.data.lib.getInboxUnread
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jackmego.com.jieba_android.JiebaSegmenter
+import java.util.*
+import kotlin.Exception
+import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
+    private lateinit var toolbar: Toolbar
+    private var inboxUnread = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val topLevelDestinationIds = setOf(R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule)
 
         navController = findNavController(R.id.nav_host_fragment)
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule
-            ), findViewById(R.id.drawer_layout)
-        )
+        appBarConfiguration = AppBarConfiguration(topLevelDestinationIds, findViewById(R.id.drawer_layout))
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<BottomNavigationView>(R.id.bottom_nav_view).setupWithNavController(navController)
 
-        thread(start = true) { Network().getTicket(792) }
-        thread(start = true) { Network().getTicket(824) }
-        thread(start = true) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id in topLevelDestinationIds) refreshBadge(false)
+        }
+
+        thread { Network().getTicket(792) }
+        thread { Network().getTicket(824) }
+        thread {
             Network().getTicket(-1)
             try {
                 handler.post { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+        thread {
+            if (loggedInUser.emailAddressInitialized())
+                try {
+                    connectImap(loggedInUser.emailAddress, loggedInUser.password)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            handler.post { Timer().schedule(0, 30000) { refreshBadge(true) } }
         }
 
         JiebaSegmenter.init(applicationContext)
@@ -74,11 +97,11 @@ class MainActivity : AppCompatActivity() {
                         handler.post {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
-                                    .setTitle("是否清除记住的密码？")
-                                    .setPositiveButton("保留") { _, _ ->
+                                    .setTitle(R.string.clear_or_not)
+                                    .setPositiveButton(R.string.keep_string) { _, _ ->
                                         finish()
                                     }
-                                    .setNegativeButton("清除") { _, _ ->
+                                    .setNegativeButton(R.string.clear_string) { _, _ ->
                                         val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE)!!.edit()
                                         sharedPreferences.putString("remember", "false")
                                         sharedPreferences.remove("username")
@@ -100,6 +123,23 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private fun refreshBadge(forceUpdate: Boolean) {
+        thread(start = true) {
+            if (forceUpdate) inboxUnread = getInboxUnread().also { Log.i("Unread", it.toString()) }
+            handler.post {
+                val emailMenuItem = findViewById<NavigationView>(R.id.side_nav_view).menu[0]
+                if (inboxUnread > 0) {
+                    emailMenuItem.title = resources.getString(R.string.email_string) + " [$inboxUnread]"
+                    toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_badge_24dp, null)
+                } else {
+                    emailMenuItem.title = resources.getString(R.string.email_string)
+                    if (forceUpdate)
+                        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_24dp, null)
+                }
+            }
+        }
+    }
+
     override fun onBackPressed() {
         with(findViewById<WebView>(R.id.web_view)) {
             if (this != null && this.canGoBack()) {
@@ -111,6 +151,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp() = navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+
+    override fun onResume() {
+        refreshBadge(true)
+        super.onResume()
+    }
 
     private val loggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 

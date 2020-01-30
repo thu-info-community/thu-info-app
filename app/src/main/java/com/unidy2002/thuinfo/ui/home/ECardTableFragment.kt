@@ -31,7 +31,7 @@ class ECardTableFragment : Fragment() {
 
     private fun updateUI(result: ECardRecord?) {
         if (result == null) {
-            Toast.makeText(context, "网络异常", Toast.LENGTH_LONG).show()
+            context?.run { Toast.makeText(this, R.string.network_error_string, Toast.LENGTH_LONG).show() }
         } else {
             view?.findViewById<SmartTable<ECardRecord.ECardElement>>(R.id.table)?.apply {
                 setData(result.eCardList)
@@ -60,10 +60,8 @@ class ECardTableFragment : Fragment() {
         val why = view?.findViewById<Button>(R.id.why)
         why?.setOnClickListener {
             AlertDialog.Builder(view?.context!!)
-                .setTitle("余额可能与实际不符")
-                .setMessage(
-                    "由于尚未找到直接查询余额的接口，此处的余额数据是根据交易记录得到的推算结果。"
-                )
+                .setTitle(R.string.remainder_not_match)
+                .setMessage(R.string.remainder_explanation)
                 .show()
         }
 

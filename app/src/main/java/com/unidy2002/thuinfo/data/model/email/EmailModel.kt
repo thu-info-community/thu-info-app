@@ -1,7 +1,6 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.email
 
 import android.util.Log
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.mail.Flags
 import javax.mail.Message
@@ -18,19 +17,19 @@ class EmailModel(message: Message) {
 
     val messageId: String
 
-    val from: String
+    val from: EmailAddress
 
-    val to: String
+    val to: List<EmailAddress>
 
-    val cc: String
+    val cc: List<EmailAddress>
 
-    val bcc: String
+    val bcc: List<EmailAddress>
 
     val subject: String
 
-    val date: String
+    val date: Date
 
-    val isRead: Boolean
+    var isRead: Boolean
 
     val content: EmailContent get() = emailFactory.content
 
@@ -50,9 +49,9 @@ class EmailModel(message: Message) {
         """
 |邮件编号　$messageId
 |发件人　　$from
-|收件人　　$to
-|抄送　　　$cc
-|密送　　　$bcc
+|收件人　　${to.joinToString(";")}
+|抄送　　　${cc.joinToString(";")}
+|密送　　　${bcc.joinToString(";")}
 |主题　　　$subject
 |日期　　　$date
 |已读　　　$isRead
@@ -63,22 +62,23 @@ class EmailModel(message: Message) {
 
         val messageId: String get() = mimeMessage.messageID
 
-        val from: String get() = (mimeMessage.from[0] as InternetAddress).run { "${personal ?: ""}<${address ?: ""}>" }
+        val from: EmailAddress
+            get() = (EmailAddress(
+                mimeMessage.from[0] as InternetAddress
+            ))
 
-        val to: String get() = getMailAddress(Message.RecipientType.TO)
+        val to: List<EmailAddress> get() = getAddress(Message.RecipientType.TO)
 
-        val cc: String get() = getMailAddress(Message.RecipientType.CC)
+        val cc: List<EmailAddress> get() = getAddress(Message.RecipientType.CC)
 
-        val bcc: String get() = getMailAddress(Message.RecipientType.BCC)
+        val bcc: List<EmailAddress> get() = getAddress(Message.RecipientType.BCC)
 
-        private fun getMailAddress(type: Message.RecipientType) =
-            mimeMessage.getRecipients(type)?.joinToString(",") {
-                (it as InternetAddress).run { "${personal ?: ""}<${address ?: ""}>" }
-            } ?: ""
+        private fun getAddress(type: Message.RecipientType) =
+            mimeMessage.getRecipients(type)?.map { EmailAddress(it as InternetAddress) } ?: listOf()
 
         val subject: String get() = mimeMessage.subject
 
-        val date: String get() = SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.CHINA).format(mimeMessage.sentDate)
+        val date: Date get() = mimeMessage.sentDate
 
         val isRead: Boolean get() = message.flags.contains(Flags.Flag.SEEN)
 
@@ -113,6 +113,15 @@ class EmailModel(message: Message) {
                 }
                 return contentValue
             }
+    }
+
+    class EmailAddress(internetAddress: InternetAddress) {
+        private fun getName(s: String) = with(s.indexOf('@')) { if (this == -1) s else s.substring(0, this) }
+
+        val email = internetAddress.address
+        val name = internetAddress.personal ?: getName(email)
+
+        override fun toString() = "$name<$email>"
     }
 
     class EmailContent {

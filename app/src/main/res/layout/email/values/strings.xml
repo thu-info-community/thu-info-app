@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="inbox_string">收件箱</string>
+    <string name="sent_string">已发送</string>
+    <string name="write_string">写信</string>
+    <string name="sender_string">发件人</string>
+    <string name="time_string">时间</string>
+    <string name="receiver_string">收件人</string>
+    <string name="cc_string">抄送</string>
+    <string name="bcc_string">密送</string>
+    <string name="back_string">返回</string>
+    <string name="reply_string">回复</string>
+    <string name="forward_string">转发</string>
+    <string name="email_plain_string">转纯文本模式</string>
+    <string name="email_html_string">转HTML模式</string>
+    <string name="email_timeout_string">访问超时</string>
+    <string name="email_exception_string">访问异常</string>
+    <string name="network_exception_string">访问异常</string>
+    <string name="load_fail_string">加载失败</string>
+    <string name="email_op_fail">操作失败</string>
+    <string name="login_error_retry">登录异常，请重试</string>
+    <string name="config_your_email">配置您的邮箱</string>
+    <string name="config_error_retry">配置异常，请重试</string>
+</resources>

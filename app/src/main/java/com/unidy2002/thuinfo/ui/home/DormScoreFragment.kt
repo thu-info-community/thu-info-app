@@ -29,7 +29,7 @@ class DormScoreFragment : Fragment() {
             val result = Network().getDormScore()
             view?.handler?.post {
                 if (result == null)
-                    Toast.makeText(context, "网络异常", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.network_exception_string, Toast.LENGTH_SHORT).show()
                 else
                     Glide.with(this)
                         .load(result)
@@ -40,7 +40,7 @@ class DormScoreFragment : Fragment() {
                                 target: Target<Drawable>?,
                                 isFirstResource: Boolean
                             ): Boolean {
-                                Toast.makeText(context, "加载失败", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, R.string.load_fail_string, Toast.LENGTH_SHORT).show()
                                 view?.findViewById<ProgressBar>(R.id.dorm_score_loading)?.visibility = View.GONE
                                 e?.printStackTrace()
                                 return false

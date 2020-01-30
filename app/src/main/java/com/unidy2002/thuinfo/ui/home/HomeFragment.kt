@@ -54,9 +54,9 @@ class HomeFragment : Fragment() {
         }
         view?.findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
             AlertDialog.Builder(view?.context!!)
-                .setTitle("您确定要挂失吗？")
-                .setMessage("该操作无法撤销。")
-                .setPositiveButton("确定") { _, _ ->
+                .setTitle(R.string.confirm_lose_card)
+                .setMessage(R.string.op_cannot_undo)
+                .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
                     thread(start = true) {
                         val result = Network().loseCard()
                         handler.post {
@@ -75,7 +75,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-                .setNegativeButton("取消") { _, _ -> }
+                .setNegativeButton(R.string.cancel_string) { _, _ -> }
                 .show()
         }
         view?.findViewById<Button>(R.id.dorm_score_btn)?.setOnClickListener {

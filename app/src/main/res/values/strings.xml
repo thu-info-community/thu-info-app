@@ -14,10 +14,21 @@
     <string name="invalid_password">请输入密码</string>
     <string name="login_error">学号或密码错误</string>
     <string name="login_failed">登录失败</string>
-    <string name="logout">退出登录</string>
+    <string name="logout">退出</string>
 
     <!-- Strings related to main utilities -->
     <string name="score">成绩</string>
     <string name="ecard">卡</string>
     <string name="card_record">消费查询</string>
+
+    <!-- Strings showing up in code -->
+    <string name="clear_or_not">是否清除记住的密码？</string>
+    <string name="keep_string">保留</string>
+    <string name="clear_string">清除</string>
+    <string name="download_succeed_string">下载完成</string>
+    <string name="downloading_string">THUInfo文件下载</string>
+    <string name="confirm_string">确认</string>
+    <string name="cancel_string">取消</string>
+    <string name="network_error_string">网络异常</string>
+    <string name="timeout_retry">加载超时，请重试</string>
 </resources>

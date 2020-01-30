@@ -37,6 +37,10 @@
     <string name="plus">+</string>
     <string name="classroom_header_string">"第%1$d周，周%2$d</string>
     <string name="email_string">邮箱</string>
+    <string name="remainder_not_match">余额可能与实际不符</string>
+    <string name="remainder_explanation">由于尚未找到直接查询余额的接口，此处的余额数据是根据交易记录得到的推算结果。</string>
+    <string name="network_error_retry">网络异常，请重试</string>
+    <string name="exam_result_not_available">尚未开放体测成绩查询</string>
 
     <!-- classroom names -->
     <string name="一教">一教</string>
@@ -77,4 +81,9 @@
     <string name="何添楼">何添楼</string>
     <string name="环境学院">环境学院</string>
     <string name="C楼">C楼</string>
+
+    <!-- lose card related -->
+    <string name="confirm_lose_card">您确定要挂失吗？</string>
+    <string name="op_cannot_undo">该操作无法撤销。</string>
+    <string name="positive_confirm_string">确认</string>
 </resources>

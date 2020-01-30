@@ -29,7 +29,7 @@ class ReportFragment : Fragment() {
             view?.handler?.post {
                 view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report ?: listOf())
                 view?.findViewById<SwipeRefreshLayout>(R.id.report_swipe_refresh)?.isRefreshing = false
-                report ?: Toast.makeText(context, "加载超时，请重试", Toast.LENGTH_SHORT).show()
+                report ?: Toast.makeText(context, R.string.timeout_retry, Toast.LENGTH_SHORT).show()
             }
         }
     }

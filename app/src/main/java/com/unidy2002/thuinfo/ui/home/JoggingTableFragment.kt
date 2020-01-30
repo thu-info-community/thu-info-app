@@ -25,7 +25,7 @@ class JoggingTableFragment : Fragment() {
 
     private fun updateUI(joggingList: List<JoggingRecord>?) {
         if (joggingList == null)
-            Toast.makeText(context, "网络异常，请重试", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.network_error_retry, Toast.LENGTH_SHORT).show()
         else
             view?.findViewById<SmartTable<JoggingRecord>>(R.id.jogging_table)?.setData(joggingList)
         view?.findViewById<ProgressBar>(R.id.jogging_loading)?.visibility = ProgressBar.GONE

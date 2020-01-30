@@ -22,7 +22,7 @@ class PhysicalExamFragment : Fragment() {
 
     private fun updateUI(result: Map<String, String?>?) {
         if (result == null) {
-            Toast.makeText(context, "尚未开放体测成绩查询", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, R.string.exam_result_not_available, Toast.LENGTH_LONG).show()
         } else {
             view?.findViewById<GridLayout>(R.id.physical_exam_grid)?.apply {
                 val standardWidth = view?.findViewById<TextView>(R.id.physical_exam_pivot)!!.width

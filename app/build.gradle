@@ -64,6 +64,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.sun.mail:android-mail:1.6.1'
     implementation 'com.sun.mail:android-activation:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'androidx.test.ext:junit:1.1.1'
     configurations { all*.exclude group: 'javax.activation', module: 'activation' }
 }
 
