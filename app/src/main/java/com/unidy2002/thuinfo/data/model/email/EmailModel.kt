@@ -76,7 +76,7 @@ class EmailModel(message: Message) {
         private fun getAddress(type: Message.RecipientType) =
             mimeMessage.getRecipients(type)?.map { EmailAddress(it as InternetAddress) } ?: listOf()
 
-        val subject: String get() = mimeMessage.subject
+        val subject: String get() = mimeMessage.subject ?: ""
 
         val date: Date get() = mimeMessage.sentDate
 
@@ -131,6 +131,19 @@ class EmailModel(message: Message) {
         val inlines = mutableListOf<Part>()
         val hasPlain: Boolean get() = ::plain.isInitialized
         val hasHtml: Boolean get() = ::html.isInitialized
+
+        fun htmlView() = html
+        /*(if (inlines.isNotEmpty())
+            "<p>内嵌图片暂不支持直接显示，可选择通过附件下载</p>\n"
+        else "") + html +
+                if (inlines.isNotEmpty()) (
+                        "<p>内嵌文件：<br>" + inlines.mapIndexed { index, part ->
+                            "<a href=\"javascript:thuinfo.inline($index)\">${part.fileName}</a>"
+                        }.joinToString("<br>")) + "</p>" else "" +
+                        if (attachments.isNotEmpty()) (
+                                "<p>附件：<br>" + attachments.mapIndexed { index, part ->
+                                    "<a href=\"javascript:thuinfo.attachment($index)\">${part.fileName}</a>"
+                                }.joinToString("<br>")) + "</p>" else ""*/
 
         private fun Part.decodedFileName(): String = MimeUtility.decodeText(fileName)
 

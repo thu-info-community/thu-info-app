@@ -1,12 +1,17 @@
 package com.unidy2002.thuinfo.ui.email
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,9 +28,12 @@ import com.unidy2002.thuinfo.data.model.email.EmailListAdapter
 import com.unidy2002.thuinfo.data.model.email.EmailModel
 import com.unidy2002.thuinfo.ui.email.EmailActivity.Companion.inboxFolder
 import com.unidy2002.thuinfo.ui.email.EmailActivity.Companion.sentFolder
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeoutException
+import javax.mail.Part
 import kotlin.concurrent.thread
 
 class EmailListFragment : Fragment() {
@@ -56,7 +64,11 @@ class EmailListFragment : Fragment() {
                                 SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(emailModel.date)
                             view?.findViewById<TextView>(R.id.email_content_receiver)?.text =
                                 emailModel.to.joinToString("; ")
-                            view?.findViewById<WebView>(R.id.email_content_view)?.loadData("", "text/plain", "utf-8")
+                            view?.findViewById<WebView>(R.id.email_content_view)?.apply {
+                                // settings.javaScriptEnabled = true
+                                // addJavascriptInterface(this@EmailListFragment, "thuinfo")
+                                loadData("", "text/plain", "utf-8")
+                            }
                             val modeText = view?.findViewById<TextView>(R.id.email_content_mode)
                             modeText?.text = ""
                             modeText?.isEnabled = false
@@ -65,7 +77,7 @@ class EmailListFragment : Fragment() {
                                 handler?.post {
                                     if (currentContent.hasHtml) {
                                         view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                                            currentContent.html, "text/html", "utf-8"
+                                            currentContent.htmlView(), "text/html", "utf-8"
                                         ) // TODO: parse cid value (hint - part.getHeader("Content-Id") to match cid)
                                         if (currentContent.hasPlain) {
                                             modeText?.text = resources.getString(R.string.email_plain_string)
@@ -100,8 +112,8 @@ class EmailListFragment : Fragment() {
                     }
                     activity?.run {
                         handler.post {
-                            (view?.findViewById<RecyclerView>(R.id.email_list_recycler_view)?.adapter as EmailListAdapter)
-                                .push(result, true)
+                            (view?.findViewById<RecyclerView>(R.id.email_list_recycler_view)?.adapter as? EmailListAdapter)
+                                ?.push(result, true)
                         }
                     }
                 } catch (e: TimeoutException) {
@@ -140,7 +152,7 @@ class EmailListFragment : Fragment() {
                     } else if (text == resources.getString(R.string.email_html_string) && currentContent.hasHtml) {
                         text = resources.getString(R.string.email_plain_string)
                         view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                            currentContent.html, "text/html", "utf-8"
+                            currentContent.htmlView(), "text/html", "utf-8"
                         )
                     }
                 } catch (e: Exception) {
@@ -154,5 +166,51 @@ class EmailListFragment : Fragment() {
             }
         }
         super.onStart()
+    }
+
+    @JavascriptInterface
+    fun inline(id: Int) {
+        Log.i("Email download", "inline $id")
+        emailDownload(currentContent.inlines[id])
+    }
+
+    @JavascriptInterface
+    fun attachment(id: Int) {
+        emailDownload(currentContent.inlines[id])
+    }
+
+    private fun emailDownload(part: Part) {
+        thread {
+            try {
+                if (Build.VERSION.SDK_INT >= 23) {
+                    val permission =
+                        activity!!.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (permission != PackageManager.PERMISSION_GRANTED)
+                        requestPermissions(
+                            arrayOf(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ), 1
+                        )
+                }
+                val inputStream = part.inputStream
+                val outputStream =
+                    FileOutputStream(File("/storage/sdcard0/Download/" + part.fileName))
+                // activity?.openFileOutput(part.fileName, Context.MODE_PRIVATE)
+                outputStream.write(inputStream.readBytes())
+                outputStream.close()
+                inputStream.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                try {
+                    handler.post {
+                        Toast.makeText(activity, getString(R.string.download_fail_string), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 }

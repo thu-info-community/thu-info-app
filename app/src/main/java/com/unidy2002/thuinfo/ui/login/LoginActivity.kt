@@ -21,6 +21,7 @@ import com.unidy2002.thuinfo.data.util.appId
 import com.unidy2002.thuinfo.data.util.appKey
 import com.unidy2002.thuinfo.data.util.serverURL
 import com.unidy2002.thuinfo.ui.report.ReportActivity
+import io.reactivex.disposables.Disposable
 import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
@@ -105,13 +106,29 @@ class LoginActivity : AppCompatActivity() {
         }
 
         try { // In order to find the appropriate min sdk
-            getSharedPreferences("config", MODE_PRIVATE).run {
+            getSharedPreferences("config", MODE_PRIVATE).run sp@{
                 if (getBoolean("first_install", true)) {
                     AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
-                        saveInBackground().subscribe()
+                        saveInBackground().subscribe(object : io.reactivex.Observer<AVObject> {
+                            override fun onComplete() {
+                                try {
+                                    edit().putBoolean("first_install", false).apply()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onSubscribe(d: Disposable) {}
+                            override fun onNext(t: AVObject) {}
+
+                            override fun onError(e: Throwable) {
+                                e.printStackTrace()
+                            }
+                        })
                     }
+
                 }
             }
         } catch (e: Exception) {

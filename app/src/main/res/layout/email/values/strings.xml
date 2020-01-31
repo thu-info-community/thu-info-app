@@ -21,4 +21,12 @@
     <string name="login_error_retry">登录异常，请重试</string>
     <string name="config_your_email">配置您的邮箱</string>
     <string name="config_error_retry">配置异常，请重试</string>
+    <string name="download_fail_string">下载失败</string>
+    <string name="subject_string">主题</string>
+    <string name="receiver_hint">收件人（多个收件人用;或,隔开）</string>
+    <string name="email_content_string">正文</string>
+    <string name="send_string">发送</string>
+    <string name="send_confirm">您确认要发送吗？</string>
+    <string name="send_succeed_string">发送成功</string>
+    <string name="send_fail_string">发送失败</string>
 </resources>
