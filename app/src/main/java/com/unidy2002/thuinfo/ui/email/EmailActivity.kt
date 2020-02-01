@@ -130,14 +130,18 @@ class EmailActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         try {
-            val currentView = (viewList[viewPager.currentItem] as EmailListFragment).root
-            with(currentView.findViewById<LinearLayout>(R.id.email_content_layout)) {
-                if (visibility == View.VISIBLE) {
-                    visibility = View.GONE
-                    currentView.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh).visibility =
-                        View.VISIBLE
-                } else {
-                    finish()
+            if (viewPager.currentItem == 2) {
+                viewPager.setCurrentItem(0, true)
+            } else {
+                val currentView = (viewList[viewPager.currentItem] as EmailListFragment).root
+                with(currentView.findViewById<LinearLayout>(R.id.email_content_layout)) {
+                    if (visibility == View.VISIBLE) {
+                        visibility = View.GONE
+                        currentView.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh).visibility =
+                            View.VISIBLE
+                    } else {
+                        finish()
+                    }
                 }
             }
         } catch (e: Exception) {

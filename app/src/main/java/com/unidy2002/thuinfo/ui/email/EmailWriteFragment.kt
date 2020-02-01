@@ -53,6 +53,7 @@ class EmailWriteFragment : Fragment() {
                                     view?.findViewById<EditText>(R.id.write_email_subject)?.text?.clear()
                                     view?.findViewById<EditText>(R.id.write_email_content)?.text?.clear()
                                 }
+                                it.isEnabled = true
                             }
                         }
                     }

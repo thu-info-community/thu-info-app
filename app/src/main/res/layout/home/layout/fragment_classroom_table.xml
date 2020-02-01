@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
@@ -33,6 +34,111 @@
                 android:text="@string/plus"/>
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp">
+
+        <View
+                android:id="@+id/classroom_layout_00"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#26A69A"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+                android:id="@+id/classroom_layout_01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/有课"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_00"/>
+
+        <View
+                android:id="@+id/classroom_layout_02"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#FFA726"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/classroom_layout_01"/>
+
+        <TextView
+                android:id="@+id/classroom_layout_03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/考试"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_02"/>
+
+        <View
+                android:id="@+id/classroom_layout_04"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#29B6F6"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/classroom_layout_03"/>
+
+        <TextView
+                android:id="@+id/classroom_layout_05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/借用"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_04"/>
+
+        <View
+                android:id="@+id/classroom_layout_06"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#868686"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/classroom_layout_05"/>
+
+        <TextView
+                android:id="@+id/classroom_layout_07"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/屏蔽"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_06"/>
+
+        <View
+                android:id="@+id/classroom_layout_08"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="#AB47BC"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_07"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/未知"
+                android:layout_marginStart="4dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/classroom_layout_08"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/classroom_swipe_refresh"

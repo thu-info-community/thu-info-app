@@ -76,7 +76,7 @@ class EmailModel(message: Message) {
         private fun getAddress(type: Message.RecipientType) =
             mimeMessage.getRecipients(type)?.map { EmailAddress(it as InternetAddress) } ?: listOf()
 
-        val subject: String get() = mimeMessage.subject ?: ""
+        val subject: String get() = mimeMessage.subject ?: "[无主题]"
 
         val date: Date get() = mimeMessage.sentDate
 

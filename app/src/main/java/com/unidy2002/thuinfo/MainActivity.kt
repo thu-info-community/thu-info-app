@@ -39,14 +39,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
     private var inboxUnread = 0
 
+    private val topLevelDestinationIds = setOf(R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-        val topLevelDestinationIds = setOf(R.id.navigation_home, R.id.navigation_news, R.id.navigation_schedule)
 
         navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(topLevelDestinationIds, findViewById(R.id.drawer_layout))
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            handler.post { Timer().schedule(0, 30000) { refreshBadge(true) } }
+            handler.post { loggedInUser.timerTasks.add(Timer().schedule(0, 30000) { refreshBadge(true) }) }
         }
 
         JiebaSegmenter.init(applicationContext)
@@ -93,7 +93,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_email ->
                     startActivity(Intent().apply { setClass(this@MainActivity, EmailActivity::class.java) })
                 R.id.navigation_report ->
-                    startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.report_guide_text)
+                        .setView(R.layout.report_guide)
+                        .setPositiveButton(R.string.report_guide_quick) { _, _ ->
+                            startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
+                        }
+                        .show()
                 R.id.navigation_logout -> {
                     thread(start = true) {
                         Network().logout()
@@ -101,20 +107,22 @@ class MainActivity : AppCompatActivity() {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
                                     .setTitle(R.string.clear_or_not)
-                                    .setPositiveButton(R.string.keep_string) { _, _ ->
-                                        finish()
-                                    }
+                                    .setPositiveButton(R.string.keep_string) { _, _ -> }
                                     .setNegativeButton(R.string.clear_string) { _, _ ->
                                         val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE)!!.edit()
                                         sharedPreferences.putString("remember", "false")
                                         sharedPreferences.remove("username")
                                         sharedPreferences.remove("password")
                                         sharedPreferences.apply()
+                                    }
+                                    .setOnDismissListener {
+                                        LoginActivity.loginViewModel.logout()
                                         finish()
                                     }
                                     .setCancelable(false)
                                     .show()
                             } else {
+                                LoginActivity.loginViewModel.logout()
                                 finish()
                             }
                         }
@@ -130,14 +138,16 @@ class MainActivity : AppCompatActivity() {
         thread(start = true) {
             if (forceUpdate) inboxUnread = getInboxUnread().also { Log.i("Unread", it.toString()) }
             handler.post {
-                val emailMenuItem = findViewById<NavigationView>(R.id.side_nav_view).menu[0]
-                if (inboxUnread > 0) {
-                    emailMenuItem.title = resources.getString(R.string.email_string) + " [$inboxUnread]"
-                    toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_badge_24dp, null)
-                } else {
-                    emailMenuItem.title = resources.getString(R.string.email_string)
-                    if (forceUpdate)
-                        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_24dp, null)
+                if (navController.currentDestination?.id in topLevelDestinationIds) {
+                    val emailMenuItem = findViewById<NavigationView>(R.id.side_nav_view).menu[0]
+                    if (inboxUnread > 0) {
+                        emailMenuItem.title = resources.getString(R.string.email_string) + " [$inboxUnread]"
+                        toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_badge_24dp, null)
+                    } else {
+                        emailMenuItem.title = resources.getString(R.string.email_string)
+                        if (forceUpdate)
+                            toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_24dp, null)
+                    }
                 }
             }
         }

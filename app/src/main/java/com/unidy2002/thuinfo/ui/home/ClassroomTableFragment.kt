@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.lib.Network
 import com.unidy2002.thuinfo.data.model.classroom.ClassroomTableAdapter
+import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import kotlin.concurrent.thread
 
 class ClassroomTableFragment : Fragment() {
@@ -22,9 +23,10 @@ class ClassroomTableFragment : Fragment() {
     private var curr: List<Pair<String, List<Int>>>? = null
     private var next: List<Pair<String, List<Int>>>? = null
     private var loadingState = MutableList(19) { false }
-    private var currentWeek = 16
-    private var currentDay = 5
+    private var currentWeek = 1
+    private var currentDay = 0
     private lateinit var classroom: String
+    private val weekInChinese = listOf("周一", "周二", "周三", "周四", "周五", "周六", "周日")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_classroom_table, container, false)
@@ -42,7 +44,7 @@ class ClassroomTableFragment : Fragment() {
                 )
         }
         view?.findViewById<TextView>(R.id.classroom_date)?.text =
-            getString(R.string.classroom_header_string, currentWeek, currentDay + 1)
+            getString(R.string.classroom_header_string, currentWeek, weekInChinese[currentDay])
         view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)?.isRefreshing = false
     }
 
@@ -74,6 +76,22 @@ class ClassroomTableFragment : Fragment() {
     override fun onStart() {
         classroom = arguments!!.getString("name")!!
         (activity as AppCompatActivity).supportActionBar?.title = arguments!!.getString("title")!!
+
+        val today = SchoolCalendar()
+        when {
+            today.weekNumber > 18 -> {
+                currentWeek = 18
+                currentDay = 6
+            }
+            today.weekNumber > 0 -> {
+                currentWeek = today.weekNumber
+                currentDay = today.dayOfWeek
+            }
+            else -> {
+                currentWeek = 1
+                currentDay = 0
+            }
+        }
 
         view?.findViewById<RecyclerView>(R.id.classroom_table_view)?.apply {
             layoutManager = LinearLayoutManager(context)

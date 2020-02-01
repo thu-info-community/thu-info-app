@@ -33,9 +33,14 @@
     <string name="dorm_mail_string">我的邮条</string>
     <string name="dorm_repair_string">网上报修</string>
     <string name="dorm_score_string">卫生成绩</string>
-    <string name="minus">-</string>
-    <string name="plus">+</string>
-    <string name="classroom_header_string">"第%1$d周，周%2$d</string>
+    <string name="minus">＜</string>
+    <string name="plus">＞</string>
+    <string name="classroom_header_string">"第%1$d周 %2$s</string>
+    <string name="有课">有课</string>
+    <string name="考试">考试</string>
+    <string name="借用">借用</string>
+    <string name="屏蔽">屏蔽</string>
+    <string name="未知">未知</string>
     <string name="email_string">邮箱</string>
     <string name="remainder_not_match">余额可能与实际不符</string>
     <string name="remainder_explanation">由于尚未找到直接查询余额的接口，此处的余额数据是根据交易记录得到的推算结果。</string>
@@ -86,4 +91,8 @@
     <string name="confirm_lose_card">您确定要挂失吗？</string>
     <string name="op_cannot_undo">该操作无法撤销。</string>
     <string name="positive_confirm_string">确认</string>
+
+    <string name="report_guide_text">Issue、PR</string>
+    <string name="report_guide_link">https://github.com/UNIDY2002/THUInfo</string>
+    <string name="report_guide_quick">快速反馈通道</string>
 </resources>

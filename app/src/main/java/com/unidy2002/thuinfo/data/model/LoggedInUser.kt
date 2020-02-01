@@ -2,6 +2,7 @@ package com.unidy2002.thuinfo.data.model
 
 import com.sun.mail.imap.IMAPStore
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
+import java.util.*
 
 data class LoggedInUser(val userId: String, val password: String) {
     var rememberPassword = false
@@ -22,4 +23,6 @@ data class LoggedInUser(val userId: String, val password: String) {
     lateinit var newsContainer: NewsContainer
 
     val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false)
+
+    val timerTasks = mutableListOf<TimerTask>()
 }

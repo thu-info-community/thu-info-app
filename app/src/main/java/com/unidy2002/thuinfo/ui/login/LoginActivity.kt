@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.ui.login
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -106,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         try { // In order to find the appropriate min sdk
-            getSharedPreferences("config", MODE_PRIVATE).run sp@{
+            getSharedPreferences("config", MODE_PRIVATE).run {
                 if (getBoolean("first_install", true)) {
                     AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
@@ -135,8 +136,14 @@ class LoginActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        findViewById<Button>(R.id.login_to_report).setOnClickListener {
-            startActivity(Intent().apply { setClass(this@LoginActivity, ReportActivity::class.java) })
+        findViewById<TextView>(R.id.login_to_report).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.report_guide_text)
+                .setView(R.layout.report_guide)
+                .setPositiveButton(R.string.report_guide_quick) { _, _ ->
+                    startActivity(Intent().apply { setClass(this@LoginActivity, ReportActivity::class.java) })
+                }
+                .show()
         }
     }
 

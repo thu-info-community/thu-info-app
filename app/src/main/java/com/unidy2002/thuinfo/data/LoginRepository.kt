@@ -23,8 +23,8 @@ class LoginRepository(val dataSource: LoginDataSource) {
     }
 
     fun logout() {
+        loggedInUser?.timerTasks?.forEach { it.cancel() }
         loggedInUser = null
-        dataSource.logout()
     }
 
     fun login(username: String, password: String): Result<LoggedInUser> =
