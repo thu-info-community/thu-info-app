@@ -1,7 +1,7 @@
-package com.unidy2002.thuinfo.data
+package com.unidy2002.thuinfo.data.model.login
 
-import com.unidy2002.thuinfo.data.lib.Network
-import com.unidy2002.thuinfo.data.model.LoggedInUser
+import com.unidy2002.thuinfo.data.model.general.Result
+import com.unidy2002.thuinfo.data.util.Network
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.

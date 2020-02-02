@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.schedule
 
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject

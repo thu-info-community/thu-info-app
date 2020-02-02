@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.tables
 
 import com.bin.david.form.annotation.SmartColumn
 import com.bin.david.form.annotation.SmartTable

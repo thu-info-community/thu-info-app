@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.text.SimpleDateFormat
 import java.util.*

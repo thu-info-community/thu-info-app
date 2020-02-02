@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.unidy2002.thuinfo.data.util
 
 // 由于代码开源（实则因为不会加密），我决定公开LeanCloud相应密钥。

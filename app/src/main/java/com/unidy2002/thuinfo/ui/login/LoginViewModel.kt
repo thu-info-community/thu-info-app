@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.LoginRepository
-import com.unidy2002.thuinfo.data.Result
-import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.model.login.LoginRepository
+import com.unidy2002.thuinfo.data.model.general.Result
+import com.unidy2002.thuinfo.data.util.Network
 import java.lang.NullPointerException
 
 class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel() {

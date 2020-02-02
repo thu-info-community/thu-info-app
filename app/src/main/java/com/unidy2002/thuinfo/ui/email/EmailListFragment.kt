@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.getEmailList
-import com.unidy2002.thuinfo.data.lib.openInbox
-import com.unidy2002.thuinfo.data.lib.openSent
+import com.unidy2002.thuinfo.data.util.getEmailList
+import com.unidy2002.thuinfo.data.util.openInbox
+import com.unidy2002.thuinfo.data.util.openSent
 import com.unidy2002.thuinfo.data.model.email.EmailListAdapter
 import com.unidy2002.thuinfo.data.model.email.EmailModel
 import com.unidy2002.thuinfo.ui.email.EmailActivity.Companion.inboxFolder

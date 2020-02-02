@@ -2,7 +2,7 @@ package com.unidy2002.thuinfo.data.model.news
 
 import android.content.Context
 import android.util.Log
-import com.unidy2002.thuinfo.data.lib.NewsDBManager
+import com.unidy2002.thuinfo.data.dao.NewsDBManager
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import org.jsoup.Jsoup
 import java.lang.Exception

@@ -118,7 +118,7 @@ class EmailModel(message: Message) {
     class EmailAddress(internetAddress: InternetAddress) {
         private fun getName(s: String) = with(s.indexOf('@')) { if (this == -1) s else s.substring(0, this) }
 
-        val email = internetAddress.address
+        val email = internetAddress.address ?: "someone@unknown.com"
         val name = internetAddress.personal ?: getName(email)
 
         override fun toString() = "$name<$email>"

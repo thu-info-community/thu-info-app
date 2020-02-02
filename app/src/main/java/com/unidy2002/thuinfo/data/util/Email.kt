@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.lib
+package com.unidy2002.thuinfo.data.util
 
 import com.sun.mail.imap.IMAPFolder
 import com.sun.mail.imap.IMAPStore

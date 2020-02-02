@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.connectImap
+import com.unidy2002.thuinfo.data.util.connectImap
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import javax.mail.Message
 import kotlin.concurrent.thread

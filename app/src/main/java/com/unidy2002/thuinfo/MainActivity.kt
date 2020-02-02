@@ -19,9 +19,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.unidy2002.thuinfo.data.lib.Network
-import com.unidy2002.thuinfo.data.lib.connectImap
-import com.unidy2002.thuinfo.data.lib.getInboxUnread
+import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.util.connectImap
+import com.unidy2002.thuinfo.data.util.getInboxUnread
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.login.LoginActivity
@@ -112,14 +112,18 @@ class MainActivity : AppCompatActivity() {
                                         getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
                                     }
                                     .setOnDismissListener {
-                                        LoginActivity.loginViewModel.logout()
-                                        finish()
+                                        thread {
+                                            LoginActivity.loginViewModel.logout()
+                                            handler.post { finish() }
+                                        }
                                     }
                                     .setCancelable(false)
                                     .show()
                             } else {
-                                LoginActivity.loginViewModel.logout()
-                                finish()
+                                thread {
+                                    LoginActivity.loginViewModel.logout()
+                                    handler.post { finish() }
+                                }
                             }
                         }
                     }

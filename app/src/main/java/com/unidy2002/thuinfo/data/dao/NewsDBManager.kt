@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data.lib
+package com.unidy2002.thuinfo.data.dao
 
 import android.content.ContentValues
 import android.content.Context

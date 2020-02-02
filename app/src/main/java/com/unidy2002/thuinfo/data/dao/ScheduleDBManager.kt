@@ -1,10 +1,10 @@
-package com.unidy2002.thuinfo.data.lib
+package com.unidy2002.thuinfo.data.dao
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.unidy2002.thuinfo.data.model.PersonalCalendar.Exam
-import com.unidy2002.thuinfo.data.model.PersonalCalendar.Lesson
+import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar.Exam
+import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar.Lesson
 import java.sql.Date
 import java.sql.Time
 import java.util.*

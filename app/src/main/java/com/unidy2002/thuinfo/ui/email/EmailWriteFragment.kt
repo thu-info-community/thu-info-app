@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.sendMail
+import com.unidy2002.thuinfo.data.util.sendMail
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 

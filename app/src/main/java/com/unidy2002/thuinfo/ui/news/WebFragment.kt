@@ -12,7 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.DownloadCompleteReceiver
 import com.unidy2002.thuinfo.data.util.downloadBySystem
 import com.unidy2002.thuinfo.ui.login.LoginActivity

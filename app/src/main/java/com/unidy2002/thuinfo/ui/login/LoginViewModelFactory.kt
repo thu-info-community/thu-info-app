@@ -2,8 +2,8 @@ package com.unidy2002.thuinfo.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.unidy2002.thuinfo.data.LoginDataSource
-import com.unidy2002.thuinfo.data.LoginRepository
+import com.unidy2002.thuinfo.data.model.login.LoginDataSource
+import com.unidy2002.thuinfo.data.model.login.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

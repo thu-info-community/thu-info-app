@@ -1,13 +1,14 @@
-package com.unidy2002.thuinfo.data.lib
+package com.unidy2002.thuinfo.data.util
 
 import android.content.Context
 import android.util.Log
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import com.unidy2002.thuinfo.data.model.ECardRecord
-import com.unidy2002.thuinfo.data.model.JoggingRecord
-import com.unidy2002.thuinfo.data.model.LoggedInUser
-import com.unidy2002.thuinfo.data.model.PersonalCalendar
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.model.tables.ECardRecord
+import com.unidy2002.thuinfo.data.model.tables.JoggingRecord
+import com.unidy2002.thuinfo.data.model.login.LoggedInUser
+import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar
 import com.unidy2002.thuinfo.data.model.news.NewsHTML
 import com.unidy2002.thuinfo.data.model.report.ReportItem
 import com.unidy2002.thuinfo.ui.login.LoginActivity
@@ -24,8 +25,7 @@ import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
 
 class Network {
-    private val loggedInUser: LoggedInUser
-        get() = LoginActivity.loginViewModel.getLoggedInUser()
+    private val loggedInUser: LoggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 
     private fun <T : HttpURLConnection> connect(
         url: String,
@@ -142,6 +142,7 @@ class Network {
         try {
             when (target) {
                 -1 -> {
+                    // Login to tsinghua home
                     val id =
                         (currentTimeMillis() * currentTimeMillis() % loggedInUser.userId.hashCode()) * Math.random()
                             .also { Log.d("Random id", it.toString()) }

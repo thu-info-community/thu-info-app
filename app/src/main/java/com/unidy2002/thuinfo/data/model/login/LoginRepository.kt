@@ -1,6 +1,6 @@
-package com.unidy2002.thuinfo.data
+package com.unidy2002.thuinfo.data.model.login
 
-import com.unidy2002.thuinfo.data.model.LoggedInUser
+import com.unidy2002.thuinfo.data.model.general.Result
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -17,17 +17,16 @@ class LoginRepository(val dataSource: LoginDataSource) {
         get() = loggedInUser != null
 
     init {
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
         loggedInUser = null
     }
 
     fun logout() {
         loggedInUser?.timerTasks?.forEach { it.cancel() }
+        dataSource.logout()
         loggedInUser = null
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> =
+    fun login(username: String, password: String) =
         dataSource.login(username, password).also {
             if (it is Result.Success)
                 setLoggedInUser(it.data)
@@ -35,7 +34,5 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.loggedInUser = loggedInUser
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
     }
 }

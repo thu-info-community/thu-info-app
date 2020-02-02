@@ -1,4 +1,4 @@
-package com.unidy2002.thuinfo.data
+package com.unidy2002.thuinfo.data.model.general
 
 /**
  * A generic class that holds a value with its loading status.

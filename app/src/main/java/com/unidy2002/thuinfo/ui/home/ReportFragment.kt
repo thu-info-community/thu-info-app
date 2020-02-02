@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.model.report.ReportAdapter
 import kotlin.concurrent.thread
 

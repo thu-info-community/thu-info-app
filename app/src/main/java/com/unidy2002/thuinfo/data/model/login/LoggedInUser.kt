@@ -1,7 +1,8 @@
-package com.unidy2002.thuinfo.data.model
+package com.unidy2002.thuinfo.data.model.login
 
 import com.sun.mail.imap.IMAPStore
 import com.unidy2002.thuinfo.data.model.news.NewsContainer
+import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar
 import java.util.*
 
 data class LoggedInUser(val userId: String, val password: String) {

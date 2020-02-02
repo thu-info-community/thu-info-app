@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.lib.Network
+import com.unidy2002.thuinfo.data.util.Network
 import kotlin.concurrent.thread
 
 class HomeFragment : Fragment() {
