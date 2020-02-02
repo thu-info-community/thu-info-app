@@ -18,9 +18,7 @@ import cn.leancloud.AVObject
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.LoggedInUser
-import com.unidy2002.thuinfo.data.util.appId
-import com.unidy2002.thuinfo.data.util.appKey
-import com.unidy2002.thuinfo.data.util.serverURL
+import com.unidy2002.thuinfo.data.util.*
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import io.reactivex.disposables.Disposable
 import kotlin.concurrent.thread
@@ -98,12 +96,22 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener { doLogin() }
         }
 
-        val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE)
-        if (sharedPreferences.getString("remember", "") == "true") {
-            username.setText(sharedPreferences.getString("username", ""))
-            password.setText(sharedPreferences.getString("password", ""))
-            remember.isChecked = true
-            login.callOnClick()
+        try {
+            getSharedPreferences("UserId", MODE_PRIVATE).run {
+                if (getString("remember", "") == "true") {
+                    username.setText(getString("username", ""))
+                    password.setText(
+                        decrypt(
+                            username.text.toString(),
+                            getString("iv", "")!! to getString("data", "")!!
+                        )
+                    )
+                    remember.isChecked = true
+                    login.callOnClick()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         try { // In order to find the appropriate min sdk
@@ -163,11 +171,15 @@ class LoginActivity : AppCompatActivity() {
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         if (remember.isChecked) {
-            val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE).edit()
-            sharedPreferences.putString("remember", "true")
-            sharedPreferences.putString("username", username.text.toString())
-            sharedPreferences.putString("password", password.text.toString())
-            sharedPreferences.apply()
+            getSharedPreferences("UserId", MODE_PRIVATE).edit().run {
+                putString("remember", "true")
+                putString("username", username.text.toString())
+                encrypt(username.text.toString(), password.text.toString()).run {
+                    putString("iv", first)
+                    putString("data", second)
+                }
+                apply()
+            }
         } else {
             getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
         }

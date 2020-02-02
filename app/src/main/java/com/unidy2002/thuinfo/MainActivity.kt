@@ -109,11 +109,7 @@ class MainActivity : AppCompatActivity() {
                                     .setTitle(R.string.clear_or_not)
                                     .setPositiveButton(R.string.keep_string) { _, _ -> }
                                     .setNegativeButton(R.string.clear_string) { _, _ ->
-                                        val sharedPreferences = getSharedPreferences("UserId", MODE_PRIVATE)!!.edit()
-                                        sharedPreferences.putString("remember", "false")
-                                        sharedPreferences.remove("username")
-                                        sharedPreferences.remove("password")
-                                        sharedPreferences.apply()
+                                        getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
                                     }
                                     .setOnDismissListener {
                                         LoginActivity.loginViewModel.logout()
