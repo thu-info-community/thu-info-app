@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.model.login.LoginRepository
 import com.unidy2002.thuinfo.data.model.general.Result
+import com.unidy2002.thuinfo.data.model.login.LoggedInUser
+import com.unidy2002.thuinfo.data.model.login.LoginRepository
 import com.unidy2002.thuinfo.data.util.Network
-import java.lang.NullPointerException
 
 class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel() {
 
@@ -58,4 +58,15 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
     fun logout() {
         loginRepository.logout()
     }
+
+    data class LoginFormState(
+        val usernameError: Int? = null,
+        val passwordError: Int? = null,
+        val isDataValid: Boolean = false
+    )
+
+    data class LoginResult(
+        val success: LoggedInUser? = null,
+        val error: Int? = null
+    )
 }

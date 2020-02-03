@@ -27,7 +27,7 @@ class WebFragment : Fragment() {
     ): View? = inflater.inflate(R.layout.fragment_web, container, false)
 
     private fun loadURL(view: WebView, url: String) {
-        thread(start = true) {
+        thread {
             Network().getPrettyPrintHTML(url).run {
                 view.handler.post {
                     if (this == null) {

@@ -2,201 +2,96 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
+            android:id="@+id/schedule_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <GridLayout
-                android:id="@+id/table_grid"
-                android:layout_width="match_parent"
+        <Button
+                android:id="@+id/schedule_minus"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:rowCount="15"
-                android:columnCount="8"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_weight="1"
+                android:text="@string/minus"
+                android:enabled="false"/>
 
+        <TextView
+                android:id="@+id/schedule_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                android:gravity="center"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                />
 
-            <TextView
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="0.2"
-                    />
+        <Button
+                android:id="@+id/schedule_plus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/plus"
+                android:enabled="false"/>
 
-            <TextView
-                    android:id="@+id/pivot"
-                    android:text="@string/_1"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+    </LinearLayout>
 
-            <TextView
-                    android:text="@string/_2"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/schedule_swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/schedule_header"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                    android:text="@string/_3"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+        <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                    android:text="@string/_4"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+            <LinearLayout
+                    android:id="@+id/schedule_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <TextView
-                    android:text="@string/_5"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+                <GridLayout
+                        android:id="@+id/table_grid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:rowCount="15"
+                        android:columnCount="8"
+                        android:orientation="vertical">
+                </GridLayout>
 
-            <TextView
-                    android:text="@string/_6"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:ignore="ButtonStyle">
 
-            <TextView
-                    android:text="@string/_7"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
+                    <Button
+                            android:id="@+id/schedule_custom_abbr"
+                            android:text="@string/custom_abbr_string"
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:enabled="false"/>
 
-            <TextView
-                    android:text="@string/_8"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_9"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_10"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_11"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_12"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_13"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-            <TextView
-                    android:text="@string/_14"
-                    android:gravity="center"
-                    android:layout_height="45dp"
-                    android:layout_columnWeight="0.2"
-                    />
-
-
-            <TextView
-                    android:text="@string/mon"
-                    android:id="@+id/content"
-                    android:layout_row="0"
-                    android:layout_column="1"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/tue"
-                    android:layout_row="0"
-                    android:layout_column="2"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/wed"
-                    android:layout_row="0"
-                    android:layout_column="3"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/thu"
-                    android:layout_row="0"
-                    android:layout_column="4"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/fri"
-                    android:layout_row="0"
-                    android:layout_column="5"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/sat"
-                    android:layout_row="0"
-                    android:layout_column="6"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-
-            <TextView
-                    android:text="@string/sun"
-                    android:layout_row="0"
-                    android:layout_column="7"
-                    android:gravity="center"
-                    android:layout_height="20dp"
-                    android:layout_columnWeight="1"
-                    />
-        </GridLayout>
-    </ScrollView>
-
-
-    <ProgressBar
-            android:id="@+id/loading"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+                    <Button
+                            android:id="@+id/schedule_save_image"
+                            android:text="@string/save_image_string"
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:enabled="false"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

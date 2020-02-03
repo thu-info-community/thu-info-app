@@ -50,7 +50,7 @@ class PhysicalExamFragment : Fragment() {
     private val handler = Handler()
 
     override fun onStart() {
-        thread(start = true) {
+        thread {
             val result = Network().getPhysicalExamResult()
             handler.post { updateUI(result) }
         }

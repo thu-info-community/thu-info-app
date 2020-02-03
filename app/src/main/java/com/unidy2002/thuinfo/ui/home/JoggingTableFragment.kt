@@ -34,7 +34,7 @@ class JoggingTableFragment : Fragment() {
     private val handler = Handler()
 
     override fun onStart() {
-        thread(start = true) {
+        thread {
             val result = Network().getJoggingRecord()
             handler.post { updateUI(result) }
         }

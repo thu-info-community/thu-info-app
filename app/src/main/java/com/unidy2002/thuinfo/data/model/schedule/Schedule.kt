@@ -3,10 +3,11 @@ package com.unidy2002.thuinfo.data.model.schedule
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
 import jackmego.com.jieba_android.JiebaSegmenter
-import java.sql.Date
 import java.sql.Time
+import java.text.SimpleDateFormat
+import java.util.*
 
-class PersonalCalendar {
+class Schedule {
     data class Lesson(
         var title: String,
         var abbr: String,
@@ -108,7 +109,7 @@ class PersonalCalendar {
                     "上课" -> {
                         val title = o["nr"] as String
                         val locale = shortenLocale(o["dd"] as? String ?: "网络异常")
-                        val date = Date.valueOf(o["nq"] as String)
+                        val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!
                         val begin = parseBegin(o["kssj"] as String)
                         val end = parseEnd(o["jssj"] as String)
                         if (lessonList.isNotEmpty() &&
@@ -140,7 +141,7 @@ class PersonalCalendar {
                                 o["nr"] as String,
                                 shortenTitle(o["nr"] as String),
                                 shortenLocale(o["dd"] as? String ?: "网络异常"),
-                                Date.valueOf(o["nq"] as String),
+                                SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!,
                                 Time.valueOf(o["kssj"] as String + ":00"),
                                 Time.valueOf(o["jssj"] as String + ":00")
                             )

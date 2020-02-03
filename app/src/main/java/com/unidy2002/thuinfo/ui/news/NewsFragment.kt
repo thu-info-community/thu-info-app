@@ -52,7 +52,7 @@ class NewsFragment : Fragment() {
             isRefreshing = true
             setColorSchemeResources(R.color.colorAccent)
             setOnRefreshListener {
-                thread(start = true) {
+                thread {
                     Network().getNews(REFRESH)
                     this@NewsFragment.handler.post { updateUI(true) }
                 }
@@ -86,7 +86,7 @@ class NewsFragment : Fragment() {
                         view?.findViewById<SwipeRefreshLayout>(R.id.news_swipe_refresh)?.isRefreshing = true
                         if (LoginActivity.loginViewModel.getLoggedInUser().newsContainer.state == -1)
                             Toast.makeText(context, "再次点击图标可退回汇总模式", Toast.LENGTH_LONG).show()
-                        thread(start = true) {
+                        thread {
                             Network().getNews(FILTER, param)
                             this@NewsFragment.handler.post { updateUI(true) }
                         }
@@ -95,14 +95,14 @@ class NewsFragment : Fragment() {
             }
             addOnScrollListener(object : OnLoadMoreListener() {
                 override fun onLoading(countItem: Int, lastItem: Int) {
-                    thread(start = true) {
+                    thread {
                         Network().getNews(MORE)
                         this@NewsFragment.handler.post { updateUI(false) }
                     }
                 }
             })
             if (!newsViewModel.recyclerViewStateInitialized())
-                thread(start = true) {
+                thread {
                     Network().getNews(NONE)
                     this@NewsFragment.handler.post { updateUI(true) }
                 }

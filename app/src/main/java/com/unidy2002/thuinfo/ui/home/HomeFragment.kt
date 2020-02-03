@@ -57,7 +57,7 @@ class HomeFragment : Fragment() {
                 .setTitle(R.string.confirm_lose_card)
                 .setMessage(R.string.op_cannot_undo)
                 .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
-                    thread(start = true) {
+                    thread {
                         val result = Network().loseCard()
                         handler.post {
                             Log.i("LOSE CARD CODE", result.toString())

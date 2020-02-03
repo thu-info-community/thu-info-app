@@ -3,13 +3,13 @@ package com.unidy2002.thuinfo.data.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar.Exam
-import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar.Lesson
+import com.unidy2002.thuinfo.data.model.schedule.Schedule.Exam
+import com.unidy2002.thuinfo.data.model.schedule.Schedule.Lesson
 import java.sql.Date
 import java.sql.Time
 import java.util.*
 
-class ScheduleDBManager private constructor(context: Context) {
+class ScheduleDBManager private constructor(context: Context?) {
     private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
 
     fun addLesson(lesson: Lesson) {
@@ -127,7 +127,7 @@ class ScheduleDBManager private constructor(context: Context) {
 
     companion object {
         private var instance: ScheduleDBManager? = null
-        fun getInstance(context: Context): ScheduleDBManager {
+        fun getInstance(context: Context?): ScheduleDBManager {
             if (instance == null) {
                 synchronized(ScheduleDBManager::class.java) {
                     if (instance == null) {

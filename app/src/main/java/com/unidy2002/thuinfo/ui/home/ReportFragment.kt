@@ -24,7 +24,7 @@ class ReportFragment : Fragment() {
     }
 
     private fun getData() {
-        thread(start = true) {
+        thread {
             val report = Network().getReport()
             view?.handler?.post {
                 view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report ?: listOf())

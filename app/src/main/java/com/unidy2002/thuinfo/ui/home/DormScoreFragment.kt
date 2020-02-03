@@ -25,7 +25,7 @@ class DormScoreFragment : Fragment() {
     ): View? = inflater.inflate(R.layout.fragment_dorm_score, container, false)
 
     override fun onStart() {
-        thread(start = true) {
+        thread {
             val result = Network().getDormScore()
             view?.handler?.post {
                 if (result == null)

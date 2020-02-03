@@ -1,110 +1,127 @@
 package com.unidy2002.thuinfo.ui.schedule
 
 import android.os.Bundle
-import android.os.Handler
-import android.view.Gravity
+import android.view.Gravity.CENTER
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import android.widget.GridLayout.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
-import com.unidy2002.thuinfo.data.model.login.LoggedInUser
-import com.unidy2002.thuinfo.ui.login.LoginActivity
-import java.sql.Date
+import com.unidy2002.thuinfo.data.model.schedule.Schedule
+import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
+import kotlin.math.round
 
 
 class ScheduleFragment : Fragment() {
 
     private lateinit var scheduleViewModel: ScheduleViewModel
 
-    private val loggedInUser: LoggedInUser
-        get() = LoginActivity.loginViewModel.getLoggedInUser()
+    private val today = SchoolCalendar(2019, 9, 24) // Assumes that the user does not use the app at midnight...
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        scheduleViewModel =
-            ViewModelProvider(this).get(ScheduleViewModel::class.java)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        scheduleViewModel = ViewModelProvider(this).get(ScheduleViewModel::class.java)
         return inflater.inflate(R.layout.fragment_schedule, container, false)
     }
 
-    private fun updateUI() {
-        val mon = Date.valueOf("2019-09-16")
-        val tue = Date.valueOf("2019-09-17")
-        val gridLayout = view?.findViewById<GridLayout>(R.id.table_grid)!!
-        val day = tue!!.time - mon!!.time
-        val width = view?.findViewById<TextView>(R.id.content)!!.width
-        val simpleDateFormat = SimpleDateFormat("MM.dd", Locale.CHINA)
-        for (c in 1..7) {
-            var last = 0
-            loggedInUser.personalCalendar.lessonList.filter { it.date.time == mon.time + (c - 1) * day }.forEach {
-                if (it.begin - last > 1) {
-                    val textView = TextView(context)
-                    textView.text = ""
-                    textView.width = width
-                    val layoutParams = GridLayout.LayoutParams()
-                    layoutParams.rowSpec = GridLayout.spec(last + 1, it.begin - last - 1, GridLayout.FILL)
-                    layoutParams.columnSpec = GridLayout.spec(c)
-                    gridLayout.addView(textView, layoutParams)
-                }
-                val textView = TextView(context)
-                textView.text = getString(R.string.abbr_locale, it.abbr, it.locale)
-                textView.width = width
-                textView.gravity = Gravity.CENTER
-                textView.isSingleLine = false
-                textView.setBackgroundColor(
-                    resources.getIntArray(R.array.schedule_colors)[loggedInUser.personalCalendar.colorMap[it.title] ?: 0]
-                )
-                val layoutParams = GridLayout.LayoutParams()
-                layoutParams.rowSpec = GridLayout.spec(it.begin, it.end - it.begin + 1, GridLayout.FILL)
-                layoutParams.columnSpec = GridLayout.spec(c, GridLayout.FILL)
-                gridLayout.addView(textView, layoutParams)
-                last = it.end
-            }
-            if (last < 14) {
-                val textView = TextView(context)
-                textView.text = ""
-                textView.width = width
-                val layoutParams = GridLayout.LayoutParams()
-                layoutParams.rowSpec = GridLayout.spec(last + 1, 14 - last, GridLayout.FILL)
-                layoutParams.columnSpec = GridLayout.spec(c)
-                gridLayout.addView(textView, layoutParams)
-            }
-            val textView = TextView(context)
-            textView.text = getString(
-                R.string.double_line,
-                resources.getStringArray(R.array.weeks)[c - 1],
-                simpleDateFormat.format(Date(mon.time + (c - 1) * day))
-            )
-            textView.width = width
-            textView.gravity = Gravity.CENTER
-            val layoutParams = GridLayout.LayoutParams()
-            layoutParams.rowSpec = GridLayout.spec(0, GridLayout.FILL)
-            layoutParams.columnSpec = GridLayout.spec(c)
-            gridLayout.addView(textView, layoutParams)
-        }
-
-        view?.findViewById<ProgressBar>(R.id.loading)?.visibility = ProgressBar.GONE
-    }
-
-    private val handler = Handler()
-
     override fun onStart() {
         super.onStart()
-        thread(start = true) {
-            Network().getCalender(context!!)
-            if (loggedInUser.calenderInitialized()) {
-                handler.post { updateUI() }
+
+        with(scheduleViewModel) {
+            scheduleData.observe(this@ScheduleFragment, Observer {
+                it?.run {
+                    error?.run result@{ context?.run { Toast.makeText(this, this@result, Toast.LENGTH_SHORT).show() } }
+                    success?.run { updateUI(this) }
+                    view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
+                }
+            })
+            scheduleWeek.observe(this@ScheduleFragment, Observer {
+                it?.run {
+                    view?.findViewById<Button>(R.id.schedule_minus)?.isEnabled = this > 1
+                    view?.findViewById<Button>(R.id.schedule_plus)?.isEnabled = this < SchoolCalendar.weekCount
+                    thread { getData(context) }
+                }
+            })
+            setWeek(today.weekNumber)
+        }
+
+        view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.apply {
+            setColorSchemeResources(R.color.colorAccent)
+            isRefreshing = true
+            setOnRefreshListener {
+                view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
+                view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
+                thread { scheduleViewModel.getData(context, true) }
+            }
+        }
+
+        view?.findViewById<TextView>(R.id.schedule_title)
+            ?.setOnClickListener { scheduleViewModel.setWeek(today.weekNumber) }
+
+        view?.findViewById<Button>(R.id.schedule_minus)
+            ?.setOnClickListener { scheduleViewModel.weekDecrease() }
+
+        view?.findViewById<Button>(R.id.schedule_plus)
+            ?.setOnClickListener { scheduleViewModel.weekIncrease() }
+    }
+
+    private fun updateUI(schedule: Schedule) {
+        scheduleViewModel.scheduleWeek.value?.run weekNumber@{
+            val date = SchoolCalendar(this, 1)
+
+            view?.run {
+                findViewById<TextView>(R.id.schedule_title).text = getString(R.string.week_title, this@weekNumber)
+
+                val grid = findViewById<GridLayout>(R.id.table_grid)
+                val totalWidth = findViewById<LinearLayout>(R.id.schedule_content).width
+                val stdWidth = round(totalWidth / 7.6).toInt()
+                val remainderWidth = totalWidth - stdWidth * 7
+                grid.removeAllViews()
+
+                fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, useStd: Boolean = true) {
+                    grid.addView(TextView(context).apply {
+                        text = title
+                        width = if (useStd) stdWidth else remainderWidth
+                        if (!useStd) height = 130
+                        gravity = CENTER
+                        color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
+                        if (begin == 0 && date == today) setTextColor(resources.getColor(R.color.colorAccent, null))
+                    }, LayoutParams().apply {
+                        rowSpec = spec(begin, size, FILL)
+                        columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
+                    })
+                }
+
+                for (i in 1..14) addView(i.toString(), begin = i, useStd = false)
+
+                repeat(7) {
+                    addView(
+                        getString(
+                            R.string.double_line,
+                            resources.getStringArray(R.array.weeks)[date.dayOfWeek],
+                            SimpleDateFormat("MM.dd", Locale.CHINA).format(date.timeInMillis)
+                        )
+                    )
+                    schedule.lessonList.filter { it.date.time == date.timeInMillis }.forEach {
+                        addView(
+                            getString(R.string.abbr_locale, it.abbr, it.locale),
+                            schedule.colorMap[it.title] ?: 0,
+                            it.begin,
+                            it.end - it.begin + 1
+                        )
+                    }
+                    date.add(Calendar.DATE, 1)
+                }
+
+                findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
+                findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
             }
         }
     }

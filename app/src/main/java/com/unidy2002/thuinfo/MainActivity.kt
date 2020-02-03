@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         .show()
                 R.id.navigation_logout -> {
-                    thread(start = true) {
+                    thread {
                         Network().logout()
                         handler.post {
                             if (loggedInUser.rememberPassword) {
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshBadge(forceUpdate: Boolean) {
-        thread(start = true) {
+        thread {
             if (forceUpdate) inboxUnread = getInboxUnread().also { Log.i("Unread", it.toString()) }
             handler.post {
                 if (navController.currentDestination?.id in topLevelDestinationIds) {

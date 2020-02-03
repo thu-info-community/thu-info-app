@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.model.classroom.ClassroomTableAdapter
+import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import kotlin.concurrent.thread
 
@@ -26,7 +26,7 @@ class ClassroomTableFragment : Fragment() {
     private var currentWeek = 1
     private var currentDay = 0
     private lateinit var classroom: String
-    private val weekInChinese = listOf("周一", "周二", "周三", "周四", "周五", "周六", "周日")
+    private val weekInChinese = listOf("", "周一", "周二", "周三", "周四", "周五", "周六", "周日")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_classroom_table, container, false)
@@ -44,7 +44,7 @@ class ClassroomTableFragment : Fragment() {
                 )
         }
         view?.findViewById<TextView>(R.id.classroom_date)?.text =
-            getString(R.string.classroom_header_string, currentWeek, weekInChinese[currentDay])
+            getString(R.string.classroom_header_string, currentWeek, weekInChinese[currentDay + 1])
         view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)?.isRefreshing = false
     }
 
@@ -65,11 +65,11 @@ class ClassroomTableFragment : Fragment() {
     }
 
     private fun initialize() {
-        thread(start = true) {
+        thread {
             getData(0)
             handler.post { updateUI() }
-            thread(start = true) { getData(1) }
-            thread(start = true) { getData(-1) }
+            thread { getData(1) }
+            thread { getData(-1) }
         }
     }
 
@@ -85,7 +85,7 @@ class ClassroomTableFragment : Fragment() {
             }
             today.weekNumber > 0 -> {
                 currentWeek = today.weekNumber
-                currentDay = today.dayOfWeek
+                currentDay = today.dayOfWeek - 1
             }
             else -> {
                 currentWeek = 1
@@ -122,7 +122,7 @@ class ClassroomTableFragment : Fragment() {
                         next = curr
                         curr = prev
                         updateUI()
-                        thread(start = true) { getData(-1) }
+                        thread { getData(-1) }
                     }
                 }
             } else {
@@ -145,7 +145,7 @@ class ClassroomTableFragment : Fragment() {
                         prev = curr
                         curr = next
                         updateUI()
-                        thread(start = true) { getData(1) }
+                        thread { getData(1) }
                     }
                 }
             } else {

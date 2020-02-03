@@ -71,10 +71,10 @@ class ECardTableFragment : Fragment() {
             refresh.isEnabled = false
             view?.findViewById<ProgressBar>(R.id.loading)?.visibility = ProgressBar.VISIBLE
             view?.findViewById<SmartTable<ECardRecord.ECardElement>>(R.id.table)?.isEnabled = false
-            thread(start = true) { getData() }
+            thread { getData() }
         }
 
-        thread(start = true) { getData() }
+        thread { getData() }
         super.onStart()
     }
 }

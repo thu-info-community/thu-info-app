@@ -2,15 +2,16 @@ package com.unidy2002.thuinfo.data.util
 
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
-import com.unidy2002.thuinfo.data.model.tables.ECardRecord
-import com.unidy2002.thuinfo.data.model.tables.JoggingRecord
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
-import com.unidy2002.thuinfo.data.model.schedule.PersonalCalendar
 import com.unidy2002.thuinfo.data.model.news.NewsHTML
 import com.unidy2002.thuinfo.data.model.report.ReportItem
+import com.unidy2002.thuinfo.data.model.schedule.Schedule
+import com.unidy2002.thuinfo.data.model.tables.ECardRecord
+import com.unidy2002.thuinfo.data.model.tables.JoggingRecord
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jxl.Workbook
 import org.jsoup.Jsoup
@@ -563,14 +564,18 @@ class Network {
             null
         }
 
-    fun getCalender(context: Context) {
-        if (!loggedInUser.calenderInitialized()) {
-            val scheduleDBManager = ScheduleDBManager.getInstance(context)
-            with(scheduleDBManager.lessonList) {
-                if (isEmpty()) {
-                    try {
+    @Synchronized
+    fun getSchedule(context: Context?, force: Boolean = false) = try {
+        if (!loggedInUser.scheduleInitialized() || force) {
+            ScheduleDBManager.getInstance(context).run {
+                val sharedPreferences =
+                    context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
+                (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
+                    Schedule(lessonList, examList, autoShortenMap, customShortenMap, colorMap)
+                } else {
+                    retryTemplate(792) {
                         connect<HttpsURLConnection>(
-                            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=20190901&p_end_date=20200131&jsoncallback=m",
+                            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=${SchoolCalendar.firstDayShortestString}&p_end_date=${SchoolCalendar.lastDayShortestString}&jsoncallback=m",
                             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
                             loggedInUser.vpnTicket
                         ).inputStream.run {
@@ -579,49 +584,36 @@ class Network {
                             var readLine: String?
                             while (reader.readLine().also { readLine = it } != null)
                                 stringBuilder.append(readLine)
-                            val result =
-                                stringBuilder.substring(
-                                    stringBuilder.indexOf("(") + 1,
-                                    stringBuilder.lastIndexOf(")")
-                                )
                             reader.close()
                             close()
-                            loggedInUser.personalCalendar = PersonalCalendar(result)
+                            Schedule(stringBuilder.run {
+                                substring(
+                                    indexOf('(') + 1,
+                                    lastIndexOf(')')
+                                )
+                            }).also {
+                                for (lesson in it.lessonList)
+                                    addLesson(lesson)
+                                for (exam in it.examList)
+                                    addExam(exam)
+                                for (auto in it.autoShortenMap)
+                                    addAuto(auto.key, auto.value.first, auto.value.second)
+                                for (custom in it.customShortenMap)
+                                    addCustom(custom.key, custom.value)
+                                for (custom in it.colorMap)
+                                    addColor(custom.key, custom.value)
+                                sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
+                            }
                         }
-
-                        for (lesson in loggedInUser.personalCalendar.lessonList)
-                            scheduleDBManager.addLesson(lesson)
-                        for (exam in loggedInUser.personalCalendar.examList)
-                            scheduleDBManager.addExam(exam)
-                        for (auto in loggedInUser.personalCalendar.autoShortenMap)
-                            scheduleDBManager.addAuto(auto.key, auto.value.first, auto.value.second)
-                        for (custom in loggedInUser.personalCalendar.customShortenMap)
-                            scheduleDBManager.addCustom(custom.key, custom.value)
-                        for (custom in loggedInUser.personalCalendar.colorMap)
-                            scheduleDBManager.addColor(custom.key, custom.value)
-                    } catch (e: Exception) {
-                        loggedInUser.personalCalendar =
-                            PersonalCalendar(
-                                mutableListOf(),
-                                mutableListOf(),
-                                mutableMapOf(),
-                                mutableMapOf(),
-                                mutableMapOf()
-                            )
-                        e.printStackTrace()
                     }
-                } else {
-                    loggedInUser.personalCalendar =
-                        PersonalCalendar(
-                            this,
-                            scheduleDBManager.examList,
-                            scheduleDBManager.autoShortenMap,
-                            scheduleDBManager.customShortenMap,
-                            scheduleDBManager.colorMap
-                        )
-                }
+                })?.also { loggedInUser.schedule = it }
             }
+        } else {
+            loggedInUser.schedule
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 
     fun getDormScore(): String? =

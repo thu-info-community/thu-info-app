@@ -1,6 +1,6 @@
 package com.unidy2002.thuinfo.data.util
 
-import java.time.DayOfWeek
+import java.text.SimpleDateFormat
 import java.time.Month
 import java.util.*
 import kotlin.math.floor
@@ -12,35 +12,42 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
 
     val weekNumber get() = floor((timeInMillis - firstDay.time.time) / 604800000.0).toInt() + 1
 
-    val dayOfWeek get() = get(Calendar.DAY_OF_WEEK)
-
-    override fun toString() = "第${weekNumber}周 ${weekInChinese[dayOfWeek]}"
+    val dayOfWeek get() = get(Calendar.DAY_OF_WEEK).run { if (this > 1) this - 1 else 7 }
 
     constructor(year: Int, month: Int, day: Int) : this() {
+        clear()
         set(year, month - 1, day) // Note: in GregorianCalendar, month value is 0-based.
     }
 
-    constructor(week: Int, dayOfWeek: DayOfWeek) : this() {
+    constructor(week: Int, dayOfWeek: Int) : this() { // Day of week indexes from 1 (Monday)
+        clear()
         set(firstDay.get(Calendar.YEAR), firstDay.get(Calendar.MONTH), firstDay.get(Calendar.DATE))
-        add(Calendar.DATE, (week - 1) * 7 + dayOfWeek.ordinal)
+        add(Calendar.DATE, (week - 1) * 7 + dayOfWeek - 1)
+    }
+
+    companion object {
+        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2019, Month.SEPTEMBER.ordinal, 9) }
+        val lastDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.JANUARY.ordinal, 12) }
+        val firstDayShortestString: String
+            get() = SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(firstDay.timeInMillis)
+        val lastDayShortestString: String
+            get() = SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(lastDay.timeInMillis)
+        val weekCount = 18
+        val semesterType = SemesterType.AUTUMN
     }
 
     enum class SemesterType { SPRING, SUMMER, AUTUMN }
 
-    private val weekInChinese = mapOf(
-        Calendar.MONDAY to "周一",
-        Calendar.TUESDAY to "周二",
-        Calendar.WEDNESDAY to "周三",
-        Calendar.THURSDAY to "周四",
-        Calendar.FRIDAY to "周五",
-        Calendar.SATURDAY to "周六",
-        Calendar.SUNDAY to "周日"
-    )
-
-    companion object {
-        val firstDay = GregorianCalendar(Locale.CHINA).also { it.set(2019, Month.SEPTEMBER.ordinal, 9) }
-        val lastDay = GregorianCalendar(Locale.CHINA).also { it.set(2020, Month.JANUARY.ordinal, 12) }
-        val weekCount = 18
-        val semesterType = SemesterType.AUTUMN
+    override fun equals(other: Any?): Boolean {
+        val tryCast = other as? SchoolCalendar
+        return if (tryCast == null) {
+            false
+        } else {
+            (tryCast.get(Calendar.DATE) == get(Calendar.DATE)
+                    && tryCast.get(Calendar.MONTH) == get(Calendar.MONTH)
+                    && tryCast.get(Calendar.YEAR) == get(Calendar.YEAR))
+        }
     }
+
+    override fun hashCode() = super.hashCode() + 233 // Only to silent Idea's warning
 }

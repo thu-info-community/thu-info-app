@@ -106,7 +106,7 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             if (!newsCard.loaded) {
                 newsCard.loaded = true
-                thread(start = true) {
+                thread {
                     Network().getPrettyPrintHTML(newsCard.href).run {
                         newsCard.brief = this
                             ?.brief
