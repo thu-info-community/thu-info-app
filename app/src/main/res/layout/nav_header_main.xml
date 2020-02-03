@@ -13,7 +13,7 @@
         android:gravity="bottom">
 
     <TextView
-            android:id="@+id/username_text"
+            android:id="@+id/full_name_text"
             android:textSize="14sp"
             android:textColor="@android:color/white"
             android:layout_width="wrap_content"

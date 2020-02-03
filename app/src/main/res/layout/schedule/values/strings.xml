@@ -19,6 +19,11 @@
         <item>周日</item>
     </string-array>
     <string name="double_line">"%1$s\n%2$s</string>
-    <string name="custom_abbr_string">自定义缩写</string>
+    <string name="custom_abbr_string">自定义简称</string>
     <string name="save_image_string">保存为图片</string>
+    <string name="edit_abbr_string">修改简称</string>
+    <string name="please_enter_abbr">请输入简称</string>
+    <string name="setup_abbr_string">设置简称</string>
+    <string name="_0_7">0/7</string>
+    <string name="_x_7">%1$d/7</string>
 </resources>

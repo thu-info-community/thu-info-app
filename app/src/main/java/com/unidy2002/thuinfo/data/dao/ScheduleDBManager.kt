@@ -7,53 +7,81 @@ import com.unidy2002.thuinfo.data.model.schedule.Schedule.Exam
 import com.unidy2002.thuinfo.data.model.schedule.Schedule.Lesson
 import java.sql.Date
 import java.sql.Time
-import java.util.*
 
 class ScheduleDBManager private constructor(context: Context?) {
     private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
 
-    fun addLesson(lesson: Lesson) {
-        val contentValues = ContentValues()
-        contentValues.put("title", lesson.title)
-        contentValues.put("abbr", lesson.abbr)
-        contentValues.put("locale", lesson.locale)
-        contentValues.put("date", lesson.date.time)
-        contentValues.put("beginning", lesson.begin)
-        contentValues.put("ending", lesson.end)
-        writableDatabase.insert("lesson", null, contentValues)
+    private fun clearTable(tableName: String) {
+        writableDatabase.execSQL("DELETE FROM $tableName")
     }
 
-    fun addExam(exam: Exam) {
-        val contentValues = ContentValues()
-        contentValues.put("title", exam.title)
-        contentValues.put("abbr", exam.abbr)
-        contentValues.put("locale", exam.locale)
-        contentValues.put("date", exam.date.time)
-        contentValues.put("beginning", exam.begin.time)
-        contentValues.put("ending", exam.end.time)
-        writableDatabase.insert("exam", null, contentValues)
+    fun updateLesson(lessonList: List<Lesson>) {
+        clearTable("lesson")
+        lessonList.forEach { addLesson(it) }
     }
 
-    fun addAuto(origin: String?, avail: Boolean?, dest: String?) {
-        val contentValues = ContentValues()
-        contentValues.put("origin", origin)
-        contentValues.put("avail", avail)
-        contentValues.put("dest", dest)
-        writableDatabase.insert("auto", null, contentValues)
+    private fun addLesson(lesson: Lesson) {
+        writableDatabase.insert("lesson", null, ContentValues().apply {
+            put("title", lesson.title)
+            put("abbr", "")
+            put("locale", lesson.locale)
+            put("date", lesson.date.time)
+            put("beginning", lesson.begin)
+            put("ending", lesson.end)
+        })
     }
 
-    fun addCustom(origin: String?, dest: String?) {
-        val contentValues = ContentValues()
-        contentValues.put("origin", origin)
-        contentValues.put("dest", dest)
-        writableDatabase.insert("custom", null, contentValues)
+    fun updateExam(examList: List<Exam>) {
+        clearTable("exam")
+        examList.forEach { addExam(it) }
     }
 
-    fun addColor(name: String?, id: Int?) {
-        val contentValues = ContentValues()
-        contentValues.put("name", name)
-        contentValues.put("id", id)
-        writableDatabase.insert("color", null, contentValues)
+    private fun addExam(exam: Exam) {
+        writableDatabase.insert("exam", null, ContentValues().apply {
+            put("title", exam.title)
+            put("abbr", "")
+            put("locale", exam.locale)
+            put("date", exam.date.time)
+            put("beginning", exam.begin.time)
+            put("ending", exam.end.time)
+        })
+    }
+
+    fun updateAuto(autoShortenMap: Map<String, Pair<Boolean, String>>) {
+        clearTable("auto")
+        autoShortenMap.forEach { addAuto(it.key, it.value.first, it.value.second) }
+    }
+
+    private fun addAuto(origin: String?, avail: Boolean?, dest: String?) {
+        writableDatabase.insert("auto", null, ContentValues().apply {
+            put("origin", origin)
+            put("avail", avail)
+            put("dest", dest)
+        })
+    }
+
+    fun updateCustom(customShortenMap: Map<String, String>) {
+        clearTable("custom")
+        customShortenMap.forEach { addCustom(it.key, it.value) }
+    }
+
+    private fun addCustom(origin: String?, dest: String?) {
+        writableDatabase.insert("custom", null, ContentValues().apply {
+            put("origin", origin)
+            put("dest", dest)
+        })
+    }
+
+    fun updateColor(colorMap: Map<String, Int>) {
+        clearTable("color")
+        colorMap.forEach { addColor(it.key, it.value) }
+    }
+
+    private fun addColor(name: String?, id: Int?) {
+        writableDatabase.insert("color", null, ContentValues().apply {
+            put("name", name)
+            put("id", id)
+        })
     }
 
     val lessonList: MutableList<Lesson>
@@ -62,12 +90,11 @@ class ScheduleDBManager private constructor(context: Context?) {
             val cursor = writableDatabase.query("lesson", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
                 val title = cursor.getString(0)
-                val abbr = cursor.getString(1)
                 val locale = cursor.getString(2)
                 val date = Date(cursor.getLong(3))
                 val begin = cursor.getInt(4)
                 val end = cursor.getInt(5)
-                list.add(Lesson(title, abbr, locale, date, begin, end))
+                list.add(Lesson(title, locale, date, begin, end))
             }
             cursor.close()
             return list
@@ -79,12 +106,11 @@ class ScheduleDBManager private constructor(context: Context?) {
             val cursor = writableDatabase.query("exam", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
                 val title = cursor.getString(0)
-                val abbr = cursor.getString(1)
                 val locale = cursor.getString(2)
                 val date = Date(cursor.getLong(3))
                 val begin = Time(cursor.getLong(4))
                 val end = Time(cursor.getLong(5))
-                list.add(Exam(title, abbr, locale, date, begin, end))
+                list.add(Exam(title, locale, date, begin, end))
             }
             cursor.close()
             return list

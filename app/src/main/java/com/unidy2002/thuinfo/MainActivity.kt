@@ -60,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         thread { Network().getTicket(792) }
         thread { Network().getTicket(824) }
         thread {
+            Network().getUsername()
+            try {
+                handler.post { findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        thread {
             Network().getTicket(-1)
             try {
                 handler.post { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
@@ -85,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler()
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        findViewById<TextView>(R.id.username_text).text = loggedInUser.fullName
+        findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName
         findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
         findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory
         findViewById<NavigationView>(R.id.side_nav_view).setNavigationItemSelectedListener {

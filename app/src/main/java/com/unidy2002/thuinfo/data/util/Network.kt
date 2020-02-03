@@ -102,8 +102,9 @@ class Network {
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
             loggedInUser.vpnTicket
         ).inputStream.close()
+    }
 
-        // Get username
+    fun getUsername() {
         connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?id=2612",
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/bks_grzm.jsp",
@@ -571,7 +572,13 @@ class Network {
                 val sharedPreferences =
                     context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
                 (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
-                    Schedule(lessonList, examList, autoShortenMap, customShortenMap, colorMap)
+                    Schedule(
+                        lessonList,
+                        examList,
+                        autoShortenMap,
+                        customShortenMap,
+                        colorMap
+                    )
                 } else {
                     retryTemplate(792) {
                         connect<HttpsURLConnection>(
@@ -586,22 +593,22 @@ class Network {
                                 stringBuilder.append(readLine)
                             reader.close()
                             close()
-                            Schedule(stringBuilder.run {
-                                substring(
-                                    indexOf('(') + 1,
-                                    lastIndexOf(')')
-                                )
-                            }).also {
-                                for (lesson in it.lessonList)
-                                    addLesson(lesson)
-                                for (exam in it.examList)
-                                    addExam(exam)
-                                for (auto in it.autoShortenMap)
-                                    addAuto(auto.key, auto.value.first, auto.value.second)
-                                for (custom in it.customShortenMap)
-                                    addCustom(custom.key, custom.value)
-                                for (custom in it.colorMap)
-                                    addColor(custom.key, custom.value)
+                            Schedule(
+                                stringBuilder.run {
+                                    substring(
+                                        indexOf('(') + 1,
+                                        lastIndexOf(')')
+                                    )
+                                },
+                                if (loggedInUser.scheduleInitialized())
+                                    loggedInUser.schedule.customShortenMap
+                                else
+                                    mutableMapOf()
+                            ).also {
+                                updateLesson(it.lessonList)
+                                updateExam(it.examList)
+                                updateAuto(it.autoShortenMap)
+                                updateColor(it.colorMap)
                                 sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
                             }
                         }

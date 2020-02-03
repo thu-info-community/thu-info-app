@@ -10,7 +10,6 @@ import java.util.*
 class Schedule {
     data class Lesson(
         var title: String,
-        var abbr: String,
         var locale: String,
         var date: Date,
         var begin: Int,
@@ -21,7 +20,6 @@ class Schedule {
 
     data class Exam(
         var title: String,
-        var abbr: String,
         var locale: String,
         var date: Date,
         var begin: Time,
@@ -94,13 +92,13 @@ class Schedule {
         this.colorMap = colorMap
     }
 
-    constructor(source: String) {
+    constructor(source: String, custom: MutableMap<String, String>) {
         val jsonArray = parseArray(source)
         segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         lessonList = mutableListOf()
         examList = mutableListOf()
         autoShortenMap = mutableMapOf()
-        customShortenMap = mutableMapOf()
+        customShortenMap = custom
         colorMap = mutableMapOf()
         for (e in jsonArray) {
             try {
@@ -123,7 +121,6 @@ class Schedule {
                             lessonList.add(
                                 Lesson(
                                     title,
-                                    shortenTitle(title),
                                     locale,
                                     date,
                                     begin,
@@ -131,6 +128,7 @@ class Schedule {
                                 )
                             )
                         }
+                        autoShortenMap[title] = true to shortenTitle(title)
                         if (colorMap[title] == null) {
                             colorMap[title] = colorMap.size % colorCount
                         }
@@ -138,8 +136,7 @@ class Schedule {
                     "考试" ->
                         examList.add(
                             Exam(
-                                o["nr"] as String,
-                                shortenTitle(o["nr"] as String),
+                                (o["nr"] as String).also { autoShortenMap[it] = true to shortenTitle(it) },
                                 shortenLocale(o["dd"] as? String ?: "网络异常"),
                                 SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!,
                                 Time.valueOf(o["kssj"] as String + ":00"),
@@ -169,7 +166,7 @@ class Schedule {
         }
     }
 
-    private fun shortenTitle(name: String): String {
+    fun shortenTitle(name: String): String {
         return customShortenMap[name] ?: with(autoShortenMap[name]) {
             if (this == null) {
                 var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")

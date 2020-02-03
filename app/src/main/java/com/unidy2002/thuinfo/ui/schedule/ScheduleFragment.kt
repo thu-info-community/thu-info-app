@@ -10,6 +10,7 @@ import android.widget.GridLayout.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
@@ -23,8 +24,6 @@ import kotlin.math.round
 class ScheduleFragment : Fragment() {
 
     private lateinit var scheduleViewModel: ScheduleViewModel
-
-    private val today = SchoolCalendar(2019, 9, 24) // Assumes that the user does not use the app at midnight...
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         scheduleViewModel = ViewModelProvider(this).get(ScheduleViewModel::class.java)
@@ -40,6 +39,8 @@ class ScheduleFragment : Fragment() {
                     error?.run result@{ context?.run { Toast.makeText(this, this@result, Toast.LENGTH_SHORT).show() } }
                     success?.run { updateUI(this) }
                     view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
+                    view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
+                    view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
                 }
             })
             scheduleWeek.observe(this@ScheduleFragment, Observer {
@@ -49,7 +50,7 @@ class ScheduleFragment : Fragment() {
                     thread { getData(context) }
                 }
             })
-            setWeek(today.weekNumber)
+            scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
         }
 
         view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.apply {
@@ -63,13 +64,20 @@ class ScheduleFragment : Fragment() {
         }
 
         view?.findViewById<TextView>(R.id.schedule_title)
-            ?.setOnClickListener { scheduleViewModel.setWeek(today.weekNumber) }
+            ?.setOnClickListener { scheduleViewModel.setWeek(SchoolCalendar().weekNumber) }
 
         view?.findViewById<Button>(R.id.schedule_minus)
             ?.setOnClickListener { scheduleViewModel.weekDecrease() }
 
         view?.findViewById<Button>(R.id.schedule_plus)
             ?.setOnClickListener { scheduleViewModel.weekIncrease() }
+
+        view?.findViewById<Button>(R.id.schedule_custom_abbr)
+            ?.setOnClickListener {
+                NavHostFragment.findNavController(this).navigate(R.id.customizeFragment)
+            }
+
+        view?.findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener { }
     }
 
     private fun updateUI(schedule: Schedule) {
@@ -92,7 +100,12 @@ class ScheduleFragment : Fragment() {
                         if (!useStd) height = 130
                         gravity = CENTER
                         color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
-                        if (begin == 0 && date == today) setTextColor(resources.getColor(R.color.colorAccent, null))
+                        if (begin == 0 && date == SchoolCalendar()) setTextColor(
+                            resources.getColor(
+                                R.color.colorAccent,
+                                null
+                            )
+                        )
                     }, LayoutParams().apply {
                         rowSpec = spec(begin, size, FILL)
                         columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
@@ -111,7 +124,7 @@ class ScheduleFragment : Fragment() {
                     )
                     schedule.lessonList.filter { it.date.time == date.timeInMillis }.forEach {
                         addView(
-                            getString(R.string.abbr_locale, it.abbr, it.locale),
+                            getString(R.string.abbr_locale, schedule.shortenTitle(it.title), it.locale),
                             schedule.colorMap[it.title] ?: 0,
                             it.begin,
                             it.end - it.begin + 1
@@ -119,9 +132,6 @@ class ScheduleFragment : Fragment() {
                     }
                     date.add(Calendar.DATE, 1)
                 }
-
-                findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
-                findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
             }
         }
     }

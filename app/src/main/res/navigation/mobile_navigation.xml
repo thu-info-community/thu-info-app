@@ -69,4 +69,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.DormScoreFragment"
             android:label="@string/dorm_score_string"
             tools:layout="@layout/fragment_dorm_score"/>
+
+    <fragment
+            android:id="@+id/customizeFragment"
+            android:name="com.unidy2002.thuinfo.ui.schedule.CustomizeFragment"
+            android:label="@string/custom_abbr_string"
+            tools:layout="@layout/fragment_customize"/>
 </navigation>

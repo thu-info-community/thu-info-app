@@ -26,7 +26,13 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
     }
 
     fun setWeek(week: Int) {
-        _scheduleWeek.postValue(week)
+        _scheduleWeek.postValue(
+            when {
+                week < 1 -> 1
+                week > SchoolCalendar.weekCount -> SchoolCalendar.weekCount
+                else -> week
+            }
+        )
     }
 
     fun weekIncrease() {
