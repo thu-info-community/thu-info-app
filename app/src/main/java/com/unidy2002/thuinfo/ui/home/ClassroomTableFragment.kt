@@ -1,163 +1,112 @@
 package com.unidy2002.thuinfo.ui.home
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.classroom.ClassroomTableAdapter
-import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import kotlin.concurrent.thread
 
 class ClassroomTableFragment : Fragment() {
-    private var prev: List<Pair<String, List<Int>>>? = null
-    private var curr: List<Pair<String, List<Int>>>? = null
-    private var next: List<Pair<String, List<Int>>>? = null
-    private var loadingState = MutableList(19) { false }
-    private var currentWeek = 1
-    private var currentDay = 0
-    private lateinit var classroom: String
-    private val weekInChinese = listOf("", "周一", "周二", "周三", "周四", "周五", "周六", "周日")
+    private val dict = listOf("", "周一", "周二", "周三", "周四", "周五", "周六", "周日")
+    private lateinit var viewModel: ClassroomTableViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_classroom_table, container, false)
-
-    private val handler = Handler()
-
-    private fun updateUI() {
-        val classroomTableView = view?.findViewById<RecyclerView>(R.id.classroom_table_view)
-        curr?.run {
-            classroomTableView?.adapter =
-                ClassroomTableAdapter(
-                    this,
-                    context!!.resources.getIntArray(R.array.classroom_colors).toList(),
-                    currentDay
-                )
-        }
-        view?.findViewById<TextView>(R.id.classroom_date)?.text =
-            getString(R.string.classroom_header_string, currentWeek, weekInChinese[currentDay + 1])
-        view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)?.isRefreshing = false
-    }
-
-    private fun getData(increment: Int) {
-        val currentLoading = currentWeek + increment
-        if (currentLoading in 1..18 && !loadingState[currentLoading]) {
-            loadingState[currentLoading] = true
-            val data = Network().getClassroomState(classroom, currentLoading)
-            if (currentLoading == currentWeek + increment) {
-                when (increment) {
-                    0 -> curr = data
-                    1 -> next = data
-                    -1 -> prev = data
-                }
-            }
-            loadingState[currentLoading] = false
-        }
-    }
-
-    private fun initialize() {
-        thread {
-            getData(0)
-            handler.post { updateUI() }
-            thread { getData(1) }
-            thread { getData(-1) }
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel = ViewModelProvider(this).get(ClassroomTableViewModel::class.java)
+        return inflater.inflate(R.layout.fragment_classroom_table, container, false)
     }
 
     override fun onStart() {
-        classroom = arguments!!.getString("name")!!
-        (activity as AppCompatActivity).supportActionBar?.title = arguments!!.getString("title")!!
+        super.onStart()
 
-        val today = SchoolCalendar()
-        when {
-            today.weekNumber > 18 -> {
-                currentWeek = 18
-                currentDay = 6
-            }
-            today.weekNumber > 0 -> {
-                currentWeek = today.weekNumber
-                currentDay = today.dayOfWeek - 1
-            }
-            else -> {
-                currentWeek = 1
-                currentDay = 0
-            }
-        }
-
-        view?.findViewById<RecyclerView>(R.id.classroom_table_view)?.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = ClassroomTableAdapter(
-                listOf(),
-                listOf(),
-                0
-            )
-        }
-
-        view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)?.apply {
-            isRefreshing = true
-            setColorSchemeResources(R.color.colorAccent)
-            setOnRefreshListener { initialize() }
-        }
+        arguments?.getString("name")?.run { viewModel.classroom = this }
+        arguments?.getString("title")?.run { (activity as AppCompatActivity).supportActionBar?.title = this }
 
         val minusButton = view?.findViewById<Button>(R.id.classroom_minus)
         val plusButton = view?.findViewById<Button>(R.id.classroom_plus)
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.classroom_table_view)
+        val swipeRefreshLayout = view?.findViewById<SwipeRefreshLayout>(R.id.classroom_swipe_refresh)
+        val title = view?.findViewById<TextView>(R.id.classroom_date)
 
-        minusButton?.setOnClickListener {
-            if (currentDay == 0) {
-                if (currentWeek > 1) {
-                    currentWeek--
-                    currentDay = 6
-                    if (prev == null) {
-                        initialize()
-                    } else {
-                        next = curr
-                        curr = prev
-                        updateUI()
-                        thread { getData(-1) }
+        viewModel.apply {
+            currentDay.observe(this@ClassroomTableFragment, Observer {
+                it?.run day@{
+                    currentWeek.value?.run week@{
+                        minusButton?.isEnabled = !(this@day == 0 && this@week == 1)
+                        plusButton?.isEnabled = !(this@day == 6 && this@week == SchoolCalendar.weekCount)
+                        title?.text = getString(R.string.classroom_header_string, this@week, dict[this@day])
+                        if (curr.value?.weekNumber == this@week) updateUI()
                     }
                 }
-            } else {
-                currentDay--
-                minusButton.isEnabled = !(currentWeek == 1 && currentDay == 0)
-                updateUI()
-            }
-            plusButton?.isEnabled = !(currentWeek == 18 && currentDay == 6)
-        }
-        minusButton?.isEnabled = !(currentWeek == 1 && currentDay == 0)
+            })
 
-        plusButton?.setOnClickListener {
-            if (currentDay == 6) {
-                if (currentWeek < 18) {
-                    currentWeek++
-                    currentDay = 0
-                    if (next == null) {
-                        initialize()
-                    } else {
-                        prev = curr
-                        curr = next
-                        updateUI()
-                        thread { getData(1) }
+            currentWeek.observe(this@ClassroomTableFragment, Observer { it?.run { shiftData(this) } })
+
+            curr.observe(this@ClassroomTableFragment, Observer {
+                it?.run {
+                    when (this.error) {
+                        ClassroomTableViewModel.ClassroomErrorReason.CACHE_FAILURE -> {
+                            swipeRefreshLayout?.isRefreshing = true
+                            thread { viewModel.getData(0) }
+                        }
+                        ClassroomTableViewModel.ClassroomErrorReason.LOAD_FAILURE -> {
+                            swipeRefreshLayout?.isRefreshing = false
+                            context?.run { Toast.makeText(this, R.string.load_fail_string, Toast.LENGTH_SHORT).show() }
+                        }
+                        else -> {
+                            swipeRefreshLayout?.isRefreshing = false
+                            updateUI()
+                        }
                     }
                 }
-            } else {
-                currentDay++
-                plusButton.isEnabled = !(currentWeek == 18 && currentDay == 6)
-                updateUI()
-            }
-            minusButton?.isEnabled = !(currentWeek == 1 && currentDay == 0)
-        }
-        plusButton?.isEnabled = !(currentWeek == 18 && currentDay == 6)
+            })
 
-        initialize()
-        super.onStart()
+            setDate(SchoolCalendar())
+        }
+
+        recyclerView?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = ClassroomTableAdapter(listOf(), listOf(), 0)
+        }
+
+        swipeRefreshLayout?.apply {
+            isRefreshing = true
+            setColorSchemeResources(R.color.colorAccent)
+            setOnRefreshListener {
+                isRefreshing = true
+                viewModel.initialize()
+            }
+        }
+
+        minusButton?.setOnClickListener { viewModel.dateDecrease() }
+
+        plusButton?.setOnClickListener { viewModel.dateIncrease() }
+    }
+
+    private fun updateUI() {
+        view?.findViewById<RecyclerView>(R.id.classroom_table_view)?.adapter =
+            viewModel.curr.value?.success?.run result@{
+                context?.run context@{
+                    viewModel.currentDay.value?.run day@{
+                        ClassroomTableAdapter(
+                            this@result,
+                            this@context.resources.getIntArray(R.array.classroom_colors).toList(),
+                            this@day
+                        )
+                    }
+                }
+            }
     }
 }

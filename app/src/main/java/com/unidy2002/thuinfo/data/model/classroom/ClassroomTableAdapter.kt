@@ -35,7 +35,7 @@ class ClassroomTableAdapter(
         val viewHolder = holder as ViewHolder
         viewHolder.name.text = list[position].first
         for (i in viewHolder.state.indices)
-            viewHolder.state[i].setBackgroundColor(colors[list[position].second[i + day * 6]])
+            viewHolder.state[i].setBackgroundColor(colors[list[position].second[i + (day - 1) * 6]])
     }
 
     override fun getItemCount() = list.size
