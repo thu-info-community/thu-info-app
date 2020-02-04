@@ -28,7 +28,7 @@ class Schedule {
 
     val examList: MutableList<Exam>
 
-    val autoShortenMap: MutableMap<String, Pair<Boolean, String>>
+    val autoShortenMap: MutableMap<String, String>
 
     val customShortenMap: MutableMap<String, String>
 
@@ -42,7 +42,7 @@ class Schedule {
 
     private val maxLength = 7
 
-    private val colorCount = 7
+    private val colorCount = 27
 
     private val beginMap = mapOf(
         "08:00" to 1,
@@ -81,7 +81,7 @@ class Schedule {
     constructor(
         lessonList: MutableList<Lesson>,
         examList: MutableList<Exam>,
-        autoShortenMap: MutableMap<String, Pair<Boolean, String>>,
+        autoShortenMap: MutableMap<String, String>,
         customShortenMap: MutableMap<String, String>,
         colorMap: MutableMap<String, Int>
     ) {
@@ -93,16 +93,15 @@ class Schedule {
     }
 
     constructor(source: String, custom: MutableMap<String, String>) {
-        val jsonArray = parseArray(source)
         segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         lessonList = mutableListOf()
         examList = mutableListOf()
         autoShortenMap = mutableMapOf()
         customShortenMap = custom
         colorMap = mutableMapOf()
-        for (e in jsonArray) {
+        parseArray(source).forEach {
             try {
-                val o = e as JSONObject
+                val o = it as JSONObject
                 when (o["fl"] as String) {
                     "上课" -> {
                         val title = o["nr"] as String
@@ -115,28 +114,16 @@ class Schedule {
                             locale == lessonList.last().locale &&
                             date == lessonList.last().date &&
                             begin <= lessonList.last().end + 1
-                        ) {
-                            lessonList.last().end = end
-                        } else {
-                            lessonList.add(
-                                Lesson(
-                                    title,
-                                    locale,
-                                    date,
-                                    begin,
-                                    end
-                                )
-                            )
-                        }
-                        autoShortenMap[title] = true to shortenTitle(title)
-                        if (colorMap[title] == null) {
+                        ) lessonList.last().end = end
+                        else lessonList.add(Lesson(title, locale, date, begin, end))
+                        shortenTitle(title)
+                        if (colorMap[title] == null)
                             colorMap[title] = colorMap.size % colorCount
-                        }
                     }
                     "考试" ->
                         examList.add(
                             Exam(
-                                (o["nr"] as String).also { autoShortenMap[it] = true to shortenTitle(it) },
+                                (o["nr"] as String),
                                 shortenLocale(o["dd"] as? String ?: "网络异常"),
                                 SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!,
                                 Time.valueOf(o["kssj"] as String + ":00"),
@@ -166,62 +153,52 @@ class Schedule {
         }
     }
 
-    fun shortenTitle(name: String): String {
-        return customShortenMap[name] ?: with(autoShortenMap[name]) {
-            if (this == null) {
-                var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
-                with(Regex("《.*?》").findAll(temp)) {
-                    if (this.count() != 0) {
-                        temp = ""
-                        this.forEach {
-                            temp += it.value.drop(1).dropLast(1)
-                        }
+    fun abbr(name: String) = customShortenMap[name] ?: autoShortenMap[name] ?: name
+
+    private fun shortenTitle(name: String) {
+        if (autoShortenMap[name] == null) {
+            var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
+            with(Regex("《.*?》").findAll(temp)) {
+                if (this.count() != 0) {
+                    temp = ""
+                    this.forEach {
+                        temp += it.value.drop(1).dropLast(1)
                     }
-                }
-                with(temp.indexOf("：")) {
-                    if (this >= 0)
-                        temp = temp.substring(0, this)
-                }
-                with(temp.indexOf(":")) {
-                    if (this >= 0)
-                        temp = temp.substring(0, this)
-                }
-                with(temp.indexOf("—")) {
-                    if (this >= 0)
-                        temp = temp.substring(0, this)
-                }
-                with(temp.indexOf("-")) {
-                    if (this >= 2)
-                        temp = temp.substring(0, this)
-                }
-                temp = temp.replace(Regex("[A-Za-z0-9]*$"), "")
-                if (temp.length > maxLength) {
-                    val segmented = segmenter.getDividedString(temp)
-                    segmented.removeAll(stopWord)
-                    if (segmented.isNotEmpty()) {
-                        temp = segmented[0]
-                        var pos = 1
-                        while (pos < segmented.size && temp.length + segmented[pos].length <= maxLength)
-                            temp += segmented[pos++]
-                        while (temp.last() in avoidEnd)
-                            temp = temp.dropLast(1)
-                    }
-                }
-                temp = customShortenMap[temp] ?: temp
-                autoShortenMap[name] = Pair(true, temp)
-                temp
-            } else {
-                if (this.first) {
-                    this.second
-                } else {
-                    customShortenMap[name] ?: name
                 }
             }
+            with(temp.indexOf("：")) {
+                if (this >= 0)
+                    temp = temp.substring(0, this)
+            }
+            with(temp.indexOf(":")) {
+                if (this >= 0)
+                    temp = temp.substring(0, this)
+            }
+            with(temp.indexOf("—")) {
+                if (this >= 0)
+                    temp = temp.substring(0, this)
+            }
+            with(temp.indexOf("-")) {
+                if (this >= 2)
+                    temp = temp.substring(0, this)
+            }
+            temp = temp.replace(Regex("[A-Za-z0-9]*$"), "")
+            if (temp.length > maxLength) {
+                val segmented = segmenter.getDividedString(temp)
+                segmented.removeAll(stopWord)
+                if (segmented.isNotEmpty()) {
+                    temp = segmented[0]
+                    var pos = 1
+                    while (pos < segmented.size && temp.length + segmented[pos].length <= maxLength)
+                        temp += segmented[pos++]
+                    while (temp.last() in avoidEnd)
+                        temp = temp.dropLast(1)
+                }
+            }
+            temp = customShortenMap[temp] ?: temp
+            autoShortenMap[name] = temp
         }
     }
 
-    private fun shortenLocale(name: String): String {
-        return name
-            .replace(Regex(".教|[\\s]"), "")
-    }
+    private fun shortenLocale(name: String) = name.replace(Regex(".教|[\\s]"), "")
 }

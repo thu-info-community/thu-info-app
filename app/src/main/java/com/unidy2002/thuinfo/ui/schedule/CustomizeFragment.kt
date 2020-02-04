@@ -54,7 +54,8 @@ class CustomizeFragment : Fragment() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val originalName = lessonNames[position]
-            val defaultNew = schedule.customShortenMap[originalName] ?: schedule.autoShortenMap[originalName]?.second
+            val defaultNew =
+                schedule.customShortenMap[originalName] ?: schedule.autoShortenMap[originalName] ?: originalName
             holder as CustomizeViewHolder
             holder.origin?.text = originalName
             holder.new?.text = defaultNew

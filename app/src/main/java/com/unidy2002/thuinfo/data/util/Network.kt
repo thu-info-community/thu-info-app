@@ -23,6 +23,8 @@ import java.lang.System.currentTimeMillis
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
 class Network {
@@ -572,45 +574,42 @@ class Network {
                 val sharedPreferences =
                     context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
                 (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
-                    Schedule(
-                        lessonList,
-                        examList,
-                        autoShortenMap,
-                        customShortenMap,
-                        colorMap
-                    )
+                    Schedule(lessonList, examList, autoShortenMap, customShortenMap, colorMap)
                 } else {
                     retryTemplate(792) {
-                        connect<HttpsURLConnection>(
-                            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=${SchoolCalendar.firstDayShortestString}&p_end_date=${SchoolCalendar.lastDayShortestString}&jsoncallback=m",
-                            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
-                            loggedInUser.vpnTicket
-                        ).inputStream.run {
-                            val reader = BufferedReader(InputStreamReader(this))
-                            val stringBuilder = StringBuilder()
-                            var readLine: String?
-                            while (reader.readLine().also { readLine = it } != null)
-                                stringBuilder.append(readLine)
-                            reader.close()
-                            close()
-                            Schedule(
-                                stringBuilder.run {
-                                    substring(
-                                        indexOf('(') + 1,
-                                        lastIndexOf(')')
-                                    )
-                                },
-                                if (loggedInUser.scheduleInitialized())
-                                    loggedInUser.schedule.customShortenMap
-                                else
-                                    mutableMapOf()
-                            ).also {
-                                updateLesson(it.lessonList)
-                                updateExam(it.examList)
-                                updateAuto(it.autoShortenMap)
-                                updateColor(it.colorMap)
-                                sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
+                        val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.CHINA)
+                        val data = (0..5).joinToString(",") {
+                            connect<HttpsURLConnection>(
+                                "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=${simpleDateFormat.format(
+                                    SchoolCalendar(it * 3 + 1, 1).timeInMillis
+                                )}&p_end_date=${simpleDateFormat.format(
+                                    SchoolCalendar(it * 3 + 3, 7).timeInMillis
+                                )}&jsoncallback=m",
+                                "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
+                                loggedInUser.vpnTicket
+                            ).inputStream.run {
+                                val reader = BufferedReader(InputStreamReader(this))
+                                val stringBuilder = StringBuilder()
+                                var readLine: String?
+                                while (reader.readLine().also { line -> readLine = line } != null)
+                                    stringBuilder.append(readLine)
+                                reader.close()
+                                close()
+                                stringBuilder.run { substring(indexOf('[') + 1, lastIndexOf(']')) }
                             }
+                        }
+                        Schedule(
+                            "[$data]",
+                            if (loggedInUser.scheduleInitialized())
+                                loggedInUser.schedule.customShortenMap
+                            else
+                                mutableMapOf()
+                        ).also {
+                            updateLesson(it.lessonList)
+                            updateExam(it.examList)
+                            updateAuto(it.autoShortenMap)
+                            updateColor(it.colorMap)
+                            sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
                         }
                     }
                 })?.also { loggedInUser.schedule = it }

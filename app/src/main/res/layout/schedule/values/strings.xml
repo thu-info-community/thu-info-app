@@ -26,4 +26,7 @@
     <string name="setup_abbr_string">设置简称</string>
     <string name="_0_7">0/7</string>
     <string name="_x_7">%1$d/7</string>
+    <string name="schedule_title_template">第%1$d周课表</string>
+    <string name="save_to_gallery_succeed">已保存至相册</string>
+    <string name="save_fail_string">保存失败</string>
 </resources>

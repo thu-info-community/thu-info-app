@@ -23,7 +23,6 @@ class ScheduleDBManager private constructor(context: Context?) {
     private fun addLesson(lesson: Lesson) {
         writableDatabase.insert("lesson", null, ContentValues().apply {
             put("title", lesson.title)
-            put("abbr", "")
             put("locale", lesson.locale)
             put("date", lesson.date.time)
             put("beginning", lesson.begin)
@@ -39,7 +38,6 @@ class ScheduleDBManager private constructor(context: Context?) {
     private fun addExam(exam: Exam) {
         writableDatabase.insert("exam", null, ContentValues().apply {
             put("title", exam.title)
-            put("abbr", "")
             put("locale", exam.locale)
             put("date", exam.date.time)
             put("beginning", exam.begin.time)
@@ -47,15 +45,14 @@ class ScheduleDBManager private constructor(context: Context?) {
         })
     }
 
-    fun updateAuto(autoShortenMap: Map<String, Pair<Boolean, String>>) {
+    fun updateAuto(autoShortenMap: Map<String, String>) {
         clearTable("auto")
-        autoShortenMap.forEach { addAuto(it.key, it.value.first, it.value.second) }
+        autoShortenMap.forEach { addAuto(it.key, it.value) }
     }
 
-    private fun addAuto(origin: String?, avail: Boolean?, dest: String?) {
+    private fun addAuto(origin: String?, dest: String?) {
         writableDatabase.insert("auto", null, ContentValues().apply {
             put("origin", origin)
-            put("avail", avail)
             put("dest", dest)
         })
     }
@@ -90,10 +87,10 @@ class ScheduleDBManager private constructor(context: Context?) {
             val cursor = writableDatabase.query("lesson", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
                 val title = cursor.getString(0)
-                val locale = cursor.getString(2)
-                val date = Date(cursor.getLong(3))
-                val begin = cursor.getInt(4)
-                val end = cursor.getInt(5)
+                val locale = cursor.getString(1)
+                val date = Date(cursor.getLong(2))
+                val begin = cursor.getInt(3)
+                val end = cursor.getInt(4)
                 list.add(Lesson(title, locale, date, begin, end))
             }
             cursor.close()
@@ -106,23 +103,22 @@ class ScheduleDBManager private constructor(context: Context?) {
             val cursor = writableDatabase.query("exam", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
                 val title = cursor.getString(0)
-                val locale = cursor.getString(2)
-                val date = Date(cursor.getLong(3))
-                val begin = Time(cursor.getLong(4))
-                val end = Time(cursor.getLong(5))
+                val locale = cursor.getString(1)
+                val date = Date(cursor.getLong(2))
+                val begin = Time(cursor.getLong(3))
+                val end = Time(cursor.getLong(4))
                 list.add(Exam(title, locale, date, begin, end))
             }
             cursor.close()
             return list
         }
 
-    val autoShortenMap: MutableMap<String, Pair<Boolean, String>>
+    val autoShortenMap: MutableMap<String, String>
         get() {
-            val map: MutableMap<String, Pair<Boolean, String>> =
-                LinkedHashMap()
+            val map: MutableMap<String, String> = mutableMapOf()
             val cursor = writableDatabase.query("auto", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
-                map[cursor.getString(0)] = Pair(cursor.getInt(1) == 1, cursor.getString(2))
+                map[cursor.getString(0)] = cursor.getString(1)
             }
             cursor.close()
             return map
@@ -130,8 +126,7 @@ class ScheduleDBManager private constructor(context: Context?) {
 
     val customShortenMap: MutableMap<String, String>
         get() {
-            val map: MutableMap<String, String> =
-                LinkedHashMap()
+            val map: MutableMap<String, String> = mutableMapOf()
             val cursor = writableDatabase.query("custom", null, null, null, null, null, null, null)
             while (cursor.moveToNext()) {
                 map[cursor.getString(0)] = cursor.getString(1)

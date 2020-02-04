@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="schedule_colors">
-        <item>#F44336</item>
         <item>#FFC107</item>
-        <item>#673AB7</item>
-        <item>#03A9F4</item>
-        <item>#009688</item>
-        <item>#3F51B5</item>
-        <item>#CDDC39</item>
+        <item>#00BCD4</item>
+        <item>#FF9800</item>
+        <item>#8BC34A</item>
+        <item>#2196F3</item>
+        <item>#FF17A8</item>
+        <item>#AB85EE</item>
+        <item>#2EFF63</item>
+        <item>#FF6E17</item>
+        <item>#2EF9F9</item>
+        <item>#FFFF2E</item>
+        <item>#02EAC8</item>
+        <item>#FF17E2</item>
+        <item>#5D46FF</item>
+        <item>#F5FAA2</item>
+        <item>#46B9FF</item>
+        <item>#97FF2E</item>
+        <item>#FF3417</item>
+        <item>#2E63FF</item>
+        <item>#E2FF17</item>
+        <item>#E217FF</item>
+        <item>#F0A0A0</item>
+        <item>#FF972E</item>
+        <item>#2196F3</item>
+        <item>#CDDC49</item>
+        <item>#FF176E</item>
+        <item>#A817FF</item>
     </array>
 </resources>

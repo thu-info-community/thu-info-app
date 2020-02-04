@@ -15,6 +15,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
+import com.unidy2002.thuinfo.data.util.save
+import com.unidy2002.thuinfo.data.util.toBitmap
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
@@ -34,6 +36,13 @@ class ScheduleFragment : Fragment() {
         super.onStart()
 
         with(scheduleViewModel) {
+            scheduleWeek.observe(this@ScheduleFragment, Observer {
+                it?.run {
+                    view?.findViewById<Button>(R.id.schedule_minus)?.isEnabled = this > 1
+                    view?.findViewById<Button>(R.id.schedule_plus)?.isEnabled = this < SchoolCalendar.weekCount
+                    thread { getData(context) }
+                }
+            })
             scheduleData.observe(this@ScheduleFragment, Observer {
                 it?.run {
                     error?.run result@{ context?.run { Toast.makeText(this, this@result, Toast.LENGTH_SHORT).show() } }
@@ -41,13 +50,6 @@ class ScheduleFragment : Fragment() {
                     view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
                     view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
                     view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
-                }
-            })
-            scheduleWeek.observe(this@ScheduleFragment, Observer {
-                it?.run {
-                    view?.findViewById<Button>(R.id.schedule_minus)?.isEnabled = this > 1
-                    view?.findViewById<Button>(R.id.schedule_plus)?.isEnabled = this < SchoolCalendar.weekCount
-                    thread { getData(context) }
                 }
             })
             scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
@@ -77,12 +79,27 @@ class ScheduleFragment : Fragment() {
                 NavHostFragment.findNavController(this).navigate(R.id.customizeFragment)
             }
 
-        view?.findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener { }
+        view?.findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener {
+            try {
+                view!!.findViewById<GridLayout>(R.id.table_grid).toBitmap().save(
+                    context!!, getString(R.string.schedule_title_template, scheduleViewModel.scheduleWeek.value)
+                )
+                Toast.makeText(context, R.string.save_to_gallery_succeed, Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                try {
+                    Toast.makeText(context, R.string.save_fail_string, Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     private fun updateUI(schedule: Schedule) {
         scheduleViewModel.scheduleWeek.value?.run weekNumber@{
             val date = SchoolCalendar(this, 1)
+            val today = SchoolCalendar()
 
             view?.run {
                 findViewById<TextView>(R.id.schedule_title).text = getString(R.string.week_title, this@weekNumber)
@@ -100,7 +117,7 @@ class ScheduleFragment : Fragment() {
                         if (!useStd) height = 130
                         gravity = CENTER
                         color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
-                        if (begin == 0 && date == SchoolCalendar()) setTextColor(
+                        if (begin == 0 && date == today) setTextColor(
                             resources.getColor(
                                 R.color.colorAccent,
                                 null
@@ -124,7 +141,7 @@ class ScheduleFragment : Fragment() {
                     )
                     schedule.lessonList.filter { it.date.time == date.timeInMillis }.forEach {
                         addView(
-                            getString(R.string.abbr_locale, schedule.shortenTitle(it.title), it.locale),
+                            getString(R.string.abbr_locale, schedule.abbr(it.title), it.locale),
                             schedule.colorMap[it.title] ?: 0,
                             it.begin,
                             it.end - it.begin + 1

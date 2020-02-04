@@ -26,14 +26,9 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
     }
 
     companion object {
-        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2019, Month.SEPTEMBER.ordinal, 9) }
-        val lastDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.JANUARY.ordinal, 12) }
-        val firstDayShortestString: String
-            get() = SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(firstDay.timeInMillis)
-        val lastDayShortestString: String
-            get() = SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(lastDay.timeInMillis)
+        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.FEBRUARY.ordinal, 17) }
         val weekCount = 18
-        val semesterType = SemesterType.AUTUMN
+        val semesterType = SemesterType.SPRING
     }
 
     enum class SemesterType { SPRING, SUMMER, AUTUMN }

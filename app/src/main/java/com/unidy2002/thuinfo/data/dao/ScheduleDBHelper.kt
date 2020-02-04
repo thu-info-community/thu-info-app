@@ -11,7 +11,6 @@ class ScheduleDBHelper(context: Context?, version: Int) :
         db.execSQL(
             "create table lesson (\n" +
                     "title String,\n" +
-                    "abbr String,\n" +
                     "locale String,\n" +
                     "date Long,\n" +
                     "beginning Integer,\n" +
@@ -20,7 +19,6 @@ class ScheduleDBHelper(context: Context?, version: Int) :
         db.execSQL(
             "create table exam (\n" +
                     "title String,\n" +
-                    "abbr String,\n" +
                     "locale String,\n" +
                     "date Long,\n" +
                     "beginning Long,\n" +
@@ -29,7 +27,6 @@ class ScheduleDBHelper(context: Context?, version: Int) :
         db.execSQL(
             "create table auto (\n" +
                     "origin String,\n" +
-                    "avail Boolean,\n" +
                     "dest String)"
         )
         db.execSQL(
