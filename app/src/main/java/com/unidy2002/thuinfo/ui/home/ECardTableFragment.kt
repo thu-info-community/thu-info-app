@@ -21,13 +21,8 @@ import com.unidy2002.thuinfo.data.model.tables.ECardRecord
 import kotlin.concurrent.thread
 
 class ECardTableFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_e_card_table, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_e_card_table, container, false)
 
     private fun updateUI(result: ECardRecord?) {
         if (result == null) {
@@ -50,19 +45,19 @@ class ECardTableFragment : Fragment() {
         view?.findViewById<Button>(R.id.refresh)?.isEnabled = true
     }
 
-    private val handler = Handler()
-
     private fun getData() {
-        Network().getECard().run { handler.post { updateUI(this) } }
+        Network().getECard().run { view?.handler?.post { updateUI(this) } }
     }
 
     override fun onStart() {
         val why = view?.findViewById<Button>(R.id.why)
         why?.setOnClickListener {
-            AlertDialog.Builder(view?.context!!)
-                .setTitle(R.string.remainder_not_match)
-                .setMessage(R.string.remainder_explanation)
-                .show()
+            view?.context?.run {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.remainder_not_match)
+                    .setMessage(R.string.remainder_explanation)
+                    .show()
+            }
         }
 
         val refresh = view?.findViewById<Button>(R.id.refresh)

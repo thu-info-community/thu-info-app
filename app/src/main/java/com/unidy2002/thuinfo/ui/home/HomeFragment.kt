@@ -2,7 +2,6 @@ package com.unidy2002.thuinfo.ui.home
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,62 +28,57 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    private val handler = Handler()
-
     override fun onStart() {
-        view?.findViewById<Button>(R.id.report_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.reportFragment)
-        }
-        view?.findViewById<Button>(R.id.physical_exam_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.physicalExamFragment)
-        }
-        view?.findViewById<Button>(R.id.jogging_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.joggingTableFragment)
-        }
-        view?.findViewById<Button>(R.id.classroom_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.classroomWelcomeFragment)
-        }
-        view?.findViewById<Button>(R.id.wentu_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.wentuFragment)
-        }
-        view?.findViewById<Button>(R.id.e_card_query_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.eCardTableFragment)
-        }
-        view?.findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
-            AlertDialog.Builder(view?.context!!)
-                .setTitle(R.string.confirm_lose_card)
-                .setMessage(R.string.op_cannot_undo)
-                .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
-                    thread {
-                        val result = Network().loseCard()
-                        handler.post {
-                            Log.i("LOSE CARD CODE", result.toString())
-                            when (result) {
-                                2 -> Toast.makeText(context, "挂失成功！", Toast.LENGTH_LONG).show()
-                                4 -> AlertDialog.Builder(context).setTitle("请不要重复挂失").setMessage("您的卡片已经处于挂失状态。").show()
-                                5 -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：5]").setMessage("卡片状态无效，无法挂失！").show()
-                                -1 -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：-1]").setMessage("挂失处理失败，没有此卡信息！").show()
-                                -2 -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：-2]").setMessage("挂失处理失败，此卡有效期错误！").show()
-                                -100 -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：-100]").setMessage("挂失处理失败，数据库错误！").show()
-                                7 -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：7]").setMessage("挂失处理失败，挂失服务异常！").show()
-                                null -> Toast.makeText(context, "挂失失败，请稍后重试。", Toast.LENGTH_LONG).show()
-                                else -> AlertDialog.Builder(context).setTitle("一卡通服务端异常[错误代码：$result]").setMessage("挂失处理失败，未知错误！").show()
+        view?.run {
+            findViewById<Button>(R.id.report_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.reportFragment)
+            }
+            findViewById<Button>(R.id.physical_exam_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
+            }
+            findViewById<Button>(R.id.jogging_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
+            }
+            findViewById<Button>(R.id.classroom_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.classroomWelcomeFragment)
+            }
+            findViewById<Button>(R.id.wentu_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.wentuFragment)
+            }
+            findViewById<Button>(R.id.e_card_query_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.eCardTableFragment)
+            }
+            findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
+                AlertDialog.Builder(context)
+                    .setTitle(R.string.confirm_lose_card)
+                    .setMessage(R.string.op_cannot_undo)
+                    .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
+                        thread {
+                            val result = Network().loseCard()
+                            handler.post {
+                                Log.i("LOSE CARD CODE", result.toString())
+                                when (result) {
+                                    2 -> Toast.makeText(context, R.string.挂失成功, Toast.LENGTH_LONG).show()
+                                    4 -> AlertDialog.Builder(context).setTitle(R.string.请不要重复挂失).setMessage(R.string.您的卡片已经处于挂失状态).show()
+                                    5 -> AlertDialog.Builder(context).setTitle(R.string.一卡通服务端异常5).setMessage(R.string.卡片状态无效无法挂失).show()
+                                    -1 -> AlertDialog.Builder(context).setTitle(R.string.一卡通服务端异常_1).setMessage(R.string.挂失处理失败没有此卡信息).show()
+                                    -2 -> AlertDialog.Builder(context).setTitle(R.string.一卡通服务端异常_2).setMessage(R.string.挂失处理失败此卡有效期错误).show()
+                                    -100 -> AlertDialog.Builder(context).setTitle(R.string.一卡通服务端异常_100).setMessage(R.string.挂失处理失败数据库错误).show()
+                                    7 -> AlertDialog.Builder(context).setTitle(R.string.一卡通服务端异常7).setMessage(R.string.挂失处理失败挂失服务异常).show()
+                                    null -> Toast.makeText(context, R.string.挂失失败请稍后重试, Toast.LENGTH_LONG).show()
+                                    else -> AlertDialog.Builder(context).setTitle(
+                                        getString(R.string.一卡通服务端异常, result)
+                                    ).setMessage(R.string.挂失处理失败未知错误).show()
+                                }
                             }
                         }
                     }
-                }
-                .setNegativeButton(R.string.cancel_string) { _, _ -> }
-                .show()
-        }
-        view?.findViewById<Button>(R.id.dorm_score_btn)?.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .navigate(R.id.dormScoreFragment)
+                    .setNegativeButton(R.string.cancel_string) { _, _ -> }
+                    .show()
+            }
+            findViewById<Button>(R.id.dorm_score_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
+            }
         }
         super.onStart()
     }

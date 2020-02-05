@@ -25,6 +25,7 @@
     <string name="dot_mark">·</string>
     <string name="physical_exam_result">体测成绩</string>
     <string name="sunny_jogging">阳光长跑</string>
+    <string name="jogging_no_score">暂无成绩</string>
     <string name="lose_card_string">一键挂失</string>
     <string name="classroom_res">教室资源</string>
     <string name="res_string">资源</string>
@@ -95,6 +96,22 @@
     <string name="confirm_lose_card">您确定要挂失吗？</string>
     <string name="op_cannot_undo">该操作无法撤销。</string>
     <string name="positive_confirm_string">确认</string>
+    <string name="挂失成功">挂失成功！</string>
+    <string name="请不要重复挂失">请不要重复挂失</string>
+    <string name="您的卡片已经处于挂失状态">您的卡片已经处于挂失状态。</string>
+    <string name="一卡通服务端异常5">一卡通服务端异常[错误代码：5]</string>
+    <string name="卡片状态无效无法挂失">卡片状态无效，无法挂失！</string>
+    <string name="一卡通服务端异常_1">一卡通服务端异常[错误代码：-1]</string>
+    <string name="挂失处理失败没有此卡信息">挂失处理失败，没有此卡信息！</string>
+    <string name="一卡通服务端异常_2">一卡通服务端异常[错误代码：-2]</string>
+    <string name="挂失处理失败此卡有效期错误">挂失处理失败，此卡有效期错误！</string>
+    <string name="一卡通服务端异常_100">一卡通服务端异常[错误代码：-100]</string>
+    <string name="挂失处理失败数据库错误">挂失处理失败，数据库错误！</string>
+    <string name="一卡通服务端异常7">一卡通服务端异常[错误代码：7]</string>
+    <string name="挂失处理失败挂失服务异常">挂失处理失败，挂失服务异常！</string>
+    <string name="挂失失败请稍后重试">挂失失败，请稍后重试。</string>
+    <string name="一卡通服务端异常">一卡通服务端异常[错误代码：%1$d]</string>
+    <string name="挂失处理失败未知错误">挂失处理失败，未知错误！</string>
 
     <string name="report_guide_text">Issue、PR</string>
     <string name="report_guide_link">https://github.com/UNIDY2002/THUInfo</string>

@@ -15,21 +15,16 @@ import com.unidy2002.thuinfo.data.model.report.ReportAdapter
 import kotlin.concurrent.thread
 
 class ReportFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_report, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_report, container, false)
 
     private fun getData() {
         thread {
             val report = Network().getReport()
             view?.handler?.post {
+                report ?: context?.run { Toast.makeText(this, R.string.timeout_retry, Toast.LENGTH_SHORT).show() }
                 view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report ?: listOf())
                 view?.findViewById<SwipeRefreshLayout>(R.id.report_swipe_refresh)?.isRefreshing = false
-                report ?: Toast.makeText(context, R.string.timeout_retry, Toast.LENGTH_SHORT).show()
             }
         }
     }

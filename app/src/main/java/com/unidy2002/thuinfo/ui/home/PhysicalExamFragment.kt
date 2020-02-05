@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.ui.home
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -22,37 +21,36 @@ class PhysicalExamFragment : Fragment() {
 
     private fun updateUI(result: Map<String, String?>?) {
         if (result == null) {
-            Toast.makeText(context, R.string.exam_result_not_available, Toast.LENGTH_LONG).show()
+            context?.run { Toast.makeText(this, R.string.exam_result_not_available, Toast.LENGTH_LONG).show() }
         } else {
             view?.findViewById<GridLayout>(R.id.physical_exam_grid)?.apply {
-                val standardWidth = view?.findViewById<TextView>(R.id.physical_exam_pivot)!!.width
-                result.forEach { (key, value) ->
-                    addView(
-                        TextView(context).apply {
-                            text = key
-                            width = standardWidth
-                            gravity = Gravity.END
-                            setPadding(15)
-                        })
-                    addView(
-                        TextView(context).apply {
-                            text = value
-                            width = standardWidth
-                            gravity = Gravity.START
-                            setPadding(15)
-                        })
+                view?.findViewById<TextView>(R.id.physical_exam_pivot)?.width?.run {
+                    result.forEach { (key, value) ->
+                        addView(
+                            TextView(context).apply {
+                                text = key
+                                width = this@run
+                                gravity = Gravity.END
+                                setPadding(15)
+                            })
+                        addView(
+                            TextView(context).apply {
+                                text = value
+                                width = this@run
+                                gravity = Gravity.START
+                                setPadding(15)
+                            })
+                    }
                 }
             }
         }
         view?.findViewById<ProgressBar>(R.id.physical_exam_loading)?.visibility = View.GONE
     }
 
-    private val handler = Handler()
-
     override fun onStart() {
         thread {
             val result = Network().getPhysicalExamResult()
-            handler.post { updateUI(result) }
+            view?.handler?.post { updateUI(result) }
         }
         super.onStart()
     }
