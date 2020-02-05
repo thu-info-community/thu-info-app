@@ -19,7 +19,7 @@
 
     <!-- Strings related to main utilities -->
     <string name="score">成绩</string>
-    <string name="ecard">卡</string>
+    <string name="e_card">卡</string>
     <string name="card_record">消费查询</string>
 
     <!-- Strings showing up in code -->

@@ -1,178 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp">
 
-    <TextView
-            android:id="@+id/score_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/score"
-            android:textSize="15sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <GridLayout
-            android:id="@+id/score_grid"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/score_text"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="1">
+            android:orientation="vertical">
 
-        <Button
-                android:id="@+id/report_btn"
-                android:text="@string/report"/>
+        <TextView
+                android:id="@+id/score_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/score"
+                android:textSize="15sp"/>
 
-        <Button
-                android:id="@+id/physical_exam_btn"
-                android:text="@string/physical_exam_result"/>
+        <GridLayout
+                android:id="@+id/score_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:rowCount="1">
 
-        <Button
-                android:id="@+id/jogging_btn"
-                android:text="@string/sunny_jogging"/>
+            <Button
+                    android:id="@+id/report_btn"
+                    android:text="@string/report"/>
 
-    </GridLayout>
+            <Button
+                    android:id="@+id/physical_exam_btn"
+                    android:text="@string/physical_exam_result"/>
 
-    <View
-            android:id="@+id/score_line"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_margin="5dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintTop_toBottomOf="@id/score_grid"/>
+            <Button
+                    android:id="@+id/jogging_btn"
+                    android:text="@string/sunny_jogging"/>
 
-    <TextView
-            android:id="@+id/res_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/res_string"
-            android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/score_line"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+        </GridLayout>
 
-    <GridLayout
-            android:id="@+id/res_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/res_text"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="1">
+        <View
+                android:id="@+id/score_line"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_margin="5dp"
+                android:background="@color/colorAccent"/>
 
-        <Button
-                android:id="@+id/classroom_btn"
-                android:text="@string/classroom_res"/>
+        <TextView
+                android:id="@+id/res_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/res_string"
+                android:textSize="15sp"/>
 
-    </GridLayout>
+        <GridLayout
+                android:id="@+id/res_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:rowCount="1">
 
-    <View
-            android:id="@+id/res_line"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_margin="5dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintTop_toBottomOf="@id/res_grid"/>
+            <Button
+                    android:id="@+id/classroom_btn"
+                    android:text="@string/classroom_res"/>
 
-    <TextView
-            android:id="@+id/ecard_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/ecard"
-            android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/res_line"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            <Button
+                    android:id="@+id/wentu_btn"
+                    android:text="@string/wentu_string"/>
 
-    <GridLayout
-            android:id="@+id/ecard_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ecard_text"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="1">
+        </GridLayout>
 
-        <Button
-                android:id="@+id/ecard_query_btn"
-                android:text="@string/card_record"/>
+        <View
+                android:id="@+id/res_line"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_margin="5dp"
+                android:background="@color/colorAccent"/>
 
-        <Button
-                android:id="@+id/lose_card_btn"
-                android:text="@string/lose_card_string"/>
+        <TextView
+                android:id="@+id/e_card_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/e_card"
+                android:textSize="15sp"/>
 
-    </GridLayout>
+        <GridLayout
+                android:id="@+id/e_card_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:rowCount="1">
 
-    <View
-            android:id="@+id/ecard_line"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_margin="5dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintTop_toBottomOf="@id/ecard_grid"/>
+            <Button
+                    android:id="@+id/e_card_query_btn"
+                    android:text="@string/card_record"/>
 
-    <TextView
-            android:id="@+id/community_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/community_string"
-            android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@id/ecard_line"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+            <Button
+                    android:id="@+id/lose_card_btn"
+                    android:text="@string/lose_card_string"/>
 
-    <GridLayout
-            android:id="@+id/community_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/community_text"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="1">
+        </GridLayout>
 
-        <Button
-                android:id="@+id/dorm_laf_btn"
-                android:text="@string/dorm_laf_string"
-                android:enabled="false"/>
+        <View
+                android:id="@+id/e_card_line"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_margin="5dp"
+                android:background="@color/colorAccent"/>
 
-        <Button
-                android:id="@+id/dorm_repair_btn"
-                android:text="@string/dorm_repair_string"
-                android:enabled="false"/>
+        <TextView
+                android:id="@+id/community_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/community_string"
+                android:textSize="15sp"/>
 
-        <Button
-                android:id="@+id/dorm_mail_btn"
-                android:text="@string/dorm_mail_string"
-                android:enabled="false"/>
+        <GridLayout
+                android:id="@+id/community_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:orientation="horizontal"
+                android:rowCount="1">
 
-        <Button
-                android:id="@+id/dorm_score_btn"
-                android:text="@string/dorm_score_string"/>
+            <Button
+                    android:id="@+id/dorm_laf_btn"
+                    android:text="@string/dorm_laf_string"
+                    android:enabled="false"/>
 
-    </GridLayout>
+            <Button
+                    android:id="@+id/dorm_repair_btn"
+                    android:text="@string/dorm_repair_string"
+                    android:enabled="false"/>
 
-    <View
-            android:id="@+id/community_line"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_margin="5dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintTop_toBottomOf="@id/community_grid"/>
+            <Button
+                    android:id="@+id/dorm_mail_btn"
+                    android:text="@string/dorm_mail_string"
+                    android:enabled="false"/>
 
+            <Button
+                    android:id="@+id/dorm_score_btn"
+                    android:text="@string/dorm_score_string"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </GridLayout>
+
+        <View
+                android:id="@+id/community_line"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_margin="5dp"
+                android:background="@color/colorAccent"/>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -48,7 +48,11 @@ class HomeFragment : Fragment() {
             NavHostFragment.findNavController(this)
                 .navigate(R.id.classroomWelcomeFragment)
         }
-        view?.findViewById<Button>(R.id.ecard_query_btn)?.setOnClickListener {
+        view?.findViewById<Button>(R.id.wentu_btn)?.setOnClickListener {
+            NavHostFragment.findNavController(this)
+                .navigate(R.id.wentuFragment)
+        }
+        view?.findViewById<Button>(R.id.e_card_query_btn)?.setOnClickListener {
             NavHostFragment.findNavController(this)
                 .navigate(R.id.eCardTableFragment)
         }
