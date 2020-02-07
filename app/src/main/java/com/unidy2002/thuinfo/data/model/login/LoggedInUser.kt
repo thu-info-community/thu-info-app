@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.data.model.login
 
 import com.sun.mail.imap.IMAPStore
-import com.unidy2002.thuinfo.data.model.news.NewsContainer
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import java.util.*
 
@@ -20,8 +19,6 @@ data class LoggedInUser(val userId: String, val password: String) {
     fun userNameInitialized() = ::userName.isInitialized
     fun emailAddressInitialized() = ::emailAddress.isInitialized
     fun imapStoreInitialized() = ::imapStore.isInitialized
-
-    lateinit var newsContainer: NewsContainer
 
     val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false)
 

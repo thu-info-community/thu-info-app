@@ -16,12 +16,11 @@ import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.util.Network
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
-class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewsAdapter(private val newsContainer: NewsContainer) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var avatar: ImageView = view.findViewById(R.id.card_avatar)
         var username: TextView = view.findViewById(R.id.username)
@@ -32,36 +31,27 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class FooterViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    var newsCardList = mutableListOf<NewsItem>()
+    private var newsCardList = emptyList<NewsItem>()
 
-    fun push(newList: MutableList<NewsItem>, force: Boolean) {
+    fun push(force: Boolean) {
         val start = newsCardList.size
-        newsCardList = newList
-        if (force)
-            notifyDataSetChanged()
-        else
-            notifyItemRangeInserted(start, newList.size - start + 1)
+        newsCardList = newsContainer.newsList
+        if (force) notifyDataSetChanged() else notifyItemRangeInserted(start, newsCardList.size - start + 1)
     }
 
     override fun getItemViewType(position: Int) = if (position == newsCardList.size) 1 else 0
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ) =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         if (viewType == 1)
             FooterViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_news_footer, parent, false))
         else
             CardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_news_card, parent, false))
 
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int
-    ) {
-        if (getItemViewType(position) == 0) {
-            val cardViewHolder = holder as CardViewHolder
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (position != newsCardList.size) {
+            holder as CardViewHolder
             val newsCard = newsCardList[position]
-            cardViewHolder.avatar.apply {
+            holder.avatar.apply {
                 setImageResource(
                     when (newsCard.originId) {
                         0 -> R.drawable.avatar00
@@ -73,65 +63,45 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                 )
                 setOnClickListener {
-                    if (this@NewsAdapter::avatarClickListener.isInitialized) {
+                    if (::avatarClickListener.isInitialized)
                         avatarClickListener.onClick(newsCard.originId)
-                    }
                 }
             }
 
-            cardViewHolder.username.text = newsContainer.newsOriginList[newsCard.originId].name
-            cardViewHolder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
-            cardViewHolder.title.text = newsCard.title
-            cardViewHolder.brief.apply {
+            holder.username.text = newsContainer.newsOriginList[newsCard.originId].name
+            holder.time.text = SimpleDateFormat("yyy-MM-dd", Locale.CHINA).format(newsCard.date)
+            holder.title.text = newsCard.title
+            holder.brief.apply {
                 text = SpannableStringBuilder(newsCard.sender).apply {
                     setSpan(StyleSpan(Typeface.BOLD), 0, this.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }.append("：" + newsCard.brief)
-                setLines(4 - cardViewHolder.title.lineCount.run { if (this == 0) 2 else this })
+                setLines(4 - holder.title.lineCount.run { if (this == 0) 2 else this })
             }
 
-            cardViewHolder.itemView.apply {
-                setOnClickListener {
-                    if (this@NewsAdapter::clickListener.isInitialized) {
-                        clickListener.onClick(position)
-                    }
-                }
-
-                setOnLongClickListener {
-                    if (this@NewsAdapter::longClickListener.isInitialized) {
-                        longClickListener.onLongClick(position)
-                    }
-                    true
-                }
+            holder.itemView.setOnClickListener {
+                if (::clickListener.isInitialized)
+                    clickListener.onClick(newsCardList[position].href.replace("amp;", ""))
             }
 
             if (!newsCard.loaded) {
                 newsCard.loaded = true
                 thread {
-                    Network().getPrettyPrintHTML(newsCard.href).run {
-                        newsCard.brief = this
-                            ?.brief
-                            ?.run {
-                                if (this != newsCard.title && this.indexOf(newsCard.title) == 0)
-                                    this.substring(newsCard.title.length)
-                                else
-                                    this
-                            }
-                            ?.also {
-                                newsContainer.newsDBManager.add(newsCard.title, newsCard.href, it)
-                            }
-                            ?: "加载失败"
-                        handler.post { notifyItemChanged(position) }
-                    }
+                    fun String.dry(title: String) = // Don't repeat yourself
+                        if (this != title && indexOf(title) == 0) substring(title.length) else this
+
+                    newsCard.brief = Network().getPrettyPrintHTML(newsCard.href)?.brief?.dry(newsCard.title)
+                        ?.also { newsContainer.newsDBManager.add(newsCard.title, newsCard.href, it) }
+                        ?: "加载失败"
+                    handler.post { notifyItemChanged(position) }
                 }
             }
         }
     }
 
-    override fun getItemCount() =
-        if (newsCardList.isEmpty()) 0 else newsCardList.size + 1
+    override fun getItemCount() = if (newsCardList.isEmpty()) 0 else newsCardList.size + 1
 
     interface OnAvatarClickListener {
-        fun onClick(param: Int)
+        fun onClick(id: Int)
     }
 
     private lateinit var avatarClickListener: OnAvatarClickListener
@@ -141,7 +111,7 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     interface OnItemClickListener {
-        fun onClick(position: Int)
+        fun onClick(href: String)
     }
 
     private lateinit var clickListener: OnItemClickListener
@@ -150,20 +120,10 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.clickListener = listener
     }
 
-    interface OnItemLongClickListener {
-        fun onLongClick(position: Int)
-    }
-
-    private lateinit var longClickListener: OnItemLongClickListener
-
-    fun setOnItemLongClickListener(longClickListener: OnItemLongClickListener) {
-        this.longClickListener = longClickListener
-    }
-
     abstract class OnLoadMoreListener : RecyclerView.OnScrollListener() {
         private var isScrolling = false
 
-        protected abstract fun onLoading(countItem: Int, lastItem: Int)
+        protected abstract fun onLoading()
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             isScrolling = newState == SCROLL_STATE_DRAGGING || newState == SCROLL_STATE_SETTLING
@@ -171,19 +131,15 @@ class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             with(recyclerView.layoutManager as LinearLayoutManager) {
-                val lastItemPosition = this.findLastCompletelyVisibleItemPosition()
-                if (this.itemCount - lastItemPosition <= 4 && !updating) {
+                if (itemCount - findLastCompletelyVisibleItemPosition() <= 4 && !updating) {
                     updating = true
-                    onLoading(itemCount, lastItemPosition)
+                    onLoading()
                 }
             }
         }
     }
 
     private val handler = Handler()
-
-    private val newsContainer: NewsContainer
-        get() = LoginActivity.loginViewModel.getLoggedInUser().newsContainer
 
     companion object {
         var updating = false

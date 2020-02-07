@@ -5,20 +5,15 @@ import android.util.Log
 import com.unidy2002.thuinfo.data.dao.NewsDBManager
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import org.jsoup.Jsoup
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewsContainer(val context: Context) {
+class NewsContainer(context: Context?) {
     val newsList: MutableList<NewsItem> = mutableListOf()
 
     val newsDBManager = NewsDBManager.getInstance(context)
 
-    var state = -1
-
-    enum class NewsOriginType {
-        POST_INFO_L, POST_INFO_T
-    }
+    enum class NewsOriginType { POST_INFO_L, POST_INFO_T }
 
     data class NewsOrigin(
         val url: String,
@@ -30,63 +25,58 @@ class NewsContainer(val context: Context) {
         var currentIndex: Int = 0
     )
 
-    private val prefix =
-        "http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/"
-    private val suffix = "/more?page="
-
     private fun getData(newsOrigin: NewsOrigin) {
         newsOrigin.currentBuffer.clear()
         if (newsOrigin.type != NewsOriginType.POST_INFO_T) {
-            try {
-                Jsoup.connect("$prefix${newsOrigin.url}$suffix${newsOrigin.currentPage}").cookie(
-                    "wengine_vpn_ticket",
-                    LoginActivity.loginViewModel.getLoggedInUser().vpnTicket
-                        .run { substring(this.indexOf('=') + 1) }
-                ).get().select("li").filter {
-                    it.children().isNotEmpty() && it.child(0).tagName() == "em"
-                }.forEach {
-                    val title = it.child(1).text()
-                    val href = it.child(1).attr("abs:href")
-                    val brief = newsDBManager.get(title, href)
-                    newsOrigin.currentBuffer.add(
-                        NewsItem(
-                            newsOrigin.originId,
-                            SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
-                            it.ownText().drop(1).dropLast(1),
-                            title,
-                            brief ?: "加载中……",
-                            href,
-                            brief != null
+            with("http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/${newsOrigin.url}/more?page=${newsOrigin.currentPage}") {
+                try {
+                    Jsoup.connect(this).cookies(
+                        LoginActivity.loginViewModel.getLoggedInUser().vpnTicket.split("; ").mapNotNull {
+                            with(it.split('=')) { if (size == 2) this[0] to this[1] else null }
+                        }.toMap()
+                    ).get().select("li").filter {
+                        it.children().isNotEmpty() && it.child(0).tagName() == "em"
+                    }.forEach {
+                        val title = it.child(1).text()
+                        val href = it.child(1).attr("abs:href")
+                        val brief = newsDBManager.get(title, href)
+                        newsOrigin.currentBuffer.add(
+                            NewsItem(
+                                newsOrigin.originId,
+                                SimpleDateFormat("yyyy.MM.dd", Locale.CHINA).parse(it.child(2).text())!!,
+                                it.ownText().drop(1).dropLast(1),
+                                title,
+                                brief ?: "加载中……",
+                                href,
+                                brief != null
+                            )
                         )
-                    )
+                    }
+                } catch (e: Exception) {
+                    Log.e("CONNECTION", "Error when connecting $this.")
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                Log.e("CONNECTION", "Error when connecting $prefix${newsOrigin.url}$suffix${newsOrigin.currentPage}.")
-                e.printStackTrace()
             }
         }
     }
 
-    private fun getNewBuffer(newsOrigin: NewsOrigin): NewsItem? =
+    private fun getNewBuffer(newsOrigin: NewsOrigin) =
         if (newsOrigin.currentBuffer.isEmpty() && newsOrigin.currentPage != -1)
             null
         else {
             newsOrigin.currentPage++
             newsOrigin.currentIndex = 0
             getData(newsOrigin)
-            if (newsOrigin.currentBuffer.isEmpty())
-                null
-            else
-                newsOrigin.currentBuffer[0]
+            if (newsOrigin.currentBuffer.isEmpty()) null else newsOrigin.currentBuffer[0]
         }
 
-    private fun getCurrentCard(newsOrigin: NewsOrigin): NewsItem? =
+    private fun getCurrentCard(newsOrigin: NewsOrigin) =
         if (newsOrigin.currentIndex < newsOrigin.currentBuffer.size)
             newsOrigin.currentBuffer[newsOrigin.currentIndex]
         else
             getNewBuffer(newsOrigin)
 
-    fun getNews(maximum: Int, clear: Boolean) {
+    fun getNews(state: Int, maximum: Int, clear: Boolean) {
         if (clear) {
             newsList.clear()
             newsOriginList.forEach {
@@ -98,22 +88,15 @@ class NewsContainer(val context: Context) {
             }
         }
         repeat(maximum) {
-            (if (state == -1)
-                newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }
-            else
-                getCurrentCard(newsOriginList[state]))
-                ?.run {
-                    newsList.add(this)
-                    newsOriginList[this.originId].currentIndex++
-                }
+            (if (state == -1) newsOriginList.mapNotNull { getCurrentCard(it) }.maxBy { it.getComparableDate() }
+            else getCurrentCard(newsOriginList[state]))?.run {
+                newsList.add(this)
+                newsOriginList[originId].currentIndex++
+            }
         }
     }
 
-    fun changeState(param: Int) {
-        state = if (state == param) -1 else param
-    }
-
-    val newsOriginList: List<NewsOrigin> = listOf(
+    val newsOriginList = listOf(
         NewsOrigin(
             "jiaowugonggao",
             "教务公告",

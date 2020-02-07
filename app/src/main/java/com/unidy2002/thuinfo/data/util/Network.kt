@@ -443,26 +443,12 @@ class Network {
             }
         }
 
-    fun getNews(mode: MODE, param: Int = 0) {
-        when (mode) {
-            MODE.NONE ->
-                loggedInUser.newsContainer.getNews(10, false)
-            MODE.REFRESH ->
-                loggedInUser.newsContainer.getNews(10, true)
-            MODE.MORE ->
-                loggedInUser.newsContainer.getNews(10, false)
-            MODE.FILTER -> {
-                loggedInUser.newsContainer.changeState(param)
-                loggedInUser.newsContainer.getNews(10, true)
-            }
-        }
-    }
-
     fun getPrettyPrintHTML(url: String): NewsHTML? =
         try {
-            Jsoup.connect(url).cookie(
-                "wengine_vpn_ticket",
-                loggedInUser.vpnTicket.run { substring(this.indexOf('=') + 1) }
+            Jsoup.connect(url).cookies(
+                loggedInUser.vpnTicket.split("; ").mapNotNull {
+                    with(it.split('=')) { if (size == 2) this[0] to this[1] else null }
+                }.toMap()
             ).get().run {
                 when {
                     url.contains("jwcbg") ->
@@ -820,8 +806,6 @@ class Network {
             loggedInUser.vpnTicket
         ).inputStream.close()
     }
-
-    enum class MODE { NONE, REFRESH, MORE, FILTER }
 
     class UserLoginError : Exception()
 

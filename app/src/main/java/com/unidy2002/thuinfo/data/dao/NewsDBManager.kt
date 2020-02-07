@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 
-class NewsDBManager private constructor(context: Context) {
+class NewsDBManager private constructor(context: Context?) {
     private val writableDatabase: SQLiteDatabase = NewsDBHelper(context, 1).writableDatabase
 
     fun add(title: String, url: String, brief: String) {
@@ -36,7 +36,7 @@ class NewsDBManager private constructor(context: Context) {
 
     companion object {
         private var instance: NewsDBManager? = null
-        fun getInstance(context: Context): NewsDBManager {
+        fun getInstance(context: Context?): NewsDBManager {
             if (instance == null) {
                 synchronized(NewsDBManager::class.java) {
                     if (instance == null) {
