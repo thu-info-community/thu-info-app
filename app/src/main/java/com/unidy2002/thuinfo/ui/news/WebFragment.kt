@@ -41,9 +41,6 @@ class WebFragment : Fragment() {
     }
 
     override fun onStart() {
-        CookieManager.getInstance()
-            .setCookie("webvpn.tsinghua.edu.cn", LoginActivity.loginViewModel.getLoggedInUser().vpnTicket)
-
         view?.findViewById<WebView>(R.id.web_view)?.apply {
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {

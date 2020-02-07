@@ -21,7 +21,7 @@ class PhysicalExamFragment : Fragment() {
 
     private fun updateUI(result: Map<String, String?>?) {
         if (result == null) {
-            context?.run { Toast.makeText(this, R.string.exam_result_not_available, Toast.LENGTH_LONG).show() }
+            context?.run { Toast.makeText(this, R.string.exam_result_not_available, Toast.LENGTH_SHORT).show() }
         } else {
             view?.findViewById<GridLayout>(R.id.physical_exam_grid)?.apply {
                 view?.findViewById<TextView>(R.id.physical_exam_pivot)?.width?.run {

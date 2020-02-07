@@ -157,6 +157,10 @@
                     android:id="@+id/dorm_score_btn"
                     android:text="@string/dorm_score_string"/>
 
+            <Button
+                    android:id="@+id/dorm_ele_recharge_btn"
+                    android:text="@string/dorm_ele_recharge_string"/>
+
         </GridLayout>
 
         <View

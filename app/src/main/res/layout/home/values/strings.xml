@@ -38,6 +38,14 @@
     <string name="dorm_mail_string">我的邮条</string>
     <string name="dorm_repair_string">网上报修</string>
     <string name="dorm_score_string">卫生成绩</string>
+    <string name="dorm_ele_recharge_string">电费充值</string>
+    <string name="yuan_string">￥</string>
+    <string name="_0">0</string>
+    <string name="require_alipay_string">该功能需要支付宝</string>
+    <string name="use_alipay_string">使用支付宝付款</string>
+    <string name="cancel_payment_string">取消支付</string>
+    <string name="op_fail_retry">操作失败，请重试</string>
+    <string name="processing_string">正在处理……</string>
     <string name="minus">＜</string>
     <string name="plus">＞</string>
     <string name="classroom_header_string">"第%1$d周 %2$s</string>
