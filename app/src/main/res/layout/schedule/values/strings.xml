@@ -1,13 +1,6 @@
 <resources>
     <string name="week_title">第%1$d周</string>
     <string name="abbr_locale">%1$s@%2$s</string>
-    <string name="mon">周一</string>
-    <string name="tue">周二</string>
-    <string name="wed">周三</string>
-    <string name="thu">周四</string>
-    <string name="fri">周五</string>
-    <string name="sat">周六</string>
-    <string name="sun">周日</string>
     <string-array name="weeks">
         <item>未知</item>
         <item>周一</item>

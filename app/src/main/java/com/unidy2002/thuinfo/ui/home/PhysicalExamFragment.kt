@@ -49,7 +49,7 @@ class PhysicalExamFragment : Fragment() {
 
     override fun onStart() {
         thread {
-            val result = Network().getPhysicalExamResult()
+            val result = Network.getPhysicalExamResult()
             view?.handler?.post { updateUI(result) }
         }
         super.onStart()

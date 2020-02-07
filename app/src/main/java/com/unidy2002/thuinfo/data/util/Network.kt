@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
-class Network {
+object Network {
     private val loggedInUser: LoggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 
     private fun <T : HttpURLConnection> connect(
@@ -66,6 +66,10 @@ class Network {
                     .also { cookie -> cookieManager.setCookie("webvpn.tsinghua.edu.cn", cookie) }
             }
             .also { Log.i("VPN TICKET", it) }
+        if (Thread.interrupted()) {
+            Log.i("interrupt", "login [0]")
+            throw InterruptedException()
+        }
 
         // Login to webvpn
         connect<HttpsURLConnection>(
@@ -94,6 +98,10 @@ class Network {
             reader.close()
             close()
         }
+        if (Thread.interrupted()) {
+            Log.i("interrupt", "login [1]")
+            throw InterruptedException()
+        }
 
         // Login to tsinghua info
         connect<HttpsURLConnection>(
@@ -102,6 +110,10 @@ class Network {
             loggedInUser.vpnTicket,
             "redirect=NO&userName=${loggedInUser.userId}&password=${loggedInUser.password}&x=0&y=0"
         ).inputStream.close()
+        if (Thread.interrupted()) {
+            Log.i("interrupt", "login [2]")
+            throw InterruptedException()
+        }
 
         // Invalidate zhjw session
         connect<HttpsURLConnection>(
@@ -109,6 +121,10 @@ class Network {
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
             loggedInUser.vpnTicket
         ).inputStream.close()
+        if (Thread.interrupted()) {
+            Log.i("interrupt", "login [3]")
+            throw InterruptedException()
+        }
     }
 
     fun getUsername() {

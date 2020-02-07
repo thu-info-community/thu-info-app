@@ -71,7 +71,7 @@ class ClassroomTableViewModel : ViewModel() {
         _currentWeek.value?.run {
             val currentLoading = this + increment
             if (currentLoading in 1..SchoolCalendar.weekCount && ::classroom.isInitialized) {
-                val data = Network().getClassroomState(classroom, currentLoading)
+                val data = Network.getClassroomState(classroom, currentLoading)
                 _currentWeek.value?.run {
                     if (currentLoading == this + increment) {
                         when (increment) {

@@ -11,7 +11,7 @@ class LoginDataSource {
     fun login(username: String, password: String): Result<LoggedInUser> {
         return try {
             val loggedInUser = LoggedInUser(username, password)
-            Network().login(loggedInUser)
+            Network.login(loggedInUser)
             Result.Success(loggedInUser)
         } catch (e: Network.UserLoginError) {
             Result.Error(e)
@@ -23,7 +23,7 @@ class LoginDataSource {
 
     fun logout() {
         try {
-            Network().logout()
+            Network.logout()
         } catch (e: Exception) {
             e.printStackTrace()
         }

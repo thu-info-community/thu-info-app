@@ -20,7 +20,7 @@ class ReportFragment : Fragment() {
 
     private fun getData() {
         thread {
-            val report = Network().getReport()
+            val report = Network.getReport()
             view?.handler?.post {
                 report ?: context?.run { Toast.makeText(this, R.string.timeout_retry, Toast.LENGTH_SHORT).show() }
                 view?.findViewById<RecyclerView>(R.id.report_recycler_view)?.adapter = ReportAdapter(report ?: listOf())

@@ -17,7 +17,7 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
     val scheduleWeek: LiveData<Int> = _scheduleWeek
 
     fun getData(context: Context?, force: Boolean = false) {
-        _scheduleData.postValue(with(Network().getSchedule(context, force)) {
+        _scheduleData.postValue(with(Network.getSchedule(context, force)) {
             if (this == null)
                 ScheduleResult(error = R.string.load_fail_string)
             else

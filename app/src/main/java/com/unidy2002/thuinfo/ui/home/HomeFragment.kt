@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
                     .setMessage(R.string.op_cannot_undo)
                     .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
                         thread {
-                            val result = Network().loseCard()
+                            val result = Network.loseCard()
                             handler.post {
                                 Log.i("LOSE CARD CODE", result.toString())
                                 when (result) {
@@ -107,7 +107,7 @@ class HomeFragment : Fragment() {
 
                                         override fun onConfirm(value: Int) {
                                             thread = thread {
-                                                with(Network().getEleRechargePayCode(value)) code@{
+                                                with(Network.getEleRechargePayCode(value)) code@{
                                                     if (this == null) {
                                                         showFailure()
                                                     } else {

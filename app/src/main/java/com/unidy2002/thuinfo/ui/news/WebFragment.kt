@@ -6,16 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.DownloadCompleteReceiver
+import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.downloadBySystem
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
 
 class WebFragment : Fragment() {
@@ -28,7 +26,7 @@ class WebFragment : Fragment() {
 
     private fun loadURL(view: WebView, url: String) {
         thread {
-            Network().getPrettyPrintHTML(url).run {
+            Network.getPrettyPrintHTML(url).run {
                 view.handler.post {
                     if (this == null) {
                         view.loadUrl(url)

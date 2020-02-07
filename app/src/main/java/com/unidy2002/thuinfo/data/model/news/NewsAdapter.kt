@@ -89,7 +89,7 @@ class NewsAdapter(private val newsContainer: NewsContainer) : RecyclerView.Adapt
                     fun String.dry(title: String) = // Don't repeat yourself
                         if (this != title && indexOf(title) == 0) substring(title.length) else this
 
-                    newsCard.brief = Network().getPrettyPrintHTML(newsCard.href)?.brief?.dry(newsCard.title)
+                    newsCard.brief = Network.getPrettyPrintHTML(newsCard.href)?.brief?.dry(newsCard.title)
                         ?.also { newsContainer.newsDBManager.add(newsCard.title, newsCard.href, it) }
                         ?: "加载失败"
                     handler.post { notifyItemChanged(position) }

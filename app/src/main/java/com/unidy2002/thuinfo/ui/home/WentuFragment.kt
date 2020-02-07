@@ -73,7 +73,7 @@ class WentuFragment : Fragment() {
         val wentuData: LiveData<List<Pair<String, Pair<Int, Int>>>> = _wentuData
 
         fun getData() {
-            thread { _wentuData.postValue(Network().getWentuState()) }
+            thread { _wentuData.postValue(Network.getWentuState()) }
         }
     }
 

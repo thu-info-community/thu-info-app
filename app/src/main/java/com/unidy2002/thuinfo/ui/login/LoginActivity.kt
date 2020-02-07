@@ -22,6 +22,7 @@ import com.unidy2002.thuinfo.data.util.*
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import io.reactivex.disposables.Disposable
 import kotlin.concurrent.thread
+import kotlin.math.log
 
 
 class LoginActivity : AppCompatActivity() {
@@ -50,18 +51,20 @@ class LoginActivity : AppCompatActivity() {
         })
         loginViewModel.loginResult.observe(this, Observer {
             it?.run {
-                loading.visibility = View.GONE
-                if (error != null) {
-                    showLoginFailed(error)
-                    username.isEnabled = true
-                    password.isEnabled = true
-                    login.isEnabled = true
-                    remember.isEnabled = true
-                } else if (success != null) {
-                    updateData(success)
-                    setResult(Activity.RESULT_OK)
-                    startActivity(Intent().apply { setClass(this@LoginActivity, MainActivity::class.java) })
-                    finish()
+                if (!inReportState) {
+                    loading.visibility = View.GONE
+                    if (error != null) {
+                        showLoginFailed(error)
+                        username.isEnabled = true
+                        password.isEnabled = true
+                        login.isEnabled = true
+                        remember.isEnabled = true
+                    } else if (success != null) {
+                        updateData(success)
+                        setResult(Activity.RESULT_OK)
+                        startActivity(Intent().apply { setClass(this@LoginActivity, MainActivity::class.java) })
+                        finish()
+                    }
                 }
             }
         })
@@ -129,12 +132,24 @@ class LoginActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.login_to_report).setOnClickListener {
+            try {
+                loginThread?.interrupt()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            inReportState = true
+            loading.visibility = View.GONE
+            username.isEnabled = true
+            password.isEnabled = true
+            login.isEnabled = true
+            remember.isEnabled = true
             AlertDialog.Builder(this)
                 .setTitle(R.string.report_guide_text)
                 .setView(R.layout.report_guide)
                 .setPositiveButton(R.string.report_guide_quick) { _, _ ->
                     startActivity(Intent().apply { setClass(this@LoginActivity, ReportActivity::class.java) })
                 }
+                .setOnCancelListener { inReportState = false }
                 .show()
         }
     }
@@ -147,7 +162,13 @@ class LoginActivity : AppCompatActivity() {
         findViewById<CheckBox>(R.id.remember).isEnabled = false
         username.isEnabled = false
         password.isEnabled = false
-        thread { loginViewModel.login(username.text.toString(), password.text.toString()) }
+        loginThread = thread {
+            try {
+                loginViewModel.login(username.text.toString(), password.text.toString())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun updateData(model: LoggedInUser) {
@@ -177,6 +198,14 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
+    override fun onResume() {
+        inReportState = false
+        super.onResume()
+    }
+
+    private var loginThread: Thread? = null
+    private var inReportState = false
 
     private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         this.addTextChangedListener(object : TextWatcher {

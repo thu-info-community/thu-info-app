@@ -23,7 +23,7 @@ class DormScoreFragment : Fragment() {
 
     override fun onStart() {
         thread {
-            val result = Network().getDormScore()
+            val result = Network.getDormScore()
             view?.run {
                 context?.run c@{
                     handler?.post {

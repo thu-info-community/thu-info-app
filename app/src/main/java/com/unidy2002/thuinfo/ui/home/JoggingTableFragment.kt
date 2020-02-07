@@ -32,7 +32,7 @@ class JoggingTableFragment : Fragment() {
 
     override fun onStart() {
         thread {
-            val result = Network().getJoggingRecord()
+            val result = Network.getJoggingRecord()
             view?.handler?.post { updateUI(result) }
         }
         super.onStart()

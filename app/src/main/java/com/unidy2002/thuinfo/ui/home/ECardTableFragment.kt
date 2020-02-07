@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.ui.home
 
 import android.os.Bundle
-import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
@@ -16,8 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bin.david.form.core.SmartTable
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.model.tables.ECardRecord
+import com.unidy2002.thuinfo.data.util.Network
 import kotlin.concurrent.thread
 
 class ECardTableFragment : Fragment() {
@@ -46,7 +45,7 @@ class ECardTableFragment : Fragment() {
     }
 
     private fun getData() {
-        Network().getECard().run { view?.handler?.post { updateUI(this) } }
+        Network.getECard().run { view?.handler?.post { updateUI(this) } }
     }
 
     override fun onStart() {

@@ -55,10 +55,10 @@ class MainActivity : AppCompatActivity() {
             if (destination.id in topLevelDestinationIds) refreshBadge(false)
         }
 
-        thread { Network().getTicket(792) }
-        thread { Network().getTicket(824) }
+        thread { Network.getTicket(792) }
+        thread { Network.getTicket(824) }
         thread {
-            Network().getUsername()
+            Network.getUsername()
             try {
                 handler.post { findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName }
             } catch (e: Exception) {
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         thread {
-            Network().getTicket(-1)
+            Network.getTicket(-1)
             try {
                 handler.post { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
             } catch (e: Exception) {
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                         .show()
                 R.id.navigation_logout -> {
                     thread {
-                        Network().logout()
+                        Network.logout()
                         handler.post {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
