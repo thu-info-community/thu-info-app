@@ -19,9 +19,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.unidy2002.thuinfo.data.util.Email.connectImap
+import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.Network
-import com.unidy2002.thuinfo.data.util.connectImap
-import com.unidy2002.thuinfo.data.util.getInboxUnread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.login.LoginActivity
 import com.unidy2002.thuinfo.ui.report.ReportActivity

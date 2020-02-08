@@ -4,15 +4,15 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -21,13 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.getEmailList
-import com.unidy2002.thuinfo.data.util.openInbox
-import com.unidy2002.thuinfo.data.util.openSent
 import com.unidy2002.thuinfo.data.model.email.EmailListAdapter
 import com.unidy2002.thuinfo.data.model.email.EmailModel
-import com.unidy2002.thuinfo.ui.email.EmailActivity.Companion.inboxFolder
-import com.unidy2002.thuinfo.ui.email.EmailActivity.Companion.sentFolder
+import com.unidy2002.thuinfo.data.util.Email.folder
+import com.unidy2002.thuinfo.data.util.Email.getEmailList
+import com.unidy2002.thuinfo.data.util.Email.openFolder
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -47,136 +45,138 @@ class EmailListFragment : Fragment() {
         return root
     }
 
-    private val handler = Handler()
-
     override fun onStart() {
-        arguments?.getBoolean("inbox")?.run {
-            view?.findViewById<RecyclerView>(R.id.email_list_recycler_view)?.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = EmailListAdapter(this@run).apply {
-                    setOnItemClickListener(object : EmailListAdapter.OnItemClickListener {
-                        override fun onClick(index: Int, emailModel: EmailModel) {
-                            view?.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh)?.visibility = GONE
-                            view?.findViewById<LinearLayout>(R.id.email_content_layout)?.visibility = VISIBLE
-                            view?.findViewById<TextView>(R.id.email_content_title)?.text = emailModel.subject
-                            view?.findViewById<TextView>(R.id.email_content_sender)?.text = emailModel.from.toString()
-                            view?.findViewById<TextView>(R.id.email_content_time)?.text =
-                                SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(emailModel.date)
-                            view?.findViewById<TextView>(R.id.email_content_receiver)?.text =
-                                emailModel.to.joinToString("; ")
-                            view?.findViewById<WebView>(R.id.email_content_view)?.apply {
-                                // settings.javaScriptEnabled = true
-                                // addJavascriptInterface(this@EmailListFragment, "thuinfo")
-                                loadData("", "text/plain", "utf-8")
-                            }
-                            val modeText = view?.findViewById<TextView>(R.id.email_content_mode)
-                            modeText?.text = ""
-                            modeText?.isEnabled = false
-                            thread {
-                                currentContent = emailModel.content
-                                handler?.post {
-                                    if (currentContent.hasHtml) {
-                                        view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                                            currentContent.htmlView(), "text/html", "utf-8"
-                                        ) // TODO: parse cid value (hint - part.getHeader("Content-Id") to match cid)
-                                        if (currentContent.hasPlain) {
-                                            modeText?.text = resources.getString(R.string.email_plain_string)
-                                            modeText?.isEnabled = true
+        // Two modules in one
+        val swipeRefresh = view?.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh)
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.email_list_recycler_view)
+        val contentLayout = view?.findViewById<LinearLayout>(R.id.email_content_layout)
+        val webView = view?.findViewById<WebView>(R.id.email_content_view)
+
+        // Email list related
+        arguments?.getString("folder")?.run folder@{
+            recyclerView?.layoutManager = LinearLayoutManager(context)
+            recyclerView?.adapter = EmailListAdapter().apply {
+                setOnItemClickListener(object : EmailListAdapter.OnItemClickListener {
+                    override fun onClick(index: Int) {
+                        thread {
+                            try {
+                                folder[this@folder]?.get(index)?.run {
+                                    with(EmailModel(this)) {
+                                        currentContent = content
+                                        activity?.runOnUiThread {
+                                            swipeRefresh?.visibility = GONE
+                                            contentLayout?.visibility = VISIBLE
+                                            webView?.loadData("", "text/plain", "utf-8")
+                                            view?.findViewById<TextView>(R.id.email_content_title)?.text = subject
+                                            view?.findViewById<TextView>(R.id.email_content_sender)?.text =
+                                                from.toString()
+                                            view?.findViewById<TextView>(R.id.email_content_time)?.text =
+                                                SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(date)
+                                            view?.findViewById<TextView>(R.id.email_content_receiver)?.text =
+                                                to.joinToString("; ")
+                                            val modeText = view?.findViewById<TextView>(R.id.email_content_mode)
+                                            modeText?.text = ""
+                                            modeText?.isEnabled = false
+                                            if (!isRead) {
+                                                isRead = true
+                                                (recyclerView?.adapter as? EmailListAdapter)?.markRead(index)
+                                            }
+                                            if (content.hasHtml) {
+                                                webView?.loadData(content.html, "text/html", "utf-8")
+                                                if (content.hasPlain) {
+                                                    modeText?.setText(R.string.email_plain_string)
+                                                    modeText?.isEnabled = true
+                                                }
+                                            } else if (content.hasPlain) {
+                                                webView?.loadData(content.plain, "text/plain", "utf-8")
+                                            } else {
+                                                webView?.loadData("加载失败", "text/plain", "utf-8")
+                                            }
                                         }
-                                    } else if (currentContent.hasPlain) {
-                                        view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                                            currentContent.plain, "text/plain", "utf-8"
-                                        )
-                                    } else {
-                                        view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                                            resources.getString(R.string.load_fail_string), "text/plain", "utf-8"
-                                        )
                                     }
                                 }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                            if (!emailModel.isRead) emailModel.isRead = true
-                            adapter?.notifyItemChanged(index)
                         }
-                    })
-                }
+                    }
+                })
             }
 
             fun fetchData(force: Boolean) { // TODO: 10 at a time
                 try {
-                    val result = if (this) {
-                        openInbox(force)
-                        getEmailList(inboxFolder)
-                    } else {
-                        openSent(force)
-                        getEmailList(sentFolder)
-                    }
-                    activity?.run {
-                        handler.post {
-                            (view?.findViewById<RecyclerView>(R.id.email_list_recycler_view)?.adapter as? EmailListAdapter)
-                                ?.push(result, true)
+                    openFolder(this, force)
+                    folder[this]?.run {
+                        with(getEmailList(this@folder, this)) {
+                            activity?.runOnUiThread { (recyclerView?.adapter as? EmailListAdapter)?.push(this, true) }
                         }
                     }
                 } catch (e: TimeoutException) {
                     e.printStackTrace()
-                    Toast.makeText(context, resources.getString(R.string.email_timeout_string), Toast.LENGTH_SHORT)
-                        .show()
+                    context?.run { Toast.makeText(this, R.string.email_timeout_string, Toast.LENGTH_SHORT).show() }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(context, resources.getString(R.string.email_exception_string), Toast.LENGTH_SHORT)
-                        .show()
+                    context?.run { Toast.makeText(this, R.string.email_exception_string, Toast.LENGTH_SHORT).show() }
                 } finally {
-                    view?.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh)?.isRefreshing = false
+                    swipeRefresh?.isRefreshing = false
                 }
             }
 
-            val swipeRefresh = view?.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh)
-            swipeRefresh?.isRefreshing = true
-            swipeRefresh?.setColorSchemeResources(R.color.colorAccent)
-            swipeRefresh?.setOnRefreshListener {
-                thread { fetchData(true) }
+            swipeRefresh?.apply {
+                isRefreshing = true
+                setColorSchemeResources(R.color.colorAccent)
+                setOnRefreshListener { thread { fetchData(true) } }
             }
+
             thread { fetchData(false) }
         }
+
+        // Email content related
         view?.findViewById<TextView>(R.id.email_content_back)?.setOnClickListener {
-            view?.findViewById<LinearLayout>(R.id.email_content_layout)?.visibility = GONE
-            view?.findViewById<SwipeRefreshLayout>(R.id.email_list_swipe_refresh)?.visibility = VISIBLE
+            contentLayout?.visibility = GONE
+            swipeRefresh?.visibility = VISIBLE
         }
+
         view?.findViewById<TextView>(R.id.email_content_mode)?.apply {
             setOnClickListener {
                 try {
                     if (text == resources.getString(R.string.email_plain_string) && currentContent.hasPlain) {
                         text = resources.getString(R.string.email_html_string)
-                        view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                            currentContent.plain, "text/plain", "utf-8"
-                        )
+                        webView?.loadData(currentContent.plain, "text/plain", "utf-8")
                     } else if (text == resources.getString(R.string.email_html_string) && currentContent.hasHtml) {
                         text = resources.getString(R.string.email_plain_string)
-                        view?.findViewById<WebView>(R.id.email_content_view)?.loadData(
-                            currentContent.htmlView(), "text/html", "utf-8"
-                        )
+                        webView?.loadData(currentContent.html, "text/html", "utf-8")
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    try {
-                        Toast.makeText(context, R.string.email_op_fail, Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    context?.run { Toast.makeText(this, R.string.email_op_fail, Toast.LENGTH_SHORT).show() }
                 }
             }
         }
+
+        // Allows web view to display inline images
+        webView?.apply {
+            settings.allowUniversalAccessFromFileURLs = true
+            settings.allowFileAccess = true
+            settings.allowFileAccessFromFileURLs = true
+            webViewClient = object : WebViewClient() {
+                override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                    if (request.url.scheme == "cid")
+                        try {
+                            currentContent.images[request.url.toString().run { substring(indexOf("cid") + 4) }]?.inputStream?.run {
+                                val result = WebResourceResponse("image/*", "UTF-8", this)
+                                close()
+                                return result
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    return super.shouldInterceptRequest(view, request)
+                }
+            }
+        }
+
         super.onStart()
-    }
-
-    @JavascriptInterface
-    fun inline(id: Int) {
-        Log.i("Email download", "inline $id")
-        emailDownload(currentContent.inlines[id])
-    }
-
-    @JavascriptInterface
-    fun attachment(id: Int) {
-        emailDownload(currentContent.inlines[id])
     }
 
     private fun emailDownload(part: Part) {
@@ -203,9 +203,12 @@ class EmailListFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {
-                    handler.post {
-                        Toast.makeText(activity, getString(R.string.download_fail_string), Toast.LENGTH_SHORT)
-                            .show()
+                    activity?.runOnUiThread {
+                        Toast.makeText(
+                            activity,
+                            R.string.download_fail_string,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

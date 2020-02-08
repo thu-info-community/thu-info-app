@@ -2,7 +2,6 @@ package com.unidy2002.thuinfo.ui.email
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -13,16 +12,15 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.connectImap
+import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.ui.login.LoginActivity
-import javax.mail.Message
 import kotlin.concurrent.thread
 
 class EmailActivity : AppCompatActivity() {
 
     val viewList = listOf(
-        EmailListFragment().apply { arguments = Bundle().apply { putBoolean("inbox", true) } },
-        EmailListFragment().apply { arguments = Bundle().apply { putBoolean("inbox", false) } },
+        EmailListFragment().apply { arguments = Bundle().apply { putString("folder", "inbox") } },
+        EmailListFragment().apply { arguments = Bundle().apply { putString("folder", "sent items") } },
         EmailWriteFragment()
     )
 
@@ -47,10 +45,10 @@ class EmailActivity : AppCompatActivity() {
             thread {
                 try {
                     connectImap(loggedInUser.emailAddress, loggedInUser.password)
-                    handler.post { updateUI() }
+                    runOnUiThread { updateUI() }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    handler.post {
+                    runOnUiThread {
                         findViewById<ProgressBar>(R.id.config_loading).visibility = View.GONE
                         Toast.makeText(this, R.string.login_error_retry, Toast.LENGTH_LONG).show()
                     }
@@ -68,7 +66,7 @@ class EmailActivity : AppCompatActivity() {
                         try {
                             val email = input.name.text.toString() + input.host.selectedItem.toString()
                             connectImap(email, loggedInUser.password)
-                            handler.post {
+                            runOnUiThread {
                                 updateUI()
                                 getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).edit().run {
                                     loggedInUser.emailAddress = email
@@ -81,7 +79,7 @@ class EmailActivity : AppCompatActivity() {
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            handler.post {
+                            runOnUiThread {
                                 findViewById<ProgressBar>(R.id.config_loading).visibility = View.GONE
                                 configure(false)
                             }
@@ -168,16 +166,6 @@ class EmailActivity : AppCompatActivity() {
     }
 
     private lateinit var viewPager: ViewPager
-
-    companion object {
-        lateinit var inboxFolder: List<Message>
-        lateinit var sentFolder: List<Message>
-
-        val inboxInitialized: Boolean get() = ::inboxFolder.isInitialized
-        val sentInitialized: Boolean get() = ::sentFolder.isInitialized
-    }
-
-    private val handler = Handler()
 
     private val loggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 }

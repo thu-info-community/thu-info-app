@@ -47,25 +47,22 @@ class EmailModel(message: Message) {
 
     override fun toString(): String =
         """
-|邮件编号　$messageId
-|发件人　　$from
-|收件人　　${to.joinToString(";")}
-|抄送　　　${cc.joinToString(";")}
-|密送　　　${bcc.joinToString(";")}
-|主题　　　$subject
-|日期　　　$date
-|已读　　　$isRead
-        """.trimMargin()
+邮件编号　$messageId
+发件人　　$from
+收件人　　${to.joinToString(";")}
+抄送　　　${cc.joinToString(";")}
+密送　　　${bcc.joinToString(";")}
+主题　　　$subject
+日期　　　$date
+已读　　　$isRead
+        """.trim()
 
     class EmailFactory(private val message: Message) {
         private val mimeMessage: MimeMessage get() = message as MimeMessage
 
         val messageId: String get() = mimeMessage.messageID
 
-        val from: EmailAddress
-            get() = (EmailAddress(
-                mimeMessage.from[0] as InternetAddress
-            ))
+        val from: EmailAddress get() = (EmailAddress(mimeMessage.from[0] as InternetAddress))
 
         val to: List<EmailAddress> get() = getAddress(Message.RecipientType.TO)
 
@@ -89,16 +86,25 @@ class EmailModel(message: Message) {
                 if (!::contentValue.isInitialized) {
                     val emailContent = EmailContent()
 
+                    fun getCid(part: Part) =
+                        with(part.getHeader("Content-Id")[0]) {
+                            if (matches(Regex("<.*>"))) {
+                                substring(indexOf('<') + 1, lastIndexOf('>'))
+                            } else {
+                                this
+                            }
+                        }
+
                     fun parsePart(part: Part) {
                         when {
                             part.isMimeType("text/plain") ->
                                 emailContent.plain = (part.content as String)
                             part.isMimeType("text/html") ->
                                 emailContent.html = (part.content as String)
-                            part.disposition == Part.ATTACHMENT ->
+                            part.isMimeType("image/*") ->
+                                emailContent.images[getCid(part)] = part
+                            part.disposition == Part.ATTACHMENT || part.disposition == Part.INLINE ->
                                 emailContent.attachments.add(part)
-                            part.disposition == Part.INLINE ->
-                                emailContent.inlines.add(part)
                             part.isMimeType("message/rfc822") ->
                                 parsePart(part.content as Part)
                             part.isMimeType("multipart/*") ->
@@ -128,22 +134,15 @@ class EmailModel(message: Message) {
         lateinit var plain: String
         lateinit var html: String
         val attachments = mutableListOf<Part>()
-        val inlines = mutableListOf<Part>()
+        val images = mutableMapOf<String, Part>()
         val hasPlain: Boolean get() = ::plain.isInitialized
         val hasHtml: Boolean get() = ::html.isInitialized
 
-        fun htmlView() = html
-        /*(if (inlines.isNotEmpty())
-            "<p>内嵌图片暂不支持直接显示，可选择通过附件下载</p>\n"
-        else "") + html +
-                if (inlines.isNotEmpty()) (
-                        "<p>内嵌文件：<br>" + inlines.mapIndexed { index, part ->
-                            "<a href=\"javascript:thuinfo.inline($index)\">${part.fileName}</a>"
-                        }.joinToString("<br>")) + "</p>" else "" +
-                        if (attachments.isNotEmpty()) (
-                                "<p>附件：<br>" + attachments.mapIndexed { index, part ->
-                                    "<a href=\"javascript:thuinfo.attachment($index)\">${part.fileName}</a>"
-                                }.joinToString("<br>")) + "</p>" else ""*/
+        private val attachmentView: String
+            get() = if (attachments.isNotEmpty()) (
+                    "<p>附件：<br>" + attachments.mapIndexed { index, part ->
+                        "<a href=\"javascript:thuinfo.attachment($index)\">${part.fileName}</a>"
+                    }.joinToString("<br>")) + "</p>" else ""
 
         private fun Part.decodedFileName(): String = MimeUtility.decodeText(fileName)
 
@@ -154,7 +153,6 @@ class EmailModel(message: Message) {
             if (hasHtml)
                 result.append("text/html:\n$html\n")
             result.append("attachments: ${attachments.joinToString(", ") { it.decodedFileName() }}\n")
-            result.append("inlines:     ${inlines.joinToString(", ") { it.decodedFileName() }}\n")
             return result.toString()
         }
     }
