@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING
 import com.unidy2002.thuinfo.R
 
 class EmailListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -46,11 +49,13 @@ class EmailListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount() = emailList.size
 
-    fun push(list: List<EmailListModel>, force: Boolean = false) {
-        val start = itemCount
-        if (force) emailList.clear()
-        list.forEach { emailList.add(it) }
-        if (force) notifyDataSetChanged() else notifyItemRangeInserted(start, list.size)
+    fun push(list: List<EmailListModel>, startIndex: Int) {
+        if (startIndex == 0) emailList.clear()
+        if (startIndex == emailList.size) { // Consistency
+            emailList.addAll(list)
+            if (startIndex == 0) notifyDataSetChanged() else notifyItemRangeInserted(startIndex, list.size)
+        }
+        onLoadMoreListener.updating = false
     }
 
     interface OnItemClickListener {
@@ -62,4 +67,28 @@ class EmailListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.clickListener = listener
     }
+
+    lateinit var onLoadMoreListener: OnLoadMoreListener
+
+    abstract class OnLoadMoreListener : RecyclerView.OnScrollListener() {
+        var updating = false
+
+        private var isScrolling = false
+
+        protected abstract fun onLoading()
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            isScrolling = newState == SCROLL_STATE_DRAGGING || newState == SCROLL_STATE_SETTLING
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            with(recyclerView.layoutManager as LinearLayoutManager) {
+                if (itemCount - findLastCompletelyVisibleItemPosition() <= 7 && !updating) {
+                    updating = true
+                    onLoading()
+                }
+            }
+        }
+    }
+
 }

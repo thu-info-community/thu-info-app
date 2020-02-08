@@ -63,8 +63,8 @@ object Email {
         }
     }
 
-    fun getEmailList(folder: String, messages: List<Message>) =
-        messages.map {
+    fun getEmailList(folder: String, messages: List<Message>, startIndex: Int) =
+        messages.subList(startIndex, (startIndex + 15).coerceAtMost(messages.size)).map {
             try {
                 with(EmailModel(it)) {
                     EmailListModel(

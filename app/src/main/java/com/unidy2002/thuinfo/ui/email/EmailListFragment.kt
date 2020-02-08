@@ -54,6 +54,28 @@ class EmailListFragment : Fragment() {
 
         // Email list related
         arguments?.getString("folder")?.run folder@{
+            fun fetchData(force: Boolean) {
+                try {
+                    (recyclerView?.adapter as? EmailListAdapter)?.run {
+                        openFolder(this@folder, force)
+                        folder[this@folder]?.run {
+                            val startIndex = if (force) 0 else itemCount
+                            with(getEmailList(this@folder, this, startIndex)) {
+                                activity?.runOnUiThread { push(this, startIndex) }
+                            }
+                        }
+                    }
+                } catch (e: TimeoutException) {
+                    e.printStackTrace()
+                    context?.run { Toast.makeText(this, R.string.email_timeout_string, Toast.LENGTH_SHORT).show() }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    context?.run { Toast.makeText(this, R.string.email_exception_string, Toast.LENGTH_SHORT).show() }
+                } finally {
+                    swipeRefresh?.isRefreshing = false
+                }
+            }
+
             recyclerView?.layoutManager = LinearLayoutManager(context)
             recyclerView?.adapter = EmailListAdapter().apply {
                 setOnItemClickListener(object : EmailListAdapter.OnItemClickListener {
@@ -102,25 +124,11 @@ class EmailListFragment : Fragment() {
                     }
                 })
             }
-
-            fun fetchData(force: Boolean) { // TODO: 10 at a time
-                try {
-                    openFolder(this, force)
-                    folder[this]?.run {
-                        with(getEmailList(this@folder, this)) {
-                            activity?.runOnUiThread { (recyclerView?.adapter as? EmailListAdapter)?.push(this, true) }
-                        }
-                    }
-                } catch (e: TimeoutException) {
-                    e.printStackTrace()
-                    context?.run { Toast.makeText(this, R.string.email_timeout_string, Toast.LENGTH_SHORT).show() }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    context?.run { Toast.makeText(this, R.string.email_exception_string, Toast.LENGTH_SHORT).show() }
-                } finally {
-                    swipeRefresh?.isRefreshing = false
+            recyclerView?.addOnScrollListener(object : EmailListAdapter.OnLoadMoreListener() {
+                override fun onLoading() {
+                    thread { fetchData(false) }
                 }
-            }
+            }.also { (recyclerView.adapter as? EmailListAdapter)?.onLoadMoreListener = it })
 
             swipeRefresh?.apply {
                 isRefreshing = true
