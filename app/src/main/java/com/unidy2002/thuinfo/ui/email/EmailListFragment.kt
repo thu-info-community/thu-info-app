@@ -1,21 +1,23 @@
 package com.unidy2002.thuinfo.ui.email
 
 import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,10 +36,12 @@ import java.util.concurrent.TimeoutException
 import javax.mail.Part
 import kotlin.concurrent.thread
 
+
 class EmailListFragment : Fragment() {
 
     lateinit var root: View
 
+    private lateinit var currentId: String
     private lateinit var currentContent: EmailModel.EmailContent
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,6 +88,7 @@ class EmailListFragment : Fragment() {
                             try {
                                 folder[this@folder]?.get(index)?.run {
                                     with(EmailModel(this)) {
+                                        currentId = messageId
                                         currentContent = content
                                         activity?.runOnUiThread {
                                             swipeRefresh?.visibility = GONE
@@ -96,6 +101,8 @@ class EmailListFragment : Fragment() {
                                                 SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(date)
                                             view?.findViewById<TextView>(R.id.email_content_receiver)?.text =
                                                 to.joinToString("; ")
+                                            view?.findViewById<ImageView>(R.id.email_content_attachment)?.visibility =
+                                                if (content.attachments.isEmpty()) GONE else VISIBLE
                                             val modeText = view?.findViewById<TextView>(R.id.email_content_mode)
                                             modeText?.text = ""
                                             modeText?.isEnabled = false
@@ -162,6 +169,34 @@ class EmailListFragment : Fragment() {
             }
         }
 
+        view?.findViewById<ImageView>(R.id.email_content_attachment)?.setOnClickListener {
+            try {
+                PopupWindow(
+                    (LayoutInflater.from(context!!).inflate(R.layout.item_attachment_list, null) as ListView).apply {
+                        adapter = ArrayAdapter(
+                            context!!,
+                            R.layout.item_attachment_text,
+                            currentContent.attachments.map { part -> part.fileName })
+                        setOnItemClickListener { _, _, position, _ ->
+                            try {
+                                emailDownload(currentId, currentContent.attachments[position])
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    },
+                    (view!!.width / 1.4).toInt(),
+                    WRAP_CONTENT
+                ).run {
+                    isOutsideTouchable = true
+                    setBackgroundDrawable(ColorDrawable(Color.WHITE))
+                    showAsDropDown(it)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         // Allows web view to display inline images
         webView?.apply {
             settings.allowUniversalAccessFromFileURLs = true
@@ -187,36 +222,43 @@ class EmailListFragment : Fragment() {
         super.onStart()
     }
 
-    private fun emailDownload(part: Part) {
+    /**
+     * This method is awful... But I don't know how to make it better...
+     * (Having poor knowledge of android file system)
+     */
+    private fun emailDownload(messageId: String, attachment: Part) { // TODO: clear cache regularly
         thread {
-            try {
-                if (Build.VERSION.SDK_INT >= 23) {
-                    val permission =
-                        activity!!.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    if (permission != PackageManager.PERMISSION_GRANTED)
-                        requestPermissions(
-                            arrayOf(
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ), 1
-                        )
-                }
-                val inputStream = part.inputStream
-                val outputStream =
-                    FileOutputStream(File("/storage/sdcard0/Download/" + part.fileName))
-                // activity?.openFileOutput(part.fileName, Context.MODE_PRIVATE)
-                outputStream.write(inputStream.readBytes())
+            try {                                                    // TODO: use better way of downloading
+                Toast.makeText(context, R.string.downloading_string, Toast.LENGTH_SHORT).show()
+                val permission = activity!!.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (permission != PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ), 1
+                    )
+                val dir = File("${activity!!.getExternalFilesDir(null)!!.path}/cache/email/$messageId")
+                if (!dir.exists()) dir.mkdirs()
+                val file = File(dir, attachment.fileName).also { println(it.absolutePath) }
+                val outputStream = FileOutputStream(file)
+                outputStream.write(attachment.inputStream.readBytes())
                 outputStream.close()
-                inputStream.close()
+                attachment.inputStream.close()
+                (activity!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).addCompletedDownload(
+                    file.name,
+                    file.name,
+                    true,
+                    attachment.contentType,
+                    file.absolutePath,
+                    file.length(),
+                    true
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {
-                    activity?.runOnUiThread {
-                        Toast.makeText(
-                            activity,
-                            R.string.download_fail_string,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    activity?.run {
+                        runOnUiThread { Toast.makeText(this, R.string.download_fail_string, Toast.LENGTH_SHORT).show() }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

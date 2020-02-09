@@ -10,8 +10,6 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeUtility
 
-// This can also serve as a good example of implementing an email agent
-
 class EmailModel(message: Message) {
     private val emailFactory: EmailFactory
 
@@ -137,12 +135,6 @@ class EmailModel(message: Message) {
         val images = mutableMapOf<String, Part>()
         val hasPlain: Boolean get() = ::plain.isInitialized
         val hasHtml: Boolean get() = ::html.isInitialized
-
-        private val attachmentView: String
-            get() = if (attachments.isNotEmpty()) (
-                    "<p>附件：<br>" + attachments.mapIndexed { index, part ->
-                        "<a href=\"javascript:thuinfo.attachment($index)\">${part.fileName}</a>"
-                    }.joinToString("<br>")) + "</p>" else ""
 
         private fun Part.decodedFileName(): String = MimeUtility.decodeText(fileName)
 

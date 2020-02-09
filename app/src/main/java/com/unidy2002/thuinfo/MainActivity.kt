@@ -167,7 +167,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp() = navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    override fun onSupportNavigateUp() =
+        with(findViewById<WebView>(R.id.web_view)) {
+            if (this != null && this.canGoBack()) {
+                this.goBack()
+                true
+            } else {
+                navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+            }
+        }
 
     override fun onResume() {
         refreshBadge(true)

@@ -36,6 +36,7 @@ class EmailActivity : AppCompatActivity() {
         }
         findViewById<TextView>(R.id.sent_text).isEnabled = true
         findViewById<TextView>(R.id.write_text).isEnabled = true
+        findViewById<TextView>(R.id.remove_config_btn).isEnabled = true
         findViewById<ProgressBar>(R.id.config_loading).visibility = View.GONE
     }
 
@@ -119,6 +120,23 @@ class EmailActivity : AppCompatActivity() {
                 textView.isSelected = true
                 labelList.filterIndexed { id, _ -> id != index }.forEach { it.isSelected = false }
             }
+        }
+
+        findViewById<TextView>(R.id.remove_config_btn).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.remove_config_string)
+                .setMessage(R.string.remove_config_confirm)
+                .setPositiveButton(R.string.positive_confirm_string) { _, _ ->
+                    try {
+                        getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).edit().remove("email").apply()
+                        Toast.makeText(this, R.string.remove_config_success, Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(this, R.string.remove_config_exception, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton(R.string.cancel_string) { _, _ -> }
+                .show()
         }
 
         configure()

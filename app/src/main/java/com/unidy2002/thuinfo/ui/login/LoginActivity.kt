@@ -22,7 +22,6 @@ import com.unidy2002.thuinfo.data.util.*
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import io.reactivex.disposables.Disposable
 import kotlin.concurrent.thread
-import kotlin.math.log
 
 
 class LoginActivity : AppCompatActivity() {
