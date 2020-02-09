@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bug_report_string">反馈</string>
-    <string name="bug_hint_string">请尽量详细地描述发生bug的情境，以方便我们进行问题定位。</string>
+    <string name="bug_hint_string">请尽量详细地描述发生bug的情境，以方便我们进行问题定位。\n或者……提点改进的建议也是好的呀~</string>
     <string name="submit_string">提交</string>
     <string name="bug_report_exception_string">反馈模块出现异常，请稍后重试</string>
     <string name="bug_report_succeed">反馈成功！</string>

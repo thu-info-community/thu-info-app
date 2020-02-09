@@ -1,16 +1,20 @@
 package com.unidy2002.thuinfo.ui.login
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import cn.leancloud.AVOSCloud
@@ -43,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
         loginViewModel.loginFormState.observe(this, Observer {
             it?.run {
-                login.isEnabled = isDataValid && loading.visibility != View.VISIBLE
+                login.isEnabled = isDataValid && loading.visibility != VISIBLE
                 usernameError?.run { username.error = getString(this) }
                 passwordError?.run { password.error = getString(this) }
             }
@@ -51,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginResult.observe(this, Observer {
             it?.run {
                 if (!inReportState) {
-                    loading.visibility = View.GONE
+                    loading.visibility = GONE
                     if (error != null) {
                         showLoginFailed(error)
                         username.isEnabled = true
@@ -100,34 +104,109 @@ class LoginActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        try { // In order to find the proper min sdk
-            getSharedPreferences("config", MODE_PRIVATE).run {
-                if (getBoolean("first_install", true)) {
+        getSharedPreferences("config", MODE_PRIVATE).run {
+            if (getBoolean("first_install", true)) {
+                val titleFirstArray = resources.getStringArray(R.array.slide_title_first_string)
+                val titleSecondArray = resources.getStringArray(R.array.slide_title_second_string)
+                val mainTextArray = resources.getStringArray(R.array.slide_main_text_string)
+
+                val loginSlideShow = findViewById<ConstraintLayout>(R.id.login_slide_show)
+                val slideTitleFirst = findViewById<TextView>(R.id.slide_title_first)
+                val slideTitleSecond = findViewById<TextView>(R.id.slide_title_second)
+                val slideMainText = findViewById<TextView>(R.id.slide_main_text)
+                val slideNext = findViewById<TextView>(R.id.slide_next)
+
+                fun fadeIn(target: TextView, duration: Long, startDelay: Long, text: String) {
+                    ObjectAnimator.ofFloat(target, "alpha", 0f, 1f).run {
+                        this.duration = duration
+                        this.startDelay = startDelay
+                        addListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator) {
+                                target.visibility = VISIBLE
+                                target.text = text
+                            }
+
+                            override fun onAnimationEnd(animation: Animator) {}
+
+                            override fun onAnimationCancel(animation: Animator) {}
+
+                            override fun onAnimationRepeat(animation: Animator) {}
+                        })
+                        start()
+                    }
+                }
+
+                fun fadeOut(target: TextView, duration: Long, startDelay: Long) {
+                    ObjectAnimator.ofFloat(target, "alpha", 1f, 0f).run {
+                        this.duration = duration
+                        this.startDelay = startDelay
+                        addListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator) {}
+
+                            override fun onAnimationEnd(animation: Animator) {
+                                target.visibility = GONE
+                            }
+
+                            override fun onAnimationCancel(animation: Animator) {}
+
+                            override fun onAnimationRepeat(animation: Animator) {}
+                        })
+                        start()
+                    }
+                }
+
+                fun updateSlide() {
+                    if (currentSlide == slideCount) {
+                        loginSlideShow.visibility = GONE
+                        edit().putBoolean("first_install", false).apply()
+                    } else {
+                        fadeOut(slideTitleFirst, 600, 100)
+                        fadeOut(slideTitleSecond, 600, 100)
+                        fadeOut(slideMainText, 600, 100)
+                        fadeOut(slideNext, 600, 100)
+
+                        fadeIn(slideTitleFirst, 750, 1000, titleFirstArray[currentSlide])
+                        fadeIn(slideTitleSecond, 750, 2200, titleSecondArray[currentSlide])
+                        fadeIn(slideMainText, 750, 3400, mainTextArray[currentSlide])
+                        fadeIn(
+                            slideNext, 700, 3200, resources.getString(
+                                if (currentSlide < slideCount - 1) R.string.next_step_string else R.string.finish_string
+                            )
+                        )
+                    }
+                }
+
+                loginSlideShow.visibility = VISIBLE
+                currentSlide = 0
+                updateSlide()
+
+                findViewById<TextView>(R.id.slide_next).setOnClickListener {
+                    currentSlide++
+                    updateSlide()
+                }
+            }
+
+            if (!getBoolean("sent_api", false)) {
+                try {  // In an attempt to find the proper min sdk
                     AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
                         saveInBackground().subscribe(object : io.reactivex.Observer<AVObject> {
                             override fun onComplete() {
-                                try {
-                                    edit().putBoolean("first_install", false).apply()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
+                                edit().putBoolean("sent_api", true).apply()
                             }
 
                             override fun onSubscribe(d: Disposable) {}
                             override fun onNext(t: AVObject) {}
-
                             override fun onError(e: Throwable) {
                                 e.printStackTrace()
                             }
                         })
                     }
-
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         findViewById<TextView>(R.id.login_to_report).setOnClickListener {
@@ -137,7 +216,7 @@ class LoginActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
             inReportState = true
-            loading.visibility = View.GONE
+            loading.visibility = GONE
             username.isEnabled = true
             password.isEnabled = true
             login.isEnabled = true
@@ -156,7 +235,7 @@ class LoginActivity : AppCompatActivity() {
     private fun doLogin() {
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
-        findViewById<ProgressBar>(R.id.loading).visibility = View.VISIBLE
+        findViewById<ProgressBar>(R.id.loading).visibility = VISIBLE
         findViewById<Button>(R.id.login).isEnabled = false
         findViewById<CheckBox>(R.id.remember).isEnabled = false
         username.isEnabled = false
@@ -205,6 +284,9 @@ class LoginActivity : AppCompatActivity() {
 
     private var loginThread: Thread? = null
     private var inReportState = false
+
+    private var currentSlide = 0
+    private val slideCount = 3
 
     private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         this.addTextChangedListener(object : TextWatcher {

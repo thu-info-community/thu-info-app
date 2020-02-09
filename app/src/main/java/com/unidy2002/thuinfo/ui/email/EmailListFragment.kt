@@ -229,7 +229,9 @@ class EmailListFragment : Fragment() {
     private fun emailDownload(messageId: String, attachment: Part) { // TODO: clear cache regularly
         thread {
             try {                                                    // TODO: use better way of downloading
-                Toast.makeText(context, R.string.downloading_string, Toast.LENGTH_SHORT).show()
+                activity?.run {
+                    runOnUiThread { Toast.makeText(this, R.string.downloading_string, Toast.LENGTH_SHORT).show() }
+                }
                 val permission = activity!!.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 if (permission != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(
