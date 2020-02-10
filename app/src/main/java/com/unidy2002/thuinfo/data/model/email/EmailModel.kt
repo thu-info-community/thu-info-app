@@ -99,10 +99,10 @@ class EmailModel(message: Message) {
                                 emailContent.plain = (part.content as String)
                             part.isMimeType("text/html") ->
                                 emailContent.html = (part.content as String)
+                            part.disposition == Part.ATTACHMENT ->
+                                emailContent.attachments.add(part)
                             part.isMimeType("image/*") ->
                                 emailContent.images[getCid(part)] = part
-                            part.disposition == Part.ATTACHMENT || part.disposition == Part.INLINE ->
-                                emailContent.attachments.add(part)
                             part.isMimeType("message/rfc822") ->
                                 parsePart(part.content as Part)
                             part.isMimeType("multipart/*") ->

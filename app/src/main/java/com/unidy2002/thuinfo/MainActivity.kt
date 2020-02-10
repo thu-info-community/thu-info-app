@@ -3,7 +3,6 @@ package com.unidy2002.thuinfo
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.webkit.WebView
@@ -43,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Setup bottom navigator, toolbar and drawer
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -55,12 +55,13 @@ class MainActivity : AppCompatActivity() {
             if (destination.id in topLevelDestinationIds) refreshBadge(false)
         }
 
+        // Important network operations
         thread { Network.getTicket(792) }
         thread { Network.getTicket(824) }
         thread {
             Network.getUsername()
             try {
-                handler.post { findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName }
+                runOnUiThread { findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         thread {
             Network.getTicket(-1)
             try {
-                handler.post { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
+                runOnUiThread { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -80,14 +81,13 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            handler.post { loggedInUser.timerTasks.add(Timer().schedule(0, 30000) { refreshBadge(true) }) }
+            runOnUiThread { loggedInUser.timerTasks.add(Timer().schedule(0, 30000) { refreshBadge(true) }) }
         }
 
         JiebaSegmenter.init(applicationContext)
     }
 
-    private val handler = Handler()
-
+    // Setup drawer navigation action
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName
         findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_logout -> {
                     thread {
                         Network.logout()
-                        handler.post {
+                        runOnUiThread {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
                                     .setTitle(R.string.clear_or_not)
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                                     .setOnDismissListener {
                                         thread {
                                             LoginActivity.loginViewModel.logout()
-                                            handler.post { finish() }
+                                            runOnUiThread { finish() }
                                         }
                                     }
                                     .setCancelable(false)
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 thread {
                                     LoginActivity.loginViewModel.logout()
-                                    handler.post { finish() }
+                                    runOnUiThread { finish() }
                                 }
                             }
                         }
@@ -138,10 +138,11 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    // The little red dot, currently designed for email notification.
     private fun refreshBadge(forceUpdate: Boolean) {
         thread {
             if (forceUpdate) inboxUnread = getInboxUnread().also { Log.i("Unread", it.toString()) }
-            handler.post {
+            runOnUiThread {
                 if (navController.currentDestination?.id in topLevelDestinationIds) {
                     val emailMenuItem = findViewById<NavigationView>(R.id.side_nav_view).menu[0]
                     if (inboxUnread > 0) {

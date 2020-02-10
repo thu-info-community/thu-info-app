@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimaryLight">#984daf</color>
+    <color name="colorPrimary">#671E7F</color>
+    <color name="colorPrimaryDark">#380052</color>
+    <color name="colorSecondaryLight">#75a7ff</color>
+    <color name="colorSecondary">#2979ff</color>
+    <color name="colorSecondaryDark">#004ecb</color>
+    <color name="colorAccent">#2979ff</color>
+    <color name="iconThemeDark">#202020</color>
+    <color name="iconThemeGreen">#008577</color>
+    <color name="iconThemeYellow">#FF9800</color>
+    <color name="iconThemeBlue">#2196F3</color>
+    <color name="iconThemeGolden">#F1DA71</color>
+    <color name="iconThemeRed">#E53935</color>
 </resources>

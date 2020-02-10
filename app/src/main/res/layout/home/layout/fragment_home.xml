@@ -3,172 +3,247 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <TextView
-                android:id="@+id/score_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/score"
-                android:textSize="15sp"/>
-
-        <GridLayout
-                android:id="@+id/score_grid"
+        <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:orientation="horizontal"
-                android:rowCount="1">
+                android:layout_marginLeft="@dimen/mtrl_card_spacing"
+                android:layout_marginTop="@dimen/mtrl_card_spacing"
+                android:layout_marginRight="@dimen/mtrl_card_spacing"
+                tools:ignore="PrivateResource"
+                style="@style/Widget.MaterialComponents.CardView">
 
-            <Button
-                    android:id="@+id/report_btn"
-                    android:text="@string/report"/>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <Button
-                    android:id="@+id/physical_exam_btn"
-                    android:text="@string/physical_exam_result"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/res_string"
+                        android:textSize="15sp"/>
 
-            <Button
-                    android:id="@+id/jogging_btn"
-                    android:text="@string/sunny_jogging"/>
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="4"
+                        android:orientation="horizontal">
 
-        </GridLayout>
+                    <TextView
+                            android:id="@+id/classroom_btn"
+                            android:text="@string/classroom_res"
+                            android:drawableTop="@drawable/ic_classroom"
+                            style="@style/home_icon_style"/>
 
-        <View
-                android:id="@+id/score_line"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent"/>
+                    <TextView
+                            android:id="@+id/wentu_btn"
+                            android:text="@string/wentu_string"
+                            android:drawableTop="@drawable/ic_wentu"
+                            style="@style/home_icon_style"/>
 
-        <TextView
-                android:id="@+id/res_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/res_string"
-                android:textSize="15sp"/>
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
 
-        <GridLayout
-                android:id="@+id/res_grid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:orientation="horizontal"
-                android:rowCount="1">
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
 
-            <Button
-                    android:id="@+id/classroom_btn"
-                    android:text="@string/classroom_res"/>
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <Button
-                    android:id="@+id/wentu_btn"
-                    android:text="@string/wentu_string"/>
-
-        </GridLayout>
-
-        <View
-                android:id="@+id/res_line"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent"/>
-
-        <TextView
-                android:id="@+id/e_card_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/e_card"
-                android:textSize="15sp"/>
-
-        <GridLayout
-                android:id="@+id/e_card_grid"
+        <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:orientation="horizontal"
-                android:rowCount="1">
+                android:layout_marginLeft="@dimen/mtrl_card_spacing"
+                android:layout_marginTop="@dimen/mtrl_card_spacing"
+                android:layout_marginRight="@dimen/mtrl_card_spacing"
+                tools:ignore="PrivateResource"
+                style="@style/Widget.MaterialComponents.CardView">
 
-            <Button
-                    android:id="@+id/e_card_query_btn"
-                    android:text="@string/card_record"/>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <Button
-                    android:id="@+id/lose_card_btn"
-                    android:text="@string/lose_card_string"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/score"
+                        android:textSize="15sp"/>
 
-        </GridLayout>
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="4"
+                        android:orientation="horizontal">
 
-        <View
-                android:id="@+id/e_card_line"
+                    <TextView
+                            android:id="@+id/report_btn"
+                            android:text="@string/report"
+                            android:drawableTop="@drawable/ic_report"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:id="@+id/physical_exam_btn"
+                            android:text="@string/physical_exam_result"
+                            android:drawableTop="@drawable/ic_physical_exam"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:id="@+id/jogging_btn"
+                            android:text="@string/sunny_jogging"
+                            android:drawableTop="@drawable/ic_jogging"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
+
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent"/>
-
-        <TextView
-                android:id="@+id/community_text"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/community_string"
-                android:textSize="15sp"/>
+                android:layout_marginLeft="@dimen/mtrl_card_spacing"
+                android:layout_marginTop="@dimen/mtrl_card_spacing"
+                android:layout_marginRight="@dimen/mtrl_card_spacing"
+                tools:ignore="PrivateResource"
+                style="@style/Widget.MaterialComponents.CardView">
 
-        <GridLayout
-                android:id="@+id/community_grid"
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/e_card"
+                        android:textSize="15sp"/>
+
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="4"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            android:id="@+id/e_card_query_btn"
+                            android:text="@string/card_record"
+                            android:drawableTop="@drawable/ic_e_card_query"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:id="@+id/lose_card_btn"
+                            android:text="@string/lose_card_string"
+                            android:drawableTop="@drawable/ic_lose_card"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
+
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="3"
-                android:orientation="horizontal"
-                android:rowCount="1">
+                android:layout_marginLeft="@dimen/mtrl_card_spacing"
+                android:layout_marginTop="@dimen/mtrl_card_spacing"
+                android:layout_marginRight="@dimen/mtrl_card_spacing"
+                android:layout_marginBottom="@dimen/mtrl_card_spacing"
+                tools:ignore="PrivateResource"
+                style="@style/Widget.MaterialComponents.CardView">
 
-            <Button
-                    android:id="@+id/dorm_laf_btn"
-                    android:text="@string/dorm_laf_string"
-                    android:enabled="false"/>
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <Button
-                    android:id="@+id/dorm_repair_btn"
-                    android:text="@string/dorm_repair_string"
-                    android:enabled="false"/>
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/community_string"
+                        android:textSize="15sp"/>
 
-            <Button
-                    android:id="@+id/dorm_mail_btn"
-                    android:text="@string/dorm_mail_string"
-                    android:enabled="false"/>
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="4"
+                        android:orientation="horizontal">
 
-            <Button
-                    android:id="@+id/dorm_score_btn"
-                    android:text="@string/dorm_score_string"/>
+                    <TextView
+                            android:id="@+id/dorm_ele_recharge_btn"
+                            android:text="@string/dorm_ele_recharge_string"
+                            android:drawableTop="@drawable/ic_dorm_ele_recharge"
+                            style="@style/home_icon_style"/>
 
-            <Button
-                    android:id="@+id/dorm_ele_recharge_btn"
-                    android:text="@string/dorm_ele_recharge_string"/>
+                    <TextView
+                            android:id="@+id/dorm_laf_btn"
+                            android:text="@string/dorm_laf_string"
+                            android:drawableTop="@drawable/ic_dorm_laf"
+                            style="@style/home_icon_style"
+                            android:enabled="false"/>
 
-        </GridLayout>
+                    <TextView
+                            android:id="@+id/dorm_repair_btn"
+                            android:text="@string/dorm_repair_string"
+                            android:drawableTop="@drawable/ic_dorm_repair"
+                            style="@style/home_icon_style"
+                            android:enabled="false"/>
 
-        <View
-                android:id="@+id/community_line"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_margin="5dp"
-                android:background="@color/colorAccent"/>
+                    <TextView
+                            android:id="@+id/dorm_mail_btn"
+                            android:text="@string/dorm_mail_string"
+                            android:drawableTop="@drawable/ic_dorm_mail"
+                            style="@style/home_icon_style"
+                            android:enabled="false"/>
+
+                    <TextView
+                            android:id="@+id/dorm_score_btn"
+                            android:text="@string/dorm_score_string"
+                            android:drawableTop="@drawable/ic_dorm_score"
+                            style="@style/home_icon_style"/>
+
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 

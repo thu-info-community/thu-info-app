@@ -6,50 +6,42 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.util.Alipay
 import com.unidy2002.thuinfo.data.util.Network
 import kotlin.concurrent.thread
 
+
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_home, container, false)
 
     override fun onStart() {
         view?.run {
-            findViewById<Button>(R.id.report_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.reportFragment)
-            }
-            findViewById<Button>(R.id.physical_exam_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
-            }
-            findViewById<Button>(R.id.jogging_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
-            }
-            findViewById<Button>(R.id.classroom_btn)?.setOnClickListener {
+            findViewById<TextView>(R.id.classroom_btn)?.setOnClickListener {
                 NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.classroomWelcomeFragment)
             }
-            findViewById<Button>(R.id.wentu_btn)?.setOnClickListener {
+            findViewById<TextView>(R.id.wentu_btn)?.setOnClickListener {
                 NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.wentuFragment)
             }
-            findViewById<Button>(R.id.e_card_query_btn)?.setOnClickListener {
+            findViewById<TextView>(R.id.report_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.reportFragment)
+            }
+            findViewById<TextView>(R.id.physical_exam_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
+            }
+            findViewById<TextView>(R.id.jogging_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
+            }
+            findViewById<TextView>(R.id.e_card_query_btn)?.setOnClickListener {
                 NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.eCardTableFragment)
             }
-            findViewById<Button>(R.id.lose_card_btn)?.setOnClickListener {
+            findViewById<TextView>(R.id.lose_card_btn)?.setOnClickListener {
                 AlertDialog.Builder(context)
                     .setTitle(R.string.confirm_lose_card)
                     .setMessage(R.string.op_cannot_undo)
@@ -77,10 +69,7 @@ class HomeFragment : Fragment() {
                     .setNegativeButton(R.string.cancel_string) { _, _ -> }
                     .show()
             }
-            findViewById<Button>(R.id.dorm_score_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
-            }
-            findViewById<Button>(R.id.dorm_ele_recharge_btn)?.setOnClickListener {
+            findViewById<TextView>(R.id.dorm_ele_recharge_btn)?.setOnClickListener {
                 try {
                     if (Alipay.hasInstalledAlipayClient(context)) {
                         val eleRechargeConfigLayout = EleRechargeConfigLayout(context)
@@ -146,6 +135,9 @@ class HomeFragment : Fragment() {
                         e.printStackTrace()
                     }
                 }
+            }
+            findViewById<TextView>(R.id.dorm_score_btn)?.setOnClickListener {
+                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
             }
         }
         super.onStart()

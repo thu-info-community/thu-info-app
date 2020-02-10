@@ -25,7 +25,7 @@ class EmailListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if (index < emailList.size) {
             emailList[index].color =
                 if (read) Color.rgb(64, 64, 64)
-                else Color.rgb(0, 133, 119)
+                else Color.rgb(0, 78, 203)
             notifyItemChanged(index)
         }
     }

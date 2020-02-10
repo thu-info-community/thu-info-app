@@ -19,7 +19,7 @@
 
     <!-- Strings related to main utilities -->
     <string name="score">成绩</string>
-    <string name="e_card">卡</string>
+    <string name="e_card">校园卡</string>
     <string name="card_record">消费查询</string>
 
     <!-- Strings showing up in code -->
@@ -28,6 +28,7 @@
     <string name="clear_string">清除</string>
     <string name="download_succeed_string">下载完成</string>
     <string name="downloading_string">THUInfo文件下载</string>
+    <string name="download_in_progress">正在下载</string>
     <string name="confirm_string">确认</string>
     <string name="cancel_string">取消</string>
     <string name="network_error_string">网络异常</string>
@@ -43,10 +44,13 @@
         <item>别把所有功能都试个遍</item>
     </array>
     <array name="slide_main_text_string">
-        <item>Issue/PR：\nhttps://github.com/UNIDY2002/THUInfo\n\n快捷反馈通道：\n见APP内</item>
+        <item>遇到问题，先重启两次\n还不行的话……\n\nIssue/PR\nhttps://github.com/UNIDY2002/THUInfo\n\n快捷反馈通道\n见APP内</item>
         <item>不信……可以看我源码嘛\n(*╹▽╹*)</item>
         <item>误点“一键挂失”的感觉\n可不好受\n┓( ´∀` )┏</item>
     </array>
     <string name="next_step_string">下一步</string>
     <string name="finish_string">结束</string>
+    <string name="request_permission_title">哦，对了</string>
+    <string name="request_permission_message">我希望申请存储权限，主要用于下载附件和保存课表图片，希望您能同意~</string>
+    <string name="request_permission_ok">了解</string>
 </resources>

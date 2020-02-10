@@ -69,7 +69,7 @@ object Email {
                 with(EmailModel(it)) {
                     EmailListModel(
                         subject,
-                        if (isRead) Color.rgb(64, 64, 64) else Color.rgb(0, 133, 119),
+                        if (isRead) Color.rgb(64, 64, 64) else Color.rgb(0, 78, 203),
                         if (folder == "inbox") from.name else to.joinToString { address -> address.name },
                         SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(date)
                     )

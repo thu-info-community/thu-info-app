@@ -1,10 +1,13 @@
 package com.unidy2002.thuinfo.ui.login
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -159,6 +162,18 @@ class LoginActivity : AppCompatActivity() {
                     if (currentSlide == slideCount) {
                         loginSlideShow.visibility = GONE
                         edit().putBoolean("first_install", false).apply()
+                        if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED ||
+                            checkSelfPermission(READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED
+                        ) {
+                            AlertDialog.Builder(this@LoginActivity)
+                                .setTitle(R.string.request_permission_title)
+                                .setMessage(R.string.request_permission_message)
+                                .setPositiveButton(R.string.request_permission_ok) { _, _ -> }
+                                .setOnDismissListener {
+                                    requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
+                                }
+                                .show()
+                        }
                     } else {
                         fadeOut(slideTitleFirst, 600, 100)
                         fadeOut(slideTitleSecond, 600, 100)
