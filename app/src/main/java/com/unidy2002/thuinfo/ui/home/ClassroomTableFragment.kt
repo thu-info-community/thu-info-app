@@ -32,7 +32,7 @@ class ClassroomTableFragment : Fragment() {
         super.onStart()
 
         arguments?.getString("name")?.run { viewModel.classroom = this }
-        arguments?.getString("title")?.run { (activity as AppCompatActivity).supportActionBar?.title = this }
+        arguments?.getString("title")?.run { (activity as? AppCompatActivity)?.supportActionBar?.title = this }
 
         val minusButton = view?.findViewById<Button>(R.id.classroom_minus)
         val plusButton = view?.findViewById<Button>(R.id.classroom_plus)

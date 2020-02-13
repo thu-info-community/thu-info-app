@@ -34,8 +34,6 @@ class Schedule {
 
     val colorMap: MutableMap<String, Int>
 
-    private lateinit var segmenter: JiebaSegmenter
-
     private val stopWord = setOf("的", "基础")
 
     private val avoidEnd = setOf('与', '和', '以', '及')
@@ -92,20 +90,20 @@ class Schedule {
         this.colorMap = colorMap
     }
 
-    constructor(source: String, custom: MutableMap<String, String>) {
-        segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
+    constructor(primary: String, secondary: List<Lesson>, custom: MutableMap<String, String>) {
+        val segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         lessonList = mutableListOf()
         examList = mutableListOf()
         autoShortenMap = mutableMapOf()
         customShortenMap = custom
         colorMap = mutableMapOf()
-        parseArray(source).forEach {
+        parseArray(primary).forEach {
             try {
                 val o = it as JSONObject
                 when (o["fl"] as String) {
                     "上课" -> {
                         val title = o["nr"] as String
-                        val locale = shortenLocale(o["dd"] as? String ?: "网络异常")
+                        val locale = o["dd"] as? String ?: ""
                         val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!
                         val begin = parseBegin(o["kssj"] as String)
                         val end = parseEnd(o["jssj"] as String)
@@ -116,15 +114,13 @@ class Schedule {
                             begin <= lessonList.last().end + 1
                         ) lessonList.last().end = end
                         else lessonList.add(Lesson(title, locale, date, begin, end))
-                        shortenTitle(title)
-                        if (colorMap[title] == null)
-                            colorMap[title] = colorMap.size % colorCount
+                        shortenTitle(title, segmenter)
                     }
                     "考试" ->
                         examList.add(
                             Exam(
                                 (o["nr"] as String),
-                                shortenLocale(o["dd"] as? String ?: "网络异常"),
+                                o["dd"] as? String ?: "",
                                 SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!,
                                 Time.valueOf(o["kssj"] as String + ":00"),
                                 Time.valueOf(o["jssj"] as String + ":00")
@@ -134,6 +130,10 @@ class Schedule {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+        secondary.forEach {
+            lessonList.add(it)
+            shortenTitle(it.title, segmenter)
         }
     }
 
@@ -155,7 +155,7 @@ class Schedule {
 
     fun abbr(name: String) = customShortenMap[name] ?: autoShortenMap[name] ?: name
 
-    private fun shortenTitle(name: String) {
+    private fun shortenTitle(name: String, segmenter: JiebaSegmenter) {
         if (autoShortenMap[name] == null) {
             var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
             with(Regex("《.*?》").findAll(temp)) {
@@ -198,7 +198,6 @@ class Schedule {
             temp = customShortenMap[temp] ?: temp
             autoShortenMap[name] = temp
         }
+        if (colorMap[name] == null) colorMap[name] = colorMap.size % colorCount
     }
-
-    private fun shortenLocale(name: String) = name.replace(Regex(".教|[\\s]"), "")
 }

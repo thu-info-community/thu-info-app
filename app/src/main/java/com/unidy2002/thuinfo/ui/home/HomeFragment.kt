@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.util.Alipay
 import com.unidy2002.thuinfo.data.util.Network
@@ -24,22 +24,22 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         view?.run {
             findViewById<TextView>(R.id.classroom_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.classroomWelcomeFragment)
+                findNavController(this@HomeFragment).navigate(R.id.classroomWelcomeFragment)
             }
             findViewById<TextView>(R.id.wentu_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.wentuFragment)
+                findNavController(this@HomeFragment).navigate(R.id.wentuFragment)
             }
             findViewById<TextView>(R.id.report_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.reportFragment)
+                findNavController(this@HomeFragment).navigate(R.id.reportFragment)
             }
             findViewById<TextView>(R.id.physical_exam_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
+                findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
             }
             findViewById<TextView>(R.id.jogging_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
+                findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
             }
             findViewById<TextView>(R.id.e_card_query_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.eCardTableFragment)
+                findNavController(this@HomeFragment).navigate(R.id.eCardTableFragment)
             }
             findViewById<TextView>(R.id.lose_card_btn)?.setOnClickListener {
                 AlertDialog.Builder(context)
@@ -137,7 +137,7 @@ class HomeFragment : Fragment() {
                 }
             }
             findViewById<TextView>(R.id.dorm_score_btn)?.setOnClickListener {
-                NavHostFragment.findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
+                findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
             }
         }
         super.onStart()

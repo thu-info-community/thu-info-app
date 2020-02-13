@@ -6,12 +6,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="ToolbarStyle" parent="AppTheme">
-        <item name="android:theme">@style/ToolbarTheme</item>
-    </style>
-
     <style name="ToolbarTheme">
-        <item name="colorControlNormal">#ffffff</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>

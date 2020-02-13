@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_constraintTop_toTopOf="parent"
-                style="@style/ToolbarStyle"/>
+                android:theme="@style/ToolbarTheme"/>
 
         <fragment
                 android:id="@+id/nav_host_fragment"
@@ -30,8 +30,7 @@
                 app:defaultNavHost="true"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
-                app:navGraph="@navigation/mobile_navigation"
-                />
+                app:navGraph="@navigation/mobile_navigation"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_nav_view"

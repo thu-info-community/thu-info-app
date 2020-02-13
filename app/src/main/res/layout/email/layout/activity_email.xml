@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintTop_toTopOf="parent"
-            style="@style/ToolbarStyle"/>
+            android:theme="@style/ToolbarTheme"/>
 
     <ProgressBar
             android:id="@+id/config_loading"

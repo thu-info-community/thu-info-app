@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity() {
                 this.goBack()
                 true
             } else {
-                navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+                navController.navigateUp(appBarConfiguration)
             }
         }
 

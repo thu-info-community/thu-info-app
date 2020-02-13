@@ -13,7 +13,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_clear_24dp"
-            style="@style/ToolbarStyle"/>
+            android:theme="@style/ToolbarTheme"/>
 
     <EditText
             android:id="@+id/bug_report_input"

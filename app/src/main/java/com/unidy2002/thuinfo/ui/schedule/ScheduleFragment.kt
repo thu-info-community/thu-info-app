@@ -117,12 +117,8 @@ class ScheduleFragment : Fragment() {
                         if (!useStd) height = 130
                         gravity = CENTER
                         color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
-                        if (begin == 0 && date == today) setTextColor(
-                            resources.getColor(
-                                R.color.colorAccent,
-                                null
-                            )
-                        )
+                        if (begin == 0 && date == today)
+                            setTextColor(resources.getColor(R.color.colorAccent, null))
                     }, LayoutParams().apply {
                         rowSpec = spec(begin, size, FILL)
                         columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
@@ -141,7 +137,10 @@ class ScheduleFragment : Fragment() {
                     )
                     schedule.lessonList.filter { it.date.time == date.timeInMillis }.forEach {
                         addView(
-                            getString(R.string.abbr_locale, schedule.abbr(it.title), it.locale),
+                            if (it.locale.isEmpty())
+                                schedule.abbr(it.title)
+                            else
+                                getString(R.string.abbr_locale, schedule.abbr(it.title), it.locale),
                             schedule.colorMap[it.title] ?: 0,
                             it.begin,
                             it.end - it.begin + 1
