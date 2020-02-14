@@ -18,11 +18,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.data.model.login.revokeUser
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.ui.email.EmailActivity
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
@@ -107,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_logout -> {
                     thread {
                         Network.logout()
+                        loggedInUser.timerTasks.forEach { task -> task.cancel() }
                         runOnUiThread {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
@@ -116,18 +118,14 @@ class MainActivity : AppCompatActivity() {
                                         getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
                                     }
                                     .setOnDismissListener {
-                                        thread {
-                                            LoginActivity.loginViewModel.logout()
-                                            runOnUiThread { finish() }
-                                        }
+                                        revokeUser()
+                                        finish()
                                     }
                                     .setCancelable(false)
                                     .show()
                             } else {
-                                thread {
-                                    LoginActivity.loginViewModel.logout()
-                                    runOnUiThread { finish() }
-                                }
+                                revokeUser()
+                                finish()
                             }
                         }
                     }
@@ -182,7 +180,5 @@ class MainActivity : AppCompatActivity() {
         refreshBadge(true)
         super.onResume()
     }
-
-    private val loggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 
 }

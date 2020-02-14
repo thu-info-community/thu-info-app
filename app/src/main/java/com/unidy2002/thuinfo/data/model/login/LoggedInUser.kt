@@ -24,3 +24,15 @@ data class LoggedInUser(val userId: String, val password: String) {
 
     val timerTasks = mutableListOf<TimerTask>()
 }
+
+private var _loggedInUser: LoggedInUser? = null
+
+val loggedInUser: LoggedInUser get() = _loggedInUser ?: throw Exception("User not logged in!")
+
+fun setUser(loggedInUser: LoggedInUser) {
+    _loggedInUser = loggedInUser
+}
+
+fun revokeUser() {
+    _loggedInUser = null
+}

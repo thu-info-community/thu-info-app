@@ -10,9 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.Email.sendMail
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
+
 
 class EmailWriteFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -27,7 +28,6 @@ class EmailWriteFragment : Fragment() {
                     .setMessage("")
                     .setPositiveButton(R.string.confirm_string) { _, _ ->
                         it.isEnabled = false
-                        val loggedInUser = LoginActivity.loginViewModel.getLoggedInUser()
                         thread {
                             val result = sendMail(
                                 loggedInUser.emailAddress,

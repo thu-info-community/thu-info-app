@@ -44,8 +44,8 @@ class ClassroomTableFragment : Fragment() {
             currentDay.observe(this@ClassroomTableFragment, Observer {
                 it?.run day@{
                     currentWeek.value?.run week@{
-                        minusButton?.isEnabled = !(this@day == 0 && this@week == 1)
-                        plusButton?.isEnabled = !(this@day == 6 && this@week == SchoolCalendar.weekCount)
+                        minusButton?.isEnabled = !(this@day == 1 && this@week == 1)
+                        plusButton?.isEnabled = !(this@day == 7 && this@week == SchoolCalendar.weekCount)
                         title?.text = getString(R.string.classroom_header_string, this@week, dict[this@day])
                         if (curr.value?.weekNumber == this@week) updateUI()
                     }

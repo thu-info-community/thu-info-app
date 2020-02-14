@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
-import com.unidy2002.thuinfo.ui.login.LoginActivity
+
 
 class CustomizeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -31,7 +32,7 @@ class CustomizeFragment : Fragment() {
 
         view?.findViewById<RecyclerView>(R.id.custom_recycler_view)?.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = CustomizeAdapter(LoginActivity.loginViewModel.getLoggedInUser().schedule)
+            adapter = CustomizeAdapter(loggedInUser.schedule)
         }
 
         scheduleDBManager = ScheduleDBManager.getInstance(context)

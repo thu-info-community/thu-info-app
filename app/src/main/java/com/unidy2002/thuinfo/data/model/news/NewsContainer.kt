@@ -3,10 +3,11 @@ package com.unidy2002.thuinfo.data.model.news
 import android.content.Context
 import android.util.Log
 import com.unidy2002.thuinfo.data.dao.NewsDBManager
-import com.unidy2002.thuinfo.ui.login.LoginActivity
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class NewsContainer(context: Context?) {
     val newsList: MutableList<NewsItem> = mutableListOf()
@@ -31,7 +32,7 @@ class NewsContainer(context: Context?) {
             with("http://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/${newsOrigin.url}/more?page=${newsOrigin.currentPage}") {
                 try {
                     Jsoup.connect(this).cookies(
-                        LoginActivity.loginViewModel.getLoggedInUser().vpnTicket.split("; ").mapNotNull {
+                        loggedInUser.vpnTicket.split("; ").mapNotNull {
                             with(it.split('=')) { if (size == 2) this[0] to this[1] else null }
                         }.toMap()
                     ).get().select("li").filter {

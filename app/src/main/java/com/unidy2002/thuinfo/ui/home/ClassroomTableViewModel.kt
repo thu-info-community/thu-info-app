@@ -108,6 +108,7 @@ class ClassroomTableViewModel : ViewModel() {
                         thread { getData(0) }
                     }
                 }
+                _prev.postValue(ClassroomResult(target - 1, error = ClassroomErrorReason.LOAD_FAILURE))
                 thread { getData(-1) }
             }
             target - 1 -> {
@@ -123,6 +124,7 @@ class ClassroomTableViewModel : ViewModel() {
                         thread { getData(0) }
                     }
                 }
+                _next.postValue(ClassroomResult(target + 1, error = ClassroomErrorReason.LOAD_FAILURE))
                 thread { getData(1) }
             }
             else -> {

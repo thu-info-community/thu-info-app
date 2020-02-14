@@ -15,6 +15,7 @@
     <string name="invalid_password">请输入密码</string>
     <string name="login_error">学号或密码错误</string>
     <string name="login_failed">登录失败</string>
+    <string name="login_exception">登录异常</string>
     <string name="logout">退出</string>
 
     <!-- Strings related to main utilities -->

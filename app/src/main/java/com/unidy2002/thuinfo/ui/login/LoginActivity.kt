@@ -15,7 +15,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
@@ -33,13 +32,13 @@ import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
 
-    companion object {
-        lateinit var loginViewModel: LoginViewModel
-    }
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
+        // Observe login form change
         loginViewModel.loginFormState.observe(this, Observer {
             it?.run {
                 login.isEnabled = isDataValid && loading.visibility != VISIBLE
@@ -55,40 +54,43 @@ class LoginActivity : AppCompatActivity() {
                 passwordError?.run { password.error = getString(this) }
             }
         })
+
+        // Observe login result change
         loginViewModel.loginResult.observe(this, Observer {
-            it?.run {
-                if (!inReportState) {
-                    loading.visibility = GONE
-                    if (error != null) {
-                        showLoginFailed(error)
-                        username.isEnabled = true
-                        password.isEnabled = true
-                        login.isEnabled = true
-                        remember.isEnabled = true
-                    } else if (success != null) {
-                        updateData(success)
-                        setResult(Activity.RESULT_OK)
-                        startActivity(Intent().apply { setClass(this@LoginActivity, MainActivity::class.java) })
-                        finish()
-                    }
+            it?.takeIf { !inReportState }?.run {
+                loading.visibility = GONE
+                if (error != null) {
+                    Toast.makeText(applicationContext, error, Toast.LENGTH_SHORT).show()
+                    username.isEnabled = true
+                    password.isEnabled = true
+                    login.isEnabled = true
+                    remember.isEnabled = true
+                } else if (success != null) {
+                    updateData(success)
+                    setResult(Activity.RESULT_OK)
+                    startActivity(Intent().apply { setClass(this@LoginActivity, MainActivity::class.java) })
+                    finish()
                 }
             }
         })
 
+        // Inform that the login form has changed (for validity check)
         username.afterTextChanged {
             loginViewModel.loginDataChanged(username.text.toString(), password.text.toString())
         }
 
-        password.apply {
-            afterTextChanged { loginViewModel.loginDataChanged(username.text.toString(), password.text.toString()) }
-            setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) doLogin()
-                false
-            }
+        password.afterTextChanged {
+            loginViewModel.loginDataChanged(username.text.toString(), password.text.toString())
+        }
+
+        password.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) doLogin()
+            false
         }
 
         login.setOnClickListener { doLogin() }
 
+        // Try to get remembered password
         try {
             getSharedPreferences("UserId", MODE_PRIVATE).run {
                 if (getString("remember", "") == "true") {
@@ -100,13 +102,14 @@ class LoginActivity : AppCompatActivity() {
                         )
                     )
                     remember.isChecked = true
-                    login.callOnClick()
+                    doLogin()
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
+        // First-install operations
         getSharedPreferences("config", MODE_PRIVATE).run {
             if (getBoolean("first_install", true)) {
                 val titleFirstArray = resources.getStringArray(R.array.slide_title_first_string)
@@ -201,8 +204,9 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
+            // Intends to find the proper min sdk
             if (!getBoolean("sent_api", false)) {
-                try {  // In an attempt to find the proper min sdk
+                try {
                     AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
@@ -224,6 +228,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        // Set report button listener
         findViewById<TextView>(R.id.login_to_report).setOnClickListener {
             try {
                 loginThread?.interrupt()
@@ -259,19 +264,21 @@ class LoginActivity : AppCompatActivity() {
             try {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             } catch (e: Exception) {
+                Toast.makeText(applicationContext, R.string.login_exception, Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
             }
         }
     }
 
-    private fun updateData(model: LoggedInUser) {
-        with(findViewById<CheckBox>(R.id.remember).isChecked) {
-            model.rememberPassword = this
-            if (this) {
+    private fun updateData(loggedInUser: LoggedInUser) {
+        with(loggedInUser) {
+            // Save remembered password
+            rememberPassword = findViewById<CheckBox>(R.id.remember).isChecked
+            if (rememberPassword) {
                 getSharedPreferences("UserId", MODE_PRIVATE).edit().run {
                     putString("remember", "true")
-                    putString("username", model.userId)
-                    encrypt(model.userId, model.password).run {
+                    putString("username", userId)
+                    encrypt(userId, password).run {
                         putString("iv", first)
                         putString("data", second)
                     }
@@ -280,18 +287,16 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
             }
-        }
 
-        getSharedPreferences(loginViewModel.getLoggedInUser().userId, MODE_PRIVATE).run {
-            getString("username", null)?.run { model.userName = this }
-            getString("email", null)?.run { model.emailAddress = this }
+            // Try to get username and email
+            getSharedPreferences(userId, MODE_PRIVATE).run {
+                getString("username", null)?.run { userName = this }
+                getString("email", null)?.run { emailAddress = this }
+            }
         }
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-    }
-
+    // In case the user returns from report
     override fun onResume() {
         inReportState = false
         super.onResume()

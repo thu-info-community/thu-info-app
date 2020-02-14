@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.model.general.Result
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
-import com.unidy2002.thuinfo.data.model.login.LoginRepository
+import com.unidy2002.thuinfo.data.model.login.setUser
 import com.unidy2002.thuinfo.data.util.Network
 
-class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel() {
+
+class LoginViewModel : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -18,21 +18,20 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
     val loginResult: LiveData<LoginResult> = _loginResult
 
     fun login(username: String, password: String) {
-        val result = loginRepository.login(username, password)
         _loginResult.postValue(
-            when {
-                result is Result.Success ->
-                    LoginResult(success = result.data)
-                (result as Result.Error).exception is Network.UserLoginError ->
-                    LoginResult(error = R.string.login_error)
-                else ->
-                    LoginResult(error = R.string.login_failed)
+            try {
+                LoginResult(success = Network.login(username, password).also { setUser(it) })
+            } catch (e: Network.UserLoginError) {
+                LoginResult(error = R.string.login_error)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                LoginResult(error = R.string.login_failed)
             }
         )
     }
 
     fun loginDataChanged(username: String, password: String) {
-        if (!isUserNameValid(username)) {
+        if (!isUsernameValid(username)) {
             _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
         } else if (!isPasswordValid(password)) {
             _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
@@ -41,23 +40,9 @@ class LoginViewModel(private var loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    fun getLoggedInUser() =
-        if (loginRepository.isLoggedIn)
-            loginRepository.loggedInUser!!
-        else
-            throw NullPointerException("User not logged in!")
+    private fun isUsernameValid(username: String) = username.matches(Regex("[0-9]+"))
 
-    private fun isUserNameValid(username: String): Boolean {
-        return username.matches(Regex("[0-9]+"))
-    }
-
-    private fun isPasswordValid(password: String): Boolean {
-        return password.isNotBlank()
-    }
-
-    fun logout() {
-        loginRepository.logout()
-    }
+    private fun isPasswordValid(password: String) = password.isNotEmpty()
 
     data class LoginFormState(
         val usernameError: Int? = null,

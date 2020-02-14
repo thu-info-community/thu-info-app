@@ -3,10 +3,11 @@ package com.unidy2002.thuinfo.data.dao
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.unidy2002.thuinfo.ui.login.LoginActivity
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
+
 
 class ScheduleDBHelper(context: Context?, version: Int) :
-    SQLiteOpenHelper(context, "calender.${LoginActivity.loginViewModel.getLoggedInUser().userId}.db", null, version) {
+    SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             "create table lesson (\n" +

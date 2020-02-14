@@ -5,7 +5,7 @@ import com.sun.mail.imap.IMAPFolder
 import com.sun.mail.imap.IMAPStore
 import com.unidy2002.thuinfo.data.model.email.EmailListModel
 import com.unidy2002.thuinfo.data.model.email.EmailModel
-import com.unidy2002.thuinfo.ui.login.LoginActivity
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Callable
@@ -20,6 +20,7 @@ import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
+
 object Email {
     val folder = mutableMapOf<String, List<Message>>()
     private val locked = mutableMapOf("inbox" to false, "sent items" to false)
@@ -27,7 +28,7 @@ object Email {
     @Synchronized
     fun connectImap(username: String, password: String) {
         Executors.newSingleThreadExecutor().submit(Callable {
-            with(LoginActivity.loginViewModel.getLoggedInUser()) {
+            with(loggedInUser) {
                 if (!imapStoreInitialized()) {
                     imapStore = (Session.getInstance(Properties().apply {
                         put("mail.store.protocol", "imap")
@@ -42,7 +43,7 @@ object Email {
 
     fun getInboxUnread() =
         try {
-            with(LoginActivity.loginViewModel.getLoggedInUser()) {
+            with(loggedInUser) {
                 if (imapStoreInitialized()) (imapStore.getFolder("inbox") as IMAPFolder).unreadMessageCount else 0
             }
         } catch (e: Exception) {
@@ -56,7 +57,7 @@ object Email {
             Executors.newSingleThreadExecutor().submit(Callable {
                 if (name !in folder || force)
                     folder[name] =
-                        (LoginActivity.loginViewModel.getLoggedInUser().imapStore.getFolder(name) as IMAPFolder)
+                        (loggedInUser.imapStore.getFolder(name) as IMAPFolder)
                             .apply { open(Folder.READ_WRITE) }.messages.reversed()
             }).get(15, TimeUnit.SECONDS)
             locked[name] = false

@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.news.NewsHTML
 import com.unidy2002.thuinfo.data.model.report.ReportItem
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
@@ -15,7 +16,6 @@ import com.unidy2002.thuinfo.data.model.schedule.Schedule.Lesson
 import com.unidy2002.thuinfo.data.model.tables.ECardRecord
 import com.unidy2002.thuinfo.data.model.tables.JoggingRecord
 import com.unidy2002.thuinfo.data.util.SchoolCalendar.Companion.semesterId
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import jxl.Workbook
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -31,9 +31,8 @@ import java.util.*
 import javax.net.ssl.HttpsURLConnection
 import kotlin.concurrent.thread
 
-object Network {
-    private val loggedInUser: LoggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 
+object Network {
     private fun <T : HttpURLConnection> connect(
         url: String,
         referer: String? = null,
@@ -59,10 +58,10 @@ object Network {
         }
     }
 
-    fun login(loggedInUser: LoggedInUser) {
+    fun login(userId: String, password: String) = LoggedInUser(userId, password).apply {
         // Get vpn ticket
         val cookieManager = CookieManager.getInstance()
-        loggedInUser.vpnTicket = connect<HttpsURLConnection>("https://webvpn.tsinghua.edu.cn/login")
+        vpnTicket = connect<HttpsURLConnection>("https://webvpn.tsinghua.edu.cn/login")
             .headerFields["Set-Cookie"]!!
             .joinToString("; ") {
                 it.substring(0, it.indexOf(';'))
@@ -78,8 +77,8 @@ object Network {
         connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
             "https://webvpn.tsinghua.edu.cn/login",
-            loggedInUser.vpnTicket,
-            "auth_type=local&username=${loggedInUser.userId}&sms_code=&password=${loggedInUser.password}"
+            vpnTicket,
+            "auth_type=local&username=$userId&sms_code=&password=$password"
         ).inputStream.run {
             val reader = BufferedReader(InputStreamReader(this))
             var readLine: String?
@@ -90,8 +89,8 @@ object Network {
                     connect<HttpsURLConnection>(
                         "https://webvpn.tsinghua.edu.cn/do-confirm-login",
                         "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
-                        loggedInUser.vpnTicket,
-                        "username=${loggedInUser.userId}&logoutOtherToken=$readLine"
+                        vpnTicket,
+                        "username=$userId&logoutOtherToken=$readLine"
                     ).inputStream.close()
                     Log.i("KICK", readLine!!)
                 } else if (readLine!!.contains("错误")) {
@@ -110,8 +109,8 @@ object Network {
         connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login",
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
-            loggedInUser.vpnTicket,
-            "redirect=NO&userName=${loggedInUser.userId}&password=${loggedInUser.password}&x=0&y=0"
+            vpnTicket,
+            "redirect=NO&userName=$userId&password=$password&x=0&y=0"
         ).inputStream.close()
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [2]")
@@ -122,7 +121,7 @@ object Network {
         connect<HttpsURLConnection>(
             "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/servlet/InvalidateSession",
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
-            loggedInUser.vpnTicket
+            vpnTicket
         ).inputStream.close()
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [3]")

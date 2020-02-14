@@ -12,9 +12,10 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.Email.connectImap
-import com.unidy2002.thuinfo.ui.login.LoginActivity
 import kotlin.concurrent.thread
+
 
 class EmailActivity : AppCompatActivity() {
 
@@ -184,6 +185,4 @@ class EmailActivity : AppCompatActivity() {
     }
 
     private lateinit var viewPager: ViewPager
-
-    private val loggedInUser get() = LoginActivity.loginViewModel.getLoggedInUser()
 }
