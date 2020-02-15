@@ -94,4 +94,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.WentuReserveFragment"
             android:label="@string/wentu_reserve_string"
             tools:layout="@layout/fragment_wentu_reserve"/>
+
+    <fragment
+            android:id="@+id/configureCommunityFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.ConfigureCommunityFragment"
+            android:label="@string/configure_community_fragment_title"
+            tools:layout="@layout/fragment_configure_community"/>
 </navigation>

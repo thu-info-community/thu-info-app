@@ -293,6 +293,22 @@ class LoginActivity : AppCompatActivity() {
                 getString("username", null)?.run { userName = this }
                 getString("email", null)?.run { emailAddress = this }
             }
+
+            // Try to get community password
+            communityPassword = try {
+                getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).run {
+                    val civ = getString("civ", null)  // Community initial vector
+                    val cpe = getString("cpe", null)  // Community password encrypted
+                    if (civ != null && cpe != null) {
+                        decrypt("c${loggedInUser.userId}", civ to cpe).also { println("Decrypted: $it") }
+                    } else {
+                        password
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                password
+            }
         }
     }
 

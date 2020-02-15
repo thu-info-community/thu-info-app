@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.Alipay
 import com.unidy2002.thuinfo.data.util.Network
 import kotlin.concurrent.thread
@@ -70,76 +72,94 @@ class HomeFragment : Fragment() {
                     .show()
             }
             findViewById<TextView>(R.id.dorm_ele_recharge_btn)?.setOnClickListener {
-                try {
-                    if (Alipay.hasInstalledAlipayClient(context)) {
-                        val eleRechargeConfigLayout = EleRechargeConfigLayout(context)
-                        AlertDialog.Builder(context)
-                            .setTitle(R.string.dorm_ele_recharge_string)
-                            .setView(eleRechargeConfigLayout)
-                            .setCancelable(false)
-                            .show()
-                            .run {
-                                var thread: Thread? = null
-                                eleRechargeConfigLayout.apply {
-                                    setOnConfirmListener(object : EleRechargeConfigLayout.OnConfirmListener {
-                                        private fun showFailure() {
-                                            try {
-                                                handler.post {
-                                                    Toast.makeText(context, R.string.op_fail_retry, Toast.LENGTH_SHORT)
-                                                        .show()
-                                                    revokeLabel()
+                configureCommunity {
+                    try {
+                        if (Alipay.hasInstalledAlipayClient(context)) {
+                            val eleRechargeConfigLayout = EleRechargeConfigLayout(context)
+                            AlertDialog.Builder(context)
+                                .setTitle(R.string.dorm_ele_recharge_string)
+                                .setView(eleRechargeConfigLayout)
+                                .setCancelable(false)
+                                .show()
+                                .run {
+                                    var thread: Thread? = null
+                                    eleRechargeConfigLayout.apply {
+                                        setOnConfirmListener(object : EleRechargeConfigLayout.OnConfirmListener {
+                                            private fun showFailure() {
+                                                try {
+                                                    handler.post {
+                                                        Toast.makeText(
+                                                            context,
+                                                            R.string.op_fail_retry,
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                        revokeLabel()
+                                                    }
+                                                } catch (e: Exception) {
+                                                    e.printStackTrace()
                                                 }
-                                            } catch (e: Exception) {
-                                                e.printStackTrace()
                                             }
-                                        }
 
-                                        override fun onConfirm(value: Int) {
-                                            thread = thread {
-                                                with(Network.getEleRechargePayCode(value)) code@{
-                                                    if (this == null) {
-                                                        showFailure()
-                                                    } else {
-                                                        activity?.run {
-                                                            handler?.post {
-                                                                if (Alipay.startAlipayClient(this, this@code)) {
-                                                                    dismiss()
-                                                                } else {
-                                                                    showFailure()
+                                            override fun onConfirm(value: Int) {
+                                                thread = thread {
+                                                    with(Network.getEleRechargePayCode(value)) code@{
+                                                        if (this == null) {
+                                                            showFailure()
+                                                        } else {
+                                                            activity?.run {
+                                                                handler?.post {
+                                                                    if (Alipay.startAlipayClient(this, this@code)) {
+                                                                        dismiss()
+                                                                    } else {
+                                                                        showFailure()
+                                                                    }
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
-                                    })
-                                    setOnCancelListener(object : EleRechargeConfigLayout.OnCancelListener {
-                                        override fun onCancel() {
-                                            thread?.interrupt()
-                                            dismiss()
-                                        }
-                                    })
+                                        })
+                                        setOnCancelListener(object : EleRechargeConfigLayout.OnCancelListener {
+                                            override fun onCancel() {
+                                                thread?.interrupt()
+                                                dismiss()
+                                            }
+                                        })
+                                    }
                                 }
+                        } else {
+                            context?.run {
+                                Toast.makeText(this, R.string.require_alipay_string, Toast.LENGTH_SHORT).show()
                             }
-                    } else {
-                        context?.run {
-                            Toast.makeText(this, R.string.require_alipay_string, Toast.LENGTH_SHORT).show()
                         }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    try {
-                        context?.run { Toast.makeText(this, R.string.load_fail_string, Toast.LENGTH_SHORT).show() }
                     } catch (e: Exception) {
                         e.printStackTrace()
+                        try {
+                            context?.run { Toast.makeText(this, R.string.load_fail_string, Toast.LENGTH_SHORT).show() }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
             findViewById<TextView>(R.id.dorm_score_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
+                configureCommunity {
+                    findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
+                }
             }
         }
         super.onStart()
+    }
+
+    private fun configureCommunity(block: () -> Unit) {
+        if (loggedInUser.communityLoggedIn) {
+            block()
+        } else {
+            activity?.run {
+                ViewModelProvider(this).get(ConfigureCommunityViewModel::class.java).setRunOnCallBack(block)
+            }
+            findNavController(this).navigate(R.id.configureCommunityFragment)
+        }
     }
 }

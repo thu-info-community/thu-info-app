@@ -123,4 +123,9 @@
 7、读者如遇紧急事务无法正常赴约，可在早上预约系统关闭前及时取消预约。\n
 8、暂定每年度8月31日清除全部用户的全部违规记录。\n
 9、如您在使用本APP进行预约的过程中遇到任何意外，请立即前往官方通道：http://seat.lib.tsinghua.edu.cn/roompre。</string>
+
+    <!-- community related -->
+    <string name="community_hint_string">这个密码很可能是你入学前就设置好了的……</string>
+    <string name="forget_password_string">忘记密码</string>
+    <string name="configure_community_fragment_title">请登录清华家园网</string>
 </resources>

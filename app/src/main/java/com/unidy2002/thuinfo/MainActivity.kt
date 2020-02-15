@@ -67,14 +67,7 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        thread {
-            Network.getTicket(-1)
-            try {
-                runOnUiThread { findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        thread { Network.getTicket(-1) }
         thread {
             if (loggedInUser.emailAddressInitialized())
                 try {
@@ -92,7 +85,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName
         findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
-        findViewById<TextView>(R.id.user_dorm_text).text = loggedInUser.dormitory
         findViewById<NavigationView>(R.id.side_nav_view).setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_email ->

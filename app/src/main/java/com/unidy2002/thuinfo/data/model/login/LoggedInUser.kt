@@ -9,11 +9,11 @@ data class LoggedInUser(val userId: String, val password: String) {
     var fullName = ""
     lateinit var vpnTicket: String
     lateinit var schedule: Schedule
-    lateinit var communityTicket: String
-    var dormitory = ""
     lateinit var userName: String
     lateinit var emailAddress: String
     lateinit var imapStore: IMAPStore
+    lateinit var communityPassword: String
+    var communityLoggedIn = false
 
     fun scheduleInitialized() = ::schedule.isInitialized
     fun userNameInitialized() = ::userName.isInitialized
