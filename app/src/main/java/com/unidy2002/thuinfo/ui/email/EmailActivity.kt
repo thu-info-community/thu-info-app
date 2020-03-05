@@ -176,7 +176,7 @@ class EmailActivity : AppCompatActivity() {
                 .run {
                     name = findViewById(R.id.username_config)
                     host = findViewById(R.id.host_list)
-                    host.adapter = ArrayAdapter<String>(
+                    host.adapter = ArrayAdapter(
                         context, android.R.layout.simple_spinner_dropdown_item,
                         listOf("@mails.tsinghua.edu.cn", "@mail.tsinghua.edu.cn")
                     )

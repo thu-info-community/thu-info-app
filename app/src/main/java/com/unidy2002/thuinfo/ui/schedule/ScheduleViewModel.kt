@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
@@ -23,6 +24,13 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
             else
                 ScheduleResult(success = this)
         })
+    }
+
+    fun addCustom(lesson: Schedule.Lesson) {
+        loggedInUser.schedule.apply {
+            lessonList.add(lesson)
+            _scheduleData.postValue(ScheduleResult(success = this))
+        }
     }
 
     fun setWeek(week: Int) {

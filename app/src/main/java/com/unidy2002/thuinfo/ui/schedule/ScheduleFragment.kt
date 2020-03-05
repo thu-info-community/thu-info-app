@@ -1,5 +1,8 @@
 package com.unidy2002.thuinfo.ui.schedule
 
+import android.R.layout.simple_spinner_dropdown_item
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity.CENTER
 import android.view.LayoutInflater
@@ -21,6 +24,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 import kotlin.math.round
+
+
+// TODO: the schedule module is definitely to be reconstructed
 
 
 class ScheduleFragment : Fragment() {
@@ -50,6 +56,7 @@ class ScheduleFragment : Fragment() {
                     view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
                     view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
                     view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
+                    view?.findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
                 }
             })
             scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
@@ -61,6 +68,7 @@ class ScheduleFragment : Fragment() {
             setOnRefreshListener {
                 view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
                 view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
+                view?.findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
                 thread { scheduleViewModel.getData(context, true) }
             }
         }
@@ -92,6 +100,63 @@ class ScheduleFragment : Fragment() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+        }
+
+        view?.findViewById<Button>(R.id.schedule_custom_add)?.setOnClickListener {
+            activity?.run {
+                val popup = ScheduleCustomAddLayout(this)
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.custom_add_string)
+                    .setView(popup)
+                    .setPositiveButton(R.string.confirm_string) { dialog, _ ->
+                        try {
+                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                isAccessible = true
+                                val info = popup.valid
+                                if (info == null) {
+                                    popup.weeks.forEach { // TODO: color bug
+                                        scheduleViewModel.addCustom(
+                                            Schedule.Lesson(
+                                                popup.title,
+                                                popup.locale,
+                                                Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
+                                                popup.range.first,
+                                                popup.range.second
+                                            )
+                                        )
+                                    }
+                                    set(dialog, true)
+                                } else {
+                                    context?.run { Toast.makeText(this, info, Toast.LENGTH_SHORT).show() }
+                                    set(dialog, false)
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    .setNegativeButton(R.string.cancel_string) { dialog, _ ->
+                        try {
+                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                isAccessible = true
+                                set(dialog, true)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    .setOnCancelListener { dialog ->
+                        try {
+                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                isAccessible = true
+                                set(dialog, true)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    .show()
             }
         }
     }
@@ -150,5 +215,104 @@ class ScheduleFragment : Fragment() {
                 }
             }
         }
+    }
+
+    internal class ScheduleCustomAddLayout(context: Context) : LinearLayout(context) {
+        private val titleView: EditText?
+        private val localeView: EditText?
+        private val dayOfWeekView: Spinner?
+        private val beginView: EditText?
+        private val endView: EditText?
+        private val repeatView: Spinner?
+        private val repeatCustomView: EditText?
+        private val includeExamView: CheckBox?
+
+        init {
+            (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                .inflate(R.layout.item_add_popup, this, true)
+                .run {
+                    titleView = findViewById(R.id.schedule_add_title)
+                    localeView = findViewById(R.id.schedule_add_locale)
+                    dayOfWeekView = findViewById(R.id.schedule_day_spinner)
+                    beginView = findViewById(R.id.schedule_begin)
+                    endView = findViewById(R.id.schedule_end)
+                    repeatView = findViewById(R.id.schedule_repeat_spinner)
+                    repeatCustomView = findViewById(R.id.schedule_repeat_custom)
+                    includeExamView = findViewById(R.id.schedule_repeat_include_exam)
+
+                    dayOfWeekView?.adapter = ArrayAdapter(
+                        context, simple_spinner_dropdown_item,
+                        resources.getStringArray(R.array.weeks).drop(1)
+                    )
+
+                    repeatView?.adapter = ArrayAdapter(
+                        context, simple_spinner_dropdown_item,
+                        listOf("每周", "单周", "双周", "自定义")
+                    )
+
+                    repeatView?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            repeatCustomView?.isEnabled = position == 3
+                            includeExamView?.isEnabled = position != 3
+                        }
+                    }
+                }
+
+        }
+
+        private fun parseCustom(): List<Int>? {
+            if (repeatCustomView == null || repeatCustomView.text.isBlank()) return null
+            val result = mutableSetOf<Int>()
+            repeatCustomView.text.toString().replace(Regex("\\s"), "").split(',').forEach {
+                when {
+                    it.matches(Regex("[0-9]+")) ->
+                        with(it.toInt()) { if (this in 1..18) result.add(this) else return null }
+                    it.matches(Regex("[0-9]+-[0-9]+")) ->
+                        with(it.split('-')) {
+                            val begin = this[0].toInt()
+                            val end = this[1].toInt()
+                            if (begin in 1..18 && end in 1..18 && begin <= end) result.addAll(begin..end)
+                            else return null
+                        }
+                    else -> return null
+                }
+            }
+            return result.toList()
+        }
+
+        private fun parseRange(): Pair<Int, Int>? {
+            if (beginView == null || endView == null) return null
+            val begin = beginView.text.toString().run { if (isBlank()) 1 else toInt() }
+            val end = endView.text.toString().run { if (isBlank()) 14 else toInt() }
+            return if (begin in 1..18 && end in 1..18 && begin <= end) begin to end else null
+        }
+
+        val valid  // TODO: avoid hard code
+            get() = when {
+                (titleView?.text ?: "").isBlank() -> "请输入名称"
+                parseRange() == null -> "起止范围不合法"
+                repeatView?.selectedItemPosition == 3 && (repeatCustomView?.text ?: "").isBlank() -> "请输入自定义周数"
+                repeatView?.selectedItemPosition == 3 && parseCustom() == null -> "自定义周数不合法"
+                else -> null
+            }
+
+        val title get() = titleView?.text?.toString()?.trim() ?: ""
+
+        val locale get() = localeView?.text?.toString()?.trim() ?: ""
+
+        val dayOfWeek get() = (dayOfWeekView?.selectedItemPosition ?: 0) + 1
+
+        val range get() = parseRange() ?: (1 to 14)
+
+        val weeks
+            get() = when (repeatView?.selectedItemPosition) {
+                0 -> if (includeExamView?.isChecked == true) 1..18 else 1..16
+                1 -> List(if (includeExamView?.isChecked == true) 9 else 8) { it * 2 + 1 }
+                2 -> List(if (includeExamView?.isChecked == true) 9 else 8) { it * 2 + 2 }
+                3 -> parseCustom() ?: 1..16  // TODO: auto UI change enabled
+                else -> 1..16
+            }
     }
 }
