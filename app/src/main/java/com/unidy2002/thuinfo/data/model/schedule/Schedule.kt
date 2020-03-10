@@ -16,7 +16,10 @@ class Schedule {
         var end: Int
     )
 
-    val lessonList: MutableList<Lesson>
+    val primaryLessonList: MutableList<Lesson>
+    val secondaryLessonList: MutableList<Lesson>
+    val customLessonList: MutableList<Lesson>
+    val lessonList get() = primaryLessonList + secondaryLessonList + customLessonList
 
     data class Exam(
         var title: String,
@@ -77,22 +80,33 @@ class Schedule {
     )
 
     constructor(
-        lessonList: MutableList<Lesson>,
+        primaryLessonList: MutableList<Lesson>,
+        secondaryLessonList: MutableList<Lesson>,
+        customLessonList: MutableList<Lesson>,
         examList: MutableList<Exam>,
         autoShortenMap: MutableMap<String, String>,
         customShortenMap: MutableMap<String, String>,
         colorMap: MutableMap<String, Int>
     ) {
-        this.lessonList = lessonList
+        this.primaryLessonList = primaryLessonList
+        this.secondaryLessonList = secondaryLessonList
+        this.customLessonList = customLessonList
         this.examList = examList
         this.autoShortenMap = autoShortenMap
         this.customShortenMap = customShortenMap
         this.colorMap = colorMap
     }
 
-    constructor(primary: String, secondary: List<Lesson>, custom: MutableMap<String, String>) {
+    constructor(
+        primary: String,
+        secondary: List<Lesson>,
+        customLesson: MutableList<Lesson>,
+        custom: MutableMap<String, String>
+    ) {
         val segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
-        lessonList = mutableListOf()
+        primaryLessonList = mutableListOf()
+        secondaryLessonList = mutableListOf()
+        customLessonList = customLesson
         examList = mutableListOf()
         autoShortenMap = mutableMapOf()
         customShortenMap = custom
@@ -107,13 +121,13 @@ class Schedule {
                         val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).parse(o["nq"] as String)!!
                         val begin = parseBegin(o["kssj"] as String)
                         val end = parseEnd(o["jssj"] as String)
-                        if (lessonList.isNotEmpty() &&
-                            title == lessonList.last().title &&
-                            locale == lessonList.last().locale &&
-                            date == lessonList.last().date &&
-                            begin <= lessonList.last().end + 1
-                        ) lessonList.last().end = end
-                        else lessonList.add(Lesson(title, locale, date, begin, end))
+                        if (primaryLessonList.isNotEmpty() &&
+                            title == primaryLessonList.last().title &&
+                            locale == primaryLessonList.last().locale &&
+                            date == primaryLessonList.last().date &&
+                            begin <= primaryLessonList.last().end + 1
+                        ) primaryLessonList.last().end = end
+                        else primaryLessonList.add(Lesson(title, locale, date, begin, end))
                         shortenTitle(title, segmenter)
                     }
                     "考试" ->
@@ -132,7 +146,7 @@ class Schedule {
             }
         }
         secondary.forEach {
-            lessonList.add(it)
+            secondaryLessonList.add(it)
             shortenTitle(it.title, segmenter)
         }
     }

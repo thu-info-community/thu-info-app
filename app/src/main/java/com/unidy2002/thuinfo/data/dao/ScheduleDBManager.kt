@@ -3,10 +3,14 @@ package com.unidy2002.thuinfo.data.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.schedule.Schedule.Exam
 import com.unidy2002.thuinfo.data.model.schedule.Schedule.Lesson
 import java.sql.Date
 import java.sql.Time
+
+// TODO: the db manager is full of duplicated code
 
 class ScheduleDBManager private constructor(context: Context?) {
     private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
@@ -15,13 +19,23 @@ class ScheduleDBManager private constructor(context: Context?) {
         writableDatabase.execSQL("DELETE FROM $tableName")
     }
 
-    fun updateLesson(lessonList: List<Lesson>) {
-        clearTable("lesson")
-        lessonList.forEach { addLesson(it) }
+    fun updatePrimaryLesson(lessonList: List<Lesson>) {
+        clearTable("primary_lesson")
+        lessonList.forEach { addLesson(it, "primary_lesson") }
     }
 
-    private fun addLesson(lesson: Lesson) {
-        writableDatabase.insert("lesson", null, ContentValues().apply {
+    fun updateSecondaryLesson(lessonList: List<Lesson>) {
+        clearTable("secondary_lesson")
+        lessonList.forEach { addLesson(it, "secondary_lesson") }
+    }
+
+    fun updateCustomLesson(lessonList: List<Lesson>) {
+        clearTable("custom_lesson")
+        lessonList.forEach { addLesson(it, "custom_lesson") }
+    }
+
+    private fun addLesson(lesson: Lesson, tableName: String) {
+        writableDatabase.insert(tableName, null, ContentValues().apply {
             put("title", lesson.title)
             put("locale", lesson.locale)
             put("date", lesson.date.time)
@@ -81,69 +95,52 @@ class ScheduleDBManager private constructor(context: Context?) {
         })
     }
 
-    val lessonList: MutableList<Lesson>
-        get() {
-            val list: MutableList<Lesson> = ArrayList()
-            val cursor = writableDatabase.query("lesson", null, null, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                val title = cursor.getString(0)
-                val locale = cursor.getString(1)
-                val date = Date(cursor.getLong(2))
-                val begin = cursor.getInt(3)
-                val end = cursor.getInt(4)
-                list.add(Lesson(title, locale, date, begin, end))
+    private fun getLessonList(tableName: String) =
+        mutableListOf<Lesson>().apply {
+            writableDatabase.query(tableName, null, null, null, null, null, null, null).apply {
+                while (moveToNext())
+                    add(Lesson(getString(0), getString(1), Date(getLong(2)), getInt(3), getInt(4)))
+                close()
             }
-            cursor.close()
-            return list
         }
 
-    val examList: MutableList<Exam>
-        get() {
-            val list: MutableList<Exam> = ArrayList()
-            val cursor = writableDatabase.query("exam", null, null, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                val title = cursor.getString(0)
-                val locale = cursor.getString(1)
-                val date = Date(cursor.getLong(2))
-                val begin = Time(cursor.getLong(3))
-                val end = Time(cursor.getLong(4))
-                list.add(Exam(title, locale, date, begin, end))
+    val primaryLessonList get() = getLessonList("primary_lesson")
+
+    val secondaryLessonList get() = getLessonList("secondary_lesson")
+
+    val customLessonList get() = getLessonList("custom_lesson")
+
+    val examList
+        get() = mutableListOf<Exam>().apply {
+            writableDatabase.query("exam", null, null, null, null, null, null, null).apply {
+                while (moveToNext())
+                    add(Exam(getString(0), getString(1), Date(getLong(2)), Time(getLong(3)), Time(getLong(4))))
+                close()
             }
-            cursor.close()
-            return list
         }
 
-    val autoShortenMap: MutableMap<String, String>
-        get() {
-            val map: MutableMap<String, String> = mutableMapOf()
-            val cursor = writableDatabase.query("auto", null, null, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                map[cursor.getString(0)] = cursor.getString(1)
+    val autoShortenMap
+        get() = mutableMapOf<String, String>().apply {
+            writableDatabase.query("auto", null, null, null, null, null, null, null).apply {
+                while (moveToNext()) put(getString(0), getString(1))
+                close()
             }
-            cursor.close()
-            return map
         }
 
-    val customShortenMap: MutableMap<String, String>
-        get() {
-            val map: MutableMap<String, String> = mutableMapOf()
-            val cursor = writableDatabase.query("custom", null, null, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                map[cursor.getString(0)] = cursor.getString(1)
+    val customShortenMap
+        get() = mutableMapOf<String, String>().apply {
+            writableDatabase.query("custom", null, null, null, null, null, null, null).apply {
+                while (moveToNext()) put(getString(0), getString(1))
+                close()
             }
-            cursor.close()
-            return map
         }
 
-    val colorMap: MutableMap<String, Int>
-        get() {
-            val map: MutableMap<String, Int> = LinkedHashMap()
-            val cursor = writableDatabase.query("color", null, null, null, null, null, null, null)
-            while (cursor.moveToNext()) {
-                map[cursor.getString(0)] = cursor.getInt(1)
+    val colorMap
+        get() = mutableMapOf<String, Int>().apply {
+            writableDatabase.query("color", null, null, null, null, null, null, null).apply {
+                while (moveToNext()) put(getString(0), getInt(1))
+                close()
             }
-            cursor.close()
-            return map
         }
 
     companion object {
@@ -158,5 +155,20 @@ class ScheduleDBManager private constructor(context: Context?) {
             }
             return instance!!
         }
+    }
+
+    class ScheduleDBHelper(context: Context?, version: Int) :
+        SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
+        override fun onCreate(db: SQLiteDatabase) {
+            db.execSQL("create table primary_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
+            db.execSQL("create table secondary_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
+            db.execSQL("create table custom_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
+            db.execSQL("create table exam(title String, locale String, date Long, beginning Long, ending Long)")
+            db.execSQL("create table auto(origin String, dest String)")
+            db.execSQL("create table custom(origin String, dest String)")
+            db.execSQL("create table color(name String, id Integer)")
+        }
+
+        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
     }
 }

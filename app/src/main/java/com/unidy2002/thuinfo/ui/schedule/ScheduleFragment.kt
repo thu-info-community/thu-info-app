@@ -104,7 +104,7 @@ class ScheduleFragment : Fragment() {
         }
 
         view?.findViewById<Button>(R.id.schedule_custom_add)?.setOnClickListener {
-            activity?.run {
+            activity?.run a@{
                 val popup = ScheduleCustomAddLayout(this)
                 AlertDialog.Builder(this)
                     .setTitle(R.string.custom_add_string)
@@ -123,7 +123,7 @@ class ScheduleFragment : Fragment() {
                                                 Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
                                                 popup.range.first,
                                                 popup.range.second
-                                            )
+                                            ), this@a
                                         )
                                     }
                                     set(dialog, true)

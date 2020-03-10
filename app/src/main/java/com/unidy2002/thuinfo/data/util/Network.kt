@@ -691,7 +691,15 @@ object Network {
                 val sharedPreferences =
                     context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
                 (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
-                    Schedule(lessonList, examList, autoShortenMap, customShortenMap, colorMap)
+                    Schedule(
+                        primaryLessonList,
+                        secondaryLessonList,
+                        customLessonList,
+                        examList,
+                        autoShortenMap,
+                        customShortenMap,
+                        colorMap
+                    )
                 } else {
                     retryTemplate(792) {
                         val lock = Object()
@@ -735,12 +743,17 @@ object Network {
                                         stringBuilder.run { substring(indexOf('[') + 1, lastIndexOf(']')) }
                                     }
                                     Log.i("async", "$it finished!")
+                                } catch (e: Exception) {
+                                    Log.e("async", "id = $it")
+                                    e.printStackTrace()
+                                }
+                                try {
                                     synchronized(count) {
                                         count--
                                         if (count == 0) synchronized(lock) { lock.notify() }
                                     }
                                 } catch (e: Exception) {
-                                    Log.e("async", "id = $it")
+                                    Log.e("async", "lock $it failed to notify")
                                     e.printStackTrace()
                                 }
                             }
@@ -758,11 +771,16 @@ object Network {
                             "[${data.joinToString(",")}]",
                             secondaryList,
                             if (loggedInUser.scheduleInitialized())
+                                loggedInUser.schedule.customLessonList
+                            else
+                                mutableListOf(),
+                            if (loggedInUser.scheduleInitialized())
                                 loggedInUser.schedule.customShortenMap
                             else
                                 mutableMapOf()
                         ).also {
-                            updateLesson(it.lessonList)
+                            updatePrimaryLesson(it.primaryLessonList)
+                            updateSecondaryLesson(it.secondaryLessonList)
                             updateExam(it.examList)
                             updateAuto(it.autoShortenMap)
                             updateColor(it.colorMap)
