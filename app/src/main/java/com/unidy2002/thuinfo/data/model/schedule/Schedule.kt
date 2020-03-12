@@ -2,6 +2,8 @@ package com.unidy2002.thuinfo.data.model.schedule
 
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.sql.Time
 import java.text.SimpleDateFormat
@@ -19,7 +21,8 @@ class Schedule {
     val primaryLessonList: MutableList<Lesson>
     val secondaryLessonList: MutableList<Lesson>
     val customLessonList: MutableList<Lesson>
-    val lessonList get() = primaryLessonList + secondaryLessonList + customLessonList
+    val autoLessonList get() = primaryLessonList + secondaryLessonList
+    val allLessonList get() = primaryLessonList + secondaryLessonList + customLessonList
 
     data class Exam(
         var title: String,
@@ -31,11 +34,22 @@ class Schedule {
 
     val examList: MutableList<Exam>
 
-    val autoShortenMap: MutableMap<String, String>
-
-    val customShortenMap: MutableMap<String, String>
+    val shortenMap: MutableMap<String, String>
 
     val colorMap: MutableMap<String, Int>
+
+    fun getColor(name: String) = colorMap[name] ?: (colorMap.size % colorCount).also {
+        colorMap[name] = it
+        ScheduleDBManager.getInstance()?.updateColor(colorMap)
+    }
+
+    fun updateShorten() {
+        ScheduleDBManager.getInstance()?.updateShorten(shortenMap)
+    }
+
+    fun updateCustom() {
+        ScheduleDBManager.getInstance()?.updateCustomLesson(customLessonList)
+    }
 
     private val stopWord = setOf("的", "基础")
 
@@ -84,33 +98,31 @@ class Schedule {
         secondaryLessonList: MutableList<Lesson>,
         customLessonList: MutableList<Lesson>,
         examList: MutableList<Exam>,
-        autoShortenMap: MutableMap<String, String>,
-        customShortenMap: MutableMap<String, String>,
+        shortenMap: MutableMap<String, String>,
         colorMap: MutableMap<String, Int>
     ) {
         this.primaryLessonList = primaryLessonList
         this.secondaryLessonList = secondaryLessonList
         this.customLessonList = customLessonList
         this.examList = examList
-        this.autoShortenMap = autoShortenMap
-        this.customShortenMap = customShortenMap
+        this.shortenMap = shortenMap
         this.colorMap = colorMap
     }
 
-    constructor(
-        primary: String,
-        secondary: List<Lesson>,
-        customLesson: MutableList<Lesson>,
-        custom: MutableMap<String, String>
-    ) {
+    constructor(primary: String, secondary: List<Lesson>) {
         val segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         primaryLessonList = mutableListOf()
         secondaryLessonList = mutableListOf()
-        customLessonList = customLesson
         examList = mutableListOf()
-        autoShortenMap = mutableMapOf()
-        customShortenMap = custom
-        colorMap = mutableMapOf()
+        if (loggedInUser.scheduleInitialized()) {
+            customLessonList = loggedInUser.schedule.customLessonList
+            shortenMap = loggedInUser.schedule.shortenMap
+            colorMap = loggedInUser.schedule.colorMap
+        } else {
+            customLessonList = mutableListOf()
+            shortenMap = mutableMapOf()
+            colorMap = mutableMapOf()
+        }
         parseArray(primary).forEach {
             try {
                 val o = it as JSONObject
@@ -167,10 +179,10 @@ class Schedule {
         }
     }
 
-    fun abbr(name: String) = customShortenMap[name] ?: autoShortenMap[name] ?: name
+    fun abbr(name: String) = shortenMap[name] ?: name
 
     private fun shortenTitle(name: String, segmenter: JiebaSegmenter) {
-        if (autoShortenMap[name] == null) {
+        if (shortenMap[name] == null) {
             var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
             with(Regex("《.*?》").findAll(temp)) {
                 if (this.count() != 0) {
@@ -209,9 +221,7 @@ class Schedule {
                         temp = temp.dropLast(1)
                 }
             }
-            temp = customShortenMap[temp] ?: temp
-            autoShortenMap[name] = temp
+            shortenMap[name] = temp
         }
-        if (colorMap[name] == null) colorMap[name] = colorMap.size % colorCount
     }
 }

@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:inputType="text"
-                android:hint="名称"/>
+                android:hint="@string/schedule_add_title_string"/>
 
         <EditText
                 android:id="@+id/schedule_add_locale"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:inputType="text"
-                android:hint="地点（可选）"/>
+                android:hint="@string/schedule_add_locale_string"/>
     </LinearLayout>
 
     <LinearLayout
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="起："/>
+                android:text="@string/schedule_add_begin_string"/>
 
         <EditText
                 android:id="@+id/schedule_begin"
@@ -55,14 +55,14 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:hint="1"
+                android:hint="@string/_1"
                 android:inputType="number"/>
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="止："/>
+                android:text="@string/schedule_add_end_string"/>
 
         <EditText
                 android:id="@+id/schedule_end"
@@ -70,7 +70,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:hint="14"
+                android:hint="@string/_14"
                 android:inputType="number"/>
     </LinearLayout>
 
@@ -94,13 +94,13 @@
                 android:enabled="false"
                 android:inputType="text"
                 android:textSize="12sp"
-                android:hint="例:2,4-6,9"/>
+                android:hint="@string/schedule_add_custom_example_string"/>
 
         <CheckBox
                 android:id="@+id/schedule_repeat_include_exam"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="含考试周"/>
+                android:text="@string/schedule_add_include_exam_string"/>
     </LinearLayout>
 </LinearLayout>

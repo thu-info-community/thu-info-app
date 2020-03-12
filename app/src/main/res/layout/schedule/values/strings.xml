@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="week_title">第%1$d周</string>
     <string name="abbr_locale">%1$s@%2$s</string>
     <string-array name="weeks">
@@ -23,4 +23,24 @@
     <string name="schedule_title_template">第%1$d周课表</string>
     <string name="save_to_gallery_succeed">已保存至相册</string>
     <string name="save_fail_string">保存失败</string>
+
+    <!-- custom add related -->
+    <string name="schedule_add_title_string">名称</string>
+    <string name="schedule_add_locale_string">地点（可选）</string>
+    <string name="schedule_add_begin_string">起：</string>
+    <string name="_1">1</string>
+    <string name="schedule_add_end_string">止：</string>
+    <string name="_14">14</string>
+    <string name="schedule_add_custom_example_string" tools:ignore="TypographyDashes">例:2,4-6,9</string>
+    <string name="schedule_add_include_exam_string">含考试周</string>
+    <string name="please_input_name">请输入名称</string>
+    <string name="schedule_range_invalid_string">起止范围不合法</string>
+    <string name="input_custom">请输入自定义周数</string>
+    <string name="input_custom_invalid">自定义周数不合法</string>
+    <string-array name="week_repeat_types">
+        <item>每周</item>
+        <item>单周</item>
+        <item>双周</item>
+        <item>自定义</item>
+    </string-array>
 </resources>

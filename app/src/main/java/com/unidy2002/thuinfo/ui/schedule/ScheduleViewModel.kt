@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import com.unidy2002.thuinfo.data.util.Network
@@ -27,10 +26,10 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
         })
     }
 
-    fun addCustom(lesson: Schedule.Lesson, context: Context) {
+    fun addCustom(lesson: Schedule.Lesson) {
         loggedInUser.schedule.apply {
             customLessonList.add(lesson)
-            ScheduleDBManager.getInstance(context).updateCustomLesson(customLessonList)
+            updateCustom()
             _scheduleData.postValue(ScheduleResult(success = this))
         }
     }

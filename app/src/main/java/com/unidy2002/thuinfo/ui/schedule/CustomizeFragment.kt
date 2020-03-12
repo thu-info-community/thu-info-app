@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 
@@ -25,8 +24,6 @@ class CustomizeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_customize, container, false)
 
-    lateinit var scheduleDBManager: ScheduleDBManager
-
     override fun onStart() {
         super.onStart()
 
@@ -34,13 +31,11 @@ class CustomizeFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = CustomizeAdapter(loggedInUser.schedule)
         }
-
-        scheduleDBManager = ScheduleDBManager.getInstance(context)
     }
 
     inner class CustomizeAdapter(val schedule: Schedule) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-        private val lessonNames = schedule.autoShortenMap.keys.toList()
+        private val lessonNames = schedule.autoLessonList.map { it.title }.toMutableSet().toList()
 
         inner class CustomizeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val origin: TextView? = view.findViewById(R.id.custom_origin_name)
@@ -55,8 +50,7 @@ class CustomizeFragment : Fragment() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val originalName = lessonNames[position]
-            val defaultNew =
-                schedule.customShortenMap[originalName] ?: schedule.autoShortenMap[originalName] ?: originalName
+            val defaultNew = schedule.abbr(originalName)
             holder as CustomizeViewHolder
             holder.origin?.text = originalName
             holder.new?.text = defaultNew
@@ -74,8 +68,8 @@ class CustomizeFragment : Fragment() {
                                 if (isNotBlank()) {
                                     holder.new?.text = this
                                     notifyItemChanged(position)
-                                    schedule.customShortenMap[originalName] = this.toString()
-                                    scheduleDBManager.updateCustom(schedule.customShortenMap)
+                                    schedule.shortenMap[originalName] = this.toString()
+                                    schedule.updateShorten()
                                 }
                             }
                         }

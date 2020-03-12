@@ -10,12 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.GridLayout.*
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import com.unidy2002.thuinfo.data.util.save
@@ -90,13 +92,13 @@ class ScheduleFragment : Fragment() {
         view?.findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener {
             try {
                 view!!.findViewById<GridLayout>(R.id.table_grid).toBitmap().save(
-                    context!!, getString(R.string.schedule_title_template, scheduleViewModel.scheduleWeek.value)
+                    context!!, getString(schedule_title_template, scheduleViewModel.scheduleWeek.value)
                 )
-                Toast.makeText(context, R.string.save_to_gallery_succeed, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, save_to_gallery_succeed, Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 e.printStackTrace()
                 try {
-                    Toast.makeText(context, R.string.save_fail_string, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, save_fail_string, Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -107,15 +109,15 @@ class ScheduleFragment : Fragment() {
             activity?.run a@{
                 val popup = ScheduleCustomAddLayout(this)
                 AlertDialog.Builder(this)
-                    .setTitle(R.string.custom_add_string)
+                    .setTitle(custom_add_string)
                     .setView(popup)
-                    .setPositiveButton(R.string.confirm_string) { dialog, _ ->
+                    .setPositiveButton(confirm_string) { dialog, _ ->
                         try {
                             dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
                                 isAccessible = true
                                 val info = popup.valid
                                 if (info == null) {
-                                    popup.weeks.forEach { // TODO: color bug
+                                    popup.weeks.forEach {
                                         scheduleViewModel.addCustom(
                                             Schedule.Lesson(
                                                 popup.title,
@@ -123,7 +125,7 @@ class ScheduleFragment : Fragment() {
                                                 Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
                                                 popup.range.first,
                                                 popup.range.second
-                                            ), this@a
+                                            )
                                         )
                                     }
                                     set(dialog, true)
@@ -136,7 +138,7 @@ class ScheduleFragment : Fragment() {
                             e.printStackTrace()
                         }
                     }
-                    .setNegativeButton(R.string.cancel_string) { dialog, _ ->
+                    .setNegativeButton(cancel_string) { dialog, _ ->
                         try {
                             dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
                                 isAccessible = true
@@ -167,7 +169,7 @@ class ScheduleFragment : Fragment() {
             val today = SchoolCalendar()
 
             view?.run {
-                findViewById<TextView>(R.id.schedule_title).text = getString(R.string.week_title, this@weekNumber)
+                findViewById<TextView>(R.id.schedule_title).text = getString(week_title, this@weekNumber)
 
                 val grid = findViewById<GridLayout>(R.id.table_grid)
                 val totalWidth = findViewById<LinearLayout>(R.id.schedule_content).width
@@ -176,18 +178,22 @@ class ScheduleFragment : Fragment() {
                 grid.removeAllViews()
 
                 fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, useStd: Boolean = true) {
-                    grid.addView(TextView(context).apply {
-                        text = title
-                        width = if (useStd) stdWidth else remainderWidth
-                        if (!useStd) height = 130
-                        gravity = CENTER
-                        color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
-                        if (begin == 0 && date == today)
-                            setTextColor(resources.getColor(R.color.colorAccent, null))
-                    }, LayoutParams().apply {
-                        rowSpec = spec(begin, size, FILL)
-                        columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
-                    })
+                    try {
+                        grid.addView(TextView(context).apply {
+                            text = title
+                            width = if (useStd) stdWidth else remainderWidth
+                            if (!useStd) height = 130
+                            gravity = CENTER
+                            color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
+                            if (begin == 0 && date == today)
+                                setTextColor(resources.getColor(R.color.colorAccent, null))
+                        }, LayoutParams().apply {
+                            rowSpec = spec(begin, size, FILL)
+                            columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
+                        })
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 for (i in 1..14) addView(i.toString(), begin = i, useStd = false)
@@ -195,18 +201,18 @@ class ScheduleFragment : Fragment() {
                 repeat(7) {
                     addView(
                         getString(
-                            R.string.double_line,
+                            double_line,
                             resources.getStringArray(R.array.weeks)[date.dayOfWeek],
                             SimpleDateFormat("MM.dd", Locale.CHINA).format(date.timeInMillis)
                         )
                     )
-                    schedule.lessonList.filter { it.date.time == date.timeInMillis }.forEach {
+                    schedule.allLessonList.filter { it.date.time == date.timeInMillis }.forEach {
                         addView(
                             if (it.locale.isEmpty())
                                 schedule.abbr(it.title)
                             else
-                                getString(R.string.abbr_locale, schedule.abbr(it.title), it.locale),
-                            schedule.colorMap[it.title] ?: 0,
+                                getString(abbr_locale, schedule.abbr(it.title), it.locale),
+                            schedule.getColor(it.title),
                             it.begin,
                             it.end - it.begin + 1
                         )
@@ -247,7 +253,7 @@ class ScheduleFragment : Fragment() {
 
                     repeatView?.adapter = ArrayAdapter(
                         context, simple_spinner_dropdown_item,
-                        listOf("每周", "单周", "双周", "自定义")
+                        resources.getStringArray(R.array.week_repeat_types)
                     )
 
                     repeatView?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -286,15 +292,15 @@ class ScheduleFragment : Fragment() {
             if (beginView == null || endView == null) return null
             val begin = beginView.text.toString().run { if (isBlank()) 1 else toInt() }
             val end = endView.text.toString().run { if (isBlank()) 14 else toInt() }
-            return if (begin in 1..18 && end in 1..18 && begin <= end) begin to end else null
+            return if (begin in 1..14 && end in 1..14 && begin <= end) begin to end else null
         }
 
-        val valid  // TODO: avoid hard code
-            get() = when {
-                (titleView?.text ?: "").isBlank() -> "请输入名称"
-                parseRange() == null -> "起止范围不合法"
-                repeatView?.selectedItemPosition == 3 && (repeatCustomView?.text ?: "").isBlank() -> "请输入自定义周数"
-                repeatView?.selectedItemPosition == 3 && parseCustom() == null -> "自定义周数不合法"
+        val valid
+            @StringRes get() = when {
+                (titleView?.text ?: "").isBlank() -> please_input_name
+                parseRange() == null -> schedule_range_invalid_string
+                repeatView?.selectedItemPosition == 3 && (repeatCustomView?.text ?: "").isBlank() -> input_custom
+                repeatView?.selectedItemPosition == 3 && parseCustom() == null -> input_custom_invalid
                 else -> null
             }
 
@@ -311,7 +317,7 @@ class ScheduleFragment : Fragment() {
                 0 -> if (includeExamView?.isChecked == true) 1..18 else 1..16
                 1 -> List(if (includeExamView?.isChecked == true) 9 else 8) { it * 2 + 1 }
                 2 -> List(if (includeExamView?.isChecked == true) 9 else 8) { it * 2 + 2 }
-                3 -> parseCustom() ?: 1..16  // TODO: auto UI change enabled
+                3 -> parseCustom() ?: 1..16
                 else -> 1..16
             }
     }

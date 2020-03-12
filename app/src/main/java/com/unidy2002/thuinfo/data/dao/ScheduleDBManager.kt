@@ -59,25 +59,13 @@ class ScheduleDBManager private constructor(context: Context?) {
         })
     }
 
-    fun updateAuto(autoShortenMap: Map<String, String>) {
-        clearTable("auto")
-        autoShortenMap.forEach { addAuto(it.key, it.value) }
+    fun updateShorten(shortenMap: Map<String, String>) {
+        clearTable("shorten")
+        shortenMap.forEach { addShorten(it.key, it.value) }
     }
 
-    private fun addAuto(origin: String?, dest: String?) {
-        writableDatabase.insert("auto", null, ContentValues().apply {
-            put("origin", origin)
-            put("dest", dest)
-        })
-    }
-
-    fun updateCustom(customShortenMap: Map<String, String>) {
-        clearTable("custom")
-        customShortenMap.forEach { addCustom(it.key, it.value) }
-    }
-
-    private fun addCustom(origin: String?, dest: String?) {
-        writableDatabase.insert("custom", null, ContentValues().apply {
+    private fun addShorten(origin: String?, dest: String?) {
+        writableDatabase.insert("shorten", null, ContentValues().apply {
             put("origin", origin)
             put("dest", dest)
         })
@@ -119,17 +107,9 @@ class ScheduleDBManager private constructor(context: Context?) {
             }
         }
 
-    val autoShortenMap
+    val shortenMap
         get() = mutableMapOf<String, String>().apply {
-            writableDatabase.query("auto", null, null, null, null, null, null, null).apply {
-                while (moveToNext()) put(getString(0), getString(1))
-                close()
-            }
-        }
-
-    val customShortenMap
-        get() = mutableMapOf<String, String>().apply {
-            writableDatabase.query("custom", null, null, null, null, null, null, null).apply {
+            writableDatabase.query("shorten", null, null, null, null, null, null, null).apply {
                 while (moveToNext()) put(getString(0), getString(1))
                 close()
             }
@@ -155,17 +135,18 @@ class ScheduleDBManager private constructor(context: Context?) {
             }
             return instance!!
         }
+
+        fun getInstance() = instance
     }
 
-    class ScheduleDBHelper(context: Context?, version: Int) :
+    private class ScheduleDBHelper(context: Context?, version: Int) :
         SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL("create table primary_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
             db.execSQL("create table secondary_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
             db.execSQL("create table custom_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
             db.execSQL("create table exam(title String, locale String, date Long, beginning Long, ending Long)")
-            db.execSQL("create table auto(origin String, dest String)")
-            db.execSQL("create table custom(origin String, dest String)")
+            db.execSQL("create table shorten(origin String, dest String)")
             db.execSQL("create table color(name String, id Integer)")
         }
 

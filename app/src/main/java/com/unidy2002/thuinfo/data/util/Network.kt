@@ -696,8 +696,7 @@ object Network {
                         secondaryLessonList,
                         customLessonList,
                         examList,
-                        autoShortenMap,
-                        customShortenMap,
+                        shortenMap,
                         colorMap
                     )
                 } else {
@@ -767,22 +766,11 @@ object Network {
                                 }
                             }
                         }
-                        Schedule(
-                            "[${data.joinToString(",")}]",
-                            secondaryList,
-                            if (loggedInUser.scheduleInitialized())
-                                loggedInUser.schedule.customLessonList
-                            else
-                                mutableListOf(),
-                            if (loggedInUser.scheduleInitialized())
-                                loggedInUser.schedule.customShortenMap
-                            else
-                                mutableMapOf()
-                        ).also {
+                        Schedule("[${data.joinToString(",")}]", secondaryList).also {
                             updatePrimaryLesson(it.primaryLessonList)
                             updateSecondaryLesson(it.secondaryLessonList)
                             updateExam(it.examList)
-                            updateAuto(it.autoShortenMap)
+                            updateShorten(it.shortenMap)
                             updateColor(it.colorMap)
                             sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
                         }
