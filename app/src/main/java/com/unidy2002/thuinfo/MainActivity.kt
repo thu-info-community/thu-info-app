@@ -18,17 +18,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,9 +58,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Important network operations
-        thread { Network.getTicket(792) }
-        thread { Network.getTicket(824) }
-        thread {
+        safeThread { Network.getTicket(792) }
+        safeThread { Network.getTicket(824) }
+        safeThread {
             Network.getUsername()
             try {
                 runOnUiThread { findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName }
@@ -67,8 +68,8 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        thread { Network.getTicket(-1) }
-        thread {
+        safeThread { Network.getTicket(-1) }
+        safeThread {
             if (loggedInUser.emailAddressInitialized())
                 try {
                     connectImap(loggedInUser.emailAddress, loggedInUser.password)
@@ -78,7 +79,9 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread { loggedInUser.timerTasks.add(Timer().schedule(0, 30000) { refreshBadge(true) }) }
         }
 
-        JiebaSegmenter.init(applicationContext)
+        // Initialize singletons
+        safeThread { JiebaSegmenter.init(applicationContext) }
+        safeThread { ScheduleDBManager.init(applicationContext) }
     }
 
     // Setup drawer navigation action
@@ -98,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         .show()
                 R.id.navigation_logout -> {
-                    thread {
+                    safeThread {
                         Network.logout()
                         loggedInUser.timerTasks.forEach { task -> task.cancel() }
                         runOnUiThread {
@@ -130,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     // The little red dot, currently designed for email notification.
     private fun refreshBadge(forceUpdate: Boolean) {
-        thread {
+        safeThread {
             if (forceUpdate) inboxUnread = getInboxUnread().also { Log.i("Unread", it.toString()) }
             runOnUiThread {
                 if (navController.currentDestination?.id in topLevelDestinationIds) {

@@ -68,8 +68,7 @@ class CustomizeFragment : Fragment() {
                                 if (isNotBlank()) {
                                     holder.new?.text = this
                                     notifyItemChanged(position)
-                                    schedule.shortenMap[originalName] = this.toString()
-                                    schedule.updateShorten()
+                                    schedule.addShorten(originalName,toString())
                                 }
                             }
                         }

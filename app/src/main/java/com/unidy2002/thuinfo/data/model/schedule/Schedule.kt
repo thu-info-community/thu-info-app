@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.data.util.safeThread
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.sql.Time
 import java.text.SimpleDateFormat
@@ -18,9 +19,9 @@ class Schedule {
         var end: Int
     )
 
-    val primaryLessonList: MutableList<Lesson>
-    val secondaryLessonList: MutableList<Lesson>
-    val customLessonList: MutableList<Lesson>
+    private val primaryLessonList: MutableList<Lesson>
+    private val secondaryLessonList: MutableList<Lesson>
+    private val customLessonList: MutableList<Lesson>
     val autoLessonList get() = primaryLessonList + secondaryLessonList
     val allLessonList get() = primaryLessonList + secondaryLessonList + customLessonList
 
@@ -32,23 +33,25 @@ class Schedule {
         var end: Time
     )
 
-    val examList: MutableList<Exam>
+    private val examList: MutableList<Exam>
 
-    val shortenMap: MutableMap<String, String>
+    private val shortenMap: MutableMap<String, String>
 
-    val colorMap: MutableMap<String, Int>
+    private val colorMap: MutableMap<String, Int>
 
     fun getColor(name: String) = colorMap[name] ?: (colorMap.size % colorCount).also {
         colorMap[name] = it
-        ScheduleDBManager.getInstance()?.updateColor(colorMap)
+        safeThread { loggedInUser.scheduleDBManager?.updateColor(colorMap) }
     }
 
-    fun updateShorten() {
-        ScheduleDBManager.getInstance()?.updateShorten(shortenMap)
+    fun addShorten(origin: String, dest: String) {
+        shortenMap[origin] = dest
+        safeThread { loggedInUser.scheduleDBManager?.updateShorten(shortenMap) }
     }
 
-    fun updateCustom() {
-        ScheduleDBManager.getInstance()?.updateCustomLesson(customLessonList)
+    fun addCustom(lesson: Lesson) {
+        customLessonList.add(lesson)
+        safeThread { loggedInUser.scheduleDBManager?.updateCustomLesson(customLessonList) }
     }
 
     private val stopWord = setOf("的", "基础")
@@ -93,20 +96,18 @@ class Schedule {
         "21:45" to 14
     )
 
-    constructor(
-        primaryLessonList: MutableList<Lesson>,
-        secondaryLessonList: MutableList<Lesson>,
-        customLessonList: MutableList<Lesson>,
-        examList: MutableList<Exam>,
-        shortenMap: MutableMap<String, String>,
-        colorMap: MutableMap<String, Int>
-    ) {
-        this.primaryLessonList = primaryLessonList
-        this.secondaryLessonList = secondaryLessonList
-        this.customLessonList = customLessonList
-        this.examList = examList
-        this.shortenMap = shortenMap
-        this.colorMap = colorMap
+    constructor() {
+        val i = loggedInUser.scheduleDBManager
+        if (i == null) {
+            throw Exception("Schedule database not yet initialized.")
+        } else {
+            primaryLessonList = i.primaryLessonList
+            secondaryLessonList = i.secondaryLessonList
+            customLessonList = i.customLessonList
+            examList = i.examList
+            shortenMap = i.shortenMap
+            colorMap = i.colorMap
+        }
     }
 
     constructor(primary: String, secondary: List<Lesson>) {
@@ -160,6 +161,16 @@ class Schedule {
         secondary.forEach {
             secondaryLessonList.add(it)
             shortenTitle(it.title, segmenter)
+        }
+        safeThread {
+            val i = loggedInUser.scheduleDBManager
+            if (i != null) {
+                i.updatePrimaryLesson(primaryLessonList)
+                i.updateSecondaryLesson(secondaryLessonList)
+                i.updateExam(examList)
+                i.updateShorten(shortenMap)
+                i.updateColor(colorMap)
+            }
         }
     }
 

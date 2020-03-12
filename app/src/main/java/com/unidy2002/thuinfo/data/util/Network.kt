@@ -687,96 +687,82 @@ object Network {
     @Synchronized
     fun getSchedule(context: Context?, force: Boolean = false) = try {
         if (!loggedInUser.scheduleInitialized() || force) {
-            ScheduleDBManager.getInstance(context).run {
-                val sharedPreferences =
-                    context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
-                (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
-                    Schedule(
-                        primaryLessonList,
-                        secondaryLessonList,
-                        customLessonList,
-                        examList,
-                        shortenMap,
-                        colorMap
-                    )
-                } else {
-                    retryTemplate(792) {
-                        val lock = Object()
-                        val data = MutableList(6) { "" }
-                        var count = 7
+            val sharedPreferences =
+                context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
+            (if (!force && sharedPreferences?.getBoolean("schedule", false) == true) {
+                Schedule()
+            } else {
+                retryTemplate(792) {
+                    val lock = Object()
+                    val data = MutableList(6) { "" }
+                    var count = 7
 
-                        // Get secondary lesson list
-                        lateinit var secondaryList: List<Lesson>
-                        thread {
-                            Log.i("async", "Secondary started!")
-                            secondaryList = getSecondary()
-                            Log.i("async", "Secondary finished!")
-                            synchronized(count) {
-                                count--
-                                if (count == 0) synchronized(lock) { lock.notify() }
-                            }
-                        }
-
-                        // Get primary lesson list
-                        (0..5).forEach {
-                            thread {
-                                val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.CHINA)
-                                try {
-                                    Log.i("async", "$it started!")
-                                    data[it] = connect(
-                                        "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=${simpleDateFormat.format(
-                                            SchoolCalendar(it * 3 + 1, 1).timeInMillis
-                                        )}&p_end_date=${simpleDateFormat.format(
-                                            SchoolCalendar(it * 3 + 3, 7).timeInMillis
-                                        )}&jsoncallback=m",
-                                        "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
-                                        loggedInUser.vpnTicket
-                                    ).inputStream.run {
-                                        val reader = BufferedReader(InputStreamReader(this))
-                                        val stringBuilder = StringBuilder()
-                                        var readLine: String?
-                                        while (reader.readLine().also { line -> readLine = line } != null)
-                                            stringBuilder.append(readLine)
-                                        reader.close()
-                                        close()
-                                        stringBuilder.run { substring(indexOf('[') + 1, lastIndexOf(']')) }
-                                    }
-                                    Log.i("async", "$it finished!")
-                                } catch (e: Exception) {
-                                    Log.e("async", "id = $it")
-                                    e.printStackTrace()
-                                }
-                                try {
-                                    synchronized(count) {
-                                        count--
-                                        if (count == 0) synchronized(lock) { lock.notify() }
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("async", "lock $it failed to notify")
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                        synchronized(lock) {
-                            while (count != 0) {
-                                try {
-                                    lock.wait()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                        Schedule("[${data.joinToString(",")}]", secondaryList).also {
-                            updatePrimaryLesson(it.primaryLessonList)
-                            updateSecondaryLesson(it.secondaryLessonList)
-                            updateExam(it.examList)
-                            updateShorten(it.shortenMap)
-                            updateColor(it.colorMap)
-                            sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
+                    // Get secondary lesson list
+                    lateinit var secondaryList: List<Lesson>
+                    thread {
+                        Log.i("async", "Secondary started!")
+                        secondaryList = getSecondary()
+                        Log.i("async", "Secondary finished!")
+                        synchronized(count) {
+                            count--
+                            if (count == 0) synchronized(lock) { lock.notify() }
                         }
                     }
-                })?.also { loggedInUser.schedule = it }
-            }
+
+                    // Get primary lesson list
+                    (0..5).forEach {
+                        thread {
+                            val simpleDateFormat = SimpleDateFormat("yyyyMMdd", Locale.CHINA)
+                            try {
+                                Log.i("async", "$it started!")
+                                data[it] = connect(
+                                    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=${simpleDateFormat.format(
+                                        SchoolCalendar(it * 3 + 1, 1).timeInMillis
+                                    )}&p_end_date=${simpleDateFormat.format(
+                                        SchoolCalendar(it * 3 + 3, 7).timeInMillis
+                                    )}&jsoncallback=m",
+                                    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
+                                    loggedInUser.vpnTicket
+                                ).inputStream.run {
+                                    val reader = BufferedReader(InputStreamReader(this))
+                                    val stringBuilder = StringBuilder()
+                                    var readLine: String?
+                                    while (reader.readLine().also { line -> readLine = line } != null)
+                                        stringBuilder.append(readLine)
+                                    reader.close()
+                                    close()
+                                    stringBuilder.run { substring(indexOf('[') + 1, lastIndexOf(']')) }
+                                }
+                                Log.i("async", "$it finished!")
+                            } catch (e: Exception) {
+                                Log.e("async", "id = $it")
+                                e.printStackTrace()
+                            }
+                            try {
+                                synchronized(count) {
+                                    count--
+                                    if (count == 0) synchronized(lock) { lock.notify() }
+                                }
+                            } catch (e: Exception) {
+                                Log.e("async", "lock $it failed to notify")
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    synchronized(lock) {
+                        while (count != 0) {
+                            try {
+                                lock.wait()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Schedule("[${data.joinToString(",")}]", secondaryList).also {
+                        sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
+                    }
+                }
+            })?.also { loggedInUser.schedule = it }
         } else {
             loggedInUser.schedule
         }

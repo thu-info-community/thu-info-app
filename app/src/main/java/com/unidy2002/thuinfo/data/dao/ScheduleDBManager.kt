@@ -12,7 +12,7 @@ import java.sql.Time
 
 // TODO: the db manager is full of duplicated code
 
-class ScheduleDBManager private constructor(context: Context?) {
+class ScheduleDBManager private constructor(context: Context) {
     private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
 
     private fun clearTable(tableName: String) {
@@ -124,22 +124,18 @@ class ScheduleDBManager private constructor(context: Context?) {
         }
 
     companion object {
-        private var instance: ScheduleDBManager? = null
-        fun getInstance(context: Context?): ScheduleDBManager {
-            if (instance == null) {
+        fun init(context: Context) {
+            if (loggedInUser.scheduleDBManager == null) {
                 synchronized(ScheduleDBManager::class.java) {
-                    if (instance == null) {
-                        instance = ScheduleDBManager(context)
+                    if (loggedInUser.scheduleDBManager == null) {
+                        loggedInUser.scheduleDBManager = ScheduleDBManager(context)
                     }
                 }
             }
-            return instance!!
         }
-
-        fun getInstance() = instance
     }
 
-    private class ScheduleDBHelper(context: Context?, version: Int) :
+    private class ScheduleDBHelper(context: Context, version: Int) :
         SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL("create table primary_lesson(title String, locale String, date Long, beginning Integer, ending Integer)")

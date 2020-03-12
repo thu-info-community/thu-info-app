@@ -1,9 +1,11 @@
 package com.unidy2002.thuinfo.data.model.login
 
 import com.sun.mail.imap.IMAPStore
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import java.util.*
 
+// NOTE: Most of its properties are designed to be written-once or read-only.
 data class LoggedInUser(val userId: String, val password: String) {
     var rememberPassword = false
     var fullName = ""
@@ -23,16 +25,18 @@ data class LoggedInUser(val userId: String, val password: String) {
     val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false)
 
     val timerTasks = mutableListOf<TimerTask>()
+
+    var scheduleDBManager: ScheduleDBManager? = null
 }
 
-private var _loggedInUser: LoggedInUser? = null
+private var loggedInUserInstance: LoggedInUser? = null
 
-val loggedInUser: LoggedInUser get() = _loggedInUser ?: throw Exception("User not logged in!")
+val loggedInUser: LoggedInUser get() = loggedInUserInstance ?: throw Exception("User not logged in!")
 
 fun setUser(loggedInUser: LoggedInUser) {
-    _loggedInUser = loggedInUser
+    loggedInUserInstance = loggedInUser
 }
 
 fun revokeUser() {
-    _loggedInUser = null
+    loggedInUserInstance = null
 }

@@ -28,8 +28,7 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
 
     fun addCustom(lesson: Schedule.Lesson) {
         loggedInUser.schedule.apply {
-            customLessonList.add(lesson)
-            updateCustom()
+            addCustom(lesson)
             _scheduleData.postValue(ScheduleResult(success = this))
         }
     }
