@@ -1,11 +1,11 @@
 package com.unidy2002.thuinfo.ui.schedule
 
-import android.content.Context
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.model.schedule.Schedule
 import com.unidy2002.thuinfo.data.util.Network
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 
@@ -17,16 +17,15 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
     private val _scheduleWeek = MutableLiveData<Int>()
     val scheduleWeek: LiveData<Int> = _scheduleWeek
 
-    fun getData(context: Context?, force: Boolean = false) {
-        _scheduleData.postValue(with(Network.getSchedule(context, force)) {
-            if (this == null)
-                ScheduleResult(error = R.string.load_fail_string)
-            else
-                ScheduleResult(success = this)
-        })
+    fun getData(force: Boolean) {
+        _scheduleData.postValue(
+            if (loggedInUser.scheduleInitialized() && (!force || Network.getSchedule()))
+                ScheduleResult(success = loggedInUser.schedule)
+            else ScheduleResult(error = R.string.load_fail_string)
+        )
     }
 
-    fun addCustom(lesson: Schedule.Lesson) {
+    fun addCustom(lesson: ScheduleDBManager.Lesson) {
         loggedInUser.schedule.apply {
             addCustom(lesson)
             _scheduleData.postValue(ScheduleResult(success = this))
@@ -52,7 +51,7 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
     }
 
     data class ScheduleResult(
-        val success: Schedule? = null,
-        val error: Int? = null
+        val success: ScheduleDBManager? = null,
+        @StringRes val error: Int? = null
     )
 }

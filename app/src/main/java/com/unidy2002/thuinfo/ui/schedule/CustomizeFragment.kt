@@ -15,10 +15,11 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.model.schedule.Schedule
-
 
 class CustomizeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -33,11 +34,11 @@ class CustomizeFragment : Fragment() {
         }
     }
 
-    inner class CustomizeAdapter(val schedule: Schedule) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    inner class CustomizeAdapter(private val schedule: ScheduleDBManager) : Adapter<ViewHolder>() {
 
-        private val lessonNames = schedule.autoLessonList.map { it.title }.toMutableSet().toList()
+        private val lessonNames = schedule.lessonNames
 
-        inner class CustomizeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        inner class CustomizeViewHolder(view: View) : ViewHolder(view) {
             val origin: TextView? = view.findViewById(R.id.custom_origin_name)
             val new: TextView? = view.findViewById(R.id.custom_new_name)
             val image: ImageView? = view.findViewById(R.id.custom_image_button)
@@ -48,7 +49,7 @@ class CustomizeFragment : Fragment() {
 
         override fun getItemCount() = lessonNames.size
 
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val originalName = lessonNames[position]
             val defaultNew = schedule.abbr(originalName)
             holder as CustomizeViewHolder
@@ -68,7 +69,7 @@ class CustomizeFragment : Fragment() {
                                 if (isNotBlank()) {
                                     holder.new?.text = this
                                     notifyItemChanged(position)
-                                    schedule.addShorten(originalName,toString())
+                                    schedule.addShorten(originalName, toString())
                                 }
                             }
                         }

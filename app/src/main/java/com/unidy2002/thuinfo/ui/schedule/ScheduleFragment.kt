@@ -3,6 +3,7 @@ package com.unidy2002.thuinfo.ui.schedule
 import android.R.layout.simple_spinner_dropdown_item
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Gravity.CENTER
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import android.widget.GridLayout.*
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +20,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
-import com.unidy2002.thuinfo.data.model.schedule.Schedule
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import com.unidy2002.thuinfo.data.util.save
 import com.unidy2002.thuinfo.data.util.toBitmap
@@ -34,6 +37,8 @@ import kotlin.math.round
 class ScheduleFragment : Fragment() {
 
     private lateinit var scheduleViewModel: ScheduleViewModel
+    private val sharedPreferences: SharedPreferences?
+        get() = context?.getSharedPreferences(loggedInUser.userId, AppCompatActivity.MODE_PRIVATE)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         scheduleViewModel = ViewModelProvider(this).get(ScheduleViewModel::class.java)
@@ -48,13 +53,16 @@ class ScheduleFragment : Fragment() {
                 it?.run {
                     view?.findViewById<Button>(R.id.schedule_minus)?.isEnabled = this > 1
                     view?.findViewById<Button>(R.id.schedule_plus)?.isEnabled = this < SchoolCalendar.weekCount
-                    thread { getData(context) }
+                    thread { getData(sharedPreferences?.getBoolean("schedule", false) != true) }
                 }
             })
             scheduleData.observe(this@ScheduleFragment, Observer {
                 it?.run {
                     error?.run result@{ context?.run { Toast.makeText(this, this@result, Toast.LENGTH_SHORT).show() } }
-                    success?.run { updateUI(this) }
+                    success?.run {
+                        updateUI(this)
+                        sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
+                    }
                     view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
                     view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
                     view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
@@ -71,7 +79,7 @@ class ScheduleFragment : Fragment() {
                 view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
                 view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
                 view?.findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
-                thread { scheduleViewModel.getData(context, true) }
+                thread { scheduleViewModel.getData(true) }
             }
         }
 
@@ -119,7 +127,7 @@ class ScheduleFragment : Fragment() {
                                 if (info == null) {
                                     popup.weeks.forEach {
                                         scheduleViewModel.addCustom(
-                                            Schedule.Lesson(
+                                            ScheduleDBManager.Lesson(
                                                 popup.title,
                                                 popup.locale,
                                                 Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
@@ -163,7 +171,7 @@ class ScheduleFragment : Fragment() {
         }
     }
 
-    private fun updateUI(schedule: Schedule) {
+    private fun updateUI(schedule: ScheduleDBManager) {
         scheduleViewModel.scheduleWeek.value?.run weekNumber@{
             val date = SchoolCalendar(this, 1)
             val today = SchoolCalendar()
