@@ -26,26 +26,25 @@ class ScheduleDBManager private constructor(context: Context) {
 
     // Write to database
 
-    private fun clearTable(tableName: String) {
+    private fun updateList(tableName: String) {
         writableDatabase.execSQL("DELETE FROM $tableName")
+        (ScheduleDBManager::class.java.getDeclaredField(tableName).get(this) as MutableList<*>)
+            .filterNotNull().forEach { addItem(it, tableName) }
     }
 
     @Synchronized
-    private fun updatePrimaryLesson() {
-        clearTable("primary_lesson")
-        mPrimaryLessonList.forEach { addItem(it, "primary_lesson") }
+    private fun updatePrimary() {
+        updateList("primaryList")
     }
 
     @Synchronized
-    private fun updateSecondaryLesson() {
-        clearTable("secondary_lesson")
-        mSecondaryLessonList.forEach { addItem(it, "secondary_lesson") }
+    private fun updateSecondary() {
+        updateList("secondaryList")
     }
 
     @Synchronized
     private fun updateExam() {
-        clearTable("exam")
-        mExamList.forEach { addItem(it, "exam") }
+        updateList("examList")
     }
 
     private fun addItem(item: Any, tableName: String) {
@@ -65,7 +64,8 @@ class ScheduleDBManager private constructor(context: Context) {
 
     // Read from database
 
-    private fun <T> read(list: MutableList<T>, tableName: String, block: Cursor.() -> T) {
+    private fun <T> readList(tableName: String, block: Cursor.() -> T) {
+        val list = ScheduleDBManager::class.java.getDeclaredField(tableName).get(this) as MutableList<T>
         list.clear()
         writableDatabase.query(tableName, null, null, null, null, null, null, null).apply {
             while (moveToNext()) list.add(block())
@@ -73,17 +73,31 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
-    private fun readLessonList(list: MutableList<Lesson>, tableName: String) {
-        read(list, tableName) { Lesson(getString(0), getString(1), Date(getLong(2)), getInt(3), getInt(4)) }
+    private fun readLessonList(tableName: String) {
+        readList(tableName) { Lesson(getString(0), getString(1), Date(getLong(2)), getInt(3), getInt(4)) }
+    }
+
+    private fun readPrimaryList() {
+        readLessonList("primaryList")
+    }
+
+    private fun readSecondaryList() {
+        readLessonList("secondaryList")
+    }
+
+    private fun readCustomList() {
+        readLessonList("customList")
     }
 
     private fun readExamList() {
-        read(mExamList, "exam") {
+        readList("examList") {
             Exam(getString(0), getString(1), Date(getLong(2)), Time(getLong(3)), Time(getLong(4)))
         }
     }
 
-    private fun <T, S> read(map: MutableMap<T, S>, tableName: String, pair: Cursor.() -> Pair<T, S>) {
+    private fun <T, S> readMap(tableName: String, pair: Cursor.() -> Pair<T, S>) {
+        val map = ScheduleDBManager::class.java.getDeclaredField(tableName).get(this) as MutableMap<T, S>
+        map.clear()
         writableDatabase.query(tableName, null, null, null, null, null, null, null).apply {
             while (moveToNext()) pair().run { map[first] = second }
             close()
@@ -91,14 +105,15 @@ class ScheduleDBManager private constructor(context: Context) {
     }
 
     private fun readShortenMap() {
-        read(mShortenMap, "shorten") { getString(0) to getString(1) }
+        readMap("shortenMap") { getString(0) to getString(1) }
     }
 
     private fun readColorMap() {
-        read(mColorMap, "color") { getString(0) to getInt(1) }
+        readMap("colorMap") { getString(0) to getInt(1) }
     }
 
-    // In-memory data
+
+    // Data classes
 
     data class Lesson(
         var title: String,
@@ -108,12 +123,6 @@ class ScheduleDBManager private constructor(context: Context) {
         var end: Int
     )
 
-    private var mPrimaryLessonList = mutableListOf<Lesson>()
-    private var mSecondaryLessonList = mutableListOf<Lesson>()
-    private val mCustomLessonList = mutableListOf<Lesson>()
-    val lessonNames get() = (mPrimaryLessonList + mSecondaryLessonList).map { it.title }.toMutableSet().toList()
-    val allLessonList get() = mPrimaryLessonList + mSecondaryLessonList + mCustomLessonList
-
     data class Exam(
         var title: String,
         var locale: String,
@@ -122,33 +131,47 @@ class ScheduleDBManager private constructor(context: Context) {
         var end: Time
     )
 
-    private var mExamList = mutableListOf<Exam>()
+    // In-memory data
 
-    private val mShortenMap = mutableMapOf<String, String>()
+    private var primaryList = mutableListOf<Lesson>()
 
-    private val mColorMap = mutableMapOf<String, Int>()
+    private var secondaryList = mutableListOf<Lesson>()
+
+    private val customList = mutableListOf<Lesson>()
+
+    private var examList = mutableListOf<Exam>()
+
+    private val shortenMap = mutableMapOf<String, String>()
+
+    private val colorMap = mutableMapOf<String, Int>()
 
     // Public methods
 
-    fun getColor(name: String) = mColorMap[name] ?: (mColorMap.size % colorCount).also {
-        mColorMap[name] = it
-        safeThread { addItem(name to it, "color") }
+    val lessonNames get() = (primaryList + secondaryList).map { it.title }.toMutableSet().toList()
+
+    val allLessonList get() = primaryList + secondaryList + customList
+
+    fun getColor(name: String) = colorMap[name] ?: (colorMap.size % colorCount).also {
+        colorMap[name] = it
+        safeThread { addItem(name to it, "colorMap") }
     }
 
+    fun abbr(name: String) = shortenMap[name] ?: name
+
     fun addShorten(origin: String, dest: String) {
-        mShortenMap[origin] = dest
-        safeThread { addItem(origin to dest, "shorten") }
+        shortenMap[origin] = dest
+        safeThread { addItem(origin to dest, "shortenMap") }
     }
 
     fun addCustom(lesson: Lesson) {
-        mCustomLessonList.add(lesson)
-        safeThread { addItem(lesson, "custom_lesson") }
+        customList.add(lesson)
+        safeThread { addItem(lesson, "customList") }
     }
 
     init {
-        readLessonList(mPrimaryLessonList, "primary_lesson")
-        readLessonList(mSecondaryLessonList, "secondary_lesson")
-        readLessonList(mCustomLessonList, "custom_lesson")
+        readPrimaryList()
+        readSecondaryList()
+        readCustomList()
         readExamList()
         readShortenMap()
         readColorMap()
@@ -193,17 +216,15 @@ class ScheduleDBManager private constructor(context: Context) {
             }
         }
         secondary.forEach { shortenTitle(it.title, segmenter) }
-        mPrimaryLessonList = primaryLessonList
-        mSecondaryLessonList = secondary.toMutableList()
-        mExamList = examList
+        primaryList = primaryLessonList
+        secondaryList = secondary.toMutableList()
+        this.examList = examList
         safeThread {
-            updatePrimaryLesson()
-            updateSecondaryLesson()
+            updatePrimary()
+            updateSecondary()
             updateExam()
         }
     }
-
-    fun abbr(name: String) = mShortenMap[name] ?: name
 
     // Private methods
 
@@ -265,47 +286,41 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
-    private fun shortenTitle(name: String, segmenter: JiebaSegmenter) {
-        if (mShortenMap[name] == null) {
-            var temp = name.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
-            with(Regex("《.*?》").findAll(temp)) {
+    private fun shortenTitle(origin: String, segmenter: JiebaSegmenter) {
+        if (shortenMap[origin] == null) {
+            var dest = origin.replace(Regex("\\(.*\\)|（.*）|[\\s]"), "")
+            with(Regex("《.*?》").findAll(dest)) {
                 if (this.count() != 0) {
-                    temp = ""
-                    this.forEach {
-                        temp += it.value.drop(1).dropLast(1)
-                    }
+                    dest = ""
+                    this.forEach { dest += it.value.drop(1).dropLast(1) }
                 }
             }
-            with(temp.indexOf("：")) {
-                if (this >= 0)
-                    temp = temp.substring(0, this)
+            with(dest.indexOf("：")) {
+                if (this >= 0) dest = dest.substring(0, this)
             }
-            with(temp.indexOf(":")) {
-                if (this >= 0)
-                    temp = temp.substring(0, this)
+            with(dest.indexOf(":")) {
+                if (this >= 0) dest = dest.substring(0, this)
             }
-            with(temp.indexOf("—")) {
-                if (this >= 0)
-                    temp = temp.substring(0, this)
+            with(dest.indexOf("—")) {
+                if (this >= 0) dest = dest.substring(0, this)
             }
-            with(temp.indexOf("-")) {
-                if (this >= 2)
-                    temp = temp.substring(0, this)
+            with(dest.indexOf("-")) {
+                if (this >= 2) dest = dest.substring(0, this)
             }
-            temp = temp.replace(Regex("[A-Za-z0-9]*$"), "")
-            if (temp.length > maxLength) {
-                val segmented = segmenter.getDividedString(temp)
+            dest = dest.replace(Regex("[A-Za-z0-9]*$"), "")
+            if (dest.length > maxLength) {
+                val segmented = segmenter.getDividedString(dest)
                 segmented.removeAll(stopWord)
                 if (segmented.isNotEmpty()) {
-                    temp = segmented[0]
+                    dest = segmented[0]
                     var pos = 1
-                    while (pos < segmented.size && temp.length + segmented[pos].length <= maxLength)
-                        temp += segmented[pos++]
-                    while (temp.last() in avoidEnd)
-                        temp = temp.dropLast(1)
+                    while (pos < segmented.size && dest.length + segmented[pos].length <= maxLength)
+                        dest += segmented[pos++]
+                    while (dest.last() in avoidEnd)
+                        dest = dest.dropLast(1)
                 }
             }
-            addShorten(name, temp)
+            addShorten(origin, dest)
         }
     }
 
@@ -327,12 +342,12 @@ class ScheduleDBManager private constructor(context: Context) {
     private class ScheduleDBHelper(context: Context, version: Int) :
         SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
         override fun onCreate(db: SQLiteDatabase) {
-            db.execSQL("create table primary_lesson(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table secondary_lesson(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table custom_lesson(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table exam(j_title String, j_locale String, j_date Long, j_begin Long, j_end Long)")
-            db.execSQL("create table shorten(j_first String, j_second String)")
-            db.execSQL("create table color(j_first String, j_second Integer)")
+            db.execSQL("create table primaryList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
+            db.execSQL("create table secondaryList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
+            db.execSQL("create table customList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
+            db.execSQL("create table examList(j_title String, j_locale String, j_date Long, j_begin Long, j_end Long)")
+            db.execSQL("create table shortenMap(j_first String, j_second String)")
+            db.execSQL("create table colorMap(j_first String, j_second Integer)")
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
