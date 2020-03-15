@@ -12,7 +12,8 @@ import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getPhysicalExamResult
 import kotlin.concurrent.thread
 
 class PhysicalExamFragment : Fragment() {

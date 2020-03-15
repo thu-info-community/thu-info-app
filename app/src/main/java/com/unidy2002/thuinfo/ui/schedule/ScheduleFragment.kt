@@ -30,10 +30,6 @@ import java.util.*
 import kotlin.concurrent.thread
 import kotlin.math.round
 
-
-// TODO: the schedule module is definitely to be reconstructed
-
-
 class ScheduleFragment : Fragment() {
 
     private lateinit var scheduleViewModel: ScheduleViewModel
@@ -72,101 +68,99 @@ class ScheduleFragment : Fragment() {
             scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
         }
 
-        view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.apply {
-            setColorSchemeResources(R.color.colorAccent)
-            isRefreshing = true
-            setOnRefreshListener {
-                view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
-                view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
-                view?.findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
-                thread { scheduleViewModel.getData(true) }
-            }
-        }
-
-        view?.findViewById<TextView>(R.id.schedule_title)
-            ?.setOnClickListener { scheduleViewModel.setWeek(SchoolCalendar().weekNumber) }
-
-        view?.findViewById<Button>(R.id.schedule_minus)
-            ?.setOnClickListener { scheduleViewModel.weekDecrease() }
-
-        view?.findViewById<Button>(R.id.schedule_plus)
-            ?.setOnClickListener { scheduleViewModel.weekIncrease() }
-
-        view?.findViewById<Button>(R.id.schedule_custom_abbr)
-            ?.setOnClickListener {
-                NavHostFragment.findNavController(this).navigate(R.id.customizeFragment)
-            }
-
-        view?.findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener {
-            try {
-                view!!.findViewById<GridLayout>(R.id.table_grid).toBitmap().save(
-                    context!!, getString(schedule_title_template, scheduleViewModel.scheduleWeek.value)
-                )
-                Toast.makeText(context, save_to_gallery_succeed, Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                try {
-                    Toast.makeText(context, save_fail_string, Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        view?.run {
+            findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.apply {
+                setColorSchemeResources(R.color.colorAccent)
+                isRefreshing = true
+                setOnRefreshListener {
+                    findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
+                    findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
+                    findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
+                    thread { scheduleViewModel.getData(true) }
                 }
             }
-        }
 
-        view?.findViewById<Button>(R.id.schedule_custom_add)?.setOnClickListener {
-            activity?.run a@{
-                val popup = ScheduleCustomAddLayout(this)
-                AlertDialog.Builder(this)
-                    .setTitle(custom_add_string)
-                    .setView(popup)
-                    .setPositiveButton(confirm_string) { dialog, _ ->
-                        try {
-                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
-                                isAccessible = true
-                                val info = popup.valid
-                                if (info == null) {
-                                    popup.weeks.forEach {
-                                        scheduleViewModel.addCustom(
-                                            ScheduleDBManager.Lesson(
-                                                popup.title,
-                                                popup.locale,
-                                                Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
-                                                popup.range.first,
-                                                popup.range.second
+            findViewById<TextView>(R.id.schedule_title)
+                ?.setOnClickListener { scheduleViewModel.setWeek(SchoolCalendar().weekNumber) }
+
+            findViewById<Button>(R.id.schedule_minus)
+                ?.setOnClickListener { scheduleViewModel.weekDecrease() }
+
+            findViewById<Button>(R.id.schedule_plus)
+                ?.setOnClickListener { scheduleViewModel.weekIncrease() }
+
+            findViewById<Button>(R.id.schedule_custom_abbr)
+                ?.setOnClickListener {
+                    NavHostFragment.findNavController(this@ScheduleFragment).navigate(R.id.customizeFragment)
+                }
+
+            findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener {
+                try {
+                    findViewById<GridLayout>(R.id.table_grid).toBitmap().save(
+                        context, getString(schedule_title_template, scheduleViewModel.scheduleWeek.value)
+                    )
+                    context?.run { Toast.makeText(this, save_to_gallery_succeed, Toast.LENGTH_SHORT).show() }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    context?.run { Toast.makeText(this, save_fail_string, Toast.LENGTH_SHORT).show() }
+                }
+            }
+
+            findViewById<Button>(R.id.schedule_custom_add)?.setOnClickListener {
+                activity?.run {
+                    val popup = ScheduleCustomAddLayout(this)
+                    AlertDialog.Builder(this)
+                        .setTitle(custom_add_string)
+                        .setView(popup)
+                        .setPositiveButton(confirm_string) { dialog, _ ->
+                            try {
+                                dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                    isAccessible = true
+                                    val info = popup.valid
+                                    if (info == null) {
+                                        popup.weeks.forEach {
+                                            scheduleViewModel.addCustom(
+                                                ScheduleDBManager.Lesson(
+                                                    popup.title,
+                                                    popup.locale,
+                                                    Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
+                                                    popup.range.first,
+                                                    popup.range.second
+                                                )
                                             )
-                                        )
+                                        }
+                                        set(dialog, true)
+                                    } else {
+                                        context?.run { Toast.makeText(this, info, Toast.LENGTH_SHORT).show() }
+                                        set(dialog, false)
                                     }
-                                    set(dialog, true)
-                                } else {
-                                    context?.run { Toast.makeText(this, info, Toast.LENGTH_SHORT).show() }
-                                    set(dialog, false)
                                 }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
                         }
-                    }
-                    .setNegativeButton(cancel_string) { dialog, _ ->
-                        try {
-                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
-                                isAccessible = true
-                                set(dialog, true)
+                        .setNegativeButton(cancel_string) { dialog, _ ->
+                            try {
+                                dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                    isAccessible = true
+                                    set(dialog, true)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
                         }
-                    }
-                    .setOnCancelListener { dialog ->
-                        try {
-                            dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
-                                isAccessible = true
-                                set(dialog, true)
+                        .setOnCancelListener { dialog ->
+                            try {
+                                dialog::class.java.superclass?.getDeclaredField("mShowing")?.run {
+                                    isAccessible = true
+                                    set(dialog, true)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
                         }
-                    }
-                    .show()
+                        .show()
+                }
             }
         }
     }

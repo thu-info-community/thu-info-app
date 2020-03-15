@@ -2,6 +2,7 @@ package com.unidy2002.thuinfo.ui.home
 
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +15,8 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.util.Network
-import android.net.Uri
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.util.encrypt
 import kotlin.concurrent.thread
 

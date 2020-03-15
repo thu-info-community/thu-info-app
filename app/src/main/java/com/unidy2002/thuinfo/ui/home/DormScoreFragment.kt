@@ -14,7 +14,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getDormScore
 import kotlin.concurrent.thread
 
 class DormScoreFragment : Fragment() {

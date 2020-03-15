@@ -16,7 +16,8 @@ import androidx.fragment.app.Fragment
 import com.bin.david.form.core.SmartTable
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.tables.ECardRecord
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getECard
 import kotlin.concurrent.thread
 
 class ECardTableFragment : Fragment() {

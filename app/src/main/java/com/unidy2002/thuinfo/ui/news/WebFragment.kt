@@ -12,7 +12,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.util.DownloadCompleteReceiver
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.getPrettyPrintHTML
 import com.unidy2002.thuinfo.data.util.downloadBySystem
 import kotlin.concurrent.thread
 
@@ -26,7 +26,7 @@ class WebFragment : Fragment() {
 
     private fun loadURL(view: WebView, url: String) {
         thread {
-            Network.getPrettyPrintHTML(url).run {
+            getPrettyPrintHTML(url).run {
                 view.handler.post {
                     if (this == null) {
                         view.loadUrl(url)

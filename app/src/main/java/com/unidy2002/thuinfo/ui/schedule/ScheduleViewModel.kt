@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getSchedule
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 
 class ScheduleViewModel : androidx.lifecycle.ViewModel() {

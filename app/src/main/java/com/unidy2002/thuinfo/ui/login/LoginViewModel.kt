@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
 import com.unidy2002.thuinfo.data.model.login.setUser
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
 
 
 class LoginViewModel : ViewModel() {

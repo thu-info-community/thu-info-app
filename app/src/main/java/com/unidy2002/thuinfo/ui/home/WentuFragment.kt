@@ -14,7 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.getWentuState
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.thread
@@ -73,7 +73,7 @@ class WentuFragment : Fragment() {
         val wentuData: LiveData<List<Pair<String, Pair<Int, Int>>>> = _wentuData
 
         fun getData() {
-            thread { _wentuData.postValue(Network.getWentuState()) }
+            thread { _wentuData.postValue(getWentuState()) }
         }
     }
 

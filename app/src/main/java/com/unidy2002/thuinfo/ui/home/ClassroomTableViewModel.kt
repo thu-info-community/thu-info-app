@@ -3,7 +3,8 @@ package com.unidy2002.thuinfo.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.unidy2002.thuinfo.data.util.Network
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getClassroomState
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import kotlin.concurrent.thread
 
