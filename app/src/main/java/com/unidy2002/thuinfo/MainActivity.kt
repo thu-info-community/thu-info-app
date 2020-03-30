@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.webkit.WebView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.get
@@ -18,13 +19,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
+import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.downloadUpdate
+import com.unidy2002.thuinfo.data.network.getTicket
+import com.unidy2002.thuinfo.data.network.getUpdateInfo
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
-import com.unidy2002.thuinfo.data.network.Network
-import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.report.ReportActivity
@@ -83,6 +87,52 @@ class MainActivity : AppCompatActivity() {
         // Initialize singletons
         safeThread { JiebaSegmenter.init(applicationContext) }
         safeThread { ScheduleDBManager.init(applicationContext) }
+
+        // Check update
+        safeThread {
+            Network.getUpdateInfo(applicationContext)?.run {
+                if (getSharedPreferences("UserId", MODE_PRIVATE).getInt("DoNotRemind", 0) < versionCode) {
+                    runOnUiThread {
+                        try {
+                            AlertDialog.Builder(this@MainActivity)
+                                .setTitle(have_new_version)
+                                .setMessage("$versionName\n$description")
+                                .setPositiveButton(download_string) { _, _ ->
+                                    try {
+                                        Toast.makeText(this@MainActivity, download_start, Toast.LENGTH_SHORT).show()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                    try {
+                                        /* action = {
+                                            val installIntent = Intent(Intent.ACTION_VIEW)
+                                            installIntent.setDataAndType(it, "application/vnd.android.package-archive")
+                                            installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            println(it)
+                                            println(it.path)
+                                            println(installIntent)
+                                            startActivity(installIntent)
+                                        } */
+                                        downloadUpdate(this@MainActivity, url, versionName)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        Toast.makeText(this@MainActivity, download_fail, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                .setNegativeButton(next_time) { _, _ -> }
+                                .setNeutralButton(do_not_remind) { _, _ ->
+                                    getSharedPreferences("UserId", MODE_PRIVATE).edit()
+                                        .putInt("DoNotRemind", versionCode)
+                                        .apply()
+                                }
+                                .show()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Setup drawer navigation action
@@ -95,9 +145,9 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent().apply { setClass(this@MainActivity, EmailActivity::class.java) })
                 R.id.navigation_report ->
                     AlertDialog.Builder(this)
-                        .setTitle(R.string.report_guide_text)
+                        .setTitle(report_guide_text)
                         .setView(R.layout.report_guide)
-                        .setPositiveButton(R.string.report_guide_quick) { _, _ ->
+                        .setPositiveButton(report_guide_quick) { _, _ ->
                             startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
                         }
                         .show()
@@ -108,9 +158,9 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
-                                    .setTitle(R.string.clear_or_not)
-                                    .setPositiveButton(R.string.keep_string) { _, _ -> }
-                                    .setNegativeButton(R.string.clear_string) { _, _ ->
+                                    .setTitle(clear_or_not)
+                                    .setPositiveButton(keep_string) { _, _ -> }
+                                    .setNegativeButton(clear_string) { _, _ ->
                                         getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
                                     }
                                     .setOnDismissListener {
@@ -140,10 +190,10 @@ class MainActivity : AppCompatActivity() {
                 if (navController.currentDestination?.id in topLevelDestinationIds) {
                     val emailMenuItem = findViewById<NavigationView>(R.id.side_nav_view).menu[0]
                     if (inboxUnread > 0) {
-                        emailMenuItem.title = resources.getString(R.string.email_string) + " [$inboxUnread]"
+                        emailMenuItem.title = resources.getString(email_string) + " [$inboxUnread]"
                         toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_badge_24dp, null)
                     } else {
-                        emailMenuItem.title = resources.getString(R.string.email_string)
+                        emailMenuItem.title = resources.getString(email_string)
                         if (forceUpdate)
                             toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_menu_24dp, null)
                     }
@@ -176,5 +226,16 @@ class MainActivity : AppCompatActivity() {
         refreshBadge(true)
         super.onResume()
     }
+
+    /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 233) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (packageManager.canRequestPackageInstalls()) {
+                    action(uriTemp!!)
+                }
+            }
+        }
+    } */
 
 }

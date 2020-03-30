@@ -128,4 +128,13 @@
     <string name="community_hint_string">这个密码很可能是你入学前就设置好了的……</string>
     <string name="forget_password_string">忘记密码</string>
     <string name="configure_community_fragment_title">请登录清华家园网</string>
+
+    <!-- download related -->
+    <string name="please_install_manually">下载完成，请前往文件管理器自行安装</string>
+    <string name="have_new_version">有新版本可用</string>
+    <string name="download_string">下载</string>
+    <string name="download_start">开始下载</string>
+    <string name="download_fail">下载失败</string>
+    <string name="next_time">下次一定</string>
+    <string name="do_not_remind">不再提醒</string>
 </resources>
