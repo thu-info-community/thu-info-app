@@ -2,9 +2,11 @@ package com.unidy2002.thuinfo
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
@@ -24,13 +26,13 @@ import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
 import com.unidy2002.thuinfo.data.network.Network
-import com.unidy2002.thuinfo.data.network.downloadUpdate
 import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.network.getUpdateInfo
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
+import com.unidy2002.thuinfo.ui.news.WebFragment
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
@@ -89,54 +91,12 @@ class MainActivity : AppCompatActivity() {
         safeThread { ScheduleDBManager.init(applicationContext) }
 
         // Check update
-        safeThread {
-            Network.getUpdateInfo(applicationContext)?.run {
-                if (getSharedPreferences("UserId", MODE_PRIVATE).getInt("DoNotRemind", 0) < versionCode) {
-                    runOnUiThread {
-                        try {
-                            AlertDialog.Builder(this@MainActivity)
-                                .setTitle(have_new_version)
-                                .setMessage("$versionName\n$description")
-                                .setPositiveButton(download_string) { _, _ ->
-                                    try {
-                                        Toast.makeText(this@MainActivity, download_start, Toast.LENGTH_SHORT).show()
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                    try {
-                                        /* action = {
-                                            val installIntent = Intent(Intent.ACTION_VIEW)
-                                            installIntent.setDataAndType(it, "application/vnd.android.package-archive")
-                                            installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            println(it)
-                                            println(it.path)
-                                            println(installIntent)
-                                            startActivity(installIntent)
-                                        } */
-                                        downloadUpdate(this@MainActivity, url, versionName)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        Toast.makeText(this@MainActivity, download_fail, Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                                .setNegativeButton(next_time) { _, _ -> }
-                                .setNeutralButton(do_not_remind) { _, _ ->
-                                    getSharedPreferences("UserId", MODE_PRIVATE).edit()
-                                        .putInt("DoNotRemind", versionCode)
-                                        .apply()
-                                }
-                                .show()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            }
-        }
+        checkUpdate()
     }
 
     // Setup drawer navigation action
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        this.menu = menu
         findViewById<TextView>(R.id.full_name_text).text = loggedInUser.fullName
         findViewById<TextView>(R.id.user_id_text).text = loggedInUser.userId
         findViewById<NavigationView>(R.id.side_nav_view).setNavigationItemSelectedListener {
@@ -151,6 +111,8 @@ class MainActivity : AppCompatActivity() {
                             startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
                         }
                         .show()
+                R.id.navigation_update ->
+                    checkUpdate(true)
                 R.id.navigation_logout -> {
                     safeThread {
                         Network.logout()
@@ -226,6 +188,82 @@ class MainActivity : AppCompatActivity() {
         refreshBadge(true)
         super.onResume()
     }
+
+    // WebFragment-related
+    lateinit var menu: Menu
+    var webFragment: WebFragment? = null
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        try {
+            when (item.itemId) {
+                R.id.web_shift_mode -> {
+                    if (item.title == resources.getString(string_view_origin)) {
+                        webFragment?.viewPretty = false
+                        item.title = resources.getString(string_view_pretty)
+                    } else {
+                        webFragment?.viewPretty = true
+                        item.title = resources.getString(string_view_origin)
+                    }
+                    webFragment?.run { loadURL(findViewById(R.id.web_view)) }
+                }
+                R.id.web_close -> navController.navigateUp(appBarConfiguration)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    // Check update related
+
+    private fun checkUpdate(force: Boolean = false) = safeThread {
+        Network.getUpdateInfo(applicationContext)?.run {
+            if (force || getSharedPreferences("UserId", MODE_PRIVATE).getInt("DoNotRemind", 0) < versionCode) {
+                runOnUiThread {
+                    try {
+                        AlertDialog.Builder(this@MainActivity)
+                            .setTitle(have_new_version)
+                            .setMessage("$versionName\n$description")
+                            .setPositiveButton(download_string) { _, _ ->
+                                try {
+                                    Toast.makeText(this@MainActivity, download_start, Toast.LENGTH_SHORT).show()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                                try {
+                                    /* action = {
+                                        val installIntent = Intent(Intent.ACTION_VIEW)
+                                        installIntent.setDataAndType(it, "application/vnd.android.package-archive")
+                                        installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        println(it)
+                                        println(it.path)
+                                        println(installIntent)
+                                        startActivity(installIntent)
+                                    }
+                                    downloadUpdate(this@MainActivity, url, versionName) */
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Toast.makeText(this@MainActivity, download_fail, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            .setNegativeButton(next_time) { _, _ -> }
+                            .setNeutralButton(do_not_remind) { _, _ ->
+                                getSharedPreferences("UserId", MODE_PRIVATE).edit()
+                                    .putInt("DoNotRemind", versionCode)
+                                    .apply()
+                            }
+                            .show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        } ?: takeIf { force }?.runOnUiThread {
+            Toast.makeText(this@MainActivity, already_up_to_date, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

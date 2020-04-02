@@ -137,4 +137,6 @@
     <string name="download_fail">下载失败</string>
     <string name="next_time">下次一定</string>
     <string name="do_not_remind">不再提醒</string>
+    <string name="update_string">更新</string>
+    <string name="already_up_to_date">已是最新版本</string>
 </resources>
