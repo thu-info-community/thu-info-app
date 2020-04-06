@@ -100,4 +100,22 @@
             android:name="com.unidy2002.thuinfo.ui.home.ConfigureCommunityFragment"
             android:label="@string/configure_community_fragment_title"
             tools:layout="@layout/fragment_configure_community"/>
+
+    <fragment
+            android:id="@+id/lafMainFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.LafMainFragment"
+            android:label="@string/dorm_laf_string"
+            tools:layout="@layout/fragment_laf_main"/>
+
+    <fragment
+            android:id="@+id/lafPageFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.LafPageFragment"
+            android:label="@string/dorm_laf_string"
+            tools:layout="@layout/fragment_laf_page"/>
+
+    <fragment
+            android:id="@+id/lafAddFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.LafAddFragment"
+            android:label="@string/add_announce_string"
+            tools:layout="@layout/fragment_laf_add"/>
 </navigation>

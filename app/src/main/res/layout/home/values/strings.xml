@@ -128,6 +128,31 @@
     <string name="community_hint_string">这个密码很可能是你入学前就设置好了的……</string>
     <string name="forget_password_string">忘记密码</string>
     <string name="configure_community_fragment_title">请登录清华家园网</string>
+    <string name="laf_lost_string">寻物启事</string>
+    <string name="laf_plus_string">＋</string>
+    <string name="laf_found_string">失物招领</string>
+    <string name="add_announce_string">发布启事</string>
+    <string name="subject_hint">力求简明扼要</string>
+    <string name="locale_string">地点</string>
+    <string name="time_lost_hint">什么时候丢的呢</string>
+    <string name="time_found_hint">什么时候发现的呢</string>
+    <string name="locale_lost_hint">在哪里丢的呢</string>
+    <string name="locale_found_hint">在哪里发现的呢</string>
+    <string name="detail_string">补充</string>
+    <string name="detail_lost_hint">请对您的所失之物做一些详细的说明</string>
+    <string name="detail_found_hint">可对您所找到的物品进行简要的补充</string>
+    <string name="contact_string">联系方式</string>
+    <string name="laf_contact_hint">QQ：888888888，微信号：wxid20000000</string>
+    <string name="laf_main_hint">该功能仍处于测试期，敬请谅解！</string>
+    <string name="publish_string">发布</string>
+    <string name="please_enter_subject">请输入主题</string>
+    <string name="please_enter_time">请输入时间</string>
+    <string name="please_enter_locale">请输入地点</string>
+    <string name="please_enter_contact">请输入联系方式</string>
+    <string name="publish_exception_string">发布出现异常</string>
+    <string name="publish_succeed_string">发布成功</string>
+    <string name="laf_exception_string">连接终端失败，请重试</string>
+    <string name="laf_publish_warning">测试期间，一经发布将无法修改或删除。</string>
 
     <!-- download related -->
     <string name="please_install_manually">下载完成，请前往文件管理器自行安装</string>

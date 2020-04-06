@@ -9,3 +9,7 @@ package com.unidy2002.thuinfo.data.util
 const val appId = "Em2nD9e0HKHIletVNu4j8v9j-gzGzoHsz"
 const val appKey = "3gSUVSmxhMd96dFzMW4yI2H8"
 const val serverURL = "https://em2nd9e0.lc-cn-n1-shared.com"
+
+const val lafAppId = "MJv390iHyK6TlLnwmqXyNHb6-gzGzoHsz"
+const val lafAppKey = "xyKt9x06deMg9QhCIM8K0PP3"
+const val lafServerURL = "https://mjv390ih.lc-cn-n1-shared.com"
