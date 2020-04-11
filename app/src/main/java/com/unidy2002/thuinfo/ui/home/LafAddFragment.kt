@@ -15,8 +15,8 @@ import cn.leancloud.AVObject
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.ui.home.LafAddFragment.TYPE.FOUND
-import com.unidy2002.thuinfo.ui.home.LafAddFragment.TYPE.LOST
+import com.unidy2002.thuinfo.ui.home.LafMainFragment.TYPE.FOUND
+import com.unidy2002.thuinfo.ui.home.LafMainFragment.TYPE.LOST
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
@@ -78,8 +78,7 @@ class LafAddFragment : Fragment() {
                                 .setMessage(laf_publish_warning)
                                 .setPositiveButton(confirm_string) { _, _ ->
                                     try {
-                                        AVObject("data").run {
-                                            put("type", type)
+                                        AVObject(type.toString()).run {
                                             put("subject", subject?.text.toString())
                                             put("time", time?.text.toString())
                                             put("locale", locale?.text.toString())
@@ -132,6 +131,4 @@ class LafAddFragment : Fragment() {
             }
         }
     }
-
-    internal enum class TYPE { LOST, FOUND }
 }

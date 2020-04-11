@@ -118,4 +118,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.LafAddFragment"
             android:label="@string/add_announce_string"
             tools:layout="@layout/fragment_laf_add"/>
+
+    <fragment
+            android:id="@+id/lafDetailFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.LafDetailFragment"
+            android:label="@string/detailed_info_string"
+            tools:layout="@layout/fragment_laf_detail"/>
 </navigation>

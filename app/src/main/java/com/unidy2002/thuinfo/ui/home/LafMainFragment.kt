@@ -39,4 +39,6 @@ class LafMainFragment : Fragment() {
             context?.run { Toast.makeText(this, R.string.laf_exception_string, Toast.LENGTH_SHORT).show() }
         }
     }
+
+    enum class TYPE { LOST, FOUND }
 }
