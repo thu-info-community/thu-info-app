@@ -33,6 +33,13 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
         }
     }
 
+    fun delCustom(title: String, session: ScheduleDBManager.Session? = null) {
+        loggedInUser.schedule.apply {
+            delCustom(title, session)
+            _scheduleData.postValue(ScheduleResult(success = this))
+        }
+    }
+
     fun setWeek(week: Int) {
         _scheduleWeek.postValue(
             when {

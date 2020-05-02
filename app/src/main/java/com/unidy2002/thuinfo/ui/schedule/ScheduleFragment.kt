@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
@@ -25,6 +24,7 @@ import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import com.unidy2002.thuinfo.data.util.save
 import com.unidy2002.thuinfo.data.util.toBitmap
+import kotlinx.android.synthetic.main.fragment_schedule.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
@@ -47,8 +47,8 @@ class ScheduleFragment : Fragment() {
         with(scheduleViewModel) {
             scheduleWeek.observe(this@ScheduleFragment, Observer {
                 it?.run {
-                    view?.findViewById<Button>(R.id.schedule_minus)?.isEnabled = this > 1
-                    view?.findViewById<Button>(R.id.schedule_plus)?.isEnabled = this < SchoolCalendar.weekCount
+                    schedule_minus.isEnabled = this > 1
+                    schedule_plus.isEnabled = this < SchoolCalendar.weekCount
                     thread { getData(sharedPreferences?.getBoolean("schedule", false) != true) }
                 }
             })
@@ -59,44 +59,40 @@ class ScheduleFragment : Fragment() {
                         updateUI(this)
                         sharedPreferences?.edit()?.putBoolean("schedule", true)?.apply()
                     }
-                    view?.findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.isRefreshing = false
-                    view?.findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = true
-                    view?.findViewById<Button>(R.id.schedule_save_image)?.isEnabled = true
-                    view?.findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
+                    schedule_swipe_refresh.isRefreshing = false
+                    schedule_custom_abbr.isEnabled = true
+                    schedule_save_image.isEnabled = true
+                    schedule_custom_add.isEnabled = true
                 }
             })
             scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
         }
 
         view?.run {
-            findViewById<SwipeRefreshLayout>(R.id.schedule_swipe_refresh)?.apply {
+            schedule_swipe_refresh.apply {
                 setColorSchemeResources(R.color.colorAccent)
                 isRefreshing = true
                 setOnRefreshListener {
-                    findViewById<Button>(R.id.schedule_custom_abbr)?.isEnabled = false
-                    findViewById<Button>(R.id.schedule_save_image)?.isEnabled = false
-                    findViewById<Button>(R.id.schedule_custom_add)?.isEnabled = true
+                    schedule_custom_abbr.isEnabled = false
+                    schedule_save_image.isEnabled = false
+                    schedule_custom_add.isEnabled = true
                     thread { scheduleViewModel.getData(true) }
                 }
             }
 
-            findViewById<TextView>(R.id.schedule_title)
-                ?.setOnClickListener { scheduleViewModel.setWeek(SchoolCalendar().weekNumber) }
+            schedule_title.setOnClickListener { scheduleViewModel.setWeek(SchoolCalendar().weekNumber) }
 
-            findViewById<Button>(R.id.schedule_minus)
-                ?.setOnClickListener { scheduleViewModel.weekDecrease() }
+            schedule_minus.setOnClickListener { scheduleViewModel.weekDecrease() }
 
-            findViewById<Button>(R.id.schedule_plus)
-                ?.setOnClickListener { scheduleViewModel.weekIncrease() }
+            schedule_plus.setOnClickListener { scheduleViewModel.weekIncrease() }
 
-            findViewById<Button>(R.id.schedule_custom_abbr)
-                ?.setOnClickListener {
-                    NavHostFragment.findNavController(this@ScheduleFragment).navigate(R.id.customizeFragment)
-                }
+            schedule_custom_abbr.setOnClickListener {
+                NavHostFragment.findNavController(this@ScheduleFragment).navigate(R.id.customizeFragment)
+            }
 
-            findViewById<Button>(R.id.schedule_save_image)?.setOnClickListener {
+            schedule_save_image.setOnClickListener {
                 try {
-                    findViewById<GridLayout>(R.id.table_grid).toBitmap().save(
+                    table_grid.toBitmap().save(
                         context, getString(schedule_title_template, scheduleViewModel.scheduleWeek.value)
                     )
                     context?.run { Toast.makeText(this, save_to_gallery_succeed, Toast.LENGTH_SHORT).show() }
@@ -106,7 +102,7 @@ class ScheduleFragment : Fragment() {
                 }
             }
 
-            findViewById<Button>(R.id.schedule_custom_add)?.setOnClickListener {
+            schedule_custom_add.setOnClickListener {
                 activity?.run {
                     val popup = ScheduleCustomAddLayout(this)
                     AlertDialog.Builder(this)
@@ -171,17 +167,16 @@ class ScheduleFragment : Fragment() {
             val today = SchoolCalendar()
 
             view?.run {
-                findViewById<TextView>(R.id.schedule_title).text = getString(week_title, this@weekNumber)
+                schedule_title.text = getString(week_title, this@weekNumber)
 
-                val grid = findViewById<GridLayout>(R.id.table_grid)
-                val totalWidth = findViewById<LinearLayout>(R.id.schedule_content).width
-                val stdWidth = round(totalWidth / 7.6).toInt()
-                val remainderWidth = totalWidth - stdWidth * 7
-                grid.removeAllViews()
+                val stdWidth = round(schedule_content.width / 7.6).toInt()
+                val remainderWidth = schedule_content.width - stdWidth * 7
+                table_grid.removeAllViews()
 
                 fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, useStd: Boolean = true) {
                     try {
-                        grid.addView(TextView(context).apply {
+                        val dayOfWeek = date.dayOfWeek
+                        table_grid.addView(TextView(context).apply {
                             text = title
                             width = if (useStd) stdWidth else remainderWidth
                             if (!useStd) height = 130
@@ -189,9 +184,22 @@ class ScheduleFragment : Fragment() {
                             color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
                             if (begin == 0 && date == today)
                                 setTextColor(resources.getColor(R.color.colorAccent, null))
+                            if (begin > 0)
+                                setOnClickListener {
+                                    AlertDialog.Builder(context)
+                                        .setTitle("您确定要删除吗？")
+                                        .setPositiveButton(confirm_string) { _, _ ->
+                                            scheduleViewModel.delCustom(
+                                                title,
+                                                ScheduleDBManager.Session(true, dayOfWeek, begin, begin + size - 1)
+                                            )
+                                        }
+                                        .setNegativeButton(cancel_string) { _, _ -> }
+                                        .show()
+                                }
                         }, LayoutParams().apply {
                             rowSpec = spec(begin, size, FILL)
-                            columnSpec = spec(if (useStd) date.dayOfWeek else 0, FILL, 1f)
+                            columnSpec = spec(if (useStd) dayOfWeek else 0, FILL, 1f)
                         })
                     } catch (e: Exception) {
                         e.printStackTrace()

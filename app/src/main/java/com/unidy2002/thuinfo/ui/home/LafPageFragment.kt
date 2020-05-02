@@ -84,7 +84,7 @@ class LafPageFragment : Fragment() {
         fun fetch() {
             swipeRefresh?.isRefreshing = true
             AVQuery<AVObject>(type.toString()).run {
-                skip(data.size)
+                skip(data.size) // TODO: `skip` is of relatively low efficiency
                 limit(10)
                 findInBackground().subscribe(object : Observer<List<AVObject>> {
                     val last = data.size

@@ -156,6 +156,7 @@
     <string name="no_more">没有更多的了</string>
     <string name="show_contact_string">展开联系方式</string>
     <string name="detailed_info_string">详细信息</string>
+    <string name="please_confirm_identity">请仔细确认对方的身份后再进行线下交流。</string>
 
     <!-- download related -->
     <string name="please_install_manually">下载完成，请前往文件管理器自行安装</string>
@@ -167,5 +168,4 @@
     <string name="do_not_remind">不再提醒</string>
     <string name="update_string">更新</string>
     <string name="already_up_to_date">已是最新版本</string>
-    <string name="please_confirm_identity">请仔细确认对方的身份后再进行线下交流。</string>
 </resources>

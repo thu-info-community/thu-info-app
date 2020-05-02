@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.data.util.SchoolCalendar
+import com.unidy2002.thuinfo.data.util.SchoolCalendar.Companion.weekCount
 import com.unidy2002.thuinfo.data.util.safeThread
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.sql.Time
@@ -113,7 +115,7 @@ class ScheduleDBManager private constructor(context: Context) {
     }
 
 
-    // Data classes
+    // Data and enum classes
 
     data class Lesson(
         var title: String,
@@ -129,6 +131,13 @@ class ScheduleDBManager private constructor(context: Context) {
         var date: Date,
         var begin: Time,
         var end: Time
+    )
+
+    data class Session(
+        val repeat: Boolean,
+        val dayOfWeek: Int,
+        val begin: Int,
+        val end: Int
     )
 
     // In-memory data
@@ -166,6 +175,26 @@ class ScheduleDBManager private constructor(context: Context) {
     fun addCustom(lesson: Lesson) {
         customList.add(lesson)
         safeThread { addItem(lesson, "customList") }
+    }
+
+    fun delCustom(title: String, session: Session? = null) {
+        if (session == null) {
+            customList.removeAll { it.title == title }
+            safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(title)) }
+        } else {
+            val dateList = MutableList(weekCount) { SchoolCalendar(it + 1, session.dayOfWeek).timeInMillis }
+            customList.removeAll { it.title == title && it.begin == session.begin && it.end == session.end && it.date.time in dateList }
+            safeThread {
+                // TODO: Reconstruction becomes inevitable.
+                dateList.forEach {
+                    writableDatabase.delete(
+                        "customList",
+                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_date = ?",
+                        arrayOf(title, session.begin.toString(), session.end.toString(), it.toString())
+                    )
+                }
+            }
+        }
     }
 
     init {
