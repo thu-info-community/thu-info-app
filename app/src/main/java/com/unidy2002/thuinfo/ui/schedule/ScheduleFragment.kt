@@ -25,7 +25,6 @@ import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import com.unidy2002.thuinfo.data.util.save
 import com.unidy2002.thuinfo.data.util.toBitmap
 import kotlinx.android.synthetic.main.fragment_schedule.*
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 import kotlin.math.round
@@ -119,7 +118,8 @@ class ScheduleFragment : Fragment() {
                                                 ScheduleDBManager.Lesson(
                                                     popup.title,
                                                     popup.locale,
-                                                    Date(SchoolCalendar(it, popup.dayOfWeek).timeInMillis),
+                                                    it,
+                                                    popup.dayOfWeek,
                                                     popup.range.first,
                                                     popup.range.second
                                                 )
@@ -173,16 +173,15 @@ class ScheduleFragment : Fragment() {
                 val remainderWidth = schedule_content.width - stdWidth * 7
                 table_grid.removeAllViews()
 
-                fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, useStd: Boolean = true) {
+                fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, day: Int = 0) {
                     try {
-                        val dayOfWeek = date.dayOfWeek
                         table_grid.addView(TextView(context).apply {
                             text = title
-                            width = if (useStd) stdWidth else remainderWidth
-                            if (!useStd) height = 130
+                            width = if (day > 0) stdWidth else remainderWidth
+                            if (day == 0) height = 130
                             gravity = CENTER
                             color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
-                            if (begin == 0 && date == today)
+                            if (begin == 0 && today.weekNumber == this@weekNumber && today.dayOfWeek == day)
                                 setTextColor(resources.getColor(R.color.colorAccent, null))
                             if (begin > 0)
                                 setOnClickListener {
@@ -191,7 +190,7 @@ class ScheduleFragment : Fragment() {
                                         .setPositiveButton(confirm_string) { _, _ ->
                                             scheduleViewModel.delCustom(
                                                 title,
-                                                ScheduleDBManager.Session(true, dayOfWeek, begin, begin + size - 1)
+                                                ScheduleDBManager.Session(0, day, begin, begin + size - 1)
                                             )
                                         }
                                         .setNegativeButton(cancel_string) { _, _ -> }
@@ -199,24 +198,26 @@ class ScheduleFragment : Fragment() {
                                 }
                         }, LayoutParams().apply {
                             rowSpec = spec(begin, size, FILL)
-                            columnSpec = spec(if (useStd) dayOfWeek else 0, FILL, 1f)
+                            columnSpec = spec(day, FILL, 1f)
                         })
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
 
-                for (i in 1..14) addView(i.toString(), begin = i, useStd = false)
+                for (i in 1..14) addView(i.toString(), begin = i)
 
-                repeat(7) {
+                for (dayOfWeek in 1..7) {
                     addView(
                         getString(
-                            double_line,
-                            resources.getStringArray(R.array.weeks)[date.dayOfWeek],
-                            SimpleDateFormat("MM.dd", Locale.CHINA).format(date.timeInMillis)
-                        )
+                            schedule_date_format,
+                            resources.getStringArray(R.array.weeks)[dayOfWeek],
+                            date.get(Calendar.MONTH),
+                            date.get(Calendar.DATE)
+                        ),
+                        day = dayOfWeek
                     )
-                    schedule.allLessonList.filter { it.date.time == date.timeInMillis }.forEach {
+                    schedule.allLessonList.filter { it.week == this@weekNumber && it.day == dayOfWeek }.forEach {
                         addView(
                             if (it.locale.isEmpty())
                                 schedule.abbr(it.title)
@@ -224,7 +225,8 @@ class ScheduleFragment : Fragment() {
                                 getString(abbr_locale, schedule.abbr(it.title), it.locale),
                             schedule.getColor(it.title),
                             it.begin,
-                            it.end - it.begin + 1
+                            it.end - it.begin + 1,
+                            dayOfWeek
                         )
                     }
                     date.add(Calendar.DATE, 1)

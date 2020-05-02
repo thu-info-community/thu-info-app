@@ -12,6 +12,7 @@
         <item>周日</item>
     </string-array>
     <string name="double_line">"%1$s\n%2$s</string>
+    <string name="schedule_date_format">"%1$s\n%2$d.%3$d</string>
     <string name="custom_abbr_string">自定义简称</string>
     <string name="save_image_string">保存为图片</string>
     <string name="custom_add_string">添加计划</string>

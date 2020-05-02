@@ -19,15 +19,7 @@ private fun Network.getSecondary() = mutableListOf<Lesson>().apply {
     try {
         fun update(position: String, data: String) {
             fun parse(title: String, week: Int) {
-                add(
-                    Lesson(
-                        title,
-                        "",
-                        Date(SchoolCalendar(week, position[3] - '0').timeInMillis),
-                        begin[position[1] - '1'],
-                        end[position[1] - '1']
-                    )
-                )
+                add(Lesson(title, "", week, position[3] - '0', begin[position[1] - '1'], end[position[1] - '1']))
             }
             Jsoup.parseBodyFragment(data).body().run {
                 val title = child(0).text()

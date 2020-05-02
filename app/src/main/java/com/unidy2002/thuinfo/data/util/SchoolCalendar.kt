@@ -1,5 +1,6 @@
 package com.unidy2002.thuinfo.data.util
 
+import java.text.SimpleDateFormat
 import java.time.Month
 import java.util.*
 import kotlin.math.floor
@@ -12,6 +13,13 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
     val weekNumber get() = floor((timeInMillis - firstDay.time.time) / 604800000.0).toInt() + 1
 
     val dayOfWeek get() = get(Calendar.DAY_OF_WEEK).run { if (this > 1) this - 1 else 7 }
+
+    constructor(milli: Long) : this() {
+        with(SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(milli)) {
+            clear()
+            set(substring(0, 4).toInt(), substring(5, 7).toInt() - 1, substring(8, 10).toInt())
+        }
+    }
 
     constructor(year: Int, month: Int, day: Int) : this() {
         clear()
@@ -28,7 +36,7 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
         val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.FEBRUARY.ordinal, 17) }
         val weekCount = 18
         val semesterType = SemesterType.SPRING
-        val semesterId="2019-2020-2"
+        val semesterId = "2019-2020-2"
     }
 
     enum class SemesterType { SPRING, SUMMER, AUTUMN }

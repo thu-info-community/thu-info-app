@@ -5,18 +5,16 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.alibaba.fastjson.JSON.parseArray
 import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
-import com.unidy2002.thuinfo.data.util.SchoolCalendar.Companion.weekCount
 import com.unidy2002.thuinfo.data.util.safeThread
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.sql.Time
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Locale.CHINA
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -24,7 +22,7 @@ class ScheduleDBManager private constructor(context: Context) {
 
     // Initialize database
 
-    private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context, 1).writableDatabase
+    private val writableDatabase: SQLiteDatabase = ScheduleDBHelper(context).writableDatabase
 
     // Write to database
 
@@ -76,7 +74,7 @@ class ScheduleDBManager private constructor(context: Context) {
     }
 
     private fun readLessonList(tableName: String) {
-        readList(tableName) { Lesson(getString(0), getString(1), Date(getLong(2)), getInt(3), getInt(4)) }
+        readList(tableName) { Lesson(getString(0), getString(1), getInt(2), getInt(3), getInt(4), getInt(5)) }
     }
 
     private fun readPrimaryList() {
@@ -93,7 +91,7 @@ class ScheduleDBManager private constructor(context: Context) {
 
     private fun readExamList() {
         readList("examList") {
-            Exam(getString(0), getString(1), Date(getLong(2)), Time(getLong(3)), Time(getLong(4)))
+            Exam(getString(0), getString(1), getInt(2), getInt(3), Time(getLong(4)), Time(getLong(5)))
         }
     }
 
@@ -114,13 +112,27 @@ class ScheduleDBManager private constructor(context: Context) {
         readMap("colorMap") { getString(0) to getInt(1) }
     }
 
+    private fun load() {
+        try {
+            readPrimaryList()
+            readSecondaryList()
+            readCustomList()
+            readExamList()
+            readShortenMap()
+            readColorMap()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     // Data and enum classes
 
     data class Lesson(
         var title: String,
         var locale: String,
-        var date: Date,
+        var week: Int,
+        var day: Int,
         var begin: Int,
         var end: Int
     )
@@ -128,13 +140,14 @@ class ScheduleDBManager private constructor(context: Context) {
     data class Exam(
         var title: String,
         var locale: String,
-        var date: Date,
+        var week: Int,
+        var day: Int,
         var begin: Time,
         var end: Time
     )
 
     data class Session(
-        val repeat: Boolean,
+        val week: Int,
         val dayOfWeek: Int,
         val begin: Int,
         val end: Int
@@ -182,28 +195,35 @@ class ScheduleDBManager private constructor(context: Context) {
             customList.removeAll { it.title == title }
             safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(title)) }
         } else {
-            val dateList = MutableList(weekCount) { SchoolCalendar(it + 1, session.dayOfWeek).timeInMillis }
-            customList.removeAll { it.title == title && it.begin == session.begin && it.end == session.end && it.date.time in dateList }
+            customList.removeAll {
+                it.title == title && it.begin == session.begin && it.end == session.end && it.day == session.dayOfWeek
+                        && (session.week == 0 || it.week == session.week)
+            }
             safeThread {
-                // TODO: Reconstruction becomes inevitable.
-                dateList.forEach {
+                if (session.week == 0)
                     writableDatabase.delete(
                         "customList",
-                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_date = ?",
-                        arrayOf(title, session.begin.toString(), session.end.toString(), it.toString())
+                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ?",
+                        arrayOf(title, session.begin.toString(), session.end.toString(), session.dayOfWeek.toString())
                     )
-                }
+                else
+                    writableDatabase.delete(
+                        "customList",
+                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ? AND j_week = ?",
+                        arrayOf(
+                            title,
+                            session.begin.toString(),
+                            session.end.toString(),
+                            session.dayOfWeek.toString(),
+                            session.week.toString()
+                        )
+                    )
             }
         }
     }
 
     init {
-        readPrimaryList()
-        readSecondaryList()
-        readCustomList()
-        readExamList()
-        readShortenMap()
-        readColorMap()
+        load()
     }
 
     fun refresh(primary: String, secondary: List<Lesson>) {
@@ -217,28 +237,42 @@ class ScheduleDBManager private constructor(context: Context) {
                     "上课" -> {
                         val title = o["nr"] as String
                         val locale = o["dd"] as? String ?: ""
-                        val date = SimpleDateFormat("yyyy-MM-dd", CHINA).parse(o["nq"] as String)!!
+                        val dateString = o["nq"] as String
+                        val date = SchoolCalendar(
+                            dateString.substring(0, 4).toInt(),
+                            dateString.substring(5, 7).toInt(),
+                            dateString.substring(8, 10).toInt()
+                        )
                         val begin = parseBegin(o["kssj"] as String)
                         val end = parseEnd(o["jssj"] as String)
                         if (primaryLessonList.isNotEmpty() &&
                             title == primaryLessonList.last().title &&
                             locale == primaryLessonList.last().locale &&
-                            date == primaryLessonList.last().date &&
+                            date.weekNumber == primaryLessonList.last().week &&
+                            date.dayOfWeek == primaryLessonList.last().day &&
                             begin <= primaryLessonList.last().end + 1
                         ) primaryLessonList.last().end = end
-                        else primaryLessonList.add(Lesson(title, locale, date, begin, end))
+                        else primaryLessonList.add(Lesson(title, locale, date.weekNumber, date.dayOfWeek, begin, end))
                         shortenTitle(title, segmenter)
                     }
-                    "考试" ->
+                    "考试" -> {
+                        val dateString = o["nq"] as String
+                        val date = SchoolCalendar(
+                            dateString.substring(0, 4).toInt(),
+                            dateString.substring(5, 7).toInt(),
+                            dateString.substring(8, 10).toInt()
+                        )
                         examList.add(
                             Exam(
                                 (o["nr"] as String),
                                 o["dd"] as? String ?: "",
-                                SimpleDateFormat("yyyy-MM-dd", CHINA).parse(o["nq"] as String)!!,
+                                date.weekNumber,
+                                date.dayOfWeek,
                                 Time.valueOf(o["kssj"] as String + ":00"),
                                 Time.valueOf(o["jssj"] as String + ":00")
                             )
                         )
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -357,6 +391,8 @@ class ScheduleDBManager private constructor(context: Context) {
     // Singleton initialization
 
     companion object {
+        private const val dbVersion = 2
+
         fun init(context: Context) {
             if (!loggedInUser.scheduleInitialized()) {
                 synchronized(ScheduleDBManager::class.java) {
@@ -368,17 +404,88 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
-    private class ScheduleDBHelper(context: Context, version: Int) :
-        SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, version) {
-        override fun onCreate(db: SQLiteDatabase) {
-            db.execSQL("create table primaryList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table secondaryList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table customList(j_title String, j_locale String, j_date Long, j_begin Integer, j_end Integer)")
-            db.execSQL("create table examList(j_title String, j_locale String, j_date Long, j_begin Long, j_end Long)")
-            db.execSQL("create table shortenMap(j_first String, j_second String)")
-            db.execSQL("create table colorMap(j_first String, j_second Integer)")
+    private inner class ScheduleDBHelper(context: Context) :
+        SQLiteOpenHelper(context, "calender.${loggedInUser.userId}.db", null, dbVersion) {
+        private fun createTables(db: SQLiteDatabase, version: Int) {
+            when (version) {
+                1 -> {
+                    db.execSQL("create table lesson(title String, locale String, date Long, beginning Integer, ending Integer)")
+                    db.execSQL("create table exam(title String, locale String, date Long, beginning Long, ending Long)")
+                    db.execSQL("create table auto(origin String, dest String)")
+                    db.execSQL("create table custom(origin String, dest String)")
+                    db.execSQL("create table color(name String, id Integer)")
+                }
+                2 -> {
+                    db.execSQL("create table primaryList(j_title String, j_locale String, j_week Integer, j_day Integer, j_begin Integer, j_end Integer)")
+                    db.execSQL("create table secondaryList(j_title String, j_locale String, j_week Integer, j_day Integer, j_begin Integer, j_end Integer)")
+                    db.execSQL("create table customList(j_title String, j_locale String, j_week Integer, j_day Integer, j_begin Integer, j_end Integer)")
+                    db.execSQL("create table examList(j_title String, j_locale String, j_week Integer, j_day Integer, j_begin Long, j_end Long)")
+                    db.execSQL("create table shortenMap(j_first String, j_second String)")
+                    db.execSQL("create table colorMap(j_first String, j_second Integer)")
+                }
+            }
         }
 
-        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+        override fun onCreate(db: SQLiteDatabase) {
+            createTables(db, dbVersion)
+        }
+
+        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+            if (oldVersion <= 1 && newVersion >= 2) {
+                Log.i("DB Update", "Schedule from $oldVersion to $newVersion")
+                createTables(db, newVersion)
+                db.query("lesson", null, null, null, null, null, null, null).apply {
+                    while (moveToNext()) {
+                        with(SchoolCalendar(getLong(2))) {
+                            db.insert("primaryList", null, ContentValues().apply {
+                                put("j_title", getString(0))
+                                put("j_locale", getString(1))
+                                put("j_week", weekNumber)
+                                put("j_day", dayOfWeek)
+                                put("j_begin", getInt(3))
+                                put("j_end", getInt(4))
+                            })
+                        }
+                    }
+                    close()
+                }
+                db.query("exam", null, null, null, null, null, null, null).apply {
+                    while (moveToNext())
+                        with(SchoolCalendar(getLong(2))) {
+                            db.insert("examList", null, ContentValues().apply {
+                                put("j_title", getString(0))
+                                put("j_locale", getString(1))
+                                put("j_week", weekNumber)
+                                put("j_day", dayOfWeek)
+                                put("j_begin", getLong(3))
+                                put("j_end", getLong(4))
+                            })
+                        }
+                    close()
+                }
+                db.query("custom", null, null, null, null, null, null, null).apply {
+                    while (moveToNext())
+                        db.insert("shortenMap", null, ContentValues().apply {
+                            put("j_first", getString(0))
+                            put("j_second", getString(1))
+                        })
+                    close()
+                }
+                db.query("color", null, null, null, null, null, null, null).apply {
+                    while (moveToNext())
+                        db.insert("colorMap", null, ContentValues().apply {
+                            put("j_first", getString(0))
+                            put("j_second", getInt(1))
+                        })
+                    close()
+                }
+                db.execSQL("delete from lesson")
+                db.execSQL("delete from exam")
+                db.execSQL("delete from auto")
+                db.execSQL("delete from custom")
+                db.execSQL("delete from color")
+                load()
+            }
+        }
     }
 }
