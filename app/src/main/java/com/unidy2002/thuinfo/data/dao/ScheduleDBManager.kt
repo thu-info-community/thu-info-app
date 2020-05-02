@@ -147,11 +147,14 @@ class ScheduleDBManager private constructor(context: Context) {
     )
 
     data class Session(
+        val title: String,
         val week: Int,
         val dayOfWeek: Int,
         val begin: Int,
         val end: Int
     )
+
+    enum class Choice { ONCE, REPEAT, ALL }
 
     // In-memory data
 
@@ -190,28 +193,33 @@ class ScheduleDBManager private constructor(context: Context) {
         safeThread { addItem(lesson, "customList") }
     }
 
-    fun delCustom(title: String, session: Session? = null) {
-        if (session == null) {
-            customList.removeAll { it.title == title }
-            safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(title)) }
+    fun delCustom(choice: Choice, session: Session) {
+        if (choice == Choice.ALL) {
+            customList.removeAll { it.title == session.title }
+            safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(session.title)) }
         } else {
             customList.removeAll {
-                it.title == title && it.begin == session.begin && it.end == session.end && it.day == session.dayOfWeek
-                        && (session.week == 0 || it.week == session.week)
+                it.title == session.title && it.begin == session.begin && it.end == session.end &&
+                        it.day == session.dayOfWeek && (choice == Choice.REPEAT || it.week == session.week)
             }
             safeThread {
-                if (session.week == 0)
+                if (choice == Choice.REPEAT)
                     writableDatabase.delete(
                         "customList",
                         "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ?",
-                        arrayOf(title, session.begin.toString(), session.end.toString(), session.dayOfWeek.toString())
+                        arrayOf(
+                            session.title,
+                            session.begin.toString(),
+                            session.end.toString(),
+                            session.dayOfWeek.toString()
+                        )
                     )
                 else
                     writableDatabase.delete(
                         "customList",
                         "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ? AND j_week = ?",
                         arrayOf(
-                            title,
+                            session.title,
                             session.begin.toString(),
                             session.end.toString(),
                             session.dayOfWeek.toString(),

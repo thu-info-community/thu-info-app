@@ -14,19 +14,18 @@
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/一教"/>
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/二教"
+                android:text="@string/一教"
                 android:enabled="false"/>
 
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/三教"
-                android:enabled="false"/>
+                android:text="@string/二教"/>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/三教"/>
 
         <Button
                 android:layout_width="wrap_content"
@@ -41,7 +40,8 @@
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/六教"/>
+                android:text="@string/六教"
+                android:enabled="false"/>
 
         <Button
                 android:layout_width="wrap_content"

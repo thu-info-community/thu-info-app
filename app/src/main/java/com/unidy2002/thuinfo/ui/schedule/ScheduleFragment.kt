@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.dao.ScheduleDBManager.Choice
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
 import com.unidy2002.thuinfo.data.util.save
@@ -173,7 +174,14 @@ class ScheduleFragment : Fragment() {
                 val remainderWidth = schedule_content.width - stdWidth * 7
                 table_grid.removeAllViews()
 
-                fun addView(title: String, color: Int? = null, begin: Int = 0, size: Int = 1, day: Int = 0) {
+                fun addView(
+                    title: String,
+                    color: Int? = null,
+                    begin: Int = 0,
+                    size: Int = 1,
+                    day: Int = 0,
+                    originalTitle: String? = null
+                ) {
                     try {
                         table_grid.addView(TextView(context).apply {
                             text = title
@@ -183,18 +191,47 @@ class ScheduleFragment : Fragment() {
                             color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
                             if (begin == 0 && today.weekNumber == this@weekNumber && today.dayOfWeek == day)
                                 setTextColor(resources.getColor(R.color.colorAccent, null))
-                            if (begin > 0)
-                                setOnClickListener {
+                            if (originalTitle != null)
+                                setOnLongClickListener {
+                                    val conflict = schedule.allLessonList.filter {
+                                        it.week == this@weekNumber && it.day == day &&
+                                                (it.begin in begin until begin + size ||
+                                                        it.end in begin until begin + size)
+                                    }.map {
+                                        ScheduleDBManager.Session(it.title, it.week, it.day, it.begin, it.end)
+                                    }.toSet().sortedBy {
+                                        if (it.title == originalTitle && it.begin == begin && it.end == begin + size - 1) 0 else 1
+                                    }
+                                    val solveConflict = ScheduleRadioGroup(context, conflict) {
+                                        getString(lesson_brief_format, it.title, it.begin, it.end)
+                                    }
                                     AlertDialog.Builder(context)
-                                        .setTitle("您确定要删除吗？")
+                                        .setTitle(you_chose_string)
+                                        .setView(solveConflict)
                                         .setPositiveButton(confirm_string) { _, _ ->
-                                            scheduleViewModel.delCustom(
-                                                title,
-                                                ScheduleDBManager.Session(0, day, begin, begin + size - 1)
-                                            )
+                                            val intention = ScheduleRadioGroup(context, Choice.values().asList()) {
+                                                getString(
+                                                    when (it) {
+                                                        Choice.ONCE -> delete_only_string
+                                                        Choice.REPEAT -> delete_repeat_string
+                                                        Choice.ALL -> delete_all_string
+                                                    }
+                                                )
+                                            }
+                                            AlertDialog.Builder(context)
+                                                .setTitle(you_plan_string)
+                                                .setView(intention)
+                                                .setPositiveButton(confirm_string) { _, _ ->
+                                                    scheduleViewModel.delCustom(
+                                                        intention.choice, solveConflict.choice
+                                                    )
+                                                }
+                                                .setNegativeButton(cancel_string) { _, _ -> }
+                                                .show()
                                         }
                                         .setNegativeButton(cancel_string) { _, _ -> }
                                         .show()
+                                    true
                                 }
                         }, LayoutParams().apply {
                             rowSpec = spec(begin, size, FILL)
@@ -226,7 +263,8 @@ class ScheduleFragment : Fragment() {
                             schedule.getColor(it.title),
                             it.begin,
                             it.end - it.begin + 1,
-                            dayOfWeek
+                            dayOfWeek,
+                            it.title
                         )
                     }
                     date.add(Calendar.DATE, 1)
@@ -235,7 +273,7 @@ class ScheduleFragment : Fragment() {
         }
     }
 
-    internal class ScheduleCustomAddLayout(context: Context) : LinearLayout(context) {
+    private class ScheduleCustomAddLayout(context: Context) : LinearLayout(context) {
         private val titleView: EditText?
         private val localeView: EditText?
         private val dayOfWeekView: Spinner?
@@ -277,7 +315,6 @@ class ScheduleFragment : Fragment() {
                         }
                     }
                 }
-
         }
 
         private fun parseCustom(): List<Int>? {
@@ -332,5 +369,25 @@ class ScheduleFragment : Fragment() {
                 3 -> parseCustom() ?: 1..16
                 else -> 1..16
             }
+    }
+
+    private class ScheduleRadioGroup<T>(context: Context, src: List<T>, toText: (T) -> String) : LinearLayout(context) {
+        var choice = src[0]
+
+        init {
+            (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                .inflate(R.layout.item_radio_group, this, true)
+                .findViewById<RadioGroup>(R.id.radio_group)
+                .apply {
+                    for ((index, item) in src.withIndex()) {
+                        addView(RadioButton(context).apply {
+                            id = index
+                            text = toText(item)
+                        })
+                    }
+                    check(0)
+                    setOnCheckedChangeListener { _, id -> choice = src[id] }
+                }
+        }
     }
 }
