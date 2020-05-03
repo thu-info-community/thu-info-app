@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 
@@ -30,15 +29,25 @@ class CustomizeFragment : Fragment() {
 
         view?.findViewById<RecyclerView>(R.id.custom_recycler_view)?.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = CustomizeAdapter(loggedInUser.schedule)
+            when (arguments?.getInt("mode")) {
+                1 -> {
+                    adapter = CustomizeAdapter(loggedInUser.schedule)
+                    (activity as? AppCompatActivity)?.supportActionBar?.setTitle(custom_abbr_string)
+                }
+                2 -> {
+                    adapter = ManageHiddenAdapter(loggedInUser.schedule)
+                    (activity as? AppCompatActivity)?.supportActionBar?.setTitle(manage_hidden_string)
+                }
+                else -> context?.run { Toast.makeText(this, schedule_exception_string, Toast.LENGTH_SHORT).show() }
+            }
         }
     }
 
-    inner class CustomizeAdapter(private val schedule: ScheduleDBManager) : Adapter<ViewHolder>() {
+    private inner class CustomizeAdapter(private val schedule: ScheduleDBManager) : Adapter<ViewHolder>() {
 
         private val lessonNames = schedule.lessonNames
 
-        inner class CustomizeViewHolder(view: View) : ViewHolder(view) {
+        private inner class CustomizeViewHolder(view: View) : ViewHolder(view) {
             val origin: TextView? = view.findViewById(R.id.custom_origin_name)
             val new: TextView? = view.findViewById(R.id.custom_new_name)
             val image: ImageView? = view.findViewById(R.id.custom_image_button)
@@ -62,9 +71,9 @@ class CustomizeFragment : Fragment() {
                         new.hint = defaultNew
                     }
                     AlertDialog.Builder(this)
-                        .setTitle(R.string.setup_abbr_string)
+                        .setTitle(setup_abbr_string)
                         .setView(input)
-                        .setPositiveButton(R.string.confirm_string) { _, _ ->
+                        .setPositiveButton(confirm_string) { _, _ ->
                             with(input.new.text) {
                                 if (isNotBlank()) {
                                     holder.new?.text = this
@@ -78,28 +87,90 @@ class CustomizeFragment : Fragment() {
                 }
             }
         }
-    }
 
-    class CustomPopupLayout(context: Context) : LinearLayout(context) {
-        val origin: TextView
-        val new: EditText
+        private inner class CustomPopupLayout(context: Context) : LinearLayout(context) {
+            val origin: TextView
+            val new: EditText
 
-        init {
-            (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                .inflate(R.layout.item_custom_popup, this, true)
-                .run {
-                    origin = findViewById(R.id.custom_popup_origin)
-                    new = findViewById(R.id.custom_popup_new)
+            init {
+                (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                    .inflate(R.layout.item_custom_popup, this, true)
+                    .run {
+                        origin = findViewById(R.id.custom_popup_origin)
+                        new = findViewById(R.id.custom_popup_new)
 
-                    new.doOnTextChanged { text, _, _, _ ->
-                        with(text?.length ?: 0) {
-                            findViewById<TextView>(R.id.custom_popup_count).apply {
-                                setText(resources.getString(R.string._x_7, this@with))
-                                setTextColor(if (this@with > 7) Color.rgb(216, 27, 96) else Color.argb(222, 0, 0, 0))
+                        new.doOnTextChanged { text, _, _, _ ->
+                            with(text?.length ?: 0) {
+                                findViewById<TextView>(R.id.custom_popup_count).apply {
+                                    setText(resources.getString(_x_7, this@with))
+                                    setTextColor(
+                                        if (this@with > 7) Color.rgb(216, 27, 96)
+                                        else Color.argb(222, 0, 0, 0)
+                                    )
+                                }
                             }
                         }
                     }
+            }
+        }
+    }
+
+    private inner class ManageHiddenAdapter(private val schedule: ScheduleDBManager) : Adapter<ViewHolder>() {
+
+        val hiddenRules = schedule.hiddenRules
+
+        private inner class CustomizeViewHolder(view: View) : ViewHolder(view) {
+            val title: TextView? = view.findViewById(R.id.manage_hidden_title)
+            val icon: ImageView? = view.findViewById(R.id.manage_hidden_btn)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CustomizeViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.item_manage_hidden_card, parent, false)
+        )
+
+        override fun getItemCount() = hiddenRules.size
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = hiddenRules[position]
+            val level = getString(
+                when (item.level) {
+                    0 -> primary_string
+                    1 -> secondary_string
+                    else -> other_string
                 }
+            )
+            holder as CustomizeViewHolder
+            holder.title?.text = when (item.week) {
+                -1 -> getString(lesson_all_format, level, item.title)
+                0 -> getString(
+                    lesson_repeat_format,
+                    level,
+                    item.title,
+                    resources.getStringArray(R.array.weeks)[item.day],
+                    item.begin,
+                    item.end
+                )
+                else -> getString(
+                    lesson_once_format,
+                    level,
+                    item.title,
+                    item.week,
+                    resources.getStringArray(R.array.weeks)[item.day],
+                    item.begin,
+                    item.end
+                )
+            }
+            holder.icon?.setOnClickListener {
+                AlertDialog.Builder(context)
+                    .setMessage(sure_to_remove_rule_string)
+                    .setPositiveButton(confirm_string) { _, _ ->
+                        schedule.removeHiddenRule(item) {
+                            notifyItemRemoved(it)
+                        }
+                    }
+                    .setNegativeButton(cancel_string) { _, _ -> }
+                    .show()
+            }
         }
     }
 }

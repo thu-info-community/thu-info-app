@@ -23,11 +23,11 @@ import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager.Choice
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.util.SchoolCalendar
+import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.data.util.save
 import com.unidy2002.thuinfo.data.util.toBitmap
 import kotlinx.android.synthetic.main.fragment_schedule.*
 import java.util.*
-import kotlin.concurrent.thread
 import kotlin.math.round
 
 class ScheduleFragment : Fragment() {
@@ -49,7 +49,7 @@ class ScheduleFragment : Fragment() {
                 it?.run {
                     schedule_minus.isEnabled = this > 1
                     schedule_plus.isEnabled = this < SchoolCalendar.weekCount
-                    thread { getData(sharedPreferences?.getBoolean("schedule", false) != true) }
+                    safeThread { getData(sharedPreferences?.getBoolean("schedule", false) != true) }
                 }
             })
             scheduleData.observe(this@ScheduleFragment, Observer {
@@ -63,6 +63,8 @@ class ScheduleFragment : Fragment() {
                     schedule_custom_abbr.isEnabled = true
                     schedule_save_image.isEnabled = true
                     schedule_custom_add.isEnabled = true
+                    schedule_manage_hidden.isEnabled = true
+                    schedule_secondary_switch.isEnabled = true
                 }
             })
             scheduleWeek.value ?: setWeek(SchoolCalendar().weekNumber)
@@ -75,8 +77,10 @@ class ScheduleFragment : Fragment() {
                 setOnRefreshListener {
                     schedule_custom_abbr.isEnabled = false
                     schedule_save_image.isEnabled = false
-                    schedule_custom_add.isEnabled = true
-                    thread { scheduleViewModel.getData(true) }
+                    schedule_custom_add.isEnabled = false
+                    schedule_manage_hidden.isEnabled = false
+                    schedule_secondary_switch.isEnabled = false
+                    safeThread { scheduleViewModel.getData(true) }
                 }
             }
 
@@ -87,7 +91,8 @@ class ScheduleFragment : Fragment() {
             schedule_plus.setOnClickListener { scheduleViewModel.weekIncrease() }
 
             schedule_custom_abbr.setOnClickListener {
-                NavHostFragment.findNavController(this@ScheduleFragment).navigate(R.id.customizeFragment)
+                NavHostFragment.findNavController(this@ScheduleFragment)
+                    .navigate(R.id.customizeFragment, Bundle().apply { putInt("mode", 1) })
             }
 
             schedule_save_image.setOnClickListener {
@@ -159,6 +164,32 @@ class ScheduleFragment : Fragment() {
                         .show()
                 }
             }
+
+            schedule_manage_hidden.setOnClickListener {
+                NavHostFragment.findNavController(this@ScheduleFragment)
+                    .navigate(R.id.customizeFragment, Bundle().apply { putInt("mode", 2) })
+            }
+
+            schedule_secondary_switch.setOnClickListener {
+                AlertDialog.Builder(context)
+                    .setTitle(secondary_courses_string)
+                    .setMessage(secondary_requirement_string)
+                    .setPositiveButton(not_now_string) { _, _ ->
+                        loggedInUser.allowEnterCourseSelection = false
+                    }
+                    .setNegativeButton(allow_enter_string) { _, _ ->
+                        loggedInUser.allowEnterCourseSelection = true
+                    }
+                    .setOnDismissListener {
+                        safeThread {
+                            sharedPreferences?.edit()
+                                ?.putBoolean("enter_selection", loggedInUser.allowEnterCourseSelection)
+                                ?.apply()
+                        }
+                    }
+                    .setCancelable(false)
+                    .show()
+            }
         }
     }
 
@@ -180,7 +211,8 @@ class ScheduleFragment : Fragment() {
                     begin: Int = 0,
                     size: Int = 1,
                     day: Int = 0,
-                    originalTitle: String? = null
+                    currentLesson: ScheduleDBManager.Session? = null,
+                    lessonsToday: List<ScheduleDBManager.Session>? = null
                 ) {
                     try {
                         table_grid.addView(TextView(context).apply {
@@ -191,19 +223,20 @@ class ScheduleFragment : Fragment() {
                             color?.run { setBackgroundColor(resources.getIntArray(R.array.schedule_colors)[color]) }
                             if (begin == 0 && today.weekNumber == this@weekNumber && today.dayOfWeek == day)
                                 setTextColor(resources.getColor(R.color.colorAccent, null))
-                            if (originalTitle != null)
+                            if (currentLesson != null && !lessonsToday.isNullOrEmpty())
                                 setOnLongClickListener {
-                                    val conflict = schedule.allLessonList.filter {
-                                        it.week == this@weekNumber && it.day == day &&
-                                                (it.begin in begin until begin + size ||
-                                                        it.end in begin until begin + size)
-                                    }.map {
-                                        ScheduleDBManager.Session(it.title, it.week, it.day, it.begin, it.end)
+                                    val conflict = lessonsToday.filter {
+                                        (it.begin in begin until begin + size ||
+                                                it.end in begin until begin + size)
                                     }.toSet().sortedBy {
-                                        if (it.title == originalTitle && it.begin == begin && it.end == begin + size - 1) 0 else 1
+                                        if (it.type == currentLesson.type &&
+                                            it.title == currentLesson.title &&
+                                            it.begin == begin &&
+                                            it.end == begin + size - 1
+                                        ) 0 else 1
                                     }
                                     val solveConflict = ScheduleRadioGroup(context, conflict) {
-                                        getString(lesson_brief_format, it.title, it.begin, it.end)
+                                        getString(lesson_brief_format, it.type.toString(), it.title, it.begin, it.end)
                                     }
                                     AlertDialog.Builder(context)
                                         .setTitle(you_chose_string)
@@ -211,10 +244,17 @@ class ScheduleFragment : Fragment() {
                                         .setPositiveButton(confirm_string) { _, _ ->
                                             val intention = ScheduleRadioGroup(context, Choice.values().asList()) {
                                                 getString(
-                                                    when (it) {
-                                                        Choice.ONCE -> delete_only_string
-                                                        Choice.REPEAT -> delete_repeat_string
-                                                        Choice.ALL -> delete_all_string
+                                                    when (solveConflict.choice.type) {
+                                                        ScheduleDBManager.LessonType.CUSTOM -> when (it) {
+                                                            Choice.ONCE -> delete_only_string
+                                                            Choice.REPEAT -> delete_repeat_string
+                                                            Choice.ALL -> delete_all_string
+                                                        }
+                                                        else -> when (it) {
+                                                            Choice.ONCE -> hide_only_string
+                                                            Choice.REPEAT -> hide_repeat_string
+                                                            Choice.ALL -> hide_all_string
+                                                        }
                                                     }
                                                 )
                                             }
@@ -222,7 +262,7 @@ class ScheduleFragment : Fragment() {
                                                 .setTitle(you_plan_string)
                                                 .setView(intention)
                                                 .setPositiveButton(confirm_string) { _, _ ->
-                                                    scheduleViewModel.delCustom(
+                                                    scheduleViewModel.delOrHide(
                                                         intention.choice, solveConflict.choice
                                                     )
                                                 }
@@ -249,12 +289,15 @@ class ScheduleFragment : Fragment() {
                         getString(
                             schedule_date_format,
                             resources.getStringArray(R.array.weeks)[dayOfWeek],
-                            date.get(Calendar.MONTH),
+                            date.get(Calendar.MONTH) + 1,
                             date.get(Calendar.DATE)
                         ),
                         day = dayOfWeek
                     )
-                    schedule.allLessonList.filter { it.week == this@weekNumber && it.day == dayOfWeek }.forEach {
+                    val lessonsToday = schedule.taggedLessonList.filter {
+                        it.week == this@weekNumber && it.dayOfWeek == dayOfWeek
+                    }
+                    lessonsToday.forEach {
                         addView(
                             if (it.locale.isEmpty())
                                 schedule.abbr(it.title)
@@ -264,7 +307,8 @@ class ScheduleFragment : Fragment() {
                             it.begin,
                             it.end - it.begin + 1,
                             dayOfWeek,
-                            it.title
+                            it,
+                            lessonsToday
                         )
                     }
                     date.add(Calendar.DATE, 1)

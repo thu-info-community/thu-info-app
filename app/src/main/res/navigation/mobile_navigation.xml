@@ -80,7 +80,6 @@
     <fragment
             android:id="@+id/customizeFragment"
             android:name="com.unidy2002.thuinfo.ui.schedule.CustomizeFragment"
-            android:label="@string/custom_abbr_string"
             tools:layout="@layout/fragment_customize"/>
 
     <fragment

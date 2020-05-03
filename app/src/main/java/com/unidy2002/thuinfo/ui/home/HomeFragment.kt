@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment.findNavController
@@ -18,6 +19,7 @@ import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getEleRechargePayCode
 import com.unidy2002.thuinfo.data.network.loseCard
 import com.unidy2002.thuinfo.data.util.Alipay
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlin.concurrent.thread
 
 
@@ -28,25 +30,17 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         view?.run {
-            findViewById<TextView>(R.id.classroom_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.classroomWelcomeFragment)
+            fun TextView.setNavigateDestination(@IdRes resId: Int) {
+                setOnClickListener { findNavController(this@HomeFragment).navigate(resId) }
             }
-            findViewById<TextView>(R.id.wentu_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.wentuFragment)
-            }
-            findViewById<TextView>(R.id.report_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.reportFragment)
-            }
-            findViewById<TextView>(R.id.physical_exam_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.physicalExamFragment)
-            }
-            findViewById<TextView>(R.id.jogging_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.joggingTableFragment)
-            }
-            findViewById<TextView>(R.id.e_card_query_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.eCardTableFragment)
-            }
-            findViewById<TextView>(R.id.lose_card_btn)?.setOnClickListener {
+
+            classroom_btn.setNavigateDestination(R.id.classroomWelcomeFragment)
+            wentu_btn.setNavigateDestination(R.id.wentuFragment)
+            report_btn.setNavigateDestination(R.id.reportFragment)
+            physical_exam_btn.setNavigateDestination(R.id.physicalExamFragment)
+            jogging_btn.setNavigateDestination(R.id.joggingTableFragment)
+            e_card_query_btn.setNavigateDestination(R.id.eCardTableFragment)
+            lose_card_btn.setOnClickListener {
                 AlertDialog.Builder(context)
                     .setTitle(confirm_lose_card)
                     .setMessage(op_cannot_undo)
@@ -78,7 +72,7 @@ class HomeFragment : Fragment() {
                     .setNegativeButton(cancel_string) { _, _ -> }
                     .show()
             }
-            findViewById<TextView>(R.id.dorm_ele_recharge_btn)?.setOnClickListener {
+            dorm_ele_recharge_btn.setOnClickListener {
                 configureCommunity {
                     try {
                         if (Alipay.hasInstalledAlipayClient(context)) {
@@ -147,10 +141,8 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-            findViewById<TextView>(R.id.dorm_laf_btn)?.setOnClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.lafMainFragment)
-            }
-            findViewById<TextView>(R.id.dorm_score_btn)?.setOnClickListener {
+            dorm_laf_btn.setNavigateDestination(R.id.lafMainFragment)
+            dorm_score_btn.setOnClickListener {
                 configureCommunity {
                     findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
                 }

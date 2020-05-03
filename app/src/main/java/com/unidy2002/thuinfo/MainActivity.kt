@@ -90,6 +90,10 @@ class MainActivity : AppCompatActivity() {
         safeThread { JiebaSegmenter.init(applicationContext) }
         safeThread { ScheduleDBManager.init(applicationContext) }
 
+        // Read configuration data
+        loggedInUser.allowEnterCourseSelection =
+            getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).getBoolean("enter_selection", false)
+
         // Check update
         checkUpdate()
     }

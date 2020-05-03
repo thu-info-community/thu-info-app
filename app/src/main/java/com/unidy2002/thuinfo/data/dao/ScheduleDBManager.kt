@@ -95,6 +95,12 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
+    private fun readHiddenList() {
+        readList("hiddenList") {
+            HiddenRule(getInt(0), getString(1), getInt(2), getInt(3), getInt(4), getInt(5))
+        }
+    }
+
     private fun <T, S> readMap(tableName: String, pair: Cursor.() -> Pair<T, S>) {
         val map = ScheduleDBManager::class.java.getDeclaredField(tableName).get(this) as MutableMap<T, S>
         map.clear()
@@ -120,6 +126,7 @@ class ScheduleDBManager private constructor(context: Context) {
             readExamList()
             readShortenMap()
             readColorMap()
+            readHiddenList()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -147,14 +154,64 @@ class ScheduleDBManager private constructor(context: Context) {
     )
 
     data class Session(
+        val type: LessonType,
         val title: String,
+        var locale: String,
         val week: Int,
         val dayOfWeek: Int,
         val begin: Int,
         val end: Int
-    )
+    ) {
+        constructor(type: LessonType, lesson: Lesson) :
+                this(type, lesson.title, lesson.locale, lesson.week, lesson.day, lesson.begin, lesson.end)
+
+        override fun equals(other: Any?): Boolean {
+            val tryCast = other as? Session
+            return tryCast != null && type == tryCast.type && title == tryCast.title &&
+                    week == tryCast.week && dayOfWeek == tryCast.dayOfWeek &&
+                    begin == tryCast.begin && end == tryCast.end
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + title.hashCode()
+            result = 31 * result + week
+            result = 31 * result + dayOfWeek
+            result = 31 * result + begin
+            result = 31 * result + end
+            return result
+        }
+    }
+
+    data class HiddenRule(
+        val level: Int, // PRIMARY: 0, SECONDARY: 1
+        val title: String,
+        val week: Int, // ALL: -1, REPEAT: 0, ONCE: the week to be hidden
+        val day: Int,
+        val begin: Int,
+        val end: Int
+    ) {
+        constructor(choice: Choice, session: Session) :
+                this(
+                    session.type.ordinal, session.title, when (choice) {
+                        Choice.ONCE -> session.week
+                        Choice.REPEAT -> 0
+                        Choice.ALL -> -1
+                    }, session.dayOfWeek, session.begin, session.end
+                )
+    }
 
     enum class Choice { ONCE, REPEAT, ALL }
+
+    enum class LessonType {
+        PRIMARY, SECONDARY, CUSTOM;
+
+        override fun toString() = when (this) {
+            PRIMARY -> "一级"
+            SECONDARY -> "二级"
+            CUSTOM -> "自定义"
+        }
+    }
 
     // In-memory data
 
@@ -170,11 +227,44 @@ class ScheduleDBManager private constructor(context: Context) {
 
     private val colorMap = mutableMapOf<String, Int>()
 
+    private val hiddenList = mutableListOf<HiddenRule>()
+
     // Public methods
 
     val lessonNames get() = (primaryList + secondaryList).map { it.title }.toMutableSet().toList()
 
-    val allLessonList get() = primaryList + secondaryList + customList
+    val taggedLessonList
+        get() = primaryList.map { Session(LessonType.PRIMARY, it) }.filterNot { matchHiddenRule(it) } +
+                secondaryList.map { Session(LessonType.SECONDARY, it) }.filterNot { matchHiddenRule(it) } +
+                customList.map { Session(LessonType.CUSTOM, it) }
+
+    val hiddenRules get() = hiddenList
+
+    fun removeHiddenRule(hiddenRule: HiddenRule, callback: ((Int) -> Unit)? = null) {
+        val sequence = hiddenRules.indices.reversed()
+        for (i in sequence) {
+            if (hiddenRules[i] == hiddenRule) {
+                hiddenList.removeAt(i)
+                callback?.invoke(i)
+            }
+        }
+        safeThread {
+            writableDatabase.delete(
+                "hiddenList",
+                "j_level = ? AND j_title = ? AND j_week = ? AND j_day = ? AND j_begin = ? AND j_end = ?",
+                with(hiddenRule) {
+                    arrayOf(
+                        level.toString(),
+                        title,
+                        week.toString(),
+                        day.toString(),
+                        begin.toString(),
+                        end.toString()
+                    )
+                }
+            )
+        }
+    }
 
     fun getColor(name: String) = colorMap[name] ?: (colorMap.size % colorCount).also {
         colorMap[name] = it
@@ -193,39 +283,47 @@ class ScheduleDBManager private constructor(context: Context) {
         safeThread { addItem(lesson, "customList") }
     }
 
-    fun delCustom(choice: Choice, session: Session) {
-        if (choice == Choice.ALL) {
-            customList.removeAll { it.title == session.title }
-            safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(session.title)) }
-        } else {
-            customList.removeAll {
-                it.title == session.title && it.begin == session.begin && it.end == session.end &&
-                        it.day == session.dayOfWeek && (choice == Choice.REPEAT || it.week == session.week)
+    fun delOrHide(choice: Choice, session: Session) {
+        when (session.type) {
+            LessonType.CUSTOM -> if (choice == Choice.ALL) {
+                customList.removeAll { it.title == session.title }
+                safeThread { writableDatabase.delete("customList", "j_title = ?", arrayOf(session.title)) }
+            } else {
+                customList.removeAll {
+                    it.title == session.title && it.begin == session.begin && it.end == session.end &&
+                            it.day == session.dayOfWeek && (choice == Choice.REPEAT || it.week == session.week)
+                }
+                safeThread {
+                    if (choice == Choice.REPEAT)
+                        writableDatabase.delete(
+                            "customList",
+                            "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ?",
+                            arrayOf(
+                                session.title,
+                                session.begin.toString(),
+                                session.end.toString(),
+                                session.dayOfWeek.toString()
+                            )
+                        )
+                    else
+                        writableDatabase.delete(
+                            "customList",
+                            "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ? AND j_week = ?",
+                            arrayOf(
+                                session.title,
+                                session.begin.toString(),
+                                session.end.toString(),
+                                session.dayOfWeek.toString(),
+                                session.week.toString()
+                            )
+                        )
+                }
             }
-            safeThread {
-                if (choice == Choice.REPEAT)
-                    writableDatabase.delete(
-                        "customList",
-                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ?",
-                        arrayOf(
-                            session.title,
-                            session.begin.toString(),
-                            session.end.toString(),
-                            session.dayOfWeek.toString()
-                        )
-                    )
-                else
-                    writableDatabase.delete(
-                        "customList",
-                        "j_title = ? AND j_begin = ? AND j_end = ? AND j_day = ? AND j_week = ?",
-                        arrayOf(
-                            session.title,
-                            session.begin.toString(),
-                            session.end.toString(),
-                            session.dayOfWeek.toString(),
-                            session.week.toString()
-                        )
-                    )
+            else -> {
+                with(HiddenRule(choice, session)) {
+                    hiddenList.add(this)
+                    safeThread { addItem(this, "hiddenList") }
+                }
             }
         }
     }
@@ -234,7 +332,7 @@ class ScheduleDBManager private constructor(context: Context) {
         load()
     }
 
-    fun refresh(primary: String, secondary: List<Lesson>) {
+    fun refresh(primary: String, secondary: List<Lesson>?) {
         val segmenter = JiebaSegmenter.getJiebaSegmenterSingleton()
         val primaryLessonList = mutableListOf<Lesson>()
         val examList = mutableListOf<Exam>()
@@ -286,9 +384,11 @@ class ScheduleDBManager private constructor(context: Context) {
                 e.printStackTrace()
             }
         }
-        secondary.forEach { shortenTitle(it.title, segmenter) }
         primaryList = primaryLessonList
-        secondaryList = secondary.toMutableList()
+        secondary?.run {
+            forEach { shortenTitle(it.title, segmenter) }
+            secondaryList = toMutableList()
+        }
         this.examList = examList
         safeThread {
             updatePrimary()
@@ -395,6 +495,12 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
+    private fun matchHiddenRule(session: Session) = hiddenList.any {
+        (it.level == 0 && session.type == LessonType.PRIMARY || it.level == 1 && session.type == LessonType.SECONDARY) &&
+                it.title == session.title && (it.week == -1 ||
+                (it.day == session.dayOfWeek && it.begin == session.begin && it.end == session.end &&
+                        (it.week == 0 || it.week == session.week)))
+    }
 
     // Singleton initialization
 
@@ -430,6 +536,7 @@ class ScheduleDBManager private constructor(context: Context) {
                     db.execSQL("create table examList(j_title String, j_locale String, j_week Integer, j_day Integer, j_begin Long, j_end Long)")
                     db.execSQL("create table shortenMap(j_first String, j_second String)")
                     db.execSQL("create table colorMap(j_first String, j_second Integer)")
+                    db.execSQL("create table hiddenList(j_level Integer, j_title String, j_week Integer, j_day Integer, j_begin Integer, j_end Integer)")
                 }
             }
         }

@@ -8,6 +8,7 @@ data class LoggedInUser(val userId: String, val password: String) {
     var rememberPassword = false
     var communityLoggedIn = false
     var fullName = ""
+    var allowEnterCourseSelection = false
 
     lateinit var vpnTicket: String
     lateinit var userName: String

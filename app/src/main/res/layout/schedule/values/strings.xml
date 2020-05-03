@@ -13,9 +13,16 @@
     </string-array>
     <string name="double_line">"%1$s\n%2$s</string>
     <string name="schedule_date_format">"%1$s\n%2$d.%3$d</string>
-    <string name="custom_abbr_string">自定义简称</string>
-    <string name="save_image_string">保存为图片</string>
+    <string name="custom_abbr_string">设置简称</string>
+    <string name="save_image_string">保存图片</string>
     <string name="custom_add_string">添加计划</string>
+    <string name="manage_hidden_string">管理隐藏</string>
+    <string name="cancel_hidden_string">取消隐藏</string>
+    <string name="secondary_courses_string">二级课表</string>
+    <string name="secondary_requirement_string">查询二级课表需要进入您的选课网站，因此需要您的明确同意。\n
+注：该APP不具备自动识别验证码的能力。</string>
+    <string name="not_now_string">暂不同意</string>
+    <string name="allow_enter_string">同意进入</string>
     <string name="edit_abbr_string">修改简称</string>
     <string name="please_enter_abbr">请输入简称</string>
     <string name="setup_abbr_string">设置简称</string>
@@ -50,6 +57,17 @@
     <string name="delete_only_string">仅删除这一项</string>
     <string name="delete_repeat_string">删除同时段的全部该项目</string>
     <string name="delete_all_string">删除所有时段的全部该项目</string>
+    <string name="hide_only_string">仅隐藏这一项</string>
+    <string name="hide_repeat_string">隐藏同时段的全部该项目</string>
+    <string name="hide_all_string">隐藏所有时段的全部该项目</string>
     <string name="you_plan_string">您打算……</string>
-    <string name="lesson_brief_format">"%1$s(%2$d至%3$d节)</string>
+    <string name="lesson_brief_format">"[%1$s]%2$s(%3$d至%4$d节)</string>
+    <string name="lesson_all_format">"[%1$s]%2$s(全部)</string>
+    <string name="lesson_repeat_format">"[%1$s]%2$s(每%3$s%4$d至%5$d节)</string>
+    <string name="lesson_once_format">"[%1$s]%2$s(第%3$d周%4$s%5$d至%6$d节)</string>
+    <string name="schedule_exception_string">出现异常</string>
+    <string name="primary_string">一级</string>
+    <string name="secondary_string">二级</string>
+    <string name="other_string">其它</string>
+    <string name="sure_to_remove_rule_string">您确定要移除这条规则吗？</string>
 </resources>

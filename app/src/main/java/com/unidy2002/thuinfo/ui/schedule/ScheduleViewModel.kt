@@ -33,9 +33,9 @@ class ScheduleViewModel : androidx.lifecycle.ViewModel() {
         }
     }
 
-    fun delCustom(choice: ScheduleDBManager.Choice, session: ScheduleDBManager.Session) {
+    fun delOrHide(choice: ScheduleDBManager.Choice, session: ScheduleDBManager.Session) {
         loggedInUser.schedule.apply {
-            delCustom(choice, session)
+            delOrHide(choice, session)
             _scheduleData.postValue(ScheduleResult(success = this))
         }
     }
