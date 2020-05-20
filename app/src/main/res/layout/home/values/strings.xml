@@ -25,6 +25,10 @@
     <string name="dorm_repair_string">网上报修</string>
     <string name="dorm_score_string">卫生成绩</string>
     <string name="dorm_ele_recharge_string">电费充值</string>
+    <string name="assessment_string">教学评估</string>
+    <string name="warning_string">敬告</string>
+    <string name="assessment_warning_string">所有评估数据将会直接传给学校，由学校匿名保管。\n严禁使用侮辱性语言或进行人身攻击，违者后果自负。</string>
+    <string name="state_string">状态</string>
     <string name="yuan_string">￥</string>
     <string name="_0">0</string>
     <string name="require_alipay_string">该功能需要支付宝</string>
@@ -114,15 +118,7 @@
     <!-- wentu reserve related -->
     <string name="wentu_reserve_string">座位预约</string>
     <string name="wentu_rule_title">文图座位预约规则</string>
-    <string name="wentu_rule_content">1、本APP仅提供预约每天早晨文图开馆时座位的接口，不对使用过程中导致的任何后果负任何责任，包括但不限于因错过打卡时间而产生的违规记录。\n
-2、文科图书馆F2、F3、F4楼层以及G层自修室的阅览座位可以有条件地预约使用。\n
-3、预约系统开放时间为每日20:00至次日7:30。读者可以预约次（/当）日早8:00开馆时的座位。\n
-4、预约座位保留至8:30。成功预约座位的读者应在8:30前在通道机上刷卡入馆，并可直接前往所预约座位而无需再在选位机上操作；系统会自动将座位状态从“预约”改为“在用”。\n
-5、成功预约座位的读者如未于8:30前在通道机上刷卡入馆，将被记“预约违规”1次，同时预约座位将释放给其他读者选用。\n
-6、“预约违规”满3次后，读者将被停止预约权限10天；同时“预约违规”计次归零。（“预约违规”有别于“使用违规”——“预约违规”满3次后仍可进行现场选位操作；“使用违规”满3次后既不能进行现场选位操作，也不能进行预约操作。）\n
-7、读者如遇紧急事务无法正常赴约，可在早上预约系统关闭前及时取消预约。\n
-8、暂定每年度8月31日清除全部用户的全部违规记录。\n
-9、如您在使用本APP进行预约的过程中遇到任何意外，请立即前往官方通道：http://seat.lib.tsinghua.edu.cn/roompre。</string>
+    <string name="wentu_rule_content">1、本APP仅提供预约每天早晨文图开馆时座位的接口，不对使用过程中导致的任何后果负任何责任，包括但不限于因错过打卡时间而产生的违规记录。\n2、文科图书馆F2、F3、F4楼层以及G层自修室的阅览座位可以有条件地预约使用。\n3、预约系统开放时间为每日20:00至次日7:30。读者可以预约次（/当）日早8:00开馆时的座位。\n4、预约座位保留至8:30。成功预约座位的读者应在8:30前在通道机上刷卡入馆，并可直接前往所预约座位而无需再在选位机上操作；系统会自动将座位状态从“预约”改为“在用”。\n5、成功预约座位的读者如未于8:30前在通道机上刷卡入馆，将被记“预约违规”1次，同时预约座位将释放给其他读者选用。\n6、“预约违规”满3次后，读者将被停止预约权限10天；同时“预约违规”计次归零。（“预约违规”有别于“使用违规”——“预约违规”满3次后仍可进行现场选位操作；“使用违规”满3次后既不能进行现场选位操作，也不能进行预约操作。）\n7、读者如遇紧急事务无法正常赴约，可在早上预约系统关闭前及时取消预约。\n8、暂定每年度8月31日清除全部用户的全部违规记录。\n9、如您在使用本APP进行预约的过程中遇到任何意外，请立即前往官方通道：http://seat.lib.tsinghua.edu.cn/roompre。</string>
 
     <!-- community related -->
     <string name="community_hint_string">这个密码很可能是你入学前就设置好了的……</string>

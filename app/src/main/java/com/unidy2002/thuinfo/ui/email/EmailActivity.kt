@@ -166,7 +166,7 @@ class EmailActivity : AppCompatActivity() {
         }
     }
 
-    internal class EmailConfigurationLayout(context: Context) : LinearLayout(context) {
+    private class EmailConfigurationLayout(context: Context) : LinearLayout(context) {
         val name: EditText
         val host: Spinner
 

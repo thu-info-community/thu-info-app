@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
 
 object Network {
-    internal fun connect(
+    fun connect(
         url: String,
         referer: String? = null,
         cookie: String? = null,
@@ -154,13 +154,14 @@ object Network {
 
     class UserLoginError : Exception()
 
-    private fun HttpsURLConnection.inputCheck(charsetName: String = "UTF-8") {
-        this.inputStream.run {
-            val reader = BufferedReader(InputStreamReader(this, charsetName))
-            var readLine: String?
-            while (reader.readLine().also { readLine = it } != null) {
-                println(readLine)
-            }
-        }
+    fun HttpsURLConnection.getData(charsetName: String = "UTF-8"): String {
+        val reader = BufferedReader(InputStreamReader(inputStream, charsetName))
+        val stringBuilder = StringBuilder()
+        var readLine: String?
+        while (reader.readLine().also { readLine = it } != null)
+            stringBuilder.append(readLine)
+        reader.close()
+        inputStream.close()
+        return stringBuilder.toString()
     }
 }

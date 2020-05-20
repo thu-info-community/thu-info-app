@@ -123,4 +123,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.LafDetailFragment"
             android:label="@string/detailed_info_string"
             tools:layout="@layout/fragment_laf_detail"/>
+
+    <fragment
+            android:id="@+id/assessmentFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.AssessmentFragment"
+            android:label="@string/assessment_string"
+            tools:layout="@layout/fragment_assessment"/>
 </navigation>

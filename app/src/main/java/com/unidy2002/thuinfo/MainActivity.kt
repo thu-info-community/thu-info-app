@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Important network operations
-        safeThread { Network.getTicket(792) }
-        safeThread { Network.getTicket(824) }
+        for ((id, _) in loggedInUser.connectionState)
+            safeThread { Network.getTicket(id) }
         safeThread {
             Network.getUsername()
             try {
@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        safeThread { Network.getTicket(-1) }
         safeThread {
             if (loggedInUser.emailAddressInitialized())
                 try {

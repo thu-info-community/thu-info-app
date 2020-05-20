@@ -36,7 +36,7 @@ fun Network.getTicket(target: Int) {
                     loggedInUser.communityLoggedIn = false
                 }
             }
-            else -> {
+            in 0..1000 -> {
                 connect(
                     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP",
                     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1",
@@ -71,6 +71,14 @@ fun Network.getTicket(target: Int) {
                     }
                 }
             }
+            else -> {
+                connect(
+                    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?mode=local&id=$target",
+                    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1",
+                    loggedInUser.vpnTicket
+                ).inputStream.close()
+                Log.i("TICKET $target", "get")
+            }
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -78,7 +86,7 @@ fun Network.getTicket(target: Int) {
     loggedInUser.connectionState[target] = false
 }
 
-internal fun <R> Network.retryTemplate(target: Int, block: () -> R): R? {
+fun <R> Network.retryTemplate(target: Int, block: () -> R): R? {
     repeat(3) {
         try {
             if (loggedInUser.connectionState[target] == true) {

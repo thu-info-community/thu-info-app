@@ -19,8 +19,7 @@
     <string name="manage_hidden_string">管理隐藏</string>
     <string name="cancel_hidden_string">取消隐藏</string>
     <string name="secondary_courses_string">二级课表</string>
-    <string name="secondary_requirement_string">查询二级课表需要进入您的选课网站，因此需要您的明确同意。\n
-注：该APP不具备自动识别验证码的能力。</string>
+    <string name="secondary_requirement_string">查询二级课表需要进入您的选课网站，因此需要您的明确同意。\n注：该APP不具备自动识别验证码的能力。</string>
     <string name="not_now_string">暂不同意</string>
     <string name="allow_enter_string">同意进入</string>
     <string name="edit_abbr_string">修改简称</string>

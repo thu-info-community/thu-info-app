@@ -147,6 +147,7 @@ class HomeFragment : Fragment() {
                     findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
                 }
             }
+            assessment_btn.setNavigateDestination(R.id.assessmentFragment)
         }
         super.onStart()
     }

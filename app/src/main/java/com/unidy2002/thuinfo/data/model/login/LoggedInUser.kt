@@ -23,7 +23,7 @@ data class LoggedInUser(val userId: String, val password: String) {
     fun scheduleInitialized() = ::schedule.isInitialized
     fun imapStoreInitialized() = ::imapStore.isInitialized
 
-    val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false)
+    val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false, 2005 to false)
 
     val timerTasks = mutableListOf<TimerTask>()
 }
