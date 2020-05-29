@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="6dp">
+
+    <TextView
+            android:id="@+id/assessment_question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"/>
+
+    <GridLayout
+            android:id="@+id/assessment_rating_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end">
+
+        <ImageView
+                android:id="@+id/star_1"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_2"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_3"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_4"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_5"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_6"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+
+        <ImageView
+                android:id="@+id/star_7"
+                android:src="@drawable/ic_star_border_32dp"
+                tools:ignore="ContentDescription"/>
+    </GridLayout>
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.unidy2002.thuinfo.data.network
 
+import com.alibaba.fastjson.JSONObject
 import com.unidy2002.thuinfo.data.model.assessment.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import org.jsoup.Jsoup
@@ -75,5 +76,7 @@ fun Network.postAssessmentForm(data: Map<String, String>) = retryTemplate(2005) 
         "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f/jxpg/f/xs/main",
         loggedInUser.vpnTicket,
         data.toList().joinToString("&") { "${encode(it.first, "UTF-8")}=${encode(it.second, "UTF-8")}" }
-    ).getData().also { println(it) }
+    ).getData().run {
+        if (JSONObject.parseObject(this)["result"] != "success") throw Exception()
+    }
 }

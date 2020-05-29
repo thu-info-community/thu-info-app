@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="6dp">
+
+
+    <EditText
+            android:id="@+id/assessment_suggestion_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="@string/more_suggestions_str"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            tools:ignore="Autofill"/>
+
+</LinearLayout>

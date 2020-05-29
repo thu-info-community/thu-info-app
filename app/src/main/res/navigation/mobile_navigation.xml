@@ -129,4 +129,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.AssessmentFragment"
             android:label="@string/assessment_string"
             tools:layout="@layout/fragment_assessment"/>
+
+    <fragment
+            android:id="@+id/assessmentDetailFragment"
+            android:name="com.unidy2002.thuinfo.ui.home.AssessmentDetailFragment"
+            android:label="@string/assessment_string"
+            tools:layout="@layout/fragment_assessment_detail"/>
 </navigation>

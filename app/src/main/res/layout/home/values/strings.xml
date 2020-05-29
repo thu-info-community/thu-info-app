@@ -28,6 +28,16 @@
     <string name="assessment_string">教学评估</string>
     <string name="warning_string">敬告</string>
     <string name="assessment_warning_string">所有评估数据将会直接传给学校，由学校匿名保管。\n严禁使用侮辱性语言或进行人身攻击，违者后果自负。</string>
+    <string name="auto_7_string">已一键打满7分</string>
+    <string name="assess_overall_str">课程印象</string>
+    <string name="assess_teacher_str">教师评价</string>
+    <string name="assess_assistant_str">助教评价</string>
+    <string name="assess_assistant_hint_str">需对至少一名助教进行评价</string>
+    <string name="more_suggestions_str">更多建议（可选）</string>
+    <string name="请为课程总体印象打分">请为课程总体印象打分</string>
+    <string name="老师评分部分有遗漏">老师评分部分有遗漏</string>
+    <string name="助教评分部分有遗漏">助教评分部分有遗漏</string>
+    <string name="发生异常">发生异常</string>
     <string name="state_string">状态</string>
     <string name="yuan_string">￥</string>
     <string name="_0">0</string>

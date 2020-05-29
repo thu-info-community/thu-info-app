@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
@@ -85,20 +86,30 @@ class AssessmentFragment : Fragment() {
             holder.name.text = item.first
             holder.state.setImageResource(if (item.second) R.drawable.ic_check_black_24dp else R.drawable.ic_remove_black_24dp)
             if (item.third != "") {
+                holder.itemView.setOnClickListener {
+                    NavHostFragment.findNavController(this@AssessmentFragment).navigate(
+                        R.id.assessmentDetailFragment,
+                        Bundle().apply {
+                            putString("url", item.third)
+                            putString("title", item.first)
+                        }
+                    )
+                }
                 holder.itemView.setOnLongClickListener {
                     safeThread {
                         Network.getAssessmentForm(item.third)?.run {
                             overall.score.value = "7"
                             teachers.forEach { it.autoScore() }
                             assistants.forEach { it.autoScore() }
-                            Network.postAssessmentForm(serialize())
-                            view?.handler?.post {
-                                Toast.makeText(context, "已一键打满7分", Toast.LENGTH_SHORT).show()
-                                getData()
+                            if (Network.postAssessmentForm(serialize()) != null) {
+                                view?.handler?.post {
+                                    Toast.makeText(context, auto_7_string, Toast.LENGTH_SHORT).show()
+                                    getData()
+                                }
                             }
                         }
                     }
-                    true
+                    false
                 }
             }
         }
