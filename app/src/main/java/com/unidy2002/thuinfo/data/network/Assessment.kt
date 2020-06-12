@@ -33,7 +33,7 @@ fun Network.getAssessmentForm(url: String) = retryTemplate(2005) {
     ).getData().run {
         val soup = Jsoup.parse(this).getElementById("xswjtxFormid")
         val basics = soup.select("#xswjtxFormid > input").map { InputTag(it) }
-        val overallSuggestion = InputTag("kcpgjgDtos[0].jtjy", "")
+        val overallSuggestion = InputTag("kcpgjgDtos[0].jtjy", soup.getElementById("kcpgjgDtos[0].jtjy").text())
         val overallScore = InputTag(soup.getElementById("kcpjfs"))
         val overall = Overall(overallSuggestion, overallScore)
         val tabPanes = soup.getElementsByClass("tab-pane")

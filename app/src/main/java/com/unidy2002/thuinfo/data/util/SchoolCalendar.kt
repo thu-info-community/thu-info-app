@@ -5,7 +5,7 @@ import java.time.Month
 import java.util.*
 import kotlin.math.floor
 
-// Currently only supports 2020-Spring
+// Currently only supports 2020-Summer
 // In future versions it shall allow automatic update
 
 class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
@@ -33,10 +33,10 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
     }
 
     companion object {
-        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.FEBRUARY.ordinal, 17) }
-        val weekCount = 18
-        val semesterType = SemesterType.SPRING
-        val semesterId = "2019-2020-2"
+        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.JUNE.ordinal, 22) }
+        val weekCount = 12
+        val semesterType = SemesterType.SUMMER
+        val semesterId = "2019-2020-3"
     }
 
     enum class SemesterType { SPRING, SUMMER, AUTUMN }

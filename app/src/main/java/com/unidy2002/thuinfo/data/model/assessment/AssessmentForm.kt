@@ -19,6 +19,13 @@ interface Suggestional {
 
     fun updateSuggestion()
 
+    /**
+     * Warning: This method is not supposed to be called alone, as updateSuggestion() should always
+     * be called in advance.
+     *
+     * @see toPairs
+     *
+     */
     fun translate(): List<Pair<String, String>>
 
     fun toPairs(): List<Pair<String, String>> {
@@ -37,7 +44,7 @@ data class Overall(private val suggestion: InputTag, val score: InputTag, overri
     override fun translate() = listOf(suggestion.toPair(), score.toPair())
 
     init {
-        suggestionText = suggestion.value // TODO: There seems to be bug here.
+        suggestionText = suggestion.value
     }
 }
 

@@ -15,13 +15,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.network.Network
-import com.unidy2002.thuinfo.data.network.getAssessmentList
 import com.unidy2002.thuinfo.data.network.getAssessmentForm
+import com.unidy2002.thuinfo.data.network.getAssessmentList
 import com.unidy2002.thuinfo.data.network.postAssessmentForm
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_assessment.*
 
 class AssessmentFragment : Fragment() {
+
+    private var firstTime = true
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_assessment, container, false)
 
@@ -41,11 +44,14 @@ class AssessmentFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        AlertDialog.Builder(context)
-            .setTitle(warning_string)
-            .setMessage(assessment_warning_string)
-            .setPositiveButton(confirm_string) { _, _ -> }
-            .show()
+        if (firstTime) {
+            AlertDialog.Builder(context)
+                .setTitle(warning_string)
+                .setMessage(assessment_warning_string)
+                .setPositiveButton(confirm_string) { _, _ -> }
+                .show()
+            firstTime = false
+        }
 
         assessment_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
