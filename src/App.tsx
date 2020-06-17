@@ -1,120 +1,81 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React, {useEffect} from "react";
+import {createStackNavigator} from "@react-navigation/stack";
+import {NavigationContainer} from "@react-navigation/native";
+import {connect, Provider} from "react-redux";
+import {LoginStatus} from "./redux/states/auth";
+import {store} from "./redux/store";
+import {LoginScreen} from "./ui/login/login";
+import {HomeScreen} from "./ui/home/home";
+import {State} from "./redux/store";
+import Snackbar from "react-native-snackbar";
+import {fullNameThunk} from "./redux/actions/basics";
+import {defaultFullNameState} from "./redux/defaults";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import {NewsScreen} from "./ui/news/news";
+import {ScheduleScreen} from "./ui/schedule/schedule";
 
-import React from "react";
-import {
-	SafeAreaView,
-	StyleSheet,
-	ScrollView,
-	View,
-	Text,
-	StatusBar,
-} from "react-native";
+interface RootProps {
+	status: LoginStatus;
+	fullName: string;
+	getFullName: () => void;
+}
 
-import {
-	Header,
-	LearnMoreLinks,
-	Colors,
-	DebugInstructions,
-	ReloadInstructions,
-} from "react-native/Libraries/NewAppScreen";
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-declare const global: {
-	HermesInternal: null | {};
-};
+const CoreRouting = (props: RootProps) => {
+	const {status, fullName, getFullName} = props;
 
-const App = () => {
+	// Things that should be done once the user has logged in
+	useEffect(() => {
+		if (status === LoginStatus.LoggedIn) {
+			getFullName();
+		}
+	}, [status, getFullName]);
+
+	// Other effect hooks
+	useEffect(() => {
+		if (fullName !== defaultFullNameState) {
+			Snackbar.show({
+				text: `你好，${fullName}！`,
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
+	}, [fullName]);
+
 	return (
-		<>
-			<StatusBar barStyle="dark-content" />
-			<SafeAreaView>
-				<ScrollView
-					contentInsetAdjustmentBehavior="automatic"
-					style={styles.scrollView}>
-					<Header />
-					{global.HermesInternal == null ? null : (
-						<View style={styles.engine}>
-							<Text style={styles.footer}>Engine: Hermes</Text>
-						</View>
-					)}
-					<View style={styles.body}>
-						<View style={styles.sectionContainer}>
-							<Text style={styles.sectionTitle}>Step One</Text>
-							<Text style={styles.sectionDescription}>
-								Edit <Text style={styles.highlight}>App.tsx</Text> to change
-								this screen and then come back to see your edits.
-							</Text>
-						</View>
-						<View style={styles.sectionContainer}>
-							<Text style={styles.sectionTitle}>See Your Changes</Text>
-							<Text style={styles.sectionDescription}>
-								<ReloadInstructions />
-							</Text>
-						</View>
-						<View style={styles.sectionContainer}>
-							<Text style={styles.sectionTitle}>Debug</Text>
-							<Text style={styles.sectionDescription}>
-								<DebugInstructions />
-							</Text>
-						</View>
-						<View style={styles.sectionContainer}>
-							<Text style={styles.sectionTitle}>Learn More</Text>
-							<Text style={styles.sectionDescription}>
-								Read the docs to discover what to do next:
-							</Text>
-						</View>
-						<LearnMoreLinks />
-					</View>
-				</ScrollView>
-			</SafeAreaView>
-		</>
+		<NavigationContainer>
+			{props.status === LoginStatus.LoggedIn ? (
+				<Tab.Navigator>
+					<Tab.Screen name="主页" component={HomeScreen} />
+					<Tab.Screen name="动态" component={NewsScreen} />
+					<Tab.Screen name="计划" component={ScheduleScreen} />
+				</Tab.Navigator>
+			) : (
+				<Stack.Navigator headerMode="none">
+					<Stack.Screen name="登录" component={LoginScreen} />
+				</Stack.Navigator>
+			)}
+		</NavigationContainer>
 	);
 };
 
-const styles = StyleSheet.create({
-	scrollView: {
-		backgroundColor: Colors.lighter,
+const Root = connect(
+	(state: State) => {
+		return {status: state.auth.status, fullName: state.fullName};
 	},
-	engine: {
-		position: "absolute",
-		right: 0,
+	(dispatch) => {
+		return {
+			getFullName: () => {
+				// @ts-ignore
+				dispatch(fullNameThunk());
+			},
+		};
 	},
-	body: {
-		backgroundColor: Colors.white,
-	},
-	sectionContainer: {
-		marginTop: 32,
-		paddingHorizontal: 24,
-	},
-	sectionTitle: {
-		fontSize: 24,
-		fontWeight: "600",
-		color: Colors.black,
-	},
-	sectionDescription: {
-		marginTop: 8,
-		fontSize: 18,
-		fontWeight: "400",
-		color: Colors.dark,
-	},
-	highlight: {
-		fontWeight: "700",
-	},
-	footer: {
-		color: Colors.dark,
-		fontSize: 12,
-		fontWeight: "600",
-		padding: 4,
-		paddingRight: 12,
-		textAlign: "right",
-	},
-});
+)(CoreRouting);
 
-export default App;
+export const App = () => (
+	<Provider store={store}>
+		<Root />
+	</Provider>
+);
