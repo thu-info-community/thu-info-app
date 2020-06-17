@@ -11,6 +11,7 @@
 		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
 	},
 	"dependencies": {
+		"@react-native-community/async-storage": "^1.11.0",
 		"@react-native-community/masked-view": "^0.1.10",
 		"@react-navigation/bottom-tabs": "^5.5.2",
 		"@react-navigation/native": "^5.5.1",
@@ -27,6 +28,8 @@
 		"react-native-snackbar": "^2.2.2",
 		"react-redux": "^7.2.0",
 		"redux": "^4.0.5",
+		"redux-persist": "^6.0.0",
+		"redux-persist-transform-filter": "^0.0.20",
 		"redux-thunk": "^2.3.0",
 		"safer-buffer": "^2.1.2",
 		"stream": "^0.0.2",

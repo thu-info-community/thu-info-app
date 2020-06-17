@@ -5,7 +5,7 @@ import {
 	FULL_NAME_SUCCESS,
 } from "../constants";
 import {Dispatch} from "redux";
-import {getFullName} from "../../network/Core";
+import {getFullName} from "../../network/core";
 
 const fullNameAction = createAsyncAction(
 	FULL_NAME_REQUEST,

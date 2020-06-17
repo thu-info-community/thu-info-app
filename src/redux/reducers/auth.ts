@@ -31,6 +31,9 @@ export const auth = (
 		case LOGIN_FAILURE:
 			return {
 				...state,
+				userId: "",
+				password: "",
+				remember: false,
 				status: action.payload,
 			};
 		default:

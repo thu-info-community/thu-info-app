@@ -17,31 +17,20 @@ interface LoginProps {
 
 // Ugly UI
 const LoginUI = (props: LoginProps) => {
-	const {userId: pUserId, password: pPassword, remember: pRemember} = props;
-
-	const [userId, setUserId] = React.useState("");
-	const [password, setPassword] = React.useState("");
-	const [remember, setRemember] = React.useState(false);
-	const [fetchedStorage, setFetchedStorage] = React.useState(false);
+	const [userId, setUserId] = React.useState(props.userId);
+	const [password, setPassword] = React.useState(props.password);
+	const [remember, setRemember] = React.useState(props.remember);
+	const [autoLoginLock, setAutoLoginLock] = React.useState(false);
 
 	useEffect(() => {
-		setUserId(pUserId);
-	}, [pUserId]);
-
-	useEffect(() => {
-		setPassword(pPassword);
-	}, [pPassword]);
-
-	useEffect(() => {
-		setRemember(pRemember);
-	}, [pRemember]);
-
-	useEffect(() => {
-		if (!fetchedStorage) {
-			setFetchedStorage(true);
-			// store.dispatch(authThunk("foo", "bar", true));
+		if (!autoLoginLock) {
+			setAutoLoginLock(true);
+			if (remember) {
+				props.login(userId, password, remember);
+			}
 		}
-	}, [fetchedStorage]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [autoLoginLock]);
 
 	return (
 		<View style={styles.center}>

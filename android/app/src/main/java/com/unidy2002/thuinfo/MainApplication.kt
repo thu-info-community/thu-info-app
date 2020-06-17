@@ -2,7 +2,10 @@ package com.unidy2002.thuinfo
 
 import android.app.Application
 import android.content.Context
-import com.facebook.react.*
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactInstanceManager
+import com.facebook.react.ReactNativeHost
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
 
@@ -10,11 +13,8 @@ class MainApplication : Application(), ReactApplication {
     private val mReactNativeHost = object : ReactNativeHost(this) {
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
 
-        override fun getPackages(): List<ReactPackage> {
-            // Packages that cannot be auto-linked yet can be added manually here, for example:
-            // packages.add(new MyReactNativePackage());
-            return PackageList(this).packages
-        }
+        // Packages that cannot be auto-linked yet can be added manually here.
+        override fun getPackages() = PackageList(this).packages
 
         override fun getJSMainModuleName() = "index"
     }
