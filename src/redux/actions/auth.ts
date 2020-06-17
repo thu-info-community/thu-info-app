@@ -2,7 +2,7 @@ import {ActionType, createAsyncAction} from "typesafe-actions";
 import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS} from "../constants";
 import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
-import {login} from "../../network/Core";
+import {login} from "../../network/core";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
