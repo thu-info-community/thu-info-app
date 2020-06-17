@@ -3,7 +3,7 @@
 	"version": "0.3.0",
 	"private": true,
 	"scripts": {
-		"android": "react-native run-android",
+		"android": "react-native run-android --no-jetifier",
 		"ios": "react-native run-ios",
 		"start": "react-native start",
 		"test": "jest",
@@ -11,8 +11,26 @@
 		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
 	},
 	"dependencies": {
+		"@react-native-community/masked-view": "^0.1.10",
+		"@react-navigation/bottom-tabs": "^5.5.2",
+		"@react-navigation/native": "^5.5.1",
+		"@react-navigation/stack": "^5.5.1",
+		"@types/react-redux": "^7.1.9",
+		"buffer": "^5.6.0",
+		"iconv-lite": "^0.6.0",
 		"react": "16.11.0",
-		"react-native": "0.62.2"
+		"react-native": "0.62.2",
+		"react-native-gesture-handler": "^1.6.1",
+		"react-native-reanimated": "^1.9.0",
+		"react-native-safe-area-context": "^3.0.3",
+		"react-native-screens": "^2.8.0",
+		"react-native-snackbar": "^2.2.2",
+		"react-redux": "^7.2.0",
+		"redux": "^4.0.5",
+		"redux-thunk": "^2.3.0",
+		"safer-buffer": "^2.1.2",
+		"stream": "^0.0.2",
+		"typesafe-actions": "^5.1.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.6.2",
@@ -27,8 +45,9 @@
 		"eslint": "^6.5.1",
 		"jest": "^24.9.0",
 		"metro-react-native-babel-preset": "^0.58.0",
-		"react-test-renderer": "16.11.0",
 		"prettier": "^2.0.4",
+		"react-test-renderer": "16.11.0",
+		"redux-devtools": "^3.5.0",
 		"typescript": "^3.8.3"
 	},
 	"jest": {
