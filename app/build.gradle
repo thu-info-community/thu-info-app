@@ -29,6 +29,7 @@ android {
                     'src/main/res/layout/schedule',
                     'src/main/res/layout/email',
                     'src/main/res/layout/report',
+                    'src/main/res/layout/hole',
                     'src/main/res/layout',
                     'src/main/res'
             ]

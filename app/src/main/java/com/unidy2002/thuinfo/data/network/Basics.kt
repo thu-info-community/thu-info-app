@@ -39,12 +39,12 @@ fun Network.getReport(): List<ReportItem>? =
                     it.child(5).ownText()
                 )
             }.sortedBy {
-                when (it.semester[5]) {
-                    '夏' -> 0
-                    '秋' -> 1
-                    '春' -> 2
+                (it.semester.substring(0, 4).toInt() * 10 + when (it.semester[5]) {
+                    '春' -> 0
+                    '夏' -> 1
+                    '秋' -> 2
                     else -> 3
-                }
+                })
             }
         }
     }

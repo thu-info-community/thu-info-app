@@ -18,6 +18,8 @@ data class LoggedInUser(val userId: String, val password: String) {
     lateinit var schedule: ScheduleDBManager
     lateinit var imapStore: IMAPStore
 
+    var holeToken = ""
+
     fun userNameInitialized() = ::userName.isInitialized
     fun emailAddressInitialized() = ::emailAddress.isInitialized
     fun scheduleInitialized() = ::schedule.isInitialized

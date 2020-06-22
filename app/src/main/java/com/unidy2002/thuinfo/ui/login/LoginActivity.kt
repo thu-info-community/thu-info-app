@@ -300,9 +300,25 @@ class LoginActivity : AppCompatActivity() {
                     val civ = getString("civ", null)  // Community initial vector
                     val cpe = getString("cpe", null)  // Community password encrypted
                     if (civ != null && cpe != null) {
-                        decrypt("c${loggedInUser.userId}", civ to cpe).also { println("Decrypted: $it") }
+                        decrypt("c${loggedInUser.userId}", civ to cpe)
                     } else {
                         password
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                password
+            }
+
+            // Try to get hole token
+            holeToken = try {
+                getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).run {
+                    val civ = getString("civ", null)  // Community initial vector
+                    val cpe = getString("cpe", null)  // Community password encrypted
+                    if (civ != null && cpe != null) {
+                        decrypt("h${loggedInUser.userId}", civ to cpe)
+                    } else {
+                        ""
                     }
                 }
             } catch (e: Exception) {

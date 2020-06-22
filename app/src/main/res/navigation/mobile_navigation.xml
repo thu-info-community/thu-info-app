@@ -135,4 +135,10 @@
             android:name="com.unidy2002.thuinfo.ui.home.AssessmentDetailFragment"
             android:label="@string/assessment_string"
             tools:layout="@layout/fragment_assessment_detail"/>
+
+    <fragment
+            android:id="@+id/holeMainFragment"
+            android:name="com.unidy2002.thuinfo.ui.hole.HoleMainFragment"
+            android:label="@string/hole_res"
+            tools:layout="@layout/fragment_hole_main"/>
 </navigation>

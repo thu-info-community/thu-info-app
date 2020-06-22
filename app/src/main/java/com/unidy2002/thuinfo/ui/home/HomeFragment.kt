@@ -34,6 +34,7 @@ class HomeFragment : Fragment() {
                 setOnClickListener { findNavController(this@HomeFragment).navigate(resId) }
             }
 
+            hole_btn.setNavigateDestination(R.id.holeMainFragment)
             classroom_btn.setNavigateDestination(R.id.classroomWelcomeFragment)
             wentu_btn.setNavigateDestination(R.id.wentuFragment)
             report_btn.setNavigateDestination(R.id.reportFragment)
