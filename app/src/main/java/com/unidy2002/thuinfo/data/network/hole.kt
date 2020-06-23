@@ -27,9 +27,7 @@ fun Network.getHoleList(page: Int): List<HoleTitleCard>? = try {
     assert(data.isNotEmpty())
     val result = mutableListOf<HoleTitleCard>()
     for (i in data.indices) {
-        result.add(data.getJSONObject(i).run {
-            HoleTitleCard(getInteger("pid"), getLong("timestamp"), getString("text"), getInteger("likenum"))
-        })
+        result.add(HoleTitleCard(data.getJSONObject(i)))
     }
     result
 } catch (e: Exception) {
@@ -41,11 +39,7 @@ fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
     val title = JSON.parseObject(
         connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid").getData()
     ).getJSONObject("data")
-    val result = mutableListOf<HoleCard>(
-        with(title) {
-            HoleTitleCard(getInteger("pid"), getLong("timestamp"), getString("text"), getInteger("likenum"))
-        }
-    )
+    val result = mutableListOf<HoleCard>(HoleTitleCard(title))
     val data = JSON.parseObject(
         connect("https://thuhole.com/services/thuhole/api.php?action=getcomment&pid=$pid&user_token=$token").getData()
     ).getJSONArray("data")

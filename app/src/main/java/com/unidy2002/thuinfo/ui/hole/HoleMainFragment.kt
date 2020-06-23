@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
@@ -117,6 +119,7 @@ class HoleMainFragment : Fragment() {
             val id: TextView = view.findViewById(R.id.hole_id_text)
             val time: TextView = view.findViewById(R.id.hole_time_text)
             val text: TextView = view.findViewById(R.id.hole_text_text)
+            val image: ImageView = view.findViewById(R.id.hole_title_card_image)
         }
 
         fun fetch() {
@@ -160,6 +163,17 @@ class HoleMainFragment : Fragment() {
                     R.id.holeCommentsFragment,
                     Bundle().apply { putInt("pid", item.id) }
                 )
+            }
+            if (item.type == "image") {
+                context?.run {
+                    holder.image.visibility = View.VISIBLE
+                    holder.image.setImageResource(R.drawable.hole_loading_image)
+                    Glide.with(this)
+                        .load("https://thuhole.com//images/${item.url}")
+                        .into(holder.image)
+                }
+            } else {
+                holder.image.visibility = View.GONE
             }
         }
     }

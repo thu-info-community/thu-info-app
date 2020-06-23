@@ -60,6 +60,8 @@
     <string name="remainder_explanation">由于尚未找到直接查询余额的接口，此处的余额数据是根据交易记录得到的推算结果。</string>
     <string name="network_error_retry">网络异常，请重试</string>
     <string name="exam_result_not_available">尚未开放体测成绩查询</string>
+    <string name="hot_spot_string">热门</string>
+    <string name="other_string">其它</string>
 
     <!-- classroom names -->
     <string name="一教">一教</string>

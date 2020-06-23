@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,10 +14,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.HoleCard
 import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
+import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
@@ -87,6 +90,7 @@ class HoleCommentsFragment : Fragment() {
             val id: TextView = view.findViewById(R.id.hole_id_text)
             val time: TextView = view.findViewById(R.id.hole_time_text)
             val text: TextView = view.findViewById(R.id.hole_text_text)
+            val image: ImageView = view.findViewById(R.id.hole_title_card_image)
         }
 
         fun refresh() {
@@ -118,6 +122,14 @@ class HoleCommentsFragment : Fragment() {
                 with(hole_comment_edit_text.text.toString()) {
                     if (isBlank() || trim().matches(Regex("Re [A-Za-z]*:")))
                         hole_comment_edit_text.setText("Re ${if (item is HoleCommentCard) item.name else ""}: ")
+                }
+            }
+            if (item is HoleTitleCard && item.type == "image") {
+                context?.run {
+                    holder.image.visibility = View.VISIBLE
+                    Glide.with(this)
+                        .load("https://thuhole.com//images/${item.url}")
+                        .into(holder.image)
                 }
             }
         }

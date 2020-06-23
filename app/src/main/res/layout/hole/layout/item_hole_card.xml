@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                   xmlns:tools="http://schemas.android.com/tools"
-                                   style="@style/Widget.MaterialComponents.CardView"
-                                   android:layout_width="match_parent"
-                                   android:layout_height="wrap_content"
-                                   android:clickable="true"
-                                   android:focusable="true"
-                                   android:foreground="?android:attr/selectableItemBackground"
-                                   android:layout_marginLeft="@dimen/mtrl_card_spacing"
-                                   android:layout_marginTop="@dimen/mtrl_card_spacing"
-                                   android:layout_marginRight="@dimen/mtrl_card_spacing"
-                                   tools:ignore="PrivateResource">
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_marginLeft="@dimen/mtrl_card_spacing"
+        android:layout_marginTop="@dimen/mtrl_card_spacing"
+        android:layout_marginRight="@dimen/mtrl_card_spacing"
+        tools:ignore="PrivateResource">
 
     <LinearLayout
             android:orientation="vertical"
@@ -31,5 +32,12 @@
                 android:id="@+id/hole_text_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+        <ImageView
+                android:id="@+id/hole_title_card_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription"
+                android:visibility="gone"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
