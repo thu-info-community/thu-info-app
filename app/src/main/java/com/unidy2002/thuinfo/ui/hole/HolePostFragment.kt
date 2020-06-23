@@ -34,7 +34,7 @@ class HolePostFragment : Fragment() {
                         }
                     } else {
                         handler.post {
-                            context?.run { Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show() }
+                            context?.run { Toast.makeText(this, hole_publish_failure, Toast.LENGTH_SHORT).show() }
                         }
                         isEnabled = true
                     }

@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.unidy2002.thuinfo.R
-import com.unidy2002.thuinfo.R.string.load_fail_string
+import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.HoleCard
+import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
+import com.unidy2002.thuinfo.data.network.postHoleComment
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_comments.*
 
@@ -48,6 +51,31 @@ class HoleCommentsFragment : Fragment() {
             hole_comments_recycler_view.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = holeCommentsAdapter.also { it.refresh() }
+            }
+
+            hole_comment_edit_text.doOnTextChanged { text, _, _, _ ->
+                hole_comment_submit.isEnabled = !text.isNullOrBlank()
+            }
+
+            hole_comment_submit.run {
+                setOnClickListener {
+                    isEnabled = false
+                    safeThread {
+                        if (Network.postHoleComment(pid, hole_comment_edit_text.text.toString())) {
+                            handler.post {
+                                holeCommentsAdapter.refresh()
+                                context?.run { Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show() }
+                                hole_comment_edit_text.setText("")
+                                isEnabled = true
+                            }
+                        } else {
+                            handler.post {
+                                context?.run { Toast.makeText(this, hole_publish_failure, Toast.LENGTH_SHORT).show() }
+                                isEnabled = true
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -86,6 +114,12 @@ class HoleCommentsFragment : Fragment() {
             holder.id.text = "#${item.id}"
             holder.time.text = item.timeStamp.toString()
             holder.text.text = item.text
+            holder.itemView.setOnClickListener {
+                with(hole_comment_edit_text.text.toString()) {
+                    if (isBlank() || trim().matches(Regex("Re [A-Za-z]*:")))
+                        hole_comment_edit_text.setText("Re ${if (item is HoleCommentCard) item.name else ""}: ")
+                }
+            }
         }
     }
 }

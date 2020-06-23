@@ -72,3 +72,16 @@ fun Network.postNewHole(text: String) = try {
     e.printStackTrace()
     false
 }
+
+fun Network.postHoleComment(pid: Int, text: String) = try {
+    val result = JSON.parseObject(
+        connect(
+            "https://thuhole.com/services/thuhole/api.php?action=docomment&user_token=$token",
+            post = "pid=$pid&text=${encode(text, "UTF-8")}&user_token=$token"
+        ).getData()
+    )
+    result.getInteger("code") == 0
+} catch (e: Exception) {
+    e.printStackTrace()
+    false
+}
