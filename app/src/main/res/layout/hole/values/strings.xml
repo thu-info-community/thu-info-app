@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="please_enter_token">请输入Token</string>
+    <string name="hole_publish_str">发表</string>
+    <string name="hole_post_hint">请遵守树洞管理规范（试行），文明发言。</string>
+    <string name="hole_publish_success">发表成功</string>
+    <string name="hole_publish_failure">发表失败</string>
+    <string name="hole_refresh_str">刷新</string>
 </resources>

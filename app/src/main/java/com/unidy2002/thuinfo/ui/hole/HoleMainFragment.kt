@@ -38,6 +38,16 @@ class HoleMainFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        hole_refresh_btn.setOnClickListener {
+            if (!hole_swipe_refresh.isRefreshing)
+                holeAdapter.refresh()
+        }
+
+        hole_new_post_btn.setOnClickListener {
+            NavHostFragment.findNavController(this).navigate(R.id.holePostFragment)
+        }
+
         hole_swipe_refresh.apply {
             setColorSchemeResources(R.color.colorAccent)
             setOnRefreshListener { holeAdapter.refresh() }
@@ -52,7 +62,7 @@ class HoleMainFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     with(recyclerView.layoutManager as LinearLayoutManager) {
-                        if (itemCount - findLastCompletelyVisibleItemPosition() <= 4 && !hole_swipe_refresh.isRefreshing)
+                        if (itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing)
                             holeAdapter.fetch()
                     }
                 }

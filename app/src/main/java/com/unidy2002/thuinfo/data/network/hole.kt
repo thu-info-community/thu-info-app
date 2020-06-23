@@ -5,6 +5,7 @@ import com.unidy2002.thuinfo.data.model.hole.HoleCard
 import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
 import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import java.net.URLEncoder.encode
 
 val token get() = loggedInUser.holeToken
 
@@ -57,4 +58,17 @@ fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
 } catch (e: Exception) {
     e.printStackTrace()
     null
+}
+
+fun Network.postNewHole(text: String) = try {
+    val result = JSON.parseObject(
+        connect(
+            "https://thuhole.com/services/thuhole/api.php?action=dopost&user_token=$token",
+            post = "text=${encode(text, "UTF-8")}&type=text&user_token=$token"
+        ).getData()
+    )
+    result.getInteger("code") == 0
+} catch (e: Exception) {
+    e.printStackTrace()
+    false
 }
