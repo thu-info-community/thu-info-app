@@ -141,4 +141,10 @@
             android:name="com.unidy2002.thuinfo.ui.hole.HoleMainFragment"
             android:label="@string/hole_res"
             tools:layout="@layout/fragment_hole_main"/>
+
+    <fragment
+            android:id="@+id/holeCommentsFragment"
+            android:name="com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment"
+            android:label="@string/hole_res"
+            tools:layout="@layout/fragment_hole_comments"/>
 </navigation>

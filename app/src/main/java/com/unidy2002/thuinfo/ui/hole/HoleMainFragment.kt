@@ -65,8 +65,10 @@ class HoleMainFragment : Fragment() {
     private fun validate() {
         safeThread {
             if (Network.holeLogin()) {
-                hole_recycler_view.handler.post {
-                    holeAdapter.refresh()
+                if (!::recyclerViewState.isInitialized) {
+                    hole_recycler_view.handler.post {
+                        holeAdapter.refresh()
+                    }
                 }
                 safeThread {
                     activity?.getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()?.run {
@@ -143,10 +145,16 @@ class HoleMainFragment : Fragment() {
             holder.id.text = "#${item.id}"
             holder.time.text = item.timeStamp.toString()
             holder.text.text = item.text
+            holder.itemView.setOnClickListener {
+                NavHostFragment.findNavController(this@HoleMainFragment).navigate(
+                    R.id.holeCommentsFragment,
+                    Bundle().apply { putInt("pid", item.id) }
+                )
+            }
         }
     }
 
-    private inner class HoleLogin() : LinearLayout(context) {
+    private inner class HoleLogin : LinearLayout(context) {
         val token: EditText = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
             .inflate(R.layout.item_hole_login, this, true)
             .findViewById(R.id.hole_token_input)
