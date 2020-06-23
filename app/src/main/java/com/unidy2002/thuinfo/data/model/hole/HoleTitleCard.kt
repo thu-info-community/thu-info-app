@@ -8,7 +8,8 @@ data class HoleTitleCard(
     override val text: String,
     var like: Int,
     val type: String,
-    val url: String
+    val url: String,
+    val reply: Int
 ) : HoleCard {
     constructor(json: JSONObject) : this(
         json.getInteger("pid"),
@@ -16,6 +17,7 @@ data class HoleTitleCard(
         json.getString("text"),
         json.getInteger("likenum"),
         json.getString("type"),
-        json.getString("url")
+        json.getString("url"),
+        json.getInteger("reply")
     )
 }

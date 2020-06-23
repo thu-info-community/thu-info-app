@@ -6,4 +6,5 @@
     <string name="hole_publish_success">发表成功</string>
     <string name="hole_publish_failure">发表失败</string>
     <string name="hole_refresh_str">刷新</string>
+    <string name="hole_comment_str">回复</string>
 </resources>

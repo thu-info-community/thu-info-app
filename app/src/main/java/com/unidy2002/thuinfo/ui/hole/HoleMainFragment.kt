@@ -3,7 +3,6 @@ package com.unidy2002.thuinfo.ui.hole
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.recyclerview.widget.RecyclerView.*
 import com.bumptech.glide.Glide
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
@@ -25,9 +23,11 @@ import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
+import com.unidy2002.thuinfo.data.util.dateToRelativeTime
 import com.unidy2002.thuinfo.data.util.encrypt
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_main.*
+import kotlin.math.min
 
 class HoleMainFragment : Fragment() {
 
@@ -36,7 +36,11 @@ class HoleMainFragment : Fragment() {
 
     private var holeAdapter = HoleAdapter()
 
-    private lateinit var recyclerViewState: Parcelable
+    private var virgin = true
+
+    private var lastTopPosition = 0
+
+    private var navigateDestination = Int.MAX_VALUE
 
     override fun onStart() {
         super.onStart()
@@ -47,6 +51,7 @@ class HoleMainFragment : Fragment() {
         }
 
         hole_new_post_btn.setOnClickListener {
+            navigateDestination = Int.MAX_VALUE
             NavHostFragment.findNavController(this).navigate(R.id.holePostFragment)
         }
 
@@ -56,10 +61,10 @@ class HoleMainFragment : Fragment() {
         }
 
         hole_recycler_view.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context).apply {
+                scrollToPosition(lastTopPosition)
+            }
             adapter = holeAdapter
-
-            if (::recyclerViewState.isInitialized) layoutManager?.onRestoreInstanceState(recyclerViewState)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -77,7 +82,8 @@ class HoleMainFragment : Fragment() {
     private fun validate() {
         safeThread {
             if (Network.holeLogin()) {
-                if (!::recyclerViewState.isInitialized) {
+                if (virgin) {
+                    virgin = false
                     hole_recycler_view.handler.post {
                         holeAdapter.refresh()
                     }
@@ -120,6 +126,8 @@ class HoleMainFragment : Fragment() {
             val time: TextView = view.findViewById(R.id.hole_time_text)
             val text: TextView = view.findViewById(R.id.hole_text_text)
             val image: ImageView = view.findViewById(R.id.hole_title_card_image)
+            val commentIcon: ImageView = view.findViewById(R.id.hole_comment_cnt_icon)
+            val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
         }
 
         fun fetch() {
@@ -156,9 +164,10 @@ class HoleMainFragment : Fragment() {
             holder as HoleCardViewHolder
             val item = data[position]
             holder.id.text = "#${item.id}"
-            holder.time.text = item.timeStamp.toString()
+            holder.time.text = dateToRelativeTime(item.timeStamp)
             holder.text.text = item.text
             holder.itemView.setOnClickListener {
+                navigateDestination = position
                 NavHostFragment.findNavController(this@HoleMainFragment).navigate(
                     R.id.holeCommentsFragment,
                     Bundle().apply { putInt("pid", item.id) }
@@ -175,6 +184,14 @@ class HoleMainFragment : Fragment() {
             } else {
                 holder.image.visibility = View.GONE
             }
+            if (item.reply > 0) {
+                holder.commentIcon.visibility = View.VISIBLE
+                holder.commentCnt.visibility = View.VISIBLE
+                holder.commentCnt.text = item.reply.toString()
+            } else {
+                holder.commentIcon.visibility = View.GONE
+                holder.commentCnt.visibility = View.GONE
+            }
         }
     }
 
@@ -182,14 +199,15 @@ class HoleMainFragment : Fragment() {
         val token: EditText = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
             .inflate(R.layout.item_hole_login, this, true)
             .findViewById(R.id.hole_token_input)
-
     }
 
     override fun onPause() {
-        hole_recycler_view.layoutManager?.onSaveInstanceState()?.run {
-            recyclerViewState = this
-        }
         super.onPause()
+        (hole_recycler_view.layoutManager as? LinearLayoutManager)?.run {
+            val firstVisible = findFirstCompletelyVisibleItemPosition()
+            lastTopPosition =
+                if (firstVisible == NO_POSITION) navigateDestination else min(navigateDestination, firstVisible)
+        }
     }
 
 }

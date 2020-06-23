@@ -2,25 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <Button
+        <ImageView
                 android:id="@+id/hole_refresh_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hole_refresh_str"/>
+                android:src="@drawable/ic_refresh"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/hole_refresh_str"
+                android:padding="5dp"
+                style="@style/home_icon_style"/>
 
-        <Button
+        <ImageView
                 android:id="@+id/hole_new_post_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/hole_publish_str"/>
-    </LinearLayout>
+                android:src="@drawable/ic_send"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/hole_publish_str"
+                android:padding="5dp"
+                style="@style/home_icon_style"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/hole_swipe_refresh"

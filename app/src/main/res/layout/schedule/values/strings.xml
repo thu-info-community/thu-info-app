@@ -68,4 +68,5 @@
     <string name="primary_string">一级</string>
     <string name="secondary_string">二级</string>
     <string name="sure_to_remove_rule_string">您确定要移除这条规则吗？</string>
+    <string name="custom_hide_hint">在课表中长按课程可将其隐藏</string>
 </resources>

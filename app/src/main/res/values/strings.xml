@@ -35,12 +35,12 @@
     <string name="network_error_string">网络异常</string>
     <string name="timeout_retry">加载超时，请重试</string>
     <array name="slide_title_first_string">
-        <item>我还很弱小</item>
+        <item>发布仓促</item>
         <item>放心！我不会以任何形式</item>
         <item>友情提醒：</item>
     </array>
     <array name="slide_title_second_string">
-        <item>请善待我</item>
+        <item>仍有诸多不足之处</item>
         <item>窃取您的敏感信息</item>
         <item>别把所有功能都试个遍</item>
     </array>

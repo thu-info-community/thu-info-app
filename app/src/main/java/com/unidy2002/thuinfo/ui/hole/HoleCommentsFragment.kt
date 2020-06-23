@@ -23,6 +23,7 @@ import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
+import com.unidy2002.thuinfo.data.util.dateToRelativeTime
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_comments.*
 
@@ -116,7 +117,7 @@ class HoleCommentsFragment : Fragment() {
             holder as HoleCardViewHolder
             val item = data[position]
             holder.id.text = "#${item.id}"
-            holder.time.text = item.timeStamp.toString()
+            holder.time.text = dateToRelativeTime(item.timeStamp)
             holder.text.text = item.text
             holder.itemView.setOnClickListener {
                 with(hole_comment_edit_text.text.toString()) {

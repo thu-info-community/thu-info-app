@@ -19,6 +19,7 @@ import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import kotlinx.android.synthetic.main.fragment_customize.*
 
 class CustomizeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -36,6 +37,7 @@ class CustomizeFragment : Fragment() {
                 }
                 2 -> {
                     adapter = ManageHiddenAdapter(loggedInUser.schedule)
+                    custom_hide_hint_text.visibility = View.VISIBLE
                     (activity as? AppCompatActivity)?.supportActionBar?.setTitle(manage_hidden_string)
                 }
                 else -> context?.run { Toast.makeText(this, schedule_exception_string, Toast.LENGTH_SHORT).show() }

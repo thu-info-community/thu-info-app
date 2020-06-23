@@ -8,7 +8,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="敬请期待"
+            android:text="暂不开放"
             android:textSize="16sp"/>
 
 </LinearLayout>

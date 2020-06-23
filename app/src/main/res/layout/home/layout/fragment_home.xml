@@ -86,7 +86,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:text="@string/res_string"
+                        android:text="@string/score"
                         android:textSize="15sp"/>
 
                 <GridLayout
@@ -96,20 +96,21 @@
                         android:orientation="horizontal">
 
                     <TextView
-                            android:id="@+id/classroom_btn"
-                            android:text="@string/classroom_res"
-                            android:drawableTop="@drawable/ic_classroom"
+                            android:id="@+id/report_btn"
+                            android:text="@string/report"
+                            android:drawableTop="@drawable/ic_report"
                             style="@style/home_icon_style"/>
 
                     <TextView
-                            android:id="@+id/wentu_btn"
-                            android:text="@string/wentu_string"
-                            android:drawableTop="@drawable/ic_wentu"
+                            android:id="@+id/physical_exam_btn"
+                            android:text="@string/physical_exam_result"
+                            android:drawableTop="@drawable/ic_physical_exam"
                             style="@style/home_icon_style"/>
 
                     <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
+                            android:id="@+id/jogging_btn"
+                            android:text="@string/sunny_jogging"
+                            android:drawableTop="@drawable/ic_jogging"
                             style="@style/home_icon_style"/>
 
                     <TextView
@@ -141,7 +142,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:text="@string/score"
+                        android:text="资源（该模块最近不大好用）"
                         android:textSize="15sp"/>
 
                 <GridLayout
@@ -151,21 +152,20 @@
                         android:orientation="horizontal">
 
                     <TextView
-                            android:id="@+id/report_btn"
-                            android:text="@string/report"
-                            android:drawableTop="@drawable/ic_report"
+                            android:id="@+id/classroom_btn"
+                            android:text="@string/classroom_res"
+                            android:drawableTop="@drawable/ic_classroom"
                             style="@style/home_icon_style"/>
 
                     <TextView
-                            android:id="@+id/physical_exam_btn"
-                            android:text="@string/physical_exam_result"
-                            android:drawableTop="@drawable/ic_physical_exam"
+                            android:id="@+id/wentu_btn"
+                            android:text="@string/wentu_string"
+                            android:drawableTop="@drawable/ic_wentu"
                             style="@style/home_icon_style"/>
 
                     <TextView
-                            android:id="@+id/jogging_btn"
-                            android:text="@string/sunny_jogging"
-                            android:drawableTop="@drawable/ic_jogging"
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
                             style="@style/home_icon_style"/>
 
                     <TextView
