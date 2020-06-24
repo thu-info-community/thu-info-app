@@ -19,6 +19,7 @@ data class LoggedInUser(val userId: String, val password: String) {
     lateinit var imapStore: IMAPStore
 
     var holeToken = ""
+    var currentImageBase64 = ""
 
     fun userNameInitialized() = ::userName.isInitialized
     fun emailAddressInitialized() = ::emailAddress.isInitialized

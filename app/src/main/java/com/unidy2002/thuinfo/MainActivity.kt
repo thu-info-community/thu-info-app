@@ -30,13 +30,18 @@ import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.network.getUpdateInfo
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
+import com.unidy2002.thuinfo.data.util.imageToBase64
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.news.WebFragment
 import com.unidy2002.thuinfo.ui.report.ReportActivity
+import com.wildma.pictureselector.FileUtils.deleteAllCacheImage
+import com.wildma.pictureselector.PictureBean
+import com.wildma.pictureselector.PictureSelector
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
 import kotlin.concurrent.schedule
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -279,4 +284,13 @@ class MainActivity : AppCompatActivity() {
         }
     } */
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PictureSelector.SELECT_REQUEST_CODE) {
+            data?.getParcelableExtra<PictureBean>(PictureSelector.PICTURE_RESULT)?.run {
+                loggedInUser.currentImageBase64 = imageToBase64(if (isCut) path else uri.toString())
+            }
+            deleteAllCacheImage(this)
+        }
+    }
 }

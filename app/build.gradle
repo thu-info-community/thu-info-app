@@ -62,6 +62,7 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.github.wildma:PictureSelector:1.2.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.sun.mail:android-mail:1.6.1'
     implementation 'com.sun.mail:android-activation:1.6.1'

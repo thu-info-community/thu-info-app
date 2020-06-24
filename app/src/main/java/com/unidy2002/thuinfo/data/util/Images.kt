@@ -6,8 +6,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.View
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
@@ -42,4 +44,26 @@ fun Bitmap.save(context: Context, filename: String) {
         "THUInfoScreenshot"
     )
     File(filePath).delete()
+}
+
+/**
+ * Given the path of an image, transform it into Base64-encoded value.
+ *
+ * @param path  the path of the image to be processed
+ * @see         <url>https://www.jianshu.com/p/e1aa920584e0</url>
+ */
+fun imageToBase64(path: String): String {
+    var inputStream: FileInputStream? = null
+    return try {
+        inputStream = FileInputStream(path)
+        with(ByteArray(inputStream.available())) {
+            inputStream.read(this)
+            Base64.encodeToString(this, Base64.NO_CLOSE)
+        }
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+        ""
+    } finally {
+        inputStream?.close()
+    }
 }

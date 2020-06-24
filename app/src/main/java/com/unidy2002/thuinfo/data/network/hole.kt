@@ -54,11 +54,12 @@ fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
     null
 }
 
-fun Network.postNewHole(text: String) = try {
+fun Network.postNewHole(text: String, withImg: Boolean = false) = try {
     val result = JSON.parseObject(
         connect(
             "https://thuhole.com/services/thuhole/api.php?action=dopost&user_token=$token",
-            post = "text=${encode(text, "UTF-8")}&type=text&user_token=$token"
+            post = "text=${encode(text, "UTF-8")}&type=${if (withImg) "image" else "text"}&user_token=$token${
+            if (withImg) "&data=${encode(loggedInUser.currentImageBase64, "UTF-8")}" else ""}"
         ).getData()
     )
     result.getInteger("code") == 0

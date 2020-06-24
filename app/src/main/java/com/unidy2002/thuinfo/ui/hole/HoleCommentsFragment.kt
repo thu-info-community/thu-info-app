@@ -121,7 +121,7 @@ class HoleCommentsFragment : Fragment() {
             holder.text.text = item.text
             holder.itemView.setOnClickListener {
                 with(hole_comment_edit_text.text.toString()) {
-                    if (isBlank() || trim().matches(Regex("Re [A-Za-z]*:")))
+                    if (isBlank() || trim().matches(Regex("Re (?:|洞主|(?:[A-Z][a-z]+ )?(?:[A-Z][a-z]+)|You Win(?: \\d+)?):")))
                         hole_comment_edit_text.setText("Re ${if (item is HoleCommentCard) item.name else ""}: ")
                 }
             }
@@ -132,6 +132,8 @@ class HoleCommentsFragment : Fragment() {
                         .load("https://thuhole.com//images/${item.url}")
                         .into(holder.image)
                 }
+            } else {
+                holder.image.visibility = View.GONE
             }
         }
     }
