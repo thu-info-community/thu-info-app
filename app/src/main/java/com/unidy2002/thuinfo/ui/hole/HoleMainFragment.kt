@@ -3,6 +3,7 @@ package com.unidy2002.thuinfo.ui.hole
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,17 @@ class HoleMainFragment : Fragment() {
                 holeAdapter.refresh()
         }
 
+        hole_attention_btn.setOnClickListener {
+            holeAdapter.refresh(FetchMode.ATTENTION)
+        }
+
+        hole_search_edit_text.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                holeAdapter.refresh(FetchMode.SEARCH, hole_search_edit_text.text.toString())
+            }
+            false
+        }
+
         hole_new_post_btn.setOnClickListener {
             navigateDestination = Int.MAX_VALUE
             NavHostFragment.findNavController(this).navigate(R.id.holePostFragment)
@@ -70,7 +82,7 @@ class HoleMainFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     with(recyclerView.layoutManager as LinearLayoutManager) {
                         if (itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing)
-                            holeAdapter.fetch()
+                            holeAdapter.fetch(FetchMode.NORMAL, "")
                     }
                 }
             })
@@ -117,6 +129,9 @@ class HoleMainFragment : Fragment() {
         }
     }
 
+    // TODO: search mode is incompletely implemented (i.e. no auto load more)
+    private enum class FetchMode { NORMAL, ATTENTION, SEARCH }
+
     private inner class HoleAdapter : Adapter<ViewHolder>() {
         private val data = mutableListOf<HoleTitleCard>()
         private var lastPage = 0
@@ -130,10 +145,17 @@ class HoleMainFragment : Fragment() {
             val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
         }
 
-        fun fetch() {
+        fun fetch(mode: FetchMode, payload: String) {
             hole_swipe_refresh.isRefreshing = true
             safeThread {
-                Network.getHoleList(lastPage + 1)?.run {
+                Network.getHoleList(
+                    when (mode) {
+                        FetchMode.NORMAL -> lastPage + 1
+                        FetchMode.ATTENTION -> -1
+                        FetchMode.SEARCH -> -2
+                    },
+                    payload
+                )?.run {
                     val lastSize = data.size
                     val lastId = data.lastOrNull()?.id ?: Int.MAX_VALUE
                     lastPage++
@@ -146,13 +168,13 @@ class HoleMainFragment : Fragment() {
             }
         }
 
-        fun refresh() {
+        fun refresh(mode: FetchMode = FetchMode.NORMAL, payload: String = "") {
             if (data.isNotEmpty()) {
                 data.clear()
                 lastPage = 0
                 notifyDataSetChanged()
             }
-            fetch()
+            fetch(mode, payload)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

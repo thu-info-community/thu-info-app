@@ -20,9 +20,20 @@ fun Network.holeLogin() = try {
     false
 }
 
-fun Network.getHoleList(page: Int): List<HoleTitleCard>? = try {
+/**
+ * page >= 0:  NORMAL
+ * page == -1: ATTENTION
+ * page == -2: SEARCH
+ */
+fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = try {
     val data = JSON.parseObject(
-        connect("https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token").getData()
+        connect(
+            when (page) {
+                -1 -> "https://thuhole.com/services/thuhole/api.php?action=getattention&user_token=$token"
+                -2 -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=1&keywords=$payload&user_token=$token"
+                else -> "https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token"
+            }
+        ).getData()
     ).getJSONArray("data")
     assert(data.isNotEmpty())
     val result = mutableListOf<HoleTitleCard>()
