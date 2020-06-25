@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/hole_select_background"
+            android:orientation="vertical">
+
+        <Button
+                android:id="@+id/hole_ignore_btn"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@drawable/hole_select_btn_all_corners"
+                android:text="@string/hole_hide_str"
+                android:textColor="#333333"
+                android:textSize="17sp"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#f8f8f8">
+        </View>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/hole_select_background"
+            android:orientation="vertical">
+
+        <Button
+                android:id="@+id/hole_select_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@drawable/hole_select_btn_all_corners"
+                android:text="@string/cancel_string"
+                android:textColor="#333333"
+                android:textSize="17sp"/>
+    </LinearLayout>
+</LinearLayout>

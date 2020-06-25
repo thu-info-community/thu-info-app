@@ -54,7 +54,7 @@ fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = if (
         for (i in data.indices) {
             result.add(HoleTitleCard(data.getJSONObject(i)))
         }
-        result
+        if (page >= 0) result.filter { !loggedInUser.holeIgnore.hasIgnoreP(it.id) } else result
     } catch (e: Exception) {
         e.printStackTrace()
         null

@@ -22,6 +22,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.R.string.*
+import com.unidy2002.thuinfo.data.dao.HoleIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
@@ -93,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize singletons
         safeThread { JiebaSegmenter.init(applicationContext) }
         safeThread { ScheduleDBManager.init(applicationContext) }
+        safeThread { HoleIgnoreDB.init(applicationContext) }
 
         // Read configuration data
         loggedInUser.allowEnterCourseSelection =

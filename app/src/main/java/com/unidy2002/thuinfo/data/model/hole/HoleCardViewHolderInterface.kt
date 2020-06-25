@@ -50,8 +50,6 @@ fun HoleCardViewHolderInterface.bind(context: Context?, card: HoleCard) {
                 findAll(card.text).filter { covered.intersect(it.range).isEmpty() && additionalCondition(it.range) }
                     .forEach {
                         covered.addAll(it.range)
-                        println(it.range)
-                        println(it.value)
                         setSpan(span(it.value), it.range.first, it.range.last + 1, SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
             }

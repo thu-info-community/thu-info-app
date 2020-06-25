@@ -1,22 +1,18 @@
 package com.unidy2002.thuinfo.ui.hole
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
+import android.view.*
 import android.view.KeyEvent.ACTION_UP
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.HoleCardViewHolderInterface
@@ -109,10 +105,12 @@ class HoleMainFragment : Fragment() {
 
     private fun validate() {
         validating = true
+        hole_swipe_refresh.isRefreshing = true
         safeThread {
             if (loggedInUser.holeLoggedIn || Network.holeLogin()) {
                 loggedInUser.holeLoggedIn = true
                 validating = false
+                hole_recycler_view.handler.post { hole_swipe_refresh.isRefreshing = false }
                 if (virgin) {
                     virgin = false
                     hole_recycler_view.handler.post {
@@ -131,6 +129,7 @@ class HoleMainFragment : Fragment() {
                 }
             } else {
                 hole_recycler_view.handler.post {
+                    hole_swipe_refresh.isRefreshing = false
                     val input = HoleLogin()
                     AlertDialog.Builder(context)
                         .setTitle(please_enter_token)
@@ -208,6 +207,8 @@ class HoleMainFragment : Fragment() {
             fetch(mode, payload)
         }
 
+        private fun getCurrentPosition(id: Int) = data.indexOfFirst { it.id == id }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             HoleCardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_hole_card, parent, false))
 
@@ -217,11 +218,24 @@ class HoleMainFragment : Fragment() {
             val item = data[position]
             (holder as HoleCardViewHolder).bind(context, item)
             holder.itemView.setOnClickListener {
-                navigateDestination = position
+                navigateDestination = getCurrentPosition(item.id)
                 NavHostFragment.findNavController(this@HoleMainFragment).navigate(
                     R.id.holeCommentsFragment,
                     Bundle().apply { putInt("pid", item.id) }
                 )
+            }
+            holder.itemView.setOnLongClickListener {
+                context?.run {
+                    LongClickSelectDialog(this) {
+                        val pressedPosition = getCurrentPosition(item.id)
+                        if (it == 0) {
+                            loggedInUser.holeIgnore.addIgnoreP(item.id)
+                            data.removeAt(pressedPosition)
+                            notifyItemRemoved(pressedPosition)
+                        }
+                    }
+                }
+                true
             }
             if (item.reply > 0) {
                 holder.commentIcon.visibility = View.VISIBLE
@@ -238,6 +252,91 @@ class HoleMainFragment : Fragment() {
         val token: EditText = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
             .inflate(R.layout.item_hole_login, this, true)
             .findViewById(R.id.hole_token_input)
+    }
+
+    // UI with great thanks to `com.wildma.pictureselector`
+    private inner class LongClickSelectDialog(context: Context, onClick: (Int) -> Unit) :
+        Dialog(context, R.style.HoleSelectDialogStyle), View.OnClickListener {
+
+        lateinit var ignore: Button
+        lateinit var cancel: Button
+
+        val listener = object : OnItemClickListener {
+            override fun onItemClick(type: Int) {
+                onClick(type)
+            }
+        }
+
+        init {
+            window?.run {
+                decorView.setPadding(0, 0, 0, 0)
+                setGravity(Gravity.RELATIVE_LAYOUT_DIRECTION or Gravity.BOTTOM)
+                attributes = attributes.apply {
+                    width = WindowManager.LayoutParams.MATCH_PARENT
+                    height = WindowManager.LayoutParams.WRAP_CONTENT
+                }
+                setCanceledOnTouchOutside(false)
+                show()
+            }
+        }
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.dialog_hole_select)
+
+            ignore = findViewById(R.id.hole_ignore_btn)
+            cancel = findViewById(R.id.hole_select_cancel_btn)
+            ignore.setOnClickListener(this)
+            cancel.setOnClickListener(this)
+
+            setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == ACTION_UP) {
+                    hideDialog()
+                    listener.onItemClick(-1)
+                }
+                false
+            }
+        }
+
+        override fun onClick(v: View) {
+            when (v.id) {
+                R.id.hole_ignore_btn -> {
+                    hideDialog()
+                    listener.onItemClick(0)
+                }
+                R.id.hole_select_cancel_btn -> {
+                    hideDialog()
+                    listener.onItemClick(-1)
+                }
+            }
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            if (isOutOfBounds(context, event)) {
+                hideDialog()
+                listener.onItemClick(-1)
+            }
+            return super.onTouchEvent(event)
+        }
+
+        private fun hideDialog() {
+            cancel()
+            dismiss()
+        }
+
+        private fun isOutOfBounds(context: Context, event: MotionEvent) = try {
+            val x = event.x.toInt()
+            val y = event.y.toInt()
+            val slop = ViewConfiguration.get(context).scaledWindowTouchSlop
+            val decorView = window!!.decorView
+            x < -slop || y < -slop || x > decorView.width + slop || y > decorView.height + slop
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(type: Int)
     }
 
     override fun onPause() {
