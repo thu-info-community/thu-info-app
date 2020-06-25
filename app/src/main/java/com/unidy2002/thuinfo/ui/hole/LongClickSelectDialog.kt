@@ -4,12 +4,18 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
 import android.widget.Button
 import androidx.annotation.IdRes
 import com.unidy2002.thuinfo.R
 
 // With great thanks to `com.wildma.pictureselector`
-class LongClickSelectDialog(context: Context, onClick: (Int) -> Unit) :
+class LongClickSelectDialog(
+    context: Context,
+    private val canSaveImg: Boolean,
+    private val canHide: Boolean,
+    onClick: (Int) -> Unit
+) :
     Dialog(context, R.style.HoleSelectDialogStyle), View.OnClickListener {
 
     private lateinit var copy: Button
@@ -45,8 +51,18 @@ class LongClickSelectDialog(context: Context, onClick: (Int) -> Unit) :
         setContentView(R.layout.dialog_hole_select)
 
         copy = register(R.id.hole_copy_btn)
-        saveImg = register(R.id.hole_save_img_btn)
-        ignore = register(R.id.hole_ignore_btn)
+        if (canSaveImg) {
+            saveImg = register(R.id.hole_save_img_btn)
+        } else {
+            findViewById<Button>(R.id.hole_save_img_btn).visibility = GONE
+            findViewById<View>(R.id.line_above_save_img).visibility = GONE
+        }
+        if (canHide) {
+            ignore = register(R.id.hole_ignore_btn)
+        } else {
+            findViewById<Button>(R.id.hole_ignore_btn).visibility = GONE
+            findViewById<View>(R.id.line_above_hide).visibility = GONE
+        }
         cancel = register(R.id.hole_select_cancel_btn)
 
         setOnKeyListener { _, keyCode, event ->

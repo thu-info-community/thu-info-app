@@ -15,10 +15,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
-import com.unidy2002.thuinfo.data.model.hole.HoleCard
-import com.unidy2002.thuinfo.data.model.hole.HoleCardViewHolderInterface
-import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
-import com.unidy2002.thuinfo.data.model.hole.bind
+import com.unidy2002.thuinfo.data.model.hole.*
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
@@ -119,12 +116,23 @@ class HoleCommentsFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = data[position]
-            (holder as HoleCardViewHolder).bind(context, item)
+            (holder as HoleCardViewHolder).bind(context, this@HoleCommentsFragment, item) { position }
             holder.itemView.setOnClickListener {
                 with(hole_comment_edit_text.text.toString()) {
                     if (isBlank() || trim().matches(Regex("Re (?:|洞主|(?:[A-Z][a-z]+ )?(?:[A-Z][a-z]+)|You Win(?: \\d+)?):")))
                         hole_comment_edit_text.setText("Re ${if (item is HoleCommentCard) item.name else ""}: ")
                 }
+            }
+            holder.itemView.setOnLongClickListener {
+                context?.run {
+                    LongClickSelectDialog(this, item is HoleTitleCard && item.type == "image", false) { index ->
+                        when (index) {
+                            0 -> copyUtil(this, item.text)
+                            1 -> if (item is HoleTitleCard) saveImgUtil(this, hole_comments_refresh.handler, item)
+                        }
+                    }
+                }
+                true
             }
         }
     }

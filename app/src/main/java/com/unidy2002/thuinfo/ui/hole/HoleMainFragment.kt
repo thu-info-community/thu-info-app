@@ -1,8 +1,6 @@
 package com.unidy2002.thuinfo.ui.hole
 
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,27 +8,24 @@ import android.view.KeyEvent.ACTION_UP
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.core.content.getSystemService
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
-import com.unidy2002.thuinfo.data.model.hole.HoleCardViewHolderInterface
-import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
-import com.unidy2002.thuinfo.data.model.hole.bind
+import com.unidy2002.thuinfo.data.model.hole.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
 import com.unidy2002.thuinfo.data.util.encrypt
-import com.unidy2002.thuinfo.data.util.getBitmap
 import com.unidy2002.thuinfo.data.util.safeThread
-import com.unidy2002.thuinfo.data.util.save
 import kotlinx.android.synthetic.main.fragment_hole_main.*
 import kotlin.math.min
 
@@ -45,7 +40,7 @@ class HoleMainFragment : Fragment() {
 
     private var lastTopPosition = 0
 
-    private var navigateDestination = Int.MAX_VALUE
+    var navigateDestination = Int.MAX_VALUE
 
     private var validating = false
 
@@ -223,7 +218,7 @@ class HoleMainFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = data[position]
-            (holder as HoleCardViewHolder).bind(context, item)
+            (holder as HoleCardViewHolder).bind(context, this@HoleMainFragment, item, ::getCurrentPosition)
             holder.itemView.setOnClickListener {
                 navigateDestination = getCurrentPosition(item.id)
                 NavHostFragment.findNavController(this@HoleMainFragment).navigate(
@@ -233,38 +228,11 @@ class HoleMainFragment : Fragment() {
             }
             holder.itemView.setOnLongClickListener {
                 context?.run {
-                    LongClickSelectDialog(this) { index ->
+                    LongClickSelectDialog(this, item.type == "image", true) { index ->
                         val pressedPosition = getCurrentPosition(item.id)
                         when (index) {
-                            0 -> {
-                                val manager = getSystemService<ClipboardManager>()
-                                if (manager == null) {
-                                    Toast.makeText(this, hole_copy_failure_str, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    manager.setPrimaryClip(ClipData.newPlainText("THUInfo", item.text))
-                                    Toast.makeText(this, hole_copy_success_str, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                            1 -> {
-                                safeThread {
-                                    try {
-                                        Network.getBitmap("https://thuhole.com//images/${item.url}")
-                                            .save(this, "#${item.id}")
-                                        hole_recycler_view.handler.post {
-                                            context?.run {
-                                                Toast.makeText(this, hole_save_success_str, Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        hole_recycler_view.handler.post {
-                                            context?.run {
-                                                Toast.makeText(this, hole_save_failure_str, Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            0 -> copyUtil(this, item.text)
+                            1 -> saveImgUtil(this, hole_swipe_refresh.handler, item)
                             2 -> {
                                 loggedInUser.holeIgnore.addIgnoreP(item.id)
                                 data.removeAt(pressedPosition)
