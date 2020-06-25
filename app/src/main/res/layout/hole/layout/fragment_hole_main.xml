@@ -32,13 +32,24 @@
                 android:padding="5dp"
                 style="@style/home_icon_style"/>
 
+        <ImageView
+                android:id="@+id/hole_hot_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_whatshot"
+                app:layout_constraintStart_toEndOf="@id/hole_attention_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/hole_attention_str"
+                android:padding="5dp"
+                style="@style/home_icon_style"/>
+
         <EditText
                 android:id="@+id/hole_search_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/hole_attention_btn"
+                app:layout_constraintStart_toEndOf="@id/hole_hot_btn"
                 app:layout_constraintEnd_toStartOf="@id/hole_new_post_btn"
                 android:hint="@string/hole_search_str"
                 android:inputType="text"

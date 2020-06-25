@@ -62,6 +62,11 @@ class HoleMainFragment : Fragment() {
             holeAdapter.refresh(FetchMode.ATTENTION)
         }
 
+        hole_hot_btn.setOnClickListener {
+            normalMode = false
+            holeAdapter.refresh(FetchMode.SEARCH, "热榜")
+        }
+
         hole_search_edit_text.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == ACTION_UP) {
                 normalMode = false

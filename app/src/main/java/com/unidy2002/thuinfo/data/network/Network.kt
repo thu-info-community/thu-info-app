@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.data.network
 
 import android.util.Log
-import android.webkit.CookieManager
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import java.io.BufferedReader

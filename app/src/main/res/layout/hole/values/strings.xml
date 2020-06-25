@@ -3,6 +3,7 @@
     <string name="please_enter_token">请输入Token</string>
     <string name="hole_publish_str">发表</string>
     <string name="hole_attention_str">关注</string>
+    <string name="hole_hot_str">热榜</string>
     <string name="hole_search_str">搜索 或 #树洞号</string>
     <string name="hole_detail_str">树洞详情</string>
     <string name="hole_post_hint">请遵守树洞管理规范（试行），文明发言。</string>
