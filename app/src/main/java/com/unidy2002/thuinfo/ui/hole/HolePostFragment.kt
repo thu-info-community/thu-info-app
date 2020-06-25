@@ -53,7 +53,7 @@ class HolePostFragment : Fragment() {
                     .setTitle(confirm_send_img_str)
                     .setPositiveButton(yes_str) { _, _ -> post(true) }
                     .setNegativeButton(no_str) { _, _ -> post(false) }
-                    .setCancelable(false)
+                    .setOnCancelListener { hole_new_post_submit.isEnabled = true }
                     .show()
             }
         }

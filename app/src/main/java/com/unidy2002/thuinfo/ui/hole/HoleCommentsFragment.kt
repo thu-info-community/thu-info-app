@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -42,40 +41,43 @@ class HoleCommentsFragment : Fragment() {
             if (this == null) {
                 context?.run { Toast.makeText(this, load_fail_string, Toast.LENGTH_SHORT).show() }
                 NavHostFragment.findNavController(this@HoleCommentsFragment).navigateUp()
-                return
-            }
-            pid = this
-            (activity as? AppCompatActivity)?.supportActionBar?.title = "#$this"
+            } else {
+                pid = this
 
-            hole_comments_refresh.apply {
-                setColorSchemeResources(R.color.colorAccent)
-                setOnRefreshListener { holeCommentsAdapter.refresh() }
-            }
+                hole_comments_refresh.apply {
+                    setColorSchemeResources(R.color.colorAccent)
+                    setOnRefreshListener { holeCommentsAdapter.refresh() }
+                }
 
-            hole_comments_recycler_view.apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = holeCommentsAdapter.also { it.refresh() }
-            }
+                hole_comments_recycler_view.apply {
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = holeCommentsAdapter.also { it.refresh() }
+                }
 
-            hole_comment_edit_text.doOnTextChanged { text, _, _, _ ->
-                hole_comment_submit.isEnabled = !text.isNullOrBlank()
-            }
+                hole_comment_edit_text.doOnTextChanged { text, _, _, _ ->
+                    hole_comment_submit.isEnabled = !text.isNullOrBlank()
+                }
 
-            hole_comment_submit.run {
-                setOnClickListener {
-                    isEnabled = false
-                    safeThread {
-                        if (Network.postHoleComment(pid, hole_comment_edit_text.text.toString())) {
-                            handler.post {
-                                holeCommentsAdapter.refresh()
-                                context?.run { Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show() }
-                                hole_comment_edit_text.setText("")
-                                isEnabled = true
-                            }
-                        } else {
-                            handler.post {
-                                context?.run { Toast.makeText(this, hole_publish_failure, Toast.LENGTH_SHORT).show() }
-                                isEnabled = true
+                hole_comment_submit.run {
+                    setOnClickListener {
+                        isEnabled = false
+                        safeThread {
+                            if (Network.postHoleComment(pid, hole_comment_edit_text.text.toString())) {
+                                handler.post {
+                                    holeCommentsAdapter.refresh()
+                                    context?.run {
+                                        Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show()
+                                    }
+                                    hole_comment_edit_text.setText("")
+                                    isEnabled = true
+                                }
+                            } else {
+                                handler.post {
+                                    context?.run {
+                                        Toast.makeText(this, hole_publish_failure, Toast.LENGTH_SHORT).show()
+                                    }
+                                    isEnabled = true
+                                }
                             }
                         }
                     }
@@ -101,9 +103,11 @@ class HoleCommentsFragment : Fragment() {
                     Network.getHoleComments(pid)?.run {
                         if (data.isNotEmpty()) data.clear()
                         data.addAll(this)
-                        handler.post { notifyDataSetChanged() }
+                        handler.post {
+                            notifyDataSetChanged()
+                            isRefreshing = false
+                        }
                     }
-                    isRefreshing = false
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.KeyEvent.ACTION_UP
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,20 +44,27 @@ class HoleMainFragment : Fragment() {
 
     private var navigateDestination = Int.MAX_VALUE
 
+    private var validating = false
+
+    private var normalMode = true
+
     override fun onStart() {
         super.onStart()
 
         hole_refresh_btn.setOnClickListener {
+            normalMode = true
             if (!hole_swipe_refresh.isRefreshing)
                 holeAdapter.refresh()
         }
 
         hole_attention_btn.setOnClickListener {
+            normalMode = false
             holeAdapter.refresh(FetchMode.ATTENTION)
         }
 
-        hole_search_edit_text.setOnKeyListener { _, keyCode, _ ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+        hole_search_edit_text.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == ACTION_UP) {
+                normalMode = false
                 holeAdapter.refresh(FetchMode.SEARCH, hole_search_edit_text.text.toString())
             }
             false
@@ -69,7 +77,10 @@ class HoleMainFragment : Fragment() {
 
         hole_swipe_refresh.apply {
             setColorSchemeResources(R.color.colorAccent)
-            setOnRefreshListener { holeAdapter.refresh() }
+            setOnRefreshListener {
+                normalMode = true
+                holeAdapter.refresh()
+            }
         }
 
         hole_recycler_view.apply {
@@ -81,32 +92,36 @@ class HoleMainFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     with(recyclerView.layoutManager as LinearLayoutManager) {
-                        if (itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing)
+                        if (normalMode && itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing)
                             holeAdapter.fetch(FetchMode.NORMAL, "")
                     }
                 }
             })
         }
 
-        validate()
+        if (!validating) validate()
     }
 
     private fun validate() {
+        validating = true
         safeThread {
-            if (Network.holeLogin()) {
+            if (loggedInUser.holeLoggedIn || Network.holeLogin()) {
+                loggedInUser.holeLoggedIn = true
+                validating = false
                 if (virgin) {
                     virgin = false
                     hole_recycler_view.handler.post {
+                        normalMode = true
                         holeAdapter.refresh()
                     }
-                }
-                safeThread {
-                    activity?.getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()?.run {
-                        encrypt("h${loggedInUser.userId}", loggedInUser.holeToken).run {
-                            putString("civ", first)
-                            putString("cpe", second)
+                    safeThread {
+                        activity?.getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()?.run {
+                            encrypt("h${loggedInUser.userId}", loggedInUser.holeToken).run {
+                                putString("civ", first)
+                                putString("cpe", second)
+                            }
+                            apply()
                         }
-                        apply()
                     }
                 }
             } else {
@@ -122,6 +137,7 @@ class HoleMainFragment : Fragment() {
                         .setNegativeButton(cancel_string) { _, _ ->
                             NavHostFragment.findNavController(this).navigateUp()
                         }
+                        .setOnDismissListener { validating = false }
                         .setCancelable(false)
                         .show()
                 }
@@ -156,13 +172,21 @@ class HoleMainFragment : Fragment() {
                     },
                     payload
                 )?.run {
-                    val lastSize = data.size
-                    val lastId = data.lastOrNull()?.id ?: Int.MAX_VALUE
-                    lastPage++
-                    data.addAll(filter { it.id < lastId })
-                    hole_swipe_refresh.handler.post {
-                        hole_swipe_refresh.isRefreshing = false
-                        notifyItemRangeChanged(lastSize, data.size)
+                    if (mode == FetchMode.NORMAL) {
+                        val lastSize = data.size
+                        val lastId = data.lastOrNull()?.id ?: Int.MAX_VALUE
+                        lastPage++
+                        data.addAll(filter { it.id < lastId })
+                        hole_swipe_refresh.handler.post {
+                            hole_swipe_refresh.isRefreshing = false
+                            notifyItemRangeChanged(lastSize, data.size)
+                        }
+                    } else {
+                        data.addAll(this)
+                        hole_swipe_refresh.handler.post {
+                            hole_swipe_refresh.isRefreshing = false
+                            notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -171,9 +195,9 @@ class HoleMainFragment : Fragment() {
         fun refresh(mode: FetchMode = FetchMode.NORMAL, payload: String = "") {
             if (data.isNotEmpty()) {
                 data.clear()
-                lastPage = 0
                 notifyDataSetChanged()
             }
+            lastPage = 0
             fetch(mode, payload)
         }
 

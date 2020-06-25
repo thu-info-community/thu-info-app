@@ -25,25 +25,40 @@ fun Network.holeLogin() = try {
  * page == -1: ATTENTION
  * page == -2: SEARCH
  */
-fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = try {
-    val data = JSON.parseObject(
-        connect(
-            when (page) {
-                -1 -> "https://thuhole.com/services/thuhole/api.php?action=getattention&user_token=$token"
-                -2 -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=1&keywords=$payload&user_token=$token"
-                else -> "https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token"
-            }
-        ).getData()
-    ).getJSONArray("data")
-    assert(data.isNotEmpty())
-    val result = mutableListOf<HoleTitleCard>()
-    for (i in data.indices) {
-        result.add(HoleTitleCard(data.getJSONObject(i)))
+fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = if (page == -2 && payload.startsWith("#")) {
+    try {
+        listOf(
+            HoleTitleCard(
+                JSON.parseObject(
+                    connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=${payload.substring(1)}").getData()
+                ).getJSONObject("data")
+            )
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyList<HoleTitleCard>()
     }
-    result
-} catch (e: Exception) {
-    e.printStackTrace()
-    null
+} else {
+    try {
+        val data = JSON.parseObject(
+            connect(
+                when (page) {
+                    -1 -> "https://thuhole.com/services/thuhole/api.php?action=getattention&user_token=$token"
+                    -2 -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=1&keywords=$payload&user_token=$token"
+                    else -> "https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token"
+                }
+            ).getData()
+        ).getJSONArray("data")
+        assert(data.isNotEmpty())
+        val result = mutableListOf<HoleTitleCard>()
+        for (i in data.indices) {
+            result.add(HoleTitleCard(data.getJSONObject(i)))
+        }
+        result
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {

@@ -145,7 +145,7 @@
     <fragment
             android:id="@+id/holeCommentsFragment"
             android:name="com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment"
-            android:label="@string/hole_res"
+            android:label="@string/hole_detail_str"
             tools:layout="@layout/fragment_hole_comments"/>
 
     <fragment

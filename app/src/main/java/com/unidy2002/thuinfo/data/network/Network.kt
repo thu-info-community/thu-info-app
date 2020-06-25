@@ -39,47 +39,22 @@ object Network {
     }
 
     fun login(userId: String, password: String) = LoggedInUser(userId, password).apply {
-        // Get vpn ticket
-        val cookieManager = CookieManager.getInstance()
-        vpnTicket = connect("https://webvpn.tsinghua.edu.cn/login")
-            .headerFields["Set-Cookie"]!!
-            .joinToString("; ") {
-                it.substring(0, it.indexOf(';'))
-                    .also { cookie -> cookieManager.setCookie("webvpn.tsinghua.edu.cn", cookie) }
-            }
-            .also { Log.i("VPN TICKET", it) }
+        // Try login to webvpn
+        vpnTicket = connect(
+            "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
+            "https://webvpn.tsinghua.edu.cn/login",
+            post = "auth_type=local&username=$userId&sms_code=&password=${encode(password, "UTF-8")}",
+            followRedirects = false
+        ).headerFields["Set-Cookie"]!!.joinToString("; ") { it.substring(0, it.indexOf(';')) }
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [0]")
             throw InterruptedException()
         }
 
-        // Login to webvpn
-        connect(
-            "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
-            "https://webvpn.tsinghua.edu.cn/login",
-            vpnTicket,
-            "auth_type=local&username=$userId&sms_code=&password=${encode(password, "UTF-8")}"
-        ).inputStream.run {
-            val reader = BufferedReader(InputStreamReader(this))
-            var readLine: String?
-            while (reader.readLine().also { readLine = it } != null) {
-                if (readLine!!.matches(Regex(".*var logoutOtherToken = '.+'.*"))) {
-                    readLine = readLine!!.substring(readLine!!.indexOf('\'') + 1)
-                    readLine = readLine!!.substring(0, readLine!!.indexOf('\''))
-                    connect(
-                        "https://webvpn.tsinghua.edu.cn/do-confirm-login",
-                        "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
-                        vpnTicket,
-                        "username=$userId&logoutOtherToken=$readLine"
-                    ).inputStream.close()
-                    Log.i("KICK", readLine!!)
-                } else if (readLine!!.contains("错误")) {
-                    throw UserLoginError()
-                }
-            }
-            reader.close()
-            close()
-        }
+        // Verify login
+        if (!connect("https://webvpn.tsinghua.edu.cn/", "https://webvpn.tsinghua.edu.cn/login", vpnTicket).getData()
+                .contains("首页")
+        ) throw UserLoginError()
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [1]")
             throw InterruptedException()
@@ -159,7 +134,7 @@ object Network {
         val stringBuilder = StringBuilder()
         var readLine: String?
         while (reader.readLine().also { readLine = it } != null)
-            stringBuilder.append(readLine)
+            stringBuilder.append("$readLine\n")
         reader.close()
         inputStream.close()
         return stringBuilder.toString()

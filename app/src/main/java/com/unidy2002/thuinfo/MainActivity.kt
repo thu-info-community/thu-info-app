@@ -123,7 +123,11 @@ class MainActivity : AppCompatActivity() {
                     checkUpdate(true)
                 R.id.navigation_logout -> {
                     safeThread {
-                        Network.logout()
+                        try {
+                            Network.logout()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                         loggedInUser.timerTasks.forEach { task -> task.cancel() }
                         runOnUiThread {
                             if (loggedInUser.rememberPassword) {
