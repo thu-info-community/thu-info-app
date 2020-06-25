@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.data.network
 
 import android.util.Log
+import android.webkit.CookieManager
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import java.io.BufferedReader
@@ -44,7 +45,11 @@ object Network {
             "https://webvpn.tsinghua.edu.cn/login",
             post = "auth_type=local&username=$userId&sms_code=&password=${encode(password, "UTF-8")}",
             followRedirects = false
-        ).headerFields["Set-Cookie"]!!.joinToString("; ") { it.substring(0, it.indexOf(';')) }
+        ).headerFields["Set-Cookie"]!!.joinToString("; ") {
+            it.substring(0, it.indexOf(';')).also { cookie ->
+                CookieManager.getInstance().setCookie("webvpn.tsinghua.edu.cn", cookie)
+            }
+        }
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [0]")
             throw InterruptedException()

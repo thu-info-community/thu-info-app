@@ -6,6 +6,12 @@
               android:orientation="vertical"
               android:padding="6dp">
 
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:foreground="#40000000"/>
 
     <EditText
             android:id="@+id/assessment_suggestion_edit_text"

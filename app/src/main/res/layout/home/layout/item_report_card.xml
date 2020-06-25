@@ -18,14 +18,16 @@
 
     <TextView
             android:id="@+id/report_course_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:layout_marginStart="5dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/report_card_image"
-            />
+            app:layout_constraintEnd_toStartOf="@id/report_course_credit"/>
 
     <TextView
             android:id="@+id/report_course_credit"

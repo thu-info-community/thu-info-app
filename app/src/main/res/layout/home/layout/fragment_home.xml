@@ -38,7 +38,7 @@
                 <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
+                        android:columnCount="3"
                         android:orientation="horizontal">
 
                     <TextView
@@ -51,11 +51,6 @@
                             android:id="@+id/assessment_btn"
                             android:text="@string/assessment_string"
                             android:drawableTop="@drawable/ic_assessment"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
                             style="@style/home_icon_style"/>
 
                     <TextView
@@ -92,7 +87,7 @@
                 <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
+                        android:columnCount="3"
                         android:orientation="horizontal">
 
                     <TextView
@@ -111,11 +106,6 @@
                             android:id="@+id/jogging_btn"
                             android:text="@string/sunny_jogging"
                             android:drawableTop="@drawable/ic_jogging"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
                             style="@style/home_icon_style"/>
 
                 </GridLayout>
@@ -148,7 +138,7 @@
                 <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
+                        android:columnCount="3"
                         android:orientation="horizontal">
 
                     <TextView
@@ -161,11 +151,6 @@
                             android:id="@+id/wentu_btn"
                             android:text="@string/wentu_string"
                             android:drawableTop="@drawable/ic_wentu"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
                             style="@style/home_icon_style"/>
 
                     <TextView
@@ -203,7 +188,7 @@
                 <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
+                        android:columnCount="3"
                         android:orientation="horizontal">
 
                     <TextView
@@ -216,11 +201,6 @@
                             android:id="@+id/lose_card_btn"
                             android:text="@string/lose_card_string"
                             android:drawableTop="@drawable/ic_lose_card"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
                             style="@style/home_icon_style"/>
 
                     <TextView
@@ -259,7 +239,7 @@
                 <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="4"
+                        android:columnCount="3"
                         android:orientation="horizontal">
 
                     <TextView
@@ -280,11 +260,6 @@
                             android:drawableTop="@drawable/ic_dorm_repair"
                             style="@style/home_icon_style"
                             android:enabled="false"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
-                            style="@style/home_icon_style"/>
 
                     <TextView
                             android:id="@+id/dorm_mail_btn"
