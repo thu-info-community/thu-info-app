@@ -14,6 +14,34 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/hole_copy_btn"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@drawable/hole_select_btn_all_corners"
+                android:text="@string/hole_copy_str"
+                android:textColor="#333333"
+                android:textSize="17sp"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#f8f8f8"/>
+
+        <Button
+                android:id="@+id/hole_save_img_btn"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:background="@drawable/hole_select_btn_all_corners"
+                android:text="@string/hole_save_img_str"
+                android:textColor="#333333"
+                android:textSize="17sp"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#f8f8f8"/>
+
+        <Button
                 android:id="@+id/hole_ignore_btn"
                 android:layout_width="match_parent"
                 android:layout_height="43dp"
@@ -21,12 +49,6 @@
                 android:text="@string/hole_hide_str"
                 android:textColor="#333333"
                 android:textSize="17sp"/>
-
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="#f8f8f8">
-        </View>
     </LinearLayout>
 
     <LinearLayout

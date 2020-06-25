@@ -2,12 +2,14 @@ package com.unidy2002.thuinfo.data.util
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Environment.DIRECTORY_PICTURES
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.View
+import com.unidy2002.thuinfo.data.network.Network
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -67,3 +69,5 @@ fun imageToBase64(path: String): String {
         inputStream?.close()
     }
 }
+
+fun Network.getBitmap(url: String): Bitmap = BitmapFactory.decodeStream(connect(url).inputStream)

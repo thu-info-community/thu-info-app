@@ -1,12 +1,17 @@
 package com.unidy2002.thuinfo.ui.hole
 
 import android.app.AlertDialog
-import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
 import android.view.KeyEvent.ACTION_UP
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +28,9 @@ import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
 import com.unidy2002.thuinfo.data.util.encrypt
+import com.unidy2002.thuinfo.data.util.getBitmap
 import com.unidy2002.thuinfo.data.util.safeThread
+import com.unidy2002.thuinfo.data.util.save
 import kotlinx.android.synthetic.main.fragment_hole_main.*
 import kotlin.math.min
 
@@ -226,12 +233,43 @@ class HoleMainFragment : Fragment() {
             }
             holder.itemView.setOnLongClickListener {
                 context?.run {
-                    LongClickSelectDialog(this) {
+                    LongClickSelectDialog(this) { index ->
                         val pressedPosition = getCurrentPosition(item.id)
-                        if (it == 0) {
-                            loggedInUser.holeIgnore.addIgnoreP(item.id)
-                            data.removeAt(pressedPosition)
-                            notifyItemRemoved(pressedPosition)
+                        when (index) {
+                            0 -> {
+                                val manager = getSystemService<ClipboardManager>()
+                                if (manager == null) {
+                                    Toast.makeText(this, hole_copy_failure_str, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    manager.setPrimaryClip(ClipData.newPlainText("THUInfo", item.text))
+                                    Toast.makeText(this, hole_copy_success_str, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            1 -> {
+                                safeThread {
+                                    try {
+                                        Network.getBitmap("https://thuhole.com//images/${item.url}")
+                                            .save(this, "#${item.id}")
+                                        hole_recycler_view.handler.post {
+                                            context?.run {
+                                                Toast.makeText(this, hole_save_success_str, Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        hole_recycler_view.handler.post {
+                                            context?.run {
+                                                Toast.makeText(this, hole_save_failure_str, Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            2 -> {
+                                loggedInUser.holeIgnore.addIgnoreP(item.id)
+                                data.removeAt(pressedPosition)
+                                notifyItemRemoved(pressedPosition)
+                            }
                         }
                     }
                 }
@@ -254,91 +292,6 @@ class HoleMainFragment : Fragment() {
             .findViewById(R.id.hole_token_input)
     }
 
-    // UI with great thanks to `com.wildma.pictureselector`
-    private inner class LongClickSelectDialog(context: Context, onClick: (Int) -> Unit) :
-        Dialog(context, R.style.HoleSelectDialogStyle), View.OnClickListener {
-
-        lateinit var ignore: Button
-        lateinit var cancel: Button
-
-        val listener = object : OnItemClickListener {
-            override fun onItemClick(type: Int) {
-                onClick(type)
-            }
-        }
-
-        init {
-            window?.run {
-                decorView.setPadding(0, 0, 0, 0)
-                setGravity(Gravity.RELATIVE_LAYOUT_DIRECTION or Gravity.BOTTOM)
-                attributes = attributes.apply {
-                    width = WindowManager.LayoutParams.MATCH_PARENT
-                    height = WindowManager.LayoutParams.WRAP_CONTENT
-                }
-                setCanceledOnTouchOutside(false)
-                show()
-            }
-        }
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.dialog_hole_select)
-
-            ignore = findViewById(R.id.hole_ignore_btn)
-            cancel = findViewById(R.id.hole_select_cancel_btn)
-            ignore.setOnClickListener(this)
-            cancel.setOnClickListener(this)
-
-            setOnKeyListener { _, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == ACTION_UP) {
-                    hideDialog()
-                    listener.onItemClick(-1)
-                }
-                false
-            }
-        }
-
-        override fun onClick(v: View) {
-            when (v.id) {
-                R.id.hole_ignore_btn -> {
-                    hideDialog()
-                    listener.onItemClick(0)
-                }
-                R.id.hole_select_cancel_btn -> {
-                    hideDialog()
-                    listener.onItemClick(-1)
-                }
-            }
-        }
-
-        override fun onTouchEvent(event: MotionEvent): Boolean {
-            if (isOutOfBounds(context, event)) {
-                hideDialog()
-                listener.onItemClick(-1)
-            }
-            return super.onTouchEvent(event)
-        }
-
-        private fun hideDialog() {
-            cancel()
-            dismiss()
-        }
-
-        private fun isOutOfBounds(context: Context, event: MotionEvent) = try {
-            val x = event.x.toInt()
-            val y = event.y.toInt()
-            val slop = ViewConfiguration.get(context).scaledWindowTouchSlop
-            val decorView = window!!.decorView
-            x < -slop || y < -slop || x > decorView.width + slop || y > decorView.height + slop
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(type: Int)
-    }
-
     override fun onPause() {
         super.onPause()
         (hole_recycler_view.layoutManager as? LinearLayoutManager)?.run {
@@ -347,5 +300,4 @@ class HoleMainFragment : Fragment() {
                 if (firstVisible == NO_POSITION) navigateDestination else min(navigateDestination, firstVisible)
         }
     }
-
 }
