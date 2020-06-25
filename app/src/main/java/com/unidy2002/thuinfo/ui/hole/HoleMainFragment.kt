@@ -17,15 +17,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
-import com.bumptech.glide.Glide
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
+import com.unidy2002.thuinfo.data.model.hole.HoleCardViewHolderInterface
 import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
+import com.unidy2002.thuinfo.data.model.hole.bind
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
-import com.unidy2002.thuinfo.data.util.dateToRelativeTime
 import com.unidy2002.thuinfo.data.util.encrypt
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_main.*
@@ -157,11 +157,12 @@ class HoleMainFragment : Fragment() {
         private val data = mutableListOf<HoleTitleCard>()
         private var lastPage = 0
 
-        private inner class HoleCardViewHolder(view: View) : ViewHolder(view) {
-            val id: TextView = view.findViewById(R.id.hole_id_text)
-            val time: TextView = view.findViewById(R.id.hole_time_text)
-            val text: TextView = view.findViewById(R.id.hole_text_text)
-            val image: ImageView = view.findViewById(R.id.hole_title_card_image)
+        private inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
+            override val id: TextView = view.findViewById(R.id.hole_id_text)
+            override val tag: TextView = view.findViewById(R.id.hole_tag_text)
+            override val time: TextView = view.findViewById(R.id.hole_time_text)
+            override val text: TextView = view.findViewById(R.id.hole_text_text)
+            override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
             val commentIcon: ImageView = view.findViewById(R.id.hole_comment_cnt_icon)
             val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
         }
@@ -183,16 +184,17 @@ class HoleMainFragment : Fragment() {
                         lastPage++
                         data.addAll(filter { it.id < lastId })
                         hole_swipe_refresh.handler.post {
-                            hole_swipe_refresh.isRefreshing = false
                             notifyItemRangeChanged(lastSize, data.size)
                         }
                     } else {
                         data.addAll(this)
                         hole_swipe_refresh.handler.post {
-                            hole_swipe_refresh.isRefreshing = false
                             notifyDataSetChanged()
                         }
                     }
+                }
+                hole_swipe_refresh.handler.post {
+                    hole_swipe_refresh.isRefreshing = false
                 }
             }
         }
@@ -212,28 +214,14 @@ class HoleMainFragment : Fragment() {
         override fun getItemCount() = data.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder as HoleCardViewHolder
             val item = data[position]
-            holder.id.text = "#${item.id}"
-            holder.time.text = dateToRelativeTime(item.timeStamp)
-            holder.text.text = item.text
+            (holder as HoleCardViewHolder).bind(context, item)
             holder.itemView.setOnClickListener {
                 navigateDestination = position
                 NavHostFragment.findNavController(this@HoleMainFragment).navigate(
                     R.id.holeCommentsFragment,
                     Bundle().apply { putInt("pid", item.id) }
                 )
-            }
-            if (item.type == "image") {
-                context?.run {
-                    holder.image.visibility = View.VISIBLE
-                    holder.image.setImageResource(R.drawable.hole_loading_image)
-                    Glide.with(this)
-                        .load("https://thuhole.com//images/${item.url}")
-                        .into(holder.image)
-                }
-            } else {
-                holder.image.visibility = View.GONE
             }
             if (item.reply > 0) {
                 holder.commentIcon.visibility = View.VISIBLE

@@ -4,4 +4,5 @@ interface HoleCard {
     val id: Int
     val timeStamp: Long
     val text: String
+    val tag: String
 }

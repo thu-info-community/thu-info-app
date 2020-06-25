@@ -13,16 +13,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bumptech.glide.Glide
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.HoleCard
+import com.unidy2002.thuinfo.data.model.hole.HoleCardViewHolderInterface
 import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
-import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
+import com.unidy2002.thuinfo.data.model.hole.bind
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
-import com.unidy2002.thuinfo.data.util.dateToRelativeTime
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_comments.*
 
@@ -89,11 +88,12 @@ class HoleCommentsFragment : Fragment() {
     private inner class HoleCommentsAdapter : Adapter<ViewHolder>() {
         private val data = mutableListOf<HoleCard>()
 
-        private inner class HoleCardViewHolder(view: View) : ViewHolder(view) {
-            val id: TextView = view.findViewById(R.id.hole_id_text)
-            val time: TextView = view.findViewById(R.id.hole_time_text)
-            val text: TextView = view.findViewById(R.id.hole_text_text)
-            val image: ImageView = view.findViewById(R.id.hole_title_card_image)
+        private inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
+            override val id: TextView = view.findViewById(R.id.hole_id_text)
+            override val tag: TextView = view.findViewById(R.id.hole_tag_text)
+            override val time: TextView = view.findViewById(R.id.hole_time_text)
+            override val text: TextView = view.findViewById(R.id.hole_text_text)
+            override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
         }
 
         fun refresh() {
@@ -118,26 +118,13 @@ class HoleCommentsFragment : Fragment() {
         override fun getItemCount() = data.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder as HoleCardViewHolder
             val item = data[position]
-            holder.id.text = "#${item.id}"
-            holder.time.text = dateToRelativeTime(item.timeStamp)
-            holder.text.text = item.text
+            (holder as HoleCardViewHolder).bind(context, item)
             holder.itemView.setOnClickListener {
                 with(hole_comment_edit_text.text.toString()) {
                     if (isBlank() || trim().matches(Regex("Re (?:|洞主|(?:[A-Z][a-z]+ )?(?:[A-Z][a-z]+)|You Win(?: \\d+)?):")))
                         hole_comment_edit_text.setText("Re ${if (item is HoleCommentCard) item.name else ""}: ")
                 }
-            }
-            if (item is HoleTitleCard && item.type == "image") {
-                context?.run {
-                    holder.image.visibility = View.VISIBLE
-                    Glide.with(this)
-                        .load("https://thuhole.com//images/${item.url}")
-                        .into(holder.image)
-                }
-            } else {
-                holder.image.visibility = View.GONE
             }
         }
     }

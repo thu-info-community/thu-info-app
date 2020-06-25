@@ -71,7 +71,13 @@ fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
     ).getJSONArray("data")
     for (i in data.indices) {
         result.add(data.getJSONObject(i).run {
-            HoleCommentCard(getInteger("cid"), getLong("timestamp"), getString("text"), getString("name"))
+            HoleCommentCard(
+                getInteger("cid"),
+                getLong("timestamp"),
+                getString("text"),
+                getString("tag") ?: "",
+                getString("name")
+            )
         })
     }
     result

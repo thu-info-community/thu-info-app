@@ -269,13 +269,6 @@
                             style="@style/home_icon_style"/>
 
                     <TextView
-                            android:id="@+id/dorm_laf_btn"
-                            android:text="@string/dorm_laf_string"
-                            android:drawableTop="@drawable/ic_dorm_laf"
-                            style="@style/home_icon_style"
-                            android:enabled="false"/>
-
-                    <TextView
                             android:id="@+id/dorm_score_btn"
                             android:text="@string/dorm_score_string"
                             android:drawableTop="@drawable/ic_dorm_score"
@@ -287,6 +280,11 @@
                             android:drawableTop="@drawable/ic_dorm_repair"
                             style="@style/home_icon_style"
                             android:enabled="false"/>
+
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
 
                     <TextView
                             android:id="@+id/dorm_mail_btn"

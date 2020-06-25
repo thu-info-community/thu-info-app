@@ -142,7 +142,6 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-            dorm_laf_btn.setNavigateDestination(R.id.lafMainFragment)
             dorm_score_btn.setOnClickListener {
                 configureCommunity {
                     findNavController(this@HomeFragment).navigate(R.id.dormScoreFragment)
