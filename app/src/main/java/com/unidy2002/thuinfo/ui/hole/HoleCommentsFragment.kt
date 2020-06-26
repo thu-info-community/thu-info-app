@@ -7,18 +7,21 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.*
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
+import com.unidy2002.thuinfo.data.network.setHoleAttention
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_comments.*
 
@@ -28,7 +31,27 @@ class HoleCommentsFragment : Fragment() {
 
     private var pid = 0
 
+    private var attention = false
+
     private val holeCommentsAdapter = HoleCommentsAdapter()
+
+    fun toggleAttention() {
+        safeThread {
+            Network.setHoleAttention(pid, !attention)?.run {
+                attention = this
+                try {
+                    hole_comment_submit?.handler?.post {
+                        (activity as MainActivity).menu[0].icon = context?.getDrawable(
+                            if (attention) R.drawable.ic_star_has_attention
+                            else R.drawable.ic_star_not_attention
+                        )
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -82,6 +105,16 @@ class HoleCommentsFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            (activity as MainActivity).menu.clear()
+            (activity as MainActivity).holeCommentsFragment = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private inner class HoleCommentsAdapter : Adapter<ViewHolder>() {
         private val data = mutableListOf<HoleCard>()
 
@@ -99,8 +132,23 @@ class HoleCommentsFragment : Fragment() {
                 safeThread {
                     Network.getHoleComments(pid)?.run {
                         if (data.isNotEmpty()) data.clear()
-                        data.addAll(this)
-                        handler.post { notifyDataSetChanged() }
+                        data.addAll(second)
+                        attention = first
+                        handler.post {
+                            notifyDataSetChanged()
+                            try {
+                                with(activity as MainActivity) {
+                                    menuInflater.inflate(R.menu.hole_support_menu, menu)
+                                    menu[0].icon = context.getDrawable(
+                                        if (attention) R.drawable.ic_star_has_attention
+                                        else R.drawable.ic_star_not_attention
+                                    )
+                                    holeCommentsFragment = this@HoleCommentsFragment
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
                     }
                     handler.post { isRefreshing = false }
                 }

@@ -34,6 +34,7 @@ import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.imageToBase64
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
+import com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment
 import com.unidy2002.thuinfo.ui.news.WebFragment
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import com.wildma.pictureselector.FileUtils.deleteAllCacheImage
@@ -204,8 +205,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // WebFragment-related
-    lateinit var menu: Menu
     var webFragment: WebFragment? = null
+
+    // Hole-related
+    var holeCommentsFragment: HoleCommentsFragment? = null
+
+    lateinit var menu: Menu
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         try {
@@ -221,6 +226,7 @@ class MainActivity : AppCompatActivity() {
                     webFragment?.run { loadURL(findViewById(R.id.web_view)) }
                 }
                 R.id.web_close -> navController.navigateUp(appBarConfiguration)
+                R.id.hole_support_like -> holeCommentsFragment?.toggleAttention()
             }
         } catch (e: Exception) {
             e.printStackTrace()

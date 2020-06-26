@@ -68,14 +68,15 @@ fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = if (
     }
 }
 
-fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
+fun Network.getHoleComments(pid: Int): Pair<Boolean, List<HoleCard>>? = try {
     val title = JSON.parseObject(
         connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid").getData()
     ).getJSONObject("data")
     val result = mutableListOf<HoleCard>(HoleTitleCard(title))
-    val data = JSON.parseObject(
+    val commentsJson = JSON.parseObject(
         connect("https://thuhole.com/services/thuhole/api.php?action=getcomment&pid=$pid&user_token=$token").getData()
-    ).getJSONArray("data")
+    )
+    val data = commentsJson.getJSONArray("data")
     for (i in data.indices) {
         result.add(data.getJSONObject(i).run {
             HoleCommentCard(
@@ -87,7 +88,7 @@ fun Network.getHoleComments(pid: Int): List<HoleCard>? = try {
             )
         })
     }
-    result
+    (commentsJson.getInteger("attention") == 1) to result
 } catch (e: Exception) {
     e.printStackTrace()
     null
@@ -118,4 +119,17 @@ fun Network.postHoleComment(pid: Int, text: String) = try {
 } catch (e: Exception) {
     e.printStackTrace()
     false
+}
+
+fun Network.setHoleAttention(pid: Int, attention: Boolean) = try {
+    connect(
+        "https://thuhole.com/services/thuhole/api.php?action=attention&user_token=$token",
+        post = "pid=$pid&switch=${if (attention) 1 else 0}&user_token=$token"
+    ).inputStream.close()
+    JSON.parseObject(
+        connect("https://thuhole.com/services/thuhole/api.php?action=getcomment&pid=$pid&user_token=$token").getData()
+    ).getInteger("attention") == 1
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
 }
