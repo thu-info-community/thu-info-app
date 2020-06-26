@@ -15,9 +15,7 @@ class LongClickSelectDialog(
     private val canSaveImg: Boolean,
     private val canHide: Boolean,
     onClick: (Int) -> Unit
-) :
-    Dialog(context, R.style.HoleSelectDialogStyle), View.OnClickListener {
-
+) : Dialog(context, R.style.HoleSelectDialogStyle), View.OnClickListener {
     private lateinit var copy: Button
     private lateinit var saveImg: Button
     private lateinit var ignore: Button

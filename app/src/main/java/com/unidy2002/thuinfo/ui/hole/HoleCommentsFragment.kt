@@ -100,11 +100,9 @@ class HoleCommentsFragment : Fragment() {
                     Network.getHoleComments(pid)?.run {
                         if (data.isNotEmpty()) data.clear()
                         data.addAll(this)
-                        handler.post {
-                            notifyDataSetChanged()
-                            isRefreshing = false
-                        }
+                        handler.post { notifyDataSetChanged() }
                     }
+                    handler.post { isRefreshing = false }
                 }
             }
         }

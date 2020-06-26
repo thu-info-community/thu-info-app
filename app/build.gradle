@@ -63,6 +63,30 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'com.github.wildma:PictureSelector:1.2.0'
+    implementation('io.noties.markwon:core:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties.markwon:ext-latex:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties.markwon:linkify:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties.markwon:syntax-highlight:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties.markwon:ext-strikethrough:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties.markwon:ext-tables:4.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    implementation('io.noties:prism4j:2.0.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
+    annotationProcessor('io.noties:prism4j-bundler:2.0.0') {
+        exclude group: 'org.jetbrains', module: 'annotations-java5'
+    }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.sun.mail:android-mail:1.6.1'
     implementation 'com.sun.mail:android-activation:1.6.1'

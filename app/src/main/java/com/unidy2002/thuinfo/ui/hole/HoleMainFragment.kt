@@ -152,13 +152,13 @@ class HoleMainFragment : Fragment() {
     }
 
     // TODO: search mode is incompletely implemented (i.e. no auto load more)
-    private enum class FetchMode { NORMAL, ATTENTION, SEARCH }
+    enum class FetchMode { NORMAL, ATTENTION, SEARCH }
 
-    private inner class HoleAdapter : Adapter<ViewHolder>() {
+    inner class HoleAdapter : Adapter<ViewHolder>() {
         private val data = mutableListOf<HoleTitleCard>()
         private var lastPage = 0
 
-        private inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
+        inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
             override val id: TextView = view.findViewById(R.id.hole_id_text)
             override val tag: TextView = view.findViewById(R.id.hole_tag_text)
             override val time: TextView = view.findViewById(R.id.hole_time_text)
@@ -166,6 +166,8 @@ class HoleMainFragment : Fragment() {
             override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
             val commentIcon: ImageView = view.findViewById(R.id.hole_comment_cnt_icon)
             val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
+            val starIcon: ImageView = view.findViewById(R.id.hole_star_cnt_icon)
+            val starCnt: TextView = view.findViewById(R.id.hole_star_cnt_text)
         }
 
         fun fetch(mode: FetchMode, payload: String) {
@@ -219,6 +221,7 @@ class HoleMainFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = data[position]
             (holder as HoleCardViewHolder).bind(context, this@HoleMainFragment, item, ::getCurrentPosition)
+            // holder.text.maxLines = 9
             holder.itemView.setOnClickListener {
                 navigateDestination = getCurrentPosition(item.id)
                 NavHostFragment.findNavController(this@HoleMainFragment).navigate(
@@ -242,14 +245,6 @@ class HoleMainFragment : Fragment() {
                     }
                 }
                 true
-            }
-            if (item.reply > 0) {
-                holder.commentIcon.visibility = View.VISIBLE
-                holder.commentCnt.visibility = View.VISIBLE
-                holder.commentCnt.text = item.reply.toString()
-            } else {
-                holder.commentIcon.visibility = View.GONE
-                holder.commentCnt.visibility = View.GONE
             }
         }
     }

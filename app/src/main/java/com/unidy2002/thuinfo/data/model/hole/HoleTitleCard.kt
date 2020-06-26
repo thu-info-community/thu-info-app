@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSONObject
 data class HoleTitleCard(
     override val id: Int,
     override val timeStamp: Long,
-    override val text: String,
+    override var text: String,
     override val tag: String,
     var like: Int,
-    val type: String,
+    var type: String,
     val url: String,
     val reply: Int
 ) : HoleCard {

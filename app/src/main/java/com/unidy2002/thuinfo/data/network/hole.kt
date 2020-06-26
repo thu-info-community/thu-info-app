@@ -7,7 +7,9 @@ import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import java.net.URLEncoder.encode
 
-val token get() = loggedInUser.holeToken
+private val token get() = loggedInUser.holeToken
+
+private val foldTags = listOf("性相关", "政治相关", "性话题", "政治话题", "折叠", "NSFW", "刷屏", "真实性可疑", "用户举报较多")
 
 fun Network.holeLogin() = try {
     JSON.parseObject(
@@ -58,6 +60,11 @@ fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = if (
     } catch (e: Exception) {
         e.printStackTrace()
         null
+    }
+}?.also { result ->
+    result.filter { it.tag in foldTags }.forEach {
+        it.type = "text"
+        it.text = "*此树洞已被折叠*"
     }
 }
 

@@ -4,20 +4,15 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.text.SpannableString
-import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
+import android.text.util.Linkify
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -30,7 +25,19 @@ import com.unidy2002.thuinfo.data.util.getBitmap
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.data.util.save
 import com.unidy2002.thuinfo.ui.hole.HoleMainFragment
+import io.noties.markwon.AbstractMarkwonPlugin
+import io.noties.markwon.Markwon
+import io.noties.markwon.MarkwonConfiguration
+import io.noties.markwon.ext.latex.JLatexMathPlugin
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.inlineparser.MarkwonInlineParserPlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 
+/*@PrismBundle(
+    include = ["java", "c"],
+    grammarLocatorClassName = ".MyGrammarLocator"
+)*/
 interface HoleCardViewHolderInterface {
     val id: TextView
     val tag: TextView
@@ -38,6 +45,9 @@ interface HoleCardViewHolderInterface {
     val text: TextView
     val image: ImageView
 }
+
+/*val highlight: SyntaxHighlight =
+    Prism4jSyntaxHighlight.create(Prism4j(MyGrammarLocator()), Prism4jThemeDefault.create())*/
 
 @SuppressLint("SetTextI18n")
 fun HoleCardViewHolderInterface.bind(
@@ -63,70 +73,91 @@ fun HoleCardViewHolderInterface.bind(
         image.visibility = View.GONE
     }
 
+    if (card is HoleTitleCard && this is HoleMainFragment.HoleAdapter.HoleCardViewHolder) {
+        bindCnt(card.reply, commentIcon, commentCnt)
+        bindCnt(card.like, starIcon, starCnt)
+    }
+
     if (context == null) {
         text.text = card.text
     } else {
-        (this as? RecyclerView.ViewHolder)?.run {
-            text.setOnClickListener {
-                if (!intercept) itemView.callOnClick()
-                intercept = false
-            }
-            text.setOnLongClickListener {
-                if (!intercept) itemView.performLongClick()
-                intercept = false
-                true
-            }
-        }
-        text.movementMethod = LinkMovementMethod.getInstance()
-
-        text.text = SpannableString(card.text).apply {
-            val covered = mutableSetOf<Int>()
-
-            fun Regex.span(span: (String) -> Any, additionalCondition: (IntRange) -> Boolean = { true }) {
-                findAll(card.text).filter { covered.intersect(it.range).isEmpty() && additionalCondition(it.range) }
-                    .forEach {
-                        covered.addAll(it.range)
-                        setSpan(span(it.value), it.range.first, it.range.last + 1, SPAN_EXCLUSIVE_EXCLUSIVE)
-                    }
-            }
-
-            Regex("((https?://)?(?:(?:[\\w-]+\\.)+[a-zA-Z]{2,3}|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})(?::\\d{1,5})?(?:/[\\w~!@#$%^&*()\\-_=+[\\\\]{};:,./?|]*)?)(?![a-zA-Z0-9])")
-                .span({ url ->
-                    object : URLSpan(url) {
-                        override fun onClick(widget: View) {
-                            super.onClick(widget)
+        try {
+            Markwon.builder(context)
+                .usePlugin(MarkwonInlineParserPlugin.create())
+                .usePlugin(JLatexMathPlugin.create(text.textSize) { it.inlinesEnabled(true) })
+                .usePlugin(LinkifyPlugin.create(Linkify.WEB_URLS))
+                .usePlugin(StrikethroughPlugin.create())
+                .usePlugin(TablePlugin.create(context))
+                .usePlugin(object : AbstractMarkwonPlugin() {
+                    override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
+                        builder.linkResolver { view, link ->
                             (fragment as? HoleMainFragment)?.navigateDestination = positionGetter(card.id)
+                            try {
+                                if (link.startsWith("hole://#")) {
+                                    NavHostFragment.findNavController(fragment).navigate(
+                                        R.id.holeCommentsFragment,
+                                        Bundle().apply { putInt("pid", link.drop(8).toInt()) }
+                                    )
+                                    intercept = true
+                                } else {
+                                    view.context.startActivity(
+                                        Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
                         }
                     }
                 })
-
-            Regex("#\\d{1,7}").span({ index ->
-                object : ClickableSpan() {
-                    override fun updateDrawState(ds: TextPaint) {
-                        ds.color = ds.linkColor
+                .build()
+                .setMarkdown(text,card.text
+                    .replace(Regex("#\\d{1,7}")) { "[${it.value}](hole://${it.value})" }
+                    .run {
+                        if (card is HoleCommentCard &&
+                            substringBefore('\n').matches(Regex("\\[[洞主A-Za-z0-9 ]+] (#|\\$\\$|```).+"))
+                        ) replaceFirst("] ", "]\n") else this
                     }
-
-                    override fun onClick(widget: View) {
-                        try {
-                            NavHostFragment.findNavController(fragment).navigate(
-                                R.id.holeCommentsFragment,
-                                Bundle().apply { putInt("pid", index.drop(1).toInt()) }
-                            )
-                            (fragment as? HoleMainFragment)?.navigateDestination = positionGetter(card.id)
-                            intercept = true
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                    .replace("\n", "  \n")
+                    .replace("$", "$$"))
+                /*.toSpannable().apply {
+                    Regex("(?:(?:Angry|Baby|Crazy|Diligent|Excited|Fat|Greedy|Hungry|Interesting|Jolly|Kind|Little|Magic|Naïve|Old|PKU|Quiet|Rich|Superman|Tough|Undefined|Valuable|Wifeless|Xiangbuchulai|Young|Zombie)\\s)?(?:Alice|Bob|Carol|Dave|Eve|Francis|Grace|Hans|Isabella|Jason|Kate|Louis|Margaret|Nathan|Olivia|Paul|Queen|Richard|Susan|Thomas|Uma|Vivian|Winnie|Xander|Yasmine|Zach)|You Win(?: \\d+)?|洞主")
+                        .findAll(toString()).forEach {
+                            if (!(startsWith('[') && it.range.first == 1))
+                                setSpan(
+                                    ForegroundColorSpan(getColor(context, R.color.colorPrimaryLight)),
+                                    it.range.first, it.range.last + 1,
+                                    SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
                         }
-                    }
+                }*/
 
+            (this as? RecyclerView.ViewHolder)?.run {
+                text.setOnClickListener {
+                    if (!intercept) itemView.callOnClick()
+                    intercept = false
                 }
-            })
-
-            Regex("(?:(?:Angry|Baby|Crazy|Diligent|Excited|Fat|Greedy|Hungry|Interesting|Jolly|Kind|Little|Magic|Naïve|Old|PKU|Quiet|Rich|Superman|Tough|Undefined|Valuable|Wifeless|Xiangbuchulai|Young|Zombie)\\s)?(?:Alice|Bob|Carol|Dave|Eve|Francis|Grace|Hans|Isabella|Jason|Kate|Louis|Margaret|Nathan|Olivia|Paul|Queen|Richard|Susan|Thomas|Uma|Vivian|Winnie|Xander|Yasmine|Zach)|You Win(?: \\d+)?|洞主")
-                .span({ ForegroundColorSpan(getColor(context, R.color.colorPrimaryLight)) }) {
-                    !(card is HoleCommentCard && it.first == 1)
+                text.setOnLongClickListener {
+                    if (!intercept) itemView.performLongClick()
+                    intercept = false
+                    true
                 }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            text.text = card.text
         }
+    }
+}
+
+private fun bindCnt(cnt: Int, icon: ImageView, text: TextView) {
+    if (cnt > 0) {
+        icon.visibility = View.VISIBLE
+        text.visibility = View.VISIBLE
+        text.text = cnt.toString()
+    } else {
+        icon.visibility = View.GONE
+        text.visibility = View.GONE
     }
 }
 
