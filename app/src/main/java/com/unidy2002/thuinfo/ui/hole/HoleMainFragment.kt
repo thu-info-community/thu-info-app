@@ -25,6 +25,7 @@ import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
 import com.unidy2002.thuinfo.data.util.encrypt
+import com.unidy2002.thuinfo.data.util.safePost
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_main.*
 import kotlin.math.min
@@ -107,10 +108,10 @@ class HoleMainFragment : Fragment() {
             if (loggedInUser.holeLoggedIn || Network.holeLogin()) {
                 loggedInUser.holeLoggedIn = true
                 validating = false
-                hole_recycler_view.handler.post { hole_swipe_refresh.isRefreshing = false }
+                hole_recycler_view.handler.safePost { hole_swipe_refresh.isRefreshing = false }
                 if (virgin) {
                     virgin = false
-                    hole_recycler_view.handler.post {
+                    hole_recycler_view.handler.safePost {
                         holeAdapter.refresh()
                     }
                     safeThread {
@@ -124,7 +125,7 @@ class HoleMainFragment : Fragment() {
                     }
                 }
             } else {
-                hole_recycler_view.handler.post {
+                hole_recycler_view.handler.safePost {
                     hole_swipe_refresh.isRefreshing = false
                     val input = HoleLogin()
                     AlertDialog.Builder(context)
@@ -161,6 +162,8 @@ class HoleMainFragment : Fragment() {
             val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
             val starIcon: ImageView = view.findViewById(R.id.hole_star_cnt_icon)
             val starCnt: TextView = view.findViewById(R.id.hole_star_cnt_text)
+            /* val quoteLine: View = view.findViewById(R.id.hole_line_below_quote)
+            val quoteText: TextView = view.findViewById(R.id.hole_quote_text) */
         }
 
         fun fetch(mode: FetchMode = currentMode, payload: String = currentPayload) {
@@ -175,12 +178,12 @@ class HoleMainFragment : Fragment() {
                         data.addAll(this)
                     }
                     if (data.size > lastSize) {
-                        hole_swipe_refresh.handler.post {
+                        hole_swipe_refresh.handler.safePost {
                             notifyItemRangeChanged(lastSize, data.size)
                         }
                     }
                 }
-                hole_swipe_refresh.handler.post {
+                hole_swipe_refresh.handler.safePost {
                     hole_swipe_refresh.isRefreshing = false
                 }
             }

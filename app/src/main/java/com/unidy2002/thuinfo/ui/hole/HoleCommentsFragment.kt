@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.ui.hole
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
 import com.unidy2002.thuinfo.data.network.setHoleAttention
+import com.unidy2002.thuinfo.data.util.safePost
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_hole_comments.*
 
@@ -36,12 +38,14 @@ class HoleCommentsFragment : Fragment() {
 
     private val holeCommentsAdapter = HoleCommentsAdapter()
 
+    private lateinit var recyclerViewState: Parcelable
+
     fun toggleAttention() {
         safeThread {
             Network.setHoleAttention(pid, !attention)?.run {
                 attention = this
                 try {
-                    hole_comment_submit?.handler?.post {
+                    hole_comment_submit?.handler?.safePost {
                         (activity as MainActivity).menu[0].icon = context?.getDrawable(
                             if (attention) R.drawable.ic_star_has_attention
                             else R.drawable.ic_star_not_attention
@@ -71,7 +75,7 @@ class HoleCommentsFragment : Fragment() {
 
                 hole_comments_recycler_view.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = holeCommentsAdapter.also { it.refresh() }
+                    adapter = holeCommentsAdapter.also { it.refresh(::recyclerViewState.isInitialized) }
                 }
 
                 hole_comment_edit_text.doOnTextChanged { text, _, _, _ ->
@@ -83,7 +87,7 @@ class HoleCommentsFragment : Fragment() {
                         isEnabled = false
                         safeThread {
                             if (Network.postHoleComment(pid, hole_comment_edit_text.text.toString())) {
-                                handler.post {
+                                handler.safePost {
                                     holeCommentsAdapter.refresh()
                                     context?.run {
                                         Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show()
@@ -92,7 +96,7 @@ class HoleCommentsFragment : Fragment() {
                                     isEnabled = true
                                 }
                             } else {
-                                handler.post {
+                                handler.safePost {
                                     context?.run {
                                         Toast.makeText(this, hole_publish_failure, Toast.LENGTH_SHORT).show()
                                     }
@@ -111,6 +115,7 @@ class HoleCommentsFragment : Fragment() {
         try {
             (activity as MainActivity).menu.clear()
             (activity as MainActivity).holeCommentsFragment = null
+            recyclerViewState = hole_comments_recycler_view.layoutManager!!.onSaveInstanceState()!!
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -127,7 +132,7 @@ class HoleCommentsFragment : Fragment() {
             override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
         }
 
-        fun refresh() {
+        fun refresh(restore: Boolean = false) {
             hole_comments_refresh.run {
                 isRefreshing = true
                 safeThread {
@@ -135,7 +140,7 @@ class HoleCommentsFragment : Fragment() {
                         if (data.isNotEmpty()) data.clear()
                         data.addAll(second)
                         attention = first
-                        handler.post {
+                        handler.safePost {
                             notifyDataSetChanged()
                             try {
                                 with(activity as MainActivity) {
@@ -153,7 +158,16 @@ class HoleCommentsFragment : Fragment() {
                             }
                         }
                     }
-                    handler.post { isRefreshing = false }
+                    handler.safePost {
+                        isRefreshing = false
+                        if (restore) {
+                            try {
+                                hole_comments_recycler_view.layoutManager?.onRestoreInstanceState(recyclerViewState)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
                 }
             }
         }

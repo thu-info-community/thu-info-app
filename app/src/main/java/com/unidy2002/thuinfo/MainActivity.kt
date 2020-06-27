@@ -227,6 +227,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     webFragment?.run { loadURL(findViewById(R.id.web_view)) }
                 }
+                /* R.id.web_copy_link -> try {
+                    copyUtil(applicationContext, webFragment!!.lastUrl)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } */
                 R.id.web_close -> navController.navigateUp(appBarConfiguration)
                 R.id.hole_support_like -> holeCommentsFragment?.toggleAttention()
             }

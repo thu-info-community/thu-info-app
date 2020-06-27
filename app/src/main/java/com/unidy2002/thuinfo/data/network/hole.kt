@@ -23,6 +23,16 @@ fun Network.holeLogin() = try {
     false
 }
 
+fun Network.holeSimpleGet(pid: Int) = try {
+    JSON.parseObject(connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid").getData())
+        .getJSONObject("data").run {
+            (if (getString("type") == "image") "[图文] " else "") + getString("text")
+        }
+} catch (e: Exception) {
+    e.printStackTrace()
+    ""
+}
+
 fun Network.getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard>? =
     if (mode == FetchMode.SEARCH && payload.matches(Regex("#\\d{1,7}"))) {
         if (page == 1) {

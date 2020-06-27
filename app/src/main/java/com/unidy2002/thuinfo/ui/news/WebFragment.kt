@@ -9,13 +9,15 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.network.getPrettyPrintHTML
 import com.unidy2002.thuinfo.data.util.DownloadCompleteReceiver
 import com.unidy2002.thuinfo.data.util.downloadBySystem
-import kotlin.concurrent.thread
+import com.unidy2002.thuinfo.data.util.safeThread
+import kotlinx.android.synthetic.main.fragment_web.*
 
 class WebFragment : Fragment() {
 
@@ -30,7 +32,7 @@ class WebFragment : Fragment() {
 
     fun loadURL(view: WebView, url: String = lastUrl) {
         if (url.isNotEmpty()) {
-            thread {
+            safeThread {
                 getPrettyPrintHTML(url).run {
                     view.handler.post {
                         if (this == null || !viewPretty) {
@@ -46,7 +48,9 @@ class WebFragment : Fragment() {
     }
 
     override fun onStart() {
-        view?.findViewById<WebView>(R.id.web_view)?.apply {
+        super.onStart()
+
+        web_view.apply {
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                     loadURL(view, request.url.toString())
@@ -68,11 +72,10 @@ class WebFragment : Fragment() {
             loadURL(this, arguments!!.getString("url")!!)
         }
 
-        activity?.menuInflater?.inflate(R.menu.news_web_menu, (activity as MainActivity).menu)
-
-        (activity as MainActivity).webFragment = this
-
-        super.onStart()
+        (activity as? MainActivity)?.run {
+            webFragment = this@WebFragment
+            if (menu.isEmpty()) menuInflater.inflate(R.menu.news_web_menu, menu)
+        }
     }
 
     override fun onDestroy() {

@@ -82,6 +82,8 @@ fun HoleCardViewHolderInterface.bind(
         text.text = card.text
     } else {
         try {
+            /* var quoteCnt = 0
+            var quoteId = 0 */
             Markwon.builder(context)
                 .usePlugin(MarkwonInlineParserPlugin.create())
                 .usePlugin(JLatexMathPlugin.create(text.textSize) { it.inlinesEnabled(true) })
@@ -101,7 +103,12 @@ fun HoleCardViewHolderInterface.bind(
                                     intercept = true
                                 } else {
                                     view.context.startActivity(
-                                        Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                                        Intent(
+                                            Intent.ACTION_VIEW, Uri.parse(
+                                                if (link.startsWith("http")) link
+                                                else "http://$link"
+                                            )
+                                        )
                                     )
                                 }
                             } catch (e: Exception) {
@@ -115,7 +122,11 @@ fun HoleCardViewHolderInterface.bind(
                     .replace(Regex("(https?://)?thuhole\\.com/?#(?:#|%23)\\d{1,7}")) {
                         it.value.substringAfter('#')
                     }
-                    .replace(Regex("#\\d{1,7}")) { "[${it.value}](hole://${it.value})" }
+                    .replace(Regex("#\\d{1,7}")) {
+                        /* quoteCnt++
+                        quoteId = it.value.drop(1).toInt() */
+                        "[${it.value}](hole://${it.value})"
+                    }
                     .run {
                         if (card is HoleCommentCard &&
                             substringBefore('\n').matches(Regex("\\[[洞主A-Za-z0-9 ]+] (#|\\$\\$|```).+"))
@@ -146,6 +157,32 @@ fun HoleCardViewHolderInterface.bind(
                     true
                 }
             }
+
+            /* if (card is HoleTitleCard && this is HoleMainFragment.HoleAdapter.HoleCardViewHolder) {
+                if (quoteCnt == 1) {
+                    safeThread {
+                        with(Network.holeSimpleGet(quoteId)) {
+                            quoteText.handler.safePost {
+                                if (isNotBlank()) {
+                                    quoteLine.visibility = View.VISIBLE
+                                    quoteText.visibility = View.VISIBLE
+                                    quoteText.text = "提到了：${
+                                    with(replace(Regex("\\n+"), " ")) {
+                                        if (length < 40) this else (substring(0, 38) + "...")
+                                    }
+                                    }"
+                                } else {
+                                    quoteLine.visibility = View.GONE
+                                    quoteText.visibility = View.GONE
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    quoteLine.visibility = View.GONE
+                    quoteText.visibility = View.GONE
+                }
+            } */
         } catch (e: Exception) {
             e.printStackTrace()
             text.text = card.text
