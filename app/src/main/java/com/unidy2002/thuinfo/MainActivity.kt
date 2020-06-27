@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,6 +25,7 @@ import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.HoleIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.data.model.hole.copyUtil
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
 import com.unidy2002.thuinfo.data.network.Network
@@ -234,6 +236,20 @@ class MainActivity : AppCompatActivity() {
                 } */
                 R.id.web_close -> navController.navigateUp(appBarConfiguration)
                 R.id.hole_support_like -> holeCommentsFragment?.toggleAttention()
+                R.id.hole_copy_token -> try {
+                    copyUtil(applicationContext, loggedInUser.holeToken)
+                    applicationContext?.run { Toast.makeText(this, hole_copy_success_str, Toast.LENGTH_SHORT).show() }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    applicationContext?.run { Toast.makeText(this, hole_copy_failure_str, Toast.LENGTH_SHORT).show() }
+                }
+                R.id.hole_logout -> {
+                    loggedInUser.holeToken = ""
+                    loggedInUser.holeLoggedIn = false
+                    getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()
+                        ?.remove("hiv")?.remove("hpe")?.commit()
+                    navController.navigateUp(appBarConfiguration)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

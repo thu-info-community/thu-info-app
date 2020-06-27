@@ -313,10 +313,10 @@ class LoginActivity : AppCompatActivity() {
             // Try to get hole token
             holeToken = try {
                 getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).run {
-                    val civ = getString("civ", null)  // Community initial vector
-                    val cpe = getString("cpe", null)  // Community password encrypted
-                    if (civ != null && cpe != null) {
-                        decrypt("h${loggedInUser.userId}", civ to cpe)
+                    val hiv = getString("hiv", null)  // Community initial vector
+                    val hpe = getString("hpe", null)  // Community password encrypted
+                    if (hiv != null && hpe != null) {
+                        decrypt("h${loggedInUser.userId}", hiv to hpe)
                     } else {
                         ""
                     }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:id="@+id/hole_copy_token"
+            android:title="@string/hole_copy_token_str"/>
+
+    <item
+            android:id="@+id/hole_logout"
+            android:title="@string/hole_logout_str"/>
+</menu>

@@ -113,8 +113,10 @@ class HoleCommentsFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         try {
-            (activity as MainActivity).menu.clear()
-            (activity as MainActivity).holeCommentsFragment = null
+            with(activity as MainActivity) {
+                menu.removeItem(R.id.hole_support_like)
+                holeCommentsFragment = null
+            }
             recyclerViewState = hole_comments_recycler_view.layoutManager!!.onSaveInstanceState()!!
         } catch (e: Exception) {
             e.printStackTrace()

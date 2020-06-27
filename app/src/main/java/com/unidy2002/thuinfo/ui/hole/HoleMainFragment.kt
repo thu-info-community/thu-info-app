@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
+import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.*
@@ -48,6 +49,8 @@ class HoleMainFragment : Fragment() {
     private var currentMode = FetchMode.NORMAL
 
     private var currentPayload = ""
+
+    private var lastAutoFetchPos = -1
 
     override fun onStart() {
         super.onStart()
@@ -91,11 +94,26 @@ class HoleMainFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     with(recyclerView.layoutManager as LinearLayoutManager) {
                         if (currentMode != FetchMode.ATTENTION &&
-                            itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing
-                        ) holeAdapter.fetch()
+                            itemCount - findLastCompletelyVisibleItemPosition() <= 10 &&
+                            lastAutoFetchPos < holeAdapter.itemCount &&
+                            !hole_swipe_refresh.isRefreshing
+                        ) {
+                            lastAutoFetchPos = holeAdapter.itemCount
+                            holeAdapter.fetch()
+                        }
                     }
                 }
             })
+        }
+
+        try {
+            with(activity as MainActivity) {
+                menu.removeItem(R.id.hole_logout)
+                menu.removeItem(R.id.hole_copy_token)
+                menuInflater.inflate(R.menu.hole_main_menu, menu)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         if (!validating) validate()
@@ -117,8 +135,8 @@ class HoleMainFragment : Fragment() {
                     safeThread {
                         activity?.getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()?.run {
                             encrypt("h${loggedInUser.userId}", loggedInUser.holeToken).run {
-                                putString("civ", first)
-                                putString("cpe", second)
+                                putString("hiv", first)
+                                putString("hpe", second)
                             }
                             apply()
                         }
@@ -197,6 +215,7 @@ class HoleMainFragment : Fragment() {
                 notifyDataSetChanged()
             }
             lastPage = 0
+            lastAutoFetchPos = -1
             fetch(mode, payload)
         }
 
@@ -246,6 +265,11 @@ class HoleMainFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        try {
+            (activity as MainActivity).menu.clear()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         (hole_recycler_view.layoutManager as? LinearLayoutManager)?.run {
             val firstVisible = findFirstCompletelyVisibleItemPosition()
             lastTopPosition =

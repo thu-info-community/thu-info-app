@@ -25,4 +25,6 @@
     <string name="yes_str">是</string>
     <string name="no_str">否</string>
     <string name="confirm_send_img_str">是否发送所附图片</string>
+    <string name="hole_copy_token_str">复制Token</string>
+    <string name="hole_logout_str">退出树洞</string>
 </resources>
