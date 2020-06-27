@@ -26,6 +26,10 @@ class HoleIgnoreDB private constructor(val context: Context) {
         }
     }
 
+    fun close() {
+        db.close()
+    }
+
     companion object {
         private const val dbVersion = 1
 

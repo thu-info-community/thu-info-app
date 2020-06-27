@@ -111,7 +111,10 @@ fun HoleCardViewHolderInterface.bind(
                     }
                 })
                 .build()
-                .setMarkdown(text,card.text
+                .setMarkdown(text, card.text
+                    .replace(Regex("(https?://)?thuhole\\.com/?#(?:#|%23)\\d{1,7}")) {
+                        it.value.substringAfter('#')
+                    }
                     .replace(Regex("#\\d{1,7}")) { "[${it.value}](hole://${it.value})" }
                     .run {
                         if (card is HoleCommentCard &&
@@ -120,17 +123,17 @@ fun HoleCardViewHolderInterface.bind(
                     }
                     .replace("\n", "  \n")
                     .replace("$", "$$"))
-                /*.toSpannable().apply {
-                    Regex("(?:(?:Angry|Baby|Crazy|Diligent|Excited|Fat|Greedy|Hungry|Interesting|Jolly|Kind|Little|Magic|Naïve|Old|PKU|Quiet|Rich|Superman|Tough|Undefined|Valuable|Wifeless|Xiangbuchulai|Young|Zombie)\\s)?(?:Alice|Bob|Carol|Dave|Eve|Francis|Grace|Hans|Isabella|Jason|Kate|Louis|Margaret|Nathan|Olivia|Paul|Queen|Richard|Susan|Thomas|Uma|Vivian|Winnie|Xander|Yasmine|Zach)|You Win(?: \\d+)?|洞主")
-                        .findAll(toString()).forEach {
-                            if (!(startsWith('[') && it.range.first == 1))
-                                setSpan(
-                                    ForegroundColorSpan(getColor(context, R.color.colorPrimaryLight)),
-                                    it.range.first, it.range.last + 1,
-                                    SPAN_EXCLUSIVE_EXCLUSIVE
-                                )
-                        }
-                }*/
+            /*.toSpannable().apply {
+                Regex("(?:(?:Angry|Baby|Crazy|Diligent|Excited|Fat|Greedy|Hungry|Interesting|Jolly|Kind|Little|Magic|Naïve|Old|PKU|Quiet|Rich|Superman|Tough|Undefined|Valuable|Wifeless|Xiangbuchulai|Young|Zombie)\\s)?(?:Alice|Bob|Carol|Dave|Eve|Francis|Grace|Hans|Isabella|Jason|Kate|Louis|Margaret|Nathan|Olivia|Paul|Queen|Richard|Susan|Thomas|Uma|Vivian|Winnie|Xander|Yasmine|Zach)|You Win(?: \\d+)?|洞主")
+                    .findAll(toString()).forEach {
+                        if (!(startsWith('[') && it.range.first == 1))
+                            setSpan(
+                                ForegroundColorSpan(getColor(context, R.color.colorPrimaryLight)),
+                                it.range.first, it.range.last + 1,
+                                SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                    }
+            }*/
 
             (this as? RecyclerView.ViewHolder)?.run {
                 text.setOnClickListener {

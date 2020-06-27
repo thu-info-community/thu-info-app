@@ -132,6 +132,8 @@ class MainActivity : AppCompatActivity() {
                             e.printStackTrace()
                         }
                         loggedInUser.timerTasks.forEach { task -> task.cancel() }
+                        loggedInUser.schedule.close()
+                        loggedInUser.holeIgnore.close()
                         runOnUiThread {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)

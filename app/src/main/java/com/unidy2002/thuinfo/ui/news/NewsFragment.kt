@@ -94,4 +94,9 @@ class NewsFragment : Fragment() {
         }
         super.onPause()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        newsContainer.close()
+    }
 }

@@ -34,6 +34,10 @@ class NewsDBManager private constructor(context: Context?) {
         return result
     }
 
+    fun close() {
+        writableDatabase.close()
+    }
+
     companion object {
         private var instance: NewsDBManager? = null
         fun getInstance(context: Context?): NewsDBManager {

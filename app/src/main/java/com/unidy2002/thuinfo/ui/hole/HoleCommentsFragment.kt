@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.get
+import androidx.core.view.isEmpty
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -105,8 +106,8 @@ class HoleCommentsFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         try {
             (activity as MainActivity).menu.clear()
             (activity as MainActivity).holeCommentsFragment = null
@@ -138,12 +139,14 @@ class HoleCommentsFragment : Fragment() {
                             notifyDataSetChanged()
                             try {
                                 with(activity as MainActivity) {
-                                    menuInflater.inflate(R.menu.hole_support_menu, menu)
-                                    menu[0].icon = context.getDrawable(
-                                        if (attention) R.drawable.ic_star_has_attention
-                                        else R.drawable.ic_star_not_attention
-                                    )
-                                    holeCommentsFragment = this@HoleCommentsFragment
+                                    if (menu.isEmpty()) {
+                                        menuInflater.inflate(R.menu.hole_support_menu, menu)
+                                        menu[0].icon = context.getDrawable(
+                                            if (attention) R.drawable.ic_star_has_attention
+                                            else R.drawable.ic_star_not_attention
+                                        )
+                                        holeCommentsFragment = this@HoleCommentsFragment
+                                    }
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()

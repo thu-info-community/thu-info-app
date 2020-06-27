@@ -132,6 +132,9 @@ class ScheduleDBManager private constructor(context: Context) {
         }
     }
 
+    fun close() {
+        writableDatabase.close()
+    }
 
     // Data and enum classes
 
