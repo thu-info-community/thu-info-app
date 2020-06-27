@@ -44,30 +44,27 @@ class HoleMainFragment : Fragment() {
 
     private var validating = false
 
-    private var normalMode = true
+    private var currentMode = FetchMode.NORMAL
+
+    private var currentPayload = ""
 
     override fun onStart() {
         super.onStart()
 
         hole_refresh_btn.setOnClickListener {
-            normalMode = true
-            if (!hole_swipe_refresh.isRefreshing)
-                holeAdapter.refresh()
+            holeAdapter.refresh(FetchMode.NORMAL)
         }
 
         hole_attention_btn.setOnClickListener {
-            normalMode = false
             holeAdapter.refresh(FetchMode.ATTENTION)
         }
 
         hole_hot_btn.setOnClickListener {
-            normalMode = false
             holeAdapter.refresh(FetchMode.SEARCH, "热榜")
         }
 
         hole_search_edit_text.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == ACTION_UP) {
-                normalMode = false
                 holeAdapter.refresh(FetchMode.SEARCH, hole_search_edit_text.text.toString())
             }
             false
@@ -80,10 +77,7 @@ class HoleMainFragment : Fragment() {
 
         hole_swipe_refresh.apply {
             setColorSchemeResources(R.color.colorAccent)
-            setOnRefreshListener {
-                normalMode = true
-                holeAdapter.refresh()
-            }
+            setOnRefreshListener { holeAdapter.refresh() }
         }
 
         hole_recycler_view.apply {
@@ -95,8 +89,9 @@ class HoleMainFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     with(recyclerView.layoutManager as LinearLayoutManager) {
-                        if (normalMode && itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing)
-                            holeAdapter.fetch(FetchMode.NORMAL, "")
+                        if (currentMode != FetchMode.ATTENTION &&
+                            itemCount - findLastCompletelyVisibleItemPosition() <= 10 && !hole_swipe_refresh.isRefreshing
+                        ) holeAdapter.fetch()
                     }
                 }
             })
@@ -116,7 +111,6 @@ class HoleMainFragment : Fragment() {
                 if (virgin) {
                     virgin = false
                     hole_recycler_view.handler.post {
-                        normalMode = true
                         holeAdapter.refresh()
                     }
                     safeThread {
@@ -151,7 +145,6 @@ class HoleMainFragment : Fragment() {
         }
     }
 
-    // TODO: search mode is incompletely implemented (i.e. no auto load more)
     enum class FetchMode { NORMAL, ATTENTION, SEARCH }
 
     inner class HoleAdapter : Adapter<ViewHolder>() {
@@ -170,29 +163,20 @@ class HoleMainFragment : Fragment() {
             val starCnt: TextView = view.findViewById(R.id.hole_star_cnt_text)
         }
 
-        fun fetch(mode: FetchMode, payload: String) {
+        fun fetch(mode: FetchMode = currentMode, payload: String = currentPayload) {
             hole_swipe_refresh.isRefreshing = true
             safeThread {
-                Network.getHoleList(
-                    when (mode) {
-                        FetchMode.NORMAL -> lastPage + 1
-                        FetchMode.ATTENTION -> -1
-                        FetchMode.SEARCH -> -2
-                    },
-                    payload
-                )?.run {
+                Network.getHoleList(mode, lastPage + 1, payload)?.run {
+                    val lastSize = data.size
+                    lastPage++
                     if (mode == FetchMode.NORMAL) {
-                        val lastSize = data.size
-                        val lastId = data.lastOrNull()?.id ?: Int.MAX_VALUE
-                        lastPage++
-                        data.addAll(filter { it.id < lastId })
-                        hole_swipe_refresh.handler.post {
-                            notifyItemRangeChanged(lastSize, data.size)
-                        }
+                        with(data.lastOrNull()?.id ?: Int.MAX_VALUE) { data.addAll(filter { it.id < this }) }
                     } else {
                         data.addAll(this)
+                    }
+                    if (data.size > lastSize) {
                         hole_swipe_refresh.handler.post {
-                            notifyDataSetChanged()
+                            notifyItemRangeChanged(lastSize, data.size)
                         }
                     }
                 }
@@ -202,7 +186,9 @@ class HoleMainFragment : Fragment() {
             }
         }
 
-        fun refresh(mode: FetchMode = FetchMode.NORMAL, payload: String = "") {
+        fun refresh(mode: FetchMode = currentMode, payload: String = currentPayload) {
+            currentMode = mode
+            currentPayload = payload
             if (data.isNotEmpty()) {
                 data.clear()
                 notifyDataSetChanged()

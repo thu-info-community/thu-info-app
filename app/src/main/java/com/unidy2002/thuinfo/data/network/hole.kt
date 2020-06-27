@@ -5,6 +5,7 @@ import com.unidy2002.thuinfo.data.model.hole.HoleCard
 import com.unidy2002.thuinfo.data.model.hole.HoleCommentCard
 import com.unidy2002.thuinfo.data.model.hole.HoleTitleCard
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.ui.hole.HoleMainFragment.FetchMode
 import java.net.URLEncoder.encode
 
 private val token get() = loggedInUser.holeToken
@@ -22,51 +23,53 @@ fun Network.holeLogin() = try {
     false
 }
 
-/**
- * page >= 0:  NORMAL
- * page == -1: ATTENTION
- * page == -2: SEARCH
- */
-fun Network.getHoleList(page: Int, payload: String): List<HoleTitleCard>? = if (page == -2 && payload.startsWith("#")) {
-    try {
-        listOf(
-            HoleTitleCard(
-                JSON.parseObject(
-                    connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=${payload.substring(1)}").getData()
-                ).getJSONObject("data")
-            )
-        )
-    } catch (e: Exception) {
-        e.printStackTrace()
-        emptyList<HoleTitleCard>()
-    }
-} else {
-    try {
-        val data = JSON.parseObject(
-            connect(
-                when (page) {
-                    -1 -> "https://thuhole.com/services/thuhole/api.php?action=getattention&user_token=$token"
-                    -2 -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=1&keywords=$payload&user_token=$token"
-                    else -> "https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token"
-                }
-            ).getData()
-        ).getJSONArray("data")
-        assert(data.isNotEmpty())
-        val result = mutableListOf<HoleTitleCard>()
-        for (i in data.indices) {
-            result.add(HoleTitleCard(data.getJSONObject(i)))
+fun Network.getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard>? =
+    if (mode == FetchMode.SEARCH && payload.matches(Regex("#\\d{1,7}"))) {
+        if (page == 1) {
+            try {
+                listOf(
+                    HoleTitleCard(
+                        JSON.parseObject(
+                            connect(
+                                "https://thuhole.com/services/thuhole/api.php?action=getone&pid=${payload.drop(1)}"
+                            ).getData()
+                        ).getJSONObject("data")
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList<HoleTitleCard>()
+            }
+        } else {
+            emptyList()
         }
-        if (page >= 0) result.filter { !loggedInUser.holeIgnore.hasIgnoreP(it.id) } else result
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
+    } else {
+        println(payload)
+        try {
+            val data = JSON.parseObject(
+                connect(
+                    when (mode) {
+                        FetchMode.NORMAL -> "https://thuhole.com/services/thuhole/api.php?action=getlist&p=$page&user_token=$token"
+                        FetchMode.ATTENTION -> "https://thuhole.com/services/thuhole/api.php?action=getattention&user_token=$token"
+                        FetchMode.SEARCH -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=$page&keywords=$payload&user_token=$token"
+                    }
+                ).getData()
+            ).getJSONArray("data")
+            assert(data.isNotEmpty())
+            val result = mutableListOf<HoleTitleCard>()
+            for (i in data.indices)
+                result.add(HoleTitleCard(data.getJSONObject(i)))
+            result.filter { !loggedInUser.holeIgnore.hasIgnoreP(it.id) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }?.also { result ->
+        result.filter { it.tag in foldTags }.forEach {
+            it.type = "text"
+            it.text = "*此树洞已被折叠*"
+        }
     }
-}?.also { result ->
-    result.filter { it.tag in foldTags }.forEach {
-        it.type = "text"
-        it.text = "*此树洞已被折叠*"
-    }
-}
 
 fun Network.getHoleComments(pid: Int): Pair<Boolean, List<HoleCard>>? = try {
     val title = JSON.parseObject(

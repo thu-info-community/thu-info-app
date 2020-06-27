@@ -129,8 +129,4 @@ class NewsContainer(context: Context?) {
             4
         )
     )
-
-    fun close(){
-        newsDBManager.close()
-    }
 }
