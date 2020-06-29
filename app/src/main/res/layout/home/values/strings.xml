@@ -7,6 +7,11 @@
     <string name="why">？</string>
     <string name="refresh">刷</string>
     <string name="report">成绩单</string>
+    <string name="pay_for_report_str">氪金</string>
+    <string name="confirm_pay_for_report_str">[试验性功能] 付费查看电子成绩单</string>
+    <string name="intro_pay_for_report_str">只支持中文成绩单。\n直接连到学校的接口。\n10元一次，氪金需谨慎。</string>
+    <string name="enter_email_str">请输入邮箱</string>
+    <string name="confirm_email_str">验证邮箱地址</string>
     <string name="grade">等第</string>
     <string name="dot_mark">·</string>
     <string name="physical_exam_result">体测成绩</string>

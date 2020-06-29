@@ -10,7 +10,7 @@ import java.net.URLEncoder.encode
 
 private val token get() = loggedInUser.holeToken
 
-private val foldTags = listOf("性相关", "政治相关", "性话题", "政治话题", "折叠", "NSFW", "刷屏", "真实性可疑", "用户举报较多")
+private val foldTags = listOf("性相关", "政治相关", "性话题", "政治话题", "折叠", "NSFW", "刷屏", "真实性可疑", "用户举报较多", "重复内容")
 
 fun Network.holeLogin() = try {
     JSON.parseObject(
@@ -23,7 +23,7 @@ fun Network.holeLogin() = try {
     false
 }
 
-fun Network.holeSimpleGet(pid: Int) = try {
+/* fun Network.holeSimpleGet(pid: Int) = try {
     JSON.parseObject(connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid").getData())
         .getJSONObject("data").run {
             (if (getString("type") == "image") "[图文] " else "") + getString("text")
@@ -31,7 +31,7 @@ fun Network.holeSimpleGet(pid: Int) = try {
 } catch (e: Exception) {
     e.printStackTrace()
     ""
-}
+} */
 
 fun Network.getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard>? =
     if (mode == FetchMode.SEARCH && payload.matches(Regex("#\\d{1,7}"))) {
@@ -41,7 +41,7 @@ fun Network.getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleT
                     HoleTitleCard(
                         JSON.parseObject(
                             connect(
-                                "https://thuhole.com/services/thuhole/api.php?action=getone&pid=${payload.drop(1)}"
+                                "https://thuhole.com/services/thuhole/api.php?action=getone&pid=${payload.drop(1)}&user_token=$token"
                             ).getData()
                         ).getJSONObject("data")
                     )
@@ -77,13 +77,13 @@ fun Network.getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleT
     }?.also { result ->
         result.filter { it.tag in foldTags }.forEach {
             it.type = "text"
-            it.text = "*此树洞已被折叠*"
+            it.text = "*单击以查看树洞*"
         }
     }
 
 fun Network.getHoleComments(pid: Int): Pair<Boolean, List<HoleCard>>? = try {
     val title = JSON.parseObject(
-        connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid").getData()
+        connect("https://thuhole.com/services/thuhole/api.php?action=getone&pid=$pid&user_token=$token").getData()
     ).getJSONObject("data")
     val result = mutableListOf<HoleCard>(HoleTitleCard(title))
     val commentsJson = JSON.parseObject(

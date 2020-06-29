@@ -32,55 +32,6 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:text="@string/hot_spot_string"
-                        android:textSize="15sp"/>
-
-                <GridLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:columnCount="3"
-                        android:orientation="horizontal">
-
-                    <TextView
-                            android:id="@+id/hole_btn"
-                            android:text="@string/hole_res"
-                            android:drawableTop="@drawable/ic_hole"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:id="@+id/assessment_btn"
-                            android:text="@string/assessment_string"
-                            android:drawableTop="@drawable/ic_assessment"
-                            style="@style/home_icon_style"/>
-
-                    <TextView
-                            android:drawableTop="@drawable/ic_empty_60dp"
-                            android:enabled="false"
-                            style="@style/home_icon_style"/>
-                </GridLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/mtrl_card_spacing"
-                android:layout_marginTop="@dimen/mtrl_card_spacing"
-                android:layout_marginRight="@dimen/mtrl_card_spacing"
-                tools:ignore="PrivateResource"
-                style="@style/Widget.MaterialComponents.CardView">
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
                         android:text="@string/score"
                         android:textSize="15sp"/>
 
@@ -269,6 +220,55 @@
                             android:enabled="false"
                             android:visibility="gone"/>
 
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/mtrl_card_spacing"
+                android:layout_marginTop="@dimen/mtrl_card_spacing"
+                android:layout_marginRight="@dimen/mtrl_card_spacing"
+                tools:ignore="PrivateResource"
+                style="@style/Widget.MaterialComponents.CardView">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/other_string"
+                        android:textSize="15sp"/>
+
+                <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="3"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            android:id="@+id/assessment_btn"
+                            android:text="@string/assessment_string"
+                            android:drawableTop="@drawable/ic_assessment"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:id="@+id/hole_btn"
+                            android:text="@string/hole_res"
+                            android:drawableTop="@drawable/ic_hole"
+                            style="@style/home_icon_style"/>
+
+                    <TextView
+                            android:drawableTop="@drawable/ic_empty_60dp"
+                            android:enabled="false"
+                            style="@style/home_icon_style"/>
                 </GridLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

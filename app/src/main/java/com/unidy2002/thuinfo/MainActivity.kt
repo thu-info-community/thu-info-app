@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -29,14 +30,18 @@ import com.unidy2002.thuinfo.data.model.hole.copyUtil
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.login.revokeUser
 import com.unidy2002.thuinfo.data.network.Network
+import com.unidy2002.thuinfo.data.network.getReportPayCode
 import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.network.getUpdateInfo
+import com.unidy2002.thuinfo.data.util.Alipay
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.data.util.imageToBase64
+import com.unidy2002.thuinfo.data.util.safePost
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment
+import com.unidy2002.thuinfo.ui.home.PayForReportConfigLayout
 import com.unidy2002.thuinfo.ui.news.WebFragment
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import com.wildma.pictureselector.FileUtils.deleteAllCacheImage
@@ -249,6 +254,60 @@ class MainActivity : AppCompatActivity() {
                     getSharedPreferences(loggedInUser.userId, Context.MODE_PRIVATE)?.edit()
                         ?.remove("hiv")?.remove("hpe")?.commit()
                     navController.navigateUp(appBarConfiguration)
+                }
+                R.id.item_pay_for_report -> if (Alipay.hasInstalledAlipayClient(this)) {
+                    AlertDialog.Builder(this)
+                        .setTitle(confirm_pay_for_report_str)
+                        .setMessage(intro_pay_for_report_str)
+                        .setPositiveButton(confirm_string) { _, _ ->
+                            val input = PayForReportConfigLayout(this)
+                            AlertDialog.Builder(this)
+                                .setTitle(enter_email_str)
+                                .setView(input)
+                                .setPositiveButton(confirm_string) { _, _ ->
+                                    val email = input.email.text.toString()
+                                    AlertDialog.Builder(this)
+                                        .setTitle(confirm_email_str)
+                                        .setMessage(email)
+                                        .setPositiveButton(confirm_string) { _, _ ->
+                                            val handler = Handler()
+                                            Toast.makeText(applicationContext, processing_string, Toast.LENGTH_SHORT)
+                                                .show()
+
+                                            fun showFailure() {
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    network_error_retry,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+
+                                            safeThread {
+                                                with(Network.getReportPayCode(email)) {
+                                                    if (this == null) {
+                                                        handler.safePost { showFailure() }
+                                                    } else {
+                                                        handler.safePost {
+                                                            if (!Alipay.startAlipayClient(this@MainActivity, this)) {
+                                                                showFailure()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .setNegativeButton(cancel_string) { _, _ -> }
+                                        .show()
+                                }
+                                .setNegativeButton(cancel_string) { _, _ -> }
+                                .show()
+                        }
+                        .setNegativeButton(cancel_string) { _, _ -> }
+                        .show()
+                } else {
+                    applicationContext?.run {
+                        Toast.makeText(this, require_alipay_string, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         } catch (e: Exception) {

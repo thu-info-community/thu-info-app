@@ -3,6 +3,12 @@ package com.unidy2002.thuinfo.data.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.data.network.Network
+import org.jsoup.Jsoup
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 /**
  * @see "https://github.com/didikee/AndroidDonate"
@@ -47,4 +53,108 @@ object Alipay {
             e.printStackTrace()
             false
         }
+
+    /**
+     * A <del>generalized</del> module for getting pay code from a given requestPayAction url.
+     *
+     * @param location  the requestPayAction url
+     * @param referer   the referer of the first request
+     *
+     * @return          the corresponding pay code, or null if any exception occurs
+     */
+    fun Network.generalGetPayCode(location: String, referer: String, report: Boolean = false): String? {
+        println(location)
+        try {
+            // Get pay id
+            val id: String
+            val xxx: String
+            connect(location, referer, loggedInUser.vpnTicket).inputStream.run {
+                Jsoup.parse(this, "GBK", location).getElementById("form2").run {
+                    id = child(0).attr("value")
+                    xxx = child(1).attr("value").replace("=", "%3d")
+                }
+                close()
+            }
+            Log.i("pay id", id)
+            Log.i("pay xxx", xxx)
+            if (Thread.interrupted()) {
+                Log.i("interrupt", "get pay code [1]")
+                return null
+            }
+
+            // For report only
+            if (report) {
+                connect(
+                    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff489a327e7c4377068ea48d546d301d731c068b/sfpt/checkPayAction!check.action?vpn-12-o2-zhifu.tsinghua.edu.cn",
+                    location,
+                    loggedInUser.vpnTicket,
+                    "xxx=$xxx"
+                ).inputStream.close()
+            }
+
+            // Send pay request to alipay
+            lateinit var url: String
+            lateinit var form: String
+            connect(
+                "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff489a327e7c4377068ea48d546d301d731c068b/sfpt/sendToAlipayAction.action",
+                referer = location,
+                cookie = loggedInUser.vpnTicket,
+                post = "id=$id&xxx=$xxx"
+            ).inputStream?.run {
+                val reader = BufferedReader(InputStreamReader(this, "GBK"))
+                var readLine: String?
+                while ((reader.readLine().also { readLine = it }) != null) {
+                    if (readLine!!.contains("action=")) {
+                        url = readLine!!.run { substring(indexOf("action=") + 8, lastIndexOf("\">")) }
+                            .replace("amp;", "")
+                        form = reader.readLine()
+                            .run { substring(indexOf("value=") + 7, lastIndexOf("\">")) }
+                            .replace("{", "%7B")
+                            .replace("&quot;", "%22")
+                            .replace(":", "%3A")
+                            .replace("}", "%7D")
+                            .replace(",", "%2C")
+                            .replace("清华学生紫荆电表", "%C7%E5%BB%AA%D1%A7%C9%FA%D7%CF%BE%A3%B5%E7%B1%ED")
+                        // It simply works... Even with paying to get report... Amazing...
+                        break
+                    }
+                }
+                reader.close()
+                close()
+            }
+            Log.i("recharge", "redirect")
+            if (Thread.interrupted()) {
+                Log.i("interrupt", "get pay code [2]")
+                return null
+            }
+
+            // Get pay code
+            connect(
+                "$url&biz_content=$form",
+                referer = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff489a327e7c4377068ea48d546d301d731c068b/sfpt/sendToAlipayAction.action",
+                cookie = loggedInUser.vpnTicket
+            ).inputStream?.run {
+                val reader = BufferedReader(InputStreamReader(this, "GBK"))
+                var readLine: String?
+                lateinit var payCode: String
+                while (reader.readLine().also { readLine = it } != null) {
+                    if (readLine!!.contains("<input name=\"qrCode\"")) {
+                        payCode = readLine!!.run { substring(indexOf("alipay") + 11) }
+                            .run { substring(0, indexOf('"')) }
+                        break
+                    }
+                }
+                reader.close()
+                close()
+                return payCode
+            }
+            if (Thread.interrupted()) {
+                Log.i("interrupt", "get pay code [3]")
+                return null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
 }

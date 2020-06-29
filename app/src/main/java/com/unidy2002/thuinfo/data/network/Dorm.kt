@@ -2,7 +2,7 @@ package com.unidy2002.thuinfo.data.network
 
 import android.util.Log
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import org.jsoup.Jsoup
+import com.unidy2002.thuinfo.data.util.Alipay.generalGetPayCode
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -100,85 +100,10 @@ fun Network.getEleRechargePayCode(money: Int): String? {
             return null
         }
 
-        // Get pay id
-        val id: String
-        val xxx: String
-        connect(
+        return generalGetPayCode(
             redirect,
-            referer = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/netweb_user/recharge_pay_ele.aspx",
-            cookie = loggedInUser.vpnTicket
-        ).inputStream.run {
-            Jsoup.parse(this, "GBK", redirect).getElementById("form2").run {
-                id = child(0).attr("value")
-                xxx = child(1).attr("value").replace("=", "%3d")
-            }
-            close()
-        }
-        Log.i("recharge id", id)
-        if (Thread.interrupted()) {
-            Log.i("interrupt", "ele pay [3]")
-            return null
-        }
-
-        // Send pay request to alipay
-        lateinit var url: String
-        lateinit var form: String
-        connect(
-            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff489a327e7c4377068ea48d546d301d731c068b/sfpt/sendToAlipayAction.action",
-            referer = redirect,
-            cookie = "${loggedInUser.vpnTicket}; ID$id=3",
-            post = "id=$id&xxx=$xxx"
-        ).inputStream?.run {
-            val reader = BufferedReader(InputStreamReader(this, "GBK"))
-            var readLine: String?
-            while ((reader.readLine().also { readLine = it }) != null) {
-                if (readLine!!.contains("action=")) {
-                    url = readLine!!.run { substring(indexOf("action=") + 8, lastIndexOf("\">")) }
-                        .replace("amp;", "")
-                    form = reader.readLine()
-                        .run { substring(indexOf("value=") + 7, lastIndexOf("\">")) }
-                        .replace("{", "%7B")
-                        .replace("&quot;", "%22")
-                        .replace(":", "%3A")
-                        .replace("}", "%7D")
-                        .replace(",", "%2C")
-                        .replace("清华学生紫荆电表", "%C7%E5%BB%AA%D1%A7%C9%FA%D7%CF%BE%A3%B5%E7%B1%ED")
-                    break
-                }
-            }
-            reader.close()
-            close()
-        }
-        Log.i("recharge", "redirect")
-        if (Thread.interrupted()) {
-            Log.i("interrupt", "ele pay [4]")
-            return null
-        }
-
-        // Get pay code
-        connect(
-            "$url&biz_content=$form",
-            referer = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff489a327e7c4377068ea48d546d301d731c068b/sfpt/sendToAlipayAction.action",
-            cookie = loggedInUser.vpnTicket
-        ).inputStream?.run {
-            val reader = BufferedReader(InputStreamReader(this, "GBK"))
-            var readLine: String?
-            lateinit var payCode: String
-            while (reader.readLine().also { readLine = it } != null) {
-                if (readLine!!.contains("<input name=\"qrCode\"")) {
-                    payCode = readLine!!.run { substring(indexOf("alipay") + 11) }
-                        .run { substring(0, indexOf('"')) }
-                    break
-                }
-            }
-            reader.close()
-            close()
-            return payCode
-        }
-        if (Thread.interrupted()) {
-            Log.i("interrupt", "ele pay [5]")
-            return null
-        }
+            "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/netweb_user/recharge_pay_ele.aspx"
+        )
     } catch (e: Exception) {
         e.printStackTrace()
     }
