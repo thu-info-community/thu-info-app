@@ -15,3 +15,10 @@ export const PROFILE_REFERER =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/bks_grzm.jsp";
 export const INVALIDATE_ZHJW_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/servlet/InvalidateSession";
+export const LOGOUT_URL = "https://webvpn.tsinghua.edu.cn/logout";
+export const INFO_ROOT_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP";
+export const PRE_LOGIN_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1";
+export const GET_REPORT_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw";
