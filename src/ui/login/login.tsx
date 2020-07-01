@@ -49,9 +49,7 @@ const LoginUI = (props: LoginProps) => {
 			<Switch value={remember} onValueChange={setRemember} />
 			<Button
 				title="登录"
-				onPress={() => {
-					props.login(userId, password, remember);
-				}}
+				onPress={() => props.login(userId, password, remember)}
 			/>
 		</View>
 	);
