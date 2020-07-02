@@ -9,6 +9,7 @@ import {defaultFullNameState} from "../redux/defaults";
 import Snackbar from "react-native-snackbar";
 import {getTicket} from "../network/core";
 import {ScheduleStackScreen} from "../ui/schedule/scheduleStack";
+import {getStr} from "../utils/i18n";
 
 interface RootProps {
 	fullName: string;
@@ -48,9 +49,9 @@ const RootComponent = (props: RootProps) => {
 
 	return (
 		<Tab.Navigator>
-			<Tab.Screen name="主页" component={HomeStackScreen} />
-			<Tab.Screen name="动态" component={NewsStackScreen} />
-			<Tab.Screen name="计划" component={ScheduleStackScreen} />
+			<Tab.Screen name={getStr("home")} component={HomeStackScreen} />
+			<Tab.Screen name={getStr("news")} component={NewsStackScreen} />
+			<Tab.Screen name={getStr("schedule")} component={ScheduleStackScreen} />
 		</Tab.Navigator>
 	);
 };

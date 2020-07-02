@@ -5,6 +5,7 @@ import {authThunk} from "../../redux/actions/auth";
 import {State} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
 import {LOGIN_FAILURE} from "../../redux/constants";
+import {getStr} from "../../utils/i18n";
 
 interface LoginProps {
 	userId: string;
@@ -35,20 +36,20 @@ const LoginUI = (props: LoginProps) => {
 	return (
 		<View style={styles.center}>
 			<TextInput
-				placeholder="学号"
+				placeholder={getStr("userId")}
 				value={userId}
 				onChangeText={setUserId}
 				keyboardType={"numeric"}
 			/>
 			<TextInput
-				placeholder="密码"
+				placeholder={getStr("password")}
 				value={password}
 				onChangeText={setPassword}
 				secureTextEntry
 			/>
 			<Switch value={remember} onValueChange={setRemember} />
 			<Button
-				title="登录"
+				title={getStr("login")}
 				onPress={() => props.login(userId, password, remember)}
 			/>
 		</View>

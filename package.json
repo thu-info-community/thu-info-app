@@ -25,6 +25,8 @@
 		"react": "16.11.0",
 		"react-native": "0.62.2",
 		"react-native-gesture-handler": "^1.6.1",
+		"react-native-i18n": "^2.0.15",
+		"react-native-localize": "^1.4.0",
 		"react-native-reanimated": "^1.9.0",
 		"react-native-safe-area-context": "^3.0.3",
 		"react-native-screens": "^2.8.0",
