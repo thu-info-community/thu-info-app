@@ -5,6 +5,7 @@ import {LoginStatus} from "../redux/states/auth";
 import {LoginScreen} from "../ui/login/login";
 import {State} from "../redux/store";
 import {Root} from "./Root";
+import {getStr} from "../utils/i18n";
 
 interface AuthFlowProps {
 	status: LoginStatus;
@@ -17,7 +18,7 @@ const AuthFlowComponent = (props: AuthFlowProps) =>
 		<Root />
 	) : (
 		<Stack.Navigator headerMode="none">
-			<Stack.Screen name="登录" component={LoginScreen} />
+			<Stack.Screen name={getStr("login")} component={LoginScreen} />
 		</Stack.Navigator>
 	);
 

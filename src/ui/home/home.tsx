@@ -1,5 +1,6 @@
 import {Button, StyleSheet, Text, View} from "react-native";
 import React from "react";
+import {getStr} from "../../utils/i18n";
 
 export const HomeScreen = (props: {
 	navigation: {navigate: (dest: string) => void};
@@ -7,8 +8,8 @@ export const HomeScreen = (props: {
 	<View style={styles.center}>
 		<Text>这是主页。</Text>
 		<Button
-			title="成绩单"
-			onPress={() => props.navigation.navigate("成绩单")}
+			title={getStr("report")}
+			onPress={() => props.navigation.navigate(getStr("report"))}
 		/>
 	</View>
 );
