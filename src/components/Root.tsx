@@ -12,7 +12,7 @@ import {ScheduleStackScreen} from "../ui/schedule/scheduleStack";
 import {getStr} from "../utils/i18n";
 
 interface RootProps {
-	fullName: string;
+	readonly fullName: string;
 	getFullName: () => void;
 }
 
@@ -49,9 +49,21 @@ const RootComponent = (props: RootProps) => {
 
 	return (
 		<Tab.Navigator>
-			<Tab.Screen name={getStr("home")} component={HomeStackScreen} />
-			<Tab.Screen name={getStr("news")} component={NewsStackScreen} />
-			<Tab.Screen name={getStr("schedule")} component={ScheduleStackScreen} />
+			<Tab.Screen
+				name="Home"
+				component={HomeStackScreen}
+				options={{title: getStr("home")}}
+			/>
+			<Tab.Screen
+				name="News"
+				component={NewsStackScreen}
+				options={{title: getStr("news")}}
+			/>
+			<Tab.Screen
+				name="Schedule"
+				component={ScheduleStackScreen}
+				options={{title: getStr("schedule")}}
+			/>
 		</Tab.Navigator>
 	);
 };

@@ -1,6 +1,5 @@
-# THUInfo
+# THUInfo ⚛️
+ 
+正在迁移至React Native，以实现跨平台支持。
 
-[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=23) 
-[![Language: Kotlin](https://img.shields.io/github/languages/top/UNIDY2002/THUInfo.svg)](https://github.com/UNIDY2002/THUInfo/search?l=kotlin)
-
-The info grabber for Tsinghua online portal.
+附：旧版[Release](https://github.com/UNIDY2002/THUInfo/releases)页

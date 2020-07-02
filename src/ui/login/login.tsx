@@ -8,10 +8,10 @@ import {LOGIN_FAILURE} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 
 interface LoginProps {
-	userId: string;
-	password: string;
-	remember: boolean;
-	status: LoginStatus;
+	readonly userId: string;
+	readonly password: string;
+	readonly remember: boolean;
+	readonly status: LoginStatus;
 	login: (userId: string, password: string, remember: boolean) => void;
 	resetStatus: () => void;
 }
