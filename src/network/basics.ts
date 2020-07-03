@@ -2,13 +2,13 @@ import cheerio from "cheerio";
 import {retrieve, retryWrapper} from "./core";
 import {GET_REPORT_URL, INFO_ROOT_URL} from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
-import {ReportItem, semesterWeight} from "../models/home";
+import {Course} from "../models/home";
 
-export const getReport = async (): Promise<[ReportItem]> =>
+export const getReport = async (): Promise<Course[]> =>
 	retryWrapper(
 		792,
-		retrieve(GET_REPORT_URL, INFO_ROOT_URL, undefined, "GBK").then((str) =>
-			(cheerio("#table1", str)
+		retrieve(GET_REPORT_URL, INFO_ROOT_URL, undefined, "GBK").then((str) => {
+			const result = cheerio("#table1", str)
 				.children()
 				.slice(1)
 				.map((_, element) => {
@@ -20,8 +20,10 @@ export const getReport = async (): Promise<[ReportItem]> =>
 						semester: getCheerioText(element, 11),
 					};
 				})
-				.get() as [ReportItem]).sort(
-				(a, b) => semesterWeight(a.semester) - semesterWeight(b.semester),
-			),
-		),
+				.get();
+			if (result.length === 0) {
+				throw 0;
+			}
+			return result;
+		}),
 	);

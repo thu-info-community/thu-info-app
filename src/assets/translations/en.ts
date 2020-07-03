@@ -6,4 +6,5 @@ export default {
 	news: "News",
 	schedule: "Schedule",
 	report: "Report",
+	networkRetry: "Network failure, please retry.",
 };
