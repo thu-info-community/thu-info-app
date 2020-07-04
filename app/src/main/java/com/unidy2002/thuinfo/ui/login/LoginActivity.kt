@@ -175,6 +175,7 @@ class LoginActivity : AppCompatActivity() {
                                 .setOnDismissListener {
                                     requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE), 1)
                                 }
+                                .setCancelable(false)
                                 .show()
                         }
                     } else {
@@ -313,8 +314,8 @@ class LoginActivity : AppCompatActivity() {
             // Try to get hole token
             holeToken = try {
                 getSharedPreferences(loggedInUser.userId, MODE_PRIVATE).run {
-                    val hiv = getString("hiv", null)  // Community initial vector
-                    val hpe = getString("hpe", null)  // Community password encrypted
+                    val hiv = getString("hiv", null)  // Hole initial vector
+                    val hpe = getString("hpe", null)  // Hole password encrypted
                     if (hiv != null && hpe != null) {
                         decrypt("h${loggedInUser.userId}", hiv to hpe)
                     } else {
@@ -323,7 +324,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                password
+                ""
             }
         }
     }

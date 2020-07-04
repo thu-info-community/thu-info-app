@@ -7,7 +7,7 @@ import java.net.URL
 
 fun getWentuState(): List<Pair<String, Pair<Int, Int>>> =
     try {
-        Jsoup.parse(URL("http://seat.lib.tsinghua.edu.cn/roomshow/"), 6000).body().child(0)
+        Jsoup.parse(URL("http://ske.lib.tsinghua.edu.cn/roomshow/"), 6000).body().child(0)
             .child(2).child(0).child(0).children().drop(3).map {
                 it.child(0).text() to
                         (it.child(1).text().toInt() to it.child(2).text().toInt())
