@@ -11,8 +11,8 @@ android {
         applicationId "com.unidy2002.thuinfo"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 8
-        versionName "1.0.3"
+        versionCode 9
+        versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
