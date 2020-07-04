@@ -3,4 +3,8 @@
     <item
             android:id="@+id/item_pay_for_report"
             android:title="@string/pay_for_report_str"/>
+
+    <item
+            android:id="@+id/report_bx_btn"
+            android:title="@string/report_bx_str"/>
 </menu>

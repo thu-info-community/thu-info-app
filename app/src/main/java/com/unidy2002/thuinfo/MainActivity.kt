@@ -341,6 +341,8 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, require_alipay_string, Toast.LENGTH_SHORT).show()
                     }
                 }
+                R.id.report_bx_btn ->
+                    navController.navigate(R.id.reportFragment, Bundle().apply { putBoolean("bx", true) })
             }
         } catch (e: Exception) {
             e.printStackTrace()

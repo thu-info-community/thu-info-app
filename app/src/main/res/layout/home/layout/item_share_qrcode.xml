@@ -6,7 +6,8 @@
               android:layout_height="wrap_content"
               android:paddingStart="12dp"
               android:paddingEnd="12dp"
-              android:gravity="center_horizontal">
+              android:gravity="center_horizontal"
+              android:padding="18dp">
 
     <ImageView
             android:id="@+id/share_qrcode_image"
