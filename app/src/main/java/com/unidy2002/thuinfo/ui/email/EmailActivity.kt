@@ -66,7 +66,7 @@ class EmailActivity : AppCompatActivity() {
                     findViewById<ProgressBar>(R.id.config_loading).visibility = View.VISIBLE
                     thread {
                         try {
-                            val email = input.name.text.toString() + input.host.selectedItem.toString()
+                            val email = "${input.name.text}@mails.tsinghua.edu.cn"
                             connectImap(email, loggedInUser.password)
                             runOnUiThread {
                                 updateUI()
@@ -167,21 +167,9 @@ class EmailActivity : AppCompatActivity() {
     }
 
     private class EmailConfigurationLayout(context: Context) : LinearLayout(context) {
-        val name: EditText
-        val host: Spinner
-
-        init {
-            (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-                .inflate(R.layout.item_email_configuration, this, true)
-                .run {
-                    name = findViewById(R.id.username_config)
-                    host = findViewById(R.id.host_list)
-                    host.adapter = ArrayAdapter(
-                        context, android.R.layout.simple_spinner_dropdown_item,
-                        listOf("@mails.tsinghua.edu.cn", "@mail.tsinghua.edu.cn")
-                    )
-                }
-        }
+        val name: EditText = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+            .inflate(R.layout.item_email_configuration, this, true)
+            .findViewById(R.id.username_config)
     }
 
     private lateinit var viewPager: ViewPager

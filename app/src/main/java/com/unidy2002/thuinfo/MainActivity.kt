@@ -7,11 +7,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.get
@@ -33,12 +33,9 @@ import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getReportPayCode
 import com.unidy2002.thuinfo.data.network.getTicket
 import com.unidy2002.thuinfo.data.network.getUpdateInfo
-import com.unidy2002.thuinfo.data.util.Alipay
+import com.unidy2002.thuinfo.data.util.*
 import com.unidy2002.thuinfo.data.util.Email.connectImap
 import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
-import com.unidy2002.thuinfo.data.util.imageToBase64
-import com.unidy2002.thuinfo.data.util.safePost
-import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment
 import com.unidy2002.thuinfo.ui.home.PayForReportConfigLayout
@@ -129,6 +126,36 @@ class MainActivity : AppCompatActivity() {
                             startActivity(Intent().apply { setClass(this@MainActivity, ReportActivity::class.java) })
                         }
                         .show()
+                R.id.navigation_share ->
+                    AlertDialog.Builder(this)
+                        .setView(object : LinearLayout(this) {
+                            init {
+                                (getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+                                    .inflate(R.layout.item_share_qrcode, this, true)
+                                    .run {
+                                        findViewById<Button>(R.id.share_save_qrcode).setOnClickListener {
+                                            try {
+                                                findViewById<ImageView>(R.id.share_qrcode_image).toBitmap()
+                                                    .save(applicationContext, "THUInfo 下载二维码")
+                                                this@MainActivity.run {
+                                                    Toast.makeText(this, hole_save_success_str, Toast.LENGTH_SHORT)
+                                                        .show()
+                                                }
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                                this@MainActivity.run {
+                                                    Toast.makeText(this, hole_save_failure_str, Toast.LENGTH_SHORT)
+                                                        .show()
+                                                }
+                                            }
+                                        }
+                                        findViewById<Button>(R.id.share_copy_url).setOnClickListener {
+                                            copyUtil(applicationContext, "https://github.com/THUInfo/THUInfo")
+                                        }
+                                    }
+                            }
+                        })
+                        .show()
                 R.id.navigation_update ->
                     checkUpdate(true)
                 R.id.navigation_logout -> {
@@ -147,7 +174,7 @@ class MainActivity : AppCompatActivity() {
                                     .setTitle(clear_or_not)
                                     .setPositiveButton(keep_string) { _, _ -> }
                                     .setNegativeButton(clear_string) { _, _ ->
-                                        getSharedPreferences("UserId", MODE_PRIVATE).edit().run{
+                                        getSharedPreferences("UserId", MODE_PRIVATE).edit().run {
                                             putString("remember", "false")
                                             remove("iv")
                                             remove("data")

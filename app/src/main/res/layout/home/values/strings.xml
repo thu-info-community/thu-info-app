@@ -182,4 +182,6 @@
     <string name="do_not_remind">不再提醒</string>
     <string name="update_string">更新</string>
     <string name="already_up_to_date">已是最新版本</string>
+    <string name="share_string">分享</string>
+    <string name="share_url">地址：https://github.com/THUInfo/THUInfo</string>
 </resources>

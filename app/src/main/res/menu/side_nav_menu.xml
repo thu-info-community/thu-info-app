@@ -9,8 +9,13 @@
             android:id="@+id/navigation_report"
             android:title="@string/report_string"/>
 
-    <item android:id="@+id/navigation_update"
-          android:title="@string/update_string"/>
+    <item
+            android:id="@+id/navigation_share"
+            android:title="@string/share_string"/>
+
+    <item
+            android:id="@+id/navigation_update"
+            android:title="@string/update_string"/>
 
     <item
             android:id="@+id/navigation_logout"

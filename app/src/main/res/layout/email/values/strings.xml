@@ -35,4 +35,5 @@
     <string name="remove_config_confirm">您确定要解除绑定吗？</string>
     <string name="remove_config_success">解绑成功，下次启动APP生效</string>
     <string name="remove_config_exception">解绑异常，请稍后重试</string>
+    <string name="host_suffix_str">"@mails.tsinghua.edu.cn"</string>
 </resources>
