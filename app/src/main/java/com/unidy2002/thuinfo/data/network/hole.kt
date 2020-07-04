@@ -10,7 +10,7 @@ import java.net.URLEncoder.encode
 
 private val token get() = loggedInUser.holeToken
 
-private val foldTags = listOf("性相关", "政治相关", "性话题", "政治话题", "折叠", "NSFW", "刷屏", "真实性可疑", "用户举报较多", "重复内容")
+private val foldTags = listOf("性相关", "政治相关", "性话题", "政治话题", "折叠", "NSFW", "刷屏", "真实性可疑", "用户举报较多", "举报较多", "重复内容")
 
 fun Network.holeLogin() = try {
     JSON.parseObject(

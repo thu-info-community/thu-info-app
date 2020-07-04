@@ -55,7 +55,7 @@ class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Ada
                 reportList.filter { it.point != null }.run {
                     val credits = sumBy { it.credit }
                     val points = sumByDouble { it.point!! * it.credit }
-                    if (points == 0.0) "N/A" else String.format("%.2f", points / credits)
+                    if (points == 0.0) "N/A" else String.format("%.3f", points / credits)
                 }
         } else {
             val cardViewHolder = holder as CardViewHolder
@@ -96,7 +96,7 @@ class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Ada
                     reportList.filter { it.semester == scoreCard.semester && it.point != null }.run {
                         val credits = sumBy { it.credit }
                         val points = sumByDouble { it.point!! * it.credit }
-                        if (points == 0.0) "N/A" else String.format("%.2f", points / credits)
+                        if (points == 0.0) "N/A" else String.format("%.3f", points / credits)
                     }
             }
         }

@@ -91,10 +91,11 @@ class LoginActivity : AppCompatActivity() {
         login.setOnClickListener { doLogin() }
 
         // Try to get remembered password
-        try {
-            getSharedPreferences("UserId", MODE_PRIVATE).run {
+        getSharedPreferences("UserId", MODE_PRIVATE)?.run {
+            val id = getString("username", "")
+            if (!id.isNullOrBlank()) username.setText(id)
+            try {
                 if (getString("remember", "") == "true") {
-                    username.setText(getString("username", ""))
                     password.setText(
                         decrypt(
                             username.text.toString(),
@@ -104,9 +105,9 @@ class LoginActivity : AppCompatActivity() {
                     remember.isChecked = true
                     doLogin()
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
 
         // First-install operations
@@ -275,18 +276,20 @@ class LoginActivity : AppCompatActivity() {
         with(loggedInUser) {
             // Save remembered password
             rememberPassword = findViewById<CheckBox>(R.id.remember).isChecked
-            if (rememberPassword) {
-                getSharedPreferences("UserId", MODE_PRIVATE).edit().run {
+            getSharedPreferences("UserId", MODE_PRIVATE).edit().run {
+                putString("username", userId)
+                if (rememberPassword) {
                     putString("remember", "true")
-                    putString("username", userId)
                     encrypt(userId, password).run {
                         putString("iv", first)
                         putString("data", second)
                     }
-                    apply()
+                } else {
+                    putString("remember", "false")
+                    remove("iv")
+                    remove("data")
                 }
-            } else {
-                getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
+                apply()
             }
 
             // Try to get username and email

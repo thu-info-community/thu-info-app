@@ -147,7 +147,12 @@ class MainActivity : AppCompatActivity() {
                                     .setTitle(clear_or_not)
                                     .setPositiveButton(keep_string) { _, _ -> }
                                     .setNegativeButton(clear_string) { _, _ ->
-                                        getSharedPreferences("UserId", MODE_PRIVATE).edit().clear().apply()
+                                        getSharedPreferences("UserId", MODE_PRIVATE).edit().run{
+                                            putString("remember", "false")
+                                            remove("iv")
+                                            remove("data")
+                                            apply()
+                                        }
                                     }
                                     .setOnDismissListener {
                                         revokeUser()
