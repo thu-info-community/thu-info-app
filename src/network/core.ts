@@ -9,6 +9,7 @@ import {
 	LOGIN_URL,
 	LOGOUT_URL,
 	PRE_LOGIN_URL,
+	PRE_ROAM_URL_PREFIX,
 	PROFILE_REFERER,
 	PROFILE_URL,
 	USER_AGENT,
@@ -23,7 +24,7 @@ import iconv from "iconv-lite";
  */
 const stringify = (form: any) =>
 	Object.keys(form)
-		.map((key) => `${key}=${encodeURIComponent(form[key])}`)
+		.map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(form[key])}`)
 		.join("&");
 
 // Since there are strange things with `fetch` regarding to encodings,
@@ -152,18 +153,21 @@ export const getFullName = async (): Promise<string> =>
 export const logout = async (): Promise<void> => connect(LOGOUT_URL);
 
 export const getTicket = async (target: number) => {
-	return retrieve(INFO_ROOT_URL, PRE_LOGIN_URL, undefined, "UTF-8", 800).then(
-		(str) => {
-			const lowerBound = str.indexOf(`name="9-${target}`);
-			const url = str
-				.substring(
-					str.indexOf("src", lowerBound) + 5,
-					str.indexOf(" id", lowerBound) - 1,
-				)
-				.replace(/amp;/g, "");
-			return connect(url, INFO_ROOT_URL);
-		},
-	);
+	if (target >= 0 && target <= 1000) {
+		return retrieve(INFO_ROOT_URL, PRE_LOGIN_URL, undefined, "UTF-8", 800).then(
+			(str) => {
+				const lowerBound = str.indexOf(`name="9-${target}`);
+				const url = str
+					.substring(
+						str.indexOf("src", lowerBound) + 5,
+						str.indexOf(" id", lowerBound) - 1,
+					)
+					.replace(/amp;/g, "");
+				return connect(url, INFO_ROOT_URL);
+			},
+		);
+	}
+	return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
 };
 
 export const retryWrapper = async <R>(

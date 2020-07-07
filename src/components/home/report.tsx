@@ -10,12 +10,12 @@ export interface ReportHeaderProps {
 }
 
 export const ReportHeader = (props: ReportHeaderProps) => (
-	<View style={styles.reportContainer}>
+	<View style={{...styles.reportContainer, margin: 10}}>
 		<Text numberOfLines={1} style={{fontSize: 18, flex: 1}}>
 			{props.semester}
 		</Text>
 		<Text numberOfLines={1} style={{fontSize: 18, flex: 0}}>
-			{gpaToStr(props.gpa, 2)}
+			{gpaToStr(props.gpa, 3)}
 		</Text>
 	</View>
 );
@@ -27,7 +27,7 @@ interface ReportItemProps {
 	point: number;
 }
 
-const gradeToColor = {
+const gradeToColor: {[key: string]: string} = {
 	"A+": "#456A2C",
 	A: "#456A2C",
 	"A-": "#456A2C",
@@ -84,8 +84,8 @@ export const ReportItem = (props: ReportItemProps) => (
 
 export const ReportFooter = (props: {gpa: number}) => (
 	<View style={{...styles.reportContainer, justifyContent: "flex-end"}}>
-		<Text style={{fontSize: 22, textAlign: "right"}}>
-			{gpaToStr(props.gpa, 2)}
+		<Text style={{fontSize: 20, textAlign: "right"}}>
+			{gpaToStr(props.gpa, 3)}
 		</Text>
 	</View>
 );
