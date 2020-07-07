@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {getReport} from "../../network/basics";
-import {Course, semesterWeight} from "../../models/home";
+import {Course, semesterWeight} from "../../models/home/report";
 import {SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,
