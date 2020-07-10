@@ -19,14 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import cn.leancloud.AVOSCloud
-import cn.leancloud.AVObject
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.login.LoggedInUser
-import com.unidy2002.thuinfo.data.util.*
+import com.unidy2002.thuinfo.data.util.decrypt
+import com.unidy2002.thuinfo.data.util.encrypt
 import com.unidy2002.thuinfo.ui.report.ReportActivity
-import io.reactivex.disposables.Disposable
 import kotlin.concurrent.thread
 
 
@@ -203,29 +201,6 @@ class LoginActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.slide_next).setOnClickListener {
                     currentSlide++
                     updateSlide()
-                }
-            }
-
-            // Intends to find the proper min sdk
-            if (!getBoolean("sent_api", false)) {
-                try {
-                    AVOSCloud.initialize(this@LoginActivity, appId, appKey, serverURL)
-                    AVObject("API_COUNT").run {
-                        put("api", android.os.Build.VERSION.SDK_INT)
-                        saveInBackground().subscribe(object : io.reactivex.Observer<AVObject> {
-                            override fun onComplete() {
-                                edit().putBoolean("sent_api", true).apply()
-                            }
-
-                            override fun onSubscribe(d: Disposable) {}
-                            override fun onNext(t: AVObject) {}
-                            override fun onError(e: Throwable) {
-                                e.printStackTrace()
-                            }
-                        })
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
         }

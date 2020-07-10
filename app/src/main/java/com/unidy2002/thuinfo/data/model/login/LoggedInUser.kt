@@ -2,6 +2,7 @@ package com.unidy2002.thuinfo.data.model.login
 
 import com.sun.mail.imap.IMAPStore
 import com.unidy2002.thuinfo.data.dao.HoleIgnoreDB
+import com.unidy2002.thuinfo.data.dao.ReportIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import java.util.*
 
@@ -19,6 +20,7 @@ data class LoggedInUser(val userId: String, val password: String) {
     lateinit var schedule: ScheduleDBManager
     lateinit var imapStore: IMAPStore
     lateinit var holeIgnore: HoleIgnoreDB
+    lateinit var reportIgnore: ReportIgnoreDB
 
     var holeToken = ""
     var holeLoggedIn = false
@@ -29,6 +31,7 @@ data class LoggedInUser(val userId: String, val password: String) {
     fun scheduleInitialized() = ::schedule.isInitialized
     fun imapStoreInitialized() = ::imapStore.isInitialized
     fun holeIgnoreInitialized() = ::holeIgnore.isInitialized
+    fun reportIgnoreInitialized() = ::reportIgnore.isInitialized
 
     val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false, 2005 to false)
 

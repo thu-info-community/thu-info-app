@@ -7,8 +7,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import com.unidy2002.thuinfo.ui.home.ReportFragment
 
-class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ReportAdapter(
+    private val originalReportList: List<ReportItem>,
+    private val mode: ReportFragment.Mode,
+    private var customOriginal: Boolean = true
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val reportList get() = if (mode == ReportFragment.Mode.CUSTOM) genCustom() else originalReportList
+
     open class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var grade: ImageView = view.findViewById(R.id.report_card_image)
         var courseName: TextView = view.findViewById(R.id.report_course_name)
@@ -103,4 +112,23 @@ class ReportAdapter(private val reportList: List<ReportItem>) : RecyclerView.Ada
     }
 
     override fun getItemCount() = reportList.size + 1
+
+    private fun genCustom() =
+        if (customOriginal) originalReportList.filter { !loggedInUser.reportIgnore.hasIgnoreP(it.id) }
+        else originalReportList.filter { loggedInUser.reportIgnore.hasIgnoreP(it.id) }
+
+    fun toggle() {
+        customOriginal = !customOriginal
+        notifyDataSetChanged()
+    }
+
+    fun toggle(position: Int) {
+        if (position < reportList.size) {
+            if (customOriginal)
+                loggedInUser.reportIgnore.addIgnoreP(reportList[position].id)
+            else
+                loggedInUser.reportIgnore.removeIgnoreP(reportList[position].id)
+        }
+        notifyDataSetChanged()
+    }
 }

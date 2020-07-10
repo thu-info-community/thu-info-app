@@ -9,6 +9,10 @@
     <string name="report">成绩单</string>
     <string name="pay_for_report_str">氪金</string>
     <string name="report_bx_str">必限成绩单</string>
+    <string name="report_custom_str">自定义成绩单</string>
+    <string name="report_graduate_str">研究生成绩单</string>
+    <string name="report_view_hidden_str">查看隐藏项</string>
+    <string name="report_view_original_str">查看成绩单</string>
     <string name="confirm_pay_for_report_str">[试验性功能] 付费查看电子成绩单</string>
     <string name="intro_pay_for_report_str">只支持中文成绩单。\n直接连到学校的接口。\n10元一次，氪金需谨慎。</string>
     <string name="enter_email_str">请输入邮箱</string>

@@ -5,5 +5,6 @@ data class ReportItem(
     val credit: Int,
     val grade: String?,
     val point: Double?,
-    val semester: String
+    val semester: String,
+    val id: String
 )

@@ -21,10 +21,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import cn.leancloud.AVOSCloud
+import cn.leancloud.AVObject
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.dao.HoleIgnoreDB
+import com.unidy2002.thuinfo.data.dao.ReportIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
 import com.unidy2002.thuinfo.data.model.hole.copyUtil
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
@@ -44,6 +47,7 @@ import com.unidy2002.thuinfo.ui.report.ReportActivity
 import com.wildma.pictureselector.FileUtils.deleteAllCacheImage
 import com.wildma.pictureselector.PictureBean
 import com.wildma.pictureselector.PictureSelector
+import io.reactivex.disposables.Disposable
 import jackmego.com.jieba_android.JiebaSegmenter
 import java.util.*
 import kotlin.concurrent.schedule
@@ -96,10 +100,36 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread { loggedInUser.timerTasks.add(Timer().schedule(0, 30000) { refreshBadge(true) }) }
         }
 
+        // Statistics
+        getSharedPreferences("config", MODE_PRIVATE).run {
+            if (!getBoolean("sent_api", false)) {
+                try {
+                    AVOSCloud.initialize(this@MainActivity, appId, appKey, serverURL)
+                    AVObject("API_COUNT").run {
+                        put("api", android.os.Build.VERSION.SDK_INT)
+                        saveInBackground().subscribe(object : io.reactivex.Observer<AVObject> {
+                            override fun onComplete() {
+                                edit().putBoolean("sent_api", true).apply()
+                            }
+
+                            override fun onSubscribe(d: Disposable) {}
+                            override fun onNext(t: AVObject) {}
+                            override fun onError(e: Throwable) {
+                                e.printStackTrace()
+                            }
+                        })
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
         // Initialize singletons
         safeThread { JiebaSegmenter.init(applicationContext) }
         safeThread { ScheduleDBManager.init(applicationContext) }
         safeThread { HoleIgnoreDB.init(applicationContext) }
+        safeThread { ReportIgnoreDB.init(applicationContext) }
 
         // Read configuration data
         loggedInUser.allowEnterCourseSelection =
@@ -168,6 +198,7 @@ class MainActivity : AppCompatActivity() {
                         loggedInUser.timerTasks.forEach { task -> task.cancel() }
                         loggedInUser.schedule.close()
                         loggedInUser.holeIgnore.close()
+                        loggedInUser.reportIgnore.close()
                         runOnUiThread {
                             if (loggedInUser.rememberPassword) {
                                 AlertDialog.Builder(this)
@@ -342,7 +373,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.report_bx_btn ->
-                    navController.navigate(R.id.reportFragment, Bundle().apply { putBoolean("bx", true) })
+                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "BX") })
+                R.id.report_custom_btn ->
+                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "CUSTOM") })
+                R.id.report_graduate_btn ->
+                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "GRADUATE") })
             }
         } catch (e: Exception) {
             e.printStackTrace()

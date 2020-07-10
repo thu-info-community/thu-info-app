@@ -7,7 +7,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/report_swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/report_recycler_view"
@@ -15,4 +16,12 @@
                 android:layout_height="match_parent"
                 />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <Button
+            android:id="@+id/report_toggle_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_view_hidden_str"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 </LinearLayout>

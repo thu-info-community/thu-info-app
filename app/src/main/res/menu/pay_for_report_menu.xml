@@ -7,4 +7,12 @@
     <item
             android:id="@+id/report_bx_btn"
             android:title="@string/report_bx_str"/>
+
+    <item
+            android:id="@+id/report_custom_btn"
+            android:title="@string/report_custom_str"/>
+
+    <item
+            android:id="@+id/report_graduate_btn"
+            android:title="@string/report_graduate_str"/>
 </menu>
