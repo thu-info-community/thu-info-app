@@ -52,6 +52,26 @@ class ReportFragment : Fragment() {
             }
         )
 
+        try {
+            activity?.getSharedPreferences("config", MODE_PRIVATE)?.run {
+                if (!state.undergraduate && !getBoolean("report_graduate", false)) {
+                    edit().putBoolean("report_graduate", true).apply()
+                    AlertDialog.Builder(context!!)
+                        .setMessage("该APP对研究生的支持尚不完善，如有问题和建议欢迎反馈。\n研究生成绩单的网址是猜的，如果总是加载不出来，假如您有兴趣的话，不如反馈一下Info网站“中文成绩单”的网址，谢谢~")
+                        .show()
+                }
+
+                if (state.mode == Mode.CUSTOM && !getBoolean("report_custom", false)) {
+                    edit().putBoolean("report_custom", true).apply()
+                    AlertDialog.Builder(context!!)
+                        .setMessage("用法：水平滑动隐藏课程。\n推出该功能的初衷是满足一些院系个性化成绩单的需求。请妥善使用。")
+                        .show()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         report_recycler_view.adapter = ReportAdapter(listOf(), state)
         report_swipe_refresh.isRefreshing = true
 
@@ -79,34 +99,6 @@ class ReportFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
-        /* try {
-            activity?.getSharedPreferences("config", MODE_PRIVATE)?.run {
-                if (!getBoolean("new", false)) {
-                    edit().putBoolean("new", true).apply()
-                    AlertDialog.Builder(context!!)
-                        .setTitle("试验性功能 自定义成绩单、研究生成绩单 上线")
-                        .setMessage("点击屏幕右上角三个点即可找到。\n应该还会再改改，所以如有问题和建议欢迎反馈，谢谢！")
-                        .show()
-                }
-
-                if (mode == Mode.GRADUATE && !getBoolean("report_graduate", false)) {
-                    edit().putBoolean("report_graduate", true).apply()
-                    AlertDialog.Builder(context!!)
-                        .setMessage("该APP对研究生的支持尚不完善，如有问题和建议欢迎反馈。\n研究生成绩单的网址是猜的，如果总是加载不出来，假如您有兴趣的话，不如反馈一下Info网站“中文成绩单”的网址，谢谢~")
-                        .show()
-                }
-
-                if (mode == Mode.CUSTOM && !getBoolean("report_custom", false)) {
-                    edit().putBoolean("report_custom", true).apply()
-                    AlertDialog.Builder(context!!)
-                        .setMessage("用法：水平滑动删除课程，使用页面底部的按钮切换模式。\n推出该功能的初衷是满足一些院系个性化成绩单的需求。请妥善使用。\n欢迎反馈改进意见~\n（目前仅支持本科生）")
-                        .show()
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } */
 
         report_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
@@ -181,6 +173,7 @@ class ReportFragment : Fragment() {
                         Toast.makeText(context, R.string.report_exception_retry, Toast.LENGTH_SHORT).show()
                     }
                 }
+                .setNegativeButton(R.string.cancel_string) { _, _ -> }
                 .show()
         } catch (e: Exception) {
             e.printStackTrace()
