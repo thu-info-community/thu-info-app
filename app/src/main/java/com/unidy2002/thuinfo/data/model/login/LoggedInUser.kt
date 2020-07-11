@@ -4,6 +4,7 @@ import com.sun.mail.imap.IMAPStore
 import com.unidy2002.thuinfo.data.dao.HoleIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ReportIgnoreDB
 import com.unidy2002.thuinfo.data.dao.ScheduleDBManager
+import com.unidy2002.thuinfo.ui.home.ReportFragment
 import java.util.*
 
 data class LoggedInUser(val userId: String, val password: String) {
@@ -25,6 +26,8 @@ data class LoggedInUser(val userId: String, val password: String) {
     var holeToken = ""
     var holeLoggedIn = false
     var currentImageBase64 = ""
+
+    var reportState = ReportFragment.State()
 
     fun userNameInitialized() = ::userName.isInitialized
     fun emailAddressInitialized() = ::emailAddress.isInitialized

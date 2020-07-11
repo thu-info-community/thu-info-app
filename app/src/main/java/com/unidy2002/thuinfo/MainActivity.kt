@@ -42,6 +42,7 @@ import com.unidy2002.thuinfo.data.util.Email.getInboxUnread
 import com.unidy2002.thuinfo.ui.email.EmailActivity
 import com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment
 import com.unidy2002.thuinfo.ui.home.PayForReportConfigLayout
+import com.unidy2002.thuinfo.ui.home.ReportFragment
 import com.unidy2002.thuinfo.ui.news.WebFragment
 import com.unidy2002.thuinfo.ui.report.ReportActivity
 import com.wildma.pictureselector.FileUtils.deleteAllCacheImage
@@ -282,6 +283,9 @@ class MainActivity : AppCompatActivity() {
     // Hole-related
     var holeCommentsFragment: HoleCommentsFragment? = null
 
+    // Report-related
+    var reportFragment: ReportFragment? = null
+
     lateinit var menu: Menu
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -372,12 +376,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this, require_alipay_string, Toast.LENGTH_SHORT).show()
                     }
                 }
-                R.id.report_bx_btn ->
-                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "BX") })
-                R.id.report_custom_btn ->
-                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "CUSTOM") })
-                R.id.report_graduate_btn ->
-                    navController.navigate(R.id.reportFragment, Bundle().apply { putString("mode", "GRADUATE") })
+                R.id.report_setting_btn -> reportFragment?.setup()
             }
         } catch (e: Exception) {
             e.printStackTrace()

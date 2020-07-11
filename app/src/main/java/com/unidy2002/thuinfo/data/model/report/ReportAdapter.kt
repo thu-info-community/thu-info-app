@@ -12,11 +12,15 @@ import com.unidy2002.thuinfo.ui.home.ReportFragment
 
 class ReportAdapter(
     private val originalReportList: List<ReportItem>,
-    private val mode: ReportFragment.Mode,
-    private var customOriginal: Boolean = true
+    private val state: ReportFragment.State
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val reportList get() = if (mode == ReportFragment.Mode.CUSTOM) genCustom() else originalReportList
+    private val reportList
+        get() = when (state.mode) {
+            ReportFragment.Mode.CUSTOM -> originalReportList.filter { !loggedInUser.reportIgnore.hasIgnoreP(it.id) }
+            ReportFragment.Mode.MANAGE -> originalReportList.filter { loggedInUser.reportIgnore.hasIgnoreP(it.id) }
+            else -> originalReportList
+        }
 
     open class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var grade: ImageView = view.findViewById(R.id.report_card_image)
@@ -113,20 +117,11 @@ class ReportAdapter(
 
     override fun getItemCount() = reportList.size + 1
 
-    private fun genCustom() =
-        if (customOriginal) originalReportList.filter { !loggedInUser.reportIgnore.hasIgnoreP(it.id) }
-        else originalReportList.filter { loggedInUser.reportIgnore.hasIgnoreP(it.id) }
-
-    fun toggle() {
-        customOriginal = !customOriginal
-        notifyDataSetChanged()
-    }
-
     fun toggle(position: Int) {
         if (position < reportList.size) {
-            if (customOriginal)
+            if (state.mode == ReportFragment.Mode.CUSTOM)
                 loggedInUser.reportIgnore.addIgnoreP(reportList[position].id)
-            else
+            else if (state.mode == ReportFragment.Mode.MANAGE)
                 loggedInUser.reportIgnore.removeIgnoreP(reportList[position].id)
         }
         notifyDataSetChanged()

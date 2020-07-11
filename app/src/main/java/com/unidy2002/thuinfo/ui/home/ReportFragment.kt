@@ -1,11 +1,14 @@
 package com.unidy2002.thuinfo.ui.home
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.fragment.app.Fragment
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
+import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.report.ReportAdapter
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getReport
@@ -26,47 +30,57 @@ class ReportFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_report, container, false)
 
-    private var mode = Mode.NORMAL
-
-    private var customOriginal = true
+    private val state get() = loggedInUser.reportState
 
     private fun getData() {
         safeThread {
-            val report = Network.getReport(mode)
+            val report = Network.getReport(state)
             view?.handler?.safePost {
                 report ?: context?.run { Toast.makeText(this, R.string.timeout_retry, Toast.LENGTH_SHORT).show() }
-                report_recycler_view.adapter = ReportAdapter(report ?: listOf(), mode, customOriginal)
+                report_recycler_view.adapter = ReportAdapter(report ?: listOf(), state)
                 report_swipe_refresh.isRefreshing = false
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
+    private fun render() {
         (activity as? AppCompatActivity)?.supportActionBar?.setTitle(
-            when (arguments?.getString("mode")) {
-                "BX" -> {
-                    mode = Mode.BX
-                    R.string.report_bx_str
-                }
-                "CUSTOM" -> {
-                    mode = Mode.CUSTOM
-                    R.string.report_custom_str
-                }
-                "GRADUATE" -> {
-                    mode = Mode.GRADUATE
-                    R.string.report_graduate_str
-
-                }
-                else -> {
-                    mode = Mode.NORMAL
-                    R.string.report
-                }
+            when (state.mode) {
+                Mode.CUSTOM -> R.string.report_custom_select_str
+                Mode.MANAGE -> R.string.report_manage_str
+                else -> if (state.undergraduate) R.string.report_under_str else R.string.report_graduate_str
             }
         )
 
-        try {
+        report_recycler_view.adapter = ReportAdapter(listOf(), state)
+        report_swipe_refresh.isRefreshing = true
+
+        if (state.mode == Mode.CUSTOM || state.mode == Mode.MANAGE) {
+            ItemTouchHelper(object : ItemTouchHelper.Callback() {
+                override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) =
+                    makeMovementFlags(0, ItemTouchHelper.START or ItemTouchHelper.END)
+
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ) = true
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.adapterPosition
+                    if (direction == ItemTouchHelper.START || direction == ItemTouchHelper.END)
+                        (report_recycler_view.adapter as? ReportAdapter)?.toggle(position)
+                }
+            }).attachToRecyclerView(report_recycler_view)
+        }
+
+        getData()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        /* try {
             activity?.getSharedPreferences("config", MODE_PRIVATE)?.run {
                 if (!getBoolean("new", false)) {
                     edit().putBoolean("new", true).apply()
@@ -92,11 +106,11 @@ class ReportFragment : Fragment() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        } */
 
         report_recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = ReportAdapter(listOf(), mode)
+            adapter = ReportAdapter(listOf(), state)
         }
 
         report_swipe_refresh.apply {
@@ -105,59 +119,125 @@ class ReportFragment : Fragment() {
             setOnRefreshListener { getData() }
         }
 
-        if (mode == Mode.NORMAL) {
-            (activity as? MainActivity)?.run {
-                menu.removeItem(R.id.item_pay_for_report)
-                menu.removeItem(R.id.report_bx_btn)
-                menu.removeItem(R.id.report_custom_btn)
-                menu.removeItem(R.id.report_graduate_btn)
-                menuInflater.inflate(R.menu.pay_for_report_menu, menu)
-            }
+        (activity as? MainActivity)?.run {
+            reportFragment = this@ReportFragment
+            menu.removeItem(R.id.item_pay_for_report)
+            menu.removeItem(R.id.report_setting_btn)
+            menuInflater.inflate(R.menu.pay_for_report_menu, menu)
         }
 
-        if (mode == Mode.CUSTOM) {
-            report_toggle_state.run {
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    report_toggle_state.setText(if (customOriginal) R.string.report_view_hidden_str else R.string.report_view_original_str)
-                    customOriginal = !customOriginal
-                    (report_recycler_view.adapter as? ReportAdapter)?.toggle()
-                }
-            }
+        if (context?.getSharedPreferences(loggedInUser.userId, MODE_PRIVATE)?.contains("reportSetting") == false)
+            setup(true)
 
-            ItemTouchHelper(object : ItemTouchHelper.Callback() {
-                override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) =
-                    makeMovementFlags(0, ItemTouchHelper.START or ItemTouchHelper.END)
+        loggedInUser.reportState = State(
+            context?.getSharedPreferences(loggedInUser.userId, MODE_PRIVATE)?.getInt("reportSetting", defaultState)
+                ?: defaultState
+        )
 
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ) = true
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
-                    if (direction == ItemTouchHelper.START || direction == ItemTouchHelper.END)
-                        (report_recycler_view.adapter as? ReportAdapter)?.toggle(position)
-                }
-            }).attachToRecyclerView(report_recycler_view)
-        }
-
-        getData()
+        render()
     }
 
-    enum class Mode { NORMAL, BX, CUSTOM, GRADUATE }
+    enum class Mode { NORMAL, BX, CUSTOM, MANAGE }
+
+    data class State(
+        val undergraduate: Boolean = true,
+        val newGPA: Boolean = true,
+        var mode: Mode = Mode.NORMAL
+    ) {
+        constructor(value: Int) : this(value >= 8, value % 8 >= 4, Mode.values()[value % 4]) // 12 by default
+
+        fun toInt() = (if (undergraduate) 8 else 0) + (if (newGPA) 4 else 0) + mode.ordinal
+    }
+
+    private val defaultState = 12
 
     override fun onPause() {
         super.onPause()
 
-        if (mode == Mode.NORMAL) {
-            (activity as? MainActivity)?.menu?.run {
-                removeItem(R.id.item_pay_for_report)
-                removeItem(R.id.report_bx_btn)
-                removeItem(R.id.report_custom_btn)
-                removeItem(R.id.report_graduate_btn)
+        (activity as? MainActivity)?.menu?.run {
+            removeItem(R.id.item_pay_for_report)
+            removeItem(R.id.report_setting_btn)
+        }
+    }
+
+    fun setup(firstTime: Boolean = false) {
+        try {
+            val input = ReportSettingView(state.toInt())
+            AlertDialog.Builder(context)
+                .setTitle(R.string.report_setting_str)
+                .setView(input)
+                .setPositiveButton(R.string.confirm_string) { _, _ ->
+                    try {
+                        loggedInUser.reportState = State(input.choice.also {
+                            context?.getSharedPreferences(loggedInUser.userId, MODE_PRIVATE)?.edit()
+                                ?.putInt("reportSetting", it)?.commit()
+                        })
+                        render()
+                        if (firstTime) {
+                            Toast.makeText(context, R.string.report_first_time, Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(context, R.string.report_exception_retry, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            context?.run { Toast.makeText(this, R.string.report_exception_retry, Toast.LENGTH_SHORT).show() }
+        }
+    }
+
+    private inner class SelectGroup(items: List<TextView>, var focus: Int = 0) {
+        init {
+            context?.run {
+                items.forEachIndexed { index, textView ->
+                    textView.setOnClickListener { v ->
+                        items.forEach { innerIt ->
+                            innerIt.background = getDrawable(R.drawable.report_setting_unselect)
+                        }
+                        v.background = getDrawable(R.drawable.report_setting_select)
+                        focus = index
+                    }
+                }
+                items.forEach { innerIt ->
+                    innerIt.background = getDrawable(R.drawable.report_setting_unselect)
+                }
+                items[focus].background = getDrawable(R.drawable.report_setting_select)
             }
         }
+    }
+
+    private inner class ReportSettingView(initState: Int) : LinearLayout(context) {
+        val selectGroups = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+            .inflate(R.layout.item_report_setting, this, true).run {
+                listOf(
+                    SelectGroup(
+                        listOf(
+                            findViewById(R.id.report_select_undergraduate),
+                            findViewById(R.id.report_select_graduate)
+                        ),
+                        1 - initState / 8
+                    ),
+                    SelectGroup(
+                        listOf(
+                            findViewById(R.id.report_select_new),
+                            findViewById(R.id.report_select_oid)
+                        ),
+                        1 - (initState % 8) / 4
+                    ),
+                    SelectGroup(
+                        listOf(
+                            findViewById(R.id.report_select_bxr),
+                            findViewById(R.id.report_select_bx),
+                            findViewById(R.id.report_select_custom),
+                            findViewById(R.id.report_select_manage)
+                        ),
+                        initState % 4
+                    )
+                )
+            }
+
+        val choice get() = (1 - selectGroups[0].focus) * 8 + (1 - selectGroups[1].focus) * 4 + selectGroups[2].focus
     }
 }
