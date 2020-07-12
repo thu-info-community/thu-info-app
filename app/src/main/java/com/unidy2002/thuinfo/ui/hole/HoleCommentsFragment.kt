@@ -20,7 +20,6 @@ import com.unidy2002.thuinfo.MainActivity
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.*
-import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
 import com.unidy2002.thuinfo.data.network.setHoleAttention
@@ -42,7 +41,7 @@ class HoleCommentsFragment : Fragment() {
 
     fun toggleAttention() {
         safeThread {
-            Network.setHoleAttention(pid, !attention)?.run {
+            setHoleAttention(pid, !attention)?.run {
                 attention = this
                 try {
                     hole_comment_submit?.handler?.safePost {
@@ -86,7 +85,7 @@ class HoleCommentsFragment : Fragment() {
                     setOnClickListener {
                         isEnabled = false
                         safeThread {
-                            if (Network.postHoleComment(pid, hole_comment_edit_text.text.toString())) {
+                            if (postHoleComment(pid, hole_comment_edit_text.text.toString())) {
                                 handler.safePost {
                                     holeCommentsAdapter.refresh()
                                     context?.run {
@@ -138,7 +137,7 @@ class HoleCommentsFragment : Fragment() {
             hole_comments_refresh.run {
                 isRefreshing = true
                 safeThread {
-                    Network.getHoleComments(pid)?.run {
+                    getHoleComments(pid)?.run {
                         if (data.isNotEmpty()) data.clear()
                         data.addAll(second)
                         attention = first

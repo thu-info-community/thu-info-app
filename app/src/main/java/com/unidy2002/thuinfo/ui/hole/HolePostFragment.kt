@@ -12,7 +12,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.postNewHole
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.wildma.pictureselector.PictureSelector
@@ -25,7 +24,7 @@ class HolePostFragment : Fragment() {
     private fun post(withImg: Boolean) {
         safeThread {
             hole_new_post_submit.run {
-                if (Network.postNewHole(hole_new_post_input.text.toString(), withImg)) {
+                if (postNewHole(hole_new_post_input.text.toString(), withImg)) {
                     handler.post {
                         context?.run { Toast.makeText(this, hole_publish_success, Toast.LENGTH_SHORT).show() }
                         loggedInUser.currentImageBase64 = ""

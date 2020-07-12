@@ -34,17 +34,7 @@ class HomeFragment : Fragment() {
                 setOnClickListener { findNavController(this@HomeFragment).navigate(resId) }
             }
 
-            // hole_btn.setNavigateDestination(R.id.holeMainFragment)
-            hole_btn.setOnClickListener {
-                AlertDialog.Builder(context)
-                    .setTitle("树洞模块已关停")
-                    .setMessage("""根据《"T大树洞"管理规范》的最新要求，不得使用T大树洞网页版以外的客户端、脚本等访问方式，未经T大树洞团队明确许可，访问T大树洞的相关服务、下载T大树洞服务提供的相关内容。""")
-                    .show()
-            }
-            hole_btn.setOnLongClickListener {
-                findNavController(this@HomeFragment).navigate(R.id.holeMainFragment)
-                true
-            }
+            hole_btn.setNavigateDestination(R.id.holeMainFragment)
             classroom_btn.setNavigateDestination(R.id.classroomWelcomeFragment)
             wentu_btn.setNavigateDestination(R.id.wentuFragment)
             report_btn.setNavigateDestination(R.id.reportFragment)

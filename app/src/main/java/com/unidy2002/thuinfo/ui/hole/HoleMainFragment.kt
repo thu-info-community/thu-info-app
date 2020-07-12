@@ -22,7 +22,6 @@ import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
-import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getHoleList
 import com.unidy2002.thuinfo.data.network.holeLogin
 import com.unidy2002.thuinfo.data.util.encrypt
@@ -123,7 +122,7 @@ class HoleMainFragment : Fragment() {
         validating = true
         hole_swipe_refresh.isRefreshing = true
         safeThread {
-            if (loggedInUser.holeLoggedIn || Network.holeLogin()) {
+            if (loggedInUser.holeLoggedIn || holeLogin()) {
                 loggedInUser.holeLoggedIn = true
                 validating = false
                 hole_recycler_view.handler.safePost { hole_swipe_refresh.isRefreshing = false }
@@ -187,7 +186,7 @@ class HoleMainFragment : Fragment() {
         fun fetch(mode: FetchMode = currentMode, payload: String = currentPayload) {
             hole_swipe_refresh.isRefreshing = true
             safeThread {
-                Network.getHoleList(mode, lastPage + 1, payload)?.run {
+                getHoleList(mode, lastPage + 1, payload)?.run {
                     val lastSize = data.size
                     lastPage++
                     if (mode == FetchMode.NORMAL) {

@@ -18,11 +18,13 @@ object Network {
         referer: String? = null,
         cookie: String? = null,
         post: String? = null,
-        followRedirects: Boolean = true
+        followRedirects: Boolean = true,
+        hole: Boolean = false
     ) = (URL(url).openConnection() as HttpsURLConnection).apply {
         setRequestProperty(
             "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+            if (hole) "THUInfo/1.0.7"
+            else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
         )
         referer?.run { setRequestProperty("referer", this) }
         cookie?.run { setRequestProperty("cookie", this) }
@@ -133,14 +135,15 @@ object Network {
 
     class UserLoginError : Exception()
 
-    fun HttpsURLConnection.getData(charsetName: String = "UTF-8"): String {
-        val reader = BufferedReader(InputStreamReader(inputStream, charsetName))
-        val stringBuilder = StringBuilder()
-        var readLine: String?
-        while (reader.readLine().also { readLine = it } != null)
-            stringBuilder.append("$readLine\n")
-        reader.close()
-        inputStream.close()
-        return stringBuilder.toString()
-    }
+}
+
+fun HttpsURLConnection.getData(charsetName: String = "UTF-8"): String {
+    val reader = BufferedReader(InputStreamReader(inputStream, charsetName))
+    val stringBuilder = StringBuilder()
+    var readLine: String?
+    while (reader.readLine().also { readLine = it } != null)
+        stringBuilder.append("$readLine\n")
+    reader.close()
+    inputStream.close()
+    return stringBuilder.toString()
 }
