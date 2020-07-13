@@ -308,6 +308,7 @@ class MainActivity : AppCompatActivity() {
                 } */
                 R.id.web_close -> navController.navigateUp(appBarConfiguration)
                 R.id.hole_support_like -> holeCommentsFragment?.toggleAttention()
+                R.id.hole_support_report -> holeCommentsFragment?.doReport()
                 R.id.hole_copy_token -> try {
                     copyUtil(applicationContext, loggedInUser.holeToken)
                     applicationContext?.run { Toast.makeText(this, hole_copy_success_str, Toast.LENGTH_SHORT).show() }

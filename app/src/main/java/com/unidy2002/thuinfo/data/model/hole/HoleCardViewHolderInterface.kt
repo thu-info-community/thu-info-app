@@ -64,7 +64,6 @@ fun HoleCardViewHolderInterface.bind(
     if (card is HoleTitleCard && card.type == "image") {
         context?.run {
             image.visibility = View.VISIBLE
-            image.setImageResource(R.drawable.hole_loading_image)
             Glide.with(this)
                 .load("https://img.thuhole.com/${card.url}")
                 .into(image)

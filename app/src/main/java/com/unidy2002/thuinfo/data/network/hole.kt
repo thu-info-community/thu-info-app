@@ -44,7 +44,6 @@ fun getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard
             emptyList()
         }
     } else {
-        println(payload)
         try {
             val data = connect(
                 when (mode) {
@@ -125,4 +124,14 @@ fun setHoleAttention(pid: Int, attention: Boolean) = try {
 } catch (e: Exception) {
     e.printStackTrace()
     null
+}
+
+fun postHoleReport(pid: Int, reason: String) = try {
+    connect(
+        "https://thuhole.com/services/thuhole/api.php?action=report&user_token=$token",
+        post = "user_token=$token&pid=$pid&reason=$reason"
+    ).getInteger("code") == 0
+} catch (e: Exception) {
+    e.printStackTrace()
+    false
 }

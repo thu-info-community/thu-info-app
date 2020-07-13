@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+            android:id="@+id/hole_support_report"
+            android:title="@string/hole_report_str"
+            android:icon="@drawable/ic_hole_report_24dp"
+            app:showAsAction="ifRoom"/>
+    <item
             android:id="@+id/hole_support_like"
             android:title="@string/hole_attention_str"
             android:icon="@drawable/ic_star_not_attention"

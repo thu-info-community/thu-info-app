@@ -3,6 +3,8 @@
     <string name="please_enter_token">请输入Token</string>
     <string name="hole_publish_str">发表</string>
     <string name="hole_attention_str">关注</string>
+    <string name="hole_report_str">举报</string>
+    <string name="hole_report_reason_str">举报理由</string>
     <string name="hole_hot_str">热榜</string>
     <string name="hole_hide_str">隐藏</string>
     <string name="hole_more_str">更多</string>
@@ -17,6 +19,8 @@
     <string name="hole_post_hint">请遵守树洞管理规范（试行），文明发言。</string>
     <string name="hole_publish_success">发表成功</string>
     <string name="hole_publish_failure">发表失败</string>
+    <string name="hole_report_success">举报成功</string>
+    <string name="hole_report_failure">举报失败</string>
     <string name="hole_refresh_str">刷新</string>
     <string name="hole_comment_str">回复</string>
     <string name="add_image_string">添加图片</string>

@@ -1,13 +1,13 @@
 package com.unidy2002.thuinfo.ui.hole
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.view.get
 import androidx.core.view.isEmpty
 import androidx.core.widget.doOnTextChanged
@@ -22,6 +22,7 @@ import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.hole.*
 import com.unidy2002.thuinfo.data.network.getHoleComments
 import com.unidy2002.thuinfo.data.network.postHoleComment
+import com.unidy2002.thuinfo.data.network.postHoleReport
 import com.unidy2002.thuinfo.data.network.setHoleAttention
 import com.unidy2002.thuinfo.data.util.safePost
 import com.unidy2002.thuinfo.data.util.safeThread
@@ -114,6 +115,7 @@ class HoleCommentsFragment : Fragment() {
         try {
             with(activity as MainActivity) {
                 menu.removeItem(R.id.hole_support_like)
+                menu.removeItem(R.id.hole_support_report)
                 holeCommentsFragment = null
             }
             recyclerViewState = hole_comments_recycler_view.layoutManager!!.onSaveInstanceState()!!
@@ -147,7 +149,7 @@ class HoleCommentsFragment : Fragment() {
                                 with(activity as MainActivity) {
                                     if (menu.isEmpty()) {
                                         menuInflater.inflate(R.menu.hole_support_menu, menu)
-                                        menu[0].icon = context.getDrawable(
+                                        menu[1].icon = context.getDrawable(
                                             if (attention) R.drawable.ic_star_has_attention
                                             else R.drawable.ic_star_not_attention
                                         )
@@ -199,5 +201,33 @@ class HoleCommentsFragment : Fragment() {
                 true
             }
         }
+    }
+
+    fun doReport() {
+        val input = HoleReportConfigLayout()
+        AlertDialog.Builder(context)
+            .setTitle(hole_report_str)
+            .setView(input)
+            .setPositiveButton(confirm_string) { _, _ ->
+                safeThread {
+                    if (postHoleReport(pid, input.reason.text.toString())) {
+                        hole_comment_submit.handler.safePost {
+                            Toast.makeText(context, hole_report_success, Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        hole_comment_submit.handler.safePost {
+                            Toast.makeText(context, hole_report_failure, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+            .setNegativeButton(cancel_string) { _, _ -> }
+            .show()
+    }
+
+    private inner class HoleReportConfigLayout : LinearLayout(context) {
+        val reason: EditText = (context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
+            .inflate(R.layout.item_hole_report_reason, this, true)
+            .findViewById(R.id.hole_report_input)
     }
 }

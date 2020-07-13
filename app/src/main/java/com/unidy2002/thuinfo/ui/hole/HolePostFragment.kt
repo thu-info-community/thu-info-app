@@ -57,7 +57,7 @@ class HolePostFragment : Fragment() {
             }
         }
 
-        hole_new_post_input.doOnTextChanged { text, _, _, _ -> hole_new_post_submit.isEnabled = !text.isNullOrBlank() }
+        hole_new_post_input.doOnTextChanged { text, _, _, _ -> hole_new_post_submit.isEnabled = !text.isNullOrEmpty() }
 
         hole_add_image.run {
             setOnClickListener {
