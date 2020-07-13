@@ -1,7 +1,9 @@
 package com.unidy2002.thuinfo.ui.hole
 
 import android.app.AlertDialog
+import android.graphics.BitmapFactory.decodeByteArray
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +15,16 @@ import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.R.string.*
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.network.postNewHole
+import com.unidy2002.thuinfo.data.util.generateKeyboard
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.wildma.pictureselector.PictureSelector
 import kotlinx.android.synthetic.main.fragment_hole_post.*
+import sj.keyboard.EmoticonsKeyBoardPopWindow
 
 class HolePostFragment : Fragment() {
+
+    private lateinit var keyboard: EmoticonsKeyBoardPopWindow
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_hole_post, container, false)
 
@@ -69,7 +76,7 @@ class HolePostFragment : Fragment() {
                     AlertDialog.Builder(context)
                         .setTitle(confirm_delete_img_str)
                         .setPositiveButton(yes_str) { _, _ ->
-                            setText(add_image_string)
+                            hole_img_preview.visibility = View.GONE
                             loggedInUser.currentImageBase64 = ""
                         }
                         .setNegativeButton(no_str) { _, _ -> }
@@ -77,15 +84,47 @@ class HolePostFragment : Fragment() {
                 }
             }
         }
+
+        try {
+            keyboard = generateKeyboard(hole_new_post_input)
+
+            hole_add_emoji.setOnClickListener {
+                if (keyboard.isShowing) keyboard.dismiss() else keyboard.showPopupWindow()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        hole_new_post_input.run {
+            isFocusable = true
+            isFocusableInTouchMode = true
+            requestFocus()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        hole_add_image.setText(if (loggedInUser.currentImageBase64.isBlank()) add_image_string else delete_image_string)
+        if (loggedInUser.currentImageBase64.isBlank()) {
+            hole_img_preview?.visibility = View.GONE
+        } else {
+            try {
+                with(Base64.decode(loggedInUser.currentImageBase64, Base64.DEFAULT)) {
+                    hole_img_preview?.setImageBitmap(decodeByteArray(this, 0, size))
+                    hole_img_preview?.visibility = View.VISIBLE
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        try {
+            keyboard.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         loggedInUser.currentImageBase64 = ""
     }
 }

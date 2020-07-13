@@ -40,7 +40,7 @@ object Network {
         }
     }
 
-    fun login(userId: String, password: String) = LoggedInUser(userId, password)/*.apply {
+    fun login(userId: String, password: String) = LoggedInUser(userId, password).apply {
         // Try login to webvpn
         vpnTicket = connect(
             "https://webvpn.tsinghua.edu.cn/do-login?local_login=true",
@@ -88,7 +88,7 @@ object Network {
             Log.i("interrupt", "login [3]")
             throw InterruptedException()
         }
-    }*/
+    }
 
     fun getUsername() {
         connect(

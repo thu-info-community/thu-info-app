@@ -27,6 +27,8 @@
     <string name="add_image_string">添加图片</string>
     <string name="delete_image_string">删除图片</string>
     <string name="confirm_delete_img_str">确认删除图片</string>
+    <string name="emoji_string">emoji</string>
+    <string name="preview_str">预览</string>
     <string name="yes_str">是</string>
     <string name="no_str">否</string>
     <string name="confirm_send_img_str">是否发送所附图片</string>

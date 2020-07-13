@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText
+    <sj.keyboard.widget.EmoticonsEditText
             android:id="@+id/hole_new_post_input"
             android:inputType="textMultiLine"
             android:hint="@string/hole_post_hint"
@@ -18,17 +18,29 @@
             android:padding="15dp"
             tools:ignore="Autofill"/>
 
-    <Button
+    <ImageView
             android:id="@+id/hole_add_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_image_string"
-            android:enabled="true"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:paddingVertical="3dp"
+            android:paddingHorizontal="7dp"
+            android:src="@drawable/ic_hole_image"
+            app:layout_constraintTop_toTopOf="@id/hole_new_post_submit"
+            app:layout_constraintBottom_toBottomOf="@id/hole_new_post_submit"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.3"/>
+            android:contentDescription="@string/add_image_string"/>
+
+    <ImageView
+            android:id="@+id/hole_add_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="3dp"
+            android:paddingHorizontal="7dp"
+            android:src="@drawable/ic_hole_smile"
+            app:layout_constraintTop_toTopOf="@id/hole_new_post_submit"
+            app:layout_constraintBottom_toBottomOf="@id/hole_new_post_submit"
+            app:layout_constraintLeft_toRightOf="@id/hole_add_image"
+            android:contentDescription="@string/emoji_string"/>
 
     <Button
             android:id="@+id/hole_new_post_submit"
@@ -37,9 +49,26 @@
             android:text="@string/submit_string"
             android:enabled="false"
             android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/middle_line"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    <View
+            android:id="@+id/middle_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"/>
+            android:visibility="invisible"
+            app:layout_constraintVertical_bias="0.6"/>
+
+    <ImageView
+            android:id="@+id/hole_img_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/middle_line"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/preview_str"
+            android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
