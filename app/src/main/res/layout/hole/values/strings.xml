@@ -2,6 +2,7 @@
 <resources>
     <string name="please_enter_token">请输入Token</string>
     <string name="hole_publish_str">发表</string>
+    <string name="hole_view_image_str">查看图片</string>
     <string name="hole_attention_str">关注</string>
     <string name="hole_report_str">举报</string>
     <string name="hole_report_reason_str">举报理由</string>
@@ -29,6 +30,7 @@
     <string name="yes_str">是</string>
     <string name="no_str">否</string>
     <string name="confirm_send_img_str">是否发送所附图片</string>
+    <string name="load_img_fail_string">图片加载失败</string>
     <string name="hole_copy_token_str">复制Token</string>
     <string name="hole_logout_str">退出树洞</string>
 </resources>

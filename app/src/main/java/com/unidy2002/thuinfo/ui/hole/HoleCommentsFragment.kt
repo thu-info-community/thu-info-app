@@ -46,7 +46,7 @@ class HoleCommentsFragment : Fragment() {
                 attention = this
                 try {
                     hole_comment_submit?.handler?.safePost {
-                        (activity as MainActivity).menu[0].icon = context?.getDrawable(
+                        (activity as MainActivity).menu[1].icon = context?.getDrawable(
                             if (attention) R.drawable.ic_star_has_attention
                             else R.drawable.ic_star_not_attention
                         )
@@ -124,10 +124,10 @@ class HoleCommentsFragment : Fragment() {
         }
     }
 
-    private inner class HoleCommentsAdapter : Adapter<ViewHolder>() {
+    inner class HoleCommentsAdapter : Adapter<ViewHolder>() {
         private val data = mutableListOf<HoleCard>()
 
-        private inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
+        inner class HoleCardViewHolder(view: View) : ViewHolder(view), HoleCardViewHolderInterface {
             override val id: TextView = view.findViewById(R.id.hole_id_text)
             override val tag: TextView = view.findViewById(R.id.hole_tag_text)
             override val time: TextView = view.findViewById(R.id.hole_time_text)

@@ -24,6 +24,7 @@ import com.unidy2002.thuinfo.data.util.dateToRelativeTime
 import com.unidy2002.thuinfo.data.util.getBitmap
 import com.unidy2002.thuinfo.data.util.safeThread
 import com.unidy2002.thuinfo.data.util.save
+import com.unidy2002.thuinfo.ui.hole.HoleCommentsFragment
 import com.unidy2002.thuinfo.ui.hole.HoleMainFragment
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
@@ -75,6 +76,15 @@ fun HoleCardViewHolderInterface.bind(
     if (card is HoleTitleCard && this is HoleMainFragment.HoleAdapter.HoleCardViewHolder) {
         bindCnt(card.reply, commentIcon, commentCnt)
         bindCnt(card.like, starIcon, starCnt)
+    }
+
+    if (card is HoleTitleCard && this is HoleCommentsFragment.HoleCommentsAdapter.HoleCardViewHolder) {
+        image.setOnClickListener {
+            NavHostFragment.findNavController(fragment)
+                .navigate(R.id.holeViewImageFragment, Bundle().apply {
+                    putString("url", "https://img.thuhole.com/${card.url}")
+                })
+        }
     }
 
     if (context == null) {
