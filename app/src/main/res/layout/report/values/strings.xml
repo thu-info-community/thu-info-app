@@ -6,4 +6,5 @@
     <string name="bug_report_exception_string">反馈模块出现异常，请稍后重试</string>
     <string name="bug_report_succeed">反馈成功！</string>
     <string name="bug_report_fail">反馈失败，请稍后重试</string>
+    <string name="popi_string">提问箱</string>
 </resources>
