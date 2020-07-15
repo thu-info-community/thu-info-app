@@ -242,7 +242,7 @@ class EmailListFragment : Fragment() {
                     )
                 val dir = File("${activity!!.getExternalFilesDir(null)!!.path}/cache/email/$messageId")
                 if (!dir.exists()) dir.mkdirs()
-                val file = File(dir, attachment.fileName).also { println(it.absolutePath) }
+                val file = File(dir, attachment.fileName)
                 val outputStream = FileOutputStream(file)
                 outputStream.write(attachment.inputStream.readBytes())
                 outputStream.close()

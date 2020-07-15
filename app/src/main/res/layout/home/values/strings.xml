@@ -9,6 +9,7 @@
     <string name="report">成绩单</string>
     <string name="pay_for_report_str">氪金</string>
     <string name="report_setting_str">设置</string>
+    <string name="report_to_excel_str">导出Excel</string>
     <string name="report_exception_retry">出现异常，请重试</string>
     <string name="report_first_time">点击右上角三个点可唤回设置</string>
     <string name="report_undergraduate_str">本科生</string>

@@ -378,6 +378,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.report_setting_btn -> reportFragment?.setup()
+                R.id.report_to_excel_btn -> reportFragment?.toExcel()
             }
         } catch (e: Exception) {
             e.printStackTrace()

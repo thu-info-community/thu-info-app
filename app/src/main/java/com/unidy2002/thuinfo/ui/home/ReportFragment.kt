@@ -2,6 +2,7 @@ package com.unidy2002.thuinfo.ui.home
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,10 +23,11 @@ import com.unidy2002.thuinfo.data.model.login.loggedInUser
 import com.unidy2002.thuinfo.data.model.report.ReportAdapter
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getReport
+import com.unidy2002.thuinfo.data.util.createExcel
 import com.unidy2002.thuinfo.data.util.safePost
 import com.unidy2002.thuinfo.data.util.safeThread
 import kotlinx.android.synthetic.main.fragment_report.*
-
+import java.io.File
 
 class ReportFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -115,6 +118,7 @@ class ReportFragment : Fragment() {
             reportFragment = this@ReportFragment
             menu.removeItem(R.id.item_pay_for_report)
             menu.removeItem(R.id.report_setting_btn)
+            menu.removeItem(R.id.report_to_excel_btn)
             menuInflater.inflate(R.menu.pay_for_report_menu, menu)
         }
 
@@ -149,6 +153,7 @@ class ReportFragment : Fragment() {
         (activity as? MainActivity)?.menu?.run {
             removeItem(R.id.item_pay_for_report)
             removeItem(R.id.report_setting_btn)
+            removeItem(R.id.report_to_excel_btn)
         }
     }
 
@@ -232,5 +237,35 @@ class ReportFragment : Fragment() {
             }
 
         val choice get() = (1 - selectGroups[0].focus) * 8 + (1 - selectGroups[1].focus) * 4 + selectGroups[2].focus
+    }
+
+    fun toExcel() {
+        try {
+            val dir = File(context?.getExternalFilesDir("report")?.path!!.toString())
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, "report_${System.currentTimeMillis()}.xls")
+            if (!file.exists()) file.createNewFile()
+
+            createExcel(file, "成绩单", listOf("学期", "课程号", "课程名", "等第", "学分", "绩点"),
+                (report_recycler_view.adapter as ReportAdapter).reportList.map {
+                    listOf(
+                        it.semester,
+                        it.id,
+                        it.name,
+                        it.grade ?: "N/A",
+                        it.credit.toString(),
+                        it.point?.toString() ?: "N/A"
+                    )
+                })
+
+            startActivity(Intent.createChooser(Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, getUriForFile(context!!, "com.unidy2002.fileprovider", file))
+                type = "application/vnd.ms-excel"
+            }, "成绩单"))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            context?.run { Toast.makeText(this, R.string.report_exception_retry, Toast.LENGTH_SHORT).show() }
+        }
     }
 }

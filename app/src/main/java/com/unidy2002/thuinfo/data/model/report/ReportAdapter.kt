@@ -15,7 +15,7 @@ class ReportAdapter(
     private val state: ReportFragment.State
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val reportList
+    val reportList
         get() = when (state.mode) {
             ReportFragment.Mode.CUSTOM -> originalReportList.filter { !loggedInUser.reportIgnore.hasIgnoreP(it.id) }
             ReportFragment.Mode.MANAGE -> originalReportList.filter { loggedInUser.reportIgnore.hasIgnoreP(it.id) }
