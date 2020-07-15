@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                     AVOSCloud.initialize(this@MainActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
+                        put("version", getVersionCode(this@MainActivity))
                         saveInBackground().subscribe(object : io.reactivex.Observer<AVObject> {
                             override fun onComplete() {
                                 edit().putBoolean("sent_api", true).apply()

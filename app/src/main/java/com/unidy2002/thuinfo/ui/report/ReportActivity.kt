@@ -21,10 +21,7 @@ import com.alibaba.fastjson.JSONArray
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getData
-import com.unidy2002.thuinfo.data.util.appId
-import com.unidy2002.thuinfo.data.util.appKey
-import com.unidy2002.thuinfo.data.util.safeThread
-import com.unidy2002.thuinfo.data.util.serverURL
+import com.unidy2002.thuinfo.data.util.*
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_report.*
@@ -63,6 +60,7 @@ class ReportActivity : AppCompatActivity() {
                     AVObject("Report").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
                         put("message", bug_report_input.text.toString())
+                        put("version", getVersionCode(this@ReportActivity))
                         saveInBackground().subscribe(object : Observer<AVObject> {
                             override fun onComplete() {
                                 Toast.makeText(this@ReportActivity, R.string.bug_report_succeed, Toast.LENGTH_SHORT)
