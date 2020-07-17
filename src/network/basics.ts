@@ -89,12 +89,14 @@ export const getAssessmentForm = (url: string): Promise<Form> =>
 		}),
 	);
 
-export const postAssessmentForm = (form: object): Promise<void> =>
+export const postAssessmentForm = (form: Form): Promise<void> =>
 	retryWrapper(
 		2005,
-		retrieve(ASSESSMENT_SUBMIT_URL, ASSESSMENT_MAIN_URL, form).then((res) => {
-			if (JSON.parse(res).result !== "success") {
-				throw 0;
-			}
-		}),
+		retrieve(ASSESSMENT_SUBMIT_URL, ASSESSMENT_MAIN_URL, form.serialize()).then(
+			(res) => {
+				if (JSON.parse(res).result !== "success") {
+					throw 0;
+				}
+			},
+		),
 	);

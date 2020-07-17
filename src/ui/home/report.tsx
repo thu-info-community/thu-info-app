@@ -11,7 +11,7 @@ import {
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 
-interface Section extends SectionListData<Course>, ReportHeaderProps {}
+type Section = SectionListData<Course> & ReportHeaderProps;
 
 const prepareData = (src: Course[]): [number, Section[]] => {
 	const semesters = new Set(src.map((course) => course.semester));
