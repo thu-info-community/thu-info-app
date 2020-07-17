@@ -1,3 +1,9 @@
+/**
+ * The minimal component of a form to be posted to the school server.
+ *
+ * Nobody knows what `name` stands for, but it is sure that `value`
+ * stands for the score of a question in some occasions.
+ */
 export class InputTag {
 	private readonly name: string;
 	public value: string;
@@ -20,6 +26,12 @@ export class InputTag {
 	};
 }
 
+/**
+ * Corresponds to the questions on the teaching-evaluation form.
+ *
+ * **DO NOT** ask why it contains property `suggestion`. Foolish design
+ * of the original website.
+ */
 export interface InputGroup {
 	question: string;
 	suggestion: InputTag;
@@ -28,49 +40,34 @@ export interface InputGroup {
 }
 
 export abstract class Suggestional {
-	abstract suggestionText: string;
+	abstract get suggestion(): string;
 
-	abstract updateSuggestion(): void;
+	abstract set suggestion(text: string);
 
-	/**
-	 * Warning: This method is not supposed to be called alone, as updateSuggestion() should always
-	 * be called in advance.
-	 */
-	abstract translate(): [string, string][];
-
-	toPairs = (): [string, string][] => {
-		this.updateSuggestion();
-		return this.translate();
-	};
+	abstract toPairs(): [string, string][];
 }
 
 export class Overall extends Suggestional {
-	constructor(
-		private suggestion: InputTag,
-		public score: InputTag,
-		public suggestionText: string = "",
-	) {
+	constructor(private suggestionTag: InputTag, public score: InputTag) {
 		super();
-		this.suggestionText = suggestion.value;
 	}
 
-	updateSuggestion() {
-		this.suggestion.value = this.suggestionText;
+	get suggestion(): string {
+		return this.suggestionTag.value;
 	}
 
-	translate(): [string, string][] {
-		return [this.suggestion.toPair(), this.score.toPair()];
+	set suggestion(text: string) {
+		this.suggestionTag.value = text;
+	}
+
+	toPairs(): [string, string][] {
+		return [this.suggestionTag.toPair(), this.score.toPair()];
 	}
 }
 
 class Person extends Suggestional {
-	constructor(
-		public name: string,
-		public inputGroups: InputGroup[],
-		public suggestionText: string = "",
-	) {
+	constructor(public name: string, public inputGroups: InputGroup[]) {
 		super();
-		this.suggestionText = inputGroups[0].suggestion.value;
 	}
 
 	autoScore(score: number = 7) {
@@ -82,13 +79,17 @@ class Person extends Suggestional {
 	outOfRange = () =>
 		this.inputGroups.some((inputGroup) => inputGroup.score.outOfRange());
 
-	updateSuggestion() {
+	get suggestion(): string {
+		return this.inputGroups[0].suggestion.value;
+	}
+
+	set suggestion(text: string) {
 		this.inputGroups.forEach((inputGroup) => {
-			inputGroup.suggestion.value = this.suggestionText;
+			inputGroup.suggestion.value = text;
 		});
 	}
 
-	translate(): [string, string][] {
+	toPairs(): [string, string][] {
 		return this.inputGroups.flatMap((item) =>
 			item.others
 				.concat(item.suggestion)
@@ -100,12 +101,15 @@ class Person extends Suggestional {
 
 export class Form {
 	constructor(
-		public basics: InputTag[],
+		private basics: InputTag[],
 		public overall: Overall,
 		public teachers: Person[],
 		public assistants: Person[],
 	) {}
 
+	/**
+	 * The form has to be serialized in order to be posted.
+	 */
 	serialize = () => {
 		const obj = Object.create(null);
 		this.basics
@@ -128,6 +132,9 @@ const assert = (exp: boolean) => {
 	}
 };
 
+/**
+ * Read persons data from their corresponding html tables.
+ */
 export const toPersons = (tables: Cheerio) => {
 	const persons: Person[] = [];
 	let table = tables.children("table").first();
