@@ -1,5 +1,4 @@
 import {
-	StyleSheet,
 	Switch,
 	TextInput,
 	View,
@@ -7,7 +6,7 @@ import {
 	Image,
 	ActivityIndicator,
 } from "react-native";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {connect} from "react-redux";
 import {authThunk} from "../../redux/actions/auth";
 import {State} from "../../redux/store";
@@ -17,6 +16,9 @@ import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {BlurView} from "@react-native-community/blur";
+import themedStyles from "../../utils/themedStyles";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 interface LoginProps {
 	readonly userId: string;
@@ -32,17 +34,17 @@ const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
 	const [remember, setRemember] = React.useState(props.remember);
-	const [autoLoginLock, setAutoLoginLock] = React.useState(false);
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+	const style = styles(themeName);
 
 	useEffect(() => {
-		if (!autoLoginLock) {
-			setAutoLoginLock(true);
-			if (remember) {
-				props.login(userId, password, remember);
-			}
+		if (remember) {
+			props.login(userId, password, remember);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [autoLoginLock]);
+	}, []);
 
 	useEffect(() => {
 		if (props.status === LoginStatus.Failed) {
@@ -50,140 +52,142 @@ const LoginUI = (props: LoginProps) => {
 				text: getStr("loginFailure"),
 				duration: Snackbar.LENGTH_LONG,
 			});
+			props.resetStatus();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.status]);
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.absoluteContainer}>
+		<View style={style.container}>
+			<View style={style.absoluteContainer}>
 				<Image
 					source={require("./../../assets/images/MaskedAppIcon.png")}
-					style={styles.appIconStyle}
+					style={style.appIconStyle}
 				/>
 				<TextInput
-					style={styles.textInputStyle}
+					style={style.textInputStyle}
 					placeholder={getStr("userId")}
 					value={userId}
 					onChangeText={setUserId}
 					keyboardType={"numeric"}
 				/>
 				<TextInput
-					style={styles.textInputStyle}
+					style={style.textInputStyle}
 					placeholder={getStr("password")}
 					value={password}
 					onChangeText={setPassword}
 					secureTextEntry
 				/>
-				<View style={styles.switchContainer}>
-					<Text style={styles.switchCaptionStyle}>{getStr("autoLogin")}</Text>
+				<View style={style.switchContainer}>
+					<Text style={style.switchCaptionStyle}>{getStr("autoLogin")}</Text>
 					<Switch value={remember} onValueChange={setRemember} />
 				</View>
 				<TouchableOpacity
-					style={styles.loginButtonStyle}
+					style={style.loginButtonStyle}
 					onPress={() => props.login(userId, password, remember)}>
-					<Text style={styles.loginButtonTextStyle}>{getStr("login")}</Text>
+					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</TouchableOpacity>
-				<Text style={styles.credentialNoteStyle}>
+				<Text style={style.credentialNoteStyle}>
 					{getStr("credentialNote")}
 				</Text>
 			</View>
 			{props.status === LoginStatus.LoggingIn ? (
-				<View style={styles.absoluteContainer}>
+				<View style={style.absoluteContainer}>
 					<BlurView
-						style={styles.blurViewStyle}
+						style={style.blurViewStyle}
 						blurType="light"
 						blurAmount={10}
 					/>
-					<ActivityIndicator size="large" color="#911c95" />
-					<Text style={styles.loggingInCaptionStyle}>
-						{getStr("loggingIn")}
-					</Text>
+					<ActivityIndicator size="large" color={theme.colors.primary} />
+					<Text style={style.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
 				</View>
 			) : null}
 		</View>
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
+const styles = themedStyles((theme) => {
+	return {
+		container: {
+			flex: 1,
+			justifyContent: "center",
+			alignItems: "center",
+		},
 
-	absoluteContainer: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		bottom: 0,
-		right: 0,
-		justifyContent: "center",
-		alignItems: "center",
-	},
+		absoluteContainer: {
+			position: "absolute",
+			top: 0,
+			left: 0,
+			bottom: 0,
+			right: 0,
+			justifyContent: "center",
+			alignItems: "center",
+		},
 
-	blurViewStyle: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		bottom: 0,
-		right: 0,
-	},
+		blurViewStyle: {
+			position: "absolute",
+			top: 0,
+			left: 0,
+			bottom: 0,
+			right: 0,
+		},
 
-	appIconStyle: {
-		marginBottom: 15,
-		resizeMode: "contain",
-		height: 140,
-	},
+		appIconStyle: {
+			marginBottom: 15,
+			resizeMode: "contain",
+			height: 140,
+		},
 
-	textInputStyle: {
-		height: 38,
-		backgroundColor: "white",
-		marginBottom: 15,
-		textAlign: "left",
-		borderColor: "lightgrey",
-		borderWidth: 1,
-		borderRadius: 5,
-		alignSelf: "stretch",
-		marginHorizontal: 80,
-		padding: 10,
-	},
+		textInputStyle: {
+			height: 38,
+			backgroundColor: "white",
+			marginBottom: 15,
+			textAlign: "left",
+			borderColor: "lightgrey",
+			borderWidth: 1,
+			borderRadius: 5,
+			alignSelf: "stretch",
+			marginHorizontal: 80,
+			padding: 10,
+		},
 
-	switchContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		paddingTop: 15,
-	},
+		switchContainer: {
+			flexDirection: "row",
+			alignItems: "center",
+			paddingTop: 15,
+		},
 
-	switchCaptionStyle: {
-		color: "#000000",
-		paddingRight: 15,
-	},
+		switchCaptionStyle: {
+			color: "black",
+			paddingRight: 15,
+		},
 
-	loginButtonStyle: {
-		height: 35,
-		width: 100,
-		backgroundColor: "#911c95",
-		marginTop: 30,
-		marginBottom: 20,
-		justifyContent: "center",
-		alignItems: "center",
-		borderRadius: 8,
-	},
+		loginButtonStyle: {
+			height: 35,
+			width: 100,
+			backgroundColor: theme.colors.primary,
+			marginTop: 30,
+			marginBottom: 20,
+			justifyContent: "center",
+			alignItems: "center",
+			borderRadius: 8,
+		},
 
-	loginButtonTextStyle: {
-		color: "#ffffff",
-		fontWeight: "bold",
-	},
+		loginButtonTextStyle: {
+			color: "white",
+			fontWeight: "bold",
+		},
 
-	credentialNoteStyle: {
-		color: "darkgrey",
-		marginHorizontal: 40,
-		marginTop: 130,
-	},
+		credentialNoteStyle: {
+			color: "darkgrey",
+			marginHorizontal: 40,
+			marginTop: 130,
+		},
 
-	loggingInCaptionStyle: {
-		marginTop: 5,
-	},
+		loggingInCaptionStyle: {
+			marginTop: 5,
+		},
+	};
 });
 
 export const LoginScreen = connect(

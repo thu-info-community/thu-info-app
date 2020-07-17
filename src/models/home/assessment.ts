@@ -4,6 +4,8 @@
  * Nobody knows what `name` stands for, but it is sure that `value`
  * stands for the score of a question in some occasions.
  */
+import {getStr} from "../../utils/i18n";
+
 export class InputTag {
 	private readonly name: string;
 	public value: string;
@@ -106,6 +108,31 @@ export class Form {
 		public teachers: Person[],
 		public assistants: Person[],
 	) {}
+
+	/**
+	 * Check whether this form is valid to post.
+	 *
+	 * Returns a reason as a `string` if invalid, or `undefined` if else.
+	 */
+	invalid = () => {
+		try {
+			if (this.overall.score.outOfRange()) {
+				return getStr("overallOutOfRange");
+			} else if (this.teachers.some((person) => person.outOfRange())) {
+				return getStr("teachersOutOfRange");
+			} else if (
+				this.assistants.length > 0 &&
+				this.assistants.every((person) => person.outOfRange())
+			) {
+				return getStr("assistantsOutOfRange");
+			} else {
+				return undefined;
+			}
+		} catch (e) {
+			console.error(e);
+			return getStr("exceptionOccurred");
+		}
+	};
 
 	/**
 	 * The form has to be serialized in order to be posted.
