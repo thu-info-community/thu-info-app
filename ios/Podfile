@@ -79,6 +79,8 @@ target 'thu_info' do
 
   pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'thu_infoTests' do
     inherit! :complete
     # Pods for testing

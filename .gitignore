@@ -33,6 +33,12 @@ local.properties
 #
 .vscode/
 
+# Eclipse
+#
+.settings/
+.classpath
+.project
+
 # node.js
 #
 node_modules/
