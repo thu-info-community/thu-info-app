@@ -1,21 +1,25 @@
 import {HomeStackScreen} from "../ui/home/homeStack";
 import {NewsStackScreen} from "../ui/news/newsStack";
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {connect} from "react-redux";
 import {fullNameThunk} from "../redux/actions/basics";
 import {getTicket} from "../network/core";
 import {ScheduleStackScreen} from "../ui/schedule/scheduleStack";
 import {getStr} from "../utils/i18n";
+import Icon from "react-native-vector-icons/FontAwesome";
+import themes from "../assets/themes/themes";
+import {ThemeContext} from "../assets/themes/context";
 
 interface RootProps {
-	readonly fullName: string;
 	getFullName: () => void;
 }
 
 const Tab = createBottomTabNavigator();
 
 const RootComponent = (props: RootProps) => {
+	const theme = themes[useContext(ThemeContext)];
+
 	useEffect(() => {
 		// Things that should be done only once upon logged in
 
@@ -28,7 +32,33 @@ const RootComponent = (props: RootProps) => {
 	}, []);
 
 	return (
-		<Tab.Navigator>
+		<Tab.Navigator
+			screenOptions={({route}) => ({
+				tabBarIcon: ({color, size}) => {
+					let iconName;
+
+					switch (route.name) {
+						case "Home": {
+							iconName = "home";
+							break;
+						}
+						case "News": {
+							iconName = "newspaper-o";
+							break;
+						}
+						case "Schedule": {
+							iconName = "table";
+							break;
+						}
+					}
+
+					return <Icon name={iconName || ""} size={size} color={color} />;
+				},
+			})}
+			tabBarOptions={{
+				activeTintColor: theme.colors.primary,
+				inactiveTintColor: "gray",
+			}}>
 			<Tab.Screen
 				name="Home"
 				component={HomeStackScreen}
