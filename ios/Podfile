@@ -77,6 +77,8 @@ target 'thu_info' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
+
   target 'thu_infoTests' do
     inherit! :complete
     # Pods for testing

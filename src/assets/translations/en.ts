@@ -3,7 +3,7 @@ export default {
 	password: "Password",
 	login: "Login",
 	autoLogin: "Auto-Login",
-	loggingIn: "Logging In ...",
+	loggingIn: "Logging In...",
 	loginFailure:
 		"Login failed, please check the network connection and make sure your password is correct before re-login.",
 	home: "Home",
