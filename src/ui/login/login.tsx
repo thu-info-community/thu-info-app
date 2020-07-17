@@ -16,6 +16,7 @@ import {LOGIN_FAILURE} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
+import {BlurView} from "@react-native-community/blur";
 
 interface LoginProps {
 	readonly userId: string;
@@ -52,41 +53,53 @@ const LoginUI = (props: LoginProps) => {
 		}
 	}, [props.status]);
 
-	return props.status !== LoginStatus.LoggingIn ? (
+	return (
 		<View style={styles.container}>
-			<Image
-				source={require("./../../assets/images/MaskedAppIcon.png")}
-				style={styles.appIconStyle}
-			/>
-			<TextInput
-				style={styles.textInputStyle}
-				placeholder={getStr("userId")}
-				value={userId}
-				onChangeText={setUserId}
-				keyboardType={"numeric"}
-			/>
-			<TextInput
-				style={styles.textInputStyle}
-				placeholder={getStr("password")}
-				value={password}
-				onChangeText={setPassword}
-				secureTextEntry
-			/>
-			<View style={styles.switchContainer}>
-				<Text style={styles.switchCaptionStyle}>{getStr("autoLogin")}</Text>
-				<Switch value={remember} onValueChange={setRemember} />
+			<View style={styles.absoluteContainer}>
+				<Image
+					source={require("./../../assets/images/MaskedAppIcon.png")}
+					style={styles.appIconStyle}
+				/>
+				<TextInput
+					style={styles.textInputStyle}
+					placeholder={getStr("userId")}
+					value={userId}
+					onChangeText={setUserId}
+					keyboardType={"numeric"}
+				/>
+				<TextInput
+					style={styles.textInputStyle}
+					placeholder={getStr("password")}
+					value={password}
+					onChangeText={setPassword}
+					secureTextEntry
+				/>
+				<View style={styles.switchContainer}>
+					<Text style={styles.switchCaptionStyle}>{getStr("autoLogin")}</Text>
+					<Switch value={remember} onValueChange={setRemember} />
+				</View>
+				<TouchableOpacity
+					style={styles.loginButtonStyle}
+					onPress={() => props.login(userId, password, remember)}>
+					<Text style={styles.loginButtonTextStyle}>{getStr("login")}</Text>
+				</TouchableOpacity>
+				<Text style={styles.credentialNoteStyle}>
+					{getStr("credentialNote")}
+				</Text>
 			</View>
-			<TouchableOpacity
-				style={styles.loginBottonStyle}
-				onPress={() => props.login(userId, password, remember)}>
-				<Text style={styles.loginButtonTextStyle}>{getStr("login")}</Text>
-			</TouchableOpacity>
-			<Text style={styles.credentialNoteStyle}>{getStr("credentialNote")}</Text>
-		</View>
-	) : (
-		<View style={styles.container}>
-			<ActivityIndicator size="large" color="#911c95" />
-			<Text style={styles.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
+			{props.status === LoginStatus.LoggingIn ? (
+				<View style={styles.absoluteContainer}>
+					<BlurView
+						style={styles.blurViewStyle}
+						blurType="light"
+						blurAmount={10}
+					/>
+					<ActivityIndicator size="large" color="#911c95" />
+					<Text style={styles.loggingInCaptionStyle}>
+						{getStr("loggingIn")}
+					</Text>
+				</View>
+			) : null}
 		</View>
 	);
 };
@@ -96,6 +109,24 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+
+	absoluteContainer: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+
+	blurViewStyle: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
 	},
 
 	appIconStyle: {
@@ -128,7 +159,7 @@ const styles = StyleSheet.create({
 		paddingRight: 15,
 	},
 
-	loginBottonStyle: {
+	loginButtonStyle: {
 		height: 35,
 		width: 100,
 		backgroundColor: "#911c95",
