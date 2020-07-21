@@ -32,3 +32,7 @@ export const ASSESSMENT_BASE_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f";
 export const ASSESSMENT_SUBMIT_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f/jxpg/b/jxpg/pgjg/xs/zancunjs";
+export const JXRL_PREFIX =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=";
+export const JXRL_MIDDLE = "&p_end_date=";
+export const JXRL_SUFFIX = "&jsoncallback=m";
