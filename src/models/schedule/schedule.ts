@@ -58,7 +58,7 @@ export interface Exam {
 	dayOfWeek: number;
 }
 
-export const parseJSON = (json: any[]) => {
+export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 	const primaryList: Lesson[] = [];
 	const examList: Exam[] = [];
 	json.forEach((o) => {

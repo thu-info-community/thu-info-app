@@ -8,15 +8,19 @@ import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
 import createFilter from "redux-persist-transform-filter";
 import createTransform from "redux-persist/es/createTransform";
+import {Schedule} from "./states/schedule";
+import {schedule} from "./reducers/schedule";
 
 export interface State {
 	auth: AuthState;
 	fullName: string;
+	schedule: Schedule;
 }
 
 const rootReducer = combineReducers({
 	auth,
 	fullName,
+	schedule,
 });
 
 const authFilter = createFilter("auth", ["userId", "password", "remember"]);
@@ -33,7 +37,7 @@ const persistConfig = {
 	version: 1,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth"],
+	whitelist: ["auth", "schedule"],
 	transforms: [authFilter, authTransform],
 };
 
