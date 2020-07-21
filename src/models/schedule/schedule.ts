@@ -1,3 +1,5 @@
+import {Calendar} from "../../utils/calendar";
+
 enum LessonType {
 	PRIMARY,
 	SECONDARY,
@@ -43,7 +45,7 @@ export interface Lesson {
 	title: string;
 	locale: string;
 	week: number;
-	day: number;
+	dayOfWeek: number;
 	begin: number;
 	end: number;
 }
@@ -53,7 +55,7 @@ export interface Exam {
 	title: string;
 	locale: string;
 	week: number;
-	day: number;
+	dayOfWeek: number;
 }
 
 export const parseJSON = (json: any[]) => {
@@ -65,25 +67,27 @@ export const parseJSON = (json: any[]) => {
 				case "上课": {
 					const title = o.nr;
 					const locale = o.dd || "";
-					const dateString = o.nq;
+					const date = new Calendar(o.nq);
+					const week = date.weekNumber;
+					const dayOfWeek = date.dayOfWeek;
 					const begin = beginMap[o.kssj];
 					const end = endMap[o.jssj];
 					if (
 						primaryList.length > 0 &&
 						title === primaryList[primaryList.length - 1].title &&
 						locale === primaryList[primaryList.length - 1].locale &&
+						week === primaryList[primaryList.length - 1].week &&
+						dayOfWeek === primaryList[primaryList.length - 1].dayOfWeek &&
 						begin <= primaryList[primaryList.length - 1].end + 1
 					) {
-						// console.log(2333);
-						// console.log(o);
 						primaryList[primaryList.length - 1].end = end;
 					} else {
 						primaryList.push({
 							type: LessonType.PRIMARY,
 							title,
 							locale,
-							week: 0,
-							day: 0,
+							week,
+							dayOfWeek,
 							begin,
 							end,
 						});
@@ -91,11 +95,14 @@ export const parseJSON = (json: any[]) => {
 					break;
 				}
 				case "考试": {
+					const date = new Calendar(o.nq);
+					const week = date.weekNumber;
+					const dayOfWeek = date.dayOfWeek;
 					examList.push({
 						title: o.nr,
 						locale: o.dd || "",
-						week: 0,
-						day: 0,
+						week,
+						dayOfWeek,
 					});
 					break;
 				}
