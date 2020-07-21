@@ -18,10 +18,6 @@ export type FullNameAction = ActionType<typeof fullNameAction>;
 export const fullNameThunk = () => (dispatch: Dispatch<FullNameAction>) => {
 	dispatch(fullNameAction.request());
 	getFullName()
-		.then((str) => {
-			dispatch(fullNameAction.success(str));
-		})
-		.catch(() => {
-			dispatch(fullNameAction.failure());
-		});
+		.then((str) => dispatch(fullNameAction.success(str)))
+		.catch(() => dispatch(fullNameAction.failure()));
 };

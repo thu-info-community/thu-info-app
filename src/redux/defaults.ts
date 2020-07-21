@@ -1,4 +1,5 @@
 import {AuthState, LoginStatus} from "./states/auth";
+import {Schedule} from "./states/schedule";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -8,3 +9,7 @@ export const defaultAuthState: AuthState = {
 };
 
 export const defaultFullNameState = "";
+
+export const defaultSchedule: Schedule = {
+	primary: [],
+};
