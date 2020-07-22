@@ -113,3 +113,56 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 	});
 	return [primaryList, examList];
 };
+
+// Note: no '}' at the end.
+export const parseScript = (script: string): Lesson[] => {
+	const result: Lesson[] = [];
+	const segments = script.split("strHTML =").slice(1);
+	const beginList = [1, 3, 6, 8, 10, 12];
+	const endList = [2, 5, 7, 9, 11, 14];
+	segments.forEach((seg) => {
+		const position = seg.substring(
+			seg.indexOf("getElementById") + 16,
+			seg.indexOf("').inner"),
+		);
+		const dayOfWeek = Number(position[3]);
+		const sessionIndex = Number(position[1]);
+		const begin = beginList[sessionIndex - 1];
+		const end = endList[sessionIndex - 1];
+		const title = seg.substring(seg.indexOf("<b>") + 3, seg.indexOf("</b>"));
+		const detail = seg
+			.substring(seg.indexOf("</a>") + 4, seg.indexOf(";") - 1)
+			.replace(/\s/, "");
+
+		const add = (week: number) => {
+			result.push({
+				type: LessonType.SECONDARY,
+				title,
+				locale: "",
+				week,
+				dayOfWeek,
+				begin,
+				end,
+			});
+		};
+
+		const res1 = /第([\d]+)周/.exec(detail);
+		if (res1 !== null) {
+			add(Number(res1[1]));
+		} else {
+			const res2 = /第([\d]+)[-~]([\d]+)周/.exec(detail);
+			if (res2 !== null) {
+				const left = Number(res2[1]);
+				const right = Number(res2[2]);
+				for (let i = left; i <= right; i++) {
+					add(i);
+				}
+			} else if (detail.indexOf("单周") !== -1) {
+				[1, 3, 5, 7, 9, 11, 13, 15].forEach((i) => add(i));
+			} else if (detail.indexOf("双周") !== -1) {
+				[2, 4, 6, 8, 10, 12, 14, 16].forEach((i) => add(i));
+			}
+		}
+	});
+	return result;
+};

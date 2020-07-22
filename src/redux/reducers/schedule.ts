@@ -1,11 +1,28 @@
 import {Schedule} from "../states/schedule";
 import {defaultSchedule} from "../defaults";
-import {PrimaryScheduleAction} from "../actions/schedule";
-import {PRIMARY_SCHEDULE_SUCCESS} from "../constants";
+import {ScheduleAction} from "../actions/schedule";
+import {
+	PRIMARY_SCHEDULE_SUCCESS,
+	SECONDARY_SCHEDULE_SUCCESS,
+} from "../constants";
 
 export const schedule = (
 	state: Schedule = defaultSchedule,
-	action: PrimaryScheduleAction,
+	action: ScheduleAction,
 ): Schedule => {
-	return action.type === PRIMARY_SCHEDULE_SUCCESS ? action.payload : state;
+	switch (action.type) {
+		case PRIMARY_SCHEDULE_SUCCESS:
+			return {
+				...state,
+				primary: action.payload.primary,
+				exam: action.payload.exam,
+			};
+		case SECONDARY_SCHEDULE_SUCCESS:
+			return {
+				...state,
+				secondary: action.payload.secondary,
+			};
+		default:
+			return state;
+	}
 };
