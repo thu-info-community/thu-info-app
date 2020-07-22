@@ -12,4 +12,6 @@ export const defaultFullNameState = "";
 
 export const defaultSchedule: Schedule = {
 	primary: [],
+	secondary: [],
+	exam: [],
 };

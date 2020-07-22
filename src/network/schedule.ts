@@ -1,6 +1,14 @@
-import {retrieve, retryWrapper} from "./core";
-import {JXRL_MIDDLE, JXRL_PREFIX, JXRL_SUFFIX} from "../constants/strings";
-import {parseJSON} from "../models/schedule/schedule";
+import {connect, retrieve, retryWrapper} from "./core";
+import {
+	COURSE_SELECT_ENTRY,
+	INFO_ROOT_URL,
+	JXRL_MIDDLE,
+	JXRL_PREFIX,
+	JXRL_SUFFIX,
+	SECONDARY_PREFIX,
+	SECONDARY_SUFFIX,
+} from "../constants/strings";
+import {parseJSON, parseScript} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 
 export const getSchedule = () => {
@@ -16,6 +24,7 @@ export const getSchedule = () => {
 						JXRL_MIDDLE +
 						format(new Calendar((id + 1) * groupSize, 7)) +
 						JXRL_SUFFIX,
+					INFO_ROOT_URL,
 				),
 			),
 		)
@@ -29,3 +38,19 @@ export const getSchedule = () => {
 			.then(parseJSON),
 	);
 };
+
+export const getSecondary = () =>
+	connect(COURSE_SELECT_ENTRY, INFO_ROOT_URL)
+		.then(() =>
+			retrieve(
+				SECONDARY_PREFIX + Calendar.semesterId + SECONDARY_SUFFIX,
+				COURSE_SELECT_ENTRY,
+				undefined,
+				"GBK",
+			),
+		)
+		.then((str) => {
+			const lowerBound = str.indexOf("function setInitValue");
+			const upperBound = str.indexOf("}", lowerBound);
+			return parseScript(str.substring(lowerBound, upperBound));
+		});
