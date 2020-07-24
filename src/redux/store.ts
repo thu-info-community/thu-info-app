@@ -6,7 +6,9 @@ import {fullName} from "./reducers/basics";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
-import createFilter from "redux-persist-transform-filter";
+import createFilter, {
+	createBlacklistFilter,
+} from "redux-persist-transform-filter";
 import createTransform from "redux-persist/es/createTransform";
 import {Schedule} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
@@ -33,12 +35,17 @@ const authTransform = createTransform(
 	{whitelist: ["auth"]},
 );
 
+const scheduleFilter = createBlacklistFilter("schedule", [
+	"primaryRefreshing",
+	"secondaryRefreshing",
+]);
+
 const persistConfig = {
 	version: 1,
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule"],
-	transforms: [authFilter, authTransform],
+	transforms: [authFilter, authTransform, scheduleFilter],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

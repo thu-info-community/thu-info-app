@@ -14,4 +14,7 @@ export const defaultSchedule: Schedule = {
 	primary: [],
 	secondary: [],
 	exam: [],
+	cache: "",
+	primaryRefreshing: false,
+	secondaryRefreshing: false,
 };
