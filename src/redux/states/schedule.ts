@@ -9,4 +9,8 @@ export interface SecondarySchedule {
 	secondary: Lesson[];
 }
 
-export interface Schedule extends PrimarySchedule, SecondarySchedule {}
+export interface Schedule extends PrimarySchedule, SecondarySchedule {
+	cache: string;
+	primaryRefreshing: boolean;
+	secondaryRefreshing: boolean;
+}

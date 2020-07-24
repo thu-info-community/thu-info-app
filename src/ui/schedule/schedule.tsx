@@ -1,5 +1,5 @@
-import {Button, StyleSheet, Text, View} from "react-native";
-import React from "react";
+import {RefreshControl, ScrollView, StyleSheet, Text} from "react-native";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {
@@ -7,39 +7,109 @@ import {
 	secondaryScheduleThunk,
 } from "../../redux/actions/schedule";
 import {Exam, Lesson} from "../../models/schedule/schedule";
+import {Col, Row, Grid} from "react-native-easy-grid";
+import {Calendar} from "../../utils/calendar";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
 	readonly secondary: Lesson[];
 	readonly exam: Exam[];
+	readonly cache: string;
+	readonly primaryRefreshing: boolean;
+	readonly secondaryRefreshing: boolean;
 	getPrimary: () => void;
 	getSecondary: () => void;
 }
 
+const headerSpan = 0.3;
+const unitHeight = 90;
+
+const GridRow = (props: {span?: number; text?: React.ReactText}) => (
+	<Row style={[styles.center, {height: (props.span || 1) * unitHeight}]}>
+		{props.text ? <Text>{props.text}</Text> : null}
+	</Row>
+);
+
+const GridColumn = ({day, lessons}: {day: number; lessons: Lesson[]}) => {
+	const record = new Array<Lesson>(14);
+	const result = [<GridRow key={0} span={headerSpan} text={day} />];
+	for (let i = 1; i <= 14; i++) {
+		if (record[i - 1] === undefined) {
+			const valid = lessons.filter(
+				(lesson) => lesson.begin <= i && i <= lesson.end,
+			);
+			if (valid.length === 0) {
+				result.push(<GridRow key={i} />);
+			} else {
+				result.push(
+					<GridRow
+						key={i}
+						text={`${valid[0].title}@${valid[0].locale}`}
+						span={valid[0].end - valid[0].begin + 1}
+					/>,
+				);
+				for (let j = i - 1; j < valid[0].end; j++) {
+					record[j] = valid[0];
+				}
+			}
+		}
+	}
+	return <Col size={2}>{result}</Col>;
+};
+
 const ScheduleUI = (props: ScheduleProps) => {
-	const foo = () => {
-		if (props.primary.length === 0) {
+	useEffect(() => {
+		if (Calendar.semesterId !== props.cache) {
+			console.log(
+				"Schedule: Corresponding cache not found. Auto fetch from server.",
+			);
 			props.getPrimary();
-		} else {
-			console.log(props.primary);
-		}
-		if (props.secondary.length === 0) {
 			props.getSecondary();
-		} else {
-			console.log(props.secondary);
 		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.cache]);
 
 	return (
-		<View style={styles.center}>
-			<Text>这是计划。</Text>
-			<Button title={"2333"} onPress={foo} />
-		</View>
+		<ScrollView
+			refreshControl={
+				<RefreshControl
+					refreshing={props.primaryRefreshing || props.secondaryRefreshing}
+					onRefresh={() => {
+						props.getPrimary();
+						props.getSecondary();
+					}}
+				/>
+			}>
+			<Grid>
+				<Col size={1}>
+					<GridRow span={headerSpan} />
+					{Array.from(new Array(14), (_, id) => (
+						<GridRow key={id} text={id + 1} />
+					))}
+				</Col>
+				{Array.from(new Array(7), (_, id) => (
+					<GridColumn
+						key={id}
+						day={id + 1}
+						lessons={props.primary.filter(
+							(lesson) => lesson.dayOfWeek === id + 1,
+						)}
+					/>
+				))}
+			</Grid>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
-	center: {flex: 1, alignItems: "center", justifyContent: "center"},
+	center: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: 3,
+		borderWidth: 0.5,
+		borderColor: "black",
+	},
 });
 
 export const ScheduleScreen = connect(
