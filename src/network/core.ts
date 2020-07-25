@@ -180,6 +180,7 @@ export const retryWrapper = async <R>(
 		} catch {
 			await getTicket(target);
 		}
+		console.log(`Getting ticket ${target} failed (${i + 1}/2). Retrying.`);
 	}
 	return operation;
 };
