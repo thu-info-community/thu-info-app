@@ -5,9 +5,11 @@ import {
 } from "@react-navigation/stack";
 import {ScheduleScreen} from "./schedule";
 import {getStr} from "../../utils/i18n";
+import {ScheduleShortenScreen} from "./scheduleShorten";
 
 type ScheduleStackParamList = {
 	Schedule: undefined;
+	ScheduleShorten: undefined;
 };
 
 const Stack = createStackNavigator<ScheduleStackParamList>();
@@ -20,6 +22,11 @@ export const ScheduleStackScreen = () => (
 			name="Schedule"
 			component={ScheduleScreen}
 			options={{title: getStr("schedule")}}
+		/>
+		<Stack.Screen
+			name="ScheduleShorten"
+			component={ScheduleShortenScreen}
+			options={{title: getStr("scheduleCustomShorten")}}
 		/>
 	</Stack.Navigator>
 );

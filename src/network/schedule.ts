@@ -30,7 +30,12 @@ export const getSchedule = () => {
 		)
 			.then((results) =>
 				results
-					.map((s) => s.substring(s.indexOf("[") + 1, s.lastIndexOf("]")))
+					.map((s) => {
+						if (s[0] !== "m") {
+							throw 0;
+						}
+						return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
+					})
 					.filter((s) => s.trim().length > 0)
 					.join(","),
 			)

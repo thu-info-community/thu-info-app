@@ -10,6 +10,7 @@ import {
 import {Dispatch} from "redux";
 import {getSchedule, getSecondary} from "../../network/schedule";
 import {PrimarySchedule, SecondarySchedule} from "../states/schedule";
+import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 
 const primaryScheduleAction = createAsyncAction(
 	PRIMARY_SCHEDULE_REQUEST,
@@ -25,7 +26,8 @@ const secondaryScheduleAction = createAsyncAction(
 
 export type ScheduleAction =
 	| ActionType<typeof primaryScheduleAction>
-	| ActionType<typeof secondaryScheduleAction>;
+	| ActionType<typeof secondaryScheduleAction>
+	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]};
 
 export const primaryScheduleThunk = () => (
 	dispatch: Dispatch<ScheduleAction>,

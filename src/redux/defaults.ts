@@ -17,4 +17,5 @@ export const defaultSchedule: Schedule = {
 	cache: "",
 	primaryRefreshing: false,
 	secondaryRefreshing: false,
+	shortenMap: {},
 };

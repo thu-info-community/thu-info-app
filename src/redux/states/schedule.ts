@@ -13,4 +13,5 @@ export interface Schedule extends PrimarySchedule, SecondarySchedule {
 	cache: string;
 	primaryRefreshing: boolean;
 	secondaryRefreshing: boolean;
+	shortenMap: {[key: string]: string};
 }
