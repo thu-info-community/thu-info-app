@@ -17,7 +17,7 @@ const addToDefaultShortenMap = (
 	src: {[key: string]: string},
 	...lists: (Lesson | Exam)[][]
 ) => {
-	const dest = Object.create(src);
+	const dest = {...src};
 	lists.forEach((list) => {
 		list.forEach((item) => {
 			if (!(item.title in src)) {
@@ -78,7 +78,7 @@ export const schedule = (
 				secondaryRefreshing: false,
 			};
 		case SCHEDULE_UPDATE_ALIAS: {
-			const shortenMap = Object.create(state.shortenMap);
+			const shortenMap = {...state.shortenMap};
 			shortenMap[action.payload[0]] = action.payload[1];
 			return {
 				...state,

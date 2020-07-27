@@ -40,4 +40,5 @@ export default {
 		"Failed in auto-evaluation, please check the network connection and retry.",
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	scheduleCustomShorten: "Aliases",
+	dayOfWeek: ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
 };

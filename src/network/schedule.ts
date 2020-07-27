@@ -12,7 +12,7 @@ import {parseJSON, parseScript} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 
 export const getSchedule = () => {
-	const format = (c: Calendar) => c.date.format("YYYYMMDD");
+	const format = (c: Calendar) => c.format("YYYYMMDD");
 	const groupSize = 3; // Make sure that `groupSize` is a divisor of `Calendar.weekCount`.
 	return retryWrapper(
 		792,
