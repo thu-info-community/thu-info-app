@@ -4,8 +4,9 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
+	View,
 } from "react-native";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {
@@ -17,6 +18,7 @@ import {Col, Row, Grid} from "react-native-easy-grid";
 import {Calendar} from "../../utils/calendar";
 import {ScheduleNav} from "./scheduleStack";
 import {getStr} from "../../utils/i18n";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -31,7 +33,7 @@ interface ScheduleProps {
 	navigation: ScheduleNav;
 }
 
-const headerSpan = 0.3;
+const headerSpan = 0.5;
 const unitHeight = 90;
 
 const GridRow = (props: {span?: number; text?: React.ReactText}) => (
@@ -42,15 +44,25 @@ const GridRow = (props: {span?: number; text?: React.ReactText}) => (
 
 const GridColumn = ({
 	day,
+	week,
 	lessons,
 	shorten,
 }: {
 	day: number;
+	week: number;
 	lessons: Lesson[];
 	shorten: {[_: string]: string};
 }) => {
 	const record = new Array<Lesson>(14);
-	const result = [<GridRow key={0} span={headerSpan} text={day} />];
+	const result = [
+		<GridRow
+			key={0}
+			span={headerSpan}
+			text={`${new Calendar(week, day).format("MM.DD")}\n${
+				getStr("dayOfWeek")[day]
+			}`}
+		/>,
+	];
 	for (let i = 1; i <= 14; i++) {
 		if (record[i - 1] === undefined) {
 			const valid = lessons.filter(
@@ -80,6 +92,8 @@ const GridColumn = ({
 };
 
 const ScheduleUI = (props: ScheduleProps) => {
+	const [week, setWeek] = useState(new Calendar().weekNumber);
+
 	useEffect(() => {
 		if (Calendar.semesterId !== props.cache) {
 			console.log(
@@ -93,6 +107,41 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	return (
 		<>
+			<View
+				style={{
+					padding: 10,
+					justifyContent: "space-between",
+					alignItems: "center",
+					flexDirection: "row",
+				}}>
+				<Icon.Button
+					name="chevron-left"
+					size={24}
+					color={week > 1 ? "black" : "#888"}
+					disabled={week <= 1}
+					backgroundColor={"#f000"}
+					onPress={() => setWeek((o) => (o > 1 ? o - 1 : o))}
+				/>
+				<Text
+					onPress={() => setWeek(new Calendar().weekNumber)}
+					style={{
+						fontSize: 18,
+						textAlign: "center",
+						flex: 1,
+					}}>
+					{week}
+				</Text>
+				<Icon.Button
+					name="chevron-right"
+					size={24}
+					color={week < Calendar.weekCount ? "black" : "#888"}
+					disabled={week >= Calendar.weekCount}
+					backgroundColor={"#f000"}
+					onPress={() =>
+						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
+					}
+				/>
+			</View>
 			<ScrollView
 				refreshControl={
 					<RefreshControl
@@ -114,8 +163,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 						<GridColumn
 							key={id}
 							day={id + 1}
+							week={week}
 							lessons={props.primary.filter(
-								(lesson) => lesson.dayOfWeek === id + 1,
+								(lesson) => lesson.dayOfWeek === id + 1 && lesson.week === week,
 							)}
 							shorten={props.shortenMap}
 						/>

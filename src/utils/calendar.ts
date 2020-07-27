@@ -12,7 +12,7 @@ export enum SemesterType {
 export class Calendar {
 	date: dayjs.Dayjs;
 
-	constructor(config: dayjs.ConfigType | number, rest?: number) {
+	constructor(config?: dayjs.ConfigType | number, rest?: number) {
 		if (rest === undefined) {
 			this.date = dayjs(config);
 		} else {
@@ -30,6 +30,8 @@ export class Calendar {
 	get dayOfWeek(): number {
 		return this.date.day();
 	}
+
+	format = (template?: string) => this.date.format(template);
 
 	diff = (other: Calendar) => this.date.diff(other.date);
 
