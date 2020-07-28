@@ -12,7 +12,11 @@ export default {
 	networkRetry: "网络异常，请重试。",
 	credentialNote: "您的用户信息因特殊原因暂时不加密地存放在本地。",
 	exceptionOccurred: "发生异常，请重试。",
+	teachingEvaluation: "教学评估",
 	overallOutOfRange: "请为课程总体印象打分。",
 	teachersOutOfRange: "老师评分部分有遗漏。",
 	assistantsOutOfRange: "助教评分部分有遗漏。",
+	loading: "加载中...",
+	evaluated: "已评价",
+	notEvaluated: "未评价",
 };
