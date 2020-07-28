@@ -14,9 +14,13 @@ export default {
 	credentialNote:
 		"Due to special reasons, your credentials are stored locally without encryption.",
 	exceptionOccurred: "Exception occurred, please retry.",
+	teachingEvaluation: "Teaching Evaluation",
 	overallOutOfRange: "Please rate your overall impression of the course.",
 	teachersOutOfRange:
 		"Please check whether you have missed out any question of the teachers'.",
 	assistantsOutOfRange:
 		"Please check whether you have missed out any question of the teaching assistants'.",
+	loading: "Loading...",
+	evaluated: "Evaluated",
+	notEvaluated: "Not Evaluated",
 };

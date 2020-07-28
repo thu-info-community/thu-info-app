@@ -5,11 +5,13 @@ import {
 } from "@react-navigation/stack";
 import {HomeScreen} from "./home";
 import {ReportScreen} from "./report";
+import {EvaluationScreen} from "./evaluation";
 import {getStr} from "../../utils/i18n";
 
 type HomeStackParamList = {
 	Home: undefined;
 	Report: undefined;
+	Evaluation: undefined;
 };
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -27,6 +29,11 @@ export const HomeStackScreen = () => (
 			name="Report"
 			component={ReportScreen}
 			options={{title: getStr("report")}}
+		/>
+		<Stack.Screen
+			name="Evaluation"
+			component={EvaluationScreen}
+			options={{title: getStr("teachingEvaluation")}}
 		/>
 	</Stack.Navigator>
 );
