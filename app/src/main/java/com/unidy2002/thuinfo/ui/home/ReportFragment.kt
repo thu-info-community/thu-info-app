@@ -114,14 +114,6 @@ class ReportFragment : Fragment() {
             setOnRefreshListener { getData() }
         }
 
-        (activity as? MainActivity)?.run {
-            reportFragment = this@ReportFragment
-            menu.removeItem(R.id.item_pay_for_report)
-            menu.removeItem(R.id.report_setting_btn)
-            menu.removeItem(R.id.report_to_excel_btn)
-            menuInflater.inflate(R.menu.pay_for_report_menu, menu)
-        }
-
         if (context?.getSharedPreferences(loggedInUser.userId, MODE_PRIVATE)?.contains("reportSetting") == false)
             setup(true)
 
@@ -154,6 +146,18 @@ class ReportFragment : Fragment() {
             removeItem(R.id.item_pay_for_report)
             removeItem(R.id.report_setting_btn)
             removeItem(R.id.report_to_excel_btn)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        (activity as? MainActivity)?.run {
+            reportFragment = this@ReportFragment
+            menu.removeItem(R.id.item_pay_for_report)
+            menu.removeItem(R.id.report_setting_btn)
+            menu.removeItem(R.id.report_to_excel_btn)
+            menuInflater.inflate(R.menu.pay_for_report_menu, menu)
         }
     }
 
