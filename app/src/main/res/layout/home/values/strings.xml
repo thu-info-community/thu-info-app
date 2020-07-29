@@ -4,8 +4,7 @@
     <string name="expenditure">总支出</string>
     <string name="_0_00">0.00</string>
     <string name="remainder">余额</string>
-    <string name="why">？</string>
-    <string name="refresh">刷</string>
+    <string name="e_card_do_query_str">查询</string>
     <string name="report">成绩单</string>
     <string name="pay_for_report_str">氪金</string>
     <string name="report_setting_str">设置</string>

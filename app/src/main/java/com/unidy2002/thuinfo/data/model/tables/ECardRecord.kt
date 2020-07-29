@@ -21,29 +21,34 @@ class ECardRecord(val eCardList: MutableList<ECardElement> = mutableListOf()) {
     var expenditure: Double = 0.0
     var remainder: Double = 0.0
 
-    fun addElement(locale: String, category: String, date_time: String, value: Double) {
+    fun addElement(locale: String, category: String, date_time: String, value: Double, beg: String, end: String) {
         date_time.split(' ').run {
-            eCardList.add(
-                ECardElement(
-                    locale,
-                    with(Regex("\\(.*\\)").find(category)) {
-                        this?.value?.drop(1)?.dropLast(1) ?: category
-                    },
-                    this[0], this[1],
-                    when (isSpent(category)) {
-                        true -> {
-                            expenditure += value
-                            remainder -= value
-                            String.format("-%.2f", value)
+            if (this[0] in beg..end) {
+                eCardList.add(
+                    ECardElement(
+                        locale,
+                        with(Regex("\\(.*\\)").find(category)) {
+                            this?.value?.drop(1)?.dropLast(1) ?: category
+                        },
+                        this[0], this[1],
+                        when (isSpent(category)) {
+                            true -> {
+                                expenditure += value
+                                String.format("-%.2f", value)
+                            }
+                            false -> {
+                                income += value
+                                String.format("+%.2f", value)
+                            }
                         }
-                        false -> {
-                            income += value
-                            remainder += value
-                            String.format("+%.2f", value)
-                        }
-                    }
+                    )
                 )
-            )
+            }
+            if (isSpent(category)) {
+                remainder -= value
+            } else {
+                remainder += value
+            }
         }
     }
 }

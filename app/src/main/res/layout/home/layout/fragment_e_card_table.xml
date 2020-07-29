@@ -80,37 +80,50 @@
                     android:textSize="28sp"/>
 
         </GridLayout>
+    </LinearLayout>
 
-        <GridLayout
+    <LinearLayout
+            android:id="@+id/e_card_date_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintTop_toBottomOf="@id/e_card_meta">
+
+        <TextView
+                android:id="@+id/e_card_date_start"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                style="@style/home_icon_style"/>
+
+        <TextView
+                android:id="@+id/e_card_date_end"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                style="@style/home_icon_style"/>
+
+        <TextView
+                android:id="@+id/e_card_do_query"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:columnCount="1"
-                android:rowCount="2">
-
-            <Button
-                    android:id="@+id/why"
-                    android:text="@string/why"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:textSize="12sp"
-                    android:enabled="false"/>
-
-            <Button
-                    android:id="@+id/refresh"
-                    android:text="@string/refresh"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:textSize="12sp"
-                    android:enabled="false"/>
-
-        </GridLayout>
+                android:text="@string/e_card_do_query_str"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                style="@style/home_icon_style"/>
     </LinearLayout>
 
     <com.bin.david.form.core.SmartTable
             android:id="@+id/table"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/e_card_meta"
+            app:layout_constraintTop_toBottomOf="@id/e_card_date_config"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     <ProgressBar

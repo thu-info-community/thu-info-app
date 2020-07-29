@@ -1,5 +1,6 @@
 package com.unidy2002.thuinfo.ui.home
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -7,20 +8,23 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bin.david.form.core.SmartTable
 import com.unidy2002.thuinfo.R
 import com.unidy2002.thuinfo.data.model.tables.ECardRecord
 import com.unidy2002.thuinfo.data.network.Network
 import com.unidy2002.thuinfo.data.network.getECard
-import kotlin.concurrent.thread
+import com.unidy2002.thuinfo.data.util.SchoolCalendar
+import com.unidy2002.thuinfo.data.util.safeThread
+import kotlinx.android.synthetic.main.fragment_e_card_table.*
+import java.util.*
 
 class ECardTableFragment : Fragment() {
+    private lateinit var today: SchoolCalendar
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_e_card_table, container, false)
 
@@ -32,44 +36,60 @@ class ECardTableFragment : Fragment() {
                 setData(result.eCardList)
                 isEnabled = true
             }
-            fun span(value: Double) =
-                SpannableString(String.format("%.2f", value)).apply {
-                    setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                }
-            view?.findViewById<TextView>(R.id.income_value)?.text = span(result.income)
-            view?.findViewById<TextView>(R.id.expenditure_value)?.text = span(result.expenditure)
-            view?.findViewById<TextView>(R.id.remainder_value)?.text = span(result.remainder)
+            fun span(value: Double) = SpannableString(String.format("%.2f", value)).apply {
+                setSpan(AbsoluteSizeSpan(32), this.length - 3, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            income_value.text = span(result.income)
+            expenditure_value.text = span(result.expenditure)
+            remainder_value.text = span(result.remainder)
         }
-        view?.findViewById<ProgressBar>(R.id.loading)?.visibility = ProgressBar.GONE
-        view?.findViewById<Button>(R.id.why)?.isEnabled = true
-        view?.findViewById<Button>(R.id.refresh)?.isEnabled = true
+        loading.visibility = ProgressBar.GONE
     }
 
     private fun getData() {
-        Network.getECard().run { view?.handler?.post { updateUI(this) } }
+        loading.visibility = ProgressBar.VISIBLE
+        safeThread {
+            Network.getECard(e_card_date_start.text.toString(), e_card_date_end.text.toString()).run {
+                view?.handler?.post { updateUI(this) }
+            }
+        }
     }
 
     override fun onStart() {
-        val why = view?.findViewById<Button>(R.id.why)
-        why?.setOnClickListener {
-            view?.context?.run {
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.remainder_not_match)
-                    .setMessage(R.string.remainder_explanation)
-                    .show()
+        super.onStart()
+
+        if (!::today.isInitialized) {
+            today = SchoolCalendar()
+
+            val year = today.get(Calendar.YEAR)
+            val month = today.get(Calendar.MONTH) + 1
+            val day = today.get(Calendar.DAY_OF_MONTH)
+
+            e_card_date_start.text = String.format("%04d-%02d-%02d", year - 1, month, day)
+            e_card_date_end.text = String.format("%04d-%02d-%02d", year, month, day)
+
+            e_card_date_start.setDateConfigListener()
+            e_card_date_end.setDateConfigListener()
+
+            e_card_do_query.setOnClickListener { getData() }
+
+            getData()
+        }
+    }
+
+    private fun TextView.setDateConfigListener() {
+        setOnClickListener {
+            context?.run {
+                DatePickerDialog(
+                    this,
+                    DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                        text = String.format("%04d-%02d-%02d", year, month + 1, day)
+                    },
+                    text.substring(0, 4).toInt(),
+                    text.substring(5, 7).toInt() - 1,
+                    text.substring(8, 10).toInt()
+                ).show()
             }
         }
-
-        val refresh = view?.findViewById<Button>(R.id.refresh)
-        refresh?.setOnClickListener {
-            why?.isEnabled = false
-            refresh.isEnabled = false
-            view?.findViewById<ProgressBar>(R.id.loading)?.visibility = ProgressBar.VISIBLE
-            view?.findViewById<SmartTable<ECardRecord.ECardElement>>(R.id.table)?.isEnabled = false
-            thread { getData() }
-        }
-
-        thread { getData() }
-        super.onStart()
     }
 }

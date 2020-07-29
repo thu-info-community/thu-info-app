@@ -202,7 +202,7 @@ fun Network.getClassroomState(classroom: String, week: Int): List<Pair<String, L
     }
 }
 
-fun Network.getECard() = retryTemplate(824) {
+fun Network.getECard(beg: String, end: String) = retryTemplate(824) {
     connect(
         "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/ExDetailsDown.do",
         null,
@@ -217,11 +217,14 @@ fun Network.getECard() = retryTemplate(824) {
                     this[1].contents,
                     this[2].contents,
                     this[4].contents,
-                    this[5].contents.toDouble()
+                    this[5].contents.toDouble(),
+                    beg,
+                    end
                 )
             }
         }
         close()
+        if (table.eCardList.isEmpty()) table.addElement("", "", "$end 00:00", 0.0, beg, end)
         table
     }
 }
