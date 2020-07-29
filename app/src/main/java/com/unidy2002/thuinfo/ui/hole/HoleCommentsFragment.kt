@@ -133,6 +133,7 @@ class HoleCommentsFragment : Fragment() {
             override val time: TextView = view.findViewById(R.id.hole_time_text)
             override val text: TextView = view.findViewById(R.id.hole_text_text)
             override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
+            override val details: LinearLayout = view.findViewById(R.id.hole_to_be_hidden_part)
         }
 
         fun refresh(restore: Boolean = false) {

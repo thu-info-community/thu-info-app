@@ -52,7 +52,6 @@ fun getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard
                     FetchMode.SEARCH -> "https://thuhole.com/services/thuhole/api.php?action=search&pagesize=50&page=$page&keywords=$payload&user_token=$token"
                 }
             ).getJSONArray("data")
-            assert(data.isNotEmpty())
             val result = mutableListOf<HoleTitleCard>()
             for (i in data.indices)
                 result.add(HoleTitleCard(data.getJSONObject(i)))
@@ -63,7 +62,7 @@ fun getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard
         }
     }?.also { result ->
         result.filter { it.tag in foldTags }.forEach {
-            it.type = "text"
+            it.type = "hidden"
             it.text = "*单击以查看树洞*"
         }
     }

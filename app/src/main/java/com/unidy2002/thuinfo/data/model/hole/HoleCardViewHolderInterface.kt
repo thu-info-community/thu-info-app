@@ -11,6 +11,7 @@ import android.os.Handler
 import android.text.util.Linkify
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.getSystemService
@@ -45,6 +46,7 @@ interface HoleCardViewHolderInterface {
     val time: TextView
     val text: TextView
     val image: ImageView
+    val details: LinearLayout
 }
 
 /*val highlight: SyntaxHighlight =
@@ -72,6 +74,9 @@ fun HoleCardViewHolderInterface.bind(
     } else {
         image.visibility = View.GONE
     }
+
+
+    details.visibility = if (card is HoleTitleCard && card.type == "hidden") View.GONE else View.VISIBLE
 
     if (card is HoleTitleCard && this is HoleMainFragment.HoleAdapter.HoleCardViewHolder) {
         bindCnt(card.reply, commentIcon, commentCnt)

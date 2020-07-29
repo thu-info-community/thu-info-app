@@ -43,103 +43,110 @@
                     android:background="@drawable/hole_tag_text_background"/>
         </LinearLayout>
 
-        <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:foreground="#40000000"/>
-
-        <TextView
-                android:id="@+id/hole_text_text"
-                android:textSize="15sp"
-                android:padding="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        <ImageView
-                android:id="@+id/hole_title_card_image"
+        <LinearLayout
+                android:id="@+id/hole_to_be_hidden_part"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                tools:ignore="ContentDescription"
-                android:visibility="gone"/>
+                android:orientation="vertical">
 
-        <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:foreground="#40000000"/>
-
-        <TextView
-                android:id="@+id/hole_quote_text"
-                android:padding="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-
-        <View
-                android:id="@+id/hole_line_below_quote"
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:foreground="#40000000"
-                android:visibility="gone"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:foreground="#40000000"/>
 
             <TextView
-                    android:id="@+id/hole_time_text"
+                    android:id="@+id/hole_text_text"
+                    android:textSize="15sp"
                     android:padding="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             <ImageView
-                    android:id="@+id/hole_comment_cnt_icon"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/hole_title_card_image"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_message"
-                    app:layout_constraintTop_toTopOf="@id/hole_time_text"
-                    app:layout_constraintBottom_toBottomOf="@id/hole_time_text"
-                    app:layout_constraintVertical_bias="0.64"
-                    app:layout_constraintEnd_toStartOf="@id/hole_comment_cnt_text"
-                    android:contentDescription="@string/hole_comment_str"
+                    android:padding="10dp"
+                    tools:ignore="ContentDescription"
                     android:visibility="gone"/>
+
+            <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:foreground="#40000000"/>
 
             <TextView
-                    android:id="@+id/hole_comment_cnt_text"
+                    android:id="@+id/hole_quote_text"
                     android:padding="5dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toStartOf="@id/hole_star_cnt_icon"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     android:visibility="gone"/>
 
-            <ImageView
-                    android:id="@+id/hole_star_cnt_icon"
+            <View
+                    android:id="@+id/hole_line_below_quote"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_star_small_black"
-                    app:layout_constraintTop_toTopOf="@id/hole_time_text"
-                    app:layout_constraintBottom_toBottomOf="@id/hole_time_text"
-                    app:layout_constraintEnd_toStartOf="@id/hole_star_cnt_text"
-                    android:contentDescription="@string/hole_attention_str"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:foreground="#40000000"
                     android:visibility="gone"/>
 
-            <TextView
-                    android:id="@+id/hole_star_cnt_text"
-                    android:padding="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:visibility="gone"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/hole_time_text"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <ImageView
+                        android:id="@+id/hole_comment_cnt_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_message"
+                        app:layout_constraintTop_toTopOf="@id/hole_time_text"
+                        app:layout_constraintBottom_toBottomOf="@id/hole_time_text"
+                        app:layout_constraintVertical_bias="0.64"
+                        app:layout_constraintEnd_toStartOf="@id/hole_comment_cnt_text"
+                        android:contentDescription="@string/hole_comment_str"
+                        android:visibility="gone"/>
+
+                <TextView
+                        android:id="@+id/hole_comment_cnt_text"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toStartOf="@id/hole_star_cnt_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:visibility="gone"/>
+
+                <ImageView
+                        android:id="@+id/hole_star_cnt_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_star_small_black"
+                        app:layout_constraintTop_toTopOf="@id/hole_time_text"
+                        app:layout_constraintBottom_toBottomOf="@id/hole_time_text"
+                        app:layout_constraintEnd_toStartOf="@id/hole_star_cnt_text"
+                        android:contentDescription="@string/hole_attention_str"
+                        android:visibility="gone"/>
+
+                <TextView
+                        android:id="@+id/hole_star_cnt_text"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:visibility="gone"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -175,6 +175,7 @@ class HoleMainFragment : Fragment() {
             override val time: TextView = view.findViewById(R.id.hole_time_text)
             override val text: TextView = view.findViewById(R.id.hole_text_text)
             override val image: ImageView = view.findViewById(R.id.hole_title_card_image)
+            override val details: LinearLayout = view.findViewById(R.id.hole_to_be_hidden_part)
             val commentIcon: ImageView = view.findViewById(R.id.hole_comment_cnt_icon)
             val commentCnt: TextView = view.findViewById(R.id.hole_comment_cnt_text)
             val starIcon: ImageView = view.findViewById(R.id.hole_star_cnt_icon)
