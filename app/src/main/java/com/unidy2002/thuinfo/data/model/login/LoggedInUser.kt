@@ -39,8 +39,6 @@ data class LoggedInUser(val userId: String, val password: String) {
     val connectionState = mutableMapOf(792 to false, 824 to false, -1 to false, 2005 to false)
 
     val timerTasks = mutableListOf<TimerTask>()
-
-    var reportOn = false
 }
 
 private var loggedInUserInstance: LoggedInUser? = null

@@ -142,8 +142,6 @@ class ReportFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
-        loggedInUser.reportOn = false
-
         (activity as? MainActivity)?.menu?.run {
             removeItem(R.id.item_pay_for_report)
             removeItem(R.id.report_setting_btn)
@@ -153,8 +151,6 @@ class ReportFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        loggedInUser.reportOn = true
 
         (activity as? MainActivity)?.run {
             reportFragment = this@ReportFragment
