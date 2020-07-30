@@ -57,11 +57,14 @@ fun getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard
                 result.add(
                     HoleTitleCard(
                         data.getJSONObject(i),
-                        if (mode == FetchMode.ATTENTION) false else connect(
+                        if (mode == FetchMode.ATTENTION) false else Network.connect(
                             "https://thuhole.com/services/thuhole/api.php?action=getcomment&pid=${data.getJSONObject(
                                 i
                             ).getInteger("pid")}&user_token=$token"
-                        ).getBoolean("attention")
+                        ).inputStream.run {
+                            skip(13)
+                            read().toChar() == '1'
+                        }
                     )
                 )
             result.filter { !loggedInUser.holeIgnore.hasIgnoreP(it.id) }

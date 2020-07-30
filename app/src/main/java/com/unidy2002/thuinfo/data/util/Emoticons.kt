@@ -4,6 +4,7 @@ import android.view.KeyEvent
 import android.widget.EditText
 import com.sj.emoji.DefEmoticons
 import com.sj.emoji.EmojiBean
+import com.sj.emoji.EmojiParse
 import com.unidy2002.thuinfo.R
 import sj.keyboard.EmoticonsKeyBoardPopWindow
 import sj.keyboard.adpater.EmoticonsAdapter
@@ -16,10 +17,15 @@ import java.util.*
 
 fun generateKeyboard(editText: EditText) = EmoticonsKeyBoardPopWindow(editText.context).apply {
     setAdapter(PageSetAdapter().apply {
+        val emoticonList = DefEmoticons.getDefEmojiArray().toCollection(ArrayList())
+        emoticonList[7] = EmojiBean(R.mipmap.emoji_0x1f3c6, EmojiParse.fromCodePoint(0x1f3c6))
+        emoticonList[8] = EmojiBean(R.mipmap.emoji_0x1f351, EmojiParse.fromCodePoint(0x1f351))
+        emoticonList[11] = EmojiBean(R.mipmap.emoji_0x1f474, EmojiParse.fromCodePoint(0x1f474))
+        emoticonList[12] = EmojiBean(R.mipmap.emoji_0x1f475, EmojiParse.fromCodePoint(0x1f475))
         add(EmoticonPageSetEntity.Builder<Any>()
             .setLine(3)
             .setRow(7)
-            .setEmoticonList(DefEmoticons.getDefEmojiArray().toCollection(ArrayList()))
+            .setEmoticonList(emoticonList)
             .setIPageViewInstantiateItem { container, _, pageEntity ->
                 pageEntity as EmoticonPageEntity<*>
                 if (pageEntity.rootView == null) {
