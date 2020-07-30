@@ -23,7 +23,7 @@ object Network {
     ) = (URL(url).openConnection() as HttpsURLConnection).apply {
         setRequestProperty(
             "User-Agent",
-            if (hole) "THUInfo/1.1.0"
+            if (hole) "THUInfo/1.1.1"
             else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
         )
         referer?.run { setRequestProperty("referer", this) }
@@ -71,7 +71,7 @@ object Network {
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login",
             "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/",
             vpnTicket,
-            "redirect=NO&userName=$userId&password=$password&x=0&y=0"
+            "redirect=NO&userName=$userId&password=${encode(password, "UTF-8")}&x=0&y=0"
         ).inputStream.close()
         if (Thread.interrupted()) {
             Log.i("interrupt", "login [2]")
