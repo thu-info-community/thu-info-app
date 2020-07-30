@@ -10,9 +10,10 @@ data class HoleTitleCard(
     var like: Int,
     var type: String,
     val url: String,
-    val reply: Int
+    val reply: Int,
+    val attention: Boolean
 ) : HoleCard {
-    constructor(json: JSONObject) : this(
+    constructor(json: JSONObject, attention: Boolean = false) : this(
         json.getInteger("pid"),
         json.getLong("timestamp"),
         json.getString("text"),
@@ -20,6 +21,7 @@ data class HoleTitleCard(
         json.getInteger("likenum"),
         json.getString("type"),
         json.getString("url"),
-        json.getInteger("reply")
+        json.getInteger("reply"),
+        attention
     )
 }

@@ -54,16 +54,27 @@ fun getHoleList(mode: FetchMode, page: Int, payload: String): List<HoleTitleCard
             ).getJSONArray("data")
             val result = mutableListOf<HoleTitleCard>()
             for (i in data.indices)
-                result.add(HoleTitleCard(data.getJSONObject(i)))
+                result.add(
+                    HoleTitleCard(
+                        data.getJSONObject(i),
+                        if (mode == FetchMode.ATTENTION) false else connect(
+                            "https://thuhole.com/services/thuhole/api.php?action=getcomment&pid=${data.getJSONObject(
+                                i
+                            ).getInteger("pid")}&user_token=$token"
+                        ).getBoolean("attention")
+                    )
+                )
             result.filter { !loggedInUser.holeIgnore.hasIgnoreP(it.id) }
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }?.also { result ->
-        result.filter { it.tag in foldTags }.forEach {
-            it.type = "hidden"
-            it.text = "*单击以查看树洞*"
+        if (mode != FetchMode.ATTENTION) {
+            result.filter { it.tag in foldTags }.forEach {
+                it.type = "hidden"
+                it.text = "*单击以查看树洞*"
+            }
         }
     }
 

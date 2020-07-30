@@ -60,7 +60,7 @@ fun HoleCardViewHolderInterface.bind(
     positionGetter: (Int) -> Int
 ) {
     var intercept = false
-    id.text = "#${card.id}"
+    id.text = "#${card.id} ${if (card is HoleTitleCard && card.attention) "★" else ""}"
     tag.visibility = if (card.tag.isBlank()) View.GONE else View.VISIBLE
     tag.text = card.tag
     time.text = dateToRelativeTime(card.timeStamp)
