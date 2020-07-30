@@ -102,10 +102,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Statistics
+        AVOSCloud.initialize(this@MainActivity, appId, appKey, serverURL)
+
         getSharedPreferences("config", MODE_PRIVATE).run {
             if (!getBoolean("sent_api", false)) {
                 try {
-                    AVOSCloud.initialize(this@MainActivity, appId, appKey, serverURL)
                     AVObject("API_COUNT").run {
                         put("api", android.os.Build.VERSION.SDK_INT)
                         put("version", getVersionCode(this@MainActivity))

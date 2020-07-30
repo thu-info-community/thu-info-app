@@ -1,7 +1,10 @@
 package com.unidy2002.thuinfo.data.network
 
 import android.util.Log
+import cn.leancloud.AVObject
 import com.unidy2002.thuinfo.data.model.login.loggedInUser
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.System.currentTimeMillis
@@ -98,6 +101,26 @@ fun <R> Network.retryTemplate(target: Int, block: () -> R): R? {
             if (loggedInUser.connectionState[target] == false) return block()
         } catch (e: Exception) {
             e.printStackTrace()
+            if (loggedInUser.reportOn && it == 2) {
+                try {
+                    AVObject("StackTrace").run {
+                        put("trace", e.message + "\n" + e.stackTrace.joinToString("\n"))
+                        put("api", android.os.Build.VERSION.SDK_INT)
+
+                        saveInBackground().subscribe(object : Observer<AVObject> {
+                            override fun onComplete() {}
+                            override fun onSubscribe(d: Disposable) {}
+                            override fun onNext(t: AVObject) {}
+
+                            override fun onError(e: Throwable) {
+                                e.printStackTrace()
+                            }
+                        })
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
             if (loggedInUser.connectionState[target] == false) getTicket(target)
         }
     }
