@@ -49,6 +49,8 @@ interface HoleCardViewHolderInterface {
     val details: LinearLayout
 }
 
+private const val imgPrefix = "https://img.thuhole.com/"
+
 /*val highlight: SyntaxHighlight =
     Prism4jSyntaxHighlight.create(Prism4j(MyGrammarLocator()), Prism4jThemeDefault.create())*/
 
@@ -68,7 +70,7 @@ fun HoleCardViewHolderInterface.bind(
         context?.run {
             image.visibility = View.VISIBLE
             Glide.with(this)
-                .load("https://img.thuhole.com/${card.url}")
+                .load("$imgPrefix${card.url}")
                 .into(image)
         }
     } else {
@@ -87,7 +89,7 @@ fun HoleCardViewHolderInterface.bind(
         image.setOnClickListener {
             NavHostFragment.findNavController(fragment)
                 .navigate(R.id.holeViewImageFragment, Bundle().apply {
-                    putString("url", "https://img.thuhole.com/${card.url}")
+                    putString("url", "$imgPrefix${card.url}")
                 })
         }
     }
@@ -228,7 +230,7 @@ fun copyUtil(context: Context, data: String) {
 fun saveImgUtil(context: Context, handler: Handler, item: HoleTitleCard) {
     safeThread {
         try {
-            Network.getBitmap("https://thuhole.com//images/${item.url}").save(context, "#${item.id}")
+            Network.getBitmap("$imgPrefix${item.url}").save(context, "#${item.id}")
             handler.post { Toast.makeText(context, R.string.hole_save_success_str, Toast.LENGTH_SHORT).show() }
         } catch (e: Exception) {
             e.printStackTrace()
