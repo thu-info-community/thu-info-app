@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo.data.util
 
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.*
 import kotlin.math.floor
 
@@ -33,7 +32,7 @@ class SchoolCalendar() : GregorianCalendar(Locale.CHINA) {
     }
 
     companion object {
-        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, Month.JUNE.ordinal, 22) }
+        val firstDay = GregorianCalendar(Locale.CHINA).also { it.clear(); it.set(2020, CompatMonth.JUNE.ordinal, 22) }
         val weekCount = 12
         val semesterType = SemesterType.SUMMER
         val semesterId = "2019-2020-3"
