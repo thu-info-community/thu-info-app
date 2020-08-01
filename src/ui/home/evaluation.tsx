@@ -1,20 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {
-	FlatList,
-	ActivityIndicator,
-	StyleSheet,
-	View,
-	Text,
-} from "react-native";
+import {FlatList, StyleSheet, View, Text} from "react-native";
 import {getAssessmentList, getAssessmentForm} from "../../network/basics";
 import {Form} from "../../models/home/assessment";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {BlurView} from "@react-native-community/blur";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {TouchableOpacity} from "react-native-gesture-handler";
+import {HomeNav} from "./homeStack";
 
-export const EvaluationScreen = () => {
+export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	// eslint-disable-next-line prettier/prettier
 	const [evaluationList, setEvaluationList] = useState<[string, boolean, string][]>();
 	const [refreshing, setRefreshing] = useState(true);
@@ -35,10 +29,13 @@ export const EvaluationScreen = () => {
 			});
 	};
 
-	const loadForm = (url: string) => {
+	const loadForm = (_url: string, _name: string) => {
 		setRefreshing(true);
-		getAssessmentForm(url)
-			.then((res) => {})
+		getAssessmentForm(_url)
+			.then((res: Form) => {
+				navigation.navigate("Form", {name: _name, form: res});
+				setRefreshing(false);
+			})
 			.catch(() => {
 				Snackbar.show({
 					text: getStr("networkRetry"),
@@ -47,7 +44,9 @@ export const EvaluationScreen = () => {
 				setRefreshing(false);
 			});
 	};
-	// TODO
+
+	const setFullGrade = () => {};
+	// TODO: Long Press
 
 	useEffect(fetchList, []);
 
@@ -59,7 +58,7 @@ export const EvaluationScreen = () => {
 					return item[1] ? (
 						<TouchableOpacity
 							style={styles.evaluatedStyle}
-							onPress={() => loadForm(item[2])}>
+							onPress={() => loadForm(item[2], item[0])}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>{getStr("evaluated")}</Text>
@@ -69,7 +68,8 @@ export const EvaluationScreen = () => {
 					) : (
 						<TouchableOpacity
 							style={styles.notEvaluatedStyle}
-							onPress={() => loadForm(item[2])}>
+							onPress={() => loadForm(item[2], item[0])}
+							onLongPress={setFullGrade}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>
@@ -81,23 +81,14 @@ export const EvaluationScreen = () => {
 					);
 				}}
 				style={styles.listStyle}
-				keyExtractor={(item, index) => `${item.semester}${index}`}
+				refreshing={refreshing}
+				onRefresh={fetchList}
+				keyExtractor={(item) => item[0]}
 			/>
-			{refreshing ? (
-				<View style={styles.absoluteContainer}>
-					<BlurView
-						style={styles.blurViewStyle}
-						blurType="light"
-						blurAmount={10}
-					/>
-					<ActivityIndicator size="large" color="purple" />
-					<Text style={styles.loadingCaptionStyle}>{getStr("loading")}</Text>
-				</View>
-			) : null}
 		</View>
 	);
 };
-// TODO: theme
+// TODO: Color theme
 
 const styles = StyleSheet.create({
 	container: {
