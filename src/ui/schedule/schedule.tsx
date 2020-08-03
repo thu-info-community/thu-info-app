@@ -6,7 +6,7 @@ import {
 	Text,
 	View,
 } from "react-native";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {
@@ -19,6 +19,8 @@ import {Calendar} from "../../utils/calendar";
 import {ScheduleNav} from "./scheduleStack";
 import {getStr} from "../../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
+import ViewShot from "react-native-view-shot";
+import {saveImg} from "../../utils/saveImg";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -39,7 +41,9 @@ const unitHeight = 90;
 
 const GridRow = (props: {span?: number; text?: React.ReactText}) => (
 	<Row style={[styles.center, {height: (props.span || 1) * unitHeight}]}>
-		{props.text ? <Text>{props.text}</Text> : null}
+		{props.text ? (
+			<Text style={{textAlign: "center"}}>{props.text}</Text>
+		) : null}
 	</Row>
 );
 
@@ -94,6 +98,8 @@ const GridColumn = ({
 
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
+
+	const viewShot = useRef<ViewShot>(null);
 
 	useEffect(() => {
 		if (Calendar.semesterId !== props.cache) {
@@ -153,29 +159,31 @@ const ScheduleUI = (props: ScheduleProps) => {
 						}}
 					/>
 				}>
-				<Grid>
-					<Col size={1}>
-						<GridRow span={headerSpan} />
-						{Array.from(new Array(14), (_, id) => (
-							<GridRow key={id} text={id + 1} />
+				<ViewShot ref={viewShot}>
+					<Grid>
+						<Col size={1}>
+							<GridRow span={headerSpan} />
+							{Array.from(new Array(14), (_, id) => (
+								<GridRow key={id} text={id + 1} />
+							))}
+						</Col>
+						{Array.from(new Array(7), (_, id) => (
+							<GridColumn
+								key={id}
+								day={id + 1}
+								week={week}
+								lessons={props.primary
+									.concat(props.secondary)
+									.concat(props.custom)
+									.filter(
+										(lesson) =>
+											lesson.dayOfWeek === id + 1 && lesson.week === week,
+									)}
+								shorten={props.shortenMap}
+							/>
 						))}
-					</Col>
-					{Array.from(new Array(7), (_, id) => (
-						<GridColumn
-							key={id}
-							day={id + 1}
-							week={week}
-							lessons={props.primary
-								.concat(props.secondary)
-								.concat(props.custom)
-								.filter(
-									(lesson) =>
-										lesson.dayOfWeek === id + 1 && lesson.week === week,
-								)}
-							shorten={props.shortenMap}
-						/>
-					))}
-				</Grid>
+					</Grid>
+				</ViewShot>
 			</ScrollView>
 			<View style={{flexDirection: "row"}}>
 				<Button
@@ -185,6 +193,13 @@ const ScheduleUI = (props: ScheduleProps) => {
 				<Button
 					title={getStr("scheduleAddCustom")}
 					onPress={() => props.navigation.navigate("ScheduleAdd")}
+				/>
+				<Button
+					title={getStr("scheduleSaveImg")}
+					onPress={() => {
+						// @ts-ignore
+						viewShot.current.capture().then(saveImg);
+					}}
 				/>
 			</View>
 		</>
