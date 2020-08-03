@@ -172,10 +172,16 @@ const ScheduleUI = (props: ScheduleProps) => {
 					))}
 				</Grid>
 			</ScrollView>
-			<Button
-				title={getStr("scheduleCustomShorten")}
-				onPress={() => props.navigation.navigate("ScheduleShorten")}
-			/>
+			<View style={{flexDirection: "row"}}>
+				<Button
+					title={getStr("scheduleCustomShorten")}
+					onPress={() => props.navigation.navigate("ScheduleShorten")}
+				/>
+				<Button
+					title={getStr("scheduleAddCustom")}
+					onPress={() => props.navigation.navigate("ScheduleAdd")}
+				/>
+			</View>
 		</>
 	);
 };
