@@ -13,12 +13,15 @@ import {Calendar} from "../../utils/calendar";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
+import {Lesson, LessonType} from "../../models/schedule/schedule";
+import {SCHEDULE_ADD_CUSTOM} from "../../redux/constants";
 
 interface ScheduleAddProps {
 	navigation: ScheduleNav;
+	addCustom: (payload: Lesson[]) => void;
 }
 
-const ScheduleAddUI = ({navigation}: ScheduleAddProps) => {
+const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 	const themeName = useContext(ThemeContext);
 	const theme = themes[themeName];
 	const style = styles(themeName);
@@ -38,19 +41,16 @@ const ScheduleAddUI = ({navigation}: ScheduleAddProps) => {
 		new Array<boolean>(Calendar.weekCount + 1).fill(false),
 	);
 
-	const [sessions, setSessions] = useState(new Array<boolean>(15).fill(false));
+	const [sessions, setSessions] = useState(new Array<boolean>(16).fill(false));
 
-	const [days, setDays] = useState(
-		new Array<boolean>(8).fill(false).fill(true, 1, 2),
-	);
+	const [day, setDay] = useState(1);
 
-	const [subject, setSubject] = useState("");
+	const [title, setTitle] = useState("");
 	const [locale, setLocale] = useState("");
 
 	const valid =
-		subject.trim().length > 0 &&
+		title.trim().length > 0 &&
 		weeks.some((value) => value) &&
-		days.some((value) => value) &&
 		sessions.some((value) => value);
 
 	const updateWeeks = (transform: (original: boolean[]) => void) => () => {
@@ -68,8 +68,8 @@ const ScheduleAddUI = ({navigation}: ScheduleAddProps) => {
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("subject")}
-					value={subject}
-					onChangeText={setSubject}
+					value={title}
+					onChangeText={setTitle}
 				/>
 				<TextInput
 					style={style.textInputStyle}
@@ -86,18 +86,13 @@ const ScheduleAddUI = ({navigation}: ScheduleAddProps) => {
 						style={[
 							style.pressable,
 							{
-								backgroundColor: days[index + 1]
-									? theme.colors.accent
-									: theme.colors.primaryDark,
+								backgroundColor:
+									index + 1 === day
+										? theme.colors.accent
+										: theme.colors.primaryDark,
 							},
 						]}
-						onPress={() =>
-							setDays(
-								new Array<boolean>(8)
-									.fill(false)
-									.fill(true, index + 1, index + 2),
-							)
-						}>
+						onPress={() => setDay(index + 1)}>
 						<Text style={style.textCenter} key={index}>
 							{getStr("dayOfWeek")[index + 1]}
 						</Text>
@@ -209,7 +204,35 @@ const ScheduleAddUI = ({navigation}: ScheduleAddProps) => {
 					backgroundColor: valid ? theme.colors.accent : "lightgrey",
 				}}
 				disabled={!valid}
-				onPress={() => navigation.pop()}>
+				onPress={() => {
+					const heads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].filter(
+						(i) => sessions[i] && !sessions[i - 1],
+					);
+					const tails = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].filter(
+						(i) => sessions[i] && !sessions[i + 1],
+					);
+					const ranges = Array.from(heads, (v, k) => [v, tails[k]]);
+					const selectedWeeks = Array.from(
+						new Array(Calendar.weekCount),
+						(_, index) => index + 1,
+					).filter((week) => weeks[week]);
+					addCustom(
+						ranges.flatMap((range) =>
+							selectedWeeks.map((week) => {
+								return {
+									type: LessonType.CUSTOM,
+									title,
+									locale,
+									week,
+									dayOfWeek: day,
+									begin: range[0],
+									end: range[1],
+								};
+							}),
+						),
+					);
+					navigation.pop();
+				}}>
 				<Text style={[style.textCenter, {fontSize: 18}]}>{getStr("done")}</Text>
 			</TouchableOpacity>
 		</ScrollView>
@@ -247,4 +270,9 @@ const styles = themedStyles((theme) => {
 	};
 });
 
-export const ScheduleAddScreen = connect()(ScheduleAddUI);
+export const ScheduleAddScreen = connect(undefined, (dispatch) => {
+	return {
+		addCustom: (payload: Lesson[]) =>
+			dispatch({type: SCHEDULE_ADD_CUSTOM, payload}),
+	};
+})(ScheduleAddUI);

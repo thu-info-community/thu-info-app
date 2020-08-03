@@ -23,6 +23,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 interface ScheduleProps {
 	readonly primary: Lesson[];
 	readonly secondary: Lesson[];
+	readonly custom: Lesson[];
 	readonly exam: Exam[];
 	readonly cache: string;
 	readonly primaryRefreshing: boolean;
@@ -78,7 +79,7 @@ const GridColumn = ({
 							valid[0].title in shorten
 								? shorten[valid[0].title]
 								: valid[0].title
-						}@${valid[0].locale}`}
+						}${valid[0].locale ? "@" : ""}${valid[0].locale}`}
 						span={valid[0].end - valid[0].begin + 1}
 					/>,
 				);
@@ -164,9 +165,13 @@ const ScheduleUI = (props: ScheduleProps) => {
 							key={id}
 							day={id + 1}
 							week={week}
-							lessons={props.primary.filter(
-								(lesson) => lesson.dayOfWeek === id + 1 && lesson.week === week,
-							)}
+							lessons={props.primary
+								.concat(props.secondary)
+								.concat(props.custom)
+								.filter(
+									(lesson) =>
+										lesson.dayOfWeek === id + 1 && lesson.week === week,
+								)}
 							shorten={props.shortenMap}
 						/>
 					))}

@@ -5,6 +5,7 @@ import {
 	PRIMARY_SCHEDULE_FAILURE,
 	PRIMARY_SCHEDULE_REQUEST,
 	PRIMARY_SCHEDULE_SUCCESS,
+	SCHEDULE_ADD_CUSTOM,
 	SCHEDULE_UPDATE_ALIAS,
 	SECONDARY_SCHEDULE_FAILURE,
 	SECONDARY_SCHEDULE_REQUEST,
@@ -83,6 +84,12 @@ export const schedule = (
 			return {
 				...state,
 				shortenMap,
+			};
+		}
+		case SCHEDULE_ADD_CUSTOM: {
+			return {
+				...state,
+				custom: state.custom.concat(action.payload),
 			};
 		}
 		default:
