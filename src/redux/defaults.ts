@@ -13,6 +13,7 @@ export const defaultFullNameState = "";
 export const defaultSchedule: Schedule = {
 	primary: [],
 	secondary: [],
+	custom: [],
 	exam: [],
 	cache: "",
 	primaryRefreshing: false,

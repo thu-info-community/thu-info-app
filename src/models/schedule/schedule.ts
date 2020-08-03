@@ -1,6 +1,6 @@
 import {Calendar} from "../../utils/calendar";
 
-enum LessonType {
+export enum LessonType {
 	PRIMARY,
 	SECONDARY,
 	CUSTOM,

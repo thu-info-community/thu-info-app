@@ -9,7 +9,14 @@ export interface SecondarySchedule {
 	secondary: Lesson[];
 }
 
-export interface Schedule extends PrimarySchedule, SecondarySchedule {
+export interface CustomSchedule {
+	custom: Lesson[];
+}
+
+export interface Schedule
+	extends PrimarySchedule,
+		SecondarySchedule,
+		CustomSchedule {
 	cache: string;
 	primaryRefreshing: boolean;
 	secondaryRefreshing: boolean;
