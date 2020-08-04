@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {FlatList, StyleSheet, View, Text} from "react-native";
-import {getAssessmentList} from "../../network/basics";
+import {
+	getAssessmentList,
+	getAssessmentForm,
+	postAssessmentForm,
+} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -28,8 +32,33 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 			});
 	};
 
-	const setFullGrade = () => {};
-	// TODO: Long Press
+	const setFullGrade = (_url: string) => {
+		getAssessmentForm(_url)
+			.then((res) => {
+				res.overall.score.value = "7";
+				res.teachers.forEach((item) => item.autoScore());
+				res.assistants.forEach((item) => item.autoScore());
+				postAssessmentForm(res)
+					.then(() => {
+						Snackbar.show({
+							text: getStr("autoScoreSuccess"),
+							duration: Snackbar.LENGTH_LONG,
+						});
+					})
+					.catch(() => {
+						Snackbar.show({
+							text: getStr("autoScoreFailure"),
+							duration: Snackbar.LENGTH_LONG,
+						});
+					});
+			})
+			.catch(() => {
+				Snackbar.show({
+					text: getStr("autoScoreFailure"),
+					duration: Snackbar.LENGTH_LONG,
+				});
+			});
+	};
 
 	useEffect(fetchList, []);
 
@@ -43,7 +72,8 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 							style={styles.evaluatedStyle}
 							onPress={() =>
 								navigation.navigate("Form", {name: item[0], url: item[2]})
-							}>
+							}
+							onLongPress={() => setFullGrade(item[2])}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>{getStr("evaluated")}</Text>
@@ -56,7 +86,7 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 							onPress={() =>
 								navigation.navigate("Form", {name: item[0], url: item[2]})
 							}
-							onLongPress={setFullGrade}>
+							onLongPress={() => setFullGrade(item[2])}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>
