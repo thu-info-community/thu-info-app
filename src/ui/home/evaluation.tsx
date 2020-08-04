@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {FlatList, StyleSheet, View, Text} from "react-native";
-import {getAssessmentList, getAssessmentForm} from "../../network/basics";
-import {Form} from "../../models/home/assessment";
+import {getAssessmentList} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -29,8 +28,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 			});
 	};
 
-	const loadForm = (_url: string, _name: string) => {
+	const navigateToDetails = (_url: string, _name: string) => {
 		setRefreshing(true);
+		/*
 		getAssessmentForm(_url)
 			.then((res: Form) => {
 				navigation.navigate("Form", {name: _name, form: res});
@@ -43,6 +43,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 				});
 				setRefreshing(false);
 			});
+		*/
+		navigation.navigate("Form", {name: _name, url: _url});
+		setRefreshing(false);
 	};
 
 	const setFullGrade = () => {};
@@ -58,7 +61,7 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 					return item[1] ? (
 						<TouchableOpacity
 							style={styles.evaluatedStyle}
-							onPress={() => loadForm(item[2], item[0])}>
+							onPress={() => navigateToDetails(item[2], item[0])}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>{getStr("evaluated")}</Text>
@@ -68,7 +71,7 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 					) : (
 						<TouchableOpacity
 							style={styles.notEvaluatedStyle}
-							onPress={() => loadForm(item[2], item[0])}
+							onPress={() => navigateToDetails(item[2], item[0])}
 							onLongPress={setFullGrade}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
