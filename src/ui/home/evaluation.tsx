@@ -28,12 +28,6 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 			});
 	};
 
-	const navigateToDetails = (_url: string, _name: string) => {
-		setRefreshing(true);
-		navigation.navigate("Form", {name: _name, url: _url});
-		setRefreshing(false);
-	};
-
 	const setFullGrade = () => {};
 	// TODO: Long Press
 
@@ -47,7 +41,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 					return item[1] ? (
 						<TouchableOpacity
 							style={styles.evaluatedStyle}
-							onPress={() => navigateToDetails(item[2], item[0])}>
+							onPress={() =>
+								navigation.navigate("Form", {name: item[0], url: item[2]})
+							}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>
 								<Text style={styles.captionStyle}>{getStr("evaluated")}</Text>
@@ -57,7 +53,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 					) : (
 						<TouchableOpacity
 							style={styles.notEvaluatedStyle}
-							onPress={() => navigateToDetails(item[2], item[0])}
+							onPress={() =>
+								navigation.navigate("Form", {name: item[0], url: item[2]})
+							}
 							onLongPress={setFullGrade}>
 							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
 							<View style={styles.iconContainerStyle}>

@@ -1,11 +1,11 @@
+import {getStr} from "../../utils/i18n";
+
 /**
  * The minimal component of a form to be posted to the school server.
  *
  * Nobody knows what `name` stands for, but it is sure that `value`
  * stands for the score of a question in some occasions.
  */
-import {getStr} from "../../utils/i18n";
-
 export class InputTag {
 	private readonly name: string;
 	public value: string;
@@ -41,18 +41,8 @@ export interface InputGroup {
 	others: InputTag[];
 }
 
-export abstract class Suggestional {
-	abstract get suggestion(): string;
-
-	abstract set suggestion(text: string);
-
-	abstract toPairs(): [string, string][];
-}
-
-export class Overall extends Suggestional {
-	constructor(private suggestionTag: InputTag, public score: InputTag) {
-		super();
-	}
+export class Overall {
+	constructor(private suggestionTag: InputTag, public score: InputTag) {}
 
 	get suggestion(): string {
 		return this.suggestionTag.value;
@@ -67,10 +57,8 @@ export class Overall extends Suggestional {
 	}
 }
 
-class Person extends Suggestional {
-	constructor(public name: string, public inputGroups: InputGroup[]) {
-		super();
-	}
+export class Person {
+	constructor(public name: string, public inputGroups: InputGroup[]) {}
 
 	autoScore(score: number = 7) {
 		this.inputGroups.forEach(
