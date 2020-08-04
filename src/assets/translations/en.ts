@@ -36,4 +36,7 @@ export default {
 	postSuccess: "Successfully post your evaluation to the sever.",
 	postFailure:
 		"Failed in posting your evaluation, please check the network connection and retry.",
+	autoScoreFailure:
+		"Failed in auto-evaluation, please check the network connection and retry.",
+	autoScoreSuccess: "You have successfully given full grade to this course.",
 };
