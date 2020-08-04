@@ -17,6 +17,7 @@ export const FormScreen = ({route, navigation}: any) => {
 
 	const [refreshing, setRefreshing] = useState(true);
 	const [evaluationForm, setEvaluationForm] = useState<Form>();
+	// TODO: 'useState' may not be the best choice.
 
 	const fetchForm = (_url: string) => {
 		setRefreshing(true);
@@ -73,22 +74,24 @@ export const FormScreen = ({route, navigation}: any) => {
 
 	const post = () => {
 		setRefreshing(true);
-		postAssessmentForm(evaluationForm)
-			.then(() => {
-				Snackbar.show({
-					text: getStr("postSuccess"),
-					duration: Snackbar.LENGTH_SHORT,
+		if (evaluationForm !== undefined) {
+			postAssessmentForm(evaluationForm)
+				.then(() => {
+					Snackbar.show({
+						text: getStr("postSuccess"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+					setRefreshing(false);
+					navigation.pop();
+				})
+				.catch(() => {
+					Snackbar.show({
+						text: getStr("postFailure"),
+						duration: Snackbar.LENGTH_LONG,
+					});
+					setRefreshing(false);
 				});
-				setRefreshing(false);
-				navigation.pop();
-			})
-			.catch(() => {
-				Snackbar.show({
-					text: getStr("postFailure"),
-					duration: Snackbar.LENGTH_LONG,
-				});
-				setRefreshing(false);
-			});
+		}
 	};
 
 	useEffect(() => {
@@ -114,6 +117,11 @@ export const FormScreen = ({route, navigation}: any) => {
 				style={styles.textInputStyle}
 				multiline={true}
 				placeholder={getStr("inputSuggestions")}
+				onChangeText={(text) => {
+					if (evaluationForm) {
+						evaluationForm.overall.suggestion = text;
+					}
+				}}
 			/>
 			<View style={styles.titleContainer}>
 				<FontAwesome name="chevron-right" color="green" size={18} />

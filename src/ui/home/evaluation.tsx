@@ -30,20 +30,6 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 
 	const navigateToDetails = (_url: string, _name: string) => {
 		setRefreshing(true);
-		/*
-		getAssessmentForm(_url)
-			.then((res: Form) => {
-				navigation.navigate("Form", {name: _name, form: res});
-				setRefreshing(false);
-			})
-			.catch(() => {
-				Snackbar.show({
-					text: getStr("networkRetry"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-				setRefreshing(false);
-			});
-		*/
 		navigation.navigate("Form", {name: _name, url: _url});
 		setRefreshing(false);
 	};
