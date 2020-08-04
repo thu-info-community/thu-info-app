@@ -2,13 +2,14 @@ import React, {useState} from "react";
 import {View} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {TouchableWithoutFeedback} from "react-native-gesture-handler";
+import {InputTag} from "../../models/home/assessment";
 
 interface starRatingProps {
 	starTotal?: number;
 	starSize?: number;
 	starSpacing?: number;
 	starColor?: string;
-	setValue: string;
+	scoreRef: InputTag;
 }
 
 export const StarRating = (props: starRatingProps) => {
@@ -18,10 +19,10 @@ export const StarRating = (props: starRatingProps) => {
 	let starColor: string = props.starColor || "gold";
 
 	const changeVal = (x: number) => {
-		props.setValue = x.toString();
+		props.scoreRef.value = x.toString();
 	};
 
-	const [rating, setRating] = useState(parseInt(props.setValue, 10));
+	const [rating, setRating] = useState(parseInt(props.scoreRef.value, 10));
 
 	let stars = [];
 	for (let i = 1; i <= rating; ++i) {
