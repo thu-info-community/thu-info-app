@@ -74,6 +74,11 @@ export const FormScreen = ({route, navigation}: any) => {
 							style={styles.textInputStyle}
 							multiline={true}
 							placeholder={getStr("inputSuggestions")}
+							defaultValue={
+								(personType === "teacher"
+									? evaluationForm?.teachers[i]?.suggestion
+									: evaluationForm?.assistants[i]?.suggestion) ?? ""
+							}
 							onChangeText={(text) => {
 								if (evaluationForm) {
 									if (personType === "teacher") {
