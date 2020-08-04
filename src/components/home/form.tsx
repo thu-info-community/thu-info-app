@@ -53,7 +53,12 @@ export const StarRating = (props: starRatingProps) => {
 	}
 
 	return (
-		<View style={{flexDirection: "row-reverse", marginVertical: 2}}>
+		<View
+			style={{
+				flexDirection: "row",
+				justifyContent: "flex-end",
+				marginVertical: 2,
+			}}>
 			{stars}
 		</View>
 	);

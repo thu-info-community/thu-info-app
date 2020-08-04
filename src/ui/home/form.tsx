@@ -40,7 +40,7 @@ export const FormScreen = ({route, navigation}: any) => {
 			});
 	};
 
-	const renderEvaluation = (personList: Person[]) => {
+	const renderEvaluation = (personList: Person[], personType: string) => {
 		let evaluationList = [];
 		if (personList.length !== 0) {
 			personList.forEach((person, i) => {
@@ -62,10 +62,34 @@ export const FormScreen = ({route, navigation}: any) => {
 						</View>,
 					);
 				});
+
+				evaluationList.push(
+					<View key={"Suggestion" + i}>
+						<Text style={styles.textInputCaptionStyle}>
+							{personType === "teacher"
+								? getStr("moreSuggestionsToTeacher")
+								: getStr("moreSuggestionsToAssistant")}
+						</Text>
+						<TextInput
+							style={styles.textInputStyle}
+							multiline={true}
+							placeholder={getStr("inputSuggestions")}
+							onChangeText={(text) => {
+								if (evaluationForm) {
+									if (personType === "teacher") {
+										evaluationForm.teachers[i].suggestion = text;
+									} else {
+										evaluationForm.assistants[i].suggestion = text;
+									}
+								}
+							}}
+						/>
+					</View>,
+				);
 			});
 		} else {
 			evaluationList.push(
-				<Text style={styles.captionStyle} key={"key"}>
+				<Text style={styles.captionStyle} key="stupidEvaluationWebsite">
 					{getStr("noPersonToEvaluate")}
 				</Text>,
 			);
@@ -117,7 +141,7 @@ export const FormScreen = ({route, navigation}: any) => {
 			</View>
 			{evaluationForm && <StarRating scoreRef={evaluationForm.overall.score} />}
 			<Text style={styles.textInputCaptionStyle}>
-				{getStr("moreSuggestions")}
+				{getStr("moreSuggestionsToCourse")}
 			</Text>
 			<TextInput
 				style={styles.textInputStyle}
@@ -134,12 +158,13 @@ export const FormScreen = ({route, navigation}: any) => {
 				<FontAwesome name="chevron-right" color="green" size={18} />
 				<Text style={styles.titleStyle}>{getStr("teacherEvaluation")}</Text>
 			</View>
-			{evaluationForm && renderEvaluation(evaluationForm.teachers)}
+			{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
 			<View style={styles.titleContainer}>
 				<FontAwesome name="chevron-right" color="blue" size={18} />
 				<Text style={styles.titleStyle}>{getStr("assistantEvaluation")}</Text>
 			</View>
-			{evaluationForm && renderEvaluation(evaluationForm.assistants)}
+			{evaluationForm &&
+				renderEvaluation(evaluationForm.assistants, "assistant")}
 			<TouchableOpacity
 				style={[
 					styles.buttonStyle,

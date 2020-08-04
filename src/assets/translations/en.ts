@@ -24,7 +24,10 @@ export default {
 	evaluated: "Evaluated",
 	notEvaluated: "Not Evaluated",
 	generalImpression: "General Impression of the Course",
-	moreSuggestions: "More Suggestions (Optional)",
+	moreSuggestionsToCourse: "More Suggestions to This Course (Optional)",
+	moreSuggestionsToTeacher: "More Suggestions to This Teacher (Optional)",
+	moreSuggestionsToAssistant:
+		"More Suggestions to This Teaching Assistant (Optional)",
 	teacherEvaluation: "Evaluation of Teachers",
 	assistantEvaluation: "Evaluation of Teaching Assistants",
 	inputSuggestions: "Please input your suggestions here.",
