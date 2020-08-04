@@ -38,24 +38,18 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 				res.overall.score.value = "7";
 				res.teachers.forEach((item) => item.autoScore());
 				res.assistants.forEach((item) => item.autoScore());
-				postAssessmentForm(res)
-					.then(() => {
-						Snackbar.show({
-							text: getStr("autoScoreSuccess"),
-							duration: Snackbar.LENGTH_LONG,
-						});
-					})
-					.catch(() => {
-						Snackbar.show({
-							text: getStr("autoScoreFailure"),
-							duration: Snackbar.LENGTH_LONG,
-						});
-					});
+				return postAssessmentForm(res);
+			})
+			.then(() => {
+				Snackbar.show({
+					text: getStr("autoScoreSuccess"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
 			})
 			.catch(() => {
 				Snackbar.show({
 					text: getStr("autoScoreFailure"),
-					duration: Snackbar.LENGTH_LONG,
+					duration: Snackbar.LENGTH_SHORT,
 				});
 			});
 	};
