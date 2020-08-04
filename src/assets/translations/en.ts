@@ -23,4 +23,14 @@ export default {
 	loading: "Loading...",
 	evaluated: "Evaluated",
 	notEvaluated: "Not Evaluated",
+	generalImpression: "General Impression of the Course",
+	moreSuggestions: "More Suggestions (Optional)",
+	teacherEvaluation: "Evaluation of Teachers",
+	assistantEvaluation: "Evaluation of Teaching Assistants",
+	inputSuggestions: "Please input your suggestions here.",
+	noPersonToEvaluate: "There is no person to be evaluated here.",
+	post: "Post",
+	postSuccess: "Successfully post your evaluation to the sever.",
+	postFailure:
+		"Failed in posting your evaluation, please check the network connection and retry.",
 };
