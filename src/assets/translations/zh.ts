@@ -19,4 +19,13 @@ export default {
 	loading: "加载中...",
 	evaluated: "已评价",
 	notEvaluated: "未评价",
+	generalImpression: "课程印象",
+	moreSuggestions: "更多建议（可选）",
+	teacherEvaluation: "教师评价",
+	assistantEvaluation: "助教评价",
+	inputSuggestions: "请在此输入您的评价。",
+	noPersonToEvaluate: "该栏目下没有需要评价的对象。",
+	post: "提交",
+	postSuccess: "已经成功提交您的评价。",
+	postFailure: "提交失败，请检查网络后重试。",
 };
