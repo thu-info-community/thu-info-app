@@ -38,7 +38,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -72,5 +72,9 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We only use your data of camara roll to save schedule to your phone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We only use your data of camara roll to save schedule to your phone.</string>
 </dict>
 </plist>
