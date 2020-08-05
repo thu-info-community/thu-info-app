@@ -20,6 +20,7 @@
 		89EB7817D5F2E026022F6CCE /* libPods-thu_info-thu_infoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91FA87EA7719B4D29CC72049 /* libPods-thu_info-thu_infoTests.a */; };
 		C2924ED09DD42827F1597958 /* libPods-thu_info-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 89129B39889512CBFA6EB479 /* libPods-thu_info-tvOS.a */; };
 		DDD1B57E8366C95E30C6711F /* libPods-thu_info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFA43F773F3EA4F28327B316 /* libPods-thu_info.a */; };
+		F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F311085F24DAC95B00D20197 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,9 @@
 		E2F1AF57EB2F4451BEF86C20 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F311085E24DAC95B00D20197 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F311086024DAC9A600D20197 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		F311086124DAC9A600D20197 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		FCE7F9393E2543A6BFFF7A0C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +150,7 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				F311085F24DAC95B00D20197 /* InfoPlist.strings */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -354,6 +359,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -381,6 +387,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -710,9 +717,19 @@
 			isa = PBXVariantGroup;
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
+				F311086024DAC9A600D20197 /* zh-Hans */,
 			);
 			name = LaunchScreen.xib;
 			path = thu_info;
+			sourceTree = "<group>";
+		};
+		F311085F24DAC95B00D20197 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F311085E24DAC95B00D20197 /* en */,
+				F311086124DAC9A600D20197 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
