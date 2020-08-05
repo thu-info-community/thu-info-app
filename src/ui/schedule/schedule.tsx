@@ -1,5 +1,4 @@
 import {
-	Button,
 	RefreshControl,
 	ScrollView,
 	StyleSheet,
@@ -7,14 +6,19 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {
 	primaryScheduleThunk,
 	secondaryScheduleThunk,
 } from "../../redux/actions/schedule";
-import {Exam, Lesson, LessonType} from "../../models/schedule/schedule";
+import {
+	Exam,
+	Lesson,
+	LessonType,
+	matchHiddenRules,
+} from "../../models/schedule/schedule";
 import {Col, Grid, Row} from "react-native-easy-grid";
 import {Calendar} from "../../utils/calendar";
 import {ScheduleNav} from "./scheduleStack";
@@ -31,6 +35,8 @@ import {
 	renderers,
 } from "react-native-popup-menu";
 import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 const {SlideInMenu} = renderers;
 
@@ -43,6 +49,7 @@ interface ScheduleProps {
 	readonly primaryRefreshing: boolean;
 	readonly secondaryRefreshing: boolean;
 	readonly shortenMap: {[key: string]: string};
+	readonly hiddenRules: Lesson[];
 	getPrimary: () => void;
 	getSecondary: () => void;
 	delOrHide: DelOrHide;
@@ -174,6 +181,30 @@ const GridColumn = ({
 	return <Col size={2}>{result}</Col>;
 };
 
+const OptionButton = ({
+	onPress,
+	title,
+}: {
+	onPress: () => void;
+	title: React.ReactText;
+}) => {
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+	return (
+		<TouchableOpacity
+			onPress={onPress}
+			style={{
+				flex: 1,
+				backgroundColor: theme.colors.accent,
+				padding: 8,
+				margin: 2,
+				borderRadius: 5,
+			}}>
+			<Text style={{textAlign: "center", color: "white"}}>{title}</Text>
+		</TouchableOpacity>
+	);
+};
+
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
 
@@ -267,6 +298,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								week={week}
 								lessons={props.primary
 									.concat(props.secondary)
+									.filter((it) => !matchHiddenRules(it, props.hiddenRules))
 									.concat(props.custom)
 									.filter(
 										(lesson) =>
@@ -281,20 +313,24 @@ const ScheduleUI = (props: ScheduleProps) => {
 				</ViewShot>
 			</ScrollView>
 			<View style={{flexDirection: "row"}}>
-				<Button
+				<OptionButton
 					title={getStr("scheduleCustomShorten")}
 					onPress={() => props.navigation.navigate("ScheduleShorten")}
 				/>
-				<Button
+				<OptionButton
 					title={getStr("scheduleAddCustom")}
 					onPress={() => props.navigation.navigate("ScheduleAdd")}
 				/>
-				<Button
+				<OptionButton
 					title={getStr("scheduleSaveImg")}
 					onPress={() => {
 						// @ts-ignore
 						viewShot.current.capture().then(saveImg);
 					}}
+				/>
+				<OptionButton
+					title={getStr("scheduleHidden")}
+					onPress={() => props.navigation.navigate("ScheduleHidden")}
 				/>
 			</View>
 		</>

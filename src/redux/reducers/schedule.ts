@@ -115,10 +115,26 @@ export const schedule = (
 							  ),
 				};
 			} else {
-				console.error("隐藏功能还没做！");
-				return state;
+				return {
+					...state,
+					hiddenRules: state.hiddenRules.concat({
+						...lesson,
+						locale: "",
+						week:
+							choice === Choice.ALL
+								? -1
+								: choice === Choice.REPEAT
+								? 0
+								: lesson.week,
+					}),
+				};
 			}
 		}
+		case "SCHEDULE_REMOVE_HIDDEN_RULE":
+			return {
+				...state,
+				hiddenRules: state.hiddenRules.filter((it) => it !== action.payload),
+			};
 		default:
 			return state;
 	}

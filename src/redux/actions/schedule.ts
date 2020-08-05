@@ -4,6 +4,7 @@ import {
 	PRIMARY_SCHEDULE_REQUEST,
 	PRIMARY_SCHEDULE_SUCCESS,
 	SCHEDULE_ADD_CUSTOM,
+	SCHEDULE_REMOVE_HIDDEN_RULE,
 	SCHEDULE_DEL_OR_HIDE,
 	SECONDARY_SCHEDULE_FAILURE,
 	SECONDARY_SCHEDULE_REQUEST,
@@ -33,7 +34,8 @@ export type ScheduleAction =
 	| ActionType<typeof secondaryScheduleAction>
 	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]}
 	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Lesson[]}
-	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [Lesson, Choice]};
+	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [Lesson, Choice]}
+	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: Lesson};
 
 export const primaryScheduleThunk = () => (
 	dispatch: Dispatch<ScheduleAction>,

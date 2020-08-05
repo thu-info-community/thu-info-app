@@ -42,6 +42,7 @@ export default {
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",
+	scheduleHidden: "Hidden Lessons",
 	saveSucceed: "Successfully saved.",
 	permissionDenied: "Permission denied.",
 	saveFailRetry: "Exception occurred when saving. Please retry.",
@@ -63,4 +64,8 @@ export default {
 	scheduleOnce: "(once)",
 	scheduleRepeat: "(every week, same period)",
 	scheduleAll: "(all)",
+	schedulePrefixAll: "[All]",
+	schedulePrefixRepeat: "[Repeat]",
+	schedulePrefixOncePrefix: "[Week ",
+	schedulePrefixOnceSuffix: "]",
 };

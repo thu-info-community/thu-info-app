@@ -19,4 +19,5 @@ export const defaultSchedule: Schedule = {
 	primaryRefreshing: false,
 	secondaryRefreshing: false,
 	shortenMap: {},
+	hiddenRules: [],
 };

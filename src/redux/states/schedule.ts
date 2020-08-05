@@ -21,4 +21,5 @@ export interface Schedule
 	primaryRefreshing: boolean;
 	secondaryRefreshing: boolean;
 	shortenMap: {[key: string]: string};
+	hiddenRules: Lesson[];
 }
