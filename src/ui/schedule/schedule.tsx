@@ -4,6 +4,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Text,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import React, {useEffect, useRef, useState} from "react";
@@ -13,14 +14,25 @@ import {
 	primaryScheduleThunk,
 	secondaryScheduleThunk,
 } from "../../redux/actions/schedule";
-import {Exam, Lesson} from "../../models/schedule/schedule";
-import {Col, Row, Grid} from "react-native-easy-grid";
+import {Exam, Lesson, LessonType} from "../../models/schedule/schedule";
+import {Col, Grid, Row} from "react-native-easy-grid";
 import {Calendar} from "../../utils/calendar";
 import {ScheduleNav} from "./scheduleStack";
 import {getStr} from "../../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
+import Snackbar from "react-native-snackbar";
+import {
+	Menu,
+	MenuOption,
+	MenuOptions,
+	MenuTrigger,
+	renderers,
+} from "react-native-popup-menu";
+import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+
+const {SlideInMenu} = renderers;
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -33,30 +45,86 @@ interface ScheduleProps {
 	readonly shortenMap: {[key: string]: string};
 	getPrimary: () => void;
 	getSecondary: () => void;
+	delOrHide: DelOrHide;
 	navigation: ScheduleNav;
 }
 
 const headerSpan = 0.5;
 const unitHeight = 90;
 
-const GridRow = (props: {span?: number; text?: React.ReactText}) => (
-	<Row style={[styles.center, {height: (props.span || 1) * unitHeight}]}>
-		{props.text ? (
-			<Text style={{textAlign: "center"}}>{props.text}</Text>
-		) : null}
-	</Row>
-);
+export enum Choice {
+	ONCE,
+	REPEAT,
+	ALL,
+}
+
+type DelOrHide = ([lesson, choice]: [Lesson, Choice]) => void;
+
+const GridRow = ({
+	span,
+	text,
+	overlaps,
+	name,
+	delOrHide,
+}: {
+	span?: number;
+	text?: React.ReactText;
+	overlaps?: Lesson[];
+	name?: string;
+	delOrHide?: DelOrHide;
+}) => {
+	const row = (
+		<Row style={[styles.center, {height: (span || 1) * unitHeight}]}>
+			{text && <Text style={{textAlign: "center"}}>{text}</Text>}
+		</Row>
+	);
+	return overlaps && delOrHide && name ? (
+		<Menu name={name} renderer={SlideInMenu} onSelect={delOrHide}>
+			<MenuTrigger>{row}</MenuTrigger>
+			<MenuOptions customStyles={{optionText: styles.menuOption}}>
+				{overlaps.flatMap((lesson, index) => {
+					const prefix = getStr(
+						lesson.type === LessonType.CUSTOM ? "delete" : "hide",
+					);
+					return [
+						<MenuOption
+							value={[lesson, Choice.ONCE]}
+							key={index * 3}
+							text={`${prefix} ${lesson.title}${getStr("scheduleOnce")}`}
+						/>,
+						<MenuOption
+							value={[lesson, Choice.REPEAT]}
+							key={index * 3 + 1}
+							text={`${prefix} ${lesson.title}${getStr("scheduleRepeat")}`}
+						/>,
+						<MenuOption
+							value={[lesson, Choice.ALL]}
+							key={index * 3 + 2}
+							text={`${prefix} ${lesson.title}${getStr("scheduleAll")}`}
+						/>,
+					];
+				})}
+			</MenuOptions>
+		</Menu>
+	) : (
+		row
+	);
+};
 
 const GridColumn = ({
 	day,
 	week,
 	lessons,
 	shorten,
+	setOverlap,
+	delOrHide,
 }: {
 	day: number;
 	week: number;
 	lessons: Lesson[];
 	shorten: {[_: string]: string};
+	setOverlap: React.Dispatch<React.SetStateAction<boolean>>;
+	delOrHide: DelOrHide;
 }) => {
 	const record = new Array<Lesson>(14);
 	const result = [
@@ -76,18 +144,28 @@ const GridColumn = ({
 			if (valid.length === 0) {
 				result.push(<GridRow key={i} />);
 			} else {
+				const {begin, end, title, locale} = valid[0];
+				if (i !== begin) {
+					// TODO: this method of detecting overlaps is probably wrong.
+					setOverlap(true);
+				}
 				result.push(
 					<GridRow
 						key={i}
-						text={`${
-							valid[0].title in shorten
-								? shorten[valid[0].title]
-								: valid[0].title
-						}${valid[0].locale ? "@" : ""}${valid[0].locale}`}
-						span={valid[0].end - valid[0].begin + 1}
+						text={`${title in shorten ? shorten[title] : title}${
+							locale ? "@" : ""
+						}${locale}`}
+						span={end - i + 1}
+						overlaps={lessons.filter(
+							(lesson) =>
+								(begin <= lesson.begin && lesson.begin <= end) ||
+								(begin <= lesson.end && lesson.end <= end),
+						)}
+						name={`${day}.${i}`}
+						delOrHide={delOrHide}
 					/>,
 				);
-				for (let j = i - 1; j < valid[0].end; j++) {
+				for (let j = i - 1; j < end; j++) {
 					record[j] = valid[0];
 				}
 			}
@@ -98,6 +176,8 @@ const GridColumn = ({
 
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
+
+	const [overlap, setOverlap] = useState(false);
 
 	const viewShot = useRef<ViewShot>(null);
 
@@ -112,6 +192,15 @@ const ScheduleUI = (props: ScheduleProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.cache]);
 
+	useEffect(() => {
+		if (overlap) {
+			Snackbar.show({
+				text: getStr("scheduleOverlapWarning"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
+	}, [overlap]);
+
 	return (
 		<>
 			<View
@@ -121,14 +210,16 @@ const ScheduleUI = (props: ScheduleProps) => {
 					alignItems: "center",
 					flexDirection: "row",
 				}}>
-				<Icon.Button
-					name="chevron-left"
-					size={24}
-					color={week > 1 ? "black" : "#888"}
-					disabled={week <= 1}
-					backgroundColor={"#f000"}
+				<TouchableOpacity
 					onPress={() => setWeek((o) => (o > 1 ? o - 1 : o))}
-				/>
+					disabled={week <= 1}
+					style={{padding: 8}}>
+					<Icon
+						name="chevron-left"
+						size={24}
+						color={week > 1 ? "black" : "#888"}
+					/>
+				</TouchableOpacity>
 				<Text
 					onPress={() => setWeek(new Calendar().weekNumber)}
 					style={{
@@ -138,16 +229,18 @@ const ScheduleUI = (props: ScheduleProps) => {
 					}}>
 					{week}
 				</Text>
-				<Icon.Button
-					name="chevron-right"
-					size={24}
-					color={week < Calendar.weekCount ? "black" : "#888"}
-					disabled={week >= Calendar.weekCount}
-					backgroundColor={"#f000"}
+				<TouchableOpacity
 					onPress={() =>
 						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
 					}
-				/>
+					disabled={week >= Calendar.weekCount}
+					style={{padding: 8}}>
+					<Icon
+						name="chevron-right"
+						size={24}
+						color={week < Calendar.weekCount ? "black" : "#888"}
+					/>
+				</TouchableOpacity>
 			</View>
 			<ScrollView
 				refreshControl={
@@ -180,6 +273,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 											lesson.dayOfWeek === id + 1 && lesson.week === week,
 									)}
 								shorten={props.shortenMap}
+								setOverlap={setOverlap}
+								delOrHide={props.delOrHide}
 							/>
 						))}
 					</Grid>
@@ -215,6 +310,10 @@ const styles = StyleSheet.create({
 		borderWidth: 0.5,
 		borderColor: "black",
 	},
+	menuOption: {
+		textAlign: "center",
+		padding: 10,
+	},
 });
 
 export const ScheduleScreen = connect(
@@ -228,6 +327,9 @@ export const ScheduleScreen = connect(
 			getSecondary: () => {
 				// @ts-ignore
 				dispatch(secondaryScheduleThunk());
+			},
+			delOrHide: ([lesson, choice]: [Lesson, Choice]) => {
+				dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [lesson, choice]});
 			},
 		};
 	},

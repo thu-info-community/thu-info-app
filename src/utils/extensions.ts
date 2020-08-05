@@ -2,7 +2,7 @@ export {};
 
 declare global {
 	interface Array<T> {
-		flatMap<R>(transform: (item: T) => R[]): R[];
+		flatMap<R>(transform: (item: T, index: number) => R[]): R[];
 	}
 
 	interface Map<K, V> {
@@ -11,8 +11,10 @@ declare global {
 }
 
 // eslint-disable-next-line no-extend-native
-Array.prototype.flatMap = function (transform: (item: any) => any[]) {
-	return this.reduce((prev, curr) => prev.concat(transform(curr)), []);
+Array.prototype.flatMap = function (
+	transform: (item: any, index: number) => any[],
+) {
+	return this.reduce((prev, curr, id) => prev.concat(transform(curr, id)), []);
 };
 
 // eslint-disable-next-line no-extend-native
