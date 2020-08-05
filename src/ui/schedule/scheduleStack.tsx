@@ -7,11 +7,13 @@ import {ScheduleScreen} from "./schedule";
 import {getStr} from "../../utils/i18n";
 import {ScheduleShortenScreen} from "./scheduleShorten";
 import {ScheduleAddScreen} from "./scheduleAdd";
+import {ScheduleHiddenScreen} from "./scheduleHidden";
 
 type ScheduleStackParamList = {
 	Schedule: undefined;
 	ScheduleShorten: undefined;
 	ScheduleAdd: undefined;
+	ScheduleHidden: undefined;
 };
 
 const Stack = createStackNavigator<ScheduleStackParamList>();
@@ -34,6 +36,11 @@ export const ScheduleStackScreen = () => (
 			name="ScheduleAdd"
 			component={ScheduleAddScreen}
 			options={{title: getStr("scheduleAddCustom")}}
+		/>
+		<Stack.Screen
+			name="ScheduleHidden"
+			component={ScheduleHiddenScreen}
+			options={{title: getStr("scheduleHidden")}}
 		/>
 	</Stack.Navigator>
 );

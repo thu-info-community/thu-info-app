@@ -44,7 +44,7 @@ export interface Lesson {
 	type: LessonType;
 	title: string;
 	locale: string;
-	week: number;
+	week: number; // When used as hidden rules, -1 for ALL, 0 for REPEAT, others for the week to be hidden.
 	dayOfWeek: number;
 	begin: number;
 	end: number;
@@ -166,3 +166,15 @@ export const parseScript = (script: string): Lesson[] => {
 	});
 	return result;
 };
+
+export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>
+	rules.some(
+		(it) =>
+			it.type === lesson.type &&
+			it.title === lesson.title &&
+			(it.week === -1 ||
+				(it.dayOfWeek === lesson.dayOfWeek &&
+					it.begin === lesson.begin &&
+					it.end === lesson.end &&
+					(it.week === 0 || it.week === lesson.week))),
+	);

@@ -35,6 +35,7 @@ export default {
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",
+	scheduleHidden: "管理隐藏",
 	saveSucceed: "保存成功",
 	permissionDenied: "获取权限失败",
 	saveFailRetry: "保存失败，请重试",
@@ -56,4 +57,8 @@ export default {
 	scheduleOnce: "（仅一次）",
 	scheduleRepeat: "（每周同时段）",
 	scheduleAll: "（全部）",
+	schedulePrefixAll: "[全部]",
+	schedulePrefixRepeat: "[每周]",
+	schedulePrefixOncePrefix: "[第",
+	schedulePrefixOnceSuffix: "周]",
 };
