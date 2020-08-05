@@ -5460,6 +5460,11 @@ react-native-localize@^1.4.0:
   resolved "https://registry.npm.taobao.org/react-native-localize/download/react-native-localize-1.4.0.tgz#4653596d066d0941c48f5404dc1c0d08b6950443"
   integrity sha1-RlNZbQZtCUHEj1QE3BwNCLaVBEM=
 
+react-native-popup-menu@^0.15.9:
+  version "0.15.9"
+  resolved "https://registry.npm.taobao.org/react-native-popup-menu/download/react-native-popup-menu-0.15.9.tgz#75bccf71ff4627cb302d871a28be84a91eb2f8d9"
+  integrity sha1-dbzPcf9GJ8swLYcaKL6EqR6y+Nk=
+
 react-native-reanimated@^1.9.0:
   version "1.9.0"
   resolved "https://registry.npm.taobao.org/react-native-reanimated/download/react-native-reanimated-1.9.0.tgz#38676c99dd585504fdc7331efb45e5f48ec7339a"

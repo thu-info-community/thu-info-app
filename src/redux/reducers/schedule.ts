@@ -6,13 +6,15 @@ import {
 	PRIMARY_SCHEDULE_REQUEST,
 	PRIMARY_SCHEDULE_SUCCESS,
 	SCHEDULE_ADD_CUSTOM,
+	SCHEDULE_DEL_OR_HIDE,
 	SCHEDULE_UPDATE_ALIAS,
 	SECONDARY_SCHEDULE_FAILURE,
 	SECONDARY_SCHEDULE_REQUEST,
 	SECONDARY_SCHEDULE_SUCCESS,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
-import {Exam, Lesson} from "../../models/schedule/schedule";
+import {Exam, Lesson, LessonType} from "../../models/schedule/schedule";
+import {Choice} from "../../ui/schedule/schedule";
 
 const addToDefaultShortenMap = (
 	src: {[key: string]: string},
@@ -91,6 +93,31 @@ export const schedule = (
 				...state,
 				custom: state.custom.concat(action.payload),
 			};
+		}
+		case SCHEDULE_DEL_OR_HIDE: {
+			const [lesson, choice] = action.payload;
+			if (lesson.type === LessonType.CUSTOM) {
+				return {
+					...state,
+					custom:
+						choice === Choice.ALL
+							? state.custom.filter((it) => it.title !== lesson.title)
+							: state.custom.filter(
+									(it) =>
+										!(
+											it.title === lesson.title &&
+											it.begin === lesson.begin &&
+											it.end === lesson.end &&
+											it.dayOfWeek === lesson.dayOfWeek &&
+											(choice === Choice.REPEAT || it.week === lesson.week)
+										),
+									// eslint-disable-next-line no-mixed-spaces-and-tabs
+							  ),
+				};
+			} else {
+				console.error("隐藏功能还没做！");
+				return state;
+			}
 		}
 		default:
 			return state;

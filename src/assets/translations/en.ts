@@ -57,4 +57,10 @@ export default {
 	selectWeek: "Select weeks",
 	done: "Done",
 	dayOfWeek: ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+	scheduleOverlapWarning: "Warning: Overlapping schedules detected.",
+	delete: "Delete",
+	hide: "Hide",
+	scheduleOnce: "(once)",
+	scheduleRepeat: "(every week, same period)",
+	scheduleAll: "(all)",
 };

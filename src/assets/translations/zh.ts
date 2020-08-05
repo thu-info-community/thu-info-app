@@ -50,4 +50,10 @@ export default {
 	selectWeek: "选择周次",
 	done: "完成",
 	dayOfWeek: ["", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+	scheduleOverlapWarning: "注意：部分计划有重叠。",
+	delete: "删除",
+	hide: "隐藏",
+	scheduleOnce: "（仅一次）",
+	scheduleRepeat: "（每周同时段）",
+	scheduleAll: "（全部）",
 };
