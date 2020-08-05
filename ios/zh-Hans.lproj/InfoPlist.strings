@@ -1,0 +1,12 @@
+/* 
+  InfoPlist.strings
+  thu_info
+
+  Created by 钱钱厚德 on 2020/8/5.
+  
+*/
+
+
+NSPhotoLibraryUsageDescription = "我们只会在将课程表存储到照片图库的时候使用您的照片数据。";
+
+NSPhotoLibraryAddUsageDescription = "我们只会在将课程表存储到照片图库的时候使用您的照片数据。";

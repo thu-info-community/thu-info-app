@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  thu_info
+
+  Created by 钱钱厚德 on 2020/8/5.
+  
+*/
+
+NSPhotoLibraryUsageDescription = "We only use your data of camara roll to save schedule to your phone.";
+
+NSPhotoLibraryAddUsageDescription = "We only use your data of camara roll to save schedule to your phone.";
