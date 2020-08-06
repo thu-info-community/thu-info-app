@@ -20,6 +20,8 @@ import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 
 const KeychainStorage = createKeychainStorage();
+import {Hole} from "./states/hole";
+import {hole} from "./reducers/hole";
 
 export interface State {
 	auth: AuthState;
@@ -28,6 +30,7 @@ export interface State {
 	config: Config;
 	credentials: Credentials;
 	cache: Cache;
+	hole: Hole;
 }
 
 const authTransform = createTransform(() => LoginStatus.None, undefined, {
@@ -56,6 +59,7 @@ const rootReducer = combineReducers({
 		credentials,
 	),
 	cache,
+	hole,
 });
 
 const calendarConfigTransform = createTransform(
@@ -92,7 +96,7 @@ const persistConfig = {
 	version: 1,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule", "config", "cache"],
+	whitelist: ["auth", "schedule", "config", "cache", "hole"],
 	transforms: [calendarConfigTransform, scheduleFilter, cacheTransform],
 };
 

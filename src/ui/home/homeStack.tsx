@@ -21,6 +21,7 @@ import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
 import {JoggingScreen} from "./jogging";
+import {HoleScreen} from "./Hole";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -38,6 +39,7 @@ export type HomeStackParamList = {
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
+	Hole: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -139,6 +141,11 @@ export const HomeStackScreen = () => (
 			name="ConfigureDorm"
 			component={ConfigureDormScreen}
 			options={{title: getStr("configureDorm")}}
+		/>
+		<Stack.Screen
+			name="Hole"
+			component={HoleScreen}
+			options={{title: getStr("hole")}}
 		/>
 	</Stack.Navigator>
 );

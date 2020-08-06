@@ -59,6 +59,7 @@ export default {
 	report: "Report",
 	physicalExam: "Physical Exam",
 	jogging: "Jogging",
+	hole: "Hole",
 	networkRetry: "Network failure, please retry.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",

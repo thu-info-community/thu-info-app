@@ -9,6 +9,7 @@ import {
 	DORM_LOGIN_URL_PREFIX,
 	DORM_SCORE_REFERER,
 	DORM_SCORE_URL,
+	HOLE_USER_AGENT,
 	ID_LOGIN_CHECK_URL,
 	INFO_LOGIN_URL,
 	INFO_ROOT_URL,
@@ -50,15 +51,19 @@ export const stringify = (form: any) =>
  *
  * If param `post` is provided, the request will be a POST request with the
  * given post form. Otherwise, the request will be a GET request.
+ *
+ * Visiting thuhole requires a special User-Agent value, and that's why an
+ * additional param `hole` is required, false by default.
  */
 export const connect = async (
 	url: string,
 	referer?: string,
 	post?: object | string,
+	hole: boolean = false,
 ): Promise<void> => {
 	const defaultHeaders = {
 		"Content-Type": CONTENT_TYPE_FORM,
-		"User-Agent": USER_AGENT,
+		"User-Agent": hole ? HOLE_USER_AGENT : USER_AGENT,
 	};
 	const headers =
 		referer === undefined
@@ -86,6 +91,9 @@ export const connect = async (
  *
  * The `encoding` and `timeout` are `UTF-8` and `0` respectively by default,
  * and can be set to other values with the corresponding params.
+ *
+ * Visiting thuhole requires a special User-Agent value, and that's why an
+ * additional param `hole` is required, false by default.
  */
 export const retrieve = async (
 	url: string,
@@ -93,6 +101,7 @@ export const retrieve = async (
 	post?: object | string,
 	encoding: string = "UTF-8",
 	timeout: number = 0,
+	hole: boolean = false,
 ) =>
 	new Promise<string>((resolve, reject) => {
 		const request = new XMLHttpRequest();
@@ -107,7 +116,7 @@ export const retrieve = async (
 		};
 		request.open(post === undefined ? "GET" : "POST", url);
 		request.setRequestHeader("Content-type", CONTENT_TYPE_FORM);
-		request.setRequestHeader("User-Agent", USER_AGENT);
+		request.setRequestHeader("User-Agent", hole ? HOLE_USER_AGENT : USER_AGENT);
 		if (referer !== undefined) {
 			request.setRequestHeader("Referer", referer);
 		}

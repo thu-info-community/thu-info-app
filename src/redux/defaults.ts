@@ -4,6 +4,7 @@ import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
 import {Calendar} from "../utils/calendar";
 import {Cache} from "./states/cache";
+import {Hole} from "./states/hole";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -46,4 +47,8 @@ export const defaultCredentials: Credentials = {
 
 export const defaultCache: Cache = {
 	news: [],
+};
+
+export const defaultHole: Hole = {
+	token: "",
 };
