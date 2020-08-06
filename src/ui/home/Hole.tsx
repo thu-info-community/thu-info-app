@@ -1,9 +1,10 @@
-import React from "react";
-import {Text} from "react-native";
+import React, {useEffect, useState} from "react";
+import {FlatList, Text, View} from "react-native";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {HOLE_SET_TOKEN} from "../../redux/constants";
-import {holeLogin} from "../../network/hole";
+import {getHoleList} from "../../network/hole";
+import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface HoleProps {
@@ -12,10 +13,32 @@ interface HoleProps {
 }
 
 const HoleUI = () => {
-	holeLogin()
-		.then(() => console.log("Succeed!"))
-		.catch((r) => console.error(r));
-	return <Text>2333</Text>;
+	const [data, setData] = useState<HoleTitleCard[]>([]);
+	const [page, setPage] = useState(1);
+	useEffect(() => {
+		setPage(1);
+		getHoleList(FetchMode.NORMAL, 1, "").then((r) => setData(r));
+	}, []);
+	return (
+		<FlatList
+			data={data}
+			renderItem={({item}) => (
+				<View style={{padding: 10}}>
+					<Text>{item.text}</Text>
+				</View>
+			)}
+			keyExtractor={(item) => `${item.pid}`}
+			onEndReachedThreshold={0.5}
+			onEndReached={() => {
+				getHoleList(FetchMode.NORMAL, page + 1, "").then((r) =>
+					setData((o) =>
+						o.concat(r.filter((it) => it.pid < o[o.length - 1].pid)),
+					),
+				);
+				setPage((p) => p + 1);
+			}}
+		/>
+	);
 };
 
 export const HoleScreen = connect(
