@@ -151,3 +151,5 @@ export const CALENDAR_CONFIG_URL =
 export const GITHUB_REPO_URL = "https://github.com/UNIDY2002/THUInfo";
 export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
+
+export const HOLE_LOGIN_URL = "https://thuhole.com/api_xmcp/hole/system_msg";
