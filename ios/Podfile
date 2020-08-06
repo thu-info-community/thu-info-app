@@ -85,6 +85,8 @@ target 'thu_info' do
 
   pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'thu_infoTests' do
     inherit! :complete
     # Pods for testing
