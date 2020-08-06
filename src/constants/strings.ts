@@ -42,3 +42,5 @@ export const SECONDARY_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/syxk.vsyxkKcapb.do?m=kbSearch&p_xnxq=";
 export const SECONDARY_SUFFIX =
 	"&pathContent=%B6%FE%BC%B6%D1%A1%BF%CE%BF%CE%B1%ED";
+export const JWGG_MAIN_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/jiaowugonggao/more";

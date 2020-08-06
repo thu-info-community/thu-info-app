@@ -45,9 +45,7 @@ export const FormScreen = ({route, navigation}: any) => {
 		if (personList.length !== 0) {
 			personList.forEach((person, i) => {
 				evaluationList.push(
-					<Text
-						style={styles.personNameStyle}
-						key={`Teacher${i}Name${person.name}`}>
+					<Text style={styles.personNameStyle} key={`Teacher${i}Name`}>
 						{person.name}
 					</Text>,
 				);
@@ -64,7 +62,7 @@ export const FormScreen = ({route, navigation}: any) => {
 				});
 
 				evaluationList.push(
-					<View key={"Suggestion" + i}>
+					<View key={`Person${i}Suggestion`}>
 						<Text style={styles.textInputCaptionStyle}>
 							{personType === "teacher"
 								? getStr("moreSuggestionsToTeacher")
