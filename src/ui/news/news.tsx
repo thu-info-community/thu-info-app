@@ -20,13 +20,20 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 	const [loading, setLoading] = useState(false);
 	const [counter, setCounter] = useState(0);
 
-	const fetchNewsList = () => {
+	const fetchNewsList = (request: boolean = true) => {
 		setRefreshing(true);
 		setLoading(true);
-		getNewsList(JWGG_MAIN_PREFIX + counter)
+
+		if (request) {
+			setNewsList([]);
+		}
+
+		let newValOfCounter = request ? 0 : 1 + counter;
+
+		getNewsList(JWGG_MAIN_PREFIX + newValOfCounter)
 			.then((res) => {
-				setNewsList(newsList?.concat(res));
-				setCounter(counter + 1);
+				setNewsList((o) => o.concat(res));
+				setCounter(newValOfCounter);
 				setRefreshing(false);
 				setLoading(false);
 			})
@@ -76,10 +83,10 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 					</View>
 				</TouchableOpacity>
 			)}
-			onEndReached={fetchNewsList}
+			onEndReached={() => fetchNewsList(false)}
 			onEndReachedThreshold={-0.15}
 			ListFooterComponent={
-				loading && counter !== 0 ? (
+				loading && newsList.length !== 0 ? (
 					<View style={styles.footerContainer}>
 						<ActivityIndicator size="small" />
 						<Text style={{margin: 10}}>{getStr("loading")}</Text>
@@ -112,15 +119,16 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		alignSelf: "center",
+		margin: 5,
 	},
 
 	abstractContainer: {
 		alignSelf: "center",
+		margin: 5,
 	},
 
 	footnoteContainer: {
-		marginTop: 5,
-		marginHorizontal: 5,
+		margin: 5,
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignContent: "center",
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
 	footerContainer: {
 		flexDirection: "row",
 		alignSelf: "stretch",
-		height: 100,
+		height: 80,
 		justifyContent: "center",
 		alignItems: "center",
 	},
