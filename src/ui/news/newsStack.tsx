@@ -9,7 +9,7 @@ import {NewsDetailScreen} from "./newsDetail";
 
 type NewsStackParamList = {
 	News: undefined;
-	NewsDetail: {url: string};
+	NewsDetail: {url: string; name: string};
 };
 
 const Stack = createStackNavigator<NewsStackParamList>();
@@ -26,7 +26,7 @@ export const NewsStackScreen = () => (
 		<Stack.Screen
 			name="NewsDetail"
 			component={NewsDetailScreen}
-			options={{title: "AAA"}}
+			options={({route}) => ({title: route.params.name})}
 		/>
 	</Stack.Navigator>
 );
