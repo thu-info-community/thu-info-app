@@ -26,7 +26,5 @@ export const NewsDetailScreen = ({route}: any) => {
 
 	useEffect(fetchHtml, []);
 
-	console.log(html);
-
 	return <WebView source={{html: html}} />;
 };
