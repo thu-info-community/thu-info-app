@@ -32,6 +32,7 @@ export default {
 	postFailure: "提交失败，请检查网络后重试。",
 	autoScoreFailure: "自动打分失败，请检查网络后重试。",
 	autoScoreSuccess: "您已经成功为该课程打满分。",
+	expenditure: "消费查询",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",

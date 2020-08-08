@@ -8,12 +8,14 @@ import {ReportScreen} from "./report";
 import {EvaluationScreen} from "./evaluation";
 import {FormScreen} from "./form";
 import {getStr} from "../../utils/i18n";
+import {ExpenditureScreen} from "./expenditure";
 
 type HomeStackParamList = {
 	Home: undefined;
 	Report: undefined;
 	Evaluation: undefined;
 	Form: {name: string; url: string};
+	Expenditure: undefined;
 };
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -41,6 +43,11 @@ export const HomeStackScreen = () => (
 			name="Form"
 			component={FormScreen}
 			options={({route}) => ({title: route.params.name})}
+		/>
+		<Stack.Screen
+			name="Expenditure"
+			component={ExpenditureScreen}
+			options={{title: getStr("expenditure")}}
 		/>
 	</Stack.Navigator>
 );
