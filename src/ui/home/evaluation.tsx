@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, StyleSheet, View, Text} from "react-native";
+import {FlatList, StyleSheet, View, Text, RefreshControl} from "react-native";
 import {
 	getAssessmentList,
 	getAssessmentForm,
@@ -92,8 +92,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 					);
 				}}
 				style={styles.listStyle}
-				refreshing={refreshing}
-				onRefresh={fetchList}
+				refreshControl={
+					<RefreshControl refreshing={refreshing} onRefresh={fetchList} />
+				}
 				keyExtractor={(item) => item[0]}
 			/>
 		</View>

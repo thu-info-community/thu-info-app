@@ -1,4 +1,3 @@
-import {JWGG_MAIN_URL} from "src/constants/strings";
 import {retrieve} from "./core";
 import cheerio from "cheerio";
 import {getCheerioText} from "src/utils/cheerio";
@@ -12,8 +11,8 @@ export class newsSlice {
 	) {}
 }
 
-export const getNewsList = (): Promise<newsSlice[]> => {
-	return retrieve(JWGG_MAIN_URL).then((str) => {
+export const getNewsList = (url: string): Promise<newsSlice[]> => {
+	return retrieve(url).then((str) => {
 		const $ = cheerio.load(str);
 		let newsList: newsSlice[] = [];
 		$("ul.cont_list > li", str).each((_, item) => {
@@ -32,7 +31,7 @@ export const getNewsList = (): Promise<newsSlice[]> => {
 };
 
 export const getNewsDetail = (url: string): Promise<string> => {
-	return retrieve(url).then((str) => {
+	return retrieve(url, undefined, undefined, "GBK").then((str) => {
 		const $ = cheerio.load(str);
 		return $("html").html() ?? "<html></html>";
 	});
