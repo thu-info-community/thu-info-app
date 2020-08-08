@@ -5,11 +5,13 @@ import {
 	ASSESSMENT_LIST_URL,
 	ASSESSMENT_MAIN_URL,
 	ASSESSMENT_SUBMIT_URL,
+	EXPENDITURE_URL,
 	GET_REPORT_URL,
 	INFO_ROOT_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
+import {Record} from "../models/home/expenditure";
 import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
 
 export const getReport = (): Promise<Course[]> =>
@@ -99,4 +101,48 @@ export const postAssessmentForm = (form: Form): Promise<void> =>
 				}
 			},
 		),
+	);
+
+export const getExpenditures = (beg: string, end: string): Promise<Record[]> =>
+	retryWrapper(
+		824,
+		retrieve(EXPENDITURE_URL, EXPENDITURE_URL, {
+			begindate: beg,
+			enddate: end,
+			transtype: "",
+		}).then(async (str) => {
+			const result: Record[] = [];
+			let $ = cheerio.load(str);
+			const page_text = $("table>tr>td>div>span").first().text().split(" ")[0];
+			// @ts-ignore
+			const page_cnt = Number(/共(\d+)页/.exec(page_text)[1]);
+			for (let i = 0; i < page_cnt; i++) {
+				if (i > 0) {
+					$ = cheerio.load(
+						await retrieve(
+							`${EXPENDITURE_URL}?dir=next&currentPage=${i}`,
+							EXPENDITURE_URL,
+							{
+								begindate: beg,
+								enddate: end,
+								transtype: "",
+							},
+						),
+					);
+				}
+				$("table.table1>tr:not(.font10-blackB)").each((index, element) => {
+					const record = {
+						locale: getCheerioText(element.children[3], 1),
+						category: getCheerioText(element.children[5], 1),
+						date: getCheerioText(element.children[9], 0),
+						value: Number(getCheerioText(element.children[11], 0).substring(1)),
+					};
+					if (record.category.match(/^(消费|自助缴费.*|取消充值)$/)) {
+						record.value *= -1;
+					}
+					result.push(record);
+				});
+			}
+			return result;
+		}),
 	);
