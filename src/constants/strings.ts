@@ -44,3 +44,9 @@ export const SECONDARY_SUFFIX =
 	"&pathContent=%B6%FE%BC%B6%D1%A1%BF%CE%BF%CE%B1%ED";
 export const JWGG_MAIN_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/jiaowugonggao/more?page=";
+export const BGTZ_MAIN_PREFIX =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/bangongtongzhi/more?field_bgtz_fl_tid=All&page=";
+export const HB_MAIN_PREFIX =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/haibao/more?page=";
+export const KYTZ_MAIN_PREFIX =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/keyantongzhi/more?field_kytz_fl_tid=All&page=";

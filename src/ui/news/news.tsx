@@ -4,21 +4,102 @@ import {
 	View,
 	RefreshControl,
 	ActivityIndicator,
+	Alert,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import {newsSlice, getNewsList} from "src/network/news";
-import {FlatList, TouchableOpacity} from "react-native-gesture-handler";
+import {
+	FlatList,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {NewsNav} from "./newsStack";
-import {JWGG_MAIN_PREFIX} from "src/constants/strings";
+import {
+	JWGG_MAIN_PREFIX,
+	BGTZ_MAIN_PREFIX,
+	KYTZ_MAIN_PREFIX,
+	HB_MAIN_PREFIX,
+} from "src/constants/strings";
+
+class newsSourceList {
+	private newsLoadList: Array<newsSlice[]>;
+	private counterList: number[];
+
+	private sourceList: string[] = [
+		JWGG_MAIN_PREFIX,
+		BGTZ_MAIN_PREFIX,
+		KYTZ_MAIN_PREFIX,
+		HB_MAIN_PREFIX,
+	];
+
+	private nameList: string[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
+
+	private getNew(ind: number): void {
+		getNewsList(
+			this.sourceList[ind] + this.counterList[ind],
+			this.nameList[ind],
+		)
+			.then((res) => {
+				this.newsLoadList[ind].concat(res);
+				this.counterList[ind] += 1;
+			})
+			.catch(() => {
+				throw -1;
+			});
+	}
+
+	private shift(ind: number): void {
+		this.newsLoadList[ind].shift();
+		if (this.newsLoadList[ind].length === 0) {
+			this.getNew(ind);
+		}
+	}
+
+	public constructor() {
+		this.newsLoadList = [[], [], [], []];
+		this.counterList = [0, 0, 0, 0];
+	}
+
+	public getNewestNews(): newsSlice {
+		this.newsLoadList.forEach((val, ind) => {
+			if (val.length === 0) {
+				this.getNew(ind);
+			}
+		});
+		let result: newsSlice = this.newsLoadList[0][0];
+		let index: number = 0;
+		this.newsLoadList.forEach((val, ind) => {
+			result = val[0].date > result.date ? val[0] : result;
+			index = val[0].date > result.date ? ind : index;
+		});
+		this.shift(index);
+		return result;
+	}
+}
 
 export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 	const [newsList, setNewsList] = useState<newsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [counter, setCounter] = useState(0);
+	const [newsNumberOnOnePage, setNewsNumber] = useState(30);
+	const [newsSource] = useState(new newsSourceList());
+
+	const renderIcon = (channel: string) => {
+		if (channel === "JWGG") {
+			return <AntDesign name="close" size={40} color="green" />;
+		} else if (channel === "BGTZ") {
+			return <AntDesign name="close" size={40} color="red" />;
+		} else if (channel === "KYTZ") {
+			return <AntDesign name="close" size={40} color="blue" />;
+		} else if (channel === "HB") {
+			return <AntDesign name="close" size={40} color="purple" />;
+		} else {
+			return null;
+		}
+	};
 
 	const fetchNewsList = (request: boolean = true) => {
 		setRefreshing(true);
@@ -28,23 +109,17 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			setNewsList([]);
 		}
 
-		let newValOfCounter = request ? 0 : 1 + counter;
+		let newNewsList: newsSlice[] = [];
+		for (let i = 0; i < 30; ++i) {
+			newNewsList.push(
+				newsSource?.getNewestNews() ?? new newsSlice("", "", "", "", ""),
+			);
+		}
 
-		getNewsList(JWGG_MAIN_PREFIX + newValOfCounter)
-			.then((res) => {
-				setNewsList((o) => o.concat(res));
-				setCounter(newValOfCounter);
-				setRefreshing(false);
-				setLoading(false);
-			})
-			.catch(() => {
-				Snackbar.show({
-					text: getStr("networkRetry"),
-					duration: Snackbar.LENGTH_LONG,
-				});
-				setRefreshing(false);
-				setLoading(false);
-			});
+		setNewsList((o) => o.concat(newNewsList));
+
+		setRefreshing(false);
+		setLoading(false);
 	};
 
 	useEffect(fetchNewsList, []);
@@ -54,36 +129,65 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={fetchNewsList} />
 			}
-			data={newsList}
+			data={newsList.slice(0, newsNumberOnOnePage)}
 			keyExtractor={(item) => "" + newsList.indexOf(item)}
 			renderItem={({item}) => (
 				<TouchableOpacity
 					style={styles.newsSliceContainer}
 					onPress={() => {
-						navigation.navigate("NewsDetail", {url: item.url, name: item.name});
+						navigation.navigate("NewsDetail", {url: item.url});
 					}}>
 					<View style={styles.titleContainer}>
-						<AntDesign name="close" size={40} color="green" />
-						<Text style={styles.titleStyle} numberOfLines={10}>
-							{item.name}
+						<TouchableWithoutFeedback onPress={() => Alert.alert("aaa")}>
+							{renderIcon(item.channel)}
+						</TouchableWithoutFeedback>
+						<View>
+							<Text
+								style={{
+									fontSize: 18,
+									marginVertical: 2.5,
+									marginHorizontal: 5,
+								}}>
+								{getStr(item.channel)}
+							</Text>
+							<Text
+								style={{
+									color: "gray",
+									marginVertical: 2.5,
+									marginHorizontal: 5,
+								}}>
+								{item.date}
+							</Text>
+						</View>
+					</View>
+					<Text
+						style={{
+							fontSize: 16,
+							fontWeight: "bold",
+							margin: 5,
+							lineHeight: 20,
+						}}>
+						{item.name}
+					</Text>
+					<Text style={{margin: 5}} numberOfLines={5}>
+						<Text style={{fontWeight: "bold"}}>
+							{item.source + (item.source ? getStr(":") : "")}
 						</Text>
-					</View>
-					<View style={styles.abstractContainer}>
-						<Text style={styles.abstractStyle} numberOfLines={5}>
-							It's abstract. It's abstract. It's abstract. It's abstract. It's
-							abstract. It's abstract. It's abstract. It's abstract. It's
-							abstract. It's abstract. It's abstract. It's abstract. It's
-							abstract. It's abstract. It's abstract. It's abstract. It's
-							abstract. It's abstract.
+						<Text style={{color: "gray"}}>
+							It is abstract. It is abstract. It is abstract. It is abstract. It
+							is abstract. It is abstract. It is abstract. It is abstract. It is
+							abstract. It is abstract. It is abstract. It is abstract. It is
+							abstract. It is abstract. It is abstract. It is abstract. It is
+							abstract.{" "}
 						</Text>
-					</View>
-					<View style={styles.footnoteContainer}>
-						<Text>{item.source}</Text>
-						<Text>{item.date}</Text>
-					</View>
+					</Text>
+					<Text />
 				</TouchableOpacity>
 			)}
-			onEndReached={() => fetchNewsList(false)}
+			onEndReached={() => {
+				fetchNewsList(false);
+				setNewsNumber(newsNumberOnOnePage + 30);
+			}}
 			onEndReachedThreshold={-0.15}
 			ListFooterComponent={
 				loading && newsList.length !== 0 ? (
@@ -116,23 +220,9 @@ const styles = StyleSheet.create({
 
 	titleContainer: {
 		flexDirection: "row",
-		justifyContent: "center",
+		justifyContent: "flex-start",
 		alignItems: "center",
-		alignSelf: "center",
 		margin: 5,
-	},
-
-	abstractContainer: {
-		alignSelf: "center",
-		margin: 5,
-	},
-
-	footnoteContainer: {
-		margin: 5,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignContent: "center",
-		alignItems: "center",
 	},
 
 	footerContainer: {
@@ -141,16 +231,5 @@ const styles = StyleSheet.create({
 		height: 80,
 		justifyContent: "center",
 		alignItems: "center",
-	},
-
-	titleStyle: {
-		fontWeight: "bold",
-		width: 300,
-		marginLeft: 15,
-	},
-
-	abstractStyle: {
-		fontSize: 14,
-		color: "gray",
 	},
 });
