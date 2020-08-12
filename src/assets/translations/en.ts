@@ -68,4 +68,10 @@ export default {
 	schedulePrefixRepeat: "[Repeat]",
 	schedulePrefixOncePrefix: "[Week ",
 	schedulePrefixOnceSuffix: "]",
+	newsDetail: "Detail of News",
+	JWGG: "Academic Affairs Notice",
+	BGTZ: "Office Notice",
+	KYTZ: "R&D Notice",
+	HB: "Poster",
+	":": ": ",
 };

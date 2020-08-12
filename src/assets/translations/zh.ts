@@ -61,4 +61,10 @@ export default {
 	schedulePrefixRepeat: "[每周]",
 	schedulePrefixOncePrefix: "[第",
 	schedulePrefixOnceSuffix: "周]",
+	newsDetail: "新闻详情",
+	JWGG: "教务公告",
+	BGTZ: "办公通知",
+	KYTZ: "科研通知",
+	HB: "海报",
+	":": "：",
 };

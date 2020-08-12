@@ -8,10 +8,14 @@ export class newsSlice {
 		readonly url: string,
 		readonly date: string,
 		readonly source: string,
+		readonly channel: string,
 	) {}
 }
 
-export const getNewsList = (url: string): Promise<newsSlice[]> => {
+export const getNewsList = (
+	url: string,
+	channel: string,
+): Promise<newsSlice[]> => {
 	return retrieve(url).then((str) => {
 		const $ = cheerio.load(str);
 		let newsList: newsSlice[] = [];
@@ -23,6 +27,7 @@ export const getNewsList = (url: string): Promise<newsSlice[]> => {
 					getCheerioText(item, 7),
 					item.children[4].data?.substr(3, item.children[4].data?.length - 5) ??
 						"",
+					channel,
 				),
 			);
 		});
