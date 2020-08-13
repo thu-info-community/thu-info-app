@@ -5,6 +5,8 @@ import {Record} from "../../models/home/expenditure";
 // @ts-ignore
 import {MyDatePicker} from "../../components/DatePicker";
 import {Calendar} from "../../utils/calendar";
+import Snackbar from "react-native-snackbar";
+import {getStr} from "../../utils/i18n";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -40,14 +42,20 @@ export const ExpenditureScreen = () => {
 		setRefreshing(true);
 		getExpenditures(beg, end)
 			.then(setExpenditures)
+			.catch(() => {
+				Snackbar.show({
+					text: getStr("networkRetry"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+			})
 			.then(() => setRefreshing(false));
 	}, [beg, end]);
 
 	return (
 		<>
 			<View style={styles.header}>
-				<MyDatePicker date={beg} onChange={setBeg} />
-				<MyDatePicker date={end} onChange={setEnd} />
+				<MyDatePicker date={beg} onChange={setBeg} disabled={refreshing} />
+				<MyDatePicker date={end} onChange={setEnd} disabled={refreshing} />
 			</View>
 			<View style={styles.container}>
 				<FlatList
