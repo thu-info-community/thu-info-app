@@ -2,7 +2,15 @@ import {DatePickerAndroid, Text, TouchableOpacity} from "react-native";
 import React from "react";
 import "../../src/utils/extensions";
 
-export const MyDatePicker = ({date, onChange}: {date: Date; onChange: any}) => (
+export const MyDatePicker = ({
+	date,
+	onChange,
+	disabled,
+}: {
+	date: Date;
+	onChange: any;
+	disabled: boolean;
+}) => (
 	<TouchableOpacity
 		style={{
 			flex: 1,
@@ -18,7 +26,8 @@ export const MyDatePicker = ({date, onChange}: {date: Date; onChange: any}) => (
 			} catch ({code, message}) {
 				console.warn("Cannot open date picker", message);
 			}
-		}}>
+		}}
+		disabled={disabled}>
 		<Text
 			style={{
 				textAlign: "center",
