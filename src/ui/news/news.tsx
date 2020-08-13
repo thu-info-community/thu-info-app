@@ -4,10 +4,9 @@ import {
 	View,
 	RefreshControl,
 	ActivityIndicator,
-	Alert,
 } from "react-native";
 import React, {useState, useEffect} from "react";
-import {newsSlice, getNewsList} from "src/network/news";
+import {newsSlice, getNewsList, sourceTag} from "src/network/news";
 import {
 	FlatList,
 	TouchableOpacity,
@@ -35,15 +34,15 @@ class newsSourceList {
 		HB_MAIN_PREFIX,
 	];
 
-	private nameList: string[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
+	private nameList: sourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
-	private getNew(ind: number): void {
+	private async getNew(ind: number): Promise<void> {
 		getNewsList(
 			this.sourceList[ind] + this.counterList[ind],
 			this.nameList[ind],
 		)
 			.then((res) => {
-				this.newsLoadList[ind].concat(res);
+				this.newsLoadList[ind] = this.newsLoadList[ind].concat(res);
 				this.counterList[ind] += 1;
 			})
 			.catch(() => {
@@ -51,22 +50,17 @@ class newsSourceList {
 			});
 	}
 
-	private shift(ind: number): void {
+	private async shift(ind: number): Promise<void> {
 		this.newsLoadList[ind].shift();
 		if (this.newsLoadList[ind].length === 0) {
-			this.getNew(ind);
+			await this.getNew(ind);
 		}
 	}
 
-	public constructor() {
-		this.newsLoadList = [[], [], [], []];
-		this.counterList = [0, 0, 0, 0];
-	}
-
-	public getNewestNews(): newsSlice {
-		this.newsLoadList.forEach((val, ind) => {
+	private async getLatestNews(): Promise<newsSlice> {
+		this.newsLoadList.forEach(async (val, ind) => {
 			if (val.length === 0) {
-				this.getNew(ind);
+				await this.getNew(ind);
 			}
 		});
 		let result: newsSlice = this.newsLoadList[0][0];
@@ -75,8 +69,27 @@ class newsSourceList {
 			result = val[0].date > result.date ? val[0] : result;
 			index = val[0].date > result.date ? ind : index;
 		});
-		this.shift(index);
+		await this.shift(index);
 		return result;
+	}
+
+	public constructor() {
+		this.newsLoadList = [[], [], [], []];
+		this.counterList = [0, 0, 0, 0];
+	}
+
+	public async getLatestNewsList(listSize: number = 30): Promise<newsSlice[]> {
+		let newsList = [];
+		for (let i = 0; i < listSize; ++i) {
+			newsList.push(await this.getLatestNews());
+		}
+		return newsList;
+	}
+
+	public print() {
+		this.newsLoadList.forEach((item) => {
+			console.log(item.length);
+		});
 	}
 }
 
@@ -87,7 +100,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 	const [newsNumberOnOnePage, setNewsNumber] = useState(30);
 	const [newsSource] = useState(new newsSourceList());
 
-	const renderIcon = (channel: string) => {
+	const renderIcon = (channel: sourceTag) => {
 		if (channel === "JWGG") {
 			return <AntDesign name="close" size={40} color="green" />;
 		} else if (channel === "BGTZ") {
@@ -96,8 +109,6 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			return <AntDesign name="close" size={40} color="blue" />;
 		} else if (channel === "HB") {
 			return <AntDesign name="close" size={40} color="purple" />;
-		} else {
-			return null;
 		}
 	};
 
@@ -109,14 +120,18 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			setNewsList([]);
 		}
 
-		let newNewsList: newsSlice[] = [];
-		for (let i = 0; i < 30; ++i) {
-			newNewsList.push(
-				newsSource?.getNewestNews() ?? new newsSlice("", "", "", "", ""),
-			);
-		}
-
-		setNewsList((o) => o.concat(newNewsList));
+		newsSource
+			.getLatestNewsList()
+			.then((res) => {
+				newsSource.print();
+				setNewsList((o) => o.concat(res));
+			})
+			.catch(() => {
+				Snackbar.show({
+					text: getStr("networkRetry"),
+					duration: Snackbar.LENGTH_LONG,
+				});
+			});
 
 		setRefreshing(false);
 		setLoading(false);
@@ -129,7 +144,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={fetchNewsList} />
 			}
-			data={newsList.slice(0, newsNumberOnOnePage)}
+			data={newsList}
 			keyExtractor={(item) => "" + newsList.indexOf(item)}
 			renderItem={({item}) => (
 				<TouchableOpacity
@@ -138,7 +153,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 						navigation.navigate("NewsDetail", {url: item.url});
 					}}>
 					<View style={styles.titleContainer}>
-						<TouchableWithoutFeedback onPress={() => Alert.alert("aaa")}>
+						<TouchableWithoutFeedback>
 							{renderIcon(item.channel)}
 						</TouchableWithoutFeedback>
 						<View>

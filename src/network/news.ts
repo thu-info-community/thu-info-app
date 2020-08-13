@@ -2,19 +2,21 @@ import {retrieve} from "./core";
 import cheerio from "cheerio";
 import {getCheerioText} from "src/utils/cheerio";
 
+export type sourceTag = "JWGG" | "KYTZ" | "BGTZ" | "HB";
+
 export class newsSlice {
 	constructor(
 		readonly name: string,
 		readonly url: string,
 		readonly date: string,
 		readonly source: string,
-		readonly channel: string,
+		readonly channel: sourceTag,
 	) {}
 }
 
 export const getNewsList = (
 	url: string,
-	channel: string,
+	channel: sourceTag,
 ): Promise<newsSlice[]> => {
 	return retrieve(url).then((str) => {
 		const $ = cheerio.load(str);
