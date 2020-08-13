@@ -13,6 +13,7 @@ import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
 import {Record} from "../models/home/expenditure";
 import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
+import "../../src/utils/extensions";
 
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
@@ -103,12 +104,12 @@ export const postAssessmentForm = (form: Form): Promise<void> =>
 		),
 	);
 
-export const getExpenditures = (beg: string, end: string): Promise<Record[]> =>
+export const getExpenditures = (beg: Date, end: Date): Promise<Record[]> =>
 	retryWrapper(
 		824,
 		retrieve(EXPENDITURE_URL, EXPENDITURE_URL, {
-			begindate: beg,
-			enddate: end,
+			begindate: beg.format(),
+			enddate: end.format(),
 			transtype: "",
 		}).then(async (str) => {
 			const result: Record[] = [];
@@ -123,8 +124,8 @@ export const getExpenditures = (beg: string, end: string): Promise<Record[]> =>
 							`${EXPENDITURE_URL}?dir=next&currentPage=${i}`,
 							EXPENDITURE_URL,
 							{
-								begindate: beg,
-								enddate: end,
+								begindate: beg.format(),
+								enddate: end.format(),
 								transtype: "",
 							},
 						),
@@ -143,6 +144,6 @@ export const getExpenditures = (beg: string, end: string): Promise<Record[]> =>
 					result.push(record);
 				});
 			}
-			return result;
+			return result.reverse();
 		}),
 	);

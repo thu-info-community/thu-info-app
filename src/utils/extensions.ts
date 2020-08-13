@@ -8,6 +8,10 @@ declare global {
 	interface Map<K, V> {
 		putAll(pairs: [K, V][]): Map<K, V>;
 	}
+
+	interface Date {
+		format(): string;
+	}
 }
 
 // eslint-disable-next-line no-extend-native
@@ -21,4 +25,9 @@ Array.prototype.flatMap = function (
 Map.prototype.putAll = function (pairs: [any, any][]) {
 	pairs.forEach(([key, value]) => this.set(key, value));
 	return this;
+};
+
+// eslint-disable-next-line no-extend-native
+Date.prototype.format = function () {
+	return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}`;
 };
