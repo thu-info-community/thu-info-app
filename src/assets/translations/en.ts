@@ -40,6 +40,7 @@ export default {
 		"Failed in auto-evaluation, please check the network connection and retry.",
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	expenditure: "Expenditures",
+	classroomState: "Classrooms",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",

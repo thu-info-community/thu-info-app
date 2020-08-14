@@ -5,6 +5,8 @@ import {
 	ASSESSMENT_LIST_URL,
 	ASSESSMENT_MAIN_URL,
 	ASSESSMENT_SUBMIT_URL,
+	CLASSROOM_STATE_MIDDLE,
+	CLASSROOM_STATE_PREFIX,
 	EXPENDITURE_URL,
 	GET_REPORT_URL,
 	INFO_ROOT_URL,
@@ -14,6 +16,7 @@ import {Course} from "../models/home/report";
 import {Record} from "../models/home/expenditure";
 import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
 import "../../src/utils/extensions";
+import {encodeToGb2312} from "../utils/encodeToGb2312";
 
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
@@ -145,5 +148,60 @@ export const getExpenditures = (beg: Date, end: Date): Promise<Record[]> =>
 				});
 			}
 			return result.reverse();
+		}),
+	);
+
+export const getClassroomState = (
+	name: string,
+	week: number,
+): Promise<[string, number[]][]> =>
+	retryWrapper(
+		792,
+		retrieve(
+			CLASSROOM_STATE_PREFIX +
+				encodeToGb2312(name) +
+				CLASSROOM_STATE_MIDDLE +
+				week,
+			undefined,
+			undefined,
+			"GBK",
+		).then((s) => {
+			return cheerio("#scrollContent>table>tbody", s)
+				.map((_, element) =>
+					element.children
+						.filter((it) => it.tagName === "tr")
+						.map((tr) => {
+							const id = tr.children[1].children[2].data?.trim() ?? "";
+							const status = tr.children
+								.slice(3)
+								.filter((it) => it.tagName === "td")
+								.map((td) => {
+									const classNames =
+										td.attribs.class
+											?.split(" ")
+											?.filter((it) => it !== "colBound") ?? [];
+									if (classNames.length > 1) {
+										return 0;
+									} else {
+										switch (classNames[0]) {
+											case "onteaching":
+												return 1;
+											case "onexam":
+												return 2;
+											case "onborrowed":
+												return 3;
+											case "ondisabled":
+												return 4;
+											case undefined:
+												return 5;
+											default:
+												return 0;
+										}
+									}
+								});
+							return [id, status];
+						}),
+				)
+				.get();
 		}),
 	);

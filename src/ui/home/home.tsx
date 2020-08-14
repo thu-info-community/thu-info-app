@@ -17,6 +17,10 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			title={getStr("expenditure")}
 			onPress={() => navigation.navigate("Expenditure")}
 		/>
+		<Button
+			title={getStr("classroomState")}
+			onPress={() => navigation.navigate("ClassroomList")}
+		/>
 	</View>
 );
 

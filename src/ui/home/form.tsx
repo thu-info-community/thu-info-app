@@ -13,8 +13,15 @@ import {StarRating} from "src/components/home/form";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {FormRouteProp, HomeNav} from "./homeStack";
 
-export const FormScreen = ({route, navigation}: any) => {
+export const FormScreen = ({
+	route,
+	navigation,
+}: {
+	route: FormRouteProp;
+	navigation: HomeNav;
+}) => {
 	const url: string = route.params.url;
 
 	const themeName = useContext(ThemeContext);
