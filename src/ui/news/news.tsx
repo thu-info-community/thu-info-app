@@ -4,6 +4,7 @@ import {
 	View,
 	RefreshControl,
 	ActivityIndicator,
+	Animated,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import {newsSlice, getNewsList, sourceTag} from "src/network/news";
@@ -23,6 +24,11 @@ import {
 	HB_MAIN_PREFIX,
 } from "src/constants/strings";
 
+// TODO: Animation
+// TODO: Number of news on one page
+// TODO: Navigation
+// TODO: Detail
+
 class newsSourceList {
 	private newsLoadList: Array<newsSlice[]>;
 	private counterList: number[];
@@ -36,44 +42,38 @@ class newsSourceList {
 
 	private nameList: sourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
-	private async getNew(ind: number): Promise<void> {
-		getNewsList(
-			this.sourceList[ind] + this.counterList[ind],
-			this.nameList[ind],
-		)
-			.then((res) => {
-				this.newsLoadList[ind] = this.newsLoadList[ind].concat(res);
-				this.counterList[ind] += 1;
-			})
-			.catch(() => {
-				throw -1;
-			});
-	}
-
-	private async shift(ind: number): Promise<void> {
-		this.newsLoadList[ind].shift();
-		if (this.newsLoadList[ind].length === 0) {
-			await this.getNew(ind);
-		}
-	}
-
 	private async getLatestNews(): Promise<newsSlice> {
-		this.newsLoadList.forEach(async (val, ind) => {
-			if (val.length === 0) {
-				await this.getNew(ind);
+		for (let i = 0; i < 4; ++i) {
+			if (this.newsLoadList[i].length === 0) {
+				await getNewsList(
+					this.sourceList[i] + this.counterList[i],
+					this.nameList[i],
+				).then((res) => {
+					this.newsLoadList[i] = res;
+					this.counterList[i] += 1;
+				});
 			}
-		});
+		}
+
 		let result: newsSlice = this.newsLoadList[0][0];
 		let index: number = 0;
 		this.newsLoadList.forEach((val, ind) => {
-			result = val[0].date > result.date ? val[0] : result;
-			index = val[0].date > result.date ? ind : index;
+			if (val[0].date > result.date) {
+				result = val[0];
+				index = ind;
+			}
 		});
-		await this.shift(index);
+
+		this.newsLoadList[index].shift();
 		return result;
 	}
 
 	public constructor() {
+		this.newsLoadList = [[], [], [], []];
+		this.counterList = [0, 0, 0, 0];
+	}
+
+	public reset() {
 		this.newsLoadList = [[], [], [], []];
 		this.counterList = [0, 0, 0, 0];
 	}
@@ -84,12 +84,6 @@ class newsSourceList {
 			newsList.push(await this.getLatestNews());
 		}
 		return newsList;
-	}
-
-	public print() {
-		this.newsLoadList.forEach((item) => {
-			console.log(item.length);
-		});
 	}
 }
 
@@ -118,12 +112,12 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 
 		if (request) {
 			setNewsList([]);
+			newsSource.reset();
 		}
 
 		newsSource
 			.getLatestNewsList()
 			.then((res) => {
-				newsSource.print();
 				setNewsList((o) => o.concat(res));
 			})
 			.catch(() => {
@@ -144,9 +138,22 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={fetchNewsList} />
 			}
+			ListEmptyComponent={
+				<View
+					style={{
+						margin: 15,
+						height: 700,
+						justifyContent: "center",
+						alignItems: "center",
+					}}>
+					<Text style={{fontSize: 18, fontWeight: "bold", alignSelf: "center"}}>
+						新闻较多，加载时间可能较长，请耐心等待。
+					</Text>
+				</View>
+			}
 			data={newsList}
-			keyExtractor={(item) => "" + newsList.indexOf(item)}
-			renderItem={({item}) => (
+			keyExtractor={(item: any) => "" + newsList.indexOf(item)}
+			renderItem={({item}: any) => (
 				<TouchableOpacity
 					style={styles.newsSliceContainer}
 					onPress={() => {
