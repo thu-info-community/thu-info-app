@@ -2,11 +2,10 @@ import React, {useEffect, useState} from "react";
 import {FlatList, RefreshControl, StyleSheet, Text, View} from "react-native";
 import {getExpenditures} from "../../network/basics";
 import {Record} from "../../models/home/expenditure";
-// @ts-ignore
-import {MyDatePicker} from "../../components/DatePicker";
 import {Calendar} from "../../utils/calendar";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
+import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -54,8 +53,8 @@ export const ExpenditureScreen = () => {
 	return (
 		<>
 			<View style={styles.header}>
-				<MyDatePicker date={beg} onChange={setBeg} disabled={refreshing} />
-				<MyDatePicker date={end} onChange={setEnd} disabled={refreshing} />
+				<DatePickerTrigger date={beg} onChange={setBeg} disabled={refreshing} />
+				<DatePickerTrigger date={end} onChange={setEnd} disabled={refreshing} />
 			</View>
 			<View style={styles.container}>
 				<FlatList
