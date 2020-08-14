@@ -9,6 +9,9 @@ import {EvaluationScreen} from "./evaluation";
 import {FormScreen} from "./form";
 import {getStr} from "../../utils/i18n";
 import {ExpenditureScreen} from "./expenditure";
+import {ClassroomListScreen} from "./classroomList";
+import {ClassroomDetailScreen} from "./classroomDetail";
+import {RouteProp} from "@react-navigation/native";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -16,7 +19,15 @@ type HomeStackParamList = {
 	Evaluation: undefined;
 	Form: {name: string; url: string};
 	Expenditure: undefined;
+	ClassroomList: undefined;
+	ClassroomDetail: {name: string};
 };
+
+export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
+export type ClassroomDetailRouteProp = RouteProp<
+	HomeStackParamList,
+	"ClassroomDetail"
+>;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -48,6 +59,16 @@ export const HomeStackScreen = () => (
 			name="Expenditure"
 			component={ExpenditureScreen}
 			options={{title: getStr("expenditure")}}
+		/>
+		<Stack.Screen
+			name="ClassroomList"
+			component={ClassroomListScreen}
+			options={{title: getStr("classroomState")}}
+		/>
+		<Stack.Screen
+			name="ClassroomDetail"
+			component={ClassroomDetailScreen}
+			options={({route}) => ({title: route.params.name})}
 		/>
 	</Stack.Navigator>
 );
