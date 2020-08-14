@@ -57,3 +57,5 @@ export const CLASSROOM_STATE_PREFIX =
 export const CLASSROOM_STATE_MIDDLE = "&weeknumber=";
 export const LOSE_CARD_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/RambleConsumeLog.do?losscard=true";
+export const WENTU_SEAT_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3fc44d22b396a1e6a1b80a29f5d3634a170c4443f3524/roomshow/";

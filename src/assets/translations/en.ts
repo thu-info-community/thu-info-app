@@ -47,6 +47,8 @@ export default {
 	loseCard: "Report lost card",
 	confirmLoseCard: "Are you sure to report the loss of your card?",
 	loseCardCannotBeUndone: "This process cannot be undone.",
+	wentu: "Wentu",
+	wentuTitle: "Wentu Seat Availability Status",
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",
