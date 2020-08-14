@@ -4,7 +4,8 @@ import {
 	View,
 	RefreshControl,
 	ActivityIndicator,
-	Animated,
+	Button,
+	Alert,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import {newsSlice, getNewsList, sourceTag} from "src/network/news";
@@ -12,6 +13,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
+	TextInput,
 } from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
@@ -24,10 +26,11 @@ import {
 	HB_MAIN_PREFIX,
 } from "src/constants/strings";
 
-// TODO: Animation
-// TODO: Number of news on one page
 // TODO: Navigation
 // TODO: Detail
+// TODO: Icons
+
+// a lot of work!
 
 class newsSourceList {
 	private newsLoadList: Array<newsSlice[]>;
@@ -78,7 +81,7 @@ class newsSourceList {
 		this.counterList = [0, 0, 0, 0];
 	}
 
-	public async getLatestNewsList(listSize: number = 30): Promise<newsSlice[]> {
+	public async getLatestNewsList(listSize: number): Promise<newsSlice[]> {
 		let newsList = [];
 		for (let i = 0; i < listSize; ++i) {
 			newsList.push(await this.getLatestNews());
@@ -116,7 +119,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 		}
 
 		newsSource
-			.getLatestNewsList()
+			.getLatestNewsList(newsNumberOnOnePage)
 			.then((res) => {
 				setNewsList((o) => o.concat(res));
 			})
@@ -131,6 +134,14 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 		setLoading(false);
 	};
 
+	const rerender = () => {
+		if (newsNumberOnOnePage < 10 || newsNumberOnOnePage > 100) {
+			Alert.alert(getStr("numberOfNewsOutOfRange"));
+		} else {
+			fetchNewsList();
+		}
+	};
+
 	useEffect(fetchNewsList, []);
 
 	return (
@@ -142,13 +153,41 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 				<View
 					style={{
 						margin: 15,
-						height: 700,
+						height: 580,
 						justifyContent: "center",
 						alignItems: "center",
 					}}>
-					<Text style={{fontSize: 18, fontWeight: "bold", alignSelf: "center"}}>
+					<Text
+						style={{
+							fontSize: 18,
+							fontWeight: "bold",
+							alignSelf: "center",
+							margin: 5,
+						}}>
 						新闻较多，加载时间可能较长，请耐心等待。
 					</Text>
+					<Text
+						style={{
+							fontSize: 16,
+							alignSelf: "center",
+							color: "gray",
+							margin: 5,
+						}}>
+						小提示：点击新闻图标可以只看该来源的新闻。
+					</Text>
+				</View>
+			}
+			ListHeaderComponent={
+				<View style={styles.headerContainer}>
+					<View style={styles.textInputContainer}>
+						<Text>{getStr("newsNumberOnPage")}</Text>
+						<TextInput
+							style={styles.textInputStyle}
+							placeholder="30"
+							onChangeText={(txt) => setNewsNumber(parseInt(txt, 10))}
+						/>
+					</View>
+					<Button title={getStr("confirm")} onPress={rerender} />
 				</View>
 			}
 			data={newsList}
@@ -206,10 +245,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 					<Text />
 				</TouchableOpacity>
 			)}
-			onEndReached={() => {
-				fetchNewsList(false);
-				setNewsNumber(newsNumberOnOnePage + 30);
-			}}
+			onEndReached={() => fetchNewsList(false)}
 			onEndReachedThreshold={-0.15}
 			ListFooterComponent={
 				loading && newsList.length !== 0 ? (
@@ -245,6 +281,32 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-start",
 		alignItems: "center",
 		margin: 5,
+	},
+
+	headerContainer: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		alignItems: "center",
+		marginTop: 10,
+		marginBottom: 2,
+		marginHorizontal: 20,
+	},
+
+	textInputContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+
+	textInputStyle: {
+		height: 30,
+		width: 60,
+		backgroundColor: "white",
+		textAlign: "left",
+		borderColor: "lightgrey",
+		borderWidth: 1,
+		borderRadius: 5,
+		padding: 7,
 	},
 
 	footerContainer: {

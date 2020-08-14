@@ -67,4 +67,7 @@ export default {
 	KYTZ: "科研通知",
 	HB: "海报",
 	":": "：",
+	confirm: "确认",
+	newsNumberOnPage: "每页显示新闻数：",
+	numberOfNewsOutOfRange: "每页显示新闻数应当不多于100且不小于10",
 };
