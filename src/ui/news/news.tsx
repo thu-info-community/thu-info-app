@@ -17,8 +17,8 @@ import {
 } from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import {NewsNav} from "./newsStack";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
 	JWGG_MAIN_PREFIX,
 	BGTZ_MAIN_PREFIX,
@@ -28,9 +28,6 @@ import {
 
 // TODO: Navigation
 // TODO: Detail
-// TODO: Icons
-
-// a lot of work!
 
 class newsSourceList {
 	private newsLoadList: Array<newsSlice[]>;
@@ -99,13 +96,13 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 
 	const renderIcon = (channel: sourceTag) => {
 		if (channel === "JWGG") {
-			return <AntDesign name="close" size={40} color="green" />;
+			return <FontAwesome name="file-text-o" size={40} color="green" />;
 		} else if (channel === "BGTZ") {
-			return <AntDesign name="close" size={40} color="red" />;
+			return <FontAwesome name="file-text-o" size={40} color="red" />;
 		} else if (channel === "KYTZ") {
-			return <AntDesign name="close" size={40} color="blue" />;
+			return <FontAwesome name="file-text-o" size={40} color="blue" />;
 		} else if (channel === "HB") {
-			return <AntDesign name="close" size={40} color="purple" />;
+			return <FontAwesome name="file-text-o" size={40} color="purple" />;
 		}
 	};
 
@@ -164,7 +161,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 							alignSelf: "center",
 							margin: 5,
 						}}>
-						新闻较多，加载时间可能较长，请耐心等待。
+						{getStr("waitForLoading")}
 					</Text>
 					<Text
 						style={{
@@ -173,7 +170,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 							color: "gray",
 							margin: 5,
 						}}>
-						小提示：点击新闻图标可以只看该来源的新闻。
+						{getStr("newsTip")}
 					</Text>
 				</View>
 			}
@@ -207,7 +204,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 								style={{
 									fontSize: 18,
 									marginVertical: 2.5,
-									marginHorizontal: 5,
+									marginHorizontal: 10,
 								}}>
 								{getStr(item.channel)}
 							</Text>
@@ -215,7 +212,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 								style={{
 									color: "gray",
 									marginVertical: 2.5,
-									marginHorizontal: 5,
+									marginHorizontal: 10,
 								}}>
 								{item.date}
 							</Text>
