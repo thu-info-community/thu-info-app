@@ -138,6 +138,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 3
         versionName "0.3.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -202,6 +203,8 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     compile project(':@react-native-community_cameraroll')
+
+    implementation 'com.android.support:multidex:1.+'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
