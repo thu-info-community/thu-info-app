@@ -55,3 +55,5 @@ export const KYTZ_MAIN_PREFIX =
 export const CLASSROOM_STATE_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/pk.classroomctrl.do?m=qyClassroomState&classroom=";
 export const CLASSROOM_STATE_MIDDLE = "&weeknumber=";
+export const LOSE_CARD_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/RambleConsumeLog.do?losscard=true";
