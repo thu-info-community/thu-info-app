@@ -2,6 +2,7 @@ import {Button, StyleSheet, View} from "react-native";
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {HomeNav} from "./homeStack";
+import {performLoseCard} from "../../components/home/loseCard";
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<View style={styles.center}>
@@ -21,6 +22,7 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			title={getStr("classroomState")}
 			onPress={() => navigation.navigate("ClassroomList")}
 		/>
+		<Button title={getStr("loseCard")} onPress={performLoseCard} />
 	</View>
 );
 

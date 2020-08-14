@@ -10,6 +10,7 @@ import {
 	EXPENDITURE_URL,
 	GET_REPORT_URL,
 	INFO_ROOT_URL,
+	LOSE_CARD_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -207,5 +208,21 @@ export const getClassroomState = (
 				throw "Network exception when getting classroom state.";
 			}
 			return result;
+		}),
+	);
+
+export const loseCard = (): Promise<number> =>
+	retryWrapper(
+		824,
+		retrieve(LOSE_CARD_URL).then((s) => {
+			const index = s.indexOf("var result");
+			const left = s.indexOf("=", index) + 1;
+			const right = s.indexOf("\n", left);
+			const value = s.substring(left, right).trim();
+			if (value === "null") {
+				throw "null error";
+			} else {
+				return Number(value);
+			}
 		}),
 	);
