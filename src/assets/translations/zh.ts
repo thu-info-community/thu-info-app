@@ -40,6 +40,8 @@ export default {
 	loseCard: "一键挂失",
 	confirmLoseCard: "您确定要挂失吗？",
 	loseCardCannotBeUndone: "该操作无法撤销。",
+	wentu: "文图",
+	wentuTitle: "文图实时空位数据",
 	confirm: "确认",
 	cancel: "取消",
 	ok: "确定",
