@@ -2,6 +2,10 @@ import {Auth, LoginStatus} from "../redux/states/auth";
 import {
 	CONTENT_TYPE_FORM,
 	DO_LOGIN_URL,
+	DORM_LOGIN_POST_MIDDLE,
+	DORM_LOGIN_POST_PREFIX,
+	DORM_LOGIN_POST_SUFFIX,
+	DORM_LOGIN_URL_PREFIX,
 	INFO_LOGIN_URL,
 	INFO_ROOT_URL,
 	INFO_URL,
@@ -16,6 +20,8 @@ import {
 } from "../constants/strings";
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
+import md5 from "md5";
+import {State, store} from "../redux/store";
 
 /**
  * Converts form data into url-encoded format.
@@ -39,7 +45,7 @@ const stringify = (form: any) =>
 export const connect = async (
 	url: string,
 	referer?: string,
-	post?: object,
+	post?: object | string,
 ): Promise<void> => {
 	const defaultHeaders = {
 		"Content-Type": CONTENT_TYPE_FORM,
@@ -53,7 +59,12 @@ export const connect = async (
 	const init =
 		post === undefined
 			? defaultInit
-			: {...defaultInit, method: "POST", body: stringify(post)};
+			: {
+					...defaultInit,
+					method: "POST",
+					body: typeof post === "string" ? post : stringify(post),
+					// eslint-disable-next-line no-mixed-spaces-and-tabs
+			  };
 	await fetch(url, init);
 };
 
@@ -70,7 +81,7 @@ export const connect = async (
 export const retrieve = async (
 	url: string,
 	referer?: string,
-	post?: object,
+	post?: object | string,
 	encoding: string = "UTF-8",
 	timeout: number = 0,
 ) =>
@@ -91,7 +102,13 @@ export const retrieve = async (
 		if (referer !== undefined) {
 			request.setRequestHeader("Referer", referer);
 		}
-		request.send(post === undefined ? null : stringify(post));
+		request.send(
+			post === undefined
+				? null
+				: typeof post === "string"
+				? post
+				: stringify(post),
+		);
 	});
 
 /**
@@ -166,8 +183,24 @@ export const getTicket = async (target: number) => {
 				return connect(url, INFO_ROOT_URL);
 			},
 		);
+	} else if (target === -1) {
+		const userId = (store.getState() as State).auth.userId;
+		const appId = md5(userId + new Date().getTime());
+		const url = DORM_LOGIN_URL_PREFIX + appId;
+		const post =
+			DORM_LOGIN_POST_PREFIX +
+			userId +
+			DORM_LOGIN_POST_MIDDLE +
+			encodeURIComponent((store.getState() as State).auth.password) +
+			DORM_LOGIN_POST_SUFFIX;
+		return retrieve(url, url, post, "gb2312").then((s) => {
+			if (s.indexOf("当前用户认证信息") === -1) {
+				throw "login to tsinghua home error";
+			}
+		});
+	} else {
+		return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
 	}
-	return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
 };
 
 export const retryWrapper = async <R>(

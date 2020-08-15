@@ -20,6 +20,14 @@ export const INFO_ROOT_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP";
 export const PRE_LOGIN_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1";
+export const DORM_LOGIN_URL_PREFIX =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_user_authenticate.aspx?url=%2fweixin%2fweixin_personal_information.aspx&weixin_appid=";
+export const DORM_LOGIN_POST_PREFIX =
+	"__VIEWSTATE=%2FwEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb%2FU6Ev%2FSwndECOSr8NHmdI%3D&__VIEWSTATEGENERATOR=7FA746C3&__EVENTVALIDATION=%2FwEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ%2FYcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB%2BBCrnQ%3D%3D&weixin_user_authenticateCtrl1%24txtUserName=";
+export const DORM_LOGIN_POST_MIDDLE =
+	"&weixin_user_authenticateCtrl1%24txtPassword=";
+export const DORM_LOGIN_POST_SUFFIX =
+	"&weixin_user_authenticateCtrl1%24btnLogin=%B5%C7%C2%BC";
 export const GET_REPORT_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw";
 export const PRE_ROAM_URL_PREFIX =

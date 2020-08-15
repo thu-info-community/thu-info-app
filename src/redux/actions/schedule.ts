@@ -15,7 +15,7 @@ import {getSchedule, getSecondary} from "../../network/schedule";
 import {PrimarySchedule, SecondarySchedule} from "../states/schedule";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Lesson} from "../../models/schedule/schedule";
-import {Choice} from "../../ui/schedule/schedule";
+import {Choice} from "../reducers/schedule";
 
 const primaryScheduleAction = createAsyncAction(
 	PRIMARY_SCHEDULE_REQUEST,

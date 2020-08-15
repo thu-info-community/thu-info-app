@@ -28,6 +28,7 @@ const RootComponent = (props: RootProps) => {
 		getTicket(792).then(() => console.log("Ticket 792 get."));
 		getTicket(824).then(() => console.log("Ticket 824 get."));
 		getTicket(2005).then(() => console.log("Ticket 2005 get."));
+		getTicket(-1).then(() => console.log("Ticket -1 get."));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

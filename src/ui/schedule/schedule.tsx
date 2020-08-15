@@ -37,6 +37,7 @@ import {
 import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {Choice} from "src/redux/reducers/schedule";
 
 const {SlideInMenu} = renderers;
 
@@ -58,12 +59,6 @@ interface ScheduleProps {
 
 const headerSpan = 0.5;
 const unitHeight = 90;
-
-export enum Choice {
-	ONCE,
-	REPEAT,
-	ALL,
-}
 
 type DelOrHide = ([lesson, choice]: [Lesson, Choice]) => void;
 

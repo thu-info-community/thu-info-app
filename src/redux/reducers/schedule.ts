@@ -14,7 +14,12 @@ import {
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
 import {Exam, Lesson, LessonType} from "../../models/schedule/schedule";
-import {Choice} from "../../ui/schedule/schedule";
+
+export enum Choice {
+	ONCE,
+	REPEAT,
+	ALL,
+}
 
 const addToDefaultShortenMap = (
 	src: {[key: string]: string},
