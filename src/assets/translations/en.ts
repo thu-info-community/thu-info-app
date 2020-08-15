@@ -42,6 +42,8 @@ export default {
 	expenditure: "Expenditures",
 	classroomState: "Classrooms",
 	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
+	classroomHeaderPrefix: "Week ",
+	classroomHeaderMiddle: ", ",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",
