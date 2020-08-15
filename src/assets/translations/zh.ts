@@ -35,6 +35,8 @@ export default {
 	expenditure: "消费查询",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
+	classroomHeaderPrefix: "第",
+	classroomHeaderMiddle: "周 ",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",

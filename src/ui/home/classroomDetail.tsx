@@ -1,5 +1,5 @@
 import {FlatList, Text, TouchableOpacity, View} from "react-native";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {getClassroomState} from "../../network/basics";
 import {ClassroomDetailRouteProp} from "./homeStack";
 import {getStr} from "../../utils/i18n";
@@ -20,13 +20,18 @@ export const ClassroomDetailScreen = ({
 		new Calendar().dayOfWeek,
 		[],
 	]);
-	// const [refreshing, setRefreshing] = useState(false);
+	const prev = useRef<[number, [string, number[]][]]>();
+	const next = useRef<[number, [string, number[]][]]>();
+	const currWeek = data[0];
+	const [refreshing, setRefreshing] = useState(false);
 
 	const refresh = () => {
+		setRefreshing(true);
 		getClassroomState(name, data[0])
 			.then((res) =>
 				setData((o) => {
 					if (o[0] === data[0]) {
+						setRefreshing(false);
 						return [o[0], o[1], res];
 					} else {
 						return o;
@@ -41,7 +46,36 @@ export const ClassroomDetailScreen = ({
 			);
 	};
 
-	useEffect(refresh, [data[0]]);
+	useEffect(() => {
+		if (prev.current && data[0] === prev.current[0]) {
+			next.current = [data[0] + 1, data[2]];
+			setData([data[0], data[1], prev.current[1]]);
+			prev.current = undefined;
+		} else if (next.current && data[0] === next.current[0]) {
+			prev.current = [data[0] - 1, data[2]];
+			setData([data[0], data[1], next.current[1]]);
+			next.current = undefined;
+		} else {
+			refresh();
+		}
+		if (
+			data[0] > 1 &&
+			(prev.current === undefined || prev.current[0] !== data[0] - 1)
+		) {
+			getClassroomState(name, data[0] - 1).then(
+				(res) => (prev.current = [data[0] - 1, res]),
+			);
+		}
+		if (
+			data[0] < Calendar.weekCount &&
+			(next.current === undefined || next.current[0] !== data[0] + 1)
+		) {
+			getClassroomState(name, data[0] + 1).then(
+				(res) => (next.current = [data[0] + 1, res]),
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currWeek]);
 
 	return (
 		<>
@@ -54,18 +88,20 @@ export const ClassroomDetailScreen = ({
 				}}>
 				<TouchableOpacity
 					onPress={() =>
-						setData(([week, day, table]) => [
-							week > 1 ? week - 1 : week,
-							day,
-							table,
-						])
+						setData(([week, day, table]) =>
+							day > 1
+								? [week, day - 1, table]
+								: week > 1
+								? [week - 1, 7, table]
+								: [week, day, table],
+						)
 					}
-					disabled={data[0] <= 1}
+					disabled={data[0] === 1 && data[1] === 1}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-left"
 						size={24}
-						color={data[0] > 1 ? "black" : "#888"}
+						color={data[0] === 1 && data[1] === 1 ? "#888" : "black"}
 					/>
 				</TouchableOpacity>
 				<Text
@@ -81,22 +117,29 @@ export const ClassroomDetailScreen = ({
 						textAlign: "center",
 						flex: 1,
 					}}>
-					{data[0]}
+					{getStr("classroomHeaderPrefix") +
+						data[0] +
+						getStr("classroomHeaderMiddle") +
+						getStr("dayOfWeek")[data[1]]}
 				</Text>
 				<TouchableOpacity
 					onPress={() =>
-						setData(([week, day, table]) => [
-							week < Calendar.weekCount ? week + 1 : week,
-							day,
-							table,
-						])
+						setData(([week, day, table]) =>
+							day < 7
+								? [week, day + 1, table]
+								: week < Calendar.weekCount
+								? [week + 1, 1, table]
+								: [week, day, table],
+						)
 					}
-					disabled={data[0] >= Calendar.weekCount}
+					disabled={data[0] === Calendar.weekCount && data[1] === 7}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-right"
 						size={24}
-						color={data[0] < Calendar.weekCount ? "black" : "#888"}
+						color={
+							data[0] === Calendar.weekCount && data[1] === 7 ? "#888" : "black"
+						}
 					/>
 				</TouchableOpacity>
 			</View>
@@ -117,6 +160,8 @@ export const ClassroomDetailScreen = ({
 			</View>
 			<FlatList
 				data={data[2]}
+				refreshing={refreshing}
+				onRefresh={refresh}
 				renderItem={({item}) => (
 					<View
 						style={{
