@@ -34,6 +34,7 @@ export default {
 	autoScoreSuccess: "您已经成功为该课程打满分。",
 	expenditure: "消费查询",
 	classroomState: "教室资源",
+	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",
