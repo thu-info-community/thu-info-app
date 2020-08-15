@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, RefreshControl, StyleSheet, Text, View} from "react-native";
+import {FlatList, StyleSheet, Text, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {getWentuState} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
@@ -34,7 +34,6 @@ export const WentuScreen = () => {
 			</Text>
 			<FlatList
 				data={wentuState}
-				refreshControl={<RefreshControl refreshing={refreshing} />}
 				onRefresh={update}
 				refreshing={refreshing}
 				renderItem={({item}) => (
