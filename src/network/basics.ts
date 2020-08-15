@@ -166,7 +166,7 @@ export const getClassroomState = (
 			undefined,
 			"GBK",
 		).then((s) => {
-			return cheerio("#scrollContent>table>tbody", s)
+			const result = cheerio("#scrollContent>table>tbody", s)
 				.map((_, element) =>
 					element.children
 						.filter((it) => it.tagName === "tr")
@@ -185,17 +185,17 @@ export const getClassroomState = (
 									} else {
 										switch (classNames[0]) {
 											case "onteaching":
-												return 1;
+												return 0;
 											case "onexam":
-												return 2;
+												return 1;
 											case "onborrowed":
-												return 3;
+												return 2;
 											case "ondisabled":
-												return 4;
+												return 3;
 											case undefined:
 												return 5;
 											default:
-												return 0;
+												return 4;
 										}
 									}
 								});
@@ -203,5 +203,9 @@ export const getClassroomState = (
 						}),
 				)
 				.get();
+			if (result.length === 0 && s.indexOf("scrollContent") === -1) {
+				throw "Network exception when getting classroom state.";
+			}
+			return result;
 		}),
 	);

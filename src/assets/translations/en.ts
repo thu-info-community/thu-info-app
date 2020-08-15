@@ -41,6 +41,7 @@ export default {
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	expenditure: "Expenditures",
 	classroomState: "Classrooms",
+	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",
