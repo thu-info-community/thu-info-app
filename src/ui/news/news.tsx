@@ -17,7 +17,6 @@ import {
 } from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
-import {NewsNav} from "./newsStack";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
 	JWGG_MAIN_PREFIX,
@@ -26,7 +25,6 @@ import {
 	HB_MAIN_PREFIX,
 } from "src/constants/strings";
 
-// TODO: Navigation
 // TODO: Detail
 
 class newsSourceList {
@@ -42,7 +40,7 @@ class newsSourceList {
 
 	private nameList: sourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
-	private async getLatestNews(): Promise<newsSlice> {
+	private async getLatestNews(source: sourceTag): Promise<newsSlice> {
 		for (let i = 0; i < 4; ++i) {
 			if (this.newsLoadList[i].length === 0) {
 				await getNewsList(
@@ -55,14 +53,17 @@ class newsSourceList {
 			}
 		}
 
-		let result: newsSlice = this.newsLoadList[0][0];
-		let index: number = 0;
-		this.newsLoadList.forEach((val, ind) => {
-			if (val[0].date > result.date) {
-				result = val[0];
-				index = ind;
-			}
-		});
+		let index: number =
+			source === undefined ? 0 : this.nameList.indexOf(source);
+		let result: newsSlice = this.newsLoadList[index][0];
+		if (source === undefined) {
+			this.newsLoadList.forEach((val, ind) => {
+				if (val[0].date > result.date) {
+					result = val[0];
+					index = ind;
+				}
+			});
+		}
 
 		this.newsLoadList[index].shift();
 		return result;
@@ -78,20 +79,23 @@ class newsSourceList {
 		this.counterList = [0, 0, 0, 0];
 	}
 
-	public async getLatestNewsList(listSize: number): Promise<newsSlice[]> {
+	public async getLatestNewsList(
+		listSize: number,
+		source: sourceTag,
+	): Promise<newsSlice[]> {
 		let newsList = [];
 		for (let i = 0; i < listSize; ++i) {
-			newsList.push(await this.getLatestNews());
+			newsList.push(await this.getLatestNews(source));
 		}
 		return newsList;
 	}
 }
 
-export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
+export const NewsScreen = ({route, navigation}: any) => {
 	const [newsList, setNewsList] = useState<newsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [newsNumberOnOnePage, setNewsNumber] = useState(30);
+	const [newsNumberOnOnePage, setNewsNumber] = useState(20);
 	const [newsSource] = useState(new newsSourceList());
 
 	const renderIcon = (channel: sourceTag) => {
@@ -116,7 +120,10 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 		}
 
 		newsSource
-			.getLatestNewsList(newsNumberOnOnePage)
+			.getLatestNewsList(
+				newsNumberOnOnePage,
+				route.params === undefined ? undefined : route.params.source,
+			)
 			.then((res) => {
 				setNewsList((o) => o.concat(res));
 			})
@@ -180,7 +187,7 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 						<Text>{getStr("newsNumberOnPage")}</Text>
 						<TextInput
 							style={styles.textInputStyle}
-							placeholder="30"
+							placeholder="20"
 							onChangeText={(txt) => setNewsNumber(parseInt(txt, 10))}
 						/>
 					</View>
@@ -188,15 +195,20 @@ export const NewsScreen = ({navigation}: {navigation: NewsNav}) => {
 				</View>
 			}
 			data={newsList}
-			keyExtractor={(item: any) => "" + newsList.indexOf(item)}
-			renderItem={({item}: any) => (
+			keyExtractor={(item) => "" + newsList.indexOf(item)}
+			renderItem={({item}) => (
 				<TouchableOpacity
 					style={styles.newsSliceContainer}
 					onPress={() => {
 						navigation.navigate("NewsDetail", {url: item.url});
 					}}>
 					<View style={styles.titleContainer}>
-						<TouchableWithoutFeedback>
+						<TouchableWithoutFeedback
+							onPress={() => {
+								if (route.params === undefined) {
+									navigation.push("News", {source: item.channel});
+								}
+							}}>
 							{renderIcon(item.channel)}
 						</TouchableWithoutFeedback>
 						<View>
