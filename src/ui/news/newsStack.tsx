@@ -6,9 +6,10 @@ import {
 import {NewsScreen} from "./news";
 import {getStr} from "../../utils/i18n";
 import {NewsDetailScreen} from "./newsDetail";
+import {sourceTag} from "src/network/news";
 
 type NewsStackParamList = {
-	News: undefined;
+	News: {source: sourceTag};
 	NewsDetail: {url: string};
 };
 
@@ -21,7 +22,12 @@ export const NewsStackScreen = () => (
 		<Stack.Screen
 			name="News"
 			component={NewsScreen}
-			options={{title: getStr("news")}}
+			options={({route}) => ({
+				title:
+					route.params === undefined
+						? getStr("news")
+						: getStr(route.params.source),
+			})}
 		/>
 		<Stack.Screen
 			name="NewsDetail"
