@@ -13,6 +13,7 @@ import {ClassroomListScreen} from "./classroomList";
 import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
 import {WentuScreen} from "./wentu";
+import {DormScoreScreen} from "./dormScore";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -23,6 +24,7 @@ type HomeStackParamList = {
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
 	Wentu: undefined;
+	DormScore: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -76,6 +78,11 @@ export const HomeStackScreen = () => (
 			name="Wentu"
 			component={WentuScreen}
 			options={{title: getStr("wentu")}}
+		/>
+		<Stack.Screen
+			name="DormScore"
+			component={DormScoreScreen}
+			options={{title: getStr("dormScore")}}
 		/>
 	</Stack.Navigator>
 );

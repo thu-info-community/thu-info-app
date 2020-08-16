@@ -52,6 +52,7 @@ export default {
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",
+	dormScore: "Dorm Score",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",

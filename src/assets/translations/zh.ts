@@ -45,6 +45,7 @@ export default {
 	confirm: "确认",
 	cancel: "取消",
 	ok: "确定",
+	dormScore: "卫生成绩",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",

@@ -28,6 +28,11 @@ export const DORM_LOGIN_POST_MIDDLE =
 	"&weixin_user_authenticateCtrl1%24txtPassword=";
 export const DORM_LOGIN_POST_SUFFIX =
 	"&weixin_user_authenticateCtrl1%24btnLogin=%B5%C7%C2%BC";
+export const DORM_SCORE_HOST = "http://m.myhome.tsinghua.edu.cn";
+export const DORM_SCORE_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_health_linechart.aspx?id=0";
+export const DORM_SCORE_REFERER =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/index.aspx";
 export const GET_REPORT_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw";
 export const PRE_ROAM_URL_PREFIX =
