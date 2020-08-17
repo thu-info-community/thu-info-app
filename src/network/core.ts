@@ -21,7 +21,7 @@ import {
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
-import {State, store} from "../redux/store";
+import {currState} from "../redux/store";
 
 /**
  * Converts form data into url-encoded format.
@@ -184,14 +184,14 @@ export const getTicket = async (target: number) => {
 			},
 		);
 	} else if (target === -1) {
-		const userId = (store.getState() as State).auth.userId;
+		const userId = currState().auth.userId;
 		const appId = md5(userId + new Date().getTime());
 		const url = DORM_LOGIN_URL_PREFIX + appId;
 		const post =
 			DORM_LOGIN_POST_PREFIX +
 			userId +
 			DORM_LOGIN_POST_MIDDLE +
-			encodeURIComponent((store.getState() as State).auth.password) +
+			encodeURIComponent(currState().auth.password) +
 			DORM_LOGIN_POST_SUFFIX;
 		return retrieve(url, url, post, "gb2312").then((s) => {
 			if (s.indexOf("当前用户认证信息") === -1) {
