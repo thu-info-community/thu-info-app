@@ -3,6 +3,7 @@ import React from "react";
 import {getStr} from "../../utils/i18n";
 import {HomeNav} from "./homeStack";
 import {performLoseCard} from "../../components/home/loseCard";
+import {getEleRechargePayCode} from "../../network/dorm";
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<View style={styles.center}>
@@ -30,6 +31,12 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		<Button
 			title={getStr("dormScore")}
 			onPress={() => navigation.navigate("DormScore")}
+		/>
+		<Button
+			title="2333"
+			onPress={() => {
+				getEleRechargePayCode(1).then((r) => console.log(r));
+			}}
 		/>
 	</View>
 );
