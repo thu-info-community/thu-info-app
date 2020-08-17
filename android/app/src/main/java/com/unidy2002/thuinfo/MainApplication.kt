@@ -13,8 +13,9 @@ class MainApplication : Application(), ReactApplication {
     private val mReactNativeHost = object : ReactNativeHost(this) {
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
 
-        // Packages that cannot be auto-linked yet can be added manually here.
-        override fun getPackages() = PackageList(this).packages
+        override fun getPackages() = PackageList(this).packages.also {
+            it.add(AlipayPackage())
+        }
 
         override fun getJSMainModuleName() = "index"
     }
