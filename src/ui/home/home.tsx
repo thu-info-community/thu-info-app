@@ -5,6 +5,7 @@ import {HomeNav} from "./homeStack";
 import {performLoseCard} from "../../components/home/loseCard";
 import {getEleRechargePayCode} from "../../network/dorm";
 import Alipay from "../../utils/alipay";
+import {AlipayPopup} from "../../components/home/alipayPopup";
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<View style={styles.center}>
@@ -33,15 +34,9 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			title={getStr("dormScore")}
 			onPress={() => navigation.navigate("DormScore")}
 		/>
-		<Button
-			title="2333"
-			onPress={() => {
-				Alipay.exists().then(() =>
-					getEleRechargePayCode(1)
-						.then(Alipay.pay)
-						.then(() => console.log(2333)),
-				);
-			}}
+		<AlipayPopup
+			onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
+			title={getStr("eleRecharge")}
 		/>
 	</View>
 );
