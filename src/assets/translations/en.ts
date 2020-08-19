@@ -53,6 +53,13 @@ export default {
 	cancel: "Cancel",
 	ok: "OK",
 	dormScore: "Dorm Score",
+	eleRecharge: "Electricity",
+	alipayRequired: "Alipay required.",
+	payFailure:
+		"Exception occurred when processing. No money is lost as long as you have not performed the payment on alipay.",
+	payWithAlipay: "Pay with Alipay",
+	processing: "Processing...",
+	cancelPayment: "Cancel",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",
