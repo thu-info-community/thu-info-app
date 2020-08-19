@@ -16,6 +16,8 @@ import {WentuScreen} from "./wentu";
 import {DormScoreScreen} from "./dormScore";
 import {ConfigureDormScreen} from "./configureDorm";
 import {LibraryScreen} from "./library";
+import {Library} from "../../models/home/library";
+import {LibraryFloorScreen} from "./libraryFloor";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -27,6 +29,7 @@ type HomeStackParamList = {
 	ClassroomDetail: {name: string};
 	Wentu: undefined;
 	Library: undefined;
+	LibraryFloor: Library;
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 };
@@ -39,6 +42,10 @@ export type ClassroomDetailRouteProp = RouteProp<
 export type ConfigureDormRouteProp = RouteProp<
 	HomeStackParamList,
 	"ConfigureDorm"
+>;
+export type LibraryFloorRouteProp = RouteProp<
+	HomeStackParamList,
+	"LibraryFloor"
 >;
 
 const Stack = createStackNavigator<HomeStackParamList>();
@@ -91,6 +98,11 @@ export const HomeStackScreen = () => (
 			name="Library"
 			component={LibraryScreen}
 			options={{title: getStr("library")}}
+		/>
+		<Stack.Screen
+			name="LibraryFloor"
+			component={LibraryFloorScreen}
+			options={({route}) => ({title: route.params.zhName})}
 		/>
 		<Stack.Screen
 			name="DormScore"

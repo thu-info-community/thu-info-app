@@ -8,3 +8,5 @@ export interface LibraryBase {
 }
 
 export type Library = LibraryBase;
+
+export type LibraryFloor = LibraryBase;
