@@ -34,7 +34,8 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~",
 	);
 	// TODO: these valid chars might be far from enough
-	const {userId, password} = currState().auth;
+	const {userId} = currState().auth;
+	const password = currState().config.dormPassword || currState().auth.password;
 	let tempPassword = "";
 	for (let i = 0; i < password.length; i++) {
 		if (validChars.has(password.charAt(i))) {

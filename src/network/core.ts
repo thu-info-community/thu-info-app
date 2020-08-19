@@ -191,7 +191,9 @@ export const getTicket = async (target: number) => {
 			DORM_LOGIN_POST_PREFIX +
 			userId +
 			DORM_LOGIN_POST_MIDDLE +
-			encodeURIComponent(currState().auth.password) +
+			encodeURIComponent(
+				currState().config.dormPassword || currState().auth.password,
+			) +
 			DORM_LOGIN_POST_SUFFIX;
 		return retrieve(url, url, post, "gb2312").then((s) => {
 			if (s.indexOf("当前用户认证信息") === -1) {

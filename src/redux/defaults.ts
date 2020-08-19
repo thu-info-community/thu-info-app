@@ -1,5 +1,6 @@
 import {AuthState, LoginStatus} from "./states/auth";
 import {Schedule} from "./states/schedule";
+import {Config} from "./states/config";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -20,4 +21,8 @@ export const defaultSchedule: Schedule = {
 	secondaryRefreshing: false,
 	shortenMap: {},
 	hiddenRules: [],
+};
+
+export const defaultConfigState: Config = {
+	dormPassword: "",
 };
