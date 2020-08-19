@@ -7,8 +7,7 @@ import {currState} from "../../redux/store";
 import {SET_DORM_PASSWORD} from "../../redux/constants";
 import {getTicket} from "../../network/core";
 import Snackbar from "react-native-snackbar";
-
-export let dormLoginStatus = {loggedIn: false};
+import {dormLoginStatus} from "../../utils/dorm";
 
 const ConfigureDormUI = ({
 	route,

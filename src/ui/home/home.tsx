@@ -7,6 +7,7 @@ import {getEleRechargePayCode} from "../../network/dorm";
 import Alipay from "../../utils/alipay";
 import {AlipayPopup} from "../../components/home/alipayPopup";
 import {configureDorm} from "./configureDorm";
+import {getLibraryTree} from "../../network/library";
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<View style={styles.center}>
@@ -41,6 +42,12 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
 			title={getStr("eleRecharge")}
 			navigation={navigation}
+		/>
+		<Button
+			title={getStr("library")}
+			onPress={() => {
+				getLibraryTree().then(console.log);
+			}}
 		/>
 	</View>
 );

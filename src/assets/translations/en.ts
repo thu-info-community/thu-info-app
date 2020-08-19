@@ -49,6 +49,7 @@ export default {
 	loseCardCannotBeUndone: "This process cannot be undone.",
 	wentu: "Wentu",
 	wentuTitle: "Wentu Seat Availability Status",
+	library: "Library",
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",
