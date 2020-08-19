@@ -22,7 +22,7 @@ import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
 import {currState} from "../redux/store";
-import {dormLoginStatus} from "../ui/home/configureDorm";
+import {dormLoginStatus} from "../utils/dorm";
 
 /**
  * Converts form data into url-encoded format.
