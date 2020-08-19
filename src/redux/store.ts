@@ -12,17 +12,21 @@ import createFilter, {
 import createTransform from "redux-persist/es/createTransform";
 import {Schedule} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
+import {Config} from "./states/config";
+import {config} from "./reducers/config";
 
 export interface State {
 	auth: AuthState;
 	fullName: string;
 	schedule: Schedule;
+	config: Config;
 }
 
 const rootReducer = combineReducers({
 	auth,
 	fullName,
 	schedule,
+	config,
 });
 
 const authFilter = createFilter("auth", ["userId", "password", "remember"]);
@@ -44,7 +48,7 @@ const persistConfig = {
 	version: 1,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule"],
+	whitelist: ["auth", "schedule", "config"],
 	transforms: [authFilter, authTransform, scheduleFilter],
 };
 
