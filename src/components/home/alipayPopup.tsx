@@ -3,13 +3,17 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import React, {useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {HomeNav} from "../../ui/home/homeStack";
+import {configureDorm} from "../../ui/home/configureDorm";
 
 export const AlipayPopup = ({
 	onPay,
 	title,
+	navigation,
 }: {
 	onPay: (money: number) => Promise<any>;
 	title: React.ReactNode;
+	navigation: HomeNav;
 }) => {
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");
@@ -104,9 +108,7 @@ export const AlipayPopup = ({
 			</Modal>
 			<TouchableOpacity
 				style={{padding: 10}}
-				onPress={() => {
-					setPopup(true);
-				}}>
+				onPress={() => configureDorm(() => setPopup(true), navigation)}>
 				<Text>{title}</Text>
 			</TouchableOpacity>
 		</>

@@ -6,6 +6,7 @@ import {performLoseCard} from "../../components/home/loseCard";
 import {getEleRechargePayCode} from "../../network/dorm";
 import Alipay from "../../utils/alipay";
 import {AlipayPopup} from "../../components/home/alipayPopup";
+import {configureDorm} from "./configureDorm";
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<View style={styles.center}>
@@ -32,11 +33,14 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		/>
 		<Button
 			title={getStr("dormScore")}
-			onPress={() => navigation.navigate("DormScore")}
+			onPress={() =>
+				configureDorm(() => navigation.navigate("DormScore"), navigation)
+			}
 		/>
 		<AlipayPopup
 			onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
 			title={getStr("eleRecharge")}
+			navigation={navigation}
 		/>
 	</View>
 );
