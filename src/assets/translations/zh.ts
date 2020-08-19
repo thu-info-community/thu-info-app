@@ -45,6 +45,8 @@ export default {
 	confirm: "确认",
 	cancel: "取消",
 	ok: "确定",
+	configureDorm: "请登录清华家园网",
+	configureDormHint: "这个密码很可能是你入学前就设置好了的……",
 	dormScore: "卫生成绩",
 	eleRecharge: "电费充值",
 	alipayRequired: "请安装支付宝。",

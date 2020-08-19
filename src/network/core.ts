@@ -22,6 +22,7 @@ import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
 import {currState} from "../redux/store";
+import {dormLoginStatus} from "../ui/home/configureDorm";
 
 /**
  * Converts form data into url-encoded format.
@@ -197,7 +198,11 @@ export const getTicket = async (target: number) => {
 			DORM_LOGIN_POST_SUFFIX;
 		return retrieve(url, url, post, "gb2312").then((s) => {
 			if (s.indexOf("当前用户认证信息") === -1) {
+				dormLoginStatus.loggedIn = false;
+				// TODO: solve the problem of once successful, fails every time
 				throw "login to tsinghua home error";
+			} else {
+				dormLoginStatus.loggedIn = true;
 			}
 		});
 	} else {
