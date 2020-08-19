@@ -15,6 +15,7 @@ import {RouteProp} from "@react-navigation/native";
 import {WentuScreen} from "./wentu";
 import {DormScoreScreen} from "./dormScore";
 import {ConfigureDormScreen} from "./configureDorm";
+import {LibraryScreen} from "./library";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -25,6 +26,7 @@ type HomeStackParamList = {
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
 	Wentu: undefined;
+	Library: undefined;
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 };
@@ -84,6 +86,11 @@ export const HomeStackScreen = () => (
 			name="Wentu"
 			component={WentuScreen}
 			options={{title: getStr("wentu")}}
+		/>
+		<Stack.Screen
+			name="Library"
+			component={LibraryScreen}
+			options={{title: getStr("library")}}
 		/>
 		<Stack.Screen
 			name="DormScore"

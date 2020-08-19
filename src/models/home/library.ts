@@ -1,9 +1,10 @@
-export interface LibraryNode {
+export interface LibraryBase {
 	id: number;
 	zhName: string;
 	zhNameTrace: string;
 	enName: string;
 	enNameTrace: string;
 	valid: boolean;
-	children: LibraryNode[];
 }
+
+export type Library = LibraryBase;
