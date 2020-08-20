@@ -9,9 +9,7 @@ export interface LibraryBase {
 
 export type Library = LibraryBase;
 
-export interface LibraryFloor extends LibraryBase {
-	parentId: number;
-}
+export type LibraryFloor = LibraryBase;
 
 export interface LibraryDate {
 	day: string;
@@ -26,3 +24,6 @@ export interface LibrarySection extends Library {
 }
 
 export interface LibrarySeat extends Library {}
+
+export const byId = (a: LibraryBase, b: LibraryBase) =>
+	Number(a.id) - Number(b.id);

@@ -16,9 +16,15 @@ import {WentuScreen} from "./wentu";
 import {DormScoreScreen} from "./dormScore";
 import {ConfigureDormScreen} from "./configureDorm";
 import {LibraryScreen} from "./library";
-import {Library, LibraryFloor} from "../../models/home/library";
+import {
+	Library,
+	LibraryDate,
+	LibraryFloor,
+	LibrarySection,
+} from "../../models/home/library";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
+import {LibrarySeatScreen} from "./librarySeat";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -32,6 +38,7 @@ type HomeStackParamList = {
 	Library: undefined;
 	LibraryFloor: Library;
 	LibrarySection: LibraryFloor;
+	LibrarySeat: {section: LibrarySection; date: LibraryDate};
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 };
@@ -53,6 +60,7 @@ export type LibrarySectionRouteProp = RouteProp<
 	HomeStackParamList,
 	"LibrarySection"
 >;
+export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -114,6 +122,11 @@ export const HomeStackScreen = () => (
 			name="LibrarySection"
 			component={LibrarySectionScreen}
 			options={({route}) => ({title: route.params.zhNameTrace})}
+		/>
+		<Stack.Screen
+			name="LibrarySeat"
+			component={LibrarySeatScreen}
+			options={({route}) => ({title: route.params.section.zhNameTrace})}
 		/>
 		<Stack.Screen
 			name="DormScore"

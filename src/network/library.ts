@@ -7,6 +7,7 @@ import {
 	LIBRARY_SEATS_URL,
 } from "../constants/strings";
 import {
+	byId,
 	Library,
 	LibraryDate,
 	LibraryFloor,
@@ -50,7 +51,7 @@ export const getLibraryFloorList = ({
 				valid: node.isValid === 1,
 				parentId: id,
 			}))
-			.sort((a: LibraryFloor, b: LibraryFloor) => Number(a.id) - Number(b.id)),
+			.sort(byId),
 	);
 
 export const getLibraryDays = ({
@@ -75,18 +76,20 @@ export const getLibrarySectionList = (
 	{id, zhNameTrace, enNameTrace}: LibraryFloor,
 	date: Date,
 ): Promise<LibrarySection[]> =>
-	fetchJson(LIBRARY_AREAS_URL + id + "/date/" + date.format()).then((r) => {
-		return r.childArea.map((node: any) => ({
-			id: node.id,
-			zhName: node.name,
-			zhNameTrace: `${zhNameTrace} - ${node.name}`,
-			enName: node.enname,
-			enNameTrace: `${enNameTrace} - ${node.enname}`,
-			valid: node.isValid === 1,
-			total: node.TotalCount,
-			available: node.TotalCount - node.UnavailableSpace,
-		}));
-	});
+	fetchJson(LIBRARY_AREAS_URL + id + "/date/" + date.format()).then((r) =>
+		r.childArea
+			.map((node: any) => ({
+				id: node.id,
+				zhName: node.name,
+				zhNameTrace: `${zhNameTrace} - ${node.name}`,
+				enName: node.enname,
+				enNameTrace: `${enNameTrace} - ${node.enname}`,
+				valid: node.isValid === 1,
+				total: node.TotalCount,
+				available: node.TotalCount - node.UnavailableSpace,
+			}))
+			.sort(byId),
+	);
 
 export const getLibrarySeatList = (
 	{id, zhNameTrace, enNameTrace}: LibrarySection,
@@ -102,24 +105,15 @@ export const getLibrarySeatList = (
 				startTime,
 				endTime,
 			}),
-	).then((r: any[]) => {
-		console.log(
-			LIBRARY_SEATS_URL +
-				"?" +
-				stringify({
-					area: id,
-					segment: segmentId,
-					day,
-					startTime,
-					endTime,
-				}),
-		);
-		return r.map((node: any) => ({
-			id: node.id,
-			zhName: node.name,
-			zhNameTrace: zhNameTrace + " - " + node.name,
-			enName: node.name,
-			enNameTrace: enNameTrace + " - " + node.name,
-			valid: node.status === 1,
-		}));
-	});
+	).then((r) =>
+		r
+			.map((node: any) => ({
+				id: node.id,
+				zhName: node.name,
+				zhNameTrace: zhNameTrace + " - " + node.name,
+				enName: node.name,
+				enNameTrace: enNameTrace + " - " + node.name,
+				valid: node.status === 1,
+			}))
+			.sort(byId),
+	);

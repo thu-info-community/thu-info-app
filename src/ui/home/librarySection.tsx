@@ -1,28 +1,23 @@
 import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {LibrarySection} from "../../models/home/library";
-import {
-	getLibraryDays,
-	getLibrarySeatList,
-	getLibrarySectionList,
-} from "../../network/library";
-import {LibrarySectionRouteProp} from "./homeStack";
+import {getLibraryDays, getLibrarySectionList} from "../../network/library";
+import {HomeNav, LibrarySectionRouteProp} from "./homeStack";
 import {getStr} from "../../utils/i18n";
 import {Calendar} from "../../utils/calendar";
+import Snackbar from "react-native-snackbar";
 
 export const LibrarySectionScreen = ({
 	route,
+	navigation,
 }: {
 	route: LibrarySectionRouteProp;
+	navigation: HomeNav;
 }) => {
 	const today = new Calendar().date;
 	const dates = [today.toDate(), today.add(1, "day").toDate()];
 	const [choice, setChoice] = useState<0 | 1>(0);
 	const [sections, setSections] = useState<LibrarySection[]>([]);
-	/* useEffect(() => {
-		getLibraryDays(route.params).then(setDays);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []); */
 	useEffect(() => {
 		getLibrarySectionList(route.params, dates[choice]).then(setSections);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,11 +56,21 @@ export const LibrarySectionScreen = ({
 						disabled={!item.valid}
 						onPress={() =>
 							item.valid &&
-							getLibraryDays(item).then((r) =>
-								getLibrarySeatList(item, r[choice]).then(console.log),
-							)
+							getLibraryDays(item)
+								.then((r) =>
+									navigation.navigate("LibrarySeat", {
+										section: item,
+										date: r[choice],
+									}),
+								)
+								.catch(() =>
+									Snackbar.show({
+										text: getStr("networkRetry"),
+										duration: Snackbar.LENGTH_SHORT,
+									}),
+								)
 						}>
-						<Text>{item.zhName}</Text>
+						<Text>{`${item.zhName} (${item.available}/${item.total})`}</Text>
 					</TouchableOpacity>
 				)}
 				keyExtractor={(item) => String(item.id)}
