@@ -13,14 +13,19 @@ export const LibraryFloorScreen = ({
 }) => {
 	const [libraryFloors, setLibraryFloors] = useState<LibraryFloor[]>([]);
 	useEffect(() => {
-		getLibraryFloorList(route.params.id).then(setLibraryFloors);
+		getLibraryFloorList(route.params).then(setLibraryFloors);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<FlatList
 			data={libraryFloors}
 			renderItem={({item}) => (
-				<TouchableOpacity style={{padding: 8}} disabled={!item.valid}>
+				<TouchableOpacity
+					style={{padding: 8}}
+					onPress={() =>
+						item.valid && navigation.navigate("LibrarySection", item)
+					}
+					disabled={!item.valid}>
 					<Text>{item.zhName}</Text>
 				</TouchableOpacity>
 			)}

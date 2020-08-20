@@ -50,6 +50,8 @@ export default {
 	wentu: "Wentu",
 	wentuTitle: "Wentu Seat Availability Status",
 	library: "Library",
+	today: "Today",
+	tomorrow: "Tomorrow",
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",

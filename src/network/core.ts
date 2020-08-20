@@ -29,7 +29,7 @@ import {dormLoginStatus} from "../utils/dorm";
  *
  * Note that the keys of the input form will **NOT** be encoded.
  */
-const stringify = (form: any) =>
+export const stringify = (form: any) =>
 	Object.keys(form)
 		.map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(form[key])}`)
 		.join("&");

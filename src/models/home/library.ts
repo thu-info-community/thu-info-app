@@ -9,4 +9,20 @@ export interface LibraryBase {
 
 export type Library = LibraryBase;
 
-export type LibraryFloor = LibraryBase;
+export interface LibraryFloor extends LibraryBase {
+	parentId: number;
+}
+
+export interface LibraryDate {
+	day: string;
+	startTime: string;
+	endTime: string;
+	segmentId: number;
+}
+
+export interface LibrarySection extends Library {
+	total: number;
+	available: number;
+}
+
+export interface LibrarySeat extends Library {}
