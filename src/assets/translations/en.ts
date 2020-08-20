@@ -52,6 +52,8 @@ export default {
 	library: "Library",
 	today: "Today",
 	tomorrow: "Tomorrow",
+	checkDate: "Please check the date of booking: ",
+	checkSeat: "Please check your seat.",
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",

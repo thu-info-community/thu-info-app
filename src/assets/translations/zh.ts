@@ -45,6 +45,8 @@ export default {
 	library: "图书馆",
 	today: "当日",
 	tomorrow: "次日",
+	checkDate: "请核对预约日期：",
+	checkSeat: "请核对预约座位",
 	confirm: "确认",
 	cancel: "取消",
 	ok: "确定",
