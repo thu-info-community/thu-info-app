@@ -10,6 +10,8 @@ import {
 	EXPENDITURE_URL,
 	GET_REPORT_URL,
 	INFO_ROOT_URL,
+	JOGGING_REFERER,
+	JOGGING_URL,
 	LOSE_CARD_URL,
 	PHYSICAL_EXAM_REFERER,
 	PHYSICAL_EXAM_URL,
@@ -21,6 +23,7 @@ import {Record} from "../models/home/expenditure";
 import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
 import "../../src/utils/extensions";
 import {encodeToGb2312} from "../utils/encodeToGb2312";
+import {JoggingRecord} from "../models/home/jogging";
 
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
@@ -152,6 +155,16 @@ export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 			},
 		),
 	);
+
+// TODO: jogging record to be implemented
+export const getJoggingRecord = (): Promise<JoggingRecord[]> =>
+	retryWrapper(
+		792,
+		retrieve(JOGGING_URL, JOGGING_REFERER, undefined, "GBK"),
+	).then((s) => {
+		console.log(s);
+		return [];
+	});
 
 export const getExpenditures = (beg: Date, end: Date): Promise<Record[]> =>
 	retryWrapper(

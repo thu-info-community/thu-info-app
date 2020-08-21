@@ -26,6 +26,7 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
+import {JoggingScreen} from "./jogging";
 
 type HomeStackParamList = {
 	Home: undefined;
@@ -33,6 +34,7 @@ type HomeStackParamList = {
 	Evaluation: undefined;
 	Form: {name: string; url: string};
 	PhysicalExam: undefined;
+	Jogging: undefined;
 	Expenditure: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
@@ -94,6 +96,11 @@ export const HomeStackScreen = () => (
 			name="PhysicalExam"
 			component={PhysicalExamScreen}
 			options={{title: getStr("physicalExam")}}
+		/>
+		<Stack.Screen
+			name="Jogging"
+			component={JoggingScreen}
+			options={{title: getStr("jogging")}}
 		/>
 		<Stack.Screen
 			name="Expenditure"
