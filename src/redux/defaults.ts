@@ -25,4 +25,5 @@ export const defaultSchedule: Schedule = {
 
 export const defaultConfigState: Config = {
 	dormPassword: "",
+	doNotRemind: 0,
 };

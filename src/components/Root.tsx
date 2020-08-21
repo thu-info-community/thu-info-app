@@ -10,6 +10,7 @@ import {getStr} from "../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
 import {ThemeContext} from "../assets/themes/context";
+import {checkUpdate} from "../utils/checkUpdate";
 
 interface RootProps {
 	getFullName: () => void;
@@ -29,6 +30,8 @@ const RootComponent = (props: RootProps) => {
 		getTicket(824).then(() => console.log("Ticket 824 get."));
 		getTicket(2005).then(() => console.log("Ticket 2005 get."));
 		getTicket(-1).then(() => console.log("Ticket -1 get."));
+
+		checkUpdate();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
