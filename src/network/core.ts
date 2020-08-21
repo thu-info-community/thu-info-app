@@ -170,7 +170,9 @@ export const getFullName = async (): Promise<string> =>
  */
 export const logout = async (): Promise<void> => connect(LOGOUT_URL);
 
-export const getTicket = async (target: number) => {
+type ValidTickets = -1 | 792 | 824 | 2005;
+
+export const getTicket = async (target: ValidTickets) => {
 	if (target >= 0 && target <= 1000) {
 		return retrieve(INFO_ROOT_URL, PRE_LOGIN_URL, undefined, "UTF-8", 800).then(
 			(str) => {
@@ -211,7 +213,7 @@ export const getTicket = async (target: number) => {
 };
 
 export const retryWrapper = async <R>(
-	target: number,
+	target: ValidTickets,
 	operation: Promise<R>,
 ): Promise<R> => {
 	for (let i = 0; i < 2; ++i) {

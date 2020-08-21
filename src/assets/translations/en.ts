@@ -10,6 +10,7 @@ export default {
 	news: "News",
 	schedule: "Schedule",
 	report: "Report",
+	physicalExam: "Physical Exam",
 	networkRetry: "Network failure, please retry.",
 	credentialNote:
 		"Due to special reasons, your credentials are stored locally without encryption.",

@@ -11,6 +11,8 @@ import {
 	GET_REPORT_URL,
 	INFO_ROOT_URL,
 	LOSE_CARD_URL,
+	PHYSICAL_EXAM_REFERER,
+	PHYSICAL_EXAM_URL,
 	WENTU_SEAT_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
@@ -104,6 +106,48 @@ export const postAssessmentForm = (form: Form): Promise<void> =>
 			(res) => {
 				if (JSON.parse(res).result !== "success") {
 					throw 0;
+				}
+			},
+		),
+	);
+
+export const getPhysicalExamResult = (): Promise<[string, string][]> =>
+	retryWrapper(
+		792,
+		retrieve(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER, undefined, "GBK").then(
+			(s) => {
+				const json = JSON.parse(s.substring(1, s.length - 1));
+				if (json.success === "false") {
+					throw new Error("Getting physical exam result failed.");
+				} else {
+					return [
+						["是否免测", json.sfmc],
+						["免测原因", json.mcyy],
+						["总分", json.zf],
+						["标准分", json.bzf],
+						["附加分", json.fjf],
+						["长跑附加分", json.cpfjf],
+						["身高", json.sg],
+						["体重", json.tz],
+						["身高体重分数", json.sgtzfs],
+						["肺活量", json.fhl],
+						["肺活量分数", json.fhltzfs],
+						["800M跑", json.bbmp],
+						["800M跑分数", json.bbmpfs],
+						["1000M跑", json.yqmp],
+						["1000M跑分数", json.yqmpfs],
+						["50M跑", json.wsmp],
+						["50M跑分数", json.wsmpfs],
+						["立定跳远", json.ldty],
+						["立定跳远分数", json.ldtyfs],
+						["坐位体前屈", json.zwtqq],
+						["坐位体前屈分数", json.zwtqqfs],
+						["仰卧起坐", json.ywqz],
+						["仰卧起坐分数", json.ywqzfs],
+						["引体向上", json.ytxs],
+						["引体向上分数", json.ytxsfs],
+						["体育课成绩", json.tykcj],
+					];
 				}
 			},
 		),
