@@ -16,6 +16,7 @@ export interface LibraryDate {
 	startTime: string;
 	endTime: string;
 	segmentId: number;
+	today: boolean;
 }
 
 export interface LibrarySection extends Library {
@@ -23,7 +24,9 @@ export interface LibrarySection extends Library {
 	available: number;
 }
 
-export interface LibrarySeat extends Library {}
+export interface LibrarySeat extends Library {
+	type: number;
+}
 
 export const byId = (a: LibraryBase, b: LibraryBase) =>
 	Number(a.id) - Number(b.id);
