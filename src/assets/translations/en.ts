@@ -6,6 +6,11 @@ export default {
 	loggingIn: "Logging In...",
 	loginFailure:
 		"Login failed, please check the network connection and make sure your password is correct before re-login.",
+	newVersionAvailable: "New version available.",
+	doNotRemind: "Forget",
+	nextTimeMust: "Dismiss",
+	download: "Download",
+	alreadyLatest: "This is the latest version.",
 	home: "Home",
 	news: "News",
 	schedule: "Schedule",

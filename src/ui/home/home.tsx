@@ -32,10 +32,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		/>
 		<Button title={getStr("loseCard")} onPress={performLoseCard} />
 		<Button
-			title={getStr("wentu")}
-			onPress={() => navigation.navigate("Wentu")}
-		/>
-		<Button
 			title={getStr("dormScore")}
 			onPress={() =>
 				configureDorm(() => navigation.navigate("DormScore"), navigation)

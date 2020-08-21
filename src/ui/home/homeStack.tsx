@@ -12,7 +12,6 @@ import {ExpenditureScreen} from "./expenditure";
 import {ClassroomListScreen} from "./classroomList";
 import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
-import {WentuScreen} from "./wentu";
 import {DormScoreScreen} from "./dormScore";
 import {ConfigureDormScreen} from "./configureDorm";
 import {LibraryScreen} from "./library";
@@ -38,7 +37,6 @@ type HomeStackParamList = {
 	Expenditure: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
-	Wentu: undefined;
 	Library: undefined;
 	LibraryFloor: Library;
 	LibrarySection: LibraryFloor;
@@ -116,11 +114,6 @@ export const HomeStackScreen = () => (
 			name="ClassroomDetail"
 			component={ClassroomDetailScreen}
 			options={({route}) => ({title: route.params.name})}
-		/>
-		<Stack.Screen
-			name="Wentu"
-			component={WentuScreen}
-			options={{title: getStr("wentu")}}
 		/>
 		<Stack.Screen
 			name="Library"

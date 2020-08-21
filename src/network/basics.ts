@@ -15,7 +15,6 @@ import {
 	LOSE_CARD_URL,
 	PHYSICAL_EXAM_REFERER,
 	PHYSICAL_EXAM_URL,
-	WENTU_SEAT_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -284,19 +283,3 @@ export const loseCard = (): Promise<number> =>
 			}
 		}),
 	);
-
-export const getWentuState = (): Promise<[string, number, number][]> =>
-	retrieve(WENTU_SEAT_URL).then((s) => {
-		return cheerio("table>tr", s)
-			.slice(3)
-			.map((_, element) => {
-				return [
-					[
-						getCheerioText(element, 1),
-						Number(getCheerioText(element, 3)),
-						Number(getCheerioText(element, 5)),
-					],
-				];
-			})
-			.get();
-	});
