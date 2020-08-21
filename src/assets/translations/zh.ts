@@ -10,6 +10,7 @@ export default {
 	schedule: "计划",
 	report: "成绩单",
 	physicalExam: "体测成绩",
+	jogging: "阳光长跑",
 	networkRetry: "网络异常，请重试。",
 	credentialNote: "您的用户信息因特殊原因暂时不加密地存放在本地。",
 	exceptionOccurred: "发生异常，请重试。",

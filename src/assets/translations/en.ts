@@ -11,6 +11,7 @@ export default {
 	schedule: "Schedule",
 	report: "Report",
 	physicalExam: "Physical Exam",
+	jogging: "Jogging",
 	networkRetry: "Network failure, please retry.",
 	credentialNote:
 		"Due to special reasons, your credentials are stored locally without encryption.",
