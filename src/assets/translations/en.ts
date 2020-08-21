@@ -54,6 +54,13 @@ export default {
 	tomorrow: "Tomorrow",
 	checkDate: "Please check the date of booking: ",
 	checkSeat: "Please check your seat.",
+	seatInvalid: " (invalid)",
+	bookSuccess: "Successfully booked.",
+	bookFailureColon: "Book failed: ",
+	todayBookHint:
+		"You should sign in within 30 minutes after the successful booking.",
+	tomorrowBookHint:
+		"You must sign in within 30 minutes after the opening of the library on the effective date of the reservation.",
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",

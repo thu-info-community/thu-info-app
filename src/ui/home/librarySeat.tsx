@@ -1,9 +1,10 @@
 import {LibrarySeatRouteProp} from "./homeStack";
 import {Alert, FlatList, Text, TouchableOpacity} from "react-native";
 import React, {useEffect, useState} from "react";
-import {getLibrarySeatList} from "../../network/library";
+import {bookLibrarySeat, getLibrarySeatList} from "../../network/library";
 import {LibrarySeat} from "../../models/home/library";
 import {getStr} from "../../utils/i18n";
+import Snackbar from "react-native-snackbar";
 
 export const LibrarySeatScreen = ({route}: {route: LibrarySeatRouteProp}) => {
 	const {date, section} = route.params;
@@ -27,7 +28,9 @@ export const LibrarySeatScreen = ({route}: {route: LibrarySeatRouteProp}) => {
 							item.valid &&
 							Alert.alert(
 								getStr("checkSeat"),
-								item.zhName,
+								item.zhName +
+									"\n" +
+									getStr(date.today ? "todayBookHint" : "tomorrowBookHint"),
 								[
 									{
 										text: getStr("cancel"),
@@ -35,12 +38,33 @@ export const LibrarySeatScreen = ({route}: {route: LibrarySeatRouteProp}) => {
 									},
 									{
 										text: getStr("confirm"),
+										onPress: () => {
+											bookLibrarySeat(item, date)
+												.then(({status, msg}) => {
+													Snackbar.show({
+														text:
+															status === 1
+																? getStr("bookSuccess")
+																: getStr("bookFailureColon") + msg,
+														duration: Snackbar.LENGTH_SHORT,
+													});
+													getLibrarySeatList(section, date).then(setSeats);
+												})
+												.catch(() =>
+													Snackbar.show({
+														text: getStr("networkRetry"),
+														duration: Snackbar.LENGTH_SHORT,
+													}),
+												);
+										},
 									},
 								],
 								{cancelable: true},
 							)
 						}>
-						<Text>{item.zhName}</Text>
+						<Text>
+							{item.zhName + (item.valid ? "" : getStr("seatInvalid"))}
+						</Text>
 					</TouchableOpacity>
 				)}
 				keyExtractor={(item) => String(item.id)}
