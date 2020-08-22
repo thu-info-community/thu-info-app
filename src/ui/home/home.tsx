@@ -19,7 +19,7 @@ import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 
-const iconSize = 80;
+const iconSize = 60;
 
 export const HomeSection = ({
 	title,
@@ -44,7 +44,13 @@ export const HomeSection = ({
 			shadowRadius: 2,
 			borderRadius: 5,
 		}}>
-		<Text style={{textAlign: "center", fontSize: 15, marginTop: 6}}>
+		<Text
+			style={{
+				textAlign: "center",
+				fontSize: 15,
+				marginTop: 6,
+				fontWeight: "bold",
+			}}>
 			{getStr(title)}
 		</Text>
 		<View
@@ -96,6 +102,12 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			</HomeIcon>
 		</HomeSection>
 		<HomeSection title="dorm">
+			<AlipayPopup
+				onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
+				title="eleRecharge"
+				navigation={navigation}>
+				<IconEleRecharge width={iconSize} height={iconSize} />
+			</AlipayPopup>
 			<HomeIcon
 				title="dormScore"
 				onPress={() =>
@@ -103,12 +115,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				}>
 				<IconDormScore width={iconSize} height={iconSize} />
 			</HomeIcon>
-			<AlipayPopup
-				onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
-				title="eleRecharge"
-				navigation={navigation}>
-				<IconEleRecharge width={iconSize} height={iconSize} />
-			</AlipayPopup>
 		</HomeSection>
 	</ScrollView>
 );
