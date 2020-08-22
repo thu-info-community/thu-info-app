@@ -12,7 +12,9 @@ export const HomeIcon = ({
 	onPress: (event: GestureResponderEvent) => void;
 	children: JSX.Element;
 }) => (
-	<TouchableOpacity style={{alignItems: "center", margin: 8}} onPress={onPress}>
+	<TouchableOpacity
+		style={{alignItems: "center", margin: 8, marginHorizontal: 14}}
+		onPress={onPress}>
 		{children}
 		<Text>{getStr(title)}</Text>
 	</TouchableOpacity>

@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
 import {ThemeContext} from "../assets/themes/context";
 import {checkUpdate} from "../utils/checkUpdate";
+import {leanCloudInit} from "../utils/leanCloud";
 
 interface RootProps {
 	getFullName: () => void;
@@ -32,6 +33,8 @@ const RootComponent = (props: RootProps) => {
 		getTicket(-1).then(() => console.log("Ticket -1 get."));
 
 		checkUpdate();
+
+		leanCloudInit();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
