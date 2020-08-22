@@ -193,7 +193,7 @@ export const getTicket = async (target: ValidTickets) => {
 			userId +
 			DORM_LOGIN_POST_MIDDLE +
 			encodeURIComponent(
-				currState().config.dormPassword || currState().auth.password,
+				currState().credentials.dormPassword || currState().auth.password,
 			) +
 			DORM_LOGIN_POST_SUFFIX;
 		return connect(url, url, post)
