@@ -50,7 +50,7 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 					justifyContent: "space-around",
 					padding: 5,
 				}}>
-				<BottomButton text="popi" onPress={() => navigation.pop()} />
+				<BottomButton text="popi" onPress={() => navigation.navigate("Popi")} />
 				<BottomButton
 					text="submit"
 					onPress={() => {

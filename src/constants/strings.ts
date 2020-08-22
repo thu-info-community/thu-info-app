@@ -126,3 +126,5 @@ export const JOGGING_REFERER =
 export const UPDATE_INFO_URL =
 	"https://cloud.tsinghua.edu.cn/f/1047a13451f44ab99d3a/?dl=1";
 export const TSINGHUA_CLOUD_URL = "https://cloud.tsinghua.edu.cn";
+export const POPI_URL =
+	"https://cloud.tsinghua.edu.cn/f/2187997c76544445ad0f/?dl=1";
