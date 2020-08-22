@@ -6,6 +6,8 @@ import {
 	DORM_LOGIN_POST_PREFIX,
 	DORM_LOGIN_POST_SUFFIX,
 	DORM_LOGIN_URL_PREFIX,
+	DORM_SCORE_REFERER,
+	DORM_SCORE_URL,
 	INFO_LOGIN_URL,
 	INFO_ROOT_URL,
 	INFO_URL,
@@ -23,6 +25,7 @@ import iconv from "iconv-lite";
 import md5 from "md5";
 import {currState} from "../redux/store";
 import {dormLoginStatus} from "../utils/dorm";
+import cheerio from "cheerio";
 
 /**
  * Converts form data into url-encoded format.
@@ -198,15 +201,18 @@ export const getTicket = async (target: ValidTickets) => {
 				currState().config.dormPassword || currState().auth.password,
 			) +
 			DORM_LOGIN_POST_SUFFIX;
-		return retrieve(url, url, post, "gb2312").then((s) => {
-			if (s.indexOf("当前用户认证信息") === -1) {
-				dormLoginStatus.loggedIn = false;
-				// TODO: solve the problem of once successful, fails every time
-				throw "login to tsinghua home error";
-			} else {
-				dormLoginStatus.loggedIn = true;
-			}
-		});
+		return connect(url, url, post)
+			.then(() =>
+				retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312"),
+			)
+			.then((s) => {
+				if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length === 1) {
+					dormLoginStatus.loggedIn = true;
+				} else {
+					dormLoginStatus.loggedIn = false;
+					throw "login to tsinghua home error";
+				}
+			});
 	} else {
 		return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
 	}
