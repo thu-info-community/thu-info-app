@@ -12,13 +12,11 @@ const authAction = createAsyncAction(
 
 export type AuthAction = ActionType<typeof authAction>;
 
-export const authThunk = (
-	userId: string,
-	password: string,
-	remember: boolean,
-) => (dispatch: Dispatch<AuthAction>) => {
-	dispatch(authAction.request({userId, password, remember}));
-	login(userId, password, remember)
+export const authThunk = (userId: string, password: string) => (
+	dispatch: Dispatch<AuthAction>,
+) => {
+	dispatch(authAction.request({userId, password}));
+	login(userId, password)
 		.then((r) => {
 			dispatch(authAction.success(r));
 		})

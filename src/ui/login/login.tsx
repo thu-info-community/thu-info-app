@@ -1,11 +1,4 @@
-import {
-	Switch,
-	TextInput,
-	View,
-	Text,
-	Image,
-	ActivityIndicator,
-} from "react-native";
+import {TextInput, View, Text, Image, ActivityIndicator} from "react-native";
 import React, {useContext, useEffect} from "react";
 import {connect} from "react-redux";
 import {authThunk} from "../../redux/actions/auth";
@@ -23,9 +16,8 @@ import themes from "../../assets/themes/themes";
 interface LoginProps {
 	readonly userId: string;
 	readonly password: string;
-	readonly remember: boolean;
 	readonly status: LoginStatus;
-	login: (userId: string, password: string, remember: boolean) => void;
+	login: (userId: string, password: string) => void;
 	resetStatus: () => void;
 }
 
@@ -33,15 +25,14 @@ interface LoginProps {
 const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
-	const [remember, setRemember] = React.useState(props.remember);
 
 	const themeName = useContext(ThemeContext);
 	const theme = themes[themeName];
 	const style = styles(themeName);
 
 	useEffect(() => {
-		if (remember) {
-			props.login(userId, password, remember);
+		if (props.userId !== "") {
+			props.login(userId, password);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -78,13 +69,9 @@ const LoginUI = (props: LoginProps) => {
 					onChangeText={setPassword}
 					secureTextEntry
 				/>
-				<View style={style.switchContainer}>
-					<Text style={style.switchCaptionStyle}>{getStr("autoLogin")}</Text>
-					<Switch value={remember} onValueChange={setRemember} />
-				</View>
 				<TouchableOpacity
 					style={style.loginButtonStyle}
-					onPress={() => props.login(userId, password, remember)}>
+					onPress={() => props.login(userId, password)}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</TouchableOpacity>
 				<Text style={style.credentialNoteStyle}>
@@ -151,17 +138,6 @@ const styles = themedStyles((theme) => {
 			padding: 10,
 		},
 
-		switchContainer: {
-			flexDirection: "row",
-			alignItems: "center",
-			paddingTop: 15,
-		},
-
-		switchCaptionStyle: {
-			color: "black",
-			paddingRight: 15,
-		},
-
 		loginButtonStyle: {
 			height: 35,
 			width: 100,
@@ -194,9 +170,9 @@ export const LoginScreen = connect(
 	(state: State) => state.auth,
 	(dispatch) => {
 		return {
-			login: (userId: string, password: string, remember: boolean) => {
+			login: (userId: string, password: string) => {
 				// @ts-ignore
-				dispatch(authThunk(userId, password, remember));
+				dispatch(authThunk(userId, password));
 			},
 			resetStatus: () => {
 				dispatch({

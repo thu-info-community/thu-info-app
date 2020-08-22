@@ -14,7 +14,6 @@ export const auth = (
 				...state,
 				userId: payload.userId,
 				password: payload.password,
-				remember: payload.remember,
 				status: LoginStatus.LoggingIn,
 			};
 		}
@@ -24,7 +23,6 @@ export const auth = (
 				...state,
 				userId: payload.userId,
 				password: payload.password,
-				remember: payload.remember,
 				status: LoginStatus.LoggedIn,
 			};
 		}
@@ -33,7 +31,6 @@ export const auth = (
 				...state,
 				userId: "",
 				password: "",
-				remember: false,
 				status: action.payload,
 			};
 		default:

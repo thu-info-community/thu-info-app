@@ -5901,6 +5901,11 @@ react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.npm.taobao.org/react-native-iphone-x-helper/download/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha1-ZF4v+7tJ6AhEu0y740oSb9oeZ3I=
 
+react-native-keychain@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.npm.taobao.org/react-native-keychain/download/react-native-keychain-4.0.5.tgz#6d3aef8f2789fc0dfa8149b8400d82ff77be361a"
+  integrity sha1-bTrvjyeJ/A36gUm4QA2C/3e+Nho=
+
 react-native-localize@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npm.taobao.org/react-native-localize/download/react-native-localize-1.4.0.tgz#4653596d066d0941c48f5404dc1c0d08b6950443"
@@ -6128,6 +6133,11 @@ redux-devtools@^3.5.0:
     lodash "^4.2.0"
     prop-types "^15.5.7"
     redux-devtools-instrument "^1.9.0"
+
+redux-persist-keychain-storage@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npm.taobao.org/redux-persist-keychain-storage/download/redux-persist-keychain-storage-0.1.1.tgz#48c22e3f24dfe474d051a09935b53287aeba30f4"
+  integrity sha1-SMIuPyTf5HTQUaCZNbUyh666MPQ=
 
 redux-persist-transform-filter@^0.0.20:
   version "0.0.20"

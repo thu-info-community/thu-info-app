@@ -2,7 +2,6 @@ export default {
 	userId: "School ID",
 	password: "Password",
 	login: "Login",
-	autoLogin: "Auto-Login",
 	loggingIn: "Logging In...",
 	loginFailure:
 		"Login failed, please check the network connection and make sure your password is correct before re-login.",
@@ -30,7 +29,7 @@ export default {
 	jogging: "Jogging",
 	networkRetry: "Network failure, please retry.",
 	credentialNote:
-		"Due to special reasons, your credentials are stored locally without encryption.",
+		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
 	exceptionOccurred: "Exception occurred, please retry.",
 	teachingEvaluation: "Teaching Evaluation",
 	overallOutOfRange: "Please rate your overall impression of the course.",
