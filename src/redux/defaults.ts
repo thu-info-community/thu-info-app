@@ -5,7 +5,6 @@ import {Config} from "./states/config";
 export const defaultAuthState: AuthState = {
 	userId: "",
 	password: "",
-	remember: false,
 	status: LoginStatus.None,
 };
 

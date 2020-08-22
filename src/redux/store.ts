@@ -1,19 +1,20 @@
 import {applyMiddleware, createStore} from "redux";
 import thunk from "redux-thunk";
-import {Auth, AuthState} from "./states/auth";
+import {AuthState, LoginStatus} from "./states/auth";
 import {combineReducers} from "redux";
 import {fullName} from "./reducers/basics";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
-import createFilter, {
-	createBlacklistFilter,
-} from "redux-persist-transform-filter";
-import createTransform from "redux-persist/es/createTransform";
+import {createBlacklistFilter} from "redux-persist-transform-filter";
 import {Schedule} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
 import {Config} from "./states/config";
 import {config} from "./reducers/config";
+import {createKeychainStorage} from "redux-persist-keychain-storage";
+import createTransform from "redux-persist/es/createTransform";
+
+const KeychainStorage = createKeychainStorage();
 
 export interface State {
 	auth: AuthState;
@@ -22,22 +23,24 @@ export interface State {
 	config: Config;
 }
 
+const authTransform = createTransform(() => LoginStatus.None, undefined, {
+	whitelist: ["status"],
+});
+
 const rootReducer = combineReducers({
-	auth,
+	auth: persistReducer(
+		{
+			keyPrefix: "com.unidy2002.thuinfo.persist.",
+			storage: KeychainStorage,
+			key: "auth",
+			transforms: [authTransform],
+		},
+		auth,
+	),
 	fullName,
 	schedule,
 	config,
 });
-
-const authFilter = createFilter("auth", ["userId", "password", "remember"]);
-
-const authTransform = createTransform(
-	(inState: Auth) => {
-		return inState.remember ? inState : {...inState, userId: "", password: ""};
-	},
-	(outState) => outState,
-	{whitelist: ["auth"]},
-);
 
 const scheduleFilter = createBlacklistFilter("schedule", [
 	"primaryRefreshing",
@@ -49,7 +52,7 @@ const persistConfig = {
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule", "config"],
-	transforms: [authFilter, authTransform, scheduleFilter],
+	transforms: [scheduleFilter],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

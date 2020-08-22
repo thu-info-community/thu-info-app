@@ -120,11 +120,7 @@ export const retrieve = async (
  *
  * @TODO cookies are nasty
  */
-export const login = async (
-	userId: string,
-	password: string,
-	remember: boolean,
-): Promise<Auth> =>
+export const login = async (userId: string, password: string): Promise<Auth> =>
 	retrieve(DO_LOGIN_URL, LOGIN_URL, {
 		auth_type: "local",
 		username: userId,
@@ -150,7 +146,6 @@ export const login = async (
 			return {
 				userId: userId,
 				password: password,
-				remember: remember,
 			};
 		});
 
