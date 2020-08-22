@@ -12,6 +12,7 @@ import themes from "../assets/themes/themes";
 import {ThemeContext} from "../assets/themes/context";
 import {checkUpdate} from "../utils/checkUpdate";
 import {leanCloudInit} from "../utils/leanCloud";
+import {SettingStackScreen} from "../ui/settings/settingsStack";
 
 interface RootProps {
 	getFullName: () => void;
@@ -57,6 +58,10 @@ const RootComponent = (props: RootProps) => {
 							iconName = "table";
 							break;
 						}
+						case "Settings": {
+							iconName = "cogs";
+							break;
+						}
 					}
 
 					return <Icon name={iconName || ""} size={size} color={color} />;
@@ -80,6 +85,11 @@ const RootComponent = (props: RootProps) => {
 				name="Schedule"
 				component={ScheduleStackScreen}
 				options={{title: getStr("schedule")}}
+			/>
+			<Tab.Screen
+				name="Settings"
+				component={SettingStackScreen}
+				options={{title: getStr("settings")}}
 			/>
 		</Tab.Navigator>
 	);
