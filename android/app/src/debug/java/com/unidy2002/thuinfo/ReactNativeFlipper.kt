@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.unidy2002.thuinfo
 
 import android.content.Context

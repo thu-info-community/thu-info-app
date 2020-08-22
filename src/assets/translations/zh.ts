@@ -12,6 +12,13 @@ export default {
 	alreadyLatest: "已是最新版本",
 	home: "主页",
 	news: "动态",
+	settings: "设置",
+	feedback: "反馈",
+	popi: "提问箱",
+	submit: "提交",
+	feedbackHint:
+		"找bug，提建议，都欢迎呀！\n我们看不到你是谁，所以请放心大胆地说~\n我们看到你的反馈后，会第一时间在提问箱中给出答复！\n也欢迎dalao前往github.com/UNIDY2002/THUInfo提Issue、PR~",
+	feedbackSuccess: "反馈成功",
 	schedule: "计划",
 	study: "学习与成绩",
 	resources: "资源",

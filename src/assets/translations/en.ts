@@ -13,6 +13,13 @@ export default {
 	alreadyLatest: "This is the latest version.",
 	home: "Home",
 	news: "News",
+	settings: "Settings",
+	feedback: "Feedback",
+	popi: "Popi Ask",
+	submit: "Submit",
+	feedbackHint:
+		"Both bug-report and suggestions are welcomed!\nWe do not know who you are, so don't be afraid~\nResponses can be found in the Popi Ask box.\nGitHub repo: https://github.com/UNIDY2002/THUInfo\nIssues and pull requests are also welcomed!",
+	feedbackSuccess: "Feedback successfully sent.",
 	schedule: "Schedule",
 	study: "Academic and Score",
 	resources: "Resources",
