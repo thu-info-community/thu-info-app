@@ -13,6 +13,8 @@ import {Config} from "./states/config";
 import {config} from "./reducers/config";
 import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
+import {credentials} from "./reducers/credentials";
+import {Credentials} from "./states/credentials";
 
 const KeychainStorage = createKeychainStorage();
 
@@ -21,6 +23,7 @@ export interface State {
 	fullName: string;
 	schedule: Schedule;
 	config: Config;
+	credentials: Credentials;
 }
 
 const authTransform = createTransform(() => LoginStatus.None, undefined, {
@@ -30,7 +33,7 @@ const authTransform = createTransform(() => LoginStatus.None, undefined, {
 const rootReducer = combineReducers({
 	auth: persistReducer(
 		{
-			keyPrefix: "com.unidy2002.thuinfo.persist.",
+			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
 			transforms: [authTransform],
@@ -40,6 +43,14 @@ const rootReducer = combineReducers({
 	fullName,
 	schedule,
 	config,
+	credentials: persistReducer(
+		{
+			keyPrefix: "com.unidy2002.thuinfo.persist.credentials.",
+			storage: KeychainStorage,
+			key: "credentials",
+		},
+		credentials,
+	),
 });
 
 const scheduleFilter = createBlacklistFilter("schedule", [

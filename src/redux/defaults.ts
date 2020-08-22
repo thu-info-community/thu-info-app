@@ -1,6 +1,7 @@
 import {AuthState, LoginStatus} from "./states/auth";
 import {Schedule} from "./states/schedule";
 import {Config} from "./states/config";
+import {Credentials} from "./states/credentials";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -23,7 +24,10 @@ export const defaultSchedule: Schedule = {
 };
 
 export const defaultConfigState: Config = {
-	dormPassword: "",
 	doNotRemind: 0,
 	lastSelfVersion: 0,
+};
+
+export const defaultCredentials: Credentials = {
+	dormPassword: "",
 };
