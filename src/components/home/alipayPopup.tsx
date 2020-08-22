@@ -5,15 +5,19 @@ import React, {useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {HomeNav} from "../../ui/home/homeStack";
 import {configureDorm} from "../../ui/home/configureDorm";
+import {HomeIcon} from "./icon";
+import zh from "../../assets/translations/zh";
 
 export const AlipayPopup = ({
 	onPay,
 	title,
 	navigation,
+	children,
 }: {
 	onPay: (money: number) => Promise<any>;
-	title: React.ReactNode;
+	title: keyof typeof zh;
 	navigation: HomeNav;
+	children: JSX.Element;
 }) => {
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");
@@ -72,13 +76,14 @@ export const AlipayPopup = ({
 											setProcessing(true);
 											onPay(Number(money))
 												.then(close)
-												.catch(() =>
+												.catch(() => {
 													Snackbar.show({
 														text: getStr("payFailure"),
 														duration: Snackbar.LENGTH_INDEFINITE,
 														action: {text: getStr("ok")},
-													}),
-												);
+													});
+													setProcessing(false);
+												});
 										})
 										.catch(() =>
 											Snackbar.show({
@@ -106,11 +111,11 @@ export const AlipayPopup = ({
 					</View>
 				</View>
 			</Modal>
-			<TouchableOpacity
-				style={{padding: 10}}
+			<HomeIcon
+				title={title}
 				onPress={() => configureDorm(() => setPopup(true), navigation)}>
-				<Text>{title}</Text>
-			</TouchableOpacity>
+				{children}
+			</HomeIcon>
 		</>
 	);
 };

@@ -1,54 +1,114 @@
-import {Button, StyleSheet, View} from "react-native";
+import {ScrollView, Text, View} from "react-native";
 import React from "react";
-import {getStr} from "../../utils/i18n";
 import {HomeNav} from "./homeStack";
 import {performLoseCard} from "../../components/home/loseCard";
 import {getEleRechargePayCode} from "../../network/dorm";
 import Alipay from "../../utils/alipay";
 import {AlipayPopup} from "../../components/home/alipayPopup";
 import {configureDorm} from "./configureDorm";
+import IconReport from "../../assets/icons/IconReport";
+import {HomeIcon} from "../../components/home/icon";
+import IconEvaluation from "../../assets/icons/IconEvaluation";
+import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
+import IconExpenditure from "../../assets/icons/IconExpenditure";
+import IconClassroom from "../../assets/icons/IconClassroom";
+import IconLoseCard from "../../assets/icons/IconLoseCard";
+import IconLibrary from "../../assets/icons/IconLibrary";
+import IconEleRecharge from "../../assets/icons/IconEleRecharge";
+import IconDormScore from "../../assets/icons/IconDormScore";
+import zh from "../../assets/translations/zh";
+import {getStr} from "../../utils/i18n";
 
-export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
-	<View style={styles.center}>
-		<Button
-			title={getStr("report")}
-			onPress={() => navigation.navigate("Report")}
-		/>
-		<Button
-			title={getStr("teachingEvaluation")}
-			onPress={() => navigation.navigate("Evaluation")}
-		/>
-		<Button
-			title={getStr("physicalExam")}
-			onPress={() => navigation.navigate("PhysicalExam")}
-		/>
-		<Button
-			title={getStr("expenditure")}
-			onPress={() => navigation.navigate("Expenditure")}
-		/>
-		<Button
-			title={getStr("classroomState")}
-			onPress={() => navigation.navigate("ClassroomList")}
-		/>
-		<Button title={getStr("loseCard")} onPress={performLoseCard} />
-		<Button
-			title={getStr("dormScore")}
-			onPress={() =>
-				configureDorm(() => navigation.navigate("DormScore"), navigation)
-			}
-		/>
-		<AlipayPopup
-			onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
-			title={getStr("eleRecharge")}
-			navigation={navigation}
-		/>
-		<Button
-			title={getStr("library")}
-			onPress={() => navigation.navigate("Library")}
-		/>
+const iconSize = 80;
+
+export const HomeSection = ({
+	title,
+	children,
+}: {
+	title: keyof typeof zh;
+	children: any;
+}) => (
+	<View
+		style={{
+			justifyContent: "center",
+			backgroundColor: "white",
+			alignItems: "center",
+			shadowColor: "grey",
+			margin: 10,
+			padding: 4,
+			shadowOffset: {
+				width: 2,
+				height: 2,
+			},
+			shadowOpacity: 0.8,
+			shadowRadius: 2,
+			borderRadius: 5,
+		}}>
+		<Text style={{textAlign: "center", fontSize: 15, marginTop: 6}}>
+			{getStr(title)}
+		</Text>
+		<View
+			style={{
+				flexDirection: "row",
+				flexWrap: "wrap",
+				justifyContent: "center",
+			}}>
+			{children}
+		</View>
 	</View>
 );
 
-const styles = StyleSheet.create({
-	center: {flex: 1, alignItems: "center", justifyContent: "center"},
-});
+export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
+	<ScrollView style={{padding: 4}}>
+		<HomeSection title="study">
+			<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
+				<IconReport width={iconSize} height={iconSize} />
+			</HomeIcon>
+			<HomeIcon
+				title="physicalExam"
+				onPress={() => navigation.navigate("PhysicalExam")}>
+				<IconPhysicalExam width={iconSize} height={iconSize} />
+			</HomeIcon>
+			<HomeIcon
+				title="teachingEvaluation"
+				onPress={() => navigation.navigate("Evaluation")}>
+				<IconEvaluation width={iconSize} height={iconSize} />
+			</HomeIcon>
+		</HomeSection>
+		<HomeSection title="resources">
+			<HomeIcon
+				title="classroomState"
+				onPress={() => navigation.navigate("ClassroomList")}>
+				<IconClassroom width={iconSize} height={iconSize} />
+			</HomeIcon>
+			<HomeIcon title="library" onPress={() => navigation.navigate("Library")}>
+				<IconLibrary width={iconSize} height={iconSize} />
+			</HomeIcon>
+		</HomeSection>
+		<HomeSection title="eCard">
+			<HomeIcon
+				title="expenditure"
+				onPress={() => navigation.navigate("Expenditure")}>
+				<IconExpenditure width={iconSize} height={iconSize} />
+			</HomeIcon>
+			<HomeIcon title="loseCard" onPress={performLoseCard}>
+				<IconLoseCard width={iconSize} height={iconSize} />
+			</HomeIcon>
+		</HomeSection>
+		<HomeSection title="dorm">
+			<HomeIcon
+				title="dormScore"
+				onPress={() =>
+					configureDorm(() => navigation.navigate("DormScore"), navigation)
+				}>
+				<IconDormScore width={iconSize} height={iconSize} />
+			</HomeIcon>
+			<AlipayPopup
+				onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
+				title="eleRecharge"
+				navigation={navigation}>
+				<IconEleRecharge width={iconSize} height={iconSize} />
+			</AlipayPopup>
+		</HomeSection>
+	</ScrollView>
+);
