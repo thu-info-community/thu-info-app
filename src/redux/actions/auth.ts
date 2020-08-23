@@ -2,7 +2,10 @@ import {ActionType, createAsyncAction} from "typesafe-actions";
 import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS} from "../constants";
 import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
-import {login} from "../../network/core";
+import {getTickets, login} from "../../network/core";
+import {leanCloudInit} from "../../utils/leanCloud";
+import {checkUpdate} from "../../utils/checkUpdate";
+import {fullNameThunk} from "./basics";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
@@ -19,6 +22,12 @@ export const authThunk = (userId: string, password: string) => (
 	login(userId, password)
 		.then((r) => {
 			dispatch(authAction.success(r));
+			// Things that should be done only once upon logged in
+			getTickets();
+			checkUpdate();
+			leanCloudInit();
+			// @ts-ignore
+			dispatch(fullNameThunk());
 		})
 		.catch((reason: LoginStatus) => {
 			dispatch(authAction.failure(reason));

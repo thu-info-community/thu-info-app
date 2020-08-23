@@ -227,3 +227,19 @@ export const retryWrapper = async <R>(
 	}
 	return operation;
 };
+
+const performGetTickets = () => {
+	([-1, 792, 824, 2005] as ValidTickets[]).forEach((target) => {
+		getTicket(target)
+			.then(() => console.log(`Ticket ${target} get.`))
+			.catch(() => console.warn(`Getting ticket ${target} failed.`));
+	});
+};
+
+export const getTickets = () => {
+	performGetTickets();
+	setInterval(() => {
+		console.log("Keep alive start.");
+		performGetTickets();
+	}, 60000);
+};
