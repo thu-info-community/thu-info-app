@@ -128,3 +128,5 @@ export const UPDATE_INFO_URL =
 export const TSINGHUA_CLOUD_URL = "https://cloud.tsinghua.edu.cn";
 export const POPI_URL =
 	"https://cloud.tsinghua.edu.cn/f/2187997c76544445ad0f/?dl=1";
+export const CALENDAR_CONFIG_URL =
+	"https://cloud.tsinghua.edu.cn/f/927782def35b4117952e/?dl=1";

@@ -1,7 +1,12 @@
 import {Config} from "../states/config";
 import {defaultConfigState} from "../defaults";
 import {ConfigAction} from "../actions/config";
-import {SET_DO_NOT_REMIND, SET_LAST_SELF_VERSION} from "../constants";
+import {
+	SET_CALENDAR_CONFIG,
+	SET_DO_NOT_REMIND,
+	SET_LAST_SELF_VERSION,
+} from "../constants";
+import {Calendar} from "../../utils/calendar";
 
 export const config = (
 	state: Config = defaultConfigState,
@@ -12,6 +17,15 @@ export const config = (
 			return {...state, doNotRemind: action.payload};
 		case SET_LAST_SELF_VERSION:
 			return {...state, lastSelfVersion: action.payload};
+		case SET_CALENDAR_CONFIG:
+			const {firstDay, weekCount, semesterType, semesterId} = action.payload;
+			return {
+				...state,
+				firstDay: new Calendar(firstDay),
+				weekCount,
+				semesterType,
+				semesterId,
+			};
 		default:
 			return state;
 	}

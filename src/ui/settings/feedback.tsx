@@ -15,13 +15,16 @@ import Snackbar from "react-native-snackbar";
 const BottomButton = ({
 	text,
 	onPress,
+	disabled,
 }: {
 	text: keyof typeof zh;
 	onPress: (event: GestureResponderEvent) => void;
+	disabled: boolean;
 }) => (
 	<TouchableOpacity
-		style={{backgroundColor: "#0002", flex: 1, margin: 4}}
-		onPress={onPress}>
+		style={{backgroundColor: disabled ? "#0000" : "#0002", flex: 1, margin: 4}}
+		disabled={disabled}
+		onPress={(e) => !disabled && onPress(e)}>
 		<Text style={{textAlign: "center", padding: 10}}>{getStr(text)}</Text>
 	</TouchableOpacity>
 );
@@ -50,7 +53,11 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 					justifyContent: "space-around",
 					padding: 5,
 				}}>
-				<BottomButton text="popi" onPress={() => navigation.navigate("Popi")} />
+				<BottomButton
+					text="popi"
+					onPress={() => navigation.navigate("Popi")}
+					disabled={false}
+				/>
 				<BottomButton
 					text="submit"
 					onPress={() => {
@@ -68,6 +75,7 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 								}),
 							);
 					}}
+					disabled={text.length === 0}
 				/>
 			</View>
 		</View>

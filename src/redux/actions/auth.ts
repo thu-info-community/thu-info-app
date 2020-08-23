@@ -6,6 +6,7 @@ import {getTickets, login} from "../../network/core";
 import {leanCloudInit} from "../../utils/leanCloud";
 import {checkUpdate} from "../../utils/checkUpdate";
 import {fullNameThunk} from "./basics";
+import {refreshCalendarConfig} from "./config";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
@@ -26,6 +27,7 @@ export const authThunk = (userId: string, password: string) => (
 			getTickets();
 			checkUpdate();
 			leanCloudInit();
+			refreshCalendarConfig();
 			// @ts-ignore
 			dispatch(fullNameThunk());
 		})
