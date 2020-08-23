@@ -15,6 +15,7 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
+import {Calendar} from "../utils/calendar";
 
 const KeychainStorage = createKeychainStorage();
 
@@ -53,6 +54,18 @@ const rootReducer = combineReducers({
 	),
 });
 
+const calendarConfigTransform = createTransform(
+	(subState: Config) => ({
+		...subState,
+		firstDay: subState.firstDay.date.format("YYYY-MM-DD"),
+	}),
+	(state) => ({
+		...state,
+		firstDay: new Calendar(state.firstDay),
+	}),
+	{whitelist: ["config"]},
+);
+
 const scheduleFilter = createBlacklistFilter("schedule", [
 	"primaryRefreshing",
 	"secondaryRefreshing",
@@ -63,7 +76,7 @@ const persistConfig = {
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule", "config"],
-	transforms: [scheduleFilter],
+	transforms: [calendarConfigTransform, scheduleFilter],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
