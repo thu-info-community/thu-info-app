@@ -229,7 +229,7 @@ export const retryWrapper = async <R>(
 };
 
 const performGetTickets = () => {
-	([-1, 792, 824, 2005] as ValidTickets[]).forEach((target) => {
+	([792, 824, 2005] as ValidTickets[]).forEach((target) => {
 		getTicket(target)
 			.then(() => console.log(`Ticket ${target} get.`))
 			.catch(() => console.warn(`Getting ticket ${target} failed.`));
@@ -238,6 +238,9 @@ const performGetTickets = () => {
 
 export const getTickets = () => {
 	performGetTickets();
+	getTicket(-1)
+		.then(() => console.log("Ticket -1 get."))
+		.catch(() => console.warn("Getting ticket -1 failed."));
 	setInterval(() => {
 		console.log("Keep alive start.");
 		performGetTickets();
