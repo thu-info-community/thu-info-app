@@ -1,4 +1,4 @@
-import {Button, Text, TextInput, View} from "react-native";
+import {Button, Text, TextInput, View, YellowBox} from "react-native";
 import React, {useState} from "react";
 import {connect} from "react-redux";
 import {ConfigureDormRouteProp, HomeNav} from "./homeStack";
@@ -69,7 +69,9 @@ export const configureDorm = (callback: () => any, navigation: HomeNav) => {
 	if (dormLoginStatus.loggedIn) {
 		callback();
 	} else {
-		// TODO: solve problems of non-serializable params.
+		YellowBox.ignoreWarnings([
+			"Non-serializable values were found in the navigation state",
+		]);
 		navigation.navigate("ConfigureDorm", {callback});
 	}
 };
