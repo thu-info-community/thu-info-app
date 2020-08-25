@@ -6,6 +6,7 @@ import {
 import {retrieve} from "../../network/core";
 import {CALENDAR_CONFIG_URL} from "../../constants/strings";
 import {store} from "../store";
+import {Calendar} from "../../utils/calendar";
 
 export type CalendarConfig = {
 	firstDay: string;
@@ -21,9 +22,14 @@ export type ConfigAction =
 
 export const refreshCalendarConfig = () => {
 	retrieve(CALENDAR_CONFIG_URL).then((s) => {
+		const payload = JSON.parse(s) as CalendarConfig;
 		store.dispatch({
 			type: SET_CALENDAR_CONFIG,
-			payload: JSON.parse(s) as CalendarConfig,
+			payload,
 		});
+		Calendar.firstDay = new Calendar(payload.firstDay);
+		Calendar.weekCount = payload.weekCount;
+		Calendar.semesterType = payload.semesterType;
+		Calendar.semesterId = payload.semesterId;
 	});
 };
