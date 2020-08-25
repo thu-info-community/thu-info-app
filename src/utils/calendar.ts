@@ -28,15 +28,16 @@ export class Calendar {
 	}
 
 	get dayOfWeek(): number {
-		return this.date.day();
+		const day = this.date.day();
+		return day === 0 ? 7 : day;
 	}
 
 	format = (template?: string) => this.date.format(template);
 
 	diff = (other: Calendar) => this.date.diff(other.date);
 
-	static firstDay = new Calendar("2020-06-22");
-	static weekCount = 12;
-	static semesterType = SemesterType.SUMMER;
-	static semesterId = "2019-2020-3";
+	static firstDay = new Calendar("2020-09-14");
+	static weekCount = 18;
+	static semesterType = SemesterType.AUTUMN;
+	static semesterId = "2020-2021-1";
 }
