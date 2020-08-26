@@ -5860,6 +5860,13 @@ react-is@^16.12.0, react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1, react-
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha1-eJcppNw23imZ3BVt1sHZwYzqVqQ=
 
+react-native-cookies@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npm.taobao.org/react-native-cookies/download/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
+  integrity sha1-Un9l6y2KegABB3BrsRvrV/UR5wE=
+  dependencies:
+    invariant "^2.1.0"
+
 react-native-easy-grid@^0.2.2:
   version "0.2.2"
   resolved "https://registry.npm.taobao.org/react-native-easy-grid/download/react-native-easy-grid-0.2.2.tgz#f0be33620be1ebe2d2295918eb58b0a27e8272ab"

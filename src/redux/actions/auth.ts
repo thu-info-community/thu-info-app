@@ -7,6 +7,7 @@ import {leanCloudInit} from "../../utils/leanCloud";
 import {checkUpdate} from "../../utils/checkUpdate";
 import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
+import CookieManager from "react-native-cookies";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
@@ -20,7 +21,8 @@ export const authThunk = (userId: string, password: string) => (
 	dispatch: Dispatch<AuthAction>,
 ) => {
 	dispatch(authAction.request({userId, password}));
-	login(userId, password)
+	CookieManager.clearAll()
+		.then(() => login(userId, password))
 		.then((r) => {
 			dispatch(authAction.success(r));
 			// Things that should be done only once upon logged in
