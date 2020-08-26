@@ -211,6 +211,8 @@ dependencies {
 
     compile project(':react-native-version-number')
 
+    compile project(':react-native-cookies')
+
     implementation 'com.android.support:multidex:1.+'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
