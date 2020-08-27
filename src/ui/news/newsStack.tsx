@@ -6,11 +6,11 @@ import {
 import {NewsScreen} from "./news";
 import {getStr} from "../../utils/i18n";
 import {NewsDetailScreen} from "./newsDetail";
-import {sourceTag} from "src/network/news";
+import {sourceTag, newsSlice} from "src/network/news";
 
 type NewsStackParamList = {
 	News: {source: sourceTag};
-	NewsDetail: {url: string};
+	NewsDetail: {detail: newsSlice};
 };
 
 const Stack = createStackNavigator<NewsStackParamList>();

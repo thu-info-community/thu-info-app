@@ -22,10 +22,14 @@ export const getNewsList = (
 		const $ = cheerio.load(str);
 		let newsList: newsSlice[] = [];
 		$("ul.cont_list > li", str).each((_, item) => {
+			let newsUrl: string = item.children[3].attribs.href;
+			if (newsUrl[0] === "/") {
+				newsUrl = "https://webvpn.tsinghua.edu.cn" + newsUrl;
+			}
 			newsList.push(
 				new newsSlice(
 					getCheerioText(item, 3),
-					item.children[3].attribs.href,
+					newsUrl,
 					getCheerioText(item, 7),
 					item.children[4].data?.substr(3, item.children[4].data?.length - 5) ??
 						"",
@@ -38,8 +42,14 @@ export const getNewsList = (
 };
 
 export const getNewsDetail = (url: string): Promise<string> => {
-	return retrieve(url, undefined, undefined, "GBK").then((str) => {
+	return retrieve(url, undefined, undefined, "UTF-8").then((str) => {
 		const $ = cheerio.load(str);
-		return $("html").html() ?? "<html></html>";
+		let htmlString: string = "";
+		$(
+			"html > body > div.wrapper > div.content > section.cont_box > div.cont_doc_box > div > div.field > div.field-items > div.field-item",
+		).each((_, item) => {
+			htmlString += $(item).html();
+		});
+		return htmlString;
 	});
 };

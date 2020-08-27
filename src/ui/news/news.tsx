@@ -120,10 +120,7 @@ export const NewsScreen = ({route, navigation}: any) => {
 		}
 
 		newsSource
-			.getLatestNewsList(
-				newsNumberOnOnePage,
-				route.params === undefined ? undefined : route.params.source,
-			)
+			.getLatestNewsList(newsNumberOnOnePage, route.params?.source)
 			.then((res) => {
 				setNewsList((o) => o.concat(res));
 			})
@@ -200,7 +197,7 @@ export const NewsScreen = ({route, navigation}: any) => {
 				<TouchableOpacity
 					style={styles.newsSliceContainer}
 					onPress={() => {
-						navigation.navigate("NewsDetail", {url: item.url});
+						navigation.navigate("NewsDetail", {detail: item});
 					}}>
 					<View style={styles.titleContainer}>
 						<TouchableWithoutFeedback
