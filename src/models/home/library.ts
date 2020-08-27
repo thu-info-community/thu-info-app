@@ -30,3 +30,10 @@ export interface LibrarySeat extends Library {
 
 export const byId = (a: LibraryBase, b: LibraryBase) =>
 	Number(a.id) - Number(b.id);
+
+export interface LibBookRecord {
+	id: string;
+	pos: string;
+	time: string;
+	status: string;
+}
