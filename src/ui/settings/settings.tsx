@@ -41,5 +41,9 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("feedback")}
 			onPress={() => navigation.navigate("Feedback")}
 		/>
+		<SettingsItem
+			text={getStr("eleRecord")}
+			onPress={() => navigation.navigate("EleRecord")}
+		/>
 	</>
 );

@@ -7,11 +7,13 @@ import {getStr} from "../../utils/i18n";
 import React from "react";
 import {FeedbackScreen} from "./feedback";
 import {PopiScreen} from "./popi";
+import {EleRecordScreen} from "./eleRecord";
 
 type SettingsStackParamList = {
 	Settings: undefined;
 	Feedback: undefined;
 	Popi: undefined;
+	EleRecord: undefined;
 };
 
 const Stack = createStackNavigator<SettingsStackParamList>();
@@ -34,6 +36,11 @@ export const SettingStackScreen = () => (
 			name="Popi"
 			component={PopiScreen}
 			options={{title: getStr("popi")}}
+		/>
+		<Stack.Screen
+			name="EleRecord"
+			component={EleRecordScreen}
+			options={{title: getStr("eleRecord")}}
 		/>
 	</Stack.Navigator>
 );
