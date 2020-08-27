@@ -3,6 +3,7 @@ import {connect, retrieve, stringify} from "./core";
 import {
 	ID_LOGIN_CHECK_URL,
 	LIBRARY_AREAS_URL,
+	LIBRARY_BOOK_RECORD_URL,
 	LIBRARY_BOOK_URL_PREFIX,
 	LIBRARY_BOOK_URL_SUFFIX,
 	LIBRARY_DAYS_URL,
@@ -13,6 +14,7 @@ import {
 } from "../constants/strings";
 import {
 	byId,
+	LibBookRecord,
 	Library,
 	LibraryDate,
 	LibraryFloor,
@@ -22,6 +24,7 @@ import {
 import "../../src/utils/extensions";
 import {currState} from "../redux/store";
 import cheerio from "cheerio";
+import {getCheerioText} from "../utils/cheerio";
 
 const fetchJson = (
 	url: string,
@@ -174,3 +177,21 @@ export const bookLibrarySeat = async (
 			},
 		),
 	);
+
+export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
+	await getAccessToken();
+	const html = await retrieve(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
+	const result = cheerio("tbody", html)
+		.children()
+		.map((index, element) => ({
+			id: getCheerioText(element, 3),
+			pos: getCheerioText(element, 5),
+			time: getCheerioText(element, 7),
+			status: getCheerioText(element, 11),
+		}))
+		.get();
+	if (result.length === 0 && html.indexOf("tbody") === -1) {
+		throw new Error("Getting lib book record failed!");
+	}
+	return result;
+};

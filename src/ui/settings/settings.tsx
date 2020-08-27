@@ -45,5 +45,9 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("eleRecord")}
 			onPress={() => navigation.navigate("EleRecord")}
 		/>
+		<SettingsItem
+			text={getStr("libBookRecord")}
+			onPress={() => navigation.navigate("LibBookRecord")}
+		/>
 	</>
 );
