@@ -119,6 +119,8 @@ export const LIBRARY_BOOK_URL_PREFIX =
 export const LIBRARY_BOOK_URL_SUFFIX = "/book";
 export const LIBRARY_BOOK_RECORD_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/user/index/book";
+export const CANCEL_BOOKING_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/profile/books/";
 export const PHYSICAL_EXAM_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=jsonCj";
 export const PHYSICAL_EXAM_REFERER =

@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 import {connect, retrieve, stringify} from "./core";
 import {
+	CANCEL_BOOKING_URL,
 	ID_LOGIN_CHECK_URL,
 	LIBRARY_AREAS_URL,
 	LIBRARY_BOOK_RECORD_URL,
@@ -183,15 +184,37 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 	const html = await retrieve(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
 	const result = cheerio("tbody", html)
 		.children()
-		.map((index, element) => ({
-			id: getCheerioText(element, 3),
-			pos: getCheerioText(element, 5),
-			time: getCheerioText(element, 7),
-			status: getCheerioText(element, 11),
-		}))
+		.map((index, element) => {
+			const delOnclick = element.children[15].children[3]?.attribs?.onclick;
+			const delStrIndex = delOnclick?.indexOf("menuDel") + 9;
+			const rightIndex = delOnclick?.indexOf("'", delStrIndex);
+			return {
+				id: getCheerioText(element, 3),
+				pos: getCheerioText(element, 5),
+				time: getCheerioText(element, 7),
+				status: getCheerioText(element, 11),
+				delId: delOnclick?.substring(delStrIndex, rightIndex),
+			};
+		})
 		.get();
 	if (result.length === 0 && html.indexOf("tbody") === -1) {
 		throw new Error("Getting lib book record failed!");
 	}
 	return result;
+};
+
+export const cancelBooking = async (id: string): Promise<void> => {
+	const token = await getAccessToken();
+	return retrieve(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
+		_method: "delete",
+		id,
+		userid: currState().auth.userId,
+		access_token: token,
+	})
+		.then(JSON.parse)
+		.then((data: any) => {
+			if (!data.status) {
+				throw data.message;
+			}
+		});
 };

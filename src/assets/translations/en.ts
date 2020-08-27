@@ -18,6 +18,9 @@ export default {
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",
 	libBookRecord: "Library Booking Records",
+	cancelBooking: "Cancel",
+	confirmCancelBooking: "Sure to cancel?",
+	cancelSucceeded: "Successfully cancelled.",
 	submit: "Submit",
 	feedbackHint:
 		"Both bug-report and suggestions are welcomed!\nWe do not know who you are, so don't be afraid~\nResponses can be found in the Popi Ask box.\nGitHub repo: https://github.com/UNIDY2002/THUInfo\nIssues and pull requests are also welcomed!",

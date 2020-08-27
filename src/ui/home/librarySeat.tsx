@@ -39,6 +39,10 @@ export const LibrarySeatScreen = ({route}: {route: LibrarySeatRouteProp}) => {
 									{
 										text: getStr("confirm"),
 										onPress: () => {
+											Snackbar.show({
+												text: getStr("processing"),
+												duration: Snackbar.LENGTH_SHORT,
+											});
 											bookLibrarySeat(item, date)
 												.then(({status, msg}) => {
 													Snackbar.show({

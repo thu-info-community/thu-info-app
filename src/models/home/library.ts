@@ -36,4 +36,5 @@ export interface LibBookRecord {
 	pos: string;
 	time: string;
 	status: string;
+	delId: string | undefined;
 }
