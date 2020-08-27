@@ -5,10 +5,10 @@ import {FlatList, RefreshControl} from "react-native";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: () => Promise<T[]>,
-	renderItem: (item: T) => JSX.Element,
+	renderItem: (item: T, refresh: () => void) => JSX.Element,
 	keyExtractor: (item: T) => string,
 	footer?: JSX.Element,
-): any {
+): () => JSX.Element {
 	return () => {
 		const [data, setData] = useState<T[]>([]);
 		const [refreshing, setRefreshing] = useState(false);
@@ -30,10 +30,10 @@ export function simpleRefreshListScreen<T>(
 		return (
 			<FlatList
 				data={data}
-				refreshing={refreshing}
-				refreshControl={<RefreshControl refreshing={refreshing} />}
-				onRefresh={refresh}
-				renderItem={({item}) => renderItem(item)}
+				refreshControl={
+					<RefreshControl refreshing={refreshing} onRefresh={refresh} />
+				}
+				renderItem={({item}) => renderItem(item, refresh)}
 				keyExtractor={keyExtractor}
 				ListFooterComponent={footer}
 			/>

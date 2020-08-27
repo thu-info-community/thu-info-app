@@ -17,6 +17,9 @@ export default {
 	eleRecord: "电费充值记录",
 	eleRecordRestriction: "现仅支持查看最近25条记录。",
 	libBookRecord: "图书馆预约记录",
+	cancelBooking: "取消预约",
+	confirmCancelBooking: "确认要取消预约吗？",
+	cancelSucceeded: "取消成功",
 	submit: "提交",
 	feedbackHint:
 		"找bug，提建议，都欢迎呀！\n我们看不到你是谁，所以请放心大胆地说~\n我们看到你的反馈后，会第一时间在提问箱中给出答复！\n也欢迎dalao前往github.com/UNIDY2002/THUInfo提Issue、PR~",
