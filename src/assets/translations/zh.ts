@@ -14,6 +14,8 @@ export default {
 	settings: "设置",
 	feedback: "反馈",
 	popi: "提问箱",
+	eleRecord: "电费充值记录",
+	eleRecordRestriction: "现仅支持查看最近25条记录。",
 	submit: "提交",
 	feedbackHint:
 		"找bug，提建议，都欢迎呀！\n我们看不到你是谁，所以请放心大胆地说~\n我们看到你的反馈后，会第一时间在提问箱中给出答复！\n也欢迎dalao前往github.com/UNIDY2002/THUInfo提Issue、PR~",

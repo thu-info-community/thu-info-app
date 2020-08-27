@@ -3,6 +3,7 @@ import {
 	DORM_SCORE_HOST,
 	DORM_SCORE_REFERER,
 	DORM_SCORE_URL,
+	ELE_PAY_RECORD_URL,
 	RECHARGE_ELE_REFERER,
 	RECHARGE_ELE_URL,
 	RECHARGE_PAY_ELE_POST_MIDDLE_A,
@@ -18,18 +19,9 @@ import {
 import cheerio from "cheerio";
 import {currState} from "../redux/store";
 import {generalGetPayCode} from "../utils/generalAlipay";
+import {getCheerioText} from "../utils/cheerio";
 
-export const getDormScore = (): Promise<string> =>
-	retryWrapper(
-		-1,
-		retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
-			(s) =>
-				DORM_SCORE_HOST +
-				cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-		),
-	);
-
-export const getEleRechargePayCode = async (money: number): Promise<string> => {
+const loginToHome = async () => {
 	const validChars = new Set(
 		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~",
 	);
@@ -43,8 +35,6 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 			tempPassword += password.charAt(i);
 		}
 	}
-
-	// Login to tsinghua home website
 	await connect(
 		TSINGHUA_HOME_LOGIN_URL,
 		undefined,
@@ -54,8 +44,21 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 			encodeURIComponent(tempPassword) +
 			TSINGHUA_HOME_LOGIN_POST_SUFFIX,
 	);
+};
 
-	// Get necessary form data
+export const getDormScore = (): Promise<string> =>
+	retryWrapper(
+		-1,
+		retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
+			(s) =>
+				DORM_SCORE_HOST +
+				cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+		),
+	);
+
+export const getEleRechargePayCode = async (money: number): Promise<string> => {
+	await loginToHome();
+
 	const $ = await retrieve(
 		RECHARGE_ELE_URL,
 		RECHARGE_ELE_REFERER,
@@ -66,7 +69,6 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 	const username = $("input[name=username]").attr().value;
 	const louhao = $("input[name=louhao]").attr().value;
 
-	// Send pay request to tsinghua
 	const redirect = await retrieve(
 		RECHARGE_PAY_ELE_URL,
 		RECHARGE_ELE_URL,
@@ -80,4 +82,27 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 	).then((s) => cheerio("#banksubmit", s).attr().action);
 
 	return generalGetPayCode(redirect, RECHARGE_PAY_ELE_URL);
+};
+
+export const getElePayRecord = async (): Promise<
+	[string, string, string, string, string, string][]
+> => {
+	await loginToHome();
+	const $ = await retrieve(
+		ELE_PAY_RECORD_URL,
+		RECHARGE_ELE_URL,
+		undefined,
+		"gb2312",
+	).then(cheerio.load);
+
+	return $(".myTable")
+		.first()
+		.children()
+		.slice(1)
+		.map((index, element) => [
+			element.children
+				.filter((it) => it.tagName === "td")
+				.map((it) => getCheerioText(it, 1)),
+		])
+		.get();
 };

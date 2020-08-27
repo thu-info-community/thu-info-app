@@ -63,6 +63,8 @@ export const QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_UTF8 =
 	"%E6%B8%85%E5%8D%8E%E5%AD%A6%E7%94%9F%E7%B4%AB%E8%8D%86%E7%94%B5%E8%A1%A8";
 export const QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_GBK =
 	"%C7%E5%BB%AA%D1%A7%C9%FA%D7%CF%BE%A3%B5%E7%B1%ED";
+export const ELE_PAY_RECORD_URL =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/Netweb_List/netweb_ele_pay_record.aspx";
 export const PRE_ROAM_URL_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?mode=local&id=";
 export const ASSESSMENT_LIST_URL =
