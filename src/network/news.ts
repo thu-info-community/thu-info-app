@@ -41,15 +41,17 @@ export const getNewsList = (
 	});
 };
 
-export const getNewsDetail = (url: string): Promise<string> => {
+export const getNewsDetail = (url: string): Promise<[string, string]> => {
 	return retrieve(url, undefined, undefined, "UTF-8").then((str) => {
 		const $ = cheerio.load(str);
 		let htmlString: string = "";
+		let abstractString: string = "";
 		$(
 			"html > body > div.wrapper > div.content > section.cont_box > div.cont_doc_box > div > div.field > div.field-items > div.field-item",
 		).each((_, item) => {
 			htmlString += $(item).html();
+			abstractString += $(item).text();
 		});
-		return htmlString;
+		return [htmlString, abstractString];
 	});
 };

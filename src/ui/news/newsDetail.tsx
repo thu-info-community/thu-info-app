@@ -4,15 +4,16 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
 import {View, StyleSheet} from "react-native";
+import {NewsDetailRouteProp} from "./newsStack";
 
-export const NewsDetailScreen = ({route}: any) => {
+export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
 	const [refreshing, setRefreshing] = useState(true);
 
 	const fetchHtml = () => {
 		setRefreshing(true);
 		getNewsDetail(route.params.detail.url)
-			.then((res) => {
+			.then(([res]) => {
 				setHtml(res);
 				// console.log(res);
 				setRefreshing(false);
