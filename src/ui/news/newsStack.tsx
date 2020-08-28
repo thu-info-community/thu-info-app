@@ -7,11 +7,15 @@ import {NewsScreen} from "./news";
 import {getStr} from "../../utils/i18n";
 import {NewsDetailScreen} from "./newsDetail";
 import {sourceTag, newsSlice} from "src/network/news";
+import {RouteProp} from "@react-navigation/native";
 
 type NewsStackParamList = {
 	News: {source: sourceTag};
 	NewsDetail: {detail: newsSlice};
 };
+
+export type NewsRouteProp = RouteProp<NewsStackParamList, "News">;
+export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
 
 const Stack = createStackNavigator<NewsStackParamList>();
 

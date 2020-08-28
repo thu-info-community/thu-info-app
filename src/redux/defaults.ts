@@ -3,6 +3,7 @@ import {Schedule} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
 import {Calendar} from "../utils/calendar";
+import {Cache} from "./states/cache";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -35,4 +36,8 @@ export const defaultConfigState: Config = {
 
 export const defaultCredentials: Credentials = {
 	dormPassword: "",
+};
+
+export const defaultCache: Cache = {
+	news: [],
 };

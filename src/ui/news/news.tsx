@@ -8,7 +8,12 @@ import {
 	Alert,
 } from "react-native";
 import React, {useState, useEffect} from "react";
-import {newsSlice, getNewsList, sourceTag} from "src/network/news";
+import {
+	newsSlice,
+	getNewsList,
+	sourceTag,
+	getNewsDetail,
+} from "src/network/news";
 import {
 	FlatList,
 	TouchableOpacity,
@@ -24,8 +29,15 @@ import {
 	KYTZ_MAIN_PREFIX,
 	HB_MAIN_PREFIX,
 } from "src/constants/strings";
+import {State} from "../../redux/store";
+import {ADD_NEWS_CACHE} from "../../redux/constants";
+import {NewsCache} from "../../redux/states/cache";
+import {connect} from "react-redux";
+import {NewsNav, NewsRouteProp} from "./newsStack";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
-// TODO: Detail
+dayjs.extend(customParseFormat);
 
 class newsSourceList {
 	private newsLoadList: Array<newsSlice[]>;
@@ -91,7 +103,14 @@ class newsSourceList {
 	}
 }
 
-export const NewsScreen = ({route, navigation}: any) => {
+interface NewsUIProps {
+	route: NewsRouteProp;
+	navigation: NewsNav;
+	cache: Map<string, string>;
+	addCache: (payload: NewsCache) => void;
+}
+
+export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsList, setNewsList] = useState<newsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -122,6 +141,17 @@ export const NewsScreen = ({route, navigation}: any) => {
 		newsSource
 			.getLatestNewsList(newsNumberOnOnePage, route.params?.source)
 			.then((res) => {
+				res.forEach(({url, date}) => {
+					if (cache.get(url) === undefined) {
+						getNewsDetail(url).then(([_, abstract]) => {
+							addCache({
+								url,
+								timestamp: dayjs(date, "YYYY.MM.DD").toDate().valueOf(),
+								abstract: abstract.slice(0, 50),
+							});
+						});
+					}
+				});
 				setNewsList((o) => o.concat(res));
 			})
 			.catch(() => {
@@ -240,18 +270,14 @@ export const NewsScreen = ({route, navigation}: any) => {
 								{item.source + (item.source ? getStr(":") : "")}
 							</Text>
 							<Text style={{color: "gray"}}>
-								It is abstract. It is abstract. It is abstract. It is abstract.
-								It is abstract. It is abstract. It is abstract. It is abstract.
-								It is abstract. It is abstract. It is abstract. It is abstract.
-								It is abstract. It is abstract. It is abstract. It is abstract.
-								It is abstract.
+								{cache.get(item.url) ?? getStr("loading")}
 							</Text>
 						</Text>
 					</TouchableOpacity>
 				</View>
 			)}
 			onEndReached={() => fetchNewsList(false)}
-			onEndReachedThreshold={-0.15}
+			onEndReachedThreshold={0.6}
 			ListFooterComponent={
 				loading && newsList.length !== 0 ? (
 					<View style={styles.footerContainer}>
@@ -322,3 +348,18 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 });
+
+export const NewsScreen = connect(
+	(state: State) => {
+		const cache = new Map<string, string>();
+		state.cache.news.forEach(({url, abstract}: NewsCache) => {
+			cache.set(url, abstract);
+		});
+		return {cache};
+	},
+	(dispatch) => ({
+		addCache: (payload: NewsCache) => {
+			dispatch({type: ADD_NEWS_CACHE, payload});
+		},
+	}),
+)(NewsUI);
