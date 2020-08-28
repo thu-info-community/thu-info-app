@@ -279,7 +279,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					/>
 				}>
 				<ViewShot ref={viewShot}>
-					<Grid>
+					<Grid style={{backgroundColor: "#EEE"}}>
 						<Col size={1}>
 							<GridRow span={headerSpan} />
 							{Array.from(new Array(14), (_, id) => (
