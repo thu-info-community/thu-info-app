@@ -133,7 +133,6 @@ export default {
 	KYTZ: "R&D Notice",
 	HB: "Poster",
 	":": ": ",
-	confirm: "Confirm",
 	newsNumberOnPage: "Number of news on one page: ",
 	numberOfNewsOutOfRange:
 		"Number of news on one page should be no more than 100 and no less than 10",
