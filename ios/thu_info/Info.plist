@@ -76,5 +76,10 @@
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>alipay</string>
+		<string>alipayqr</string>
+	</array>
 </dict>
 </plist>
