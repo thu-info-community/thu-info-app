@@ -3,7 +3,7 @@ import React from "react";
 import {HomeNav} from "./homeStack";
 import {performLoseCard} from "../../components/home/loseCard";
 import {getEleRechargePayCode} from "../../network/dorm";
-import Alipay from "../../utils/alipay";
+import {doAlipay} from "../../utils/alipay";
 import {AlipayPopup} from "../../components/home/alipayPopup";
 import {configureDorm} from "./configureDorm";
 import IconReport from "../../assets/icons/IconReport";
@@ -103,7 +103,7 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		</HomeSection>
 		<HomeSection title="dorm">
 			<AlipayPopup
-				onPay={(money) => getEleRechargePayCode(money).then(Alipay.pay)}
+				onPay={(money) => getEleRechargePayCode(money).then(doAlipay)}
 				title="eleRecharge"
 				navigation={navigation}>
 				<IconEleRecharge width={iconSize} height={iconSize} />
