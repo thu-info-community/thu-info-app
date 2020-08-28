@@ -14,7 +14,7 @@ export const NewsDetailScreen = ({route}: any) => {
 		getNewsDetail(route.params.detail.url)
 			.then((res) => {
 				setHtml(res);
-				console.log(res);
+				// console.log(res);
 				setRefreshing(false);
 			})
 			.catch(() => {
@@ -30,7 +30,11 @@ export const NewsDetailScreen = ({route}: any) => {
 
 	return (
 		<View style={styles.container}>
-			<WebView source={{html: html}} style={styles.webContainer} />
+			<WebView
+				source={{html: html}}
+				containerStyle={styles.webContainer}
+				textZoom={300} // TODO: what about ios?
+			/>
 		</View>
 	);
 };

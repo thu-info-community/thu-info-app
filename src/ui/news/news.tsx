@@ -129,10 +129,11 @@ export const NewsScreen = ({route, navigation}: any) => {
 					text: getStr("networkRetry"),
 					duration: Snackbar.LENGTH_LONG,
 				});
+			})
+			.then(() => {
+				setRefreshing(false);
+				setLoading(false);
 			});
-
-		setRefreshing(false);
-		setLoading(false);
 	};
 
 	const rerender = () => {
@@ -194,11 +195,7 @@ export const NewsScreen = ({route, navigation}: any) => {
 			data={newsList}
 			keyExtractor={(item) => "" + newsList.indexOf(item)}
 			renderItem={({item}) => (
-				<TouchableOpacity
-					style={styles.newsSliceContainer}
-					onPress={() => {
-						navigation.navigate("NewsDetail", {detail: item});
-					}}>
+				<View style={styles.newsSliceContainer}>
 					<View style={styles.titleContainer}>
 						<TouchableWithoutFeedback
 							onPress={() => {
@@ -227,29 +224,31 @@ export const NewsScreen = ({route, navigation}: any) => {
 							</Text>
 						</View>
 					</View>
-					<Text
-						style={{
-							fontSize: 16,
-							fontWeight: "bold",
-							margin: 5,
-							lineHeight: 20,
-						}}>
-						{item.name}
-					</Text>
-					<Text style={{margin: 5}} numberOfLines={5}>
-						<Text style={{fontWeight: "bold"}}>
-							{item.source + (item.source ? getStr(":") : "")}
+					<TouchableOpacity
+						onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
+						<Text
+							style={{
+								fontSize: 16,
+								fontWeight: "bold",
+								margin: 5,
+								lineHeight: 20,
+							}}>
+							{item.name}
 						</Text>
-						<Text style={{color: "gray"}}>
-							It is abstract. It is abstract. It is abstract. It is abstract. It
-							is abstract. It is abstract. It is abstract. It is abstract. It is
-							abstract. It is abstract. It is abstract. It is abstract. It is
-							abstract. It is abstract. It is abstract. It is abstract. It is
-							abstract.{" "}
+						<Text style={{margin: 5}} numberOfLines={5}>
+							<Text style={{fontWeight: "bold"}}>
+								{item.source + (item.source ? getStr(":") : "")}
+							</Text>
+							<Text style={{color: "gray"}}>
+								It is abstract. It is abstract. It is abstract. It is abstract.
+								It is abstract. It is abstract. It is abstract. It is abstract.
+								It is abstract. It is abstract. It is abstract. It is abstract.
+								It is abstract. It is abstract. It is abstract. It is abstract.
+								It is abstract.
+							</Text>
 						</Text>
-					</Text>
-					<Text />
-				</TouchableOpacity>
+					</TouchableOpacity>
+				</View>
 			)}
 			onEndReached={() => fetchNewsList(false)}
 			onEndReachedThreshold={-0.15}
