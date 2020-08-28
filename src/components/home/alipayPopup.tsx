@@ -1,4 +1,4 @@
-import Alipay from "../../utils/alipay";
+import {hasAlipay} from "../../utils/alipay";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import React, {useState} from "react";
@@ -71,7 +71,7 @@ export const AlipayPopup = ({
 							onPress={() => {
 								valid &&
 									!processing &&
-									Alipay.exists()
+									hasAlipay()
 										.then(() => {
 											setProcessing(true);
 											onPay(Number(money))
