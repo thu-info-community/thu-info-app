@@ -1,4 +1,24 @@
 {
-  "extends": ["config:base"],
-  "ignorePaths": ["android", "ios", "gradle", "src"]
+	"extends": [
+		"config:base"
+	],
+	"ignorePaths": [
+		"android",
+		"ios",
+		"gradle",
+		"src"
+	],
+	"packageRules": [
+		{
+			"updateTypes": [
+				"minor",
+				"patch",
+				"pin",
+				"digest"
+			],
+			"automerge": true,
+			"automergeType": "branch",
+			"requiredStatusChecks": null
+		}
+	]
 }
