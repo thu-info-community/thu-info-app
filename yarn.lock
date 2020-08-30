@@ -6436,10 +6436,10 @@ react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.npm.taobao.org/react-native-iphone-x-helper/download/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha1-ZF4v+7tJ6AhEu0y740oSb9oeZ3I=
 
-react-native-keychain@^4.0.5:
-  version "4.0.5"
-  resolved "https://registry.npm.taobao.org/react-native-keychain/download/react-native-keychain-4.0.5.tgz#6d3aef8f2789fc0dfa8149b8400d82ff77be361a"
-  integrity sha1-bTrvjyeJ/A36gUm4QA2C/3e+Nho=
+react-native-keychain@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-6.1.1.tgz#3c14e4df9e5599f8d5a708da75d27f9d2424d7c1"
+  integrity sha512-WYvAg7FbYPyX8jJ1rY/IQGS+6zK5LtNMRa3E8x1n0M5Lmsm/9CHtakzbmqT+rLvFE7DpPBg7qFawMuUoDjjtYA==
 
 react-native-localize@^1.4.1:
   version "1.4.1"
