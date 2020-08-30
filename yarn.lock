@@ -6411,10 +6411,10 @@ react-native-popup-menu@^0.15.9:
   resolved "https://registry.npm.taobao.org/react-native-popup-menu/download/react-native-popup-menu-0.15.9.tgz#75bccf71ff4627cb302d871a28be84a91eb2f8d9"
   integrity sha1-dbzPcf9GJ8swLYcaKL6EqR6y+Nk=
 
-react-native-reanimated@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.npm.taobao.org/react-native-reanimated/download/react-native-reanimated-1.9.0.tgz#38676c99dd585504fdc7331efb45e5f48ec7339a"
-  integrity sha1-OGdsmd1YVQT9xzMe+0Xl9I7HM5o=
+react-native-reanimated@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-1.13.0.tgz#1ee5d27d34bd2cee7dfad4ae9a3673300872c917"
+  integrity sha512-uadP/0QO+4TCsyPSvzRdl+76NPM7Bp8M25KQLB4Hg3tWBMjhrMrETnzNi33L/OPfmhU+7rceyi0QPe/DxKT5bQ==
   dependencies:
     fbjs "^1.0.0"
 
