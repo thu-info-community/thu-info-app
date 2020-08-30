@@ -34,7 +34,7 @@
 		"react-native": "0.62.2",
 		"react-native-cookies": "^3.3.0",
 		"react-native-easy-grid": "^0.2.2",
-		"react-native-gesture-handler": "^1.6.1",
+		"react-native-gesture-handler": "^1.7.0",
 		"react-native-i18n": "^2.0.15",
 		"react-native-image-zoom-viewer": "^3.0.1",
 		"react-native-keychain": "^4.0.5",
