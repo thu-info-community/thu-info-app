@@ -68,7 +68,7 @@
 		"@types/react-test-renderer": "16.9.2",
 		"@typescript-eslint/eslint-plugin": "^2.27.0",
 		"@typescript-eslint/parser": "^2.27.0",
-		"babel-jest": "^24.9.0",
+		"babel-jest": "^26.3.0",
 		"eslint": "^6.5.1",
 		"jest": "^24.9.0",
 		"metro-react-native-babel-preset": "^0.58.0",
