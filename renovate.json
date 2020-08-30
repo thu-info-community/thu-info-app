@@ -1,5 +1,4 @@
 {
-  "extends": [
-    "config:base"
-  ]
+  "extends": ["config:base"],
+  "ignorePaths": ["android", "ios", "gradle", "src"]
 }
