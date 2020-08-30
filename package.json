@@ -26,7 +26,7 @@
 		"buffer": "5.6.0",
 		"cheerio": "0.22.0",
 		"dayjs": "1.8.34",
-		"events": "3.1.0",
+		"events": "3.2.0",
 		"iconv-lite": "0.6.0",
 		"leancloud-storage": "4.6.1",
 		"md5": "2.3.0",
