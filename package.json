@@ -75,7 +75,7 @@
 		"metro-react-native-babel-preset": "0.63.0",
 		"prettier": "2.1.1",
 		"react-test-renderer": "16.13.1",
-		"redux-devtools": "3.5.0",
+		"redux-devtools": "3.6.1",
 		"typescript": "3.9.5"
 	},
 	"jest": {
