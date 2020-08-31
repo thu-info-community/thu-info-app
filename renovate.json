@@ -19,6 +19,14 @@
 			"automerge": true,
 			"automergeType": "branch",
 			"requiredStatusChecks": null
+		},
+		{
+			"depTypeList": [
+				"devDependencies"
+			],
+			"automerge": true,
+			"automergeType": "branch",
+			"requiredStatusChecks": null
 		}
 	]
 }
