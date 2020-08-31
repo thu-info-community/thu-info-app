@@ -207,13 +207,13 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    compile project(':@react-native-community_cameraroll')
+    implementation project(':@react-native-community_cameraroll')
 
-    compile project(':react-native-version-number')
+    implementation project(':react-native-version-number')
 
-    compile project(':react-native-cookies')
+    implementation project(':@react-native-community_cookies')
 
-    implementation 'com.android.support:multidex:1.+'
+    implementation 'com.android.support:multidex:1.0.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group: 'com.facebook.fbjni'

@@ -7,7 +7,7 @@ import {leanCloudInit} from "../../utils/leanCloud";
 import {checkUpdate} from "../../utils/checkUpdate";
 import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
-import CookieManager from "react-native-cookies";
+import CookieManager from "@react-native-community/cookies";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
