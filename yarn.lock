@@ -1277,10 +1277,10 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@react-native-community/cookies@^4.0.1":
+"@react-native-community/cookies@4.0.1":
   version "4.0.1"
-  resolved "https://registry.npm.taobao.org/@react-native-community/cookies/download/@react-native-community/cookies-4.0.1.tgz#520f16ddf87156269b291ef9f03283a032414300"
-  integrity sha1-Ug8W3fhxViabKR758DKDoDJBQwA=
+  resolved "https://registry.yarnpkg.com/@react-native-community/cookies/-/cookies-4.0.1.tgz#520f16ddf87156269b291ef9f03283a032414300"
+  integrity sha512-SHr9evZD5NipwwKvVeSMyjdYxdouWIPP5x8AJRaABDM1BnW6Md5hyAQvQzQJMKBym5uyH9MkFvjSSJI2ueBYQQ==
   dependencies:
     invariant "^2.2.4"
 
@@ -3025,10 +3025,10 @@ eslint-plugin-prettier@3.1.2:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-prettier@^3.1.4:
+eslint-plugin-prettier@3.1.4:
   version "3.1.4"
-  resolved "https://registry.npm.taobao.org/eslint-plugin-prettier/download/eslint-plugin-prettier-3.1.4.tgz#168ab43154e2ea57db992a2cd097c828171f75c2"
-  integrity sha1-Foq0MVTi6lfbmSos0JfIKBcfdcI=
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.4.tgz#168ab43154e2ea57db992a2cd097c828171f75c2"
+  integrity sha512-jZDa8z76klRqo+TdGDTFJSavwbnWK2ZpqGKNZ+VvweMW516pDUMmQ2koXvxEE4JhzNvTv+radye/bWGBmA6jmg==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
