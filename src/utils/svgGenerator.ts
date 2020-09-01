@@ -1,3 +1,5 @@
+import {ReactElement} from "react";
+
 interface ColorBoard {
 	dark: string;
 	green: string;
@@ -12,7 +14,7 @@ export const svgGenerator = (
 		width: number | string | undefined,
 		height: number | string | undefined,
 		colors: ColorBoard,
-	) => JSX.Element,
+	) => ReactElement,
 ) => ({width, height}: {width?: number | string; height?: number | string}) =>
 	transform(width, height, {
 		dark: "#202020",

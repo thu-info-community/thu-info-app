@@ -1,7 +1,7 @@
 import {hasAlipay} from "../../utils/alipay";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import React, {useState} from "react";
+import React, {ReactElement, useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {HomeNav} from "../../ui/home/homeStack";
 import {configureDorm} from "../../ui/home/configureDorm";
@@ -17,7 +17,7 @@ export const AlipayPopup = ({
 	onPay: (money: number) => Promise<any>;
 	title: keyof typeof zh;
 	navigation: HomeNav;
-	children: JSX.Element;
+	children: ReactElement;
 }) => {
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");

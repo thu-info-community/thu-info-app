@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {FC, ReactElement, useEffect, useState} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: () => Promise<T[]>,
-	renderItem: (item: T, refresh: () => void) => JSX.Element,
+	renderItem: (item: T, refresh: () => void) => ReactElement,
 	keyExtractor: (item: T) => string,
-	footer?: JSX.Element,
-): () => JSX.Element {
+	footer?: ReactElement,
+): FC {
 	return () => {
 		const [data, setData] = useState<T[]>([]);
 		const [refreshing, setRefreshing] = useState(false);
