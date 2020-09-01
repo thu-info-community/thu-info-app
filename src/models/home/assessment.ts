@@ -1,4 +1,5 @@
 import {getStr} from "../../utils/i18n";
+import Cheerio, {CheerioElement} from "cheerio";
 
 /**
  * The minimal component of a form to be posted to the school server.

@@ -5,6 +5,9 @@ module.exports = {
 	plugins: ["@typescript-eslint"],
 	rules: {
 		"react-native/no-inline-styles": ["off"],
-		"quotes": ["error", "double"],
+		quotes: ["error", "double"],
+		// https://github.com/eslint/eslint/issues/13640
+		"no-shadow": ["off"],
+		"@typescript-eslint/no-shadow": [1],
 	},
 };

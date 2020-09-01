@@ -8,7 +8,7 @@ export const DatePickerTrigger = ({
 	disabled,
 }: {
 	date: Date;
-	onChange: (date: Date) => void;
+	onChange: (newDate: Date) => void;
 	disabled: boolean;
 }) => {
 	const [visible, setVisible] = useState(false);

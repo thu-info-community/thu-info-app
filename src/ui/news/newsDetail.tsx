@@ -27,6 +27,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 			});
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchHtml, []);
 
 	return (

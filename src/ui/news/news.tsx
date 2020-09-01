@@ -174,6 +174,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 		}
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, []);
 
 	return (

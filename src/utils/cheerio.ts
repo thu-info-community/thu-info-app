@@ -1,3 +1,5 @@
+import {CheerioElement} from "cheerio";
+
 export const getCheerioText = (element: CheerioElement, index?: number) =>
 	index === undefined
 		? element.firstChild?.data?.trim() ?? ""
