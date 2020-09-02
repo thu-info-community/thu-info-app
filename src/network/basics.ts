@@ -5,6 +5,7 @@ import {
 	ASSESSMENT_LIST_URL,
 	ASSESSMENT_MAIN_URL,
 	ASSESSMENT_SUBMIT_URL,
+	BKS_REPORT_BXR_URL,
 	CLASSROOM_STATE_MIDDLE,
 	CLASSROOM_STATE_PREFIX,
 	EXPENDITURE_URL,
@@ -16,6 +17,7 @@ import {
 	LOSE_CARD_URL,
 	PHYSICAL_EXAM_REFERER,
 	PHYSICAL_EXAM_URL,
+	YJS_REPORT_BXR_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -41,12 +43,40 @@ const gradeToOldGPA = new Map<string, number>([
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
 		792,
-		retrieve(
-			currState().config.graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
-			INFO_ROOT_URL,
-			undefined,
-			"GBK",
-		).then((str) => {
+		Promise.all([
+			retrieve(
+				currState().config.graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
+				INFO_ROOT_URL,
+				undefined,
+				"GBK",
+			),
+			currState().config.bx
+				? retrieve(
+						currState().config.graduate
+							? YJS_REPORT_BXR_URL
+							: BKS_REPORT_BXR_URL,
+						INFO_ROOT_URL,
+						undefined,
+						"GBK",
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  )
+				: undefined,
+		]).then(([str, bxStr]: [string, string | undefined]) => {
+			const bxSet = new Set<string>();
+			if (bxStr) {
+				const childrenOriginal = cheerio(".table-striped", bxStr).children();
+				const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
+				children.each((index, element) => {
+					if (element.children.length === 25) {
+						// I don't know why this is needed... Weird...
+						const transformedElement = cheerio(element);
+						const type = getCheerioText(transformedElement.children()[8], 0);
+						if (type === "必修" || type === "限选") {
+							bxSet.add(getCheerioText(transformedElement.children()[0], 0));
+						}
+					}
+				});
+			}
 			const newGPA = currState().config.newGPA;
 			const result = cheerio("#table1", str)
 				.children()
@@ -57,17 +87,20 @@ export const getReport = (): Promise<Course[]> =>
 					if (!newGPA) {
 						point = gradeToOldGPA.get(grade) ?? point;
 					}
-					return {
-						name: getCheerioText(element, 3),
-						credit: Number(getCheerioText(element, 5)),
-						grade,
-						point,
-						semester: getCheerioText(element, 11),
-					};
+					return bxStr === undefined || bxSet.has(getCheerioText(element, 1))
+						? {
+								name: getCheerioText(element, 3),
+								credit: Number(getCheerioText(element, 5)),
+								grade,
+								point,
+								semester: getCheerioText(element, 11),
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  }
+						: undefined;
 				})
 				.get();
-			if (result.length === 0) {
-				throw 0;
+			if (result.length === 0 && str.indexOf("table1") === -1) {
+				throw new Error("Getting report failure.");
 			}
 			return result;
 		}),
