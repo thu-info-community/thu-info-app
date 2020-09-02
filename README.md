@@ -2,6 +2,8 @@
 
 An APP aimed at integrating various sources of campus information.
 
+[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases)
+
 ## Release
 
 Not ready yet.
