@@ -63,7 +63,6 @@ object Alipay {
      * @return          the corresponding pay code, or null if any exception occurs
      */
     fun Network.generalGetPayCode(location: String, referer: String, report: Boolean = false): String? {
-        println(location)
         try {
             // Get pay id
             val id: String

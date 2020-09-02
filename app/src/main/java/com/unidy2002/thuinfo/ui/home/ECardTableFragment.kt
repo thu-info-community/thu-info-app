@@ -82,7 +82,7 @@ class ECardTableFragment : Fragment() {
             context?.run {
                 DatePickerDialog(
                     this,
-                    DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                    { _, year, month, day ->
                         text = String.format("%04d-%02d-%02d", year, month + 1, day)
                     },
                     text.substring(0, 4).toInt(),
