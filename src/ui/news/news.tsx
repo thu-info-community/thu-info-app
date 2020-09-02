@@ -143,7 +143,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 			.then((res) => {
 				res.forEach(({url, date}) => {
 					if (cache.get(url) === undefined) {
-						getNewsDetail(url).then(([_, abstract]) => {
+						getNewsDetail(url).then(([_, __, abstract]) => {
 							addCache({
 								url,
 								timestamp: dayjs(date, "YYYY.MM.DD").toDate().valueOf(),

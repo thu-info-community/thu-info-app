@@ -18,8 +18,8 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const fetchHtml = () => {
 		setRefreshing(true);
 		getNewsDetail(route.params.detail.url)
-			.then(([res]) => {
-				setHtml(res);
+			.then(([title, res]) => {
+				setHtml(`<h1>${title}</h1>${res}`);
 				// console.log(res);
 				setRefreshing(false);
 			})
@@ -39,9 +39,9 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 		<>
 			<View style={styles.container}>
 				<WebView
-					source={{html: html}}
+					source={{html: html, baseUrl: route.params.detail.url}}
 					containerStyle={styles.webContainer}
-					textZoom={300} // TODO: what about ios?
+					// textZoom={300} // TODO: what about ios? what about images?
 				/>
 			</View>
 			{refreshing && (
