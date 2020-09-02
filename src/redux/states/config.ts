@@ -8,4 +8,6 @@ export interface Config {
 	semesterType: SemesterType;
 	semesterId: string;
 	graduate: boolean;
+	newGPA: boolean;
+	bx: boolean;
 }

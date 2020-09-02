@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View} from "react-native";
 import React from "react";
+import {currState} from "../../redux/store";
 
 const gpaToStr = (gpa: number, dig: number) =>
 	isNaN(gpa) ? "N/A" : gpa.toFixed(dig);
@@ -54,7 +55,11 @@ export const ReportItem = (props: ReportItemProps) => (
 				width: 27,
 				height: 27,
 				backgroundColor:
-					props.grade in gradeToColor ? gradeToColor[props.grade] : "#A6A6A6",
+					props.grade === "A-" && !currState().config.newGPA
+						? "#5E943D"
+						: props.grade in gradeToColor
+						? gradeToColor[props.grade]
+						: "#A6A6A6",
 				borderStyle: "solid",
 				borderRadius: 14,
 				paddingBottom: 2,

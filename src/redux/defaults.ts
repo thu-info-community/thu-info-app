@@ -33,6 +33,8 @@ export const defaultConfigState: Config = {
 	semesterType: Calendar.semesterType,
 	semesterId: Calendar.semesterId,
 	graduate: false,
+	newGPA: true,
+	bx: false,
 };
 
 export const defaultCredentials: Credentials = {

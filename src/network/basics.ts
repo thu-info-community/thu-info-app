@@ -26,6 +26,18 @@ import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
 import {currState} from "../redux/store";
 
+const gradeToOldGPA = new Map<string, number>([
+	["A-", 3.7],
+	["B+", 3.3],
+	["B", 3.0],
+	["B-", 2.7],
+	["C+", 2.3],
+	["C", 2.0],
+	["C-", 1.7],
+	["D+", 1.3],
+	["D", 1.0],
+]);
+
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
 		792,
@@ -35,15 +47,21 @@ export const getReport = (): Promise<Course[]> =>
 			undefined,
 			"GBK",
 		).then((str) => {
+			const newGPA = currState().config.newGPA;
 			const result = cheerio("#table1", str)
 				.children()
 				.slice(1)
 				.map((_, element) => {
+					const grade = getCheerioText(element, 7);
+					let point = Number(getCheerioText(element, 9));
+					if (!newGPA) {
+						point = gradeToOldGPA.get(grade) ?? point;
+					}
 					return {
 						name: getCheerioText(element, 3),
 						credit: Number(getCheerioText(element, 5)),
-						grade: getCheerioText(element, 7),
-						point: Number(getCheerioText(element, 9)),
+						grade,
+						point,
 						semester: getCheerioText(element, 11),
 					};
 				})

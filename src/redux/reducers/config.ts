@@ -2,10 +2,12 @@ import {Config} from "../states/config";
 import {defaultConfigState} from "../defaults";
 import {ConfigAction} from "../actions/config";
 import {
+	SET_BX,
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
 	SET_GRADUATE,
 	SET_LAST_SELF_VERSION,
+	SET_NEW_GPA,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
 
@@ -31,6 +33,16 @@ export const config = (
 			return {
 				...state,
 				graduate: action.payload,
+			};
+		case SET_NEW_GPA:
+			return {
+				...state,
+				newGPA: action.payload,
+			};
+		case SET_BX:
+			return {
+				...state,
+				bx: action.payload,
 			};
 		default:
 			return state;
