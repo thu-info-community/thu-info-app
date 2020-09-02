@@ -29,6 +29,7 @@ jobs:
         - yarn
       script:
         - yarn lint
+        - yarn test
         - cd android
         - gradle assembleDebug
         - cd ..
