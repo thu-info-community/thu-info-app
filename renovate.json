@@ -17,16 +17,14 @@
 				"digest"
 			],
 			"automerge": true,
-			"automergeType": "branch",
-			"requiredStatusChecks": null
+			"automergeType": "branch"
 		},
 		{
 			"depTypeList": [
 				"devDependencies"
 			],
 			"automerge": true,
-			"automergeType": "branch",
-			"requiredStatusChecks": null
+			"automergeType": "branch"
 		}
 	]
 }

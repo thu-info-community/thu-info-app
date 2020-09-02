@@ -2,7 +2,7 @@
 
 An APP aimed at integrating various sources of campus information.
 
-[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases)
+[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://play.google.com/store/apps/details?id=io.robertying.learnx) [![Platform iOS](https://img.shields.io/badge/platform-ios-brightgreen)](https://apps.apple.com/cn/app/learnx/id1459073115#?platform=iphone)
 
 ## Release
 
