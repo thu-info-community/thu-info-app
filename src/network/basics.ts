@@ -8,7 +8,8 @@ import {
 	CLASSROOM_STATE_MIDDLE,
 	CLASSROOM_STATE_PREFIX,
 	EXPENDITURE_URL,
-	GET_REPORT_URL,
+	GET_BKS_REPORT_URL,
+	GET_YJS_REPORT_URL,
 	INFO_ROOT_URL,
 	JOGGING_REFERER,
 	JOGGING_URL,
@@ -23,11 +24,17 @@ import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
 import "../../src/utils/extensions";
 import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
+import {currState} from "../redux/store";
 
 export const getReport = (): Promise<Course[]> =>
 	retryWrapper(
 		792,
-		retrieve(GET_REPORT_URL, INFO_ROOT_URL, undefined, "GBK").then((str) => {
+		retrieve(
+			currState().config.graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
+			INFO_ROOT_URL,
+			undefined,
+			"GBK",
+		).then((str) => {
 			const result = cheerio("#table1", str)
 				.children()
 				.slice(1)

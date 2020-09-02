@@ -32,6 +32,7 @@ export const defaultConfigState: Config = {
 	weekCount: Calendar.weekCount,
 	semesterType: Calendar.semesterType,
 	semesterId: Calendar.semesterId,
+	graduate: false,
 };
 
 export const defaultCredentials: Credentials = {

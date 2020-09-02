@@ -7,4 +7,5 @@ export interface Config {
 	weekCount: number;
 	semesterType: SemesterType;
 	semesterId: string;
+	graduate: boolean;
 }

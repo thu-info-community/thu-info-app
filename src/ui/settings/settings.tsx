@@ -1,14 +1,17 @@
 import {
 	GestureResponderEvent,
 	Platform,
+	Switch,
 	Text,
 	TouchableHighlight,
 	TouchableNativeFeedback,
 	View,
 } from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
+import {currState, store} from "../../redux/store";
+import {SET_GRADUATE} from "../../redux/constants";
 
 const SettingsItem = ({
 	text,
@@ -35,6 +38,37 @@ const SettingsItem = ({
 	);
 };
 
+const SettingsSwitch = ({
+	textOn,
+	textOff,
+	onValueChange,
+	defaultValue,
+}: {
+	textOn: string;
+	textOff: string;
+	onValueChange: (state: boolean) => void;
+	defaultValue: boolean;
+}) => {
+	const [status, setStatus] = useState(defaultValue);
+	return (
+		<View
+			style={{
+				padding: 12,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
+			<Text style={{fontSize: 18}}>{status ? textOn : textOff}</Text>
+			<Switch
+				value={status}
+				onValueChange={(value) => {
+					setStatus(value);
+					onValueChange(value);
+				}}
+			/>
+		</View>
+	);
+};
+
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<>
 		<SettingsItem
@@ -48,6 +82,14 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		<SettingsItem
 			text={getStr("libBookRecord")}
 			onPress={() => navigation.navigate("LibBookRecord")}
+		/>
+		<SettingsSwitch
+			textOn={getStr("graduate")}
+			textOff={getStr("undergraduate")}
+			onValueChange={(state) =>
+				store.dispatch({type: SET_GRADUATE, payload: state})
+			}
+			defaultValue={currState().config.graduate}
 		/>
 	</>
 );
