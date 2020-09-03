@@ -4,6 +4,8 @@ export default {
 	login: "登录",
 	loggingIn: "正在登录中...",
 	loginFailure: "登录失败，请检查网络并确保密码正确后重新登录。",
+	logout: "注销",
+	confirmLogout: "您确定要注销吗？",
 	newVersionAvailable: "有新版本可用",
 	doNotRemind: "忽略本次",
 	nextTimeMust: "下次一定",

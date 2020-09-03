@@ -8,6 +8,8 @@ import {
 	SettingsSeparator,
 	SettingsSwitch,
 } from "../../components/settings/items";
+import {Alert} from "react-native";
+import {doLogout} from "../../redux/actions/auth";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<>
@@ -31,6 +33,16 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		<SettingsItem
 			text={getStr("libBookRecord")}
 			onPress={() => navigation.navigate("LibBookRecord")}
+		/>
+		<SettingsSeparator />
+		<SettingsItem
+			text={getStr("logout")}
+			onPress={() => {
+				Alert.alert(getStr("logout"), getStr("confirmLogout"), [
+					{text: getStr("cancel")},
+					{text: getStr("confirm"), onPress: doLogout},
+				]);
+			}}
 		/>
 		<SettingsSeparator />
 		<SettingsItem

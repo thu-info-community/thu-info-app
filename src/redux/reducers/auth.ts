@@ -1,6 +1,11 @@
 import {AuthState, LoginStatus} from "../states/auth";
 import {AuthAction} from "../actions/auth";
-import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS} from "../constants";
+import {
+	DO_LOGOUT,
+	LOGIN_FAILURE,
+	LOGIN_REQUEST,
+	LOGIN_SUCCESS,
+} from "../constants";
 import {defaultAuthState} from "../defaults";
 
 export const auth = (
@@ -32,6 +37,13 @@ export const auth = (
 				userId: "",
 				password: "",
 				status: action.payload,
+			};
+		case DO_LOGOUT:
+			return {
+				...state,
+				userId: "",
+				password: "",
+				status: LoginStatus.None,
 			};
 		default:
 			return state;
