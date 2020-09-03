@@ -34,6 +34,8 @@ export default {
 	oldGPA: "旧绩点",
 	bx: "必限",
 	bxr: "必限任",
+	scheduleSettings: "课程表设置",
+	scheduleUnitHeight: "课表单元高度（恶搞后果自负）",
 	acknowledgements: "致谢",
 	acknowledgeLearnX: "感谢 learnX 开源代码提供参考范例 🎉",
 	acknowledgeCommunity: "致敬 JavaScript 开源社区 ❤️",

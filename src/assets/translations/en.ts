@@ -35,6 +35,8 @@ export default {
 	oldGPA: "Old GPA Policy",
 	bx: "Required & Restricted",
 	bxr: "Required, Restricted & Elective",
+	scheduleSettings: "Schedule Settings",
+	scheduleUnitHeight: "Set Unit Height (VALIDITY IS NOT CHECKED)",
 	acknowledgements: "Acknowledgements",
 	acknowledgeLearnX: "Great thanks to the `learnX` project 🎉",
 	acknowledgeCommunity: "Best regards to the JavaScript Community ❤️",

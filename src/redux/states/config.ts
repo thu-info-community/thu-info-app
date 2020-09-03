@@ -10,4 +10,5 @@ export interface Config {
 	graduate: boolean;
 	newGPA: boolean;
 	bx: boolean;
+	scheduleHeight: number;
 }

@@ -51,6 +51,7 @@ interface ScheduleProps {
 	readonly secondaryRefreshing: boolean;
 	readonly shortenMap: {[key: string]: string};
 	readonly hiddenRules: Lesson[];
+	readonly unitHeight: number;
 	getPrimary: () => void;
 	getSecondary: () => void;
 	delOrHide: DelOrHide;
@@ -58,7 +59,6 @@ interface ScheduleProps {
 }
 
 const headerSpan = 0.5;
-const unitHeight = 90;
 
 type DelOrHide = ([lesson, choice]: [Lesson, Choice]) => void;
 
@@ -68,12 +68,14 @@ const GridRow = ({
 	overlaps,
 	name,
 	delOrHide,
+	unitHeight,
 }: {
 	span?: number;
 	text?: React.ReactText;
 	overlaps?: Lesson[];
 	name?: string;
 	delOrHide?: DelOrHide;
+	unitHeight: number;
 }) => {
 	const row = (
 		<Row style={[styles.center, {height: (span || 1) * unitHeight}]}>
@@ -120,6 +122,7 @@ const GridColumn = ({
 	shorten,
 	setOverlap,
 	delOrHide,
+	unitHeight,
 }: {
 	day: number;
 	week: number;
@@ -127,6 +130,7 @@ const GridColumn = ({
 	shorten: {[_: string]: string};
 	setOverlap: React.Dispatch<React.SetStateAction<boolean>>;
 	delOrHide: DelOrHide;
+	unitHeight: number;
 }) => {
 	const record = new Array<Lesson>(14);
 	const result = [
@@ -136,6 +140,7 @@ const GridColumn = ({
 			text={`${new Calendar(week, day).format("MM.DD")}\n${
 				getStr("dayOfWeek")[day]
 			}`}
+			unitHeight={unitHeight}
 		/>,
 	];
 	for (let i = 1; i <= 14; i++) {
@@ -144,7 +149,7 @@ const GridColumn = ({
 				(lesson) => lesson.begin <= i && i <= lesson.end,
 			);
 			if (valid.length === 0) {
-				result.push(<GridRow key={i} />);
+				result.push(<GridRow key={i} unitHeight={unitHeight} />);
 			} else {
 				const {begin, end, title, locale} = valid[0];
 				if (i !== begin) {
@@ -165,6 +170,7 @@ const GridColumn = ({
 						)}
 						name={`${day}.${i}`}
 						delOrHide={delOrHide}
+						unitHeight={unitHeight}
 					/>,
 				);
 				for (let j = i - 1; j < end; j++) {
@@ -285,9 +291,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 				<ViewShot ref={viewShot}>
 					<Grid style={{backgroundColor: "white"}}>
 						<Col size={1}>
-							<GridRow span={headerSpan} />
+							<GridRow span={headerSpan} unitHeight={props.unitHeight} />
 							{Array.from(new Array(14), (_, id) => (
-								<GridRow key={id} text={id + 1} />
+								<GridRow key={id} text={id + 1} unitHeight={props.unitHeight} />
 							))}
 						</Col>
 						{Array.from(new Array(7), (_, id) => (
@@ -306,6 +312,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								shorten={props.shortenMap}
 								setOverlap={setOverlap}
 								delOrHide={props.delOrHide}
+								unitHeight={props.unitHeight}
 							/>
 						))}
 					</Grid>
@@ -352,7 +359,11 @@ const styles = StyleSheet.create({
 });
 
 export const ScheduleScreen = connect(
-	(state: State) => state.schedule,
+	(state: State) => ({
+		...state.schedule,
+		unitHeight:
+			state.config.scheduleHeight > 10 ? state.config.scheduleHeight : 10,
+	}),
 	(dispatch) => {
 		return {
 			getPrimary: () => {

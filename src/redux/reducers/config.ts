@@ -44,6 +44,11 @@ export const config = (
 				...state,
 				bx: action.payload,
 			};
+		case "SET_SCHEDULE_HEIGHT":
+			return {
+				...state,
+				scheduleHeight: action.payload,
+			};
 		default:
 			return state;
 	}

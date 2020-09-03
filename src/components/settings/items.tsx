@@ -3,6 +3,7 @@ import {
 	Platform,
 	Switch,
 	Text,
+	TextInput,
 	TouchableHighlight,
 	TouchableNativeFeedback,
 	View,
@@ -68,6 +69,34 @@ export const SettingsSwitch = ({
 					setStatus(value);
 					onValueChange(value);
 				}}
+			/>
+		</View>
+	);
+};
+
+export const SettingsEditValue = ({
+	text,
+	value,
+	onValueChange,
+}: {
+	text: string;
+	value: number;
+	onValueChange: (newValue: number) => void;
+}) => {
+	return (
+		<View
+			style={{
+				padding: 12,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
+			<Text style={{fontSize: 18, flex: 4}}>{text}</Text>
+			<TextInput
+				style={{flex: 1}}
+				value={String(value)}
+				onChangeText={(newText) => onValueChange(Number(newText))}
+				keyboardType="numeric"
 			/>
 		</View>
 	);

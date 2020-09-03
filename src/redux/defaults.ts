@@ -35,6 +35,7 @@ export const defaultConfigState: Config = {
 	graduate: false,
 	newGPA: true,
 	bx: false,
+	scheduleHeight: 90,
 };
 
 export const defaultCredentials: Credentials = {

@@ -25,6 +25,10 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("reportSettings")}
 			onPress={() => navigation.navigate("ReportSettings")}
 		/>
+		<SettingsItem
+			text={getStr("scheduleSettings")}
+			onPress={() => navigation.navigate("ScheduleSettings")}
+		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("eleRecord")}
