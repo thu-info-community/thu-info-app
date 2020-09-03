@@ -43,6 +43,7 @@ export const HomeSection = ({
 			shadowOpacity: 0.8,
 			shadowRadius: 2,
 			borderRadius: 5,
+			elevation: 2,
 		}}>
 		<Text
 			style={{

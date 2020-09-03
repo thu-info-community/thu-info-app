@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FlatList, StyleSheet, View, Text, RefreshControl} from "react-native";
 import {
 	getAssessmentList,
@@ -10,11 +10,16 @@ import {getStr} from "../../utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {HomeNav} from "./homeStack";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	// eslint-disable-next-line prettier/prettier
 	const [evaluationList, setEvaluationList] = useState<[string, boolean, string][]>();
 	const [refreshing, setRefreshing] = useState(true);
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
 
 	const fetchList = () => {
 		setRefreshing(true);
@@ -93,7 +98,11 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 				}}
 				style={styles.listStyle}
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={fetchList} />
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchList}
+						colors={[theme.colors.accent]}
+					/>
 				}
 				keyExtractor={(item) => item[0]}
 			/>

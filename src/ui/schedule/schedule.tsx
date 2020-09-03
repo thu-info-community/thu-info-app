@@ -207,6 +207,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	const viewShot = useRef<ViewShot>(null);
 
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+
 	useEffect(() => {
 		if (Calendar.semesterId !== props.cache) {
 			console.log(
@@ -276,10 +279,11 @@ const ScheduleUI = (props: ScheduleProps) => {
 							props.getPrimary();
 							props.getSecondary();
 						}}
+						colors={[theme.colors.accent]}
 					/>
 				}>
 				<ViewShot ref={viewShot}>
-					<Grid style={{backgroundColor: "#EEE"}}>
+					<Grid style={{backgroundColor: "white"}}>
 						<Col size={1}>
 							<GridRow span={headerSpan} />
 							{Array.from(new Array(14), (_, id) => (

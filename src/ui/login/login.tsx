@@ -12,6 +12,7 @@ import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 interface LoginProps {
 	readonly userId: string;
@@ -55,20 +56,30 @@ const LoginUI = (props: LoginProps) => {
 					source={require("./../../assets/images/MaskedAppIcon.png")}
 					style={style.appIconStyle}
 				/>
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("userId")}
-					value={userId}
-					onChangeText={setUserId}
-					keyboardType={"numeric"}
-				/>
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("password")}
-					value={password}
-					onChangeText={setPassword}
-					secureTextEntry
-				/>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					<Icon name="user" size={18} color={theme.colors.primary} />
+					<TextInput
+						style={style.textInputStyle}
+						placeholder={getStr("userId")}
+						placeholderTextColor={theme.colors.primary}
+						selectionColor={theme.colors.accent}
+						value={userId}
+						onChangeText={setUserId}
+						keyboardType={"numeric"}
+					/>
+				</View>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					<Icon name="key" size={18} color={theme.colors.primary} />
+					<TextInput
+						style={style.textInputStyle}
+						placeholder={getStr("password")}
+						placeholderTextColor={theme.colors.primary}
+						selectionColor={theme.colors.accent}
+						value={password}
+						onChangeText={setPassword}
+						secureTextEntry
+					/>
+				</View>
 				<TouchableOpacity
 					style={style.loginButtonStyle}
 					onPress={() => props.login(userId, password)}>
@@ -126,22 +137,17 @@ const styles = themedStyles((theme) => {
 		},
 
 		textInputStyle: {
-			height: 38,
-			backgroundColor: "white",
-			marginBottom: 15,
+			color: theme.colors.primary,
+			width: "36%",
 			textAlign: "left",
-			borderColor: "lightgrey",
-			borderWidth: 1,
-			borderRadius: 5,
-			alignSelf: "stretch",
-			marginHorizontal: 80,
+			marginHorizontal: 10,
 			padding: 10,
 		},
 
 		loginButtonStyle: {
 			height: 35,
 			width: 100,
-			backgroundColor: theme.colors.primary,
+			backgroundColor: theme.colors.accent,
 			marginTop: 30,
 			marginBottom: 20,
 			justifyContent: "center",

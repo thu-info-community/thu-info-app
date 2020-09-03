@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FlatList, RefreshControl, StyleSheet, Text, View} from "react-native";
 import {getExpenditures} from "../../network/basics";
 import {Record} from "../../models/home/expenditure";
@@ -6,6 +6,8 @@ import {Calendar} from "../../utils/calendar";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -37,6 +39,9 @@ export const ExpenditureScreen = () => {
 	const [end, setEnd] = useState(today.date.toDate());
 	const [refreshing, setRefreshing] = useState(false);
 
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+
 	useEffect(() => {
 		setRefreshing(true);
 		getExpenditures(beg, end)
@@ -59,7 +64,12 @@ export const ExpenditureScreen = () => {
 			<View style={styles.container}>
 				<FlatList
 					data={expenditures}
-					refreshControl={<RefreshControl refreshing={refreshing} />}
+					refreshControl={
+						<RefreshControl
+							refreshing={refreshing}
+							colors={[theme.colors.accent]}
+						/>
+					}
 					renderItem={({item}) => <ExpenditureCard record={item} />}
 					keyExtractor={(item, index) => `${item.date}-${item.value}-${index}`}
 				/>

@@ -42,6 +42,7 @@ export const Root = () => {
 					return <Icon name={iconName || ""} size={size} color={color} />;
 				},
 			})}
+			backBehavior="initialRoute"
 			tabBarOptions={{
 				activeTintColor: theme.colors.primary,
 				inactiveTintColor: "gray",

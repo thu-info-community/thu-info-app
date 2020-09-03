@@ -1,7 +1,9 @@
-import React, {FC, ReactElement, useEffect, useState} from "react";
+import React, {FC, ReactElement, useContext, useEffect, useState} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: () => Promise<T[]>,
@@ -12,6 +14,9 @@ export function simpleRefreshListScreen<T>(
 	return () => {
 		const [data, setData] = useState<T[]>([]);
 		const [refreshing, setRefreshing] = useState(false);
+
+		const themeName = useContext(ThemeContext);
+		const theme = themes[themeName];
 
 		const refresh = () => {
 			setRefreshing(true);
@@ -31,7 +36,11 @@ export function simpleRefreshListScreen<T>(
 			<FlatList
 				data={data}
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={refresh} />
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={refresh}
+						colors={[theme.colors.accent]}
+					/>
 				}
 				renderItem={({item}) => renderItem(item, refresh)}
 				keyExtractor={keyExtractor}

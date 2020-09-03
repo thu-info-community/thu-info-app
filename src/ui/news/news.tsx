@@ -7,7 +7,7 @@ import {
 	Button,
 	Alert,
 } from "react-native";
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {
 	newsSlice,
 	getNewsList,
@@ -36,6 +36,8 @@ import {connect} from "react-redux";
 import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 dayjs.extend(customParseFormat);
 
@@ -117,6 +119,9 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsNumberOnOnePage, setNewsNumber] = useState(20);
 	const [newsSource] = useState(new newsSourceList());
 
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+
 	const renderIcon = (channel: sourceTag) => {
 		if (channel === "JWGG") {
 			return <FontAwesome name="file-text-o" size={40} color="green" />;
@@ -180,7 +185,11 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	return (
 		<FlatList
 			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={fetchNewsList} />
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={fetchNewsList}
+					colors={[theme.colors.accent]}
+				/>
 			}
 			ListEmptyComponent={
 				<View
@@ -306,6 +315,7 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.8,
 		shadowRadius: 2,
 		borderRadius: 5,
+		elevation: 2,
 	},
 
 	titleContainer: {

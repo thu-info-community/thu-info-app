@@ -144,7 +144,12 @@ export const FormScreen = ({
 		<ScrollView
 			style={styles.container}
 			showsVerticalScrollIndicator={false}
-			refreshControl={<RefreshControl refreshing={refreshing} />}>
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					colors={[theme.colors.accent]}
+				/>
+			}>
 			<View style={styles.titleContainer}>
 				<FontAwesome name="chevron-right" color="red" size={18} />
 				<Text style={styles.titleStyle}>{getStr("generalImpression")}</Text>
