@@ -106,9 +106,9 @@ export const ClassroomDetailScreen = ({
 				</TouchableOpacity>
 				<Text
 					onPress={() =>
-						setData(([_, day, table]) => [
+						setData(([_, __, table]) => [
 							new Calendar().weekNumber,
-							day,
+							new Calendar().dayOfWeek,
 							table,
 						])
 					}
@@ -116,6 +116,7 @@ export const ClassroomDetailScreen = ({
 						fontSize: 18,
 						textAlign: "center",
 						flex: 1,
+						marginHorizontal: 10,
 					}}>
 					{getStr("classroomHeaderPrefix") +
 						data[0] +

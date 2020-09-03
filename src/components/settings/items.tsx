@@ -8,6 +8,7 @@ import {
 	View,
 } from "react-native";
 import React, {useState} from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export const SettingsItem = ({
 	text,
@@ -17,8 +18,15 @@ export const SettingsItem = ({
 	onPress: (event: GestureResponderEvent) => void;
 }) => {
 	const content = (
-		<View style={{padding: 12}}>
+		<View
+			style={{
+				padding: 12,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
 			<Text style={{fontSize: 18}}>{text}</Text>
+			<Icon name="angle-right" size={24} color="lightgrey" />
 		</View>
 	);
 	return Platform.OS === "ios" ? (
@@ -64,3 +72,5 @@ export const SettingsSwitch = ({
 		</View>
 	);
 };
+
+export const SettingsSeparator = () => <View style={{height: 10}} />;

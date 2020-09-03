@@ -10,6 +10,7 @@ import {PopiScreen} from "./popi";
 import {EleRecordScreen} from "./eleRecord";
 import {LibBookRecordScreen} from "./libBookRecord";
 import {ReportSettingsScreen} from "./reportSettings";
+import {AcknowledgementsScreen} from "./acknowledgements";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -18,6 +19,7 @@ type SettingsStackParamList = {
 	EleRecord: undefined;
 	LibBookRecord: undefined;
 	ReportSettings: undefined;
+	Acknowledgements: undefined;
 };
 
 const Stack = createStackNavigator<SettingsStackParamList>();
@@ -55,6 +57,11 @@ export const SettingStackScreen = () => (
 			name="ReportSettings"
 			component={ReportSettingsScreen}
 			options={{title: getStr("reportSettings")}}
+		/>
+		<Stack.Screen
+			name="Acknowledgements"
+			component={AcknowledgementsScreen}
+			options={{title: getStr("acknowledgements")}}
 		/>
 	</Stack.Navigator>
 );
