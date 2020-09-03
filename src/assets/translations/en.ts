@@ -76,6 +76,7 @@ export default {
 		"Failed in auto-evaluation, please check the network connection and retry.",
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	expenditure: "Expenditures",
+	query: "Query",
 	classroomState: "Classrooms",
 	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
 	classroomHeaderPrefix: "Week ",

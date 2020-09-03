@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
-import {FlatList, RefreshControl, StyleSheet, Text, View} from "react-native";
+import {
+	Button,
+	FlatList,
+	RefreshControl,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 import {getExpenditures} from "../../network/basics";
 import {Record} from "../../models/home/expenditure";
 import {Calendar} from "../../utils/calendar";
@@ -42,7 +49,7 @@ export const ExpenditureScreen = () => {
 	const themeName = useContext(ThemeContext);
 	const theme = themes[themeName];
 
-	useEffect(() => {
+	const refresh = () => {
 		setRefreshing(true);
 		getExpenditures(beg, end)
 			.then(setExpenditures)
@@ -53,13 +60,21 @@ export const ExpenditureScreen = () => {
 				});
 			})
 			.then(() => setRefreshing(false));
-	}, [beg, end]);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(refresh, []);
 
 	return (
 		<>
 			<View style={styles.header}>
 				<DatePickerTrigger date={beg} onChange={setBeg} disabled={refreshing} />
 				<DatePickerTrigger date={end} onChange={setEnd} disabled={refreshing} />
+				<Button
+					title={getStr("query")}
+					onPress={refresh}
+					disabled={refreshing}
+				/>
 			</View>
 			<View style={styles.container}>
 				<FlatList
@@ -67,6 +82,7 @@ export const ExpenditureScreen = () => {
 					refreshControl={
 						<RefreshControl
 							refreshing={refreshing}
+							onRefresh={refresh}
 							colors={[theme.colors.accent]}
 						/>
 					}

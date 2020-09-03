@@ -69,6 +69,7 @@ export default {
 	autoScoreFailure: "自动打分失败，请检查网络后重试。",
 	autoScoreSuccess: "您已经成功为该课程打满分。",
 	expenditure: "消费查询",
+	query: "查询",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	classroomHeaderPrefix: "第",
