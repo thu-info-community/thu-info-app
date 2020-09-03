@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="avatar">头像</string>
-    <string name="string_view_origin">查看原始网页</string>
-    <string name="string_view_pretty">查看简约网页</string>
-    <string name="web_copy_link_str">复制链接</string>
-    <string name="string_close">关闭</string>
-</resources>
