@@ -1,11 +1,19 @@
-import {FlatList, Text, TouchableOpacity, View} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import {
+	FlatList,
+	RefreshControl,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {getClassroomState} from "../../network/basics";
 import {ClassroomDetailRouteProp} from "./homeStack";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {Calendar} from "../../utils/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 const colors = ["#26A69A", "#FFA726", "#29B6F6", "#868686", "#AB47BC"];
 
@@ -24,6 +32,9 @@ export const ClassroomDetailScreen = ({
 	const next = useRef<[number, [string, number[]][]]>();
 	const currWeek = data[0];
 	const [refreshing, setRefreshing] = useState(false);
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
 
 	const refresh = () => {
 		setRefreshing(true);
@@ -161,8 +172,13 @@ export const ClassroomDetailScreen = ({
 			</View>
 			<FlatList
 				data={data[2]}
-				refreshing={refreshing}
-				onRefresh={refresh}
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={refresh}
+						colors={[theme.colors.accent]}
+					/>
+				}
 				renderItem={({item}) => (
 					<View
 						style={{

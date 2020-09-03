@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {getReport} from "../../network/basics";
 import {Course, semesterWeight} from "../../models/home/report";
-import {SectionList, SectionListData} from "react-native";
+import {RefreshControl, SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,
 	ReportHeader,
@@ -10,6 +10,8 @@ import {
 } from "../../components/home/report";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 type Section = SectionListData<Course> & ReportHeaderProps;
 
@@ -46,6 +48,9 @@ export const ReportScreen = () => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+
 	const fetchData = () => {
 		setRefreshing(true);
 		getReport()
@@ -81,8 +86,13 @@ export const ReportScreen = () => {
 				/>
 			)}
 			ListFooterComponent={<ReportFooter gpa={gpa} />}
-			refreshing={refreshing}
-			onRefresh={fetchData}
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={fetchData}
+					colors={[theme.colors.accent]}
+				/>
+			}
 			keyExtractor={(item, index) => `${item.semester}${index}`}
 		/>
 	);
