@@ -8,10 +8,12 @@ import {
 	DORM_LOGIN_URL_PREFIX,
 	DORM_SCORE_REFERER,
 	DORM_SCORE_URL,
+	ID_LOGIN_CHECK_URL,
 	INFO_LOGIN_URL,
 	INFO_ROOT_URL,
 	INFO_URL,
 	INVALIDATE_ZHJW_URL,
+	LIBRARY_LOGIN_URL,
 	LOGIN_URL,
 	LOGOUT_URL,
 	PRE_LOGIN_URL,
@@ -168,7 +170,7 @@ export const getFullName = async (): Promise<string> =>
  */
 export const logout = async (): Promise<void> => connect(LOGOUT_URL);
 
-type ValidTickets = -1 | 792 | 824 | 2005;
+type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 for library
 
 export const getTicket = async (target: ValidTickets) => {
 	if (target >= 0 && target <= 1000) {
@@ -208,6 +210,17 @@ export const getTicket = async (target: ValidTickets) => {
 					throw "login to tsinghua home error";
 				}
 			});
+	} else if (target === 5000) {
+		await connect(LIBRARY_LOGIN_URL, undefined);
+		const redirect = cheerio(
+			"div.wrapper>a",
+			await retrieve(ID_LOGIN_CHECK_URL, LIBRARY_LOGIN_URL, {
+				i_user: currState().auth.userId,
+				i_pass: currState().auth.password,
+				i_captcha: "",
+			}),
+		).attr().href;
+		return connect(redirect);
 	} else {
 		return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
 	}
@@ -229,7 +242,7 @@ export const retryWrapper = async <R>(
 };
 
 const performGetTickets = () => {
-	([792, 824, 2005] as ValidTickets[]).forEach((target) => {
+	([792, 824, 2005, 5000] as ValidTickets[]).forEach((target) => {
 		getTicket(target)
 			.then(() => console.log(`Ticket ${target} get.`))
 			.catch(() => console.warn(`Getting ticket ${target} failed.`));

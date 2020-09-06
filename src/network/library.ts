@@ -1,8 +1,7 @@
 /* eslint-disable quotes */
-import {connect, retrieve, stringify} from "./core";
+import {retrieve, retryWrapper, stringify} from "./core";
 import {
 	CANCEL_BOOKING_URL,
-	ID_LOGIN_CHECK_URL,
 	LIBRARY_AREAS_URL,
 	LIBRARY_BOOK_RECORD_URL,
 	LIBRARY_BOOK_URL_PREFIX,
@@ -10,7 +9,6 @@ import {
 	LIBRARY_DAYS_URL,
 	LIBRARY_HOME_URL,
 	LIBRARY_LIST_URL,
-	LIBRARY_LOGIN_URL,
 	LIBRARY_SEATS_URL,
 } from "../constants/strings";
 import {
@@ -144,23 +142,20 @@ export const getLibrarySeatList = (
 			.sort(byId),
 	);
 
-const getAccessToken = async () => {
-	await connect(LIBRARY_LOGIN_URL, undefined);
-	const redirect = cheerio(
-		"div.wrapper>a",
-		await retrieve(ID_LOGIN_CHECK_URL, LIBRARY_LOGIN_URL, {
-			i_user: currState().auth.userId,
-			i_pass: currState().auth.password,
-			i_captcha: "",
+const getAccessToken = (): Promise<string> =>
+	retryWrapper(
+		5000,
+		retrieve(LIBRARY_HOME_URL).then((response) => {
+			const leftmost = response.indexOf("access_token");
+			const left = response.indexOf('"', leftmost) + 1;
+			const right = response.indexOf('"', left);
+			const token = response.substring(left, right);
+			if (token.trim() === "") {
+				throw new Error("Getting library token failed.");
+			}
+			return token;
 		}),
-	).attr().href;
-	await connect(redirect);
-	const response = await retrieve(LIBRARY_HOME_URL);
-	const leftmost = response.indexOf("access_token");
-	const left = response.indexOf('"', leftmost) + 1;
-	const right = response.indexOf('"', left);
-	return response.substring(left, right);
-};
+	);
 
 export const bookLibrarySeat = async (
 	{id, type}: LibrarySeat,
