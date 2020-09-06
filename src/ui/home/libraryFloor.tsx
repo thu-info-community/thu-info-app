@@ -12,7 +12,14 @@ export const LibraryFloorScreen = simpleRefreshListScreen(
 			style={{padding: 8}}
 			onPress={() => item.valid && navigation.navigate("LibrarySection", item)}
 			disabled={!item.valid}>
-			<Text>{item.zhName}</Text>
+			<Text
+				style={{
+					textAlign: "center",
+					textDecorationLine: item.valid ? "none" : "line-through",
+					color: item.valid ? "black" : "grey",
+				}}>
+				{item.zhName}
+			</Text>
 		</TouchableOpacity>
 	),
 	(item) => String(item.id),

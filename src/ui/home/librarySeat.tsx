@@ -57,7 +57,14 @@ export const LibrarySeatScreen = simpleRefreshListScreen(
 					{cancelable: true},
 				)
 			}>
-			<Text>{item.zhName + (item.valid ? "" : getStr("seatInvalid"))}</Text>
+			<Text
+				style={{
+					textAlign: "center",
+					textDecorationLine: item.valid ? "none" : "line-through",
+					color: item.valid ? "black" : "grey",
+				}}>
+				{item.zhName + (item.valid ? "" : getStr("seatInvalid"))}
+			</Text>
 		</TouchableOpacity>
 	),
 	(item) => String(item.id),

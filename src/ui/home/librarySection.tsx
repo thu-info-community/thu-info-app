@@ -40,7 +40,12 @@ export const LibrarySectionScreen = ({
 							}),
 						)
 				}>
-				<Text>{`${item.zhName} (${item.available}/${item.total})`}</Text>
+				<Text
+					style={{
+						textAlign: "center",
+						textDecorationLine: item.valid ? "none" : "line-through",
+						color: item.valid ? "black" : "grey",
+					}}>{`${item.zhName} (${item.available}/${item.total})`}</Text>
 			</TouchableOpacity>
 		),
 		(item) => String(item.id),
