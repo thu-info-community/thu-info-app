@@ -193,7 +193,7 @@ export const ClassroomDetailScreen = ({
 							<View
 								style={{
 									backgroundColor:
-										colors[item[1][(data[1] - 1) * 6 + index]] ?? "white",
+										colors[item[1][(data[1] - 1) * 6 + index]] ?? "#E2E2E2",
 									width: 20,
 									height: 20,
 									margin: 2,

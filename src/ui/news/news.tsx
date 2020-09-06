@@ -54,6 +54,11 @@ class newsSourceList {
 
 	private nameList: sourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
+	private static dateForComp(x: newsSlice): dayjs.Dayjs {
+		const date = dayjs(x.date, "YYYY.MM.DD");
+		return x.channel === "JWGG" ? date.add(3, "day") : date;
+	}
+
 	private async getLatestNews(source: sourceTag): Promise<newsSlice> {
 		for (let i = 0; i < 4; ++i) {
 			if (this.newsLoadList[i].length === 0) {
@@ -72,7 +77,10 @@ class newsSourceList {
 		let result: newsSlice = this.newsLoadList[index][0];
 		if (source === undefined) {
 			this.newsLoadList.forEach((val, ind) => {
-				if (val[0].date > result.date) {
+				if (
+					newsSourceList.dateForComp(val[0]) >
+					newsSourceList.dateForComp(result)
+				) {
 					result = val[0];
 					index = ind;
 				}

@@ -41,7 +41,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				<WebView
 					source={{html: html, baseUrl: route.params.detail.url}}
 					containerStyle={styles.webContainer}
-					// textZoom={300} // TODO: what about ios? what about images?
+					textZoom={240} // TODO: what about ios? what about images?
 				/>
 			</View>
 			{refreshing && (
