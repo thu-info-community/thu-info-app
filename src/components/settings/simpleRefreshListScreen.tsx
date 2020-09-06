@@ -1,4 +1,11 @@
-import React, {FC, ReactElement, useContext, useEffect, useState} from "react";
+import React, {
+	FC,
+	PropsWithChildren,
+	ReactElement,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
@@ -6,12 +13,16 @@ import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 
 export function simpleRefreshListScreen<T>(
-	dataSource: () => Promise<T[]>,
-	renderItem: (item: T, refresh: () => void) => ReactElement,
+	dataSource: (props: PropsWithChildren<any>) => Promise<T[]>,
+	renderItem: (
+		item: T,
+		refresh: () => void,
+		props: PropsWithChildren<any>,
+	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: ReactElement,
 ): FC {
-	return () => {
+	return (props) => {
 		const [data, setData] = useState<T[]>([]);
 		const [refreshing, setRefreshing] = useState(false);
 
@@ -20,7 +31,7 @@ export function simpleRefreshListScreen<T>(
 
 		const refresh = () => {
 			setRefreshing(true);
-			dataSource()
+			dataSource(props)
 				.then(setData)
 				.catch(() =>
 					Snackbar.show({
@@ -30,10 +41,12 @@ export function simpleRefreshListScreen<T>(
 				)
 				.then(() => setRefreshing(false));
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		useEffect(refresh, []);
 
 		return (
 			<FlatList
+				style={{flex: 1}}
 				data={data}
 				refreshControl={
 					<RefreshControl
@@ -42,7 +55,7 @@ export function simpleRefreshListScreen<T>(
 						colors={[theme.colors.accent]}
 					/>
 				}
-				renderItem={({item}) => renderItem(item, refresh)}
+				renderItem={({item}) => renderItem(item, refresh, props)}
 				keyExtractor={keyExtractor}
 				ListFooterComponent={footer}
 			/>
