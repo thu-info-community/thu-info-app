@@ -8,11 +8,12 @@ import {
 	SettingsSeparator,
 	SettingsSwitch,
 } from "../../components/settings/items";
-import {Alert} from "react-native";
+import {Alert, Linking, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
+import {checkUpdate} from "../../utils/checkUpdate";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
-	<>
+	<ScrollView>
 		<SettingsSwitch
 			textOn={getStr("graduate")}
 			textOff={getStr("undergraduate")}
@@ -40,6 +41,19 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		/>
 		<SettingsSeparator />
 		<SettingsItem
+			text={getStr("checkUpdate")}
+			onPress={() => checkUpdate(true)}
+		/>
+		<SettingsItem
+			text={getStr("rollBack")}
+			onPress={() =>
+				Linking.openURL(
+					"https://cloud.tsinghua.edu.cn/f/873a6cd027d2401da695",
+				).then(() => console.log("Opening system explorer for rolling back."))
+			}
+		/>
+		<SettingsSeparator />
+		<SettingsItem
 			text={getStr("logout")}
 			onPress={() => {
 				Alert.alert(getStr("logout"), getStr("confirmLogout"), [
@@ -57,5 +71,5 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("acknowledgements")}
 			onPress={() => navigation.navigate("Acknowledgements")}
 		/>
-	</>
+	</ScrollView>
 );

@@ -40,6 +40,8 @@ export default {
 	acknowledgements: "Acknowledgements",
 	acknowledgeLearnX: "Great thanks to the `learnX` project 🎉",
 	acknowledgeCommunity: "Best regards to the JavaScript Community ❤️",
+	checkUpdate: "Check Update",
+	rollBack: "Roll Back to Older Version",
 	schedule: "Schedule",
 	study: "Academic and Score",
 	resources: "Resources",
