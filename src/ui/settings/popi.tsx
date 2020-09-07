@@ -1,26 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {FlatList, Text, View} from "react-native";
+import React from "react";
+import {Text, View} from "react-native";
 import {retrieve} from "../../network/core";
 import {POPI_URL} from "../../constants/strings";
+import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 
-export const PopiScreen = () => {
-	const [data, setData] = useState<[string, string][]>([]);
-
-	useEffect(() => {
-		retrieve(POPI_URL).then(JSON.parse).then(setData);
-	}, []);
-
-	return (
-		<FlatList
-			data={data}
-			renderItem={({item}) => (
-				<View style={{padding: 10}}>
-					<Text>{item[0]}</Text>
-					<View style={{backgroundColor: "grey", height: 1}} />
-					<Text>{item[1]}</Text>
-				</View>
-			)}
-			keyExtractor={(item) => item[0]}
-		/>
-	);
-};
+export const PopiScreen = simpleRefreshListScreen<[string, string]>(
+	() => retrieve(POPI_URL).then(JSON.parse),
+	([q, a]) => (
+		<View style={{padding: 10}}>
+			<Text>{q}</Text>
+			<View style={{backgroundColor: "grey", height: 1}} />
+			<Text>{a}</Text>
+		</View>
+	),
+	([x]) => x,
+);
