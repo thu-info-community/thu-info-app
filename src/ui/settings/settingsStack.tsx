@@ -12,6 +12,7 @@ import {LibBookRecordScreen} from "./libBookRecord";
 import {ReportSettingsScreen} from "./reportSettings";
 import {AcknowledgementsScreen} from "./acknowledgements";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
+import {AboutScreen} from "./about";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -22,6 +23,7 @@ type SettingsStackParamList = {
 	ReportSettings: undefined;
 	Acknowledgements: undefined;
 	ScheduleSettings: undefined;
+	About: undefined;
 };
 
 const Stack = createStackNavigator<SettingsStackParamList>();
@@ -69,6 +71,11 @@ export const SettingStackScreen = () => (
 			name="Acknowledgements"
 			component={AcknowledgementsScreen}
 			options={{title: getStr("acknowledgements")}}
+		/>
+		<Stack.Screen
+			name="About"
+			component={AboutScreen}
+			options={{title: getStr("about")}}
 		/>
 	</Stack.Navigator>
 );

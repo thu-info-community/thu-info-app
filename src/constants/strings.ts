@@ -142,3 +142,6 @@ export const POPI_URL =
 	"https://cloud.tsinghua.edu.cn/f/2187997c76544445ad0f/?dl=1";
 export const CALENDAR_CONFIG_URL =
 	"https://cloud.tsinghua.edu.cn/f/927782def35b4117952e/?dl=1";
+export const GITHUB_REPO_URL = "https://github.com/UNIDY2002/THUInfo";
+export const UNIDY2002_URL = "https://github.com/UNIDY2002";
+export const ASHITEMARU_URL = "https://github.com/Ashitemaru";

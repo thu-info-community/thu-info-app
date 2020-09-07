@@ -53,6 +53,10 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("acknowledgements")}
 			onPress={() => navigation.navigate("Acknowledgements")}
 		/>
+		<SettingsItem
+			text={getStr("about")}
+			onPress={() => navigation.navigate("About")}
+		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("logout")}
