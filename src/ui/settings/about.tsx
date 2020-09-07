@@ -1,6 +1,5 @@
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React, {useContext} from "react";
-import packageConfig from "../../../package.json";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
@@ -9,6 +8,7 @@ import {
 	GITHUB_REPO_URL,
 	UNIDY2002_URL,
 } from "../../constants/strings";
+import VersionNumber from "react-native-version-number";
 
 const makeLinking = (url: string) =>
 	Linking.openURL(url).then(() =>
@@ -21,7 +21,7 @@ export const AboutScreen = () => {
 	return (
 		<View style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>
 			<Text style={styles.textStyle}>
-				{`${getStr("currentVersion")}v${packageConfig.version}`}
+				{`${getStr("currentVersion")}v${VersionNumber.appVersion}`}
 			</Text>
 			<TouchableOpacity onPress={() => makeLinking(GITHUB_REPO_URL)}>
 				<Text style={[styles.textStyle, {color: theme.colors.primaryLight}]}>
