@@ -1,16 +1,14 @@
 # THUInfo ⚛️
 
-[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform iOS](https://img.shields.io/badge/platform-ios-brightgreen)](https://apps.apple.com)
+[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform iOS](https://img.shields.io/badge/platform-ios-lightgrey)](https://apps.apple.com)
 
 An APP aimed at integrating various sources of campus information.
 
 ## Release
 
-Not ready yet.
+Android: [GitHub Release](https://github.com/UNIDY2002/THUInfo/releases)
 
-For versions before 2.0.0: [GitHub Release](https://github.com/UNIDY2002/THUInfo/releases)
-
-**NOTE: The screenshots shown below are of versions before 2.0.0. When version 2.0.0 is ready, they shall be replaced.**
+iOS: Not ready yet.
 
 ## Features
 
@@ -45,7 +43,8 @@ Whatever you need to build a [React Native](https://reactnative.cn/docs/getting-
 ### Procedure
 
 ```bash
-git clone https://github.com/UNIDY2002/THUInfo.git
+# First clone, whether directly here or from your forked repo.
+# Then...
 cd THUInfo
 yarn
 yarn android  # For Android
@@ -56,6 +55,6 @@ yarn ios      # For iOS
 
 ## Acknowledgement
 
-Great thanks to the [learnX](https://github.com/robertying/learnX) project, without whose code the migration to React Native would never be as smooth.
+Great thanks to the [learnX](https://github.com/robertying/learnX) project, without referring to whose code the migration to React Native would never be as smooth.
 
 Best regards to the JavaScript and the React Native community.
