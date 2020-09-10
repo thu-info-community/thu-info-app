@@ -1782,10 +1782,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-native@0.63.17":
-  version "0.63.17"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.17.tgz#364402e33b2805cadfe703d5a84f2e84ad684000"
-  integrity sha512-xSU9JCHKGqC5Mxnqoc5xs4dquo2bW3ttNqz7IWRtHqEKQvbDcXUgZPNNqEKBiq+5ifMcJs5Dex7jgu8ywKoXBA==
+"@types/react-native@0.63.18":
+  version "0.63.18"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.18.tgz#748d82c6453befe97285393ad9530472d8de56af"
+  integrity sha512-WwEWqmHiqFn61M1FZR/+frj+E8e2o8i5cPqu9mjbjtZS/gBfCKVESF2ai/KAlaQECkkWkx/nMJeCc5eHMmLQgw==
   dependencies:
     "@types/react" "*"
 
