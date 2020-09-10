@@ -1,5 +1,24 @@
 jobs:
   include:
+    - language: objective-c
+      os: osx
+      osx_image: xcode12
+      podfile: ios/Podfile
+      cache:
+        - yarn
+        - cocoapods
+      before_install:
+        - nvm install node
+        - npm install -g yarn
+      install:
+        - brew tap wix/brew
+        - brew install applesimutils
+        - gem install fastlane
+        - gem install cocoapods
+        - yarn
+        - cd ios && pod install && cd ..
+      script:
+        - yarn ios
     - language: android
       os: linux
       dist: trusty
@@ -28,8 +47,15 @@ jobs:
       install:
         - yarn
       script:
+        - cd android && gradle assembleDebug && cd ..
+    - language: node_js
+      os: linux
+      dist: trusty
+      node_js:
+        - "14"
+      cache: yarn
+      install:
+        - yarn
+      script:
         - yarn lint
         - yarn test
-        - cd android
-        - gradle assembleDebug
-        - cd ..
