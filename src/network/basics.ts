@@ -27,6 +27,9 @@ import "../../src/utils/extensions";
 import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
 import {currState} from "../redux/store";
+import {Buffer} from "buffer";
+import excelToJson from "convert-excel-to-json";
+import dayjs from "dayjs";
 
 const gradeToOldGPA = new Map<string, number>([
 	["A-", 3.7],
@@ -223,48 +226,58 @@ export const getJoggingRecord = (): Promise<JoggingRecord[]> =>
 		return [];
 	});
 
-export const getExpenditures = (beg: Date, end: Date): Promise<Record[]> =>
+export const getExpenditures = (
+	beg: Date,
+	end: Date,
+): Promise<[Record[], number, number, number]> =>
 	retryWrapper(
 		824,
-		retrieve(EXPENDITURE_URL, EXPENDITURE_URL, {
-			begindate: beg.format(),
-			enddate: end.format(),
-			transtype: "",
-		}).then(async (str) => {
-			const result: Record[] = [];
-			let $ = cheerio.load(str);
-			const page_text = $("table>tr>td>div>span").first().text().split(" ")[0];
-			// @ts-ignore
-			const page_cnt = Number(/共(\d+)页/.exec(page_text)[1]);
-			for (let i = 0; i < page_cnt; i++) {
-				if (i > 0) {
-					$ = cheerio.load(
-						await retrieve(
-							`${EXPENDITURE_URL}?dir=next&currentPage=${i}`,
-							EXPENDITURE_URL,
-							{
-								begindate: beg.format(),
-								enddate: end.format(),
-								transtype: "",
-							},
-						),
-					);
-				}
-				$("table.table1>tr:not(.font10-blackB)").each((index, element) => {
-					const record = {
-						locale: getCheerioText(element.children[3], 1),
-						category: getCheerioText(element.children[5], 1),
-						date: getCheerioText(element.children[9], 0),
-						value: Number(getCheerioText(element.children[11], 0).substring(1)),
-					};
+		retrieve(EXPENDITURE_URL, EXPENDITURE_URL, undefined, "base64").then(
+			(data) => {
+				const sheet = excelToJson({
+					source: Buffer.from(data).toString(),
+					header: {rows: 1},
+					columnToKey: {
+						A: "value",
+						B: "locale",
+						C: "category",
+						D: "value",
+						E: "date",
+						F: "value",
+					},
+				}).Sheet1;
+				const result = sheet.slice(0, sheet.length - 1);
+				result.forEach((record: {value: string | number; category: string}) => {
+					record.value = Number(record.value);
 					if (record.category.match(/^(消费|自助缴费.*|取消充值)$/)) {
 						record.value *= -1;
 					}
-					result.push(record);
 				});
-			}
-			return result.reverse();
-		}),
+				const remainder = result.reduce(
+					(prev: number, curr: Record) => prev + curr.value,
+					0,
+				);
+				let income = 0;
+				let outgo = 0;
+				const filtered = result
+					.filter((it: Record) => {
+						const d = dayjs(it.date.split(" ")[0], "YYYY-MM-DD")
+							.toDate()
+							.valueOf();
+						const valid = d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
+						if (valid) {
+							if (it.value > 0) {
+								income += it.value;
+							} else {
+								outgo -= it.value;
+							}
+						}
+						return valid;
+					})
+					.reverse();
+				return [filtered, income, outgo, remainder];
+			},
+		),
 	);
 
 export const getClassroomState = (

@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
+	Alert,
 	Button,
 	FlatList,
 	RefreshControl,
@@ -38,8 +39,25 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 	);
 };
 
+export const Money = ({title, money}: {title: string; money: number}) => {
+	const strMoney = money.toFixed(2);
+	const bigMoney = strMoney.substring(0, strMoney.length - 3);
+	const smallMoney = strMoney.substring(strMoney.length - 3);
+	return (
+		<View style={{alignItems: "center", flex: 1, padding: 5}}>
+			<Text>{title}</Text>
+			<View style={{flexDirection: "row", alignItems: "flex-end"}}>
+				<Text style={{fontSize: 28}}>{bigMoney}</Text>
+				<Text style={{fontSize: 18}}>{smallMoney}</Text>
+			</View>
+		</View>
+	);
+};
+
 export const ExpenditureScreen = () => {
-	const [expenditures, setExpenditures] = useState<Record[]>([]);
+	const [[expenditures, income, outgo, remainder], setExpenditures] = useState<
+		[Record[], number, number, number]
+	>([[], 0, 0, 0]);
 
 	const today = new Calendar();
 	const [beg, setBeg] = useState(today.date.add(-1, "month").toDate());
@@ -67,6 +85,11 @@ export const ExpenditureScreen = () => {
 
 	return (
 		<>
+			<View style={{flexDirection: "row"}}>
+				<Money title={getStr("income")} money={income} />
+				<Money title={getStr("outgo")} money={outgo} />
+				<Money title={getStr("remainder")} money={remainder} />
+			</View>
 			<View style={styles.header}>
 				<DatePickerTrigger date={beg} onChange={setBeg} disabled={refreshing} />
 				<DatePickerTrigger date={end} onChange={setEnd} disabled={refreshing} />
@@ -74,6 +97,17 @@ export const ExpenditureScreen = () => {
 					title={getStr("query")}
 					onPress={refresh}
 					disabled={refreshing}
+				/>
+				<Button
+					title={getStr("question")}
+					onPress={() => {
+						Alert.alert(
+							getStr("question"),
+							getStr("expenditureFAQ"),
+							[{text: getStr("ok")}],
+							{cancelable: true},
+						);
+					}}
 				/>
 			</View>
 			<View style={styles.container}>

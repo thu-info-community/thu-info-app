@@ -78,6 +78,12 @@ export default {
 	autoScoreSuccess: "您已经成功为该课程打满分。",
 	expenditure: "消费查询",
 	query: "查询",
+	income: "收入",
+	outgo: "支出",
+	remainder: "余额",
+	question: "疑问",
+	expenditureFAQ:
+		"余额≠收入-支出？\n收入和支出对应的是所选时段内的数据。\n\n余额与实际不符？\n由于尚未找到直接查询余额的接口，当前余额数据是根据您的全部收支记录得出的推算结果。\n若与实际不符，欢迎反馈！",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	classroomHeaderPrefix: "第",

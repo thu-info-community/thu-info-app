@@ -85,6 +85,12 @@ export default {
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	expenditure: "Expenditures",
 	query: "Query",
+	income: "Income",
+	outgo: "Expenditure",
+	remainder: "Remainder",
+	question: "FAQ",
+	expenditureFAQ:
+		"Remainder does not match the difference between income and expenditure?\nThe income and expenditure are calculated based on your selected range of dates.\n\nRemainder does not match the actual value of my card?\nAs no direct API has been found yet, the remainder value is deduced based on the whole history of your expenditure records, and might be incorrect.\nIf such, feedbacks are welcome!",
 	classroomState: "Classrooms",
 	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
 	classroomHeaderPrefix: "Week ",

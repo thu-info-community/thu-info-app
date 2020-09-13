@@ -119,8 +119,6 @@ export const retrieve = async (
 
 /**
  * Logs-in to WebVPN, INFO and ZHJW sequentially.
- *
- * @TODO cookies are nasty
  */
 export const login = async (userId: string, password: string): Promise<Auth> =>
 	retrieve(DO_LOGIN_URL, LOGIN_URL, {
