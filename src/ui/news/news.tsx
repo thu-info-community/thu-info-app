@@ -283,7 +283,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 							}}>
 							{item.name}
 						</Text>
-						<Text style={{margin: 5}} numberOfLines={5}>
+						<Text style={{margin: 5, lineHeight: 18}} numberOfLines={5}>
 							<Text style={{fontWeight: "bold"}}>
 								{item.source + (item.source ? getStr(":") : "")}
 							</Text>
