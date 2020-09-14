@@ -47,8 +47,8 @@ Whatever you need to build a [React Native](https://reactnative.cn/docs/getting-
 # Then...
 cd THUInfo
 yarn
-yarn android  # For Android
-yarn ios      # For iOS
+yarn android                  # For Android
+npx pod-install && yarn ios   # For iOS
 ```
 
 **Issues and pull requests are welcome!**

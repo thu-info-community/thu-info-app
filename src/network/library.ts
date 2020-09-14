@@ -24,6 +24,7 @@ import "../../src/utils/extensions";
 import {currState} from "../redux/store";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
+import dayjs from "dayjs";
 
 const fetchJson = (
 	url: string,
@@ -63,9 +64,10 @@ export const getLibraryFloorList = ({
 			.sort(byId),
 	);
 
-export const getLibraryDays = ({
-	id,
-}: LibrarySection): Promise<[LibraryDate, LibraryDate]> =>
+export const getLibraryDay = (
+	id: number,
+	choice: 0 | 1,
+): Promise<LibraryDate> =>
 	fetchJson(LIBRARY_DAYS_URL + id).then((r) => {
 		if (r.length !== 2) {
 			throw new Error("Expected 2 available days, got " + r.length);
@@ -79,14 +81,19 @@ export const getLibraryDays = ({
 			endTime: transformDate(node.endTime),
 			segmentId: node.id,
 			today: index === 0,
-		}));
+		}))[choice];
 	});
 
 export const getLibrarySectionList = (
 	{id, zhNameTrace, enNameTrace}: LibraryFloor,
-	date: Date,
+	dateChoice: 0 | 1,
 ): Promise<LibrarySection[]> =>
-	fetchJson(LIBRARY_AREAS_URL + id + "/date/" + date.format()).then((r) =>
+	fetchJson(
+		LIBRARY_AREAS_URL +
+			id +
+			"/date/" +
+			dayjs().add(dateChoice, "day").toDate().format(),
+	).then((r) =>
 		r.childArea
 			.map((node: any) => ({
 				id: node.id,
@@ -116,30 +123,33 @@ const currentTime = () => {
 
 export const getLibrarySeatList = (
 	{id, zhNameTrace, enNameTrace}: LibrarySection,
-	{day, startTime, endTime, segmentId, today}: LibraryDate,
+	dateChoice: 0 | 1,
 ): Promise<LibrarySeat[]> =>
-	fetchJson(
-		LIBRARY_SEATS_URL +
-			"?" +
-			stringify({
-				area: id,
-				segment: segmentId,
-				day,
-				startTime: today ? currentTime() : startTime,
-				endTime,
-			}),
-	).then((r) =>
-		r
-			.map((node: any) => ({
-				id: node.id,
-				zhName: node.name,
-				zhNameTrace: zhNameTrace + " - " + node.name,
-				enName: node.name,
-				enNameTrace: enNameTrace + " - " + node.name,
-				valid: node.status === 1,
-				type: node.area_type,
-			}))
-			.sort(byId),
+	getLibraryDay(id, dateChoice).then(
+		({day, startTime, endTime, segmentId, today}) =>
+			fetchJson(
+				LIBRARY_SEATS_URL +
+					"?" +
+					stringify({
+						area: id,
+						segment: segmentId,
+						day,
+						startTime: today ? currentTime() : startTime,
+						endTime,
+					}),
+			).then((r) =>
+				r
+					.map((node: any) => ({
+						id: node.id,
+						zhName: node.name,
+						zhNameTrace: zhNameTrace + " - " + node.name,
+						enName: node.name,
+						enNameTrace: enNameTrace + " - " + node.name,
+						valid: node.status === 1,
+						type: node.area_type,
+					}))
+					.sort(byId),
+			),
 	);
 
 const getAccessToken = (): Promise<string> =>
@@ -159,18 +169,21 @@ const getAccessToken = (): Promise<string> =>
 
 export const bookLibrarySeat = async (
 	{id, type}: LibrarySeat,
-	{segmentId}: LibraryDate,
+	section: LibrarySection,
+	dateChoice: 0 | 1,
 ): Promise<{status: number; msg: string}> =>
 	JSON.parse(
-		await retrieve(
-			LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
-			LIBRARY_HOME_URL,
-			{
-				access_token: await getAccessToken(),
-				userid: currState().auth.userId,
-				segment: segmentId,
-				type,
-			},
+		await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
+			retrieve(
+				LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
+				LIBRARY_HOME_URL,
+				{
+					access_token: await getAccessToken(),
+					userid: currState().auth.userId,
+					segment: segmentId,
+					type,
+				},
+			),
 		),
 	);
 

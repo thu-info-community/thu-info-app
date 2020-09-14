@@ -15,12 +15,7 @@ import {RouteProp} from "@react-navigation/native";
 import {DormScoreScreen} from "./dormScore";
 import {ConfigureDormScreen} from "./configureDorm";
 import {LibraryScreen} from "./library";
-import {
-	Library,
-	LibraryDate,
-	LibraryFloor,
-	LibrarySection,
-} from "../../models/home/library";
+import {Library, LibraryFloor, LibrarySection} from "../../models/home/library";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
@@ -40,7 +35,7 @@ type HomeStackParamList = {
 	Library: undefined;
 	LibraryFloor: Library;
 	LibrarySection: LibraryFloor;
-	LibrarySeat: {section: LibrarySection; date: LibraryDate};
+	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 };
