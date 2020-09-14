@@ -3,21 +3,39 @@ import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {LibraryBase} from "../../models/home/library";
-import {HomeNav} from "../../ui/home/homeStack";
+import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
+import {RouteProp} from "@react-navigation/native";
 
-export function libraryRefreshListScreen<T extends LibraryBase>(
+export function libraryRefreshListScreen<
+	T extends LibraryBase,
+	S extends "LibraryFloor" | "LibrarySection" | "LibrarySeat"
+>(
 	dataSource: (
-		props: PropsWithChildren<any>,
+		props: PropsWithChildren<{
+			navigation: HomeNav;
+			route: RouteProp<HomeStackParamList, S>;
+		}>,
 		dateChoice: 0 | 1,
 	) => Promise<T[]>,
 	onPress: (
-		props: PropsWithChildren<any>,
+		props: PropsWithChildren<{
+			navigation: HomeNav;
+			route: RouteProp<HomeStackParamList, S>;
+		}>,
 		item: T,
 		choice: 0 | 1,
 		refresh: () => void,
 	) => () => void,
-): FC {
-	return (props: PropsWithChildren<any> & {navigation: HomeNav}) => {
+): FC<{
+	navigation: HomeNav;
+	route: RouteProp<HomeStackParamList, S>;
+}> {
+	return (
+		props: PropsWithChildren<{
+			navigation: HomeNav;
+			route: RouteProp<HomeStackParamList, S>;
+		}>,
+	) => {
 		const [choice, setChoice] = useState<0 | 1>(
 			props?.route?.params?.dateChoice ?? 0,
 		);

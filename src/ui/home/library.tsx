@@ -10,7 +10,10 @@ export const LibraryScreen = simpleRefreshListScreen(
 		<TouchableOpacity
 			style={{padding: 8}}
 			disabled={!item.valid}
-			onPress={() => item.valid && navigation.navigate("LibraryFloor", item)}>
+			onPress={() =>
+				item.valid &&
+				navigation.navigate("LibraryFloor", {library: item, dateChoice: 0})
+			}>
 			<Text
 				style={{
 					textAlign: "center",

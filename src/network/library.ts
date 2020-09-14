@@ -45,45 +45,6 @@ export const getLibraryList = (): Promise<Library[]> =>
 		})),
 	);
 
-export const getLibraryFloorList = ({
-	id,
-	zhName,
-	enName,
-}: Library): Promise<LibraryFloor[]> =>
-	fetchJson(LIBRARY_AREAS_URL + id, LIBRARY_HOME_URL).then((r) =>
-		r.childArea
-			.map((node: any) => ({
-				id: node.id,
-				zhName: node.name,
-				zhNameTrace: `${zhName} - ${node.name}`,
-				enName: node.enname,
-				enNameTrace: `${enName} - ${node.enname}`,
-				valid: node.isValid === 1,
-				parentId: id,
-			}))
-			.sort(byId),
-	);
-
-export const getLibraryDay = (
-	id: number,
-	choice: 0 | 1,
-): Promise<LibraryDate> =>
-	fetchJson(LIBRARY_DAYS_URL + id).then((r) => {
-		if (r.length !== 2) {
-			throw new Error("Expected 2 available days, got " + r.length);
-		}
-		const transformDate = (s: {date: string}) => {
-			return s.date.substring(11, 16);
-		};
-		return r.map((node: any, index: number) => ({
-			day: node.day,
-			startTime: transformDate(node.startTime),
-			endTime: transformDate(node.endTime),
-			segmentId: node.id,
-			today: index === 0,
-		}))[choice];
-	});
-
 export const getLibrarySectionList = (
 	{id, zhNameTrace, enNameTrace}: LibraryFloor,
 	dateChoice: 0 | 1,
@@ -107,6 +68,58 @@ export const getLibrarySectionList = (
 			}))
 			.sort(byId),
 	);
+
+export const getLibraryFloorList = async (
+	{id, zhName, enName}: Library,
+	dateChoice: 0 | 1,
+): Promise<LibraryFloor[]> => {
+	const r = await fetchJson(LIBRARY_AREAS_URL + id, LIBRARY_HOME_URL);
+	return ((await Promise.all(
+		r.childArea.map(async (node: any) => {
+			const floor = {
+				id: node.id,
+				zhName: node.name,
+				zhNameTrace: `${zhName} - ${node.name}`,
+				enName: node.enname,
+				enNameTrace: `${enName} - ${node.enname}`,
+				valid: node.isValid === 1,
+				parentId: id,
+				available: 0,
+				total: 0,
+			};
+			const [available, total] = (
+				await Promise.all(await getLibrarySectionList(floor, dateChoice))
+			).reduce(
+				([px, py], curr) =>
+					curr.valid ? [px + curr.available, py + curr.total] : [px, py],
+				[0, 0],
+			);
+			floor.available = available;
+			floor.total = total;
+			return floor;
+		}),
+	)) as LibraryFloor[]).sort(byId);
+};
+
+export const getLibraryDay = (
+	id: number,
+	choice: 0 | 1,
+): Promise<LibraryDate> =>
+	fetchJson(LIBRARY_DAYS_URL + id).then((r) => {
+		if (r.length !== 2) {
+			throw new Error("Expected 2 available days, got " + r.length);
+		}
+		const transformDate = (s: {date: string}) => {
+			return s.date.substring(11, 16);
+		};
+		return r.map((node: any, index: number) => ({
+			day: node.day,
+			startTime: transformDate(node.startTime),
+			endTime: transformDate(node.endTime),
+			segmentId: node.id,
+			today: index === 0,
+		}))[choice];
+	});
 
 const pad = (ori: any, length: number) => {
 	let result = String(ori);

@@ -22,7 +22,7 @@ import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
 import {JoggingScreen} from "./jogging";
 
-type HomeStackParamList = {
+export type HomeStackParamList = {
 	Home: undefined;
 	Report: undefined;
 	Evaluation: undefined;
@@ -33,8 +33,8 @@ type HomeStackParamList = {
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
 	Library: undefined;
-	LibraryFloor: Library;
-	LibrarySection: LibraryFloor;
+	LibraryFloor: {library: Library; dateChoice: 0 | 1};
+	LibrarySection: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
@@ -118,12 +118,12 @@ export const HomeStackScreen = () => (
 		<Stack.Screen
 			name="LibraryFloor"
 			component={LibraryFloorScreen}
-			options={({route}) => ({title: route.params.zhName})}
+			options={({route}) => ({title: route.params.library.zhName})}
 		/>
 		<Stack.Screen
 			name="LibrarySection"
 			component={LibrarySectionScreen}
-			options={({route}) => ({title: route.params.zhNameTrace})}
+			options={({route}) => ({title: route.params.floor.zhNameTrace})}
 		/>
 		<Stack.Screen
 			name="LibrarySeat"

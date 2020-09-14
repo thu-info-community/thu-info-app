@@ -1,26 +1,17 @@
-import {Text, TouchableOpacity} from "react-native";
-import React from "react";
-import {HomeNav, LibraryFloorRouteProp} from "./homeStack";
 import {getLibraryFloorList} from "../../network/library";
-import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
+import {LibraryFloor} from "../../models/home/library";
 
-export const LibraryFloorScreen = simpleRefreshListScreen(
-	({route}: {route: LibraryFloorRouteProp}) =>
-		getLibraryFloorList(route.params),
-	(item, _, {navigation}: {navigation: HomeNav}) => (
-		<TouchableOpacity
-			style={{padding: 8}}
-			onPress={() => item.valid && navigation.navigate("LibrarySection", item)}
-			disabled={!item.valid}>
-			<Text
-				style={{
-					textAlign: "center",
-					textDecorationLine: item.valid ? "none" : "line-through",
-					color: item.valid ? "black" : "grey",
-				}}>
-				{item.zhName}
-			</Text>
-		</TouchableOpacity>
-	),
-	(item) => String(item.id),
+export const LibraryFloorScreen = libraryRefreshListScreen<
+	LibraryFloor,
+	"LibraryFloor"
+>(
+	(props, dateChoice) =>
+		getLibraryFloorList(props.route.params.library, dateChoice),
+	(props, item, choice) => () => {
+		props.navigation.navigate("LibrarySection", {
+			floor: item,
+			dateChoice: choice,
+		});
+	},
 );
