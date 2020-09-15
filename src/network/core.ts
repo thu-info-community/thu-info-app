@@ -25,7 +25,7 @@ import {
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
-import {currState} from "../redux/store";
+import {currState, mocked} from "../redux/store";
 import {dormLoginStatus} from "../utils/dorm";
 import cheerio from "cheerio";
 
@@ -121,52 +121,61 @@ export const retrieve = async (
  * Logs-in to WebVPN, INFO and ZHJW sequentially.
  */
 export const login = async (userId: string, password: string): Promise<Auth> =>
-	retrieve(DO_LOGIN_URL, LOGIN_URL, {
-		auth_type: "local",
-		username: userId,
-		sms_code: "",
-		password: password,
-	})
-		.then((str) => {
-			if (str.indexOf("首页") === -1) {
-				throw LoginStatus.Failed;
-			}
-		})
-		.then(() =>
-			connect(INFO_LOGIN_URL, INFO_URL, {
-				redirect: "NO",
-				userName: userId,
+	mocked()
+		? {userId: userId, password: password}
+		: retrieve(DO_LOGIN_URL, LOGIN_URL, {
+				auth_type: "local",
+				username: userId,
+				sms_code: "",
 				password: password,
-				x: "0",
-				y: "0",
-			}),
-		)
-		.then(() => connect(INVALIDATE_ZHJW_URL, INFO_URL))
-		.then(() => {
-			return {
-				userId: userId,
-				password: password,
-			};
-		});
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  })
+				.then((str) => {
+					if (str.indexOf("首页") === -1) {
+						throw LoginStatus.Failed;
+					}
+				})
+				.then(() =>
+					connect(INFO_LOGIN_URL, INFO_URL, {
+						redirect: "NO",
+						userName: userId,
+						password: password,
+						x: "0",
+						y: "0",
+					}),
+				)
+				.then(() => connect(INVALIDATE_ZHJW_URL, INFO_URL))
+				.then(() => {
+					return {
+						userId: userId,
+						password: password,
+					};
+				});
 
 /**
  * Gets the user's full name.
  */
 export const getFullName = async (): Promise<string> =>
-	retrieve(PROFILE_URL, PROFILE_REFERER, undefined, "GBK").then((str) => {
-		const key = "report1_3";
-		const startIndex = str.indexOf(`"${key}"`); // In order to silence eslint.
-		if (startIndex === -1) {
-			throw 0;
-		} else {
-			return str.substring(startIndex + 12, str.indexOf("</td>", startIndex));
-		}
-	});
+	mocked()
+		? "Somebody"
+		: retrieve(PROFILE_URL, PROFILE_REFERER, undefined, "GBK").then((str) => {
+				const key = "report1_3";
+				const startIndex = str.indexOf(`"${key}"`); // In order to silence eslint.
+				if (startIndex === -1) {
+					throw 0;
+				}
+				return str.substring(startIndex + 12, str.indexOf("</td>", startIndex));
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  });
 
 /**
  * Logs-out from WebVPN.
  */
-export const logout = async (): Promise<void> => connect(LOGOUT_URL);
+export const logout = async (): Promise<void> => {
+	if (!mocked()) {
+		return connect(LOGOUT_URL);
+	}
+};
 
 type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 for library
 
@@ -248,6 +257,9 @@ const performGetTickets = () => {
 };
 
 export const getTickets = () => {
+	if (mocked()) {
+		return;
+	}
 	performGetTickets();
 	getTicket(-1)
 		.then(() => console.log("Ticket -1 get."))

@@ -103,3 +103,7 @@ export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
+
+export const mocked = () =>
+	store.getState().auth.userId === "8888" &&
+	store.getState().auth.password === "8888";
