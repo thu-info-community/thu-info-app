@@ -11,7 +11,13 @@ const connect = (url: string, query?: object, post?: object): Promise<any> =>
 		"UTF-8",
 		0,
 		true,
-	).then((s) => JSON.parse(s));
+	).then((s) => {
+		const r = JSON.parse(s);
+		if (r.code === 1) {
+			throw r.msg;
+		}
+		return r;
+	});
 
 export const holeLogin = () =>
 	connect(HOLE_LOGIN_URL).then((r: {error: any; result: []}) => {

@@ -5,6 +5,7 @@ import {State} from "../../redux/store";
 import {HOLE_SET_TOKEN} from "../../redux/constants";
 import {getHoleList} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
+import Snackbar from "react-native-snackbar";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface HoleProps {
@@ -17,7 +18,13 @@ const HoleUI = () => {
 	const [page, setPage] = useState(1);
 	useEffect(() => {
 		setPage(1);
-		getHoleList(FetchMode.NORMAL, 1, "").then((r) => setData(r));
+		getHoleList(FetchMode.NORMAL, 1, "")
+			.then((r) => setData(r))
+			.catch((err) => {
+				if (typeof err === "string") {
+					Snackbar.show({text: err, duration: Snackbar.LENGTH_SHORT});
+				}
+			});
 	}, []);
 	return (
 		<FlatList

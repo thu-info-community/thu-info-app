@@ -11,6 +11,7 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
+import IconHole from "../../assets/icons/IconHole";
 
 const iconSize = 60;
 
@@ -105,6 +106,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 					configureDorm(() => navigation.navigate("DormScore"), navigation)
 				}>
 				<IconDormScore width={iconSize} height={iconSize} />
+			</HomeIcon>
+		</HomeSection>
+		<HomeSection title="hole">
+			<HomeIcon title="hole" onPress={() => navigation.navigate("Hole")}>
+				<IconHole width={iconSize} height={iconSize} />
 			</HomeIcon>
 		</HomeSection>
 	</ScrollView>

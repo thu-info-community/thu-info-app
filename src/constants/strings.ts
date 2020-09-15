@@ -1,7 +1,9 @@
+import VersionNumber from "react-native-version-number";
+
 export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
-export const HOLE_USER_AGENT = "THUInfo/1.1.2";
+export const HOLE_USER_AGENT = "THUInfo/" + VersionNumber.appVersion;
 
 export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn/";
 export const LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login";
