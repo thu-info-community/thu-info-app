@@ -42,6 +42,8 @@ export default {
 	secondarySchedule: "二级课表",
 	sendErrReport: "发送错误报告",
 	emptyList: "列表空空如也，请刷新重试",
+	holeSettings: "树洞设置",
+	holeTokenSettings: "设置Token",
 	acknowledgements: "致谢",
 	acknowledgeLearnX: "感谢 learnX 开源代码提供参考范例 🎉",
 	acknowledgeCommunity: "致敬 JavaScript 开源社区 ❤️",

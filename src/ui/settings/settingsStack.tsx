@@ -17,6 +17,7 @@ import {ReportManageHiddenScreen} from "./reportManageHidden";
 import {SecondarySettingsScreen} from "./secondarySettings";
 import {RemainderSettingsScreen} from "./remainderSettings";
 import {ExperimentalScreen} from "./experimental";
+import {HoleSettingsScreen} from "./holeSettings";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -31,6 +32,7 @@ type SettingsStackParamList = {
 	SecondarySettings: undefined;
 	RemainderSettings: undefined;
 	Experimental: undefined;
+	HoleSettings: undefined;
 	About: undefined;
 };
 
@@ -104,6 +106,11 @@ export const SettingStackScreen = () => (
 			name="Experimental"
 			component={ExperimentalScreen}
 			options={{title: getStr("experimental")}}
+		/>
+		<Stack.Screen
+			name="HoleSettings"
+			component={HoleSettingsScreen}
+			options={{title: getStr("holeSettings")}}
 		/>
 	</Stack.Navigator>
 );

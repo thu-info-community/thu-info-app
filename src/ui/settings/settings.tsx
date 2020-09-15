@@ -45,6 +45,11 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		/>
 		<SettingsSeparator />
 		<SettingsItem
+			text={getStr("holeSettings")}
+			onPress={() => navigation.navigate("HoleSettings")}
+		/>
+		<SettingsSeparator />
+		<SettingsItem
 			text={getStr("eleRecord")}
 			onPress={() => navigation.navigate("EleRecord")}
 			icon={<Feather name="zap" size={16} />}

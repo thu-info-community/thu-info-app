@@ -42,6 +42,8 @@ export default {
 	secondarySchedule: "Secondary Schedule",
 	sendErrReport: "Send error report",
 	emptyList: "The list seems empty.",
+	holeSettings: "Hole Settings",
+	holeTokenSettings: "Setup hole token",
 	acknowledgements: "Acknowledgements",
 	acknowledgeLearnX: "Great thanks to the `learnX` project 🎉",
 	acknowledgeCommunity: "Best regards to the JavaScript Community ❤️",

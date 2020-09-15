@@ -88,15 +88,15 @@ export const SettingsSwitch = ({
 	);
 };
 
-export const SettingsEditValue = ({
+export function SettingsEditValue<T extends string | number>({
 	text,
 	value,
 	onValueChange,
 }: {
 	text: string;
-	value: number;
-	onValueChange: (newValue: number) => void;
-}) => {
+	value: T;
+	onValueChange: (newValue: T) => void;
+}) {
 	return (
 		<View
 			style={{
@@ -120,7 +120,11 @@ export const SettingsEditValue = ({
 				}}
 				value={String(value)}
 				onChangeText={(newText) => {
-					if (!isNaN(Number(newText))) {
+					if (typeof value === "string") {
+						// @ts-ignore
+						onValueChange(newText);
+					} else if (!isNaN(Number(newText))) {
+						// @ts-ignore
 						onValueChange(Number(newText));
 					}
 				}}
@@ -128,6 +132,6 @@ export const SettingsEditValue = ({
 			/>
 		</View>
 	);
-};
+}
 
 export const SettingsSeparator = () => <View style={{height: 10}} />;

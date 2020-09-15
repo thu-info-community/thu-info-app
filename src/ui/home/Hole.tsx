@@ -1,19 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {FlatList, Text, View} from "react-native";
-import {connect} from "react-redux";
-import {State} from "../../redux/store";
-import {HOLE_SET_TOKEN} from "../../redux/constants";
 import {getHoleList} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface HoleProps {
-	token: string;
-	setToken: (token: string) => void;
-}
-
-const HoleUI = () => {
+export const HoleScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
 	const [page, setPage] = useState(1);
 	useEffect(() => {
@@ -47,13 +38,3 @@ const HoleUI = () => {
 		/>
 	);
 };
-
-export const HoleScreen = connect(
-	(state: State) => state.hole,
-	(dispatch) => {
-		return {
-			setToken: (token: string) =>
-				dispatch({type: HOLE_SET_TOKEN, payload: token}),
-		};
-	},
-)(HoleUI);
