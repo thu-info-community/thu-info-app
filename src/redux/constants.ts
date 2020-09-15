@@ -30,5 +30,7 @@ export const ADD_NEWS_CACHE = "ADD_NEWS_CACHE";
 export const SET_GRADUATE = "SET_GRADUATE";
 export const SET_NEW_GPA = "SET_NEW_GPA";
 export const SET_BX = "SET_BX";
+export const ADD_REPORT_HIDDEN = "ADD_REPORT_HIDDEN";
+export const REMOVE_REPORT_HIDDEN = "REMOVE_REPORT_HIDDEN";
 
 export const SET_SCHEDULE_HEIGHT = "SET_SCHEDULE_HEIGHT";

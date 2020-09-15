@@ -34,6 +34,9 @@ export default {
 	oldGPA: "旧绩点",
 	bx: "必限",
 	bxr: "必限任",
+	manageHidden: "隐藏的科目",
+	reportHiddenWarning:
+		"推出该功能的初衷是满足一些院系个性化成绩单的需求。\n请妥善使用。",
 	scheduleSettings: "课程表设置",
 	scheduleUnitHeight: "课表单元高度（恶搞后果自负）",
 	acknowledgements: "致谢",

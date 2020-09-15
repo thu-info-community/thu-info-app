@@ -35,6 +35,7 @@ export const defaultConfigState: Config = {
 	graduate: false,
 	newGPA: true,
 	bx: false,
+	reportHidden: [],
 	scheduleHeight: 90,
 };
 

@@ -12,6 +12,8 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
 
 type Section = SectionListData<Course> & ReportHeaderProps;
 
@@ -44,7 +46,7 @@ const prepareData = (src: Course[]): [number, Section[]] => {
 	return [totalPoints / totalCredits, sections];
 };
 
-export const ReportScreen = () => {
+const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
@@ -55,7 +57,7 @@ export const ReportScreen = () => {
 		setRefreshing(true);
 		getReport()
 			.then((res) => {
-				setReport(res);
+				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);
 			})
 			.catch(() => {
@@ -67,6 +69,7 @@ export const ReportScreen = () => {
 			});
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchData, []);
 
 	const [gpa, sections] = prepareData(report || []);
@@ -97,3 +100,7 @@ export const ReportScreen = () => {
 		/>
 	);
 };
+
+export const ReportScreen = connect((state: State) => ({
+	hidden: state.config.reportHidden ?? [],
+}))(ReportUI);

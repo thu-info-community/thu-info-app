@@ -35,6 +35,8 @@ export default {
 	oldGPA: "Old GPA Policy",
 	bx: "Required & Restricted",
 	bxr: "Required, Restricted & Elective",
+	manageHidden: "Hidden Subjects",
+	reportHiddenWarning: "Do not abuse this functionality.",
 	scheduleSettings: "Schedule Settings",
 	scheduleUnitHeight: "Set Unit Height (VALIDITY IS NOT CHECKED)",
 	acknowledgements: "Acknowledgements",

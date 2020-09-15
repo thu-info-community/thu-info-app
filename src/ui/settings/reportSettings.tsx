@@ -1,10 +1,15 @@
-import {SettingsSwitch} from "../../components/settings/items";
+import {SettingsItem, SettingsSwitch} from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
 import React from "react";
 import {currState, store} from "../../redux/store";
 import {SET_BX, SET_NEW_GPA} from "../../redux/constants";
+import {SettingsNav} from "./settingsStack";
 
-export const ReportSettingsScreen = () => (
+export const ReportSettingsScreen = ({
+	navigation,
+}: {
+	navigation: SettingsNav;
+}) => (
 	<>
 		<SettingsSwitch
 			textOn={getStr("newGPA")}
@@ -21,6 +26,10 @@ export const ReportSettingsScreen = () => (
 				store.dispatch({type: SET_BX, payload: state});
 			}}
 			defaultValue={currState().config.bx}
+		/>
+		<SettingsItem
+			text={getStr("manageHidden")}
+			onPress={() => navigation.navigate("ReportManageHidden")}
 		/>
 	</>
 );

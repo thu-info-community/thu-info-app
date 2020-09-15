@@ -13,6 +13,7 @@ import {ReportSettingsScreen} from "./reportSettings";
 import {AcknowledgementsScreen} from "./acknowledgements";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
 import {AboutScreen} from "./about";
+import {ReportManageHiddenScreen} from "./reportManageHidden";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -23,6 +24,7 @@ type SettingsStackParamList = {
 	ReportSettings: undefined;
 	Acknowledgements: undefined;
 	ScheduleSettings: undefined;
+	ReportManageHidden: undefined;
 	About: undefined;
 };
 
@@ -76,6 +78,11 @@ export const SettingStackScreen = () => (
 			name="About"
 			component={AboutScreen}
 			options={{title: getStr("about")}}
+		/>
+		<Stack.Screen
+			name="ReportManageHidden"
+			component={ReportManageHiddenScreen}
+			options={{title: getStr("manageHidden")}}
 		/>
 	</Stack.Navigator>
 );

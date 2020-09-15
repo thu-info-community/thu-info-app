@@ -2,12 +2,15 @@ import {Config} from "../states/config";
 import {defaultConfigState} from "../defaults";
 import {ConfigAction} from "../actions/config";
 import {
+	ADD_REPORT_HIDDEN,
+	REMOVE_REPORT_HIDDEN,
 	SET_BX,
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
 	SET_GRADUATE,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
+	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
 
@@ -44,7 +47,22 @@ export const config = (
 				...state,
 				bx: action.payload,
 			};
-		case "SET_SCHEDULE_HEIGHT":
+		case ADD_REPORT_HIDDEN:
+			return (state.reportHidden ?? []).indexOf(action.payload) === -1
+				? {
+						...state,
+						reportHidden: (state.reportHidden ?? []).concat(action.payload),
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  }
+				: state;
+		case REMOVE_REPORT_HIDDEN:
+			return {
+				...state,
+				reportHidden: (state.reportHidden ?? []).filter(
+					(it) => it !== action.payload,
+				),
+			};
+		case SET_SCHEDULE_HEIGHT:
 			return {
 				...state,
 				scheduleHeight: action.payload,

@@ -10,5 +10,6 @@ export interface Config {
 	graduate: boolean;
 	newGPA: boolean;
 	bx: boolean;
+	reportHidden: string[];
 	scheduleHeight: number;
 }
