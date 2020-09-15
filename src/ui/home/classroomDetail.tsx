@@ -159,6 +159,7 @@ export const ClassroomDetailScreen = ({
 				style={{
 					flexWrap: "wrap",
 					flexDirection: "row",
+					justifyContent: "space-around",
 					alignItems: "center",
 					margin: 4,
 				}}>
@@ -179,15 +180,19 @@ export const ClassroomDetailScreen = ({
 						colors={[theme.colors.accent]}
 					/>
 				}
+				style={{
+					marginHorizontal: 20,
+					marginTop: 10,
+				}}
 				renderItem={({item}) => (
 					<View
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
-							marginHorizontal: 8,
+							marginHorizontal: 0,
 						}}>
 						<Text style={{flex: 1, textAlign: "center", fontSize: 15}}>
-							{item[0]}
+							{item[0].split(":")[0]}
 						</Text>
 						{Array.from(new Array(6), (_, index) => (
 							<View

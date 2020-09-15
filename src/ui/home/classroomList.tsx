@@ -5,11 +5,23 @@ import {HomeNav} from "./homeStack";
 const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => (
 	<TouchableOpacity
 		style={{
-			backgroundColor: "#ccc",
-			padding: 10,
-			margin: 5,
+			backgroundColor: "white",
+			padding: 7,
+			marginHorizontal: 5,
+			marginTop: 10,
 			width: 120,
+			height: 40,
 			justifyContent: "center",
+			borderRadius: 3,
+			shadowColor: "grey",
+			shadowOffset: {
+				width: 2,
+				height: 2,
+			},
+			shadowOpacity: 0.8,
+			shadowRadius: 2,
+			borderColor: "lightgray",
+			borderWidth: 2,
 		}}
 		onPress={() => navigation.navigate("ClassroomDetail", {name})}>
 		<Text style={{textAlign: "center"}}>{name}</Text>
