@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {FlatList, Text, View} from "react-native";
-import {getHoleList} from "../../network/hole";
+import {getHoleList, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
+import {getStr} from "../../utils/i18n";
+import {NetworkRetry} from "../../components/easySnackbars";
 
 export const HoleScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -13,7 +15,18 @@ export const HoleScreen = () => {
 			.then((r) => setData(r))
 			.catch((err) => {
 				if (typeof err === "string") {
-					Snackbar.show({text: err, duration: Snackbar.LENGTH_SHORT});
+					holeLogin()
+						.then(() =>
+							Snackbar.show({text: err, duration: Snackbar.LENGTH_SHORT}),
+						)
+						.catch(() =>
+							Snackbar.show({
+								text: getStr("holePleaseSetToken"),
+								duration: Snackbar.LENGTH_LONG,
+							}),
+						);
+				} else {
+					NetworkRetry();
 				}
 			});
 	}, []);

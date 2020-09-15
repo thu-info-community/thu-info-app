@@ -62,6 +62,8 @@ export default {
 	physicalExam: "Physical Exam",
 	jogging: "Jogging",
 	hole: "Hole",
+	holePleaseSetToken:
+		"Login failed. Please check your token in the settings section, or go to https://thuhole.com for more information.",
 	networkRetry: "Network failure, please retry.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
