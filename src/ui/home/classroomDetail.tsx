@@ -165,10 +165,20 @@ export const ClassroomDetailScreen = ({
 				}}>
 				{colors.flatMap((color, index) => [
 					<View
-						style={{backgroundColor: color, width: 14, height: 14, margin: 2}}
-						key={index + 1}
-					/>,
-					<Text key={-index}>{getStr("classroomStatus")[index]}</Text>,
+						style={{
+							flexDirection: "row",
+							justifyContent: "center",
+							alignItems: "center",
+							marginHorizontal: 3,
+						}}>
+						<View
+							style={{backgroundColor: color, width: 14, height: 14, margin: 2}}
+							key={index + 1}
+						/>
+						<Text key={-index} style={{marginLeft: 2}}>
+							{getStr("classroomStatus")[index]}
+						</Text>
+					</View>,
 				])}
 			</View>
 			<FlatList
@@ -191,11 +201,11 @@ export const ClassroomDetailScreen = ({
 							alignItems: "center",
 							marginHorizontal: 0,
 							justifyContent: "space-around",
-							marginBottom: 10,
+							marginBottom: 4,
 						}}>
 						<Text
 							style={{
-								flex: 1,
+								flex: 4,
 								textAlign: "center",
 								fontSize: 15,
 								fontWeight: "bold",
@@ -204,23 +214,36 @@ export const ClassroomDetailScreen = ({
 						</Text>
 						<Text
 							style={{
-								flex: 1,
+								flex: 4,
 								textAlign: "center",
 								fontSize: 15,
 								fontWeight: "bold",
 							}}>
 							{getStr("classroomCapacity")}
 						</Text>
-						<Text
-							style={{
-								flex: 1,
-								textAlign: "center",
-								fontSize: 15,
-								fontWeight: "bold",
-								marginHorizontal: 15,
-							}}>
-							{getStr("classroomCondition")}
-						</Text>
+						<View style={{flex: 5}}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 15,
+									fontWeight: "bold",
+									marginBottom: 2,
+								}}>
+								{getStr("classroomCondition")}
+							</Text>
+							<View
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-around",
+									alignItems: "center",
+								}}>
+								{[1, 2, 3, 4, 5, 6].map((val) => (
+									<Text key={val} style={{flex: 1, textAlign: "center"}}>
+										{val}
+									</Text>
+								))}
+							</View>
+						</View>
 					</View>
 				}
 				renderItem={({item}) => (

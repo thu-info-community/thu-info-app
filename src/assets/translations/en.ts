@@ -168,6 +168,7 @@ export default {
 	newsNumberOnPage: "Number of news per loading: ",
 	numberOfNewsOutOfRange:
 		"Number of news per loading should be no more than 100 and no less than 10",
+	numberOfNewsNaN: "Your input is not a number",
 	waitForLoading: "It may take long time to load news...",
 	newsTip: "Tip: Press the icon to filter the source of news.",
 	classroomName: "Classroom",

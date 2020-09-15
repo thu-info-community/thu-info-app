@@ -124,7 +124,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsList, setNewsList] = useState<newsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [newsNumberOnOnePage, setNewsNumber] = useState(20);
+	const [newsNumberOnOnePage, setNewsNumber] = useState("20");
 	const [newsSource] = useState(new newsSourceList());
 
 	const themeName = useContext(ThemeContext);
@@ -152,7 +152,10 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 		}
 
 		newsSource
-			.getLatestNewsList(newsNumberOnOnePage, route.params?.source)
+			.getLatestNewsList(
+				parseInt(newsNumberOnOnePage, 10),
+				route.params?.source,
+			)
 			.then((res) => {
 				res.forEach(({url, date}) => {
 					if (cache.get(url) === undefined) {
@@ -180,7 +183,11 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	};
 
 	const rerender = () => {
-		if (newsNumberOnOnePage < 10 || newsNumberOnOnePage > 100) {
+		let n = parseInt(newsNumberOnOnePage, 10);
+
+		if (isNaN(n)) {
+			Alert.alert(getStr("numberOfNewsNaN"));
+		} else if (n < 10 || n > 100) {
 			Alert.alert(getStr("numberOfNewsOutOfRange"));
 		} else {
 			fetchNewsList();
@@ -234,7 +241,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 						<TextInput
 							style={styles.textInputStyle}
 							placeholder="20"
-							onChangeText={(txt) => setNewsNumber(parseInt(txt, 10))}
+							onChangeText={(txt) => setNewsNumber(txt)}
 						/>
 					</View>
 					<Button title={getStr("confirm")} onPress={rerender} />
