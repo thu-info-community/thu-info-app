@@ -170,12 +170,12 @@ export const ClassroomDetailScreen = ({
 							justifyContent: "center",
 							alignItems: "center",
 							marginHorizontal: 3,
-						}}>
+						}}
+						key={index}>
 						<View
 							style={{backgroundColor: color, width: 14, height: 14, margin: 2}}
-							key={index + 1}
 						/>
-						<Text key={-index} style={{marginLeft: 2}}>
+						<Text style={{marginLeft: 2}}>
 							{getStr("classroomStatus")[index]}
 						</Text>
 					</View>,
