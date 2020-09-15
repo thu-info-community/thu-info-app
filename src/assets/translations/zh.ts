@@ -118,6 +118,7 @@ export default {
 	payWithAlipay: "使用支付宝付款",
 	processing: "正在处理……",
 	cancelPayment: "取消支付",
+	testAccountNotSupportEleRecharge: "测试账号暂不支持电费充值",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",

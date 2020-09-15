@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {connect} from "react-redux";
 import {ConfigureDormRouteProp, HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
-import {currState} from "../../redux/store";
+import {currState, mocked} from "../../redux/store";
 import {SET_DORM_PASSWORD} from "../../redux/constants";
 import {getTicket} from "../../network/core";
 import Snackbar from "react-native-snackbar";
@@ -66,7 +66,7 @@ export const ConfigureDormScreen = connect(undefined, (dispatch) => {
 })(ConfigureDormUI);
 
 export const configureDorm = (callback: () => any, navigation: HomeNav) => {
-	if (dormLoginStatus.loggedIn) {
+	if (mocked() || dormLoginStatus.loggedIn) {
 		callback();
 	} else {
 		YellowBox.ignoreWarnings([

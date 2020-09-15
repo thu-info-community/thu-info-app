@@ -128,6 +128,8 @@ export default {
 	payWithAlipay: "Pay with Alipay",
 	processing: "Processing...",
 	cancelPayment: "Cancel",
+	testAccountNotSupportEleRecharge:
+		"Electricity recharge with testing account is not supported.",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",

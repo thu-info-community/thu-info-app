@@ -17,7 +17,7 @@ import {
 	TSINGHUA_HOME_LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
-import {currState} from "../redux/store";
+import {currState, mocked} from "../redux/store";
 import {generalGetPayCode} from "../utils/generalAlipay";
 import {getCheerioText} from "../utils/cheerio";
 
@@ -47,14 +47,20 @@ const loginToHome = async () => {
 };
 
 export const getDormScore = (): Promise<string> =>
-	retryWrapper(
-		-1,
-		retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
-			(s) =>
-				DORM_SCORE_HOST +
-				cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-		),
-	);
+	mocked()
+		? Promise.resolve(
+				"http://m.myhome.tsinghua.edu.cn/ChartAxd.axd?vpn-1&i=dcp_e62ae28f4.jpeg&_guid_=63efec60-dc2d-4242-b056-c2922670251b",
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  )
+		: retryWrapper(
+				-1,
+				retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
+					(s) =>
+						DORM_SCORE_HOST +
+						cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+				),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const getEleRechargePayCode = async (money: number): Promise<string> => {
 	await loginToHome();
@@ -87,6 +93,17 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 export const getElePayRecord = async (): Promise<
 	[string, string, string, string, string, string][]
 > => {
+	if (mocked()) {
+		return [
+			["", "0", "2020-09-15 11:24:07", "", "10.00", "已成功"],
+			["", "1", "2020-09-06 17:38:57", "", "5.00", "已成功"],
+			["", "2", "2020-09-03 15:47:29", "", "20.00", "已成功"],
+			["", "3", "2020-08-30 09:17:38", "", "1.00", "已成功"],
+			["", "4", "2020-08-30 09:14:36", "", "4.00", "已成功"],
+			["", "5", "2020-08-24 11:43:00", "", "10.00", "已成功"],
+			["", "6", "2020-08-22 23:12:49", "", "5.00", "已成功"],
+		];
+	}
 	await loginToHome();
 	const $ = await retrieve(
 		ELE_PAY_RECORD_URL,

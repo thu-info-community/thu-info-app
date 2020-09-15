@@ -7,6 +7,7 @@ import {HomeNav} from "../../ui/home/homeStack";
 import {configureDorm} from "../../ui/home/configureDorm";
 import {HomeIcon} from "./icon";
 import zh from "../../assets/translations/zh";
+import {mocked} from "../../redux/store";
 
 export const AlipayPopup = ({
 	onPay,
@@ -113,7 +114,18 @@ export const AlipayPopup = ({
 			</Modal>
 			<HomeIcon
 				title={title}
-				onPress={() => configureDorm(() => setPopup(true), navigation)}>
+				onPress={() =>
+					configureDorm(() => {
+						if (mocked()) {
+							Snackbar.show({
+								text: getStr("testAccountNotSupportEleRecharge"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						} else {
+							setPopup(true);
+						}
+					}, navigation)
+				}>
 				{children}
 			</HomeIcon>
 		</>
