@@ -170,4 +170,7 @@ export default {
 		"Number of news per loading should be no more than 100 and no less than 10",
 	waitForLoading: "It may take long time to load news...",
 	newsTip: "Tip: Press the icon to filter the source of news.",
+	classroomName: "Classroom",
+	classroomCapacity: "Capacity",
+	classroomCondition: "State",
 };

@@ -184,15 +184,64 @@ export const ClassroomDetailScreen = ({
 					marginHorizontal: 20,
 					marginTop: 10,
 				}}
+				ListHeaderComponent={
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							marginHorizontal: 0,
+							justifyContent: "space-around",
+							marginBottom: 10,
+						}}>
+						<Text
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 15,
+								fontWeight: "bold",
+							}}>
+							{getStr("classroomName")}
+						</Text>
+						<Text
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 15,
+								fontWeight: "bold",
+							}}>
+							{getStr("classroomCapacity")}
+						</Text>
+						<Text
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 15,
+								fontWeight: "bold",
+								marginHorizontal: 15,
+							}}>
+							{getStr("classroomCondition")}
+						</Text>
+					</View>
+				}
 				renderItem={({item}) => (
 					<View
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
 							marginHorizontal: 0,
+							justifyContent: "space-around",
 						}}>
-						<Text style={{flex: 1, textAlign: "center", fontSize: 15}}>
+						<Text
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 15,
+								fontWeight: "bold",
+							}}>
 							{item[0].split(":")[0]}
+						</Text>
+						<Text style={{flex: 1, textAlign: "center", fontSize: 15}}>
+							{item[0].split(":")[1]}
 						</Text>
 						{Array.from(new Array(6), (_, index) => (
 							<View

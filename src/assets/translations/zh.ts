@@ -158,4 +158,7 @@ export default {
 	numberOfNewsOutOfRange: "单次加载新闻数应当不多于100且不小于10",
 	waitForLoading: "新闻较多，加载时间较长，请耐心等待。",
 	newsTip: "小提示：点按新闻图标可只查看某一来源的新闻。",
+	classroomName: "教室",
+	classroomCapacity: "教室容量",
+	classroomCondition: "教室状态",
 };
