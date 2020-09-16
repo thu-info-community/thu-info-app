@@ -174,4 +174,6 @@ export default {
 	classroomName: "Classroom",
 	classroomCapacity: "Capacity",
 	classroomCondition: "State",
+	courseName: "Course Name",
+	courseNameShorten: "Alias",
 };

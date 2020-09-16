@@ -21,7 +21,7 @@ const ConfigureDormUI = ({
 	const [password, setPassword] = useState("");
 
 	return (
-		<View style={{alignItems: "center", padding: 10}}>
+		<View style={{alignItems: "center", justifyContent: "center", padding: 10}}>
 			<Text>{currState().auth.userId}</Text>
 			<TextInput
 				placeholder={getStr("password")}

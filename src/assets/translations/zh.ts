@@ -162,4 +162,6 @@ export default {
 	classroomName: "教室",
 	classroomCapacity: "教室容量",
 	classroomCondition: "教室状态",
+	courseName: "课程原名",
+	courseNameShorten: "课程简称",
 };

@@ -86,14 +86,13 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 						style={[
 							style.pressable,
 							{
-								backgroundColor:
-									index + 1 === day
-										? theme.colors.accent
-										: theme.colors.primaryDark,
+								borderColor:
+									index + 1 === day ? theme.colors.accent : "lightgray",
+								shadowColor: index + 1 === day ? theme.colors.accent : "gray",
 							},
 						]}
 						onPress={() => setDay(index + 1)}>
-						<Text style={style.textCenter} key={index}>
+						<Text style={style.dayOfWeekCenter} key={index}>
 							{getStr("dayOfWeek")[index + 1]}
 						</Text>
 					</TouchableOpacity>
@@ -109,9 +108,12 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 								style={[
 									style.pressable,
 									{
-										backgroundColor: sessions[session]
+										borderColor: sessions[session]
 											? theme.colors.accent
-											: theme.colors.primaryDark,
+											: "lightgray",
+										shadowColor: sessions[session]
+											? theme.colors.accent
+											: "gray",
 									},
 								]}
 								onPress={() => {
@@ -143,9 +145,10 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 									style={[
 										style.pressable,
 										{
-											backgroundColor: weeks[index]
+											borderColor: weeks[index]
 												? theme.colors.accent
-												: theme.colors.primaryDark,
+												: "lightgray",
+											shadowColor: weeks[index] ? theme.colors.accent : "gray",
 										},
 									]}
 									onPress={updateWeeks(
@@ -201,6 +204,14 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 					padding: 10,
 					margin: 5,
 					marginTop: 20,
+					borderRadius: 4,
+					shadowColor: "grey",
+					shadowOffset: {
+						width: 1,
+						height: 1,
+					},
+					shadowOpacity: 0.8,
+					shadowRadius: 2,
 					backgroundColor: valid ? theme.colors.accent : "lightgrey",
 				}}
 				disabled={!valid}
@@ -233,29 +244,61 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 					);
 					navigation.pop();
 				}}>
-				<Text style={[style.textCenter, {fontSize: 18}]}>{getStr("done")}</Text>
+				<Text
+					style={[
+						style.textCenter,
+						{
+							fontSize: 16,
+							fontWeight: "bold",
+							color: valid ? "white" : "black",
+						},
+					]}>
+					{getStr("done")}
+				</Text>
 			</TouchableOpacity>
 		</ScrollView>
 	);
 };
 
-const styles = themedStyles((theme) => {
+const styles = themedStyles(() => {
+	// TODO: themed styles
 	return {
 		pressable: {
 			flex: 1,
 			padding: 8,
 			margin: 5,
-			backgroundColor: theme.colors.primaryLight,
+			backgroundColor: "white",
+			justifyContent: "center",
+			borderRadius: 3,
+			shadowColor: "grey",
+			shadowOffset: {
+				width: 1,
+				height: 1,
+			},
+			shadowOpacity: 0.8,
+			shadowRadius: 2,
+			borderColor: "lightgray",
+			borderWidth: 2.5,
 		},
+
+		dayOfWeekCenter: {
+			textAlign: "center",
+			fontSize: 13,
+		},
+
 		textCenter: {
 			textAlign: "center",
-			color: "white",
+			fontSize: 14,
 		},
+
 		textHeader: {
 			margin: 4,
 			textAlign: "center",
-			fontSize: 20,
+			fontSize: 18,
+			marginTop: 20,
+			marginBottom: 10,
 		},
+
 		textInputStyle: {
 			height: 38,
 			flex: 1,

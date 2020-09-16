@@ -16,6 +16,6 @@ export const HomeIcon = ({
 		style={{alignItems: "center", margin: 8, marginHorizontal: 14}}
 		onPress={onPress}>
 		{children}
-		<Text>{getStr(title)}</Text>
+		<Text style={{marginVertical: 4}}>{getStr(title)}</Text>
 	</TouchableOpacity>
 );
