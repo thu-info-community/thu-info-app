@@ -7205,10 +7205,10 @@ react-native-safe-area-context@3.1.7:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.1.7.tgz#fc9e636dfb168f992a2172d363509ce0611a8403"
   integrity sha512-qSyg/pVMwVPgAy8yCvw349Q+uEUhtRBV33eVXHHkfoou1vCChJxI7SmNR47/6M3BLdjWcyc4lcd018Kx+jhQCw==
 
-react-native-screens@2.10.1:
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.10.1.tgz#06d22fae87ef0ce51c616c34a199726db1403b95"
-  integrity sha512-Z2kKSk4AwWRQNCBmTjViuBQK0/Lx0jc25TZptn/2gKYUCOuVRvCekoA26u0Tsb3BIQ8tWDsZW14OwDlFUXW1aw==
+react-native-screens@2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.11.0.tgz#34b30b07c2d04aa100cba984b944b303bfa43ea6"
+  integrity sha512-vJzJE3zI1XUtqthrX3Dh2TBQWB+xFyaGhF52KBq9FjJUN5ws4xpLZJxBWa1KbGV3DilmcSZ4jmZR5LGordwE7w==
 
 react-native-snackbar@2.2.3:
   version "2.2.3"
