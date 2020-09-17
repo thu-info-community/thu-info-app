@@ -283,7 +283,7 @@ const styles = themedStyles(() => {
 
 		dayOfWeekCenter: {
 			textAlign: "center",
-			fontSize: 13,
+			fontSize: 12,
 		},
 
 		textCenter: {

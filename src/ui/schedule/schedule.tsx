@@ -200,6 +200,7 @@ const OptionButton = ({
 				padding: 8,
 				margin: 2,
 				borderRadius: 5,
+				justifyContent: "center",
 			}}>
 			<Text style={{textAlign: "center", color: "white"}}>{title}</Text>
 		</TouchableOpacity>

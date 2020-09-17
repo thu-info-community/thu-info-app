@@ -164,4 +164,6 @@ export default {
 	classroomCondition: "教室状态",
 	courseName: "课程原名",
 	courseNameShorten: "课程简称",
+	noHiddenLesson: "您目前没有隐藏课程。",
+	hiddenLessonTip: "小提示：您可以在课程表界面设置隐藏。",
 };

@@ -39,6 +39,37 @@ const ScheduleHiddenUI = ({
 				</TouchableOpacity>
 			</View>
 		)}
+		ListEmptyComponent={
+			<View
+				style={{
+					margin: 15,
+					height: 580,
+					justifyContent: "center",
+					alignItems: "center",
+				}}>
+				<Text
+					style={{
+						fontSize: 18,
+						fontWeight: "bold",
+						alignSelf: "center",
+						margin: 5,
+					}}>
+					{getStr("noHiddenLesson")}
+				</Text>
+				<Text
+					style={{
+						fontSize: 16,
+						alignSelf: "center",
+						color: "gray",
+						margin: 5,
+					}}>
+					{getStr("hiddenLessonTip")}
+				</Text>
+			</View>
+		}
+		style={{
+			padding: 5,
+		}}
 		keyExtractor={(item) =>
 			`${item.title}.${item.week}.${item.dayOfWeek}.[${item.begin}-${item.end}]`
 		}
