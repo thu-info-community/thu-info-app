@@ -26,7 +26,7 @@ import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
 import "../../src/utils/extensions";
 import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
-import {currState} from "../redux/store";
+import {currState, mocked} from "../redux/store";
 import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
@@ -44,70 +44,166 @@ const gradeToOldGPA = new Map<string, number>([
 ]);
 
 export const getReport = (): Promise<Course[]> =>
-	retryWrapper(
-		792,
-		Promise.all([
-			retrieve(
-				currState().config.graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
-				INFO_ROOT_URL,
-				undefined,
-				"GBK",
-			),
-			currState().config.bx
-				? retrieve(
+	mocked()
+		? Promise.resolve([
+				{
+					credit: 2,
+					grade: "A+",
+					name: "军事理论",
+					point: 4,
+					semester: "2019-夏",
+				},
+				{
+					credit: 2,
+					grade: "A+",
+					name: "军事技能",
+					point: 4,
+					semester: "2019-夏",
+				},
+				{
+					credit: 5,
+					grade: "A+",
+					name: "微积分A(1)",
+					point: 4,
+					semester: "2019-秋",
+				},
+				{
+					credit: 4,
+					grade: "A+",
+					name: "线性代数",
+					point: 4,
+					semester: "2019-秋",
+				},
+				{
+					credit: 3,
+					grade: "A+",
+					name: "思想道德修养与法律基础",
+					point: 4.0,
+					semester: "2019-秋",
+				},
+				{
+					credit: 1,
+					grade: "A+",
+					name: "体育(1)",
+					point: 4,
+					semester: "2019-秋",
+				},
+				{
+					credit: 5,
+					grade: "A+",
+					name: "微积分A(2)",
+					point: 4,
+					semester: "2020-春",
+				},
+				{
+					credit: 4,
+					grade: "A+",
+					name: "大学物理B(1)",
+					point: 4,
+					semester: "2020-春",
+				},
+				{
+					credit: 3,
+					grade: "A+",
+					name: "中国近现代史纲要",
+					point: 4,
+					semester: "2020-春",
+				},
+				{
+					credit: 1,
+					grade: "A+",
+					name: "形势与政策",
+					point: 4,
+					semester: "2020-春",
+				},
+				{
+					credit: 1,
+					grade: "A+",
+					name: "体育(2)",
+					point: 4,
+					semester: "2020-春",
+				},
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ])
+		: retryWrapper(
+				792,
+				Promise.all([
+					retrieve(
 						currState().config.graduate
-							? YJS_REPORT_BXR_URL
-							: BKS_REPORT_BXR_URL,
+							? GET_YJS_REPORT_URL
+							: GET_BKS_REPORT_URL,
 						INFO_ROOT_URL,
 						undefined,
 						"GBK",
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
-				  )
-				: undefined,
-		]).then(([str, bxStr]: [string, string | undefined]) => {
-			const bxSet = new Set<string>();
-			if (bxStr) {
-				const childrenOriginal = cheerio(".table-striped", bxStr).children();
-				const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
-				children.each((index, element) => {
-					if (element.children.length === 25) {
-						// I don't know why this is needed... Weird...
-						const transformedElement = cheerio(element);
-						const type = getCheerioText(transformedElement.children()[8], 0);
-						if (type === "必修" || type === "限选") {
-							bxSet.add(getCheerioText(transformedElement.children()[0], 0));
-						}
-					}
-				});
-			}
-			const newGPA = currState().config.newGPA;
-			const result = cheerio("#table1", str)
-				.children()
-				.slice(1)
-				.map((_, element) => {
-					const grade = getCheerioText(element, 7);
-					let point = Number(getCheerioText(element, 9));
-					if (!newGPA) {
-						point = gradeToOldGPA.get(grade) ?? point;
-					}
-					return bxStr === undefined || bxSet.has(getCheerioText(element, 1))
-						? {
-								name: getCheerioText(element, 3),
-								credit: Number(getCheerioText(element, 5)),
-								grade,
-								point,
-								semester: getCheerioText(element, 11),
+					),
+					currState().config.bx
+						? retrieve(
+								currState().config.graduate
+									? YJS_REPORT_BXR_URL
+									: BKS_REPORT_BXR_URL,
+								INFO_ROOT_URL,
+								undefined,
+								"GBK",
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  }
-						: undefined;
-				})
-				.get();
-			if (result.length === 0 && str.indexOf("table1") === -1) {
-				throw new Error("Getting report failure.");
-			}
-			return result;
-		}),
-	);
+						  )
+						: undefined,
+				]).then(([str, bxStr]: [string, string | undefined]) => {
+					const bxSet = new Set<string>();
+					if (bxStr) {
+						const childrenOriginal = cheerio(
+							".table-striped",
+							bxStr,
+						).children();
+						const children = childrenOriginal.slice(
+							1,
+							childrenOriginal.length - 1,
+						);
+						children.each((index, element) => {
+							if (element.children.length === 25) {
+								// I don't know why this is needed... Weird...
+								const transformedElement = cheerio(element);
+								const type = getCheerioText(
+									transformedElement.children()[8],
+									0,
+								);
+								if (type === "必修" || type === "限选") {
+									bxSet.add(
+										getCheerioText(transformedElement.children()[0], 0),
+									);
+								}
+							}
+						});
+					}
+					const newGPA = currState().config.newGPA;
+					const result = cheerio("#table1", str)
+						.children()
+						.slice(1)
+						.map((_, element) => {
+							const grade = getCheerioText(element, 7);
+							let point = Number(getCheerioText(element, 9));
+							if (!newGPA) {
+								point = gradeToOldGPA.get(grade) ?? point;
+							}
+							return bxStr === undefined ||
+								bxSet.has(getCheerioText(element, 1))
+								? {
+										name: getCheerioText(element, 3),
+										credit: Number(getCheerioText(element, 5)),
+										grade,
+										point,
+										semester: getCheerioText(element, 11),
+										// eslint-disable-next-line no-mixed-spaces-and-tabs
+								  }
+								: undefined;
+						})
+						.get();
+					if (result.length === 0 && str.indexOf("table1") === -1) {
+						throw new Error("Getting report failure.");
+					}
+					return result;
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const getAssessmentList = (): Promise<[string, boolean, string][]> =>
 	retryWrapper(
@@ -175,46 +271,80 @@ export const postAssessmentForm = (form: Form): Promise<void> =>
 	);
 
 export const getPhysicalExamResult = (): Promise<[string, string][]> =>
-	retryWrapper(
-		792,
-		retrieve(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER, undefined, "GBK").then(
-			(s) => {
-				const json = JSON.parse(s.substring(1, s.length - 1));
-				if (json.success === "false") {
-					throw new Error("Getting physical exam result failed.");
-				} else {
-					return [
-						["是否免测", json.sfmc],
-						["免测原因", json.mcyy],
-						["总分", json.zf],
-						["标准分", json.bzf],
-						["附加分", json.fjf],
-						["长跑附加分", json.cpfjf],
-						["身高", json.sg],
-						["体重", json.tz],
-						["身高体重分数", json.sgtzfs],
-						["肺活量", json.fhl],
-						["肺活量分数", json.fhltzfs],
-						["800M跑", json.bbmp],
-						["800M跑分数", json.bbmpfs],
-						["1000M跑", json.yqmp],
-						["1000M跑分数", json.yqmpfs],
-						["50M跑", json.wsmp],
-						["50M跑分数", json.wsmpfs],
-						["立定跳远", json.ldty],
-						["立定跳远分数", json.ldtyfs],
-						["坐位体前屈", json.zwtqq],
-						["坐位体前屈分数", json.zwtqqfs],
-						["仰卧起坐", json.ywqz],
-						["仰卧起坐分数", json.ywqzfs],
-						["引体向上", json.ytxs],
-						["引体向上分数", json.ytxsfs],
-						["体育课成绩", json.tykcj],
-					];
-				}
-			},
-		),
-	);
+	mocked()
+		? Promise.resolve([
+				["是否免测", "否"],
+				["免测原因", ""],
+				["总分", "300"],
+				["标准分", "300"],
+				["附加分", "0"],
+				["长跑附加分", "0"],
+				["身高", "175"],
+				["体重", "66"],
+				["身高体重分数", "40"],
+				["肺活量", "2000"],
+				["肺活量分数", "20"],
+				["800M跑", "3'40"],
+				["800M跑分数", "50"],
+				["1000M跑", ""],
+				["1000M跑分数", ""],
+				["50M跑", "8.7"],
+				["50M跑分数", "40"],
+				["立定跳远", "1.9"],
+				["立定跳远分数", "20"],
+				["坐位体前屈", "10"],
+				["坐位体前屈分数", "30"],
+				["仰卧起坐", ""],
+				["仰卧起坐分数", ""],
+				["引体向上", "10"],
+				["引体向上分数", "20"],
+				["体育课成绩", ""],
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ])
+		: retryWrapper(
+				792,
+				retrieve(
+					PHYSICAL_EXAM_URL,
+					PHYSICAL_EXAM_REFERER,
+					undefined,
+					"GBK",
+				).then((s) => {
+					const json = JSON.parse(s.substring(1, s.length - 1));
+					if (json.success === "false") {
+						throw new Error("Getting physical exam result failed.");
+					} else {
+						return [
+							["是否免测", json.sfmc],
+							["免测原因", json.mcyy],
+							["总分", json.zf],
+							["标准分", json.bzf],
+							["附加分", json.fjf],
+							["长跑附加分", json.cpfjf],
+							["身高", json.sg],
+							["体重", json.tz],
+							["身高体重分数", json.sgtzfs],
+							["肺活量", json.fhl],
+							["肺活量分数", json.fhltzfs],
+							["800M跑", json.bbmp],
+							["800M跑分数", json.bbmpfs],
+							["1000M跑", json.yqmp],
+							["1000M跑分数", json.yqmpfs],
+							["50M跑", json.wsmp],
+							["50M跑分数", json.wsmpfs],
+							["立定跳远", json.ldty],
+							["立定跳远分数", json.ldtyfs],
+							["坐位体前屈", json.zwtqq],
+							["坐位体前屈分数", json.zwtqqfs],
+							["仰卧起坐", json.ywqz],
+							["仰卧起坐分数", json.ywqzfs],
+							["引体向上", json.ytxs],
+							["引体向上分数", json.ytxsfs],
+							["体育课成绩", json.tykcj],
+						];
+					}
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 // TODO: jogging record to be implemented
 export const getJoggingRecord = (): Promise<JoggingRecord[]> =>
@@ -340,17 +470,20 @@ export const getClassroomState = (
 	);
 
 export const loseCard = (): Promise<number> =>
-	retryWrapper(
-		824,
-		retrieve(LOSE_CARD_URL).then((s) => {
-			const index = s.indexOf("var result");
-			const left = s.indexOf("=", index) + 1;
-			const right = s.indexOf("\n", left);
-			const value = s.substring(left, right).trim();
-			if (value === "null") {
-				throw "null error";
-			} else {
-				return Number(value);
-			}
-		}),
-	);
+	mocked()
+		? Promise.resolve(2)
+		: retryWrapper(
+				824,
+				retrieve(LOSE_CARD_URL).then((s) => {
+					const index = s.indexOf("var result");
+					const left = s.indexOf("=", index) + 1;
+					const right = s.indexOf("\n", left);
+					const value = s.substring(left, right).trim();
+					if (value === "null") {
+						throw "null error";
+					} else {
+						return Number(value);
+					}
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
