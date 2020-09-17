@@ -78,8 +78,10 @@ class newsSourceList {
 		if (source === undefined) {
 			this.newsLoadList.forEach((val, ind) => {
 				if (
-					newsSourceList.dateForComp(val[0]) >
-					newsSourceList.dateForComp(result)
+					result === undefined ||
+					(val[0] &&
+						newsSourceList.dateForComp(val[0]) >
+							newsSourceList.dateForComp(result))
 				) {
 					result = val[0];
 					index = ind;
@@ -88,7 +90,11 @@ class newsSourceList {
 		}
 
 		this.newsLoadList[index].shift();
-		return result;
+		if (result) {
+			return result;
+		} else {
+			throw new Error("Unknown error related to mocking.");
+		}
 	}
 
 	public constructor() {
@@ -107,7 +113,11 @@ class newsSourceList {
 	): Promise<newsSlice[]> {
 		let newsList = [];
 		for (let i = 0; i < listSize; ++i) {
-			newsList.push(await this.getLatestNews(source));
+			try {
+				newsList.push(await this.getLatestNews(source));
+			} catch (e) {
+				console.warn(e);
+			}
 		}
 		return newsList;
 	}
