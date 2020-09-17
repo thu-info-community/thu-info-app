@@ -1532,7 +1532,7 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-community/datetimepicker@^3.0.2":
+"@react-native-community/datetimepicker@3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.0.2.tgz#6e52cda7fa46ecebfb216f5520cfbf2754348299"
   integrity sha512-NLcV3HLrjtvyYM4CU4O+nWJ+LsjB4XnkUiXjK52PgnlRrg5i3hJQHcp/GsrHQbB62UC+Zn96+Hy+jiw4K5Rw/w==
