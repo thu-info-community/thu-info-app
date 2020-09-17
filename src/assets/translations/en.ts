@@ -178,4 +178,5 @@ export default {
 	courseNameShorten: "Aliases",
 	noHiddenLesson: "You have no hidden lessons.",
 	hiddenLessonTip: "Tips: You can set hidden lessons in the schedule.",
+	tips: "Tips: ",
 };

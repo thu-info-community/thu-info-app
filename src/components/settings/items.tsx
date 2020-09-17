@@ -10,13 +10,16 @@ import {
 } from "react-native";
 import React, {useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Feather from "react-native-vector-icons/Feather";
 
 export const SettingsItem = ({
 	text,
 	onPress,
+	iconName,
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
+	iconName: string;
 }) => {
 	const content = (
 		<View
@@ -26,7 +29,10 @@ export const SettingsItem = ({
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
-			<Text style={{fontSize: 18}}>{text}</Text>
+			<View style={{flexDirection: "row", alignItems: "center"}}>
+				<Feather name={iconName} size={16} />
+				<Text style={{fontSize: 17, marginHorizontal: 10}}>{text}</Text>
+			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
 		</View>
 	);
@@ -48,11 +54,13 @@ export const SettingsSwitch = ({
 	textOff,
 	onValueChange,
 	defaultValue,
+	iconName,
 }: {
 	textOn: string;
 	textOff: string;
 	onValueChange: (state: boolean) => void;
 	defaultValue: boolean;
+	iconName: string;
 }) => {
 	const [status, setStatus] = useState(defaultValue);
 	return (
@@ -62,7 +70,12 @@ export const SettingsSwitch = ({
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
-			<Text style={{fontSize: 18}}>{status ? textOn : textOff}</Text>
+			<View style={{flexDirection: "row", alignItems: "center"}}>
+				<Feather name={iconName} size={16} />
+				<Text style={{fontSize: 17, marginHorizontal: 10}}>
+					{status ? textOn : textOff}
+				</Text>
+			</View>
 			<Switch
 				value={status}
 				onValueChange={(value) => {
