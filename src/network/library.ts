@@ -21,7 +21,7 @@ import {
 	LibrarySection,
 } from "../models/home/library";
 import "../../src/utils/extensions";
-import {currState} from "../redux/store";
+import {currState, mocked} from "../redux/store";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
@@ -169,6 +169,9 @@ const getAccessToken = (): Promise<string> =>
 	retryWrapper(
 		5000,
 		retrieve(LIBRARY_HOME_URL).then((response) => {
+			if (mocked()) {
+				return "";
+			}
 			const leftmost = response.indexOf("access_token");
 			const left = response.indexOf('"', leftmost) + 1;
 			const right = response.indexOf('"', left);
@@ -185,22 +188,64 @@ export const bookLibrarySeat = async (
 	section: LibrarySection,
 	dateChoice: 0 | 1,
 ): Promise<{status: number; msg: string}> =>
-	JSON.parse(
-		await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
-			retrieve(
-				LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
-				LIBRARY_HOME_URL,
-				{
-					access_token: await getAccessToken(),
-					userid: currState().auth.userId,
-					segment: segmentId,
-					type,
-				},
-			),
-		),
-	);
+	mocked()
+		? {status: 0, msg: "Testing account cannot book a seat."}
+		: JSON.parse(
+				await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
+					retrieve(
+						LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
+						LIBRARY_HOME_URL,
+						{
+							access_token: await getAccessToken(),
+							userid: currState().auth.userId,
+							segment: segmentId,
+							type,
+						},
+					),
+				),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
+	if (mocked()) {
+		return [
+			{
+				delId: undefined,
+				id: "202009111837",
+				pos: "文科图书馆-四层-C区:F4C083",
+				status: "已使用",
+				time: "2020-09-11 12:15:52",
+			},
+			{
+				delId: undefined,
+				id: "202009070209",
+				pos: "文科图书馆-二层-A区:F2A008",
+				status: "用户取消",
+				time: "2020-09-08 08:00:00",
+			},
+			{
+				delId: undefined,
+				id: "202009062358",
+				pos: "文科图书馆-三层-A区:F3A018",
+				status: "已使用",
+				time: "2020-09-07 08:00:00",
+			},
+			{
+				delId: undefined,
+				id: "202009021093",
+				pos: "文科图书馆-三层-B区:F3B018",
+				status: "已关闭",
+				time: "2020-09-02 10:57:25",
+			},
+			{
+				delId: undefined,
+				id: "202008310485",
+				pos: "北馆(李文正馆)-四层-B阅览区:NF4B093",
+				status: "已使用",
+				time: "2020-08-31 08:31:03",
+			},
+		];
+	}
 	await getAccessToken();
 	const html = await retrieve(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
 	const result = cheerio("tbody", html)
@@ -225,6 +270,9 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 };
 
 export const cancelBooking = async (id: string): Promise<void> => {
+	if (mocked()) {
+		throw new Error("Testing account cannot cancel a seat.");
+	}
 	const token = await getAccessToken();
 	return retrieve(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
 		_method: "delete",
