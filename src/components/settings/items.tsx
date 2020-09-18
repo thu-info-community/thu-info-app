@@ -23,7 +23,7 @@ export const SettingsItem = ({
 	const content = (
 		<View
 			style={{
-				padding: 10,
+				padding: 8,
 				paddingRight: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
@@ -67,7 +67,7 @@ export const SettingsSwitch = ({
 	return (
 		<View
 			style={{
-				padding: 10,
+				padding: 8,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
@@ -100,7 +100,7 @@ export const SettingsEditValue = ({
 	return (
 		<View
 			style={{
-				padding: 10,
+				padding: 8,
 				paddingRight: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",

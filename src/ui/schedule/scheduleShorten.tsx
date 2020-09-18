@@ -73,9 +73,14 @@ const ScheduleShortenUI = (props: ScheduleShortenProps) => {
 							borderRadius: 5,
 							padding: 6,
 						}}
-						defaultValue={item[1]}
+						defaultValue={item[1] === item[0] ? "" : item[1]}
+						placeholder={item[0]}
 						onChangeText={(text) => {
-							props.setAlias(item[0], text);
+							if (text !== "") {
+								props.setAlias(item[0], text);
+							} else {
+								props.setAlias(item[0], item[0]);
+							}
 						}}
 					/>
 				</View>

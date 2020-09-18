@@ -45,7 +45,7 @@ const ReportManageHiddenUI = ({
 					iconOff={null}
 				/>
 			)}
-			style={{padding: 10}}
+			style={{paddingVertical: 10, paddingLeft: 0, paddingRight: 3}}
 			keyExtractor={(item) => item}
 			ListFooterComponent={
 				<Text
