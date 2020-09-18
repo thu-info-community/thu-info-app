@@ -8,7 +8,6 @@ import {AlipayPopup} from "../../components/home/alipayPopup";
 import {configureDorm} from "./configureDorm";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
-import IconEvaluation from "../../assets/icons/IconEvaluation";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconClassroom from "../../assets/icons/IconClassroom";
@@ -76,11 +75,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
 			</HomeIcon>
-			<HomeIcon
+			{/* <HomeIcon
 				title="teachingEvaluation"
 				onPress={() => navigation.navigate("Evaluation")}>
 				<IconEvaluation width={iconSize} height={iconSize} />
-			</HomeIcon>
+			</HomeIcon> */}
 		</HomeSection>
 		<HomeSection title="resources">
 			<HomeIcon
