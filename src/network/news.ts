@@ -8,6 +8,7 @@ import {
 	JWGG_MAIN_PREFIX,
 	KYTZ_MAIN_PREFIX,
 } from "../constants/strings";
+import {newsHtml, url0, url1} from "../assets/htmls/newsHtml";
 
 export type sourceTag = "JWGG" | "KYTZ" | "BGTZ" | "HB";
 
@@ -34,16 +35,14 @@ export const getNewsList = (
 						date: "2020.09.16",
 						name: "博士生思政课“中国马克思主义与当代”扩容通知",
 						source: "研究生院",
-						url:
-							"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0/boarddetail_cat.jsp?columnId=0010106&itemSeq=46224",
+						url: url0,
 					},
 					{
 						channel: "JWGG",
 						date: "2020.09.14",
 						name: "2020~2021学年秋季学期第一批新开本科生课程征求意见",
 						source: "教务处",
-						url:
-							"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fae0429e207e6b597d469dbf915b243d8ae9128e1cdcffb247/jwcbg/detail_cat.jsp?boardid=57&seq=7634",
+						url: url1,
 					},
 					{
 						channel: "JWGG",
@@ -226,7 +225,9 @@ export const getNewsDetail = async (
 	url: string,
 ): Promise<[string, string, string]> => {
 	const [encoding, title, content] = getNewsDetailPolicy(url);
-	const html = await retrieve(url, undefined, undefined, encoding);
+	const html = mocked()
+		? newsHtml[url] ?? ""
+		: await retrieve(url, undefined, undefined, encoding);
 	if (title !== undefined && content) {
 		const r = cheerio(content, html);
 		return [
