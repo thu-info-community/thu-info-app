@@ -414,60 +414,488 @@ export const getClassroomState = (
 	name: string,
 	week: number,
 ): Promise<[string, number[]][]> =>
-	retryWrapper(
-		792,
-		retrieve(
-			CLASSROOM_STATE_PREFIX +
-				encodeToGb2312(name) +
-				CLASSROOM_STATE_MIDDLE +
-				week,
-			undefined,
-			undefined,
-			"GBK",
-		).then((s) => {
-			const result = cheerio("#scrollContent>table>tbody", s)
-				.map((_, element) =>
-					element.children
-						.filter((it) => it.tagName === "tr")
-						.map((tr) => {
-							const id = tr.children[1].children[2].data?.trim() ?? "";
-							const status = tr.children
-								.slice(3)
-								.filter((it) => it.tagName === "td")
-								.map((td) => {
-									const classNames =
-										td.attribs.class
-											?.split(" ")
-											?.filter((it) => it !== "colBound") ?? [];
-									if (classNames.length > 1) {
-										return 0;
-									} else {
-										switch (classNames[0]) {
-											case "onteaching":
+	mocked()
+		? Promise.resolve([
+				[
+					"101:240",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"102:40",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"103:40",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"104:240",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"201:150",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"202:40",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"203:40",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"204:40",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				[
+					"205:150",
+					[
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+						5,
+						2,
+						0,
+						0,
+						5,
+						5,
+					],
+				],
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ])
+		: retryWrapper(
+				792,
+				retrieve(
+					CLASSROOM_STATE_PREFIX +
+						encodeToGb2312(name) +
+						CLASSROOM_STATE_MIDDLE +
+						week,
+					undefined,
+					undefined,
+					"GBK",
+				).then((s) => {
+					const result = cheerio("#scrollContent>table>tbody", s)
+						.map((_, element) =>
+							element.children
+								.filter((it) => it.tagName === "tr")
+								.map((tr) => {
+									const id = tr.children[1].children[2].data?.trim() ?? "";
+									const status = tr.children
+										.slice(3)
+										.filter((it) => it.tagName === "td")
+										.map((td) => {
+											const classNames =
+												td.attribs.class
+													?.split(" ")
+													?.filter((it) => it !== "colBound") ?? [];
+											if (classNames.length > 1) {
 												return 0;
-											case "onexam":
-												return 1;
-											case "onborrowed":
-												return 2;
-											case "ondisabled":
-												return 3;
-											case undefined:
-												return 5;
-											default:
-												return 4;
-										}
-									}
-								});
-							return [id, status];
-						}),
-				)
-				.get();
-			if (result.length === 0 && s.indexOf("scrollContent") === -1) {
-				throw "Network exception when getting classroom state.";
-			}
-			return result;
-		}),
-	);
+											} else {
+												switch (classNames[0]) {
+													case "onteaching":
+														return 0;
+													case "onexam":
+														return 1;
+													case "onborrowed":
+														return 2;
+													case "ondisabled":
+														return 3;
+													case undefined:
+														return 5;
+													default:
+														return 4;
+												}
+											}
+										});
+									return [id, status];
+								}),
+						)
+						.get();
+					if (result.length === 0 && s.indexOf("scrollContent") === -1) {
+						throw "Network exception when getting classroom state.";
+					}
+					return result;
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const loseCard = (): Promise<number> =>
 	mocked()
