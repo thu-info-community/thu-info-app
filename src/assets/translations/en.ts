@@ -17,7 +17,7 @@ export default {
 	news: "News",
 	settings: "Settings",
 	feedback: "Feedback",
-	popi: "Popi Ask",
+	popi: "Check Popi",
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",
 	libBookRecord: "Library Booking Records",

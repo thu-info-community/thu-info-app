@@ -4,6 +4,7 @@ import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
 import {SET_SCHEDULE_HEIGHT} from "../../redux/constants";
 import {connect} from "react-redux";
+import {View} from "react-native";
 
 export const ScheduleSettingsUI = ({
 	height,
@@ -12,13 +13,13 @@ export const ScheduleSettingsUI = ({
 	height: number;
 	setHeight: (newHeight: number) => void;
 }) => (
-	<>
+	<View style={{padding: 10}}>
 		<SettingsEditValue
 			text={getStr("scheduleUnitHeight")}
 			value={height}
 			onValueChange={setHeight}
 		/>
-	</>
+	</View>
 );
 
 export const ScheduleSettingsScreen = connect(

@@ -19,7 +19,7 @@ export const EleRecordScreen = simpleRefreshListScreen(
 					justifyContent: "space-between",
 				}}>
 				<View style={{flex: 2, alignItems: "flex-start"}}>
-					<Text style={{fontSize: 16}}>{status}</Text>
+					<Text style={{fontSize: 16, marginBottom: 3}}>{status}</Text>
 					<Text style={{color: "grey"}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
@@ -29,7 +29,8 @@ export const EleRecordScreen = simpleRefreshListScreen(
 		);
 	},
 	(item) => item[1],
-	<Text style={{padding: 10, textAlign: "center"}}>
-		{getStr("eleRecordRestriction")}
+	<Text style={{padding: 10, marginTop: 10, textAlign: "center"}}>
+		<Text style={{fontWeight: "bold", fontSize: 16}}>{getStr("tips")}</Text>
+		<Text style={{color: "gray"}}>{getStr("eleRecordRestriction")}</Text>
 	</Text>,
 );

@@ -11,6 +11,9 @@ import {
 import {Alert, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
 import {checkUpdate} from "../../utils/checkUpdate";
+import Feather from "react-native-vector-icons/Feather";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
@@ -21,50 +24,51 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 				store.dispatch({type: SET_GRADUATE, payload: state})
 			}
 			defaultValue={currState().config.graduate}
-			iconName="users"
+			iconOn={<Entypo name="graduation-cap" size={16} />}
+			iconOff={<Feather name="users" size={16} />}
 		/>
 		<SettingsItem
 			text={getStr("reportSettings")}
 			onPress={() => navigation.navigate("ReportSettings")}
-			iconName="file-text"
+			icon={<Feather name="file-text" size={16} />}
 		/>
 		<SettingsItem
 			text={getStr("scheduleSettings")}
 			onPress={() => navigation.navigate("ScheduleSettings")}
-			iconName="layout"
+			icon={<Feather name="layout" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("eleRecord")}
 			onPress={() => navigation.navigate("EleRecord")}
-			iconName="zap"
+			icon={<Feather name="zap" size={16} />}
 		/>
 		<SettingsItem
 			text={getStr("libBookRecord")}
 			onPress={() => navigation.navigate("LibBookRecord")}
-			iconName="book-open"
+			icon={<Feather name="book-open" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("checkUpdate")}
 			onPress={() => checkUpdate(true)}
-			iconName="download"
+			icon={<Feather name="download" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("feedback")}
 			onPress={() => navigation.navigate("Feedback")}
-			iconName="edit"
+			icon={<Feather name="edit" size={16} />}
 		/>
 		<SettingsItem
 			text={getStr("acknowledgements")}
 			onPress={() => navigation.navigate("Acknowledgements")}
-			iconName="tag"
+			icon={<Feather name="tag" size={16} />}
 		/>
 		<SettingsItem
 			text={getStr("about")}
 			onPress={() => navigation.navigate("About")}
-			iconName="info"
+			icon={<AntDesign name="copyright" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
@@ -75,7 +79,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 					{text: getStr("confirm"), onPress: doLogout},
 				]);
 			}}
-			iconName="user-x"
+			icon={<Feather name="user-x" size={16} />}
 		/>
 	</ScrollView>
 );

@@ -17,9 +17,9 @@ export const LibBookRecordScreen = simpleRefreshListScreen(
 					justifyContent: "space-between",
 				}}>
 				<View style={{flex: 2, alignItems: "flex-start"}}>
-					<Text style={{fontSize: 16}}>{lib}</Text>
-					<Text style={{color: "grey"}}>{seat}</Text>
-					<Text style={{color: "grey"}}>{time}</Text>
+					<Text style={{fontSize: 16, marginVertical: 2}}>{lib}</Text>
+					<Text style={{color: "grey", marginVertical: 2}}>{seat}</Text>
+					<Text style={{color: "grey", marginVertical: 2}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 16}}>{status}</Text>

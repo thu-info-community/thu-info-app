@@ -10,13 +10,15 @@ const deps = [
 
 export const AcknowledgementsScreen = () => (
 	<ScrollView style={{paddingVertical: 15}}>
+		<Text />
 		<Text style={[styles.center]}>{getStr("acknowledgeLearnX")}</Text>
 		<Text style={[styles.center]}>{getStr("acknowledgeCommunity")}</Text>
 		{deps.map((value, index) => (
-			<Text style={{textAlign: "center"}} key={index}>
+			<Text style={{textAlign: "center", marginVertical: 2}} key={index}>
 				{value}
 			</Text>
 		))}
+		<Text />
 	</ScrollView>
 );
 

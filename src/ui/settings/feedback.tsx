@@ -22,7 +22,12 @@ const BottomButton = ({
 	disabled: boolean;
 }) => (
 	<TouchableOpacity
-		style={{backgroundColor: disabled ? "#0000" : "#0002", flex: 1, margin: 4}}
+		style={{
+			backgroundColor: disabled ? "#0000" : "#0002",
+			flex: 1,
+			margin: 4,
+			borderRadius: 4,
+		}}
 		disabled={disabled}
 		onPress={(e) => !disabled && onPress(e)}>
 		<Text style={{textAlign: "center", padding: 10}}>{getStr(text)}</Text>

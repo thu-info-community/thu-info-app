@@ -21,6 +21,7 @@ export function simpleRefreshListScreen<T>(
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: ReactElement,
+	empty?: ReactElement,
 ): FC {
 	return (props) => {
 		const [data, setData] = useState<T[]>([]);
@@ -46,7 +47,7 @@ export function simpleRefreshListScreen<T>(
 
 		return (
 			<FlatList
-				style={{flex: 1}}
+				style={{flex: 1, padding: 10}}
 				data={data}
 				refreshControl={
 					<RefreshControl
@@ -58,6 +59,7 @@ export function simpleRefreshListScreen<T>(
 				renderItem={({item}) => renderItem(item, refresh, props)}
 				keyExtractor={keyExtractor}
 				ListFooterComponent={footer}
+				ListEmptyComponent={empty}
 			/>
 		);
 	};

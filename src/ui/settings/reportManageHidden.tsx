@@ -41,11 +41,21 @@ const ReportManageHiddenUI = ({
 					textOff={item}
 					onValueChange={(state) => (state ? add(item) : remove(item))}
 					defaultValue={hidden.indexOf(item) !== -1}
+					iconOn={null}
+					iconOff={null}
 				/>
 			)}
+			style={{padding: 10}}
 			keyExtractor={(item) => item}
 			ListFooterComponent={
-				<Text style={{textAlign: "center", padding: 10}}>
+				<Text
+					style={{
+						textAlign: "center",
+						margin: 20,
+						lineHeight: 18,
+						fontSize: 14,
+						color: "gray",
+					}}>
 					{getStr("reportHiddenWarning")}
 				</Text>
 			}

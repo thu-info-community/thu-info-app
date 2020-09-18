@@ -10,27 +10,26 @@ import {
 } from "react-native";
 import React, {useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Feather from "react-native-vector-icons/Feather";
 
 export const SettingsItem = ({
 	text,
 	onPress,
-	iconName,
+	icon,
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
-	iconName: string;
+	icon: any;
 }) => {
 	const content = (
 		<View
 			style={{
-				padding: 12,
+				padding: 10,
 				paddingRight: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Feather name={iconName} size={16} />
+				{icon}
 				<Text style={{fontSize: 17, marginHorizontal: 10}}>{text}</Text>
 			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
@@ -54,24 +53,26 @@ export const SettingsSwitch = ({
 	textOff,
 	onValueChange,
 	defaultValue,
-	iconName,
+	iconOn,
+	iconOff,
 }: {
 	textOn: string;
 	textOff: string;
 	onValueChange: (state: boolean) => void;
 	defaultValue: boolean;
-	iconName: string;
+	iconOn: any;
+	iconOff: any;
 }) => {
 	const [status, setStatus] = useState(defaultValue);
 	return (
 		<View
 			style={{
-				padding: 12,
+				padding: 10,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Feather name={iconName} size={16} />
+				{status ? iconOn : iconOff}
 				<Text style={{fontSize: 17, marginHorizontal: 10}}>
 					{status ? textOn : textOff}
 				</Text>
@@ -99,14 +100,24 @@ export const SettingsEditValue = ({
 	return (
 		<View
 			style={{
-				padding: 12,
+				padding: 10,
 				paddingRight: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
+				alignItems: "center",
 			}}>
-			<Text style={{fontSize: 18, flex: 4}}>{text}</Text>
+			<Text style={{fontSize: 17, flex: 4}}>{text}</Text>
 			<TextInput
-				style={{flex: 1}}
+				style={{
+					fontSize: 15,
+					flex: 1,
+					backgroundColor: "white",
+					textAlign: "left",
+					borderColor: "lightgrey",
+					borderWidth: 1,
+					borderRadius: 5,
+					padding: 6,
+				}}
 				value={String(value)}
 				onChangeText={(newText) => onValueChange(Number(newText))}
 				keyboardType="numeric"
