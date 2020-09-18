@@ -40,17 +40,9 @@ export const getNewsList = (
 					{
 						channel: "JWGG",
 						date: "2020.09.14",
-						name: "2020~2021学年秋季学期第一批新开本科生课程征求意见",
-						source: "教务处",
-						url: url1,
-					},
-					{
-						channel: "JWGG",
-						date: "2020.09.14",
 						name: "研究生补退选时间安排（2020-2021秋）",
 						source: "教务处",
-						url:
-							"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fae0429e207e6b597d469dbf915b243d8ae9128e1cdcffb247/jwcbg/detail_cat.jsp?boardid=57&seq=7632",
+						url: url1,
 					},
 					{
 						channel: "JWGG",
