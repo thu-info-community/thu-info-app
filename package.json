@@ -81,7 +81,7 @@
 		"react-native-fs": "2.16.6",
 		"react-test-renderer": "16.13.1",
 		"redux-devtools": "3.7.0",
-		"typescript": "4.0.2"
+		"typescript": "4.0.3"
 	},
 	"jest": {
 		"preset": "react-native",
