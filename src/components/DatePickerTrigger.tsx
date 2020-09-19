@@ -39,7 +39,19 @@ export const DatePickerTrigger = ({
 					{date.format()}
 				</Text>
 			</TouchableOpacity>
-			{visible && (
+			{visible && Platform.OS === "android" && (
+				<DateTimePicker
+					value={date}
+					mode="date"
+					onChange={(_, selectedDate) => {
+						setVisible(false);
+						if (selectedDate !== undefined) {
+							onChange(selectedDate);
+						}
+					}}
+				/>
+			)}
+			{visible && Platform.OS === "ios" && (
 				<Modal
 					animationType="slide"
 					transparent={true}
@@ -49,36 +61,33 @@ export const DatePickerTrigger = ({
 							flex: 1,
 							justifyContent: "flex-end",
 						}}>
-						{Platform.OS === "ios" && (
-							<View
-								style={{
-									backgroundColor: "white",
-									flexDirection: "row",
-									alignItems: "center",
-									justifyContent: "space-around",
-									shadowColor: "gray",
-									shadowOffset: {
-										width: 0,
-										height: 1,
-									},
-									shadowRadius: 3,
-									shadowOpacity: 0.8,
-									paddingVertical: 4,
-								}}>
-								<Text style={{fontSize: 16}}>{text}</Text>
-								<Button
-									title={getStr("confirm")}
-									onPress={() => {
-										setVisible(false);
-									}}
-								/>
-							</View>
-						)}
+						<View
+							style={{
+								backgroundColor: "white",
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "space-around",
+								shadowColor: "gray",
+								shadowOffset: {
+									width: 0,
+									height: 1,
+								},
+								shadowRadius: 3,
+								shadowOpacity: 0.8,
+								paddingVertical: 4,
+							}}>
+							<Text style={{fontSize: 16}}>{text}</Text>
+							<Button
+								title={getStr("confirm")}
+								onPress={() => {
+									setVisible(false);
+								}}
+							/>
+						</View>
 						<DateTimePicker
 							value={date}
 							mode="date"
 							onChange={(_, selectedDate) => {
-								// setVisible(false);
 								if (selectedDate !== undefined) {
 									onChange(selectedDate);
 								}
@@ -89,9 +98,7 @@ export const DatePickerTrigger = ({
 							}}
 						/>
 					</View>
-					{Platform.OS === "ios" && (
-						<View style={{height: 15, backgroundColor: "white"}} />
-					)}
+					<View style={{height: 15, backgroundColor: "white"}} />
 				</Modal>
 			)}
 		</>

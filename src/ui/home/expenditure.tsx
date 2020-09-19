@@ -86,7 +86,7 @@ export const ExpenditureScreen = () => {
 	useEffect(refresh, []);
 
 	return (
-		<View style={{padding: 10}}>
+		<View style={{padding: 10, flex: 1}}>
 			<View style={{flexDirection: "row"}}>
 				<Money title={getStr("income")} money={income} />
 				<Money title={getStr("outgo")} money={outgo} />
