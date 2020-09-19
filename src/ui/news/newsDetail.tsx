@@ -35,13 +35,15 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchHtml, []);
 
+	const adaptedHtml = `<head><meta name="viewport" content="width=100, initial-scale=1"></head>
+	<body>${html}</body>`;
+
 	return (
 		<>
 			<View style={styles.container}>
 				<WebView
-					source={{html: html, baseUrl: route.params.detail.url}}
+					source={{html: adaptedHtml, baseUrl: route.params.detail.url}}
 					containerStyle={styles.webContainer}
-					textZoom={240} // TODO: what about ios? what about images?
 				/>
 			</View>
 			{refreshing && (

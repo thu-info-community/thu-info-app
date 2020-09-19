@@ -160,7 +160,7 @@ const policyList: [string, [string, string, string]][] = [
 	],
 	[
 		"77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8",
-		["UTF-8", ".cont_doc_box span", "div.field-item"],
+		["UTF-8", ".cont_doc_box h5 span", "div.field-item"],
 	],
 	[
 		"77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0",
