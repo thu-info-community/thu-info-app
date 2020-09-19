@@ -360,55 +360,308 @@ export const getExpenditures = (
 	beg: Date,
 	end: Date,
 ): Promise<[Record[], number, number, number]> =>
-	retryWrapper(
-		824,
-		retrieve(EXPENDITURE_URL, EXPENDITURE_URL, undefined, "base64").then(
-			(data) => {
-				const sheet = excelToJson({
-					source: Buffer.from(data).toString(),
-					header: {rows: 1},
-					columnToKey: {
-						A: "value",
-						B: "locale",
-						C: "category",
-						D: "value",
-						E: "date",
-						F: "value",
+	mocked()
+		? Promise.resolve([
+				[
+					{
+						category: "消费",
+						date: "2020-09-19 11:38",
+						locale: "饮食中心",
+						value: -6.45,
 					},
-				}).Sheet1;
-				const result = sheet.slice(0, sheet.length - 1);
-				result.forEach((record: {value: string | number; category: string}) => {
-					record.value = Number(record.value);
-					if (record.category.match(/^(消费|自助缴费.*|取消充值)$/)) {
-						record.value *= -1;
-					}
-				});
-				const remainder = result.reduce(
-					(prev: number, curr: Record) => prev + curr.value,
-					0,
-				);
-				let income = 0;
-				let outgo = 0;
-				const filtered = result
-					.filter((it: Record) => {
-						const d = dayjs(it.date.split(" ")[0], "YYYY-MM-DD")
-							.toDate()
-							.valueOf();
-						const valid = d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
-						if (valid) {
-							if (it.value > 0) {
-								income += it.value;
-							} else {
-								outgo -= it.value;
-							}
-						}
-						return valid;
-					})
-					.reverse();
-				return [filtered, income, outgo, remainder];
-			},
-		),
-	);
+					{
+						category: "消费",
+						date: "2020-09-19 07:12",
+						locale: "饮食中心",
+						value: -3.2,
+					},
+					{
+						category: "消费",
+						date: "2020-09-18 18:02",
+						locale: "饮食中心",
+						value: -8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-18 07:30",
+						locale: "饮食中心",
+						value: -4.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-17 17:52",
+						locale: "饮食中心",
+						value: -8.8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-17 11:46",
+						locale: "饮食中心",
+						value: -6.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-17 08:33",
+						locale: "饮食中心",
+						value: -4,
+					},
+					{
+						category: "消费",
+						date: "2020-09-16 18:01",
+						locale: "饮食中心",
+						value: -6.45,
+					},
+					{
+						category: "消费",
+						date: "2020-09-16 11:45",
+						locale: "饮食中心",
+						value: -8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-16 07:25",
+						locale: "饮食中心",
+						value: -4.7,
+					},
+					{
+						category: "消费",
+						date: "2020-09-15 11:55",
+						locale: "饮食中心",
+						value: -5.7,
+					},
+					{
+						category: "消费",
+						date: "2020-09-15 07:08",
+						locale: "饮食中心",
+						value: -2.5,
+					},
+					{
+						category: "自助缴费(学生公寓水费)",
+						date: "2020-09-14 18:37",
+						locale: "桃李园西门厅左",
+						value: -20,
+					},
+					{
+						category: "领取圈存",
+						date: "2020-09-14 18:37",
+						locale: "桃李园西门厅左",
+						value: 300,
+					},
+					{
+						category: "消费",
+						date: "2020-09-14 18:00",
+						locale: "饮食中心",
+						value: -12,
+					},
+					{
+						category: "消费",
+						date: "2020-09-14 12:01",
+						locale: "饮食中心",
+						value: -9,
+					},
+					{
+						category: "消费",
+						date: "2020-09-14 07:22",
+						locale: "饮食中心",
+						value: -4.2,
+					},
+					{
+						category: "消费",
+						date: "2020-09-13 18:34",
+						locale: "饮食中心",
+						value: -15,
+					},
+					{
+						category: "消费",
+						date: "2020-09-13 12:19",
+						locale: "饮食中心",
+						value: -4.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-13 07:22",
+						locale: "饮食中心",
+						value: -3.1,
+					},
+					{
+						category: "消费",
+						date: "2020-09-12 18:03",
+						locale: "饮食中心",
+						value: -6.8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-12 12:17",
+						locale: "饮食中心",
+						value: -15,
+					},
+					{
+						category: "消费",
+						date: "2020-09-12 07:56",
+						locale: "饮食中心",
+						value: -4,
+					},
+					{
+						category: "消费",
+						date: "2020-09-11 18:23",
+						locale: "饮食中心",
+						value: -6,
+					},
+					{
+						category: "消费",
+						date: "2020-09-11 12:04",
+						locale: "饮食中心",
+						value: -6.7,
+					},
+					{
+						category: "消费",
+						date: "2020-09-11 07:56",
+						locale: "饮食中心",
+						value: -5.2,
+					},
+					{
+						category: "消费",
+						date: "2020-09-10 17:21",
+						locale: "饮食中心",
+						value: -8.4,
+					},
+					{
+						category: "消费",
+						date: "2020-09-10 11:37",
+						locale: "饮食中心",
+						value: -6.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-10 08:36",
+						locale: "饮食中心",
+						value: -4.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-09 17:54",
+						locale: "饮食中心",
+						value: -8.8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-09 11:27",
+						locale: "饮食中心",
+						value: -5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-08 18:26",
+						locale: "饮食中心",
+						value: -8.5,
+					},
+					{
+						category: "消费",
+						date: "2020-09-08 12:14",
+						locale: "饮食中心",
+						value: -10,
+					},
+					{
+						category: "消费",
+						date: "2020-09-08 08:23",
+						locale: "饮食中心",
+						value: -3.1,
+					},
+					{
+						category: "消费",
+						date: "2020-09-07 17:47",
+						locale: "饮食中心",
+						value: -8,
+					},
+					{
+						category: "消费",
+						date: "2020-09-07 12:04",
+						locale: "饮食中心",
+						value: -11.61,
+					},
+					{
+						category: "消费",
+						date: "2020-09-07 08:02",
+						locale: "饮食中心",
+						value: -2.3,
+					},
+					{
+						category: "消费",
+						date: "2020-09-06 18:28",
+						locale: "饮食中心",
+						value: -4,
+					},
+					{
+						category: "消费",
+						date: "2020-09-06 12:03",
+						locale: "饮食中心",
+						value: -5.2,
+					},
+					{
+						category: "消费",
+						date: "2020-09-06 08:02",
+						locale: "饮食中心",
+						value: -5.9,
+					},
+				],
+				300,
+				272.11,
+				27.89,
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ])
+		: retryWrapper(
+				824,
+				retrieve(EXPENDITURE_URL, EXPENDITURE_URL, undefined, "base64").then(
+					(data) => {
+						const sheet = excelToJson({
+							source: Buffer.from(data).toString(),
+							header: {rows: 1},
+							columnToKey: {
+								A: "value",
+								B: "locale",
+								C: "category",
+								D: "value",
+								E: "date",
+								F: "value",
+							},
+						}).Sheet1;
+						const result = sheet.slice(0, sheet.length - 1);
+						result.forEach(
+							(record: {value: string | number; category: string}) => {
+								record.value = Number(record.value);
+								if (record.category.match(/^(消费|自助缴费.*|取消充值)$/)) {
+									record.value *= -1;
+								}
+							},
+						);
+						const remainder = result.reduce(
+							(prev: number, curr: Record) => prev + curr.value,
+							0,
+						);
+						let income = 0;
+						let outgo = 0;
+						const filtered = result
+							.filter((it: Record) => {
+								const d = dayjs(it.date.split(" ")[0], "YYYY-MM-DD")
+									.toDate()
+									.valueOf();
+								const valid =
+									d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
+								if (valid) {
+									if (it.value > 0) {
+										income += it.value;
+									} else {
+										outgo -= it.value;
+									}
+								}
+								return valid;
+							})
+							.reverse();
+						return [filtered, income, outgo, remainder];
+					},
+				),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 const basePatterns = [
 	[5, 0, 0, 0, 2, 5],

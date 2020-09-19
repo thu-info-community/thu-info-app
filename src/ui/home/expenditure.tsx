@@ -16,6 +16,7 @@ import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {mocked} from "../../redux/store";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -90,26 +91,36 @@ export const ExpenditureScreen = () => {
 				<Money title={getStr("outgo")} money={outgo} />
 				<Money title={getStr("remainder")} money={remainder} />
 			</View>
-			<View style={styles.header}>
-				<DatePickerTrigger date={beg} onChange={setBeg} disabled={refreshing} />
-				<DatePickerTrigger date={end} onChange={setEnd} disabled={refreshing} />
-				<Button
-					title={getStr("query")}
-					onPress={refresh}
-					disabled={refreshing}
-				/>
-				<Button
-					title={getStr("question")}
-					onPress={() => {
-						Alert.alert(
-							getStr("question"),
-							getStr("expenditureFAQ"),
-							[{text: getStr("ok")}],
-							{cancelable: true},
-						);
-					}}
-				/>
-			</View>
+			{!mocked() && (
+				<View style={styles.header}>
+					<DatePickerTrigger
+						date={beg}
+						onChange={setBeg}
+						disabled={refreshing}
+					/>
+					<DatePickerTrigger
+						date={end}
+						onChange={setEnd}
+						disabled={refreshing}
+					/>
+					<Button
+						title={getStr("query")}
+						onPress={refresh}
+						disabled={refreshing}
+					/>
+					<Button
+						title={getStr("question")}
+						onPress={() => {
+							Alert.alert(
+								getStr("question"),
+								getStr("expenditureFAQ"),
+								[{text: getStr("ok")}],
+								{cancelable: true},
+							);
+						}}
+					/>
+				</View>
+			)}
 			<View style={styles.container}>
 				<FlatList
 					data={expenditures}
