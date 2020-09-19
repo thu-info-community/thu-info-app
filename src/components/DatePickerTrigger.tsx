@@ -1,15 +1,25 @@
-import {Text, TouchableOpacity} from "react-native";
+import {
+	Modal,
+	Text,
+	TouchableOpacity,
+	View,
+	Button,
+	Platform,
+} from "react-native";
 import React, {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import {getStr} from "src/utils/i18n";
 
 export const DatePickerTrigger = ({
 	date,
 	onChange,
 	disabled,
+	text,
 }: {
 	date: Date;
 	onChange: (newDate: Date) => void;
 	disabled: boolean;
+	text: string;
 }) => {
 	const [visible, setVisible] = useState(false);
 	return (
@@ -30,16 +40,59 @@ export const DatePickerTrigger = ({
 				</Text>
 			</TouchableOpacity>
 			{visible && (
-				<DateTimePicker
-					value={date}
-					mode="date"
-					onChange={(_, selectedDate) => {
-						setVisible(false);
-						if (selectedDate !== undefined) {
-							onChange(selectedDate);
-						}
-					}}
-				/>
+				<Modal
+					animationType="slide"
+					transparent={true}
+					onRequestClose={() => {}}>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "flex-end",
+						}}>
+						{Platform.OS === "ios" && (
+							<View
+								style={{
+									backgroundColor: "white",
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "space-around",
+									shadowColor: "gray",
+									shadowOffset: {
+										width: 0,
+										height: 1,
+									},
+									shadowRadius: 3,
+									shadowOpacity: 0.8,
+									paddingVertical: 4,
+								}}>
+								<Text style={{fontSize: 16}}>{text}</Text>
+								<Button
+									title={getStr("confirm")}
+									onPress={() => {
+										setVisible(false);
+									}}
+								/>
+							</View>
+						)}
+						<DateTimePicker
+							value={date}
+							mode="date"
+							onChange={(_, selectedDate) => {
+								// setVisible(false);
+								if (selectedDate !== undefined) {
+									onChange(selectedDate);
+								}
+							}}
+							style={{
+								width: "100%",
+								backgroundColor: "white",
+							}}
+						/>
+					</View>
+					{Platform.OS === "ios" && (
+						<View style={{height: 15, backgroundColor: "white"}} />
+					)}
+				</Modal>
 			)}
 		</>
 	);

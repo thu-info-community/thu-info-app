@@ -167,4 +167,6 @@ export default {
 	noHiddenLesson: "您目前没有隐藏课程。",
 	hiddenLessonTip: "小提示：您可以在课程表界面设置隐藏。",
 	tips: "小提示：",
+	begDate: "起始日期",
+	endDate: "终止日期",
 };

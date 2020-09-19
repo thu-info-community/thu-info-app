@@ -3,6 +3,7 @@ import {
 	Alert,
 	Button,
 	FlatList,
+	Platform,
 	RefreshControl,
 	StyleSheet,
 	Text,
@@ -85,7 +86,7 @@ export const ExpenditureScreen = () => {
 	useEffect(refresh, []);
 
 	return (
-		<>
+		<View style={{padding: 10}}>
 			<View style={{flexDirection: "row"}}>
 				<Money title={getStr("income")} money={income} />
 				<Money title={getStr("outgo")} money={outgo} />
@@ -97,11 +98,13 @@ export const ExpenditureScreen = () => {
 						date={beg}
 						onChange={setBeg}
 						disabled={refreshing}
+						text={Platform.OS === "ios" ? getStr("begDate") : ""}
 					/>
 					<DatePickerTrigger
 						date={end}
 						onChange={setEnd}
 						disabled={refreshing}
+						text={Platform.OS === "ios" ? getStr("endDate") : ""}
 					/>
 					<Button
 						title={getStr("query")}
@@ -135,13 +138,14 @@ export const ExpenditureScreen = () => {
 					keyExtractor={(item, index) => `${item.date}-${item.value}-${index}`}
 				/>
 			</View>
-		</>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	header: {
 		flexDirection: "row",
+		alignItems: "center",
 	},
 	container: {
 		alignItems: "stretch",
