@@ -6,6 +6,7 @@ import {
 	ActivityIndicator,
 	Button,
 	Alert,
+	Dimensions,
 } from "react-native";
 import React, {useState, useEffect, useContext} from "react";
 import {
@@ -207,6 +208,8 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, []);
 
+	let screenHeight = Dimensions.get("window");
+
 	return (
 		<FlatList
 			refreshControl={
@@ -220,7 +223,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 				<View
 					style={{
 						margin: 15,
-						height: 580,
+						height: screenHeight.height * 0.6,
 						justifyContent: "center",
 						alignItems: "center",
 					}}>

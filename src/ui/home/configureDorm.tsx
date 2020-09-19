@@ -1,4 +1,11 @@
-import {Text, TextInput, TouchableOpacity, View, YellowBox} from "react-native";
+import {
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+	YellowBox,
+	Dimensions,
+} from "react-native";
 import React, {useState} from "react";
 import {connect} from "react-redux";
 import {ConfigureDormRouteProp, HomeNav} from "./homeStack";
@@ -20,13 +27,15 @@ const ConfigureDormUI = ({
 }) => {
 	const [password, setPassword] = useState("");
 
+	let screenHeight = Dimensions.get("window");
+
 	return (
 		<View
 			style={{
 				alignItems: "center",
 				justifyContent: "center",
 				padding: 10,
-				height: 580,
+				height: screenHeight.height * 0.7,
 			}}>
 			<Text style={{fontSize: 18, marginVertical: 10, fontWeight: "bold"}}>
 				{currState().auth.userId}
