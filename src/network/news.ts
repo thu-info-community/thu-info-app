@@ -184,6 +184,14 @@ const policyList: [string, [string, string, string]][] = [
 		["GBK", "", "[style='text-align:left']"],
 	],
 	["ghxt", ["GBK", "", "[valign=top]:not([class])"]],
+	[
+		"fgc",
+		[
+			"GBK",
+			".title_b",
+			"[style='width:647px;margin-left:6px;font-size:13px;line-height:20px;text-align:justify']",
+		],
+	],
 ];
 
 const getNewsDetailPolicy = (
