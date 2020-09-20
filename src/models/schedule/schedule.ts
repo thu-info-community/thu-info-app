@@ -120,19 +120,16 @@ export const parseScript = (script: string): Lesson[] => {
 	const segments = script.split("strHTML =").slice(1);
 	const beginList = [1, 3, 6, 8, 10, 12];
 	const endList = [2, 5, 7, 9, 11, 14];
+	const reg = /"<span onmouseover=\\"return overlib\('(.+?)'\);\\" onmouseout='return nd\(\);'>(.+?)<\/span>";[ \n\t\r]+?document.getElementById\('(.+?)'\).innerHTML \+= strHTML\+"<br>";/;
 	segments.forEach((seg) => {
-		const position = seg.substring(
-			seg.indexOf("getElementById") + 16,
-			seg.indexOf("').inner"),
-		);
+		reg.test(seg);
+		const position = RegExp.$3;
 		const dayOfWeek = Number(position[3]);
 		const sessionIndex = Number(position[1]);
 		const begin = beginList[sessionIndex - 1];
 		const end = endList[sessionIndex - 1];
-		const title = seg.substring(seg.indexOf("<b>") + 3, seg.indexOf("</b>"));
-		const detail = seg
-			.substring(seg.indexOf("</a>") + 4, seg.indexOf(";") - 1)
-			.replace(/\s/, "");
+		const title = RegExp.$2;
+		const detail = RegExp.$1.replace(/\s/, "");
 
 		const add = (week: number) => {
 			result.push({
@@ -161,6 +158,12 @@ export const parseScript = (script: string): Lesson[] => {
 				[1, 3, 5, 7, 9, 11, 13, 15].forEach((i) => add(i));
 			} else if (detail.indexOf("双周") !== -1) {
 				[2, 4, 6, 8, 10, 12, 14, 16].forEach((i) => add(i));
+			} else {
+				const res3 = /第((\d+,\s*)*\d+)周/.exec(detail);
+				if (res3 !== null) {
+					const weeks = res3[1].replace(/\s/, "").split(",");
+					weeks.forEach((week) => add(Number(week)));
+				}
 			}
 		}
 	});

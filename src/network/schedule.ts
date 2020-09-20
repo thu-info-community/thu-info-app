@@ -1,14 +1,18 @@
-import {connect, retrieve, retryWrapper} from "./core";
+import {retrieve, retryWrapper} from "./core";
 import {
-	COURSE_SELECT_ENTRY,
 	INFO_ROOT_URL,
+	JXMH_REFERER,
 	JXRL_MIDDLE,
 	JXRL_PREFIX,
 	JXRL_SUFFIX,
-	SECONDARY_PREFIX,
-	SECONDARY_SUFFIX,
+	SECONDARY_URL,
 } from "../constants/strings";
-import {parseJSON, parseScript} from "../models/schedule/schedule";
+import {
+	Exam,
+	Lesson,
+	parseJSON,
+	parseScript,
+} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 import {mocked} from "../redux/store";
 
@@ -1038,7 +1042,7 @@ export const getSchedule = () => {
 				],
 				[],
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  ])
+		  ] as [Lesson[], Exam[]])
 		: retryWrapper(
 				792,
 				Promise.all(
@@ -1073,17 +1077,12 @@ export const getSchedule = () => {
 export const getSecondary = () =>
 	mocked()
 		? Promise.resolve([])
-		: connect(COURSE_SELECT_ENTRY, INFO_ROOT_URL)
-				.then(() =>
-					retrieve(
-						SECONDARY_PREFIX + Calendar.semesterId + SECONDARY_SUFFIX,
-						COURSE_SELECT_ENTRY,
-						undefined,
-						"GBK",
-					),
-				)
-				.then((str) => {
+		: retryWrapper(
+				792,
+				retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
 					const lowerBound = str.indexOf("function setInitValue");
 					const upperBound = str.indexOf("}", lowerBound);
 					return parseScript(str.substring(lowerBound, upperBound));
-				});
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
