@@ -95,7 +95,9 @@ const ConfigureDormUI = ({
 				</Text>
 			</TouchableOpacity>
 			<Text style={{margin: 20}}>
-				<Text style={{fontWeight: "bold", fontSize: 16}}>{getStr("tips")}</Text>
+				<Text style={{fontWeight: "bold", fontSize: 16, lineHeight: 18}}>
+					{getStr("tips")}
+				</Text>
 				<Text>{getStr("configureDormHint")}</Text>
 			</Text>
 		</View>
