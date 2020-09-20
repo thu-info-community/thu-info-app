@@ -49,7 +49,7 @@ const loginToHome = async () => {
 export const getDormScore = (): Promise<string> =>
 	mocked()
 		? Promise.resolve(
-				"http://m.myhome.tsinghua.edu.cn/ChartAxd.axd?vpn-1&i=dcp_e62ae28f4.jpeg&_guid_=63efec60-dc2d-4242-b056-c2922670251b",
+				"https://cloud.tsinghua.edu.cn/f/43ada07f3731439daf06/?dl=1",
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  )
 		: retryWrapper(
