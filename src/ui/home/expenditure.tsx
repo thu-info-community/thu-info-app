@@ -28,9 +28,11 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 				justifyContent: "space-between",
 			}}>
 			<View style={{flex: 2, alignItems: "flex-start"}}>
-				<Text style={{fontSize: 16}}>{record.locale}</Text>
-				<Text style={{color: "grey"}}>{record.category}</Text>
-				<Text style={{color: "grey"}}>{record.date}</Text>
+				<Text style={{fontSize: 16, marginVertical: 2}}>{record.locale}</Text>
+				<Text style={{color: "grey", marginVertical: 2}}>
+					{record.category}
+				</Text>
+				<Text style={{color: "grey", marginVertical: 2}}>{record.date}</Text>
 			</View>
 			<View style={{flex: 1, alignItems: "flex-end"}}>
 				<Text style={{fontSize: 20, color: record.value > 0 ? "red" : "black"}}>
