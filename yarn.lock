@@ -880,7 +880,7 @@
     core-js "^2.6.5"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@7.11.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.7.2", "@babel/runtime@^7.9.2":
+"@babel/runtime@7.11.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.7.2", "@babel/runtime@^7.9.2":
   version "7.11.2"
   resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.11.2.tgz?cache=0&sync_timestamp=1596637761107&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
   integrity sha1-9UnBPHVMxAuHZEufqfCaapX+BzY=
@@ -3216,6 +3216,11 @@ csstype@^2.2.0:
   resolved "https://registry.npm.taobao.org/csstype/download/csstype-2.6.10.tgz?cache=0&sync_timestamp=1586935655811&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcsstype%2Fdownload%2Fcsstype-2.6.10.tgz#e63af50e66d7c266edb6b32909cfd0aabe03928b"
   integrity sha1-5jr1DmbXwmbttrMpCc/Qqr4Dkos=
 
+darkreader@^4.9.14:
+  version "4.9.17"
+  resolved "https://registry.npm.taobao.org/darkreader/download/darkreader-4.9.17.tgz#8a045887503206df0dd150b4fcec0c87684e6c2c"
+  integrity sha1-igRYh1AyBt8N0VC0/OwMh2hObCw=
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.npm.taobao.org/dashdash/download/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -4470,6 +4475,11 @@ hermes-profile-transformer@^0.0.6:
   integrity sha1-vQ9ezO2oDdDdquRDRpqyb7OPwns=
   dependencies:
     source-map "^0.7.3"
+
+highlight.js@^10.1.1:
+  version "10.2.0"
+  resolved "https://registry.npm.taobao.org/highlight.js/download/highlight.js-10.2.0.tgz#367151bcf813adebc54822f1cb51d2e1e599619f"
+  integrity sha1-NnFRvPgTrevFSCLxy1HS4eWZYZ8=
 
 hoist-non-react-statics@^3.3.0:
   version "3.3.2"
@@ -6037,6 +6047,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+marked@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.npm.taobao.org/marked/download/marked-1.1.1.tgz?cache=0&sync_timestamp=1594690149591&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmarked%2Fdownload%2Fmarked-1.1.1.tgz#e5d61b69842210d5df57b05856e0c91572703e6a"
+  integrity sha1-5dYbaYQiENXfV7BYVuDJFXJwPmo=
+
 md5@2.3.0, md5@^2.0.0:
   version "2.3.0"
   resolved "https://registry.npm.taobao.org/md5/download/md5-2.3.0.tgz?cache=0&sync_timestamp=1596362680344&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmd5%2Fdownload%2Fmd5-2.3.0.tgz#c3da9a6aae3a30b46b7b0c349b87b110dc3bda4f"
@@ -7207,6 +7222,16 @@ react-native-gesture-handler@1.8.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-github-markdown@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.npm.taobao.org/react-native-github-markdown/download/react-native-github-markdown-4.0.4.tgz#eb178742e57a7a973095bd552d8d27e098dfc3c9"
+  integrity sha1-6xeHQuV6epcwlb1VLY0n4Jjfw8k=
+  dependencies:
+    "@babel/runtime" "^7.10.4"
+    darkreader "^4.9.14"
+    highlight.js "^10.1.1"
+    marked "^1.1.0"
 
 react-native-image-pan-zoom@^2.1.12:
   version "2.1.12"

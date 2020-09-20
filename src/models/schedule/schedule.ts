@@ -115,8 +115,12 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 };
 
 // Note: no '}' at the end.
-export const parseScript = (script: string): Lesson[] => {
+export const parseScript = (
+	script: string,
+	verbose: boolean = false,
+): Lesson[] | [string, string, boolean][] => {
 	const result: Lesson[] = [];
+	const verboseResult: [string, string, boolean][] = [];
 	const segments = script.split("strHTML =").slice(1);
 	const beginList = [1, 3, 6, 8, 10, 12];
 	const endList = [2, 5, 7, 9, 11, 14];
@@ -146,6 +150,7 @@ export const parseScript = (script: string): Lesson[] => {
 		const res1 = /第([\d]+)周/.exec(detail);
 		if (res1 !== null) {
 			add(Number(res1[1]));
+			verboseResult.push([title, `第${res1[1]}周`, true]);
 		} else {
 			const res2 = /第([\d]+)[-~]([\d]+)周/.exec(detail);
 			if (res2 !== null) {
@@ -154,20 +159,26 @@ export const parseScript = (script: string): Lesson[] => {
 				for (let i = left; i <= right; i++) {
 					add(i);
 				}
+				verboseResult.push([title, `第${res2[1]}~${res2[2]}周`, true]);
 			} else if (detail.indexOf("单周") !== -1) {
 				[1, 3, 5, 7, 9, 11, 13, 15].forEach((i) => add(i));
+				verboseResult.push([title, "单周", true]);
 			} else if (detail.indexOf("双周") !== -1) {
 				[2, 4, 6, 8, 10, 12, 14, 16].forEach((i) => add(i));
+				verboseResult.push([title, "双周", true]);
 			} else {
 				const res3 = /第((\d+,\s*)*\d+)周/.exec(detail);
 				if (res3 !== null) {
 					const weeks = res3[1].replace(/\s/, "").split(",");
 					weeks.forEach((week) => add(Number(week)));
+					verboseResult.push([title, `第${weeks}周`, true]);
+				} else {
+					verboseResult.push([title, detail, false]);
 				}
 			}
 		}
 	});
-	return result;
+	return verbose ? verboseResult : result;
 };
 
 export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>

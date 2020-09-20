@@ -39,6 +39,7 @@
 		"react-native": "0.62.2",
 		"react-native-easy-grid": "0.2.2",
 		"react-native-gesture-handler": "1.8.0",
+		"react-native-github-markdown": "4.0.4",
 		"react-native-image-zoom-viewer": "3.0.1",
 		"react-native-keychain": "4.0.5",
 		"react-native-localize": "1.4.1",

@@ -1082,7 +1082,21 @@ export const getSecondary = () =>
 				retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
 					const lowerBound = str.indexOf("function setInitValue");
 					const upperBound = str.indexOf("}", lowerBound);
-					return parseScript(str.substring(lowerBound, upperBound));
+					return parseScript(str.substring(lowerBound, upperBound)) as Lesson[];
 				}),
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
+
+export const getSecondaryVerbose = () =>
+	retryWrapper(
+		792,
+		retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
+			const lowerBound = str.indexOf("function setInitValue");
+			const upperBound = str.indexOf("}", lowerBound);
+			return parseScript(str.substring(lowerBound, upperBound), true) as [
+				string,
+				string,
+				boolean,
+			][];
+		}),
+	);
