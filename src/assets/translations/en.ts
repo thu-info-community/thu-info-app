@@ -184,4 +184,8 @@ export default {
 	tips: "Tips: ",
 	begDate: "Start Date",
 	endDate: "End Date",
+	success: "Succeeded",
+	failure: "Failed",
+	state: "State",
+	courseTime: "Course Time",
 };

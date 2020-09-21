@@ -86,14 +86,13 @@ export const SecondarySettingsScreen = () => {
 							flexDirection: "row",
 							marginVertical: 5,
 							padding: 10,
-							paddingTop: 20,
 							justifyContent: "center",
 							alignItems: "center",
 						}}>
 						<Text style={{flex: 1, textAlign: "center"}}>{item[0]}</Text>
 						<Text style={{flex: 1, textAlign: "center"}}>{item[1]}</Text>
 						<Text style={{flex: 1, textAlign: "center"}}>
-							{item[2] ? "成功" : "失败"}
+							{item[2] ? getStr("success") : getStr("failure")}
 						</Text>
 					</View>
 				)}
@@ -117,7 +116,7 @@ export const SecondarySettingsScreen = () => {
 										fontSize: 16,
 										fontWeight: "bold",
 									}}>
-									课程名称
+									{getStr("courseName")}
 								</Text>
 								<Text
 									style={{
@@ -126,7 +125,7 @@ export const SecondarySettingsScreen = () => {
 										fontSize: 16,
 										fontWeight: "bold",
 									}}>
-									课程时间
+									{getStr("courseTime")}
 								</Text>
 								<Text
 									style={{
@@ -135,7 +134,7 @@ export const SecondarySettingsScreen = () => {
 										fontSize: 16,
 										fontWeight: "bold",
 									}}>
-									状态
+									{getStr("state")}
 								</Text>
 							</View>
 						)}

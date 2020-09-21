@@ -172,4 +172,8 @@ export default {
 	tips: "小提示：",
 	begDate: "起始日期",
 	endDate: "终止日期",
+	success: "成功",
+	failure: "失败",
+	state: "状态",
+	courseTime: "课程时间",
 };
