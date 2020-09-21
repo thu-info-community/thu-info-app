@@ -1,12 +1,14 @@
-import {FlatList, Text} from "react-native";
-import React, {useEffect, useState} from "react";
+import {FlatList, RefreshControl, Text} from "react-native";
+import React, {useContext, useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {ADD_REPORT_HIDDEN, REMOVE_REPORT_HIDDEN} from "../../redux/constants";
 import {getReport} from "../../network/basics";
-import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {SettingsSwitch} from "../../components/settings/items";
+import {NetworkRetry} from "../../components/easySnackbars";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 const ReportManageHiddenUI = ({
 	hidden,
@@ -18,18 +20,18 @@ const ReportManageHiddenUI = ({
 	remove: (payload: string) => void;
 }) => {
 	const [lessons, setLessons] = useState<string[]>([]);
+	const [refreshing, setRefreshing] = useState(true);
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
 
 	useEffect(() => {
 		getReport()
 			.then((r) => {
 				setLessons([...new Set(r.map((it) => it.name))]);
 			})
-			.catch(() =>
-				Snackbar.show({
-					text: getStr("networkRetry"),
-					duration: Snackbar.LENGTH_SHORT,
-				}),
-			);
+			.catch(NetworkRetry)
+			.then(() => setRefreshing(false));
 	}, []);
 
 	return (
@@ -45,6 +47,12 @@ const ReportManageHiddenUI = ({
 					iconOff={null}
 				/>
 			)}
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					colors={[theme.colors.accent]}
+				/>
+			}
 			style={{paddingVertical: 10, paddingLeft: 0, paddingRight: 3}}
 			keyExtractor={(item) => item}
 			ListFooterComponent={
