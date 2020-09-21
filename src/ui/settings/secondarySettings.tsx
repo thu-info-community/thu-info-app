@@ -1,7 +1,14 @@
 /* eslint-disable no-undef */
 import React, {useContext, useEffect, useState} from "react";
 import MarkdownWebView from "react-native-github-markdown";
-import {Button, FlatList, RefreshControl, Text, View} from "react-native";
+import {
+	Button,
+	FlatList,
+	RefreshControl,
+	Text,
+	View,
+	Dimensions,
+} from "react-native";
 import {getSecondaryVerbose} from "../../network/schedule";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {ThemeContext} from "../../assets/themes/context";
@@ -16,9 +23,9 @@ const markdown = preval`
       const path = require('path');
       let str;
       if (process.cwd().includes("ios")) {
-        str = fs.readFileSync(path.resolve(process.cwd(), '../src/assets/mds/secondary_zh.md'), 'utf8');
+        	str = fs.readFileSync(path.resolve(process.cwd(), '../src/assets/mds/secondary_zh.md'), 'utf8');
       } else {
-        str = fs.readFileSync(path.resolve(process.cwd(), './src/assets/mds/secondary_zh.md'), 'utf8');
+        	str = fs.readFileSync(path.resolve(process.cwd(), './src/assets/mds/secondary_zh.md'), 'utf8');
       }
       module.exports = str;
 `;
@@ -40,14 +47,31 @@ export const SecondarySettingsScreen = () => {
 
 	useEffect(refresh, []);
 
+	let screenHeight = Dimensions.get("window");
+
 	return (
 		<>
 			<MarkdownWebView
 				style={{backgroundColor: "transparent", flex: 1}}
 				content={markdown}
 			/>
+			<View
+				style={{
+					shadowColor: "gray",
+					shadowOffset: {
+						width: 0,
+						height: 1,
+					},
+					shadowRadius: 3,
+					shadowOpacity: 0.8,
+					height: 2,
+					backgroundColor: "lightgray",
+				}}
+			/>
 			<FlatList
-				style={{flex: 1}}
+				style={{
+					flex: 1,
+				}}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -57,33 +81,103 @@ export const SecondarySettingsScreen = () => {
 				}
 				data={data}
 				renderItem={({item}) => (
-					<View style={{flexDirection: "row"}}>
-						<Text style={{flex: 1}}>{item[0]}</Text>
-						<Text style={{flex: 1}}>{item[1]}</Text>
-						<Text style={{flex: 1}}>{item[2] ? "成功" : "失败"}</Text>
+					<View
+						style={{
+							flexDirection: "row",
+							marginVertical: 5,
+							padding: 10,
+							paddingTop: 20,
+							justifyContent: "center",
+							alignItems: "center",
+						}}>
+						<Text style={{flex: 1, textAlign: "center"}}>{item[0]}</Text>
+						<Text style={{flex: 1, textAlign: "center"}}>{item[1]}</Text>
+						<Text style={{flex: 1, textAlign: "center"}}>
+							{item[2] ? "成功" : "失败"}
+						</Text>
 					</View>
 				)}
 				keyExtractor={(item, index) => item[0] + item[1] + item[2] + index}
+				ListHeaderComponent={
+					<View>
+						{data.length !== 0 && (
+							<View
+								style={{
+									flexDirection: "row",
+									marginVertical: 5,
+									padding: 10,
+									paddingTop: 20,
+									justifyContent: "center",
+									alignItems: "center",
+								}}>
+								<Text
+									style={{
+										flex: 1,
+										textAlign: "center",
+										fontSize: 16,
+										fontWeight: "bold",
+									}}>
+									课程名称
+								</Text>
+								<Text
+									style={{
+										flex: 1,
+										textAlign: "center",
+										fontSize: 16,
+										fontWeight: "bold",
+									}}>
+									课程时间
+								</Text>
+								<Text
+									style={{
+										flex: 1,
+										textAlign: "center",
+										fontSize: 16,
+										fontWeight: "bold",
+									}}>
+									状态
+								</Text>
+							</View>
+						)}
+					</View>
+				}
 				ListFooterComponent={() => (
 					<>
 						{data.some((it) => !it[2]) && (
-							<Button
-								title={getStr("sendErrReport")}
-								onPress={() => {
-									const err = data.filter((it) => !it[2]).map((it) => it[1]);
-									submitSecondaryErr(String(err))
-										.then(() =>
-											Snackbar.show({
-												text: getStr("feedbackSuccess"),
-												duration: Snackbar.LENGTH_SHORT,
-											}),
-										)
-										.catch(NetworkRetry);
-								}}
-							/>
+							<View>
+								<Button
+									title={getStr("sendErrReport")}
+									onPress={() => {
+										const err = data.filter((it) => !it[2]).map((it) => it[1]);
+										submitSecondaryErr(String(err))
+											.then(() =>
+												Snackbar.show({
+													text: getStr("feedbackSuccess"),
+													duration: Snackbar.LENGTH_SHORT,
+												}),
+											)
+											.catch(NetworkRetry);
+									}}
+								/>
+								<Text />
+							</View>
 						)}
 						{data.length === 0 && (
-							<Text style={{textAlign: "center"}}>{getStr("emptyList")}</Text>
+							<View
+								style={{
+									height: screenHeight.height * 0.35,
+									justifyContent: "center",
+									alignItems: "center",
+								}}>
+								<Text
+									style={{
+										textAlign: "center",
+										fontWeight: "bold",
+										fontSize: 16,
+									}}>
+									{getStr("emptyList")}
+								</Text>
+							</View>
 						)}
 					</>
 				)}
