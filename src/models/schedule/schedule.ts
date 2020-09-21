@@ -114,6 +114,39 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 	return [primaryList, examList];
 };
 
+export const parseSecondaryWeek = (
+	src: string,
+	callback: (week: number) => void,
+): boolean => {
+	let healthy = true;
+	src.split(",").forEach((segment) => {
+		if (segment.indexOf("-") === -1) {
+			const week = Number(segment);
+			if (isNaN(week)) {
+				healthy = false;
+			} else {
+				callback(week);
+			}
+		} else {
+			const partials = segment.split("-");
+			if (partials.length === 2) {
+				const x = Number(partials[0]);
+				const y = Number(partials[1]);
+				if (isNaN(x) || isNaN(y) || x > y) {
+					healthy = false;
+				} else {
+					for (let i = x; i <= y; i++) {
+						callback(i);
+					}
+				}
+			} else {
+				healthy = false;
+			}
+		}
+	});
+	return healthy;
+};
+
 // Note: no '}' at the end.
 export const parseScript = (
 	script: string,
@@ -155,33 +188,8 @@ export const parseScript = (
 			verboseResult.push([title, "双周", true]);
 		} else {
 			const res = /第([\d\-~,]+)周/.exec(detail);
-			let healthy = true;
 			if (res !== null && res[1]) {
-				res[1].split(",").forEach((segment) => {
-					if (segment.indexOf("-") === -1) {
-						const week = Number(segment);
-						if (isNaN(week)) {
-							healthy = false;
-						} else {
-							add(week);
-						}
-					} else {
-						const partials = segment.split("-");
-						if (partials.length === 2) {
-							const x = Number(partials[0]);
-							const y = Number(partials[1]);
-							if (isNaN(x) || isNaN(y) || x > y) {
-								healthy = false;
-							} else {
-								for (let i = x; i <= y; i++) {
-									add(i);
-								}
-							}
-						} else {
-							healthy = false;
-						}
-					}
-				});
+				const healthy = parseSecondaryWeek(res[1], add);
 				verboseResult.push([title, res[1], healthy]);
 			} else {
 				verboseResult.push([title, detail, false]);
