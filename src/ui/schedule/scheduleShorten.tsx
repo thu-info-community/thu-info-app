@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {SCHEDULE_UPDATE_ALIAS} from "../../redux/constants";
 import {getStr} from "src/utils/i18n";
+import Snackbar from "react-native-snackbar";
 
 interface ScheduleShortenProps {
 	readonly shortenMap: [string, string][];
@@ -55,7 +56,10 @@ const ScheduleShortenUI = (props: ScheduleShortenProps) => {
 					}}>
 					<Text
 						numberOfLines={1}
-						style={{fontSize: 15, flex: 1, textAlign: "center"}}>
+						style={{fontSize: 15, flex: 1, textAlign: "center"}}
+						onPress={() =>
+							Snackbar.show({text: item[0], duration: Snackbar.LENGTH_SHORT})
+						}>
 						{item[0]}
 					</Text>
 					<TextInput
