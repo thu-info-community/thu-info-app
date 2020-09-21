@@ -3,9 +3,10 @@ import {
 	INFO_ROOT_URL,
 	JXMH_REFERER,
 	JXRL_MIDDLE,
-	JXRL_PREFIX,
+	JXRL_BKS_PREFIX,
 	JXRL_SUFFIX,
 	SECONDARY_URL,
+	JXRL_YJS_PREFIX,
 } from "../constants/strings";
 import {
 	Exam,
@@ -14,7 +15,7 @@ import {
 	parseScript,
 } from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
-import {mocked} from "../redux/store";
+import {currState, mocked} from "../redux/store";
 
 export const getSchedule = () => {
 	const format = (c: Calendar) => c.format("YYYYMMDD");
@@ -1048,7 +1049,9 @@ export const getSchedule = () => {
 				Promise.all(
 					Array.from(new Array(Calendar.weekCount / groupSize), (_, id) =>
 						retrieve(
-							JXRL_PREFIX +
+							(currState().config.graduate
+								? JXRL_YJS_PREFIX
+								: JXRL_BKS_PREFIX) +
 								format(new Calendar(id * groupSize + 1, 1)) +
 								JXRL_MIDDLE +
 								format(new Calendar((id + 1) * groupSize, 7)) +
