@@ -186,13 +186,22 @@ export const parseScript = (
 		} else if (detail.indexOf("双周") !== -1) {
 			[2, 4, 6, 8, 10, 12, 14, 16].forEach(add);
 			verboseResult.push([title, "双周", true]);
+		} else if (detail.indexOf("全周") !== -1) {
+			[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].forEach(add);
+			verboseResult.push([title, "全周", true]);
 		} else {
 			const res = /第([\d\-~,]+)周/.exec(detail);
 			if (res !== null && res[1]) {
 				const healthy = parseSecondaryWeek(res[1], add);
 				verboseResult.push([title, res[1], healthy]);
 			} else {
-				verboseResult.push([title, detail, false]);
+				const resEn = /Week([\d\-~,]+)/i.exec(detail);
+				if (resEn !== null && resEn[1]) {
+					const healthy = parseSecondaryWeek(resEn[1], add);
+					verboseResult.push([title, resEn[1], healthy]);
+				} else {
+					verboseResult.push([title, detail, false]);
+				}
 			}
 		}
 	});
