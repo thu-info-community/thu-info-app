@@ -147,34 +147,44 @@ export const parseScript = (
 			});
 		};
 
-		const res1 = /第([\d]+)周/.exec(detail);
-		if (res1 !== null) {
-			add(Number(res1[1]));
-			verboseResult.push([title, `第${res1[1]}周`, true]);
+		if (detail.indexOf("单周") !== -1) {
+			[1, 3, 5, 7, 9, 11, 13, 15].forEach(add);
+			verboseResult.push([title, "单周", true]);
+		} else if (detail.indexOf("双周") !== -1) {
+			[2, 4, 6, 8, 10, 12, 14, 16].forEach(add);
+			verboseResult.push([title, "双周", true]);
 		} else {
-			const res2 = /第([\d]+)[-~]([\d]+)周/.exec(detail);
-			if (res2 !== null) {
-				const left = Number(res2[1]);
-				const right = Number(res2[2]);
-				for (let i = left; i <= right; i++) {
-					add(i);
-				}
-				verboseResult.push([title, `第${res2[1]}~${res2[2]}周`, true]);
-			} else if (detail.indexOf("单周") !== -1) {
-				[1, 3, 5, 7, 9, 11, 13, 15].forEach((i) => add(i));
-				verboseResult.push([title, "单周", true]);
-			} else if (detail.indexOf("双周") !== -1) {
-				[2, 4, 6, 8, 10, 12, 14, 16].forEach((i) => add(i));
-				verboseResult.push([title, "双周", true]);
+			const res = /第([\d\-~,]+)周/.exec(detail);
+			let healthy = true;
+			if (res !== null && res[1]) {
+				res[1].split(",").forEach((segment) => {
+					if (segment.indexOf("-") === -1) {
+						const week = Number(segment);
+						if (isNaN(week)) {
+							healthy = false;
+						} else {
+							add(week);
+						}
+					} else {
+						const partials = segment.split("-");
+						if (partials.length === 2) {
+							const x = Number(partials[0]);
+							const y = Number(partials[1]);
+							if (isNaN(x) || isNaN(y) || x > y) {
+								healthy = false;
+							} else {
+								for (let i = x; i <= y; i++) {
+									add(i);
+								}
+							}
+						} else {
+							healthy = false;
+						}
+					}
+				});
+				verboseResult.push([title, res[1], healthy]);
 			} else {
-				const res3 = /第((\d+,\s*)*\d+)周/.exec(detail);
-				if (res3 !== null) {
-					const weeks = res3[1].replace(/\s/, "").split(",");
-					weeks.forEach((week) => add(Number(week)));
-					verboseResult.push([title, `第${weeks}周`, true]);
-				} else {
-					verboseResult.push([title, detail, false]);
-				}
+				verboseResult.push([title, detail, false]);
 			}
 		}
 	});

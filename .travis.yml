@@ -47,7 +47,7 @@ jobs:
       install:
         - yarn
       script:
-        - cd android && gradle assembleDebug && cd ..
+        - cd android && gradle assembleRelease && cd ..
     - language: node_js
       os: linux
       dist: trusty
