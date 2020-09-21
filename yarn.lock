@@ -1787,10 +1787,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-native@0.63.19":
-  version "0.63.19"
-  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.19.tgz#5302f3fecd47ea83626b0bafacbb0d9f2892a242"
-  integrity sha512-iUcejWDCw5gBIezDtSWBpkbB3piIMZau7FAfQqhObCJpCm/7QgVof/aKIP0fCkADYz/qGmIZATMX8kjAS7TVbw==
+"@types/react-native@0.63.20":
+  version "0.63.20"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.20.tgz#15ccf000bf849d867b15d14d2b4acc364fb7fa27"
+  integrity sha512-APnxRTDxbWw/IYjvwvXkhYJiz1gahyVA579pJqAVsEfZ+ZUwUHZpWKnexobyH5NmRJHuA/8LrThyps/BW3SYXA==
   dependencies:
     "@types/react" "*"
 
@@ -7223,10 +7223,10 @@ react-native-gesture-handler@1.8.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-github-markdown@^4.0.4:
+react-native-github-markdown@4.0.4:
   version "4.0.4"
-  resolved "https://registry.npm.taobao.org/react-native-github-markdown/download/react-native-github-markdown-4.0.4.tgz#eb178742e57a7a973095bd552d8d27e098dfc3c9"
-  integrity sha1-6xeHQuV6epcwlb1VLY0n4Jjfw8k=
+  resolved "https://registry.yarnpkg.com/react-native-github-markdown/-/react-native-github-markdown-4.0.4.tgz#eb178742e57a7a973095bd552d8d27e098dfc3c9"
+  integrity sha512-GQSmymEjDEi0ue6LWsyvfiSCbfI/7IVfgTza3hzzP/i+1A4S/QnAAIrja6u5ZtQems1KPM4xTPwBIkc/rer6ug==
   dependencies:
     "@babel/runtime" "^7.10.4"
     darkreader "^4.9.14"
