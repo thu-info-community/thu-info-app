@@ -6,17 +6,14 @@ import {SCHEDULE_UPDATE_ALIAS} from "../../redux/constants";
 import {getStr} from "src/utils/i18n";
 
 interface ScheduleShortenProps {
-	readonly shortenMap: {[key: string]: string};
+	readonly shortenMap: [string, string][];
 	readonly setAlias: (origin: string, dest: string) => void;
 }
-
-const prepareData = (o: {[key: string]: string}) =>
-	Object.keys(o).map((key) => [key, o[key]]);
 
 const ScheduleShortenUI = (props: ScheduleShortenProps) => {
 	return (
 		<FlatList
-			data={prepareData(props.shortenMap)}
+			data={props.shortenMap}
 			ListHeaderComponent={
 				<View
 					style={{
@@ -92,8 +89,17 @@ const ScheduleShortenUI = (props: ScheduleShortenProps) => {
 
 export const ScheduleShortenScreen = connect(
 	(state: State) => {
+		const o = state.schedule.shortenMap;
+		const validLessons = new Set(
+			state.schedule.primary
+				.concat(state.schedule.secondary)
+				.map((it) => it.title)
+				.concat(state.schedule.exam.map((it) => it.title)),
+		);
 		return {
-			shortenMap: state.schedule.shortenMap,
+			shortenMap: Object.keys(o)
+				.filter((key) => validLessons.has(key))
+				.map((key) => [key, o[key]]) as [string, string][],
 		};
 	},
 	(dispatch) => {
