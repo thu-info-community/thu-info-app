@@ -309,9 +309,12 @@ export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 					undefined,
 					"GBK",
 				).then((s) => {
-					const json = JSON.parse(s.substring(1, s.length - 1));
+					const json = JSON.parse(
+						// eslint-disable-next-line quotes
+						s.substring(1, s.length - 1).replace(/'/g, '"'),
+					);
 					if (json.success === "false") {
-						throw new Error("Getting physical exam result failed.");
+						return [["状态", "暂无可查成绩"]];
 					} else {
 						return [
 							["是否免测", json.sfmc],
