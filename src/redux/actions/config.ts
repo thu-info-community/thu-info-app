@@ -7,6 +7,7 @@ import {
 	SET_GRADUATE,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
+	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {retrieve} from "../../network/core";
@@ -30,7 +31,8 @@ export type ConfigAction =
 	| {type: typeof SET_BX; payload: boolean}
 	| {type: typeof ADD_REPORT_HIDDEN; payload: string}
 	| {type: typeof REMOVE_REPORT_HIDDEN; payload: string}
-	| {type: typeof SET_SCHEDULE_HEIGHT; payload: number};
+	| {type: typeof SET_SCHEDULE_HEIGHT; payload: number}
+	| {type: typeof SET_REMAINDER_SHIFT; payload: number};
 
 export const refreshCalendarConfig = () => {
 	retrieve(CALENDAR_CONFIG_URL).then((s) => {

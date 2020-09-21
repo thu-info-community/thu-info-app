@@ -10,6 +10,7 @@ import {
 	SET_GRADUATE,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
+	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
@@ -66,6 +67,11 @@ export const config = (
 			return {
 				...state,
 				scheduleHeight: action.payload,
+			};
+		case SET_REMAINDER_SHIFT:
+			return {
+				...state,
+				remainderShift: action.payload,
 			};
 		default:
 			return state;

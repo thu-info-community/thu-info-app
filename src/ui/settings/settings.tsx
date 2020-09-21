@@ -37,6 +37,11 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			onPress={() => navigation.navigate("ScheduleSettings")}
 			icon={<Feather name="layout" size={16} />}
 		/>
+		<SettingsItem
+			text={getStr("remainderSettings")}
+			onPress={() => navigation.navigate("RemainderSettings")}
+			icon={<AntDesign name="creditcard" size={16} />}
+		/>
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("eleRecord")}

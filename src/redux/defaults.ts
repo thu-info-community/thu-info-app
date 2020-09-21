@@ -36,7 +36,8 @@ export const defaultConfigState: Config = {
 	newGPA: true,
 	bx: false,
 	reportHidden: [],
-	scheduleHeight: 65,
+	scheduleHeight: 90,
+	remainderShift: 0,
 };
 
 export const defaultCredentials: Credentials = {

@@ -188,4 +188,6 @@ export default {
 	failure: "Failed",
 	state: "State",
 	courseTime: "Course Time",
+	remainderSettings: "Reset Remainder",
+	setNewRemainder: "Set the New Remainder",
 };

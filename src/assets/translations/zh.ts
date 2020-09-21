@@ -176,4 +176,6 @@ export default {
 	failure: "失败",
 	state: "状态",
 	courseTime: "课程时间",
+	remainderSettings: "修正余额",
+	setNewRemainder: "设置新余额",
 };

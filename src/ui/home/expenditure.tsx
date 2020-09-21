@@ -18,6 +18,8 @@ import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {mocked} from "../../redux/store";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -58,7 +60,7 @@ export const Money = ({title, money}: {title: string; money: number}) => {
 	);
 };
 
-export const ExpenditureScreen = () => {
+export const ExpenditureUI = ({shift}: {shift: number}) => {
 	const [[expenditures, income, outgo, remainder], setExpenditures] = useState<
 		[Record[], number, number, number]
 	>([[], 0, 0, 0]);
@@ -92,7 +94,10 @@ export const ExpenditureScreen = () => {
 			<View style={{flexDirection: "row"}}>
 				<Money title={getStr("income")} money={income} />
 				<Money title={getStr("outgo")} money={outgo} />
-				<Money title={getStr("remainder")} money={remainder} />
+				<Money
+					title={getStr("remainder")}
+					money={refreshing ? 0 : remainder + shift}
+				/>
 			</View>
 			{!mocked() && (
 				<View style={styles.header}>
@@ -156,3 +161,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 });
+
+export const ExpenditureScreen = connect((state: State) => ({
+	shift: state.config.remainderShift,
+}))(ExpenditureUI);

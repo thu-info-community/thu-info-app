@@ -78,7 +78,7 @@ export const getReport = (): Promise<Course[]> =>
 					credit: 3,
 					grade: "A+",
 					name: "思想道德修养与法律基础",
-					point: 4.0,
+					point: 4,
 					semester: "2019-秋",
 				},
 				{
