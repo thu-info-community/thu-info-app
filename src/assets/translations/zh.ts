@@ -38,7 +38,7 @@ export default {
 	reportHiddenWarning:
 		"推出该功能的初衷是满足一些院系个性化成绩单的需求。\n请妥善使用。",
 	scheduleSettings: "课程表设置",
-	scheduleUnitHeight: "课表单元高度（恶搞后果自负）",
+	scheduleUnitHeight: "课表单元高度",
 	secondarySchedule: "二级课表",
 	sendErrReport: "发送错误报告",
 	emptyList: "列表空空如也，请刷新重试",

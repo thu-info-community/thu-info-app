@@ -119,7 +119,11 @@ export const SettingsEditValue = ({
 					padding: 6,
 				}}
 				value={String(value)}
-				onChangeText={(newText) => onValueChange(Number(newText))}
+				onChangeText={(newText) => {
+					if (!isNaN(Number(newText))) {
+						onValueChange(Number(newText));
+					}
+				}}
 				keyboardType="numeric"
 			/>
 		</View>

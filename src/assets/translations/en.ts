@@ -38,7 +38,7 @@ export default {
 	manageHidden: "Hidden Subjects",
 	reportHiddenWarning: "Do not abuse this functionality.",
 	scheduleSettings: "Schedule Settings",
-	scheduleUnitHeight: "Set Unit Height (VALIDITY IS NOT CHECKED)",
+	scheduleUnitHeight: "Set Unit Height",
 	secondarySchedule: "Secondary Schedule",
 	sendErrReport: "Send error report",
 	emptyList: "The list seems empty.",
