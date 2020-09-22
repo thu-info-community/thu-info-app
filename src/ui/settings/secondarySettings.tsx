@@ -143,23 +143,20 @@ export const SecondarySettingsScreen = () => {
 				ListFooterComponent={() => (
 					<>
 						{data.some((it) => !it[2]) && (
-							<View>
-								<Button
-									title={getStr("sendErrReport")}
-									onPress={() => {
-										const err = data.filter((it) => !it[2]).map((it) => it[1]);
-										submitSecondaryErr(String(err))
-											.then(() =>
-												Snackbar.show({
-													text: getStr("feedbackSuccess"),
-													duration: Snackbar.LENGTH_SHORT,
-												}),
-											)
-											.catch(NetworkRetry);
-									}}
-								/>
-								<Text />
-							</View>
+							<Button
+								title={getStr("sendErrReport")}
+								onPress={() => {
+									const err = data.filter((it) => !it[2]).map((it) => it[1]);
+									submitSecondaryErr(String(err))
+										.then(() =>
+											Snackbar.show({
+												text: getStr("feedbackSuccess"),
+												duration: Snackbar.LENGTH_SHORT,
+											}),
+										)
+										.catch(NetworkRetry);
+								}}
+							/>
 						)}
 						{data.length === 0 && (
 							<View

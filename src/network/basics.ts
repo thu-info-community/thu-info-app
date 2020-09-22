@@ -660,7 +660,6 @@ export const getExpenditures = (
 								return valid;
 							})
 							.reverse();
-						// console.log(filtered.length);
 						return [filtered, income, outgo, remainder];
 					},
 				),
