@@ -163,5 +163,5 @@ const styles = StyleSheet.create({
 });
 
 export const ExpenditureScreen = connect((state: State) => ({
-	shift: state.config.remainderShift,
+	shift: state.config.remainderShift ?? 0,
 }))(ExpenditureUI);
