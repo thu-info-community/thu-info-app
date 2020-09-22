@@ -78,7 +78,16 @@ const GridRow = ({
 	unitHeight: number;
 }) => {
 	const row = (
-		<Row style={[styles.center, {height: (span || 1) * unitHeight}]}>
+		<Row
+			style={[
+				styles.center,
+				{
+					height:
+						(span || 1) >= 0.9
+							? (span || 1) * unitHeight
+							: Math.max((span || 1) * unitHeight, 45),
+				},
+			]}>
 			{text && <Text style={{textAlign: "center"}}>{text}</Text>}
 		</Row>
 	);
