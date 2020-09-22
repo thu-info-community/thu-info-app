@@ -166,7 +166,7 @@ export const parseScript = (
 		const begin = beginList[sessionIndex - 1];
 		const end = endList[sessionIndex - 1];
 		const title = RegExp.$2;
-		const detail = RegExp.$1.replace(/\s/, "");
+		const detail = RegExp.$1.replace(/\s/g, "");
 
 		const add = (week: number) => {
 			result.push({
