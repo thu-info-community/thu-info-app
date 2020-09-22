@@ -13,8 +13,6 @@ export const RemainderSettingsUI = ({
 }) => {
 	const [shift, setShift] = useState(0);
 
-	// console.log(shift);
-
 	return (
 		<View style={{padding: 10}}>
 			<SettingsEditValue
