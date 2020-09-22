@@ -1670,6 +1670,13 @@
   resolved "https://registry.npm.taobao.org/@types/color-name/download/@types/color-name-1.1.1.tgz?cache=0&sync_timestamp=1588199606687&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fcolor-name%2Fdownload%2F%40types%2Fcolor-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha1-HBJhu+qhCoBVu8XYq4S3sq/IRqA=
 
+"@types/convert-excel-to-json@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.npm.taobao.org/@types/convert-excel-to-json/download/@types/convert-excel-to-json-1.7.0.tgz#6dafed3c564b948b0f938601dc6ef231c00d6ec2"
+  integrity sha1-ba/tPFZLlIsPk4YB3G7yMcANbsI=
+  dependencies:
+    "@types/node" "*"
+
 "@types/cookiejar@*":
   version "2.1.1"
   resolved "https://registry.npm.taobao.org/@types/cookiejar/download/@types/cookiejar-2.1.1.tgz#90b68446364baf9efd8e8349bb36bd3852b75b80"
