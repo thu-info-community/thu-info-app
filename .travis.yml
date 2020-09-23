@@ -38,6 +38,7 @@ jobs:
           - $HOME/.gradle/wrapper/
           - $HOME/.android/build-cache
       before_install:
+        - openssl aes-256-cbc -k "$SECRET_PASSWORD" -in THUInfo.jks.enc -out android/app/THUInfo.jks -d
         - nvm install node
         - npm install -g yarn
         - curl -s "https://get.sdkman.io" | bash
@@ -48,6 +49,18 @@ jobs:
         - yarn
       script:
         - cd android && gradle assembleRelease && cd ..
+      before_deploy:
+        - mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/THUInfo_release_$TRAVIS_TAG.apk
+      deploy:
+        provider: releases
+        api_key:
+          secure: RMf2ORhxG/9TSsu7x0GLLaWerg9fTAWoVvNEa/ggb56Geo4w3Cg8mZoXRq708HoqNdOyD0kFsVIx3xW45EvZvZp0Os/2zza6T8jmzg59zrmUmBAHFg4+ks7Ox0E3QwBozN7XJwuLCEuGHnOw6tNRTsfd84hT+lBr3Zvzkfbsn1S5ZkP8SoHZQ8TmuYWd+34eFPn7u2mjjGHe/sxhXPnqtKZKfKTpWPoHE+qyGR3ni9dxI1tiMfxzCFi4MGyHKndntcUYxSYGJ09oYfNNqgAasV1yZxhXg0LUFsi5veE4b20rJ5shjPnTbXPM3PeT/BK74X2zfmUT+vXoOay/i1RX1peW1YT/bZ8zB8K8FL7ChbNVZ8DOQM/TevEYn7Y9tTI46MqJVLz61T2DKnAo6l074HW+X37AQly+u995PsMs62YaGKcWG+XXZBPN0rlgmwd4DxTScIN7f/v3fps7kpca+vXdJQnDhAaR6wR7UZsHwqYeLvm7JyNjrCDW814a0/6v147XPiPq7EVA8LAalj9vijZ9iOApWx/wv+z9ZoQ7y5VAZot6pqI/p6VTj7MBOwM0AfMFyC8hT9PReGIumLoRy0Msf1UdpqjS7z72KKn0xu8qmK4vuDkEOP3Tx+lz/yGQYlmKPEo5o4FnhX4yMq1XsttS8pmsXyRSAF/Ewy6c9Ug=
+        file: android/app/build/outputs/apk/release/THUInfo_release_$TRAVIS_TAG.apk
+        on:
+          tags: true
+          repo: UNIDY2002/THUInfo
+        skip_cleanup: true
+        overwrite: true
     - language: node_js
       os: linux
       dist: trusty
