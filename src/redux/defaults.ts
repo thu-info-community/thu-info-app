@@ -36,7 +36,7 @@ export const defaultConfigState: Config = {
 	newGPA: true,
 	bx: false,
 	reportHidden: [],
-	scheduleHeight: 90,
+	scheduleHeight: 65,
 	remainderShift: 0,
 };
 
