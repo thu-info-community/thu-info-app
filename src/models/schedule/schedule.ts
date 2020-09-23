@@ -189,6 +189,18 @@ export const parseScript = (
 		} else if (detail.indexOf("全周") !== -1) {
 			[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].forEach(add);
 			verboseResult.push([title, "全周", true]);
+		} else if (
+			detail.indexOf("前八周") !== -1 ||
+			detail.indexOf("前8周") !== -1
+		) {
+			[1, 2, 3, 4, 5, 6, 7, 8].forEach(add);
+			verboseResult.push([title, "前八周", true]);
+		} else if (
+			detail.indexOf("后八周") !== -1 ||
+			detail.indexOf("后8周") !== -1
+		) {
+			[9, 10, 11, 12, 13, 14, 15, 16].forEach(add);
+			verboseResult.push([title, "后八周", true]);
 		} else {
 			const res = /第([\d\-~,]+)周/.exec(detail);
 			if (res !== null && res[1]) {
