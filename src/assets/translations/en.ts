@@ -95,7 +95,7 @@ export default {
 	remainder: "Remainder",
 	question: "FAQ",
 	expenditureFAQ:
-		"\nRemainder does not match the difference between income and expenditure?\n\nThe income and expenditure are calculated based on your selected range of dates while remainder is based on the whole history of your expenditure records.\n\nRemainder does not match the actual value of my card?\n\nAs no direct API has been found yet, the remainder value is deduced based on the whole history of your expenditure records, and might be incorrect. Moreover, it seems that if you have lost your card and made a new one before, there can be serious deviation of the expenditure record. Please reset your remainder manually in the settings.",
+		"\nRemainder does not match the difference between income and expenditure?\n\nThe income and expenditure are calculated based on your selected range of dates while remainder is based on the whole history of your expenditure records.\n\nRemainder does not match the actual value of my card?\n\nAs no direct API has been found yet, the remainder value is deduced based on the whole history of your expenditure records, and might be incorrect. Moreover, it seems that if you have lost your card and made a new one before, there can be serious deviation of the expenditure record. In this case, please reset your remainder manually in the settings.",
 	classroomState: "Classrooms",
 	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
 	classroomHeaderPrefix: "Week ",
