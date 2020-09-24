@@ -191,6 +191,6 @@ export default {
 	remainderSettings: "Reset Remainder",
 	setNewRemainder: "Set the New Remainder",
 	remainderTips:
-		"Due to some problems in data migration, there can be some differences between remainders shown in expenditure page and the actual remainder. If you have lost your card and made a new one before, please reset the remainder in the box above.\nPS: There may be delay in the expenditure record, please wait for a moment before resetting the remainder.",
+		"The remainder shown in expenditure page can go wrong due to data migration problems. If you ever lost your card and made a new one before, please reset the remainder in the box above.\nPS: The display error can also be caused by data translation delay, please wait for a moment before resetting the remainder.",
 	resetRemainderShift: "Cancel Reset",
 };
