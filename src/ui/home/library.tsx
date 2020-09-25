@@ -5,6 +5,7 @@ import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshLi
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {getStr} from "src/utils/i18n";
+import {mocked} from "../../redux/store";
 
 export const LibraryScreen = simpleRefreshListScreen(
 	getLibraryList,
@@ -49,7 +50,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 				textAlign: "center",
 				marginVertical: 20,
 			}}>
-			{getStr("chooseLibrary")}
+			{getStr(mocked() ? "chooseLibraryMocked" : "chooseLibrary")}
 		</Text>
 		<View style={{backgroundColor: "lightgray", height: 1}} />
 	</View>,

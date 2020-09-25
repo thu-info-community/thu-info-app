@@ -6,6 +6,7 @@ import {LibraryBase} from "../../models/home/library";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import {mocked} from "../../redux/store";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -27,7 +28,7 @@ export function libraryRefreshListScreen<
 		choice: 0 | 1,
 		refresh: () => void,
 	) => () => void,
-	header: ReactElement,
+	header?: ReactElement,
 ): FC<{
 	navigation: HomeNav;
 	route: RouteProp<HomeStackParamList, S>;
@@ -74,7 +75,9 @@ export function libraryRefreshListScreen<
 								}}>
 								{item.zhName + moreInformation}
 							</Text>
-							<Icon name="angle-right" size={24} color="grey" />
+							{(!mocked() || header) && (
+								<Icon name="angle-right" size={24} color="grey" />
+							)}
 						</TouchableOpacity>
 						<View style={{backgroundColor: "lightgray", height: 1}} />
 					</View>
@@ -82,7 +85,7 @@ export function libraryRefreshListScreen<
 			},
 			(item) => String(item.id),
 			undefined,
-			header,
+			header || <View style={{backgroundColor: "lightgray", height: 1}} />,
 		);
 
 		return (

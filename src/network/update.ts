@@ -23,10 +23,7 @@ export const getUpdateInfo = () =>
 				TSINGHUA_CLOUD_URL,
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  )
-				.then((o) => {
-					console.log(o);
-					return JSON.parse(o);
-				})
+				.then(JSON.parse)
 				.then((o: UpdateInfo[]) =>
 					o
 						.filter((it) => it.versionCode > Number(VersionNumber.buildVersion))

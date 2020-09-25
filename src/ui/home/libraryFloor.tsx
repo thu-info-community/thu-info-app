@@ -2,8 +2,6 @@ import {getLibraryFloorList} from "../../network/library";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {LibraryFloor} from "../../models/home/library";
 import {mocked} from "../../redux/store";
-import React from "react";
-import {View} from "react-native";
 
 export const LibraryFloorScreen = libraryRefreshListScreen<
 	LibraryFloor,
@@ -19,5 +17,4 @@ export const LibraryFloorScreen = libraryRefreshListScreen<
 			});
 		}
 	},
-	<View style={{backgroundColor: "lightgray", height: 1}} />,
 );
