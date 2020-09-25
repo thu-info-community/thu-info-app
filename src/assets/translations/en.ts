@@ -193,4 +193,6 @@ export default {
 	remainderTips:
 		"The remainder shown in expenditure page can go wrong due to data migration problems. If you ever lost your card and made a new one before, please reset the remainder in the box above.\nPS: The display error can also be caused by data translation delay, please wait for a moment before resetting the remainder.",
 	resetRemainderShift: "Cancel Reset",
+	chooseLibrary: "Please select a library to check/book a seat",
+	bookTips: "Press the list below to book a seat",
 };

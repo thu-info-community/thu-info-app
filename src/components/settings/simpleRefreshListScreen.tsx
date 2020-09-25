@@ -59,7 +59,7 @@ export function simpleRefreshListScreen<T>(
 				}
 				renderItem={({item}) => renderItem(item, refresh, props)}
 				keyExtractor={keyExtractor}
-				ListHeaderComponent={refreshing ? null : header}
+				ListHeaderComponent={data.length === 0 ? null : header}
 				ListFooterComponent={footer}
 				ListEmptyComponent={empty}
 			/>

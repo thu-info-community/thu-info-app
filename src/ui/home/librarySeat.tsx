@@ -5,6 +5,8 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {mocked} from "../../redux/store";
+import React from "react";
+import {Text, View} from "react-native";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
@@ -49,4 +51,16 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 			);
 		}
 	},
+	<View style={{justifyContent: "center"}}>
+		<Text
+			style={{
+				fontSize: 16,
+				fontWeight: "bold",
+				textAlign: "center",
+				marginBottom: 15,
+			}}>
+			{getStr("bookTips")}
+		</Text>
+		<View style={{backgroundColor: "lightgray", height: 1}} />
+	</View>,
 );

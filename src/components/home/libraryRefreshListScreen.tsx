@@ -1,4 +1,4 @@
-import React, {FC, PropsWithChildren, useState} from "react";
+import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
@@ -27,6 +27,7 @@ export function libraryRefreshListScreen<
 		choice: 0 | 1,
 		refresh: () => void,
 	) => () => void,
+	header: ReactElement,
 ): FC<{
 	navigation: HomeNav;
 	route: RouteProp<HomeStackParamList, S>;
@@ -81,7 +82,7 @@ export function libraryRefreshListScreen<
 			},
 			(item) => String(item.id),
 			undefined,
-			<View style={{backgroundColor: "lightgray", height: 1}} />,
+			header,
 		);
 
 		return (
