@@ -21,6 +21,7 @@ export function simpleRefreshListScreen<T>(
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: ReactElement,
+	header?: ReactElement,
 	empty?: ReactElement,
 ): FC {
 	return (props) => {
@@ -58,6 +59,7 @@ export function simpleRefreshListScreen<T>(
 				}
 				renderItem={({item}) => renderItem(item, refresh, props)}
 				keyExtractor={keyExtractor}
+				ListHeaderComponent={header}
 				ListFooterComponent={footer}
 				ListEmptyComponent={empty}
 			/>
