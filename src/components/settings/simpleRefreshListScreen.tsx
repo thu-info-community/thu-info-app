@@ -48,7 +48,7 @@ export function simpleRefreshListScreen<T>(
 
 		return (
 			<FlatList
-				style={{flex: 1, padding: 10}}
+				style={{flex: 1}}
 				data={data}
 				refreshControl={
 					<RefreshControl
@@ -59,7 +59,7 @@ export function simpleRefreshListScreen<T>(
 				}
 				renderItem={({item}) => renderItem(item, refresh, props)}
 				keyExtractor={keyExtractor}
-				ListHeaderComponent={header}
+				ListHeaderComponent={refreshing ? null : header}
 				ListFooterComponent={footer}
 				ListEmptyComponent={empty}
 			/>

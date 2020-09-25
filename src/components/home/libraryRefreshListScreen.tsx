@@ -5,6 +5,7 @@ import {getStr} from "../../utils/i18n";
 import {LibraryBase} from "../../models/home/library";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -50,29 +51,42 @@ export function libraryRefreshListScreen<
 						? ""
 						: getStr("seatInvalid");
 				return (
-					<TouchableOpacity
-						style={{padding: 8}}
-						disabled={!item.valid}
-						onPress={() =>
-							item.valid && onPress(props, item, choice, refresh)()
-						}>
-						<Text
+					<View>
+						<TouchableOpacity
 							style={{
-								textAlign: "center",
-								textDecorationLine: item.valid ? "none" : "line-through",
-								color: item.valid ? "black" : "grey",
-							}}>
-							{item.zhName + moreInformation}
-						</Text>
-					</TouchableOpacity>
+								backgroundColor: "#ffffff",
+								flexDirection: "row",
+								justifyContent: "space-between",
+								alignItems: "center",
+								paddingHorizontal: 12,
+							}}
+							disabled={!item.valid}
+							onPress={() =>
+								item.valid && onPress(props, item, choice, refresh)()
+							}>
+							<Text
+								style={{
+									textAlign: "center",
+									textDecorationLine: item.valid ? "none" : "line-through",
+									color: item.valid ? "black" : "grey",
+									marginVertical: 14,
+								}}>
+								{item.zhName + moreInformation}
+							</Text>
+							<Icon name="angle-right" size={24} color="grey" />
+						</TouchableOpacity>
+						<View style={{backgroundColor: "lightgray", height: 1}} />
+					</View>
 				);
 			},
 			(item) => String(item.id),
+			undefined,
+			<View style={{backgroundColor: "lightgray", height: 1}} />,
 		);
 
 		return (
 			<>
-				<View style={{flexDirection: "row"}}>
+				<View style={{flexDirection: "row", margin: 15}}>
 					<TouchableOpacity
 						style={{padding: 6, flex: 1}}
 						onPress={() => setChoice(0)}>

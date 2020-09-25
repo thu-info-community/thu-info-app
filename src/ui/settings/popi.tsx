@@ -7,7 +7,7 @@ import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshLi
 export const PopiScreen = simpleRefreshListScreen<[string, string]>(
 	() => retrieve(POPI_URL).then(JSON.parse),
 	([q, a]) => (
-		<View style={{padding: 10, marginVertical: 15}}>
+		<View style={{padding: 15, marginVertical: 5}}>
 			<Text
 				style={{
 					marginBottom: 5,

@@ -14,7 +14,7 @@ export const EleRecordScreen = simpleRefreshListScreen(
 		return (
 			<View
 				style={{
-					padding: 10,
+					padding: 15,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>
