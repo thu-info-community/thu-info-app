@@ -81,7 +81,7 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 		RECHARGE_PAY_ELE_POST_PREFIX +
 			money +
 			RECHARGE_PAY_ELE_POST_MIDDLE_A +
-			username +
+			encodeURIComponent(username) +
 			RECHARGE_PAY_ELE_POST_MIDDLE_B +
 			louhao +
 			RECHARGE_PAY_ELE_POST_SUFFIX,
