@@ -7,6 +7,7 @@ import {getStr} from "../../utils/i18n";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export const HoleListScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -46,7 +47,50 @@ export const HoleListScreen = () => {
 		<FlatList
 			data={data}
 			renderItem={({item}) => (
-				<View style={{padding: 10}}>
+				<View
+					style={{
+						margin: 10,
+						padding: 10,
+						backgroundColor: "white",
+						shadowColor: "grey",
+						shadowOffset: {
+							width: 2,
+							height: 2,
+						},
+						shadowOpacity: 0.8,
+						shadowRadius: 2,
+						borderRadius: 5,
+						elevation: 2,
+					}}>
+					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
+						<View style={{flexDirection: "row"}}>
+							<Text>{`#${item.pid}`}</Text>
+							<Text> </Text>
+							<Text>{item.timestamp}</Text>
+						</View>
+						<View style={{flexDirection: "row"}}>
+							{item.reply > 0 && (
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+									}}>
+									<Text>{item.reply}</Text>
+									<Icon name="comment" size={12} />
+								</View>
+							)}
+							{item.likenum > 0 && (
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+									}}>
+									<Text>{item.likenum}</Text>
+									<Icon name="star-o" size={12} />
+								</View>
+							)}
+						</View>
+					</View>
 					<Text>{item.text}</Text>
 				</View>
 			)}
