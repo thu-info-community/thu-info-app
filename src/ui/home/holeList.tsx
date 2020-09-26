@@ -8,6 +8,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
+import TimeAgo from "react-native-timeago";
 
 export const HoleListScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -66,7 +67,7 @@ export const HoleListScreen = () => {
 						<View style={{flexDirection: "row"}}>
 							<Text>{`#${item.pid}`}</Text>
 							<Text> </Text>
-							<Text>{item.timestamp}</Text>
+							<TimeAgo time={item.timestamp * 1000} />
 						</View>
 						<View style={{flexDirection: "row"}}>
 							{item.reply > 0 && (
