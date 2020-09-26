@@ -8,7 +8,7 @@ An APP aimed at integrating various sources of campus information.
 
 Android: [GitHub Release](https://github.com/UNIDY2002/THUInfo/releases)
 
-iOS: Not ready yet.
+iOS: Under review.
 
 ## Features
 
