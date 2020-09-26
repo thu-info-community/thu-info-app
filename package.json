@@ -1,7 +1,7 @@
 {
 	"name": "thu_info",
-	"version": "2.0.0-rc3",
-	"build": 19,
+	"version": "2.0.0-rc4",
+	"build": 20,
 	"private": true,
 	"scripts": {
 		"android": "react-native run-android --no-jetifier",
