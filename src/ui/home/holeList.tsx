@@ -1,16 +1,24 @@
-import React, {useEffect, useState} from "react";
-import {FlatList, Text, View} from "react-native";
+import React, {useContext, useEffect, useState} from "react";
+import {FlatList, RefreshControl, Text, View} from "react-native";
 import {getHoleList, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {NetworkRetry} from "../../components/easySnackbars";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
-export const HoleScreen = () => {
+export const HoleListScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
+	const [refreshing, setRefreshing] = useState(true);
 	const [page, setPage] = useState(1);
-	useEffect(() => {
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+
+	const firstFetch = () => {
 		setPage(1);
+		setRefreshing(true);
 		getHoleList(FetchMode.NORMAL, 1, "")
 			.then((r) => setData(r))
 			.catch((err) => {
@@ -28,8 +36,12 @@ export const HoleScreen = () => {
 				} else {
 					NetworkRetry();
 				}
-			});
-	}, []);
+			})
+			.then(() => setRefreshing(false));
+	};
+
+	useEffect(firstFetch, []);
+
 	return (
 		<FlatList
 			data={data}
@@ -40,12 +52,23 @@ export const HoleScreen = () => {
 			)}
 			keyExtractor={(item) => `${item.pid}`}
 			onEndReachedThreshold={0.5}
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={firstFetch}
+					colors={[theme.colors.accent]}
+				/>
+			}
 			onEndReached={() => {
-				getHoleList(FetchMode.NORMAL, page + 1, "").then((r) =>
-					setData((o) =>
-						o.concat(r.filter((it) => it.pid < o[o.length - 1].pid)),
-					),
-				);
+				setRefreshing(true);
+				getHoleList(FetchMode.NORMAL, page + 1, "")
+					.then((r) =>
+						setData((o) =>
+							o.concat(r.filter((it) => it.pid < o[o.length - 1].pid)),
+						),
+					)
+					.catch(NetworkRetry)
+					.then(() => setRefreshing(false));
 				setPage((p) => p + 1);
 			}}
 		/>

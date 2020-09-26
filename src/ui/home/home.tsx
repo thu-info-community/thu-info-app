@@ -109,7 +109,7 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			</HomeIcon>
 		</HomeSection>
 		<HomeSection title="hole">
-			<HomeIcon title="hole" onPress={() => navigation.navigate("Hole")}>
+			<HomeIcon title="hole" onPress={() => navigation.navigate("HoleList")}>
 				<IconHole width={iconSize} height={iconSize} />
 			</HomeIcon>
 		</HomeSection>
