@@ -122,6 +122,8 @@ export default {
 	processing: "正在处理……",
 	cancelPayment: "取消支付",
 	testAccountNotSupportEleRecharge: "测试账号暂不支持电费充值",
+	eleRechargeHint:
+		"该功能关乎个人财产，且难以进行充分测试，可能仍有漏洞。\n建议使用该APP充值时，一次充值金额不要过高。\n若充值失败，请及时向我们反馈。\n当然，如果不放心，不用这个功能也是可以哒。",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",

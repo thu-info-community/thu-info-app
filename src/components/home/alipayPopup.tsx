@@ -109,6 +109,9 @@ export const AlipayPopup = ({
 								{getStr("cancelPayment")}
 							</Text>
 						</TouchableOpacity>
+						<Text style={{textAlign: "center"}}>
+							{getStr("eleRechargeHint")}
+						</Text>
 					</View>
 				</View>
 			</Modal>

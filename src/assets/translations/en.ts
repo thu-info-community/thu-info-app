@@ -133,6 +133,8 @@ export default {
 	cancelPayment: "Cancel",
 	testAccountNotSupportEleRecharge:
 		"Electricity recharge with testing account is not supported.",
+	eleRechargeHint:
+		"As this functionality is money-related, and we are not sure whether this functionality always works, do be careful when using it, and do not pay too much in one action.\nIn case of any failure, do contact us as soon as possible.\nOf course, if you have doubt in this functionality and do not want to use it, that is also okay.",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",

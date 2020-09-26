@@ -83,7 +83,7 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 			RECHARGE_PAY_ELE_POST_MIDDLE_A +
 			encodeURIComponent(username) +
 			RECHARGE_PAY_ELE_POST_MIDDLE_B +
-			louhao +
+			encodeURIComponent(louhao) +
 			RECHARGE_PAY_ELE_POST_SUFFIX,
 	).then((s) => cheerio("#banksubmit", s).attr().action);
 
