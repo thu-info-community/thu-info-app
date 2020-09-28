@@ -1568,10 +1568,10 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
   integrity sha512-rk4sWFsmtOw8oyx8SD3KSvawwaK7gRBSEIy2TAwURyGt+3TizssXP1r8nx3zY+R7v2vYYHXZ+k2/GULAT/bcaQ==
 
-"@react-navigation/bottom-tabs@5.9.0":
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-5.9.0.tgz#18ae3011256874863adc5f877dc3cbf6594b3a4e"
-  integrity sha512-4hP/YWgd+yKdZM+n4BPbWgdPapW9lrDz3fgQ0w3FTDlYaFPL8pv3Q9aDO03+Uj1VnuprdJN5LgZONGCcAFrItQ==
+"@react-navigation/bottom-tabs@5.9.1":
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-5.9.1.tgz#68d50e301d06f97f83a785f5acdf2c50e9600053"
+  integrity sha512-bTzMTjqsb6Q64INZ5qeCzky29KmzDIBbYgMsy5x5vXEIxgKUFmE2aOTzFvR9UxoKz/Zn8ek8WSFi975qvHaarg==
   dependencies:
     color "^3.1.2"
     react-native-iphone-x-helper "^1.2.1"
@@ -1588,10 +1588,10 @@
     react-is "^16.13.0"
     use-subscription "^1.4.0"
 
-"@react-navigation/native@5.7.4":
-  version "5.7.4"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.7.4.tgz#f55d54ab26942cf40fb3f6e1d6b9c26056e1d4e3"
-  integrity sha512-ndLojJZyWqxGdWeXlSr7ylHaMbBIwvoXnmsKHOMvUN6FV0dxv8b8L9T1yRW82b9mak4y6y6Q+1gIAWjO7FhAsQ==
+"@react-navigation/native@5.7.5":
+  version "5.7.5"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.7.5.tgz#478579435549a1c5c9901c9c6b3c1f75fa7dbf0c"
+  integrity sha512-HZpfxXF740XsA0HkeohGETo/zOmlMFb65XElQOk9+dPoN+36y2olZC/f7HuqpucsU925zg7jrnyUnW6tCtc3IA==
   dependencies:
     "@react-navigation/core" "^5.12.4"
     nanoid "^3.1.12"
@@ -1603,10 +1603,10 @@
   dependencies:
     nanoid "^3.1.12"
 
-"@react-navigation/stack@5.9.1":
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.9.1.tgz#2ddc82b70eafd7d50c2f7cd6f11303b876603fa8"
-  integrity sha512-LPSB8/etYYBe0NLHPndrly2amM/feSXXZJ3KevvKH3zP+RbEonsLOpmjOh2jXpZy9+1oLlSuGs+xzgpamMuguw==
+"@react-navigation/stack@5.9.2":
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.9.2.tgz#68841c9ef032177d15664b14cff62e16698f89c7"
+  integrity sha512-imEvTuCNsIo3ZriN6eIreGaxypuuB9ZOqdUXfxJznzMCkb7lN4OR/YVztAJW3QQzhuD4vwly+7jDvt7SxyfSuw==
   dependencies:
     color "^3.1.2"
     react-native-iphone-x-helper "^1.2.1"
