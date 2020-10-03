@@ -38,7 +38,7 @@ jobs:
           - $HOME/.gradle/wrapper/
           - $HOME/.android/build-cache
       before_install:
-        - openssl aes-256-cbc -k "$SECRET_PASSWORD" -in THUInfo.jks.enc -out android/app/THUInfo.jks -d
+        - openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
         - nvm install node
         - npm install -g yarn
         - curl -s "https://get.sdkman.io" | bash
