@@ -10,6 +10,20 @@ import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
 
+const FOLD_TAGS = [
+	"性相关",
+	"政治相关",
+	"性话题",
+	"政治话题",
+	"折叠",
+	"NSFW",
+	"刷屏",
+	"真实性可疑",
+	"用户举报较多",
+	"举报较多",
+	"重复内容",
+];
+
 export const HoleListScreen = () => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
@@ -47,54 +61,72 @@ export const HoleListScreen = () => {
 	return (
 		<FlatList
 			data={data}
-			renderItem={({item}) => (
-				<View
-					style={{
-						margin: 10,
-						padding: 10,
-						backgroundColor: "white",
-						shadowColor: "grey",
-						shadowOffset: {
-							width: 2,
-							height: 2,
-						},
-						shadowOpacity: 0.8,
-						shadowRadius: 2,
-						borderRadius: 5,
-						elevation: 2,
-					}}>
-					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
-						<View style={{flexDirection: "row"}}>
-							<Text>{`#${item.pid}`}</Text>
-							<Text> </Text>
-							<TimeAgo time={item.timestamp * 1000} />
+			renderItem={({item}) => {
+				const needFold = FOLD_TAGS.indexOf(item.tag) !== -1;
+				return (
+					<View
+						style={{
+							margin: 10,
+							padding: 10,
+							backgroundColor: "white",
+							shadowColor: "grey",
+							shadowOffset: {
+								width: 2,
+								height: 2,
+							},
+							shadowOpacity: 0.8,
+							shadowRadius: 2,
+							borderRadius: 5,
+							elevation: 2,
+						}}>
+						<View
+							style={{flexDirection: "row", justifyContent: "space-between"}}>
+							<View style={{flexDirection: "row"}}>
+								<Text>{`#${item.pid}`}</Text>
+								{item.tag && (
+									<View
+										style={{
+											backgroundColor: "#00c",
+											borderRadius: 4,
+											marginLeft: 5,
+											paddingHorizontal: 4,
+										}}>
+										<Text style={{color: "white", fontWeight: "bold"}}>
+											{item.tag}
+										</Text>
+									</View>
+								)}
+								<Text> </Text>
+								<TimeAgo time={item.timestamp * 1000} />
+							</View>
+							<View style={{flexDirection: "row"}}>
+								{needFold && <Text> 已隐藏</Text>}
+								{!needFold && item.reply > 0 && (
+									<View
+										style={{
+											flexDirection: "row",
+											alignItems: "center",
+										}}>
+										<Text>{item.reply}</Text>
+										<Icon name="comment" size={12} />
+									</View>
+								)}
+								{!needFold && item.likenum > 0 && (
+									<View
+										style={{
+											flexDirection: "row",
+											alignItems: "center",
+										}}>
+										<Text>{item.likenum}</Text>
+										<Icon name="star-o" size={12} />
+									</View>
+								)}
+							</View>
 						</View>
-						<View style={{flexDirection: "row"}}>
-							{item.reply > 0 && (
-								<View
-									style={{
-										flexDirection: "row",
-										alignItems: "center",
-									}}>
-									<Text>{item.reply}</Text>
-									<Icon name="comment" size={12} />
-								</View>
-							)}
-							{item.likenum > 0 && (
-								<View
-									style={{
-										flexDirection: "row",
-										alignItems: "center",
-									}}>
-									<Text>{item.likenum}</Text>
-									<Icon name="star-o" size={12} />
-								</View>
-							)}
-						</View>
+						{needFold || <Text>{item.text}</Text>}
 					</View>
-					<Text>{item.text}</Text>
-				</View>
-			)}
+				);
+			}}
 			keyExtractor={(item) => `${item.pid}`}
 			onEndReachedThreshold={0.5}
 			refreshControl={
