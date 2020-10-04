@@ -1,6 +1,6 @@
 # THUInfo ⚛️
 
-[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform iOS](https://img.shields.io/badge/platform-ios-lightgrey)](https://apps.apple.com)
+[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform iOS](https://img.shields.io/badge/platform-ios-brightgreen)](https://apps.apple.com/cn/app/thu-info/id1533968428)
 
 An APP aimed at integrating various sources of campus information.
 
@@ -8,7 +8,7 @@ An APP aimed at integrating various sources of campus information.
 
 Android: [GitHub Release](https://github.com/UNIDY2002/THUInfo/releases)
 
-iOS: Under review.
+iOS: [APP Store](https://apps.apple.com/cn/app/thu-info/id1533968428)
 
 ## Features
 
