@@ -9,6 +9,7 @@ import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
+import {HighlightedMarkdown} from "../../components/home/hole";
 
 const FOLD_TAGS = [
 	"性相关",
@@ -83,7 +84,7 @@ export const HoleListScreen = () => {
 							style={{flexDirection: "row", justifyContent: "space-between"}}>
 							<View style={{flexDirection: "row"}}>
 								<Text>{`#${item.pid}`}</Text>
-								{item.tag && (
+								{item.tag && item.tag !== "折叠" && (
 									<View
 										style={{
 											backgroundColor: "#00c",
@@ -123,7 +124,7 @@ export const HoleListScreen = () => {
 								)}
 							</View>
 						</View>
-						{needFold || <Text>{item.text}</Text>}
+						{needFold || <HighlightedMarkdown text={item.text} />}
 					</View>
 				);
 			}}
