@@ -13,7 +13,7 @@
 	},
 	"dependencies": {
 		"@leancloud/platform-adapters-react-native": "0.4.0",
-		"@react-native-community/async-storage": "1.12.0",
+		"@react-native-community/async-storage": "1.12.1",
 		"@react-native-community/blur": "3.6.0",
 		"@react-native-community/cameraroll": "4.0.1",
 		"@react-native-community/cookies": "4.0.1",
