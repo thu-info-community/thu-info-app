@@ -47,6 +47,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		<SettingsItem
 			text={getStr("holeSettings")}
 			onPress={() => navigation.navigate("HoleSettings")}
+			icon={<FontAwesome name="tree" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem

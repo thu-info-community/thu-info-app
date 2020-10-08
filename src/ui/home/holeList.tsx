@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {FlatList, RefreshControl, Text, View} from "react-native";
+import {FlatList, Image, RefreshControl, Text, View} from "react-native";
 import {getHoleList, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
@@ -10,6 +10,7 @@ import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
 import {HighlightedMarkdown} from "../../components/home/hole";
+import {IMAGE_BASE} from "../../constants/strings";
 
 const FOLD_TAGS = [
 	"性相关",
@@ -125,6 +126,13 @@ export const HoleListScreen = () => {
 							</View>
 						</View>
 						{needFold || <HighlightedMarkdown text={item.text} />}
+						{!needFold && item.type === "image" && (
+							<Image
+								source={{uri: IMAGE_BASE + item.url}}
+								style={{height: 400}}
+								resizeMode="contain"
+							/>
+						)}
 					</View>
 				);
 			}}
