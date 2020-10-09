@@ -12,7 +12,7 @@
 		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
 	},
 	"dependencies": {
-		"@leancloud/platform-adapters-react-native": "0.4.0",
+		"@leancloud/platform-adapters-react-native": "0.5.0",
 		"@react-native-community/async-storage": "1.12.1",
 		"@react-native-community/blur": "3.6.0",
 		"@react-native-community/cameraroll": "4.0.1",
