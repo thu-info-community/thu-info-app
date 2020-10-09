@@ -1,5 +1,12 @@
 import React, {useContext, useEffect, useState} from "react";
-import {FlatList, Image, RefreshControl, Text, View} from "react-native";
+import {
+	FlatList,
+	Image,
+	RefreshControl,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import {getHoleList, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
@@ -9,8 +16,10 @@ import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
-import {HighlightedMarkdown} from "../../components/home/hole";
+import {HoleMarkdown} from "../../components/home/hole";
 import {IMAGE_BASE} from "../../constants/strings";
+import {HomeNav} from "./homeStack";
+import {Material} from "../../constants/styles";
 
 const FOLD_TAGS = [
 	"性相关",
@@ -26,7 +35,7 @@ const FOLD_TAGS = [
 	"重复内容",
 ];
 
-export const HoleListScreen = () => {
+export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [page, setPage] = useState(1);
@@ -66,21 +75,9 @@ export const HoleListScreen = () => {
 			renderItem={({item}) => {
 				const needFold = FOLD_TAGS.indexOf(item.tag) !== -1;
 				return (
-					<View
-						style={{
-							margin: 10,
-							padding: 10,
-							backgroundColor: "white",
-							shadowColor: "grey",
-							shadowOffset: {
-								width: 2,
-								height: 2,
-							},
-							shadowOpacity: 0.8,
-							shadowRadius: 2,
-							borderRadius: 5,
-							elevation: 2,
-						}}>
+					<TouchableOpacity
+						style={Material.card}
+						onPress={() => navigation.navigate("HoleDetail", item)}>
 						<View
 							style={{flexDirection: "row", justifyContent: "space-between"}}>
 							<View style={{flexDirection: "row"}}>
@@ -125,7 +122,7 @@ export const HoleListScreen = () => {
 								)}
 							</View>
 						</View>
-						{needFold || <HighlightedMarkdown text={item.text} />}
+						{needFold || <HoleMarkdown text={item.text} />}
 						{!needFold && item.type === "image" && (
 							<Image
 								source={{uri: IMAGE_BASE + item.url}}
@@ -133,7 +130,7 @@ export const HoleListScreen = () => {
 								resizeMode="contain"
 							/>
 						)}
-					</View>
+					</TouchableOpacity>
 				);
 			}}
 			keyExtractor={(item) => `${item.pid}`}

@@ -62,6 +62,9 @@ export default {
 	physicalExam: "体测成绩",
 	jogging: "阳光长跑",
 	hole: "树洞",
+	holeDetail: "树洞详情",
+	originalText: "原文",
+	comments: "评论",
 	holePleaseSetToken:
 		"登录失败，请前往设置页面检查token，或登录树洞主页 https://thuhole.com 以进一步查看。",
 	networkRetry: "网络异常，请重试。",

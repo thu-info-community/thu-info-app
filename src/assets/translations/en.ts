@@ -62,6 +62,9 @@ export default {
 	physicalExam: "Physical Exam",
 	jogging: "Jogging",
 	hole: "Hole",
+	holeDetail: "Hole Detail",
+	originalText: "Original Text",
+	comments: "Comments",
 	holePleaseSetToken:
 		"Login failed. Please check your token in the settings section, or go to https://thuhole.com for more information.",
 	networkRetry: "Network failure, please retry.",

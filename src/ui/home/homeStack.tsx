@@ -22,6 +22,8 @@ import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
 import {JoggingScreen} from "./jogging";
 import {HoleListScreen} from "./holeList";
+import {HoleDetailScreen} from "./holeDetail";
+import {HoleTitleCard} from "../../models/home/hole";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -40,6 +42,7 @@ export type HomeStackParamList = {
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 	HoleList: undefined;
+	HoleDetail: HoleTitleCard;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -52,6 +55,7 @@ export type ConfigureDormRouteProp = RouteProp<
 	"ConfigureDorm"
 >;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
+export type HoleDetailRouteProp = RouteProp<HomeStackParamList, "HoleDetail">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -138,6 +142,11 @@ export const HomeStackScreen = () => (
 			name="HoleList"
 			component={HoleListScreen}
 			options={{title: getStr("hole")}}
+		/>
+		<Stack.Screen
+			name="HoleDetail"
+			component={HoleDetailScreen}
+			options={{title: getStr("holeDetail")}}
 		/>
 	</Stack.Navigator>
 );

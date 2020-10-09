@@ -129,8 +129,8 @@ const mapNode = (node: Node) => {
 	}
 };
 
-export const HighlightedMarkdown = (props: any) => {
-	const renderedMarkdown = renderMd(props.text);
+export const HoleMarkdown = ({text}: {text: string}) => {
+	const renderedMarkdown = renderMd(text);
 	let result = <Text>{renderedMarkdown}</Text>;
 	const parser = new Parser(
 		new DomHandler(
