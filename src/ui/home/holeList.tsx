@@ -122,7 +122,14 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 								)}
 							</View>
 						</View>
-						{needFold || <HoleMarkdown text={item.text} />}
+						{needFold || (
+							<HoleMarkdown
+								text={item.text}
+								navigationHandler={(pid) =>
+									navigation.navigate("HoleDetail", {pid, lazy: true})
+								}
+							/>
+						)}
 						{!needFold && item.type === "image" && (
 							<Image
 								source={{uri: IMAGE_BASE + item.url}}

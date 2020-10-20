@@ -42,7 +42,7 @@ export type HomeStackParamList = {
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 	HoleList: undefined;
-	HoleDetail: HoleTitleCard;
+	HoleDetail: HoleTitleCard | {pid: number; lazy: true};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;

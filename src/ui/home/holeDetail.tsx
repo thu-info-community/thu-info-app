@@ -1,22 +1,49 @@
 import {Image, ScrollView, StyleSheet, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import {HoleDetailRouteProp} from "./homeStack";
+import {HoleDetailRouteProp, HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
 import {Material} from "../../constants/styles";
 import {HoleMarkdown} from "../../components/home/hole";
 import {IMAGE_BASE} from "../../constants/strings";
 import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {HoleCommentCard} from "../../models/home/hole";
-import {getHoleComments} from "../../network/hole";
+import {HoleCommentCard, HoleTitleCard} from "../../models/home/hole";
+import {getHoleComments, getHoleSingle} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 
-export const HoleDetailScreen = ({route}: {route: HoleDetailRouteProp}) => {
-	const {pid, text, type, url, timestamp, reply, likenum} = route.params;
+const dummyHoleTitleCard = {
+	pid: -1,
+	text: "",
+	type: "",
+	url: "",
+	timestamp: -1,
+	reply: 0,
+	likenum: 0,
+	tag: "",
+};
+
+export const HoleDetailScreen = ({
+	route,
+	navigation,
+}: {
+	route: HoleDetailRouteProp;
+	navigation: HomeNav;
+}) => {
+	const [
+		{pid, text, type, url, timestamp, reply, likenum},
+		setHoleTitle,
+	] = useState<HoleTitleCard>(
+		"lazy" in route.params
+			? {...dummyHoleTitleCard, pid: route.params.pid}
+			: route.params,
+	);
 	const [comments, setComments] = useState<HoleCommentCard[]>([]);
 
 	useEffect(() => {
 		getHoleComments(pid).then(setComments).catch(NetworkRetry);
+		if ("lazy" in route.params) {
+			getHoleSingle(pid).then(setHoleTitle).catch(NetworkRetry);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -25,7 +52,12 @@ export const HoleDetailScreen = ({route}: {route: HoleDetailRouteProp}) => {
 			<Text style={styles.smallHeader}>{getStr("originalText")}</Text>
 			<View style={Material.card}>
 				<Text style={styles.bigPid}>{`#${pid}`}</Text>
-				<HoleMarkdown text={text} />
+				<HoleMarkdown
+					text={text}
+					navigationHandler={(destPid) =>
+						navigation.push("HoleDetail", {pid: destPid, lazy: true})
+					}
+				/>
 				{type === "image" && (
 					<Image
 						source={{uri: IMAGE_BASE + url}}
@@ -66,7 +98,12 @@ export const HoleDetailScreen = ({route}: {route: HoleDetailRouteProp}) => {
 			{comments.map((item) => (
 				<View style={Material.card} key={item.cid}>
 					<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
-					<HoleMarkdown text={item.text} />
+					<HoleMarkdown
+						text={item.text}
+						navigationHandler={(destPid) =>
+							navigation.navigate("HoleDetail", {pid: destPid, lazy: true})
+						}
+					/>
 					<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
 					<TimeAgo time={item.timestamp * 1000} />
 				</View>

@@ -11,6 +11,8 @@ import {Linking, Text, View} from "react-native";
 import {Parser} from "htmlparser2";
 import {DomHandler} from "domhandler";
 
+export type NavigationHandler = (pid: number) => void;
+
 const normalize_url = (url: string) =>
 	/^https?:\/\//.test(url) ? url : "http://" + url;
 
@@ -19,6 +21,18 @@ const A = ({href, children}: {href: string | undefined; children: any}) => (
 		onPress={() => href && Linking.openURL(normalize_url(href))}
 		style={{color: "blue"}}>
 		{children}
+	</Text>
+);
+
+const PidLink = ({
+	pid,
+	navigationHandler,
+}: {
+	pid: number;
+	navigationHandler: NavigationHandler;
+}) => (
+	<Text onPress={() => navigationHandler(pid)} style={{color: "blue"}}>
+		#{pid}
 	</Text>
 );
 
@@ -32,7 +46,7 @@ interface Node {
 	startIndex?: number | null;
 }
 
-const mapNode = (node: Node) => {
+const mapNode = (node: Node, navigationHandler: NavigationHandler) => {
 	switch (node.type) {
 		case "text":
 			if (
@@ -62,7 +76,10 @@ const mapNode = (node: Node) => {
 									) : rule === "url" ? (
 										<A href={p}>{p}</A>
 									) : rule === "pid" ? (
-										<A href={undefined}>{p}</A>
+										<PidLink
+											pid={Number(p.substring(1))}
+											navigationHandler={navigationHandler}
+										/>
 									) : rule === "nickname" ? (
 										<Text>{p}</Text>
 									) : (
@@ -77,7 +94,7 @@ const mapNode = (node: Node) => {
 				return undefined;
 			}
 		case "tag":
-			const children = node.children?.map(mapNode);
+			const children = node.children?.map((r) => mapNode(r, navigationHandler));
 			switch (node.name) {
 				case "p":
 					return <Text key={node.startIndex || "p"}>{children}</Text>;
@@ -129,14 +146,20 @@ const mapNode = (node: Node) => {
 	}
 };
 
-export const HoleMarkdown = ({text}: {text: string}) => {
+export const HoleMarkdown = ({
+	text,
+	navigationHandler,
+}: {
+	text: string;
+	navigationHandler: NavigationHandler;
+}) => {
 	const renderedMarkdown = renderMd(text);
 	let result = <Text>{renderedMarkdown}</Text>;
 	const parser = new Parser(
 		new DomHandler(
 			(error, dom) => {
 				if (!error) {
-					result = <View>{dom.map(mapNode)}</View>;
+					result = <View>{dom.map((r) => mapNode(r, navigationHandler))}</View>;
 				}
 			},
 			{withStartIndices: true},

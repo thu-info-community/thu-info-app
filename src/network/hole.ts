@@ -51,11 +51,8 @@ export const getHoleList = async (
 
 export const getHoleComments = async (
 	pid: number,
-): Promise<HoleCommentCard[]> => {
-	return (
-		await connect("https://thuhole.com/services/thuhole/api.php", {
-			action: "getcomment",
-			pid,
-		})
-	).data;
-};
+): Promise<HoleCommentCard[]> =>
+	(await connect(HOLE_API_URL, {action: "getcomment", pid})).data;
+
+export const getHoleSingle = async (pid: number): Promise<HoleTitleCard> =>
+	(await connect(HOLE_API_URL, {action: "getone", pid})).data;
