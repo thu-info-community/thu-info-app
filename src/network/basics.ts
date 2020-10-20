@@ -311,7 +311,7 @@ export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 				).then((s) => {
 					const json = JSON.parse(
 						// eslint-disable-next-line quotes
-						s.substring(1, s.length - 1).replace(/'/g, '"'),
+						s.replace(/'/g, '"'),
 					);
 					if (json.success === "false") {
 						return [["状态", "暂无可查成绩"]];

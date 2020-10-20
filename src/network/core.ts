@@ -22,6 +22,7 @@ import {
 	PROFILE_REFERER,
 	PROFILE_URL,
 	USER_AGENT,
+	WEB_VPN_ROOT_URL,
 } from "../constants/strings";
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
@@ -29,6 +30,7 @@ import md5 from "md5";
 import {currState, mocked} from "../redux/store";
 import {dormLoginStatus} from "../utils/dorm";
 import cheerio from "cheerio";
+import {NetworkRetry} from "../components/easySnackbars";
 
 /**
  * Converts form data into url-encoded format.
@@ -271,8 +273,18 @@ export const getTickets = () => {
 	getTicket(-1)
 		.then(() => console.log("Ticket -1 get."))
 		.catch(() => console.warn("Getting ticket -1 failed."));
-	setInterval(() => {
+	setInterval(async () => {
 		console.log("Keep alive start.");
+		const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
+		if (verification.indexOf("个人信息") === -1) {
+			console.log("Lost connection with school website. Reconnecting...");
+			const {userId, password} = currState().auth;
+			try {
+				await login(userId, password);
+			} catch (e) {
+				NetworkRetry();
+			}
+		}
 		performGetTickets();
 	}, 60000);
 };
