@@ -14,3 +14,11 @@ export interface HoleTitleCard {
 	type: string;
 	url: string;
 }
+
+export interface HoleCommentCard {
+	cid: number;
+	timestamp: number;
+	text: string;
+	tag?: string;
+	name: string;
+}

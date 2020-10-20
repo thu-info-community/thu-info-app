@@ -1,7 +1,7 @@
 import {store} from "../redux/store";
 import {retrieve, stringify} from "./core";
 import {HOLE_API_URL, HOLE_LOGIN_URL} from "../constants/strings";
-import {FetchMode, HoleTitleCard} from "../models/home/hole";
+import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/home/hole";
 
 const connect = (url: string, query?: object, post?: object): Promise<any> =>
 	retrieve(
@@ -47,4 +47,15 @@ export const getHoleList = async (
 			)
 		).data;
 	}
+};
+
+export const getHoleComments = async (
+	pid: number,
+): Promise<HoleCommentCard[]> => {
+	return (
+		await connect("https://thuhole.com/services/thuhole/api.php", {
+			action: "getcomment",
+			pid,
+		})
+	).data;
 };
