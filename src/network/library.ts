@@ -440,6 +440,7 @@ export const getLibrarySeatList = (
 						valid: node.status === 1,
 						type: node.area_type,
 					}))
+					.filter((it: LibrarySeat) => it.valid)
 					.sort(byId),
 			),
 	);
