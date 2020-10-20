@@ -130,14 +130,13 @@ export const login = async (
 	if (mocked()) {
 		return {userId: userId, password: password};
 	}
-	const loginResponse = JSON.parse(
-		await retrieve(DO_LOGIN_URL, LOGIN_URL, {
-			auth_type: "local",
-			username: userId,
-			sms_code: "",
-			password: password,
-		}),
-	);
+	const rawResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
+		auth_type: "local",
+		username: userId,
+		sms_code: "",
+		password: password,
+	});
+	const loginResponse = JSON.parse(rawResponse);
 	if (!loginResponse.success) {
 		switch (loginResponse.error) {
 			case "NEED_CONFIRM":
