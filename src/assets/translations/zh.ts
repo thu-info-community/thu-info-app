@@ -64,6 +64,9 @@ export default {
 	jogging: "阳光长跑",
 	hole: "树洞",
 	holeDetail: "树洞详情",
+	holePublish: "发表树洞",
+	holePublishHint: "请遵守树洞规范，文明发言。",
+	publish: "发表",
 	originalText: "原文",
 	comments: "评论",
 	holePleaseSetToken:

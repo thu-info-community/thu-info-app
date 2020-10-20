@@ -56,3 +56,18 @@ export const getHoleComments = async (
 
 export const getHoleSingle = async (pid: number): Promise<HoleTitleCard> =>
 	(await connect(HOLE_API_URL, {action: "getone", pid})).data;
+
+export const postNewHole = async (text: string): Promise<void> => {
+	const result = await connect(
+		HOLE_API_URL,
+		{action: "dopost"},
+		{
+			text,
+			type: "text",
+			user_token: store.getState().hole.token,
+		},
+	);
+	if (result.code !== 0) {
+		throw new Error(result.message);
+	}
+};

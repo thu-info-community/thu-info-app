@@ -64,6 +64,10 @@ export default {
 	jogging: "Jogging",
 	hole: "Hole",
 	holeDetail: "Hole Detail",
+	holePublish: "Publish new hole",
+	holePublishHint:
+		"Please follow thuhole community guidelines during communication.",
+	publish: "Publish",
 	originalText: "Original Text",
 	comments: "Comments",
 	holePleaseSetToken:
