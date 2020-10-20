@@ -51,6 +51,9 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 						margin: 8,
 						padding: 10,
 						backgroundColor: "#FFF",
+						borderColor: "#CCC",
+						borderWidth: 1,
+						borderRadius: 5,
 					}}
 					placeholder={getStr("feedbackHint")}
 					multiline={true}
