@@ -131,7 +131,7 @@ export const login = async (userId: string, password: string): Promise<Auth> =>
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  })
 				.then((str) => {
-					if (str.indexOf("首页") === -1) {
+					if (!JSON.parse(str).success) {
 						throw LoginStatus.Failed;
 					}
 				})
