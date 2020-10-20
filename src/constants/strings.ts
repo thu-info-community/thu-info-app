@@ -5,6 +5,8 @@ export const USER_AGENT =
 export const LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login";
 export const DO_LOGIN_URL =
 	"https://webvpn.tsinghua.edu.cn/do-login?local_login=true";
+export const CONFIRM_LOGIN_URL =
+	"https://webvpn.tsinghua.edu.cn/do-confirm-login";
 export const INFO_URL =
 	"https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/";
 export const INFO_LOGIN_URL =

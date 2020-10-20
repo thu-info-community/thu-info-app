@@ -1,5 +1,6 @@
-import {Auth, LoginStatus} from "../redux/states/auth";
+import {Auth} from "../redux/states/auth";
 import {
+	CONFIRM_LOGIN_URL,
 	CONTENT_TYPE_FORM,
 	DO_LOGIN_URL,
 	DORM_LOGIN_POST_MIDDLE,
@@ -120,37 +121,43 @@ export const retrieve = async (
 /**
  * Logs-in to WebVPN, INFO and ZHJW sequentially.
  */
-export const login = async (userId: string, password: string): Promise<Auth> =>
-	mocked()
-		? {userId: userId, password: password}
-		: retrieve(DO_LOGIN_URL, LOGIN_URL, {
-				auth_type: "local",
-				username: userId,
-				sms_code: "",
-				password: password,
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  })
-				.then((str) => {
-					if (!JSON.parse(str).success) {
-						throw LoginStatus.Failed;
-					}
-				})
-				.then(() =>
-					connect(INFO_LOGIN_URL, INFO_URL, {
-						redirect: "NO",
-						userName: userId,
-						password: password,
-						x: "0",
-						y: "0",
-					}),
-				)
-				.then(() => connect(INVALIDATE_ZHJW_URL, INFO_URL))
-				.then(() => {
-					return {
-						userId: userId,
-						password: password,
-					};
-				});
+export const login = async (
+	userId: string,
+	password: string,
+): Promise<Auth> => {
+	if (mocked()) {
+		return {userId: userId, password: password};
+	}
+	const loginResponse = JSON.parse(
+		await retrieve(DO_LOGIN_URL, LOGIN_URL, {
+			auth_type: "local",
+			username: userId,
+			sms_code: "",
+			password: password,
+		}),
+	);
+	if (!loginResponse.success) {
+		switch (loginResponse.error) {
+			case "NEED_CONFIRM":
+				await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+				break;
+			default:
+				throw new Error(loginResponse.message);
+		}
+	}
+	await connect(INFO_LOGIN_URL, INFO_URL, {
+		redirect: "NO",
+		userName: userId,
+		password: password,
+		x: "0",
+		y: "0",
+	});
+	await connect(INVALIDATE_ZHJW_URL, INFO_URL);
+	return {
+		userId: userId,
+		password: password,
+	};
+};
 
 /**
  * Gets the user's full name.

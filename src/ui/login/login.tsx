@@ -48,9 +48,14 @@ const LoginUI = (props: LoginProps) => {
 	}, []);
 
 	useEffect(() => {
-		if (props.status === LoginStatus.Failed) {
+		if (
+			props.status !== LoginStatus.None &&
+			props.status !== LoginStatus.LoggingIn &&
+			props.status !== LoginStatus.LoggedIn
+		) {
 			Snackbar.show({
-				text: getStr("loginFailure"),
+				// @ts-ignore
+				text: `${getStr("loginFailure")}\n${props.status.message}`,
 				duration: Snackbar.LENGTH_LONG,
 			});
 			props.resetStatus();
