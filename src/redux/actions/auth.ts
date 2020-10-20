@@ -9,7 +9,6 @@ import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
 import {getTickets, login, logout} from "../../network/core";
 import {leanCloudInit} from "../../utils/leanCloud";
-import {checkUpdate} from "../../utils/checkUpdate";
 import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
 import CookieManager from "@react-native-community/cookies";
@@ -35,7 +34,6 @@ export const authThunk = (userId: string, password: string) => (
 			dispatch(authAction.success(r));
 			// Things that should be done only once upon logged in
 			getTickets();
-			checkUpdate();
 			leanCloudInit();
 			refreshCalendarConfig();
 			// @ts-ignore
