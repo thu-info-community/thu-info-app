@@ -58,6 +58,7 @@ export default {
 	resources: "Resources",
 	eCard: "E-Card",
 	dorm: "Dormitory",
+	life: "Life",
 	report: "Report",
 	physicalExam: "Physical Exam",
 	jogging: "Jogging",

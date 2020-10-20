@@ -145,14 +145,16 @@ export const login = async (
 		sms_code: "",
 		password: password,
 	});
-	const loginResponse = JSON.parse(rawResponse);
-	if (!loginResponse.success) {
-		switch (loginResponse.error) {
-			case "NEED_CONFIRM":
-				await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
-				break;
-			default:
-				throw new Error(loginResponse.message);
+	if (rawResponse.indexOf("个人信息") === -1) {
+		const loginResponse = JSON.parse(rawResponse);
+		if (!loginResponse.success) {
+			switch (loginResponse.error) {
+				case "NEED_CONFIRM":
+					await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+					break;
+				default:
+					throw new Error(loginResponse.message);
+			}
 		}
 	}
 	await connect(INFO_LOGIN_URL, INFO_URL, {

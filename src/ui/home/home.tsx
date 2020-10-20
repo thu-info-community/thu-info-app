@@ -86,14 +86,12 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				<IconLibrary width={iconSize} height={iconSize} />
 			</HomeIcon>
 		</HomeSection>
-		<HomeSection title="eCard">
+		<HomeSection title="life">
 			<HomeIcon
 				title="expenditure"
 				onPress={() => navigation.navigate("Expenditure")}>
 				<IconExpenditure width={iconSize} height={iconSize} />
 			</HomeIcon>
-		</HomeSection>
-		<HomeSection title="dorm">
 			{/*<AlipayPopup
 				onPay={(money) => getEleRechargePayCode(money).then(doAlipay)}
 				title="eleRecharge"

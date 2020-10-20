@@ -58,6 +58,7 @@ export default {
 	resources: "资源",
 	eCard: "校园卡",
 	dorm: "我们的家园",
+	life: "生活",
 	report: "成绩单",
 	physicalExam: "体测成绩",
 	jogging: "阳光长跑",
