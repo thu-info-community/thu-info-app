@@ -14,6 +14,7 @@ export default {
 	download: "Download",
 	alreadyLatest: "This is the latest version.",
 	broadcast: "Broadcast",
+	hideKeyboard: "Hide Keyboard",
 	home: "Home",
 	news: "News",
 	settings: "Settings",

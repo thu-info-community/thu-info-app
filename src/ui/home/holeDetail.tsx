@@ -141,7 +141,7 @@ export const HoleDetailScreen = ({
 				<TouchableOpacity
 					style={{
 						backgroundColor: "#0002",
-						flex: 1,
+						flex: 0,
 						margin: 4,
 						borderRadius: 4,
 						alignItems: "center",

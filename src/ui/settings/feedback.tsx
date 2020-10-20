@@ -1,9 +1,10 @@
 import {
 	GestureResponderEvent,
-	KeyboardAvoidingView,
+	Keyboard,
 	Text,
 	TextInput,
 	TouchableOpacity,
+	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import React, {useState} from "react";
@@ -38,52 +39,54 @@ const BottomButton = ({
 export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [text, setText] = useState("");
 	return (
-		<KeyboardAvoidingView style={{flex: 1}}>
-			<TextInput
-				value={text}
-				onChangeText={setText}
-				style={{
-					flex: 1,
-					textAlignVertical: "top",
-					fontSize: 15,
-					margin: 8,
-					padding: 10,
-					backgroundColor: "#FFF",
-				}}
-				placeholder={getStr("feedbackHint")}
-				multiline={true}
-			/>
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-around",
-					padding: 5,
-				}}>
-				<BottomButton
-					text="popi"
-					onPress={() => navigation.navigate("Popi")}
-					disabled={false}
-				/>
-				<BottomButton
-					text="submit"
-					onPress={() => {
-						submitFeedback(text)
-							.then(() =>
-								Snackbar.show({
-									text: getStr("feedbackSuccess"),
-									duration: Snackbar.LENGTH_SHORT,
-								}),
-							)
-							.catch(() =>
-								Snackbar.show({
-									text: getStr("networkRetry"),
-									duration: Snackbar.LENGTH_SHORT,
-								}),
-							);
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<View style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
+				<TextInput
+					value={text}
+					onChangeText={setText}
+					style={{
+						flex: 1,
+						textAlignVertical: "top",
+						fontSize: 15,
+						margin: 8,
+						padding: 10,
+						backgroundColor: "#FFF",
 					}}
-					disabled={text.length === 0}
+					placeholder={getStr("feedbackHint")}
+					multiline={true}
 				/>
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "space-around",
+						padding: 5,
+					}}>
+					<BottomButton
+						text="popi"
+						onPress={() => navigation.navigate("Popi")}
+						disabled={false}
+					/>
+					<BottomButton
+						text="submit"
+						onPress={() => {
+							submitFeedback(text)
+								.then(() =>
+									Snackbar.show({
+										text: getStr("feedbackSuccess"),
+										duration: Snackbar.LENGTH_SHORT,
+									}),
+								)
+								.catch(() =>
+									Snackbar.show({
+										text: getStr("networkRetry"),
+										duration: Snackbar.LENGTH_SHORT,
+									}),
+								);
+						}}
+						disabled={text.length === 0}
+					/>
+				</View>
 			</View>
-		</KeyboardAvoidingView>
+		</TouchableWithoutFeedback>
 	);
 };
