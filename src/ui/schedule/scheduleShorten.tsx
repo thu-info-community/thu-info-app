@@ -15,6 +15,7 @@ const ScheduleShortenUI = (props: ScheduleShortenProps) => {
 	return (
 		<FlatList
 			data={props.shortenMap}
+			removeClippedSubviews={false}
 			ListHeaderComponent={
 				<View
 					style={{
