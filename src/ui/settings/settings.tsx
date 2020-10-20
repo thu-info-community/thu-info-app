@@ -14,6 +14,7 @@ import {checkUpdate} from "../../utils/checkUpdate";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
@@ -52,6 +53,12 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("libBookRecord")}
 			onPress={() => navigation.navigate("LibBookRecord")}
 			icon={<Feather name="book-open" size={16} />}
+		/>
+		<SettingsSeparator />
+		<SettingsItem
+			text={getStr("experimental")}
+			onPress={() => navigation.navigate("Experimental")}
+			icon={<FontAwesome name="flask" size={16} />}
 		/>
 		<SettingsSeparator />
 		<SettingsItem

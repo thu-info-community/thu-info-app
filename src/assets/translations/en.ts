@@ -191,6 +191,7 @@ export default {
 	state: "State",
 	courseTime: "Course Time",
 	remainderSettings: "Reset Remainder",
+	experimental: "Experimental",
 	setNewRemainder: "Set the New Remainder",
 	remainderTips:
 		"The remainder shown in expenditure page can go wrong due to data migration problems. If you ever lost your card and made a new one before, please reset the remainder in the box above.\nPS: The display error can also be caused by data translation delay, please wait for a moment before resetting the remainder.",

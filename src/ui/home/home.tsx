@@ -1,19 +1,13 @@
 import {ScrollView, Text, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
-import {performLoseCard} from "../../components/home/loseCard";
-import {getEleRechargePayCode} from "../../network/dorm";
-import {doAlipay} from "../../utils/alipay";
-import {AlipayPopup} from "../../components/home/alipayPopup";
 import {configureDorm} from "./configureDorm";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconClassroom from "../../assets/icons/IconClassroom";
-import IconLoseCard from "../../assets/icons/IconLoseCard";
 import IconLibrary from "../../assets/icons/IconLibrary";
-import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
@@ -97,17 +91,14 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				onPress={() => navigation.navigate("Expenditure")}>
 				<IconExpenditure width={iconSize} height={iconSize} />
 			</HomeIcon>
-			<HomeIcon title="loseCard" onPress={performLoseCard}>
-				<IconLoseCard width={iconSize} height={iconSize} />
-			</HomeIcon>
 		</HomeSection>
 		<HomeSection title="dorm">
-			<AlipayPopup
+			{/*<AlipayPopup
 				onPay={(money) => getEleRechargePayCode(money).then(doAlipay)}
 				title="eleRecharge"
 				navigation={navigation}>
 				<IconEleRecharge width={iconSize} height={iconSize} />
-			</AlipayPopup>
+			</AlipayPopup>*/}
 			<HomeIcon
 				title="dormScore"
 				onPress={() =>
