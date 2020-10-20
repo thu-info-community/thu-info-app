@@ -1,7 +1,7 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {currState, store} from "../../redux/store";
+import {currState, mocked, store} from "../../redux/store";
 import {SET_GRADUATE} from "../../redux/constants";
 import {
 	SettingsItem,
@@ -44,12 +44,16 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			icon={<AntDesign name="creditcard" size={16} />}
 		/>
 		<SettingsSeparator />
-		<SettingsItem
-			text={getStr("holeSettings")}
-			onPress={() => navigation.navigate("HoleSettings")}
-			icon={<FontAwesome name="tree" size={16} />}
-		/>
-		<SettingsSeparator />
+		{!mocked() && (
+			<>
+				<SettingsItem
+					text={getStr("holeSettings")}
+					onPress={() => navigation.navigate("HoleSettings")}
+					icon={<FontAwesome name="tree" size={16} />}
+				/>
+				<SettingsSeparator />
+			</>
+		)}
 		<SettingsItem
 			text={getStr("eleRecord")}
 			onPress={() => navigation.navigate("EleRecord")}
