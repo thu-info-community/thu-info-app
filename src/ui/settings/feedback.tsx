@@ -1,5 +1,6 @@
 import {
 	GestureResponderEvent,
+	KeyboardAvoidingView,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -37,7 +38,7 @@ const BottomButton = ({
 export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [text, setText] = useState("");
 	return (
-		<View style={{flex: 1}}>
+		<KeyboardAvoidingView style={{flex: 1}}>
 			<TextInput
 				value={text}
 				onChangeText={setText}
@@ -83,6 +84,6 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 					disabled={text.length === 0}
 				/>
 			</View>
-		</View>
+		</KeyboardAvoidingView>
 	);
 };
