@@ -1,4 +1,13 @@
-import {Image, ScrollView, StyleSheet, Text, View} from "react-native";
+import {
+	Image,
+	KeyboardAvoidingView,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
@@ -8,8 +17,13 @@ import {IMAGE_BASE} from "../../constants/strings";
 import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {HoleCommentCard, HoleTitleCard} from "../../models/home/hole";
-import {getHoleComments, getHoleSingle} from "../../network/hole";
+import {
+	getHoleComments,
+	getHoleSingle,
+	postHoleComment,
+} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
+import Snackbar from "react-native-snackbar";
 
 const dummyHoleTitleCard = {
 	pid: -1,
@@ -38,6 +52,7 @@ export const HoleDetailScreen = ({
 			: route.params,
 	);
 	const [comments, setComments] = useState<HoleCommentCard[]>([]);
+	const [myComment, setMyComment] = useState("");
 
 	useEffect(() => {
 		getHoleComments(pid).then(setComments).catch(NetworkRetry);
@@ -108,6 +123,46 @@ export const HoleDetailScreen = ({
 					<TimeAgo time={item.timestamp * 1000} />
 				</View>
 			))}
+			<KeyboardAvoidingView style={{flexDirection: "row"}}>
+				<TextInput
+					value={myComment}
+					onChangeText={setMyComment}
+					style={{
+						flex: 1,
+						textAlignVertical: "top",
+						fontSize: 15,
+						margin: 8,
+						padding: 10,
+						backgroundColor: "#FFF",
+					}}
+					placeholder={getStr("holePublishHint")}
+					multiline={true}
+				/>
+				<TouchableOpacity
+					style={{
+						backgroundColor: "#0002",
+						flex: 1,
+						margin: 4,
+						borderRadius: 4,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					onPress={() => {
+						Snackbar.show({
+							text: getStr("processing"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
+						postHoleComment(pid, myComment)
+							.then(() => getHoleComments(pid))
+							.then(setComments)
+							.then(() => setMyComment(""))
+							.catch(NetworkRetry);
+					}}>
+					<Text style={{textAlign: "center", padding: 10}}>
+						{getStr("publish")}
+					</Text>
+				</TouchableOpacity>
+			</KeyboardAvoidingView>
 		</ScrollView>
 	);
 };

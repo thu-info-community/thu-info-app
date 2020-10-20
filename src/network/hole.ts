@@ -71,3 +71,21 @@ export const postNewHole = async (text: string): Promise<void> => {
 		throw new Error(result.message);
 	}
 };
+
+export const postHoleComment = async (
+	pid: number,
+	text: string,
+): Promise<void> => {
+	const result = await connect(
+		HOLE_API_URL,
+		{action: "docomment"},
+		{
+			pid,
+			text,
+			user_token: store.getState().hole.token,
+		},
+	);
+	if (result.code !== 0) {
+		throw new Error(result.message);
+	}
+};
