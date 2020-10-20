@@ -153,6 +153,8 @@ export const CALENDAR_CONFIG_URL =
 export const GITHUB_REPO_URL = "https://github.com/UNIDY2002/THUInfo";
 export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
+export const BROADCAST_URL =
+	"https://cloud.tsinghua.edu.cn/f/8a795d2ec51645599028/?dl=1";
 
 export const HOLE_LOGIN_URL = "https://thuhole.com/api_xmcp/hole/system_msg";
 export const HOLE_API_URL = "https://thuhole.com/services/thuhole/api.php";

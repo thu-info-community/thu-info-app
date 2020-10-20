@@ -20,7 +20,7 @@ import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
-import {checkUpdate} from "../../utils/checkUpdate";
+import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 
 interface LoginProps {
 	readonly userId: string;
@@ -44,6 +44,7 @@ const LoginUI = (props: LoginProps) => {
 			props.login(userId, password);
 		}
 		checkUpdate();
+		checkBroadcast();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

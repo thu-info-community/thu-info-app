@@ -12,6 +12,7 @@ export default {
 	nextTimeMust: "下次一定",
 	download: "下载",
 	alreadyLatest: "已是最新版本",
+	broadcast: "站内消息",
 	home: "主页",
 	news: "动态",
 	settings: "设置",

@@ -1,8 +1,8 @@
-import {getUpdateInfo} from "../network/update";
+import {getBroadcastData, getUpdateInfo} from "../network/update";
 import {currState, store} from "../redux/store";
 import {Alert, Linking} from "react-native";
 import {getStr} from "./i18n";
-import {SET_DO_NOT_REMIND} from "../redux/constants";
+import {SET_DO_NOT_REMIND, SET_LAST_BROADCAST_ID} from "../redux/constants";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 
@@ -44,6 +44,25 @@ export const checkUpdate = (force: boolean = false) => {
 				text: getStr("alreadyLatest"),
 				duration: Snackbar.LENGTH_SHORT,
 			});
+		}
+	});
+};
+
+export const checkBroadcast = () => {
+	getBroadcastData().then((r) => {
+		if (r.length > 0) {
+			Alert.alert(
+				getStr("broadcast"),
+				r.map((it) => it.message).join("\n"),
+				[
+					{
+						text: getStr("confirm"),
+						onPress: () =>
+							store.dispatch({type: SET_LAST_BROADCAST_ID, payload: r[0].id}),
+					},
+				],
+				{cancelable: true},
+			);
 		}
 	});
 };

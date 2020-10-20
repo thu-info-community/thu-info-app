@@ -13,4 +13,5 @@ export interface Config {
 	reportHidden: string[];
 	scheduleHeight: number;
 	remainderShift: number;
+	lastBroadcast: number;
 }

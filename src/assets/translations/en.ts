@@ -13,6 +13,7 @@ export default {
 	nextTimeMust: "Dismiss",
 	download: "Download",
 	alreadyLatest: "This is the latest version.",
+	broadcast: "Broadcast",
 	home: "Home",
 	news: "News",
 	settings: "Settings",

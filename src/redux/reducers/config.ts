@@ -8,6 +8,7 @@ import {
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
 	SET_GRADUATE,
+	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
 	SET_REMAINDER_SHIFT,
@@ -72,6 +73,11 @@ export const config = (
 			return {
 				...state,
 				remainderShift: action.payload,
+			};
+		case SET_LAST_BROADCAST_ID:
+			return {
+				...state,
+				lastBroadcast: action.payload,
 			};
 		default:
 			return state;
