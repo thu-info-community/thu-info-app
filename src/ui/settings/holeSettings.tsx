@@ -4,6 +4,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {HOLE_SET_TOKEN} from "../../redux/constants";
+import {View} from "react-native";
 
 export const HoleSettingsUI = ({
 	token,
@@ -12,13 +13,13 @@ export const HoleSettingsUI = ({
 	token: string;
 	setToken: (newToken: string) => void;
 }) => (
-	<>
+	<View style={{padding: 10}}>
 		<SettingsEditValue
 			text={getStr("holeTokenSettings")}
 			value={token}
 			onValueChange={setToken}
 		/>
-	</>
+	</View>
 );
 
 export const HoleSettingsScreen = connect(

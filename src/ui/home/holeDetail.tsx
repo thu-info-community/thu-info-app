@@ -1,12 +1,13 @@
 import {
 	Image,
-	KeyboardAvoidingView,
 	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
+	Keyboard,
 	View,
+	Dimensions,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
@@ -43,6 +44,8 @@ export const HoleDetailScreen = ({
 	route: HoleDetailRouteProp;
 	navigation: HomeNav;
 }) => {
+	let screenHeight = Dimensions.get("window").height;
+
 	const [
 		{pid, text, type, url, timestamp, reply, likenum},
 		setHoleTitle,
@@ -53,6 +56,14 @@ export const HoleDetailScreen = ({
 	);
 	const [comments, setComments] = useState<HoleCommentCard[]>([]);
 	const [myComment, setMyComment] = useState("");
+	const [contentHeight, setContentHeight] = useState<number>(0);
+
+	Keyboard.addListener("keyboardWillShow", (eve) => {
+		setContentHeight(eve.endCoordinates.screenY);
+	});
+	Keyboard.addListener("keyboardWillHide", (eve) => {
+		setContentHeight(eve.endCoordinates.screenY);
+	});
 
 	useEffect(() => {
 		getHoleComments(pid).then(setComments).catch(NetworkRetry);
@@ -63,67 +74,69 @@ export const HoleDetailScreen = ({
 	}, []);
 
 	return (
-		<ScrollView style={{paddingVertical: 8}}>
-			<Text style={styles.smallHeader}>{getStr("originalText")}</Text>
-			<View style={Material.card}>
-				<Text style={styles.bigPid}>{`#${pid}`}</Text>
-				<HoleMarkdown
-					text={text}
-					navigationHandler={(destPid) =>
-						navigation.push("HoleDetail", {pid: destPid, lazy: true})
-					}
-				/>
-				{type === "image" && (
-					<Image
-						source={{uri: IMAGE_BASE + url}}
-						style={{height: 400}}
-						resizeMode="contain"
-					/>
-				)}
-				<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
-				<View style={{flexDirection: "row", justifyContent: "space-between"}}>
-					<TimeAgo time={timestamp * 1000} />
-					<View style={{flexDirection: "row"}}>
-						{reply > 0 && (
-							<View
-								style={{
-									flexDirection: "row",
-									alignItems: "center",
-								}}>
-								<Text>{reply}</Text>
-								<Icon name="comment" size={12} />
-							</View>
-						)}
-						{likenum > 0 && (
-							<View
-								style={{
-									flexDirection: "row",
-									alignItems: "center",
-								}}>
-								<Text>{likenum}</Text>
-								<Icon name="star-o" size={12} />
-							</View>
-						)}
-					</View>
-				</View>
-			</View>
-			{reply > 0 && (
-				<Text style={styles.smallHeader}>{getStr("comments")}</Text>
-			)}
-			{comments.map((item) => (
-				<View style={Material.card} key={item.cid}>
-					<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
+		<View style={{padding: 8, height: contentHeight - 150}}>
+			<ScrollView style={{height: 10}}>
+				<Text style={styles.smallHeader}>{getStr("originalText")}</Text>
+				<View style={Material.card}>
+					<Text style={styles.bigPid}>{`#${pid}`}</Text>
 					<HoleMarkdown
-						text={item.text}
+						text={text}
 						navigationHandler={(destPid) =>
-							navigation.navigate("HoleDetail", {pid: destPid, lazy: true})
+							navigation.push("HoleDetail", {pid: destPid, lazy: true})
 						}
 					/>
+					{type === "image" && (
+						<Image
+							source={{uri: IMAGE_BASE + url}}
+							style={{height: 400}}
+							resizeMode="contain"
+						/>
+					)}
 					<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
-					<TimeAgo time={item.timestamp * 1000} />
+					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
+						<TimeAgo time={timestamp * 1000} />
+						<View style={{flexDirection: "row"}}>
+							{reply > 0 && (
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+									}}>
+									<Text>{reply}</Text>
+									<Icon name="comment" size={12} />
+								</View>
+							)}
+							{likenum > 0 && (
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+									}}>
+									<Text>{likenum}</Text>
+									<Icon name="star-o" size={12} />
+								</View>
+							)}
+						</View>
+					</View>
 				</View>
-			))}
-			<KeyboardAvoidingView style={{flexDirection: "row"}}>
+				{reply > 0 && (
+					<Text style={styles.smallHeader}>{getStr("comments")}</Text>
+				)}
+				{comments.map((item) => (
+					<View style={Material.card} key={item.cid}>
+						<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
+						<HoleMarkdown
+							text={item.text}
+							navigationHandler={(destPid) =>
+								navigation.navigate("HoleDetail", {pid: destPid, lazy: true})
+							}
+						/>
+						<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
+						<TimeAgo time={item.timestamp * 1000} />
+					</View>
+				))}
+			</ScrollView>
+			<View style={{flexDirection: "row"}}>
 				<TextInput
 					value={myComment}
 					onChangeText={setMyComment}
@@ -162,8 +175,8 @@ export const HoleDetailScreen = ({
 						{getStr("publish")}
 					</Text>
 				</TouchableOpacity>
-			</KeyboardAvoidingView>
-		</ScrollView>
+			</View>
+		</View>
 	);
 };
 
