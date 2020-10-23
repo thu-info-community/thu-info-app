@@ -80,8 +80,12 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 						onPress={() => navigation.navigate("HoleDetail", item)}>
 						<View
 							style={{flexDirection: "row", justifyContent: "space-between"}}>
-							<View style={{flexDirection: "row"}}>
-								<Text>{`#${item.pid}`}</Text>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text
+									style={{
+										fontWeight: "bold",
+										marginVertical: 2,
+									}}>{`#${item.pid}`}</Text>
 								{item.tag && item.tag !== "折叠" && (
 									<View
 										style={{
@@ -98,7 +102,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 								<Text> </Text>
 								<TimeAgo time={item.timestamp * 1000} />
 							</View>
-							<View style={{flexDirection: "row"}}>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
 								{needFold && <Text> 已隐藏</Text>}
 								{!needFold && item.reply > 0 && (
 									<View

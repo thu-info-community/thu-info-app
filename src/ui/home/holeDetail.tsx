@@ -8,8 +8,6 @@ import {
 	Keyboard,
 	View,
 	Dimensions,
-	KeyboardAvoidingView,
-	Platform,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
@@ -151,7 +149,7 @@ export const HoleDetailScreen = ({
 					</View>
 				))}
 			</ScrollView>
-			<View style={{flexDirection: "row"}}>
+			<View style={{flexDirection: "row", alignItems: "center"}}>
 				<TextInput
 					value={myComment}
 					onChangeText={setMyComment}
@@ -162,6 +160,9 @@ export const HoleDetailScreen = ({
 						margin: 8,
 						padding: 10,
 						backgroundColor: "#FFF",
+						borderColor: "lightgray",
+						borderRadius: 5,
+						borderWidth: 1,
 					}}
 					placeholder={getStr("holePublishHint")}
 					multiline={true}
