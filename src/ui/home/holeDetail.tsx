@@ -8,6 +8,8 @@ import {
 	Keyboard,
 	View,
 	Dimensions,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
@@ -25,6 +27,7 @@ import {
 } from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
+import {useHeaderHeight} from "@react-navigation/stack";
 
 const dummyHoleTitleCard = {
 	pid: -1,
@@ -44,8 +47,6 @@ export const HoleDetailScreen = ({
 	route: HoleDetailRouteProp;
 	navigation: HomeNav;
 }) => {
-	let screenHeight = Dimensions.get("window").height;
-
 	const [
 		{pid, text, type, url, timestamp, reply, likenum},
 		setHoleTitle,
@@ -56,13 +57,20 @@ export const HoleDetailScreen = ({
 	);
 	const [comments, setComments] = useState<HoleCommentCard[]>([]);
 	const [myComment, setMyComment] = useState("");
-	const [contentHeight, setContentHeight] = useState<number>(0);
+	const [keyboardShown, setKeyboardShown] = useState(false);
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+	const headerHeight = useHeaderHeight();
+	const screenHeight = Dimensions.get("window").height;
 
 	Keyboard.addListener("keyboardWillShow", (eve) => {
-		setContentHeight(eve.endCoordinates.screenY);
+		if (keyboardHeight === 0) {
+			setKeyboardHeight(eve.endCoordinates.height);
+		}
+		setKeyboardShown(true);
 	});
-	Keyboard.addListener("keyboardWillHide", (eve) => {
-		setContentHeight(eve.endCoordinates.screenY);
+	Keyboard.addListener("keyboardWillHide", () => {
+		setKeyboardShown(false);
 	});
 
 	useEffect(() => {
@@ -74,8 +82,15 @@ export const HoleDetailScreen = ({
 	}, []);
 
 	return (
-		<View style={{padding: 8, height: contentHeight - 150}}>
-			<ScrollView style={{height: 10}}>
+		<View
+			style={{
+				padding: 8,
+				height: keyboardShown
+					? screenHeight - headerHeight - keyboardHeight
+					: undefined,
+				flex: keyboardShown ? undefined : 1,
+			}}>
+			<ScrollView>
 				<Text style={styles.smallHeader}>{getStr("originalText")}</Text>
 				<View style={Material.card}>
 					<Text style={styles.bigPid}>{`#${pid}`}</Text>
