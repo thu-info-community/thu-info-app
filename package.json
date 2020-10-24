@@ -23,7 +23,7 @@
 		"@react-navigation/native": "5.7.6",
 		"@react-navigation/stack": "5.9.3",
 		"@types/cheerio": "0.22.22",
-		"@types/md5": "2.2.0",
+		"@types/md5": "2.2.1",
 		"@types/react-native-vector-icons": "6.4.6",
 		"@types/react-redux": "7.1.9",
 		"buffer": "5.6.1",
