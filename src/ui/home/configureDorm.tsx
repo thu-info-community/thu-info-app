@@ -3,8 +3,8 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
-	YellowBox,
 	Dimensions,
+	LogBox,
 } from "react-native";
 import React, {useState} from "react";
 import {connect} from "react-redux";
@@ -115,7 +115,7 @@ export const configureDorm = (callback: () => any, navigation: HomeNav) => {
 	if (mocked() || dormLoginStatus.loggedIn) {
 		callback();
 	} else {
-		YellowBox.ignoreWarnings([
+		LogBox.ignoreLogs([
 			"Non-serializable values were found in the navigation state",
 		]);
 		navigation.navigate("ConfigureDorm", {callback});
