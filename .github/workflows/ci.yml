@@ -1,0 +1,88 @@
+name: Build Android and iOS
+
+on: push
+
+jobs:
+  install-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          yarn
+      - name: Run tests
+        run: |
+          yarn lint
+          yarn test
+  build-android:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          yarn
+      - name: Build android release
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+          NDK_VERSION: 21.3.6528147
+        run: |
+          openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
+          cd android && gradle assembleRelease && cd ..
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/
+      - name: Prepare for release
+        id: prepare_release
+        if: startsWith(github.ref, 'refs/tags')
+        run: |
+          export ref='${{ github.ref }}'
+          export tag=${ref:10}
+          echo "::set-output name=tag::$tag"
+          mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/THUInfo_release_$tag.apk
+      - name: Deploy to App Center
+        if: startsWith(github.ref, 'refs/tags')
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: UNIDY/THUInfo
+          token: ${{ secrets.APP_CENTER_TOKEN }}
+          group: CD
+          file: android/app/build/outputs/apk/release/THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            App Center 下载链接：https://install.appcenter.ms/users/unidy/apps/thuinfo/distribution_groups/cd
+      - name: Upload to GitHub release
+        if: startsWith(github.ref, 'refs/tags')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: android/app/build/outputs/apk/release/THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
+          asset_name: THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
+          asset_content_type: 'application/vnd.android.package-archive'
+  build-ios:
+    needs: install-and-test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          yarn
+          cd ios && pod install && cd ..
+      - name: Run ios app
+        run: |
+          yarn ios
