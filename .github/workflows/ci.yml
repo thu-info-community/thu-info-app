@@ -33,7 +33,7 @@ jobs:
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
           cd android && gradle assembleRelease && cd ..
       - name: Upload artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: app-release.apk
           path: android/app/build/outputs/apk/release/
