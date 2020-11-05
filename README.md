@@ -1,14 +1,14 @@
 # THUInfo ⚛️
 
-[![Build Status](https://travis-ci.com/UNIDY2002/THUInfo.svg?branch=react)](https://travis-ci.com/UNIDY2002/THUInfo) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform iOS](https://img.shields.io/badge/platform-ios-brightgreen)](https://apps.apple.com/cn/app/thu-info/id1533968428)
+[![Build Status](https://github.com/UNIDY2002/THUInfo/workflows/Build%20Android%20and%20iOS/badge.svg)](https://github.com/UNIDY2002/THUInfo/actions?query=workflow%3A%22Build+Android+and+iOS%22) [![GitHub release](https://img.shields.io/github/v/release/UNIDY2002/THUInfo)](https://github.com/UNIDY2002/THUInfo/releases) [![Platform Android](https://img.shields.io/badge/platform-android-brightgreen)](https://install.appcenter.ms/users/unidy/apps/thuinfo/distribution_groups/cd) [![Platform iOS](https://img.shields.io/badge/platform-ios-brightgreen)](https://apps.apple.com/cn/app/thu-info/id1533968428)
 
 An APP aimed at integrating various sources of campus information.
 
 ## Release
 
-Android: [GitHub Release](https://github.com/UNIDY2002/THUInfo/releases)
+Android: [App Center](https://install.appcenter.ms/users/unidy/apps/thuinfo/distribution_groups/cd)
 
-iOS: [APP Store](https://apps.apple.com/cn/app/thu-info/id1533968428)
+iOS: [App Store](https://apps.apple.com/cn/app/thu-info/id1533968428)
 
 ## Features
 
