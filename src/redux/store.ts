@@ -18,10 +18,10 @@ import {Credentials} from "./states/credentials";
 import {Calendar} from "../utils/calendar";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
-
-const KeychainStorage = createKeychainStorage();
 import {Hole} from "./states/hole";
 import {hole} from "./reducers/hole";
+
+const KeychainStorage = createKeychainStorage();
 
 export interface State {
 	auth: AuthState;

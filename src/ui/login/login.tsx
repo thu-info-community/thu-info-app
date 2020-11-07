@@ -80,6 +80,7 @@ const LoginUI = (props: LoginProps) => {
 						placeholderTextColor={theme.colors.primary}
 						selectionColor={theme.colors.accent}
 						value={userId}
+						testID="loginUserId"
 						onChangeText={setUserId}
 						keyboardType={"numeric"}
 					/>
@@ -92,6 +93,7 @@ const LoginUI = (props: LoginProps) => {
 						placeholderTextColor={theme.colors.primary}
 						selectionColor={theme.colors.accent}
 						value={password}
+						testID="loginPassword"
 						onChangeText={setPassword}
 						secureTextEntry
 					/>
