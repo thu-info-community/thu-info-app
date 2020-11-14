@@ -7177,10 +7177,10 @@ react-native-keychain@4.0.5:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-4.0.5.tgz#6d3aef8f2789fc0dfa8149b8400d82ff77be361a"
   integrity sha512-TbiO8AO055EPjaxIuKxrCEOB4r81uQCVDFbtcs+e4pEOHxf6z3JgDC0UU0poJElKfCh37b+TFRxQhg6DbsYJBA==
 
-react-native-localize@1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-1.4.3.tgz#6fde2fb1e73a7205910419a680cb4734187d556f"
-  integrity sha512-n3pi89LBeSzB825CBagyaYRtBS93LdvNz3sI386iXwLSg1ONjEGR1Ez36JBuxZalZgORjrKzV2Pun6MO7iwD6w==
+react-native-localize@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-2.0.0.tgz#79a2ed4a9981f94ce62db93e4e6a4b8f08fd1bdd"
+  integrity sha512-D2S4JZ+aQle7qpSG3pg3kpqETwbr2Ikz9LL7VcmACMm+dQd+TTKGU5+zQjqR88UQcxJTUssuCF7IgoZC2KgwFw==
 
 react-native-popup-menu@0.15.9:
   version "0.15.9"
