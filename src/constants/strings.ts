@@ -156,6 +156,7 @@ export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
 export const BROADCAST_URL =
 	"https://cloud.tsinghua.edu.cn/f/8a795d2ec51645599028/?dl=1";
 
-export const HOLE_LOGIN_URL = "https://thuhole.com/api_xmcp/hole/system_msg";
-export const HOLE_API_URL = "https://thuhole.com/services/thuhole/api.php";
+export const HOLE_LOGIN_URL =
+	"https://api.thuhole.com/api_xmcp/hole/system_msg";
+export const HOLE_API_URL = "https://api.thuhole.com/services/thuhole/api.php";
 export const IMAGE_BASE = "https://thimg.yecdn.com/";
