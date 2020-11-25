@@ -24,12 +24,3 @@ target 'thu_info' do
     flipper_post_install(installer)
   end
 end
-
-target 'thu_info-tvOS' do
-  # Pods for thu_info-tvOS
-
-  target 'thu_info-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
