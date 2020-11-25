@@ -44,6 +44,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				<WebView
 					source={{html: adaptedHtml, baseUrl: route.params.detail.url}}
 					containerStyle={styles.webContainer}
+					setSupportMultipleWindows={false}
 				/>
 			</View>
 			{refreshing && (
