@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import {getHoleList, holeLogin} from "../../network/hole";
+import {getHoleList, holeConfig, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
@@ -17,23 +17,8 @@ import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
 import {HoleMarkdown} from "../../components/home/hole";
-import {IMAGE_BASE} from "../../constants/strings";
 import {HomeNav} from "./homeStack";
 import {Material} from "../../constants/styles";
-
-const FOLD_TAGS = [
-	"性相关",
-	"政治相关",
-	"性话题",
-	"政治话题",
-	"折叠",
-	"NSFW",
-	"刷屏",
-	"真实性可疑",
-	"用户举报较多",
-	"举报较多",
-	"重复内容",
-];
 
 export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -73,7 +58,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 		<FlatList
 			data={data}
 			renderItem={({item}) => {
-				const needFold = FOLD_TAGS.indexOf(item.tag) !== -1;
+				const needFold = holeConfig.foldTags.includes(item.tag);
 				return (
 					<TouchableOpacity
 						style={Material.card}
@@ -136,7 +121,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 						)}
 						{!needFold && item.type === "image" && (
 							<Image
-								source={{uri: IMAGE_BASE + item.url}}
+								source={{uri: holeConfig.imageBase + item.url}}
 								style={{height: 400}}
 								resizeMode="contain"
 							/>

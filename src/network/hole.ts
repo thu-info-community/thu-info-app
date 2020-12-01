@@ -1,7 +1,30 @@
 import {store} from "../redux/store";
 import {retrieve, stringify} from "./core";
-import {HOLE_API_URL, HOLE_LOGIN_URL} from "../constants/strings";
+import {
+	HOLE_GET_COMMENTS_URL,
+	HOLE_GET_LIST_URL,
+	HOLE_LOGIN_URL,
+	HOLE_NEW_COMMENT_URL,
+	HOLE_NEW_POST_URL,
+} from "../constants/strings";
 import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/home/hole";
+
+export const holeConfig = {
+	foldTags: [
+		"性相关",
+		"政治相关",
+		"折叠",
+		"NSFW",
+		"刷屏",
+		"真实性可疑",
+		"举报较多",
+		"重复内容",
+		"引战",
+		"未经证实的传闻",
+		"令人不适",
+	],
+	imageBase: "https://thimg.yecdn.com/",
+};
 
 const connect = (url: string, query?: object, post?: object): Promise<any> =>
 	retrieve(
@@ -36,31 +59,26 @@ export const getHoleList = async (
 	if (mode === FetchMode.SEARCH && payload.match(/#\d{1,7}/)) {
 		return [];
 	} else {
-		return (
-			await connect(
-				HOLE_API_URL,
-				mode === FetchMode.NORMAL
-					? {action: "getlist", p: page}
-					: mode === FetchMode.ATTENTION
-					? {action: "getattention"}
-					: {action: "search", pagesize: 50, page: page, keywords: payload},
-			)
-		).data;
+		const result = await connect(HOLE_GET_LIST_URL, {page});
+		try {
+			holeConfig.foldTags = result.config.fold_tags;
+			holeConfig.imageBase = result.config.img_base_url;
+		} catch (e) {}
+		return result.data;
 	}
 };
 
-export const getHoleComments = async (
+export const getHoleDetail = async (
 	pid: number,
-): Promise<HoleCommentCard[]> =>
-	(await connect(HOLE_API_URL, {action: "getcomment", pid})).data;
-
-export const getHoleSingle = async (pid: number): Promise<HoleTitleCard> =>
-	(await connect(HOLE_API_URL, {action: "getone", pid})).data;
+): Promise<[HoleTitleCard, HoleCommentCard[]]> => {
+	const result = await connect(HOLE_GET_COMMENTS_URL, {pid});
+	return [result.post, result.data];
+};
 
 export const postNewHole = async (text: string): Promise<void> => {
 	const result = await connect(
-		HOLE_API_URL,
-		{action: "dopost"},
+		HOLE_NEW_POST_URL,
+		{},
 		{
 			text,
 			type: "text",
@@ -77,11 +95,12 @@ export const postHoleComment = async (
 	text: string,
 ): Promise<void> => {
 	const result = await connect(
-		HOLE_API_URL,
-		{action: "docomment"},
+		HOLE_NEW_COMMENT_URL,
+		{},
 		{
 			pid,
 			text,
+			type: "text",
 			user_token: store.getState().hole.token,
 		},
 	);

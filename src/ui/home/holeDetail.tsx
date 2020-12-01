@@ -14,15 +14,10 @@ import {HoleDetailRouteProp, HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
 import {Material} from "../../constants/styles";
 import {HoleMarkdown} from "../../components/home/hole";
-import {IMAGE_BASE} from "../../constants/strings";
 import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {HoleCommentCard, HoleTitleCard} from "../../models/home/hole";
-import {
-	getHoleComments,
-	getHoleSingle,
-	postHoleComment,
-} from "../../network/hole";
+import {getHoleDetail, holeConfig, postHoleComment} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useHeaderHeight} from "@react-navigation/stack";
@@ -72,9 +67,16 @@ export const HoleDetailScreen = ({
 	});
 
 	useEffect(() => {
-		getHoleComments(pid).then(setComments).catch(NetworkRetry);
+		getHoleDetail(pid)
+			.then(([title, commentList]) => {
+				setHoleTitle(title);
+				setComments(commentList);
+			})
+			.catch(NetworkRetry);
 		if ("lazy" in route.params) {
-			getHoleSingle(pid).then(setHoleTitle).catch(NetworkRetry);
+			getHoleDetail(pid)
+				.then(([title]) => setHoleTitle(title))
+				.catch(NetworkRetry);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -100,7 +102,7 @@ export const HoleDetailScreen = ({
 					/>
 					{type === "image" && (
 						<Image
-							source={{uri: IMAGE_BASE + url}}
+							source={{uri: holeConfig.imageBase + url}}
 							style={{height: 400}}
 							resizeMode="contain"
 						/>
@@ -182,8 +184,8 @@ export const HoleDetailScreen = ({
 							duration: Snackbar.LENGTH_SHORT,
 						});
 						postHoleComment(pid, myComment)
-							.then(() => getHoleComments(pid))
-							.then(setComments)
+							.then(() => getHoleDetail(pid))
+							.then(([_, commentList]) => setComments(commentList))
 							.then(() => setMyComment(""))
 							.catch(NetworkRetry);
 					}}>
