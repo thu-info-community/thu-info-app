@@ -158,7 +158,10 @@ export const BROADCAST_URL =
 
 export const HOLE_LOGIN_URL = "https://api.thuhole.com/contents/system_msg";
 export const HOLE_GET_LIST_URL = "https://api.thuhole.com/contents/post/list";
+export const HOLE_GET_ATTENTION_URL =
+	"https://api.thuhole.com/contents/post/attentions";
 export const HOLE_GET_COMMENTS_URL =
 	"https://api.thuhole.com/contents/post/detail";
 export const HOLE_NEW_POST_URL = "https://api.thuhole.com/send/post";
 export const HOLE_NEW_COMMENT_URL = "https://api.thuhole.com/send/comment";
+export const HOLE_SEARCH_URL = "https://api.thuhole.com/contents/search";

@@ -1,11 +1,13 @@
 import {store} from "../redux/store";
 import {retrieve, stringify} from "./core";
 import {
+	HOLE_GET_ATTENTION_URL,
 	HOLE_GET_COMMENTS_URL,
 	HOLE_GET_LIST_URL,
 	HOLE_LOGIN_URL,
 	HOLE_NEW_COMMENT_URL,
 	HOLE_NEW_POST_URL,
+	HOLE_SEARCH_URL,
 } from "../constants/strings";
 import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/home/hole";
 
@@ -51,28 +53,43 @@ export const holeLogin = () =>
 		}
 	});
 
-export const getHoleList = async (
-	mode: FetchMode,
-	page: number,
-	payload: string,
-): Promise<HoleTitleCard[]> => {
-	if (mode === FetchMode.SEARCH && payload.match(/#\d{1,7}/)) {
-		return [];
-	} else {
-		const result = await connect(HOLE_GET_LIST_URL, {page});
-		try {
-			holeConfig.foldTags = result.config.fold_tags;
-			holeConfig.imageBase = result.config.img_base_url;
-		} catch (e) {}
-		return result.data;
-	}
-};
-
 export const getHoleDetail = async (
 	pid: number,
 ): Promise<[HoleTitleCard, HoleCommentCard[]]> => {
 	const result = await connect(HOLE_GET_COMMENTS_URL, {pid});
 	return [result.post, result.data];
+};
+
+export const getHoleList = async (
+	mode: FetchMode,
+	page: number,
+	payload: string,
+): Promise<HoleTitleCard[]> => {
+	if (mode === FetchMode.SEARCH && payload.match(/^#\d{1,7}$/)) {
+		return [(await getHoleDetail(Number(payload.slice(1))))[0]];
+	} else {
+		let result;
+		switch (mode) {
+			case FetchMode.NORMAL:
+				result = await connect(HOLE_GET_LIST_URL, {page});
+				try {
+					holeConfig.foldTags = result.config.fold_tags;
+					holeConfig.imageBase = result.config.img_base_url;
+				} catch (e) {}
+				break;
+			case FetchMode.ATTENTION:
+				result = await connect(HOLE_GET_ATTENTION_URL, {page});
+				break;
+			case FetchMode.SEARCH:
+				result = await connect(HOLE_SEARCH_URL, {
+					pagesize: 50,
+					page,
+					keywords: payload,
+				});
+				break;
+		}
+		return result.data;
+	}
 };
 
 export const postNewHole = async (text: string): Promise<void> => {
