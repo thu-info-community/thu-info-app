@@ -539,7 +539,9 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 				pos: getCheerioText(element, 5),
 				time: getCheerioText(element, 7),
 				status: getCheerioText(element, 11),
-				delId: delOnclick?.substring(delStrIndex, rightIndex),
+				delId: delOnclick?.includes("menuDel")
+					? delOnclick?.substring(delStrIndex, rightIndex)
+					: undefined,
 			};
 		})
 		.get();
