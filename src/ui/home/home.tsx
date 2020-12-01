@@ -13,6 +13,7 @@ import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import IconHole from "../../assets/icons/IconHole";
 import {mocked} from "../../redux/store";
+import IconEvaluation from "../../assets/icons/IconEvaluation";
 
 const iconSize = 60;
 
@@ -71,11 +72,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
 			</HomeIcon>
-			{/* <HomeIcon
+			<HomeIcon
 				title="teachingEvaluation"
 				onPress={() => navigation.navigate("Evaluation")}>
 				<IconEvaluation width={iconSize} height={iconSize} />
-			</HomeIcon> */}
+			</HomeIcon>
 		</HomeSection>
 		<HomeSection title="resources">
 			<HomeIcon

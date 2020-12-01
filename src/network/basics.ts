@@ -22,7 +22,13 @@ import {
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
 import {Record} from "../models/home/expenditure";
-import {Form, InputTag, Overall, toPersons} from "../models/home/assessment";
+import {
+	Form,
+	InputTag,
+	Overall,
+	Person,
+	toPersons,
+} from "../models/home/assessment";
 import "../../src/utils/extensions";
 import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
@@ -206,69 +212,116 @@ export const getReport = (): Promise<Course[]> =>
 		  );
 
 export const getAssessmentList = (): Promise<[string, boolean, string][]> =>
-	retryWrapper(
-		2005,
-		retrieve(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
-			const result = cheerio("tbody", str)
-				.children()
-				.map((index, element) => {
-					const onclick = element.children[11].firstChild.attribs.onclick;
-					const href =
-						ASSESSMENT_BASE_URL +
-						onclick.substring(
-							onclick.indexOf("Body('") + 6,
-							onclick.indexOf("') })"),
-						);
-					return [
-						[
-							getCheerioText(element, 5),
-							getCheerioText(element, 9) === "是",
-							href,
-						],
-					];
-				})
-				.get();
-			if (result.length === 0) {
-				throw 0;
-			}
-			return result;
-		}),
-	);
+	mocked()
+		? Promise.resolve([
+				["微积分A(2)", true, "Mr. Z"],
+				["高等线性代数选讲", true, "Mr. L"],
+				["大学物理B(1)", true, "Mr. L"],
+				["中国近代史纲要", true, "Ms. S"],
+				["形势与政策", true, "Mr. L"],
+				["一年级男生体育(2)", true, "Mr. Y"],
+				["离散数学(2)", true, "Mr. Z"],
+				["面向对象的程序设计基础", true, "Mr. H"],
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ])
+		: retryWrapper(
+				2005,
+				retrieve(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
+					const result = cheerio("tbody", str)
+						.children()
+						.map((index, element) => {
+							const onclick = element.children[11].firstChild.attribs.onclick;
+							const href =
+								ASSESSMENT_BASE_URL +
+								onclick.substring(
+									onclick.indexOf("Body('") + 6,
+									onclick.indexOf("') })"),
+								);
+							return [
+								[
+									getCheerioText(element, 5),
+									getCheerioText(element, 9) === "是",
+									href,
+								],
+							];
+						})
+						.get();
+					if (result.length === 0) {
+						throw 0;
+					}
+					return result;
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
+
+const makeMockQuestion = (question: string) => ({
+	question,
+	suggestion: new InputTag("", ""),
+	score: new InputTag("", "7"),
+	others: [],
+});
 
 export const getAssessmentForm = (url: string): Promise<Form> =>
-	retryWrapper(
-		2005,
-		retrieve(url, ASSESSMENT_MAIN_URL).then((str) => {
-			const $ = cheerio.load(str);
-			const basics = $("#xswjtxFormid > input")
-				.map((_, element) => new InputTag(element))
-				.get();
-			const overallSuggestion = new InputTag(
-				"kcpgjgDtos[0].jtjy",
-				getCheerioText($("textarea")[1]),
-			);
-			const overallScore = new InputTag($("#kcpjfs")[0]);
-			const overall = new Overall(overallSuggestion, overallScore);
-			const tabPanes = $(".tab-pane");
+	mocked()
+		? Promise.resolve(
+				new Form(
+					[],
+					new Overall(new InputTag("", ""), new InputTag("", "7")),
+					[
+						new Person(url, [
+							makeMockQuestion("老师教学态度认真负责"),
+							makeMockQuestion("老师讲解清楚，深入浅出"),
+							makeMockQuestion("老师关注我们和我们的学习"),
+							makeMockQuestion("老师严格要求，促使我认真学习"),
+							makeMockQuestion("老师教学注重师生互动"),
+							makeMockQuestion("老师教学能让我体会学科特点和思维方式"),
+							makeMockQuestion("课程教学符合教学大纲"),
+							makeMockQuestion("老师的教学有效激发我的学习志趣"),
+						]),
+					],
+					[],
+				),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  )
+		: retryWrapper(
+				2005,
+				retrieve(url, ASSESSMENT_MAIN_URL).then((str) => {
+					const $ = cheerio.load(str);
+					const basics = $("#xswjtxFormid > input")
+						.map((_, element) => new InputTag(element))
+						.get();
+					const overallSuggestion = new InputTag(
+						"kcpgjgDtos[0].jtjy",
+						getCheerioText($("textarea")[1]),
+					);
+					const overallScore = new InputTag($("#kcpjfs")[0]);
+					const overall = new Overall(overallSuggestion, overallScore);
+					const tabPanes = $(".tab-pane");
 
-			const teachers = toPersons(tabPanes.first());
-			const assistants = toPersons(tabPanes.first().next().next());
+					const teachers = toPersons(tabPanes.first());
+					const assistants = toPersons(tabPanes.first().next().next());
 
-			return new Form(basics, overall, teachers, assistants);
-		}),
-	);
+					return new Form(basics, overall, teachers, assistants);
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const postAssessmentForm = (form: Form): Promise<void> =>
-	retryWrapper(
-		2005,
-		retrieve(ASSESSMENT_SUBMIT_URL, ASSESSMENT_MAIN_URL, form.serialize()).then(
-			(res) => {
-				if (JSON.parse(res).result !== "success") {
-					throw 0;
-				}
-			},
-		),
-	);
+	mocked()
+		? Promise.resolve()
+		: retryWrapper(
+				2005,
+				retrieve(
+					ASSESSMENT_SUBMIT_URL,
+					ASSESSMENT_MAIN_URL,
+					form.serialize(),
+				).then((res) => {
+					if (JSON.parse(res).result !== "success") {
+						throw 0;
+					}
+				}),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
 export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 	mocked()
