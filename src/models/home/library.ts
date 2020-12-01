@@ -22,6 +22,8 @@ export interface LibraryDate {
 export interface LibrarySection extends Library {
 	total: number;
 	available: number;
+	posX: number;
+	posY: number;
 }
 
 export interface LibrarySeat extends Library {

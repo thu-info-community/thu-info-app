@@ -29,6 +29,7 @@ import {TouchableOpacity} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {LibraryMapScreen} from "./libraryMap";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -44,6 +45,7 @@ export type HomeStackParamList = {
 	LibraryFloor: {library: Library; dateChoice: 0 | 1};
 	LibrarySection: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
+	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	DormScore: undefined;
 	ConfigureDorm: {callback: () => any};
 	HoleList: undefined;
@@ -60,6 +62,7 @@ export type ConfigureDormRouteProp = RouteProp<
 	HomeStackParamList,
 	"ConfigureDorm"
 >;
+export type LibraryMapRouteProp = RouteProp<HomeStackParamList, "LibraryMap">;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
 export type HoleDetailRouteProp = RouteProp<HomeStackParamList, "HoleDetail">;
 
@@ -131,12 +134,26 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="LibrarySection"
 				component={LibrarySectionScreen}
-				options={({route}) => ({title: route.params.floor.zhNameTrace})}
+				options={({route, navigation}) => ({
+					title: route.params.floor.zhNameTrace,
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("LibraryMap", route.params)}>
+							<Icon name="search" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="LibrarySeat"
 				component={LibrarySeatScreen}
 				options={({route}) => ({title: route.params.section.zhNameTrace})}
+			/>
+			<Stack.Screen
+				name="LibraryMap"
+				component={LibraryMapScreen}
+				options={({route}) => ({title: route.params.floor.zhNameTrace})}
 			/>
 			<Stack.Screen
 				name="DormScore"

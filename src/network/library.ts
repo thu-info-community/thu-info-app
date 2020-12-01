@@ -87,6 +87,8 @@ export const getLibrarySectionList = (
 				valid: node.isValid === 1,
 				total: node.TotalCount,
 				available: node.TotalCount - node.UnavailableSpace,
+				posX: node.point_x2,
+				posY: node.point_y2,
 			}))
 			.sort(byId),
 	);
