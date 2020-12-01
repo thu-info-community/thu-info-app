@@ -21,4 +21,6 @@ export interface HoleCommentCard {
 	text: string;
 	tag?: string;
 	name: string;
+	type: string;
+	url: string;
 }

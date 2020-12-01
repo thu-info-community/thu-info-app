@@ -146,6 +146,13 @@ export const HoleDetailScreen = ({
 								navigation.navigate("HoleDetail", {pid: destPid, lazy: true})
 							}
 						/>
+						{item.type === "image" && (
+							<Image
+								source={{uri: holeConfig.imageBase + item.url}}
+								style={{height: 400}}
+								resizeMode="contain"
+							/>
+						)}
 						<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
 						<TimeAgo time={item.timestamp * 1000} />
 					</View>
