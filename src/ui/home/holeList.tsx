@@ -198,11 +198,18 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 								/>
 							)}
 							{!needFold && item.type === "image" && (
-								<Image
-									source={{uri: holeConfig.imageBase + item.url}}
-									style={{height: 400}}
-									resizeMode="contain"
-								/>
+								<Pressable
+									onPress={() =>
+										navigation.navigate("HoleImage", {
+											url: holeConfig.imageBase + item.url,
+										})
+									}>
+									<Image
+										source={{uri: holeConfig.imageBase + item.url}}
+										style={{height: 400}}
+										resizeMode="contain"
+									/>
+								</Pressable>
 							)}
 						</TouchableOpacity>
 					);

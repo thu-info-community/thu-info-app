@@ -70,6 +70,8 @@ export default {
 	holePublish: "发表树洞",
 	holePublishHint: "请遵守树洞规范，文明发言。",
 	publish: "发表",
+	holeImage: "查看图片",
+	holeSaveImage: "保存图片（可能有bug）",
 	originalText: "原文",
 	comments: "评论",
 	holePleaseSetToken:

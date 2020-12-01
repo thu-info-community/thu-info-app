@@ -30,6 +30,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen} from "./libraryMap";
+import {HoleImageScreen} from "./holeImage";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -51,6 +52,7 @@ export type HomeStackParamList = {
 	HoleList: undefined;
 	HoleDetail: HoleTitleCard | {pid: number; lazy: true};
 	HolePublish: undefined;
+	HoleImage: {url: string};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -65,6 +67,7 @@ export type ConfigureDormRouteProp = RouteProp<
 export type LibraryMapRouteProp = RouteProp<HomeStackParamList, "LibraryMap">;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
 export type HoleDetailRouteProp = RouteProp<HomeStackParamList, "HoleDetail">;
+export type HoleImageRouteProp = RouteProp<HomeStackParamList, "HoleImage">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -188,6 +191,11 @@ export const HomeStackScreen = () => {
 				name="HolePublish"
 				component={HolePublishScreen}
 				options={{title: getStr("holePublish")}}
+			/>
+			<Stack.Screen
+				name="HoleImage"
+				component={HoleImageScreen}
+				options={{title: getStr("holeImage")}}
 			/>
 		</Stack.Navigator>
 	);

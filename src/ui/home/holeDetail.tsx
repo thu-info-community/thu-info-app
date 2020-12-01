@@ -8,6 +8,7 @@ import {
 	Keyboard,
 	View,
 	Dimensions,
+	Pressable,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
@@ -101,11 +102,18 @@ export const HoleDetailScreen = ({
 						}
 					/>
 					{type === "image" && (
-						<Image
-							source={{uri: holeConfig.imageBase + url}}
-							style={{height: 400}}
-							resizeMode="contain"
-						/>
+						<Pressable
+							onPress={() =>
+								navigation.navigate("HoleImage", {
+									url: holeConfig.imageBase + url,
+								})
+							}>
+							<Image
+								source={{uri: holeConfig.imageBase + url}}
+								style={{height: 400}}
+								resizeMode="contain"
+							/>
+						</Pressable>
 					)}
 					<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
 					<View style={{flexDirection: "row", justifyContent: "space-between"}}>
@@ -143,15 +151,22 @@ export const HoleDetailScreen = ({
 						<HoleMarkdown
 							text={item.text}
 							navigationHandler={(destPid) =>
-								navigation.navigate("HoleDetail", {pid: destPid, lazy: true})
+								navigation.push("HoleDetail", {pid: destPid, lazy: true})
 							}
 						/>
 						{item.type === "image" && (
-							<Image
-								source={{uri: holeConfig.imageBase + item.url}}
-								style={{height: 400}}
-								resizeMode="contain"
-							/>
+							<Pressable
+								onPress={() =>
+									navigation.navigate("HoleImage", {
+										url: holeConfig.imageBase + item.url,
+									})
+								}>
+								<Image
+									source={{uri: holeConfig.imageBase + item.url}}
+									style={{height: 400}}
+									resizeMode="contain"
+								/>
+							</Pressable>
 						)}
 						<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
 						<TimeAgo time={item.timestamp * 1000} />

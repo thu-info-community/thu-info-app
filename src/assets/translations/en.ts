@@ -71,6 +71,8 @@ export default {
 	holePublishHint:
 		"Please follow thuhole community guidelines during communication.",
 	publish: "Publish",
+	holeImage: "Preview Image",
+	holeSaveImage: "Save image (might be buggy)",
 	originalText: "Original Text",
 	comments: "Comments",
 	holePleaseSetToken:
