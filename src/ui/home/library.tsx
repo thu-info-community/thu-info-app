@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from "react-native";
+import {Linking, Pressable, Text, TouchableOpacity, View} from "react-native";
 import {getLibraryList} from "../../network/library";
 import {HomeNav} from "./homeStack";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
@@ -40,7 +40,18 @@ export const LibraryScreen = simpleRefreshListScreen(
 		</View>
 	),
 	(item) => String(item.id),
-	undefined,
+	mocked() ? undefined : (
+		<View style={{padding: 6, margin: 4, alignItems: "center"}}>
+			<Pressable
+				onPress={() =>
+					Linking.openURL("https://mp.weixin.qq.com/s/pzwZi7ZlIUO9zwwf50yrRw")
+				}>
+				<Text style={{textAlign: "center"}}>
+					传送门：如何快速在图书馆找到一个有插座的位置，99%的清华人都还不知道
+				</Text>
+			</Pressable>
+		</View>
+	),
 	<View>
 		<Text
 			style={{
