@@ -267,7 +267,7 @@ export const retryWrapper = async <R>(
 	return operation;
 };
 
-const performGetTickets = () => {
+export const performGetTickets = () => {
 	([792, 824, 2005, 5000] as ValidTickets[]).forEach((target) => {
 		getTicket(target)
 			.then(() => console.log(`Ticket ${target} get.`))

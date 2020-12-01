@@ -5,6 +5,7 @@ export default {
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",
 	loginFailure: "登录失败，请检查网络并确保密码正确后重新登录。",
+	forceLogin: "强制重新登录",
 	logout: "注销",
 	confirmLogout: "您确定要注销吗？",
 	newVersionAvailable: "有新版本可用",

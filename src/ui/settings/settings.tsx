@@ -15,6 +15,9 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Snackbar from "react-native-snackbar";
+import {NetworkRetry} from "../../components/easySnackbars";
+import {login, performGetTickets} from "../../network/core";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
@@ -93,6 +96,26 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			icon={<AntDesign name="copyright" size={16} />}
 		/>
 		<SettingsSeparator />
+		<SettingsItem
+			text={getStr("forceLogin")}
+			onPress={() => {
+				Snackbar.show({
+					text: getStr("processing"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+				const {userId, password} = currState().auth;
+				login(userId, password)
+					.then(performGetTickets)
+					.then(() =>
+						Snackbar.show({
+							text: getStr("success"),
+							duration: Snackbar.LENGTH_SHORT,
+						}),
+					)
+					.catch(NetworkRetry);
+			}}
+			icon={<Feather name="refresh-cw" size={16} />}
+		/>
 		<SettingsItem
 			text={getStr("logout")}
 			onPress={() => {

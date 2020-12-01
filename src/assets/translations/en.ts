@@ -6,6 +6,7 @@ export default {
 	loggingIn: "Logging In...",
 	loginFailure:
 		"Login failed, please check the network connection and make sure your password is correct before re-login.",
+	forceLogin: "Force login",
 	logout: "Logout",
 	confirmLogout: "Are you sure to logout?",
 	newVersionAvailable: "New version available.",
