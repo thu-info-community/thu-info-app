@@ -9,7 +9,9 @@
 		"start": "react-native start",
 		"test": "jest",
 		"lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
+		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+		"draft": "node versionhelper.js draft",
+		"release": "node versionhelper.js release"
 	},
 	"dependencies": {
 		"@leancloud/platform-adapters-react-native": "0.5.0",
@@ -89,6 +91,7 @@
 		"react-native-fs": "2.16.6",
 		"react-test-renderer": "17.0.1",
 		"redux-devtools": "3.7.0",
+		"semver": "7.3.4",
 		"typescript": "4.1.2"
 	},
 	"jest": {
