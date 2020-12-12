@@ -7,6 +7,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.soloader.SoLoader
+import com.swmansion.reanimated.ReanimatedJSIModulePackage
 import java.lang.reflect.InvocationTargetException
 
 class MainApplication : Application(), ReactApplication {
@@ -14,6 +15,8 @@ class MainApplication : Application(), ReactApplication {
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
 
         override fun getPackages() = PackageList(this).packages
+
+        override fun getJSIModulePackage() = ReanimatedJSIModulePackage()
 
         override fun getJSMainModuleName() = "index"
     }
