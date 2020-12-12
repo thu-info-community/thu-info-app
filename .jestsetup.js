@@ -29,8 +29,6 @@ jest.mock("react-native-view-shot", () => ({
 	RNViewShot: jest.fn().mockResolvedValue(),
 }));
 
-jest.mock("react-native/Libraries/Animated/src/NativeAnimatedHelper");
-
 jest.mock("@react-native-community/async-storage", () => mockAsyncStorage);
 
 jest.mock("react-native-keychain", () => ({
