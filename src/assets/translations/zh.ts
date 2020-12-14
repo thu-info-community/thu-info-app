@@ -45,6 +45,12 @@ export default {
 	secondarySchedule: "二级课表",
 	sendErrReport: "发送错误报告",
 	emptyList: "列表空空如也，请刷新重试",
+	passwordManagement: "密码管理",
+	homePassword: "家园网密码",
+	hidden: "已隐藏",
+	validate: "验证",
+	validateSucceed: "验证成功",
+	validateFail: "验证失败",
 	holeSettings: "树洞设置",
 	holeTokenSettings: "设置Token",
 	acknowledgements: "致谢",
@@ -77,6 +83,8 @@ export default {
 	holePleaseSetToken:
 		"登录失败，请前往设置页面检查token，或登录树洞主页 https://thuhole.com 以进一步查看。",
 	networkRetry: "网络异常，请重试。",
+	homeNetworkRetry:
+		"登录失败，请前往设置→密码管理部分设置家园网密码，或稍后重试。",
 	credentialNote: "您的用户信息仅会被保存在本地，并经操作系统安全地加密。",
 	exceptionOccurred: "发生异常，请重试。",
 	teachingEvaluation: "教学评估",
@@ -111,6 +119,8 @@ export default {
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	classroomHeaderPrefix: "第",
 	classroomHeaderMiddle: "周 ",
+	experimentalHint:
+		"以下功能属于试验性功能，请谨慎使用，如有问题请及时向我们反馈~",
 	loseCard: "快速挂失",
 	confirmLoseCard: "您确定要挂失吗？",
 	loseCardCannotBeUndone: "该操作无法撤销。",

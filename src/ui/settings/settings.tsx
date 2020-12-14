@@ -54,14 +54,14 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 					onPress={() => navigation.navigate("HoleSettings")}
 					icon={<FontAwesome name="tree" size={16} />}
 				/>
+				<SettingsItem
+					text={getStr("passwordManagement")}
+					onPress={() => navigation.navigate("PasswordManagement")}
+					icon={<FontAwesome name="lock" size={16} />}
+				/>
 				<SettingsSeparator />
 			</>
 		)}
-		<SettingsItem
-			text={getStr("eleRecord")}
-			onPress={() => navigation.navigate("EleRecord")}
-			icon={<Feather name="zap" size={16} />}
-		/>
 		<SettingsItem
 			text={getStr("libBookRecord")}
 			onPress={() => navigation.navigate("LibBookRecord")}

@@ -13,7 +13,6 @@ import {ClassroomListScreen} from "./classroomList";
 import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
 import {DormScoreScreen} from "./dormScore";
-import {ConfigureDormScreen} from "./configureDorm";
 import {LibraryScreen} from "./library";
 import {Library, LibraryFloor, LibrarySection} from "../../models/home/library";
 import {LibraryFloorScreen} from "./libraryFloor";
@@ -48,7 +47,6 @@ export type HomeStackParamList = {
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	DormScore: undefined;
-	ConfigureDorm: {callback: () => any};
 	HoleList: undefined;
 	HoleDetail: HoleTitleCard | {pid: number; lazy: true};
 	HolePublish: undefined;
@@ -59,10 +57,6 @@ export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
 export type ClassroomDetailRouteProp = RouteProp<
 	HomeStackParamList,
 	"ClassroomDetail"
->;
-export type ConfigureDormRouteProp = RouteProp<
-	HomeStackParamList,
-	"ConfigureDorm"
 >;
 export type LibraryMapRouteProp = RouteProp<HomeStackParamList, "LibraryMap">;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
@@ -162,11 +156,6 @@ export const HomeStackScreen = () => {
 				name="DormScore"
 				component={DormScoreScreen}
 				options={{title: getStr("dormScore")}}
-			/>
-			<Stack.Screen
-				name="ConfigureDorm"
-				component={ConfigureDormScreen}
-				options={{title: getStr("configureDorm")}}
 			/>
 			<Stack.Screen
 				name="HoleList"

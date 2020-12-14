@@ -1,4 +1,5 @@
 import {
+	Button,
 	GestureResponderEvent,
 	Platform,
 	Switch,
@@ -10,6 +11,9 @@ import {
 } from "react-native";
 import React, {useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
+import {getStr} from "../../utils/i18n";
+import Snackbar from "react-native-snackbar";
+import {NetworkRetry} from "../easySnackbars";
 
 export const SettingsItem = ({
 	text,
@@ -88,7 +92,7 @@ export const SettingsSwitch = ({
 	);
 };
 
-export function SettingsEditValue<T extends string | number>({
+export const SettingsEditValue = <T extends string | number>({
 	text,
 	value,
 	onValueChange,
@@ -96,7 +100,53 @@ export function SettingsEditValue<T extends string | number>({
 	text: string;
 	value: T;
 	onValueChange: (newValue: T) => void;
-}) {
+}) => (
+	<View
+		style={{
+			padding: 8,
+			paddingRight: 16,
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+		}}>
+		<Text style={{fontSize: 17, flex: 4}}>{text}</Text>
+		<TextInput
+			style={{
+				fontSize: 15,
+				flex: 1,
+				backgroundColor: "white",
+				textAlign: "left",
+				borderColor: "lightgrey",
+				borderWidth: 1,
+				borderRadius: 5,
+				padding: 6,
+			}}
+			value={String(value)}
+			onChangeText={(newText) => {
+				if (typeof value === "string") {
+					// @ts-ignore
+					onValueChange(newText);
+				} else if (!isNaN(Number(newText))) {
+					// @ts-ignore
+					onValueChange(Number(newText));
+				}
+			}}
+			keyboardType={typeof value === "string" ? "default" : "numeric"}
+		/>
+	</View>
+);
+
+export const SettingsSetPassword = ({
+	text,
+	onValueChange,
+	validator,
+}: {
+	text: string;
+	onValueChange: (newValue: string) => void;
+	validator: (password: string) => Promise<boolean>;
+}) => {
+	const [value, setValue] = useState("");
+	const [disabled, setDisabled] = useState(false);
 	return (
 		<View
 			style={{
@@ -106,11 +156,11 @@ export function SettingsEditValue<T extends string | number>({
 				justifyContent: "space-between",
 				alignItems: "center",
 			}}>
-			<Text style={{fontSize: 17, flex: 4}}>{text}</Text>
+			<Text style={{fontSize: 17, flex: 2}}>{text}</Text>
 			<TextInput
 				style={{
 					fontSize: 15,
-					flex: 1,
+					flex: 2,
 					backgroundColor: "white",
 					textAlign: "left",
 					borderColor: "lightgrey",
@@ -118,20 +168,32 @@ export function SettingsEditValue<T extends string | number>({
 					borderRadius: 5,
 					padding: 6,
 				}}
-				value={String(value)}
+				placeholder={getStr("hidden")}
+				value={value}
 				onChangeText={(newText) => {
-					if (typeof value === "string") {
-						// @ts-ignore
-						onValueChange(newText);
-					} else if (!isNaN(Number(newText))) {
-						// @ts-ignore
-						onValueChange(Number(newText));
-					}
+					setValue(newText);
+					onValueChange(newText);
 				}}
-				keyboardType="numeric"
+				secureTextEntry
+			/>
+			<Button
+				title={getStr("validate")}
+				disabled={disabled}
+				onPress={() => {
+					setDisabled(true);
+					validator(value)
+						.then((result) => {
+							Snackbar.show({
+								text: getStr(result ? "validateSucceed" : "validateFail"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						})
+						.catch(NetworkRetry)
+						.then(() => setDisabled(false));
+				}}
 			/>
 		</View>
 	);
-}
+};
 
 export const SettingsSeparator = () => <View style={{height: 10}} />;

@@ -3,22 +3,15 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import React, {ReactElement, useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
-import {HomeNav} from "../../ui/home/homeStack";
-import {configureDorm} from "../../ui/home/configureDorm";
-import {HomeIcon} from "./icon";
-import zh from "../../assets/translations/zh";
 import {mocked} from "../../redux/store";
+import {getTicket} from "../../network/core";
 
 export const AlipayPopup = ({
 	onPay,
-	title,
-	navigation,
-	children,
+	trigger,
 }: {
 	onPay: (money: number) => Promise<any>;
-	title: keyof typeof zh;
-	navigation: HomeNav;
-	children: ReactElement;
+	trigger: (onPress: () => void) => ReactElement;
 }) => {
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");
@@ -115,10 +108,13 @@ export const AlipayPopup = ({
 					</View>
 				</View>
 			</Modal>
-			<HomeIcon
-				title={title}
-				onPress={() =>
-					configureDorm(() => {
+			{trigger(() => {
+				Snackbar.show({
+					text: getStr("loggingIn"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+				getTicket(-1)
+					.then(() => {
 						if (mocked()) {
 							Snackbar.show({
 								text: getStr("testAccountNotSupportEleRecharge"),
@@ -127,10 +123,14 @@ export const AlipayPopup = ({
 						} else {
 							setPopup(true);
 						}
-					}, navigation)
-				}>
-				{children}
-			</HomeIcon>
+					})
+					.catch(() =>
+						Snackbar.show({
+							text: getStr("homeNetworkRetry"),
+							duration: Snackbar.LENGTH_LONG,
+						}),
+					);
+			})}
 		</>
 	);
 };

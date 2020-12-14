@@ -12,8 +12,8 @@ export const DormScoreScreen = () => {
 			.then(setUrl)
 			.catch(() =>
 				Snackbar.show({
-					text: getStr("networkRetry"),
-					duration: Snackbar.LENGTH_SHORT,
+					text: getStr("homeNetworkRetry"),
+					duration: Snackbar.LENGTH_LONG,
 				}),
 			);
 	}, []);

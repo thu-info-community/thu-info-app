@@ -45,6 +45,12 @@ export default {
 	secondarySchedule: "Secondary Schedule",
 	sendErrReport: "Send error report",
 	emptyList: "The list seems empty.",
+	passwordManagement: "Password Management",
+	homePassword: "MyHome Password",
+	hidden: "Hidden",
+	validate: "Validate",
+	validateSucceed: "Validation succeeded.",
+	validateFail: "Validation failed.",
 	holeSettings: "Hole Settings",
 	holeTokenSettings: "Setup hole token",
 	acknowledgements: "Acknowledgements",
@@ -78,6 +84,8 @@ export default {
 	holePleaseSetToken:
 		"Login failed. Please check your token in the settings section, or go to https://thuhole.com for more information.",
 	networkRetry: "Network failure, please retry.",
+	homeNetworkRetry:
+		"Login failed. Please go to Settings->Password Management to setup MyHome password, or try again later.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
 	exceptionOccurred: "Exception occurred, please retry.",
@@ -118,6 +126,8 @@ export default {
 	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
 	classroomHeaderPrefix: "Week ",
 	classroomHeaderMiddle: ", ",
+	experimentalHint:
+		"The following functionalities are experimental. Take care when using them and do report any problems to us, thank you!",
 	loseCard: "Report lost card",
 	confirmLoseCard: "Are you sure to report the loss of your card?",
 	loseCardCannotBeUndone: "This process cannot be undone.",

@@ -29,7 +29,6 @@ import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
 import {currState, mocked} from "../redux/store";
-import {dormLoginStatus} from "../utils/dorm";
 import cheerio from "cheerio";
 import {NetworkRetry} from "../components/easySnackbars";
 
@@ -229,10 +228,7 @@ export const getTicket = async (target: ValidTickets) => {
 				retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312"),
 			)
 			.then((s) => {
-				if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length === 1) {
-					dormLoginStatus.loggedIn = true;
-				} else {
-					dormLoginStatus.loggedIn = false;
+				if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length !== 1) {
 					throw "login to tsinghua home error";
 				}
 			});

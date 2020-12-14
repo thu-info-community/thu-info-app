@@ -18,6 +18,7 @@ import {SecondarySettingsScreen} from "./secondarySettings";
 import {RemainderSettingsScreen} from "./remainderSettings";
 import {ExperimentalScreen} from "./experimental";
 import {HoleSettingsScreen} from "./holeSettings";
+import {PasswordManagementScreen} from "./PasswordManagement";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -33,6 +34,7 @@ type SettingsStackParamList = {
 	RemainderSettings: undefined;
 	Experimental: undefined;
 	HoleSettings: undefined;
+	PasswordManagement: undefined;
 	About: undefined;
 };
 
@@ -111,6 +113,11 @@ export const SettingStackScreen = () => (
 			name="HoleSettings"
 			component={HoleSettingsScreen}
 			options={{title: getStr("holeSettings")}}
+		/>
+		<Stack.Screen
+			name="PasswordManagement"
+			component={PasswordManagementScreen}
+			options={{title: getStr("passwordManagement")}}
 		/>
 	</Stack.Navigator>
 );

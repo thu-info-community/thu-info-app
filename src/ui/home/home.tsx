@@ -1,7 +1,6 @@
 import {ScrollView, Text, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
-import {configureDorm} from "./configureDorm";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
@@ -94,17 +93,9 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				onPress={() => navigation.navigate("Expenditure")}>
 				<IconExpenditure width={iconSize} height={iconSize} />
 			</HomeIcon>
-			{/*<AlipayPopup
-				onPay={(money) => getEleRechargePayCode(money).then(doAlipay)}
-				title="eleRecharge"
-				navigation={navigation}>
-				<IconEleRecharge width={iconSize} height={iconSize} />
-			</AlipayPopup>*/}
 			<HomeIcon
 				title="dormScore"
-				onPress={() =>
-					configureDorm(() => navigation.navigate("DormScore"), navigation)
-				}>
+				onPress={() => navigation.navigate("DormScore")}>
 				<IconDormScore width={iconSize} height={iconSize} />
 			</HomeIcon>
 		</HomeSection>
