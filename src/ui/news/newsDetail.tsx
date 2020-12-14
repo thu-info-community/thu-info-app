@@ -7,6 +7,7 @@ import {View, StyleSheet, ActivityIndicator} from "react-native";
 import {NewsDetailRouteProp} from "./newsStack";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {USER_AGENT} from "../../constants/strings";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
@@ -44,6 +45,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				<WebView
 					source={{html: adaptedHtml, baseUrl: route.params.detail.url}}
 					containerStyle={styles.webContainer}
+					userAgent={USER_AGENT}
 					setSupportMultipleWindows={false}
 				/>
 			</View>
