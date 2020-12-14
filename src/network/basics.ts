@@ -323,6 +323,17 @@ export const postAssessmentForm = (form: Form): Promise<void> =>
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
 
+const physicalExamResultTotal = (json: any) =>
+	Number(json.fhltzfs) * 0.15 +
+	Number(json.wsmpfs) * 0.2 +
+	Number(json.zwtqqfs) * 0.1 +
+	Number(json.ldtyfs) * 0.1 +
+	Number(json.ytxsfs) * 0.1 +
+	Number(json.yqmpfs) * 0.2 +
+	Number(json.ywqzfs) * 0.1 +
+	Number(json.bbmpfs) * 0.2 +
+	Number(json.sgtzfs) * 0.15;
+
 export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 	mocked()
 		? Promise.resolve([
@@ -376,6 +387,10 @@ export const getPhysicalExamResult = (): Promise<[string, string][]> =>
 							["标准分", json.bzf],
 							["附加分", json.fjf],
 							["长跑附加分", json.cpfjf],
+							[
+								"参考成绩（APP自动结算，仅供参考）",
+								physicalExamResultTotal(json),
+							],
 							["身高", json.sg],
 							["体重", json.tz],
 							["身高体重分数", json.sgtzfs],
