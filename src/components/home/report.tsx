@@ -11,7 +11,8 @@ export interface ReportHeaderProps {
 }
 
 export const ReportHeader = (props: ReportHeaderProps) => (
-	<View style={{...styles.reportContainer, margin: 10}}>
+	<View
+		style={{...styles.reportContainer, padding: 10, backgroundColor: "white"}}>
 		<Text numberOfLines={1} style={{fontSize: 18, flex: 1}}>
 			{props.semester}
 		</Text>
@@ -97,7 +98,7 @@ export const ReportFooter = (props: {gpa: number}) => (
 
 const styles = StyleSheet.create({
 	reportContainer: {
-		margin: 6,
+		padding: 6,
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",

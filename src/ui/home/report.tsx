@@ -77,6 +77,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	return (
 		<SectionList
 			sections={sections}
+			stickySectionHeadersEnabled={true}
 			renderSectionHeader={({section}) => (
 				<ReportHeader semester={section.semester} gpa={section.gpa} />
 			)}
