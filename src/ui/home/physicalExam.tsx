@@ -26,4 +26,8 @@ export const PhysicalExamScreen = simpleRefreshListScreen(
 		</View>
 	),
 	([x]) => x,
+	undefined,
+	undefined,
+	undefined,
+	27,
 );

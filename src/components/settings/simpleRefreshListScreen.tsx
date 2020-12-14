@@ -23,6 +23,7 @@ export function simpleRefreshListScreen<T>(
 	footer?: ReactElement,
 	header?: ReactElement,
 	empty?: ReactElement,
+	initialNumToRender?: number,
 ): FC {
 	return (props) => {
 		const [data, setData] = useState<T[]>([]);
@@ -62,6 +63,7 @@ export function simpleRefreshListScreen<T>(
 				ListHeaderComponent={data.length === 0 ? null : header}
 				ListFooterComponent={footer}
 				ListEmptyComponent={empty}
+				initialNumToRender={initialNumToRender}
 			/>
 		);
 	};
