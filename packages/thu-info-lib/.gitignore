@@ -1,0 +1,6 @@
+/.idea
+/.env
+/.vscode
+/node_modules
+/lib
+/dist

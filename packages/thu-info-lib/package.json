@@ -1,0 +1,41 @@
+{
+    "name": "thu-info-lib",
+    "version": "0.1.0",
+    "description": "The JavaScript library that provides a program-friendly interface to Tsinghua web portal",
+    "main": "lib/index.js",
+    "files": [
+        "lib/**/*",
+        "src/**/*"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "jest",
+        "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+        "fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+        "draft": "node versionhelper.js draft",
+        "release": "node versionhelper.js release"
+    },
+    "keywords": [
+        "tsinghua",
+        "thu",
+        "info",
+        "thuinfo",
+        "thu-info",
+        "thu info"
+    ],
+    "author": "UNIDY2002 <UNIDY2002@outlook.com> (https://unidy2002.github.io/)",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/UNIDY2002/thu-info-lib.git"
+    },
+    "devDependencies": {
+        "@types/jest": "26.0.19",
+        "@typescript-eslint/eslint-plugin": "4.9.1",
+        "@typescript-eslint/parser": "4.9.1",
+        "eslint": "7.15.0",
+        "jest": "26.6.3",
+        "semver": "7.3.4",
+        "typescript": "4.1.3"
+    }
+}
