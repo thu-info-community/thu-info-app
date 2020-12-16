@@ -40,6 +40,18 @@ const endMap: {[key: string]: number} = {
 	"21:45": 14,
 };
 
+const examBeginMap: {[key: string]: number} = {
+	"8:00": 1,
+	"14:30": 7,
+	"19:00": 12,
+};
+
+const examEndMap: {[key: string]: number} = {
+	"10:00": 3,
+	"16:30": 9,
+	"21:00": 13,
+};
+
 export interface Lesson {
 	type: LessonType;
 	title: string;
@@ -56,6 +68,8 @@ export interface Exam {
 	locale: string;
 	week: number;
 	dayOfWeek: number;
+	begin: number;
+	end: number;
 }
 
 export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
@@ -103,6 +117,8 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 						locale: o.dd || "",
 						week,
 						dayOfWeek,
+						begin: examBeginMap[o.kssj],
+						end: examEndMap[o.jssj],
 					});
 					break;
 				}

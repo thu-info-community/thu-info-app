@@ -315,6 +315,17 @@ const ScheduleUI = (props: ScheduleProps) => {
 									.concat(props.secondary)
 									.filter((it) => !matchHiddenRules(it, props.hiddenRules))
 									.concat(props.custom)
+									.concat(
+										props.exam.map((e) => ({
+											type: LessonType.PRIMARY,
+											title: "[考试]" + e.title,
+											locale: "当前版本暂不支持显示地点",
+											week: e.week,
+											dayOfWeek: e.dayOfWeek,
+											begin: e.begin,
+											end: e.end,
+										})),
+									)
 									.filter(
 										(lesson) =>
 											lesson.dayOfWeek === id + 1 && lesson.week === week,
