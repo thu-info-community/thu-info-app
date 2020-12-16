@@ -76,7 +76,7 @@
 		"@types/convert-excel-to-json": "1.7.0",
 		"@types/jest": "26.0.19",
 		"@types/markdown-it": "10.0.3",
-		"@types/react-native": "0.63.40",
+		"@types/react-native": "0.63.41",
 		"@types/react-test-renderer": "17.0.0",
 		"@typescript-eslint/eslint-plugin": "4.10.0",
 		"@typescript-eslint/parser": "4.10.0",
