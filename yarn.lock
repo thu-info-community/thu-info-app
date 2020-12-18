@@ -767,14 +767,6 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime-corejs2@^7.10.2":
-  version "7.12.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs2/-/runtime-corejs2-7.12.5.tgz#382ec38f0826365e96118e28b81249c1c61bace3"
-  integrity sha512-kt5YpZ7F5A05LOgQuaMXXmcxakK/qttf5C/E1BJPA3Kf5PanbjPzDoXN+PIslUnjUxpuKblCsXyP0QfMiqyKqA==
-  dependencies:
-    core-js "^2.6.5"
-    regenerator-runtime "^0.13.4"
-
 "@babel/runtime@7.12.5", "@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.1", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
@@ -1218,7 +1210,7 @@
     "@leancloud/adapter-types" "^4.0.0"
     "@leancloud/adapters-superagent" "^1.3.0"
 
-"@leancloud/platform-adapters-node@^1.1.0":
+"@leancloud/platform-adapters-node@^1.1.0", "@leancloud/platform-adapters-node@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@leancloud/platform-adapters-node/-/platform-adapters-node-1.4.0.tgz#8fba1d74e5d4393586ca47b8936dabe38d7bc889"
   integrity sha512-8uLkPqFnHAcr08O2WLDfrIr+BrgYGvHpvmZYpvKfjg1Gp/jDavXxVmHcjqX5Si9WT+c19D9xn4jDF/BamabAwQ==
@@ -1238,7 +1230,7 @@
     "@leancloud/platform-adapters-browser" "^1.4.0"
     "@react-native-community/async-storage" "^1.11.0"
 
-"@leancloud/platform-adapters-weapp@^1.2.0":
+"@leancloud/platform-adapters-weapp@^1.2.0", "@leancloud/platform-adapters-weapp@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@leancloud/platform-adapters-weapp/-/platform-adapters-weapp-1.5.0.tgz#1a0d662a903dff6f3327f7871eba821b2f1058ef"
   integrity sha512-aUCbKIPfXGjmzm4VKMv+EObhn8xLb6xROHA7lLx+dZ8EcvnHnkotm/54Fh5ORU+QrhB0kHFLer2w6tLxloEBJw==
@@ -3007,7 +2999,7 @@ copy-descriptor@^0.1.0:
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
   integrity sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
 
-core-js@^2.2.2, core-js@^2.4.0, core-js@^2.4.1, core-js@^2.6.5:
+core-js@^2.2.2, core-js@^2.4.0, core-js@^2.4.1:
   version "2.6.11"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
@@ -5721,13 +5713,12 @@ leancloud-realtime-plugin-live-query@^1.2.0:
   resolved "https://registry.yarnpkg.com/leancloud-realtime-plugin-live-query/-/leancloud-realtime-plugin-live-query-1.2.0.tgz#1e07da1b5b99e44cddbc3b052234422f278c4ab9"
   integrity sha512-eJooIH8/FyUoozr3Eeby2DpDnmX39m1bfxfxlYPuojkio+i/DLwPD+aTHnRDH6QXJcT6tNTt85RcxVR/Txg98Q==
 
-leancloud-realtime@^5.0.0-rc.2:
-  version "5.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/leancloud-realtime/-/leancloud-realtime-5.0.0-rc.3.tgz#3a590d8c99685aa54849529d5d7fbbca0ea45152"
-  integrity sha512-LGhxz2LY8/G7+dK4SQydaKdlBOcnaNi4r7Cl2otxOV6IyWPDRNiwSTjhAZLV7wHSDep6clrZVoZZGA0YuV24Lg==
+leancloud-realtime@^5.0.0-rc.4:
+  version "5.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/leancloud-realtime/-/leancloud-realtime-5.0.0-rc.4.tgz#5ee0f370fa4f8414194654361535f0ce9e283226"
+  integrity sha512-03z+2JYnH4FE7ZyV+x0gkeEYFdjMoz5Uo63XeAQPchc5aBqGd+wXwdgjQzPAXJ1d7h/3w1CrcMLbSTf7eK8Eqw==
   dependencies:
     "@babel/runtime" "^7.10.2"
-    "@babel/runtime-corejs2" "^7.10.2"
     "@leancloud/adapter-types" "^3.0.0"
     "@leancloud/platform-adapters-browser" "^1.1.0"
     "@leancloud/platform-adapters-node" "^1.1.0"
@@ -5741,19 +5732,19 @@ leancloud-realtime@^5.0.0-rc.2:
     protobufjs "^5.0.1"
     uuid "^3.0.0"
 
-leancloud-storage@4.8.3:
-  version "4.8.3"
-  resolved "https://registry.yarnpkg.com/leancloud-storage/-/leancloud-storage-4.8.3.tgz#dfe04125e813e2881e80d3ee3ff838eddb76dcfe"
-  integrity sha512-MiXuoJrH16MYMdnZjW57ajYRIBeCISqWeIzDnFAgTmktLIh8RSyqXLgcPbWfmTwzROTbR2uYWnEjhX75G0838w==
+leancloud-storage@4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/leancloud-storage/-/leancloud-storage-4.9.0.tgz#5fdf472c7b7954120ee2100b555909521ce2dbe7"
+  integrity sha512-xQM9b1X+J0HSZTawfciAKgF3w28ZOPMVn2VuWSeXztKiROBSx1uMrebiO8jN7WYQdaJMR+38h1Dh+QIEfj560A==
   dependencies:
-    "@leancloud/adapter-types" "^3.0.0"
-    "@leancloud/platform-adapters-browser" "^1.1.0"
-    "@leancloud/platform-adapters-node" "^1.1.0"
-    "@leancloud/platform-adapters-weapp" "^1.2.0"
+    "@leancloud/adapter-types" "^4.0.0"
+    "@leancloud/platform-adapters-browser" "^1.4.0"
+    "@leancloud/platform-adapters-node" "^1.4.0"
+    "@leancloud/platform-adapters-weapp" "^1.5.0"
     babel-runtime "^6.26.0"
     debug "^3.1.0"
     eventemitter3 "^2.0.3"
-    leancloud-realtime "^5.0.0-rc.2"
+    leancloud-realtime "^5.0.0-rc.4"
     leancloud-realtime-plugin-live-query "^1.2.0"
     md5 "^2.0.0"
     promise-timeout "^1.3.0"
