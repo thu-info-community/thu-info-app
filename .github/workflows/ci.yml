@@ -46,7 +46,7 @@ jobs:
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
           yarn add react-native@0.63.4 # Since react-native-reanimated is currently incompatible with rn 0.64 on android
-          cd android && gradle assembleRelease && cd ..
+          npx jetify && cd android && gradle assembleRelease && cd ..
       - name: Upload artifact
         if: endsWith(github.ref, 'master')
         uses: actions/upload-artifact@v2
