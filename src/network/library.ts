@@ -387,13 +387,22 @@ export const getLibraryDay = (
 	choice: 0 | 1,
 ): Promise<LibraryDate> =>
 	fetchJson(LIBRARY_DAYS_URL + id).then((r) => {
-		if (r.length !== 2) {
-			throw new Error("Expected 2 available days, got " + r.length);
+		const m = new Map();
+		r.forEach((item: {id: number}) => {
+			if (!m.has(item.id)) {
+				m.set(item.id, item);
+			}
+		});
+		if (m.size !== 2) {
+			throw new Error("Expected 2 available days, got " + m.size);
 		}
+		const dl = [...m.values()].sort(
+			(a: {id: number}, b: {id: number}) => a.id - b.id,
+		);
 		const transformDate = (s: {date: string}) => {
 			return s.date.substring(11, 16);
 		};
-		return r.map((node: any, index: number) => ({
+		return dl.map((node: any, index: number) => ({
 			day: node.day,
 			startTime: transformDate(node.startTime),
 			endTime: transformDate(node.endTime),
