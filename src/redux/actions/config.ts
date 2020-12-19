@@ -24,7 +24,7 @@ export type CalendarConfig = {
 };
 
 export type ConfigAction =
-	| {type: typeof SET_DO_NOT_REMIND; payload: number}
+	| {type: typeof SET_DO_NOT_REMIND; payload: string}
 	| {type: typeof SET_LAST_SELF_VERSION; payload: number}
 	| {type: typeof SET_CALENDAR_CONFIG; payload: CalendarConfig}
 	| {type: typeof SET_GRADUATE; payload: boolean}

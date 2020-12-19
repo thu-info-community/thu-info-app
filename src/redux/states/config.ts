@@ -2,6 +2,7 @@ import {Calendar, SemesterType} from "../../utils/calendar";
 
 export interface Config {
 	doNotRemind: number;
+	doNotRemindSemver: string;
 	lastSelfVersion: number;
 	firstDay: Calendar;
 	weekCount: number;

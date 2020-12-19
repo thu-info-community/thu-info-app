@@ -5,47 +5,51 @@ import {getStr} from "./i18n";
 import {SET_DO_NOT_REMIND, SET_LAST_BROADCAST_ID} from "../redux/constants";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
+import {gt, lt} from "semver";
 
 export const checkUpdate = (force: boolean = false) => {
-	console.log("Current version: " + VersionNumber.buildVersion);
-	getUpdateInfo().then((r) => {
-		if (
-			r.length &&
-			(force || currState().config.doNotRemind < r[0].versionCode)
-		) {
-			Alert.alert(
-				getStr("newVersionAvailable"),
-				r[0].versionName + "\n" + r[0].description,
-				[
-					{
-						text: getStr("doNotRemind"),
-						onPress: () => {
-							store.dispatch({
-								type: SET_DO_NOT_REMIND,
-								payload: r[0].versionCode,
-							});
+	console.log("Current version: " + VersionNumber.appVersion);
+	getUpdateInfo()
+		.then((r) => r.filter((it) => gt(it.versionName, VersionNumber.appVersion)))
+		.then((r) => {
+			if (
+				r.length &&
+				(force ||
+					lt(currState().config.doNotRemindSemver ?? "0.0.0", r[0].versionName))
+			) {
+				Alert.alert(
+					getStr("newVersionAvailable"),
+					r[0].versionName + "\n" + r[0].description,
+					[
+						{
+							text: getStr("doNotRemind"),
+							onPress: () => {
+								store.dispatch({
+									type: SET_DO_NOT_REMIND,
+									payload: r[0].versionName,
+								});
+							},
 						},
-					},
-					{text: getStr("nextTimeMust")},
-					{
-						text: getStr("download"),
-						onPress: () => {
-							Linking.openURL(r[0].url).then(() =>
-								console.log("Opening system explorer: " + r[0].url),
-							);
+						{text: getStr("nextTimeMust")},
+						{
+							text: getStr("download"),
+							onPress: () => {
+								Linking.openURL(r[0].url).then(() =>
+									console.log("Opening system explorer: " + r[0].url),
+								);
+							},
 						},
-					},
-				],
-				{cancelable: true},
-			);
-		}
-		if (force && r.length === 0) {
-			Snackbar.show({
-				text: getStr("alreadyLatest"),
-				duration: Snackbar.LENGTH_SHORT,
-			});
-		}
-	});
+					],
+					{cancelable: true},
+				);
+			}
+			if (force && r.length === 0) {
+				Snackbar.show({
+					text: getStr("alreadyLatest"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+			}
+		});
 };
 
 export const checkBroadcast = () => {

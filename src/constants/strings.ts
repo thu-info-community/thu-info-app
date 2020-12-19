@@ -143,10 +143,14 @@ export const JOGGING_URL =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_kw_xscjb.do?m=queryXsCjAll";
 export const JOGGING_REFERER =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh.do?url=jxmh.do&m=bks_tyjx_tcyy";
-export const UPDATE_INFO_URL_ANDRIOD =
-	"https://cloud.tsinghua.edu.cn/f/1047a13451f44ab99d3a/?dl=1";
-export const UPDATE_INFO_URL_IOS =
-	"https://cloud.tsinghua.edu.cn/f/4697101ba02145e4a887/?dl=1";
+export const UPDATE_URL_ANDROID =
+	"https://api.github.com/repos/UNIDY2002/THUInfo/releases/latest";
+export const UPDATE_URL_IOS =
+	"http://itunes.apple.com/lookup?bundleId=org.reactjs.native.example.thu-info";
+export const ANDROID_APP_CENTER_URL =
+	"https://install.appcenter.ms/users/unidy/apps/thuinfo/distribution_groups/cd";
+export const IOS_APP_STORE_URL =
+	"https://apps.apple.com/cn/app/thu-info/id1533968428";
 export const TSINGHUA_CLOUD_URL = "https://cloud.tsinghua.edu.cn";
 export const POPI_URL =
 	"https://cloud.tsinghua.edu.cn/f/2187997c76544445ad0f/?dl=1";

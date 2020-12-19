@@ -28,6 +28,7 @@ export const defaultSchedule: Schedule = {
 
 export const defaultConfigState: Config = {
 	doNotRemind: 0,
+	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
 	firstDay: Calendar.firstDay,
 	weekCount: Calendar.weekCount,

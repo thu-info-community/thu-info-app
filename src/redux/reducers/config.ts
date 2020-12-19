@@ -22,7 +22,7 @@ export const config = (
 ): Config => {
 	switch (action.type) {
 		case SET_DO_NOT_REMIND:
-			return {...state, doNotRemind: action.payload};
+			return {...state, doNotRemindSemver: action.payload};
 		case SET_LAST_SELF_VERSION:
 			return {...state, lastSelfVersion: action.payload};
 		case SET_CALENDAR_CONFIG:
