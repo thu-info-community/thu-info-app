@@ -35,7 +35,7 @@ if (command === "draft") {
 	fs.writeFileSync("./draft", message + "\n", {flag: "a"});
 	child_process.execSync("git add ./draft");
 } else if (command === "release") {
-	const version = semver.coerce(message);
+	const version = semver.clean(message);
 	if (!semver.valid(version)) {
 		console.error("Version number provided MUST follow semver!");
 		process.exit(1);

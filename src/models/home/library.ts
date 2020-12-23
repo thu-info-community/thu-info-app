@@ -28,6 +28,8 @@ export interface LibrarySection extends Library {
 
 export interface LibrarySeat extends Library {
 	type: number;
+	hasSocket: boolean;
+	lcObjId: string;
 }
 
 export const byId = (a: LibraryBase, b: LibraryBase) =>

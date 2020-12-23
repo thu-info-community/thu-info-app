@@ -1,12 +1,14 @@
 import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
-import {Text, TouchableOpacity, View} from "react-native";
+import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {LibraryBase} from "../../models/home/library";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {mocked} from "../../redux/store";
+import {toggleSocketState} from "../../network/library";
+import Snackbar from "react-native-snackbar";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -54,31 +56,89 @@ export function libraryRefreshListScreen<
 						: getStr("seatInvalid");
 				return (
 					<View>
-						<TouchableOpacity
-							style={{
-								backgroundColor: "#ffffff",
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-								paddingHorizontal: 12,
-							}}
-							disabled={!item.valid}
-							onPress={() =>
-								item.valid && onPress(props, item, choice, refresh)()
-							}>
-							<Text
-								style={{
-									textAlign: "center",
-									textDecorationLine: item.valid ? "none" : "line-through",
-									color: item.valid ? "black" : "grey",
-									marginVertical: 14,
-								}}>
-								{item.zhName + moreInformation}
-							</Text>
-							{(!mocked() || header) && (
-								<Icon name="angle-right" size={24} color="grey" />
+						<View style={{flexDirection: "row"}}>
+							{"hasSocket" in item && (
+								<TouchableOpacity
+									style={{
+										backgroundColor: "#ffffff",
+										flexDirection: "row",
+										justifyContent: "center",
+										alignItems: "center",
+										paddingHorizontal: 12,
+										flex: 1,
+									}}
+									onLongPress={() => {
+										Alert.alert(
+											getStr(
+												// @ts-ignore
+												item.hasSocket
+													? "confirmReportNoSocket"
+													: "confirmReportHasSocket",
+											),
+											getStr("socketReportPrompt"),
+											[
+												{text: getStr("cancel")},
+												{
+													text: getStr("confirm"),
+													onPress: () => {
+														toggleSocketState(
+															item.id, // @ts-ignore
+															item.lcObjId, // @ts-ignore
+															!item.hasSocket,
+														)
+															.then(() =>
+																Snackbar.show({
+																	text: getStr("reportSuccessful"),
+																	duration: Snackbar.LENGTH_SHORT,
+																}),
+															)
+															.catch(() =>
+																Snackbar.show({
+																	text: getStr("reportFail"),
+																	duration: Snackbar.LENGTH_SHORT,
+																}),
+															);
+													},
+												},
+											],
+											{cancelable: true},
+										);
+									}}>
+									<Text style={{textAlign: "center"}}>
+										{
+											// @ts-ignore
+											getStr(item.hasSocket ? "hasSocket" : "noSocket")
+										}
+									</Text>
+								</TouchableOpacity>
 							)}
-						</TouchableOpacity>
+							<TouchableOpacity
+								style={{
+									backgroundColor: "#ffffff",
+									flexDirection: "row",
+									justifyContent: "space-between",
+									alignItems: "center",
+									paddingHorizontal: 12,
+									flex: 2,
+								}}
+								disabled={!item.valid}
+								onPress={() =>
+									item.valid && onPress(props, item, choice, refresh)()
+								}>
+								<Text
+									style={{
+										textAlign: "center",
+										textDecorationLine: item.valid ? "none" : "line-through",
+										color: item.valid ? "black" : "grey",
+										marginVertical: 14,
+									}}>
+									{item.zhName + moreInformation}
+								</Text>
+								{(!mocked() || header) && (
+									<Icon name="angle-right" size={24} color="grey" />
+								)}
+							</TouchableOpacity>
+						</View>
 						<View style={{backgroundColor: "lightgray", height: 1}} />
 					</View>
 				);

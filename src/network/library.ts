@@ -25,6 +25,7 @@ import {currState, mocked} from "../redux/store";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
+import AV from "leancloud-storage/core";
 
 const fetchJson = (
 	url: string,
@@ -430,17 +431,20 @@ export const getLibrarySeatList = (
 ): Promise<LibrarySeat[]> =>
 	getLibraryDay(id, dateChoice).then(
 		({day, startTime, endTime, segmentId, today}) =>
-			fetchJson(
-				LIBRARY_SEATS_URL +
-					"?" +
-					stringify({
-						area: id,
-						segment: segmentId,
-						day,
-						startTime: today ? currentTime() : startTime,
-						endTime,
-					}),
-			).then((r) =>
+			Promise.all([
+				fetchJson(
+					LIBRARY_SEATS_URL +
+						"?" +
+						stringify({
+							area: id,
+							segment: segmentId,
+							day,
+							startTime: today ? currentTime() : startTime,
+							endTime,
+						}),
+				),
+				new AV.Query("Sockets").equalTo("sectionId", id).find(),
+			]).then(([r, s]) =>
 				r
 					.map((node: any) => ({
 						id: node.id,
@@ -450,6 +454,12 @@ export const getLibrarySeatList = (
 						enNameTrace: enNameTrace + " - " + node.name,
 						valid: node.status === 1,
 						type: node.area_type,
+						hasSocket:
+							s.find((it) => it.get("seatId") === node.id)?.get("available") ??
+							false,
+						lcObjId: s
+							.find((it) => it.get("seatId") === node.id)
+							?.get("objectId"),
 					}))
 					.filter((it: LibrarySeat) => it.valid)
 					.sort(byId),
@@ -579,4 +589,31 @@ export const cancelBooking = async (id: string): Promise<void> => {
 				throw data.message;
 			}
 		});
+};
+
+// For dev only
+export const batchSetSocket = async (
+	section: LibrarySection,
+	available: boolean,
+) => {
+	const Socket = AV.Object.extend("Sockets");
+	const seatList = await getLibrarySeatList(section, 0);
+	const avObjects = seatList.map((seat) => {
+		const socket = new Socket();
+		socket.set("seatId", seat.id);
+		socket.set("sectionId", section.id);
+		socket.set("available", available);
+		return socket;
+	});
+	console.log(await AV.Object.saveAll(avObjects));
+};
+
+export const toggleSocketState = async (
+	seatId: number,
+	objectId: string,
+	target: boolean,
+) => {
+	const socket = AV.Object.createWithoutData("Sockets", objectId);
+	socket.set("available", target);
+	await socket.save();
 };

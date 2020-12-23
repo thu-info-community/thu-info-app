@@ -27,6 +27,18 @@ export default {
 	cancelBooking: "Cancel",
 	confirmCancelBooking: "Sure to cancel?",
 	cancelSucceeded: "Successfully cancelled.",
+	hasSocket: "Socket Available",
+	noSocket: "Socket Unavailable",
+	confirmReportHasSocket:
+		"You are going to report this seat as `socket available`.",
+	confirmReportNoSocket:
+		"You are going to report this seat as `socket unavailable`.",
+	socketReportPrompt: "You should be responsible for your report~",
+	reportSuccessful: "Report succeeded. Thanks for your contribution!",
+	reportFail:
+		"Report failed. This might be due to network error, or the seat not having been registered",
+	socketIntro:
+		"Everyone can contribute to the availability status of library seats. If you encounter false information, long-press the `socket available/unavailable` button to report.\nWe will not record the personal information of the contributors, but you should be responsible for your report. Thank you for your support~\nIf you find most of the seats of a section wrongly tagged, do feel free to send feedback to us in the APP.",
 	submit: "Submit",
 	feedbackHint:
 		"Both bug-report and suggestions are welcomed!\nWe do not know who you are, so don't be afraid~\nResponses can be found in the Popi Ask box.\nGitHub repo: https://github.com/UNIDY2002/THUInfo\nIssues and pull requests are also welcomed!",
