@@ -32,6 +32,9 @@ export interface LibrarySeat extends Library {
 	lcObjId: string;
 }
 
+export const weightedValidityAndId = (lib: LibraryBase) =>
+	(lib.valid ? 0 : 1000) + lib.id;
+
 export const byId = (a: LibraryBase, b: LibraryBase) =>
 	Number(a.id) - Number(b.id);
 

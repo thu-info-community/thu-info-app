@@ -19,6 +19,7 @@ import {
 	LibraryFloor,
 	LibrarySeat,
 	LibrarySection,
+	weightedValidityAndId,
 } from "../models/home/library";
 import "../../src/utils/extensions";
 import {currState, mocked} from "../redux/store";
@@ -461,8 +462,10 @@ export const getLibrarySeatList = (
 							.find((it) => it.get("seatId") === node.id)
 							?.get("objectId"),
 					}))
-					.filter((it: LibrarySeat) => it.valid)
-					.sort(byId),
+					.sort(
+						(a: LibrarySeat, b: LibrarySeat) =>
+							weightedValidityAndId(a) - weightedValidityAndId(b),
+					),
 			),
 	);
 
