@@ -27,7 +27,7 @@
 		"@types/cheerio": "0.22.23",
 		"@types/md5": "2.2.1",
 		"@types/react-native-vector-icons": "6.4.6",
-		"@types/react-redux": "7.1.13",
+		"@types/react-redux": "7.1.14",
 		"buffer": "6.0.3",
 		"cheerio": "0.22.0",
 		"convert-excel-to-json": "1.7.0",
