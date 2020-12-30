@@ -9,7 +9,7 @@ if (
 			(process.argv[2] === "draft" || process.argv[2] === "release")) ||
 		(process.argv.length === 5 &&
 			process.argv[2] === "release" &&
-			process.argv[4] === "--pick-draft")
+			process.argv[4] === "--no-pick-draft")
 	)
 ) {
 	console.error("Commandline argument error!");
@@ -53,9 +53,9 @@ if (command === "draft") {
 			.replace(`"version": "${pkg.version}"`, `"version": "${version}"`),
 	);
 
-	if (process.argv.length === 5) {
+	if (process.argv.length === 4) {
 		console.info("Converting draft to release...");
-		// Then must have --pick-draft
+		// Then must be without --no-pick-draft
 		const draft = fs.readFileSync("./draft").toString();
 		const release =
 			draft.trim().length > 0

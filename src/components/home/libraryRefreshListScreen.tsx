@@ -104,7 +104,11 @@ export function libraryRefreshListScreen<
 											{cancelable: true},
 										);
 									}}>
-									<Text style={{textAlign: "center"}}>
+									<Text
+										style={{
+											textAlign: "center", // @ts-ignore
+											color: item.hasSocket ? "green" : "blue",
+										}}>
 										{
 											// @ts-ignore
 											getStr(item.hasSocket ? "hasSocket" : "noSocket")

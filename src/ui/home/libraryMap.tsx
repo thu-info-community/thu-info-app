@@ -1,10 +1,13 @@
-import {LibraryMapRouteProp} from "./homeStack";
+import {LibraryMapRouteProp, LibrarySeatMapRouteProp} from "./homeStack";
 import {Dimensions, Image, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {LIBRARY_MAP_URL} from "../../constants/strings";
 import {LibrarySection} from "../../models/home/library";
 import {getLibrarySectionList} from "../../network/library";
 import {NetworkRetry} from "../../components/easySnackbars";
+import ImageViewer from "react-native-image-zoom-viewer";
+import {saveImg} from "../../utils/saveImg";
+import {getStr} from "../../utils/i18n";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);
@@ -37,6 +40,29 @@ export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 					<Text style={{color: "black"}}>{zhName}</Text>
 				</View>
 			))}
+		</View>
+	);
+};
+
+export const LibrarySeatMapScreen = ({
+	route,
+}: {
+	route: LibrarySeatMapRouteProp;
+}) => {
+	return (
+		<View style={{flex: 1}}>
+			{
+				<ImageViewer
+					imageUrls={[
+						{url: `${LIBRARY_MAP_URL}${route.params.section.id}/seat-free.jpg`},
+					]}
+					onSave={saveImg}
+					menuContext={{
+						saveToLocal: getStr("holeSaveImage"),
+						cancel: getStr("cancel"),
+					}}
+				/>
+			}
 		</View>
 	);
 };

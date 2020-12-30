@@ -28,7 +28,7 @@ import {TouchableOpacity} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
-import {LibraryMapScreen} from "./libraryMap";
+import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
 import {HoleImageScreen} from "./holeImage";
 
 export type HomeStackParamList = {
@@ -46,6 +46,7 @@ export type HomeStackParamList = {
 	LibrarySection: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
+	LibrarySeatMap: {section: LibrarySection};
 	DormScore: undefined;
 	HoleList: undefined;
 	HoleDetail: HoleTitleCard | {pid: number; lazy: true};
@@ -60,6 +61,10 @@ export type ClassroomDetailRouteProp = RouteProp<
 >;
 export type LibraryMapRouteProp = RouteProp<HomeStackParamList, "LibraryMap">;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
+export type LibrarySeatMapRouteProp = RouteProp<
+	HomeStackParamList,
+	"LibrarySeatMap"
+>;
 export type HoleDetailRouteProp = RouteProp<HomeStackParamList, "HoleDetail">;
 export type HoleImageRouteProp = RouteProp<HomeStackParamList, "HoleImage">;
 
@@ -145,12 +150,28 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="LibrarySeat"
 				component={LibrarySeatScreen}
-				options={({route}) => ({title: route.params.section.zhNameTrace})}
+				options={({route, navigation}) => ({
+					title: route.params.section.zhNameTrace,
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() =>
+								navigation.navigate("LibrarySeatMap", route.params)
+							}>
+							<Icon name="search" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="LibraryMap"
 				component={LibraryMapScreen}
 				options={({route}) => ({title: route.params.floor.zhNameTrace})}
+			/>
+			<Stack.Screen
+				name="LibrarySeatMap"
+				component={LibrarySeatMapScreen}
+				options={({route}) => ({title: route.params.section.zhNameTrace})}
 			/>
 			<Stack.Screen
 				name="DormScore"
