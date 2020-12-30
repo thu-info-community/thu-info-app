@@ -700,7 +700,11 @@ export const getExpenditures = (
 						result.forEach(
 							(record: {value: string | number; category: string}) => {
 								record.value = Number(record.value);
-								if (record.category.match(/^(消费|自助缴费.*|取消充值)$/)) {
+								if (
+									record.category.match(
+										/^(消费|自助缴费.*|取消充值|领取旧卡余额)$/,
+									)
+								) {
 									record.value *= -1;
 								}
 							},
