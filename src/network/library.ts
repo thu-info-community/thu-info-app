@@ -27,6 +27,9 @@ import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import AV from "leancloud-storage/core";
+type Cheerio = ReturnType<typeof cheerio>;
+type Element = Cheerio[number];
+type TagElement = Element & {type: "tag"};
 
 const fetchJson = (
 	url: string,
@@ -544,8 +547,9 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 	const result = cheerio("tbody", html)
 		.children()
 		.map((index, element) => {
-			const delOnclick = element.children[15].children[3]?.attribs?.onclick;
-			const delStrIndex = delOnclick?.indexOf("menuDel") + 9;
+			const delOnclick = (((element as TagElement).children[15] as TagElement)
+				.children[3] as TagElement | undefined)?.attribs?.onclick;
+			const delStrIndex = delOnclick ? delOnclick.indexOf("menuDel") + 9 : 0;
 			const rightIndex = delOnclick?.indexOf("'", delStrIndex);
 			return {
 				id: getCheerioText(element, 3),

@@ -1,5 +1,8 @@
 import {getStr} from "../../utils/i18n";
-import Cheerio, {CheerioElement} from "cheerio";
+import cheerio from "cheerio";
+type Cheerio = ReturnType<typeof cheerio>;
+type Element = Cheerio[number];
+type TagElement = Element & {type: "tag"};
 
 /**
  * The minimal component of a form to be posted to the school server.
@@ -11,13 +14,14 @@ export class InputTag {
 	private readonly name: string;
 	public value: string;
 
-	constructor(input: CheerioElement | string, value?: string) {
+	constructor(input: Element | string, value?: string) {
+		const inputTag = input as TagElement;
 		if (typeof input === "string") {
 			this.name = input;
 			this.value = value || "";
 		} else {
-			this.name = input.attribs.name;
-			this.value = input.attribs.value;
+			this.name = inputTag.attribs.name;
+			this.value = inputTag.attribs.value || "";
 		}
 	}
 
@@ -169,18 +173,12 @@ export const toPersons = (tables: Cheerio) => {
 
 			const suggestions = inputs.filter("[class]");
 			assert(suggestions.length === 1);
-			const suggestion = new InputTag(
-				suggestions[0].attribs.name,
-				suggestions[0].attribs.value,
-			);
+			const suggestion = new InputTag(suggestions[0]);
 			inputs = inputs.filter(":not([class])");
 
 			const scores = inputs.filter("ul > input");
 			assert(scores.length === 1);
-			const score = new InputTag(
-				scores[0].attribs.name,
-				scores[0].attribs.value,
-			);
+			const score = new InputTag(scores[0]);
 			inputs = inputs.filter(":not([avgfs])");
 
 			const others = inputs.map((_, ele) => new InputTag(ele)).get();

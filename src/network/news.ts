@@ -128,20 +128,24 @@ export const getNewsList = (
 		const $ = cheerio.load(str);
 		let newsList: newsSlice[] = [];
 		$("ul.cont_list > li", str).each((_, item) => {
-			let newsUrl: string = item.children[3].attribs.href;
-			if (newsUrl[0] === "/") {
-				newsUrl = "https://webvpn.tsinghua.edu.cn" + newsUrl;
+			if (item.type === "tag" && item.children[3].type === "tag") {
+				let newsUrl: string = item.children[3].attribs.href;
+				if (newsUrl[0] === "/") {
+					newsUrl = "https://webvpn.tsinghua.edu.cn" + newsUrl;
+				}
+				newsList.push(
+					new newsSlice(
+						getCheerioText(item, 3),
+						newsUrl,
+						getCheerioText(item, 7),
+						item.children[4].data?.substr(
+							3,
+							item.children[4].data?.length - 5,
+						) ?? "",
+						channel,
+					),
+				);
 			}
-			newsList.push(
-				new newsSlice(
-					getCheerioText(item, 3),
-					newsUrl,
-					getCheerioText(item, 7),
-					item.children[4].data?.substr(3, item.children[4].data?.length - 5) ??
-						"",
-					channel,
-				),
-			);
 		});
 		return newsList;
 	});

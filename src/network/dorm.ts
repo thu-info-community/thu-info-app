@@ -20,6 +20,9 @@ import cheerio from "cheerio";
 import {currState, mocked} from "../redux/store";
 import {generalGetPayCode} from "../utils/generalAlipay";
 import {getCheerioText} from "../utils/cheerio";
+type Cheerio = ReturnType<typeof cheerio>;
+type Element = Cheerio[number];
+type TagElement = Element & {type: "tag"};
 
 const loginToHome = async () => {
 	const validChars = new Set(
@@ -117,8 +120,8 @@ export const getElePayRecord = async (): Promise<
 		.children()
 		.slice(1)
 		.map((index, element) => [
-			element.children
-				.filter((it) => it.tagName === "td")
+			(element as TagElement).children
+				.filter((it) => it.type === "tag" && it.tagName === "td")
 				.map((it) => getCheerioText(it, 1)),
 		])
 		.get();

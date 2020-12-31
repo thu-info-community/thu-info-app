@@ -36,6 +36,9 @@ import {currState, mocked} from "../redux/store";
 import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
+type Cheerio = ReturnType<typeof cheerio>;
+type Element = Cheerio[number];
+type TagElement = Element & {type: "tag"};
 
 const gradeToOldGPA = new Map<string, number>([
 	["A-", 3.7],
@@ -165,8 +168,7 @@ export const getReport = (): Promise<Course[]> =>
 							childrenOriginal.length - 1,
 						);
 						children.each((index, element) => {
-							if (element.children.length === 25) {
-								// I don't know why this is needed... Weird...
+							if (element.type === "tag" && element.children.length === 25) {
 								const transformedElement = cheerio(element);
 								const type = getCheerioText(
 									transformedElement.children()[8],
@@ -230,7 +232,9 @@ export const getAssessmentList = (): Promise<[string, boolean, string][]> =>
 					const result = cheerio("tbody", str)
 						.children()
 						.map((index, element) => {
-							const onclick = element.children[11].firstChild.attribs.onclick;
+							const onclick = (((element as TagElement)
+								.children[11] as TagElement).firstChild as TagElement).attribs
+								.onclick;
 							const href =
 								ASSESSMENT_BASE_URL +
 								onclick.substring(
@@ -790,16 +794,19 @@ export const getClassroomState = (
 				).then((s) => {
 					const result = cheerio("#scrollContent>table>tbody", s)
 						.map((_, element) =>
-							element.children
-								.filter((it) => it.tagName === "tr")
+							(element as TagElement).children
+								.filter((it) => it.type === "tag" && it.tagName === "tr")
 								.map((tr) => {
-									const id = tr.children[1].children[2].data?.trim() ?? "";
-									const status = tr.children
+									const id =
+										((tr as TagElement)
+											.children[1] as TagElement).children[2].data?.trim() ??
+										"";
+									const status = (tr as TagElement).children
 										.slice(3)
-										.filter((it) => it.tagName === "td")
+										.filter((it) => it.type === "tag" && it.tagName === "td")
 										.map((td) => {
 											const classNames =
-												td.attribs.class
+												(td as TagElement).attribs.class
 													?.split(" ")
 													?.filter((it) => it !== "colBound") ?? [];
 											if (classNames.length > 1) {

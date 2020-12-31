@@ -8,7 +8,6 @@ import {
 } from "../../utils/textSplitter";
 import {Linking, Text} from "react-native";
 import Markdown from "react-native-markdown-display";
-// @ts-ignore
 import {docco} from "react-syntax-highlighter/src/styles/hljs";
 // @ts-ignore
 import SyntaxHighlighter from "react-native-syntax-highlighter";
