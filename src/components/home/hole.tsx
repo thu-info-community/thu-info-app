@@ -8,8 +8,7 @@ import {
 } from "../../utils/textSplitter";
 import {Linking, Text} from "react-native";
 import Markdown from "react-native-markdown-display";
-import {docco} from "react-syntax-highlighter/src/styles/hljs";
-// @ts-ignore
+import {docco} from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SyntaxHighlighter from "react-native-syntax-highlighter";
 
 export type NavigationHandler = (pid: number) => void;
@@ -111,8 +110,8 @@ export const HoleMarkdown = ({
 					</Text>
 				),
 				fence: (node) => (
-					<SyntaxHighlighter // @ts-ignore
-						language={node.sourceInfo}
+					<SyntaxHighlighter
+						language={((node as unknown) as {sourceInfo: string}).sourceInfo}
 						style={docco}
 						highlighter={"hljs"}
 						key={node.key}>
