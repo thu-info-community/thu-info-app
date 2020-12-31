@@ -145,33 +145,41 @@ export const HoleDetailScreen = ({
 				{reply > 0 && (
 					<Text style={styles.smallHeader}>{getStr("comments")}</Text>
 				)}
-				{comments.map((item) => (
-					<View style={Material.card} key={item.cid}>
-						<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
-						<HoleMarkdown
-							text={item.text}
-							navigationHandler={(destPid) =>
-								navigation.push("HoleDetail", {pid: destPid, lazy: true})
-							}
-						/>
-						{item.type === "image" && (
-							<Pressable
-								onPress={() =>
-									navigation.navigate("HoleImage", {
-										url: holeConfig.imageBase + item.url,
-									})
-								}>
-								<Image
-									source={{uri: holeConfig.imageBase + item.url}}
-									style={{height: 400}}
-									resizeMode="contain"
-								/>
-							</Pressable>
-						)}
-						<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
-						<TimeAgo time={item.timestamp * 1000} />
-					</View>
-				))}
+				{comments.map((item) => {
+					const replyContent = item.text;
+					const splitIdx = replyContent.indexOf("]");
+
+					const author = replyContent.substr(0, splitIdx + 1);
+					const replyText = replyContent.substr(splitIdx + 2);
+					return (
+						<View style={Material.card} key={item.cid}>
+							<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
+							<Text>{author}</Text>
+							<HoleMarkdown
+								text={replyText}
+								navigationHandler={(destPid) =>
+									navigation.push("HoleDetail", {pid: destPid, lazy: true})
+								}
+							/>
+							{item.type === "image" && (
+								<Pressable
+									onPress={() =>
+										navigation.navigate("HoleImage", {
+											url: holeConfig.imageBase + item.url,
+										})
+									}>
+									<Image
+										source={{uri: holeConfig.imageBase + item.url}}
+										style={{height: 400}}
+										resizeMode="contain"
+									/>
+								</Pressable>
+							)}
+							<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
+							<TimeAgo time={item.timestamp * 1000} />
+						</View>
+					);
+				})}
 			</ScrollView>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
 				<TextInput

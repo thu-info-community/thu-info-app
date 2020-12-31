@@ -34,10 +34,8 @@
 		"dayjs": "1.9.8",
 		"eslint-plugin-prettier": "3.3.0",
 		"events": "3.2.0",
-		"htmlparser2": "6.0.0",
 		"iconv-lite": "0.6.2",
 		"leancloud-storage": "4.9.0",
-		"markdown-it": "12.0.4",
 		"md5": "2.3.0",
 		"moment": "2.29.1",
 		"react": "17.0.1",
@@ -48,18 +46,21 @@
 		"react-native-image-zoom-viewer": "3.0.1",
 		"react-native-keychain": "4.0.5",
 		"react-native-localize": "2.0.1",
+		"react-native-markdown-display": "7.0.0-alpha.2",
 		"react-native-popup-menu": "0.15.10",
 		"react-native-reanimated": "2.0.0-rc.1",
 		"react-native-safe-area-context": "3.1.9",
 		"react-native-screens": "2.16.1",
 		"react-native-snackbar": "2.3.1",
 		"react-native-svg": "12.1.0",
+		"react-native-syntax-highlighter": "2.1.0",
 		"react-native-timeago": "0.5.0",
 		"react-native-vector-icons": "7.1.0",
 		"react-native-version-number": "0.3.6",
 		"react-native-view-shot": "3.1.2",
 		"react-native-webview": "11.0.2",
 		"react-redux": "7.2.2",
+		"react-syntax-highlighter": "15.4.3",
 		"redux": "4.0.5",
 		"redux-persist": "6.0.0",
 		"redux-persist-keychain-storage": "0.1.1",
@@ -76,8 +77,8 @@
 		"@react-native-community/eslint-config": "2.0.0",
 		"@types/convert-excel-to-json": "1.7.0",
 		"@types/jest": "26.0.19",
-		"@types/markdown-it": "12.0.0",
 		"@types/react-native": "0.63.43",
+		"@types/react-syntax-highlighter": "13.5.0",
 		"@types/react-test-renderer": "17.0.0",
 		"@types/semver": "7.3.4",
 		"@typescript-eslint/eslint-plugin": "4.11.1",
@@ -104,7 +105,7 @@
 			"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|css|less)$": "<rootDir>/.assetstransformer.js"
 		},
 		"transformIgnorePatterns": [
-			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-community/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native)/)"
+			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-community/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native|react-native-markdown-display|react-syntax-highlighter/src/styles/hljs|react-native-syntax-highlighter)/)"
 		],
 		"coveragePathIgnorePatterns": [
 			".+\\.js"
