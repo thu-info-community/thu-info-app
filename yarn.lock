@@ -3208,10 +3208,10 @@ data-urls@^2.0.0:
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
 
-dayjs@1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.0.tgz#41ae4c1a5116c446738c4ec7e9f4f10e937e698b"
-  integrity sha512-U/yusl5TQPvU1Tlhsu3A82Ebn4BNKHJMIk9AePYHCmGtTXcuPkODiEhkzqA8mnQ0bbgoR6+oha2ioZEewOiP2A==
+dayjs@1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.1.tgz#114f678624842035396667a24eb1436814bc16fd"
+  integrity sha512-2xg7JrHQeLBQFkvTumLoy62x1siyeocc98QwjtURgvRqOPYmAkMUdmSjrOA+MlmL6QMQn5MUhDf6rNZNuPc1LQ==
 
 dayjs@^1.8.15:
   version "1.9.5"
