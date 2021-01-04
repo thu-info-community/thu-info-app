@@ -5,7 +5,8 @@
         "moduleResolution": "node",
         "declaration": true,
         "outDir": "./lib",
-        "strict": true
+        "strict": true,
+        "allowSyntheticDefaultImports": true
     },
     "include": [
         "src"

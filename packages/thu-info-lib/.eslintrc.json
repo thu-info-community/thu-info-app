@@ -8,7 +8,8 @@
         "plugin:@typescript-eslint/recommended"
     ],
     "ignorePatterns": [
-        "versionhelper.js"
+        "versionhelper.js",
+        "encodeToGb2312.js"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -19,6 +20,21 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "@typescript-eslint/ban-ts-comment": [
+            "off"
+        ],
+        "@typescript-eslint/ban-types": [
+            "off"
+        ],
+        "@typescript-eslint/explicit-module-boundary-types": [
+            "off"
+        ],
+        "@typescript-eslint/no-explicit-any": [
+            "off"
+        ],
+        "@typescript-eslint/no-shadow": [
+            1
+        ],
         "comma-dangle": [
             "error",
             "only-multiline"
@@ -37,6 +53,12 @@
         "linebreak-style": [
             "error",
             "unix"
+        ],
+        "no-shadow": [
+            "off"
+        ],
+        "prettier/prettier": [
+            "off"
         ],
         "quotes": [
             "error",
