@@ -10,6 +10,7 @@ import React, {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {getStr} from "src/utils/i18n";
 
+// TODO: Adapt to fit the new date picker ui of iOS14
 export const DatePickerTrigger = ({
 	date,
 	onChange,
@@ -60,6 +61,7 @@ export const DatePickerTrigger = ({
 						style={{
 							flex: 1,
 							justifyContent: "flex-end",
+							alignContent: "center",
 						}}>
 						<View
 							style={{
@@ -95,6 +97,7 @@ export const DatePickerTrigger = ({
 							style={{
 								width: "100%",
 								backgroundColor: "white",
+								alignSelf: "center",
 							}}
 						/>
 					</View>
