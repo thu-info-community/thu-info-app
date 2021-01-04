@@ -1,11 +1,11 @@
 import {Text, View} from "react-native";
 import React from "react";
-import {getPhysicalExamResult} from "../../network/basics";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "src/utils/i18n";
+import {helper} from "../../redux/store";
 
 export const PhysicalExamScreen = simpleRefreshListScreen(
-	getPhysicalExamResult,
+	helper.getPhysicalExamResult,
 	([key, value]) => (
 		<View style={{flexDirection: "row", alignItems: "center"}}>
 			<Text

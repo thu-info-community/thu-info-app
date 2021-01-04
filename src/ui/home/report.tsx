@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getReport} from "../../network/basics";
-import {Course, semesterWeight} from "../../models/home/report";
+import {Course, semesterWeight} from "../../helper/src/models/home/report";
 import {RefreshControl, SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,
@@ -12,7 +11,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {useColorScheme} from "react-native-appearance";
 
 type Section = SectionListData<Course> & ReportHeaderProps;
@@ -55,7 +54,8 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 
 	const fetchData = () => {
 		setRefreshing(true);
-		getReport()
+		helper
+			.getReport()
 			.then((res) => {
 				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);

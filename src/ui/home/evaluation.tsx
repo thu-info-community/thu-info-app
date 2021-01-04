@@ -1,10 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {FlatList, StyleSheet, View, Text, RefreshControl} from "react-native";
-import {
-	getAssessmentList,
-	getAssessmentForm,
-	postAssessmentForm,
-} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -12,6 +7,7 @@ import {TouchableOpacity} from "react-native-gesture-handler";
 import {HomeNav} from "./homeStack";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
+import {helper} from "../../redux/store";
 
 export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	// eslint-disable-next-line prettier/prettier
@@ -23,7 +19,8 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 
 	const fetchList = () => {
 		setRefreshing(true);
-		getAssessmentList()
+		helper
+			.getAssessmentList()
 			.then((res) => {
 				setEvaluationList(res);
 				setRefreshing(false);
@@ -38,12 +35,13 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	};
 
 	const setFullGrade = (_url: string) => {
-		getAssessmentForm(_url)
+		helper
+			.getAssessmentForm(_url)
 			.then((res) => {
 				res.overall.score.value = "7";
 				res.teachers.forEach((item) => item.autoScore());
 				res.assistants.forEach((item) => item.autoScore());
-				return postAssessmentForm(res);
+				return helper.postAssessmentForm(res);
 			})
 			.then(() => {
 				Snackbar.show({

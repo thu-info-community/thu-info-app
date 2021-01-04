@@ -1,4 +1,4 @@
-import {Calendar} from "../../utils/calendar";
+import {Calendar} from "./calendar";
 
 export enum ScheduleType {
 	PRIMARY,

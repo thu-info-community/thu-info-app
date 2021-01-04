@@ -1,4 +1,4 @@
-import {retrieve} from "../network/core";
+import {retrieve} from "../lib/core";
 import cheerio from "cheerio";
 import {
 	QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_GBK,

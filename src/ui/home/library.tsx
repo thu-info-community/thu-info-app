@@ -5,10 +5,10 @@ import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshLi
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {getStr} from "src/utils/i18n";
-import {mocked} from "../../redux/store";
+import {helper} from "../../redux/store";
 
 export const LibraryScreen = simpleRefreshListScreen(
-	getLibraryList,
+	helper.getLibraryList,
 	(item, _, {navigation}: {navigation: HomeNav}, {colors}) => (
 		<View>
 			<TouchableOpacity
@@ -40,7 +40,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 		</View>
 	),
 	(item) => String(item.id),
-	mocked()
+	helper.mocked()
 		? undefined
 		: () => (
 				<View

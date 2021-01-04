@@ -1,4 +1,7 @@
-import {Calendar, SemesterType} from "../../utils/calendar";
+import {
+	Calendar,
+	SemesterType,
+} from "../../helper/src/models/schedule/calendar";
 
 export interface Config {
 	doNotRemind: number;

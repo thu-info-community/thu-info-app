@@ -9,13 +9,13 @@ import {
 	View,
 	Dimensions,
 } from "react-native";
-import {getSecondaryVerbose} from "../../network/schedule";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {submitSecondaryErr} from "../../utils/leanCloud";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native-appearance";
+import {helper} from "../../redux/store";
 
 // @ts-ignore
 const markdown = preval`
@@ -39,7 +39,8 @@ export const SecondarySettingsScreen = () => {
 
 	const refresh = () => {
 		setRefreshing(true);
-		getSecondaryVerbose()
+		helper
+			.getSecondaryVerbose()
 			.then(setData)
 			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));

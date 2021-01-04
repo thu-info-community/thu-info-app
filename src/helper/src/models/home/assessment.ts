@@ -1,4 +1,3 @@
-import {getStr} from "../../utils/i18n";
 import cheerio from "cheerio";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -110,20 +109,20 @@ export class Form {
 	invalid = () => {
 		try {
 			if (this.overall.score.outOfRange()) {
-				return getStr("overallOutOfRange");
+				return "overallOutOfRange";
 			} else if (this.teachers.some((person) => person.outOfRange())) {
-				return getStr("teachersOutOfRange");
+				return "teachersOutOfRange";
 			} else if (
 				this.assistants.length > 0 &&
 				this.assistants.every((person) => person.outOfRange())
 			) {
-				return getStr("assistantsOutOfRange");
+				return "assistantsOutOfRange";
 			} else {
 				return undefined;
 			}
 		} catch (e) {
 			console.error(e);
-			return getStr("exceptionOccurred");
+			return "exceptionOccurred";
 		}
 	};
 

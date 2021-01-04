@@ -19,16 +19,16 @@ const prevalData = preval`
         process.chdir('..')
         flag = true;
     }
-    result[url0] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/0.html'), 'utf8');
-    result[url1] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/1.html'), 'utf8');
-    result[url2] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/2.html'), 'utf8');
-    result[url3] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/3.html'), 'utf8');
-    result[url4] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/4.html'), 'utf8');
-    result[url5] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/5.html'), 'utf8');
-    result[url6] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/6.html'), 'utf8');
-    result[url7] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/7.html'), 'utf8');
-    result[url8] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/8.html'), 'utf8');
-    result[url9] = fs.readFileSync(path.resolve(process.cwd(), './src/assets/htmls/9.html'), 'utf8');
+    result[url0] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/0.html'), 'utf8');
+    result[url1] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/1.html'), 'utf8');
+    result[url2] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/2.html'), 'utf8');
+    result[url3] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/3.html'), 'utf8');
+    result[url4] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/4.html'), 'utf8');
+    result[url5] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/5.html'), 'utf8');
+    result[url6] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/6.html'), 'utf8');
+    result[url7] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/7.html'), 'utf8');
+    result[url8] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/8.html'), 'utf8');
+    result[url9] = fs.readFileSync(path.resolve(process.cwd(), './src/helper/src/mocks/news/9.html'), 'utf8');
     if (flag) {
         process.chdir('ios')
     }

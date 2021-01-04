@@ -1,18 +1,17 @@
 import {LibrarySeatRouteProp} from "./homeStack";
 import {Alert} from "react-native";
-import {bookLibrarySeat, getLibrarySeatList} from "../../network/library";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
-import {mocked} from "../../redux/store";
+import {helper} from "../../redux/store";
 import React from "react";
 import {Text, View} from "react-native";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
-		getLibrarySeatList(route.params.section, dateChoice),
+		helper.getLibrarySeatList(route.params.section, dateChoice),
 	(props, item, choice, refresh) => () => {
-		if (!mocked()) {
+		if (!helper.mocked()) {
 			Alert.alert(
 				getStr("checkSeat"),
 				item.zhName +
@@ -27,7 +26,8 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 								text: getStr("processing"),
 								duration: Snackbar.LENGTH_SHORT,
 							});
-							bookLibrarySeat(item, props.route.params.section, choice)
+							helper
+								.bookLibrarySeat(item, props.route.params.section, choice)
 								.then(({status, msg}) => {
 									Snackbar.show({
 										text:

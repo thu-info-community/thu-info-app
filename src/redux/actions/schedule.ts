@@ -8,10 +8,12 @@ import {
 	SCHEDULE_DEL_OR_HIDE,
 } from "../constants";
 import {Dispatch} from "redux";
-import {getSchedule} from "../../network/schedule";
+import {PrimarySchedule, SecondarySchedule} from "../states/schedule";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
+import {Lesson} from "../../helper/src/models/schedule/schedule";
 import {Choice} from "../reducers/schedule";
-import {Schedule, TimeBlock} from "src/models/schedule/schedule";
+import {Schedule, TimeBlock} from "../../helper/src/models/schedule/schedule";
+import {helper} from "../store";
 
 const scheduleAction = createAsyncAction(
 	SCHEDULE_REQUEST,
@@ -28,7 +30,7 @@ export type ScheduleAction =
 
 export const scheduleThunk = () => (dispatch: Dispatch<ScheduleAction>) => {
 	dispatch(scheduleAction.request());
-	getSchedule()
+	helper.getSchedule()
 		.then((res) => dispatch(scheduleAction.success(res)))
 		.catch(() => dispatch(scheduleAction.failure()));
 };

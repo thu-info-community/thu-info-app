@@ -1,11 +1,11 @@
 import {Text, View} from "react-native";
 import React from "react";
-import {getElePayRecord} from "../../network/dorm";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
+import {helper} from "../../redux/store";
 
 export const EleRecordScreen = simpleRefreshListScreen(
-	getElePayRecord,
+	helper.getElePayRecord,
 	(item, _, __, {colors}) => {
 		// const [name, id, time, channel, value, status] = item;
 		const time = item[2];

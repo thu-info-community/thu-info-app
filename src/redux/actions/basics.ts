@@ -5,7 +5,7 @@ import {
 	FULL_NAME_SUCCESS,
 } from "../constants";
 import {Dispatch} from "redux";
-import {getFullName} from "../../network/core";
+import {helper} from "../store";
 
 const fullNameAction = createAsyncAction(
 	FULL_NAME_REQUEST,
@@ -17,7 +17,8 @@ export type FullNameAction = ActionType<typeof fullNameAction>;
 
 export const fullNameThunk = () => (dispatch: Dispatch<FullNameAction>) => {
 	dispatch(fullNameAction.request());
-	getFullName()
+	helper
+		.getFullName()
 		.then((str) => dispatch(fullNameAction.success(str)))
 		.catch(() => dispatch(fullNameAction.failure()));
 };

@@ -3,8 +3,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import React, {ReactElement, useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
-import {mocked} from "../../redux/store";
-import {getTicket} from "../../network/core";
+import {helper} from "../../redux/store";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
 
@@ -118,9 +117,10 @@ export const AlipayPopup = ({
 					text: getStr("loggingIn"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
-				getTicket(-1)
+				helper
+					.getTicket(-1)
 					.then(() => {
-						if (mocked()) {
+						if (helper.mocked()) {
 							Snackbar.show({
 								text: getStr("testAccountNotSupportEleRecharge"),
 								duration: Snackbar.LENGTH_SHORT,

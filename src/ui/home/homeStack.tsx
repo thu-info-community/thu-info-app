@@ -14,7 +14,11 @@ import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
 import {DormScoreScreen} from "./dormScore";
 import {LibraryScreen} from "./library";
-import {Library, LibraryFloor, LibrarySection} from "../../models/home/library";
+import {
+	Library,
+	LibraryFloor,
+	LibrarySection,
+} from "../../helper/src/models/home/library";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
@@ -22,7 +26,7 @@ import {PhysicalExamScreen} from "./physicalExam";
 import {JoggingScreen} from "./jogging";
 import {HoleListScreen} from "./holeList";
 import {HoleDetailScreen} from "./holeDetail";
-import {HoleTitleCard} from "../../models/home/hole";
+import {HoleTitleCard} from "../../models/hole";
 import {HolePublishScreen} from "./holePublish";
 import {TouchableOpacity} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";

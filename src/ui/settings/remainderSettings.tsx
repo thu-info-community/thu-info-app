@@ -3,11 +3,11 @@ import {getStr} from "../../utils/i18n";
 import {SET_REMAINDER_SHIFT} from "../../redux/constants";
 import {connect} from "react-redux";
 import {Button, View, Text, TextInput} from "react-native";
-import {getExpenditures} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
+import {helper} from "../../redux/store";
 
 export const RemainderSettingsUI = ({
 	setRemainderShift,
@@ -62,7 +62,8 @@ export const RemainderSettingsUI = ({
 							text: getStr("processing"),
 							duration: Snackbar.LENGTH_SHORT,
 						});
-						getExpenditures(new Date(), new Date())
+						helper
+							.getExpenditures(new Date(), new Date())
 							.then((r) => {
 								setRemainderShift(Number(newValue) - r[3]);
 								Snackbar.show({

@@ -2,18 +2,19 @@ import {LibraryMapRouteProp, LibrarySeatMapRouteProp} from "./homeStack";
 import {Dimensions, Image, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {LIBRARY_MAP_URL} from "../../constants/strings";
-import {LibrarySection} from "../../models/home/library";
-import {getLibrarySectionList} from "../../network/library";
+import {LibrarySection} from "../../helper/src/models/home/library";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
+import {helper} from "../../redux/store";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);
 
 	useEffect(() => {
-		getLibrarySectionList(route.params.floor, route.params.dateChoice)
+		helper
+			.getLibrarySectionList(route.params.floor, route.params.dateChoice)
 			.then(setSections)
 			.catch(NetworkRetry);
 	}, [route.params.dateChoice, route.params.floor]);

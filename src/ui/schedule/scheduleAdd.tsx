@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import {connect} from "react-redux";
 import themes from "../../assets/themes/themes";
-import {Calendar} from "../../utils/calendar";
+import {Calendar} from "../../helper/src/models/schedule/calendar";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
@@ -24,6 +24,7 @@ import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
 import {useColorScheme} from "react-native-appearance";
+import {Lesson, LessonType} from "thu-info-lib/src/models/schedule/schedule";
 
 interface ScheduleAddProps {
 	scheduleList: Schedule[];

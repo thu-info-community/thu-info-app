@@ -6,9 +6,6 @@ export enum SemesterType {
 	AUTUMN,
 }
 
-// Currently only supports 2020-Summer
-// In the near future versions it shall allow automatic update
-
 export class Calendar {
 	date: dayjs.Dayjs;
 

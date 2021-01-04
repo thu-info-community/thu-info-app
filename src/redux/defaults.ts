@@ -2,7 +2,7 @@ import {AuthState, LoginStatus} from "./states/auth";
 import {Schedules} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
-import {Calendar} from "../utils/calendar";
+import {Calendar} from "../helper/src/models/schedule/calendar";
 import {Cache} from "./states/cache";
 import {Hole} from "./states/hole";
 

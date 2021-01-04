@@ -4,7 +4,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {SET_DORM_PASSWORD} from "../../redux/constants";
 import {View} from "react-native";
-import {getTicket} from "../../network/core";
+import {helper} from "../../redux/store";
 
 export const PasswordManagementUI = ({
 	setDormPassword,
@@ -17,7 +17,8 @@ export const PasswordManagementUI = ({
 			onValueChange={setDormPassword}
 			validator={() =>
 				new Promise((resolve) => {
-					getTicket(-1)
+					helper
+						.getTicket(-1)
 						.then(() => resolve(true))
 						.catch(() => resolve(false));
 				})

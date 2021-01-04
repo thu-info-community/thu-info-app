@@ -1,7 +1,7 @@
 import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
-import {loseCard} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
+import {helper} from "../../redux/store";
 
 export const performLoseCard = () => {
 	Alert.alert(
@@ -15,7 +15,8 @@ export const performLoseCard = () => {
 			{
 				text: getStr("confirm"),
 				onPress: () => {
-					loseCard()
+					helper
+						.loseCard()
 						.then((value) => {
 							// Why setTimeOut? https://github.com/cooperka/react-native-snackbar/issues/28
 							setTimeout(() => {

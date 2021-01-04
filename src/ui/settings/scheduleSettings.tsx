@@ -1,7 +1,7 @@
 import {SettingsEditValue, SettingsItem} from "../../components/settings/items";
 import React from "react";
 import {getStr} from "../../utils/i18n";
-import {mocked, State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {SET_SCHEDULE_HEIGHT} from "../../redux/constants";
 import {connect} from "react-redux";
 import {View} from "react-native";
@@ -23,7 +23,7 @@ export const ScheduleSettingsUI = ({
 			value={height}
 			onValueChange={setHeight}
 		/>
-		{!mocked() && (
+		{!helper.mocked() && (
 			<SettingsItem
 				text={getStr("secondarySchedule")}
 				onPress={() => navigation.navigate("SecondarySettings")}

@@ -17,7 +17,7 @@ import {Material} from "../../constants/styles";
 import {HoleMarkdown} from "../../components/home/hole";
 import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {HoleCommentCard, HoleTitleCard} from "../../models/home/hole";
+import {HoleCommentCard, HoleTitleCard} from "../../models/hole";
 import {getHoleDetail, holeConfig, postHoleComment} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";

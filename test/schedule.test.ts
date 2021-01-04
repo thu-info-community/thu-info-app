@@ -1,4 +1,4 @@
-import {parseSecondaryWeek} from "../src/models/schedule/schedule";
+import {parseSecondaryWeek} from "../src/helper/src/models/schedule/schedule";
 
 test("Test parsing of secondary lessons session weeks.", () => {
 	const callback = (_: number) => {};

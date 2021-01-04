@@ -1,7 +1,5 @@
 import {retrieve} from "./core";
 import cheerio from "cheerio";
-import {getCheerioText} from "src/utils/cheerio";
-import {mocked} from "../redux/store";
 import {
 	BGTZ_MAIN_PREFIX,
 	HB_MAIN_PREFIX,
@@ -19,25 +17,17 @@ import {
 	url7,
 	url8,
 	url9,
-} from "../assets/htmls/newsHtml";
-
-export type sourceTag = "JWGG" | "KYTZ" | "BGTZ" | "HB";
-
-export class newsSlice {
-	constructor(
-		readonly name: string,
-		readonly url: string,
-		readonly date: string,
-		readonly source: string,
-		readonly channel: sourceTag,
-	) {}
-}
+} from "../mocks/news/newsHtml";
+import {newsSlice, sourceTag} from "../models/news/news";
+import {InfoHelper} from "../index";
+import {getCheerioText} from "../utils/cheerio";
 
 export const getNewsList = (
+	helper: InfoHelper,
 	url: string,
 	channel: sourceTag,
 ): Promise<newsSlice[]> => {
-	if (mocked()) {
+	if (helper.mocked()) {
 		switch (url) {
 			case JWGG_MAIN_PREFIX + 0:
 				return Promise.resolve([
@@ -210,10 +200,11 @@ const getNewsDetailPolicy = (
 };
 
 export const getNewsDetail = async (
+	helper: InfoHelper,
 	url: string,
 ): Promise<[string, string, string]> => {
 	const [encoding, title, content] = getNewsDetailPolicy(url);
-	const html = mocked()
+	const html = helper.mocked()
 		? newsHtml[url] ?? ""
 		: await retrieve(url, undefined, undefined, encoding);
 	if (title !== undefined && content) {

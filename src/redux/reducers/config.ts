@@ -14,7 +14,7 @@ import {
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
-import {Calendar} from "../../utils/calendar";
+import {Calendar} from "../../helper/src/models/schedule/calendar";
 
 export const config = (
 	state: Config = defaultConfigState,

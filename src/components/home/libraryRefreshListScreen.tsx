@@ -2,13 +2,13 @@ import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
-import {LibraryBase} from "../../models/home/library";
+import {LibraryBase} from "../../helper/src/models/home/library";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {mocked} from "../../redux/store";
-import {toggleSocketState} from "../../network/library";
+import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
+import {toggleSocketState} from "../../network/misc";
 import {useColorScheme} from "react-native-appearance";
 import themes, {Theme} from "../../assets/themes/themes";
 
@@ -142,7 +142,7 @@ export function libraryRefreshListScreen<
 									}}>
 									{item.zhName + moreInformation}
 								</Text>
-								{(!mocked() || header) && (
+								{(!helper.mocked() || header) && (
 									<Icon name="angle-right" size={24} color="grey" />
 								)}
 							</TouchableOpacity>

@@ -21,12 +21,12 @@ import {
 	LibrarySection,
 	weightedValidityAndId,
 } from "../models/home/library";
-import "../../src/utils/extensions";
-import {currState, mocked} from "../redux/store";
+import "../utils/extensions";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import AV from "leancloud-storage/core";
+import {InfoHelper} from "../index";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -38,8 +38,8 @@ const fetchJson = (
 ): Promise<any> =>
 	retrieve(url, referer, post).then((s) => JSON.parse(s).data.list);
 
-export const getLibraryList = (): Promise<Library[]> =>
-	mocked()
+export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
+	helper.mocked()
 		? Promise.resolve([
 				{
 					enName: "Main Library North Section",
@@ -73,6 +73,7 @@ export const getLibraryList = (): Promise<Library[]> =>
 		  );
 
 export const getLibrarySectionList = (
+	helper: InfoHelper,
 	{id, zhNameTrace, enNameTrace}: LibraryFloor,
 	dateChoice: 0 | 1,
 ): Promise<LibrarySection[]> =>
@@ -99,10 +100,11 @@ export const getLibrarySectionList = (
 	);
 
 export const getLibraryFloorList = async (
+	helper: InfoHelper,
 	{id, zhName, enName}: Library,
 	dateChoice: 0 | 1,
 ): Promise<LibraryFloor[]> => {
-	if (mocked()) {
+	if (helper.mocked()) {
 		if (id === 89 && dateChoice === 0) {
 			return [
 				{
@@ -374,7 +376,9 @@ export const getLibraryFloorList = async (
 				total: 0,
 			};
 			const [available, total] = (
-				await Promise.all(await getLibrarySectionList(floor, dateChoice))
+				await Promise.all(
+					await getLibrarySectionList(helper, floor, dateChoice),
+				)
 			).reduce(
 				([px, py], curr) =>
 					curr.valid ? [px + curr.available, py + curr.total] : [px, py],
@@ -387,7 +391,7 @@ export const getLibraryFloorList = async (
 	)) as LibraryFloor[]).sort(byId);
 };
 
-export const getLibraryDay = (
+const getLibraryDay = (
 	sectionId: number,
 	choice: 0 | 1,
 ): Promise<LibraryDate> =>
@@ -461,11 +465,12 @@ export const getLibrarySeatList = (
 			),
 	);
 
-const getAccessToken = (): Promise<string> =>
+const getAccessToken = (helper: InfoHelper): Promise<string> =>
 	retryWrapper(
+		helper,
 		5000,
 		retrieve(LIBRARY_HOME_URL).then((response) => {
-			if (mocked()) {
+			if (helper.mocked()) {
 				return "";
 			}
 			const leftmost = response.indexOf("access_token");
@@ -480,11 +485,12 @@ const getAccessToken = (): Promise<string> =>
 	);
 
 export const bookLibrarySeat = async (
+	helper: InfoHelper,
 	{id, type}: LibrarySeat,
 	section: LibrarySection,
 	dateChoice: 0 | 1,
 ): Promise<{status: number; msg: string}> =>
-	mocked()
+	helper.mocked()
 		? {status: 0, msg: "Testing account cannot book a seat."}
 		: JSON.parse(
 				await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
@@ -492,8 +498,8 @@ export const bookLibrarySeat = async (
 						LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
 						LIBRARY_HOME_URL,
 						{
-							access_token: await getAccessToken(),
-							userid: currState().auth.userId,
+							access_token: await getAccessToken(helper),
+							userid: helper.userId,
 							segment: segmentId,
 							type,
 						},
@@ -502,8 +508,10 @@ export const bookLibrarySeat = async (
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
 
-export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
-	if (mocked()) {
+export const getBookingRecords = async (
+	helper: InfoHelper,
+): Promise<LibBookRecord[]> => {
+	if (helper.mocked()) {
 		return [
 			{
 				delId: undefined,
@@ -542,7 +550,7 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 			},
 		];
 	}
-	await getAccessToken();
+	await getAccessToken(helper);
 	const html = await retrieve(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
 	const result = cheerio("tbody", html)
 		.children()
@@ -568,15 +576,18 @@ export const getBookingRecords = async (): Promise<LibBookRecord[]> => {
 	return result;
 };
 
-export const cancelBooking = async (id: string): Promise<void> => {
-	if (mocked()) {
+export const cancelBooking = async (
+	helper: InfoHelper,
+	id: string,
+): Promise<void> => {
+	if (helper.mocked()) {
 		throw new Error("Testing account cannot cancel a seat.");
 	}
-	const token = await getAccessToken();
+	const token = await getAccessToken(helper);
 	return retrieve(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
 		_method: "delete",
 		id,
-		userid: currState().auth.userId,
+		userid: helper.userId,
 		access_token: token,
 	})
 		.then(JSON.parse)
@@ -585,31 +596,4 @@ export const cancelBooking = async (id: string): Promise<void> => {
 				throw data.message;
 			}
 		});
-};
-
-// For dev only
-export const batchSetSocket = async (
-	section: LibrarySection,
-	available: boolean,
-) => {
-	const Socket = AV.Object.extend("Sockets");
-	const seatList = await getLibrarySeatList(section, 0);
-	const avObjects = seatList.map((seat) => {
-		const socket = new Socket();
-		socket.set("seatId", seat.id);
-		socket.set("sectionId", section.id);
-		socket.set("available", available);
-		return socket;
-	});
-	console.log(await AV.Object.saveAll(avObjects));
-};
-
-export const toggleSocketState = async (
-	seatId: number,
-	objectId: string,
-	target: boolean,
-) => {
-	const socket = AV.Object.createWithoutData("Sockets", objectId);
-	socket.set("available", target);
-	await socket.save();
 };

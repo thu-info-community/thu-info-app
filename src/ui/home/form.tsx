@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Text, StyleSheet, View, RefreshControl} from "react-native";
-import {getAssessmentForm, postAssessmentForm} from "src/network/basics";
-import {Form, Person} from "src/models/home/assessment";
+import {Form, Person} from "src/helper/src/models/home/assessment";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {
@@ -14,6 +13,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, HomeNav} from "./homeStack";
 import {useColorScheme} from "react-native-appearance";
+import {helper} from "../../redux/store";
 
 export const FormScreen = ({
 	route,
@@ -33,7 +33,8 @@ export const FormScreen = ({
 
 	const fetchForm = (_url: string) => {
 		setRefreshing(true);
-		getAssessmentForm(_url)
+		helper
+			.getAssessmentForm(_url)
 			.then((res: Form) => {
 				setEvaluationForm(res);
 				setRefreshing(false);
@@ -118,7 +119,8 @@ export const FormScreen = ({
 				});
 				setRefreshing(false);
 			} else {
-				postAssessmentForm(evaluationForm)
+				helper
+					.postAssessmentForm(evaluationForm)
 					.then(() => {
 						Snackbar.show({
 							text: getStr("postSuccess"),

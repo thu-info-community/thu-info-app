@@ -15,13 +15,13 @@ import {
 	parseScript,
 	ScheduleType,
 } from "../models/schedule/schedule";
-import {Calendar} from "../utils/calendar";
-import {currState, mocked} from "../redux/store";
+import {Calendar} from "../models/schedule/calendar";
+import {InfoHelper} from "../index";
 
-export const getPrimarySchedule = () => {
+export const getPrimarySchedule = (helper: InfoHelper, graduate: boolean) => {
 	const format = (c: Calendar) => c.format("YYYYMMDD");
 	const groupSize = 3; // Make sure that `groupSize` is a divisor of `Calendar.weekCount`.
-	return mocked()
+	return helper.mocked()
 		? Promise.resolve([
 				{
 					name: "回笼觉设计与梦境工程",
@@ -198,13 +198,12 @@ export const getPrimarySchedule = () => {
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  ])
 		: retryWrapper(
+				helper,
 				792,
 				Promise.all(
 					Array.from(new Array(Calendar.weekCount / groupSize), (_, id) =>
 						retrieve(
-							(currState().config.graduate
-								? JXRL_YJS_PREFIX
-								: JXRL_BKS_PREFIX) +
+							(graduate ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
 								format(new Calendar(id * groupSize + 1, 1)) +
 								JXRL_MIDDLE +
 								format(new Calendar((id + 1) * groupSize, 7)) +
@@ -213,7 +212,7 @@ export const getPrimarySchedule = () => {
 						),
 					),
 				)
-					.then((results) =>
+					.then((results) => {
 						results
 							.map((s) => {
 								if (s[0] !== "m") {
@@ -222,18 +221,19 @@ export const getPrimarySchedule = () => {
 								return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
 							})
 							.filter((s) => s.trim().length > 0)
-							.join(","),
-					)
+							.join(",");
+					})
 					.then((str) => JSON.parse(`[${str}]`))
 					.then(parseJSON),
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
 };
 
-export const getSecondary = () =>
-	mocked()
+export const getSecondary = (helper: InfoHelper) =>
+	helper.mocked()
 		? Promise.resolve([])
 		: retryWrapper(
+				helper,
 				792,
 				retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
 					const lowerBound = str.indexOf("function setInitValue");
@@ -245,20 +245,17 @@ export const getSecondary = () =>
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
 
-export const getSchedule = async () => {
+export const getSchedule = async (helper: InfoHelper) => {
 	let scheduleList: Schedule[] = [];
-	try {
-		scheduleList = scheduleList.concat(await getPrimarySchedule());
-		scheduleList = scheduleList.concat(await getSecondary());
-		scheduleList.forEach(mergeTimeBlocks);
-	} catch (e) {
-		console.error(e);
-	}
+	scheduleList = scheduleList.concat(await getPrimarySchedule(helper));
+	scheduleList = scheduleList.concat(await getSecondary(helper));
+	scheduleList.forEach(mergeTimeBlocks);
 	return scheduleList;
 };
 
-export const getSecondaryVerbose = () =>
+export const getSecondaryVerbose = (helper: InfoHelper) =>
 	retryWrapper(
+		helper,
 		792,
 		retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
 			const lowerBound = str.indexOf("function setInitValue");

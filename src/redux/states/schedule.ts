@@ -1,4 +1,9 @@
-import {Schedule} from "../../models/schedule/schedule";
+import {Schedule} from "../../helper/src/models/schedule/schedule";
+
+export interface PrimarySchedule {
+	primary: Lesson[];
+	exam: Exam[];
+}
 
 export interface Schedules {
 	baseSchedule: Schedule[];

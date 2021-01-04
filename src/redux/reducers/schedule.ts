@@ -10,8 +10,12 @@ import {
 	SCHEDULE_UPDATE_ALIAS,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 } from "../constants";
-import {Calendar} from "../../utils/calendar";
-import {ScheduleType, Schedule, TimeBlock} from "src/models/schedule/schedule";
+import {Calendar} from "../../helper/src/models/schedule/calendar";
+import {
+	Exam,
+	Lesson,
+	LessonType,
+} from "../../helper/src/models/schedule/schedule";
 
 export enum Choice {
 	ONCE,

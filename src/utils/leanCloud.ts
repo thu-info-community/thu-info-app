@@ -1,6 +1,6 @@
 import AV from "leancloud-storage/core";
 import VersionNumber from "react-native-version-number";
-import {currState, mocked, store} from "../redux/store";
+import {currState, helper, store} from "../redux/store";
 import {SET_LAST_SELF_VERSION} from "../redux/constants";
 import {Platform} from "react-native";
 
@@ -23,7 +23,7 @@ export const leanCloudInit = () => {
 };
 
 export const submitFeedback = async (content: string) => {
-	if (!mocked()) {
+	if (!helper.mocked()) {
 		const statistics = new (AV.Object.extend("Feedback"))();
 		statistics.set("version", Number(VersionNumber.buildVersion));
 		statistics.set("os", Platform.OS);

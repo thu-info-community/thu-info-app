@@ -5,9 +5,8 @@ import Feather from "react-native-vector-icons/Feather";
 import {Text, View} from "react-native";
 import {performLoseCard} from "../../components/home/loseCard";
 import {SettingsNav} from "./settingsStack";
-import {mocked} from "../../redux/store";
+import {helper} from "../../redux/store";
 import {AlipayPopup} from "../../components/home/alipayPopup";
-import {getEleRechargePayCode} from "../../network/dorm";
 import {doAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
@@ -26,9 +25,9 @@ export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 				icon={<Feather name="credit-card" size={16} />}
 			/>
 			<SettingsSeparator />
-			{!mocked() && (
+			{!helper.mocked() && (
 				<AlipayPopup
-					onPay={(money) => getEleRechargePayCode(money).then(doAlipay)}
+					onPay={(money) => helper.getEleRechargePayCode(money).then(doAlipay)}
 					trigger={(onPress) => (
 						<SettingsItem
 							text={getStr("eleRecharge")}

@@ -11,9 +11,10 @@ import {
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
+import {retrieve} from "../../helper/src/lib/core";
+import {CALENDAR_CONFIG_URL} from "../../constants/strings";
 import {store} from "../store";
-import {Calendar} from "../../utils/calendar";
-import AV from "leancloud-storage/core";
+import {Calendar} from "../../helper/src/models/schedule/calendar";
 
 export type CalendarConfig = {
 	firstDay: string;
@@ -35,16 +36,16 @@ export type ConfigAction =
 	| {type: typeof SET_REMAINDER_SHIFT; payload: number}
 	| {type: typeof SET_LAST_BROADCAST_ID; payload: number};
 
-export const refreshCalendarConfig = async () => {
-	const payload = (
-		await new AV.Query("Config").find()
-	)[0].toJSON() as CalendarConfig;
-	store.dispatch({
-		type: SET_CALENDAR_CONFIG,
-		payload,
+export const refreshCalendarConfig = () => {
+	retrieve(CALENDAR_CONFIG_URL).then((s) => {
+		const payload = JSON.parse(s) as CalendarConfig;
+		store.dispatch({
+			type: SET_CALENDAR_CONFIG,
+			payload,
+		});
+		Calendar.firstDay = new Calendar(payload.firstDay);
+		Calendar.weekCount = payload.weekCount;
+		Calendar.semesterType = payload.semesterType;
+		Calendar.semesterId = payload.semesterId;
 	});
-	Calendar.firstDay = new Calendar(payload.firstDay);
-	Calendar.weekCount = payload.weekCount;
-	Calendar.semesterType = payload.semesterType;
-	Calendar.semesterId = payload.semesterId;
 };

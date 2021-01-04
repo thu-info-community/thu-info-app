@@ -1,11 +1,11 @@
-import {retrieve} from "./core";
+import {retrieve} from "../helper/src/lib/core";
 import {
 	ANDROID_APP_CENTER_URL,
 	IOS_APP_STORE_URL,
 	UPDATE_URL_ANDROID,
 	UPDATE_URL_IOS,
 } from "../constants/strings";
-import {currState, mocked} from "../redux/store";
+import {currState, helper} from "../redux/store";
 import {Platform} from "react-native";
 import AV from "leancloud-storage/core";
 
@@ -16,7 +16,7 @@ interface UpdateInfo {
 }
 
 export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
-	mocked()
+	helper.mocked()
 		? Promise.resolve([])
 		: Platform.OS === "ios"
 		? retrieve(UPDATE_URL_IOS, UPDATE_URL_IOS)
@@ -47,7 +47,7 @@ export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
 				]);
 
 export const getBroadcastData = () =>
-	mocked()
+	helper.mocked()
 		? Promise.resolve([])
 		: new AV.Query("Broadcast")
 				.limit(1000)

@@ -1,5 +1,5 @@
 import {store} from "../redux/store";
-import {retrieve, stringify} from "./core";
+import {retrieve, stringify} from "../helper/src/lib/core";
 import {
 	HOLE_GET_ATTENTION_URL,
 	HOLE_GET_COMMENTS_URL,
@@ -9,7 +9,7 @@ import {
 	HOLE_NEW_POST_URL,
 	HOLE_SEARCH_URL,
 } from "../constants/strings";
-import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/home/hole";
+import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/hole";
 
 export const holeConfig = {
 	foldTags: [

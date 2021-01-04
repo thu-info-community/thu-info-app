@@ -15,12 +15,15 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
-import {Calendar} from "../utils/calendar";
+import {Calendar} from "../helper/src/models/schedule/calendar";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 import {Hole} from "./states/hole";
 import {hole} from "./reducers/hole";
 import {defaultSchedule} from "./defaults";
+import {InfoHelper} from "../helper/src";
+
+export const helper = new InfoHelper("", "", "");
 
 const KeychainStorage = createKeychainStorage();
 
@@ -121,7 +124,3 @@ export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
-
-export const mocked = () =>
-	store.getState().auth.userId === "8888" &&
-	store.getState().auth.password === "8888";

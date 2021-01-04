@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import {getNewsDetail} from "src/network/news";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
@@ -9,6 +8,7 @@ import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "../../constants/strings";
 import {useColorScheme} from "react-native-appearance";
 import themedStyles from "../../utils/themedStyles";
+import {helper} from "../../redux/store";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
@@ -20,7 +20,8 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 
 	const fetchHtml = () => {
 		setRefreshing(true);
-		getNewsDetail(route.params.detail.url)
+		helper
+			.getNewsDetail(route.params.detail.url)
 			.then(([title, res]) => {
 				setHtml(`<h2>${title}</h2>${res}`);
 				setRefreshing(false);

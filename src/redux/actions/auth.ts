@@ -7,12 +7,11 @@ import {
 } from "../constants";
 import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
-import {login, logout} from "../../network/core";
 import {leanCloudInit} from "../../utils/leanCloud";
 import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
 import CookieManager from "@react-native-community/cookies";
-import {store} from "../store";
+import {helper, store} from "../store";
 
 const authAction = createAsyncAction(
 	LOGIN_REQUEST,
@@ -31,9 +30,10 @@ export const authThunk = (
 ) => (dispatch: Dispatch<AuthAction>) => {
 	dispatch(authAction.request({userId, password}));
 	CookieManager.clearAll()
-		.then(() => login(userId, password, statusIndicator))
+		.then(() => helper.login(userId, password, statusIndicator))
 		.then((r) => {
 			dispatch(authAction.success(r));
+			helper.setCredentials(r.userId, r.password);
 			// Things that should be done only once upon logged in
 			leanCloudInit();
 			refreshCalendarConfig();
@@ -47,6 +47,6 @@ export const authThunk = (
 
 export const doLogout = () => {
 	// TODO: safely remove the redux
-	logout().then(() => console.log("Successfully logged out."));
+	helper.logout().then(() => console.log("Successfully logged out."));
 	store.dispatch({type: DO_LOGOUT, payload: undefined});
 };

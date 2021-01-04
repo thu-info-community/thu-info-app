@@ -10,7 +10,7 @@ import {
 	View,
 } from "react-native";
 import {getHoleList, holeConfig, holeLogin} from "../../network/hole";
-import {FetchMode, HoleTitleCard} from "../../models/home/hole";
+import {FetchMode, HoleTitleCard} from "../../models/hole";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {NetworkRetry} from "../../components/easySnackbars";

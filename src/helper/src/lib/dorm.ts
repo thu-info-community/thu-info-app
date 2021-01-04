@@ -17,21 +17,20 @@ import {
 	TSINGHUA_HOME_LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
-import {currState, mocked} from "../redux/store";
 import {generalGetPayCode} from "../utils/generalAlipay";
 import {getCheerioText} from "../utils/cheerio";
+import {InfoHelper} from "../index";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
 
-const loginToHome = async () => {
+const loginToHome = async (helper: InfoHelper) => {
 	const validChars = new Set(
 		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~",
 	);
 	// TODO: these valid chars might be far from enough
-	const {userId} = currState().auth;
-	const password =
-		currState().credentials.dormPassword || currState().auth.password;
+	const {userId} = helper;
+	const password = helper.dormPassword || helper.password;
 	let tempPassword = "";
 	for (let i = 0; i < password.length; i++) {
 		if (validChars.has(password.charAt(i))) {
@@ -49,18 +48,28 @@ const loginToHome = async () => {
 	);
 };
 
-export const getDormScore = (): Promise<string> =>
-	retryWrapper(
-		-1,
-		retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
-			(s) =>
-				DORM_SCORE_HOST +
-				cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-		),
-	);
+export const getDormScore = (helper: InfoHelper): Promise<string> =>
+	helper.mocked()
+		? Promise.resolve(
+				"https://cloud.tsinghua.edu.cn/f/43ada07f3731439daf06/?dl=1",
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  )
+		: retryWrapper(
+				helper,
+				-1,
+				retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
+					(s) =>
+						DORM_SCORE_HOST +
+						cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+				),
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  );
 
-export const getEleRechargePayCode = async (money: number): Promise<string> => {
-	await loginToHome();
+export const getEleRechargePayCode = async (
+	helper: InfoHelper,
+	money: number,
+): Promise<string> => {
+	await loginToHome(helper);
 
 	const $ = await retrieve(
 		RECHARGE_ELE_URL,
@@ -87,10 +96,10 @@ export const getEleRechargePayCode = async (money: number): Promise<string> => {
 	return generalGetPayCode(redirect, RECHARGE_PAY_ELE_URL);
 };
 
-export const getElePayRecord = async (): Promise<
-	[string, string, string, string, string, string][]
-> => {
-	if (mocked()) {
+export const getElePayRecord = async (
+	helper: InfoHelper,
+): Promise<[string, string, string, string, string, string][]> => {
+	if (helper.mocked()) {
 		return [
 			["", "0", "2020-09-15 11:24:07", "", "10.00", "已成功"],
 			["", "1", "2020-09-06 17:38:57", "", "5.00", "已成功"],
@@ -101,7 +110,7 @@ export const getElePayRecord = async (): Promise<
 			["", "6", "2020-08-22 23:12:49", "", "5.00", "已成功"],
 		];
 	}
-	await loginToHome();
+	await loginToHome(helper);
 	const $ = await retrieve(
 		ELE_PAY_RECORD_URL,
 		RECHARGE_ELE_URL,

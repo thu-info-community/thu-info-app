@@ -1,8 +1,13 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {currState, mocked} from "../../redux/store";
-import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
+import {currState, helper, store} from "../../redux/store";
+import {SET_GRADUATE} from "../../redux/constants";
+import {
+	SettingsItem,
+	SettingsSeparator,
+	SettingsSwitch,
+} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
 import {checkUpdate} from "../../utils/checkUpdate";
@@ -11,7 +16,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {login, performGetTickets} from "../../network/core";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
@@ -31,7 +35,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			icon={<AntDesign name="creditcard" size={16} />}
 		/>
 		<SettingsSeparator />
-		{!mocked() && (
+		{!helper.mocked() && (
 			<>
 				<SettingsItem
 					text={getStr("holeSettings")}
@@ -88,8 +92,9 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 					duration: Snackbar.LENGTH_SHORT,
 				});
 				const {userId, password} = currState().auth;
-				login(userId, password)
-					.then(() => performGetTickets())
+				helper
+					.login(userId, password)
+					.then(() => helper.performGetTickets())
 					.then(() =>
 						Snackbar.show({
 							text: getStr("success"),

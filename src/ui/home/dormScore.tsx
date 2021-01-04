@@ -1,14 +1,15 @@
 import {View} from "react-native";
 import React, {useEffect, useState} from "react";
-import {getDormScore} from "../../network/dorm";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import ImageViewer from "react-native-image-zoom-viewer";
+import {helper} from "../../redux/store";
 
 export const DormScoreScreen = () => {
 	const [url, setUrl] = useState<string>();
 	useEffect(() => {
-		getDormScore()
+		helper
+			.getDormScore()
 			.then(setUrl)
 			.catch(() =>
 				Snackbar.show({
