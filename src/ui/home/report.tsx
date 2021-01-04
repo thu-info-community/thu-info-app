@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Course} from "../../helper/src/models/home/report";
+import {Course} from "../../helper/src";
 import {RefreshControl, SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,

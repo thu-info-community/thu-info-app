@@ -1,4 +1,4 @@
 [submodule "helper"]
 	path = src/helper
 	url = https://github.com/UNIDY2002/thu-info-lib.git
-	branch = migration
+	branch = main

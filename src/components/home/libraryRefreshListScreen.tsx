@@ -2,7 +2,7 @@ import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
-import {LibraryBase} from "../../helper/src/models/home/library";
+import {LibraryBase} from "../../helper/src";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";

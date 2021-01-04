@@ -79,7 +79,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	useEffect(props.getSchedule, []);
 
 	useEffect(() => {
-		if (Calendar.semesterId !== props.cache) {
+		if (CalendarClass.semesterId !== props.cache) {
 			console.log(
 				"Schedule: Corresponding cache not found. Auto fetch from server.",
 			);
@@ -251,9 +251,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 				</Text>
 				<TouchableOpacity
 					onPress={() =>
-						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
+						setWeek((o) => (week < CalendarClass.weekCount ? o + 1 : o))
 					}
-					disabled={week >= Calendar.weekCount}
+					disabled={week >= CalendarClass.weekCount}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-right"

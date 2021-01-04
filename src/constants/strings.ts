@@ -1,5 +1,7 @@
+export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
+export const HOLE_USER_AGENT = "THUInfo/nightly";
 export const JWGG_MAIN_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/jiaowugonggao/more?page=";
 export const BGTZ_MAIN_PREFIX =

@@ -1,5 +1,5 @@
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
-import {LibraryFloor} from "../../helper/src/models/home/library";
+import {LibraryFloor} from "../../helper/src";
 import {helper} from "../../redux/store";
 
 export const LibraryFloorScreen = libraryRefreshListScreen<

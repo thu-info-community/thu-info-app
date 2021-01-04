@@ -2,7 +2,7 @@ import {AuthState, LoginStatus} from "./states/auth";
 import {Schedules} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
-import {Calendar} from "../helper/src/models/schedule/calendar";
+import {CalendarClass} from "../helper/src";
 import {Cache} from "./states/cache";
 import {Hole} from "./states/hole";
 
@@ -26,10 +26,10 @@ export const defaultConfigState: Config = {
 	doNotRemind: 0,
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
-	firstDay: Calendar.firstDay,
-	weekCount: Calendar.weekCount,
-	semesterType: Calendar.semesterType,
-	semesterId: Calendar.semesterId,
+	firstDay: CalendarClass.firstDay,
+	weekCount: CalendarClass.weekCount,
+	semesterType: CalendarClass.semesterType,
+	semesterId: CalendarClass.semesterId,
 	graduate: false,
 	newGPA: true,
 	bx: false,

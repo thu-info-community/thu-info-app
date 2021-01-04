@@ -1,6 +1,6 @@
 import {Text} from "react-native";
 import React, {useEffect, useState} from "react";
-import {JoggingRecord} from "../../helper/src/models/home/jogging";
+import {JoggingRecord} from "../../helper/src";
 import {helper} from "../../redux/store";
 
 export const JoggingScreen = () => {

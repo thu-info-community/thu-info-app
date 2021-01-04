@@ -10,7 +10,7 @@ import {
 import {Dispatch} from "redux";
 import {PrimarySchedule, SecondarySchedule} from "../states/schedule";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
-import {Lesson} from "../../helper/src/models/schedule/schedule";
+import {Lesson} from "../../helper/src";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeBlock} from "../../helper/src/models/schedule/schedule";
 import {currState, helper} from "../store";

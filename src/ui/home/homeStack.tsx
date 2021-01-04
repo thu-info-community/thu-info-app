@@ -14,11 +14,7 @@ import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
 import {DormScoreScreen} from "./dormScore";
 import {LibraryScreen} from "./library";
-import {
-	Library,
-	LibraryFloor,
-	LibrarySection,
-} from "../../helper/src/models/home/library";
+import {Library, LibraryFloor, LibrarySection} from "../../helper/src";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";

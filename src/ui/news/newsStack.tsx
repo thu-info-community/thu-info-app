@@ -6,8 +6,8 @@ import {
 import {NewsScreen} from "./news";
 import {getStr} from "../../utils/i18n";
 import {NewsDetailScreen} from "./newsDetail";
-import {sourceTag, newsSlice} from "src/helper/src/lib/news";
 import {RouteProp} from "@react-navigation/native";
+import {newsSlice, sourceTag} from "../../helper/src";
 
 type NewsStackParamList = {
 	News: {source: sourceTag};

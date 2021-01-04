@@ -9,8 +9,8 @@ import {
 	Text,
 	View,
 } from "react-native";
-import {Record} from "../../helper/src/models/home/expenditure";
-import {Calendar} from "../../helper/src/models/schedule/calendar";
+import {Record} from "../../helper/src";
+import {CalendarClass} from "../../helper/src";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
@@ -73,7 +73,7 @@ export const ExpenditureUI = ({shift}: {shift: number}) => {
 		[Record[], number, number, number]
 	>([[], 0, 0, 0]);
 
-	const today = new Calendar();
+	const today = new CalendarClass();
 	const [beg, setBeg] = useState(today.date.add(-1, "month").toDate());
 	const [end, setEnd] = useState(today.date.toDate());
 	const [refreshing, setRefreshing] = useState(false);

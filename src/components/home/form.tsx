@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {View} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {TouchableWithoutFeedback} from "react-native-gesture-handler";
-import {InputTag} from "../../helper/src/models/home/assessment";
+import {InputTag} from "../../helper/src";
 
 interface starRatingProps {
 	starTotal?: number;

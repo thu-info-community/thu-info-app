@@ -15,7 +15,7 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
-import {Calendar} from "../helper/src/models/schedule/calendar";
+import {CalendarClass} from "../helper/src";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 import {Hole} from "./states/hole";
@@ -73,7 +73,7 @@ const calendarConfigTransform = createTransform(
 	}),
 	(state) => ({
 		...state,
-		firstDay: new Calendar(state.firstDay),
+		firstDay: new CalendarClass(state.firstDay),
 	}),
 	{whitelist: ["config"]},
 );

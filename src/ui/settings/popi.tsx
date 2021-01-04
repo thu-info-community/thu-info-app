@@ -1,8 +1,8 @@
 import React from "react";
 import {Text, View} from "react-native";
-import {retrieve} from "../../helper/src/lib/core";
 import {POPI_URL} from "../../constants/strings";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import {retrieve} from "../../utils/network";
 
 export const PopiScreen = simpleRefreshListScreen<[string, string]>(
 	() => retrieve(POPI_URL).then(JSON.parse),

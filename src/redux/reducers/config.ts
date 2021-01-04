@@ -14,7 +14,7 @@ import {
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
-import {Calendar} from "../../helper/src/models/schedule/calendar";
+import {CalendarClass} from "../../helper/src";
 
 export const config = (
 	state: Config = defaultConfigState,
@@ -29,7 +29,7 @@ export const config = (
 			const {firstDay, weekCount, semesterType, semesterId} = action.payload;
 			return {
 				...state,
-				firstDay: new Calendar(firstDay),
+				firstDay: new CalendarClass(firstDay),
 				weekCount,
 				semesterType,
 				semesterId,

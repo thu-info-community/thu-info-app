@@ -1,18 +1,24 @@
-import {retrieve} from "../helper/src/lib/core";
 import {
 	ANDROID_APP_CENTER_URL,
+	BROADCAST_URL,
 	IOS_APP_STORE_URL,
+	TSINGHUA_CLOUD_URL,
 	UPDATE_URL_ANDROID,
 	UPDATE_URL_IOS,
 } from "../constants/strings";
 import {currState, helper} from "../redux/store";
 import {Platform} from "react-native";
-import AV from "leancloud-storage/core";
+import {retrieve} from "../utils/network";
 
 interface UpdateInfo {
 	versionName: string;
 	url: string;
 	description: string;
+}
+
+interface Broadcast {
+	message: string;
+	id: number;
 }
 
 export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
@@ -49,19 +55,10 @@ export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
 export const getBroadcastData = () =>
 	helper.mocked()
 		? Promise.resolve([])
-		: new AV.Query("Broadcast")
-				.limit(1000)
-				.find()
-				.then((r) =>
-					r.map((it) => ({
-						message: it.get("message") as string,
-						createdAt: Number(it.createdAt),
-					})),
-				)
-				.then((o) =>
+		: retrieve(BROADCAST_URL, TSINGHUA_CLOUD_URL)
+				.then(JSON.parse)
+				.then((o: Broadcast[]) =>
 					o
-						.filter(
-							(it) => it.createdAt > (currState().config.lastBroadcast ?? 0),
-						)
-						.sort((a, b) => b.createdAt - a.createdAt),
+						.filter((it) => it.id > (currState().config.lastBroadcast ?? 0))
+						.sort((a, b) => b.id - a.id),
 				);

@@ -1,5 +1,5 @@
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
-import {LibrarySection} from "../../helper/src/models/home/library";
+import {LibrarySection} from "../../helper/src";
 import {helper} from "../../redux/store";
 
 export const LibrarySectionScreen = libraryRefreshListScreen<

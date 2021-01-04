@@ -11,10 +11,10 @@ import {
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
-import {retrieve} from "../../helper/src/lib/core";
 import {CALENDAR_CONFIG_URL} from "../../constants/strings";
 import {store} from "../store";
-import {Calendar} from "../../helper/src/models/schedule/calendar";
+import {CalendarClass} from "../../helper/src";
+import {retrieve} from "../../utils/network";
 
 export type CalendarConfig = {
 	firstDay: string;
@@ -43,9 +43,9 @@ export const refreshCalendarConfig = () => {
 			type: SET_CALENDAR_CONFIG,
 			payload,
 		});
-		Calendar.firstDay = new Calendar(payload.firstDay);
-		Calendar.weekCount = payload.weekCount;
-		Calendar.semesterType = payload.semesterType;
-		Calendar.semesterId = payload.semesterId;
+		CalendarClass.firstDay = new CalendarClass(payload.firstDay);
+		CalendarClass.weekCount = payload.weekCount;
+		CalendarClass.semesterType = payload.semesterType;
+		CalendarClass.semesterId = payload.semesterId;
 	});
 };
