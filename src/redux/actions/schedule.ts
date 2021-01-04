@@ -13,7 +13,7 @@ import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Lesson} from "../../helper/src/models/schedule/schedule";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeBlock} from "../../helper/src/models/schedule/schedule";
-import {helper} from "../store";
+import {currState, helper} from "../store";
 
 const scheduleAction = createAsyncAction(
 	SCHEDULE_REQUEST,

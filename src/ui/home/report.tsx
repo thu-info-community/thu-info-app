@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Course, semesterWeight} from "../../helper/src/models/home/report";
+import {Course} from "../../helper/src/models/home/report";
 import {RefreshControl, SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,
@@ -13,6 +13,25 @@ import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {useColorScheme} from "react-native-appearance";
+
+export const semesterWeight = (semester: string): number => {
+	const year = Number(semester.slice(0, 4));
+	let term: number;
+	switch (semester[5]) {
+		case "春":
+			term = 0;
+			break;
+		case "夏":
+			term = 1;
+			break;
+		case "秋":
+			term = 2;
+			break;
+		default:
+			term = 3;
+	}
+	return year * 10 + term;
+};
 
 type Section = SectionListData<Course> & ReportHeaderProps;
 
@@ -52,10 +71,12 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
+	const {graduate, bx, newGPA} = currState().config;
+
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getReport()
+			.getReport(graduate, bx, newGPA)
 			.then((res) => {
 				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);
