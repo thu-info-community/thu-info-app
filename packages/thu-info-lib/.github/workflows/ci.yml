@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags')
     steps:
+      - uses: actions/checkout@v2
       - name: Build library
         run: |
           yarn build
