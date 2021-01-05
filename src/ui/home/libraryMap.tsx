@@ -2,12 +2,12 @@ import {LibraryMapRouteProp, LibrarySeatMapRouteProp} from "./homeStack";
 import {Dimensions, Image, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {LIBRARY_MAP_URL} from "../../constants/strings";
-import {LibrarySection} from "../../helper/src";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
+import {LibrarySection} from "thu-info-lib/lib/models/home/library";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);

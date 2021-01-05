@@ -2,9 +2,9 @@ import {AuthState, LoginStatus} from "./states/auth";
 import {Schedules} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
-import {CalendarClass} from "../helper/src";
 import {Cache} from "./states/cache";
 import {Hole} from "./states/hole";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 
 export const defaultAuthState: AuthState = {
 	userId: "",
@@ -26,10 +26,10 @@ export const defaultConfigState: Config = {
 	doNotRemind: 0,
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
-	firstDay: CalendarClass.firstDay,
-	weekCount: CalendarClass.weekCount,
-	semesterType: CalendarClass.semesterType,
-	semesterId: CalendarClass.semesterId,
+	firstDay: Calendar.firstDay,
+	weekCount: Calendar.weekCount,
+	semesterType: Calendar.semesterType,
+	semesterId: Calendar.semesterId,
 	graduate: false,
 	newGPA: true,
 	bx: false,

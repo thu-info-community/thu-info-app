@@ -12,17 +12,18 @@ import {
 	activeWeek,
 	Schedule,
 	ScheduleType,
-} from "../../helper/src/models/schedule/schedule";
+} from "thu-info-lib/lib/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
 import {scheduleThunk} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
-import {Calendar} from "../../helper/src/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {Choice} from "src/redux/reducers/schedule";
 import {useColorScheme} from "react-native-appearance";
 
 interface ScheduleProps {
@@ -79,7 +80,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	useEffect(props.getSchedule, []);
 
 	useEffect(() => {
-		if (CalendarClass.semesterId !== props.cache) {
+		if (Calendar.semesterId !== props.cache) {
 			console.log(
 				"Schedule: Corresponding cache not found. Auto fetch from server.",
 			);
@@ -251,9 +252,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 				</Text>
 				<TouchableOpacity
 					onPress={() =>
-						setWeek((o) => (week < CalendarClass.weekCount ? o + 1 : o))
+						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
 					}
-					disabled={week >= CalendarClass.weekCount}
+					disabled={week >= Calendar.weekCount}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-right"

@@ -13,8 +13,8 @@ import {
 } from "../constants";
 import {CALENDAR_CONFIG_URL} from "../../constants/strings";
 import {store} from "../store";
-import {CalendarClass} from "../../helper/src";
 import {retrieve} from "../../utils/network";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 
 export type CalendarConfig = {
 	firstDay: string;
@@ -43,9 +43,9 @@ export const refreshCalendarConfig = () => {
 			type: SET_CALENDAR_CONFIG,
 			payload,
 		});
-		CalendarClass.firstDay = new CalendarClass(payload.firstDay);
-		CalendarClass.weekCount = payload.weekCount;
-		CalendarClass.semesterType = payload.semesterType;
-		CalendarClass.semesterId = payload.semesterId;
+		Calendar.firstDay = new Calendar(payload.firstDay);
+		Calendar.weekCount = payload.weekCount;
+		Calendar.semesterType = payload.semesterType;
+		Calendar.semesterId = payload.semesterId;
 	});
 };

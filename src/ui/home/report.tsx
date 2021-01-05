@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {Course} from "../../helper/src";
 import {RefreshControl, SectionList, SectionListData} from "react-native";
 import {
 	ReportFooter,
@@ -11,7 +10,8 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {helper, State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
+import {Course} from "thu-info-lib/lib/models/home/report";
 import {useColorScheme} from "react-native-appearance";
 
 export const semesterWeight = (semester: string): number => {

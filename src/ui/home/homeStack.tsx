@@ -14,7 +14,6 @@ import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
 import {DormScoreScreen} from "./dormScore";
 import {LibraryScreen} from "./library";
-import {Library, LibraryFloor, LibrarySection} from "../../helper/src";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
@@ -29,6 +28,11 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
 import {HoleImageScreen} from "./holeImage";
+import {
+	Library,
+	LibraryFloor,
+	LibrarySection,
+} from "thu-info-lib/lib/models/home/library";
 import {useColorScheme} from "react-native-appearance";
 
 export type HomeStackParamList = {

@@ -7,7 +7,7 @@ import {NewsScreen} from "./news";
 import {getStr} from "../../utils/i18n";
 import {NewsDetailScreen} from "./newsDetail";
 import {RouteProp} from "@react-navigation/native";
-import {newsSlice, sourceTag} from "../../helper/src";
+import {newsSlice, sourceTag} from "thu-info-lib/lib/models/news/news";
 
 type NewsStackParamList = {
 	News: {source: sourceTag};

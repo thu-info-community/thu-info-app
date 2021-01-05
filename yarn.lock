@@ -1581,20 +1581,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/cheerio@0.22.23":
-  version "0.22.23"
-  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.23.tgz#74bcfee9c5ee53f619711dca953a89fe5cfa4eb4"
-  integrity sha512-QfHLujVMlGqcS/ePSf3Oe5hK3H8wi/yN2JYuxSB1U10VvW1fO3K8C+mURQesFYS1Hn7lspOsTT75SKq/XtydQg==
-  dependencies:
-    "@types/node" "*"
-
-"@types/convert-excel-to-json@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@types/convert-excel-to-json/-/convert-excel-to-json-1.7.0.tgz#6dafed3c564b948b0f938601dc6ef231c00d6ec2"
-  integrity sha512-a64gWsxoRYuUjJz/wf6qMtsxqQtoEcrH1V7MkWDdhf/xfl8a/6yUk9hk58pVoKcRe+n/KCCVuz+8TfNXiHxniw==
-  dependencies:
-    "@types/node" "*"
-
 "@types/cookiejar@*":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@types/cookiejar/-/cookiejar-2.1.2.tgz#66ad9331f63fe8a3d3d9d8c6e3906dd10f6446e8"
@@ -1671,13 +1657,6 @@
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
   integrity sha512-3c+yGKvVP5Y9TYBEibGNR+kLtijnj7mYrXRg+WpFb2X9xm04g/DXYkfg4hmzJQosc9snFNUPkbYIhu+KAm6jJw==
-
-"@types/md5@2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.2.1.tgz#0e2d65d8f6cc91aafbc9be5a4c08fee9250406ce"
-  integrity sha512-bZB0jqBL7JETFqvRKyuDETFceFaVcLm2MBPP5LFEEL/SZuqLnyvzF37tXmMERDncC3oeEj/fOUw88ftJeMpZaw==
-  dependencies:
-    "@types/node" "*"
 
 "@types/node@*":
   version "14.14.6"
@@ -9025,6 +9004,17 @@ through@^2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
+
+thu-info-lib@0.1.1-alpha.2:
+  version "0.1.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.1-alpha.2.tgz#0cfcd384e4a0531336610bb97101f266986f7255"
+  integrity sha512-qJN10IZpbSosVK9z6ufGCpxpICd7R1gqIe74SWFGl3icR7Zv1uiCgziy/X+A48Bbv4irt89r+gHLmNJm5D63/g==
+  dependencies:
+    cheerio "0.22.0"
+    convert-excel-to-json "1.7.0"
+    dayjs "1.10.1"
+    iconv-lite "0.6.2"
+    md5 "2.3.0"
 
 time-stamp@^1.0.0:
   version "1.1.0"

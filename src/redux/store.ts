@@ -15,13 +15,13 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
-import {CalendarClass} from "../helper/src";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 import {Hole} from "./states/hole";
 import {hole} from "./reducers/hole";
+import {InfoHelper} from "thu-info-lib";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
-import {InfoHelper} from "../helper/src";
 
 export const helper = new InfoHelper("", "", "");
 
@@ -73,7 +73,7 @@ const calendarConfigTransform = createTransform(
 	}),
 	(state) => ({
 		...state,
-		firstDay: new CalendarClass(state.firstDay),
+		firstDay: new Calendar(state.firstDay),
 	}),
 	{whitelist: ["config"]},
 );

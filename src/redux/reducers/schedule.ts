@@ -10,8 +10,12 @@ import {
 	SCHEDULE_UPDATE_ALIAS,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 } from "../constants";
-import {CalendarClass, LessonTypeEnum} from "../../helper/src";
-import {Exam, Lesson} from "../../helper/src";
+import {
+	Exam,
+	Lesson,
+	LessonType,
+} from "thu-info-lib/lib/models/schedule/schedule";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 
 export enum Choice {
 	ONCE,

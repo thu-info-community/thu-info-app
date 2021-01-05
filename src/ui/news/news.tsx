@@ -31,7 +31,7 @@ import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import themes from "../../assets/themes/themes";
-import {newsSlice, sourceTag} from "thu-info-lib/src/models/news/news";
+import {newsSlice, sourceTag} from "thu-info-lib/lib/models/news/news";
 import {useColorScheme} from "react-native-appearance";
 import themedStyles from "../../utils/themedStyles";
 

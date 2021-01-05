@@ -1,5 +1,5 @@
+import {LibraryFloor} from "thu-info-lib/lib/models/home/library";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
-import {LibraryFloor} from "../../helper/src";
 import {helper} from "../../redux/store";
 
 export const LibraryFloorScreen = libraryRefreshListScreen<

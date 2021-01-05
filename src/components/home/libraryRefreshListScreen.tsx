@@ -2,13 +2,13 @@ import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
-import {LibraryBase} from "../../helper/src";
 import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {toggleSocketState} from "../../network/misc";
+import {LibraryBase} from "thu-info-lib/lib/models/home/library";
 import {useColorScheme} from "react-native-appearance";
 import themes, {Theme} from "../../assets/themes/themes";
 

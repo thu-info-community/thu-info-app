@@ -1,4 +1,4 @@
-import {Schedule} from "../../helper/src";
+import {Schedule} from "thu-info-lib/lib/models/schedule/schedule";
 
 export interface PrimarySchedule {
 	primary: Lesson[];

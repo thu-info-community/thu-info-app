@@ -16,7 +16,7 @@ import {
 	Schedule,
 	ScheduleType,
 	TimeBlock,
-} from "../../models/schedule/schedule";
+} from "thu-info-lib/lib/models/schedule/schedule";
 import {
 	SCHEDULE_DEL_OR_HIDE,
 	SCHEDULE_REMOVE_HIDDEN_RULE,

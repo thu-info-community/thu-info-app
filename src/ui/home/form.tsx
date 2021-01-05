@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Text, StyleSheet, View, RefreshControl} from "react-native";
-import {Form, Person} from "src/helper/src";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {
@@ -14,6 +13,7 @@ import themes from "../../assets/themes/themes";
 import {FormRouteProp, HomeNav} from "./homeStack";
 import {useColorScheme} from "react-native-appearance";
 import {helper} from "../../redux/store";
+import {Form, Person} from "thu-info-lib/lib/models/home/assessment";
 
 export const FormScreen = ({
 	route,

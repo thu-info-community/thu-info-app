@@ -10,10 +10,10 @@ import {
 import {Dispatch} from "redux";
 import {PrimarySchedule, SecondarySchedule} from "../states/schedule";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
-import {Lesson} from "../../helper/src";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeBlock} from "../../helper/src/models/schedule/schedule";
 import {currState, helper} from "../store";
+import {Lesson} from "thu-info-lib/lib/models/schedule/schedule";
 
 const scheduleAction = createAsyncAction(
 	SCHEDULE_REQUEST,

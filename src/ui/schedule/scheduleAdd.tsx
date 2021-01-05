@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import {connect} from "react-redux";
 import themes from "../../assets/themes/themes";
-import {CalendarClass} from "../../helper/src";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
@@ -19,12 +18,13 @@ import {
 	Schedule,
 	ScheduleType,
 	TimeBlock,
-} from "../../models/schedule/schedule";
+} from "thu-info-lib/lib/models/schedule/schedule";
 import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
+import {Lesson, LessonType} from "thu-info-lib/lib/models/schedule/schedule";
+import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 import {useColorScheme} from "react-native-appearance";
-import {Lesson, LessonType} from "thu-info-lib/src/models/schedule/schedule";
 
 interface ScheduleAddProps {
 	scheduleList: Schedule[];
@@ -66,7 +66,7 @@ const ScheduleAddUI = ({
 	];
 
 	const [weeks, setWeeks] = useState(
-		new Array<boolean>(CalendarClass.weekCount + 1).fill(false),
+		new Array<boolean>(Calendar.weekCount + 1).fill(false),
 	);
 
 	const [sessions, setSessions] = useState(new Array<boolean>(16).fill(false));
@@ -163,7 +163,7 @@ const ScheduleAddUI = ({
 			</View>
 			<Text style={style.textHeader}>{getStr("selectWeek")}</Text>
 			<View>
-				{Array.from(new Array(CalendarClass.weekCount / 6), (_, i) => (
+				{Array.from(new Array(Calendar.weekCount / 6), (_, i) => (
 					<View key={i} style={{flexDirection: "row"}}>
 						{Array.from(new Array(6), (__, j) => {
 							const index = i * 6 + j + 1;
@@ -192,7 +192,7 @@ const ScheduleAddUI = ({
 					<TouchableOpacity
 						style={style.pressable}
 						onPress={updateWeeks((original) => {
-							for (let i = 1; i <= CalendarClass.weekCount; i += 2) {
+							for (let i = 1; i <= Calendar.weekCount; i += 2) {
 								original[i] = true;
 							}
 						})}>
@@ -201,7 +201,7 @@ const ScheduleAddUI = ({
 					<TouchableOpacity
 						style={style.pressable}
 						onPress={updateWeeks((original) => {
-							for (let i = 1; i <= CalendarClass.weekCount; i += 2) {
+							for (let i = 1; i <= Calendar.weekCount; i += 2) {
 								original[i] = false;
 							}
 						})}>
@@ -210,7 +210,7 @@ const ScheduleAddUI = ({
 					<TouchableOpacity
 						style={style.pressable}
 						onPress={updateWeeks((original) => {
-							for (let i = 2; i <= CalendarClass.weekCount; i += 2) {
+							for (let i = 2; i <= Calendar.weekCount; i += 2) {
 								original[i] = true;
 							}
 						})}>
@@ -219,7 +219,7 @@ const ScheduleAddUI = ({
 					<TouchableOpacity
 						style={style.pressable}
 						onPress={updateWeeks((original) => {
-							for (let i = 2; i <= CalendarClass.weekCount; i += 2) {
+							for (let i = 2; i <= Calendar.weekCount; i += 2) {
 								original[i] = false;
 							}
 						})}>
@@ -252,7 +252,7 @@ const ScheduleAddUI = ({
 					);
 					const ranges = Array.from(heads, (v, k) => [v, tails[k]]);
 					const selectedWeeks = Array.from(
-						new Array(CalendarClass.weekCount),
+						new Array(Calendar.weekCount),
 						(_, index) => index + 1,
 					).filter((week) => weeks[week]);
 					let newSchedule = {
