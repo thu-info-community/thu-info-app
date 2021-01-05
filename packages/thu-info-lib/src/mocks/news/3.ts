@@ -161,4 +161,4 @@ function chuanold(oldid,nrid)
 </body>
 </html>
 
-`;
+` as string;

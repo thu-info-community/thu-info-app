@@ -145,4 +145,4 @@ export default `
 </td>
   </tr>
 </table>
-`;
+` as string;

@@ -192,4 +192,4 @@ body {
 </body>
 </html>
 
-`;
+` as string;

@@ -204,4 +204,4 @@ jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":
 
 </html>
 
-`;
+` as string;

@@ -185,4 +185,4 @@ body {
  
 </table> 
 </body>
-</html>`;
+</html>` as string;

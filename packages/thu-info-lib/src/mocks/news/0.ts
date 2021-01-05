@@ -377,4 +377,4 @@ function searchBlur(text){
 
 </body>
 </html>
-`;
+` as string;
