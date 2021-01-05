@@ -1,4 +1,4 @@
-name: Run Tests
+name: Test and Publish
 
 on: push
 
@@ -21,3 +21,23 @@ jobs:
         run: |
           yarn lint
           yarn test
+  build-and-publish:
+    needs: unit-test-and-style-check
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+      - name: Build library
+        run: |
+          yarn build
+      - name: Prepare for publishing
+        id: prepare_publish
+        run: |
+          export ref='${{ github.ref }}'
+          export tag=${ref:11}
+          echo "::set-output name=tag::$tag"
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TAG: ${{ steps.prepare_publish.outputs.tag }}
+        run: |
+          yarn publish --new-version $TAG -tag alpha
