@@ -1,8 +1,10 @@
+import {act} from "react-test-renderer";
 import {Calendar} from "../../utils/calendar";
 
-export enum LessonType {
+export enum ScheduleType {
 	PRIMARY,
 	SECONDARY,
+	EXAM,
 	CUSTOM,
 }
 
@@ -52,6 +54,7 @@ const examEndMap: {[key: string]: number} = {
 	"21:00": 13,
 };
 
+/*
 export interface Lesson {
 	type: LessonType;
 	title: string;
@@ -71,55 +74,91 @@ export interface Exam {
 	begin: number;
 	end: number;
 }
+*/
 
-export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
-	const primaryList: Lesson[] = [];
-	const examList: Exam[] = [];
+interface timeBlock {
+	week: number;
+	dayOfWeek: number;
+	courseNum: number;
+}
+
+export class Schedule {
+	constructor(
+		readonly name: string,
+		readonly location: string,
+		readonly activeTime: timeBlock[],
+		readonly delOrHideTime: timeBlock[],
+		readonly type: ScheduleType,
+	) {}
+
+	public addActiveTimeBlocks(
+		week: number,
+		dayOfWeek: number,
+		begin: number,
+		end: number,
+	) {
+		for (let i = begin; i <= end; ++i) {
+			this.activeTime.push({
+				week: week,
+				dayOfWeek: dayOfWeek,
+				courseNum: i,
+			});
+		}
+	}
+
+	public hideOnce(time: timeBlock) {
+		let ind: number = this.activeTime.indexOf(time);
+		if (ind !== -1) {
+			this.delOrHideTime.push(this.activeTime[ind]);
+			this.activeTime.splice(ind, 1);
+		}
+	}
+
+	public unhideOnce(time: timeBlock) {
+		let ind: number = this.delOrHideTime.indexOf(time);
+		if (ind !== -1) {
+			this.activeTime.push(this.activeTime[ind]);
+			this.delOrHideTime.splice(ind, 1);
+		}
+	}
+}
+
+export const parseJSON = (json: any[]): Schedule[] => {
+	let scheduleList: Schedule[] = [];
 	json.forEach((o) => {
 		try {
+			const date = new Calendar(o.nq);
 			switch (o.fl) {
 				case "上课": {
-					const title = o.nr;
-					const locale = o.dd || "";
-					const date = new Calendar(o.nq);
-					const week = date.weekNumber;
-					const dayOfWeek = date.dayOfWeek;
-					const begin = beginMap[o.kssj];
-					const end = endMap[o.jssj];
-					if (
-						primaryList.length > 0 &&
-						title === primaryList[primaryList.length - 1].title &&
-						locale === primaryList[primaryList.length - 1].locale &&
-						week === primaryList[primaryList.length - 1].week &&
-						dayOfWeek === primaryList[primaryList.length - 1].dayOfWeek &&
-						begin <= primaryList[primaryList.length - 1].end + 1
-					) {
-						primaryList[primaryList.length - 1].end = end;
+					// TODO: use id to detect duplication
+					let lessonList = scheduleList.filter((val) => val.name === o.nr);
+					let lesson: Schedule;
+					if (lessonList.length) {
+						lesson = lessonList[0];
 					} else {
-						primaryList.push({
-							type: LessonType.PRIMARY,
-							title,
-							locale,
-							week,
-							dayOfWeek,
-							begin,
-							end,
-						});
+						scheduleList.push(
+							new Schedule(o.nr, o.dd || "", [], [], ScheduleType.PRIMARY),
+						);
+						lesson = scheduleList[scheduleList.length - 1];
 					}
+					lesson.addActiveTimeBlocks(
+						date.weekNumber,
+						date.dayOfWeek,
+						beginMap[o.kssj],
+						endMap[o.jssj],
+					);
 					break;
 				}
 				case "考试": {
-					const date = new Calendar(o.nq);
-					const week = date.weekNumber;
-					const dayOfWeek = date.dayOfWeek;
-					examList.push({
-						title: o.nr,
-						locale: o.dd || "",
-						week,
-						dayOfWeek,
-						begin: examBeginMap[o.kssj],
-						end: examEndMap[o.jssj],
-					});
+					scheduleList.push(
+						new Schedule(o.nr, o.dd || "", [], [], ScheduleType.EXAM),
+					);
+					scheduleList[scheduleList.length - 1].addActiveTimeBlocks(
+						date.weekNumber,
+						date.dayOfWeek,
+						examBeginMap[o.kssj],
+						examEndMap[o.jssj],
+					);
 					break;
 				}
 			}
@@ -127,7 +166,7 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
 			console.error(e);
 		}
 	});
-	return [primaryList, examList];
+	return scheduleList;
 };
 
 export const parseSecondaryWeek = (
@@ -236,6 +275,7 @@ export const parseScript = (
 	return verbose ? verboseResult : result;
 };
 
+/*
 export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>
 	rules.some(
 		(it) =>
@@ -247,3 +287,4 @@ export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>
 					it.end === lesson.end &&
 					(it.week === 0 || it.week === lesson.week))),
 	);
+*/

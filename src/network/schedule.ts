@@ -8,12 +8,7 @@ import {
 	SECONDARY_URL,
 	JXRL_YJS_PREFIX,
 } from "../constants/strings";
-import {
-	Exam,
-	Lesson,
-	parseJSON,
-	parseScript,
-} from "../models/schedule/schedule";
+import {Schedule, parseJSON, parseScript} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 import {currState, mocked} from "../redux/store";
 

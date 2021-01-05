@@ -4,10 +4,22 @@ import {
 	Text,
 	Dimensions,
 	TouchableOpacity,
+	RefreshControl,
 } from "react-native";
-import React, {ReactElement, useState, useContext, useRef} from "react";
+import React, {
+	ReactElement,
+	useState,
+	useContext,
+	useRef,
+	useEffect,
+} from "react";
 import {connect} from "react-redux";
-import {Exam, Lesson} from "../../models/schedule/schedule";
+import {
+	Exam,
+	Lesson,
+	LessonType,
+	matchHiddenRules,
+} from "../../models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
 import {
@@ -21,10 +33,10 @@ import {Calendar} from "../../utils/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
-import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import Snackbar from "react-native-snackbar";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -71,7 +83,11 @@ const OptionButton = ({
 
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
+	const [overlap, setOverlap] = useState(false);
 	const viewShot = useRef<ViewShot>(null);
+
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
 
 	const timeBlockNum = 14;
 	const daysInWeek = 7;
@@ -81,6 +97,26 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const unitHeight = 80;
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
+
+	useEffect(() => {
+		if (Calendar.semesterId !== props.cache) {
+			console.log(
+				"Schedule: Corresponding cache not found. Auto fetch from server.",
+			);
+			props.getPrimary();
+			props.getSecondary();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.cache]);
+
+	useEffect(() => {
+		if (overlap) {
+			Snackbar.show({
+				text: getStr("scheduleOverlapWarning"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
+	}, [overlap]);
 
 	const horizontalLine = () => (
 		<View style={{backgroundColor: "lightgray", height: 1}} />
@@ -164,19 +200,30 @@ const ScheduleUI = (props: ScheduleProps) => {
 		return <View style={{flex: 1}}>{rowList}</View>;
 	};
 
-	// TODO: update it to add secondary
 	const allSchedule = () => {
-		let components: ReactElement[] = [];
-		props.primary.forEach((val) => {
-			components.push(
+		return props.primary
+			.concat(props.secondary)
+			.filter((it) => !matchHiddenRules(it, props.hiddenRules))
+			.concat(props.custom)
+			.concat(
+				props.exam.map((e) => ({
+					type: LessonType.PRIMARY,
+					title: "[考试]" + e.title,
+					locale: "当前版本暂不支持显示地点",
+					week: e.week,
+					dayOfWeek: e.dayOfWeek,
+					begin: e.begin,
+					end: e.end,
+				})),
+			)
+			.filter((lesson) => lesson.week === week)
+			.map((lesson) => (
 				<Schedule
-					lessonInfo={val}
+					lessonInfo={lesson}
 					gridHeight={unitHeight}
 					gridWidth={unitWidth}
-				/>,
-			);
-		});
-		return components;
+				/>
+			));
 	};
 
 	return (
@@ -220,7 +267,18 @@ const ScheduleUI = (props: ScheduleProps) => {
 					/>
 				</TouchableOpacity>
 			</View>
-			<ScrollView style={{flex: 1, flexDirection: "column"}}>
+			<ScrollView
+				style={{flex: 1, flexDirection: "column"}}
+				refreshControl={
+					<RefreshControl
+						refreshing={props.primaryRefreshing || props.secondaryRefreshing}
+						onRefresh={() => {
+							props.getPrimary();
+							props.getSecondary();
+						}}
+						colors={[theme.colors.accent]}
+					/>
+				}>
 				<ViewShot ref={viewShot}>
 					{horizontalLine()}
 					{basicGrid()}
