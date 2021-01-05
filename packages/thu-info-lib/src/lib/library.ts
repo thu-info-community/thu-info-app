@@ -25,7 +25,6 @@ import "../utils/extensions";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
-import AV from "leancloud-storage/core";
 import {InfoHelper} from "../index";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -428,30 +427,23 @@ export const getLibrarySeatList = (
 ): Promise<LibrarySeat[]> =>
     getLibraryDay(id, dateChoice).then(
         ({day, startTime, endTime, segmentId, today}) =>
-            Promise.all([
-                fetchJson(
-                    LIBRARY_SEATS_URL +
-						"?" +
-						stringify({area: id, segment: segmentId, day, startTime: today ? currentTime() : startTime, endTime})),
-                new AV.Query("Sockets").equalTo("sectionId", id).limit(1000).find(),
-            ]).then(([r, s]) =>
-                r
-                    .map((node: any) => ({
-                        id: node.id,
-                        zhName: node.name,
-                        zhNameTrace: zhNameTrace + " - " + node.name,
-                        enName: node.name,
-                        enNameTrace: enNameTrace + " - " + node.name,
-                        valid: node.status === 1,
-                        type: node.area_type,
-                        hasSocket: s.find((it) => it.get("seatId") === node.id)?.get("available") ?? false,
-                        lcObjId: s.find((it) => it.get("seatId") === node.id)?.get("objectId"),
-                    }))
-                    .sort(
-                        (a: LibrarySeat, b: LibrarySeat) =>
-                            weightedValidityAndId(a) - weightedValidityAndId(b),
-                    ),
-            ),
+            fetchJson(LIBRARY_SEATS_URL + "?" + stringify({area: id, segment: segmentId, day, startTime: today ? currentTime() : startTime, endTime}))
+                .then((r) =>
+                    r
+                        .map((node: any) => ({
+                            id: node.id,
+                            zhName: node.name,
+                            zhNameTrace: zhNameTrace + " - " + node.name,
+                            enName: node.name,
+                            enNameTrace: enNameTrace + " - " + node.name,
+                            valid: node.status === 1,
+                            type: node.area_type,
+                        }))
+                        .sort(
+                            (a: LibrarySeat, b: LibrarySeat) =>
+                                weightedValidityAndId(a) - weightedValidityAndId(b),
+                        ),
+                ),
     );
 
 const getAccessToken = (helper: InfoHelper): Promise<string> =>
