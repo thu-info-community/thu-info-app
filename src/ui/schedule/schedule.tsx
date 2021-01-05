@@ -10,6 +10,7 @@ import {
 } from "../../redux/actions/schedule";
 import {Choice} from "src/redux/reducers/schedule";
 import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+import {Schedule} from "src/components/schedule/schedule";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -32,10 +33,12 @@ interface ScheduleProps {
 const ScheduleUI = (props: ScheduleProps) => {
 	const timeBlockNum = 14;
 	const daysInWeek = 7;
+	const borderTotWidth = daysInWeek + 1;
 
 	// TODO: let it able to be modified
 	const unitHeight = 80;
-	const unitHalfWidth = Dimensions.get("window").width / (2 * daysInWeek + 1);
+	const unitWidth =
+		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
 
 	const horizontalLine = () => (
 		<View style={{backgroundColor: "lightgray", height: 1}} />
@@ -53,7 +56,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 							borderLeftWidth: ind ? 1 : 2,
 							alignContent: "center",
 							justifyContent: "center",
-						}}>
+						}}
+						key={`0-${ind + 1}`}>
 						<Text style={{textAlign: "center", color: "gray"}}>{val}</Text>
 					</View>,
 				);
@@ -67,8 +71,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 					borderBottomColor: "lightgray",
 					borderBottomWidth: 2,
 					height: unitHeight / 2,
-				}}>
-				<View style={{flex: 1}} />
+				}}
+				key="0">
+				<View style={{flex: 1}} key="0-0" />
 				{daysOfWeekList}
 			</View>
 		);
@@ -77,7 +82,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 			let blockList = [];
 			blockList.push(
 				<View
-					style={{flex: 1, alignContent: "center", justifyContent: "center"}}>
+					style={{flex: 1, alignContent: "center", justifyContent: "center"}}
+					key={`${ind}-0`}>
 					<Text style={{textAlign: "center", color: "gray"}}>{ind}</Text>
 				</View>,
 			);
@@ -89,6 +95,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 							borderLeftColor: "lightgray",
 							borderLeftWidth: i ? 1 : 2,
 						}}
+						key={`${ind}-${i + 1}`}
 					/>,
 				);
 			}
@@ -104,8 +111,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 						flexDirection: "row",
 						height: unitHeight,
 						borderBottomColor: "lightgray",
-						borderBottomWidth: 1,
-					}}>
+						borderBottomWidth: [2, 5, 7, 9, 11].indexOf(i) === -1 ? 1 : 2,
+					}}
+					key={`${i}`}>
 					{basicRow(i)}
 				</View>,
 			);
@@ -114,26 +122,26 @@ const ScheduleUI = (props: ScheduleProps) => {
 		return <View style={{flex: 1}}>{rowList}</View>;
 	};
 
+	// TODO: update it to add secondary
+	const allSchedule = () => {
+		let components: ReactElement[] = [];
+		props.primary.forEach((val) => {
+			components.push(
+				<Schedule
+					lessonInfo={val}
+					gridHeight={unitHeight}
+					gridWidth={unitWidth}
+				/>,
+			);
+		});
+		return components;
+	};
+
 	return (
 		<ScrollView style={{flex: 1, flexDirection: "column"}}>
 			{horizontalLine()}
 			{basicGrid()}
-			<View
-				style={{
-					position: "absolute",
-					left: unitHalfWidth + 4,
-					top: unitHeight / 2 + 3,
-					width: unitHalfWidth * 2 - 7,
-					height: unitHeight * 3 - 6,
-					backgroundColor: "red",
-					borderRadius: 5,
-					alignContent: "center",
-					justifyContent: "center",
-				}}>
-				<Text style={{textAlign: "center", color: "white"}}>
-					概率论与数理统计@文北楼206
-				</Text>
-			</View>
+			{allSchedule()}
 		</ScrollView>
 	);
 };
