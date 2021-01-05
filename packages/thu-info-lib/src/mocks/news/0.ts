@@ -1,4 +1,4 @@
-
+export default `
 
 
 
@@ -377,3 +377,4 @@ function searchBlur(text){
 
 </body>
 </html>
+`;

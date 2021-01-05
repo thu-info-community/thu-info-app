@@ -1,4 +1,4 @@
-
+export default `
  
 
 
@@ -185,4 +185,4 @@ body {
  
 </table> 
 </body>
-</html>
+</html>`;

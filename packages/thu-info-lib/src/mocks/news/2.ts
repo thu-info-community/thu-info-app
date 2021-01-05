@@ -1,4 +1,4 @@
-
+export default `
 
 
 
@@ -241,3 +241,5 @@ function chuanold(oldid,nrid)
 
 </body>
 </html>
+    
+`;

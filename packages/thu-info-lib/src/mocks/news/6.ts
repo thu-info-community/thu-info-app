@@ -1,4 +1,4 @@
-
+export default `
 
 
 
@@ -145,3 +145,4 @@
 </td>
   </tr>
 </table>
+`;
