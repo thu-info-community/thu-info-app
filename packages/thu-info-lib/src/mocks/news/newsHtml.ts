@@ -19,15 +19,15 @@ export const url6 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656
 export const url7 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279771";
 export const url8 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3/boarddetail_cat.jsp?columnId=dwxcb01&itemSeq=124530";
 export const url9 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279661";
-export const newsHtml = {
-    url0: _0,
-    url1: _1,
-    url2: _2,
-    url3: _3,
-    url4: _4,
-    url5: _5,
-    url6: _6,
-    url7: _7,
-    url8: _8,
-    url9: _9,
-} as {[key: string]: string};
+export const newsHtml = {} as {[key: string]: string};
+
+newsHtml[url0] = _0;
+newsHtml[url1] = _1;
+newsHtml[url2] = _2;
+newsHtml[url3] = _3;
+newsHtml[url4] = _4;
+newsHtml[url5] = _5;
+newsHtml[url6] = _6;
+newsHtml[url7] = _7;
+newsHtml[url8] = _8;
+newsHtml[url9] = _9;
