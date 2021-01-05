@@ -20,7 +20,7 @@ import {
 } from "./lib/core";
 import {ValidTickets} from "./models/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
-import {LibBookRecord, LibrarySeat} from "./models/home/library";
+import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
 import {
     bookLibrarySeat,
     cancelBooking,
@@ -32,56 +32,13 @@ import {
 } from "./lib/library";
 import {getNewsDetail, getNewsList} from "./lib/news";
 import {getSchedule, getSecondary, getSecondaryVerbose} from "./lib/schedule";
-import * as mAssessment from "./models/home/assessment";
-import * as mLibrary from "./models/home/library";
-import * as mReport from "./models/home/report";
-import * as mJogging from "./models/home/jogging";
-import * as mExpenditure from "./models/home/expenditure";
-import * as mCalendar from "./models/schedule/calendar";
-import * as mSchedule from "./models/schedule/schedule";
-import * as mNews from "./models/news/news";
+import {Course} from "./models/home/report";
+import {Form} from "./models/home/assessment";
+import {JoggingRecord} from "./models/home/jogging";
+import {Record} from "./models/home/expenditure";
+import {newsSlice, sourceTag} from "./models/news/news";
 
 export const MOCK = "8888";
-
-export type InputTag = mAssessment.InputTag;
-
-export type Form = mAssessment.Form;
-
-export type Person = mAssessment.Person;
-
-export type Library = mLibrary.Library;
-
-export type LibraryBase = mLibrary.LibraryBase;
-
-export type LibraryFloor = mLibrary.LibraryFloor;
-
-export type LibrarySection = mLibrary.LibrarySection;
-
-export type Course = mReport.Course;
-
-export type JoggingRecord = mJogging.JoggingRecord;
-
-export type Record = mExpenditure.Record;
-
-export type Calendar = mCalendar.Calendar;
-
-export const CalendarClass = mCalendar.Calendar;
-
-export type SemesterType = mCalendar.SemesterType;
-
-export type Exam = mSchedule.Exam;
-
-export type Lesson = mSchedule.Lesson;
-
-export const LessonType = mSchedule.LessonType;
-
-export const matchHiddenRules = mSchedule.matchHiddenRules;
-
-export const LessonTypeEnum = mSchedule.LessonType;
-
-export type newsSlice = mNews.newsSlice;
-
-export type sourceTag = mNews.sourceTag;
 
 export class InfoHelper {
     constructor(
