@@ -6,10 +6,25 @@ import {libraryRefreshListScreen} from "../../components/home/libraryRefreshList
 import {helper} from "../../redux/store";
 import React from "react";
 import {Text, View} from "react-native";
+import AV from "leancloud-storage/core";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
-		helper.getLibrarySeatList(route.params.section, dateChoice),
+		Promise.all([
+			helper.getLibrarySeatList(route.params.section, dateChoice),
+			new AV.Query("Sockets")
+				.equalTo("sectionId", route.params.section.id)
+				.limit(1000)
+				.find(),
+		]).then(([r, s]) =>
+			r.map((seat) => ({
+				...seat,
+				hasSocket:
+					s.find((it) => it.get("seatId") === seat.id)?.get("available") ??
+					false,
+				lcObjId: s.find((it) => it.get("seatId") === seat.id)?.get("objectId"),
+			})),
+		),
 	(props, item, choice, refresh) => () => {
 		if (!helper.mocked()) {
 			Alert.alert(

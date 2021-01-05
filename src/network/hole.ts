@@ -1,5 +1,6 @@
 import {store} from "../redux/store";
 import {
+	CONTENT_TYPE_FORM,
 	HOLE_GET_ATTENTION_URL,
 	HOLE_GET_COMMENTS_URL,
 	HOLE_GET_LIST_URL,
@@ -37,7 +38,10 @@ const connect = (url: string, query?: object, post?: object): Promise<any> =>
 	fetch(
 		url + "?" + stringify({...query, user_token: store.getState().hole.token}),
 		{
-			headers: {"User-Agent": HOLE_USER_AGENT},
+			headers: {
+				"content-type": CONTENT_TYPE_FORM,
+				"User-Agent": HOLE_USER_AGENT,
+			},
 			method: post ? "POST" : "GET",
 			body: post ? stringify(post) : undefined,
 		},

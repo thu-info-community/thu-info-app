@@ -48,9 +48,6 @@ Whatever you need to build a [React Native](https://reactnative.cn/docs/getting-
 
 ```bash
 # First clone, whether directly here or from your forked repo.
-# Note: We currently use submodules in this project,
-# so --recursive is required when cloning.
-#
 # Then...
 cd THUInfo
 yarn
