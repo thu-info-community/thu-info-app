@@ -1,5 +1,11 @@
-import {ScrollView, View, Text, Dimensions} from "react-native";
-import React, {ReactElement} from "react";
+import {
+	ScrollView,
+	View,
+	Text,
+	Dimensions,
+	TouchableOpacity,
+} from "react-native";
+import React, {ReactElement, useState, useContext, useRef} from "react";
 import {connect} from "react-redux";
 import {Exam, Lesson} from "../../models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
@@ -11,6 +17,14 @@ import {
 import {Choice} from "src/redux/reducers/schedule";
 import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {Schedule} from "src/components/schedule/schedule";
+import {Calendar} from "../../utils/calendar";
+import Icon from "react-native-vector-icons/FontAwesome";
+import ViewShot from "react-native-view-shot";
+import {saveImg} from "../../utils/saveImg";
+import Snackbar from "react-native-snackbar";
+import {getStr} from "../../utils/i18n";
+import {ThemeContext} from "../../assets/themes/context";
+import themes from "../../assets/themes/themes";
 
 interface ScheduleProps {
 	readonly primary: Lesson[];
@@ -30,7 +44,35 @@ interface ScheduleProps {
 	navigation: ScheduleNav;
 }
 
+const OptionButton = ({
+	onPress,
+	title,
+}: {
+	onPress: () => void;
+	title: React.ReactText;
+}) => {
+	const themeName = useContext(ThemeContext);
+	const theme = themes[themeName];
+	return (
+		<TouchableOpacity
+			onPress={onPress}
+			style={{
+				flex: 1,
+				backgroundColor: theme.colors.accent,
+				padding: 8,
+				margin: 2,
+				borderRadius: 5,
+				justifyContent: "center",
+			}}>
+			<Text style={{textAlign: "center", color: "white"}}>{title}</Text>
+		</TouchableOpacity>
+	);
+};
+
 const ScheduleUI = (props: ScheduleProps) => {
+	const [week, setWeek] = useState(new Calendar().weekNumber);
+	const viewShot = useRef<ViewShot>(null);
+
 	const timeBlockNum = 14;
 	const daysInWeek = 7;
 	const borderTotWidth = daysInWeek + 1;
@@ -138,11 +180,75 @@ const ScheduleUI = (props: ScheduleProps) => {
 	};
 
 	return (
-		<ScrollView style={{flex: 1, flexDirection: "column"}}>
-			{horizontalLine()}
-			{basicGrid()}
-			{allSchedule()}
-		</ScrollView>
+		<>
+			<View
+				style={{
+					padding: 10,
+					justifyContent: "space-between",
+					alignItems: "center",
+					flexDirection: "row",
+				}}>
+				<TouchableOpacity
+					onPress={() => setWeek((o) => (o > 1 ? o - 1 : o))}
+					disabled={week <= 1}
+					style={{padding: 8}}>
+					<Icon
+						name="chevron-left"
+						size={24}
+						color={week > 1 ? "black" : "#888"}
+					/>
+				</TouchableOpacity>
+				<Text
+					onPress={() => setWeek(new Calendar().weekNumber)}
+					style={{
+						fontSize: 18,
+						textAlign: "center",
+						flex: 1,
+					}}>
+					{week}
+				</Text>
+				<TouchableOpacity
+					onPress={() =>
+						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
+					}
+					disabled={week >= Calendar.weekCount}
+					style={{padding: 8}}>
+					<Icon
+						name="chevron-right"
+						size={24}
+						color={week < Calendar.weekCount ? "black" : "#888"}
+					/>
+				</TouchableOpacity>
+			</View>
+			<ScrollView style={{flex: 1, flexDirection: "column"}}>
+				<ViewShot ref={viewShot}>
+					{horizontalLine()}
+					{basicGrid()}
+					{allSchedule()}
+				</ViewShot>
+			</ScrollView>
+			<View style={{flexDirection: "row"}}>
+				<OptionButton
+					title={getStr("scheduleCustomShorten")}
+					onPress={() => props.navigation.navigate("ScheduleShorten")}
+				/>
+				<OptionButton
+					title={getStr("scheduleAddCustom")}
+					onPress={() => props.navigation.navigate("ScheduleAdd")}
+				/>
+				<OptionButton
+					title={getStr("scheduleSaveImg")}
+					onPress={() => {
+						// @ts-ignore
+						viewShot.current.capture().then(saveImg);
+					}}
+				/>
+				<OptionButton
+					title={getStr("scheduleHidden")}
+					onPress={() => props.navigation.navigate("ScheduleHidden")}
+				/>
+			</View>
+		</>
 	);
 };
 

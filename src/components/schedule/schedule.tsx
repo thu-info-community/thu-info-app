@@ -11,6 +11,7 @@ interface ScheduleProps {
 }
 
 export const Schedule = (props: ScheduleProps) => {
+	// TODO: maybe some special judge?
 	let lessonInfo: Lesson = props.lessonInfo;
 
 	const gridHalfWidth = props.gridWidth / 2;
