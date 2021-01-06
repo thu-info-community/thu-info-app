@@ -1,4 +1,3 @@
-import {act} from "react-test-renderer";
 import {Calendar} from "../../utils/calendar";
 
 export enum ScheduleType {
@@ -56,7 +55,7 @@ const examEndMap: {[key: string]: number} = {
 
 /*
 export interface Lesson {
-	type: LessonType;
+	// type: LessonType;
 	title: string;
 	locale: string;
 	week: number; // When used as hidden rules, -1 for ALL, 0 for REPEAT, others for the week to be hidden.
@@ -79,7 +78,8 @@ export interface Exam {
 interface timeBlock {
 	week: number;
 	dayOfWeek: number;
-	courseNum: number;
+	begin: number;
+	end: number;
 }
 
 export class Schedule {
@@ -91,19 +91,24 @@ export class Schedule {
 		readonly type: ScheduleType,
 	) {}
 
+	public activeWeek(week: number) {
+		let res: boolean = false;
+		this.activeTime.forEach((val) => (res = res || week === val.week));
+		return res;
+	}
+
 	public addActiveTimeBlocks(
 		week: number,
 		dayOfWeek: number,
 		begin: number,
 		end: number,
 	) {
-		for (let i = begin; i <= end; ++i) {
-			this.activeTime.push({
-				week: week,
-				dayOfWeek: dayOfWeek,
-				courseNum: i,
-			});
-		}
+		this.activeTime.push({
+			week: week,
+			dayOfWeek: dayOfWeek,
+			begin: begin,
+			end: end,
+		});
 	}
 
 	public hideOnce(time: timeBlock) {
@@ -206,8 +211,8 @@ export const parseSecondaryWeek = (
 export const parseScript = (
 	script: string,
 	verbose: boolean = false,
-): Lesson[] | [string, string, boolean][] => {
-	const result: Lesson[] = [];
+): Schedule[] | [string, string, boolean][] => {
+	const result: Schedule[] = [];
 	const verboseResult: [string, string, boolean][] = [];
 	const segments = script.split("strHTML =").slice(1);
 	const beginList = [1, 3, 6, 8, 10, 12];
@@ -224,15 +229,17 @@ export const parseScript = (
 		const detail = RegExp.$1.replace(/\s/g, "");
 
 		const add = (week: number) => {
-			result.push({
-				type: LessonType.SECONDARY,
-				title,
-				locale: "",
-				week,
-				dayOfWeek,
-				begin,
-				end,
-			});
+			let lessonList = result.filter((val) => val.name === title);
+			let lesson: Schedule;
+			if (lessonList.length) {
+				lesson = lessonList[0];
+			} else {
+				result.push(
+					new Schedule(title, position, [], [], ScheduleType.SECONDARY),
+				);
+				lesson = result[result.length - 1];
+			}
+			lesson.addActiveTimeBlocks(week, dayOfWeek, begin, end);
 		};
 
 		if (detail.indexOf("单周") !== -1) {

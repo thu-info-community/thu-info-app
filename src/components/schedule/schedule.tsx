@@ -1,19 +1,20 @@
 import React from "react";
 import {View, Text} from "react-native";
-import {Lesson} from "src/models/schedule/schedule";
 
-interface ScheduleProps {
-	lessonInfo: Lesson;
+interface ScheduleBlockProps {
+	dayOfWeek: number;
+	begin: number;
+	end: number;
+	name: string;
+	location: string;
 	gridHeight: number;
 	gridWidth: number;
 	blockColor?: string;
 	blockInterval?: number;
 }
 
-export const Schedule = (props: ScheduleProps) => {
+export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	// TODO: maybe some special judge?
-	let lessonInfo: Lesson = props.lessonInfo;
-
 	const gridHalfWidth = props.gridWidth / 2;
 	const gridHalfHeight = props.gridHeight / 2;
 
@@ -21,20 +22,20 @@ export const Schedule = (props: ScheduleProps) => {
 	const blockColor = props.blockColor || "red";
 
 	const blockLeftPos =
-		(lessonInfo.dayOfWeek * 2 - 1) * gridHalfWidth + // Block Width
-		(lessonInfo.dayOfWeek + 1) + // Border Width
+		(props.dayOfWeek * 2 - 1) * gridHalfWidth + // Block Width
+		(props.dayOfWeek + 1) + // Border Width
 		blockInterval; // Block Interval
 	const blockTopPos =
-		(lessonInfo.begin * 2 - 1) * gridHalfHeight + // Block Width
-		([1, 3, 6, 8, 10, 12].indexOf(lessonInfo.begin) === -1 ? 0 : 1) + // Border Width
+		(props.begin * 2 - 1) * gridHalfHeight + // Block Width
+		([1, 3, 6, 8, 10, 12].indexOf(props.begin) === -1 ? 0 : 1) + // Border Width
 		blockInterval; // Block Interval
 	const blockRightPos =
-		(lessonInfo.dayOfWeek * 2 + 1) * gridHalfWidth + // Block Width
-		(lessonInfo.dayOfWeek + 1) - // Border Width
+		(props.dayOfWeek * 2 + 1) * gridHalfWidth + // Block Width
+		(props.dayOfWeek + 1) - // Border Width
 		blockInterval; // Block Interval
 	const blockBottomPos =
-		(lessonInfo.end * 2 + 1) * gridHalfHeight - // Block Width
-		([2, 5, 7, 9, 11].indexOf(lessonInfo.end) === -1 ? 0 : 1) - // Border Width
+		(props.end * 2 + 1) * gridHalfHeight - // Block Width
+		([2, 5, 7, 9, 11].indexOf(props.end) === -1 ? 0 : 1) - // Border Width
 		blockInterval; // Block Interval
 
 	return (
@@ -51,7 +52,7 @@ export const Schedule = (props: ScheduleProps) => {
 				justifyContent: "center",
 			}}>
 			<Text style={{textAlign: "center", color: "white"}}>
-				{lessonInfo.title + "@" + lessonInfo.locale}
+				{props.name + "@" + props.location}
 			</Text>
 		</View>
 	);

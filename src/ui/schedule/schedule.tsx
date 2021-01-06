@@ -14,12 +14,7 @@ import React, {
 	useEffect,
 } from "react";
 import {connect} from "react-redux";
-import {
-	Exam,
-	Lesson,
-	LessonType,
-	matchHiddenRules,
-} from "../../models/schedule/schedule";
+import {Schedule} from "../../models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
 import {
@@ -28,7 +23,7 @@ import {
 } from "../../redux/actions/schedule";
 import {Choice} from "src/redux/reducers/schedule";
 import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
-import {Schedule} from "src/components/schedule/schedule";
+import {ScheduleBlock} from "src/components/schedule/schedule";
 import {Calendar} from "../../utils/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
@@ -39,15 +34,11 @@ import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
 
 interface ScheduleProps {
-	readonly primary: Lesson[];
-	readonly secondary: Lesson[];
-	readonly custom: Lesson[];
-	readonly exam: Exam[];
+	readonly schedule: Schedule[];
 	readonly cache: string;
 	readonly primaryRefreshing: boolean;
 	readonly secondaryRefreshing: boolean;
 	readonly shortenMap: {[key: string]: string};
-	readonly hiddenRules: Lesson[];
 	readonly unitHeight: number;
 	getPrimary: () => void;
 	getSecondary: () => void;
@@ -201,29 +192,27 @@ const ScheduleUI = (props: ScheduleProps) => {
 	};
 
 	const allSchedule = () => {
-		return props.primary
-			.concat(props.secondary)
-			.filter((it) => !matchHiddenRules(it, props.hiddenRules))
-			.concat(props.custom)
-			.concat(
-				props.exam.map((e) => ({
-					type: LessonType.PRIMARY,
-					title: "[考试]" + e.title,
-					locale: "当前版本暂不支持显示地点",
-					week: e.week,
-					dayOfWeek: e.dayOfWeek,
-					begin: e.begin,
-					end: e.end,
-				})),
-			)
-			.filter((lesson) => lesson.week === week)
-			.map((lesson) => (
-				<Schedule
-					lessonInfo={lesson}
-					gridHeight={unitHeight}
-					gridWidth={unitWidth}
-				/>
-			));
+		let components: ReactElement[] = [];
+		props.schedule
+			.filter((val) => val.activeWeek(week))
+			.forEach((val) => {
+				val.activeTime.forEach((block) => {
+					if (block.week === week) {
+						components.push(
+							<ScheduleBlock
+								dayOfWeek={block.dayOfWeek}
+								begin={block.begin}
+								end={block.end}
+								name={val.name}
+								location={val.location}
+								gridHeight={unitHeight}
+								gridWidth={unitWidth}
+							/>,
+						);
+					}
+				});
+			});
+		return components;
 	};
 
 	return (
