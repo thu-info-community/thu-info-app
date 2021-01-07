@@ -76,7 +76,7 @@
 		"@babel/runtime": "7.12.5",
 		"@react-native-community/eslint-config": "2.0.0",
 		"@types/convert-excel-to-json": "1.7.0",
-		"@types/jest": "26.0.19",
+		"@types/jest": "26.0.20",
 		"@types/react-native": "0.63.44",
 		"@types/react-syntax-highlighter": "13.5.0",
 		"@types/react-test-renderer": "17.0.0",
