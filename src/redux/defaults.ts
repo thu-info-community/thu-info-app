@@ -15,7 +15,10 @@ export const defaultAuthState: AuthState = {
 export const defaultFullNameState = "";
 
 export const defaultSchedule: Schedules = {
-	// TODO: fill here
+	baseSchedule: [],
+	cache: "",
+	refreshing: false,
+	shortenMap: {},
 };
 
 export const defaultConfigState: Config = {

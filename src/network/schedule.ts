@@ -66,9 +66,9 @@ export const getSecondary = () =>
 		  );
 
 export const getSchedule = async () => {
-	const scheduleList: Schedule[] = [];
-	scheduleList.concat(await getPrimarySchedule());
-	scheduleList.concat(await getSecondary());
+	let scheduleList: Schedule[] = [];
+	scheduleList = scheduleList.concat(await getPrimarySchedule());
+	scheduleList = scheduleList.concat(await getSecondary());
 	return scheduleList;
 };
 

@@ -53,28 +53,6 @@ const examEndMap: {[key: string]: number} = {
 	"21:00": 13,
 };
 
-/*
-export interface Lesson {
-	// type: LessonType;
-	title: string;
-	locale: string;
-	week: number; // When used as hidden rules, -1 for ALL, 0 for REPEAT, others for the week to be hidden.
-	dayOfWeek: number;
-	begin: number;
-	end: number;
-}
-
-// TODO: support exam
-export interface Exam {
-	title: string;
-	locale: string;
-	week: number;
-	dayOfWeek: number;
-	begin: number;
-	end: number;
-}
-*/
-
 interface timeBlock {
 	week: number;
 	dayOfWeek: number;
@@ -82,51 +60,50 @@ interface timeBlock {
 	end: number;
 }
 
-export class Schedule {
-	constructor(
-		readonly name: string,
-		readonly location: string,
-		readonly activeTime: timeBlock[],
-		readonly delOrHideTime: timeBlock[],
-		readonly type: ScheduleType,
-	) {}
-
-	public activeWeek(week: number) {
-		let res: boolean = false;
-		this.activeTime.forEach((val) => (res = res || week === val.week));
-		return res;
-	}
-
-	public addActiveTimeBlocks(
-		week: number,
-		dayOfWeek: number,
-		begin: number,
-		end: number,
-	) {
-		this.activeTime.push({
-			week: week,
-			dayOfWeek: dayOfWeek,
-			begin: begin,
-			end: end,
-		});
-	}
-
-	public hideOnce(time: timeBlock) {
-		let ind: number = this.activeTime.indexOf(time);
-		if (ind !== -1) {
-			this.delOrHideTime.push(this.activeTime[ind]);
-			this.activeTime.splice(ind, 1);
-		}
-	}
-
-	public unhideOnce(time: timeBlock) {
-		let ind: number = this.delOrHideTime.indexOf(time);
-		if (ind !== -1) {
-			this.activeTime.push(this.activeTime[ind]);
-			this.delOrHideTime.splice(ind, 1);
-		}
-	}
+export interface Schedule {
+	name: string;
+	location: string;
+	activeTime: timeBlock[];
+	delOrHideTime: timeBlock[];
+	type: ScheduleType;
 }
+
+export const activeWeek = (week: number, schedule: Schedule) => {
+	let res: boolean = false;
+	schedule.activeTime.forEach((val) => (res = res || week === val.week));
+	return res;
+};
+
+export const addActiveTimeBlocks = (
+	week: number,
+	dayOfWeek: number,
+	begin: number,
+	end: number,
+	schedule: Schedule,
+) => {
+	schedule.activeTime.push({
+		week: week,
+		dayOfWeek: dayOfWeek,
+		begin: begin,
+		end: end,
+	});
+};
+
+export const hideOnce = (time: timeBlock, schedule: Schedule) => {
+	let ind: number = schedule.activeTime.indexOf(time);
+	if (ind !== -1) {
+		schedule.delOrHideTime.push(schedule.activeTime[ind]);
+		schedule.activeTime.splice(ind, 1);
+	}
+};
+
+export const unhideOnce = (time: timeBlock, schedule: Schedule) => {
+	let ind: number = schedule.delOrHideTime.indexOf(time);
+	if (ind !== -1) {
+		schedule.activeTime.push(schedule.activeTime[ind]);
+		schedule.delOrHideTime.splice(ind, 1);
+	}
+};
 
 export const parseJSON = (json: any[]): Schedule[] => {
 	let scheduleList: Schedule[] = [];
@@ -141,28 +118,38 @@ export const parseJSON = (json: any[]): Schedule[] => {
 					if (lessonList.length) {
 						lesson = lessonList[0];
 					} else {
-						scheduleList.push(
-							new Schedule(o.nr, o.dd || "", [], [], ScheduleType.PRIMARY),
-						);
+						scheduleList.push({
+							name: o.nr,
+							location: o.dd || "",
+							activeTime: [],
+							delOrHideTime: [],
+							type: ScheduleType.PRIMARY,
+						});
 						lesson = scheduleList[scheduleList.length - 1];
 					}
-					lesson.addActiveTimeBlocks(
+					addActiveTimeBlocks(
 						date.weekNumber,
 						date.dayOfWeek,
 						beginMap[o.kssj],
 						endMap[o.jssj],
+						lesson,
 					);
 					break;
 				}
 				case "考试": {
-					scheduleList.push(
-						new Schedule(o.nr, o.dd || "", [], [], ScheduleType.EXAM),
-					);
-					scheduleList[scheduleList.length - 1].addActiveTimeBlocks(
+					scheduleList.push({
+						name: o.nr,
+						location: o.dd || "",
+						activeTime: [],
+						delOrHideTime: [],
+						type: ScheduleType.EXAM,
+					});
+					addActiveTimeBlocks(
 						date.weekNumber,
 						date.dayOfWeek,
 						examBeginMap[o.kssj],
 						examEndMap[o.jssj],
+						scheduleList[scheduleList.length - 1],
 					);
 					break;
 				}
@@ -234,12 +221,16 @@ export const parseScript = (
 			if (lessonList.length) {
 				lesson = lessonList[0];
 			} else {
-				result.push(
-					new Schedule(title, position, [], [], ScheduleType.SECONDARY),
-				);
+				result.push({
+					name: title,
+					location: position,
+					activeTime: [],
+					delOrHideTime: [],
+					type: ScheduleType.SECONDARY,
+				});
 				lesson = result[result.length - 1];
 			}
-			lesson.addActiveTimeBlocks(week, dayOfWeek, begin, end);
+			addActiveTimeBlocks(week, dayOfWeek, begin, end, lesson);
 		};
 
 		if (detail.indexOf("单周") !== -1) {
@@ -281,17 +272,3 @@ export const parseScript = (
 	});
 	return verbose ? verboseResult : result;
 };
-
-/*
-export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>
-	rules.some(
-		(it) =>
-			it.type === lesson.type &&
-			it.title === lesson.title &&
-			(it.week === -1 ||
-				(it.dayOfWeek === lesson.dayOfWeek &&
-					it.begin === lesson.begin &&
-					it.end === lesson.end &&
-					(it.week === 0 || it.week === lesson.week))),
-	);
-*/

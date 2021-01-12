@@ -14,15 +14,10 @@ import React, {
 	useEffect,
 } from "react";
 import {connect} from "react-redux";
-import {Schedule} from "../../models/schedule/schedule";
+import {activeWeek, Schedule} from "../../models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
-import {
-	primaryScheduleThunk,
-	secondaryScheduleThunk,
-} from "../../redux/actions/schedule";
-import {Choice} from "src/redux/reducers/schedule";
-import {SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+import {scheduleThunk} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import {Calendar} from "../../utils/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -34,16 +29,12 @@ import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
 
 interface ScheduleProps {
-	readonly schedule: Schedule[];
+	readonly baseSchedule: Schedule[];
 	readonly cache: string;
-	readonly primaryRefreshing: boolean;
-	readonly secondaryRefreshing: boolean;
+	readonly refreshing: boolean;
 	readonly shortenMap: {[key: string]: string};
 	readonly unitHeight: number;
-	getPrimary: () => void;
-	getSecondary: () => void;
-	// delOrHide: DelOrHide;
-	// TODO: Replace?
+	getSchedule: () => void;
 	navigation: ScheduleNav;
 }
 
@@ -89,13 +80,15 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(props.getSchedule, []);
+
 	useEffect(() => {
 		if (Calendar.semesterId !== props.cache) {
 			console.log(
 				"Schedule: Corresponding cache not found. Auto fetch from server.",
 			);
-			props.getPrimary();
-			props.getSecondary();
+			props.getSchedule();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.cache]);
@@ -193,8 +186,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	const allSchedule = () => {
 		let components: ReactElement[] = [];
-		props.schedule
-			.filter((val) => val.activeWeek(week))
+		props.baseSchedule
+			.filter((val) => activeWeek(week, val))
 			.forEach((val) => {
 				val.activeTime.forEach((block) => {
 					if (block.week === week) {
@@ -260,11 +253,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 				style={{flex: 1, flexDirection: "column"}}
 				refreshControl={
 					<RefreshControl
-						refreshing={props.primaryRefreshing || props.secondaryRefreshing}
-						onRefresh={() => {
-							props.getPrimary();
-							props.getSecondary();
-						}}
+						refreshing={props.refreshing}
+						onRefresh={props.getSchedule}
 						colors={[theme.colors.accent]}
 					/>
 				}>
@@ -305,19 +295,10 @@ export const ScheduleScreen = connect(
 		unitHeight:
 			state.config.scheduleHeight > 10 ? state.config.scheduleHeight : 10,
 	}),
-	(dispatch) => {
-		return {
-			getPrimary: () => {
-				// @ts-ignore
-				dispatch(primaryScheduleThunk());
-			},
-			getSecondary: () => {
-				// @ts-ignore
-				dispatch(secondaryScheduleThunk());
-			},
-			delOrHide: ([lesson, choice]: [Lesson, Choice]) => {
-				dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [lesson, choice]});
-			},
-		};
-	},
+	(dispatch) => ({
+		getSchedule: () => {
+			// @ts-ignore
+			dispatch(scheduleThunk());
+		},
+	}),
 )(ScheduleUI);
