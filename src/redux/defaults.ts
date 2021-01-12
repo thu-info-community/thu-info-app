@@ -1,5 +1,5 @@
 import {AuthState, LoginStatus} from "./states/auth";
-import {Schedule} from "./states/schedule";
+import {Schedules} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
 import {Calendar} from "../utils/calendar";
@@ -14,16 +14,8 @@ export const defaultAuthState: AuthState = {
 
 export const defaultFullNameState = "";
 
-export const defaultSchedule: Schedule = {
-	primary: [],
-	secondary: [],
-	custom: [],
-	exam: [],
-	cache: "",
-	primaryRefreshing: false,
-	secondaryRefreshing: false,
-	shortenMap: {},
-	hiddenRules: [],
+export const defaultSchedule: Schedules = {
+	// TODO: fill here
 };
 
 export const defaultConfigState: Config = {

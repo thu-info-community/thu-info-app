@@ -7,7 +7,7 @@ import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
 import {createBlacklistFilter} from "redux-persist-transform-filter";
-import {Schedule} from "./states/schedule";
+import {Schedules} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
 import {Config} from "./states/config";
 import {config} from "./reducers/config";
@@ -26,7 +26,7 @@ const KeychainStorage = createKeychainStorage();
 export interface State {
 	auth: AuthState;
 	fullName: string;
-	schedule: Schedule;
+	schedule: Schedules;
 	config: Config;
 	credentials: Credentials;
 	cache: Cache;

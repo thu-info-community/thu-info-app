@@ -1,25 +1,8 @@
-import {Exam, Lesson} from "../../models/schedule/schedule";
+import {Schedule} from "../../models/schedule/schedule";
 
-export interface PrimarySchedule {
-	primary: Lesson[];
-	exam: Exam[];
-}
-
-export interface SecondarySchedule {
-	secondary: Lesson[];
-}
-
-export interface CustomSchedule {
-	custom: Lesson[];
-}
-
-export interface Schedule
-	extends PrimarySchedule,
-		SecondarySchedule,
-		CustomSchedule {
+export interface Schedules {
+	baseSchedule: Schedule[];
 	cache: string;
-	primaryRefreshing: boolean;
-	secondaryRefreshing: boolean;
+	refreshing: boolean;
 	shortenMap: {[key: string]: string};
-	hiddenRules: Lesson[];
 }

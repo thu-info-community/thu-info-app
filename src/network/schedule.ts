@@ -12,17 +12,11 @@ import {Schedule, parseJSON, parseScript} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 import {currState, mocked} from "../redux/store";
 
-export const getSchedule = () => {
+export const getPrimarySchedule = () => {
 	const format = (c: Calendar) => c.format("YYYYMMDD");
 	const groupSize = 3; // Make sure that `groupSize` is a divisor of `Calendar.weekCount`.
 	return mocked()
-		? Promise.resolve(([
-				[
-					// TODO: fill here!!!
-				],
-				[],
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  ] as unknown) as [Schedule[]])
+		? Promise.resolve([])
 		: retryWrapper(
 				792,
 				Promise.all(
@@ -70,6 +64,13 @@ export const getSecondary = () =>
 				}),
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
+
+export const getSchedule = async () => {
+	const scheduleList: Schedule[] = [];
+	scheduleList.concat(await getPrimarySchedule());
+	scheduleList.concat(await getSecondary());
+	return scheduleList;
+};
 
 export const getSecondaryVerbose = () =>
 	retryWrapper(
