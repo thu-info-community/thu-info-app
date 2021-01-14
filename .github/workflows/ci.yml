@@ -42,7 +42,7 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
-          NDK_VERSION: 21.3.6528147
+          NDK_VERSION: ${{ secrets.NDK_VERSION }}
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
           yarn add react-native@0.63.4 # Since react-native-reanimated is currently incompatible with rn 0.64 on android
