@@ -8,7 +8,12 @@ import {
 	SECONDARY_URL,
 	JXRL_YJS_PREFIX,
 } from "../constants/strings";
-import {Schedule, parseJSON, parseScript} from "../models/schedule/schedule";
+import {
+	Schedule,
+	mergeTimeBlocks,
+	parseJSON,
+	parseScript,
+} from "../models/schedule/schedule";
 import {Calendar} from "../utils/calendar";
 import {currState, mocked} from "../redux/store";
 
@@ -30,10 +35,13 @@ export const getPrimarySchedule = () => {
 								format(new Calendar((id + 1) * groupSize, 7)) +
 								JXRL_SUFFIX,
 							INFO_ROOT_URL,
+							undefined,
+							"GBK",
 						),
 					),
 				)
-					.then((results) =>
+					.then((results) => {
+						console.log(results);
 						results
 							.map((s) => {
 								if (s[0] !== "m") {
@@ -42,8 +50,8 @@ export const getPrimarySchedule = () => {
 								return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
 							})
 							.filter((s) => s.trim().length > 0)
-							.join(","),
-					)
+							.join(",");
+					})
 					.then((str) => JSON.parse(`[${str}]`))
 					.then(parseJSON),
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -68,7 +76,9 @@ export const getSecondary = () =>
 export const getSchedule = async () => {
 	let scheduleList: Schedule[] = [];
 	scheduleList = scheduleList.concat(await getPrimarySchedule());
-	scheduleList = scheduleList.concat(await getSecondary());
+	// scheduleList = scheduleList.concat(await getSecondary());
+	console.log("Fuck!");
+	scheduleList.forEach(mergeTimeBlocks);
 	return scheduleList;
 };
 

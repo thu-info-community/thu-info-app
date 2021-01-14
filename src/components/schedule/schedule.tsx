@@ -19,7 +19,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const gridHalfHeight = props.gridHeight / 2;
 
 	const blockInterval = props.blockInterval || 2;
-	const blockColor = props.blockColor || "red";
+	const blockColor = props.blockColor || "#1f1e33";
 
 	const blockLeftPos =
 		(props.dayOfWeek * 2 - 1) * gridHalfWidth + // Block Width
@@ -50,7 +50,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				borderRadius: 5,
 				alignContent: "center",
 				justifyContent: "center",
-			}}>
+			}}
+			key={`${props.dayOfWeek}-${props.begin}`}>
 			<Text style={{textAlign: "center", color: "white"}}>
 				{props.name + "@" + props.location}
 			</Text>

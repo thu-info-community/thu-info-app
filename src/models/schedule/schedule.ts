@@ -74,6 +74,31 @@ export const activeWeek = (week: number, schedule: Schedule) => {
 	return res;
 };
 
+export const mergeTimeBlocks = (schedule: Schedule) => {
+	schedule.activeTime.sort((a, b) => {
+		if (a.week > b.week) {
+			return 1;
+		} else if (a.dayOfWeek > b.dayOfWeek) {
+			return 1;
+		} else if (a.begin > b.begin) {
+			return 1;
+		} else {
+			return -1;
+		}
+	});
+	for (let i = 0; i < schedule.activeTime.length; ++i) {
+		if (
+			i !== schedule.activeTime.length - 1 &&
+			schedule.activeTime[i].end + 1 === schedule.activeTime[i + 1].begin &&
+			schedule.activeTime[i].week === schedule.activeTime[i + 1].week &&
+			schedule.activeTime[i].dayOfWeek === schedule.activeTime[i + 1].dayOfWeek
+		) {
+			schedule.activeTime[i].end = schedule.activeTime[i + 1].end;
+			schedule.activeTime.splice(i + 1, 1);
+		}
+	}
+};
+
 export const addActiveTimeBlocks = (
 	week: number,
 	dayOfWeek: number,
@@ -214,6 +239,8 @@ export const parseScript = (
 		const end = endList[sessionIndex - 1];
 		const title = RegExp.$2;
 		const detail = RegExp.$1.replace(/\s/g, "");
+
+		console.log(RegExp.$1);
 
 		const add = (week: number) => {
 			let lessonList = result.filter((val) => val.name === title);

@@ -98,7 +98,7 @@ export const JXRL_BKS_PREFIX =
 export const JXRL_YJS_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=yjs_jxrl_all&p_start_date=";
 export const JXRL_MIDDLE = "&p_end_date=";
-export const JXRL_SUFFIX = "&jsoncallback=m";
+export const JXRL_SUFFIX = "&jsoncallback=no_such_method";
 export const JXMH_REFERER =
 	"https://webvpn.tsinghua.edu.cn/http-80/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/render.userLayoutRootNode.uP";
 export const SECONDARY_URL =
