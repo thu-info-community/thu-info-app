@@ -179,6 +179,7 @@ export default {
 	scheduleAddCustom: "New Schedule",
 	scheduleSaveImg: "Save Image",
 	scheduleHidden: "Hidden Lessons",
+	scheduleDetail: "Schedule details",
 	saveSucceed: "Successfully saved.",
 	permissionDenied: "Permission denied.",
 	saveFailRetry: "Exception occurred when saving. Please retry.",

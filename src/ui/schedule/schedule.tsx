@@ -76,7 +76,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const borderTotWidth = daysInWeek + 1;
 
 	// TODO: let it able to be modified
-	const unitHeight = 80;
+	const unitHeight = props.unitHeight;
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
 
@@ -209,6 +209,16 @@ const ScheduleUI = (props: ScheduleProps) => {
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
+								onPress={() => {
+									props.navigation.navigate("ScheduleDetail", {
+										name: val.name,
+										location: val.location,
+										week: week,
+										dayOfWeek: block.dayOfWeek,
+										begin: block.begin,
+										end: block.end,
+									});
+								}}
 							/>,
 						);
 					}

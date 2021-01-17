@@ -164,6 +164,7 @@ export default {
 	scheduleAddCustom: "添加计划",
 	scheduleSaveImg: "保存图片",
 	scheduleHidden: "管理隐藏",
+	scheduleDetail: "计划详情",
 	saveSucceed: "保存成功",
 	permissionDenied: "获取权限失败",
 	saveFailRetry: "保存失败，请重试",
