@@ -118,6 +118,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 							borderLeftWidth: ind ? 1 : 2,
 							alignContent: "center",
 							justifyContent: "center",
+							backgroundColor: "white",
 						}}
 						key={`0-${ind + 1}`}>
 						<Text style={{textAlign: "center", color: "gray"}}>{val}</Text>
@@ -133,9 +134,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 					borderBottomColor: "lightgray",
 					borderBottomWidth: 2,
 					height: unitHeight / 2,
+					backgroundColor: "white",
 				}}
 				key="0">
-				<View style={{flex: 1}} key="0-0" />
+				<View style={{flex: 1, backgroundColor: "white"}} key="0-0" />
 				{daysOfWeekList}
 			</View>
 		);
@@ -144,7 +146,12 @@ const ScheduleUI = (props: ScheduleProps) => {
 			let blockList = [];
 			blockList.push(
 				<View
-					style={{flex: 1, alignContent: "center", justifyContent: "center"}}
+					style={{
+						flex: 1,
+						alignContent: "center",
+						justifyContent: "center",
+						backgroundColor: "white",
+					}}
 					key={`${ind}-0`}>
 					<Text style={{textAlign: "center", color: "gray"}}>{ind}</Text>
 				</View>,
@@ -156,6 +163,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 							flex: 2,
 							borderLeftColor: "lightgray",
 							borderLeftWidth: i ? 1 : 2,
+							backgroundColor: "white",
 						}}
 						key={`${ind}-${i + 1}`}
 					/>,
@@ -174,6 +182,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 						height: unitHeight,
 						borderBottomColor: "lightgray",
 						borderBottomWidth: [2, 5, 7, 9, 11].indexOf(i) === -1 ? 1 : 2,
+						backgroundColor: "white",
 					}}
 					key={`${i}`}>
 					{basicRow(i)}
@@ -181,7 +190,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 			);
 		}
 
-		return <View style={{flex: 1}}>{rowList}</View>;
+		return <View style={{flex: 1, backgroundColor: "white"}}>{rowList}</View>;
 	};
 
 	const allSchedule = () => {
