@@ -1,4 +1,4 @@
-import {View, Text} from "react-native";
+import {View, Text, Dimensions, TouchableOpacity} from "react-native";
 import React from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -50,9 +50,33 @@ export interface ScheduleDetailProps {
 // TODO: delOrHide
 export const ScheduleDetailScreen = ({route}: any) => {
 	const props = route.params;
+	const lineLength = Dimensions.get("window").width * 0.9;
+	const horizontalLine = () => (
+		<View
+			style={{
+				backgroundColor: "lightgray",
+				height: 1,
+				width: lineLength,
+				margin: 5,
+			}}
+		/>
+	);
+
 	return (
-		<View style={{paddingVertical: 30, paddingHorizontal: 20}}>
-			<Text style={{fontSize: 25, marginBottom: 20}} numberOfLines={1}>
+		<View
+			style={{
+				paddingVertical: 30,
+				paddingHorizontal: 20,
+				alignItems: "center",
+			}}>
+			<Text
+				style={{
+					fontSize: 25,
+					marginBottom: 20,
+					lineHeight: 30,
+					alignSelf: "flex-start",
+				}}
+				numberOfLines={2}>
 				{props.name}
 			</Text>
 			<View
@@ -60,10 +84,11 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					flexDirection: "row",
 					alignItems: "center",
 					marginVertical: 10,
+					alignSelf: "flex-start",
 				}}>
 				<View
 					style={{alignItems: "center", justifyContent: "center", width: 20}}>
-					<FontAwesome name="map-marker" size={20} color="green" />
+					<FontAwesome name="map-marker" size={20} color="red" />
 				</View>
 				<Text style={{marginHorizontal: 10, color: "gray"}}>地点</Text>
 				<Text style={{marginHorizontal: 15}}>{props.location}</Text>
@@ -73,6 +98,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					flexDirection: "row",
 					alignItems: "center",
 					marginVertical: 10,
+					alignSelf: "flex-start",
 				}}>
 				<View
 					style={{alignItems: "center", justifyContent: "center", width: 20}}>
@@ -93,6 +119,27 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					{"（" + beginTime[props.begin] + " ~ " + endTime[props.end] + "）"}
 				</Text>
 			</View>
+			{horizontalLine()}
+			<Text>TODO</Text>
+			{horizontalLine()}
+			<TouchableOpacity
+				style={{
+					borderRadius: 2,
+					backgroundColor: "white",
+					alignSelf: "stretch",
+					justifyContent: "center",
+					alignItems: "center",
+					shadowColor: "gray",
+					shadowOpacity: 0.8,
+					shadowRadius: 2,
+					shadowOffset: {height: 2, width: 2},
+					margin: 5,
+					padding: 12,
+				}}>
+				<Text style={{color: "red", fontWeight: "bold", fontSize: 18}}>
+					删除计划
+				</Text>
+			</TouchableOpacity>
 		</View>
 	);
 };
