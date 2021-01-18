@@ -3,6 +3,7 @@ import React from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const beginTime = [
+	"",
 	"08:00",
 	"08:50",
 	"09:50",
@@ -20,6 +21,7 @@ const beginTime = [
 ];
 
 const endTime = [
+	"",
 	"08:45",
 	"09:35",
 	"10:35",

@@ -22,7 +22,7 @@ const scheduleAction = createAsyncAction(
 export type ScheduleAction =
 	| ActionType<typeof scheduleAction>
 	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]}
-	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Lesson[]}
+	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Schedule}
 	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [Lesson, Choice]}
 	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: Lesson};
 

@@ -13,12 +13,16 @@ import {Calendar} from "../../utils/calendar";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
-import {Lesson, LessonType} from "../../models/schedule/schedule";
+import {
+	addActiveTimeBlocks,
+	Schedule,
+	ScheduleType,
+} from "../../models/schedule/schedule";
 import {SCHEDULE_ADD_CUSTOM} from "../../redux/constants";
 
 interface ScheduleAddProps {
 	navigation: ScheduleNav;
-	addCustom: (payload: Lesson[]) => void;
+	addCustom: (payload: Schedule) => void;
 }
 
 const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
@@ -227,21 +231,19 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 						new Array(Calendar.weekCount),
 						(_, index) => index + 1,
 					).filter((week) => weeks[week]);
-					addCustom(
-						ranges.flatMap((range) =>
-							selectedWeeks.map((week) => {
-								return {
-									type: LessonType.CUSTOM,
-									title,
-									locale,
-									week,
-									dayOfWeek: day,
-									begin: range[0],
-									end: range[1],
-								};
-							}),
-						),
+					let newSchedule = {
+						name: title,
+						location: locale,
+						activeTime: [],
+						delOrHideTime: [],
+						type: ScheduleType.CUSTOM,
+					};
+					ranges.flatMap((range) =>
+						selectedWeeks.map((week) => {
+							addActiveTimeBlocks(week, day, range[0], range[1], newSchedule);
+						}),
 					);
+					addCustom(newSchedule);
 					navigation.pop();
 				}}>
 				<Text
@@ -315,7 +317,7 @@ const styles = themedStyles(() => {
 
 export const ScheduleAddScreen = connect(undefined, (dispatch) => {
 	return {
-		addCustom: (payload: Lesson[]) =>
+		addCustom: (payload: Schedule) =>
 			dispatch({type: SCHEDULE_ADD_CUSTOM, payload}),
 	};
 })(ScheduleAddUI);

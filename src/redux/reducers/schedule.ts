@@ -65,10 +65,8 @@ export const schedule = (
 			};
 		}
 		case SCHEDULE_ADD_CUSTOM: {
-			return {
-				...state,
-				custom: state.custom.concat(action.payload),
-			};
+			state.baseSchedule.push(action.payload);
+			return state;
 		}
 		case SCHEDULE_DEL_OR_HIDE: {
 			const [lesson, choice] = action.payload;
