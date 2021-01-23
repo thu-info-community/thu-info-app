@@ -28,7 +28,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 		blockInterval; // Block Interval
 	const blockTopPos =
 		(props.begin * 2 - 1) * gridHalfHeight + // Block Width
-		([1, 3, 6, 8, 10, 12].indexOf(props.begin) === -1 ? 0 : 1) + // Border Width
+		1 + // Border Width
 		blockInterval; // Block Interval
 	const blockRightPos =
 		(props.dayOfWeek * 2 + 1) * gridHalfWidth + // Block Width

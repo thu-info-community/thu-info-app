@@ -1,6 +1,10 @@
 import {View, Text, Dimensions, TouchableOpacity} from "react-native";
 import React from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import {Choice} from "src/redux/reducers/schedule";
+import {TimeBlock} from "src/models/schedule/schedule";
+import {connect} from "react-redux";
+import {SCHEDULE_DEL_OR_HIDE} from "src/redux/constants";
 
 const beginTime = [
 	"",
@@ -47,11 +51,11 @@ export interface ScheduleDetailProps {
 	dayOfWeek: number;
 	begin: number;
 	end: number;
+	deleteFunc: (title: string, block: TimeBlock, choice: Choice) => void;
 }
 
 // TODO: delOrHide
-export const ScheduleDetailScreen = ({route}: any) => {
-	const props = route.params;
+const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 	const lineLength = Dimensions.get("window").width * 0.9;
 	const horizontalLine = () => (
 		<View
@@ -63,6 +67,48 @@ export const ScheduleDetailScreen = ({route}: any) => {
 			}}
 		/>
 	);
+
+	const delButton = (choice: Choice) => {
+		const buttonText: string =
+			choice === Choice.ALL
+				? "删除所有时段该计划"
+				: choice === Choice.REPEAT
+				? "删除每周同时段该计划"
+				: "删除该时段计划";
+		return (
+			<TouchableOpacity
+				style={{
+					borderRadius: 2,
+					backgroundColor: "white",
+					alignSelf: "stretch",
+					justifyContent: "center",
+					alignItems: "center",
+					shadowColor: "gray",
+					shadowOpacity: 0.8,
+					shadowRadius: 2,
+					shadowOffset: {height: 2, width: 2},
+					margin: 5,
+					padding: 12,
+				}}>
+				<Text
+					style={{fontWeight: "bold", fontSize: 18}}
+					onPress={() =>
+						props.deleteFunc(
+							props.name,
+							{
+								week: props.week,
+								dayOfWeek: props.dayOfWeek,
+								begin: props.begin,
+								end: props.end,
+							},
+							choice,
+						)
+					}>
+					{buttonText}
+				</Text>
+			</TouchableOpacity>
+		);
+	};
 
 	return (
 		<View
@@ -124,24 +170,22 @@ export const ScheduleDetailScreen = ({route}: any) => {
 			{horizontalLine()}
 			<Text>TODO</Text>
 			{horizontalLine()}
-			<TouchableOpacity
-				style={{
-					borderRadius: 2,
-					backgroundColor: "white",
-					alignSelf: "stretch",
-					justifyContent: "center",
-					alignItems: "center",
-					shadowColor: "gray",
-					shadowOpacity: 0.8,
-					shadowRadius: 2,
-					shadowOffset: {height: 2, width: 2},
-					margin: 5,
-					padding: 12,
-				}}>
-				<Text style={{color: "red", fontWeight: "bold", fontSize: 18}}>
-					删除计划
-				</Text>
-			</TouchableOpacity>
+			{delButton(Choice.ONCE)}
+			{delButton(Choice.REPEAT)}
+			{delButton(Choice.ALL)}
 		</View>
 	);
 };
+
+export const ScheduleDetailScreen = connect(
+	(state: State) => ({
+		...state.schedule,
+		unitHeight:
+			state.config.scheduleHeight > 10 ? state.config.scheduleHeight : 10,
+	}),
+	(dispatch) => ({
+		deleteFunc: (title: string, block: TimeBlock, choice: Choice) => {
+			dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [title, block, choice]});
+		},
+	}),
+)(ScheduleDetailUI);

@@ -217,6 +217,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										dayOfWeek: block.dayOfWeek,
 										begin: block.begin,
 										end: block.end,
+										deleteFunc: props.delOrHide,
 									});
 								}}
 							/>,

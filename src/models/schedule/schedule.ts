@@ -53,7 +53,7 @@ const examEndMap: {[key: string]: number} = {
 	"21:00": 13,
 };
 
-interface timeBlock {
+export interface TimeBlock {
 	week: number;
 	dayOfWeek: number;
 	begin: number;
@@ -63,8 +63,8 @@ interface timeBlock {
 export interface Schedule {
 	name: string;
 	location: string;
-	activeTime: timeBlock[];
-	delOrHideTime: timeBlock[];
+	activeTime: TimeBlock[];
+	delOrHideTime: TimeBlock[];
 	type: ScheduleType;
 }
 
@@ -114,7 +114,7 @@ export const addActiveTimeBlocks = (
 	});
 };
 
-export const hideOnce = (time: timeBlock, schedule: Schedule) => {
+export const hideOnce = (time: TimeBlock, schedule: Schedule) => {
 	let ind: number = schedule.activeTime.indexOf(time);
 	if (ind !== -1) {
 		schedule.delOrHideTime.push(schedule.activeTime[ind]);
@@ -122,7 +122,7 @@ export const hideOnce = (time: timeBlock, schedule: Schedule) => {
 	}
 };
 
-export const unhideOnce = (time: timeBlock, schedule: Schedule) => {
+export const unhideOnce = (time: TimeBlock, schedule: Schedule) => {
 	let ind: number = schedule.delOrHideTime.indexOf(time);
 	if (ind !== -1) {
 		schedule.activeTime.push(schedule.activeTime[ind]);

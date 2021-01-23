@@ -10,27 +10,18 @@ import {
 	SCHEDULE_UPDATE_ALIAS,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
+import {
+	ScheduleType,
+	Schedule,
+	TimeBlock,
+	hideOnce,
+} from "src/models/schedule/schedule";
 
 export enum Choice {
 	ONCE,
 	REPEAT,
 	ALL,
 }
-
-const addToDefaultShortenMap = (
-	src: {[key: string]: string},
-	...lists: (Lesson | Exam)[][]
-) => {
-	const dest = {...src};
-	lists.forEach((list) => {
-		list.forEach((item) => {
-			if (!(item.title in src)) {
-				dest[item.title] = item.title;
-			}
-		});
-	});
-	return dest;
-};
 
 export const schedule = (
 	state: Schedules = defaultSchedule,
@@ -43,13 +34,18 @@ export const schedule = (
 				refreshing: true,
 			};
 		case SCHEDULE_SUCCESS:
+			let customList: Schedule[] = [];
+			state.baseSchedule.forEach((val) => {
+				if (val.type === ScheduleType.CUSTOM) {
+					customList.push(val);
+				}
+			});
 			return {
 				...state,
-				baseSchedule: action.payload,
+				baseSchedule: customList.concat(action.payload),
 				cache: Calendar.semesterId,
 				refreshing: false,
-				shortenMap: {},
-				// TODO: fix it
+				// shortenMap: {}, // Is it correct?
 			};
 		case SCHEDULE_FAILURE:
 			return {
@@ -65,44 +61,47 @@ export const schedule = (
 			};
 		}
 		case SCHEDULE_ADD_CUSTOM: {
-			state.baseSchedule.push(action.payload);
-			return state;
+			return {
+				...state,
+				baseSchedule: state.baseSchedule.concat([action.payload]),
+			};
 		}
 		case SCHEDULE_DEL_OR_HIDE: {
-			const [lesson, choice] = action.payload;
-			if (lesson.type === LessonType.CUSTOM) {
-				return {
-					...state,
-					custom:
-						choice === Choice.ALL
-							? state.custom.filter((it) => it.title !== lesson.title)
-							: state.custom.filter(
-									(it) =>
-										!(
-											it.title === lesson.title &&
-											it.begin === lesson.begin &&
-											it.end === lesson.end &&
-											it.dayOfWeek === lesson.dayOfWeek &&
-											(choice === Choice.REPEAT || it.week === lesson.week)
-										),
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  ),
-				};
-			} else {
-				return {
-					...state,
-					hiddenRules: state.hiddenRules.concat({
-						...lesson,
-						locale: "",
-						week:
-							choice === Choice.ALL
-								? -1
-								: choice === Choice.REPEAT
-								? 0
-								: lesson.week,
-					}),
-				};
+			const [title, time, choice] = action.payload;
+			const selectedSchedule: Schedule = state.baseSchedule.filter(
+				(val) => val.name === title,
+			)[0];
+			state.baseSchedule.splice(
+				state.baseSchedule.indexOf(selectedSchedule),
+				1,
+			);
+			if (selectedSchedule.type === ScheduleType.CUSTOM) {
+				return state;
 			}
+			const hideBlocks: TimeBlock[] = [];
+			const filter = (block: TimeBlock) => {
+				if (choice === Choice.ALL) {
+					return true;
+				} else if (choice === Choice.REPEAT) {
+					return (
+						block.dayOfWeek === time.dayOfWeek && block.begin === time.begin
+					);
+				} else {
+					return block === time;
+				}
+			};
+			selectedSchedule.activeTime.forEach((block) => {
+				if (filter(block)) {
+					hideBlocks.push(block);
+				}
+			});
+			hideBlocks.forEach((val) => {
+				hideOnce(val, selectedSchedule);
+			});
+			return {
+				...state,
+				baseSchedule: state.baseSchedule.concat([selectedSchedule]),
+			};
 		}
 		case "SCHEDULE_REMOVE_HIDDEN_RULE":
 			return {
