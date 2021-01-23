@@ -8,14 +8,10 @@ import {
 	SCHEDULE_ADD_CUSTOM,
 	SCHEDULE_DEL_OR_HIDE,
 	SCHEDULE_UPDATE_ALIAS,
+	SCHEDULE_REMOVE_HIDDEN_RULE,
 } from "../constants";
 import {Calendar} from "../../utils/calendar";
-import {
-	ScheduleType,
-	Schedule,
-	TimeBlock,
-	hideOnce,
-} from "src/models/schedule/schedule";
+import {ScheduleType, Schedule, TimeBlock} from "src/models/schedule/schedule";
 
 export enum Choice {
 	ONCE,
@@ -68,17 +64,18 @@ export const schedule = (
 		}
 		case SCHEDULE_DEL_OR_HIDE: {
 			const [title, time, choice] = action.payload;
-			const selectedSchedule: Schedule = state.baseSchedule.filter(
-				(val) => val.name === title,
-			)[0];
-			state.baseSchedule.splice(
-				state.baseSchedule.indexOf(selectedSchedule),
-				1,
-			);
-			if (selectedSchedule.type === ScheduleType.CUSTOM) {
-				return state;
-			}
-			const hideBlocks: TimeBlock[] = [];
+
+			const newBaseSchedule: Schedule[] = [];
+			const selectedScheduleList: Schedule[] = [];
+			state.baseSchedule.forEach((val) => {
+				if (val.name === title) {
+					selectedScheduleList.push(val);
+				} else {
+					newBaseSchedule.push(val);
+				}
+			});
+			let selectedSchedule = selectedScheduleList[0];
+
 			const filter = (block: TimeBlock) => {
 				if (choice === Choice.ALL) {
 					return true;
@@ -87,23 +84,42 @@ export const schedule = (
 						block.dayOfWeek === time.dayOfWeek && block.begin === time.begin
 					);
 				} else {
-					return block === time;
+					return (
+						block.week === time.week &&
+						block.dayOfWeek === time.dayOfWeek &&
+						block.begin === time.begin
+					);
 				}
 			};
+
+			const newActiveBlocks: TimeBlock[] = [];
+			const delOrHideBlocks: TimeBlock[] = [];
 			selectedSchedule.activeTime.forEach((block) => {
-				if (filter(block)) {
-					hideBlocks.push(block);
+				if (!filter(block)) {
+					newActiveBlocks.push(block);
+				} else {
+					delOrHideBlocks.push(block);
 				}
 			});
-			hideBlocks.forEach((val) => {
-				hideOnce(val, selectedSchedule);
-			});
+			selectedSchedule = Object.assign(
+				{},
+				{
+					...selectedSchedule,
+					activeTime: newActiveBlocks,
+					delOrHideTime: delOrHideBlocks,
+				},
+			);
+
 			return {
 				...state,
-				baseSchedule: state.baseSchedule.concat([selectedSchedule]),
+				baseSchedule:
+					newActiveBlocks === [] &&
+					selectedSchedule.type === ScheduleType.CUSTOM
+						? newBaseSchedule
+						: newBaseSchedule.concat([selectedSchedule]),
 			};
 		}
-		case "SCHEDULE_REMOVE_HIDDEN_RULE":
+		case SCHEDULE_REMOVE_HIDDEN_RULE:
 			return {
 				...state,
 				hiddenRules: state.hiddenRules.filter((it) => it !== action.payload),

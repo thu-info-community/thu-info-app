@@ -14,7 +14,11 @@ import React, {
 	useEffect,
 } from "react";
 import {connect} from "react-redux";
-import {activeWeek, Schedule} from "../../models/schedule/schedule";
+import {
+	activeWeek,
+	Schedule,
+	ScheduleType,
+} from "../../models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
 import {scheduleThunk} from "../../redux/actions/schedule";
@@ -26,7 +30,6 @@ import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
-import Snackbar from "react-native-snackbar";
 
 interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
@@ -65,7 +68,6 @@ const OptionButton = ({
 
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
-	const [overlap, setOverlap] = useState(false);
 	const viewShot = useRef<ViewShot>(null);
 
 	const themeName = useContext(ThemeContext);
@@ -92,15 +94,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.cache]);
-
-	useEffect(() => {
-		if (overlap) {
-			Snackbar.show({
-				text: getStr("scheduleOverlapWarning"),
-				duration: Snackbar.LENGTH_SHORT,
-			});
-		}
-	}, [overlap]);
 
 	const horizontalLine = () => (
 		<View style={{backgroundColor: "lightgray", height: 1}} />
@@ -205,10 +198,15 @@ const ScheduleUI = (props: ScheduleProps) => {
 								dayOfWeek={block.dayOfWeek}
 								begin={block.begin}
 								end={block.end}
-								name={val.name}
+								name={
+									val.type === ScheduleType.CUSTOM
+										? val.name.substr(1)
+										: val.name
+								}
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
+								key={val.name + block.begin}
 								onPress={() => {
 									props.navigation.navigate("ScheduleDetail", {
 										name: val.name,
@@ -217,7 +215,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										dayOfWeek: block.dayOfWeek,
 										begin: block.begin,
 										end: block.end,
-										deleteFunc: props.delOrHide,
+										type: val.type,
 									});
 								}}
 							/>,

@@ -1,5 +1,6 @@
 import React, {useContext, useState} from "react";
 import {
+	Alert,
 	ScrollView,
 	Text,
 	TextInput,
@@ -15,17 +16,27 @@ import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
 import {
 	addActiveTimeBlocks,
+	isScheduleOverlap,
 	Schedule,
 	ScheduleType,
+	TimeBlock,
 } from "../../models/schedule/schedule";
-import {SCHEDULE_ADD_CUSTOM} from "../../redux/constants";
+import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+import {State} from "../../redux/store";
+import { Choice } from "src/redux/reducers/schedule";
 
 interface ScheduleAddProps {
+	scheduleList: Schedule[];
 	navigation: ScheduleNav;
 	addCustom: (payload: Schedule) => void;
+	delOrHide: (title: string, block: TimeBlock, choice: Choice) => void;
 }
 
-const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
+const ScheduleAddUI = ({
+	scheduleList,
+	navigation,
+	addCustom,
+}: ScheduleAddProps) => {
 	const themeName = useContext(ThemeContext);
 	const theme = themes[themeName];
 	const style = styles(themeName);
@@ -232,7 +243,7 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 						(_, index) => index + 1,
 					).filter((week) => weeks[week]);
 					let newSchedule = {
-						name: title,
+						name: "#" + title,
 						location: locale,
 						activeTime: [],
 						delOrHideTime: [],
@@ -243,8 +254,40 @@ const ScheduleAddUI = ({navigation, addCustom}: ScheduleAddProps) => {
 							addActiveTimeBlocks(week, day, range[0], range[1], newSchedule);
 						}),
 					);
-					addCustom(newSchedule);
-					navigation.pop();
+
+					let overlapList: Schedule[] = [];
+					scheduleList.forEach((val) => {
+						if (isScheduleOverlap(val, newSchedule)) {
+							overlapList.push(val);
+						}
+					});
+
+					if (overlapList !== []) {
+						Alert.alert(
+							"计划冲突",
+							"您新建的计划与下列计划相冲突：\n" +
+								overlapList.map((val) => val.name).join("\n") +
+								"点击确认则会覆盖已有计划，点击取消放弃新建计划",
+							[
+								{
+									text: "确认",
+									onPress: () => {
+										overlapList.forEach((val) => {
+											
+										})
+										addCustom(newSchedule);
+										navigation.pop();
+									},
+								},
+								{
+									text: "取消",
+								},
+							],
+						);
+					} else {
+						addCustom(newSchedule);
+						navigation.pop();
+					}
 				}}>
 				<Text
 					style={[
@@ -315,9 +358,15 @@ const styles = themedStyles(() => {
 	};
 });
 
-export const ScheduleAddScreen = connect(undefined, (dispatch) => {
-	return {
+export const ScheduleAddScreen = connect(
+	(state: State) => ({
+		scheduleList: state.schedule.baseSchedule,
+	}),
+	(dispatch) => ({
 		addCustom: (payload: Schedule) =>
 			dispatch({type: SCHEDULE_ADD_CUSTOM, payload}),
-	};
-})(ScheduleAddUI);
+		delOrHide: (title: string, block: TimeBlock, choice: Choice) => {
+			dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [title, block, choice]});
+		},
+	}),
+)(ScheduleAddUI);

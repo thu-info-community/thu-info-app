@@ -1,10 +1,10 @@
 import {View, Text, Dimensions, TouchableOpacity} from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Choice} from "src/redux/reducers/schedule";
-import {TimeBlock} from "src/models/schedule/schedule";
-import {connect} from "react-redux";
 import {SCHEDULE_DEL_OR_HIDE} from "src/redux/constants";
+import {store} from "src/redux/store";
+import {ScheduleType} from "src/models/schedule/schedule";
 
 const beginTime = [
 	"",
@@ -51,11 +51,14 @@ export interface ScheduleDetailProps {
 	dayOfWeek: number;
 	begin: number;
 	end: number;
-	deleteFunc: (title: string, block: TimeBlock, choice: Choice) => void;
+	type: ScheduleType;
 }
 
 // TODO: delOrHide
-const ScheduleDetailUI = (props: ScheduleDetailProps) => {
+export const ScheduleDetailScreen = ({route}: any) => {
+	const props = route.params;
+	const [pressed, setPressed] = useState<boolean>(false);
+
 	const lineLength = Dimensions.get("window").width * 0.9;
 	const horizontalLine = () => (
 		<View
@@ -69,12 +72,14 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 	);
 
 	const delButton = (choice: Choice) => {
+		const verbText: string =
+			props.type === ScheduleType.CUSTOM ? "删除" : "隐藏";
 		const buttonText: string =
 			choice === Choice.ALL
-				? "删除所有时段该计划"
+				? verbText + "所有时段该计划"
 				: choice === Choice.REPEAT
-				? "删除每周同时段该计划"
-				: "删除该时段计划";
+				? verbText + "每周同时段该计划"
+				: verbText + "该时段计划";
 		return (
 			<TouchableOpacity
 				style={{
@@ -89,11 +94,12 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 					shadowOffset: {height: 2, width: 2},
 					margin: 5,
 					padding: 12,
-				}}>
-				<Text
-					style={{fontWeight: "bold", fontSize: 18}}
-					onPress={() =>
-						props.deleteFunc(
+				}}
+				onPress={() => {
+					setPressed(true);
+					store.dispatch({
+						type: SCHEDULE_DEL_OR_HIDE,
+						payload: [
 							props.name,
 							{
 								week: props.week,
@@ -102,8 +108,16 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 								end: props.end,
 							},
 							choice,
-						)
-					}>
+						],
+					});
+				}}
+				disabled={pressed}>
+				<Text
+					style={{
+						fontWeight: "bold",
+						fontSize: 18,
+						color: pressed ? "gray" : choice === Choice.ALL ? "red" : "black",
+					}}>
 					{buttonText}
 				</Text>
 			</TouchableOpacity>
@@ -123,9 +137,11 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 					marginBottom: 20,
 					lineHeight: 30,
 					alignSelf: "flex-start",
+					textDecorationLine: pressed ? "line-through" : undefined,
+					color: pressed ? "gray" : "black",
 				}}
 				numberOfLines={2}>
-				{props.name}
+				{props.type === ScheduleType.CUSTOM ? props.name.substr(1) : props.name}
 			</Text>
 			<View
 				style={{
@@ -139,7 +155,13 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 					<FontAwesome name="map-marker" size={20} color="red" />
 				</View>
 				<Text style={{marginHorizontal: 10, color: "gray"}}>地点</Text>
-				<Text style={{marginHorizontal: 15}}>{props.location}</Text>
+				<Text
+					style={{
+						marginHorizontal: 15,
+						color: props.location === "" ? "gray" : "black",
+					}}>
+					{props.location === "" ? "[未指定]" : props.location}
+				</Text>
 			</View>
 			<View
 				style={{
@@ -176,16 +198,3 @@ const ScheduleDetailUI = (props: ScheduleDetailProps) => {
 		</View>
 	);
 };
-
-export const ScheduleDetailScreen = connect(
-	(state: State) => ({
-		...state.schedule,
-		unitHeight:
-			state.config.scheduleHeight > 10 ? state.config.scheduleHeight : 10,
-	}),
-	(dispatch) => ({
-		deleteFunc: (title: string, block: TimeBlock, choice: Choice) => {
-			dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [title, block, choice]});
-		},
-	}),
-)(ScheduleDetailUI);

@@ -52,8 +52,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				alignContent: "center",
 				justifyContent: "center",
 			}}
-			onPress={props.onPress}
-			key={`${props.dayOfWeek}-${props.begin}`}>
+			onPress={props.onPress}>
 			<Text style={{textAlign: "center", color: "white"}}>
 				{props.name + "@" + props.location}
 			</Text>

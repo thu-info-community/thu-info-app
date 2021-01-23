@@ -114,20 +114,20 @@ export const addActiveTimeBlocks = (
 	});
 };
 
-export const hideOnce = (time: TimeBlock, schedule: Schedule) => {
-	let ind: number = schedule.activeTime.indexOf(time);
-	if (ind !== -1) {
-		schedule.delOrHideTime.push(schedule.activeTime[ind]);
-		schedule.activeTime.splice(ind, 1);
-	}
-};
-
-export const unhideOnce = (time: TimeBlock, schedule: Schedule) => {
-	let ind: number = schedule.delOrHideTime.indexOf(time);
-	if (ind !== -1) {
-		schedule.activeTime.push(schedule.activeTime[ind]);
-		schedule.delOrHideTime.splice(ind, 1);
-	}
+export const isScheduleOverlap = (a: Schedule, b: Schedule) => {
+	const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
+		_a.week === _b.week &&
+		_a.dayOfWeek === _b.dayOfWeek &&
+		(_a.begin <= _b.end || _b.begin <= _a.end);
+	let res = false;
+	a.activeTime.forEach((aval) => {
+		b.activeTime.forEach((bval) => {
+			if (isBlockOverlap(aval, bval)) {
+				res = true;
+			}
+		});
+	});
+	return res;
 };
 
 export const parseJSON = (json: any[]): Schedule[] => {
