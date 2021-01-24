@@ -5,4 +5,5 @@ export interface Schedules {
 	cache: string;
 	refreshing: boolean;
 	shortenMap: {[key: string]: string};
+	customCnt: number;
 }

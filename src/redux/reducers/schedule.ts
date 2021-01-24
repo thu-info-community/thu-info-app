@@ -60,6 +60,7 @@ export const schedule = (
 			return {
 				...state,
 				baseSchedule: state.baseSchedule.concat([action.payload]),
+				customCnt: state.customCnt + 1,
 			};
 		}
 		case SCHEDULE_DEL_OR_HIDE: {

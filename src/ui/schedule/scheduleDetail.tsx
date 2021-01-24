@@ -141,7 +141,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					color: pressed ? "gray" : "black",
 				}}
 				numberOfLines={2}>
-				{props.type === ScheduleType.CUSTOM ? props.name.substr(1) : props.name}
+				{props.type === ScheduleType.CUSTOM ? props.name.substr(6) : props.name}
 			</Text>
 			<View
 				style={{

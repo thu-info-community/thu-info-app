@@ -200,7 +200,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								end={block.end}
 								name={
 									val.type === ScheduleType.CUSTOM
-										? val.name.substr(1)
+										? val.name.substr(6)
 										: val.name
 								}
 								location={val.location}

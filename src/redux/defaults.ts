@@ -19,6 +19,7 @@ export const defaultSchedule: Schedules = {
 	cache: "",
 	refreshing: false,
 	shortenMap: {},
+	customCnt: 1,
 };
 
 export const defaultConfigState: Config = {

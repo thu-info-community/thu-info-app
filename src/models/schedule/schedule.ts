@@ -114,18 +114,25 @@ export const addActiveTimeBlocks = (
 	});
 };
 
-export const isScheduleOverlap = (a: Schedule, b: Schedule) => {
+export const getOverlappedBlock = (
+	tester: Schedule,
+	base: Schedule[],
+): [TimeBlock, string][] => {
+	let res: [TimeBlock, string][] = [];
 	const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
 		_a.week === _b.week &&
 		_a.dayOfWeek === _b.dayOfWeek &&
-		(_a.begin <= _b.end || _b.begin <= _a.end);
-	let res = false;
-	a.activeTime.forEach((aval) => {
-		b.activeTime.forEach((bval) => {
-			if (isBlockOverlap(aval, bval)) {
-				res = true;
-			}
-		});
+		((_a.begin > _b.begin && _a.begin <= _b.end) ||
+			(_a.begin < _b.begin && _b.begin <= _a.end) ||
+			_a.begin === _b.begin);
+	tester.activeTime.forEach((test) => {
+		base.forEach((val) =>
+			val.activeTime.forEach((block) => {
+				if (isBlockOverlap(block, test)) {
+					res.push([block, val.name]);
+				}
+			}),
+		);
 	});
 	return res;
 };

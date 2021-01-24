@@ -16,26 +16,41 @@ import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
 import {
 	addActiveTimeBlocks,
-	isScheduleOverlap,
+	getOverlappedBlock,
 	Schedule,
 	ScheduleType,
 	TimeBlock,
 } from "../../models/schedule/schedule";
 import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
-import { Choice } from "src/redux/reducers/schedule";
+import {Choice} from "src/redux/reducers/schedule";
 
 interface ScheduleAddProps {
 	scheduleList: Schedule[];
+	customCnt: number;
 	navigation: ScheduleNav;
 	addCustom: (payload: Schedule) => void;
 	delOrHide: (title: string, block: TimeBlock, choice: Choice) => void;
 }
 
+export const numberToCode = (num: number): string => {
+	console.log("GET: " + num);
+	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
+	let res: string = "";
+	pow10.forEach((val) => {
+		res += Math.floor(num / val) % 10;
+	});
+	return res;
+};
+
+const dayOfWeekChar = ["", "一", "二", "三", "四", "五", "六", "日"];
+
 const ScheduleAddUI = ({
 	scheduleList,
+	customCnt,
 	navigation,
 	addCustom,
+	delOrHide,
 }: ScheduleAddProps) => {
 	const themeName = useContext(ThemeContext);
 	const theme = themes[themeName];
@@ -243,7 +258,7 @@ const ScheduleAddUI = ({
 						(_, index) => index + 1,
 					).filter((week) => weeks[week]);
 					let newSchedule = {
-						name: "#" + title,
+						name: numberToCode(customCnt) + title,
 						location: locale,
 						activeTime: [],
 						delOrHideTime: [],
@@ -255,26 +270,37 @@ const ScheduleAddUI = ({
 						}),
 					);
 
-					let overlapList: Schedule[] = [];
-					scheduleList.forEach((val) => {
-						if (isScheduleOverlap(val, newSchedule)) {
-							overlapList.push(val);
-						}
-					});
+					let overlapList: [TimeBlock, string][] = getOverlappedBlock(
+						newSchedule,
+						scheduleList,
+					);
 
-					if (overlapList !== []) {
+					if (overlapList.length) {
 						Alert.alert(
 							"计划冲突",
-							"您新建的计划与下列计划相冲突：\n" +
-								overlapList.map((val) => val.name).join("\n") +
-								"点击确认则会覆盖已有计划，点击取消放弃新建计划",
+							"您新建的计划与下列计划相冲突：\n\n" +
+								overlapList
+									.map(
+										(val) =>
+											val[1] +
+											" 第" +
+											val[0].week +
+											"周周" +
+											dayOfWeekChar[val[0].dayOfWeek] +
+											" 第" +
+											val[0].begin +
+											(val[0].begin === val[0].end ? "" : " ~ " + val[0].end) +
+											"节",
+									)
+									.join("\n") +
+								"\n\n点击“确认”则会覆盖已有计划，点击“取消”放弃新建计划",
 							[
 								{
 									text: "确认",
 									onPress: () => {
 										overlapList.forEach((val) => {
-											
-										})
+											delOrHide(val[1], val[0], Choice.ONCE);
+										});
 										addCustom(newSchedule);
 										navigation.pop();
 									},
@@ -361,6 +387,7 @@ const styles = themedStyles(() => {
 export const ScheduleAddScreen = connect(
 	(state: State) => ({
 		scheduleList: state.schedule.baseSchedule,
+		customCnt: state.schedule.customCnt,
 	}),
 	(dispatch) => ({
 		addCustom: (payload: Schedule) =>
