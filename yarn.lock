@@ -7698,10 +7698,10 @@ react-native-screens@2.16.1:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.16.1.tgz#b105a127378d90018a46daf0c2f6518fca60c06f"
   integrity sha512-WZ7m0sBDVaHbBnlHxwQnUlI6KNfQKHq+Unfw+VBuAlnSXvT+aw6Bb/K2bUlHzBgvrPjwY3Spc7ZERFuTwRLLwg==
 
-react-native-snackbar@2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.3.1.tgz#62cef7c60d043f31d07641799e36bfd1445f826b"
-  integrity sha512-eWVEvdCiyx2K57Zv7xnnTzHuBqJSIA8SgFnKXQkmejENk97L+vTWik/QzXmwQ9AOxHVRmogBoHADVbdxGOfPZw==
+react-native-snackbar@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.3.2.tgz#6846deff8707f49dd1ed3ee8cce2d6f525eb6629"
+  integrity sha512-0xqN15A4xUTR3k0/Fdj5zrLOUsLKoPNZB8iqv3/bvjP0lTgJiSRiaSa0ty/tD/lP8kQzek+ldCkjDHxDG2ZFuQ==
 
 react-native-svg@12.1.0:
   version "12.1.0"
