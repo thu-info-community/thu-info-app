@@ -34,7 +34,6 @@ interface ScheduleAddProps {
 }
 
 export const numberToCode = (num: number): string => {
-	console.log("GET: " + num);
 	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
 	let res: string = "";
 	pow10.forEach((val) => {
@@ -270,7 +269,7 @@ const ScheduleAddUI = ({
 						}),
 					);
 
-					let overlapList: [TimeBlock, string][] = getOverlappedBlock(
+					let overlapList: [TimeBlock, string, boolean][] = getOverlappedBlock(
 						newSchedule,
 						scheduleList,
 					);
@@ -282,17 +281,18 @@ const ScheduleAddUI = ({
 								overlapList
 									.map(
 										(val) =>
-											val[1] +
-											" 第" +
+											"「" +
+											val[1].substr(val[2] ? 6 : 0) +
+											"」\n第" +
 											val[0].week +
-											"周周" +
+											"周 周" +
 											dayOfWeekChar[val[0].dayOfWeek] +
 											" 第" +
 											val[0].begin +
 											(val[0].begin === val[0].end ? "" : " ~ " + val[0].end) +
 											"节",
 									)
-									.join("\n") +
+									.join("\n\n") +
 								"\n\n点击“确认”则会覆盖已有计划，点击“取消”放弃新建计划",
 							[
 								{

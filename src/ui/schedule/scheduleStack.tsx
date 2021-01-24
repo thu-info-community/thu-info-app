@@ -5,7 +5,6 @@ import {
 } from "@react-navigation/stack";
 import {ScheduleScreen} from "./schedule";
 import {getStr} from "../../utils/i18n";
-import {ScheduleShortenScreen} from "./scheduleShorten";
 import {ScheduleAddScreen} from "./scheduleAdd";
 import {ScheduleHiddenScreen} from "./scheduleHidden";
 import {ScheduleDetailScreen, ScheduleDetailProps} from "./scheduleDetail";
@@ -28,11 +27,6 @@ export const ScheduleStackScreen = () => (
 			name="Schedule"
 			component={ScheduleScreen}
 			options={{title: getStr("schedule")}}
-		/>
-		<Stack.Screen
-			name="ScheduleShorten"
-			component={ScheduleShortenScreen}
-			options={{title: getStr("scheduleCustomShorten")}}
 		/>
 		<Stack.Screen
 			name="ScheduleAdd"

@@ -117,8 +117,8 @@ export const addActiveTimeBlocks = (
 export const getOverlappedBlock = (
 	tester: Schedule,
 	base: Schedule[],
-): [TimeBlock, string][] => {
-	let res: [TimeBlock, string][] = [];
+): [TimeBlock, string, boolean][] => {
+	let res: [TimeBlock, string, boolean][] = [];
 	const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
 		_a.week === _b.week &&
 		_a.dayOfWeek === _b.dayOfWeek &&
@@ -129,7 +129,7 @@ export const getOverlappedBlock = (
 		base.forEach((val) =>
 			val.activeTime.forEach((block) => {
 				if (isBlockOverlap(block, test)) {
-					res.push([block, val.name]);
+					res.push([block, val.name, val.type === ScheduleType.CUSTOM]);
 				}
 			}),
 		);

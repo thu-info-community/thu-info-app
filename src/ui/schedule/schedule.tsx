@@ -198,11 +198,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 								dayOfWeek={block.dayOfWeek}
 								begin={block.begin}
 								end={block.end}
-								name={
-									val.type === ScheduleType.CUSTOM
-										? val.name.substr(6)
-										: val.name
-								}
+								name={(props.shortenMap[val.name] === undefined
+									? val.name
+									: props.shortenMap[val.name]
+								).substr(val.type === ScheduleType.CUSTOM ? 6 : 0)}
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
@@ -215,6 +214,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										dayOfWeek: block.dayOfWeek,
 										begin: block.begin,
 										end: block.end,
+										alias: props.shortenMap[val.name],
 										type: val.type,
 									});
 								}}
@@ -283,10 +283,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 				</ViewShot>
 			</ScrollView>
 			<View style={{flexDirection: "row"}}>
-				<OptionButton
-					title={getStr("scheduleCustomShorten")}
-					onPress={() => props.navigation.navigate("ScheduleShorten")}
-				/>
 				<OptionButton
 					title={getStr("scheduleAddCustom")}
 					onPress={() => props.navigation.navigate("ScheduleAdd")}

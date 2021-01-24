@@ -1,10 +1,19 @@
-import {View, Text, Dimensions, TouchableOpacity} from "react-native";
+import {
+	View,
+	Text,
+	Dimensions,
+	TouchableOpacity,
+	Button,
+	Alert,
+} from "react-native";
 import React, {useState} from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Choice} from "src/redux/reducers/schedule";
-import {SCHEDULE_DEL_OR_HIDE} from "src/redux/constants";
+import {SCHEDULE_DEL_OR_HIDE, SCHEDULE_UPDATE_ALIAS} from "src/redux/constants";
 import {store} from "src/redux/store";
 import {ScheduleType} from "src/models/schedule/schedule";
+import {TextInput} from "react-native-gesture-handler";
+import {getStr} from "src/utils/i18n";
 
 const beginTime = [
 	"",
@@ -51,15 +60,19 @@ export interface ScheduleDetailProps {
 	dayOfWeek: number;
 	begin: number;
 	end: number;
+	alias: string;
 	type: ScheduleType;
 }
 
 // TODO: delOrHide
 export const ScheduleDetailScreen = ({route}: any) => {
 	const props = route.params;
-	const [pressed, setPressed] = useState<boolean>(false);
+	const [delPressed, setDelPressed] = useState<boolean>(false);
+	const [aliasPressed, setAliasPressed] = useState<boolean>(false);
+	const [newAlias, setAlias] = useState<string>("");
 
 	const lineLength = Dimensions.get("window").width * 0.9;
+
 	const horizontalLine = () => (
 		<View
 			style={{
@@ -73,7 +86,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 
 	const delButton = (choice: Choice) => {
 		const verbText: string =
-			props.type === ScheduleType.CUSTOM ? "删除" : "隐藏";
+			props.type === ScheduleType.CUSTOM && choice === Choice.ALL
+				? "删除"
+				: "隐藏";
 		const buttonText: string =
 			choice === Choice.ALL
 				? verbText + "所有时段该计划"
@@ -96,7 +111,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					padding: 12,
 				}}
 				onPress={() => {
-					setPressed(true);
+					setDelPressed(true);
 					store.dispatch({
 						type: SCHEDULE_DEL_OR_HIDE,
 						payload: [
@@ -111,12 +126,16 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						],
 					});
 				}}
-				disabled={pressed}>
+				disabled={delPressed}>
 				<Text
 					style={{
 						fontWeight: "bold",
 						fontSize: 18,
-						color: pressed ? "gray" : choice === Choice.ALL ? "red" : "black",
+						color: delPressed
+							? "gray"
+							: choice === Choice.ALL
+							? "red"
+							: "black",
 					}}>
 					{buttonText}
 				</Text>
@@ -137,11 +156,13 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					marginBottom: 20,
 					lineHeight: 30,
 					alignSelf: "flex-start",
-					textDecorationLine: pressed ? "line-through" : undefined,
-					color: pressed ? "gray" : "black",
+					textDecorationLine: delPressed ? "line-through" : undefined,
+					color: delPressed ? "gray" : "black",
 				}}
 				numberOfLines={2}>
-				{props.type === ScheduleType.CUSTOM ? props.name.substr(6) : props.name}
+				{(props.alias === undefined ? props.name : props.alias).substr(
+					props.type === ScheduleType.CUSTOM ? 6 : 0,
+				)}
 			</Text>
 			<View
 				style={{
@@ -189,8 +210,95 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					{"（" + beginTime[props.begin] + " ~ " + endTime[props.end] + "）"}
 				</Text>
 			</View>
+			{props.alias === undefined ? null : (
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						marginVertical: 10,
+						alignSelf: "flex-start",
+					}}>
+					<View
+						style={{alignItems: "center", justifyContent: "center", width: 20}}>
+						<FontAwesome name="file-text-o" size={20} color="green" />
+					</View>
+					<Text style={{marginHorizontal: 10, color: "gray"}}>原名</Text>
+					<Text
+						style={{
+							marginHorizontal: 15,
+							color: props.location === "" ? "gray" : "black",
+						}}>
+						{props.name}
+					</Text>
+				</View>
+			)}
 			{horizontalLine()}
-			<Text>TODO</Text>
+			<Text
+				style={{
+					marginVertical: 10,
+					alignSelf: "flex-start",
+					fontSize: 18,
+				}}>
+				{(props.alias === undefined ? "设置" : "修改或删除") + "简称："}
+			</Text>
+			<View
+				style={{
+					marginVertical: 10,
+					alignSelf: "stretch",
+					justifyContent: "center",
+					flexDirection: "row",
+				}}>
+				<TextInput
+					style={{
+						fontSize: 15,
+						flex: 5,
+						backgroundColor: "white",
+						textAlign: "left",
+						textAlignVertical: "center",
+						borderColor: "lightgrey",
+						borderWidth: 1,
+						borderRadius: 5,
+						marginHorizontal: 10,
+						padding: 6,
+					}}
+					value={newAlias}
+					onChangeText={setAlias}
+					keyboardType="default"
+				/>
+				<Button
+					title={getStr("confirm")}
+					onPress={() => {
+						if (newAlias.length === 0) {
+							Alert.alert("简称错误", "不能将简称设置为空。");
+							return;
+						}
+						store.dispatch({
+							type: SCHEDULE_UPDATE_ALIAS,
+							payload: [
+								props.name,
+								(props.type === ScheduleType.CUSTOM
+									? props.name.substr(0, 6)
+									: "") + newAlias,
+							],
+						});
+						setAliasPressed(true);
+					}}
+					disabled={aliasPressed}
+				/>
+				{props.alias === undefined ? null : (
+					<Button
+						title={"删除简称"}
+						onPress={() => {
+							store.dispatch({
+								type: SCHEDULE_UPDATE_ALIAS,
+								payload: [props.name, undefined],
+							});
+							setAliasPressed(true);
+						}}
+						disabled={aliasPressed}
+					/>
+				)}
+			</View>
 			{horizontalLine()}
 			{delButton(Choice.ONCE)}
 			{delButton(Choice.REPEAT)}

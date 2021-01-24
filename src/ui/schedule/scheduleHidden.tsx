@@ -13,7 +13,7 @@ const ScheduleHiddenUI = ({
 	removeRule,
 }: {
 	rules: Lesson[];
-	removeRule: (rule: Lesson) => void;
+	removeRule: (rule: number) => void;
 }) => {
 	let screenHeight = Dimensions.get("window");
 
