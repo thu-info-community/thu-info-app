@@ -31,7 +31,7 @@
 		"buffer": "6.0.3",
 		"cheerio": "0.22.0",
 		"convert-excel-to-json": "1.7.0",
-		"dayjs": "1.10.3",
+		"dayjs": "1.10.4",
 		"eslint-plugin-prettier": "3.3.1",
 		"events": "3.2.0",
 		"iconv-lite": "0.6.2",
