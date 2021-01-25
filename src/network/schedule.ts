@@ -161,14 +161,21 @@ export const getPrimarySchedule = () => {
 				{
 					name: "游戏氪金理论与实践",
 					location: "PC/主机/智能设备",
-					activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-						(val) => ({
+					activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+						.map((val) => ({
 							week: val,
 							dayOfWeek: 5,
 							begin: 3,
 							end: 5,
-						}),
-					),
+						}))
+						.concat(
+							[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((val) => ({
+								week: val,
+								dayOfWeek: 6,
+								begin: 1,
+								end: 2,
+							})),
+						),
 					delOrHideTime: [],
 					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,

@@ -131,17 +131,6 @@ export const schedule = (
 					newActiveBlocks.push(block);
 				}
 			});
-			selectedSchedule.delOrHideTime.forEach((block) => {
-				if (block.week === -1 && choice === Choice.REPEAT) {
-					return;
-				} else if (block.week === -1 && choice === Choice.ALL) {
-					hideBlocks = hideBlocks.concat(selectedSchedule.delOrHideDetail);
-				} else if (blockFilter(block)) {
-					hideBlocks.push(block);
-				} else {
-					newActiveBlocks.push(block);
-				}
-			});
 			selectedSchedule = Object.assign(
 				{},
 				{
@@ -153,11 +142,17 @@ export const schedule = (
 							? selectedSchedule.delOrHideTime.concat([time])
 							: choice === Choice.REPEAT
 							? selectedSchedule.delOrHideTime
-									.filter((val) => val.week !== time.week)
-									.concat({
-										...time,
-										week: -1,
-									})
+									.filter(
+										(val) =>
+											val.dayOfWeek !== time.dayOfWeek ||
+											val.begin !== time.begin,
+									)
+									.concat([
+										{
+											...time,
+											week: -1,
+										},
+									])
 							: [
 									{
 										...time,
@@ -165,14 +160,15 @@ export const schedule = (
 									},
 									// eslint-disable-next-line no-mixed-spaces-and-tabs
 							  ],
-					delOrHideDetail: choice === Choice.ONCE ? [] : hideBlocks,
+					delOrHideDetail: selectedSchedule.delOrHideDetail.concat(hideBlocks),
 				},
 			);
 
 			return {
 				...state,
 				baseSchedule:
-					choice === Choice.ALL && selectedSchedule.type === ScheduleType.CUSTOM
+					newActiveBlocks.length === 0 &&
+					selectedSchedule.type === ScheduleType.CUSTOM
 						? newBaseSchedule
 						: newBaseSchedule.concat([selectedSchedule]),
 			};
@@ -184,15 +180,20 @@ export const schedule = (
 				title,
 			);
 
+			console.log(time);
+
 			selectedSchedule = {
 				...selectedSchedule,
 				activeTime:
 					time.week === 0
 						? selectedSchedule.delOrHideDetail
 						: time.week === -1
-						? selectedSchedule.delOrHideDetail.filter(
-								(val) =>
-									val.dayOfWeek === time.dayOfWeek && val.begin === time.begin,
+						? selectedSchedule.activeTime.concat(
+								selectedSchedule.delOrHideDetail.filter(
+									(val) =>
+										val.dayOfWeek === time.dayOfWeek &&
+										val.begin === time.begin,
+								),
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  )
 						: selectedSchedule.activeTime.concat([time]),
@@ -216,7 +217,8 @@ export const schedule = (
 								(val) =>
 									val.week !== time.week ||
 									val.dayOfWeek !== time.dayOfWeek ||
-									val.begin !== time.begin,
+									val.begin !== time.begin ||
+									val.end !== time.end,
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  ),
 			};
