@@ -144,7 +144,6 @@ export const parseJSON = (json: any[]): Schedule[] => {
 			const date = new Calendar(o.nq);
 			switch (o.fl) {
 				case "上课": {
-					// TODO: use id to detect duplication
 					let lessonList = scheduleList.filter((val) => val.name === o.nr);
 					let lesson: Schedule;
 					if (lessonList.length) {

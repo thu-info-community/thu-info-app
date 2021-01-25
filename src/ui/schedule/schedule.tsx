@@ -77,7 +77,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const daysInWeek = 7;
 	const borderTotWidth = daysInWeek + 1;
 
-	// TODO: let it able to be modified
 	const unitHeight = props.unitHeight;
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);

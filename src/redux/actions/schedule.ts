@@ -24,7 +24,7 @@ export type ScheduleAction =
 	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]}
 	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Schedule}
 	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [string, TimeBlock, Choice]}
-	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: Lesson};
+	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: [string, TimeBlock]};
 
 export const scheduleThunk = () => (dispatch: Dispatch<ScheduleAction>) => {
 	dispatch(scheduleAction.request());

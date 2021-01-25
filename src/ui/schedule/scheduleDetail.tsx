@@ -71,7 +71,6 @@ export interface ScheduleDetailProps {
 	type: ScheduleType;
 }
 
-// TODO: delOrHide
 export const ScheduleDetailScreen = ({route}: any) => {
 	const props = route.params;
 	const [delPressed, setDelPressed] = useState<boolean>(false);
