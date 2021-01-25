@@ -261,6 +261,7 @@ const ScheduleAddUI = ({
 						location: locale,
 						activeTime: [],
 						delOrHideTime: [],
+						delOrHideDetail: [],
 						type: ScheduleType.CUSTOM,
 					};
 					ranges.flatMap((range) =>

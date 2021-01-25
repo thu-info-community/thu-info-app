@@ -47,17 +47,37 @@ export const schedule = (
 			};
 		case SCHEDULE_SUCCESS:
 			let customList: Schedule[] = [];
+			let newScheduleList: Schedule[] = [];
 			state.baseSchedule.forEach((val) => {
 				if (val.type === ScheduleType.CUSTOM) {
 					customList.push(val);
 				}
 			});
+			action.payload.forEach((val) => {
+				let selectedScheduleList = state.baseSchedule.filter(
+					(item) => item.name === val.name,
+				);
+				if (selectedScheduleList.length === 0) {
+					newScheduleList.push(val);
+					return;
+				}
+				let selectedSchedule = selectedScheduleList[0];
+				newScheduleList.push(
+					selectedSchedule.delOrHideTime.length === 0
+						? val
+						: {
+								...val,
+								activeTime: selectedSchedule.activeTime,
+								delOrHideTime: selectedSchedule.delOrHideTime,
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  },
+				);
+			});
 			return {
 				...state,
-				baseSchedule: customList.concat(action.payload),
+				baseSchedule: customList.concat(newScheduleList),
 				cache: Calendar.semesterId,
 				refreshing: false,
-				// shortenMap: {}, // Is it correct?
 			};
 		case SCHEDULE_FAILURE:
 			return {
@@ -102,26 +122,42 @@ export const schedule = (
 				}
 			};
 
-			const newActiveBlocks = selectedSchedule.activeTime.filter(
-				(block) => !blockFilter(block),
-			);
+			let newActiveBlocks: TimeBlock[] = [];
+			let hideBlocks: TimeBlock[] = [];
+			selectedSchedule.activeTime.forEach((block) => {
+				if (blockFilter(block)) {
+					hideBlocks.push(block);
+				} else {
+					newActiveBlocks.push(block);
+				}
+			});
+			selectedSchedule.delOrHideTime.forEach((block) => {
+				if (block.week === -1 && choice === Choice.REPEAT) {
+					return;
+				} else if (block.week === -1 && choice === Choice.ALL) {
+					hideBlocks = hideBlocks.concat(selectedSchedule.delOrHideDetail);
+				} else if (blockFilter(block)) {
+					hideBlocks.push(block);
+				} else {
+					newActiveBlocks.push(block);
+				}
+			});
 			selectedSchedule = Object.assign(
 				{},
 				{
 					...selectedSchedule,
 					activeTime: newActiveBlocks,
 					// week: 0 means ALL, week: -1 means REPEAT
-					delOrHideTime: selectedSchedule.delOrHideTime.concat(
+					delOrHideTime:
 						choice === Choice.ONCE
-							? [time]
+							? selectedSchedule.delOrHideTime.concat([time])
 							: choice === Choice.REPEAT
-							? [
-									{
+							? selectedSchedule.delOrHideTime
+									.filter((val) => val.week !== time.week)
+									.concat({
 										...time,
 										week: -1,
-									},
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  ]
+									})
 							: [
 									{
 										...time,
@@ -129,15 +165,14 @@ export const schedule = (
 									},
 									// eslint-disable-next-line no-mixed-spaces-and-tabs
 							  ],
-					),
+					delOrHideDetail: choice === Choice.ONCE ? [] : hideBlocks,
 				},
 			);
 
 			return {
 				...state,
 				baseSchedule:
-					newActiveBlocks === [] &&
-					selectedSchedule.type === ScheduleType.CUSTOM
+					choice === Choice.ALL && selectedSchedule.type === ScheduleType.CUSTOM
 						? newBaseSchedule
 						: newBaseSchedule.concat([selectedSchedule]),
 			};
@@ -151,6 +186,16 @@ export const schedule = (
 
 			selectedSchedule = {
 				...selectedSchedule,
+				activeTime:
+					time.week === 0
+						? selectedSchedule.delOrHideDetail
+						: time.week === -1
+						? selectedSchedule.delOrHideDetail.filter(
+								(val) =>
+									val.dayOfWeek === time.dayOfWeek && val.begin === time.begin,
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  )
+						: selectedSchedule.activeTime.concat([time]),
 				delOrHideTime: selectedSchedule.delOrHideTime.filter(
 					(val) =>
 						val.week !== time.week ||
@@ -158,6 +203,22 @@ export const schedule = (
 						val.begin !== time.begin ||
 						val.end !== time.end,
 				),
+				delOrHideDetail:
+					time.week === 0
+						? []
+						: time.week === -1
+						? selectedSchedule.delOrHideDetail.filter(
+								(val) =>
+									val.dayOfWeek !== time.dayOfWeek || val.begin !== time.begin,
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  )
+						: selectedSchedule.delOrHideDetail.filter(
+								(val) =>
+									val.week !== time.week ||
+									val.dayOfWeek !== time.dayOfWeek ||
+									val.begin !== time.begin,
+								// eslint-disable-next-line no-mixed-spaces-and-tabs
+						  ),
 			};
 
 			return {

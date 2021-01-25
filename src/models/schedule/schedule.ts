@@ -65,6 +65,7 @@ export interface Schedule {
 	location: string;
 	activeTime: TimeBlock[];
 	delOrHideTime: TimeBlock[];
+	delOrHideDetail: TimeBlock[];
 	type: ScheduleType;
 }
 
@@ -154,6 +155,7 @@ export const parseJSON = (json: any[]): Schedule[] => {
 							location: o.dd || "",
 							activeTime: [],
 							delOrHideTime: [],
+							delOrHideDetail: [],
 							type: ScheduleType.PRIMARY,
 						});
 						lesson = scheduleList[scheduleList.length - 1];
@@ -173,6 +175,7 @@ export const parseJSON = (json: any[]): Schedule[] => {
 						location: o.dd || "",
 						activeTime: [],
 						delOrHideTime: [],
+						delOrHideDetail: [],
 						type: ScheduleType.EXAM,
 					});
 					addActiveTimeBlocks(
@@ -259,6 +262,7 @@ export const parseScript = (
 					location: position,
 					activeTime: [],
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.SECONDARY,
 				});
 				lesson = result[result.length - 1];

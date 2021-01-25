@@ -35,6 +35,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -49,6 +50,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -63,6 +65,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -77,6 +80,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -91,6 +95,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -105,6 +110,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -119,6 +125,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -133,6 +140,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -147,6 +155,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -161,6 +170,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				{
@@ -175,6 +185,7 @@ export const getPrimarySchedule = () => {
 						}),
 					),
 					delOrHideTime: [],
+					delOrHideDetail: [],
 					type: ScheduleType.PRIMARY,
 				},
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
