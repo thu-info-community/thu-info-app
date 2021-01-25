@@ -53,6 +53,13 @@ const endTime = [
 
 const dayOfWeekChar = ["", "一", "二", "三", "四", "五", "六", "日"];
 
+const nullAlias = (str: string) => {
+	if (str === undefined) {
+		return true;
+	}
+	return str.length === 0;
+};
+
 export interface ScheduleDetailProps {
 	name: string;
 	location: string;
@@ -68,8 +75,8 @@ export interface ScheduleDetailProps {
 export const ScheduleDetailScreen = ({route}: any) => {
 	const props = route.params;
 	const [delPressed, setDelPressed] = useState<boolean>(false);
-	const [aliasPressed, setAliasPressed] = useState<boolean>(false);
-	const [newAlias, setAlias] = useState<string>("");
+	const [inputText, setInputText] = useState<string>("");
+	const [newAlias, setAlias] = useState<string>(props.alias);
 
 	const lineLength = Dimensions.get("window").width * 0.9;
 
@@ -160,7 +167,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					color: delPressed ? "gray" : "black",
 				}}
 				numberOfLines={2}>
-				{(props.alias === undefined ? props.name : props.alias).substr(
+				{(nullAlias(newAlias) ? props.name : newAlias).substr(
 					props.type === ScheduleType.CUSTOM ? 6 : 0,
 				)}
 			</Text>
@@ -210,7 +217,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					{"（" + beginTime[props.begin] + " ~ " + endTime[props.end] + "）"}
 				</Text>
 			</View>
-			{props.alias === undefined ? null : (
+			{nullAlias(newAlias) ? null : (
 				<View
 					style={{
 						flexDirection: "row",
@@ -239,7 +246,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					alignSelf: "flex-start",
 					fontSize: 18,
 				}}>
-				{(props.alias === undefined ? "设置" : "修改或删除") + "简称："}
+				{(nullAlias(newAlias) ? "设置" : "修改或删除") + "简称："}
 			</Text>
 			<View
 				style={{
@@ -261,31 +268,30 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						marginHorizontal: 10,
 						padding: 6,
 					}}
-					value={newAlias}
-					onChangeText={setAlias}
+					value={inputText}
+					onChangeText={setInputText}
 					keyboardType="default"
 				/>
 				<Button
 					title={getStr("confirm")}
 					onPress={() => {
-						if (newAlias.length === 0) {
+						if (inputText.length === 0) {
 							Alert.alert("简称错误", "不能将简称设置为空。");
 							return;
 						}
+						const res: string =
+							(props.type === ScheduleType.CUSTOM
+								? props.name.substr(0, 6)
+								: "") + inputText;
 						store.dispatch({
 							type: SCHEDULE_UPDATE_ALIAS,
-							payload: [
-								props.name,
-								(props.type === ScheduleType.CUSTOM
-									? props.name.substr(0, 6)
-									: "") + newAlias,
-							],
+							payload: [props.name, res],
 						});
-						setAliasPressed(true);
+						setAlias(res);
+						setInputText("");
 					}}
-					disabled={aliasPressed}
 				/>
-				{props.alias === undefined ? null : (
+				{nullAlias(newAlias) ? null : (
 					<Button
 						title={"删除简称"}
 						onPress={() => {
@@ -293,9 +299,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 								type: SCHEDULE_UPDATE_ALIAS,
 								payload: [props.name, undefined],
 							});
-							setAliasPressed(true);
+							setAlias("");
+							setInputText("");
 						}}
-						disabled={aliasPressed}
 					/>
 				)}
 			</View>
