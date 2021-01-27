@@ -1,5 +1,9 @@
 import {Auth} from "../redux/states/auth";
 import {
+	ACADEMIC_HOME_URL,
+	ACADEMIC_LOGIN_CHOICE_URL,
+	ACADEMIC_LOGIN_URL,
+	ACADEMIC_URL,
 	CONFIRM_LOGIN_URL,
 	CONTENT_TYPE_FORM,
 	DO_LOGIN_URL,
@@ -14,7 +18,6 @@ import {
 	INFO_LOGIN_URL,
 	INFO_ROOT_URL,
 	INFO_URL,
-	INVALIDATE_ZHJW_URL,
 	LIBRARY_LOGIN_URL,
 	LOGIN_URL,
 	LOGOUT_URL,
@@ -129,7 +132,7 @@ export const retrieve = async (
 	});
 
 /**
- * Logs-in to WebVPN, INFO and ZHJW sequentially.
+ * Logs-in to WebVPN, INFO and academic sequentially.
  */
 export const login = async (
 	userId: string,
@@ -138,6 +141,7 @@ export const login = async (
 	if (mocked()) {
 		return {userId: userId, password: password};
 	}
+	const graduate = userId[4] === "2" || userId[4] === "3";
 	const rawResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
 		auth_type: "local",
 		username: userId,
@@ -163,7 +167,12 @@ export const login = async (
 		x: "0",
 		y: "0",
 	});
-	await connect(INVALIDATE_ZHJW_URL, INFO_URL);
+	await connect(ACADEMIC_LOGIN_URL, ACADEMIC_URL, {userName: userId, password});
+	const iFrameUrl = cheerio(
+		graduate ? "#23-2604_iframe" : "#25-2649_iframe",
+		await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
+	).attr("src") as string;
+	await connect(iFrameUrl, ACADEMIC_LOGIN_CHOICE_URL);
 	return {
 		userId: userId,
 		password: password,
