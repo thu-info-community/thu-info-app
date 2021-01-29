@@ -138,8 +138,7 @@ export const getReport = (
                 semester: "2020-春",
             },
             // eslint-disable-next-line no-mixed-spaces-and-tabs
-		  ])
-        : retryWrapper(
+		    ]) : retryWrapper(
             helper,
             792,
             Promise.all([
@@ -156,7 +155,7 @@ export const getReport = (
                         undefined,
                         "GBK",
                         // eslint-disable-next-line no-mixed-spaces-and-tabs
-						  )
+						    )
                     : undefined,
             ]).then(([str, bxStr]: [string, string | undefined]) => {
                 const bxSet = new Set<string>();
@@ -184,25 +183,25 @@ export const getReport = (
                         }
                     });
                 }
-                const result = cheerio("#table1", str)
+                const result = cheerio("[cellspacing=1]", str)
                     .children()
                     .slice(1)
                     .map((_, element) => {
-                        const grade = getCheerioText(element, 7);
-                        let point = Number(getCheerioText(element, 9));
+                        const grade = getCheerioText(element, graduate ? 9 : 7);
+                        let point = Number(getCheerioText(element, graduate ? 11 : 9));
                         if (!newGPA) {
                             point = gradeToOldGPA.get(grade) ?? point;
                         }
                         return bxStr === undefined ||
-								bxSet.has(getCheerioText(element, 1))
+                        bxSet.has(getCheerioText(element, 1))
                             ? {
                                 name: getCheerioText(element, 3),
                                 credit: Number(getCheerioText(element, 5)),
                                 grade,
                                 point,
-                                semester: getCheerioText(element, 11),
+                                semester: getCheerioText(element, graduate ? 13 : 11),
                                 // eslint-disable-next-line no-mixed-spaces-and-tabs
-								  }
+                            }
                             : undefined;
                     })
                     .get();
