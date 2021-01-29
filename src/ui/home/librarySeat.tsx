@@ -51,16 +51,19 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 			);
 		}
 	},
-	<View style={{justifyContent: "center"}}>
-		<Text
-			style={{
-				fontSize: 16,
-				fontWeight: "bold",
-				textAlign: "center",
-				marginBottom: 15,
-			}}>
-			{getStr("bookTips")}
-		</Text>
-		<View style={{backgroundColor: "lightgray", height: 1}} />
-	</View>,
+	(theme) => (
+		<View style={{justifyContent: "center"}}>
+			<Text
+				style={{
+					fontSize: 16,
+					fontWeight: "bold",
+					textAlign: "center",
+					marginBottom: 15,
+					color: theme.colors.text,
+				}}>
+				{getStr("bookTips")}
+			</Text>
+			<View style={{backgroundColor: "lightgray", height: 1}} />
+		</View>
+	),
 );

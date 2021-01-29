@@ -8,7 +8,7 @@ import React, {
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
-import themes from "../../assets/themes/themes";
+import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
 
 export function simpleRefreshListScreen<T>(
@@ -17,6 +17,7 @@ export function simpleRefreshListScreen<T>(
 		item: T,
 		refresh: () => void,
 		props: PropsWithChildren<any>,
+		theme: Theme,
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: ReactElement,
@@ -57,7 +58,7 @@ export function simpleRefreshListScreen<T>(
 						colors={[theme.colors.accent]}
 					/>
 				}
-				renderItem={({item}) => renderItem(item, refresh, props)}
+				renderItem={({item}) => renderItem(item, refresh, props, theme)}
 				keyExtractor={keyExtractor}
 				ListHeaderComponent={data.length === 0 ? null : header}
 				ListFooterComponent={footer}

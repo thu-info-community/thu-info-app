@@ -9,6 +9,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {mocked} from "../../redux/store";
 import {toggleSocketState} from "../../network/library";
 import Snackbar from "react-native-snackbar";
+import {useColorScheme} from "react-native-appearance";
+import themes, {Theme} from "../../assets/themes/themes";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -30,7 +32,7 @@ export function libraryRefreshListScreen<
 		choice: 0 | 1,
 		refresh: () => void,
 	) => () => void,
-	header?: ReactElement,
+	header?: (theme: Theme) => ReactElement,
 ): FC<{
 	navigation: HomeNav;
 	route: RouteProp<HomeStackParamList, S>;
@@ -44,10 +46,12 @@ export function libraryRefreshListScreen<
 		const [choice, setChoice] = useState<0 | 1>(
 			props?.route?.params?.dateChoice ?? 0,
 		);
+		const themeName = useColorScheme();
+		const theme = themes[themeName];
 
 		const List = simpleRefreshListScreen(
 			() => dataSource(props, choice),
-			(item, refresh) => {
+			(item, refresh, _, {colors}) => {
 				const moreInformation = // @ts-ignore
 					item.available !== undefined && item.total !== undefined // @ts-ignore
 						? ` (${item.available}/${item.total})`
@@ -60,7 +64,7 @@ export function libraryRefreshListScreen<
 							{"hasSocket" in item && (
 								<TouchableOpacity
 									style={{
-										backgroundColor: "#ffffff",
+										backgroundColor: colors.background,
 										flexDirection: "row",
 										justifyContent: "center",
 										alignItems: "center",
@@ -118,7 +122,7 @@ export function libraryRefreshListScreen<
 							)}
 							<TouchableOpacity
 								style={{
-									backgroundColor: "#ffffff",
+									backgroundColor: colors.background,
 									flexDirection: "row",
 									justifyContent: "space-between",
 									alignItems: "center",
@@ -133,7 +137,7 @@ export function libraryRefreshListScreen<
 									style={{
 										textAlign: "center",
 										textDecorationLine: item.valid ? "none" : "line-through",
-										color: item.valid ? "black" : "grey",
+										color: item.valid ? colors.text : "grey",
 										marginVertical: 14,
 									}}>
 									{item.zhName + moreInformation}
@@ -149,7 +153,11 @@ export function libraryRefreshListScreen<
 			},
 			(item) => String(item.id),
 			undefined,
-			header || <View style={{backgroundColor: "lightgray", height: 1}} />,
+			header ? (
+				header(theme)
+			) : (
+				<View style={{backgroundColor: "lightgray", height: 1}} />
+			),
 		);
 
 		return (
@@ -160,7 +168,7 @@ export function libraryRefreshListScreen<
 						onPress={() => setChoice(0)}>
 						<Text
 							style={{
-								color: choice === 0 ? "blue" : "black",
+								color: choice === 0 ? "blue" : theme.colors.text,
 								textAlign: "center",
 							}}>
 							{getStr("today")}
@@ -171,7 +179,7 @@ export function libraryRefreshListScreen<
 						onPress={() => setChoice(1)}>
 						<Text
 							style={{
-								color: choice === 1 ? "blue" : "black",
+								color: choice === 1 ? "blue" : theme.colors.text,
 								textAlign: "center",
 							}}>
 							{getStr("tomorrow")}

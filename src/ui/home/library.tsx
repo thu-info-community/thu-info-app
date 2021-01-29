@@ -9,11 +9,11 @@ import {mocked} from "../../redux/store";
 
 export const LibraryScreen = simpleRefreshListScreen(
 	getLibraryList,
-	(item, _, {navigation}: {navigation: HomeNav}) => (
+	(item, _, {navigation}: {navigation: HomeNav}, {colors}) => (
 		<View>
 			<TouchableOpacity
 				style={{
-					backgroundColor: "#ffffff",
+					backgroundColor: colors.background,
 					flexDirection: "row",
 					justifyContent: "space-between",
 					alignItems: "center",
@@ -29,7 +29,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 						fontSize: 14,
 						textAlign: "left",
 						textDecorationLine: item.valid ? "none" : "line-through",
-						color: item.valid ? "black" : "grey",
+						color: item.valid ? colors.text : "grey",
 						marginVertical: 14,
 					}}>
 					{item.zhName}
