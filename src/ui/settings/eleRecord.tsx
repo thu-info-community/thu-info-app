@@ -31,8 +31,12 @@ export const EleRecordScreen = simpleRefreshListScreen(
 		);
 	},
 	(item) => item[1],
-	<Text style={{padding: 10, marginTop: 10, textAlign: "center"}}>
-		<Text style={{fontWeight: "bold", fontSize: 16}}>{getStr("tips")}</Text>
-		<Text style={{color: "gray"}}>{getStr("eleRecordRestriction")}</Text>
-	</Text>,
+	({colors}) => (
+		<Text style={{padding: 10, marginTop: 10, textAlign: "center"}}>
+			<Text style={{fontWeight: "bold", fontSize: 16, color: colors.text}}>
+				{getStr("tips")}
+			</Text>
+			<Text style={{color: "gray"}}>{getStr("eleRecordRestriction")}</Text>
+		</Text>
+	),
 );

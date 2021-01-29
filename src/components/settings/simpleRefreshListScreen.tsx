@@ -20,9 +20,9 @@ export function simpleRefreshListScreen<T>(
 		theme: Theme,
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
-	footer?: ReactElement,
-	header?: ReactElement,
-	empty?: ReactElement,
+	footer?: (theme: Theme) => ReactElement,
+	header?: (theme: Theme) => ReactElement,
+	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
 ): FC {
 	return (props) => {
@@ -60,9 +60,11 @@ export function simpleRefreshListScreen<T>(
 				}
 				renderItem={({item}) => renderItem(item, refresh, props, theme)}
 				keyExtractor={keyExtractor}
-				ListHeaderComponent={data.length === 0 ? null : header}
-				ListFooterComponent={footer}
-				ListEmptyComponent={empty}
+				ListHeaderComponent={
+					data.length === 0 ? null : header ? header(theme) : undefined
+				}
+				ListFooterComponent={footer ? footer(theme) : undefined}
+				ListEmptyComponent={empty ? empty(theme) : undefined}
 				initialNumToRender={initialNumToRender}
 			/>
 		);

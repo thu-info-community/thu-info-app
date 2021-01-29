@@ -153,11 +153,8 @@ export function libraryRefreshListScreen<
 			},
 			(item) => String(item.id),
 			undefined,
-			header ? (
-				header(theme)
-			) : (
-				<View style={{backgroundColor: "lightgray", height: 1}} />
-			),
+			header ??
+				(() => <View style={{backgroundColor: "lightgray", height: 1}} />),
 		);
 
 		return (

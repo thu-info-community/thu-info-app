@@ -40,30 +40,30 @@ export const LibraryScreen = simpleRefreshListScreen(
 		</View>
 	),
 	(item) => String(item.id),
-	mocked() ? undefined : (
-		<View
-			style={{
-				padding: 6,
-				margin: 4,
-				alignItems: "center",
-				marginHorizontal: 14,
-			}}>
-			<Text style={{textAlign: "center", lineHeight: 20, color: "gray"}}>
-				{getStr("socketIntro")}
+	mocked()
+		? undefined
+		: ({colors}) => (
+				<View style={{padding: 6, margin: 4, alignItems: "center",marginHorizontal: 14}}>
+					<Text style={{textAlign: "center", lineHeight: 20, color: "gray"}}>
+						{getStr("socketIntro")}
+					</Text>
+				</View>
+				// eslint-disable-next-line no-mixed-spaces-and-tabs
+		  ),
+	({colors}) => (
+		<View>
+			<Text
+				style={{
+					fontWeight: "bold",
+					fontSize: 16,
+					alignSelf: "center",
+					textAlign: "center",
+					marginVertical: 20,
+					color: colors.text,
+				}}>
+				{getStr(mocked() ? "chooseLibraryMocked" : "chooseLibrary")}
 			</Text>
+			<View style={{backgroundColor: "lightgray", height: 1}} />
 		</View>
 	),
-	<View>
-		<Text
-			style={{
-				fontWeight: "bold",
-				fontSize: 16,
-				alignSelf: "center",
-				textAlign: "center",
-				marginVertical: 20,
-			}}>
-			{getStr(mocked() ? "chooseLibraryMocked" : "chooseLibrary")}
-		</Text>
-		<View style={{backgroundColor: "lightgray", height: 1}} />
-	</View>,
 );
