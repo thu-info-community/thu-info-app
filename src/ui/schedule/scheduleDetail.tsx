@@ -14,6 +14,8 @@ import {store} from "src/redux/store";
 import {ScheduleType} from "src/models/schedule/schedule";
 import {TextInput} from "react-native-gesture-handler";
 import {getStr} from "src/utils/i18n";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 const beginTime = [
 	"",
@@ -79,6 +81,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 
 	const lineLength = Dimensions.get("window").width * 0.9;
 
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	const horizontalLine = () => (
 		<View
 			style={{
@@ -141,7 +146,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 							? "gray"
 							: choice === Choice.ALL
 							? "red"
-							: "black",
+							: colors.text,
 					}}>
 					{buttonText}
 				</Text>
@@ -163,7 +168,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					lineHeight: 30,
 					alignSelf: "flex-start",
 					textDecorationLine: delPressed ? "line-through" : undefined,
-					color: delPressed ? "gray" : "black",
+					color: delPressed ? "gray" : colors.text,
 				}}
 				numberOfLines={2}>
 				{(nullAlias(newAlias) ? props.name : newAlias).substr(
@@ -185,7 +190,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 				<Text
 					style={{
 						marginHorizontal: 15,
-						color: props.location === "" ? "gray" : "black",
+						color: props.location === "" ? "gray" : colors.text,
 					}}>
 					{props.location === "" ? "[未指定]" : props.location}
 				</Text>
@@ -202,11 +207,13 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					<FontAwesome name="list-alt" size={20} color="blue" />
 				</View>
 				<Text style={{marginHorizontal: 10, color: "gray"}}>节数</Text>
-				<Text style={{marginLeft: 15}}>{"第" + props.week + "周"}</Text>
-				<Text style={{marginLeft: 5}}>
+				<Text style={{marginLeft: 15, color: colors.text}}>
+					{"第" + props.week + "周"}
+				</Text>
+				<Text style={{marginLeft: 5, color: colors.text}}>
 					{"周" + dayOfWeekChar[props.dayOfWeek]}
 				</Text>
-				<Text style={{marginLeft: 5}}>
+				<Text style={{marginLeft: 5, color: colors.text}}>
 					{"第" +
 						props.begin +
 						(props.begin === props.end ? "" : " ~ " + props.end) +
@@ -232,7 +239,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					<Text
 						style={{
 							marginHorizontal: 15,
-							color: props.location === "" ? "gray" : "black",
+							color: props.location === "" ? "gray" : colors.text,
 						}}>
 						{props.name}
 					</Text>
@@ -244,6 +251,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					marginVertical: 10,
 					alignSelf: "flex-start",
 					fontSize: 18,
+					color: colors.text,
 				}}>
 				{(nullAlias(newAlias) ? "设置" : "修改或删除") + "简称："}
 			</Text>
@@ -258,7 +266,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					style={{
 						fontSize: 15,
 						flex: 5,
-						backgroundColor: "white",
+						backgroundColor: colors.background,
 						textAlign: "left",
 						textAlignVertical: "center",
 						borderColor: "lightgrey",

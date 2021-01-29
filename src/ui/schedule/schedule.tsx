@@ -235,7 +235,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					<Icon
 						name="chevron-left"
 						size={24}
-						color={week > 1 ? "black" : "#888"}
+						color={week > 1 ? theme.colors.text : "#888"}
 					/>
 				</TouchableOpacity>
 				<Text
@@ -244,6 +244,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 						fontSize: 18,
 						textAlign: "center",
 						flex: 1,
+						color: theme.colors.text,
 					}}>
 					{week}
 				</Text>
@@ -256,7 +257,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					<Icon
 						name="chevron-right"
 						size={24}
-						color={week < Calendar.weekCount ? "black" : "#888"}
+						color={week < Calendar.weekCount ? theme.colors.text : "#888"}
 					/>
 				</TouchableOpacity>
 			</View>

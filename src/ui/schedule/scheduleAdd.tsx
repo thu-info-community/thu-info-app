@@ -332,14 +332,13 @@ const ScheduleAddUI = ({
 	);
 };
 
-const styles = themedStyles(() => {
-	// TODO: themed styles
+const styles = themedStyles(({colors}) => {
 	return {
 		pressable: {
 			flex: 1,
 			padding: 8,
 			margin: 5,
-			backgroundColor: "white",
+			backgroundColor: colors.background,
 			justifyContent: "center",
 			borderRadius: 3,
 			shadowColor: "grey",
@@ -356,11 +355,13 @@ const styles = themedStyles(() => {
 		dayOfWeekCenter: {
 			textAlign: "center",
 			fontSize: 12,
+			color: colors.text,
 		},
 
 		textCenter: {
 			textAlign: "center",
 			fontSize: 14,
+			color: colors.text,
 		},
 
 		textHeader: {
@@ -369,12 +370,13 @@ const styles = themedStyles(() => {
 			fontSize: 18,
 			marginTop: 20,
 			marginBottom: 10,
+			color: colors.text,
 		},
 
 		textInputStyle: {
 			height: 38,
 			flex: 1,
-			backgroundColor: "white",
+			backgroundColor: colors.background,
 			textAlign: "left",
 			borderColor: "lightgrey",
 			borderWidth: 1,
