@@ -1,7 +1,6 @@
 import {Auth} from "../redux/states/auth";
 import {
 	ACADEMIC_HOME_URL,
-	ACADEMIC_LOGIN_CHOICE_URL,
 	ACADEMIC_LOGIN_URL,
 	ACADEMIC_URL,
 	CONFIRM_LOGIN_URL,
@@ -114,7 +113,7 @@ export const retrieve = async (
 			if (request.status === 200) {
 				resolve(iconv.decode(Buffer.from(request.response), encoding));
 			} else {
-				reject(0);
+				reject(`Network error: response status = ${request.status}`);
 			}
 		};
 		request.open(post === undefined ? "GET" : "POST", url);
@@ -132,8 +131,65 @@ export const retrieve = async (
 		);
 	});
 
+const loginInfo = async (userId: string, password: string) => {
+	const response = await retrieve(
+		INFO_LOGIN_URL,
+		INFO_URL,
+		{
+			redirect: "NO",
+			userName: userId,
+			password: password,
+			x: "0",
+			y: "0",
+		},
+		"GBK",
+	);
+	if (!response.includes("清华大学信息门户")) {
+		throw new Error("Failed to login to INFO.");
+	}
+};
+
+const loginAcademic = async (
+	userId: string,
+	password: string,
+	graduate: boolean,
+) => {
+	const responseA = await retrieve(
+		ACADEMIC_LOGIN_URL,
+		ACADEMIC_URL,
+		{
+			userName: userId,
+			password,
+		},
+		"GBK",
+	);
+	if (!responseA.includes("清华大学信息门户")) {
+		throw new Error("Failed to login to Academic (step 1).");
+	}
+
+	const MAX_ATTEMPT = 3;
+	for (let i = 0; i < MAX_ATTEMPT; ++i) {
+		const iFrameUrl = cheerio(
+			graduate ? "#23-2604_iframe" : "#25-2649_iframe",
+			await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
+		).attr("src") as string;
+		const responseB = await retrieve(
+			iFrameUrl,
+			ACADEMIC_HOME_URL,
+			undefined,
+			"GBK",
+		);
+		if (responseB.includes("清华大学教学门户")) {
+			return;
+		}
+	}
+	throw new Error(
+		`Failed to login to Academic after ${MAX_ATTEMPT} attempts. (step 2).`,
+	);
+};
+
 /**
- * Logs-in to WebVPN, INFO and academic sequentially.
+ * Logs-in to WebVPN, INFO and academic.
  */
 export const login = async (
 	userId: string,
@@ -144,37 +200,25 @@ export const login = async (
 	}
 	const graduate = userId[4] === "2" || userId[4] === "3";
 	store.dispatch({type: SET_GRADUATE, payload: graduate});
-	const rawResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
+	const loginResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
 		auth_type: "local",
 		username: userId,
 		sms_code: "",
 		password: password,
-	});
-	if (rawResponse.indexOf("个人信息") === -1) {
-		const loginResponse = JSON.parse(rawResponse);
-		if (!loginResponse.success) {
-			switch (loginResponse.error) {
-				case "NEED_CONFIRM":
-					await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
-					break;
-				default:
-					throw new Error(loginResponse.message);
-			}
+	}).then(JSON.parse);
+	if (!loginResponse.success) {
+		switch (loginResponse.error) {
+			case "NEED_CONFIRM":
+				await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+				break;
+			default:
+				throw new Error(loginResponse.message);
 		}
 	}
-	await connect(INFO_LOGIN_URL, INFO_URL, {
-		redirect: "NO",
-		userName: userId,
-		password: password,
-		x: "0",
-		y: "0",
-	});
-	await connect(ACADEMIC_LOGIN_URL, ACADEMIC_URL, {userName: userId, password});
-	const iFrameUrl = cheerio(
-		graduate ? "#23-2604_iframe" : "#25-2649_iframe",
-		await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
-	).attr("src") as string;
-	await connect(iFrameUrl, ACADEMIC_LOGIN_CHOICE_URL);
+	await Promise.all([
+		loginInfo(userId, password),
+		loginAcademic(userId, password, graduate),
+	]);
 	return {
 		userId: userId,
 		password: password,
