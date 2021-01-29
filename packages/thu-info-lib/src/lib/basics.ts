@@ -730,7 +730,8 @@ export const getExpenditures = (
                         },
                     );
                     const remainder = result.reduce(
-                        (prev: number, curr: Record) => prev + curr.value,
+                        (prev: number, curr: Record) =>
+                            prev + (curr.category === "领取旧卡余额" ? 0 : curr.value),
                         0,
                     );
                     let income = 0;
@@ -742,7 +743,7 @@ export const getExpenditures = (
                                 .valueOf();
                             const valid =
 									d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
-                            if (valid) {
+                            if (valid && it.category !== "领取旧卡余额") {
                                 if (it.value > 0) {
                                     income += it.value;
                                 } else {
