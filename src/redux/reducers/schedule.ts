@@ -69,6 +69,7 @@ export const schedule = (
 								...val,
 								activeTime: selectedSchedule.activeTime,
 								delOrHideTime: selectedSchedule.delOrHideTime,
+								delOrHideDetail: selectedSchedule.delOrHideDetail,
 								// eslint-disable-next-line no-mixed-spaces-and-tabs
 						  },
 				);
@@ -179,8 +180,6 @@ export const schedule = (
 				state,
 				title,
 			);
-
-			console.log(time);
 
 			selectedSchedule = {
 				...selectedSchedule,

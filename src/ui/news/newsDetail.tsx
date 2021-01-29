@@ -21,7 +21,6 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 		getNewsDetail(route.params.detail.url)
 			.then(([title, res]) => {
 				setHtml(`<h2>${title}</h2>${res}`);
-				// console.log(res);
 				setRefreshing(false);
 			})
 			.catch(() => {

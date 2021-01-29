@@ -210,13 +210,10 @@ export const getPrimarySchedule = () => {
 								format(new Calendar((id + 1) * groupSize, 7)) +
 								JXRL_SUFFIX,
 							INFO_ROOT_URL,
-							undefined,
-							"GBK",
 						),
 					),
 				)
 					.then((results) => {
-						console.log(results);
 						results
 							.map((s) => {
 								if (s[0] !== "m") {

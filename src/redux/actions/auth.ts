@@ -45,6 +45,7 @@ export const authThunk = (userId: string, password: string) => (
 };
 
 export const doLogout = () => {
+	// TODO: safely remove the redux
 	logout().then(() => console.log("Successfully logged out."));
 	store.dispatch({type: DO_LOGOUT, payload: undefined});
 };
