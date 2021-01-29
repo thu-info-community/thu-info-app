@@ -172,7 +172,7 @@ const loginAcademic = async (
 		const iFrameUrl = cheerio(
 			graduate ? "#23-2604_iframe" : "#25-2649_iframe",
 			await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
-		).attr("src") as string;
+		).attr().src;
 		const responseB = await retrieve(
 			iFrameUrl,
 			ACADEMIC_HOME_URL,
@@ -254,17 +254,14 @@ type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 
 
 export const getTicket = async (target: ValidTickets) => {
 	if (target >= 0 && target <= 1000) {
-		return retrieve(INFO_ROOT_URL, PRE_LOGIN_URL, undefined, "UTF-8", 800).then(
-			(str) => {
-				const lowerBound = str.indexOf(`name="9-${target}`);
-				const url = str
-					.substring(
-						str.indexOf("src", lowerBound) + 5,
-						str.indexOf(" id", lowerBound) - 1,
-					)
-					.replace(/amp;/g, "");
-				return connect(url, INFO_ROOT_URL);
-			},
+		return retrieve(
+			INFO_ROOT_URL,
+			PRE_LOGIN_URL,
+			undefined,
+			"UTF-8",
+			800,
+		).then((str) =>
+			connect(cheerio(`#9-${target}_iframe`, str).attr().src, INFO_ROOT_URL),
 		);
 	} else if (target === -1) {
 		const userId = currState().auth.userId;
