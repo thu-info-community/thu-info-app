@@ -334,7 +334,7 @@ export const getTickets = () => {
 	setInterval(async () => {
 		console.log("Keep alive start.");
 		const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
-		if (verification.indexOf("个人信息") === -1) {
+		if (!verification.includes("个人信息")) {
 			console.log("Lost connection with school website. Reconnecting...");
 			const {userId, password} = currState().auth;
 			try {
