@@ -54,6 +54,7 @@ export const SecondarySettingsScreen = () => {
 			<MarkdownWebView
 				style={{backgroundColor: "transparent", flex: 1}}
 				content={markdown}
+				darkMode={themeName === "dark"}
 			/>
 			<View
 				style={{
@@ -89,9 +90,16 @@ export const SecondarySettingsScreen = () => {
 							justifyContent: "center",
 							alignItems: "center",
 						}}>
-						<Text style={{flex: 1, textAlign: "center"}}>{item[0]}</Text>
-						<Text style={{flex: 1, textAlign: "center"}}>{item[1]}</Text>
-						<Text style={{flex: 1, textAlign: "center"}}>
+						<Text
+							style={{flex: 1, textAlign: "center", color: theme.colors.text}}>
+							{item[0]}
+						</Text>
+						<Text
+							style={{flex: 1, textAlign: "center", color: theme.colors.text}}>
+							{item[1]}
+						</Text>
+						<Text
+							style={{flex: 1, textAlign: "center", color: theme.colors.text}}>
 							{item[2] ? getStr("success") : getStr("failure")}
 						</Text>
 					</View>
@@ -115,6 +123,7 @@ export const SecondarySettingsScreen = () => {
 										textAlign: "center",
 										fontSize: 16,
 										fontWeight: "bold",
+										color: theme.colors.text,
 									}}>
 									{getStr("courseName")}
 								</Text>
@@ -124,6 +133,7 @@ export const SecondarySettingsScreen = () => {
 										textAlign: "center",
 										fontSize: 16,
 										fontWeight: "bold",
+										color: theme.colors.text,
 									}}>
 									{getStr("courseTime")}
 								</Text>
@@ -133,6 +143,7 @@ export const SecondarySettingsScreen = () => {
 										textAlign: "center",
 										fontSize: 16,
 										fontWeight: "bold",
+										color: theme.colors.text,
 									}}>
 									{getStr("state")}
 								</Text>
@@ -170,6 +181,7 @@ export const SecondarySettingsScreen = () => {
 										textAlign: "center",
 										fontWeight: "bold",
 										fontSize: 16,
+										color: theme.colors.text,
 									}}>
 									{getStr("emptyList")}
 								</Text>

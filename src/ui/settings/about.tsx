@@ -20,7 +20,7 @@ export const AboutScreen = () => {
 	const theme = themes[themeName];
 	return (
 		<View style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>
-			<Text style={styles.textStyle}>
+			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
 				{`${getStr("currentVersion")}v${VersionNumber.appVersion}`}
 			</Text>
 			<TouchableOpacity onPress={() => makeLinking(GITHUB_REPO_URL)}>
@@ -29,7 +29,9 @@ export const AboutScreen = () => {
 				</Text>
 			</TouchableOpacity>
 			<View style={{height: 10}} />
-			<Text style={[styles.textStyle]}>{getStr("maintainers")}</Text>
+			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
+				{getStr("maintainers")}
+			</Text>
 			<TouchableOpacity onPress={() => makeLinking(UNIDY2002_URL)}>
 				<Text
 					style={[
@@ -49,10 +51,14 @@ export const AboutScreen = () => {
 				</Text>
 			</TouchableOpacity>
 			<View style={{flex: 1}} />
-			<Text style={[styles.textStyle, {fontSize: 15}]}>
+			<Text
+				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
 				{getStr("builtWithRN")}
 			</Text>
-			<Text style={[styles.textStyle, {fontSize: 15}]}>© 2020 | UNIDY</Text>
+			<Text
+				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
+				© 2020 | UNIDY
+			</Text>
 		</View>
 	);
 };

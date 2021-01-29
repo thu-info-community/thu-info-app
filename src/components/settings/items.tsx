@@ -14,9 +14,13 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../easySnackbars";
+import {useColorScheme} from "react-native-appearance";
+import themes, {ColorTheme} from "../../assets/themes/themes";
 
-const setIconWidth = (icon: ReactElement | undefined) =>
-	icon === undefined ? undefined : cloneElement(icon, {style: {width: 20}});
+const setIconWidth = (icon: ReactElement | undefined, colors: ColorTheme) =>
+	icon === undefined
+		? undefined
+		: cloneElement(icon, {style: {width: 20, color: colors.text}});
 
 export const SettingsItem = ({
 	text,
@@ -27,6 +31,8 @@ export const SettingsItem = ({
 	onPress: (event: GestureResponderEvent) => void;
 	icon: ReactElement | undefined;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
 	const content = (
 		<View
 			style={{
@@ -36,8 +42,10 @@ export const SettingsItem = ({
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{setIconWidth(icon)}
-				<Text style={{fontSize: 17, marginHorizontal: 10}}>{text}</Text>
+				{setIconWidth(icon, colors)}
+				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+					{text}
+				</Text>
 			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
 		</View>
@@ -70,6 +78,8 @@ export const SettingsSwitch = ({
 	iconOn: ReactElement | undefined;
 	iconOff: ReactElement | undefined;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
 	const [status, setStatus] = useState(defaultValue);
 	return (
 		<View
@@ -79,8 +89,8 @@ export const SettingsSwitch = ({
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{setIconWidth(status ? iconOn : iconOff)}
-				<Text style={{fontSize: 17, marginHorizontal: 10}}>
+				{setIconWidth(status ? iconOn : iconOff, colors)}
+				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
 					{status ? textOn : textOff}
 				</Text>
 			</View>
@@ -103,41 +113,45 @@ export const SettingsEditValue = <T extends string | number>({
 	text: string;
 	value: T;
 	onValueChange: (newValue: T) => void;
-}) => (
-	<View
-		style={{
-			padding: 8,
-			paddingRight: 16,
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "center",
-		}}>
-		<Text style={{fontSize: 17, flex: 4}}>{text}</Text>
-		<TextInput
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+	return (
+		<View
 			style={{
-				fontSize: 15,
-				flex: 1,
-				backgroundColor: "white",
-				textAlign: "left",
-				borderColor: "lightgrey",
-				borderWidth: 1,
-				borderRadius: 5,
-				padding: 6,
-			}}
-			value={String(value)}
-			onChangeText={(newText) => {
-				if (typeof value === "string") {
-					// @ts-ignore
-					onValueChange(newText);
-				} else if (!isNaN(Number(newText))) {
-					// @ts-ignore
-					onValueChange(Number(newText));
-				}
-			}}
-			keyboardType={typeof value === "string" ? "default" : "numeric"}
-		/>
-	</View>
-);
+				padding: 8,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+				alignItems: "center",
+			}}>
+			<Text style={{fontSize: 17, flex: 4, color: colors.text}}>{text}</Text>
+			<TextInput
+				style={{
+					fontSize: 15,
+					flex: 1,
+					backgroundColor: colors.background,
+					textAlign: "left",
+					borderColor: "lightgrey",
+					borderWidth: 1,
+					borderRadius: 5,
+					padding: 6,
+				}}
+				value={String(value)}
+				onChangeText={(newText) => {
+					if (typeof value === "string") {
+						// @ts-ignore
+						onValueChange(newText);
+					} else if (!isNaN(Number(newText))) {
+						// @ts-ignore
+						onValueChange(Number(newText));
+					}
+				}}
+				keyboardType={typeof value === "string" ? "default" : "numeric"}
+			/>
+		</View>
+	);
+};
 
 export const SettingsSetPassword = ({
 	text,
@@ -148,6 +162,8 @@ export const SettingsSetPassword = ({
 	onValueChange: (newValue: string) => void;
 	validator: (password: string) => Promise<boolean>;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
 	const [value, setValue] = useState("");
 	const [disabled, setDisabled] = useState(false);
 	return (
@@ -159,12 +175,12 @@ export const SettingsSetPassword = ({
 				justifyContent: "space-between",
 				alignItems: "center",
 			}}>
-			<Text style={{fontSize: 17, flex: 2}}>{text}</Text>
+			<Text style={{fontSize: 17, flex: 2, color: colors.text}}>{text}</Text>
 			<TextInput
 				style={{
 					fontSize: 15,
 					flex: 2,
-					backgroundColor: "white",
+					backgroundColor: colors.background,
 					textAlign: "left",
 					borderColor: "lightgrey",
 					borderWidth: 1,

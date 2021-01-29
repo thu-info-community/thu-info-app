@@ -6,7 +6,7 @@ import {getStr} from "../../utils/i18n";
 
 export const EleRecordScreen = simpleRefreshListScreen(
 	getElePayRecord,
-	(item) => {
+	(item, _, __, {colors}) => {
 		// const [name, id, time, channel, value, status] = item;
 		const time = item[2];
 		const value = item[4];
@@ -19,11 +19,13 @@ export const EleRecordScreen = simpleRefreshListScreen(
 					justifyContent: "space-between",
 				}}>
 				<View style={{flex: 2, alignItems: "flex-start"}}>
-					<Text style={{fontSize: 16, marginBottom: 3}}>{status}</Text>
+					<Text style={{fontSize: 16, marginBottom: 3, color: colors.text}}>
+						{status}
+					</Text>
 					<Text style={{color: "grey"}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
-					<Text style={{fontSize: 20}}>{value}</Text>
+					<Text style={{fontSize: 20, color: colors.text}}>{value}</Text>
 				</View>
 			</View>
 		);

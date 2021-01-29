@@ -6,7 +6,7 @@ import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshLi
 
 export const PopiScreen = simpleRefreshListScreen<[string, string]>(
 	() => retrieve(POPI_URL).then(JSON.parse),
-	([q, a]) => (
+	([q, a], _, __, {colors}) => (
 		<View style={{padding: 15, marginVertical: 5}}>
 			<Text
 				style={{
@@ -14,11 +14,14 @@ export const PopiScreen = simpleRefreshListScreen<[string, string]>(
 					fontWeight: "bold",
 					fontSize: 16,
 					lineHeight: 18,
+					color: colors.text,
 				}}>
 				{"Q: " + q}
 			</Text>
 			<View style={{backgroundColor: "grey", height: 1}} />
-			<Text style={{marginTop: 10, lineHeight: 17}}>{"A: " + a}</Text>
+			<Text style={{marginTop: 10, lineHeight: 17, color: colors.text}}>
+				{"A: " + a}
+			</Text>
 		</View>
 	),
 	([x]) => x,

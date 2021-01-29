@@ -23,19 +23,28 @@ const BottomButton = ({
 	text: keyof typeof zh;
 	onPress: (event: GestureResponderEvent) => void;
 	disabled: boolean;
-}) => (
-	<TouchableOpacity
-		style={{
-			backgroundColor: disabled ? "#0000" : "#0002",
-			flex: 1,
-			margin: 4,
-			borderRadius: 4,
-		}}
-		disabled={disabled}
-		onPress={(e) => !disabled && onPress(e)}>
-		<Text style={{textAlign: "center", padding: 10}}>{getStr(text)}</Text>
-	</TouchableOpacity>
-);
+}) => {
+	const dark = useColorScheme() === "dark";
+	return (
+		<TouchableOpacity
+			style={{
+				backgroundColor: dark
+					? disabled
+						? "#FFF4"
+						: "#ccc"
+					: disabled
+					? "#0000"
+					: "#0002",
+				flex: 1,
+				margin: 4,
+				borderRadius: 4,
+			}}
+			disabled={disabled}
+			onPress={(e) => !disabled && onPress(e)}>
+			<Text style={{textAlign: "center", padding: 10}}>{getStr(text)}</Text>
+		</TouchableOpacity>
+	);
+};
 
 export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [text, setText] = useState("");

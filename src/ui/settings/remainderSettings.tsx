@@ -6,12 +6,17 @@ import {Button, View, Text, TextInput} from "react-native";
 import {getExpenditures} from "../../network/basics";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 export const RemainderSettingsUI = ({
 	setRemainderShift,
 }: {
 	setRemainderShift: (newShift: number) => void;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	const [newValue, setNewValue] = useState("");
 
 	return (
@@ -24,12 +29,14 @@ export const RemainderSettingsUI = ({
 					justifyContent: "space-between",
 					alignItems: "center",
 				}}>
-				<Text style={{fontSize: 17, flex: 4}}>{getStr("setNewRemainder")}</Text>
+				<Text style={{fontSize: 17, flex: 4, color: colors.text}}>
+					{getStr("setNewRemainder")}
+				</Text>
 				<TextInput
 					style={{
 						fontSize: 15,
 						flex: 1,
-						backgroundColor: "white",
+						backgroundColor: colors.background,
 						textAlign: "left",
 						borderColor: "lightgrey",
 						borderWidth: 1,
@@ -77,8 +84,20 @@ export const RemainderSettingsUI = ({
 					}}
 				/>
 			</View>
-			<Text style={{padding: 10, marginTop: 10, textAlign: "center"}}>
-				<Text style={{fontWeight: "bold", fontSize: 16, lineHeight: 18}}>
+			<Text
+				style={{
+					padding: 10,
+					marginTop: 10,
+					textAlign: "center",
+					color: colors.text,
+				}}>
+				<Text
+					style={{
+						fontWeight: "bold",
+						fontSize: 16,
+						lineHeight: 18,
+						color: colors.text,
+					}}>
 					{getStr("tips")}
 				</Text>
 				<Text style={{color: "gray", lineHeight: 18}}>

@@ -7,7 +7,7 @@ import Snackbar from "react-native-snackbar";
 
 export const LibBookRecordScreen = simpleRefreshListScreen(
 	getBookingRecords,
-	({pos, time, status, delId}, refresh) => {
+	({pos, time, status, delId}, refresh, _, {colors}) => {
 		const [lib, seat] = pos.split(":");
 		return (
 			<View
@@ -17,12 +17,14 @@ export const LibBookRecordScreen = simpleRefreshListScreen(
 					justifyContent: "space-between",
 				}}>
 				<View style={{flex: 2, alignItems: "flex-start"}}>
-					<Text style={{fontSize: 16, marginVertical: 2}}>{lib}</Text>
+					<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+						{lib}
+					</Text>
 					<Text style={{color: "grey", marginVertical: 2}}>{seat}</Text>
 					<Text style={{color: "grey", marginVertical: 2}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
-					<Text style={{fontSize: 16}}>{status}</Text>
+					<Text style={{fontSize: 16, color: colors.text}}>{status}</Text>
 					{delId && (
 						<TouchableOpacity
 							style={{padding: 3}}

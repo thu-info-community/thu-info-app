@@ -5,6 +5,8 @@ import React, {ReactElement, useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {mocked} from "../../redux/store";
 import {getTicket} from "../../network/core";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 export const AlipayPopup = ({
 	onPay,
@@ -13,6 +15,9 @@ export const AlipayPopup = ({
 	onPay: (money: number) => Promise<any>;
 	trigger: (onPress: () => void) => ReactElement;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");
 	const [processing, setProcessing] = useState(false);
@@ -38,11 +43,11 @@ export const AlipayPopup = ({
 						style={{
 							justifyContent: "center",
 							alignItems: "center",
-							backgroundColor: "white",
+							backgroundColor: colors.background,
 							padding: 25,
 						}}>
 						<View style={{flexDirection: "row", alignItems: "center"}}>
-							<Text>￥</Text>
+							<Text style={{color: colors.text}}>￥</Text>
 							<TextInput
 								keyboardType="numeric"
 								placeholder="0"
@@ -98,11 +103,11 @@ export const AlipayPopup = ({
 							style={{padding: 8}}
 							disabled={processing}
 							onPress={() => !processing && close()}>
-							<Text style={{color: processing ? "grey" : "black"}}>
+							<Text style={{color: processing ? "grey" : colors.text}}>
 								{getStr("cancelPayment")}
 							</Text>
 						</TouchableOpacity>
-						<Text style={{textAlign: "center"}}>
+						<Text style={{textAlign: "center", color: colors.text}}>
 							{getStr("eleRechargeHint")}
 						</Text>
 					</View>
