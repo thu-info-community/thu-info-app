@@ -13,6 +13,8 @@ import {getStr} from "../../utils/i18n";
 import IconHole from "../../assets/icons/IconHole";
 import {mocked} from "../../redux/store";
 import IconEvaluation from "../../assets/icons/IconEvaluation";
+import themedStyles from "../../utils/themedStyles";
+import {useColorScheme} from "react-native-appearance";
 
 const iconSize = 60;
 
@@ -22,43 +24,17 @@ export const HomeSection = ({
 }: {
 	title: keyof typeof zh;
 	children: any;
-}) => (
-	<View
-		style={{
-			justifyContent: "center",
-			backgroundColor: "white",
-			alignItems: "center",
-			shadowColor: "grey",
-			margin: 10,
-			padding: 4,
-			shadowOffset: {
-				width: 2,
-				height: 2,
-			},
-			shadowOpacity: 0.8,
-			shadowRadius: 2,
-			borderRadius: 5,
-			elevation: 2,
-		}}>
-		<Text
-			style={{
-				textAlign: "center",
-				fontSize: 15,
-				marginTop: 6,
-				fontWeight: "bold",
-			}}>
-			{getStr(title)}
-		</Text>
-		<View
-			style={{
-				flexDirection: "row",
-				flexWrap: "wrap",
-				justifyContent: "center",
-			}}>
-			{children}
+}) => {
+	const themeName = useColorScheme();
+	const style = styles(themeName);
+
+	return (
+		<View style={style.sectionContainer}>
+			<Text style={style.sectionTitle}>{getStr(title)}</Text>
+			<View style={style.sectionContent}>{children}</View>
 		</View>
-	</View>
-);
+	);
+};
 
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 	<ScrollView style={{padding: 4}}>
@@ -108,3 +84,34 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		)}
 	</ScrollView>
 );
+
+const styles = themedStyles((theme) => ({
+	sectionContainer: {
+		justifyContent: "center",
+		backgroundColor: theme.colors.background,
+		alignItems: "center",
+		shadowColor: "grey",
+		margin: 10,
+		padding: 4,
+		shadowOffset: {
+			width: 2,
+			height: 2,
+		},
+		shadowOpacity: 0.8,
+		shadowRadius: 2,
+		borderRadius: 5,
+		elevation: 2,
+	},
+	sectionTitle: {
+		textAlign: "center",
+		fontSize: 15,
+		marginTop: 6,
+		fontWeight: "bold",
+		color: theme.colors.text,
+	},
+	sectionContent: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "center",
+	},
+}));

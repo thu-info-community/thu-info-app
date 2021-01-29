@@ -7,6 +7,7 @@ export interface ColorTheme {
 	primaryDark: string;
 	accent: string;
 	text: string;
+	background: string;
 }
 
 export interface Theme {

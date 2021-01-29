@@ -5,5 +5,6 @@ export const colorDark: ColorTheme = {
 	primary: "#7a2694",
 	primaryDark: "#3e0558",
 	accent: "#023ea2",
-	text: "#ffffff",
+	text: "#cccccc",
+	background: "#000000",
 };
