@@ -1,10 +1,10 @@
-import {StyleSheet} from "react-native";
+import themedStyles from "../utils/themedStyles";
 
-export const Material = StyleSheet.create({
+export const Material = themedStyles(({colors}) => ({
 	card: {
 		margin: 10,
 		padding: 10,
-		backgroundColor: "white",
+		backgroundColor: colors.background,
 		shadowColor: "grey",
 		shadowOffset: {
 			width: 2,
@@ -15,4 +15,4 @@ export const Material = StyleSheet.create({
 		borderRadius: 5,
 		elevation: 2,
 	},
-});
+}));

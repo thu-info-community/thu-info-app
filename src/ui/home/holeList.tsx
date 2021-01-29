@@ -34,6 +34,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
+	const MaterialTheme = Material(themeName);
 
 	const firstFetch = (
 		mode: FetchMode = FetchMode.NORMAL,
@@ -81,9 +82,9 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 					style={({pressed}) => ({
 						padding: 10,
 						marginHorizontal: 2,
-						backgroundColor: pressed ? "#eee" : "white",
+						backgroundColor: pressed ? "#eee" : theme.colors.background,
 					})}>
-					<Feather name="refresh-cw" size={20} />
+					<Feather name="refresh-cw" size={20} color={theme.colors.text} />
 				</Pressable>
 				<Pressable
 					onPress={() => {
@@ -93,9 +94,9 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 					style={({pressed}) => ({
 						padding: 10,
 						marginHorizontal: 2,
-						backgroundColor: pressed ? "#eee" : "white",
+						backgroundColor: pressed ? "#eee" : theme.colors.background,
 					})}>
-					<Feather name="bookmark" size={20} />
+					<Feather name="bookmark" size={20} color={theme.colors.text} />
 				</Pressable>
 				<Pressable
 					onPress={() => {
@@ -106,15 +107,17 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 					style={({pressed}) => ({
 						padding: 10,
 						marginHorizontal: 2,
-						backgroundColor: pressed ? "#eee" : "white",
+						backgroundColor: pressed ? "#eee" : theme.colors.background,
 					})}>
-					<FontAwesome name="fire" size={20} />
+					<FontAwesome name="fire" size={20} color={theme.colors.text} />
 				</Pressable>
 				<TextInput
 					style={{
 						flex: 1,
 						marginHorizontal: 3,
-						backgroundColor: "#eee",
+						backgroundColor: theme.colors.background,
+						borderColor: "lightgray",
+						borderWidth: 1,
 					}}
 					value={searchContent}
 					onChangeText={setSearchContent}
@@ -128,9 +131,9 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 					style={({pressed}) => ({
 						padding: 10,
 						marginHorizontal: 2,
-						backgroundColor: pressed ? "#eee" : "white",
+						backgroundColor: pressed ? "#eee" : theme.colors.background,
 					})}>
-					<FontAwesome name="search" size={20} />
+					<FontAwesome name="search" size={20} color={theme.colors.text} />
 				</Pressable>
 			</View>
 			<FlatList
@@ -139,7 +142,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 					const needFold = holeConfig.foldTags.includes(item.tag);
 					return (
 						<TouchableOpacity
-							style={Material.card}
+							style={MaterialTheme.card}
 							onPress={() => navigation.navigate("HoleDetail", item)}>
 							<View
 								style={{flexDirection: "row", justifyContent: "space-between"}}>
@@ -148,6 +151,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 										style={{
 											fontWeight: "bold",
 											marginVertical: 2,
+											color: theme.colors.text,
 										}}>{`#${item.pid}`}</Text>
 									{item.tag && item.tag !== "折叠" && (
 										<View
@@ -166,15 +170,23 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 									<TimeAgo time={item.timestamp * 1000} />
 								</View>
 								<View style={{flexDirection: "row", alignItems: "center"}}>
-									{needFold && <Text> 已隐藏</Text>}
+									{needFold && (
+										<Text style={{color: theme.colors.text}}> 已隐藏</Text>
+									)}
 									{!needFold && item.reply > 0 && (
 										<View
 											style={{
 												flexDirection: "row",
 												alignItems: "center",
 											}}>
-											<Text>{item.reply}</Text>
-											<Icon name="comment" size={12} />
+											<Text style={{color: theme.colors.text}}>
+												{item.reply}
+											</Text>
+											<Icon
+												name="comment"
+												size={12}
+												style={{color: theme.colors.text}}
+											/>
 										</View>
 									)}
 									{!needFold && item.likenum > 0 && (
@@ -183,8 +195,14 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 												flexDirection: "row",
 												alignItems: "center",
 											}}>
-											<Text>{item.likenum}</Text>
-											<Icon name="star-o" size={12} />
+											<Text style={{color: theme.colors.text}}>
+												{item.likenum}
+											</Text>
+											<Icon
+												name="star-o"
+												size={12}
+												style={{color: theme.colors.text}}
+											/>
 										</View>
 									)}
 								</View>

@@ -22,6 +22,8 @@ import {getHoleDetail, holeConfig, postHoleComment} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useHeaderHeight} from "@react-navigation/stack";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 const dummyHoleTitleCard = {
 	pid: -1,
@@ -56,6 +58,10 @@ export const HoleDetailScreen = ({
 
 	const headerHeight = useHeaderHeight();
 	const screenHeight = Dimensions.get("window").height;
+
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+	const MaterialTheme = Material(themeName);
 
 	Keyboard.addListener("keyboardWillShow", (eve) => {
 		if (keyboardHeight === 0) {
@@ -92,9 +98,11 @@ export const HoleDetailScreen = ({
 				flex: keyboardShown ? undefined : 1,
 			}}>
 			<ScrollView>
-				<Text style={styles.smallHeader}>{getStr("originalText")}</Text>
-				<View style={Material.card}>
-					<Text style={styles.bigPid}>{`#${pid}`}</Text>
+				<Text style={[styles.smallHeader, {color: colors.text}]}>
+					{getStr("originalText")}
+				</Text>
+				<View style={MaterialTheme.card}>
+					<Text style={[styles.bigPid, {color: colors.text}]}>{`#${pid}`}</Text>
 					<HoleMarkdown
 						text={text}
 						navigationHandler={(destPid) =>
@@ -125,8 +133,8 @@ export const HoleDetailScreen = ({
 										flexDirection: "row",
 										alignItems: "center",
 									}}>
-									<Text>{reply}</Text>
-									<Icon name="comment" size={12} />
+									<Text style={{color: colors.text}}>{reply}</Text>
+									<Icon name="comment" size={12} color={colors.text} />
 								</View>
 							)}
 							{likenum > 0 && (
@@ -135,15 +143,17 @@ export const HoleDetailScreen = ({
 										flexDirection: "row",
 										alignItems: "center",
 									}}>
-									<Text>{likenum}</Text>
-									<Icon name="star-o" size={12} />
+									<Text style={{color: colors.text}}>{likenum}</Text>
+									<Icon name="star-o" size={12} color={colors.text} />
 								</View>
 							)}
 						</View>
 					</View>
 				</View>
 				{reply > 0 && (
-					<Text style={styles.smallHeader}>{getStr("comments")}</Text>
+					<Text style={[styles.smallHeader, {color: colors.text}]}>
+						{getStr("comments")}
+					</Text>
 				)}
 				{comments.map((item) => {
 					const replyContent = item.text;
@@ -152,9 +162,13 @@ export const HoleDetailScreen = ({
 					const author = replyContent.substr(0, splitIdx + 1);
 					const replyText = replyContent.substr(splitIdx + 2);
 					return (
-						<View style={Material.card} key={item.cid}>
-							<Text style={styles.bigPid}>{`#${item.cid}`}</Text>
-							<Text>{author}</Text>
+						<View style={MaterialTheme.card} key={item.cid}>
+							<Text
+								style={[
+									styles.bigPid,
+									{color: colors.text},
+								]}>{`#${item.cid}`}</Text>
+							<Text style={{color: colors.text}}>{author}</Text>
 							<HoleMarkdown
 								text={replyText}
 								navigationHandler={(destPid) =>
@@ -191,7 +205,7 @@ export const HoleDetailScreen = ({
 						fontSize: 15,
 						margin: 8,
 						padding: 10,
-						backgroundColor: "#FFF",
+						backgroundColor: colors.background,
 						borderColor: "lightgray",
 						borderRadius: 5,
 						borderWidth: 1,
@@ -219,7 +233,7 @@ export const HoleDetailScreen = ({
 							.then(() => setMyComment(""))
 							.catch(NetworkRetry);
 					}}>
-					<Text style={{textAlign: "center", padding: 10}}>
+					<Text style={{textAlign: "center", padding: 10, color: colors.text}}>
 						{getStr("publish")}
 					</Text>
 				</TouchableOpacity>

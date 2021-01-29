@@ -12,8 +12,12 @@ import {postNewHole} from "../../network/hole";
 import {HomeNav} from "./homeStack";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
 	const [text, setText] = useState("");
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -27,7 +31,7 @@ export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 						fontSize: 15,
 						margin: 8,
 						padding: 10,
-						backgroundColor: "#FFF",
+						backgroundColor: colors.background,
 						borderColor: "#CCC",
 						borderWidth: 1,
 						borderRadius: 5,
@@ -57,7 +61,8 @@ export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 								.then(() => navigation.pop())
 								.catch(NetworkRetry);
 						}}>
-						<Text style={{textAlign: "center", padding: 10}}>
+						<Text
+							style={{textAlign: "center", padding: 10, color: colors.text}}>
 							{getStr("publish")}
 						</Text>
 					</TouchableOpacity>

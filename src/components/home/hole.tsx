@@ -10,6 +10,8 @@ import {Linking, Text} from "react-native";
 import Markdown from "react-native-markdown-display";
 import {docco} from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SyntaxHighlighter from "react-native-syntax-highlighter";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
 export type NavigationHandler = (pid: number) => void;
 
@@ -43,6 +45,8 @@ export const HoleMarkdown = ({
 	text: string;
 	navigationHandler: NavigationHandler;
 }) => {
+	const themeName = useColorScheme();
+	const theme = themes[themeName];
 	return (
 		<Markdown
 			rules={{
@@ -58,7 +62,7 @@ export const HoleMarkdown = ({
 						<React.Fragment key={node.key}>
 							{splitted.map(([rule, p]: [string, string], idx: number) => {
 								return (
-									<Text key={idx}>
+									<Text key={idx} style={{color: theme.colors.text}}>
 										{rule === "url_pid" ? (
 											<Text>/##</Text>
 										) : rule === "url" ? (
@@ -80,32 +84,68 @@ export const HoleMarkdown = ({
 					);
 				},
 				heading1: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading3]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading3,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
 				heading2: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading3]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading3,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
 				heading3: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading3]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading3,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
 				heading4: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading4]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading4,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
 				heading5: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading5]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading5,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
 				heading6: (node, children, parent, styles) => (
-					<Text key={node.key} style={[styles.heading, styles.heading6]}>
+					<Text
+						key={node.key}
+						style={[
+							styles.heading,
+							styles.heading6,
+							{color: theme.colors.text},
+						]}>
 						{children}
 					</Text>
 				),
