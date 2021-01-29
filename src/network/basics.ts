@@ -715,7 +715,8 @@ export const getExpenditures = (
 							},
 						);
 						const remainder = result.reduce(
-							(prev: number, curr: Record) => prev + curr.value,
+							(prev: number, curr: Record) =>
+								prev + (curr.category === "领取旧卡余额" ? 0 : curr.value),
 							0,
 						);
 						let income = 0;
