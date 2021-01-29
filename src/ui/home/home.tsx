@@ -29,7 +29,14 @@ export const HomeSection = ({
 	const style = styles(themeName);
 
 	return (
-		<View style={style.sectionContainer}>
+		<View
+			style={[
+				style.sectionContainer,
+				{
+					borderColor: "#aaa",
+					borderWidth: themeName === "dark" ? 1 : 0,
+				},
+			]}>
 			<Text style={style.sectionTitle}>{getStr(title)}</Text>
 			<View style={style.sectionContent}>{children}</View>
 		</View>

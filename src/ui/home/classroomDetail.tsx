@@ -112,7 +112,7 @@ export const ClassroomDetailScreen = ({
 					<Icon
 						name="chevron-left"
 						size={24}
-						color={data[0] === 1 && data[1] === 1 ? "#888" : "black"}
+						color={data[0] === 1 && data[1] === 1 ? "#888" : theme.colors.text}
 					/>
 				</TouchableOpacity>
 				<Text
@@ -128,6 +128,7 @@ export const ClassroomDetailScreen = ({
 						textAlign: "center",
 						flex: 1,
 						marginHorizontal: 10,
+						color: theme.colors.text,
 					}}>
 					{getStr("classroomHeaderPrefix") +
 						data[0] +
@@ -150,7 +151,9 @@ export const ClassroomDetailScreen = ({
 						name="chevron-right"
 						size={24}
 						color={
-							data[0] === Calendar.weekCount && data[1] === 7 ? "#888" : "black"
+							data[0] === Calendar.weekCount && data[1] === 7
+								? "#888"
+								: theme.colors.text
 						}
 					/>
 				</TouchableOpacity>
@@ -175,7 +178,7 @@ export const ClassroomDetailScreen = ({
 						<View
 							style={{backgroundColor: color, width: 14, height: 14, margin: 2}}
 						/>
-						<Text style={{marginLeft: 2}}>
+						<Text style={{marginLeft: 2, color: theme.colors.text}}>
 							{getStr("classroomStatus")[index]}
 						</Text>
 					</View>,
@@ -209,6 +212,7 @@ export const ClassroomDetailScreen = ({
 								textAlign: "center",
 								fontSize: 15,
 								fontWeight: "bold",
+								color: theme.colors.text,
 							}}>
 							{getStr("classroomName")}
 						</Text>
@@ -218,6 +222,7 @@ export const ClassroomDetailScreen = ({
 								textAlign: "center",
 								fontSize: 15,
 								fontWeight: "bold",
+								color: theme.colors.text,
 							}}>
 							{getStr("classroomCapacity")}
 						</Text>
@@ -228,6 +233,7 @@ export const ClassroomDetailScreen = ({
 									fontSize: 15,
 									fontWeight: "bold",
 									marginBottom: 2,
+									color: theme.colors.text,
 								}}>
 								{getStr("classroomCondition")}
 							</Text>
@@ -238,7 +244,13 @@ export const ClassroomDetailScreen = ({
 									alignItems: "center",
 								}}>
 								{[1, 2, 3, 4, 5, 6].map((val) => (
-									<Text key={val} style={{flex: 1, textAlign: "center"}}>
+									<Text
+										key={val}
+										style={{
+											flex: 1,
+											textAlign: "center",
+											color: theme.colors.text,
+										}}>
 										{val}
 									</Text>
 								))}
@@ -260,10 +272,17 @@ export const ClassroomDetailScreen = ({
 								textAlign: "center",
 								fontSize: 15,
 								fontWeight: "bold",
+								color: theme.colors.text,
 							}}>
 							{item[0].split(":")[0]}
 						</Text>
-						<Text style={{flex: 1, textAlign: "center", fontSize: 15}}>
+						<Text
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 15,
+								color: theme.colors.text,
+							}}>
 							{item[0].split(":")[1]}
 						</Text>
 						{Array.from(new Array(6), (_, index) => (

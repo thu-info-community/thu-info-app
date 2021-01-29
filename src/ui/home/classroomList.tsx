@@ -1,32 +1,38 @@
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
 
-const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => (
-	<TouchableOpacity
-		style={{
-			backgroundColor: "white",
-			padding: 7,
-			marginHorizontal: 5,
-			marginTop: 10,
-			width: 120,
-			height: 40,
-			justifyContent: "center",
-			borderRadius: 3,
-			shadowColor: "grey",
-			shadowOffset: {
-				width: 2,
-				height: 2,
-			},
-			shadowOpacity: 0.8,
-			shadowRadius: 2,
-			borderColor: "lightgray",
-			borderWidth: 2,
-		}}
-		onPress={() => navigation.navigate("ClassroomDetail", {name})}>
-		<Text style={{textAlign: "center"}}>{name}</Text>
-	</TouchableOpacity>
-);
+const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+	return (
+		<TouchableOpacity
+			style={{
+				backgroundColor: colors.background,
+				padding: 7,
+				marginHorizontal: 5,
+				marginTop: 10,
+				width: 120,
+				height: 40,
+				justifyContent: "center",
+				borderRadius: 3,
+				shadowColor: "grey",
+				shadowOffset: {
+					width: 2,
+					height: 2,
+				},
+				shadowOpacity: 0.8,
+				shadowRadius: 2,
+				borderColor: "#aaa",
+				borderWidth: 2,
+			}}
+			onPress={() => navigation.navigate("ClassroomDetail", {name})}>
+			<Text style={{textAlign: "center", color: colors.text}}>{name}</Text>
+		</TouchableOpacity>
+	);
+};
 
 export const ClassroomListScreen = ({navigation}: {navigation: HomeNav}) => (
 	<ScrollView>
