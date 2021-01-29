@@ -728,7 +728,7 @@ export const getExpenditures = (
 									.valueOf();
 								const valid =
 									d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
-								if (valid) {
+								if (valid && it.category !== "领取旧卡余额") {
 									if (it.value > 0) {
 										income += it.value;
 									} else {
