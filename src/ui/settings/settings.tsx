@@ -1,19 +1,13 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {currState, mocked, store} from "../../redux/store";
-import {SET_GRADUATE} from "../../redux/constants";
-import {
-	SettingsItem,
-	SettingsSeparator,
-	SettingsSwitch,
-} from "../../components/settings/items";
+import {currState, mocked} from "../../redux/store";
+import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
 import {checkUpdate} from "../../utils/checkUpdate";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Entypo from "react-native-vector-icons/Entypo";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
@@ -21,16 +15,6 @@ import {login, performGetTickets} from "../../network/core";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
-		<SettingsSwitch
-			textOn={getStr("graduate")}
-			textOff={getStr("undergraduate")}
-			onValueChange={(state) =>
-				store.dispatch({type: SET_GRADUATE, payload: state})
-			}
-			defaultValue={currState().config.graduate}
-			iconOn={<Entypo name="graduation-cap" size={16} />}
-			iconOff={<Feather name="users" size={16} />}
-		/>
 		<SettingsItem
 			text={getStr("reportSettings")}
 			onPress={() => navigation.navigate("ReportSettings")}

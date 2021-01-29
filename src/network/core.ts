@@ -31,9 +31,10 @@ import {
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import md5 from "md5";
-import {currState, mocked} from "../redux/store";
+import {currState, mocked, store} from "../redux/store";
 import cheerio from "cheerio";
 import {NetworkRetry} from "../components/easySnackbars";
+import {SET_GRADUATE} from "../redux/constants";
 
 /**
  * Converts form data into url-encoded format.
@@ -142,6 +143,7 @@ export const login = async (
 		return {userId: userId, password: password};
 	}
 	const graduate = userId[4] === "2" || userId[4] === "3";
+	store.dispatch({type: SET_GRADUATE, payload: graduate});
 	const rawResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
 		auth_type: "local",
 		username: userId,
