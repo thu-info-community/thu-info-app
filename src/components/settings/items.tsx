@@ -9,11 +9,14 @@ import {
 	TouchableNativeFeedback,
 	View,
 } from "react-native";
-import React, {useState} from "react";
+import React, {cloneElement, ReactElement, useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../easySnackbars";
+
+const setIconWidth = (icon: ReactElement) =>
+	cloneElement(icon, {style: {width: 20}});
 
 export const SettingsItem = ({
 	text,
@@ -22,7 +25,7 @@ export const SettingsItem = ({
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
-	icon: any;
+	icon: ReactElement;
 }) => {
 	const content = (
 		<View
@@ -33,7 +36,7 @@ export const SettingsItem = ({
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{icon}
+				{setIconWidth(icon)}
 				<Text style={{fontSize: 17, marginHorizontal: 10}}>{text}</Text>
 			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
@@ -64,8 +67,8 @@ export const SettingsSwitch = ({
 	textOff: string;
 	onValueChange: (state: boolean) => void;
 	defaultValue: boolean;
-	iconOn: any;
-	iconOff: any;
+	iconOn: ReactElement;
+	iconOff: ReactElement;
 }) => {
 	const [status, setStatus] = useState(defaultValue);
 	return (
@@ -76,7 +79,7 @@ export const SettingsSwitch = ({
 				justifyContent: "space-between",
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{status ? iconOn : iconOff}
+				{setIconWidth(status ? iconOn : iconOff)}
 				<Text style={{fontSize: 17, marginHorizontal: 10}}>
 					{status ? textOn : textOff}
 				</Text>
