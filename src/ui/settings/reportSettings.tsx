@@ -24,16 +24,18 @@ export const ReportSettingsScreen = ({
 			iconOn={<Feather name="file-plus" size={17} />}
 			iconOff={<Feather name="file-minus" size={17} />}
 		/>
-		<SettingsSwitch
-			textOn={getStr("bx")}
-			textOff={getStr("bxr")}
-			onValueChange={(state) => {
-				store.dispatch({type: SET_BX, payload: state});
-			}}
-			defaultValue={currState().config.bx}
-			iconOn={<Feather name="filter" size={17} />}
-			iconOff={<Feather name="filter" size={17} />}
-		/>
+		{currState().config.graduate || (
+			<SettingsSwitch
+				textOn={getStr("bx")}
+				textOff={getStr("bxr")}
+				onValueChange={(state) => {
+					store.dispatch({type: SET_BX, payload: state});
+				}}
+				defaultValue={currState().config.bx}
+				iconOn={<Feather name="filter" size={17} />}
+				iconOff={<Feather name="filter" size={17} />}
+			/>
+		)}
 		<SettingsItem
 			text={getStr("manageHidden")}
 			onPress={() => navigation.navigate("ReportManageHidden")}

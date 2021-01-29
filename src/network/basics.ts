@@ -183,12 +183,13 @@ export const getReport = (): Promise<Course[]> =>
 						});
 					}
 					const newGPA = currState().config.newGPA;
-					const result = cheerio("#table1", str)
+					const graduate = currState().config.graduate;
+					const result = cheerio("[cellspacing=1]", str)
 						.children()
 						.slice(1)
 						.map((_, element) => {
-							const grade = getCheerioText(element, 7);
-							let point = Number(getCheerioText(element, 9));
+							const grade = getCheerioText(element, graduate ? 9 : 7);
+							let point = Number(getCheerioText(element, graduate ? 11 : 9));
 							if (!newGPA) {
 								point = gradeToOldGPA.get(grade) ?? point;
 							}
@@ -199,7 +200,7 @@ export const getReport = (): Promise<Course[]> =>
 										credit: Number(getCheerioText(element, 5)),
 										grade,
 										point,
-										semester: getCheerioText(element, 11),
+										semester: getCheerioText(element, graduate ? 13 : 11),
 										// eslint-disable-next-line no-mixed-spaces-and-tabs
 								  }
 								: undefined;
