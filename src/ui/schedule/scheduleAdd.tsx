@@ -23,7 +23,6 @@ import {
 import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
-import {Lesson, LessonType} from "../../models/schedule/schedule";
 import {useColorScheme} from "react-native-appearance";
 
 interface ScheduleAddProps {

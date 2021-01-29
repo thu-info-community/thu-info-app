@@ -6,12 +6,7 @@ import {
 	TouchableOpacity,
 	RefreshControl,
 } from "react-native";
-import React, {
-	ReactElement,
-	useState,
-	useRef,
-	useEffect,
-} from "react";
+import React, {ReactElement, useState, useRef, useEffect} from "react";
 import {connect} from "react-redux";
 import {
 	activeWeek,

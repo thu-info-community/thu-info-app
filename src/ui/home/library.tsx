@@ -42,8 +42,14 @@ export const LibraryScreen = simpleRefreshListScreen(
 	(item) => String(item.id),
 	mocked()
 		? undefined
-		: ({colors}) => (
-				<View style={{padding: 6, margin: 4, alignItems: "center",marginHorizontal: 14}}>
+		: () => (
+				<View
+					style={{
+						padding: 6,
+						margin: 4,
+						alignItems: "center",
+						marginHorizontal: 14,
+					}}>
 					<Text style={{textAlign: "center", lineHeight: 20, color: "gray"}}>
 						{getStr("socketIntro")}
 					</Text>
