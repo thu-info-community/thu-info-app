@@ -1,6 +1,5 @@
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import React, {useContext} from "react";
-import {ThemeContext} from "../../assets/themes/context";
+import React from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
@@ -9,6 +8,7 @@ import {
 	UNIDY2002_URL,
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
+import {useColorScheme} from "react-native-appearance";
 
 const makeLinking = (url: string) =>
 	Linking.openURL(url).then(() =>
@@ -16,7 +16,7 @@ const makeLinking = (url: string) =>
 	);
 
 export const AboutScreen = () => {
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 	return (
 		<View style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>

@@ -13,6 +13,7 @@ import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
 import {submitFeedback} from "../../utils/leanCloud";
 import Snackbar from "react-native-snackbar";
+import {useColorScheme} from "react-native-appearance";
 
 const BottomButton = ({
 	text,
@@ -38,6 +39,7 @@ const BottomButton = ({
 
 export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [text, setText] = useState("");
+	const dark = useColorScheme() === "dark";
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
@@ -50,7 +52,7 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 						fontSize: 15,
 						margin: 8,
 						padding: 10,
-						backgroundColor: "#FFF",
+						backgroundColor: dark ? "#000" : "#FFF",
 						borderColor: "#CCC",
 						borderWidth: 1,
 						borderRadius: 5,

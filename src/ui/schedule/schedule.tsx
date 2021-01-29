@@ -9,7 +9,6 @@ import {
 import React, {
 	ReactElement,
 	useState,
-	useContext,
 	useRef,
 	useEffect,
 } from "react";
@@ -28,8 +27,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {useColorScheme} from "react-native-appearance";
 
 interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
@@ -48,7 +47,7 @@ const OptionButton = ({
 	onPress: () => void;
 	title: React.ReactText;
 }) => {
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 	return (
 		<TouchableOpacity
@@ -70,7 +69,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumber);
 	const viewShot = useRef<ViewShot>(null);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const timeBlockNum = 14;

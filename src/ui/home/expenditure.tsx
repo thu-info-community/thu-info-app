@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
 	Alert,
 	Button,
@@ -15,11 +15,11 @@ import {Calendar} from "../../utils/calendar";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {mocked} from "../../redux/store";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
+import {useColorScheme} from "react-native-appearance";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
@@ -70,7 +70,7 @@ export const ExpenditureUI = ({shift}: {shift: number}) => {
 	const [end, setEnd] = useState(today.date.toDate());
 	const [refreshing, setRefreshing] = useState(false);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const refresh = () => {

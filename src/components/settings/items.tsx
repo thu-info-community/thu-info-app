@@ -15,8 +15,8 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../easySnackbars";
 
-const setIconWidth = (icon: ReactElement) =>
-	cloneElement(icon, {style: {width: 20}});
+const setIconWidth = (icon: ReactElement | undefined) =>
+	icon === undefined ? undefined : cloneElement(icon, {style: {width: 20}});
 
 export const SettingsItem = ({
 	text,
@@ -25,7 +25,7 @@ export const SettingsItem = ({
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
-	icon: ReactElement;
+	icon: ReactElement | undefined;
 }) => {
 	const content = (
 		<View
@@ -67,8 +67,8 @@ export const SettingsSwitch = ({
 	textOff: string;
 	onValueChange: (state: boolean) => void;
 	defaultValue: boolean;
-	iconOn: ReactElement;
-	iconOff: ReactElement;
+	iconOn: ReactElement | undefined;
+	iconOff: ReactElement | undefined;
 }) => {
 	const [status, setStatus] = useState(defaultValue);
 	return (

@@ -8,7 +8,7 @@ import {
 	Alert,
 	Dimensions,
 } from "react-native";
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 import {
 	newsSlice,
 	getNewsList,
@@ -37,8 +37,8 @@ import {connect} from "react-redux";
 import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {useColorScheme} from "react-native-appearance";
 
 dayjs.extend(customParseFormat);
 
@@ -138,7 +138,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsNumberOnOnePage, setNewsNumber] = useState("20");
 	const [newsSource] = useState(new newsSourceList());
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const renderIcon = (channel: sourceTag) => {

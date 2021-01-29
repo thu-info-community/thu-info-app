@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
 	FlatList,
 	Image,
@@ -14,7 +14,6 @@ import {FetchMode, HoleTitleCard} from "../../models/home/hole";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -23,6 +22,7 @@ import {HoleMarkdown} from "../../components/home/hole";
 import {HomeNav} from "./homeStack";
 import {Material} from "../../constants/styles";
 import Feather from "react-native-vector-icons/Feather";
+import {useColorScheme} from "react-native-appearance";
 
 export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -32,7 +32,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [payload, setPayload] = useState("");
 	const [searchContent, setSearchContent] = useState("");
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const firstFetch = (

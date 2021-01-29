@@ -1,19 +1,19 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 import {getNewsDetail} from "src/network/news";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
 import {View, StyleSheet, ActivityIndicator} from "react-native";
 import {NewsDetailRouteProp} from "./newsStack";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "../../constants/strings";
+import {useColorScheme} from "react-native-appearance";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
 	const [refreshing, setRefreshing] = useState(true);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const fetchHtml = () => {

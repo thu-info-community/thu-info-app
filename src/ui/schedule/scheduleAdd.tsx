@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import {
 	Alert,
 	ScrollView,
@@ -8,7 +8,6 @@ import {
 	View,
 } from "react-native";
 import {connect} from "react-redux";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {Calendar} from "../../utils/calendar";
 import themedStyles from "../../utils/themedStyles";
@@ -24,6 +23,8 @@ import {
 import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
+import {Lesson, LessonType} from "../../models/schedule/schedule";
+import {useColorScheme} from "react-native-appearance";
 
 interface ScheduleAddProps {
 	scheduleList: Schedule[];
@@ -51,7 +52,7 @@ const ScheduleAddUI = ({
 	addCustom,
 	delOrHide,
 }: ScheduleAddProps) => {
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 	const style = styles(themeName);
 

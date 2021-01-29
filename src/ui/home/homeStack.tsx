@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React from "react";
 import {
 	createStackNavigator,
 	StackNavigationProp,
@@ -26,10 +26,10 @@ import {HoleTitleCard} from "../../models/home/hole";
 import {HolePublishScreen} from "./holePublish";
 import {TouchableOpacity} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
 import {HoleImageScreen} from "./holeImage";
+import {useColorScheme} from "react-native-appearance";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -73,7 +73,7 @@ const Stack = createStackNavigator<HomeStackParamList>();
 export type HomeNav = StackNavigationProp<HomeStackParamList>;
 
 export const HomeStackScreen = () => {
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	return (

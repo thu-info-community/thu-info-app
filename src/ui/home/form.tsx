@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Text, StyleSheet, View, RefreshControl} from "react-native";
 import {getAssessmentForm, postAssessmentForm} from "src/network/basics";
 import {Form, Person} from "src/models/home/assessment";
@@ -11,9 +11,9 @@ import {
 } from "react-native-gesture-handler";
 import {StarRating} from "src/components/home/form";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, HomeNav} from "./homeStack";
+import {useColorScheme} from "react-native-appearance";
 
 export const FormScreen = ({
 	route,
@@ -24,7 +24,7 @@ export const FormScreen = ({
 }) => {
 	const url: string = route.params.url;
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const [refreshing, setRefreshing] = useState(true);

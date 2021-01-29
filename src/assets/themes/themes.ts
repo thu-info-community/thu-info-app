@@ -13,4 +13,6 @@ export interface Theme {
 
 export default {
 	light: {colors: colorLight},
+	dark: {colors: colorLight},
+	"no-preference": {colors: colorLight},
 };

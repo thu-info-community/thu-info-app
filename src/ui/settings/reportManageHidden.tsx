@@ -1,5 +1,5 @@
 import {FlatList, RefreshControl, Text} from "react-native";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
 import {ADD_REPORT_HIDDEN, REMOVE_REPORT_HIDDEN} from "../../redux/constants";
@@ -7,8 +7,8 @@ import {getReport} from "../../network/basics";
 import {getStr} from "../../utils/i18n";
 import {SettingsSwitch} from "../../components/settings/items";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
+import {useColorScheme} from "react-native-appearance";
 
 const ReportManageHiddenUI = ({
 	hidden,
@@ -22,7 +22,7 @@ const ReportManageHiddenUI = ({
 	const [lessons, setLessons] = useState<string[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	useEffect(() => {
@@ -43,8 +43,8 @@ const ReportManageHiddenUI = ({
 					textOff={item}
 					onValueChange={(state) => (state ? add(item) : remove(item))}
 					defaultValue={hidden.indexOf(item) !== -1}
-					iconOn={null}
-					iconOff={null}
+					iconOn={undefined}
+					iconOff={undefined}
 				/>
 			)}
 			refreshControl={

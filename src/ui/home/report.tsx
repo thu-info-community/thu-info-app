@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getReport} from "../../network/basics";
 import {Course, semesterWeight} from "../../models/home/report";
 import {RefreshControl, SectionList, SectionListData} from "react-native";
@@ -10,10 +10,10 @@ import {
 } from "../../components/home/report";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
+import {useColorScheme} from "react-native-appearance";
 
 type Section = SectionListData<Course> & ReportHeaderProps;
 
@@ -50,7 +50,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const fetchData = () => {

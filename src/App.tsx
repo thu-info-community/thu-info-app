@@ -4,12 +4,12 @@ import {PersistGate} from "redux-persist/integration/react";
 import React from "react";
 import {AuthFlow} from "./components/AuthFlow";
 import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
-import {ThemeContext} from "./assets/themes/context";
 import {MenuProvider} from "react-native-popup-menu";
+import {AppearanceProvider} from "react-native-appearance";
 
 export const App = () => (
 	<Provider store={store}>
-		<ThemeContext.Provider value={"light"}>
+		<AppearanceProvider>
 			<MenuProvider>
 				<PersistGate persistor={persistor}>
 					<NavigationContainer
@@ -24,6 +24,6 @@ export const App = () => (
 					</NavigationContainer>
 				</PersistGate>
 			</MenuProvider>
-		</ThemeContext.Provider>
+		</AppearanceProvider>
 	</Provider>
 );

@@ -5,7 +5,7 @@ import {
 	ActivityIndicator,
 	Dimensions,
 } from "react-native";
-import React, {useContext, useEffect} from "react";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {authThunk} from "../../redux/actions/auth";
 import {State} from "../../redux/store";
@@ -16,11 +16,11 @@ import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
 import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
+import {useColorScheme} from "react-native-appearance";
 
 interface LoginProps {
 	readonly userId: string;
@@ -35,7 +35,7 @@ const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 	const style = styles(themeName);
 

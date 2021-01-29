@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import MarkdownWebView from "react-native-github-markdown";
 import {
 	Button,
@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import {getSecondaryVerbose} from "../../network/schedule";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {ThemeContext} from "../../assets/themes/context";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {submitSecondaryErr} from "../../utils/leanCloud";
 import Snackbar from "react-native-snackbar";
+import {useColorScheme} from "react-native-appearance";
 
 // @ts-ignore
 const markdown = preval`
@@ -34,7 +34,7 @@ export const SecondarySettingsScreen = () => {
 	const [data, setData] = useState<[string, string, boolean][]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 
-	const themeName = useContext(ThemeContext);
+	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
 	const refresh = () => {

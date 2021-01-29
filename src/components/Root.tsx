@@ -1,18 +1,18 @@
 import {HomeStackScreen} from "../ui/home/homeStack";
 import {NewsStackScreen} from "../ui/news/newsStack";
-import React, {useContext} from "react";
+import React from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {ScheduleStackScreen} from "../ui/schedule/scheduleStack";
 import {getStr} from "../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
-import {ThemeContext} from "../assets/themes/context";
 import {SettingStackScreen} from "../ui/settings/settingsStack";
+import {useColorScheme} from "react-native-appearance";
 
 const Tab = createBottomTabNavigator();
 
 export const Root = () => {
-	const theme = themes[useContext(ThemeContext)];
+	const theme = themes[useColorScheme()];
 
 	return (
 		<Tab.Navigator
