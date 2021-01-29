@@ -3,11 +3,12 @@ import {getNewsDetail} from "src/network/news";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
-import {View, StyleSheet, ActivityIndicator} from "react-native";
+import {View, ActivityIndicator} from "react-native";
 import {NewsDetailRouteProp} from "./newsStack";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "../../constants/strings";
 import {useColorScheme} from "react-native-appearance";
+import themedStyles from "../../utils/themedStyles";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
@@ -15,6 +16,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
+	const style = styles(themeName);
 
 	const fetchHtml = () => {
 		setRefreshing(true);
@@ -40,16 +42,16 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 
 	return (
 		<>
-			<View style={styles.container}>
+			<View style={style.container}>
 				<WebView
 					source={{html: adaptedHtml, baseUrl: route.params.detail.url}}
-					containerStyle={styles.webContainer}
+					containerStyle={style.webContainer}
 					userAgent={USER_AGENT}
 					setSupportMultipleWindows={false}
 				/>
 			</View>
 			{refreshing && (
-				<View style={styles.container}>
+				<View style={style.container}>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
 				</View>
 			)}
@@ -57,7 +59,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	);
 };
 
-const styles = StyleSheet.create({
+const styles = themedStyles((theme) => ({
 	container: {
 		flex: 1,
 		padding: 15,
@@ -69,6 +71,6 @@ const styles = StyleSheet.create({
 	},
 
 	webContainer: {
-		backgroundColor: "#f2f2f2",
+		backgroundColor: theme.colors.background,
 	},
-});
+}));

@@ -1,5 +1,4 @@
 import {
-	StyleSheet,
 	Text,
 	View,
 	RefreshControl,
@@ -39,6 +38,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
+import themedStyles from "../../utils/themedStyles";
 
 dayjs.extend(customParseFormat);
 
@@ -140,6 +140,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
+	const style = styles(themeName);
 
 	const renderIcon = (channel: sourceTag) => {
 		if (channel === "JWGG") {
@@ -233,6 +234,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 							fontWeight: "bold",
 							alignSelf: "center",
 							margin: 5,
+							color: theme.colors.text,
 						}}>
 						{getStr("waitForLoading")}
 					</Text>
@@ -248,11 +250,13 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 				</View>
 			}
 			ListHeaderComponent={
-				<View style={styles.headerContainer}>
-					<View style={styles.textInputContainer}>
-						<Text>{getStr("newsNumberOnPage")}</Text>
+				<View style={style.headerContainer}>
+					<View style={style.textInputContainer}>
+						<Text style={{color: theme.colors.text}}>
+							{getStr("newsNumberOnPage")}
+						</Text>
 						<TextInput
-							style={styles.textInputStyle}
+							style={style.textInputStyle}
 							placeholder="20"
 							onChangeText={(txt) => setNewsNumber(txt)}
 						/>
@@ -263,8 +267,8 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 			data={newsList}
 			keyExtractor={(item) => "" + newsList.indexOf(item)}
 			renderItem={({item}) => (
-				<View style={styles.newsSliceContainer}>
-					<View style={styles.titleContainer}>
+				<View style={style.newsSliceContainer}>
+					<View style={style.titleContainer}>
 						<TouchableWithoutFeedback
 							onPress={() => {
 								if (route.params === undefined) {
@@ -279,6 +283,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 									fontSize: 18,
 									marginVertical: 2.5,
 									marginHorizontal: 10,
+									color: theme.colors.text,
 								}}>
 								{getStr(item.channel)}
 							</Text>
@@ -300,11 +305,12 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 								fontWeight: "bold",
 								margin: 5,
 								lineHeight: 20,
+								color: theme.colors.text,
 							}}>
 							{item.name}
 						</Text>
 						<Text style={{margin: 5, lineHeight: 18}} numberOfLines={5}>
-							<Text style={{fontWeight: "bold"}}>
+							<Text style={{fontWeight: "bold", color: theme.colors.text}}>
 								{item.source + (item.source ? getStr(":") : "")}
 							</Text>
 							<Text style={{color: "gray"}}>
@@ -318,9 +324,11 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 			onEndReachedThreshold={0.6}
 			ListFooterComponent={
 				loading && newsList.length !== 0 ? (
-					<View style={styles.footerContainer}>
+					<View style={style.footerContainer}>
 						<ActivityIndicator size="small" />
-						<Text style={{margin: 10}}>{getStr("loading")}</Text>
+						<Text style={{margin: 10, color: theme.colors.text}}>
+							{getStr("loading")}
+						</Text>
 					</View>
 				) : null
 			}
@@ -328,9 +336,9 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	);
 };
 
-const styles = StyleSheet.create({
+const styles = themedStyles(({colors}) => ({
 	newsSliceContainer: {
-		backgroundColor: "white",
+		backgroundColor: colors.background,
 		justifyContent: "center",
 		padding: 15,
 		marginVertical: 8,
@@ -371,7 +379,7 @@ const styles = StyleSheet.create({
 	textInputStyle: {
 		height: 30,
 		width: 60,
-		backgroundColor: "white",
+		backgroundColor: colors.background,
 		textAlign: "left",
 		borderColor: "lightgrey",
 		borderWidth: 1,
@@ -386,7 +394,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-});
+}));
 
 export const NewsScreen = connect(
 	(state: State) => {
