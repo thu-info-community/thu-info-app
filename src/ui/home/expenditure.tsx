@@ -22,6 +22,9 @@ import {State} from "../../redux/store";
 import {useColorScheme} from "react-native-appearance";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	return (
 		<View
 			style={{
@@ -30,14 +33,17 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 				justifyContent: "space-between",
 			}}>
 			<View style={{flex: 2, alignItems: "flex-start"}}>
-				<Text style={{fontSize: 16, marginVertical: 2}}>{record.locale}</Text>
+				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+					{record.locale}
+				</Text>
 				<Text style={{color: "grey", marginVertical: 2}}>
 					{record.category}
 				</Text>
 				<Text style={{color: "grey", marginVertical: 2}}>{record.date}</Text>
 			</View>
 			<View style={{flex: 1, alignItems: "flex-end"}}>
-				<Text style={{fontSize: 20, color: record.value > 0 ? "red" : "black"}}>
+				<Text
+					style={{fontSize: 20, color: record.value > 0 ? "red" : colors.text}}>
 					{(record.value >= 0 ? "+" : "") + record.value.toFixed(2)}
 				</Text>
 			</View>
@@ -46,15 +52,18 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 };
 
 export const Money = ({title, money}: {title: string; money: number}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	const strMoney = money.toFixed(2);
 	const bigMoney = strMoney.substring(0, strMoney.length - 3);
 	const smallMoney = strMoney.substring(strMoney.length - 3);
 	return (
 		<View style={{alignItems: "center", flex: 1, padding: 5}}>
-			<Text>{title}</Text>
+			<Text style={{color: colors.text}}>{title}</Text>
 			<View style={{flexDirection: "row", alignItems: "flex-end"}}>
-				<Text style={{fontSize: 28}}>{bigMoney}</Text>
-				<Text style={{fontSize: 18}}>{smallMoney}</Text>
+				<Text style={{fontSize: 28, color: colors.text}}>{bigMoney}</Text>
+				<Text style={{fontSize: 18, color: colors.text}}>{smallMoney}</Text>
 			</View>
 		</View>
 	);

@@ -9,6 +9,8 @@ import {
 import React, {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {getStr} from "src/utils/i18n";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../assets/themes/themes";
 
 // TODO: Adapt to fit the new date picker ui of iOS14
 export const DatePickerTrigger = ({
@@ -22,7 +24,11 @@ export const DatePickerTrigger = ({
 	disabled: boolean;
 	text: string;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
 	const [visible, setVisible] = useState(false);
+
 	return (
 		<>
 			<TouchableOpacity
@@ -36,6 +42,7 @@ export const DatePickerTrigger = ({
 					style={{
 						textAlign: "center",
 						fontSize: 16,
+						color: colors.text,
 					}}>
 					{date.format()}
 				</Text>
@@ -65,7 +72,7 @@ export const DatePickerTrigger = ({
 						}}>
 						<View
 							style={{
-								backgroundColor: "white",
+								backgroundColor: colors.background,
 								flexDirection: "row",
 								alignItems: "center",
 								justifyContent: "space-around",
@@ -78,7 +85,7 @@ export const DatePickerTrigger = ({
 								shadowOpacity: 0.8,
 								paddingVertical: 4,
 							}}>
-							<Text style={{fontSize: 16}}>{text}</Text>
+							<Text style={{fontSize: 16, color: colors.text}}>{text}</Text>
 							<Button
 								title={getStr("confirm")}
 								onPress={() => {
@@ -96,12 +103,12 @@ export const DatePickerTrigger = ({
 							}}
 							style={{
 								width: "100%",
-								backgroundColor: "white",
+								backgroundColor: colors.background,
 								alignSelf: "center",
 							}}
 						/>
 					</View>
-					<View style={{height: 15, backgroundColor: "white"}} />
+					<View style={{height: 15, backgroundColor: colors.background}} />
 				</Modal>
 			)}
 		</>
