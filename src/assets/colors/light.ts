@@ -5,4 +5,5 @@ export const colorLight: ColorTheme = {
 	primary: "#671e7f",
 	primaryDark: "#380052",
 	accent: "#2979ff",
+	text: "#000000",
 };

@@ -1,10 +1,12 @@
 import {colorLight} from "../colors/light";
+import {colorDark} from "../colors/dark";
 
 export interface ColorTheme {
 	primaryLight: string;
 	primary: string;
 	primaryDark: string;
 	accent: string;
+	text: string;
 }
 
 export interface Theme {
@@ -13,6 +15,6 @@ export interface Theme {
 
 export default {
 	light: {colors: colorLight},
-	dark: {colors: colorLight},
+	dark: {colors: colorDark},
 	"no-preference": {colors: colorLight},
 };

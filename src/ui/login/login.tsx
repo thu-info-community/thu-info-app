@@ -194,6 +194,7 @@ const styles = themedStyles((theme) => {
 
 		loggingInCaptionStyle: {
 			marginTop: 5,
+			color: theme.colors.text,
 		},
 	};
 });
