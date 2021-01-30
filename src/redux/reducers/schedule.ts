@@ -11,9 +11,9 @@ import {
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 } from "../constants";
 import {
-	Exam,
-	Lesson,
-	LessonType,
+	TimeBlock,
+	Schedule,
+	ScheduleType,
 } from "thu-info-lib/lib/models/schedule/schedule";
 import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 

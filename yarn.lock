@@ -9005,14 +9005,14 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@0.1.2-alpha.3:
-  version "0.1.2-alpha.3"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.3.tgz#996bce4bf937a0be3f50b11cd2b197a61c367194"
-  integrity sha512-2+oJrkV70ll7pAV6Q3K1k1cc3i+9ES8ezZhBXkLpmgR29k2g8Ln+tjalwSE7ZoiKT6QjOjtLA2xBDNFMpLWjjg==
+thu-info-lib@0.1.2-alpha.9:
+  version "0.1.2-alpha.9"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.9.tgz#5d575a14d31116493dab49f87a3bf770b59f61c8"
+  integrity sha512-uLPbL+mShVx2nhm5HFukSA39yxncJ7bBkTqM/v0IWfgVUbz3ehRrrgz/rOo4UM3tvIx2tQ6Rt4Nl+k/sHs9QpQ==
   dependencies:
     cheerio "0.22.0"
     convert-excel-to-json "1.7.0"
-    dayjs "1.10.1"
+    dayjs "1.10.4"
     iconv-lite "0.6.2"
     md5 "2.3.0"
 

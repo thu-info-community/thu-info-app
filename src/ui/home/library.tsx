@@ -1,5 +1,4 @@
 import {Text, TouchableOpacity, View} from "react-native";
-import {getLibraryList} from "../../network/library";
 import {HomeNav} from "./homeStack";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import React from "react";
@@ -67,7 +66,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 					marginVertical: 20,
 					color: colors.text,
 				}}>
-				{getStr(mocked() ? "chooseLibraryMocked" : "chooseLibrary")}
+				{getStr(helper.mocked() ? "chooseLibraryMocked" : "chooseLibrary")}
 			</Text>
 			<View style={{backgroundColor: "lightgray", height: 1}} />
 		</View>

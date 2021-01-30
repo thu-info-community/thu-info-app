@@ -154,7 +154,9 @@ export const ClassroomDetailScreen = ({
 						name="chevron-right"
 						size={24}
 						color={
-							data[0] === Calendar.weekCount && data[1] === 7 ? "#888" : theme.colors.text
+							data[0] === Calendar.weekCount && data[1] === 7
+								? "#888"
+								: theme.colors.text
 						}
 					/>
 				</TouchableOpacity>

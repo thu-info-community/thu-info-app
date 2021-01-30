@@ -23,7 +23,6 @@ import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
-import {Choice} from "src/redux/reducers/schedule";
 import {useColorScheme} from "react-native-appearance";
 
 interface ScheduleProps {

@@ -11,7 +11,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Choice} from "src/redux/reducers/schedule";
 import {SCHEDULE_DEL_OR_HIDE, SCHEDULE_UPDATE_ALIAS} from "src/redux/constants";
 import {store} from "src/redux/store";
-import {ScheduleType} from "src/models/schedule/schedule";
+import {ScheduleType} from "thu-info-lib/src/models/schedule/schedule";
 import {TextInput} from "react-native-gesture-handler";
 import {getStr} from "src/utils/i18n";
 import {useColorScheme} from "react-native-appearance";

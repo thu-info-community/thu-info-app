@@ -1,13 +1,8 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {currState, helper, store} from "../../redux/store";
-import {SET_GRADUATE} from "../../redux/constants";
-import {
-	SettingsItem,
-	SettingsSeparator,
-	SettingsSwitch,
-} from "../../components/settings/items";
+import {currState, helper} from "../../redux/store";
+import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
 import {checkUpdate} from "../../utils/checkUpdate";
