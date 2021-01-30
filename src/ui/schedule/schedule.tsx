@@ -198,7 +198,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
-								key={val.name + block.begin}
+								key={`${val.name}-${block.week}-${block.dayOfWeek}-${block.begin}-${val.location}`}
 								onPress={() => {
 									props.navigation.navigate("ScheduleDetail", {
 										name: val.name,
