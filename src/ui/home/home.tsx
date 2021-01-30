@@ -3,7 +3,6 @@ import React from "react";
 import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
-import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconClassroom from "../../assets/icons/IconClassroom";
 import IconLibrary from "../../assets/icons/IconLibrary";
@@ -12,7 +11,6 @@ import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import IconHole from "../../assets/icons/IconHole";
 import {mocked} from "../../redux/store";
-import IconEvaluation from "../../assets/icons/IconEvaluation";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
 
@@ -49,7 +47,7 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 			<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
 				<IconReport width={iconSize} height={iconSize} />
 			</HomeIcon>
-			<HomeIcon
+			{/*<HomeIcon
 				title="physicalExam"
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
@@ -58,7 +56,7 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				title="teachingEvaluation"
 				onPress={() => navigation.navigate("Evaluation")}>
 				<IconEvaluation width={iconSize} height={iconSize} />
-			</HomeIcon>
+			</HomeIcon>*/}
 		</HomeSection>
 		<HomeSection title="resources">
 			<HomeIcon

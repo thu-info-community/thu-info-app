@@ -7,6 +7,7 @@ import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
 import {MenuProvider} from "react-native-popup-menu";
 import {AppearanceProvider} from "react-native-appearance";
 import {useColorScheme} from "react-native-appearance";
+import themes from "./assets/themes/themes";
 
 export const App = () => (
 	<Provider store={store}>
@@ -18,10 +19,13 @@ export const App = () => (
 							...DefaultTheme,
 							colors: {
 								...DefaultTheme.colors,
-								text: useColorScheme() === "dark" ? "#cccccc" : "black",
-								background: useColorScheme() === "dark" ? "black" : "white",
-								card: useColorScheme() === "dark" ? "black" : "white",
-								border: useColorScheme() === "dark" ? "white" : "black",
+								text: themes[useColorScheme()].colors.text,
+								background: themes[useColorScheme()].colors.background,
+								card: themes[useColorScheme()].colors.background,
+								border:
+									useColorScheme() === "dark"
+										? "white"
+										: DefaultTheme.colors.border,
 							},
 						}}>
 						<AuthFlow />
