@@ -100,13 +100,18 @@ const persistConfig = {
 	whitelist: ["auth", "schedule", "config", "cache", "hole"],
 	transforms: [calendarConfigTransform, scheduleFilter, cacheTransform],
 	migrate: (state: any) =>
-		Promise.resolve({
-			...state,
-			schedule:
-				state.schedule.baseSchedule === undefined
-					? defaultSchedule
-					: state.schedule,
-		}),
+		Promise.resolve(
+			state === undefined
+				? undefined
+				: {
+						...state,
+						schedule:
+							state.schedule.baseSchedule === undefined
+								? defaultSchedule
+								: state.schedule,
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  },
+		),
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
