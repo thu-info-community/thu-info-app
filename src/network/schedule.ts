@@ -213,7 +213,7 @@ export const getPrimarySchedule = () => {
 						),
 					),
 				)
-					.then((results) => {
+					.then((results) =>
 						results
 							.map((s) => {
 								if (s[0] !== "m") {
@@ -222,8 +222,8 @@ export const getPrimarySchedule = () => {
 								return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
 							})
 							.filter((s) => s.trim().length > 0)
-							.join(",");
-					})
+							.join(","),
+					)
 					.then((str) => JSON.parse(`[${str}]`))
 					.then(parseJSON),
 				// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -247,9 +247,13 @@ export const getSecondary = () =>
 
 export const getSchedule = async () => {
 	let scheduleList: Schedule[] = [];
-	scheduleList = scheduleList.concat(await getPrimarySchedule());
-	scheduleList = scheduleList.concat(await getSecondary());
-	scheduleList.forEach(mergeTimeBlocks);
+	try {
+		scheduleList = scheduleList.concat(await getPrimarySchedule());
+		scheduleList = scheduleList.concat(await getSecondary());
+		scheduleList.forEach(mergeTimeBlocks);
+	} catch (e) {
+		console.error(e);
+	}
 	return scheduleList;
 };
 
