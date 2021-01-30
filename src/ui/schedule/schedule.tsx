@@ -61,7 +61,7 @@ const OptionButton = ({
 };
 
 const ScheduleUI = (props: ScheduleProps) => {
-	const [week, setWeek] = useState(new Calendar().weekNumber);
+	const [week, setWeek] = useState(new Calendar().weekNumberCoerced);
 	const viewShot = useRef<ViewShot>(null);
 
 	const themeName = useColorScheme();
@@ -239,7 +239,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					/>
 				</TouchableOpacity>
 				<Text
-					onPress={() => setWeek(new Calendar().weekNumber)}
+					onPress={() => setWeek(new Calendar().weekNumberCoerced)}
 					style={{
 						fontSize: 18,
 						textAlign: "center",

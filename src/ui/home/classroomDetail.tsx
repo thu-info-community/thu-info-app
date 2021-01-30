@@ -24,7 +24,7 @@ export const ClassroomDetailScreen = ({
 }) => {
 	const name = route.params.name;
 	const [data, setData] = useState<[number, number, [string, number[]][]]>([
-		new Calendar().weekNumber,
+		new Calendar().weekNumberCoerced,
 		new Calendar().dayOfWeek,
 		[],
 	]);
@@ -118,7 +118,7 @@ export const ClassroomDetailScreen = ({
 				<Text
 					onPress={() =>
 						setData(([_, __, table]) => [
-							new Calendar().weekNumber,
+							new Calendar().weekNumberCoerced,
 							new Calendar().dayOfWeek,
 							table,
 						])
