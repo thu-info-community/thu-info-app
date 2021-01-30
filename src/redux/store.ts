@@ -20,6 +20,7 @@ import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 import {Hole} from "./states/hole";
 import {hole} from "./reducers/hole";
+import {defaultSchedule} from "./defaults";
 
 const KeychainStorage = createKeychainStorage();
 
@@ -93,11 +94,19 @@ const cacheTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 1,
+	version: 2,
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule", "config", "cache", "hole"],
 	transforms: [calendarConfigTransform, scheduleFilter, cacheTransform],
+	migrate: (state: any) =>
+		Promise.resolve({
+			...state,
+			schedule:
+				state.schedule.baseSchedule === undefined
+					? defaultSchedule
+					: state.schedule,
+		}),
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
