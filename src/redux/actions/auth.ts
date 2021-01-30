@@ -7,7 +7,7 @@ import {
 } from "../constants";
 import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
-import {getTickets, login, logout} from "../../network/core";
+import {login, logout} from "../../network/core";
 import {leanCloudInit} from "../../utils/leanCloud";
 import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
@@ -33,7 +33,6 @@ export const authThunk = (userId: string, password: string) => (
 		.then((r) => {
 			dispatch(authAction.success(r));
 			// Things that should be done only once upon logged in
-			getTickets();
 			leanCloudInit();
 			refreshCalendarConfig();
 			// @ts-ignore

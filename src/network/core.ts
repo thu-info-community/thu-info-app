@@ -219,6 +219,7 @@ export const login = async (
 		loginInfo(userId, password),
 		loginAcademic(userId, password, graduate),
 	]);
+	await getTickets();
 	return {
 		userId: userId,
 		password: password,
@@ -315,22 +316,22 @@ export const retryWrapper = async <R>(
 	return operation;
 };
 
-export const performGetTickets = () => {
-	([792, 824, 2005, 5000] as ValidTickets[]).forEach((target) => {
-		getTicket(target)
-			.then(() => console.log(`Ticket ${target} get.`))
-			.catch(() => console.warn(`Getting ticket ${target} failed.`));
-	});
-};
+export const performGetTickets = () =>
+	Promise.all(
+		([792, 824, 2005, 5000] as ValidTickets[]).map((target) =>
+			getTicket(target)
+				.then(() => console.log(`Ticket ${target} get.`))
+				.catch(() => console.warn(`Getting ticket ${target} failed.`)),
+		),
+	);
 
-export const getTickets = () => {
-	if (mocked()) {
-		return;
-	}
-	performGetTickets();
-	getTicket(-1)
-		.then(() => console.log("Ticket -1 get."))
-		.catch(() => console.warn("Getting ticket -1 failed."));
+const getTickets = async () => {
+	await Promise.all([
+		performGetTickets(),
+		getTicket(-1)
+			.then(() => console.log("Ticket -1 get."))
+			.catch(() => console.warn("Getting ticket -1 failed.")),
+	]);
 	setInterval(async () => {
 		console.log("Keep alive start.");
 		const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
@@ -343,6 +344,6 @@ export const getTickets = () => {
 				NetworkRetry();
 			}
 		}
-		performGetTickets();
+		await performGetTickets();
 	}, 60000);
 };
