@@ -24,6 +24,17 @@ export class Calendar {
         return Math.floor(this.diff(Calendar.firstDay) / 604800000) + 1;
     }
 
+    get weekNumberCoerced(): number {
+        const weekNumber = this.weekNumber;
+        if (weekNumber > Calendar.weekCount) {
+            return Calendar.weekCount;
+        } else if (weekNumber < 1) {
+            return 1;
+        } else {
+            return weekNumber;
+        }
+    }
+
     get dayOfWeek(): number {
         const day = this.date.day();
         return day === 0 ? 7 : day;
