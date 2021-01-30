@@ -24,12 +24,14 @@ export type AuthAction =
 	| ActionType<typeof authAction>
 	| {type: typeof DO_LOGOUT; payload: undefined};
 
-export const authThunk = (userId: string, password: string) => (
-	dispatch: Dispatch<AuthAction>,
-) => {
+export const authThunk = (
+	userId: string,
+	password: string,
+	statusIndicator: () => void,
+) => (dispatch: Dispatch<AuthAction>) => {
 	dispatch(authAction.request({userId, password}));
 	CookieManager.clearAll()
-		.then(() => login(userId, password))
+		.then(() => login(userId, password, statusIndicator))
 		.then((r) => {
 			dispatch(authAction.success(r));
 			// Things that should be done only once upon logged in

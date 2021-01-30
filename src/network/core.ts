@@ -131,7 +131,11 @@ export const retrieve = async (
 		);
 	});
 
-const loginInfo = async (userId: string, password: string) => {
+const loginInfo = async (
+	userId: string,
+	password: string,
+	indicator?: () => void,
+) => {
 	const response = await retrieve(
 		INFO_LOGIN_URL,
 		INFO_URL,
@@ -147,12 +151,14 @@ const loginInfo = async (userId: string, password: string) => {
 	if (!response.includes("清华大学信息门户")) {
 		throw new Error("Failed to login to INFO.");
 	}
+	indicator && indicator();
 };
 
 const loginAcademic = async (
 	userId: string,
 	password: string,
 	graduate: boolean,
+	indicator?: () => void,
 ) => {
 	const responseA = await retrieve(
 		ACADEMIC_LOGIN_URL,
@@ -166,6 +172,7 @@ const loginAcademic = async (
 	if (!responseA.includes("清华大学信息门户")) {
 		throw new Error("Failed to login to Academic (step 1).");
 	}
+	indicator && indicator();
 
 	const MAX_ATTEMPT = 3;
 	for (let i = 0; i < MAX_ATTEMPT; ++i) {
@@ -180,6 +187,7 @@ const loginAcademic = async (
 			"GBK",
 		);
 		if (responseB.includes("清华大学教学门户")) {
+			indicator && indicator();
 			return;
 		}
 	}
@@ -194,6 +202,7 @@ const loginAcademic = async (
 export const login = async (
 	userId: string,
 	password: string,
+	statusIndicator?: () => void,
 ): Promise<Auth> => {
 	if (mocked()) {
 		return {userId: userId, password: password};
@@ -215,11 +224,12 @@ export const login = async (
 				throw new Error(loginResponse.message);
 		}
 	}
+	statusIndicator && statusIndicator();
 	await Promise.all([
-		loginInfo(userId, password),
-		loginAcademic(userId, password, graduate),
+		loginInfo(userId, password, statusIndicator),
+		loginAcademic(userId, password, graduate, statusIndicator),
 	]);
-	await getTickets();
+	statusIndicator && (await getTickets(statusIndicator));
 	return {
 		userId: userId,
 		password: password,
@@ -316,21 +326,23 @@ export const retryWrapper = async <R>(
 	return operation;
 };
 
-export const performGetTickets = () =>
+export const performGetTickets = (indicator?: () => void) =>
 	Promise.all(
 		([792, 824, 2005, 5000] as ValidTickets[]).map((target) =>
 			getTicket(target)
 				.then(() => console.log(`Ticket ${target} get.`))
-				.catch(() => console.warn(`Getting ticket ${target} failed.`)),
+				.catch(() => console.warn(`Getting ticket ${target} failed.`))
+				.then(indicator),
 		),
 	);
 
-const getTickets = async () => {
+const getTickets = async (indicator?: () => void) => {
 	await Promise.all([
-		performGetTickets(),
+		performGetTickets(indicator),
 		getTicket(-1)
 			.then(() => console.log("Ticket -1 get."))
-			.catch(() => console.warn("Getting ticket -1 failed.")),
+			.catch(() => console.warn("Getting ticket -1 failed."))
+			.then(indicator),
 	]);
 	setInterval(async () => {
 		console.log("Keep alive start.");

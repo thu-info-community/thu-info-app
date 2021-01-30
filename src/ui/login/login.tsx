@@ -27,7 +27,11 @@ interface LoginProps {
 	readonly userId: string;
 	readonly password: string;
 	readonly status: LoginStatus;
-	login: (userId: string, password: string) => void;
+	login: (
+		userId: string,
+		password: string,
+		statusIndicator: () => void,
+	) => void;
 	resetStatus: () => void;
 	navigation: LoginNav;
 }
@@ -36,6 +40,7 @@ interface LoginProps {
 const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
+	const [loginPhase, setLoginPhase] = React.useState(0);
 
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
@@ -43,7 +48,8 @@ const LoginUI = (props: LoginProps) => {
 
 	useEffect(() => {
 		if (props.userId !== "") {
-			props.login(userId, password);
+			setLoginPhase(1);
+			props.login(userId, password, () => setLoginPhase((i) => i + 1));
 		}
 		checkUpdate();
 		checkBroadcast();
@@ -102,7 +108,10 @@ const LoginUI = (props: LoginProps) => {
 				</View>
 				<TouchableOpacity
 					style={style.loginButtonStyle}
-					onPress={() => props.login(userId, password)}>
+					onPress={() => {
+						setLoginPhase(1);
+						props.login(userId, password, () => setLoginPhase((i) => i + 1));
+					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</TouchableOpacity>
 				<Text
@@ -128,7 +137,9 @@ const LoginUI = (props: LoginProps) => {
 						blurAmount={10}
 					/>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
-					<Text style={style.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
+					<Text style={style.loggingInCaptionStyle}>
+						{getStr("loggingIn") + ` (${loginPhase}0%)`}
+					</Text>
 				</View>
 			) : null}
 		</View>
@@ -213,9 +224,13 @@ export const LoginScreen = connect(
 	(state: State) => state.auth,
 	(dispatch) => {
 		return {
-			login: (userId: string, password: string) => {
+			login: (
+				userId: string,
+				password: string,
+				statusIndicator: () => void,
+			) => {
 				// @ts-ignore
-				dispatch(authThunk(userId, password));
+				dispatch(authThunk(userId, password, statusIndicator));
 			},
 			resetStatus: () => {
 				dispatch({

@@ -89,7 +89,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 				});
 				const {userId, password} = currState().auth;
 				login(userId, password)
-					.then(performGetTickets)
+					.then(() => performGetTickets())
 					.then(() =>
 						Snackbar.show({
 							text: getStr("success"),
