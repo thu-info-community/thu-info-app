@@ -21,6 +21,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
 import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 import {useColorScheme} from "react-native-appearance";
+import {LoginNav} from "../../components/AuthFlow";
 
 interface LoginProps {
 	readonly userId: string;
@@ -28,6 +29,7 @@ interface LoginProps {
 	readonly status: LoginStatus;
 	login: (userId: string, password: string) => void;
 	resetStatus: () => void;
+	navigation: LoginNav;
 }
 
 // Not That Ugly UI
@@ -111,6 +113,9 @@ const LoginUI = (props: LoginProps) => {
 					}}>
 					{getStr("slogan")}
 				</Text>
+				<TouchableOpacity onPress={() => props.navigation.navigate("Feedback")}>
+					<Text style={style.feedbackTextStyle}>{getStr("feedback")}</Text>
+				</TouchableOpacity>
 				<Text style={style.credentialNoteStyle}>
 					{getStr("credentialNote")}
 				</Text>
@@ -186,10 +191,15 @@ const styles = themedStyles((theme) => {
 			fontWeight: "bold",
 		},
 
+		feedbackTextStyle: {
+			color: theme.colors.primary,
+			marginTop: 60,
+		},
+
 		credentialNoteStyle: {
 			color: theme.colors.primaryDark,
 			marginHorizontal: 40,
-			marginTop: 100,
+			marginTop: 20,
 		},
 
 		loggingInCaptionStyle: {

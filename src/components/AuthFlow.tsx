@@ -1,16 +1,30 @@
 import React from "react";
-import {createStackNavigator} from "@react-navigation/stack";
+import {
+	createStackNavigator,
+	StackNavigationProp,
+} from "@react-navigation/stack";
 import {connect} from "react-redux";
 import {LoginStatus} from "../redux/states/auth";
 import {LoginScreen} from "../ui/login/login";
 import {State} from "../redux/store";
 import {Root} from "./Root";
+import {FeedbackScreen} from "../ui/settings/feedback";
+import {getStr} from "../utils/i18n";
+import {PopiScreen} from "../ui/settings/popi";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
 }
 
-const Stack = createStackNavigator();
+type LoginStackParamList = {
+	Login: undefined;
+	Feedback: undefined;
+	Popi: undefined;
+};
+
+const Stack = createStackNavigator<LoginStackParamList>();
+
+export type LoginNav = StackNavigationProp<LoginStackParamList>;
 
 const AuthFlowComponent = (props: AuthFlowProps) =>
 	props.status === LoginStatus.LoggedIn ? (
@@ -18,6 +32,16 @@ const AuthFlowComponent = (props: AuthFlowProps) =>
 	) : (
 		<Stack.Navigator headerMode="none">
 			<Stack.Screen name="Login" component={LoginScreen} />
+			<Stack.Screen
+				name="Feedback"
+				component={FeedbackScreen}
+				options={{title: getStr("feedback")}}
+			/>
+			<Stack.Screen
+				name="Popi"
+				component={PopiScreen}
+				options={{title: getStr("popi")}}
+			/>
 		</Stack.Navigator>
 	);
 
