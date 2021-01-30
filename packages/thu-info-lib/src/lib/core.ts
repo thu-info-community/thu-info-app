@@ -1,4 +1,7 @@
 import {
+    ACADEMIC_HOME_URL,
+    ACADEMIC_LOGIN_URL,
+    ACADEMIC_URL,
     CONFIRM_LOGIN_URL,
     CONTENT_TYPE_FORM,
     DO_LOGIN_URL,
@@ -12,7 +15,6 @@ import {
     INFO_LOGIN_URL,
     INFO_ROOT_URL,
     INFO_URL,
-    INVALIDATE_ZHJW_URL,
     LIBRARY_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
@@ -99,7 +101,7 @@ export const retrieve = async (
             if (request.status === 200) {
                 resolve(iconv.decode(Buffer.from(request.response), encoding));
             } else {
-                reject(0);
+                reject(`Network error: response status = ${request.status}`);
             }
         };
         request.open(post === undefined ? "GET" : "POST", url);
@@ -117,13 +119,79 @@ export const retrieve = async (
         );
     });
 
+const loginInfo = async (
+    userId: string,
+    password: string,
+    indicator?: () => void,
+) => {
+    const response = await retrieve(
+        INFO_LOGIN_URL,
+        INFO_URL,
+        {
+            redirect: "NO",
+            userName: userId,
+            password: password,
+            x: "0",
+            y: "0",
+        },
+        "GBK",
+    );
+    if (!response.includes("清华大学信息门户")) {
+        throw new Error("Failed to login to INFO.");
+    }
+    indicator && indicator();
+};
+
+const loginAcademic = async (
+    userId: string,
+    password: string,
+    graduate: boolean,
+    indicator?: () => void,
+) => {
+    const responseA = await retrieve(
+        ACADEMIC_LOGIN_URL,
+        ACADEMIC_URL,
+        {
+            userName: userId,
+            password,
+        },
+        "GBK",
+    );
+    if (!responseA.includes("清华大学信息门户")) {
+        throw new Error("Failed to login to Academic (step 1).");
+    }
+    indicator && indicator();
+
+    const MAX_ATTEMPT = 3;
+    for (let i = 0; i < MAX_ATTEMPT; ++i) {
+        const iFrameUrl = cheerio(
+            graduate ? "#23-2604_iframe" : "#25-2649_iframe",
+            await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
+        ).attr().src;
+        const responseB = await retrieve(
+            iFrameUrl,
+            ACADEMIC_HOME_URL,
+            undefined,
+            "GBK",
+        );
+        if (responseB.includes("清华大学教学门户")) {
+            indicator && indicator();
+            return;
+        }
+    }
+    throw new Error(
+        `Failed to login to Academic after ${MAX_ATTEMPT} attempts. (step 2).`,
+    );
+};
+
 /**
- * Logs-in to WebVPN, INFO and ZHJW sequentially.
+ * Logs-in to WebVPN, INFO and academic.
  */
 export const login = async (
     helper: InfoHelper,
     userId: string,
     password: string,
+    statusIndicator?: () => void,
 ): Promise<{
     userId: string;
     password: string;
@@ -131,32 +199,28 @@ export const login = async (
     if (userId === MOCK && password === MOCK) {
         return {userId: userId, password: password};
     }
-    const rawResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
+    const graduate = userId[4] === "2" || userId[4] === "3";
+    const loginResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
         auth_type: "local",
         username: userId,
         sms_code: "",
         password: password,
-    });
-    if (rawResponse.indexOf("个人信息") === -1) {
-        const loginResponse = JSON.parse(rawResponse);
-        if (!loginResponse.success) {
-            switch (loginResponse.error) {
-            case "NEED_CONFIRM":
-                await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
-                break;
-            default:
-                throw new Error(loginResponse.message);
-            }
+    }).then(JSON.parse);
+    if (!loginResponse.success) {
+        switch (loginResponse.error) {
+        case "NEED_CONFIRM":
+            await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+            break;
+        default:
+            throw new Error(loginResponse.message);
         }
     }
-    await connect(INFO_LOGIN_URL, INFO_URL, {
-        redirect: "NO",
-        userName: userId,
-        password: password,
-        x: "0",
-        y: "0",
-    });
-    await connect(INVALIDATE_ZHJW_URL, INFO_URL);
+    statusIndicator && statusIndicator();
+    await Promise.all([
+        loginInfo(userId, password, statusIndicator),
+        loginAcademic(userId, password, graduate, statusIndicator),
+    ]);
+    statusIndicator && (await getTickets(helper, statusIndicator));
     return {
         userId: userId,
         password: password,
@@ -189,17 +253,14 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
 
 export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
     if (target >= 0 && target <= 1000) {
-        return retrieve(INFO_ROOT_URL, PRE_LOGIN_URL, undefined, "UTF-8", 800).then(
-            (str) => {
-                const lowerBound = str.indexOf(`name="9-${target}`);
-                const url = str
-                    .substring(
-                        str.indexOf("src", lowerBound) + 5,
-                        str.indexOf(" id", lowerBound) - 1,
-                    )
-                    .replace(/amp;/g, "");
-                return connect(url, INFO_ROOT_URL);
-            },
+        return retrieve(
+            INFO_ROOT_URL,
+            PRE_LOGIN_URL,
+            undefined,
+            "UTF-8",
+            800,
+        ).then((str) =>
+            connect(cheerio(`#9-${target}_iframe`, str).attr().src, INFO_ROOT_URL),
         );
     } else if (target === -1) {
         const userId = helper.userId;
@@ -252,26 +313,28 @@ export const retryWrapper = async <R>(
     return operation;
 };
 
-export const performGetTickets = (helper: InfoHelper) => {
-    ([792, 824, 2005, 5000] as ValidTickets[]).forEach((target) => {
-        getTicket(helper, target)
-            .then(() => console.log(`Ticket ${target} get.`))
-            .catch(() => console.warn(`Getting ticket ${target} failed.`));
-    });
-};
+export const performGetTickets = (helper: InfoHelper, indicator?: () => void) =>
+    Promise.all(
+        ([792, 824, 2005, 5000] as ValidTickets[]).map((target) =>
+            getTicket(helper, target)
+                .then(() => console.log(`Ticket ${target} get.`))
+                .catch(() => console.warn(`Getting ticket ${target} failed.`))
+                .then(indicator),
+        ),
+    );
 
-export const getTickets = (helper: InfoHelper) => {
-    if (helper.mocked()) {
-        return;
-    }
-    performGetTickets(helper);
-    getTicket(helper, -1)
-        .then(() => console.log("Ticket -1 get."))
-        .catch(() => console.warn("Getting ticket -1 failed."));
+const getTickets = async (helper: InfoHelper, indicator?: () => void) => {
+    await Promise.all([
+        performGetTickets(helper, indicator),
+        getTicket(helper, -1)
+            .then(() => console.log("Ticket -1 get."))
+            .catch(() => console.warn("Getting ticket -1 failed."))
+            .then(indicator),
+    ]);
     setInterval(async () => {
         console.log("Keep alive start.");
         const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
-        if (verification.indexOf("个人信息") === -1) {
+        if (!verification.includes("个人信息")) {
             console.log("Lost connection with school website. Reconnecting...");
             const {userId, password} = helper;
             try {
@@ -280,6 +343,6 @@ export const getTickets = (helper: InfoHelper) => {
                 console.warn("Login failed!");
             }
         }
-        performGetTickets(helper);
+        await performGetTickets(helper);
     }, 60000);
 };
