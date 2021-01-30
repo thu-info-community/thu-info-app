@@ -220,6 +220,7 @@ export const login = async (
         loginInfo(userId, password, statusIndicator),
         loginAcademic(userId, password, graduate, statusIndicator),
     ]);
+    helper.setCredentials(userId, password);
     statusIndicator && (await getTickets(helper, statusIndicator));
     return {
         userId: userId,
