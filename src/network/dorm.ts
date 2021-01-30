@@ -50,20 +50,14 @@ const loginToHome = async () => {
 };
 
 export const getDormScore = (): Promise<string> =>
-	mocked()
-		? Promise.resolve(
-				"https://cloud.tsinghua.edu.cn/f/43ada07f3731439daf06/?dl=1",
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  )
-		: retryWrapper(
-				-1,
-				retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
-					(s) =>
-						DORM_SCORE_HOST +
-						cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-				),
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  );
+	retryWrapper(
+		-1,
+		retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
+			(s) =>
+				DORM_SCORE_HOST +
+				cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+		),
+	);
 
 export const getEleRechargePayCode = async (money: number): Promise<string> => {
 	await loginToHome();

@@ -74,11 +74,13 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				onPress={() => navigation.navigate("Expenditure")}>
 				<IconExpenditure width={iconSize} height={iconSize} />
 			</HomeIcon>
-			<HomeIcon
-				title="dormScore"
-				onPress={() => navigation.navigate("DormScore")}>
-				<IconDormScore width={iconSize} height={iconSize} />
-			</HomeIcon>
+			{!mocked() && (
+				<HomeIcon
+					title="dormScore"
+					onPress={() => navigation.navigate("DormScore")}>
+					<IconDormScore width={iconSize} height={iconSize} />
+				</HomeIcon>
+			)}
 		</HomeSection>
 		{!mocked() && (
 			<HomeSection title="hole">

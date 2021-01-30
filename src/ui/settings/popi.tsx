@@ -1,12 +1,18 @@
 import React from "react";
 import {Text, View} from "react-native";
-import {retrieve} from "../../network/core";
-import {POPI_URL} from "../../constants/strings";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import AV from "leancloud-storage/core";
 
-export const PopiScreen = simpleRefreshListScreen<[string, string]>(
-	() => retrieve(POPI_URL).then(JSON.parse),
-	([q, a], _, __, {colors}) => (
+export const PopiScreen = simpleRefreshListScreen<{
+	question: string;
+	answer: string;
+}>(
+	() =>
+		new AV.Query("Popi")
+			.limit(1000)
+			.find()
+			.then((r) => r.reverse().map((it) => it.toJSON())),
+	({question, answer}, _, __, {colors}) => (
 		<View style={{padding: 15, marginVertical: 5}}>
 			<Text
 				style={{
@@ -16,13 +22,13 @@ export const PopiScreen = simpleRefreshListScreen<[string, string]>(
 					lineHeight: 18,
 					color: colors.text,
 				}}>
-				{"Q: " + q}
+				{"Q: " + question}
 			</Text>
 			<View style={{backgroundColor: "grey", height: 1}} />
 			<Text style={{marginTop: 10, lineHeight: 17, color: colors.text}}>
-				{"A: " + a}
+				{"A: " + answer}
 			</Text>
 		</View>
 	),
-	([x]) => x,
+	({question}) => question,
 );

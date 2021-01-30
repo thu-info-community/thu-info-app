@@ -62,7 +62,10 @@ export const checkBroadcast = () => {
 					{
 						text: getStr("confirm"),
 						onPress: () =>
-							store.dispatch({type: SET_LAST_BROADCAST_ID, payload: r[0].id}),
+							store.dispatch({
+								type: SET_LAST_BROADCAST_ID,
+								payload: r[0].createdAt,
+							}),
 					},
 				],
 				{cancelable: true},
