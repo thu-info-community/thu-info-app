@@ -171,7 +171,7 @@ export const parseJSON = (json: any[]): Schedule[] => {
 				}
 				case "考试": {
 					scheduleList.push({
-						name: o.nr,
+						name: "[考试]" + o.nr,
 						location: o.dd || "",
 						activeTime: [],
 						delOrHideTime: [],
