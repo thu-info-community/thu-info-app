@@ -56,10 +56,11 @@ export class InfoHelper {
     public login = async (
         userId: string,
         password: string,
+        statusIndicator?: () => void,
     ): Promise<{
         userId: string;
         password: string;
-    }> => login(this, userId, password);
+    }> => login(this, userId, password, statusIndicator);
 
     public getFullName = async (): Promise<string> => getFullName(this);
 
