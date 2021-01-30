@@ -12,7 +12,6 @@ import {
 import {
     getFullName,
     getTicket,
-    getTickets,
     login,
     logout,
     performGetTickets,
@@ -73,13 +72,7 @@ export class InfoHelper {
         operation: Promise<R>,
     ): Promise<R> => retryWrapper(this, target, operation);
 
-    public performGetTickets = () => {
-        performGetTickets(this);
-    };
-
-    public getTickets = () => {
-        getTickets(this);
-    };
+    public performGetTickets = () => performGetTickets(this);
 
     public getReport = (
         graduate: boolean,
