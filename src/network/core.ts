@@ -116,6 +116,9 @@ export const retrieve = async (
 				reject(`Network error: response status = ${request.status}`);
 			}
 		};
+		request.ontimeout = () => {
+			reject("Network error: timeout.");
+		};
 		request.open(post === undefined ? "GET" : "POST", url);
 		request.setRequestHeader("Content-type", CONTENT_TYPE_FORM);
 		request.setRequestHeader("User-Agent", hole ? HOLE_USER_AGENT : USER_AGENT);
@@ -272,7 +275,13 @@ export const getTicket = async (target: ValidTickets) => {
 			"UTF-8",
 			800,
 		).then((str) =>
-			connect(cheerio(`#9-${target}_iframe`, str).attr().src, INFO_ROOT_URL),
+			retrieve(
+				cheerio(`#9-${target}_iframe`, str).attr().src,
+				INFO_ROOT_URL,
+				undefined,
+				"UTF-8",
+				800,
+			),
 		);
 	} else if (target === -1) {
 		const userId = currState().auth.userId;
