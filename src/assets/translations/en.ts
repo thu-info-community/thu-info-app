@@ -1,4 +1,5 @@
 export default {
+	mark: "EN",
 	userId: "School ID",
 	password: "Password",
 	login: "Login",
@@ -240,4 +241,32 @@ export default {
 	chooseLibrary: "Please select a library to check/book a seat",
 	chooseLibraryMocked: "Please select a library",
 	bookTips: "Press the list below to book a seat",
+	location: "Locale",
+	timeLocation: "Time",
+	weekNumPrefix: "Week ",
+	weekNumSuffix: "",
+	periodNumPrefix: "Session ",
+	periodNumSuffix: "",
+	originalName: "Original\nname",
+	locationUnset: "[Unknown location]",
+	set: "Set ",
+	delOrModify: "Delete or modify ",
+	delAlias: "Delete Alias",
+	alias: "the alias:",
+	illegalAlias: "Illegal Alias",
+	aliasCannotBeNull: "Can not set the alias null string.",
+	scheduleConflict: "Schedules Conflict",
+	customIntro:
+		"Your new custom schedule conflicts with following schedules:\n\n",
+	customText:
+		"\n\nPress 'OK' to delete or hide the overlapped schedules, press 'Cancel' to cancel creating the new schedule.",
+	unhideIntro:
+		"The schedule you want to unhide conflicts with following schedules:\n\n",
+	unhideText:
+		"\n\nPress 'OK' to delete or hide the overlapped schedules, press 'Cancel' to cancel unhiding the schedule.",
+	delSchedule: "Delete ",
+	hideSchedule: "Hide ",
+	allTime: "the schedule(All time)",
+	repeatly: "the schedule(Weekly)",
+	once: "the schedule(Once)",
 };

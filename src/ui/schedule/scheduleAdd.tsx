@@ -42,8 +42,6 @@ export const numberToCode = (num: number): string => {
 	return res;
 };
 
-const dayOfWeekChar = ["", "一", "二", "三", "四", "五", "六", "日"];
-
 const ScheduleAddUI = ({
 	scheduleList,
 	customCnt,
@@ -277,27 +275,30 @@ const ScheduleAddUI = ({
 
 					if (overlapList.length) {
 						Alert.alert(
-							"计划冲突",
-							"您新建的计划与下列计划相冲突：\n\n" +
+							getStr("scheduleConflict"),
+							getStr("customIntro") +
 								overlapList
 									.map(
 										(val) =>
 											"「" +
 											val[1].substr(val[2] ? 6 : 0) +
-											"」\n第" +
+											"」\n" +
+											getStr("weekNumPrefix") +
 											val[0].week +
-											"周 周" +
-											dayOfWeekChar[val[0].dayOfWeek] +
-											" 第" +
+											getStr("weekNumSuffix") +
+											" " +
+											getStr("dayOfWeek")[val[0].dayOfWeek] +
+											" " +
+											getStr("periodNumPrefix") +
 											val[0].begin +
 											(val[0].begin === val[0].end ? "" : " ~ " + val[0].end) +
-											"节",
+											getStr("periodNumSuffix"),
 									)
 									.join("\n\n") +
-								"\n\n点击“确认”则会覆盖已有计划（如果自定义计划所有时间段均被覆盖，这个计划会被删除），点击“取消”放弃新建计划",
+								getStr("customText"),
 							[
 								{
-									text: "确认",
+									text: getStr("confirm"),
 									onPress: () => {
 										overlapList.forEach((val) => {
 											delOrHide(val[1], val[0], Choice.ONCE);
@@ -307,7 +308,7 @@ const ScheduleAddUI = ({
 									},
 								},
 								{
-									text: "取消",
+									text: getStr("cancel"),
 								},
 							],
 						);

@@ -94,24 +94,25 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	const basicGrid = () => {
 		let daysOfWeekList: ReactElement[] = [];
-		["周一", "周二", "周三", "周四", "周五", "周六", "周日"].forEach(
-			(val, ind) => {
-				daysOfWeekList.push(
-					<View
-						style={{
-							flex: 2,
-							borderLeftColor: "lightgray",
-							borderLeftWidth: ind ? 1 : 2,
-							alignContent: "center",
-							justifyContent: "center",
-							backgroundColor: "white",
-						}}
-						key={`0-${ind + 1}`}>
-						<Text style={{textAlign: "center", color: "gray"}}>{val}</Text>
-					</View>,
-				);
-			},
-		);
+
+		for (let ind = 1; ind <= 7; ++ind) {
+			daysOfWeekList.push(
+				<View
+					style={{
+						flex: 2,
+						borderLeftColor: "lightgray",
+						borderLeftWidth: ind ? 1 : 2,
+						alignContent: "center",
+						justifyContent: "center",
+						backgroundColor: "white",
+					}}
+					key={`0-${ind + 1}`}>
+					<Text style={{textAlign: "center", color: "gray"}}>
+						{getStr("dayOfWeek")[ind]}
+					</Text>
+				</View>,
+			);
+		}
 
 		let gridHead = (
 			<View

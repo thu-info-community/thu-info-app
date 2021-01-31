@@ -53,8 +53,6 @@ const endTime = [
 	"21:45",
 ];
 
-const dayOfWeekChar = ["", "一", "二", "三", "四", "五", "六", "日"];
-
 const nullAlias = (str: string) => {
 	if (str === undefined) {
 		return true;
@@ -98,14 +96,14 @@ export const ScheduleDetailScreen = ({route}: any) => {
 	const delButton = (choice: Choice) => {
 		const verbText: string =
 			props.type === ScheduleType.CUSTOM && choice === Choice.ALL
-				? "删除"
-				: "隐藏";
+				? getStr("delSchedule")
+				: getStr("hideSchedule");
 		const buttonText: string =
 			choice === Choice.ALL
-				? verbText + "所有时段该计划"
+				? verbText + getStr("allTime")
 				: choice === Choice.REPEAT
-				? verbText + "每周同时段该计划"
-				: verbText + "该时段计划";
+				? verbText + getStr("repeatly")
+				: verbText + getStr("once");
 		return (
 			<TouchableOpacity
 				style={{
@@ -186,13 +184,22 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					style={{alignItems: "center", justifyContent: "center", width: 20}}>
 					<FontAwesome name="map-marker" size={20} color="red" />
 				</View>
-				<Text style={{marginHorizontal: 10, color: "gray"}}>地点</Text>
+				<View
+					style={{
+						alignItems: "flex-start",
+						justifyContent: "center",
+						width: getStr("mark") === "CH" ? undefined : 67,
+					}}>
+					<Text style={{marginHorizontal: 8, color: "gray"}}>
+						{getStr("location")}
+					</Text>
+				</View>
 				<Text
 					style={{
-						marginHorizontal: 15,
+						marginHorizontal: 5,
 						color: props.location === "" ? "gray" : colors.text,
 					}}>
-					{props.location === "" ? "[未指定]" : props.location}
+					{props.location === "" ? getStr("locationUnset") : props.location}
 				</Text>
 			</View>
 			<View
@@ -206,21 +213,34 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					style={{alignItems: "center", justifyContent: "center", width: 20}}>
 					<FontAwesome name="list-alt" size={20} color="blue" />
 				</View>
-				<Text style={{marginHorizontal: 10, color: "gray"}}>节数</Text>
-				<Text style={{marginLeft: 15, color: colors.text}}>
-					{"第" + props.week + "周"}
+				<View
+					style={{
+						alignItems: "flex-start",
+						justifyContent: "center",
+						width: getStr("mark") === "CH" ? undefined : 67,
+					}}>
+					<Text style={{marginHorizontal: 8, color: "gray"}}>
+						{getStr("timeLocation")}
+					</Text>
+				</View>
+				<Text style={{marginLeft: 5, color: colors.text}}>
+					{getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix")}
 				</Text>
 				<Text style={{marginLeft: 5, color: colors.text}}>
-					{"周" + dayOfWeekChar[props.dayOfWeek]}
+					{getStr("dayOfWeek")[props.dayOfWeek]}
 				</Text>
 				<Text style={{marginLeft: 5, color: colors.text}}>
-					{"第" +
+					{getStr("periodNumPrefix") +
 						props.begin +
 						(props.begin === props.end ? "" : " ~ " + props.end) +
-						"节"}
+						getStr("periodNumSuffix")}
 				</Text>
 				<Text style={{marginLeft: 5, color: "gray"}}>
-					{"（" + beginTime[props.begin] + " ~ " + endTime[props.end] + "）"}
+					{(getStr("mark") === "CH" ? "（" : "(") +
+						beginTime[props.begin] +
+						" ~ " +
+						endTime[props.end] +
+						(getStr("mark") === "CH" ? "）" : ")")}
 				</Text>
 			</View>
 			{nullAlias(newAlias) ? null : (
@@ -235,10 +255,21 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						style={{alignItems: "center", justifyContent: "center", width: 20}}>
 						<FontAwesome name="file-text-o" size={20} color="green" />
 					</View>
-					<Text style={{marginHorizontal: 10, color: "gray"}}>原名</Text>
+					<View
+						style={{
+							alignItems: "flex-start",
+							justifyContent: "center",
+							width: getStr("mark") === "CH" ? undefined : 67,
+						}}>
+						<Text
+							style={{marginHorizontal: 8, color: "gray"}}
+							numberOfLines={2}>
+							{getStr("originalName")}
+						</Text>
+					</View>
 					<Text
 						style={{
-							marginHorizontal: 15,
+							marginHorizontal: 5,
 							color: props.location === "" ? "gray" : colors.text,
 						}}>
 						{props.name}
@@ -253,7 +284,8 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					fontSize: 18,
 					color: colors.text,
 				}}>
-				{(nullAlias(newAlias) ? "设置" : "修改或删除") + "简称："}
+				{(nullAlias(newAlias) ? getStr("set") : getStr("delOrModify")) +
+					getStr("alias")}
 			</Text>
 			<View
 				style={{
@@ -283,7 +315,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					title={getStr("confirm")}
 					onPress={() => {
 						if (inputText.length === 0) {
-							Alert.alert("简称错误", "不能将简称设置为空。");
+							Alert.alert(getStr("illegalAlias"), getStr("aliasCannotBeNull"));
 							return;
 						}
 						const res: string =
@@ -300,7 +332,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 				/>
 				{nullAlias(newAlias) ? null : (
 					<Button
-						title={"删除简称"}
+						title={getStr("delAlias")}
 						onPress={() => {
 							store.dispatch({
 								type: SCHEDULE_UPDATE_ALIAS,

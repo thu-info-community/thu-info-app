@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import {connect} from "react-redux";
 import React from "react";
 import {
@@ -22,8 +23,6 @@ import {
 } from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {Choice} from "src/redux/reducers/schedule";
-
-const dayOfWeekChar = ["", "一", "二", "三", "四", "五", "六", "日"];
 
 const ScheduleHiddenUI = ({
 	baseSchedule,
@@ -64,14 +63,13 @@ const ScheduleHiddenUI = ({
 							: `${
 									item.time.week === -1
 										? getStr("schedulePrefixRepeat")
-										: "[第" + item.time.week + "周]"
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
+										: getStr("schedulePrefixOncePrefix") +
+										  item.time.week +
+										  getStr("schedulePrefixOnceSuffix")
 							  } ${item.name.substr(
 									item.type === ScheduleType.CUSTOM ? 6 : 0,
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  )} 周${dayOfWeekChar[item.time.dayOfWeek]} [${
+							  )} ${getStr("dayOfWeek")[item.time.dayOfWeek]} [${
 									item.time.begin
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
 							  }, ${item.time.end}]`}
 					</Text>
 					<TouchableOpacity
@@ -94,29 +92,32 @@ const ScheduleHiddenUI = ({
 							);
 							if (overlapList.length) {
 								Alert.alert(
-									"计划冲突",
-									"您要恢复的计划与下列计划相冲突：\n\n" +
+									getStr("scheduleConflict"),
+									getStr("unhideIntro") +
 										overlapList
 											.map(
 												(val) =>
 													"「" +
 													val[1].substr(val[2] ? 6 : 0) +
-													"」\n第" +
+													"」\n" +
+													getStr("weekNumPrefix") +
 													val[0].week +
-													"周 周" +
-													dayOfWeekChar[val[0].dayOfWeek] +
-													" 第" +
+													getStr("weekNumSuffix") +
+													" " +
+													getStr("dayOfWeek")[val[0].dayOfWeek] +
+													" " +
+													getStr("periodNumPrefix") +
 													val[0].begin +
 													(val[0].begin === val[0].end
 														? ""
 														: " ~ " + val[0].end) +
-													"节",
+													getStr("periodNumSuffix"),
 											)
 											.join("\n\n") +
-										"\n\n点击“确认”则会覆盖已有计划（如果自定义计划所有时间段均被覆盖，这个计划会被删除），点击“取消”放弃恢复计划",
+										getStr("unhideText"),
 									[
 										{
-											text: "确认",
+											text: getStr("confirm"),
 											onPress: () => {
 												removeRule(item.name, item.time);
 												overlapList.forEach((val) => {
@@ -125,7 +126,7 @@ const ScheduleHiddenUI = ({
 											},
 										},
 										{
-											text: "取消",
+											text: getStr("cancel"),
 										},
 									],
 								);
