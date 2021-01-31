@@ -82,9 +82,6 @@ export const mergeTimeBlocks = (schedule: Schedule) => {
 			(a.dayOfWeek - b.dayOfWeek) * 100 +
 			(a.begin - b.begin),
 	);
-	if (schedule.name === "电子学基础实验") {
-		console.log(schedule.activeTime);
-	}
 	let flag = 0;
 	while (flag < schedule.activeTime.length) {
 		if (
@@ -244,15 +241,17 @@ export const parseScript = (
 	const reg = /"<span onmouseover=\\"return overlib\('(.+?)'\);\\" onmouseout='return nd\(\);'>(.+?)<\/span>";[ \n\t\r]+?document.getElementById\('(.+?)'\).innerHTML \+= strHTML\+"<br>";/;
 	segments.forEach((seg) => {
 		reg.test(seg);
-		const position = RegExp.$3;
-		const dayOfWeek = Number(position[3]);
-		const sessionIndex = Number(position[1]);
+		const basic = RegExp.$3;
+		const dayOfWeek = Number(basic[3]);
+		const sessionIndex = Number(basic[1]);
 		const begin = beginList[sessionIndex - 1];
 		const end = endList[sessionIndex - 1];
 		const title = RegExp.$2;
 		const detail = RegExp.$1.replace(/\s/g, "");
 
-		console.log(RegExp.$1);
+		// TODO: ugly resolution, maybe better
+		/[^(]+?\(([^，]+?)，.+?/.test(detail);
+		const location = RegExp.$1;
 
 		const add = (week: number) => {
 			let lessonList = result.filter((val) => val.name === title);
@@ -262,7 +261,7 @@ export const parseScript = (
 			} else {
 				result.push({
 					name: title,
-					location: position,
+					location: location,
 					activeTime: [],
 					delOrHideTime: [],
 					delOrHideDetail: [],

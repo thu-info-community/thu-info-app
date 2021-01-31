@@ -56,7 +56,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			}}
 			onPress={props.onPress}>
 			<Text style={{textAlign: "center", color: "white"}}>
-				{props.name + "@" + props.location}
+				{props.name + (props.location.length ? "@" : "") + props.location}
 			</Text>
 		</TouchableOpacity>
 	);
