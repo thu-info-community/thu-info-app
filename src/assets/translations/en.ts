@@ -162,6 +162,7 @@ export default {
 	configureDorm: "Login to myhome.tsinghua.edu.cn",
 	configureDormHint:
 		"This password was probably set even before you entered the school...",
+	email: "Email",
 	dormScore: "Dorm Score",
 	eleRecharge: "Electricity",
 	alipayRequired: "Alipay required.",

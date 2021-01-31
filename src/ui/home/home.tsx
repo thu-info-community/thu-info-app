@@ -13,6 +13,7 @@ import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
+import IconMain from "../../assets/icons/IconMain";
 
 const iconSize = 60;
 
@@ -81,6 +82,9 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 					<IconDormScore width={iconSize} height={iconSize} />
 				</HomeIcon>
 			)}
+			<HomeIcon title="email" onPress={() => navigation.navigate("Email")}>
+				<IconMain width={iconSize} height={iconSize} />
+			</HomeIcon>
 		</HomeSection>
 	</ScrollView>
 );
