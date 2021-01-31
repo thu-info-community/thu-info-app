@@ -38,7 +38,9 @@ export const ClassroomDetailScreen = ({
 
 	const refresh = () => {
 		setRefreshing(true);
-		getClassroomState(name, data[0])
+		const six = ["六教A区", "六教B区", "六教C区"].includes(name);
+		getClassroomState(six ? "六教" : name, data[0])
+			.then((res) => (six ? res.filter((it) => it[0][1] === name[2]) : res))
 			.then((res) =>
 				setData((o) => {
 					if (o[0] === data[0]) {
