@@ -76,26 +76,29 @@ export const activeWeek = (week: number, schedule: Schedule) => {
 };
 
 export const mergeTimeBlocks = (schedule: Schedule) => {
-	schedule.activeTime.sort((a, b) => {
-		if (a.week > b.week) {
-			return 1;
-		} else if (a.dayOfWeek > b.dayOfWeek) {
-			return 1;
-		} else if (a.begin > b.begin) {
-			return 1;
-		} else {
-			return -1;
-		}
-	});
-	for (let i = 0; i < schedule.activeTime.length; ++i) {
+	schedule.activeTime.sort(
+		(a, b) =>
+			(a.week - b.week) * 10000 +
+			(a.dayOfWeek - b.dayOfWeek) * 100 +
+			(a.begin - b.begin),
+	);
+	if (schedule.name === "电子学基础实验") {
+		console.log(schedule.activeTime);
+	}
+	let flag = 0;
+	while (flag < schedule.activeTime.length) {
 		if (
-			i !== schedule.activeTime.length - 1 &&
-			schedule.activeTime[i].end + 1 === schedule.activeTime[i + 1].begin &&
-			schedule.activeTime[i].week === schedule.activeTime[i + 1].week &&
-			schedule.activeTime[i].dayOfWeek === schedule.activeTime[i + 1].dayOfWeek
+			flag !== schedule.activeTime.length - 1 &&
+			schedule.activeTime[flag].end + 1 ===
+				schedule.activeTime[flag + 1].begin &&
+			schedule.activeTime[flag].week === schedule.activeTime[flag + 1].week &&
+			schedule.activeTime[flag].dayOfWeek ===
+				schedule.activeTime[flag + 1].dayOfWeek
 		) {
-			schedule.activeTime[i].end = schedule.activeTime[i + 1].end;
-			schedule.activeTime.splice(i + 1, 1);
+			schedule.activeTime[flag].end = schedule.activeTime[flag + 1].end;
+			schedule.activeTime.splice(flag + 1, 1);
+		} else {
+			++flag;
 		}
 	}
 };

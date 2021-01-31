@@ -51,6 +51,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				borderRadius: 5,
 				alignContent: "center",
 				justifyContent: "center",
+				paddingVertical: 3,
+				paddingHorizontal: 1,
 			}}
 			onPress={props.onPress}>
 			<Text style={{textAlign: "center", color: "white"}}>

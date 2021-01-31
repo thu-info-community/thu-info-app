@@ -236,10 +236,12 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
+  - react-native-appearance (0.3.4):
+    - React
   - react-native-blur (0.8.0):
     - React
-  - react-native-cameraroll (4.0.1):
-    - React
+  - react-native-cameraroll (4.0.2):
+    - React-Core
   - react-native-cookies (5.0.1):
     - React-Core
   - react-native-safe-area-context (3.1.9):
@@ -248,7 +250,7 @@ PODS:
     - React
   - react-native-view-shot (3.1.2):
     - React
-  - react-native-webview (11.0.2):
+  - react-native-webview (11.2.1):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -324,7 +326,7 @@ PODS:
     - React
   - RNLocalize (2.0.1):
     - React-Core
-  - RNReanimated (2.0.0-rc.1):
+  - RNReanimated (2.0.0-rc.2):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -353,14 +355,14 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (2.16.1):
+  - RNScreens (2.17.1):
     - React-Core
-  - RNSnackbar (2.3.1):
+  - RNSnackbar (2.3.2):
     - React-Core
   - RNSVG (12.1.0):
     - React
-  - RNVectorIcons (7.1.0):
-    - React
+  - RNVectorIcons (8.0.0):
+    - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -402,6 +404,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-appearance (from `../node_modules/react-native-appearance`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
@@ -479,6 +482,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-appearance:
+    :path: "../node_modules/react-native-appearance"
   react-native-blur:
     :path: "../node_modules/@react-native-community/blur"
   react-native-cameraroll:
@@ -567,13 +572,14 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
+  react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-  react-native-cameraroll: 60ba0068826eab1c8d43146191bafd4363ea58a7
+  react-native-cameraroll: 1965db75c851b15e77a22ca0ac78e32af6b571ae
   react-native-cookies: ce50e42ace7cf0dd47769260ca5bbe8eee607e4e
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 4475fde003fe8a210053d1f98fb9e06c1d834e1c
-  react-native-webview: dfd7202ff115c44d3ea401c2f36122fb3ac79f07
+  react-native-webview: a4751ec8f0a6a397026f22ed54c1efeec4540555
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -591,11 +597,11 @@ SPEC CHECKSUMS:
   RNGestureHandler: 9b7e605a741412e20e13c512738a31bd1611759b
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 41026b7c14878f1a1b381bc79f668f1fbf841adb
-  RNReanimated: b2d6785c8fc1f61e1c81179c64c9b6b1a00e6ab5
-  RNScreens: 45c457af3d2ee9e08fc01e70da87e653d46b1198
-  RNSnackbar: 559b3b4fedd6bbbe017e4f357ae230536b35b115
+  RNReanimated: e8a1520b15df106c96214161078c69e4a23b8b29
+  RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
+  RNSnackbar: 2f790a7b5b685e9d3525968990ba3f82354b064c
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
-  RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
+  RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
