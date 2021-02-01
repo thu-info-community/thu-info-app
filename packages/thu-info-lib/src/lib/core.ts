@@ -21,8 +21,6 @@ import {
     META_DATA_URL,
     PRE_LOGIN_URL,
     PRE_ROAM_URL_PREFIX,
-    PROFILE_REFERER,
-    PROFILE_URL,
     USER_AGENT,
     WEB_VPN_ROOT_URL,
 } from "../constants/strings";
@@ -148,19 +146,20 @@ const loginInfo = async (
         throw new Error("Failed to login to INFO.");
     }
     await connect(INFO_ROOT_URL, INFO_URL);
-    if (shouldOverrideEmailName) {
-        try {
-            const {config} = await retrieve(
-                META_DATA_URL,
-                INFO_ROOT_URL,
-                undefined,
-                "GBK",
-                800,
-            ).then(JSON.parse);
+    try {
+        const {config} = await retrieve(
+            META_DATA_URL,
+            INFO_ROOT_URL,
+            undefined,
+            "GBK",
+            2000,
+        ).then(JSON.parse);
+        if (shouldOverrideEmailName) {
             helper && (helper.emailName = config.userInfo.yhm);
-        } catch {
-            throw new Error("Failed to get meta data.");
         }
+        helper && (helper.fullName = config.userInfo.userName);
+    } catch {
+        throw new Error("Failed to get meta data.");
     }
     indicator && indicator();
 };
@@ -252,21 +251,6 @@ export const login = async (
         password: password,
     };
 };
-
-/**
- * Gets the user's full name.
- */
-export const getFullName = async (helper: InfoHelper): Promise<string> =>
-    helper.mocked()
-        ? "Somebody"
-        : retrieve(PROFILE_URL, PROFILE_REFERER, undefined, "GBK").then((str) => {
-            const key = "report1_3";
-            const startIndex = str.indexOf(`"${key}"`); // In order to silence eslint.
-            if (startIndex === -1) {
-                throw 0;
-            }
-            return str.substring(startIndex + 12, str.indexOf("</td>", startIndex));
-        });
 
 /**
  * Logs-out from WebVPN.

@@ -10,7 +10,6 @@ import {
     postAssessmentForm,
 } from "./lib/basics";
 import {
-    getFullName,
     getTicket,
     login,
     logout,
@@ -47,6 +46,8 @@ export class InfoHelper {
         public dormPassword: string,
     ) {}
 
+    public fullName = "";
+
     public setCredentials = (userId: string, password: string) => {
         this.userId = userId;
         this.password = password;
@@ -64,8 +65,6 @@ export class InfoHelper {
         userId: string;
         password: string;
     }> => login(this, userId, password, statusIndicator, firstTime, shouldOverrideEmailName);
-
-    public getFullName = async (): Promise<string> => getFullName(this);
 
     public logout = async (): Promise<void> => logout(this);
 

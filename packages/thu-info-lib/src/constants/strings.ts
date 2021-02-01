@@ -20,10 +20,6 @@ export const ACADEMIC_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/Login";
 export const ACADEMIC_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/render.userLayoutRootNode.uP";
-export const PROFILE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?id=2612";
-export const PROFILE_REFERER =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/bks_grzm.jsp";
 export const LOGOUT_URL = "https://webvpn.tsinghua.edu.cn/logout";
 export const INFO_ROOT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP";
