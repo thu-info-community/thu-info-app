@@ -291,7 +291,7 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
                 INFO_ROOT_URL,
                 undefined,
                 "UTF-8",
-                3000
+                6000,
             ),
         );
     } else if (target === -1) {
