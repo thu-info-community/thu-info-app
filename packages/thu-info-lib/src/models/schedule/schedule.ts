@@ -1,9 +1,10 @@
 import {Calendar} from "./calendar";
 
-export enum LessonType {
-    PRIMARY,
-    SECONDARY,
-    CUSTOM,
+export enum ScheduleType {
+	PRIMARY,
+	SECONDARY,
+	EXAM,
+	CUSTOM,
 }
 
 const beginMap: {[key: string]: number} = {
@@ -52,74 +53,138 @@ const examEndMap: {[key: string]: number} = {
     "21:00": 13,
 };
 
-export interface Lesson {
-    type: LessonType;
-    title: string;
-    locale: string;
-    week: number; // When used as hidden rules, -1 for ALL, 0 for REPEAT, others for the week to be hidden.
-    dayOfWeek: number;
-    begin: number;
-    end: number;
+export interface TimeBlock {
+	week: number;
+	dayOfWeek: number;
+	begin: number;
+	end: number;
 }
 
-// TODO: support exam
-export interface Exam {
-    title: string;
-    locale: string;
-    week: number;
-    dayOfWeek: number;
-    begin: number;
-    end: number;
+export interface Schedule {
+	name: string;
+	location: string;
+	activeTime: TimeBlock[];
+	delOrHideTime: TimeBlock[];
+	delOrHideDetail: TimeBlock[];
+	type: ScheduleType;
 }
 
-export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
-    const primaryList: Lesson[] = [];
-    const examList: Exam[] = [];
+export const activeWeek = (week: number, schedule: Schedule) => {
+    let res = false;
+    schedule.activeTime.forEach((val) => (res = res || week === val.week));
+    return res;
+};
+
+export const mergeTimeBlocks = (schedule: Schedule) => {
+    schedule.activeTime.sort(
+        (a, b) =>
+            (a.week - b.week) * 10000 +
+			(a.dayOfWeek - b.dayOfWeek) * 100 +
+			(a.begin - b.begin),
+    );
+    let flag = 0;
+    while (flag < schedule.activeTime.length) {
+        if (
+            flag !== schedule.activeTime.length - 1 &&
+			schedule.activeTime[flag].end + 1 ===
+				schedule.activeTime[flag + 1].begin &&
+			schedule.activeTime[flag].week === schedule.activeTime[flag + 1].week &&
+			schedule.activeTime[flag].dayOfWeek ===
+				schedule.activeTime[flag + 1].dayOfWeek
+        ) {
+            schedule.activeTime[flag].end = schedule.activeTime[flag + 1].end;
+            schedule.activeTime.splice(flag + 1, 1);
+        } else {
+            ++flag;
+        }
+    }
+};
+
+export const addActiveTimeBlocks = (
+    week: number,
+    dayOfWeek: number,
+    begin: number,
+    end: number,
+    schedule: Schedule,
+) => {
+    schedule.activeTime.push({
+        week: week,
+        dayOfWeek: dayOfWeek,
+        begin: begin,
+        end: end,
+    });
+};
+
+export const getOverlappedBlock = (
+    tester: Schedule,
+    base: Schedule[],
+): [TimeBlock, string, boolean][] => {
+    const res: [TimeBlock, string, boolean][] = [];
+    const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
+        _a.week === _b.week &&
+		_a.dayOfWeek === _b.dayOfWeek &&
+		((_a.begin > _b.begin && _a.begin <= _b.end) ||
+			(_a.begin < _b.begin && _b.begin <= _a.end) ||
+			_a.begin === _b.begin);
+    tester.activeTime.forEach((test) => {
+        base.forEach((val) =>
+            val.activeTime.forEach((block) => {
+                if (isBlockOverlap(block, test)) {
+                    res.push([block, val.name, val.type === ScheduleType.CUSTOM]);
+                }
+            }),
+        );
+    });
+    return res;
+};
+
+export const parseJSON = (json: any[]): Schedule[] => {
+    const scheduleList: Schedule[] = [];
     json.forEach((o) => {
         try {
+            const date = new Calendar(o.nq);
             switch (o.fl) {
             case "上课": {
-                const title = o.nr;
-                const locale = o.dd || "";
-                const date = new Calendar(o.nq);
-                const week = date.weekNumber;
-                const dayOfWeek = date.dayOfWeek;
-                const begin = beginMap[o.kssj];
-                const end = endMap[o.jssj];
-                if (
-                    primaryList.length > 0 &&
-                    title === primaryList[primaryList.length - 1].title &&
-                    locale === primaryList[primaryList.length - 1].locale &&
-                    week === primaryList[primaryList.length - 1].week &&
-                    dayOfWeek === primaryList[primaryList.length - 1].dayOfWeek &&
-                    begin <= primaryList[primaryList.length - 1].end + 1
-                ) {
-                    primaryList[primaryList.length - 1].end = end;
+                const lessonList = scheduleList.filter((val) => val.name === o.nr);
+                let lesson: Schedule;
+                if (lessonList.length) {
+                    lesson = lessonList[0];
                 } else {
-                    primaryList.push({
-                        type: LessonType.PRIMARY,
-                        title,
-                        locale,
-                        week,
-                        dayOfWeek,
-                        begin,
-                        end,
+                    scheduleList.push({
+                        name: o.nr,
+                        location: o.dd || "",
+                        activeTime: [],
+                        delOrHideTime: [],
+                        delOrHideDetail: [],
+                        type: ScheduleType.PRIMARY,
                     });
+                    lesson = scheduleList[scheduleList.length - 1];
                 }
+                addActiveTimeBlocks(
+                    date.weekNumber,
+                    date.dayOfWeek,
+                    beginMap[o.kssj],
+                    endMap[o.jssj],
+                    lesson,
+                );
                 break;
             }
             case "考试": {
-                const date = new Calendar(o.nq);
-                const week = date.weekNumber;
-                const dayOfWeek = date.dayOfWeek;
-                examList.push({
-                    title: o.nr,
-                    locale: o.dd || "",
-                    week,
-                    dayOfWeek,
-                    begin: examBeginMap[o.kssj],
-                    end: examEndMap[o.jssj],
+                scheduleList.push({
+                    name: "[考试]" + o.nr,
+                    location: o.dd || "",
+                    activeTime: [],
+                    delOrHideTime: [],
+                    delOrHideDetail: [],
+                    type: ScheduleType.EXAM,
                 });
+                addActiveTimeBlocks(
+                    date.weekNumber,
+                    date.dayOfWeek,
+                    examBeginMap[o.kssj],
+                    examEndMap[o.jssj],
+                    scheduleList[scheduleList.length - 1],
+                );
                 break;
             }
             }
@@ -127,7 +192,7 @@ export const parseJSON = (json: any[]): [Lesson[], Exam[]] => {
             console.error(e);
         }
     });
-    return [primaryList, examList];
+    return scheduleList;
 };
 
 export const parseSecondaryWeek = (
@@ -167,8 +232,8 @@ export const parseSecondaryWeek = (
 export const parseScript = (
     script: string,
     verbose = false,
-): Lesson[] | [string, string, boolean][] => {
-    const result: Lesson[] = [];
+): Schedule[] | [string, string, boolean][] => {
+    const result: Schedule[] = [];
     const verboseResult: [string, string, boolean][] = [];
     const segments = script.split("strHTML =").slice(1);
     const beginList = [1, 3, 6, 8, 10, 12];
@@ -176,24 +241,35 @@ export const parseScript = (
     const reg = /"<span onmouseover=\\"return overlib\('(.+?)'\);\\" onmouseout='return nd\(\);'>(.+?)<\/span>";[ \n\t\r]+?document.getElementById\('(.+?)'\).innerHTML \+= strHTML\+"<br>";/;
     segments.forEach((seg) => {
         reg.test(seg);
-        const position = RegExp.$3;
-        const dayOfWeek = Number(position[3]);
-        const sessionIndex = Number(position[1]);
+        const basic = RegExp.$3;
+        const dayOfWeek = Number(basic[3]);
+        const sessionIndex = Number(basic[1]);
         const begin = beginList[sessionIndex - 1];
         const end = endList[sessionIndex - 1];
         const title = RegExp.$2;
         const detail = RegExp.$1.replace(/\s/g, "");
 
+        // TODO: ugly resolution, maybe better
+        /[^(]+?\(([^，]+?)，.+?/.test(detail);
+        const location = RegExp.$1;
+
         const add = (week: number) => {
-            result.push({
-                type: LessonType.SECONDARY,
-                title,
-                locale: "",
-                week,
-                dayOfWeek,
-                begin,
-                end,
-            });
+            const lessonList = result.filter((val) => val.name === title);
+            let lesson: Schedule;
+            if (lessonList.length) {
+                lesson = lessonList[0];
+            } else {
+                result.push({
+                    name: title,
+                    location: location,
+                    activeTime: [],
+                    delOrHideTime: [],
+                    delOrHideDetail: [],
+                    type: ScheduleType.SECONDARY,
+                });
+                lesson = result[result.length - 1];
+            }
+            addActiveTimeBlocks(week, dayOfWeek, begin, end, lesson);
         };
 
         if (detail.indexOf("单周") !== -1) {
@@ -207,13 +283,13 @@ export const parseScript = (
             verboseResult.push([title, "全周", true]);
         } else if (
             detail.indexOf("前八周") !== -1 ||
-            detail.indexOf("前8周") !== -1
+			detail.indexOf("前8周") !== -1
         ) {
             [1, 2, 3, 4, 5, 6, 7, 8].forEach(add);
             verboseResult.push([title, "前八周", true]);
         } else if (
             detail.indexOf("后八周") !== -1 ||
-            detail.indexOf("后8周") !== -1
+			detail.indexOf("后8周") !== -1
         ) {
             [9, 10, 11, 12, 13, 14, 15, 16].forEach(add);
             verboseResult.push([title, "后八周", true]);
@@ -235,15 +311,3 @@ export const parseScript = (
     });
     return verbose ? verboseResult : result;
 };
-
-export const matchHiddenRules = (lesson: Lesson, rules: Lesson[]) =>
-    rules.some(
-        (it) =>
-            it.type === lesson.type &&
-            it.title === lesson.title &&
-            (it.week === -1 ||
-                (it.dayOfWeek === lesson.dayOfWeek &&
-                    it.begin === lesson.begin &&
-                    it.end === lesson.end &&
-                    (it.week === 0 || it.week === lesson.week))),
-    );
