@@ -146,15 +146,11 @@ export const getReport = (
                 retrieve(
                     graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
                     INFO_ROOT_URL,
-                    undefined,
-                    "GBK",
                 ),
                 bx
                     ? retrieve(
                         graduate ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL,
                         INFO_ROOT_URL,
-                        undefined,
-                        "GBK",
                         // eslint-disable-next-line no-mixed-spaces-and-tabs
 						    )
                     : undefined,
@@ -383,12 +379,7 @@ export const getPhysicalExamResult = (
         : retryWrapper(
             helper,
             792,
-            retrieve(
-                PHYSICAL_EXAM_URL,
-                PHYSICAL_EXAM_REFERER,
-                undefined,
-                "GBK",
-            ).then((s) => {
+            retrieve(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
                 const json = JSON.parse(
                     // eslint-disable-next-line quotes
                     s.replace(/'/g, '"'),
@@ -440,7 +431,7 @@ export const getJoggingRecord = (
     retryWrapper(
         helper,
         792,
-        retrieve(JOGGING_URL, JOGGING_REFERER, undefined, "GBK"),
+        retrieve(JOGGING_URL, JOGGING_REFERER),
     ).then((s) => {
         console.log(s);
         return [];
@@ -703,7 +694,7 @@ export const getExpenditures = (
         : retryWrapper(
             helper,
             824,
-            retrieve(EXPENDITURE_URL, EXPENDITURE_URL, undefined, "base64").then(
+            retrieve(EXPENDITURE_URL, EXPENDITURE_URL).then(
                 (data) => {
                     const sheet = excelToJson({
                         source: Buffer.from(data).toString(),
@@ -803,15 +794,7 @@ export const getClassroomState = (
         : retryWrapper(
             helper,
             792,
-            retrieve(
-                CLASSROOM_STATE_PREFIX +
-						encodeToGb2312(name) +
-						CLASSROOM_STATE_MIDDLE +
-						week,
-                undefined,
-                undefined,
-                "GBK",
-            ).then((s) => {
+            retrieve(CLASSROOM_STATE_PREFIX + encodeToGb2312(name) + CLASSROOM_STATE_MIDDLE + week).then((s) => {
                 const result = cheerio("#scrollContent>table>tbody", s)
                     .map((_, element) =>
                         (element as TagElement).children

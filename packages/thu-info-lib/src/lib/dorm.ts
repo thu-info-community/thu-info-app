@@ -53,7 +53,7 @@ export const getDormScore = (helper: InfoHelper): Promise<string> =>
     retryWrapper(
         helper,
         -1,
-        retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312").then(
+        retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
             (s) =>
                 DORM_SCORE_HOST +
 						cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
@@ -66,12 +66,7 @@ export const getEleRechargePayCode = async (
 ): Promise<string> => {
     await loginToHome(helper);
 
-    const $ = await retrieve(
-        RECHARGE_ELE_URL,
-        RECHARGE_ELE_REFERER,
-        undefined,
-        "gb2312",
-    ).then(cheerio.load);
+    const $ = await retrieve(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
 
     const username = $("input[name=username]").attr().value;
     const louhao = $("input[name=louhao]").attr().value;
@@ -106,12 +101,7 @@ export const getElePayRecord = async (
         ];
     }
     await loginToHome(helper);
-    const $ = await retrieve(
-        ELE_PAY_RECORD_URL,
-        RECHARGE_ELE_URL,
-        undefined,
-        "gb2312",
-    ).then(cheerio.load);
+    const $ = await retrieve(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load);
 
     return $(".myTable")
         .first()

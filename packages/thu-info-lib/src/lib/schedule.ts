@@ -238,7 +238,7 @@ export const getSecondary = (helper: InfoHelper) =>
         : retryWrapper(
             helper,
             792,
-            retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
+            retrieve(SECONDARY_URL, JXMH_REFERER).then((str) => {
                 const lowerBound = str.indexOf("function setInitValue");
                 const upperBound = str.indexOf("}", lowerBound);
                 return parseScript(
@@ -264,7 +264,7 @@ export const getSecondaryVerbose = (helper: InfoHelper) =>
     retryWrapper(
         helper,
         792,
-        retrieve(SECONDARY_URL, JXMH_REFERER, undefined, "GBK").then((str) => {
+        retrieve(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(str.substring(lowerBound, upperBound), true) as [

@@ -60,7 +60,6 @@ export const retrieve = async (
     url: string,
     referer?: string,
     post?: object | string,
-    encoding = "UTF-8",
     timeout = 60000,
 ) => {
     const request = new XMLHttpRequest();

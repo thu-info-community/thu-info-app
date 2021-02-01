@@ -8,7 +8,7 @@ import {
 
 export const generalGetPayCode = async (location: string, referer: string) => {
     // Get pay id
-    const $1 = await retrieve(location, referer, undefined, "GBK").then(
+    const $1 = await retrieve(location, referer).then(
         cheerio.load
     );
     const id = $1("input[name=id]").attr().value;
@@ -19,7 +19,6 @@ export const generalGetPayCode = async (location: string, referer: string) => {
         SEND_TO_ALIPAY_ACTION_URL,
         location,
         { id, xxx },
-        "GBK"
     ).then(cheerio.load);
     const url = $2("form").attr().action;
     const form = $2("[name=biz_content]").attr().value;
@@ -33,8 +32,6 @@ export const generalGetPayCode = async (location: string, referer: string) => {
           QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_GBK
       ),
         SEND_TO_ALIPAY_ACTION_URL,
-        undefined,
-        "GBK"
     ).then((s) => {
         const qrCode = cheerio("input[name=qrCode]", s).attr().value;
         return qrCode.substring(qrCode.lastIndexOf("/") + 1);

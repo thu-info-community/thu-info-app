@@ -141,47 +141,45 @@ export const getNewsList = (
     });
 };
 
-const policyList: [string, [string, string, string]][] = [
-    ["jwcbg", ["GBK", ".TD4", "td[colspan=4]:not(td[height])"]],
+const policyList: [string, [string, string]][] = [
+    ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
     [
         "kybg",
-        ["GBK", ".style1", "table[width='95%'][cellpadding='3'] tr:nth-child(3)"],
+        [".style1", "table[width='95%'][cellpadding='3'] tr:nth-child(3)"],
     ],
-    ["gjc", ["GBK", ".style11", "[width='85%'] td"]],
+    ["gjc", [".style11", "[width='85%'] td"]],
     [
         "77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3",
-        ["GBK", ".TD1", "td[colspan=4]:not(td[height])"],
+        [".TD1", "td[colspan=4]:not(td[height])"],
     ],
     [
         "77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8",
-        ["UTF-8", ".cont_doc_box h5 span", "div.field-item"],
+        [".cont_doc_box h5 span", "div.field-item"],
     ],
     [
         "77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0",
         [
-            "GBK",
             "h3",
             "[style='text-align:left; width:90%; magin:0px auto; padding-top:20px;  padding-bottom:20px;word-break:break-all;']",
         ],
     ],
     [
         "77726476706e69737468656265737421f8e60f8834396657761d88e29d51367b523e",
-        ["GBK", "h1", ".r_cont > ul"],
+        ["h1", ".r_cont > ul"],
     ],
     [
         "77726476706e69737468656265737421e8ef439b69336153301c9aa596522b20e1a870705b76e399",
-        ["GBK", "", ".td4"],
+        ["", ".td4"],
     ],
-    ["rscbg", ["GBK", "[height=40]", "[width='95%'] > tr:nth-child(3)"]],
+    ["rscbg", ["[height=40]", "[width='95%'] > tr:nth-child(3)"]],
     [
         "77726476706e69737468656265737421e7e056d234297b437c0bc7b88b5c2d3212b31e4d37621d4714d6",
-        ["GBK", "", "[style='text-align:left']"],
+        ["", "[style='text-align:left']"],
     ],
-    ["ghxt", ["GBK", "", "[valign=top]:not([class])"]],
+    ["ghxt", ["", "[valign=top]:not([class])"]],
     [
         "fgc",
         [
-            "GBK",
             ".title_b",
             "[style='width:647px;margin-left:6px;font-size:13px;line-height:20px;text-align:justify']",
         ],
@@ -190,23 +188,21 @@ const policyList: [string, [string, string, string]][] = [
 
 const getNewsDetailPolicy = (
     url: string,
-): [string, string | undefined, string | undefined] => {
+): [string | undefined, string | undefined] => {
     for (let i = 0; i < policyList.length; ++i) {
         if (url.indexOf(policyList[i][0]) !== -1) {
             return policyList[i][1];
         }
     }
-    return ["UTF-8", undefined, undefined];
+    return [undefined, undefined];
 };
 
 export const getNewsDetail = async (
     helper: InfoHelper,
     url: string,
 ): Promise<[string, string, string]> => {
-    const [encoding, title, content] = getNewsDetailPolicy(url);
-    const html = helper.mocked()
-        ? newsHtml[url] ?? ""
-        : await retrieve(url, undefined, undefined, encoding);
+    const [title, content] = getNewsDetailPolicy(url);
+    const html = helper.mocked() ? newsHtml[url] ?? "" : await retrieve(url);
     if (title !== undefined && content) {
         const r = cheerio(content, html);
         return [

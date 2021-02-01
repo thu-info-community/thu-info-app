@@ -45,7 +45,6 @@ const loginInfo = async (
             x: "0",
             y: "0",
         },
-        "GBK",
     );
     if (!response.includes("清华大学信息门户")) {
         throw new Error("Failed to login to INFO.");
@@ -56,7 +55,6 @@ const loginInfo = async (
             META_DATA_URL,
             INFO_ROOT_URL,
             undefined,
-            "GBK",
             2000,
         ).then(JSON.parse);
         if (shouldOverrideEmailName) {
@@ -82,7 +80,6 @@ const loginAcademic = async (
             userName: userId,
             password,
         },
-        "GBK",
     );
     if (!responseA.includes("清华大学信息门户")) {
         throw new Error("Failed to login to Academic (step 1).");
@@ -95,12 +92,7 @@ const loginAcademic = async (
             graduate ? "#23-2604_iframe" : "#25-2649_iframe",
             await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
         ).attr().src;
-        const responseB = await retrieve(
-            iFrameUrl,
-            ACADEMIC_HOME_URL,
-            undefined,
-            "GBK",
-        );
+        const responseB = await retrieve(iFrameUrl, ACADEMIC_HOME_URL);
         if (responseB.includes("清华大学教学门户")) {
             indicator && indicator();
             return;
@@ -172,14 +164,12 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             INFO_ROOT_URL,
             PRE_LOGIN_URL,
             undefined,
-            "UTF-8",
             3000,
         ).then((str) =>
             retrieve(
                 cheerio(`#9-${target}_iframe`, str).attr().src,
                 INFO_ROOT_URL,
                 undefined,
-                "UTF-8",
                 6000,
             ),
         );
@@ -195,7 +185,7 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             DORM_LOGIN_POST_SUFFIX;
         return connect(url, url, post)
             .then(() =>
-                retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER, undefined, "gb2312"),
+                retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER),
             )
             .then((s) => {
                 if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length !== 1) {
