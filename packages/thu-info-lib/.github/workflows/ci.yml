@@ -18,6 +18,10 @@ jobs:
         run: |
           yarn
       - name: Run tests
+        env:
+          INFO_USER_ID: ${{ secrets.INFO_USER_ID }}
+          INFO_PASSWORD: ${{ secrets.INFO_PASSWORD }}
+          INFO_EMAIL_NAME: ${{ secrets.INFO_EMAIL_NAME }}
         run: |
           yarn lint
           yarn test

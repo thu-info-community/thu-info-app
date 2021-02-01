@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import {retrieve, retryWrapper, stringify} from "./core";
+import {retryWrapper} from "./core";
 import {
     CANCEL_BOOKING_URL,
     LIBRARY_AREAS_URL,
@@ -26,6 +26,7 @@ import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
+import {retrieve, stringify} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};

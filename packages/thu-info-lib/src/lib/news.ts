@@ -1,4 +1,4 @@
-import {retrieve} from "./core";
+import {retrieve} from "../utils/network";
 import cheerio from "cheerio";
 import {
     BGTZ_MAIN_PREFIX,

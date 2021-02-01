@@ -1,4 +1,4 @@
-import {connect, retrieve, retryWrapper} from "./core";
+import {retryWrapper} from "./core";
 import {
     DORM_SCORE_HOST,
     DORM_SCORE_REFERER,
@@ -20,6 +20,7 @@ import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/generalAlipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
+import {connect, retrieve} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};

@@ -1,5 +1,5 @@
 import cheerio from "cheerio";
-import {retrieve, retryWrapper} from "./core";
+import {retryWrapper} from "./core";
 import {
     ASSESSMENT_BASE_URL,
     ASSESSMENT_LIST_URL,
@@ -36,6 +36,7 @@ import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
+import {retrieve} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};

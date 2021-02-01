@@ -1,4 +1,4 @@
-import {retrieve, retryWrapper} from "./core";
+import {retryWrapper} from "./core";
 import {
     INFO_ROOT_URL,
     JXMH_REFERER,
@@ -17,6 +17,7 @@ import {
 } from "../models/schedule/schedule";
 import {Calendar} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
+import {retrieve} from "../utils/network";
 
 export const getPrimarySchedule = (helper: InfoHelper, graduate: boolean) => {
     const format = (c: Calendar) => c.format("YYYYMMDD");

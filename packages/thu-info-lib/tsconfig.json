@@ -6,13 +6,15 @@
         "declaration": true,
         "outDir": "./lib",
         "strict": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
     },
     "include": [
         "src"
     ],
     "exclude": [
         "node_modules",
-        "**/__tests__/*"
+        "**/__tests__/*",
+        "**/__mocks__/*"
     ]
 }
