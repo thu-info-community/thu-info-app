@@ -18,6 +18,7 @@ import {
     LIBRARY_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
+    META_DATA_URL,
     PRE_LOGIN_URL,
     PRE_ROAM_URL_PREFIX,
     PROFILE_REFERER,
@@ -123,6 +124,8 @@ const loginInfo = async (
     userId: string,
     password: string,
     indicator?: () => void,
+    helper: InfoHelper | undefined = undefined,
+    shouldOverrideEmailName = true,
 ) => {
     const response = await retrieve(
         INFO_LOGIN_URL,
@@ -138,6 +141,21 @@ const loginInfo = async (
     );
     if (!response.includes("清华大学信息门户")) {
         throw new Error("Failed to login to INFO.");
+    }
+    await connect(INFO_ROOT_URL, INFO_URL);
+    if (shouldOverrideEmailName) {
+        try {
+            const {config} = await retrieve(
+                META_DATA_URL,
+                INFO_ROOT_URL,
+                undefined,
+                "GBK",
+                800,
+            ).then(JSON.parse);
+            helper && (helper.emailName = config.userInfo.yhm);
+        } catch {
+            throw new Error("Failed to get meta data.");
+        }
     }
     indicator && indicator();
 };
@@ -192,6 +210,8 @@ export const login = async (
     userId: string,
     password: string,
     statusIndicator?: () => void,
+    firstTime = true,
+    shouldOverrideEmailName = true,
 ): Promise<{
     userId: string;
     password: string;
@@ -217,11 +237,11 @@ export const login = async (
     }
     statusIndicator && statusIndicator();
     await Promise.all([
-        loginInfo(userId, password, statusIndicator),
+        loginInfo(userId, password, statusIndicator, helper, shouldOverrideEmailName),
         loginAcademic(userId, password, graduate, statusIndicator),
     ]);
     helper.setCredentials(userId, password);
-    statusIndicator && (await getTickets(helper, statusIndicator));
+    firstTime && (await getTickets(helper, statusIndicator));
     return {
         userId: userId,
         password: password,

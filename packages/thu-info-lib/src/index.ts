@@ -43,6 +43,7 @@ export class InfoHelper {
     constructor(
         public userId: string,
         public password: string,
+        public emailName: string, // without host
         public dormPassword: string,
     ) {}
 
@@ -57,10 +58,12 @@ export class InfoHelper {
         userId: string,
         password: string,
         statusIndicator?: () => void,
+        firstTime = true,
+        shouldOverrideEmailName = true,
     ): Promise<{
         userId: string;
         password: string;
-    }> => login(this, userId, password, statusIndicator);
+    }> => login(this, userId, password, statusIndicator, firstTime, shouldOverrideEmailName);
 
     public getFullName = async (): Promise<string> => getFullName(this);
 

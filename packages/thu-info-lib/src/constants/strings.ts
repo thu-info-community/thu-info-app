@@ -12,6 +12,8 @@ export const INFO_URL =
     "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/";
 export const INFO_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login";
+export const META_DATA_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/__service__/nav.json";
 export const ACADEMIC_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/";
 export const ACADEMIC_LOGIN_URL =
