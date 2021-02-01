@@ -3,6 +3,7 @@ import React from "react";
 import {currState} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
+import {getStr} from "../../utils/i18n";
 
 const gpaToStr = (gpa: number, dig: number) =>
 	isNaN(gpa) ? "N/A" : gpa.toFixed(dig);
@@ -107,16 +108,30 @@ export const ReportItem = (props: ReportItemProps) => {
 	);
 };
 
-export const ReportFooter = (props: {gpa: number}) => {
+export const ReportFooter = (props: {
+	gpa: number;
+	totalCredits: number;
+	allCredits: number;
+	totalPoints: number;
+}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 
 	return (
-		<View style={{...style.reportContainer, justifyContent: "flex-end"}}>
-			<Text style={[style.reportText, {fontSize: 20, textAlign: "right"}]}>
-				{gpaToStr(props.gpa, 3)}
-			</Text>
-		</View>
+		<>
+			<View style={{...style.reportContainer, justifyContent: "flex-end"}}>
+				<Text style={[style.reportText, {fontSize: 20, textAlign: "right"}]}>
+					{gpaToStr(props.gpa, 3)}
+				</Text>
+			</View>
+			<View style={{...style.reportContainer, justifyContent: "flex-end"}}>
+				<Text style={[style.reportText, {fontSize: 14, textAlign: "right"}]}>
+					{getStr("allCredits")}:{props.allCredits} {getStr("totalCredits")}:
+					{props.totalCredits} {getStr("totalPoints")}:
+					{gpaToStr(props.totalPoints, 1)}
+				</Text>
+			</View>
+		</>
 	);
 };
 

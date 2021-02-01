@@ -35,13 +35,23 @@ export const semesterWeight = (semester: string): number => {
 
 type Section = SectionListData<Course> & ReportHeaderProps;
 
-const prepareData = (src: Course[]): [number, Section[]] => {
+// totalCredits <= allCredits
+const prepareData = (
+	src: Course[],
+): {
+	gpa: number;
+	totalCredits: number;
+	allCredits: number;
+	totalPoints: number;
+	sections: Section[];
+} => {
 	const semesters = new Set(src.map((course) => course.semester));
 	const sortedSemesters = [...semesters].sort(
 		(a, b) => semesterWeight(a) - semesterWeight(b),
 	);
 	let totalCredits = 0;
 	let totalPoints = 0;
+	let allCredits = 0;
 	const sections = sortedSemesters.map((semester) => {
 		const courses = src.filter((course) => course.semester === semester);
 		const credits = courses.reduce(
@@ -55,13 +65,23 @@ const prepareData = (src: Course[]): [number, Section[]] => {
 		);
 		totalCredits += credits;
 		totalPoints += points;
+		allCredits += courses.reduce(
+			(acc, course) => acc + (isNaN(course.credit) ? 0 : course.credit),
+			0,
+		);
 		return {
 			semester,
 			gpa: points / credits,
 			data: courses,
 		};
 	});
-	return [totalPoints / totalCredits, sections];
+	return {
+		gpa: totalPoints / totalCredits,
+		sections,
+		allCredits,
+		totalCredits,
+		totalPoints,
+	};
 };
 
 const ReportUI = ({hidden}: {hidden: string[]}) => {
@@ -93,7 +113,9 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchData, []);
 
-	const [gpa, sections] = prepareData(report || []);
+	const {gpa, sections, allCredits, totalCredits, totalPoints} = prepareData(
+		report || [],
+	);
 
 	return (
 		<SectionList
@@ -110,7 +132,14 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 					point={item.point}
 				/>
 			)}
-			ListFooterComponent={<ReportFooter gpa={gpa} />}
+			ListFooterComponent={
+				<ReportFooter
+					gpa={gpa}
+					totalCredits={totalCredits}
+					allCredits={allCredits}
+					totalPoints={totalPoints}
+				/>
+			}
 			refreshControl={
 				<RefreshControl
 					refreshing={refreshing}
