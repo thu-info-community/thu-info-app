@@ -14,7 +14,6 @@ export const retrieve = async (
     url: string,
     referer?: string,
     post?: object | string,
-    encoding = "UTF-8",
 ): Promise<string> => {
     const defaultHeaders = {
         "Content-Type": CONTENT_TYPE_FORM,
@@ -34,6 +33,7 @@ export const retrieve = async (
                 method: "POST",
                 body: typeof post === "string" ? post : stringify(post),
             };
+    let charset = "UTF-8";
     return await fetch(url, init)
         .then((res) => {
             res.headers.raw()["set-cookie"]?.forEach((cookie) => {
@@ -41,9 +41,18 @@ export const retrieve = async (
                 const [key, val] = segment.split("=");
                 cookies[key] = val;
             });
+            const contentType = res.headers.get("Content-Type");
+            if (contentType) {
+                if (contentType.includes("application/octet-stream")) {
+                    charset = "base64";
+                } else {
+                    /charset=(.*?);/.test(contentType + ";");
+                    charset = RegExp.$1;
+                }
+            }
             return res.arrayBuffer();
         })
-        .then((arrayBuffer) => iconv.decode(Buffer.from(arrayBuffer), encoding));
+        .then((arrayBuffer) => iconv.decode(Buffer.from(arrayBuffer), charset));
 };
 
 export const connect = async (

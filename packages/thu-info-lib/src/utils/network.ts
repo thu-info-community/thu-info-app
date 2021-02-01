@@ -68,7 +68,17 @@ export const retrieve = async (
         request.responseType = "arraybuffer";
         request.onload = () => {
             if (request.status === 200) {
-                resolve(iconv.decode(Buffer.from(request.response), encoding));
+                const contentType = request.getResponseHeader("Content-Type");
+                let charset = "UTF-8";
+                if (contentType) {
+                    if (contentType.includes("application/octet-stream")) {
+                        charset = "base64";
+                    } else {
+                        /charset=(.*?);/.test(contentType + ";");
+                        charset = RegExp.$1;
+                    }
+                }
+                resolve(iconv.decode(Buffer.from(request.response), charset));
             } else {
                 reject(`Network error: response status = ${request.status}`);
             }
