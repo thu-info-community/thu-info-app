@@ -8,7 +8,6 @@ import {
 import {Auth, LoginStatus} from "../states/auth";
 import {Dispatch} from "redux";
 import {leanCloudInit} from "../../utils/leanCloud";
-import {fullNameThunk} from "./basics";
 import {refreshCalendarConfig} from "./config";
 import CookieManager from "@react-native-community/cookies";
 import {helper, store} from "../store";
@@ -37,8 +36,6 @@ export const authThunk = (
 			leanCloudInit();
 			refreshCalendarConfig();
 			dispatch(authAction.success(r));
-			// @ts-ignore
-			dispatch(fullNameThunk());
 		})
 		.catch((reason: LoginStatus) => {
 			dispatch(authAction.failure(reason));

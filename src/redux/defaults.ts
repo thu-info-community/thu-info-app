@@ -12,8 +12,6 @@ export const defaultAuthState: AuthState = {
 	status: LoginStatus.None,
 };
 
-export const defaultFullNameState = "";
-
 export const defaultSchedule: Schedules = {
 	baseSchedule: [],
 	cache: "",

@@ -88,7 +88,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 				});
 				const {userId, password} = currState().auth;
 				helper
-					.login(userId, password)
+					.login(userId, password, undefined, false)
 					.then(() => helper.performGetTickets())
 					.then(() =>
 						Snackbar.show({

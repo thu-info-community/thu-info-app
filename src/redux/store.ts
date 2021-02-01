@@ -2,7 +2,6 @@ import {applyMiddleware, createStore} from "redux";
 import thunk from "redux-thunk";
 import {AuthState, LoginStatus} from "./states/auth";
 import {combineReducers} from "redux";
-import {fullName} from "./reducers/basics";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
@@ -23,7 +22,7 @@ import {InfoHelper} from "thu-info-lib";
 import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
 
-export const helper = new InfoHelper("", "", "");
+export const helper = new InfoHelper("", "", "", "");
 
 const KeychainStorage = createKeychainStorage();
 
@@ -51,7 +50,6 @@ const rootReducer = combineReducers({
 		},
 		auth,
 	),
-	fullName,
 	schedule,
 	config,
 	credentials: persistReducer(
