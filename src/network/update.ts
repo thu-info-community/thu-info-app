@@ -8,7 +8,6 @@ import {currState} from "../redux/store";
 import {Platform} from "react-native";
 import AV from "leancloud-storage/core";
 import {helper} from "../redux/store";
-import {retrieve} from "thu-info-lib/lib/lib/core";
 
 interface UpdateInfo {
 	versionName: string;
@@ -20,8 +19,9 @@ export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
 	helper.mocked()
 		? Promise.resolve([])
 		: Platform.OS === "ios"
-		? retrieve(UPDATE_URL_IOS, UPDATE_URL_IOS)
-				.then((s) => JSON.parse(s).results[0])
+		? fetch(UPDATE_URL_IOS)
+				.then((r) => r.json())
+				.then((r) => r.results[0])
 				.then(
 					({
 						version,
@@ -37,8 +37,8 @@ export const getUpdateInfo = (): Promise<UpdateInfo[]> =>
 						},
 					],
 				)
-		: retrieve(UPDATE_URL_ANDROID, UPDATE_URL_ANDROID)
-				.then(JSON.parse)
+		: fetch(UPDATE_URL_ANDROID)
+				.then((r) => r.json())
 				.then(({tag_name, body}: {tag_name: string; body: string}) => [
 					{
 						versionName: tag_name,
