@@ -84,7 +84,7 @@ export const connect = async (
  * If param `post` is provided, a post request with the given post form will
  * be sent. Otherwise, a GET request will be sent.
  *
- * The `encoding` and `timeout` are `UTF-8` and `0` respectively by default,
+ * The `encoding` and `timeout` are `UTF-8` and `60000` respectively by default,
  * and can be set to other values with the corresponding params.
  */
 export const retrieve = async (
@@ -92,12 +92,11 @@ export const retrieve = async (
     referer?: string,
     post?: object | string,
     encoding = "UTF-8",
-    timeout = 0,
-) =>
-    new Promise<string>((resolve, reject) => {
-        const request = new XMLHttpRequest();
+    timeout = 60000,
+) => {
+    const request = new XMLHttpRequest();
+    const work = new Promise<string>((resolve, reject) => {
         request.responseType = "arraybuffer";
-        request.timeout = timeout;
         request.onload = () => {
             if (request.status === 200) {
                 resolve(iconv.decode(Buffer.from(request.response), encoding));
@@ -119,6 +118,12 @@ export const retrieve = async (
                     : stringify(post),
         );
     });
+    const abort = new Promise<string>((_, reject) => setTimeout(() => {
+        request.abort();
+        reject(new Error("Network error: Timeout."));
+    }, timeout));
+    return Promise.race([work, abort]);
+};
 
 const loginInfo = async (
     userId: string,
@@ -279,9 +284,15 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             PRE_LOGIN_URL,
             undefined,
             "UTF-8",
-            800,
+            3000,
         ).then((str) =>
-            connect(cheerio(`#9-${target}_iframe`, str).attr().src, INFO_ROOT_URL),
+            retrieve(
+                cheerio(`#9-${target}_iframe`, str).attr().src,
+                INFO_ROOT_URL,
+                undefined,
+                "UTF-8",
+                3000
+            ),
         );
     } else if (target === -1) {
         const userId = helper.userId;
