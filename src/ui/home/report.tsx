@@ -66,7 +66,25 @@ const prepareData = (
 		totalCredits += credits;
 		totalPoints += points;
 		allCredits += courses.reduce(
-			(acc, course) => acc + (isNaN(course.credit) ? 0 : course.credit),
+			(acc, course) =>
+				acc +
+				(isNaN(course.credit) ||
+				![
+					"A+",
+					"A",
+					"A-",
+					"B+",
+					"B",
+					"B-",
+					"C+",
+					"C",
+					"C-",
+					"D+",
+					"D",
+					"P",
+				].includes(course.grade)
+					? 0
+					: course.credit),
 			0,
 		);
 		return {
