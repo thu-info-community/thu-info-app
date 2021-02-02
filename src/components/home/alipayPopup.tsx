@@ -53,7 +53,12 @@ export const AlipayPopup = ({
 								value={money}
 								onChangeText={setMoney}
 								editable={!processing}
-								style={{fontSize: 27, width: "90%"}}
+								style={{
+									fontSize: 27,
+									width: "90%",
+									color: colors.text,
+									backgroundColor: colors.background,
+								}}
 							/>
 						</View>
 						<TouchableOpacity

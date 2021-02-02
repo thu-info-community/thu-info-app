@@ -1,5 +1,5 @@
 import React from "react";
-import {Text, TouchableOpacity} from "react-native";
+import {Text, TouchableOpacity, View} from "react-native";
 
 interface ScheduleBlockProps {
 	dayOfWeek: number;
@@ -52,12 +52,42 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				alignContent: "center",
 				justifyContent: "center",
 				paddingVertical: 3,
-				paddingHorizontal: 1,
+				paddingHorizontal: 3,
 			}}
 			onPress={props.onPress}>
-			<Text style={{textAlign: "center", color: "white"}}>
-				{props.name + (props.location.length ? "@" : "") + props.location}
-			</Text>
+			<View
+				style={{
+					height: "50%",
+					justifyContent: "flex-end",
+				}}>
+				<Text
+					style={{
+						textAlign: "left",
+						color: "white",
+						lineHeight: 16,
+						fontWeight: "bold",
+						fontSize: 14,
+					}}>
+					{props.name}
+				</Text>
+			</View>
+			{props.location.length ? (
+				<View
+					style={{
+						height: "50%",
+						justifyContent: "flex-start",
+					}}>
+					<Text
+						style={{
+							textAlign: "left",
+							color: "white",
+							lineHeight: 16,
+							fontSize: 12,
+						}}>
+						{"@" + props.location}
+					</Text>
+				</View>
+			) : null}
 		</TouchableOpacity>
 	);
 };

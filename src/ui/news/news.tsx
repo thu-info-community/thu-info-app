@@ -377,6 +377,7 @@ const styles = themedStyles(({colors}) => ({
 		height: 30,
 		width: 60,
 		backgroundColor: colors.background,
+		color: colors.text,
 		textAlign: "left",
 		borderColor: "lightgrey",
 		borderWidth: 1,

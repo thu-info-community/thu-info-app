@@ -32,6 +32,7 @@ export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 						margin: 8,
 						padding: 10,
 						backgroundColor: colors.background,
+						color: colors.text,
 						borderColor: "#CCC",
 						borderWidth: 1,
 						borderRadius: 5,

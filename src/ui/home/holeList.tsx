@@ -116,6 +116,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 						flex: 1,
 						marginHorizontal: 3,
 						backgroundColor: theme.colors.background,
+						color: theme.colors.text,
 						borderColor: "lightgray",
 						borderWidth: 1,
 					}}

@@ -25,7 +25,7 @@ export const FormScreen = ({
 	const url: string = route.params.url;
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const {colors} = themes[themeName];
 
 	const [refreshing, setRefreshing] = useState(true);
 	const [evaluationForm, setEvaluationForm] = useState<Form>();
@@ -77,7 +77,19 @@ export const FormScreen = ({
 								: getStr("moreSuggestionsToAssistant")}
 						</Text>
 						<TextInput
-							style={styles.textInputStyle}
+							style={{
+								height: 80,
+								textAlign: "left",
+								borderColor: "lightgrey",
+								borderWidth: 1,
+								borderRadius: 5,
+								alignSelf: "stretch",
+								textAlignVertical: "top",
+								padding: 10,
+								marginBottom: 20,
+								color: colors.text,
+								backgroundColor: colors.background,
+							}}
 							multiline={true}
 							placeholder={getStr("inputSuggestions")}
 							defaultValue={
@@ -147,10 +159,7 @@ export const FormScreen = ({
 			style={styles.container}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
-				<RefreshControl
-					refreshing={refreshing}
-					colors={[theme.colors.accent]}
-				/>
+				<RefreshControl refreshing={refreshing} colors={[colors.accent]} />
 			}>
 			<View style={styles.titleContainer}>
 				<FontAwesome name="chevron-right" color="red" size={18} />
@@ -161,7 +170,19 @@ export const FormScreen = ({
 				{getStr("moreSuggestionsToCourse")}
 			</Text>
 			<TextInput
-				style={styles.textInputStyle}
+				style={{
+					height: 80,
+					textAlign: "left",
+					borderColor: "lightgrey",
+					borderWidth: 1,
+					borderRadius: 5,
+					alignSelf: "stretch",
+					textAlignVertical: "top",
+					padding: 10,
+					marginBottom: 20,
+					color: colors.text,
+					backgroundColor: colors.background,
+				}}
 				multiline={true}
 				placeholder={getStr("inputSuggestions")}
 				defaultValue={evaluationForm?.overall?.suggestion ?? ""}
@@ -187,7 +208,7 @@ export const FormScreen = ({
 					styles.buttonStyle,
 					{
 						backgroundColor:
-							evaluationForm === undefined ? "lightgrey" : theme.colors.primary,
+							evaluationForm === undefined ? "lightgrey" : colors.primary,
 					},
 				]}
 				onPress={post}
@@ -223,19 +244,6 @@ const styles = StyleSheet.create({
 		alignSelf: "flex-start",
 		marginTop: 20,
 		marginBottom: 10,
-	},
-
-	textInputStyle: {
-		height: 80,
-		backgroundColor: "white",
-		textAlign: "left",
-		borderColor: "lightgrey",
-		borderWidth: 1,
-		borderRadius: 5,
-		alignSelf: "stretch",
-		textAlignVertical: "top",
-		padding: 10,
-		marginBottom: 20,
 	},
 
 	personNameStyle: {

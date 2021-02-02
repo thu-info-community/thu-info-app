@@ -75,6 +75,19 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
 
+	const colorList: string[] = [
+		"#16A085",
+		"#27AE60",
+		"#2980B9",
+		"#8E44AD",
+		"#2C3E50",
+		"#F39C12",
+		"#D35400",
+		"#C0392B",
+		"#BDC3C7",
+		"#7F8C8D",
+	];
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(props.getSchedule, []);
 
@@ -101,10 +114,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 					style={{
 						flex: 2,
 						borderLeftColor: "lightgray",
-						borderLeftWidth: ind ? 1 : 2,
+						borderLeftWidth: ind === 1 ? 2 : 1,
 						alignContent: "center",
 						justifyContent: "center",
-						backgroundColor: "white",
+						backgroundColor: theme.colors.background,
 					}}
 					key={`0-${ind + 1}`}>
 					<Text style={{textAlign: "center", color: "gray"}}>
@@ -121,10 +134,13 @@ const ScheduleUI = (props: ScheduleProps) => {
 					borderBottomColor: "lightgray",
 					borderBottomWidth: 2,
 					height: unitHeight / 2,
-					backgroundColor: "white",
+					backgroundColor: theme.colors.background,
 				}}
 				key="0">
-				<View style={{flex: 1, backgroundColor: "white"}} key="0-0" />
+				<View
+					style={{flex: 1, backgroundColor: theme.colors.background}}
+					key="0-0"
+				/>
 				{daysOfWeekList}
 			</View>
 		);
@@ -137,7 +153,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 						flex: 1,
 						alignContent: "center",
 						justifyContent: "center",
-						backgroundColor: "white",
+						backgroundColor: theme.colors.background,
 					}}
 					key={`${ind}-0`}>
 					<Text style={{textAlign: "center", color: "gray"}}>{ind}</Text>
@@ -150,7 +166,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 							flex: 2,
 							borderLeftColor: "lightgray",
 							borderLeftWidth: i ? 1 : 2,
-							backgroundColor: "white",
+							backgroundColor: theme.colors.background,
 						}}
 						key={`${ind}-${i + 1}`}
 					/>,
@@ -184,7 +200,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 		let components: ReactElement[] = [];
 		props.baseSchedule
 			.filter((val) => activeWeek(week, val))
-			.forEach((val) => {
+			.forEach((val, ind) => {
 				val.activeTime.forEach((block) => {
 					if (block.week === week) {
 						components.push(
@@ -200,6 +216,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
 								key={`${val.name}-${block.week}-${block.dayOfWeek}-${block.begin}-${val.location}`}
+								blockColor={colorList[ind % colorList.length]}
 								onPress={() => {
 									props.navigation.navigate("ScheduleDetail", {
 										name: val.name,

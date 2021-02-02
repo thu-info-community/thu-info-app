@@ -37,6 +37,7 @@ export const RemainderSettingsUI = ({
 						fontSize: 15,
 						flex: 1,
 						backgroundColor: colors.background,
+						color: colors.text,
 						textAlign: "left",
 						borderColor: "lightgrey",
 						borderWidth: 1,

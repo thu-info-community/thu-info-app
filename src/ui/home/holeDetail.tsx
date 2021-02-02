@@ -209,6 +209,7 @@ export const HoleDetailScreen = ({
 						borderColor: "lightgray",
 						borderRadius: 5,
 						borderWidth: 1,
+						color: colors.text,
 					}}
 					placeholder={getStr("holePublishHint")}
 					multiline={true}

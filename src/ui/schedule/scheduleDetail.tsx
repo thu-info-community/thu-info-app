@@ -144,7 +144,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 							? "gray"
 							: choice === Choice.ALL
 							? "red"
-							: colors.text,
+							: "black",
 					}}>
 					{buttonText}
 				</Text>
@@ -299,6 +299,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						fontSize: 15,
 						flex: 5,
 						backgroundColor: colors.background,
+						color: colors.text,
 						textAlign: "left",
 						textAlignVertical: "center",
 						borderColor: "lightgrey",

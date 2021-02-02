@@ -23,6 +23,8 @@ import {
 } from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {Choice} from "src/redux/reducers/schedule";
+import themes from "../../assets/themes/themes";
+import {useColorScheme} from "react-native-appearance";
 
 const ScheduleHiddenUI = ({
 	baseSchedule,
@@ -34,6 +36,8 @@ const ScheduleHiddenUI = ({
 	delOrHide: (title: string, block: TimeBlock, choice: Choice) => void;
 }) => {
 	let screenHeight = Dimensions.get("window");
+	const themeName = useColorScheme();
+	const theme = themes[themeName];
 
 	const getData = () => {
 		let list = baseSchedule
@@ -57,7 +61,13 @@ const ScheduleHiddenUI = ({
 			data={getData()}
 			renderItem={({item}) => (
 				<View style={{flexDirection: "row", padding: 6, alignItems: "center"}}>
-					<Text style={{flex: 1, marginHorizontal: 5, fontSize: 15}}>
+					<Text
+						style={{
+							flex: 1,
+							marginHorizontal: 5,
+							fontSize: 15,
+							color: theme.colors.text,
+						}}>
 						{item.time.week === 0
 							? `${getStr("schedulePrefixAll")} ${item.name}`
 							: `${
@@ -134,7 +144,7 @@ const ScheduleHiddenUI = ({
 								removeRule(item.name, item.time);
 							}
 						}}>
-						<Icon name="trash-o" size={18} color="black" />
+						<Icon name="trash-o" size={18} color={theme.colors.text} />
 					</TouchableOpacity>
 				</View>
 			)}
@@ -152,6 +162,7 @@ const ScheduleHiddenUI = ({
 							fontWeight: "bold",
 							alignSelf: "center",
 							margin: 5,
+							color: theme.colors.text,
 						}}>
 						{getStr("noHiddenLesson")}
 					</Text>
