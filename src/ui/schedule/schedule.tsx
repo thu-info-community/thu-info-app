@@ -24,6 +24,8 @@ import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
+// @ts-ignore
+import md5 from "md5";
 
 interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
@@ -196,11 +198,13 @@ const ScheduleUI = (props: ScheduleProps) => {
 		return <View style={{flex: 1, backgroundColor: "white"}}>{rowList}</View>;
 	};
 
+	console.log(parseInt(md5("122"), 16));
+
 	const allSchedule = () => {
 		let components: ReactElement[] = [];
 		props.baseSchedule
 			.filter((val) => activeWeek(week, val))
-			.forEach((val, ind) => {
+			.forEach((val) => {
 				val.activeTime.forEach((block) => {
 					if (block.week === week) {
 						components.push(
@@ -216,7 +220,11 @@ const ScheduleUI = (props: ScheduleProps) => {
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
 								key={`${val.name}-${block.week}-${block.dayOfWeek}-${block.begin}-${val.location}`}
-								blockColor={colorList[ind % colorList.length]}
+								blockColor={
+									colorList[
+										parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
+									]
+								}
 								onPress={() => {
 									props.navigation.navigate("ScheduleDetail", {
 										name: val.name,
