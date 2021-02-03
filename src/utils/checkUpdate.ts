@@ -6,6 +6,8 @@ import {SET_DO_NOT_REMIND, SET_LAST_BROADCAST_ID} from "../redux/constants";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 import {gt, lt} from "semver";
+import {NetworkRetry} from "../components/easySnackbars";
+import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
 
 export const checkUpdate = (force: boolean = false) => {
 	console.log("Current version: " + VersionNumber.appVersion);
@@ -33,10 +35,17 @@ export const checkUpdate = (force: boolean = false) => {
 						{text: getStr("nextTimeMust")},
 						{
 							text: getStr("download"),
-							onPress: () => {
-								Linking.openURL(r[0].url).then(() =>
-									console.log("Opening system explorer: " + r[0].url),
-								);
+							onPress: async () => {
+								try {
+									const {status} = await fetch(
+										TUNA_BASE_URL + r[0].versionName,
+									);
+									await Linking.openURL(
+										status === 404 ? r[0].url : TUNA_LATEST_URL,
+									);
+								} catch (e) {
+									NetworkRetry();
+								}
 							},
 						},
 					],

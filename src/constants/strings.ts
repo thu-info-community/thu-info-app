@@ -21,6 +21,10 @@ export const ANDROID_APP_CENTER_URL =
 export const IOS_APP_STORE_URL =
 	"https://apps.apple.com/cn/app/thu-info/id1533968428";
 export const GITHUB_REPO_URL = "https://github.com/UNIDY2002/THUInfo";
+export const TUNA_BASE_URL =
+	"https://mirrors.tuna.tsinghua.edu.cn/github-release/UNIDY2002/THUInfo/";
+export const TUNA_LATEST_URL =
+	"https://mirrors.tuna.tsinghua.edu.cn/github-release/UNIDY2002/THUInfo/LatestRelease/";
 export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
 
