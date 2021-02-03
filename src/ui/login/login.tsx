@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import {authThunk} from "../../redux/actions/auth";
 import {State} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {LOGIN_FAILURE} from "../../redux/constants";
+import {LOGIN_FAILURE, SET_GRADUATE} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -229,6 +229,10 @@ export const LoginScreen = connect(
 				password: string,
 				statusIndicator: () => void,
 			) => {
+				dispatch({
+					type: SET_GRADUATE,
+					payload: userId[4] === "2" || userId[4] === "3",
+				});
 				// @ts-ignore
 				dispatch(authThunk(userId, password, statusIndicator));
 			},
