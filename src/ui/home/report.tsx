@@ -82,6 +82,7 @@ const prepareData = (
 					"D+",
 					"D",
 					"P",
+					"EX",
 				].includes(course.grade)
 					? 0
 					: course.credit),
