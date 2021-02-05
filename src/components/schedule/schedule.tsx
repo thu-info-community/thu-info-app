@@ -19,7 +19,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const gridHalfWidth = props.gridWidth / 2;
 	const gridHalfHeight = props.gridHeight / 2;
 
-	const blockInterval = props.blockInterval || 2;
+	const blockInterval = props.blockInterval || 1;
 	const blockColor = props.blockColor || "#1f1e33";
 
 	const blockLeftPos =
@@ -52,13 +52,14 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				alignContent: "center",
 				justifyContent: "center",
 				paddingVertical: 3,
-				paddingHorizontal: 3,
+				paddingLeft: 2,
+				paddingRight: 0,
 			}}
 			onPress={props.onPress}>
 			<View
 				style={{
-					height: "50%",
-					justifyContent: "flex-end",
+					height: props.location.length ? "50%" : "100%",
+					justifyContent: props.location.length ? "flex-end" : "center",
 				}}>
 				<Text
 					style={{
@@ -81,7 +82,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 						style={{
 							textAlign: "left",
 							color: "white",
-							lineHeight: 16,
+							lineHeight: 14,
 							fontSize: 12,
 						}}>
 						{"@" + props.location}

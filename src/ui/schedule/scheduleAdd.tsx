@@ -337,7 +337,7 @@ const styles = themedStyles(({colors}) => {
 	return {
 		pressable: {
 			flex: 1,
-			padding: 8,
+			padding: 6,
 			margin: 5,
 			backgroundColor: colors.background,
 			justifyContent: "center",
