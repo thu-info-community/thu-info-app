@@ -22,6 +22,7 @@ jobs:
           INFO_USER_ID: ${{ secrets.INFO_USER_ID }}
           INFO_PASSWORD: ${{ secrets.INFO_PASSWORD }}
           INFO_EMAIL_NAME: ${{ secrets.INFO_EMAIL_NAME }}
+          INFO_DORM_PASSWORD: ${{ secrets.INFO_DORM_PASSWORD }}
         run: |
           yarn lint
           yarn test
