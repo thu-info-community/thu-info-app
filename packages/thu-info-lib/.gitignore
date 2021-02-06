@@ -5,3 +5,4 @@
 /lib
 /dist
 yarn-error.log
+secrets.json

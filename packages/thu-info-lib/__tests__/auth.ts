@@ -2,10 +2,24 @@ import {InfoHelper} from "../src";
 
 jest.mock("../src/utils/network");
 
-const userId = process.env.INFO_USER_ID!;
-const password = process.env.INFO_PASSWORD!;
-const dormPassword = process.env.INFO_DORM_PASSWORD!;
-const emailName = process.env.INFO_EMAIL_NAME!;
+let userId = "";
+let password = "";
+let dormPassword = "";
+let emailName = "";
+
+try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const secrets = require("../secrets.json");
+    userId = secrets.userId;
+    password = secrets.password;
+    dormPassword = secrets.dormPassword;
+    emailName = secrets.emailName;
+} catch (e) {
+    userId = process.env.INFO_USER_ID!;
+    password = process.env.INFO_PASSWORD!;
+    dormPassword = process.env.INFO_DORM_PASSWORD!;
+    emailName = process.env.INFO_EMAIL_NAME!;
+}
 
 it("Login test", async () => {
     jest.setTimeout(20000);
