@@ -7375,9 +7375,10 @@ react-native-popup-menu@0.15.10:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.15.10.tgz#49f2a67c8d1ea329f44e56288eca4a5c04835828"
   integrity sha512-w7MaicsfpclK7g/omjMchNaXwhMi0apt/DC734AbHuJTWCfv5mF3JgL1UzRW19ncFMBRfQeYapPy/zUyJCGgEQ==
 
-"react-native-reanimated@file:./react-native-reanimated-2.0.0-rc.2.tgz":
-  version "2.0.0-rc.2"
-  resolved "file:./react-native-reanimated-2.0.0-rc.2.tgz#ec54968dff37e153fe6dc0073337420e3e4b2b96"
+react-native-reanimated@2.0.0-rc.3:
+  version "2.0.0-rc.3"
+  resolved "https://registry.npm.taobao.org/react-native-reanimated/download/react-native-reanimated-2.0.0-rc.3.tgz#7c9e0228ccab0e40831c1c80eb23cf834f6d5707"
+  integrity sha1-fJ4CKMyrDkCDHByA6yPPg09tVwc=
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.10.4"
     fbjs "^3.0.0"
