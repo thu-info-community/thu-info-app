@@ -55,7 +55,6 @@ const gradeToOldGPA = new Map<string, number>([
 
 export const getReport = (
     helper: InfoHelper,
-    graduate: boolean,
     bx: boolean,
     newGPA: boolean,
 ): Promise<Course[]> =>
@@ -144,12 +143,12 @@ export const getReport = (
             792,
             Promise.all([
                 retrieve(
-                    graduate ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
+                    helper.graduate() ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
                     INFO_ROOT_URL,
                 ),
                 bx
                     ? retrieve(
-                        graduate ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL,
+                        helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL,
                         INFO_ROOT_URL,
                         // eslint-disable-next-line no-mixed-spaces-and-tabs
 						    )
@@ -180,6 +179,7 @@ export const getReport = (
                         }
                     });
                 }
+                const graduate = helper.graduate();
                 const result = cheerio("[cellspacing=1]", str)
                     .children()
                     .slice(1)

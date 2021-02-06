@@ -248,7 +248,8 @@ export const getSecondary = (helper: InfoHelper) =>
             // eslint-disable-next-line no-mixed-spaces-and-tabs
 		  );
 
-export const getSchedule = async (helper: InfoHelper, graduate: boolean) => {
+export const getSchedule = async (helper: InfoHelper) => {
+    const graduate = helper.graduate();
     let scheduleList: Schedule[] = [];
     try {
         scheduleList = scheduleList.concat(await getPrimarySchedule(helper, graduate));

@@ -9,13 +9,7 @@ import {
     loseCard,
     postAssessmentForm,
 } from "./lib/basics";
-import {
-    getTicket,
-    login,
-    logout,
-    performGetTickets,
-    retryWrapper,
-} from "./lib/core";
+import {getTicket, login, logout, retryWrapper} from "./lib/core";
 import {ValidTickets} from "./models/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
@@ -36,35 +30,30 @@ import {JoggingRecord} from "./models/home/jogging";
 import {Record} from "./models/home/expenditure";
 import {newsSlice, sourceTag} from "./models/news/news";
 
-export const MOCK = "8888";
-
 export class InfoHelper {
-    constructor(
-        public userId: string,
-        public password: string,
-        public emailName: string, // without host
-        public dormPassword: string,
-    ) {}
+    public userId = "";
+    public password = "";
+    public dormPassword = "";
 
     public fullName = "";
+    public emailName = "";    // without host
 
-    public setCredentials = (userId: string, password: string) => {
-        this.userId = userId;
-        this.password = password;
-    };
+    public MOCK = "8888";
 
-    public mocked = () => this.userId === MOCK && this.password === MOCK;
+    public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
+
+    public graduate = () => this.userId.length > 4 ? (this.userId[4] === "2" || this.userId[4] === "3") : false;
 
     public login = async (
-        userId: string,
-        password: string,
+        auth: {
+            userId?: string;
+            password?: string;
+            dormPassword?: string;
+        },
         statusIndicator?: () => void,
-        firstTime = true,
+        doKeepAlive = true,
         shouldOverrideEmailName = true,
-    ): Promise<{
-        userId: string;
-        password: string;
-    }> => login(this, userId, password, statusIndicator, firstTime, shouldOverrideEmailName);
+    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword, statusIndicator, doKeepAlive, shouldOverrideEmailName);
 
     public logout = async (): Promise<void> => logout(this);
 
@@ -75,13 +64,10 @@ export class InfoHelper {
         operation: Promise<R>,
     ): Promise<R> => retryWrapper(this, target, operation);
 
-    public performGetTickets = () => performGetTickets(this);
-
     public getReport = (
-        graduate: boolean,
         bx: boolean,
         newGPA: boolean,
-    ): Promise<Course[]> => getReport(this, graduate, bx, newGPA);
+    ): Promise<Course[]> => getReport(this, bx, newGPA);
 
     public getAssessmentList = (): Promise<[string, boolean, string][]> =>
         getAssessmentList(this);
@@ -116,9 +102,7 @@ export class InfoHelper {
     public getEleRechargePayCode = async (money: number): Promise<string> =>
         getEleRechargePayCode(this, money);
 
-    public getElePayRecord = async (): Promise<
-        [string, string, string, string, string, string][]
-        > => getElePayRecord(this);
+    public getElePayRecord = async (): Promise<[string, string, string, string, string, string][]> => getElePayRecord(this);
 
     public getLibraryList = async (): Promise<Library[]> => getLibraryList(this);
 
@@ -160,7 +144,7 @@ export class InfoHelper {
         url: string,
     ): Promise<[string, string, string]> => getNewsDetail(this, url);
 
-    public getSchedule = async (graduate: boolean) => getSchedule(this, graduate);
+    public getSchedule = async () => getSchedule(this);
 
     public getSecondary = async () => getSecondary(this);
 

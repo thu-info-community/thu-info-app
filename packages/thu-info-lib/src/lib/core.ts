@@ -24,15 +24,15 @@ import {
 } from "../constants/strings";
 import md5 from "md5";
 import cheerio from "cheerio";
-import {InfoHelper, MOCK} from "../index";
+import {InfoHelper} from "../index";
 import {ValidTickets} from "../models/network";
 import {connect, retrieve} from "../utils/network";
 
 const loginInfo = async (
+    helper: InfoHelper,
     userId: string,
     password: string,
     indicator?: () => void,
-    helper: InfoHelper | undefined = undefined,
     shouldOverrideEmailName = true,
 ) => {
     const response = await retrieve(
@@ -58,9 +58,9 @@ const loginInfo = async (
             2000,
         ).then(JSON.parse);
         if (shouldOverrideEmailName) {
-            helper && (helper.emailName = config.userInfo.yhm);
+            helper.emailName = config.userInfo.yhm;
         }
-        helper && (helper.fullName = config.userInfo.userName);
+        helper.fullName = config.userInfo.userName;
     } catch {
         throw new Error("Failed to get meta data.");
     }
@@ -68,9 +68,9 @@ const loginInfo = async (
 };
 
 const loginAcademic = async (
+    helper: InfoHelper,
     userId: string,
     password: string,
-    graduate: boolean,
     indicator?: () => void,
 ) => {
     const responseA = await retrieve(
@@ -89,7 +89,7 @@ const loginAcademic = async (
     const MAX_ATTEMPT = 3;
     for (let i = 0; i < MAX_ATTEMPT; ++i) {
         const iFrameUrl = cheerio(
-            graduate ? "#23-2604_iframe" : "#25-2649_iframe",
+            helper.graduate() ? "#23-2604_iframe" : "#25-2649_iframe",
             await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
         ).attr().src;
         const responseB = await retrieve(iFrameUrl, ACADEMIC_HOME_URL);
@@ -110,17 +110,14 @@ export const login = async (
     helper: InfoHelper,
     userId: string,
     password: string,
+    dormPassword: string,
     statusIndicator?: () => void,
-    firstTime = true,
+    doKeepAlive = true,
     shouldOverrideEmailName = true,
-): Promise<{
-    userId: string;
-    password: string;
-}> => {
-    if (userId === MOCK && password === MOCK) {
-        return {userId: userId, password: password};
+): Promise<void> => {
+    if (helper.mocked()) {
+        return;
     }
-    const graduate = userId[4] === "2" || userId[4] === "3";
     const loginResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
         auth_type: "local",
         username: userId,
@@ -130,7 +127,7 @@ export const login = async (
     if (!loginResponse.success) {
         switch (loginResponse.error) {
         case "NEED_CONFIRM":
-            await connect(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+            await connect(CONFIRM_LOGIN_URL, LOGIN_URL);
             break;
         default:
             throw new Error(loginResponse.message);
@@ -138,15 +135,18 @@ export const login = async (
     }
     statusIndicator && statusIndicator();
     await Promise.all([
-        loginInfo(userId, password, statusIndicator, helper, shouldOverrideEmailName),
-        loginAcademic(userId, password, graduate, statusIndicator),
+        loginInfo(helper, userId, password, statusIndicator, shouldOverrideEmailName),
+        loginAcademic(helper, userId, password, statusIndicator),
     ]);
-    helper.setCredentials(userId, password);
-    firstTime && (await getTickets(helper, statusIndicator));
-    return {
-        userId: userId,
-        password: password,
-    };
+    helper.userId = userId;
+    helper.password = password;
+    helper.dormPassword = dormPassword;
+    await batchGetTickets(
+        helper,
+        [792, 824, 2005, 5000, -1] as ValidTickets[],
+        statusIndicator,
+    );
+    doKeepAlive && keepAlive(helper);
 };
 
 /**
@@ -154,7 +154,7 @@ export const login = async (
  */
 export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
-        return connect(LOGOUT_URL);
+        await connect(LOGOUT_URL);
     }
 };
 
@@ -184,12 +184,10 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             encodeURIComponent(helper.dormPassword || helper.password) +
             DORM_LOGIN_POST_SUFFIX;
         return connect(url, url, post)
-            .then(() =>
-                retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER),
-            )
+            .then(() => retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER))
             .then((s) => {
                 if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length !== 1) {
-                    throw "login to tsinghua home error";
+                    throw new Error("login to tsinghua home error");
                 }
             });
     } else if (target === 5000) {
@@ -224,9 +222,9 @@ export const retryWrapper = async <R>(
     return operation;
 };
 
-export const performGetTickets = (helper: InfoHelper, indicator?: () => void) =>
+const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
     Promise.all(
-        ([792, 824, 2005, 5000] as ValidTickets[]).map((target) =>
+        tickets.map((target) =>
             getTicket(helper, target)
                 .then(() => console.log(`Ticket ${target} get.`))
                 .catch(() => console.warn(`Getting ticket ${target} failed.`))
@@ -234,26 +232,16 @@ export const performGetTickets = (helper: InfoHelper, indicator?: () => void) =>
         ),
     );
 
-const getTickets = async (helper: InfoHelper, indicator?: () => void) => {
-    await Promise.all([
-        performGetTickets(helper, indicator),
-        getTicket(helper, -1)
-            .then(() => console.log("Ticket -1 get."))
-            .catch(() => console.warn("Getting ticket -1 failed."))
-            .then(indicator),
-    ]);
+const keepAlive = (helper: InfoHelper) => {
     setInterval(async () => {
         console.log("Keep alive start.");
         const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
         if (!verification.includes("个人信息")) {
             console.log("Lost connection with school website. Reconnecting...");
-            const {userId, password} = helper;
-            try {
-                await login(helper, userId, password);
-            } catch (e) {
-                console.warn("Login failed!");
-            }
+            const {userId, password, dormPassword} = helper;
+            await login(helper, userId, password, dormPassword, () => {}, false);
+        } else {
+            await batchGetTickets(helper, [792, 824, 2005, 5000] as ValidTickets[]);
         }
-        await performGetTickets(helper);
     }, 60000);
 };
