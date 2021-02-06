@@ -7,6 +7,7 @@ import {helper} from "../../redux/store";
 import {retryWrapper} from "thu-info-lib/lib/lib/core";
 import {retrieve} from "thu-info-lib/lib/utils/network";
 import {
+	DORM_SCORE_HOST,
 	DORM_SCORE_REFERER,
 	DORM_SCORE_URL,
 } from "thu-info-lib/lib/constants/strings";
@@ -39,7 +40,7 @@ Err: ${e}`,
 					);
 				}
 				return (
-					"https://webvpn.tsinghua.edu.cn" +
+					DORM_SCORE_HOST +
 					cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src
 				);
 			}),
