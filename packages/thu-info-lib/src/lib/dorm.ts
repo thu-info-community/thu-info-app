@@ -1,6 +1,6 @@
 import {retryWrapper} from "./core";
 import {
-    DORM_SCORE_HOST,
+    WEB_VPN_ROOT_URL,
     DORM_SCORE_REFERER,
     DORM_SCORE_URL,
     ELE_PAY_RECORD_URL,
@@ -54,9 +54,7 @@ export const getDormScore = (helper: InfoHelper): Promise<string> =>
         helper,
         -1,
         retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
-            (s) =>
-                DORM_SCORE_HOST +
-						cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+            (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
         ),
     );
 

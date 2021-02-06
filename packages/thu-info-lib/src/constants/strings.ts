@@ -2,7 +2,7 @@ export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
 
-export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn/";
+export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn";
 export const LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login";
 export const DO_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/do-login?local_login=true";
@@ -34,7 +34,6 @@ export const DORM_LOGIN_POST_MIDDLE =
     "&weixin_user_authenticateCtrl1%24txtPassword=";
 export const DORM_LOGIN_POST_SUFFIX =
     "&weixin_user_authenticateCtrl1%24btnLogin=%B5%C7%C2%BC";
-export const DORM_SCORE_HOST = "http://m.myhome.tsinghua.edu.cn";
 export const DORM_SCORE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_health_linechart.aspx?id=0";
 export const DORM_SCORE_REFERER =
