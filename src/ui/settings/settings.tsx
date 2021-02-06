@@ -1,7 +1,7 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {currState, helper} from "../../redux/store";
+import {helper} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
 import {doLogout} from "../../redux/actions/auth";
@@ -86,10 +86,8 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 					text: getStr("processing"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
-				const {userId, password} = currState().auth;
 				helper
-					.login(userId, password, undefined, false)
-					.then(() => helper.performGetTickets())
+					.login({}, () => {}, false)
 					.then(() =>
 						Snackbar.show({
 							text: getStr("success"),

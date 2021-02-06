@@ -22,7 +22,7 @@ import {InfoHelper} from "thu-info-lib";
 import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
 
-export const helper = new InfoHelper("", "", "", "");
+export const helper = new InfoHelper();
 
 const KeychainStorage = createKeychainStorage();
 

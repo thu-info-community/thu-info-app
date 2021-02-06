@@ -4,7 +4,6 @@ import {
 	SET_BX,
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
-	SET_GRADUATE,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
@@ -26,7 +25,6 @@ export type ConfigAction =
 	| {type: typeof SET_DO_NOT_REMIND; payload: string}
 	| {type: typeof SET_LAST_SELF_VERSION; payload: number}
 	| {type: typeof SET_CALENDAR_CONFIG; payload: CalendarConfig}
-	| {type: typeof SET_GRADUATE; payload: boolean}
 	| {type: typeof SET_NEW_GPA; payload: boolean}
 	| {type: typeof SET_BX; payload: boolean}
 	| {type: typeof ADD_REPORT_HIDDEN; payload: string}

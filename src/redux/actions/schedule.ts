@@ -11,7 +11,7 @@ import {Dispatch} from "redux";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeBlock} from "thu-info-lib/src/models/schedule/schedule";
-import {currState, helper} from "../store";
+import {helper} from "../store";
 
 const scheduleAction = createAsyncAction(
 	SCHEDULE_REQUEST,
@@ -29,7 +29,7 @@ export type ScheduleAction =
 export const scheduleThunk = () => (dispatch: Dispatch<ScheduleAction>) => {
 	dispatch(scheduleAction.request());
 	helper
-		.getSchedule(currState().config.graduate)
+		.getSchedule()
 		.then((res) => dispatch(scheduleAction.success(res)))
 		.catch(() => dispatch(scheduleAction.failure()));
 };

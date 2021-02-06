@@ -1,7 +1,7 @@
 import {SettingsItem, SettingsSwitch} from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
 import React from "react";
-import {currState, store} from "../../redux/store";
+import {currState, helper, store} from "../../redux/store";
 import {SET_BX, SET_NEW_GPA} from "../../redux/constants";
 import {SettingsNav} from "./settingsStack";
 import Feather from "react-native-vector-icons/Feather";
@@ -24,7 +24,7 @@ export const ReportSettingsScreen = ({
 			iconOn={<Feather name="file-plus" size={17} />}
 			iconOff={<Feather name="file-minus" size={17} />}
 		/>
-		{currState().config.graduate || (
+		{helper.graduate() || (
 			<SettingsSwitch
 				textOn={getStr("bx")}
 				textOff={getStr("bxr")}

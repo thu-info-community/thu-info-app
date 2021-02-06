@@ -11,7 +11,6 @@ export interface Config {
 	weekCount: number;
 	semesterType: SemesterType;
 	semesterId: string;
-	graduate: boolean;
 	newGPA: boolean;
 	bx: boolean;
 	reportHidden: string[];

@@ -28,7 +28,6 @@ export const defaultConfigState: Config = {
 	weekCount: Calendar.weekCount,
 	semesterType: Calendar.semesterType,
 	semesterId: Calendar.semesterId,
-	graduate: false,
 	newGPA: true,
 	bx: false,
 	reportHidden: [],

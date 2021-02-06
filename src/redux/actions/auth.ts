@@ -28,14 +28,22 @@ export const authThunk = (
 	statusIndicator: () => void,
 ) => (dispatch: Dispatch<AuthAction>) => {
 	dispatch(authAction.request({userId, password}));
-	helper.dormPassword = store.getState().credentials.dormPassword;
 	CookieManager.clearAll()
-		.then(() => helper.login(userId, password, statusIndicator))
-		.then((r) => {
+		.then(() =>
+			helper.login(
+				{
+					userId,
+					password,
+					dormPassword: store.getState().credentials.dormPassword,
+				},
+				statusIndicator,
+			),
+		)
+		.then(() => {
 			// Things that should be done only once upon logged in
 			leanCloudInit();
 			refreshCalendarConfig();
-			dispatch(authAction.success(r));
+			dispatch(authAction.success({userId, password}));
 		})
 		.catch((reason: LoginStatus) => {
 			dispatch(authAction.failure(reason));

@@ -1,7 +1,7 @@
 import {FlatList, RefreshControl, Text} from "react-native";
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {helper, State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {ADD_REPORT_HIDDEN, REMOVE_REPORT_HIDDEN} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {SettingsSwitch} from "../../components/settings/items";
@@ -25,8 +25,9 @@ const ReportManageHiddenUI = ({
 	const theme = themes[themeName];
 
 	useEffect(() => {
+		const {bx, newGPA} = currState().config;
 		helper
-			.getReport()
+			.getReport(bx, newGPA)
 			.then((r) => {
 				setLessons([...new Set(r.map((it) => it.name))]);
 			})

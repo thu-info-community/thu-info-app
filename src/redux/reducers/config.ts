@@ -7,7 +7,6 @@ import {
 	SET_BX,
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
-	SET_GRADUATE,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
 	SET_NEW_GPA,
@@ -33,11 +32,6 @@ export const config = (
 				weekCount,
 				semesterType,
 				semesterId,
-			};
-		case SET_GRADUATE:
-			return {
-				...state,
-				graduate: action.payload,
 			};
 		case SET_NEW_GPA:
 			return {

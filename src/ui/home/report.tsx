@@ -110,12 +110,12 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
-	const {graduate, bx, newGPA} = currState().config;
+	const {bx, newGPA} = currState().config;
 
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getReport(graduate, bx, newGPA)
+			.getReport(bx, newGPA)
 			.then((res) => {
 				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);
