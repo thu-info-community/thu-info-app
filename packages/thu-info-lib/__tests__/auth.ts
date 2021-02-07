@@ -22,5 +22,6 @@ try {
 it("Login test", async () => {
     const helper = new InfoHelper();
     await helper.login({userId, password, dormPassword}, () => {}, false);
+    await helper.logout();
     expect(helper.emailName).toEqual(emailName);
 }, 20000);
