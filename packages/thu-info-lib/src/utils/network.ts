@@ -2,6 +2,7 @@ import {CONTENT_TYPE_FORM, USER_AGENT} from "../constants/strings";
 import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import fetch from "cross-fetch";
+import AbortController from "abort-controller";
 
 const cookies: {[key: string]: string} = {};
 
@@ -27,6 +28,7 @@ export const uFetch = async (
     url: string,
     referer?: string,
     post?: object | string,
+    timeout = 60000,
 ): Promise<string> => {
     const defaultHeaders = {
         "Content-Type": CONTENT_TYPE_FORM,
@@ -37,7 +39,12 @@ export const uFetch = async (
         referer === undefined
             ? defaultHeaders
             : {...defaultHeaders, Referer: referer};
-    const defaultInit = {headers: headers};
+    const controller = new AbortController();
+    const timeoutEvent = setTimeout(controller.abort, timeout);
+    const defaultInit = {
+        headers: headers,
+        signal: controller.signal,
+    };
     const init =
         post === undefined
             ? defaultInit
@@ -47,27 +54,29 @@ export const uFetch = async (
                 body: typeof post === "string" ? post : stringify(post),
             };
     let charset = "UTF-8";
-    return await fetch(url, init)
-        .then((res) => {
-            res.headers.forEach((value, key) => {
-                if (key === "set-cookie") {
-                    const segment = value.split(";")[0];
-                    const [item, val] = segment.split("=");
-                    cookies[item] = val;
-                }
-            });
-            const contentType = res.headers.get("Content-Type");
-            if (contentType) {
-                if (contentType.includes("application/octet-stream")) {
-                    charset = "base64";
-                } else {
-                    /charset=(.*?);/.test(contentType + ";");
-                    charset = RegExp.$1;
-                }
+    try {
+        const response = await fetch(url, init);
+        response.headers.forEach((value, key) => {
+            if (key === "set-cookie") {
+                const segment = value.split(";")[0];
+                const [item, val] = segment.split("=");
+                cookies[item] = val;
             }
-            return res.arrayBuffer();
-        })
-        .then((arrayBuffer) => iconv.decode(Buffer.from(arrayBuffer), charset));
+        });
+        const contentType = response.headers.get("Content-Type");
+        if (contentType) {
+            if (contentType.includes("application/octet-stream")) {
+                charset = "base64";
+            } else {
+                /charset=(.*?);/.test(contentType + ";");
+                charset = RegExp.$1;
+            }
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        return iconv.decode(Buffer.from(arrayBuffer), charset);
+    } finally {
+        clearTimeout(timeoutEvent);
+    }
 };
 
 export const connect = async (
@@ -81,11 +90,4 @@ export const retrieve = async (
     referer?: string,
     post?: object | string,
     timeout = 60000,
-) => {
-    const work = uFetch(url, referer, post);
-    const abort = new Promise<string>((_, reject) => setTimeout(() => {
-        // request.abort();
-        reject(new Error("Network error: Timeout."));
-    }, timeout));
-    return Promise.race([work, abort]);
-};
+) => uFetch(url, referer, post, timeout);

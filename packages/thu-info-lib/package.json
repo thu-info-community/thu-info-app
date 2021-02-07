@@ -30,6 +30,7 @@
         "url": "https://github.com/UNIDY2002/thu-info-lib.git"
     },
     "dependencies": {
+        "abort-controller": "3.0.0",
         "cheerio": "0.22.0",
         "convert-excel-to-json": "1.7.0",
         "cross-fetch": "3.0.6",
