@@ -1,7 +1,5 @@
 import {InfoHelper} from "../src";
 
-jest.mock("../src/utils/network");
-
 let userId = "";
 let password = "";
 let dormPassword = "";
@@ -22,8 +20,7 @@ try {
 }
 
 it("Login test", async () => {
-    jest.setTimeout(20000);
     const helper = new InfoHelper();
     await helper.login({userId, password, dormPassword}, () => {}, false);
     expect(helper.emailName).toEqual(emailName);
-});
+}, 20000);
