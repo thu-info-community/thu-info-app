@@ -127,7 +127,7 @@ export const login = async (
     if (!loginResponse.success) {
         switch (loginResponse.error) {
         case "NEED_CONFIRM":
-            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL);
+            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, "");
             break;
         default:
             throw new Error(loginResponse.message);
