@@ -3072,7 +3072,7 @@ cross-fetch@^3.0.4:
 
 "cross-fetch@https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer":
   version "3.0.6"
-  resolved "https://github.com/UNIDY2002/cross-fetch.git#485c6dcbdb2701847452d36fd497e5a699369965"
+  resolved "https://github.com/UNIDY2002/cross-fetch.git#fe174370048b05278ab0b5545ba4c939265bfc30"
   dependencies:
     node-fetch "2.6.1"
 
@@ -8671,10 +8671,10 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@0.1.2-alpha.15:
-  version "0.1.2-alpha.15"
-  resolved "https://registry.npm.taobao.org/thu-info-lib/download/thu-info-lib-0.1.2-alpha.15.tgz#cf430747d0357bf175c1b2c4920e28b1faa7a275"
-  integrity sha1-z0MHR9A1e/F1wbLEkg4osfqnonU=
+thu-info-lib@0.1.2-alpha.16:
+  version "0.1.2-alpha.16"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.16.tgz#1edd866f22f891cd3f444b9f2a2b2e67c893f172"
+  integrity sha512-2mcKboyRse6cl9yd0gYkjJ+dfIkTaM5OwDXn8icr1TD12ipQpsqU4jkREY2Sa2DOBAWT3/GxLLLw41u7XrUSJg==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
