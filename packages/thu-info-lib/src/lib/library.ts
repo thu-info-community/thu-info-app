@@ -81,7 +81,7 @@ export const getLibrarySectionList = (
         LIBRARY_AREAS_URL +
 			id +
 			"/date/" +
-			dayjs().add(dateChoice, "day").toDate().format(),
+			dayjs().add(dateChoice, "day").format("YYYY-MM-DD"),
     ).then((r) =>
         r.childArea
             .map((node: any) => ({

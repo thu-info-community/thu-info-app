@@ -1,7 +1,14 @@
 import cheerio from "cheerio";
+
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
+
+const flatMap = <T, R>(arr: T[], transform: (item: T, index: number) => R[]) =>
+    arr.reduce(
+        (prev: R[], curr: T, id) => prev.concat(transform(curr, id)),
+        [],
+    );
 
 /**
  * The minimal component of a form to be posted to the school server.
@@ -84,7 +91,7 @@ export class Person {
     }
 
     toPairs(): [string, string][] {
-        return this.inputGroups.flatMap((item) =>
+        return flatMap(this.inputGroups, (item) =>
             item.others
                 .concat(item.suggestion)
                 .concat(item.score)
@@ -135,11 +142,9 @@ export class Form {
             .map((inputTag) => inputTag.toPair())
             .forEach(([key, value]) => (obj[key] = value));
         this.overall.toPairs().forEach(([key, value]) => (obj[key] = value));
-        this.teachers
-            .flatMap((person) => person.toPairs())
+        flatMap(this.teachers, (person) => person.toPairs())
             .forEach(([key, value]) => (obj[key] = value));
-        this.assistants
-            .flatMap((person) => person.toPairs())
+        flatMap(this.assistants, (person) => person.toPairs())
             .forEach(([key, value]) => (obj[key] = value));
         return obj;
     };
