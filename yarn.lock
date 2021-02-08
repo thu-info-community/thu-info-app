@@ -1962,7 +1962,7 @@ abab@^2.0.3:
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.5.tgz#c0b678fb32d60fc1219c784d6a826fe385aeb79a"
   integrity sha512-9IK9EadsbHo6jLWIpxpR6pL0sazTXV6+SQv25ZB+F7Bj9mJNaOc4nCRabwd5M/JwmUa8idz6Eci6eKfJryPs6Q==
 
-abort-controller@^3.0.0:
+abort-controller@3.0.0, abort-controller@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"
   integrity sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==
@@ -3067,6 +3067,12 @@ cross-fetch@^3.0.4:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
   integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
+  dependencies:
+    node-fetch "2.6.1"
+
+"cross-fetch@https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer":
+  version "3.0.6"
+  resolved "https://github.com/UNIDY2002/cross-fetch.git#485c6dcbdb2701847452d36fd497e5a699369965"
   dependencies:
     node-fetch "2.6.1"
 
@@ -8665,13 +8671,15 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@0.1.2-alpha.12:
-  version "0.1.2-alpha.12"
-  resolved "https://registry.npm.taobao.org/thu-info-lib/download/thu-info-lib-0.1.2-alpha.12.tgz?cache=0&sync_timestamp=1612596252843&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fthu-info-lib%2Fdownload%2Fthu-info-lib-0.1.2-alpha.12.tgz#f35ba180ccd1560b475507c2b3e31da1c032929d"
-  integrity sha1-81uhgMzRVgtHVQfCs+MdocAykp0=
+thu-info-lib@0.1.2-alpha.15:
+  version "0.1.2-alpha.15"
+  resolved "https://registry.npm.taobao.org/thu-info-lib/download/thu-info-lib-0.1.2-alpha.15.tgz#cf430747d0357bf175c1b2c4920e28b1faa7a275"
+  integrity sha1-z0MHR9A1e/F1wbLEkg4osfqnonU=
   dependencies:
+    abort-controller "3.0.0"
     cheerio "0.22.0"
     convert-excel-to-json "1.7.0"
+    cross-fetch "https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer"
     dayjs "1.10.4"
     iconv-lite "0.6.2"
     md5 "2.3.0"
