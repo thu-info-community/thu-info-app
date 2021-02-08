@@ -80,16 +80,3 @@ export const uFetch = async (
         clearTimeout(timeoutEvent);
     }
 };
-
-export const connect = async (
-    url: string,
-    referer?: string,
-    post?: object | string,
-): Promise<string> => uFetch(url, referer, post);
-
-export const retrieve = async (
-    url: string,
-    referer?: string,
-    post?: object | string,
-    timeout = 60000,
-) => uFetch(url, referer, post, timeout);

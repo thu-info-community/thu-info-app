@@ -1,4 +1,4 @@
-import {retrieve} from "../utils/network";
+import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
 import {
     BGTZ_MAIN_PREFIX,
@@ -114,7 +114,7 @@ export const getNewsList = (
             return Promise.resolve([]);
         }
     }
-    return retrieve(url).then((str) => {
+    return uFetch(url).then((str) => {
         const $ = cheerio.load(str);
         const newsList: newsSlice[] = [];
         $("ul.cont_list > li", str).each((_, item) => {
@@ -202,7 +202,7 @@ export const getNewsDetail = async (
     url: string,
 ): Promise<[string, string, string]> => {
     const [title, content] = getNewsDetailPolicy(url);
-    const html = helper.mocked() ? newsHtml[url] ?? "" : await retrieve(url);
+    const html = helper.mocked() ? newsHtml[url] ?? "" : await uFetch(url);
     if (title !== undefined && content) {
         const r = cheerio(content, html);
         return [

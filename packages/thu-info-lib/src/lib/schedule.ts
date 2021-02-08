@@ -17,7 +17,7 @@ import {
 } from "../models/schedule/schedule";
 import {Calendar} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
-import {retrieve} from "../utils/network";
+import {uFetch} from "../utils/network";
 
 export const getPrimarySchedule = (helper: InfoHelper, graduate: boolean) => {
     const format = (c: Calendar) => c.format("YYYYMMDD");
@@ -203,7 +203,7 @@ export const getPrimarySchedule = (helper: InfoHelper, graduate: boolean) => {
             792,
             Promise.all(
                 Array.from(new Array(Calendar.weekCount / groupSize), (_, id) =>
-                    retrieve(
+                    uFetch(
                         (graduate
                             ? JXRL_YJS_PREFIX
                             : JXRL_BKS_PREFIX) +
@@ -238,7 +238,7 @@ export const getSecondary = (helper: InfoHelper) =>
         : retryWrapper(
             helper,
             792,
-            retrieve(SECONDARY_URL, JXMH_REFERER).then((str) => {
+            uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
                 const lowerBound = str.indexOf("function setInitValue");
                 const upperBound = str.indexOf("}", lowerBound);
                 return parseScript(
@@ -265,7 +265,7 @@ export const getSecondaryVerbose = (helper: InfoHelper) =>
     retryWrapper(
         helper,
         792,
-        retrieve(SECONDARY_URL, JXMH_REFERER).then((str) => {
+        uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(str.substring(lowerBound, upperBound), true) as [

@@ -26,7 +26,7 @@ import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
-import {retrieve, stringify} from "../utils/network";
+import {uFetch, stringify} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -36,7 +36,7 @@ const fetchJson = (
     referer?: string,
     post?: object | string,
 ): Promise<any> =>
-    retrieve(url, referer, post).then((s) => JSON.parse(s).data.list);
+    uFetch(url, referer, post).then((s) => JSON.parse(s).data.list);
 
 export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
     helper.mocked()
@@ -451,7 +451,7 @@ const getAccessToken = (helper: InfoHelper): Promise<string> =>
     retryWrapper(
         helper,
         5000,
-        retrieve(LIBRARY_HOME_URL).then((response) => {
+        uFetch(LIBRARY_HOME_URL).then((response) => {
             if (helper.mocked()) {
                 return "";
             }
@@ -476,7 +476,7 @@ export const bookLibrarySeat = async (
         ? {status: 0, msg: "Testing account cannot book a seat."}
         : JSON.parse(
             await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
-                retrieve(
+                uFetch(
                     LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
                     LIBRARY_HOME_URL,
                     {
@@ -533,7 +533,7 @@ export const getBookingRecords = async (
         ];
     }
     await getAccessToken(helper);
-    const html = await retrieve(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
+    const html = await uFetch(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
     const result = cheerio("tbody", html)
         .children()
         .map((index, element) => {
@@ -566,7 +566,7 @@ export const cancelBooking = async (
         throw new Error("Testing account cannot cancel a seat.");
     }
     const token = await getAccessToken(helper);
-    return retrieve(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
+    return uFetch(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
         _method: "delete",
         id,
         userid: helper.userId,

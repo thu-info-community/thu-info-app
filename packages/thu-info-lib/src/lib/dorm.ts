@@ -20,7 +20,7 @@ import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/generalAlipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
-import {connect, retrieve} from "../utils/network";
+import {uFetch} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -38,7 +38,7 @@ const loginToHome = async (helper: InfoHelper) => {
             tempPassword += password.charAt(i);
         }
     }
-    await connect(
+    await uFetch(
         TSINGHUA_HOME_LOGIN_URL,
         undefined,
         TSINGHUA_HOME_LOGIN_POST_PREFIX +
@@ -53,7 +53,7 @@ export const getDormScore = (helper: InfoHelper): Promise<string> =>
     retryWrapper(
         helper,
         -1,
-        retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
+        uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
             (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
         ),
     );
@@ -64,12 +64,12 @@ export const getEleRechargePayCode = async (
 ): Promise<string> => {
     await loginToHome(helper);
 
-    const $ = await retrieve(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
+    const $ = await uFetch(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
 
     const username = $("input[name=username]").attr().value;
     const louhao = $("input[name=louhao]").attr().value;
 
-    const redirect = await retrieve(
+    const redirect = await uFetch(
         RECHARGE_PAY_ELE_URL,
         RECHARGE_ELE_URL,
         RECHARGE_PAY_ELE_POST_PREFIX +
@@ -99,7 +99,7 @@ export const getElePayRecord = async (
         ];
     }
     await loginToHome(helper);
-    const $ = await retrieve(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load);
+    const $ = await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load);
 
     return $(".myTable")
         .first()

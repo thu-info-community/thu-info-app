@@ -26,7 +26,7 @@ import md5 from "md5";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {ValidTickets} from "../models/network";
-import {connect, retrieve} from "../utils/network";
+import {uFetch} from "../utils/network";
 
 const loginInfo = async (
     helper: InfoHelper,
@@ -35,7 +35,7 @@ const loginInfo = async (
     indicator?: () => void,
     shouldOverrideEmailName = true,
 ) => {
-    const response = await retrieve(
+    const response = await uFetch(
         INFO_LOGIN_URL,
         INFO_URL,
         {
@@ -49,9 +49,9 @@ const loginInfo = async (
     if (!response.includes("清华大学信息门户")) {
         throw new Error("Failed to login to INFO.");
     }
-    await connect(INFO_ROOT_URL, INFO_URL);
+    await uFetch(INFO_ROOT_URL, INFO_URL);
     try {
-        const {config} = await retrieve(
+        const {config} = await uFetch(
             META_DATA_URL,
             INFO_ROOT_URL,
             undefined,
@@ -73,7 +73,7 @@ const loginAcademic = async (
     password: string,
     indicator?: () => void,
 ) => {
-    const responseA = await retrieve(
+    const responseA = await uFetch(
         ACADEMIC_LOGIN_URL,
         ACADEMIC_URL,
         {
@@ -90,9 +90,9 @@ const loginAcademic = async (
     for (let i = 0; i < MAX_ATTEMPT; ++i) {
         const iFrameUrl = cheerio(
             helper.graduate() ? "#23-2604_iframe" : "#25-2649_iframe",
-            await retrieve(ACADEMIC_HOME_URL, ACADEMIC_URL),
+            await uFetch(ACADEMIC_HOME_URL, ACADEMIC_URL),
         ).attr().src;
-        const responseB = await retrieve(iFrameUrl, ACADEMIC_HOME_URL);
+        const responseB = await uFetch(iFrameUrl, ACADEMIC_HOME_URL);
         if (responseB.includes("清华大学教学门户")) {
             indicator && indicator();
             return;
@@ -118,7 +118,7 @@ export const login = async (
     if (helper.mocked()) {
         return;
     }
-    const loginResponse = await retrieve(DO_LOGIN_URL, LOGIN_URL, {
+    const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
         auth_type: "local",
         username: userId,
         sms_code: "",
@@ -127,7 +127,7 @@ export const login = async (
     if (!loginResponse.success) {
         switch (loginResponse.error) {
         case "NEED_CONFIRM":
-            await connect(CONFIRM_LOGIN_URL, LOGIN_URL);
+            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL);
             break;
         default:
             throw new Error(loginResponse.message);
@@ -154,19 +154,19 @@ export const login = async (
  */
 export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
-        await connect(LOGOUT_URL);
+        await uFetch(LOGOUT_URL);
     }
 };
 
 export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
     if (target >= 0 && target <= 1000) {
-        return retrieve(
+        return uFetch(
             INFO_ROOT_URL,
             PRE_LOGIN_URL,
             undefined,
             3000,
         ).then((str) =>
-            retrieve(
+            uFetch(
                 cheerio(`#9-${target}_iframe`, str).attr().src,
                 INFO_ROOT_URL,
                 undefined,
@@ -183,26 +183,26 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             DORM_LOGIN_POST_MIDDLE +
             encodeURIComponent(helper.dormPassword || helper.password) +
             DORM_LOGIN_POST_SUFFIX;
-        return connect(url, url, post)
-            .then(() => retrieve(DORM_SCORE_URL, DORM_SCORE_REFERER))
+        return uFetch(url, url, post)
+            .then(() => uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER))
             .then((s) => {
                 if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length !== 1) {
                     throw new Error("login to tsinghua home error");
                 }
             });
     } else if (target === 5000) {
-        await connect(LIBRARY_LOGIN_URL, undefined);
+        await uFetch(LIBRARY_LOGIN_URL, undefined);
         const redirect = cheerio(
             "div.wrapper>a",
-            await retrieve(ID_LOGIN_CHECK_URL, LIBRARY_LOGIN_URL, {
+            await uFetch(ID_LOGIN_CHECK_URL, LIBRARY_LOGIN_URL, {
                 i_user: helper.userId,
                 i_pass: helper.password,
                 i_captcha: "",
             }),
         ).attr().href;
-        return connect(redirect);
+        return uFetch(redirect);
     } else {
-        return connect(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
+        return uFetch(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
     }
 };
 
@@ -235,7 +235,7 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     setInterval(async () => {
         console.log("Keep alive start.");
-        const verification = await retrieve(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
+        const verification = await uFetch(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
         if (!verification.includes("个人信息")) {
             console.log("Lost connection with school website. Reconnecting...");
             const {userId, password, dormPassword} = helper;

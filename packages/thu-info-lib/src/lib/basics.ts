@@ -36,7 +36,7 @@ import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
-import {retrieve} from "../utils/network";
+import {uFetch} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -142,12 +142,12 @@ export const getReport = (
             helper,
             792,
             Promise.all([
-                retrieve(
+                uFetch(
                     helper.graduate() ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL,
                     INFO_ROOT_URL,
                 ),
                 bx
-                    ? retrieve(
+                    ? uFetch(
                         helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL,
                         INFO_ROOT_URL,
                         // eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -228,7 +228,7 @@ export const getAssessmentList = (
         : retryWrapper(
             helper,
             2005,
-            retrieve(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
+            uFetch(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
                 const result = cheerio("tbody", str)
                     .children()
                     .map((index, element) => {
@@ -290,7 +290,7 @@ export const getAssessmentForm = (
         : retryWrapper(
             helper,
             2005,
-            retrieve(url, ASSESSMENT_MAIN_URL).then((str) => {
+            uFetch(url, ASSESSMENT_MAIN_URL).then((str) => {
                 const $ = cheerio.load(str);
                 const basics = $("#xswjtxFormid > input")
                     .map((_, element) => new InputTag(element))
@@ -320,7 +320,7 @@ export const postAssessmentForm = (
         : retryWrapper(
             helper,
             2005,
-            retrieve(
+            uFetch(
                 ASSESSMENT_SUBMIT_URL,
                 ASSESSMENT_MAIN_URL,
                 form.serialize(),
@@ -379,7 +379,7 @@ export const getPhysicalExamResult = (
         : retryWrapper(
             helper,
             792,
-            retrieve(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
+            uFetch(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
                 const json = JSON.parse(
                     // eslint-disable-next-line quotes
                     s.replace(/'/g, '"'),
@@ -431,7 +431,7 @@ export const getJoggingRecord = (
     retryWrapper(
         helper,
         792,
-        retrieve(JOGGING_URL, JOGGING_REFERER),
+        uFetch(JOGGING_URL, JOGGING_REFERER),
     ).then((s) => {
         console.log(s);
         return [];
@@ -694,7 +694,7 @@ export const getExpenditures = (
         : retryWrapper(
             helper,
             824,
-            retrieve(EXPENDITURE_URL, EXPENDITURE_URL).then(
+            uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
                 (data) => {
                     const sheet = excelToJson({
                         source: Buffer.from(data).toString(),
@@ -794,7 +794,7 @@ export const getClassroomState = (
         : retryWrapper(
             helper,
             792,
-            retrieve(CLASSROOM_STATE_PREFIX + encodeToGb2312(name) + CLASSROOM_STATE_MIDDLE + week).then((s) => {
+            uFetch(CLASSROOM_STATE_PREFIX + encodeToGb2312(name) + CLASSROOM_STATE_MIDDLE + week).then((s) => {
                 const result = cheerio("#scrollContent>table>tbody", s)
                     .map((_, element) =>
                         (element as TagElement).children
@@ -846,7 +846,7 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
         : retryWrapper(
             helper,
             824,
-            retrieve(LOSE_CARD_URL).then((s) => {
+            uFetch(LOSE_CARD_URL).then((s) => {
                 const index = s.indexOf("var result");
                 const left = s.indexOf("=", index) + 1;
                 const right = s.indexOf("\n", left);
