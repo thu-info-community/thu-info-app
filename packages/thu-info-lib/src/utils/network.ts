@@ -4,6 +4,8 @@ import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
 
+export type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 for library
+
 const cookies: {[key: string]: string} = {};
 
 /**

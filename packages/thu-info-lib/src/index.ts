@@ -10,7 +10,7 @@ import {
     postAssessmentForm,
 } from "./lib/basics";
 import {getTicket, login, logout, retryWrapper} from "./lib/core";
-import {ValidTickets} from "./models/network";
+import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
 import {

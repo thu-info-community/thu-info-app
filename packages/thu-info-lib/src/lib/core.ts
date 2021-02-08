@@ -25,7 +25,7 @@ import {
 import md5 from "md5";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
-import {ValidTickets} from "../models/network";
+import {ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
 
 const loginInfo = async (
