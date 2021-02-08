@@ -40,7 +40,9 @@ export const uFetch = async (
             ? defaultHeaders
             : {...defaultHeaders, Referer: referer};
     const controller = new AbortController();
-    const timeoutEvent = setTimeout(controller.abort, timeout);
+    const timeoutEvent = setTimeout(() => {
+        controller.abort();
+    }, timeout);
     const defaultInit = {
         headers: headers,
         signal: controller.signal,
