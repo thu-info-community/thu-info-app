@@ -8,6 +8,15 @@ export type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home
 
 const cookies: {[key: string]: string} = {};
 
+export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
+    s
+        .split("")
+        .map((ch) => RegExp(/^[\u4e00-\u9fa5]*$/).test(ch)
+            ? iconv.encode(ch, encoding).reduce((a: string, b: number) => a + "%" + b.toString(16), "")
+            : ch,
+        )
+        .join("");
+
 /**
  * Converts form data into url-encoded format.
  */

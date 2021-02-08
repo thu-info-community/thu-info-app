@@ -30,13 +30,12 @@ import {
     toPersons,
 } from "../models/home/assessment";
 import "../utils/extensions";
-import {encodeToGb2312} from "../utils/encodeToGb2312";
 import {JoggingRecord} from "../models/home/jogging";
 import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
-import {uFetch} from "../utils/network";
+import {arbitraryEncode, uFetch} from "../utils/network";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -794,7 +793,7 @@ export const getClassroomState = (
         : retryWrapper(
             helper,
             792,
-            uFetch(CLASSROOM_STATE_PREFIX + encodeToGb2312(name) + CLASSROOM_STATE_MIDDLE + week).then((s) => {
+            uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(name, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
                 const result = cheerio("#scrollContent>table>tbody", s)
                     .map((_, element) =>
                         (element as TagElement).children

@@ -1,10 +1,6 @@
-import {uFetch} from "./network";
+import {arbitraryEncode, uFetch} from "./network";
 import cheerio from "cheerio";
-import {
-    QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_GBK,
-    QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_UTF8,
-    SEND_TO_ALIPAY_ACTION_URL,
-} from "../constants/strings";
+import {SEND_TO_ALIPAY_ACTION_URL} from "../constants/strings";
 
 export const generalGetPayCode = async (location: string, referer: string) => {
     // Get pay id
@@ -25,12 +21,7 @@ export const generalGetPayCode = async (location: string, referer: string) => {
 
     // Get pay code
     return uFetch(
-        url +
-      "&biz_content=" +
-      encodeURIComponent(form).replace(
-          QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_UTF8,
-          QING_HUA_XUE_SHENG_ZI_JING_DIAN_BIAO_GBK
-      ),
+        url + "&biz_content=" + arbitraryEncode(form, "GBK"),
         SEND_TO_ALIPAY_ACTION_URL,
     ).then((s) => {
         const qrCode = cheerio("input[name=qrCode]", s).attr().value;
