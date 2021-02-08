@@ -40,6 +40,8 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
+    public TOTAL_PHASES = 9;
+
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
     public graduate = () => this.userId.length > 4 ? (this.userId[4] === "2" || this.userId[4] === "3") : false;

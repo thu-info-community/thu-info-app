@@ -1,5 +1,10 @@
 import {InfoHelper} from "../src";
 
+global.console = {
+    ...global.console,
+    log: jest.fn,
+};
+
 let userId = "";
 let password = "";
 let dormPassword = "";
@@ -21,7 +26,9 @@ try {
 
 it("Login test", async () => {
     const helper = new InfoHelper();
-    await helper.login({userId, password, dormPassword}, () => {}, false);
+    const counter = jest.fn();
+    await helper.login({userId, password, dormPassword}, counter, false);
     await helper.logout();
     expect(helper.emailName).toEqual(emailName);
+    expect(counter).toBeCalledTimes(helper.TOTAL_PHASES);
 }, 20000);
