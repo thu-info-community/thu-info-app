@@ -1330,10 +1330,9 @@ crc-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-cross-fetch@3.0.6:
+"cross-fetch@https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer":
   version "3.0.6"
-  resolved "https://registry.npm.taobao.org/cross-fetch/download/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
-  integrity sha1-OkBAvIlB5lPg6c8X8p680XfTNlw=
+  resolved "https://github.com/UNIDY2002/cross-fetch.git#485c6dcbdb2701847452d36fd497e5a699369965"
   dependencies:
     node-fetch "2.6.1"
 

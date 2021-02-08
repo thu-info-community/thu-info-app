@@ -6,7 +6,7 @@ This is a JavaScript library aimed to provide a program-friendly interface to Ts
 
 ## Compatibility
 
-TODO
+The library uses [a customized fork of `cross-fetch`](https://github.com/UNIDY2002/cross-fetch/tree/rn-array-buffer), which provides a uniformed support of handling network requests across node, browsers and react-native.
 
 ## Installation
 
