@@ -25,7 +25,7 @@ import {
 import md5 from "md5";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
-import {ValidTickets} from "../utils/network";
+import {clearCookies, ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
 
 const loginInfo = async (
@@ -115,9 +115,13 @@ export const login = async (
     doKeepAlive = true,
     shouldOverrideEmailName = true,
 ): Promise<void> => {
+    helper.userId = userId;
+    helper.password = password;
+    helper.dormPassword = dormPassword;
     if (helper.mocked()) {
         return;
     }
+    clearCookies();
     const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
         auth_type: "local",
         username: userId,
@@ -138,9 +142,6 @@ export const login = async (
         loginInfo(helper, userId, password, statusIndicator, shouldOverrideEmailName),
         loginAcademic(helper, userId, password, statusIndicator),
     ]);
-    helper.userId = userId;
-    helper.password = password;
-    helper.dormPassword = dormPassword;
     await batchGetTickets(
         helper,
         [792, 824, 2005, 5000, -1] as ValidTickets[],

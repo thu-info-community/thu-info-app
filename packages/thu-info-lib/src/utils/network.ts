@@ -8,6 +8,10 @@ export type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home
 
 const cookies: {[key: string]: string} = {};
 
+export const clearCookies = () => {
+    Object.keys(cookies).forEach((key) => delete cookies[key]);
+};
+
 export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
     s
         .split("")
