@@ -8671,10 +8671,10 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@0.1.2-alpha.16:
-  version "0.1.2-alpha.16"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.16.tgz#1edd866f22f891cd3f444b9f2a2b2e67c893f172"
-  integrity sha512-2mcKboyRse6cl9yd0gYkjJ+dfIkTaM5OwDXn8icr1TD12ipQpsqU4jkREY2Sa2DOBAWT3/GxLLLw41u7XrUSJg==
+thu-info-lib@0.1.2-alpha.17:
+  version "0.1.2-alpha.17"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.17.tgz#34f779a9b4188df5517afe3137ac6b9f90759130"
+  integrity sha512-A9uJz9UNUfszShq+JXtqcd55XhfL392j4UCyx3gxVqtU/8oEnCIg69vwpI8b4MjtGogNsAA35CJzFWx3f/fgpA==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
