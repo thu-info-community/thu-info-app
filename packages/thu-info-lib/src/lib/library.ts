@@ -21,7 +21,6 @@ import {
     LibrarySection,
     weightedValidityAndId,
 } from "../models/home/library";
-import "../utils/extensions";
 import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";

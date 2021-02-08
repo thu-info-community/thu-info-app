@@ -29,7 +29,6 @@ import {
     Person,
     toPersons,
 } from "../models/home/assessment";
-import "../utils/extensions";
 import {JoggingRecord} from "../models/home/jogging";
 import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
