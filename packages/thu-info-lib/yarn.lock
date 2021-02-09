@@ -4353,7 +4353,7 @@ node-notifier@^8.0.0:
     uuid "^8.3.0"
     which "^2.0.2"
 
-node-polyfill-webpack-plugin@^1.0.2:
+node-polyfill-webpack-plugin@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.0.2.tgz#97e87d555909028b5699e29f82385b78dfd69233"
   integrity sha512-x4dNQ28D/kwvDbp52y6WBOuXs2QhGkIkv8RT2xhBj5JO21iUrNT4aSJyw41Jio3Ima/S0UKCTfHdS6mUOxjYmw==
