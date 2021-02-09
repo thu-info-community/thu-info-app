@@ -3063,16 +3063,10 @@ crc-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-cross-fetch@^3.0.4:
+cross-fetch@3.0.6, cross-fetch@^3.0.4:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
   integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
-  dependencies:
-    node-fetch "2.6.1"
-
-"cross-fetch@https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer":
-  version "3.0.6"
-  resolved "https://github.com/UNIDY2002/cross-fetch.git#fe174370048b05278ab0b5545ba4c939265bfc30"
   dependencies:
     node-fetch "2.6.1"
 
@@ -8671,15 +8665,15 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@0.1.2-alpha.17:
-  version "0.1.2-alpha.17"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.17.tgz#34f779a9b4188df5517afe3137ac6b9f90759130"
-  integrity sha512-A9uJz9UNUfszShq+JXtqcd55XhfL392j4UCyx3gxVqtU/8oEnCIg69vwpI8b4MjtGogNsAA35CJzFWx3f/fgpA==
+thu-info-lib@0.1.2-alpha.19:
+  version "0.1.2-alpha.19"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-0.1.2-alpha.19.tgz#6a6f2607af29928df2bf7e481860a97b400e39c5"
+  integrity sha512-mgzhoDNRhDZhEiJznJ9akhkyC2OQWa10Vzo136tbGR7/XN3D5HLgBBoqnp+qiaOYuT4i8MVHNStkWc6RysUDMg==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
     convert-excel-to-json "1.7.0"
-    cross-fetch "https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer"
+    cross-fetch "3.0.6"
     dayjs "1.10.4"
     iconv-lite "0.6.2"
     md5 "2.3.0"
