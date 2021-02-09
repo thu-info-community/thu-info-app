@@ -1,17 +1,27 @@
 import {CONTENT_TYPE_FORM, USER_AGENT} from "../constants/strings";
-import {Buffer} from "buffer";
 import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
 
+/**
+ * The values that are valid as ticket numbers.
+ * See wiki for more information.
+ */
 export type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 for library
 
 const cookies: {[key: string]: string} = {};
 
+/**
+ * Clear the cookies.
+ */
 export const clearCookies = () => {
     Object.keys(cookies).forEach((key) => delete cookies[key]);
 };
 
+/**
+ * An enhanced implementation of `encodeURIComponent`, which supports
+ * arbitrary charset.
+ */
 export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
     s
         .split("")
@@ -22,7 +32,7 @@ export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
         .join("");
 
 /**
- * Converts form data into url-encoded format.
+ * Converts form data into url-encoded format (utf-8).
  */
 export const stringify = (form: any) =>
     Object.keys(form)
@@ -33,11 +43,10 @@ export const stringify = (form: any) =>
  * Gets the response data from the given `url`, with a specified `referer` if
  * provided.
  *
- * If param `post` is provided, a post request with the given post form will
- * be sent. Otherwise, a GET request will be sent.
+ * If param `post` is provided, a `POST` request with the given post form will
+ * be sent. Otherwise, a `GET` request will be sent.
  *
- * The `encoding` and `timeout` are `UTF-8` and `60000` respectively by default,
- * and can be set to other values with the corresponding params.
+ * The `timeout` is `60000` by default, in milliseconds.
  */
 export const uFetch = async (
     url: string,
@@ -45,15 +54,22 @@ export const uFetch = async (
     post?: object | string,
     timeout = 60000,
 ): Promise<string> => {
+    // Prepare request headers
     const defaultHeaders = {
+        // Setup content-type and user-agent
         "Content-Type": CONTENT_TYPE_FORM,
         "User-Agent": USER_AGENT,
+        // Setup cookies
         "Cookie": Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";"),
     };
+
+    // Add referer to header if specified
     const headers =
         referer === undefined
             ? defaultHeaders
             : {...defaultHeaders, Referer: referer};
+
+    // Handle timeout abortion
     const controller = new AbortController();
     const timeoutEvent = setTimeout(() => {
         controller.abort();
@@ -62,6 +78,8 @@ export const uFetch = async (
         headers: headers,
         signal: controller.signal,
     };
+
+    // Switch method to `POST` if post-body is provided
     const init =
         post === undefined
             ? defaultInit
@@ -70,9 +88,12 @@ export const uFetch = async (
                 method: "POST",
                 body: typeof post === "string" ? post : stringify(post),
             };
-    let charset = "UTF-8";
+
+    // Perform the network request
     try {
         const response = await fetch(url, init);
+
+        // Manage cookies
         response.headers.forEach((value, key) => {
             if (key === "set-cookie") {
                 const segment = value.split(";")[0];
@@ -80,18 +101,55 @@ export const uFetch = async (
                 cookies[item] = val;
             }
         });
+
+        // Detect charset based on content-type
         const contentType = response.headers.get("Content-Type");
+        let base64 = false;
+        let charset = "UTF-8";
         if (contentType) {
             if (contentType.includes("application/octet-stream")) {
-                charset = "base64";
+                base64 = true;
             } else {
                 /charset=(.*?);/.test(contentType + ";");
                 charset = RegExp.$1;
             }
         }
-        const arrayBuffer = await response.arrayBuffer();
-        return iconv.decode(Buffer.from(arrayBuffer), charset);
+
+        if (global.FileReader) {
+            // For browser and react-native
+            const blob = await response.blob();
+            return await new Promise<string>(((resolve, reject) => {
+                // Use FileReader to read blob data
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    if (typeof reader.result === "string") {
+                        if (base64) {
+                            // Simply return the string data with the MIME header removed
+                            resolve(reader.result.substr("data:application/octet-stream;base64,".length));
+                        } else {
+                            // The value stored in `reader.result` has already been parsed with the correct encoding
+                            resolve(reader.result);
+                        }
+                    } else {
+                        // This should not happen
+                        reject(new Error("Blob parsing error."));
+                    }
+                };
+                // Read and transform
+                if (base64) {
+                    reader.readAsDataURL(blob);
+                } else {
+                    reader.readAsText(blob, charset);
+                }
+            }));
+        } else {
+            // For node.js
+            const arrayBuffer = await response.arrayBuffer();
+            // Use iconv-lite to transform arrayBuffer into string
+            return iconv.decode(Buffer.from(arrayBuffer), charset);
+        }
     } finally {
+        // We have to clear the timeout
         clearTimeout(timeoutEvent);
     }
 };

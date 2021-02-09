@@ -1329,9 +1329,10 @@ crc-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-"cross-fetch@https://github.com/UNIDY2002/cross-fetch.git#rn-array-buffer":
+cross-fetch@3.0.6:
   version "3.0.6"
-  resolved "https://github.com/UNIDY2002/cross-fetch.git#fe174370048b05278ab0b5545ba4c939265bfc30"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
+  integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
   dependencies:
     node-fetch "2.6.1"
 

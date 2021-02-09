@@ -30,7 +30,6 @@ import {
     toPersons,
 } from "../models/home/assessment";
 import {JoggingRecord} from "../models/home/jogging";
-import {Buffer} from "buffer";
 import excelToJson from "convert-excel-to-json";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
@@ -695,7 +694,7 @@ export const getExpenditures = (
             uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
                 (data) => {
                     const sheet = excelToJson({
-                        source: Buffer.from(data).toString(),
+                        source: data,
                         header: {rows: 1},
                         columnToKey: {
                             A: "value",

@@ -6,7 +6,7 @@ This is a JavaScript library aimed to provide a program-friendly interface to Ts
 
 ## Compatibility
 
-The library uses [a customized fork of `cross-fetch`](https://github.com/UNIDY2002/cross-fetch/tree/rn-array-buffer), which provides a uniformed support of handling network requests across node, browsers and react-native.
+The library uses `cross-fetch`, which provides a uniformed support of handling network requests across node, browsers and react-native.
 
 ## Installation
 
@@ -24,7 +24,7 @@ See [wiki](https://github.com/UNIDY2002/thu-info-lib/wiki).
 
 ## Testing
 
-Run yarn test for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must create a `secrets.json`  under the root folder, with `userId`, `password`, `dormPassword` and `emailName` as keys.
+Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must create a `secrets.json`  under the root folder, with `userId`, `password`, `dormPassword` and `emailName` as keys.
 
 It's ok if you meet `Timeout * Async callback was not invoked within the xxx-ms timeout...` error when running tests. Rerunning tests may resolve this problem. If you hate this, just adjust the third argument timeout of every testcase `it("xxx", async () => void, timeout)`.
 
