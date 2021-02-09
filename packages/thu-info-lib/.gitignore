@@ -4,5 +4,7 @@
 /node_modules
 /lib
 /dist
+!/dist/browser-polyfill.min.js
+!/dist/manifest.json
 yarn-error.log
 secrets.json
