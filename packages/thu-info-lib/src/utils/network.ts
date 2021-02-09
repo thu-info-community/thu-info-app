@@ -59,15 +59,19 @@ export const uFetch = async (
         // Setup content-type and user-agent
         "Content-Type": CONTENT_TYPE_FORM,
         "User-Agent": USER_AGENT,
-        // Setup cookies
-        "Cookie": Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";"),
     };
+
+    const headersWithCookies = global.FileReader === undefined ? {
+        ...defaultHeaders,
+        // Cookie should be manually set in Node.js
+        Cookie: Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";"),
+    } : defaultHeaders;
 
     // Add referer to header if specified
     const headers =
         referer === undefined
-            ? defaultHeaders
-            : {...defaultHeaders, Referer: referer};
+            ? headersWithCookies
+            : {...headersWithCookies, Referer: referer};
 
     // Handle timeout abortion
     const controller = new AbortController();
