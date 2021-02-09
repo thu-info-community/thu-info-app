@@ -96,9 +96,7 @@ jobs:
       - name: Setup caching
         uses: actions/cache@v2
         with:
-          path: |
-            node_modules
-            ios/Pods
+          path: node_modules
           key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.OS }}-cache-
