@@ -223,6 +223,16 @@ export const retryWrapper = async <R>(
     return operation;
 };
 
+export const retryWrapperWithMocks = async <R>(
+    helper: InfoHelper,
+    target: ValidTickets,
+    operation: Promise<R>,
+    fallback: R,
+): Promise<R> =>
+    helper.mocked()
+        ? Promise.resolve(fallback)
+        : retryWrapper(helper, target, operation);
+
 const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
     Promise.all(
         tickets.map((target) =>

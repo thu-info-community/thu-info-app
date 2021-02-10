@@ -3,7 +3,6 @@ import {
     getAssessmentList,
     getClassroomState,
     getExpenditures,
-    getJoggingRecord,
     getPhysicalExamResult,
     getReport,
     loseCard,
@@ -26,7 +25,6 @@ import {getNewsDetail, getNewsList} from "./lib/news";
 import {getSchedule, getSecondary, getSecondaryVerbose} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
-import {JoggingRecord} from "./models/home/jogging";
 import {Record} from "./models/home/expenditure";
 import {newsSlice, sourceTag} from "./models/news/news";
 
@@ -82,9 +80,6 @@ export class InfoHelper {
 
     public getPhysicalExamResult = (): Promise<[string, string][]> =>
         getPhysicalExamResult(this);
-
-    public getJoggingRecord = (): Promise<JoggingRecord[]> =>
-        getJoggingRecord(this);
 
     public getExpenditures = (
         beg: Date,
