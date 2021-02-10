@@ -225,13 +225,15 @@ export const retryWrapper = async <R>(
 
 export const retryWrapperWithMocks = async <R>(
     helper: InfoHelper,
-    target: ValidTickets,
+    target: ValidTickets | undefined,
     operation: Promise<R>,
     fallback: R,
 ): Promise<R> =>
     helper.mocked()
         ? Promise.resolve(fallback)
-        : retryWrapper(helper, target, operation);
+        : target
+            ? retryWrapper(helper, target, operation)
+            : operation;
 
 const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
     Promise.all(
