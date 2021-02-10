@@ -24,11 +24,19 @@ try {
     emailName = process.env.INFO_EMAIL_NAME!;
 }
 
-it("Login test", async () => {
+it("should enter mocked account", async()=> {
+    const helper = new InfoHelper();
+    await helper.login({userId:"8888", password:"8888"}, ()=>{}, false);
+    await helper.logout();
+    expect(helper.mocked()).toEqual(true);
+}, 20000);
+
+it("should login successfully.", async () => {
     const helper = new InfoHelper();
     const counter = jest.fn();
     await helper.login({userId, password, dormPassword}, counter, false);
     await helper.logout();
+    expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);
     expect(counter).toBeCalledTimes(helper.TOTAL_PHASES);
 }, 20000);
