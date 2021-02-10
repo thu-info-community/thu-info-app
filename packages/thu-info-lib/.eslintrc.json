@@ -10,7 +10,7 @@
     "ignorePatterns": [
         "versionhelper.js",
         "encodeToGb2312.js",
-        "src/mocks/news/*.ts"
+        "src/mocks/source/*.ts"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
