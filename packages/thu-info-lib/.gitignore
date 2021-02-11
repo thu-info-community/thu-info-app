@@ -2,7 +2,7 @@
 /.env
 /.vscode
 /node_modules
-/lib
 /demo/index.js
+/dist
 yarn-error.log
 secrets.json

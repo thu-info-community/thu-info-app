@@ -2,9 +2,9 @@
     "name": "thu-info-lib",
     "version": "0.1.2-alpha.20",
     "description": "The JavaScript library that provides a program-friendly interface to Tsinghua web portal",
-    "main": "lib/index.js",
+    "main": "dist/index.js",
     "files": [
-        "lib/**/*",
+        "dist/**/*",
         "src/**/*"
     ],
     "scripts": {

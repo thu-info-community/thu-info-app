@@ -25,7 +25,7 @@ Tested across node, browsers and react-native.
 
 `yarn && yarn build`
 
-You can find the library version in `lib/`. It can be used in web development or imported with NodeJS (with all dependencies installed). It **SHOULD NOT** be used directly in browsers.
+You can find the library version in `dist/`. It can be used in web development or imported with NodeJS (with all dependencies installed). It **SHOULD NOT** be used directly in browsers.
 
 ### Bundled version (for browsers)
 
