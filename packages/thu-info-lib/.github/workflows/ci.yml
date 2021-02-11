@@ -60,4 +60,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
-          yarn publish --new-version $TAG -tag alpha
+          yarn publish --new-version $TAG

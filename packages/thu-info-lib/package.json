@@ -26,6 +26,16 @@
         "thu info"
     ],
     "author": "UNIDY2002 <UNIDY2002@outlook.com> (https://unidy2002.github.io/)",
+    "maintainers": [
+        {
+            "name": "UNIDY2002",
+            "email": "UNIDY2002@outlook.com"
+        },
+        {
+            "name": "Ashitemaru",
+            "email": "qhd19@mails.tsinghua.edu.cn"
+        }
+    ],
     "license": "MIT",
     "repository": {
         "type": "git",
