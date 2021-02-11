@@ -31,7 +31,7 @@ You can find the library version in `lib/`. It can be used in web development or
 
 `yarn && yarn build-dist`
 
-You can find the bundled version in `dist/`. You can install the directory as an unpacked extension in Chrome, then execute anything you want in the Console of Chrome Developer Tool. The helper class and utility types is attached as `window.InfoHelper` in this mode.
+You can find the bundled version in `demo/`. You can install the directory as an unpacked extension in Chrome, then execute anything you want in the Console of Chrome Developer Tool. The helper class and utility types is attached as `window.InfoHelper` in this mode.
 
 Use `yarn watch-dist` for watching file changes.
 

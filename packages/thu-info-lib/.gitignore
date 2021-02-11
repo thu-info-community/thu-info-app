@@ -3,8 +3,6 @@
 /.vscode
 /node_modules
 /lib
-/dist
-!/dist/browser-polyfill.min.js
-!/dist/manifest.json
+/demo/index.js
 yarn-error.log
 secrets.json

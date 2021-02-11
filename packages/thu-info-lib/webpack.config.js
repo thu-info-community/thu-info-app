@@ -6,7 +6,7 @@ module.exports = {
         index: "./demo/index.ts",
     },
     output: {
-        path: path.resolve("./dist"),
+        path: path.resolve("./demo"),
         filename: "[name].js",
     },
     plugins: [
