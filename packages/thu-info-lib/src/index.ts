@@ -8,7 +8,7 @@ import {
     loseCard,
     postAssessmentForm,
 } from "./lib/basics";
-import {getTicket, login, logout, retryWrapper} from "./lib/core";
+import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
@@ -22,7 +22,7 @@ import {
     getLibrarySectionList,
 } from "./lib/library";
 import {getNewsDetail, getNewsList} from "./lib/news";
-import {getSchedule, getSecondary, getSecondaryVerbose} from "./lib/schedule";
+import {getPrimary, getSchedule, getSecondary, getSecondaryVerbose} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
@@ -58,11 +58,6 @@ export class InfoHelper {
     public logout = async (): Promise<void> => logout(this);
 
     public getTicket = async (target: ValidTickets) => getTicket(this, target);
-
-    public retryWrapper = async <R>(
-        target: ValidTickets,
-        operation: Promise<R>,
-    ): Promise<R> => retryWrapper(this, target, operation);
 
     public getReport = (
         bx: boolean,
@@ -142,6 +137,8 @@ export class InfoHelper {
     ): Promise<[string, string, string]> => getNewsDetail(this, url);
 
     public getSchedule = async () => getSchedule(this);
+
+    public getPrimary = async () => getPrimary(this);
 
     public getSecondary = async () => getSecondary(this);
 

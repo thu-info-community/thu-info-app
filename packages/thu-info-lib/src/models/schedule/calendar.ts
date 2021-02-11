@@ -40,8 +40,6 @@ export class Calendar {
         return day === 0 ? 7 : day;
     }
 
-    format = (template?: string) => this.date.format(template);
-
     diff = (other: Calendar) => this.date.diff(other.date);
 
     static firstDay = new Calendar("2020-09-14");

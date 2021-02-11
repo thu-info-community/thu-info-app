@@ -1,4 +1,4 @@
-import {retryWrapper} from "./core";
+import {retryWrapperWithMocks} from "./core";
 import {
     INFO_ROOT_URL,
     JXMH_REFERER,
@@ -9,7 +9,6 @@ import {
     JXRL_YJS_PREFIX,
 } from "../constants/strings";
 import {
-    ScheduleType,
     Schedule,
     mergeTimeBlocks,
     parseJSON,
@@ -18,260 +17,78 @@ import {
 import {Calendar} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
+import {
+    MOCK_PRIMARY_SCHEDULE,
+    MOCK_SECONDARY_SCHEDULE,
+    MOCK_SECONDARY_VERBOSE,
+} from "../mocks/schedule";
 
-export const getPrimarySchedule = (helper: InfoHelper, graduate: boolean) => {
-    const format = (c: Calendar) => c.format("YYYYMMDD");
-    const groupSize = 3; // Make sure that `groupSize` is a divisor of `Calendar.weekCount`.
-    return helper.mocked()
-        ? Promise.resolve([
-            {
-                name: "回笼觉设计与梦境工程",
-                location: "2.0*0.9的宿舍床",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 1,
-                        begin: 1,
-                        end: 2,
-                    }),
+const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `Calendar.weekCount`.
+
+export const getPrimary = (helper: InfoHelper) =>
+    retryWrapperWithMocks(
+        helper,
+        792,
+        Promise.all(
+            Array.from(new Array(Calendar.weekCount / GROUP_SIZE), (_, id) =>
+                uFetch(
+                    (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
+                    new Calendar(id * GROUP_SIZE + 1, 1).date.format("YYYYMMDD") +
+                    JXRL_MIDDLE +
+                    new Calendar((id + 1) * GROUP_SIZE, 7).date.format("YYYYMMDD") +
+                    JXRL_SUFFIX,
+                    INFO_ROOT_URL,
                 ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "摸鱼学导论",
-                location: "实验室和社工组织",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 1,
-                        begin: 6,
-                        end: 7,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "临时进出校基本原理",
-                location: "学生部、研工部",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 2,
-                        begin: 3,
-                        end: 5,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "学婊艺术欣赏",
-                location: "院系年级微信群",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 2,
-                        begin: 8,
-                        end: 9,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "社畜学的想象力：拖延、甩锅与膜人",
-                location: "桃李一层",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 2,
-                        begin: 12,
-                        end: 13,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "初级校园新闻采写",
-                location: "知乎",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 3,
-                        begin: 6,
-                        end: 7,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "退学案例分析研讨课",
-                location: "教务处",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 4,
-                        begin: 6,
-                        end: 7,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "打包、取件与排队论",
-                location: "紫荆14号楼北快递点",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 4,
-                        begin: 10,
-                        end: 11,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "淘宝优惠数值计算",
-                location: "智能手机",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 4,
-                        begin: 12,
-                        end: 13,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "游戏氪金理论与实践",
-                location: "PC/主机/智能设备",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-                    .map((val) => ({
-                        week: val,
-                        dayOfWeek: 5,
-                        begin: 3,
-                        end: 5,
-                    }))
-                    .concat(
-                        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((val) => ({
-                            week: val,
-                            dayOfWeek: 6,
-                            begin: 1,
-                            end: 2,
-                        })),
-                    ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            {
-                name: "树洞文学中的清华形象",
-                location: "THUHole",
-                activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-                    (val) => ({
-                        week: val,
-                        dayOfWeek: 5,
-                        begin: 8,
-                        end: 9,
-                    }),
-                ),
-                delOrHideTime: [],
-                delOrHideDetail: [],
-                type: ScheduleType.PRIMARY,
-            },
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
-		  ])
-        : retryWrapper(
-            helper,
-            792,
-            Promise.all(
-                Array.from(new Array(Calendar.weekCount / groupSize), (_, id) =>
-                    uFetch(
-                        (graduate
-                            ? JXRL_YJS_PREFIX
-                            : JXRL_BKS_PREFIX) +
-								format(new Calendar(id * groupSize + 1, 1)) +
-								JXRL_MIDDLE +
-								format(new Calendar((id + 1) * groupSize, 7)) +
-								JXRL_SUFFIX,
-                        INFO_ROOT_URL,
-                    ),
-                ),
+            ),
+        )
+            .then((results) =>
+                results
+                    .map((s) => {
+                        if (s[0] !== "m") {
+                            throw 0;
+                        }
+                        return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
+                    })
+                    .filter((s) => s.trim().length > 0)
+                    .join(","),
             )
-                .then((results) =>
-                    results
-                        .map((s) => {
-                            if (s[0] !== "m") {
-                                throw 0;
-                            }
-                            return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
-                        })
-                        .filter((s) => s.trim().length > 0)
-                        .join(","),
-                )
-                .then((str) => JSON.parse(`[${str}]`))
-                .then(parseJSON),
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
-		  );
-};
+            .then((str) => JSON.parse(`[${str}]`))
+            .then(parseJSON),
+        MOCK_PRIMARY_SCHEDULE,
+    );
 
 export const getSecondary = (helper: InfoHelper) =>
-    helper.mocked()
-        ? Promise.resolve([])
-        : retryWrapper(
-            helper,
-            792,
-            uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
-                const lowerBound = str.indexOf("function setInitValue");
-                const upperBound = str.indexOf("}", lowerBound);
-                return parseScript(
-                    str.substring(lowerBound, upperBound),
-                ) as Schedule[];
-            }),
-            // eslint-disable-next-line no-mixed-spaces-and-tabs
-		  );
+    retryWrapperWithMocks(
+        helper,
+        792,
+        uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
+            const lowerBound = str.indexOf("function setInitValue");
+            const upperBound = str.indexOf("}", lowerBound);
+            return parseScript(
+                str.substring(lowerBound, upperBound),
+            ) as Schedule[];
+        }),
+        MOCK_SECONDARY_SCHEDULE,
+    );
 
 export const getSchedule = async (helper: InfoHelper) => {
-    const graduate = helper.graduate();
-    let scheduleList: Schedule[] = [];
-    try {
-        scheduleList = scheduleList.concat(await getPrimarySchedule(helper, graduate));
-        scheduleList = scheduleList.concat(await getSecondary(helper));
-        scheduleList.forEach(mergeTimeBlocks);
-    } catch (e) {
-        console.error(e);
-    }
+    const scheduleList: Schedule[] = (await getPrimary(helper)).concat(await getSecondary(helper));
+    scheduleList.forEach(mergeTimeBlocks);
     return scheduleList;
 };
 
 export const getSecondaryVerbose = (helper: InfoHelper) =>
-    retryWrapper(
+    retryWrapperWithMocks(
         helper,
         792,
         uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(str.substring(lowerBound, upperBound), true) as [
-				string,
-				string,
-				boolean,
-			][];
+                string,
+                string,
+                boolean,
+            ][];
         }),
+        MOCK_SECONDARY_VERBOSE,
     );
