@@ -159,20 +159,19 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
     }
 };
 
-export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
+export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promise<void> => {
     if (target >= 0 && target <= 1000) {
-        return uFetch(
+        const response = await uFetch(
             INFO_ROOT_URL,
             PRE_LOGIN_URL,
             undefined,
             3000,
-        ).then((str) =>
-            uFetch(
-                cheerio(`#9-${target}_iframe`, str).attr().src,
-                INFO_ROOT_URL,
-                undefined,
-                6000,
-            ),
+        );
+        await uFetch(
+            cheerio(`#9-${target}_iframe`, response).attr().src,
+            INFO_ROOT_URL,
+            undefined,
+            6000,
         );
     } else if (target === -1) {
         const userId = helper.userId;
@@ -184,13 +183,11 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
             DORM_LOGIN_POST_MIDDLE +
             encodeURIComponent(helper.dormPassword || helper.password) +
             DORM_LOGIN_POST_SUFFIX;
-        return uFetch(url, url, post)
-            .then(() => uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER))
-            .then((s) => {
-                if (cheerio("#weixin_health_linechartCtrl1_Chart1", s).length !== 1) {
-                    throw new Error("login to tsinghua home error");
-                }
-            });
+        await uFetch(url, url, post);
+        const response = await uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER);
+        if (cheerio("#weixin_health_linechartCtrl1_Chart1", response).length !== 1) {
+            throw new Error("login to tsinghua home error");
+        }
     } else if (target === 5000) {
         await uFetch(LIBRARY_LOGIN_URL, undefined);
         const redirect = cheerio(
@@ -201,9 +198,9 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets) => {
                 i_captcha: "",
             }),
         ).attr().href;
-        return uFetch(redirect);
+        await uFetch(redirect);
     } else {
-        return uFetch(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
+        await uFetch(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
     }
 };
 
