@@ -8,6 +8,7 @@ import {
     DORM_LOGIN_POST_PREFIX,
     DORM_LOGIN_POST_SUFFIX,
     DORM_LOGIN_URL_PREFIX,
+    DORM_LOGIN_VIEWSTATE,
     DORM_SCORE_REFERER,
     DORM_SCORE_URL,
     ID_LOGIN_CHECK_URL,
@@ -20,6 +21,7 @@ import {
     META_DATA_URL,
     PRE_LOGIN_URL,
     PRE_ROAM_URL_PREFIX,
+    TSINGHUA_HOME_LOGIN_URL,
     WEB_VPN_ROOT_URL,
 } from "../constants/strings";
 import md5 from "md5";
@@ -188,6 +190,36 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
         if (cheerio("#weixin_health_linechartCtrl1_Chart1", response).length !== 1) {
             throw new Error("login to tsinghua home error");
         }
+    } else if (target === -2) {
+        const validChars = new Set(
+            "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~",
+        );
+        // TODO: these valid chars might be far from enough
+        const {userId} = helper;
+        const password = helper.dormPassword || helper.password;
+        let tempPassword = "";
+        for (let i = 0; i < password.length; i++) {
+            if (validChars.has(password.charAt(i))) {
+                tempPassword += password.charAt(i);
+            }
+        }
+        await uFetch(
+            TSINGHUA_HOME_LOGIN_URL,
+            undefined,
+            {
+                __VIEWSTATE: DORM_LOGIN_VIEWSTATE,
+                __VIEWSTATEGENERATOR: "CA0B0334",
+                net_Default_LoginCtrl1$txtUserName: userId,
+                net_Default_LoginCtrl1$txtUserPwd: tempPassword,
+                "net_Default_LoginCtrl1$lbtnLogin.x": 17,
+                "net_Default_LoginCtrl1$lbtnLogin.y": 10,
+                net_Default_LoginCtrl1$txtSearch1: "",
+                Home_Img_NewsCtrl1$hfJsImg: "dummyContent",
+                Home_Img_ActivityCtrl1$hfScript: "dummyContent",
+                Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
+                Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
+            },
+        );
     } else if (target === 5000) {
         await uFetch(LIBRARY_LOGIN_URL, undefined);
         const redirect = cheerio(
@@ -204,7 +236,7 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
     }
 };
 
-export const retryWrapper = async <R>(
+const retryWrapper = async <R>(
     helper: InfoHelper,
     target: ValidTickets,
     operation: Promise<R>,

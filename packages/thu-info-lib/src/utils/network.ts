@@ -7,7 +7,7 @@ import AbortController from "abort-controller";
  * The values that are valid as ticket numbers.
  * See wiki for more information.
  */
-export type ValidTickets = -1 | 792 | 824 | 2005 | 5000; // -1 for tsinghua home, 5000 for library
+export type ValidTickets = -1 | -2 | 792 | 824 | 2005 | 5000; // -1 and -2 for tsinghua home, 5000 for library
 
 const cookies: {[key: string]: string} = {};
 
