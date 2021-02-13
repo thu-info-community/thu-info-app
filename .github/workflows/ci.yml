@@ -11,9 +11,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-cache-
+            $cache-{{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-cache-
+            $cache-{{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
@@ -97,9 +97,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-cache-
+            $cache-{{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
