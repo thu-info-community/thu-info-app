@@ -6,14 +6,8 @@ import {
     ELE_PAY_RECORD_URL,
     RECHARGE_ELE_REFERER,
     RECHARGE_ELE_URL,
-    RECHARGE_PAY_ELE_POST_MIDDLE_A,
-    RECHARGE_PAY_ELE_POST_MIDDLE_B,
-    RECHARGE_PAY_ELE_POST_PREFIX,
-    RECHARGE_PAY_ELE_POST_SUFFIX,
+    DORM_LOGIN_VIEWSTATE,
     RECHARGE_PAY_ELE_URL,
-    TSINGHUA_HOME_LOGIN_POST_MIDDLE,
-    TSINGHUA_HOME_LOGIN_POST_PREFIX,
-    TSINGHUA_HOME_LOGIN_POST_SUFFIX,
     TSINGHUA_HOME_LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
@@ -41,11 +35,19 @@ const loginToHome = async (helper: InfoHelper) => {
     await uFetch(
         TSINGHUA_HOME_LOGIN_URL,
         undefined,
-        TSINGHUA_HOME_LOGIN_POST_PREFIX +
-			userId +
-			TSINGHUA_HOME_LOGIN_POST_MIDDLE +
-			encodeURIComponent(tempPassword) +
-			TSINGHUA_HOME_LOGIN_POST_SUFFIX,
+        {
+            __VIEWSTATE: DORM_LOGIN_VIEWSTATE,
+            __VIEWSTATEGENERATOR: "CA0B0334",
+            net_Default_LoginCtrl1$txtUserName: userId,
+            net_Default_LoginCtrl1$txtUserPwd: tempPassword,
+            "net_Default_LoginCtrl1$lbtnLogin.x": 17,
+            "net_Default_LoginCtrl1$lbtnLogin.y": 10,
+            net_Default_LoginCtrl1$txtSearch1: "",
+            Home_Img_NewsCtrl1$hfJsImg: "dummyContent",
+            Home_Img_ActivityCtrl1$hfScript: "dummyContent",
+            Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
+            Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
+        },
     );
 };
 
@@ -72,13 +74,17 @@ export const getEleRechargePayCode = async (
     const redirect = await uFetch(
         RECHARGE_PAY_ELE_URL,
         RECHARGE_ELE_URL,
-        RECHARGE_PAY_ELE_POST_PREFIX +
-			money +
-			RECHARGE_PAY_ELE_POST_MIDDLE_A +
-			encodeURIComponent(username) +
-			RECHARGE_PAY_ELE_POST_MIDDLE_B +
-			encodeURIComponent(louhao) +
-			RECHARGE_PAY_ELE_POST_SUFFIX,
+        {
+            __EVENTTARGET: "",
+            __EVENTARGUMENT: "",
+            __VIEWSTATE: "dummyContent",
+            __VIEWSTATEGENERATOR: "D6B25EB7",
+            recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
+            write_money: String(money),
+            username,
+            louhao,
+            banktype: "alipay",
+        },
     ).then((s) => cheerio("#banksubmit", s).attr().action);
 
     return generalGetPayCode(redirect, RECHARGE_PAY_ELE_URL);
