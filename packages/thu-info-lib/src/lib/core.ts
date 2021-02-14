@@ -4,9 +4,6 @@ import {
     ACADEMIC_URL,
     CONFIRM_LOGIN_URL,
     DO_LOGIN_URL,
-    DORM_LOGIN_POST_MIDDLE,
-    DORM_LOGIN_POST_PREFIX,
-    DORM_LOGIN_POST_SUFFIX,
     DORM_LOGIN_URL_PREFIX,
     DORM_LOGIN_VIEWSTATE,
     DORM_SCORE_REFERER,
@@ -133,7 +130,7 @@ export const login = async (
     if (!loginResponse.success) {
         switch (loginResponse.error) {
         case "NEED_CONFIRM":
-            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, "");
+            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, {});
             break;
         default:
             throw new Error(loginResponse.message);
@@ -179,13 +176,14 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
         const userId = helper.userId;
         const appId = md5(userId + new Date().getTime());
         const url = DORM_LOGIN_URL_PREFIX + appId;
-        const post =
-            DORM_LOGIN_POST_PREFIX +
-            userId +
-            DORM_LOGIN_POST_MIDDLE +
-            encodeURIComponent(helper.dormPassword || helper.password) +
-            DORM_LOGIN_POST_SUFFIX;
-        await uFetch(url, url, post);
+        await uFetch(url, url, {
+            __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
+            __VIEWSTATEGENERATOR: "7FA746C3",
+            __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
+            weixin_user_authenticateCtrl1$txtUserName: userId,
+            weixin_user_authenticateCtrl1$txtPassword: helper.dormPassword || helper.password,
+            weixin_user_authenticateCtrl1$btnLogin: "登录",
+        });
         const response = await uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER);
         if (cheerio("#weixin_health_linechartCtrl1_Chart1", response).length !== 1) {
             throw new Error("login to tsinghua home error");

@@ -48,7 +48,7 @@ export const getEleRechargePayCode = async (
             __VIEWSTATE: "dummyContent",
             __VIEWSTATEGENERATOR: "D6B25EB7",
             recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
-            write_money: String(money),
+            write_money: money,
             username,
             louhao,
             banktype: "alipay",

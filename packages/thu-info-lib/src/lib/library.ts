@@ -41,7 +41,7 @@ type TagElement = Element & {type: "tag"};
 const fetchJson = (
     url: string,
     referer?: string,
-    post?: object | string,
+    post?: object,
 ): Promise<any> =>
     uFetch(url, referer, post).then((s) => JSON.parse(s).data.list);
 

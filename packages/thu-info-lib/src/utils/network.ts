@@ -51,7 +51,7 @@ export const stringify = (form: any) =>
 export const uFetch = async (
     url: string,
     referer?: string,
-    post?: object | string,
+    post?: object,
     timeout = 60000,
 ): Promise<string> => {
     // Prepare request headers
@@ -90,7 +90,7 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: typeof post === "string" ? post : stringify(post),
+                body: stringify(post),
             };
 
     // Perform the network request
