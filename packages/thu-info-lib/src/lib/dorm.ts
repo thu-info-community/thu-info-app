@@ -9,7 +9,7 @@ import {
     RECHARGE_PAY_ELE_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
-import {generalGetPayCode} from "../utils/generalAlipay";
+import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";

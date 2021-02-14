@@ -1,6 +1,6 @@
 import {arbitraryEncode, uFetch} from "./network";
 import cheerio from "cheerio";
-import {SEND_TO_ALIPAY_ACTION_URL} from "../constants/strings";
+import {ALIPAY_URL_PREFIX, SEND_TO_ALIPAY_ACTION_URL} from "../constants/strings";
 
 export const generalGetPayCode = async (location: string, referer: string) => {
     // Get pay id
@@ -28,3 +28,5 @@ export const generalGetPayCode = async (location: string, referer: string) => {
         return qrCode.substring(qrCode.lastIndexOf("/") + 1);
     });
 };
+
+export const genAlipayUrl = (payCode: string) => ALIPAY_URL_PREFIX + payCode;
