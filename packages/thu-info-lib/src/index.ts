@@ -40,7 +40,7 @@ export class InfoHelper {
 
     public RETRY_TIMES = 2;
 
-    public static TOTAL_PHASES = 9;  // const
+    public static TOTAL_PHASES = 10;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
