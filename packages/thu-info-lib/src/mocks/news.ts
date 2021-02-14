@@ -1,8 +1,8 @@
 import {BGTZ_MAIN_PREFIX, HB_MAIN_PREFIX, JWGG_MAIN_PREFIX} from "../constants/strings";
 import {url0, url1, url2, url3, url4, url5, url6, url7, url8, url9} from "./source/newsHtml";
-import {newsSlice} from "../models/news/news";
+import {NewsSlice} from "../models/news/news";
 
-export const MOCK_NEWS_LIST = (url: string): newsSlice[] => {
+export const MOCK_NEWS_LIST = (url: string): NewsSlice[] => {
     switch (url) {
     case JWGG_MAIN_PREFIX + 0:
         return [

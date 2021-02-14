@@ -1,7 +1,7 @@
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
 import {newsHtml} from "../mocks/source/newsHtml";
-import {newsSlice, sourceTag} from "../models/news/news";
+import {NewsSlice, sourceTag} from "../models/news/news";
 import {InfoHelper} from "../index";
 import {getCheerioText} from "../utils/cheerio";
 import {retryWrapperWithMocks} from "./core";
@@ -11,13 +11,13 @@ export const getNewsList = (
     helper: InfoHelper,
     url: string,
     channel: sourceTag,
-): Promise<newsSlice[]> =>
+): Promise<NewsSlice[]> =>
     retryWrapperWithMocks(
         helper,
         undefined,
         () => uFetch(url).then((str) => {
             const $ = cheerio.load(str);
-            const newsList: newsSlice[] = [];
+            const newsList: NewsSlice[] = [];
             $("ul.cont_list > li", str).each((_, item) => {
                 if (item.type === "tag" && item.children[3].type === "tag") {
                     let newsUrl: string = item.children[3].attribs.href;
@@ -25,16 +25,16 @@ export const getNewsList = (
                         newsUrl = "https://webvpn.tsinghua.edu.cn" + newsUrl;
                     }
                     newsList.push(
-                        new newsSlice(
-                            getCheerioText(item, 3),
-                            newsUrl,
-                            getCheerioText(item, 7),
-                            item.children[4].data?.substr(
+                        {
+                            name: getCheerioText(item, 3),
+                            url: newsUrl,
+                            date: getCheerioText(item, 7),
+                            source: item.children[4].data?.substr(
                                 3,
                                 item.children[4].data?.length - 5,
                             ) ?? "",
                             channel,
-                        ),
+                        },
                     );
                 }
             });
