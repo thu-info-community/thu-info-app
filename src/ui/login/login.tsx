@@ -22,6 +22,7 @@ import IconMain from "../../assets/icons/IconMain";
 import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
+import {InfoHelper} from "thu-info-lib";
 
 interface LoginProps {
 	readonly userId: string;
@@ -138,7 +139,10 @@ const LoginUI = (props: LoginProps) => {
 					/>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
 					<Text style={style.loggingInCaptionStyle}>
-						{getStr("loggingIn") + ` (${loginPhase}0%)`}
+						{getStr("loggingIn") +
+							` (${Math.round(
+								(loginPhase * 100) / (InfoHelper.TOTAL_PHASES + 1),
+							)}%)`}
 					</Text>
 				</View>
 			) : null}
