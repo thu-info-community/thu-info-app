@@ -239,13 +239,12 @@ const retryWrapper = async <R>(
     target: ValidTickets,
     operation: () => Promise<R>,
 ): Promise<R> => {
-    for (let i = 0; i < 2; ++i) {
+    for (let i = 0; i < helper.RETRY_TIMES; ++i) {
         try {
             return await operation();
         } catch {
             await getTicket(helper, target);
         }
-        console.log(`Getting ticket ${target} failed (${i + 1}/2). Retrying.`);
     }
     return operation();
 };

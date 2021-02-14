@@ -38,5 +38,5 @@ it("should login successfully.", async () => {
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);
-    expect(counter).toBeCalledTimes(helper.TOTAL_PHASES);
+    expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
 }, 20000);
