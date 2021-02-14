@@ -19,7 +19,7 @@ import {cache} from "./reducers/cache";
 import {Hole} from "./states/hole";
 import {hole} from "./reducers/hole";
 import {InfoHelper} from "thu-info-lib";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
 
 export const helper = new InfoHelper();

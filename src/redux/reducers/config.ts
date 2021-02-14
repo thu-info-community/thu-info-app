@@ -13,7 +13,7 @@ import {
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 export const config = (
 	state: Config = defaultConfigState,

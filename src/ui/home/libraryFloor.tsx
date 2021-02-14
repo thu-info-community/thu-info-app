@@ -1,4 +1,4 @@
-import {LibraryFloor} from "thu-info-lib/lib/models/home/library";
+import {LibraryFloor} from "thu-info-lib/dist/models/home/library";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {helper} from "../../redux/store";
 

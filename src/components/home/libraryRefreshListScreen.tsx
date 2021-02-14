@@ -8,7 +8,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {toggleSocketState} from "../../network/misc";
-import {LibraryBase} from "thu-info-lib/lib/models/home/library";
+import {LibraryBase} from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native-appearance";
 import themes, {Theme} from "../../assets/themes/themes";
 

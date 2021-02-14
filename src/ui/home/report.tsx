@@ -11,7 +11,7 @@ import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
-import {Course} from "thu-info-lib/lib/models/home/report";
+import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native-appearance";
 
 export const semesterWeight = (semester: string): number => {

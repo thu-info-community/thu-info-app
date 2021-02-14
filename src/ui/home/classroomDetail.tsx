@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
 import {helper} from "../../redux/store";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 const colors = ["#26A69A", "#FFA726", "#29B6F6", "#868686", "#AB47BC"];
 

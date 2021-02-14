@@ -18,7 +18,6 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {JoggingScreen} from "./jogging";
 import {HoleListScreen} from "./holeList";
 import {HoleDetailScreen} from "./holeDetail";
 import {HoleTitleCard} from "../../models/hole";
@@ -32,7 +31,7 @@ import {
 	Library,
 	LibraryFloor,
 	LibrarySection,
-} from "thu-info-lib/lib/models/home/library";
+} from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native-appearance";
 
 export type HomeStackParamList = {
@@ -41,7 +40,6 @@ export type HomeStackParamList = {
 	Evaluation: undefined;
 	Form: {name: string; url: string};
 	PhysicalExam: undefined;
-	Jogging: undefined;
 	Expenditure: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
@@ -106,11 +104,6 @@ export const HomeStackScreen = () => {
 				name="PhysicalExam"
 				component={PhysicalExamScreen}
 				options={{title: getStr("physicalExam")}}
-			/>
-			<Stack.Screen
-				name="Jogging"
-				component={JoggingScreen}
-				options={{title: getStr("jogging")}}
 			/>
 			<Stack.Screen
 				name="Expenditure"

@@ -13,7 +13,7 @@ import themes from "../../assets/themes/themes";
 import {FormRouteProp, HomeNav} from "./homeStack";
 import {useColorScheme} from "react-native-appearance";
 import {helper} from "../../redux/store";
-import {Form, Person} from "thu-info-lib/lib/models/home/assessment";
+import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
 
 export const FormScreen = ({
 	route,

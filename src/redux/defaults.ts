@@ -4,7 +4,7 @@ import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
 import {Cache} from "./states/cache";
 import {Hole} from "./states/hole";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 export const defaultAuthState: AuthState = {
 	userId: "",

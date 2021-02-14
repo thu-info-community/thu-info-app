@@ -11,7 +11,7 @@ import {
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {store} from "../store";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import AV from "leancloud-storage/core";
 
 export type CalendarConfig = {

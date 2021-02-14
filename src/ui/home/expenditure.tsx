@@ -16,8 +16,8 @@ import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {connect} from "react-redux";
 import {State} from "../../redux/store";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
-import {Record} from "thu-info-lib/lib/models/home/expenditure";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import {Record} from "thu-info-lib/dist/models/home/expenditure";
 import {useColorScheme} from "react-native-appearance";
 
 const ExpenditureCard = ({record}: {record: Record}) => {

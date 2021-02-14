@@ -1,4 +1,4 @@
-import {Schedule} from "thu-info-lib/lib/models/schedule/schedule";
+import {Schedule} from "thu-info-lib/dist/models/schedule/schedule";
 
 export interface Schedules {
 	baseSchedule: Schedule[];

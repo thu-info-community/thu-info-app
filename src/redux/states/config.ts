@@ -1,7 +1,7 @@
 import {
 	Calendar,
 	SemesterType,
-} from "thu-info-lib/lib/models/schedule/calendar";
+} from "thu-info-lib/dist/models/schedule/calendar";
 
 export interface Config {
 	doNotRemind: number;

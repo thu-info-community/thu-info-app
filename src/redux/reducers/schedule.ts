@@ -14,8 +14,8 @@ import {
 	TimeBlock,
 	Schedule,
 	ScheduleType,
-} from "thu-info-lib/lib/models/schedule/schedule";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+} from "thu-info-lib/dist/models/schedule/schedule";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 export enum Choice {
 	ONCE,

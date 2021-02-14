@@ -118,28 +118,14 @@ export const AlipayPopup = ({
 				</View>
 			</Modal>
 			{trigger(() => {
-				Snackbar.show({
-					text: getStr("loggingIn"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-				helper
-					.getTicket(-1)
-					.then(() => {
-						if (helper.mocked()) {
-							Snackbar.show({
-								text: getStr("testAccountNotSupportEleRecharge"),
-								duration: Snackbar.LENGTH_SHORT,
-							});
-						} else {
-							setPopup(true);
-						}
-					})
-					.catch(() =>
-						Snackbar.show({
-							text: getStr("homeNetworkRetry"),
-							duration: Snackbar.LENGTH_LONG,
-						}),
-					);
+				if (helper.mocked()) {
+					Snackbar.show({
+						text: getStr("testAccountNotSupportEleRecharge"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+				} else {
+					setPopup(true);
+				}
 			})}
 		</>
 	);

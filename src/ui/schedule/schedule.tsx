@@ -12,12 +12,12 @@ import {
 	activeWeek,
 	Schedule,
 	ScheduleType,
-} from "thu-info-lib/lib/models/schedule/schedule";
+} from "thu-info-lib/dist/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
 import {State} from "../../redux/store";
 import {scheduleThunk} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
-import {Calendar} from "thu-info-lib/lib/models/schedule/calendar";
+import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
