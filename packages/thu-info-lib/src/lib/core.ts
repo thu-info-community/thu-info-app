@@ -143,7 +143,7 @@ export const login = async (
     ]);
     await batchGetTickets(
         helper,
-        [792, 824, 2005, 5000, -1] as ValidTickets[],
+        [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
         statusIndicator,
     );
     doKeepAlive && keepAlive(helper);
