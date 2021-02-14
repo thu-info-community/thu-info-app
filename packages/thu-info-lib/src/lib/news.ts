@@ -15,7 +15,7 @@ export const getNewsList = (
     retryWrapperWithMocks(
         helper,
         undefined,
-        uFetch(url).then((str) => {
+        () => uFetch(url).then((str) => {
             const $ = cheerio.load(str);
             const newsList: newsSlice[] = [];
             $("ul.cont_list > li", str).each((_, item) => {

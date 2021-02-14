@@ -237,30 +237,30 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
 const retryWrapper = async <R>(
     helper: InfoHelper,
     target: ValidTickets,
-    operation: Promise<R>,
+    operation: () => Promise<R>,
 ): Promise<R> => {
     for (let i = 0; i < 2; ++i) {
         try {
-            return await operation;
+            return await operation();
         } catch {
             await getTicket(helper, target);
         }
         console.log(`Getting ticket ${target} failed (${i + 1}/2). Retrying.`);
     }
-    return operation;
+    return operation();
 };
 
 export const retryWrapperWithMocks = async <R>(
     helper: InfoHelper,
     target: ValidTickets | undefined,
-    operation: Promise<R>,
+    operation: () => Promise<R>,
     fallback: R,
 ): Promise<R> =>
     helper.mocked()
         ? Promise.resolve(fallback)
         : target
             ? retryWrapper(helper, target, operation)
-            : operation;
+            : operation();
 
 const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
     Promise.all(

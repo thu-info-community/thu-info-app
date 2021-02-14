@@ -63,7 +63,7 @@ export const getReport = (
     retryWrapperWithMocks(
         helper,
         792,
-        Promise.all([
+        () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL, INFO_ROOT_URL),
             bx
                 ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL, INFO_ROOT_URL)
@@ -131,7 +131,7 @@ export const getAssessmentList = (
     retryWrapperWithMocks(
         helper,
         2005,
-        uFetch(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
+        () => uFetch(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
             const result = cheerio("tbody", str)
                 .children()
                 .map((index, element) => {
@@ -165,7 +165,7 @@ export const getAssessmentForm = (
     retryWrapperWithMocks(
         helper,
         2005,
-        uFetch(url, ASSESSMENT_MAIN_URL).then((str) => {
+        () => uFetch(url, ASSESSMENT_MAIN_URL).then((str) => {
             const $ = cheerio.load(str);
             const basics = $("#xswjtxFormid > input")
                 .map((_, element) => new InputTag(element))
@@ -193,7 +193,7 @@ export const postAssessmentForm = (
     retryWrapperWithMocks(
         helper,
         2005,
-        uFetch(
+        () => uFetch(
             ASSESSMENT_SUBMIT_URL,
             ASSESSMENT_MAIN_URL,
             form.serialize(),
@@ -222,7 +222,7 @@ export const getPhysicalExamResult = (
     retryWrapperWithMocks(
         helper,
         792,
-        uFetch(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
+        () => uFetch(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
             const json = JSON.parse(
                 // eslint-disable-next-line quotes
                 s.replace(/'/g, '"'),
@@ -275,7 +275,7 @@ export const getExpenditures = (
     retryWrapperWithMocks(
         helper,
         824,
-        uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
+        () => uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
             (data) => {
                 const sheet = excelToJson({
                     source: data,
@@ -340,7 +340,7 @@ export const getClassroomState = (
     retryWrapperWithMocks(
         helper,
         792,
-        uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(name, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
+        () => uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(name, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
             const result = cheerio("#scrollContent>table>tbody", s)
                 .map((_, element) =>
                     (element as TagElement).children
@@ -390,7 +390,7 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
     retryWrapperWithMocks(
         helper,
         824,
-        uFetch(LOSE_CARD_URL).then((s) => {
+        () => uFetch(LOSE_CARD_URL).then((s) => {
             const index = s.indexOf("var result");
             const left = s.indexOf("=", index) + 1;
             const right = s.indexOf("\n", left);

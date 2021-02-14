@@ -22,7 +22,7 @@ export const getDormScore = (helper: InfoHelper): Promise<string> =>
     retryWrapperWithMocks(
         helper,
         -1,
-        uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
+        () => uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
             (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
         ),
         "",
@@ -64,7 +64,7 @@ export const getElePayRecord = async (
     retryWrapperWithMocks(
         helper,
         -2,
-        (async () => {
+        async () => {
             const $ = await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load);
 
             return $(".myTable")
@@ -77,6 +77,6 @@ export const getElePayRecord = async (
                         .map((it) => getCheerioText(it, 1)),
                 ])
                 .get();
-        })(),
+        },
         MOCK_ELE_PAY_RECORD,
     );

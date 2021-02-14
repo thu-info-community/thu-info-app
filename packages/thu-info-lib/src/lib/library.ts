@@ -49,7 +49,7 @@ export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
     retryWrapperWithMocks(
         helper,
         undefined,
-        fetchJson(LIBRARY_LIST_URL, LIBRARY_HOME_URL).then(
+        () => fetchJson(LIBRARY_LIST_URL, LIBRARY_HOME_URL).then(
             (r) =>
                 r.map((node: any) => ({
                     id: node.id,
@@ -98,7 +98,7 @@ export const getLibraryFloorList = async (
     retryWrapperWithMocks(
         helper,
         undefined,
-        fetchJson(LIBRARY_AREAS_URL + id, LIBRARY_HOME_URL)
+        () => fetchJson(LIBRARY_AREAS_URL + id, LIBRARY_HOME_URL)
             .then(
                 (r): Promise<LibraryFloor[]> => Promise.all(
                     r.childArea.map(async (node: any) => {
@@ -192,7 +192,7 @@ const getAccessToken = (helper: InfoHelper): Promise<string> =>
     retryWrapperWithMocks(
         helper,
         5000,
-        uFetch(LIBRARY_HOME_URL).then((response) => {
+        () => uFetch(LIBRARY_HOME_URL).then((response) => {
             if (helper.mocked()) {
                 return "";
             }
@@ -240,7 +240,7 @@ export const getBookingRecords = async (
     retryWrapperWithMocks(
         helper,
         undefined,
-        (async (): Promise<LibBookRecord[]> => {
+        async (): Promise<LibBookRecord[]> => {
             await getAccessToken(helper);
             const html = await uFetch(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
             const result = cheerio("tbody", html)
@@ -265,7 +265,7 @@ export const getBookingRecords = async (
                 throw new Error("Getting lib book record failed!");
             }
             return result;
-        })(),
+        },
         MOCK_LIBRARY_BOOKING_RECORDS,
     );
 
@@ -276,7 +276,7 @@ export const cancelBooking = async (
     retryWrapperWithMocks(
         helper,
         undefined,
-        getAccessToken(helper)
+        () => getAccessToken(helper)
             .then((token) => uFetch(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
                 _method: "delete",
                 id,

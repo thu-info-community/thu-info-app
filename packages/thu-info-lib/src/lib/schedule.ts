@@ -29,7 +29,7 @@ export const getPrimary = (helper: InfoHelper) =>
     retryWrapperWithMocks(
         helper,
         792,
-        Promise.all(
+        () => Promise.all(
             Array.from(new Array(Calendar.weekCount / GROUP_SIZE), (_, id) =>
                 uFetch(
                     (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
@@ -61,7 +61,7 @@ export const getSecondary = (helper: InfoHelper) =>
     retryWrapperWithMocks(
         helper,
         792,
-        uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
+        () => uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(
@@ -81,7 +81,7 @@ export const getSecondaryVerbose = (helper: InfoHelper) =>
     retryWrapperWithMocks(
         helper,
         792,
-        uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
+        () => uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(str.substring(lowerBound, upperBound), true) as [
