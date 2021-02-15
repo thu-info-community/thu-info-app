@@ -55,13 +55,16 @@ jobs:
           export ref='${{ github.ref }}'
           export tag=${ref:11}
           echo "::set-output name=tag::$tag"
-          zip -r demo.zip ./demo/*
       - name: Publish to NPM
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
           yarn publish --new-version $TAG
+      - name: Build demo
+        run: |
+          yarn build-dist
+          zip -r demo.zip ./demo/*
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
