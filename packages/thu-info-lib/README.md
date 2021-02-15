@@ -15,25 +15,90 @@ yarn add thu-info-lib
 
 See [wiki](https://github.com/thu-info-community/thu-info-lib/wiki).
 
-## Compatibility
+## Playground
 
-Tested across node, browsers and react-native.
+### Before you start
 
-## Build from source
+It is recommended that you have `Yarn` installed.
 
-### Library version (for development or Node)
+```shell
+npm install -g yarn  # Skip this step if you have already used yarn before.
+```
 
-`yarn && yarn build`
+After that, install the dependencies that this project requires.
 
-You can find the library version in `dist/`. It can be used in web development or imported with NodeJS (with all dependencies installed). It **SHOULD NOT** be used directly in browsers.
+```shell
+yarn install
+```
 
-### Bundled version (for browsers)
+Go on to the corresponding section depending on the JS environment you will be using.
 
-`yarn && yarn build-dist`
+**Note that due to various reasons, some operations might fail from time to time. Retrying might solve the problem.**
 
-You can find the bundled version in `demo/`. You can install the directory as an unpacked extension in Chrome, then execute anything you want in the Console of Chrome Developer Tool. The helper class and utility types is attached as `window.InfoHelper` in this mode.
+### Browsers
 
-Use `yarn watch-dist` for watching file changes.
+Run the following command.
+
+```shell
+yarn build-dist
+```
+
+You will find a bundled `index.js` generated in directory `demo/`.
+
+Install `demo/` as an unpacked extension in Chrome.
+
+> Note: you should have developer-mode enabled in Chrome.
+
+Click on the installed extension `thu-info-lib-test` and you will see a blank page.
+
+After that, you can open the console of Chrome Developer Tool and execute anything you want in it. The helper class is attached as `window.InfoHelper`.
+
+Here is a typical example of what you will execute in the browser console.
+
+```javascript
+helper = new InfoHelper.InfoHelper()
+helper.login({userId: "", password: "", dormPassword:""})
+```
+
+### Node.js
+
+Run the following command.
+
+```shell
+yarn build
+```
+
+You can find the build output in directory `dist/`.
+
+After that, run command
+
+```shell
+yarn demo
+```
+
+This will execute script `demo.js` at the root directory.
+
+You can modify `demo.js` to perform more requests.
+
+You can also run command
+
+```shell
+yarn play
+```
+
+to start an interactive JS environment (Node REPL).
+
+A typical example of what you will execute will be
+
+```javascript
+import {InfoHelper} from "./dist";
+const helper = new InfoHelper();
+await helper.login({userId: "", password: "", dormPassword:""});
+```
+
+### React Native
+
+See [THUInfo APP](https://github.com/UNIDY2002/THUInfo) for an example.
 
 ## Testing
 

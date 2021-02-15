@@ -10,6 +10,8 @@
     "scripts": {
         "build": "tsc",
         "test": "jest",
+        "play": "node -r esm --experimental-repl-await",
+        "demo": "node -r esm demo.js",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
         "draft": "node versionhelper.js draft",
@@ -57,6 +59,7 @@
         "@typescript-eslint/eslint-plugin": "4.15.0",
         "@typescript-eslint/parser": "4.15.0",
         "eslint": "7.20.0",
+        "esm": "3.2.25",
         "jest": "26.6.3",
         "node-polyfill-webpack-plugin": "1.0.2",
         "semver": "7.3.4",
