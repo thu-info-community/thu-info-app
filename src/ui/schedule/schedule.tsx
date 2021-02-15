@@ -24,7 +24,6 @@ import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native-appearance";
-// @ts-ignore
 import md5 from "md5";
 
 interface ScheduleProps {
