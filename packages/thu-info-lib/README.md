@@ -1,6 +1,6 @@
 # thu-info-lib
 
-[![Build Status](https://github.com/UNIDY2002/thu-info-lib/workflows/Test%20and%20Publish/badge.svg)](https://github.com/UNIDY2002/thu-info-lib/actions?query=workflow%3A%22Test+and+Publish%22)
+[![Build Status](https://github.com/thu-info-community/thu-info-lib/workflows/Test%20and%20Publish/badge.svg)](https://github.com/thu-info-community/thu-info-lib/actions?query=workflow%3A%22Test+and+Publish%22)
 [![NPM Version](https://img.shields.io/npm/v/thu-info-lib)](https://www.npmjs.com/package/thu-info-lib)
 
 This is a JavaScript library aimed to provide a program-friendly interface to Tsinghua web portal, and is licensed under MIT License.
@@ -13,7 +13,7 @@ yarn add thu-info-lib
 
 ## Usage
 
-See [wiki](https://github.com/UNIDY2002/thu-info-lib/wiki).
+See [wiki](https://github.com/thu-info-community/thu-info-lib/wiki).
 
 ## Compatibility
 
