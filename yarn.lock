@@ -1428,7 +1428,7 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
-"@types/md5@^2.3.0":
+"@types/md5@2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.3.0.tgz#3b6a623091160f4dc75be3173e25f2110dc3fa1f"
   integrity sha512-556YJ7ejzxIqSSxzyGGpctuZOarNZJt/zlEkhmmDc1f/slOEANHuwu2ZX7YaZ40rMiWoxt8GvAhoDpW1cmSy6A==
@@ -8669,10 +8669,10 @@ through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-thu-info-lib@1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.0.0-rc.1.tgz#0481719a37c00ae4c5569efa8e5c4acac9611c60"
-  integrity sha512-39hfITEkujTC9lcEW61AecSmsNwZnp/798Bho1/k/vBkbF37LIzFn7lP1PRKAC0xgU/TejyRJNKU9fgPeszh1A==
+thu-info-lib@1.0.0-rc.2:
+  version "1.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.0.0-rc.2.tgz#447cba9ae9949d26e02c9d6a132128969a15f772"
+  integrity sha512-WQFMeB+0o76koczDOcayovcGZQP9wyN5j88rUC/aYt2WUBF9w3IooTBTXo+Nng3bM92LP9G6Iowhjy6R8DF6RQ==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
