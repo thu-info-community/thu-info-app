@@ -55,9 +55,28 @@ jobs:
           export ref='${{ github.ref }}'
           export tag=${ref:11}
           echo "::set-output name=tag::$tag"
+          zip -r demo.zip ./demo/*
       - name: Publish to NPM
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
           yarn publish --new-version $TAG
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: ./release
+      - name: Upload demo
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: demo.zip
+          asset_name: demo.zip
+          asset_content_type: application/zip

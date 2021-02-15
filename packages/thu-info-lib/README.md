@@ -15,6 +15,25 @@ yarn add thu-info-lib
 
 See [wiki](https://github.com/thu-info-community/thu-info-lib/wiki).
 
+## Quick demo
+
+Download `demo.zip` from [the latest release](https://github.com/thu-info-community/thu-info-lib/releases/latest), and unzip it.
+
+After that, install the unpacked directory `demo/` as an unpacked extension in Chrome.
+
+> Note: you should have developer-mode enabled in Chrome.
+
+Click on the installed extension `thu-info-lib-test` and you will see a blank page.
+
+After that, you can open the console of Chrome Developer Tool and execute anything you want in it. The helper class is attached as `window.InfoHelper`.
+
+Here is a typical example of what you will execute in the browser console.
+
+```javascript
+helper = new InfoHelper.InfoHelper()
+helper.login({userId: "", password: "", dormPassword:""})
+```
+
 ## Playground
 
 ### Before you start
@@ -45,20 +64,7 @@ yarn build-dist
 
 You will find a bundled `index.js` generated in directory `demo/`.
 
-Install `demo/` as an unpacked extension in Chrome.
-
-> Note: you should have developer-mode enabled in Chrome.
-
-Click on the installed extension `thu-info-lib-test` and you will see a blank page.
-
-After that, you can open the console of Chrome Developer Tool and execute anything you want in it. The helper class is attached as `window.InfoHelper`.
-
-Here is a typical example of what you will execute in the browser console.
-
-```javascript
-helper = new InfoHelper.InfoHelper()
-helper.login({userId: "", password: "", dormPassword:""})
-```
+Follow the steps in section [Quick demo](#Quick-demo) and play.
 
 ### Node.js
 
