@@ -23,11 +23,8 @@ export const auth = (
 			};
 		}
 		case LOGIN_SUCCESS: {
-			const payload = action.payload;
 			return {
 				...state,
-				userId: payload.userId,
-				password: payload.password,
 				status: LoginStatus.LoggedIn,
 			};
 		}

@@ -1,16 +1,16 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {helper} from "../../redux/store";
+import {helper, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
-import {doLogout} from "../../redux/actions/auth";
 import {checkUpdate} from "../../utils/checkUpdate";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
+import {DO_LOGOUT} from "../../redux/constants";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 	<ScrollView style={{padding: 10}}>
@@ -103,7 +103,15 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			onPress={() => {
 				Alert.alert(getStr("logout"), getStr("confirmLogout"), [
 					{text: getStr("cancel")},
-					{text: getStr("confirm"), onPress: doLogout},
+					{
+						text: getStr("confirm"),
+						onPress: () => {
+							helper
+								.logout()
+								.then(() => console.log("Successfully logged out."));
+							store.dispatch({type: DO_LOGOUT, payload: undefined});
+						},
+					},
 				]);
 			}}
 			icon={<Feather name="user-x" size={16} />}

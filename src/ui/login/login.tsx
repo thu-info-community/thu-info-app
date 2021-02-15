@@ -7,10 +7,13 @@ import {
 } from "react-native";
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {authThunk} from "../../redux/actions/auth";
-import {State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {LOGIN_FAILURE} from "../../redux/constants";
+import {
+	LOGIN_FAILURE,
+	LOGIN_REQUEST,
+	LOGIN_SUCCESS,
+} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -22,7 +25,9 @@ import IconMain from "../../assets/icons/IconMain";
 import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
-import {InfoHelper} from "thu-info-lib";
+import CookieManager from "@react-native-community/cookies";
+import {leanCloudInit} from "../../utils/leanCloud";
+import {refreshCalendarConfig} from "../../redux/actions/config";
 
 interface LoginProps {
 	readonly userId: string;
@@ -33,6 +38,7 @@ interface LoginProps {
 		password: string,
 		statusIndicator: () => void,
 	) => void;
+	loginSuccess: () => void;
 	resetStatus: () => void;
 	navigation: LoginNav;
 }
@@ -47,10 +53,18 @@ const LoginUI = (props: LoginProps) => {
 	const theme = themes[themeName];
 	const style = styles(themeName);
 
+	const performLogin = () => {
+		props.login(userId, password, () => {
+			if (currState().auth.status !== LoginStatus.LoggedIn) {
+				setLoginPhase((i) => i + 1);
+			}
+		});
+	};
+
 	useEffect(() => {
 		if (props.userId !== "") {
 			setLoginPhase(1);
-			props.login(userId, password, () => setLoginPhase((i) => i + 1));
+			performLogin();
 		}
 		checkUpdate();
 		checkBroadcast();
@@ -72,6 +86,13 @@ const LoginUI = (props: LoginProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.status]);
+
+	useEffect(() => {
+		if (loginPhase === 5) {
+			props.loginSuccess();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginPhase]);
 
 	const width = Dimensions.get("window").width * 0.4;
 
@@ -111,7 +132,7 @@ const LoginUI = (props: LoginProps) => {
 					style={style.loginButtonStyle}
 					onPress={() => {
 						setLoginPhase(1);
-						props.login(userId, password, () => setLoginPhase((i) => i + 1));
+						performLogin();
 					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</TouchableOpacity>
@@ -139,10 +160,7 @@ const LoginUI = (props: LoginProps) => {
 					/>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
 					<Text style={style.loggingInCaptionStyle}>
-						{getStr("loggingIn") +
-							` (${Math.round(
-								(loginPhase * 100) / (InfoHelper.TOTAL_PHASES + 1),
-							)}%)`}
+						{getStr("loggingIn") + ` (${Math.round((loginPhase * 100) / 5)}%)`}
 					</Text>
 				</View>
 			) : null}
@@ -233,14 +251,35 @@ export const LoginScreen = connect(
 				password: string,
 				statusIndicator: () => void,
 			) => {
-				// @ts-ignore
-				dispatch(authThunk(userId, password, statusIndicator));
+				dispatch({type: LOGIN_REQUEST, payload: {userId, password}});
+				CookieManager.clearAll()
+					.then(() =>
+						helper.login(
+							{
+								userId,
+								password,
+								dormPassword: currState().credentials.dormPassword,
+							},
+							statusIndicator,
+						),
+					)
+					.then(() => {
+						// Things that should be done only once upon logged in
+						leanCloudInit();
+						refreshCalendarConfig();
+					})
+					.catch((reason: LoginStatus) => {
+						dispatch({type: LOGIN_FAILURE, payload: reason});
+					});
 			},
 			resetStatus: () => {
 				dispatch({
 					type: LOGIN_FAILURE,
 					payload: LoginStatus.None,
 				});
+			},
+			loginSuccess: () => {
+				dispatch({type: LOGIN_SUCCESS, payload: undefined});
 			},
 		};
 	},
