@@ -252,6 +252,7 @@ export const LoginScreen = connect(
 				statusIndicator: () => void,
 			) => {
 				dispatch({type: LOGIN_REQUEST, payload: {userId, password}});
+				refreshCalendarConfig();
 				CookieManager.clearAll()
 					.then(() =>
 						helper.login(
@@ -264,9 +265,7 @@ export const LoginScreen = connect(
 						),
 					)
 					.then(() => {
-						// Things that should be done only once upon logged in
 						leanCloudInit();
-						refreshCalendarConfig();
 					})
 					.catch((reason: LoginStatus) => {
 						dispatch({type: LOGIN_FAILURE, payload: reason});
