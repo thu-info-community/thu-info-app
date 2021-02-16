@@ -122,7 +122,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 					}}
 					key={`0-${ind + 1}`}>
 					<Text style={{textAlign: "center", color: "gray"}}>
-						{getStr("dayOfWeek")[ind]}
+						{`${new Calendar(week, ind).date.format("MM.DD")}
+${getStr("dayOfWeek")[ind]}`}
 					</Text>
 				</View>,
 			);
@@ -196,8 +197,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 		return <View style={{flex: 1, backgroundColor: "white"}}>{rowList}</View>;
 	};
-
-	console.log(parseInt(md5("122"), 16));
 
 	const allSchedule = () => {
 		let components: ReactElement[] = [];
