@@ -66,8 +66,8 @@
 		"typesafe-actions": "5.1.0"
 	},
 	"devDependencies": {
-		"@babel/core": "7.12.16",
-		"@babel/runtime": "7.12.13",
+		"@babel/core": "7.12.17",
+		"@babel/runtime": "7.12.18",
 		"@react-native-community/eslint-config": "2.0.0",
 		"@types/jest": "26.0.20",
 		"@types/md5": "2.3.0",
