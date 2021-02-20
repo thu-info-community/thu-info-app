@@ -74,6 +74,8 @@ export default {
 	about: "关于",
 	currentVersion: "当前版本：",
 	maintainers: "我们的团队",
+	libText: "开源底层库",
+	libHint: "（正在写文档）",
 	builtWithRN: "使用React Native⚛️构建",
 	schedule: "计划",
 	study: "学习与成绩",

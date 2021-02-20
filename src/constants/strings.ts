@@ -27,6 +27,7 @@ export const TUNA_LATEST_URL =
 	"https://mirrors.tuna.tsinghua.edu.cn/github-release/UNIDY2002/THUInfo/LatestRelease/";
 export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
+export const LIB_URL = "https://github.com/thu-info-community/thu-info-lib";
 
 export const HOLE_LOGIN_URL = "https://api.thuhole.com/contents/system_msg";
 export const HOLE_GET_LIST_URL = "https://api.thuhole.com/contents/post/list";

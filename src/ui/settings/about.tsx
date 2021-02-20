@@ -5,6 +5,7 @@ import {getStr} from "../../utils/i18n";
 import {
 	ASHITEMARU_URL,
 	GITHUB_REPO_URL,
+	LIB_URL,
 	UNIDY2002_URL,
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
@@ -57,6 +58,24 @@ export const AboutScreen = () => {
 					(iOS) Ashitemaru @ GitHub
 				</Text>
 			</TouchableOpacity>
+			<View style={{height: 10}} />
+			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
+				{getStr("libText")}
+				<Text style={{color: "red"}}> [NEW]</Text>
+			</Text>
+			<Text
+				style={[styles.textStyle, {color: theme.colors.text, fontSize: 16}]}>
+				{getStr("libHint")}
+			</Text>
+			<TouchableOpacity onPress={() => makeLinking(LIB_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 14},
+					]}>
+					thu-info-community / thu-info-lib @ GitHub
+				</Text>
+			</TouchableOpacity>
 			<View style={{flex: 1}} />
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
@@ -64,7 +83,7 @@ export const AboutScreen = () => {
 			</Text>
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
-				© 2020 | UNIDY
+				© 2021 | UNIDY
 			</Text>
 		</View>
 	);

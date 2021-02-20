@@ -77,6 +77,8 @@ export default {
 	about: "About",
 	currentVersion: "Current version: ",
 	maintainers: "Maintainers",
+	libText: "Opensource Lib",
+	libHint: "(Documentation in progress)",
 	builtWithRN: "Proudly built with React Native⚛️",
 	schedule: "Schedule",
 	study: "Academic and Score",
