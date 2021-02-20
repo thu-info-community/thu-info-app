@@ -8,10 +8,12 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
 import {SettingStackScreen} from "../ui/settings/settingsStack";
 import {useColorScheme} from "react-native-appearance";
+import {connect} from "react-redux";
+import {State} from "../redux/store";
 
 const Tab = createBottomTabNavigator();
 
-export const Root = () => {
+const RootComponent = ({libIntroduced}: {libIntroduced: boolean}) => {
 	const theme = themes[useColorScheme()];
 
 	return (
@@ -65,8 +67,15 @@ export const Root = () => {
 			<Tab.Screen
 				name="Settings"
 				component={SettingStackScreen}
-				options={{title: getStr("settings")}}
+				options={{
+					title: getStr("settings"),
+					tabBarBadge: libIntroduced ? undefined : "NEW",
+				}}
 			/>
 		</Tab.Navigator>
 	);
 };
+
+export const Root = connect((state: State) => ({
+	libIntroduced: state.config.libIntroduced,
+}))(RootComponent);

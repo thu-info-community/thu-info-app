@@ -1,7 +1,7 @@
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {helper, store} from "../../redux/store";
+import {helper, State, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
 import {checkUpdate} from "../../utils/checkUpdate";
@@ -11,8 +11,15 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {DO_LOGOUT} from "../../redux/constants";
+import {connect} from "react-redux";
 
-export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
+export const SettingsUI = ({
+	navigation,
+	libIntroduced,
+}: {
+	navigation: SettingsNav;
+	libIntroduced: boolean;
+}) => (
 	<ScrollView style={{padding: 10}}>
 		<SettingsItem
 			text={getStr("reportSettings")}
@@ -77,6 +84,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 			text={getStr("about")}
 			onPress={() => navigation.navigate("About")}
 			icon={<AntDesign name="copyright" size={16} />}
+			badge={libIntroduced ? undefined : "NEW"}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
@@ -118,3 +126,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => (
 		/>
 	</ScrollView>
 );
+
+export const SettingsScreen = connect((state: State) => ({
+	libIntroduced: state.config.libIntroduced,
+}))(SettingsUI);

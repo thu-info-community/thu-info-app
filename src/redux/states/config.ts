@@ -17,4 +17,5 @@ export interface Config {
 	scheduleHeight: number;
 	remainderShift: number;
 	lastBroadcast: number;
+	libIntroduced: boolean;
 }

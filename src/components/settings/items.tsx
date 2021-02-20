@@ -26,10 +26,12 @@ export const SettingsItem = ({
 	text,
 	onPress,
 	icon,
+	badge,
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
 	icon: ReactElement | undefined;
+	badge?: string;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes[themeName];
@@ -45,6 +47,7 @@ export const SettingsItem = ({
 				{setIconWidth(icon, colors)}
 				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
 					{text}
+					{badge && <Text style={{color: "red", fontSize: 12}}>[{badge}]</Text>}
 				</Text>
 			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
