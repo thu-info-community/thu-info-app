@@ -62,7 +62,7 @@
 		"safer-buffer": "2.1.2",
 		"semver": "7.3.4",
 		"stream": "0.0.2",
-		"thu-info-lib": "1.0.0-rc.4",
+		"thu-info-lib": "1.0.0-rc.5",
 		"typesafe-actions": "5.1.0"
 	},
 	"devDependencies": {
