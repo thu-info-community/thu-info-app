@@ -18,7 +18,12 @@ import {HoleMarkdown} from "../../components/home/hole";
 import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {HoleCommentCard, HoleTitleCard} from "../../models/hole";
-import {getHoleDetail, holeConfig, postHoleComment} from "../../network/hole";
+import {
+	getHoleDetail,
+	holeConfig,
+	postHoleComment,
+	setHoleAttention,
+} from "../../network/hole";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useHeaderHeight} from "@react-navigation/stack";
@@ -34,6 +39,7 @@ const dummyHoleTitleCard = {
 	reply: 0,
 	likenum: 0,
 	tag: "",
+	attention: false,
 };
 
 export const HoleDetailScreen = ({
@@ -44,7 +50,7 @@ export const HoleDetailScreen = ({
 	navigation: HomeNav;
 }) => {
 	const [
-		{pid, text, type, url, timestamp, reply, likenum},
+		{pid, text, type, url, timestamp, reply, likenum, attention},
 		setHoleTitle,
 	] = useState<HoleTitleCard>(
 		"lazy" in route.params
@@ -87,6 +93,29 @@ export const HoleDetailScreen = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					style={{paddingHorizontal: 16, marginHorizontal: 4}}
+					onPress={() => {
+						setHoleTitle((title) => {
+							setHoleAttention(pid, !title.attention).catch((e) => {
+								Snackbar.show({text: e, duration: Snackbar.LENGTH_SHORT});
+							});
+							return {...title, attention: !title.attention};
+						});
+					}}>
+					<Icon
+						name={attention ? "star" : "star-o"}
+						size={24}
+						color={colors.primary}
+					/>
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation, attention, colors.primary, pid]);
 
 	return (
 		<View
@@ -230,7 +259,10 @@ export const HoleDetailScreen = ({
 						});
 						postHoleComment(pid, myComment)
 							.then(() => getHoleDetail(pid))
-							.then(([_, commentList]) => setComments(commentList))
+							.then(([title, commentList]) => {
+								setHoleTitle(title);
+								setComments(commentList);
+							})
 							.then(() => setMyComment(""))
 							.catch(NetworkRetry);
 					}}>

@@ -13,6 +13,7 @@ export interface HoleTitleCard {
 	timestamp: number;
 	type: string;
 	url: string;
+	attention: boolean;
 }
 
 export interface HoleCommentCard {

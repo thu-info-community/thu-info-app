@@ -8,6 +8,7 @@ import {
 	HOLE_NEW_COMMENT_URL,
 	HOLE_NEW_POST_URL,
 	HOLE_SEARCH_URL,
+	HOLE_SET_ATTENTION_URL,
 	HOLE_USER_AGENT,
 } from "../constants/strings";
 import {FetchMode, HoleCommentCard, HoleTitleCard} from "../models/hole";
@@ -49,7 +50,7 @@ const connect = (url: string, query?: object, post?: object): Promise<any> =>
 		.then((r) => r.json())
 		.then((r) => {
 			if (r.code === 1) {
-				throw r.msg;
+				throw new Error(r.msg);
 			}
 			return r;
 		});
@@ -134,4 +135,15 @@ export const postHoleComment = async (
 	if (result.code !== 0) {
 		throw new Error(result.message);
 	}
+};
+
+export const setHoleAttention = async (pid: number, attention: boolean) => {
+	await connect(
+		HOLE_SET_ATTENTION_URL,
+		{},
+		{
+			pid,
+			switch: attention,
+		},
+	);
 };

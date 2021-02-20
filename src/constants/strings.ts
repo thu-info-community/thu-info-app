@@ -37,3 +37,4 @@ export const HOLE_GET_COMMENTS_URL =
 export const HOLE_NEW_POST_URL = "https://api.thuhole.com/send/post";
 export const HOLE_NEW_COMMENT_URL = "https://api.thuhole.com/send/comment";
 export const HOLE_SEARCH_URL = "https://api.thuhole.com/contents/search";
+export const HOLE_SET_ATTENTION_URL = "https://api.thuhole.com/edit/attention";
