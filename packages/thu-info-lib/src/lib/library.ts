@@ -217,7 +217,7 @@ export const bookLibrarySeat = async (
     retryWrapperWithMocks(
         helper,
         undefined,
-        JSON.parse(
+        async () => JSON.parse(
             await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
                 uFetch(
                     LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
