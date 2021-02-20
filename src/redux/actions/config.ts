@@ -6,6 +6,7 @@ import {
 	SET_DO_NOT_REMIND,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
+	SET_LIB_INTRODUCED,
 	SET_NEW_GPA,
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
@@ -31,7 +32,8 @@ export type ConfigAction =
 	| {type: typeof REMOVE_REPORT_HIDDEN; payload: string}
 	| {type: typeof SET_SCHEDULE_HEIGHT; payload: number}
 	| {type: typeof SET_REMAINDER_SHIFT; payload: number}
-	| {type: typeof SET_LAST_BROADCAST_ID; payload: number};
+	| {type: typeof SET_LAST_BROADCAST_ID; payload: number}
+	| {type: typeof SET_LIB_INTRODUCED; payload: undefined};
 
 export const refreshCalendarConfig = async () => {
 	const payload = (

@@ -9,6 +9,7 @@ import {
 	SET_DO_NOT_REMIND,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
+	SET_LIB_INTRODUCED,
 	SET_NEW_GPA,
 	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
@@ -72,6 +73,11 @@ export const config = (
 			return {
 				...state,
 				lastBroadcast: action.payload,
+			};
+		case SET_LIB_INTRODUCED:
+			return {
+				...state,
+				libIntroduced: true,
 			};
 		default:
 			return state;

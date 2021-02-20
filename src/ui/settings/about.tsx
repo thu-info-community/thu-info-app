@@ -1,5 +1,5 @@
 import {Linking, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import React from "react";
+import React, {useEffect} from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
@@ -9,6 +9,8 @@ import {
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
 import {useColorScheme} from "react-native-appearance";
+import {store} from "../../redux/store";
+import {SET_LIB_INTRODUCED} from "../../redux/constants";
 
 const makeLinking = (url: string) =>
 	Linking.openURL(url).then(() =>
@@ -18,6 +20,11 @@ const makeLinking = (url: string) =>
 export const AboutScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
+
+	useEffect(() => {
+		store.dispatch({type: SET_LIB_INTRODUCED});
+	});
+
 	return (
 		<View style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>
 			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
