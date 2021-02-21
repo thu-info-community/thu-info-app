@@ -265,6 +265,7 @@ export const LoginScreen = connect(
 						),
 					)
 					.then(() => {
+						dispatch({type: LOGIN_SUCCESS, payload: undefined});
 						leanCloudInit();
 					})
 					.catch((reason: LoginStatus) => {

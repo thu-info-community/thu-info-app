@@ -38,7 +38,8 @@ export const ClassroomDetailScreen = ({
 
 	const refresh = () => {
 		setRefreshing(true);
-		const six = ["六教A区", "六教B区", "六教C区"].includes(name);
+		const six =
+			!helper.mocked() && ["六教A区", "六教B区", "六教C区"].includes(name);
 		helper
 			.getClassroomState(six ? "六教" : name, data[0])
 			.then((res) => (six ? res.filter((it) => it[0][1] === name[2]) : res))
