@@ -56,11 +56,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				paddingRight: 0,
 			}}
 			onPress={props.onPress}>
-			<View
-				style={{
-					height: props.location.length ? "50%" : "100%",
-					justifyContent: props.location.length ? "flex-end" : "center",
-				}}>
+			<View>
 				<Text
 					style={{
 						textAlign: "left",
@@ -71,13 +67,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 					}}>
 					{props.name}
 				</Text>
-			</View>
-			{props.location.length ? (
-				<View
-					style={{
-						height: "50%",
-						justifyContent: "flex-start",
-					}}>
+				{props.location.length ? (
 					<Text
 						style={{
 							textAlign: "left",
@@ -87,8 +77,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 						}}>
 						{"@" + props.location}
 					</Text>
-				</View>
-			) : null}
+				) : null}
+			</View>
 		</TouchableOpacity>
 	);
 };

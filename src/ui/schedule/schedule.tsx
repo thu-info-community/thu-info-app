@@ -122,8 +122,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 					}}
 					key={`0-${ind + 1}`}>
 					<Text style={{textAlign: "center", color: "gray"}}>
-						{`${new Calendar(week, ind).date.format("MM.DD")}
-${getStr("dayOfWeek")[ind]}`}
+						{`${new Calendar(week, ind).date.format("MM.DD")}\n${
+							getStr("dayOfWeek")[ind]
+						}`}
 					</Text>
 				</View>,
 			);
