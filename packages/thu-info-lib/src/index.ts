@@ -22,7 +22,7 @@ import {
     getLibrarySectionList,
 } from "./lib/library";
 import {getNewsDetail, getNewsList} from "./lib/news";
-import {getPrimary, getSchedule, getSecondary, getSecondaryVerbose} from "./lib/schedule";
+import {getSchedule, getSecondaryVerbose} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
@@ -139,10 +139,6 @@ export class InfoHelper {
     ): Promise<[string, string, string]> => getNewsDetail(this, url);
 
     public getSchedule = async () => getSchedule(this);
-
-    public getPrimary = async () => getPrimary(this);
-
-    public getSecondary = async () => getSecondary(this);
 
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
 }

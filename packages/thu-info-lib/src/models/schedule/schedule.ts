@@ -69,12 +69,6 @@ export interface Schedule {
 	type: ScheduleType;
 }
 
-export const activeWeek = (week: number, schedule: Schedule) => {
-    let res = false;
-    schedule.activeTime.forEach((val) => (res = res || week === val.week));
-    return res;
-};
-
 export const mergeTimeBlocks = (schedule: Schedule) => {
     schedule.activeTime.sort(
         (a, b) =>
@@ -100,44 +94,6 @@ export const mergeTimeBlocks = (schedule: Schedule) => {
     }
 };
 
-export const addActiveTimeBlocks = (
-    week: number,
-    dayOfWeek: number,
-    begin: number,
-    end: number,
-    schedule: Schedule,
-) => {
-    schedule.activeTime.push({
-        week: week,
-        dayOfWeek: dayOfWeek,
-        begin: begin,
-        end: end,
-    });
-};
-
-export const getOverlappedBlock = (
-    tester: Schedule,
-    base: Schedule[],
-): [TimeBlock, string, boolean][] => {
-    const res: [TimeBlock, string, boolean][] = [];
-    const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
-        _a.week === _b.week &&
-		_a.dayOfWeek === _b.dayOfWeek &&
-		((_a.begin > _b.begin && _a.begin <= _b.end) ||
-			(_a.begin < _b.begin && _b.begin <= _a.end) ||
-			_a.begin === _b.begin);
-    tester.activeTime.forEach((test) => {
-        base.forEach((val) =>
-            val.activeTime.forEach((block) => {
-                if (isBlockOverlap(block, test)) {
-                    res.push([block, val.name, val.type === ScheduleType.CUSTOM]);
-                }
-            }),
-        );
-    });
-    return res;
-};
-
 export const parseJSON = (json: any[]): Schedule[] => {
     const scheduleList: Schedule[] = [];
     json.forEach((o) => {
@@ -160,13 +116,12 @@ export const parseJSON = (json: any[]): Schedule[] => {
                     });
                     lesson = scheduleList[scheduleList.length - 1];
                 }
-                addActiveTimeBlocks(
-                    date.weekNumber,
-                    date.dayOfWeek,
-                    beginMap[o.kssj],
-                    endMap[o.jssj],
-                    lesson,
-                );
+                lesson.activeTime.push({
+                    week: date.weekNumber,
+                    dayOfWeek: date.dayOfWeek,
+                    begin: beginMap[o.kssj],
+                    end: endMap[o.jssj],
+                });
                 break;
             }
             case "考试": {
@@ -178,13 +133,12 @@ export const parseJSON = (json: any[]): Schedule[] => {
                     delOrHideDetail: [],
                     type: ScheduleType.EXAM,
                 });
-                addActiveTimeBlocks(
-                    date.weekNumber,
-                    date.dayOfWeek,
-                    examBeginMap[o.kssj],
-                    examEndMap[o.jssj],
-                    scheduleList[scheduleList.length - 1],
-                );
+                scheduleList[scheduleList.length - 1].activeTime.push({
+                    week: date.weekNumber,
+                    dayOfWeek: date.dayOfWeek,
+                    begin: examBeginMap[o.kssj],
+                    end: examEndMap[o.jssj],
+                });
                 break;
             }
             }
@@ -269,7 +223,12 @@ export const parseScript = (
                 });
                 lesson = result[result.length - 1];
             }
-            addActiveTimeBlocks(week, dayOfWeek, begin, end, lesson);
+            lesson.activeTime.push({
+                week: week,
+                dayOfWeek: dayOfWeek,
+                begin: begin,
+                end: end,
+            });
         };
 
         if (detail.indexOf("单周") !== -1) {

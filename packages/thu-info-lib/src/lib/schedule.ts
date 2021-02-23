@@ -25,7 +25,7 @@ import {
 
 const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `Calendar.weekCount`.
 
-export const getPrimary = (helper: InfoHelper) =>
+const getPrimary = (helper: InfoHelper) =>
     retryWrapperWithMocks(
         helper,
         792,
@@ -57,7 +57,7 @@ export const getPrimary = (helper: InfoHelper) =>
         MOCK_PRIMARY_SCHEDULE,
     );
 
-export const getSecondary = (helper: InfoHelper) =>
+const getSecondary = (helper: InfoHelper) =>
     retryWrapperWithMocks(
         helper,
         792,
