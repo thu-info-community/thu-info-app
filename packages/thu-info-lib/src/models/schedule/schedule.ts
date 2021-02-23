@@ -100,6 +100,44 @@ export const mergeTimeBlocks = (schedule: Schedule) => {
     }
 };
 
+export const addActiveTimeBlocks = (
+    week: number,
+    dayOfWeek: number,
+    begin: number,
+    end: number,
+    schedule: Schedule,
+) => {
+    schedule.activeTime.push({
+        week: week,
+        dayOfWeek: dayOfWeek,
+        begin: begin,
+        end: end,
+    });
+};
+
+export const getOverlappedBlock = (
+    tester: Schedule,
+    base: Schedule[],
+): [TimeBlock, string, boolean][] => {
+    const res: [TimeBlock, string, boolean][] = [];
+    const isBlockOverlap = (_a: TimeBlock, _b: TimeBlock) =>
+        _a.week === _b.week &&
+		_a.dayOfWeek === _b.dayOfWeek &&
+		((_a.begin > _b.begin && _a.begin <= _b.end) ||
+			(_a.begin < _b.begin && _b.begin <= _a.end) ||
+			_a.begin === _b.begin);
+    tester.activeTime.forEach((test) => {
+        base.forEach((val) =>
+            val.activeTime.forEach((block) => {
+                if (isBlockOverlap(block, test)) {
+                    res.push([block, val.name, val.type === ScheduleType.CUSTOM]);
+                }
+            }),
+        );
+    });
+    return res;
+};
+
 export const parseJSON = (json: any[]): Schedule[] => {
     const scheduleList: Schedule[] = [];
     json.forEach((o) => {
