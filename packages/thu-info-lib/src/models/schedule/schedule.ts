@@ -69,6 +69,12 @@ export interface Schedule {
 	type: ScheduleType;
 }
 
+export const activeWeek = (week: number, schedule: Schedule) => {
+    let res = false;
+    schedule.activeTime.forEach((val) => (res = res || week === val.week));
+    return res;
+};
+
 export const mergeTimeBlocks = (schedule: Schedule) => {
     schedule.activeTime.sort(
         (a, b) =>
