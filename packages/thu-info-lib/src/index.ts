@@ -26,7 +26,7 @@ import {getSchedule, getSecondaryVerbose} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
-import {NewsSlice, sourceTag} from "./models/news/news";
+import {NewsSlice, SourceTag} from "./models/news/news";
 
 export class InfoHelper {
     public userId = "";
@@ -131,7 +131,7 @@ export class InfoHelper {
 
     public getNewsList = async (
         url: string,
-        channel: sourceTag,
+        channel: SourceTag,
     ): Promise<NewsSlice[]> => getNewsList(this, url, channel);
 
     public getNewsDetail = async (

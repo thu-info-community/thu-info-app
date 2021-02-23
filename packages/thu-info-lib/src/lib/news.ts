@@ -1,7 +1,7 @@
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
 import {newsHtml} from "../mocks/source/newsHtml";
-import {NewsSlice, sourceTag} from "../models/news/news";
+import {NewsSlice, SourceTag} from "../models/news/news";
 import {InfoHelper} from "../index";
 import {getCheerioText} from "../utils/cheerio";
 import {retryWrapperWithMocks} from "./core";
@@ -10,7 +10,7 @@ import {MOCK_NEWS_LIST} from "../mocks/news";
 export const getNewsList = (
     helper: InfoHelper,
     url: string,
-    channel: sourceTag,
+    channel: SourceTag,
 ): Promise<NewsSlice[]> =>
     retryWrapperWithMocks(
         helper,
