@@ -31,14 +31,14 @@ import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import themes from "../../assets/themes/themes";
-import {newsSlice, sourceTag} from "thu-info-lib/dist/models/news/news";
+import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native-appearance";
 import themedStyles from "../../utils/themedStyles";
 
 dayjs.extend(customParseFormat);
 
 class newsSourceList {
-	private newsLoadList: Array<newsSlice[]>;
+	private newsLoadList: Array<NewsSlice[]>;
 	private counterList: number[];
 
 	private sourceList: string[] = [
@@ -48,14 +48,14 @@ class newsSourceList {
 		HB_MAIN_PREFIX,
 	];
 
-	private nameList: sourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
+	private nameList: SourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
-	private static dateForComp(x: newsSlice): dayjs.Dayjs {
+	private static dateForComp(x: NewsSlice): dayjs.Dayjs {
 		const date = dayjs(x.date, "YYYY.MM.DD");
 		return x.channel === "JWGG" ? date.add(3, "day") : date;
 	}
 
-	private async getLatestNews(source: sourceTag): Promise<newsSlice> {
+	private async getLatestNews(source: SourceTag): Promise<NewsSlice> {
 		for (let i = 0; i < 4; ++i) {
 			if (this.newsLoadList[i].length === 0) {
 				await helper
@@ -72,7 +72,7 @@ class newsSourceList {
 
 		let index: number =
 			source === undefined ? 0 : this.nameList.indexOf(source);
-		let result: newsSlice = this.newsLoadList[index][0];
+		let result: NewsSlice = this.newsLoadList[index][0];
 		if (source === undefined) {
 			this.newsLoadList.forEach((val, ind) => {
 				if (
@@ -107,8 +107,8 @@ class newsSourceList {
 
 	public async getLatestNewsList(
 		listSize: number,
-		source: sourceTag,
-	): Promise<newsSlice[]> {
+		source: SourceTag,
+	): Promise<NewsSlice[]> {
 		let newsList = [];
 		for (let i = 0; i < listSize; ++i) {
 			try {
@@ -129,7 +129,7 @@ interface NewsUIProps {
 }
 
 export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
-	const [newsList, setNewsList] = useState<newsSlice[]>([]);
+	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [newsNumberOnOnePage, setNewsNumber] = useState("20");
@@ -139,7 +139,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const theme = themes[themeName];
 	const style = styles(themeName);
 
-	const renderIcon = (channel: sourceTag) => {
+	const renderIcon = (channel: SourceTag) => {
 		if (channel === "JWGG") {
 			return <FontAwesome name="file-text-o" size={40} color="green" />;
 		} else if (channel === "BGTZ") {
