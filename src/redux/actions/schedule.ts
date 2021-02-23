@@ -6,6 +6,7 @@ import {
 	SCHEDULE_ADD_CUSTOM,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 	SCHEDULE_DEL_OR_HIDE,
+	SCHEDULE_UPDATE_LOCATION,
 } from "../constants";
 import {Dispatch} from "redux";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
@@ -24,7 +25,8 @@ export type ScheduleAction =
 	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]}
 	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Schedule}
 	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [string, TimeBlock, Choice]}
-	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: [string, TimeBlock]};
+	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: [string, TimeBlock]}
+	| {type: typeof SCHEDULE_UPDATE_LOCATION; payload: [string, string]};
 
 export const scheduleThunk = () => (dispatch: Dispatch<ScheduleAction>) => {
 	dispatch(scheduleAction.request());

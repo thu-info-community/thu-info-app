@@ -244,6 +244,7 @@ export default {
 	alias: "简称：",
 	illegalAlias: "简称错误",
 	aliasCannotBeNull: "不能将简称设置为空。",
+	aliasCannotBeSame: "简称不能和原名一致。",
 	scheduleConflict: "计划冲突",
 	customIntro: "您新建的计划与下列计划相冲突：\n\n",
 	customText:
@@ -256,4 +257,11 @@ export default {
 	allTime: "所有时段该计划",
 	repeatly: "每周同时段该计划",
 	once: "该时段计划",
+	delLocation: "清除地点",
+	illegalLocation: "地点错误",
+	locationCannotBeNull: "不能将地点设置为空。",
+	modifyTime: "修改时间",
+	confirmDeletion: "确认删除",
+	confirmDeletionText:
+		"是否确认删除地点？该操作不能撤销。点按“确认”来删除地点。",
 };

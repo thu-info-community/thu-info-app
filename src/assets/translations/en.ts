@@ -260,6 +260,7 @@ export default {
 	alias: "the alias:",
 	illegalAlias: "Illegal Alias",
 	aliasCannotBeNull: "Can not set the alias null string.",
+	aliasCannotBeSame: "Alias can not be the same with original name.",
 	scheduleConflict: "Schedules Conflict",
 	customIntro:
 		"Your new custom schedule conflicts with following schedules:\n\n",
@@ -274,4 +275,11 @@ export default {
 	allTime: "the schedule(All time)",
 	repeatly: "the schedule(Weekly)",
 	once: "the schedule(Once)",
+	delLocation: "Delete Location",
+	illegalLocation: "Illegal Location",
+	locationCannotBeNull: "Can not set the location null string.",
+	modifyTime: "Modify Time",
+	confirmDeletion: "Confirm deletion",
+	confirmDeletionText:
+		"Are you sure to delete the location? This operation cannot be undone. Press 'OK' to delete the location.",
 };

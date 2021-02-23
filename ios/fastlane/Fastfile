@@ -50,4 +50,8 @@ platform :ios do
     )
     upload_to_testflight
   end
+
+  lane :release do
+    build_app(scheme: "thu_info")
+  end
 end

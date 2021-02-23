@@ -11,7 +11,6 @@ import {ScheduleDetailScreen, ScheduleDetailProps} from "./scheduleDetail";
 
 type ScheduleStackParamList = {
 	Schedule: undefined;
-	ScheduleShorten: undefined;
 	ScheduleAdd: undefined;
 	ScheduleHidden: undefined;
 	ScheduleDetail: ScheduleDetailProps;

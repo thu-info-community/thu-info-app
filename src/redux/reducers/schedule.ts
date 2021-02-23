@@ -9,6 +9,7 @@ import {
 	SCHEDULE_DEL_OR_HIDE,
 	SCHEDULE_UPDATE_ALIAS,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
+	SCHEDULE_UPDATE_LOCATION,
 } from "../constants";
 import {
 	TimeBlock,
@@ -49,7 +50,7 @@ export const schedule = (
 				...state,
 				refreshing: true,
 			};
-		case SCHEDULE_SUCCESS:
+		case SCHEDULE_SUCCESS: {
 			let customList: Schedule[] = [];
 			let newScheduleList: Schedule[] = [];
 			state.baseSchedule.forEach((val) => {
@@ -84,6 +85,7 @@ export const schedule = (
 				cache: Calendar.semesterId,
 				refreshing: false,
 			};
+		}
 		case SCHEDULE_FAILURE:
 			return {
 				...state,
@@ -95,6 +97,23 @@ export const schedule = (
 			return {
 				...state,
 				shortenMap,
+			};
+		}
+		case SCHEDULE_UPDATE_LOCATION: {
+			let newScheduleList: Schedule[] = [];
+			state.baseSchedule.forEach((val) => {
+				if (val.name === action.payload[0]) {
+					newScheduleList.push({
+						...val,
+						location: action.payload[1],
+					});
+				} else {
+					newScheduleList.push(val);
+				}
+			});
+			return {
+				...state,
+				baseSchedule: newScheduleList,
 			};
 		}
 		case SCHEDULE_ADD_CUSTOM: {

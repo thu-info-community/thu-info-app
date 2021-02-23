@@ -9,7 +9,11 @@ import {
 import React, {useState} from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Choice} from "src/redux/reducers/schedule";
-import {SCHEDULE_DEL_OR_HIDE, SCHEDULE_UPDATE_ALIAS} from "src/redux/constants";
+import {
+	SCHEDULE_DEL_OR_HIDE,
+	SCHEDULE_UPDATE_ALIAS,
+	SCHEDULE_UPDATE_LOCATION,
+} from "src/redux/constants";
 import {store} from "src/redux/store";
 import {ScheduleType} from "thu-info-lib/src/models/schedule/schedule";
 import {TextInput} from "react-native-gesture-handler";
@@ -74,8 +78,12 @@ export interface ScheduleDetailProps {
 export const ScheduleDetailScreen = ({route}: any) => {
 	const props = route.params;
 	const [delPressed, setDelPressed] = useState<boolean>(false);
-	const [inputText, setInputText] = useState<string>("");
+
+	const [aliasInputText, setAliasInputText] = useState<string>("");
+	const [locationInputText, setLocationInputText] = useState<string>("");
+
 	const [newAlias, setAlias] = useState<string>(props.alias);
+	const [newLocation, setLocation] = useState<string>(props.location);
 
 	const lineLength = Dimensions.get("window").width * 0.9;
 
@@ -197,9 +205,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 				<Text
 					style={{
 						marginHorizontal: 5,
-						color: props.location === "" ? "gray" : colors.text,
+						color: newLocation === "" ? "gray" : colors.text,
 					}}>
-					{props.location === "" ? getStr("locationUnset") : props.location}
+					{newLocation === "" ? getStr("locationUnset") : newLocation}
 				</Text>
 			</View>
 			<View
@@ -308,27 +316,27 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						marginHorizontal: 10,
 						padding: 6,
 					}}
-					value={inputText}
-					onChangeText={setInputText}
+					value={aliasInputText}
+					onChangeText={setAliasInputText}
 					keyboardType="default"
 				/>
 				<Button
 					title={getStr("confirm")}
 					onPress={() => {
-						if (inputText.length === 0) {
+						if (aliasInputText.length === 0) {
 							Alert.alert(getStr("illegalAlias"), getStr("aliasCannotBeNull"));
 							return;
 						}
 						const res: string =
 							(props.type === ScheduleType.CUSTOM
 								? props.name.substr(0, 6)
-								: "") + inputText;
+								: "") + aliasInputText;
 						store.dispatch({
 							type: SCHEDULE_UPDATE_ALIAS,
 							payload: [props.name, res],
 						});
 						setAlias(res);
-						setInputText("");
+						setAliasInputText("");
 					}}
 				/>
 				{nullAlias(newAlias) ? null : (
@@ -340,10 +348,92 @@ export const ScheduleDetailScreen = ({route}: any) => {
 								payload: [props.name, undefined],
 							});
 							setAlias("");
-							setInputText("");
+							setAliasInputText("");
 						}}
 					/>
 				)}
+			</View>
+			<Text
+				style={{
+					marginVertical: 10,
+					alignSelf: "flex-start",
+					fontSize: 18,
+					color: colors.text,
+				}}>
+				{(newLocation.length ? getStr("delOrModify") : getStr("set")) +
+					getStr("location") +
+					(getStr("mark") === "CH" ? "：" : ":")}
+			</Text>
+			<View
+				style={{
+					marginVertical: 10,
+					alignSelf: "stretch",
+					justifyContent: "center",
+					flexDirection: "row",
+				}}>
+				<TextInput
+					style={{
+						fontSize: 15,
+						flex: 5,
+						backgroundColor: colors.background,
+						color: colors.text,
+						textAlign: "left",
+						textAlignVertical: "center",
+						borderColor: "lightgrey",
+						borderWidth: 1,
+						borderRadius: 5,
+						marginHorizontal: 10,
+						padding: 6,
+					}}
+					value={locationInputText}
+					onChangeText={setLocationInputText}
+					keyboardType="default"
+				/>
+				<Button
+					title={getStr("confirm")}
+					onPress={() => {
+						if (locationInputText.length === 0) {
+							Alert.alert(
+								getStr("illegalLocation"),
+								getStr("locationCannotBeNull"),
+							);
+							return;
+						}
+						store.dispatch({
+							type: SCHEDULE_UPDATE_LOCATION,
+							payload: [props.name, locationInputText],
+						});
+						setLocation(locationInputText);
+						setLocationInputText("");
+					}}
+				/>
+				{newLocation.length ? (
+					<Button
+						title={getStr("delLocation")}
+						onPress={() => {
+							Alert.alert(
+								getStr("confirmDeletion"),
+								getStr("confirmDeletionText"),
+								[
+									{
+										text: getStr("confirm"),
+										onPress: () => {
+											store.dispatch({
+												type: SCHEDULE_UPDATE_LOCATION,
+												payload: [props.name, ""],
+											});
+											setLocation("");
+											setLocationInputText("");
+										},
+									},
+									{
+										text: getStr("cancel"),
+									},
+								],
+							);
+						}}
+					/>
+				) : null}
 			</View>
 			{horizontalLine()}
 			{delButton(Choice.ONCE)}
