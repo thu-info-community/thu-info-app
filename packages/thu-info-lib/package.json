@@ -61,7 +61,7 @@
         "eslint": "7.20.0",
         "esm": "3.2.25",
         "jest": "26.6.3",
-        "node-polyfill-webpack-plugin": "1.0.2",
+        "node-polyfill-webpack-plugin": "1.0.3",
         "semver": "7.3.4",
         "ts-jest": "26.5.2",
         "ts-loader": "8.0.17",

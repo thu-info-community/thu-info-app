@@ -4244,10 +4244,10 @@ node-notifier@^8.0.0:
     uuid "^8.3.0"
     which "^2.0.2"
 
-node-polyfill-webpack-plugin@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.0.2.tgz#97e87d555909028b5699e29f82385b78dfd69233"
-  integrity sha512-x4dNQ28D/kwvDbp52y6WBOuXs2QhGkIkv8RT2xhBj5JO21iUrNT4aSJyw41Jio3Ima/S0UKCTfHdS6mUOxjYmw==
+node-polyfill-webpack-plugin@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.0.3.tgz#eba2f0a7c17b4615bef7373f8218bae2599caf4a"
+  integrity sha512-80F4ThcBrcv8RoG7o/3NhIY0mvzkUITo6GZ0bfr8kRhFJ94/5Lf6O43Ctt5FacIG7pi/GANtr/Ozn86y2qTbQw==
   dependencies:
     assert "^2.0.0"
     browserify-zlib "^0.2.0"
@@ -4259,6 +4259,7 @@ node-polyfill-webpack-plugin@1.0.2:
     events "^3.2.0"
     https-browserify "^1.0.0"
     os-browserify "^0.3.0"
+    path-browserify "^1.0.1"
     process "^0.11.10"
     punycode "^2.1.1"
     querystring-es3 "^0.2.1"
@@ -4540,6 +4541,11 @@ pascalcase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
+
+path-browserify@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
+  integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-exists@^3.0.0:
   version "3.0.0"
