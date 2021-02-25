@@ -63,6 +63,9 @@ const OptionButton = ({
 
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumberCoerced);
+	const today = new Calendar().dayOfWeek;
+	const nowWeek = new Calendar().weekNumberCoerced;
+
 	const viewShot = useRef<ViewShot>(null);
 
 	const themeName = useColorScheme();
@@ -169,7 +172,12 @@ const ScheduleUI = (props: ScheduleProps) => {
 							flex: 2,
 							borderLeftColor: "lightgray",
 							borderLeftWidth: i ? 1 : 2,
-							backgroundColor: theme.colors.background,
+							backgroundColor:
+								week === nowWeek && i + 1 === today
+									? theme.colors.background === "#000000"
+										? "#3D3D3D"
+										: "#F4F4F4"
+									: theme.colors.background,
 						}}
 						key={`${ind}-${i + 1}`}
 					/>,
@@ -244,6 +252,28 @@ const ScheduleUI = (props: ScheduleProps) => {
 		return components;
 	};
 
+	const todayMark = () =>
+		week === nowWeek ? (
+			<View
+				style={{
+					position: "absolute",
+					left: ((today * 2 - 1) * unitWidth) / 2 + today + 2,
+					top: 2,
+					width: unitWidth - 2,
+					height: unitHeight / 2 - 4,
+					backgroundColor: "gray",
+					borderRadius: 5,
+					alignContent: "center",
+					justifyContent: "center",
+				}}>
+				<Text style={{color: "white", textAlign: "center"}}>
+					{`${new Calendar(week, today).date.format("MM.DD")}\n${
+						getStr("dayOfWeek")[today]
+					}`}
+				</Text>
+			</View>
+		) : null;
+
 	return (
 		<>
 			<View
@@ -299,6 +329,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					{horizontalLine()}
 					{basicGrid()}
 					{allSchedule()}
+					{todayMark()}
 				</ViewShot>
 			</ScrollView>
 			<View style={{flexDirection: "row"}}>
