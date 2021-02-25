@@ -10,7 +10,12 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {DO_LOGOUT} from "../../redux/constants";
+import {
+	DO_LOGOUT,
+	HOLE_SET_TOKEN,
+	SCHEDULE_CLEAR,
+	SET_DORM_PASSWORD,
+} from "../../redux/constants";
 import {connect} from "react-redux";
 
 export const SettingsUI = ({
@@ -118,6 +123,9 @@ export const SettingsUI = ({
 								.logout()
 								.then(() => console.log("Successfully logged out."));
 							store.dispatch({type: DO_LOGOUT, payload: undefined});
+							store.dispatch({type: HOLE_SET_TOKEN, payload: ""});
+							store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
+							store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
 						},
 					},
 				]);

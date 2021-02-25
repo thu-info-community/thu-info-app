@@ -10,6 +10,7 @@ import {
 	SCHEDULE_UPDATE_ALIAS,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 	SCHEDULE_UPDATE_LOCATION,
+	SCHEDULE_CLEAR,
 } from "../constants";
 import {
 	TimeBlock,
@@ -250,6 +251,8 @@ export const schedule = (
 				baseSchedule: newBaseSchedule.concat([selectedSchedule]),
 			};
 		}
+		case SCHEDULE_CLEAR:
+			return defaultSchedule;
 		default:
 			return state;
 	}
