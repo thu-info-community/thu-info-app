@@ -63,10 +63,6 @@ export const AboutScreen = () => {
 				{getStr("libText")}
 				<Text style={{color: "red"}}> [NEW]</Text>
 			</Text>
-			<Text
-				style={[styles.textStyle, {color: theme.colors.text, fontSize: 16}]}>
-				{getStr("libHint")}
-			</Text>
 			<TouchableOpacity onPress={() => makeLinking(LIB_URL)}>
 				<Text
 					style={[

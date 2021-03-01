@@ -1,9 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
 import {helper, State, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
-import {Alert, ScrollView} from "react-native";
+import {
+	Alert,
+	Dimensions,
+	Image,
+	Modal,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import {checkUpdate} from "../../utils/checkUpdate";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -17,122 +26,171 @@ import {
 	SET_DORM_PASSWORD,
 } from "../../redux/constants";
 import {connect} from "react-redux";
+import {useColorScheme} from "react-native-appearance";
+import themes from "../../assets/themes/themes";
+import AV from "leancloud-storage";
 
 export const SettingsUI = ({
 	navigation,
 }: {
 	navigation: SettingsNav;
 	libIntroduced: boolean;
-}) => (
-	<ScrollView style={{padding: 10}}>
-		<SettingsItem
-			text={getStr("reportSettings")}
-			onPress={() => navigation.navigate("ReportSettings")}
-			icon={<Feather name="file-text" size={16} />}
-		/>
-		<SettingsItem
-			text={getStr("scheduleSettings")}
-			onPress={() => navigation.navigate("ScheduleSettings")}
-			icon={<Feather name="layout" size={16} />}
-		/>
-		<SettingsItem
-			text={getStr("remainderSettings")}
-			onPress={() => navigation.navigate("RemainderSettings")}
-			icon={<AntDesign name="creditcard" size={16} />}
-		/>
-		<SettingsSeparator />
-		{!helper.mocked() && (
-			<>
+}) => {
+	const [showPopup, setShowPopup] = useState(false);
+	const [url, setUrl] = useState("");
+
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+
+	return (
+		<>
+			<ScrollView style={{padding: 10}}>
 				<SettingsItem
-					text={getStr("holeSettings")}
-					onPress={() => navigation.navigate("HoleSettings")}
-					icon={<FontAwesome name="tree" size={16} />}
+					text={getStr("reportSettings")}
+					onPress={() => navigation.navigate("ReportSettings")}
+					icon={<Feather name="file-text" size={16} />}
 				/>
 				<SettingsItem
-					text={getStr("passwordManagement")}
-					onPress={() => navigation.navigate("PasswordManagement")}
-					icon={<FontAwesome name="lock" size={16} />}
+					text={getStr("scheduleSettings")}
+					onPress={() => navigation.navigate("ScheduleSettings")}
+					icon={<Feather name="layout" size={16} />}
+				/>
+				<SettingsItem
+					text={getStr("remainderSettings")}
+					onPress={() => navigation.navigate("RemainderSettings")}
+					icon={<AntDesign name="creditcard" size={16} />}
 				/>
 				<SettingsSeparator />
-			</>
-		)}
-		<SettingsItem
-			text={getStr("libBookRecord")}
-			onPress={() => navigation.navigate("LibBookRecord")}
-			icon={<Feather name="book-open" size={16} />}
-		/>
-		<SettingsSeparator />
-		<SettingsItem
-			text={getStr("experimental")}
-			onPress={() => navigation.navigate("Experimental")}
-			icon={<FontAwesome name="flask" size={16} />}
-		/>
-		<SettingsSeparator />
-		<SettingsItem
-			text={getStr("checkUpdate")}
-			onPress={() => checkUpdate(true)}
-			icon={<Feather name="download" size={16} />}
-		/>
-		<SettingsSeparator />
-		<SettingsItem
-			text={getStr("feedback")}
-			onPress={() => navigation.navigate("Feedback")}
-			icon={<Feather name="edit" size={16} />}
-		/>
-		<SettingsItem
-			text={getStr("acknowledgements")}
-			onPress={() => navigation.navigate("Acknowledgements")}
-			icon={<Feather name="tag" size={16} />}
-		/>
-		<SettingsItem
-			text={getStr("about")}
-			onPress={() => navigation.navigate("About")}
-			icon={<AntDesign name="copyright" size={16} />}
-		/>
-		<SettingsSeparator />
-		<SettingsItem
-			text={getStr("forceLogin")}
-			onPress={async () => {
-				try {
-					Snackbar.show({
-						text: getStr("processing"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
-					await helper.logout();
-					await helper.login({}, () => {}, false);
-					Snackbar.show({
-						text: getStr("success"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
-				} catch (e) {
-					NetworkRetry();
-				}
-			}}
-			icon={<Feather name="refresh-cw" size={16} />}
-		/>
-		<SettingsItem
-			text={getStr("logout")}
-			onPress={() => {
-				Alert.alert(getStr("logout"), getStr("confirmLogout"), [
-					{text: getStr("cancel")},
-					{
-						text: getStr("confirm"),
-						onPress: () => {
-							helper
-								.logout()
-								.then(() => console.log("Successfully logged out."));
-							store.dispatch({type: DO_LOGOUT, payload: undefined});
-							store.dispatch({type: HOLE_SET_TOKEN, payload: ""});
-							store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
-							store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
-						},
-					},
-				]);
-			}}
-			icon={<Feather name="user-x" size={16} />}
-		/>
-	</ScrollView>
-);
+				{!helper.mocked() && (
+					<>
+						<SettingsItem
+							text={getStr("holeSettings")}
+							onPress={() => navigation.navigate("HoleSettings")}
+							icon={<FontAwesome name="tree" size={16} />}
+						/>
+						<SettingsItem
+							text={getStr("passwordManagement")}
+							onPress={() => navigation.navigate("PasswordManagement")}
+							icon={<FontAwesome name="lock" size={16} />}
+						/>
+						<SettingsSeparator />
+					</>
+				)}
+				<SettingsItem
+					text={getStr("libBookRecord")}
+					onPress={() => navigation.navigate("LibBookRecord")}
+					icon={<Feather name="book-open" size={16} />}
+				/>
+				<SettingsSeparator />
+				<SettingsItem
+					text={getStr("experimental")}
+					onPress={() => navigation.navigate("Experimental")}
+					icon={<FontAwesome name="flask" size={16} />}
+				/>
+				<SettingsSeparator />
+				<SettingsItem
+					text={getStr("checkUpdate")}
+					onPress={() => checkUpdate(true)}
+					icon={<Feather name="download" size={16} />}
+				/>
+				<SettingsSeparator />
+				<SettingsItem
+					text={getStr("feedback")}
+					onPress={() => navigation.navigate("Feedback")}
+					icon={<Feather name="edit" size={16} />}
+				/>
+				<SettingsItem
+					text={getStr("acknowledgements")}
+					onPress={() => navigation.navigate("Acknowledgements")}
+					icon={<Feather name="tag" size={16} />}
+				/>
+				<SettingsItem
+					text={getStr("about")}
+					onPress={() => navigation.navigate("About")}
+					icon={<AntDesign name="copyright" size={16} />}
+				/>
+				{!helper.mocked() && (
+					<SettingsItem
+						text={getStr("wechatGroup")}
+						onPress={() => {
+							new AV.Query("_File")
+								.equalTo("name", "wechat.jpg")
+								.first()
+								.then((r) => setUrl(r?.get("url")))
+								.then(() => setShowPopup(true));
+						}}
+						icon={<FontAwesome name="wechat" size={16} />}
+					/>
+				)}
+				<SettingsSeparator />
+				<SettingsItem
+					text={getStr("forceLogin")}
+					onPress={async () => {
+						try {
+							Snackbar.show({
+								text: getStr("processing"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+							await helper.logout();
+							await helper.login({}, () => {}, false);
+							Snackbar.show({
+								text: getStr("success"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						} catch (e) {
+							NetworkRetry();
+						}
+					}}
+					icon={<Feather name="refresh-cw" size={16} />}
+				/>
+				<SettingsItem
+					text={getStr("logout")}
+					onPress={() => {
+						Alert.alert(getStr("logout"), getStr("confirmLogout"), [
+							{text: getStr("cancel")},
+							{
+								text: getStr("confirm"),
+								onPress: () => {
+									helper
+										.logout()
+										.then(() => console.log("Successfully logged out."));
+									store.dispatch({type: DO_LOGOUT, payload: undefined});
+									store.dispatch({type: HOLE_SET_TOKEN, payload: ""});
+									store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
+									store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
+								},
+							},
+						]);
+					}}
+					icon={<Feather name="user-x" size={16} />}
+				/>
+			</ScrollView>
+			<Modal
+				animationType="fade"
+				transparent={true}
+				visible={showPopup}
+				onRequestClose={() => setShowPopup(false)}>
+				<View style={{flex: 1, alignSelf: "center", justifyContent: "center"}}>
+					<View style={{backgroundColor: colors.background}}>
+						<Image
+							source={{uri: url}}
+							style={{
+								height: Dimensions.get("window").width * 0.7,
+								width: Dimensions.get("window").width * 0.7,
+							}}
+							resizeMode="contain"
+						/>
+						<TouchableOpacity
+							style={{padding: 8}}
+							onPress={() => setShowPopup(false)}>
+							<Text style={{color: "blue", textAlign: "center"}}>[CLOSE]</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</Modal>
+		</>
+	);
+};
 
 export const SettingsScreen = connect((state: State) => ({
 	libIntroduced: state.config.libIntroduced,
