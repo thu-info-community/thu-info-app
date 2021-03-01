@@ -13,7 +13,7 @@ import {State} from "../redux/store";
 
 const Tab = createBottomTabNavigator();
 
-const RootComponent = ({libIntroduced}: {libIntroduced: boolean}) => {
+const RootComponent = ({}: {libIntroduced: boolean}) => {
 	const theme = themes[useColorScheme()];
 
 	return (
@@ -67,10 +67,7 @@ const RootComponent = ({libIntroduced}: {libIntroduced: boolean}) => {
 			<Tab.Screen
 				name="Settings"
 				component={SettingStackScreen}
-				options={{
-					title: getStr("settings"),
-					tabBarBadge: libIntroduced ? undefined : "NEW",
-				}}
+				options={{title: getStr("settings")}}
 			/>
 		</Tab.Navigator>
 	);

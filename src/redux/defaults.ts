@@ -34,7 +34,7 @@ export const defaultConfigState: Config = {
 	scheduleHeight: 65,
 	remainderShift: 0,
 	lastBroadcast: 0,
-	libIntroduced: false,
+	libIntroduced: true,
 };
 
 export const defaultCredentials: Credentials = {

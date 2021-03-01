@@ -20,7 +20,6 @@ import {connect} from "react-redux";
 
 export const SettingsUI = ({
 	navigation,
-	libIntroduced,
 }: {
 	navigation: SettingsNav;
 	libIntroduced: boolean;
@@ -89,7 +88,6 @@ export const SettingsUI = ({
 			text={getStr("about")}
 			onPress={() => navigation.navigate("About")}
 			icon={<AntDesign name="copyright" size={16} />}
-			badge={libIntroduced ? undefined : "NEW"}
 		/>
 		<SettingsSeparator />
 		<SettingsItem
