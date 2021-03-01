@@ -94,20 +94,21 @@ export const SettingsUI = ({
 		<SettingsSeparator />
 		<SettingsItem
 			text={getStr("forceLogin")}
-			onPress={() => {
-				Snackbar.show({
-					text: getStr("processing"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-				helper
-					.login({}, () => {}, false)
-					.then(() =>
-						Snackbar.show({
-							text: getStr("success"),
-							duration: Snackbar.LENGTH_SHORT,
-						}),
-					)
-					.catch(NetworkRetry);
+			onPress={async () => {
+				try {
+					Snackbar.show({
+						text: getStr("processing"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+					await helper.logout();
+					await helper.login({}, () => {}, false);
+					Snackbar.show({
+						text: getStr("success"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+				} catch (e) {
+					NetworkRetry();
+				}
 			}}
 			icon={<Feather name="refresh-cw" size={16} />}
 		/>
