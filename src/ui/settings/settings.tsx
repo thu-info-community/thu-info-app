@@ -131,7 +131,9 @@ export const SettingsUI = ({
 								text: getStr("processing"),
 								duration: Snackbar.LENGTH_SHORT,
 							});
-							await helper.logout();
+							try {
+								await helper.logout();
+							} catch (e) {}
 							await helper.login({}, () => {}, false);
 							Snackbar.show({
 								text: getStr("success"),
