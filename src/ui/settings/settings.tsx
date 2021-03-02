@@ -116,7 +116,9 @@ export const SettingsUI = ({
 							new AV.Query("_File")
 								.equalTo("name", "wechat.jpg")
 								.first()
-								.then((r) => setUrl(r?.get("url")))
+								.then((r) =>
+									setUrl(r?.get("url")?.replace("http://", "https://")),
+								)
 								.then(() => setShowPopup(true));
 						}}
 						icon={<FontAwesome name="wechat" size={16} />}
