@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
-import {AppRegistry} from "react-native";
+import React from "react";
+import {AppRegistry, Platform, Text} from "react-native";
 import {name} from "./app.json";
 import {App} from "./src/App";
 import AV from "leancloud-storage/core";
@@ -20,5 +21,21 @@ AV.init({
 	appKey: "cxQfkadtrY7iQSl7HI4rlrGx",
 	serverURL: "https://xbf9ybv8.lc-cn-n1-shared.com",
 });
+
+// Fix MIUI12 font problem: https://segmentfault.com/a/1190000023622085
+
+const defaultFontFamily = {
+	...Platform.select({
+		android: {fontFamily: ""},
+	}),
+};
+
+const oldRender = Text.render;
+Text.render = function (...args) {
+	const origin = oldRender.call(this, ...args);
+	return React.cloneElement(origin, {
+		style: [defaultFontFamily, origin.props.style],
+	});
+};
 
 AppRegistry.registerComponent(name, () => App);
