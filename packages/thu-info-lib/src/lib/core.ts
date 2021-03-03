@@ -112,38 +112,43 @@ export const login = async (
     helper.userId = userId;
     helper.password = password;
     helper.dormPassword = dormPassword;
-    if (helper.mocked()) {
+    if (helper.mocked() || helper.loginLocked) {
         return;
     }
-    clearCookies();
-    const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
-        auth_type: "local",
-        username: userId,
-        sms_code: "",
-        password: password,
-    }).then(JSON.parse);
-    if (!loginResponse.success) {
-        switch (loginResponse.error) {
-        case "NEED_CONFIRM":
-            await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, {});
-            break;
-        default:
-            throw new Error(loginResponse.message);
+    try {
+        helper.loginLocked = true;
+        clearCookies();
+        const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
+            auth_type: "local",
+            username: userId,
+            sms_code: "",
+            password: password,
+        }).then(JSON.parse);
+        if (!loginResponse.success) {
+            switch (loginResponse.error) {
+            case "NEED_CONFIRM":
+                await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, {});
+                break;
+            default:
+                throw new Error(loginResponse.message);
+            }
         }
-    }
-    statusIndicator && statusIndicator();
-    await Promise.all([
-        loginInfo(helper, userId, password, statusIndicator),
-        loginAcademic(helper, userId, password, statusIndicator),
-    ]);
-    await batchGetTickets(
-        helper,
-        [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
-        statusIndicator,
-    );
-    if (global.FileReader) {
-        // Do not keep-alive for Node.js
-        keepAlive(helper);
+        statusIndicator && statusIndicator();
+        await Promise.all([
+            loginInfo(helper, userId, password, statusIndicator),
+            loginAcademic(helper, userId, password, statusIndicator),
+        ]);
+        await batchGetTickets(
+            helper,
+            [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
+            statusIndicator,
+        );
+    } finally {
+        helper.loginLocked = false;
+        if (global.FileReader) {
+            // Do not keep-alive for Node.js
+            keepAlive(helper);
+        }
     }
 };
 

@@ -46,6 +46,8 @@ export class InfoHelper {
 
     public keepAliveTimer: ReturnType<typeof setInterval> | undefined;
 
+    public loginLocked = false;
+
     public login = async (
         auth: {
             userId?: string;
