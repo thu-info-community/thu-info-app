@@ -125,16 +125,18 @@ export const postNewHole = async (
 export const postHoleComment = async (
 	pid: number,
 	text: string,
+	image?: string,
 ): Promise<void> => {
+	const post = {
+		pid,
+		text,
+		type: image ? "image" : "text",
+		user_token: store.getState().hole.token,
+	};
 	const result = await connect(
 		HOLE_NEW_COMMENT_URL,
 		{},
-		{
-			pid,
-			text,
-			type: "text",
-			user_token: store.getState().hole.token,
-		},
+		image ? {...post, data: image} : post,
 	);
 	if (result.code !== 0) {
 		throw new Error(result.message);

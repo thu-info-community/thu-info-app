@@ -29,6 +29,7 @@ import Snackbar from "react-native-snackbar";
 import {useHeaderHeight} from "@react-navigation/stack";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
+import {launchImageLibrary} from "react-native-image-picker";
 
 const dummyHoleTitleCard = {
 	pid: -1,
@@ -61,6 +62,7 @@ export const HoleDetailScreen = ({
 	const [myComment, setMyComment] = useState("");
 	const [keyboardShown, setKeyboardShown] = useState(false);
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const [base64, setBase64] = useState<string | undefined>();
 
 	const headerHeight = useHeaderHeight();
 	const screenHeight = Dimensions.get("window").height;
@@ -253,17 +255,43 @@ export const HoleDetailScreen = ({
 						justifyContent: "center",
 					}}
 					onPress={() => {
+						if (base64) {
+							setBase64(undefined);
+						} else {
+							launchImageLibrary(
+								{mediaType: "photo", includeBase64: true},
+								(response) => {
+									setBase64(response.base64);
+								},
+							);
+						}
+					}}>
+					<Text style={{textAlign: "center", padding: 10, color: colors.text}}>
+						{getStr(base64 ? "removeImage" : "addImage")}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						backgroundColor: "#0002",
+						flex: 0,
+						margin: 4,
+						borderRadius: 4,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					onPress={() => {
 						Snackbar.show({
 							text: getStr("processing"),
 							duration: Snackbar.LENGTH_SHORT,
 						});
-						postHoleComment(pid, myComment)
+						postHoleComment(pid, myComment, base64)
 							.then(() => getHoleDetail(pid))
 							.then(([title, commentList]) => {
 								setHoleTitle(title);
 								setComments(commentList);
+								setBase64(undefined);
+								setMyComment("");
 							})
-							.then(() => setMyComment(""))
 							.catch(NetworkRetry);
 					}}>
 					<Text style={{textAlign: "center", padding: 10, color: colors.text}}>
