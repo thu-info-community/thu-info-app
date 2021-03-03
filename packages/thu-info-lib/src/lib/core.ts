@@ -118,6 +118,7 @@ export const login = async (
     try {
         helper.loginLocked = true;
         clearCookies();
+        await helper.clearCookieHandler();
         const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
             auth_type: "local",
             username: userId,

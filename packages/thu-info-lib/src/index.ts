@@ -48,6 +48,8 @@ export class InfoHelper {
 
     public loginLocked = false;
 
+    public clearCookieHandler = async () => {};
+
     public login = async (
         auth: {
             userId?: string;
