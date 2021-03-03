@@ -87,6 +87,14 @@ export const HoleDetailScreen = ({
 		Snackbar.show({text: e.message, duration: Snackbar.LENGTH_SHORT});
 	};
 
+	const nothingWritten = (str: string) =>
+		str.trim().length === 0 ||
+		str
+			.trim()
+			.match(
+				/^Re (?:|洞主|(?:[A-Z][a-z]+ )?(?:[A-Z][a-z]+)|You Win(?: \d+)?):$/,
+			);
+
 	useEffect(() => {
 		getHoleDetail(pid)
 			.then(([title, commentList]) => {
@@ -140,6 +148,11 @@ export const HoleDetailScreen = ({
 				</Text>
 				<TouchableOpacity
 					style={MaterialTheme.card}
+					onPress={() => {
+						if (nothingWritten(myComment)) {
+							setMyComment("Re : ");
+						}
+					}}
 					onLongPress={() => {
 						if (permissions.includes("delete")) {
 							Alert.alert(
@@ -223,6 +236,11 @@ export const HoleDetailScreen = ({
 						<TouchableOpacity
 							style={MaterialTheme.card}
 							key={item.cid}
+							onPress={() => {
+								if (nothingWritten(myComment)) {
+									setMyComment(`Re ${item.name}: `);
+								}
+							}}
 							onLongPress={() => {
 								if (item.permissions.includes("delete")) {
 									Alert.alert(
