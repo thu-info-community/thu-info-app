@@ -26,7 +26,7 @@ try {
 
 it("should enter mocked account", async()=> {
     const helper = new InfoHelper();
-    await helper.login({userId:"8888", password:"8888"}, ()=>{}, false);
+    await helper.login({userId:"8888", password:"8888"}, ()=>{});
     await helper.logout();
     expect(helper.mocked()).toEqual(true);
 }, 20000);
@@ -34,7 +34,7 @@ it("should enter mocked account", async()=> {
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
     const counter = jest.fn();
-    await helper.login({userId, password, dormPassword}, counter, false);
+    await helper.login({userId, password, dormPassword}, counter);
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);

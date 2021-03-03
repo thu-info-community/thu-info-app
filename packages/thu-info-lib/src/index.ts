@@ -46,6 +46,8 @@ export class InfoHelper {
 
     public graduate = () => this.userId.length > 4 ? (this.userId[4] === "2" || this.userId[4] === "3") : false;
 
+    public keepAliveTimer: ReturnType<typeof setInterval> | undefined;
+
     public login = async (
         auth: {
             userId?: string;
@@ -53,9 +55,7 @@ export class InfoHelper {
             dormPassword?: string;
         },
         statusIndicator?: () => void,
-        doKeepAlive = true,
-        shouldOverrideEmailName = true,
-    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword, statusIndicator, doKeepAlive, shouldOverrideEmailName);
+    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword, statusIndicator);
 
     public logout = async (): Promise<void> => logout(this);
 

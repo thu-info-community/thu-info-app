@@ -9,7 +9,6 @@ import {InfoHelper} from "./dist";
             dormPassword: "",
         },
         undefined,
-        false,
     );
     console.log(`I bet your email address is: ${helper.emailName}@mails.tsinghua.edu.cn`);
 

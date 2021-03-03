@@ -32,7 +32,6 @@ const loginInfo = async (
     userId: string,
     password: string,
     indicator?: () => void,
-    shouldOverrideEmailName = true,
 ) => {
     const response = await uFetch(
         INFO_LOGIN_URL,
@@ -56,9 +55,7 @@ const loginInfo = async (
             undefined,
             2000,
         ).then(JSON.parse);
-        if (shouldOverrideEmailName) {
-            helper.emailName = config.userInfo.yhm;
-        }
+        helper.emailName = config.userInfo.yhm;
         helper.fullName = config.userInfo.userName;
     } catch {
         throw new Error("Failed to get meta data.");
@@ -111,8 +108,6 @@ export const login = async (
     password: string,
     dormPassword: string,
     statusIndicator?: () => void,
-    doKeepAlive = true,
-    shouldOverrideEmailName = true,
 ): Promise<void> => {
     helper.userId = userId;
     helper.password = password;
@@ -138,7 +133,7 @@ export const login = async (
     }
     statusIndicator && statusIndicator();
     await Promise.all([
-        loginInfo(helper, userId, password, statusIndicator, shouldOverrideEmailName),
+        loginInfo(helper, userId, password, statusIndicator),
         loginAcademic(helper, userId, password, statusIndicator),
     ]);
     await batchGetTickets(
@@ -146,7 +141,7 @@ export const login = async (
         [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
         statusIndicator,
     );
-    doKeepAlive && keepAlive(helper);
+    keepAlive(helper);
 };
 
 /**
@@ -272,13 +267,14 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
     );
 
 const keepAlive = (helper: InfoHelper) => {
-    setInterval(async () => {
+    helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
+    helper.keepAliveTimer = setInterval(async () => {
         console.log("Keep alive start.");
         const verification = await uFetch(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
         if (!verification.includes("个人信息")) {
             console.log("Lost connection with school website. Reconnecting...");
             const {userId, password, dormPassword} = helper;
-            await login(helper, userId, password, dormPassword, () => {}, false);
+            await login(helper, userId, password, dormPassword, () => {});
         } else {
             await batchGetTickets(helper, [792, 824, 2005, 5000] as ValidTickets[]);
         }
