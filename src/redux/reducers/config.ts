@@ -7,6 +7,7 @@ import {
 	SET_BX,
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
+	SET_EMAIL_NAME,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
 	SET_LIB_INTRODUCED,
@@ -78,6 +79,11 @@ export const config = (
 			return {
 				...state,
 				libIntroduced: true,
+			};
+		case SET_EMAIL_NAME:
+			return {
+				...state,
+				emailName: action.payload,
 			};
 		default:
 			return state;

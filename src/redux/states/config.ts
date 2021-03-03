@@ -18,4 +18,5 @@ export interface Config {
 	remainderShift: number;
 	lastBroadcast: number;
 	libIntroduced: boolean;
+	emailName: string;
 }

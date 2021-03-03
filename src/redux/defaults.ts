@@ -35,6 +35,7 @@ export const defaultConfigState: Config = {
 	remainderShift: 0,
 	lastBroadcast: 0,
 	libIntroduced: true,
+	emailName: "",
 };
 
 export const defaultCredentials: Credentials = {

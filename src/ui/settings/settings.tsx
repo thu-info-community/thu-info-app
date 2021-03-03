@@ -24,6 +24,7 @@ import {
 	HOLE_SET_TOKEN,
 	SCHEDULE_CLEAR,
 	SET_DORM_PASSWORD,
+	SET_EMAIL_NAME,
 } from "../../redux/constants";
 import {connect} from "react-redux";
 import {useColorScheme} from "react-native-appearance";
@@ -136,7 +137,7 @@ export const SettingsUI = ({
 							try {
 								await helper.logout();
 							} catch (e) {}
-							await helper.login({}, () => {}, false);
+							await helper.login({}, () => {});
 							Snackbar.show({
 								text: getStr("success"),
 								duration: Snackbar.LENGTH_SHORT,
@@ -162,6 +163,7 @@ export const SettingsUI = ({
 									store.dispatch({type: HOLE_SET_TOKEN, payload: ""});
 									store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
 									store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
+									store.dispatch({type: SET_EMAIL_NAME, payload: ""});
 								},
 							},
 						]);

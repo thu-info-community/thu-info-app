@@ -13,6 +13,7 @@ import {
 	LOGIN_FAILURE,
 	LOGIN_REQUEST,
 	LOGIN_SUCCESS,
+	SET_EMAIL_NAME,
 } from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
@@ -277,6 +278,7 @@ export const LoginScreen = connect(
 			},
 			loginSuccess: () => {
 				dispatch({type: LOGIN_SUCCESS, payload: undefined});
+				dispatch({type: SET_EMAIL_NAME, payload: helper.emailName});
 			},
 		};
 	},
