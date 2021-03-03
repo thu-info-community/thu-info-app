@@ -94,6 +94,8 @@ export default {
 	holePublish: "Publish new hole",
 	holePublishHint:
 		"Please follow thuhole community guidelines during communication.",
+	addImage: "Add Image",
+	removeImage: "Remove Image",
 	publish: "Publish",
 	holeImage: "Preview Image",
 	holeSaveImage: "Save image (might be buggy)",

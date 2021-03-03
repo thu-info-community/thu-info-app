@@ -90,6 +90,8 @@ export default {
 	holeDetail: "树洞详情",
 	holePublish: "发表树洞",
 	holePublishHint: "请遵守树洞规范，文明发言。",
+	addImage: "添加图片",
+	removeImage: "删除图片",
 	publish: "发表",
 	holeImage: "查看图片",
 	holeSaveImage: "保存图片（可能有bug）",

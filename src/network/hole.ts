@@ -103,15 +103,19 @@ export const getHoleList = async (
 	}
 };
 
-export const postNewHole = async (text: string): Promise<void> => {
+export const postNewHole = async (
+	text: string,
+	image?: string,
+): Promise<void> => {
+	const post = {
+		text,
+		type: image ? "image" : "text",
+		user_token: store.getState().hole.token,
+	};
 	const result = await connect(
 		HOLE_NEW_POST_URL,
 		{},
-		{
-			text,
-			type: "text",
-			user_token: store.getState().hole.token,
-		},
+		image ? {...post, data: image} : post,
 	);
 	if (result.code !== 0) {
 		throw new Error(result.message);

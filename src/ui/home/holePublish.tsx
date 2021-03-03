@@ -14,11 +14,14 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
+import {launchImageLibrary} from "react-native-image-picker";
 
 export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes[themeName];
 	const [text, setText] = useState("");
+	const [base64, setBase64] = useState<string | undefined>();
+
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
@@ -54,11 +57,35 @@ export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 							borderRadius: 4,
 						}}
 						onPress={() => {
+							if (base64) {
+								setBase64(undefined);
+							} else {
+								launchImageLibrary(
+									{mediaType: "photo", includeBase64: true},
+									(response) => {
+										setBase64(response.base64);
+									},
+								);
+							}
+						}}>
+						<Text
+							style={{textAlign: "center", padding: 10, color: colors.text}}>
+							{getStr(base64 ? "removeImage" : "addImage")}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{
+							backgroundColor: "#0002",
+							flex: 1,
+							margin: 4,
+							borderRadius: 4,
+						}}
+						onPress={() => {
 							Snackbar.show({
 								text: getStr("processing"),
 								duration: Snackbar.LENGTH_SHORT,
 							});
-							postNewHole(text)
+							postNewHole(text, base64)
 								.then(() => navigation.pop())
 								.catch(NetworkRetry);
 						}}>
