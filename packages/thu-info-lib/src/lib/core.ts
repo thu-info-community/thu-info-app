@@ -141,7 +141,10 @@ export const login = async (
         [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
         statusIndicator,
     );
-    keepAlive(helper);
+    if (global.FileReader) {
+        // Do not keep-alive for Node.js
+        keepAlive(helper);
+    }
 };
 
 /**
