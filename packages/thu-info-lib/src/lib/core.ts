@@ -232,19 +232,40 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
     }
 };
 
+const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
+    const verification = await uFetch(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
+    if (!verification.includes("个人信息")) {
+        const {userId, password, dormPassword} = helper;
+        await login(helper, userId, password, dormPassword);
+        return true;
+    } else {
+        return false;
+    }
+};
+
 const retryWrapper = async <R>(
     helper: InfoHelper,
-    target: ValidTickets,
+    target: ValidTickets | undefined,
     operation: () => Promise<R>,
 ): Promise<R> => {
-    for (let i = 0; i < helper.RETRY_TIMES; ++i) {
-        try {
+    try {
+        if (target) {
+            try {
+                return await operation();
+            } catch {
+                await getTicket(helper, target);
+                return await operation();
+            }
+        } else {
             return await operation();
-        } catch {
-            await getTicket(helper, target);
+        }
+    } catch (e) {
+        if (await verifyAndReLogin(helper)) {
+            return await operation();
+        } else {
+            throw e;
         }
     }
-    return operation();
 };
 
 export const retryWrapperWithMocks = async <R>(
@@ -255,9 +276,7 @@ export const retryWrapperWithMocks = async <R>(
 ): Promise<R> =>
     helper.mocked()
         ? Promise.resolve(fallback)
-        : target
-            ? retryWrapper(helper, target, operation)
-            : operation();
+        : retryWrapper(helper, target, operation);
 
 const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
     Promise.all(
@@ -272,14 +291,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        console.log("Keep alive start.");
-        const verification = await uFetch(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
-        if (!verification.includes("个人信息")) {
-            console.log("Lost connection with school website. Reconnecting...");
-            const {userId, password, dormPassword} = helper;
-            await login(helper, userId, password, dormPassword, () => {});
-        } else {
-            await batchGetTickets(helper, [792, 824, 2005, 5000] as ValidTickets[]);
-        }
+        await batchGetTickets(helper, [792, 824, 2005, 5000] as ValidTickets[]);
     }, 60000);
 };

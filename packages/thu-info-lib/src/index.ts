@@ -38,8 +38,6 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
-    public RETRY_TIMES = 2;
-
     public static TOTAL_PHASES = 10;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
