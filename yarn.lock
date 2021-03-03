@@ -6362,10 +6362,10 @@ metro-react-native-babel-preset@0.59.0:
     "@babel/template" "^7.0.0"
     react-refresh "^0.4.0"
 
-metro-react-native-babel-preset@0.65.1:
-  version "0.65.1"
-  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.65.1.tgz#5064a5a676cf505543672533e868be8e1c44c282"
-  integrity sha512-F5DdoPZiiIbuDRhxf+8drCm6GQCXQ1rKxDYfSdWvtl9wQaRHpUqh0/4p2XnzGFDH1gWVoVfjTb0v9T1eLRaL5A==
+metro-react-native-babel-preset@0.65.2:
+  version "0.65.2"
+  resolved "https://registry.yarnpkg.com/metro-react-native-babel-preset/-/metro-react-native-babel-preset-0.65.2.tgz#786cbb8b21daa614cbbebcc5c3ce72b6b0710892"
+  integrity sha512-jBpZwJwnGHXUnzoZl81LlUzvec2dh1llMJ2A7pbTMuCKhx4LjqOGEE1E+hkNqj/Uh7gi6tCPy5JYSCo9Ue/Vog==
   dependencies:
     "@babel/core" "^7.0.0"
     "@babel/plugin-proposal-class-properties" "^7.0.0"
@@ -7518,7 +7518,7 @@ react-native-image-pan-zoom@^2.1.12:
   resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.12.tgz#eb98bf56fb5610379bdbfdb63219cc1baca98fd2"
   integrity sha512-BF66XeP6dzuANsPmmFsJshM2Jyh/Mo1t8FsGc1L9Q9/sVP8MJULDabB1hms+eAoqgtyhMr5BuXV3E1hJ5U5H6Q==
 
-react-native-image-picker@^3.2.1:
+react-native-image-picker@3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-3.2.1.tgz#97119ffef0ac2de2862f61ac38c2f5af99e9de18"
   integrity sha512-nOBZzYGmE5qZ8JBCvhWHQA+umYnQ8Jd3HGmgxBnmi0/82mU2nwCCnrzHsb29Q+DD7YasYr64rm8uWBBow8L5Fw==
