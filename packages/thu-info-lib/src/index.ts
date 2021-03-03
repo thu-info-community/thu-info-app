@@ -114,7 +114,7 @@ export class InfoHelper {
     public getLibrarySeatList = async (
         librarySection: LibrarySection,
         dateChoice: 0 | 1,
-    ): Promise<LibrarySeat[]> => getLibrarySeatList(librarySection, dateChoice);
+    ): Promise<LibrarySeat[]> => getLibrarySeatList(this, librarySection, dateChoice);
 
     public bookLibrarySeat = async (
         librarySeat: LibrarySeat,

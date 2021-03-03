@@ -68,26 +68,31 @@ export const getLibrarySectionList = (
     {id, zhNameTrace, enNameTrace}: LibraryFloor,
     dateChoice: 0 | 1,
 ): Promise<LibrarySection[]> =>
-    fetchJson(
-        LIBRARY_AREAS_URL +
-        id +
-        "/date/" +
-        dayjs().add(dateChoice, "day").format("YYYY-MM-DD"),
-    ).then((r) =>
-        r.childArea
-            .map((node: any) => ({
-                id: node.id,
-                zhName: node.name,
-                zhNameTrace: `${zhNameTrace} - ${node.name}`,
-                enName: node.enname,
-                enNameTrace: `${enNameTrace} - ${node.enname}`,
-                valid: node.isValid === 1,
-                total: node.TotalCount,
-                available: node.TotalCount - node.UnavailableSpace,
-                posX: node.point_x2,
-                posY: node.point_y2,
-            }))
-            .sort(byId),
+    retryWrapperWithMocks(
+        helper,
+        undefined,
+        () => fetchJson(
+            LIBRARY_AREAS_URL +
+            id +
+            "/date/" +
+            dayjs().add(dateChoice, "day").format("YYYY-MM-DD"),
+        ).then((r) =>
+            r.childArea
+                .map((node: any) => ({
+                    id: node.id,
+                    zhName: node.name,
+                    zhNameTrace: `${zhNameTrace} - ${node.name}`,
+                    enName: node.enname,
+                    enNameTrace: `${enNameTrace} - ${node.enname}`,
+                    valid: node.isValid === 1,
+                    total: node.TotalCount,
+                    available: node.TotalCount - node.UnavailableSpace,
+                    posX: node.point_x2,
+                    posY: node.point_y2,
+                }))
+                .sort(byId),
+        ),
+        [],
     );
 
 export const getLibraryFloorList = async (
@@ -164,29 +169,37 @@ const currentTime = () => {
 };
 
 export const getLibrarySeatList = (
+    helper: InfoHelper,
     {id, zhNameTrace, enNameTrace}: LibrarySection,
     dateChoice: 0 | 1,
 ): Promise<LibrarySeat[]> =>
-    getLibraryDay(id, dateChoice).then(
-        ({day, startTime, endTime, segmentId, today}) =>
-            fetchJson(LIBRARY_SEATS_URL + "?" + stringify({area: id, segment: segmentId, day, startTime: today ? currentTime() : startTime, endTime}))
-                .then((r) =>
-                    r
-                        .map((node: any) => ({
-                            id: node.id,
-                            zhName: node.name,
-                            zhNameTrace: zhNameTrace + " - " + node.name,
-                            enName: node.name,
-                            enNameTrace: enNameTrace + " - " + node.name,
-                            valid: node.status === 1,
-                            type: node.area_type,
-                        }))
-                        .sort(
-                            (a: LibrarySeat, b: LibrarySeat) =>
-                                weightedValidityAndId(a) - weightedValidityAndId(b),
-                        ),
-                ),
-    );
+    retryWrapperWithMocks(helper, undefined, () =>
+        getLibraryDay(id, dateChoice).then(
+            ({day, startTime, endTime, segmentId, today}) =>
+                fetchJson(LIBRARY_SEATS_URL + "?" + stringify({
+                    area: id,
+                    segment: segmentId,
+                    day,
+                    startTime: today ? currentTime() : startTime,
+                    endTime,
+                }))
+                    .then((r) =>
+                        r
+                            .map((node: any) => ({
+                                id: node.id,
+                                zhName: node.name,
+                                zhNameTrace: zhNameTrace + " - " + node.name,
+                                enName: node.name,
+                                enNameTrace: enNameTrace + " - " + node.name,
+                                valid: node.status === 1,
+                                type: node.area_type,
+                            }))
+                            .sort(
+                                (a: LibrarySeat, b: LibrarySeat) =>
+                                    weightedValidityAndId(a) - weightedValidityAndId(b),
+                            ),
+                    ),
+        ), []);
 
 const getAccessToken = (helper: InfoHelper): Promise<string> =>
     retryWrapperWithMocks(
