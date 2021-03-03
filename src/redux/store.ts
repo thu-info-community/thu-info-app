@@ -41,9 +41,48 @@ export interface State {
 	hole: Hole;
 }
 
-const authTransform = createTransform(() => LoginStatus.None, undefined, {
-	whitelist: ["status"],
-});
+const authTransform = createTransform(
+	(status) =>
+		status === LoginStatus.LoggedIn ? LoginStatus.LoggedIn : LoginStatus.None,
+	(status) => status,
+	{
+		whitelist: ["status"],
+	},
+);
+
+const authPlugin = createTransform(
+	(a: AuthState) => a,
+	(a: AuthState) => {
+		helper.userId = a.userId;
+		helper.password = a.password;
+		return a;
+	},
+	{
+		whitelist: ["auth"],
+	},
+);
+
+const credentialsPlugin = createTransform(
+	(c: Credentials) => c,
+	(c: Credentials) => {
+		helper.dormPassword = c.dormPassword;
+		return c;
+	},
+	{
+		whitelist: ["credentials"],
+	},
+);
+
+const configPlugin = createTransform(
+	(c: Config) => c,
+	(c: Config) => {
+		helper.emailName = c.emailName;
+		return c;
+	},
+	{
+		whitelist: ["config"],
+	},
+);
 
 const rootReducer = combineReducers({
 	auth: persistReducer(
@@ -103,8 +142,15 @@ const persistConfig = {
 	version: 2,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule", "config", "cache", "hole"],
-	transforms: [calendarConfigTransform, scheduleFilter, cacheTransform],
+	whitelist: ["auth", "schedule", "config", "cache", "hole", "credentials"],
+	transforms: [
+		calendarConfigTransform,
+		scheduleFilter,
+		cacheTransform,
+		authPlugin,
+		credentialsPlugin,
+		configPlugin,
+	],
 	migrate: (state: any) =>
 		Promise.resolve(
 			state === undefined
