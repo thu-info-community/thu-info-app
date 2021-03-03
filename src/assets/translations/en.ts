@@ -96,6 +96,7 @@ export default {
 		"Please follow thuhole community guidelines during communication.",
 	addImage: "Add Image",
 	removeImage: "Remove Image",
+	deleteHoleConfirm: "Are you sure to delete this post?",
 	publish: "Publish",
 	holeImage: "Preview Image",
 	holeSaveImage: "Save image (might be buggy)",

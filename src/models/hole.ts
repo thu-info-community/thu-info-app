@@ -14,6 +14,7 @@ export interface HoleTitleCard {
 	type: string;
 	url: string;
 	attention: boolean;
+	permissions: string[];
 }
 
 export interface HoleCommentCard {
@@ -24,4 +25,5 @@ export interface HoleCommentCard {
 	name: string;
 	type: string;
 	url: string;
+	permissions: string[];
 }

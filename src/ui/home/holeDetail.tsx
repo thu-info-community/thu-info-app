@@ -9,6 +9,7 @@ import {
 	View,
 	Dimensions,
 	Pressable,
+	Alert,
 } from "react-native";
 import React, {useEffect, useState} from "react";
 import {HoleDetailRouteProp, HomeNav} from "./homeStack";
@@ -19,6 +20,7 @@ import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {HoleCommentCard, HoleTitleCard} from "../../models/hole";
 import {
+	deleteHolePost,
 	getHoleDetail,
 	holeConfig,
 	postHoleComment,
@@ -41,6 +43,7 @@ const dummyHoleTitleCard = {
 	likenum: 0,
 	tag: "",
 	attention: false,
+	permissions: [],
 };
 
 export const HoleDetailScreen = ({
@@ -51,7 +54,7 @@ export const HoleDetailScreen = ({
 	navigation: HomeNav;
 }) => {
 	const [
-		{pid, text, type, url, timestamp, reply, likenum, attention},
+		{pid, text, type, url, timestamp, reply, likenum, attention, permissions},
 		setHoleTitle,
 	] = useState<HoleTitleCard>(
 		"lazy" in route.params
@@ -132,7 +135,28 @@ export const HoleDetailScreen = ({
 				<Text style={[styles.smallHeader, {color: colors.text}]}>
 					{getStr("originalText")}
 				</Text>
-				<View style={MaterialTheme.card}>
+				<TouchableOpacity
+					style={MaterialTheme.card}
+					onLongPress={() => {
+						if (permissions.includes("delete")) {
+							Alert.alert(
+								getStr("confirm"),
+								getStr("deleteHoleConfirm"),
+								[
+									{text: getStr("cancel")},
+									{
+										text: getStr("confirm"),
+										onPress: () => {
+											deleteHolePost(pid)
+												.then(() => navigation.pop())
+												.catch(NetworkRetry);
+										},
+									},
+								],
+								{cancelable: true},
+							);
+						}
+					}}>
 					<Text style={[styles.bigPid, {color: colors.text}]}>{`#${pid}`}</Text>
 					<HoleMarkdown
 						text={text}
@@ -180,7 +204,7 @@ export const HoleDetailScreen = ({
 							)}
 						</View>
 					</View>
-				</View>
+				</TouchableOpacity>
 				{reply > 0 && (
 					<Text style={[styles.smallHeader, {color: colors.text}]}>
 						{getStr("comments")}

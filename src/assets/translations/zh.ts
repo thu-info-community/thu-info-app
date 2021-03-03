@@ -92,6 +92,7 @@ export default {
 	holePublishHint: "请遵守树洞规范，文明发言。",
 	addImage: "添加图片",
 	removeImage: "删除图片",
+	deleteHoleConfirm: "您确定要撤回这条树洞吗？",
 	publish: "发表",
 	holeImage: "查看图片",
 	holeSaveImage: "保存图片（可能有bug）",
