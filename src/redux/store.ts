@@ -21,8 +21,13 @@ import {hole} from "./reducers/hole";
 import {InfoHelper} from "thu-info-lib";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
+import CookieManager from "@react-native-community/cookies";
 
 export const helper = new InfoHelper();
+
+helper.clearCookieHandler = async () => {
+	await CookieManager.clearAll();
+};
 
 const KeychainStorage = createKeychainStorage();
 

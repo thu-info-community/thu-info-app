@@ -25,7 +25,6 @@ import IconMain from "../../assets/icons/IconMain";
 import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
-import CookieManager from "@react-native-community/cookies";
 import {leanCloudInit} from "../../utils/leanCloud";
 import {refreshCalendarConfig} from "../../redux/actions/config";
 
@@ -253,16 +252,14 @@ export const LoginScreen = connect(
 			) => {
 				dispatch({type: LOGIN_REQUEST, payload: {userId, password}});
 				refreshCalendarConfig();
-				CookieManager.clearAll()
-					.then(() =>
-						helper.login(
-							{
-								userId,
-								password,
-								dormPassword: currState().credentials.dormPassword,
-							},
-							statusIndicator,
-						),
+				helper
+					.login(
+						{
+							userId,
+							password,
+							dormPassword: currState().credentials.dormPassword,
+						},
+						statusIndicator,
 					)
 					.then(() => {
 						dispatch({type: LOGIN_SUCCESS, payload: undefined});
