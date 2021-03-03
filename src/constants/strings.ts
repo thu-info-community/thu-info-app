@@ -40,3 +40,5 @@ export const HOLE_NEW_COMMENT_URL = "https://api.thuhole.com/send/comment";
 export const HOLE_SEARCH_URL = "https://api.thuhole.com/contents/search";
 export const HOLE_SET_ATTENTION_URL = "https://api.thuhole.com/edit/attention";
 export const HOLE_DELETE_POST_URL = "https://api.thuhole.com/edit/report/post";
+export const HOLE_DELETE_COMMENT_URL =
+	"https://api.thuhole.com/edit/report/comment";

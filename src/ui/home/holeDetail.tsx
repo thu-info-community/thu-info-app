@@ -20,7 +20,7 @@ import TimeAgo from "react-native-timeago";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {HoleCommentCard, HoleTitleCard} from "../../models/hole";
 import {
-	deleteHolePost,
+	deleteHole,
 	getHoleDetail,
 	holeConfig,
 	postHoleComment,
@@ -147,7 +147,7 @@ export const HoleDetailScreen = ({
 									{
 										text: getStr("confirm"),
 										onPress: () => {
-											deleteHolePost(pid)
+											deleteHole(pid, false)
 												.then(() => navigation.pop())
 												.catch(NetworkRetry);
 										},
@@ -217,7 +217,33 @@ export const HoleDetailScreen = ({
 					const author = replyContent.substr(0, splitIdx + 1);
 					const replyText = replyContent.substr(splitIdx + 2);
 					return (
-						<View style={MaterialTheme.card} key={item.cid}>
+						<TouchableOpacity
+							style={MaterialTheme.card}
+							key={item.cid}
+							onLongPress={() => {
+								if (item.permissions.includes("delete")) {
+									Alert.alert(
+										getStr("confirm"),
+										getStr("deleteHoleConfirm"),
+										[
+											{text: getStr("cancel")},
+											{
+												text: getStr("confirm"),
+												onPress: () => {
+													deleteHole(item.cid, true)
+														.then(() => getHoleDetail(pid))
+														.then(([title, commentList]) => {
+															setHoleTitle(title);
+															setComments(commentList);
+														})
+														.catch(NetworkRetry);
+												},
+											},
+										],
+										{cancelable: true},
+									);
+								}
+							}}>
 							<Text
 								style={[
 									styles.bigPid,
@@ -246,7 +272,7 @@ export const HoleDetailScreen = ({
 							)}
 							<View style={{height: 1, backgroundColor: "#ccc", margin: 2}} />
 							<TimeAgo time={item.timestamp * 1000} />
-						</View>
+						</TouchableOpacity>
 					);
 				})}
 			</ScrollView>

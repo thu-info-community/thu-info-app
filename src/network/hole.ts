@@ -1,6 +1,7 @@
 import {store} from "../redux/store";
 import {
 	CONTENT_TYPE_FORM,
+	HOLE_DELETE_COMMENT_URL,
 	HOLE_DELETE_POST_URL,
 	HOLE_GET_ATTENTION_URL,
 	HOLE_GET_COMMENTS_URL,
@@ -155,9 +156,9 @@ export const setHoleAttention = async (pid: number, attention: boolean) => {
 	);
 };
 
-export const deleteHolePost = async (id: number) => {
+export const deleteHole = async (id: number, comment: boolean) => {
 	const result = await connect(
-		HOLE_DELETE_POST_URL,
+		comment ? HOLE_DELETE_COMMENT_URL : HOLE_DELETE_POST_URL,
 		{},
 		{
 			id,
