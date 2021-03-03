@@ -10,7 +10,6 @@ import {
 import {getStr} from "../../utils/i18n";
 import {postNewHole} from "../../network/hole";
 import {HomeNav} from "./homeStack";
-import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
@@ -87,7 +86,12 @@ export const HolePublishScreen = ({navigation}: {navigation: HomeNav}) => {
 							});
 							postNewHole(text, base64)
 								.then(() => navigation.pop())
-								.catch(NetworkRetry);
+								.catch((e: Error) => {
+									Snackbar.show({
+										text: e.message,
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								});
 						}}>
 						<Text
 							style={{textAlign: "center", padding: 10, color: colors.text}}>

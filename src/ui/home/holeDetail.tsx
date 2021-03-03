@@ -26,7 +26,6 @@ import {
 	postHoleComment,
 	setHoleAttention,
 } from "../../network/hole";
-import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {useHeaderHeight} from "@react-navigation/stack";
 import {useColorScheme} from "react-native-appearance";
@@ -84,17 +83,21 @@ export const HoleDetailScreen = ({
 		setKeyboardShown(false);
 	});
 
+	const errCallback = (e: Error) => {
+		Snackbar.show({text: e.message, duration: Snackbar.LENGTH_SHORT});
+	};
+
 	useEffect(() => {
 		getHoleDetail(pid)
 			.then(([title, commentList]) => {
 				setHoleTitle(title);
 				setComments(commentList);
 			})
-			.catch(NetworkRetry);
+			.catch(errCallback);
 		if ("lazy" in route.params) {
 			getHoleDetail(pid)
 				.then(([title]) => setHoleTitle(title))
-				.catch(NetworkRetry);
+				.catch(errCallback);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -149,7 +152,7 @@ export const HoleDetailScreen = ({
 										onPress: () => {
 											deleteHole(pid, false)
 												.then(() => navigation.pop())
-												.catch(NetworkRetry);
+												.catch(errCallback);
 										},
 									},
 								],
@@ -236,7 +239,7 @@ export const HoleDetailScreen = ({
 															setHoleTitle(title);
 															setComments(commentList);
 														})
-														.catch(NetworkRetry);
+														.catch(errCallback);
 												},
 											},
 										],
@@ -342,7 +345,7 @@ export const HoleDetailScreen = ({
 								setBase64(undefined);
 								setMyComment("");
 							})
-							.catch(NetworkRetry);
+							.catch(errCallback);
 					}}>
 					<Text style={{textAlign: "center", padding: 10, color: colors.text}}>
 						{getStr("publish")}

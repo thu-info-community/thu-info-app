@@ -13,7 +13,6 @@ import {getHoleList, holeConfig, holeLogin} from "../../network/hole";
 import {FetchMode, HoleTitleCard} from "../../models/hole";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -44,21 +43,17 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 		setRefreshing(true);
 		getHoleList(mode, 1, fetchPayload)
 			.then((r) => setData(r))
-			.catch((err) => {
-				if (typeof err === "string") {
-					holeLogin()
-						.then(() =>
-							Snackbar.show({text: err, duration: Snackbar.LENGTH_SHORT}),
-						)
-						.catch(() =>
-							Snackbar.show({
-								text: getStr("holePleaseSetToken"),
-								duration: Snackbar.LENGTH_LONG,
-							}),
-						);
-				} else {
-					NetworkRetry();
-				}
+			.catch((err: Error) => {
+				holeLogin()
+					.then(() =>
+						Snackbar.show({text: err.message, duration: Snackbar.LENGTH_SHORT}),
+					)
+					.catch(() =>
+						Snackbar.show({
+							text: getStr("holePleaseSetToken"),
+							duration: Snackbar.LENGTH_LONG,
+						}),
+					);
 			})
 			.then(() => setRefreshing(false));
 	};
@@ -250,7 +245,9 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 								o.concat(r.filter((it) => it.pid < o[o.length - 1].pid)),
 							),
 						)
-						.catch(NetworkRetry)
+						.catch((e: Error) => {
+							Snackbar.show({text: e.message, duration: Snackbar.LENGTH_SHORT});
+						})
 						.then(() => setRefreshing(false));
 					setPage((p) => p + 1);
 				}}
