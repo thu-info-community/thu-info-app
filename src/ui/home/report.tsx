@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {RefreshControl, SectionList, SectionListData} from "react-native";
+import {
+	RefreshControl,
+	SectionList,
+	SectionListData,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import {
 	ReportFooter,
 	ReportHeader,
@@ -107,6 +114,8 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
+	const [flag, setFlag] = useState<1 | 2 | 3>(1);
+
 	const themeName = useColorScheme();
 	const theme = themes[themeName];
 
@@ -115,7 +124,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getReport(bx, newGPA)
+			.getReport(bx, newGPA, flag)
 			.then((res) => {
 				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);
@@ -130,44 +139,81 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(fetchData, []);
+	useEffect(fetchData, [flag]);
 
 	const {gpa, sections, allCredits, totalCredits, totalPoints} = prepareData(
 		report || [],
 	);
 
 	return (
-		<SectionList
-			sections={sections}
-			stickySectionHeadersEnabled={true}
-			renderSectionHeader={({section}) => (
-				<ReportHeader semester={section.semester} gpa={section.gpa} />
-			)}
-			renderItem={({item}) => (
-				<ReportItem
-					name={item.name}
-					credit={item.credit}
-					grade={item.grade}
-					point={item.point}
-				/>
-			)}
-			ListFooterComponent={
-				<ReportFooter
-					gpa={gpa}
-					totalCredits={totalCredits}
-					allCredits={allCredits}
-					totalPoints={totalPoints}
-				/>
-			}
-			refreshControl={
-				<RefreshControl
-					refreshing={refreshing}
-					onRefresh={fetchData}
-					colors={[theme.colors.accent]}
-				/>
-			}
-			keyExtractor={(item, index) => `${item.semester}${index}`}
-		/>
+		<>
+			<View style={{flexDirection: "row", margin: 5}}>
+				<TouchableOpacity
+					style={{padding: 6, flex: 1}}
+					onPress={() => setFlag(1)}>
+					<Text
+						style={{
+							color: flag === 1 ? "blue" : theme.colors.text,
+							textAlign: "center",
+						}}>
+						{getStr("reportFlag1")}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{padding: 6, flex: 1}}
+					onPress={() => setFlag(2)}>
+					<Text
+						style={{
+							color: flag === 2 ? "blue" : theme.colors.text,
+							textAlign: "center",
+						}}>
+						{getStr("reportFlag2")}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{padding: 6, flex: 1}}
+					onPress={() => setFlag(3)}>
+					<Text
+						style={{
+							color: flag === 3 ? "blue" : theme.colors.text,
+							textAlign: "center",
+						}}>
+						{getStr("reportFlag3")}
+					</Text>
+				</TouchableOpacity>
+			</View>
+			<SectionList
+				sections={sections}
+				stickySectionHeadersEnabled={true}
+				renderSectionHeader={({section}) => (
+					<ReportHeader semester={section.semester} gpa={section.gpa} />
+				)}
+				renderItem={({item}) => (
+					<ReportItem
+						name={item.name}
+						credit={item.credit}
+						grade={item.grade}
+						point={item.point}
+					/>
+				)}
+				ListFooterComponent={
+					<ReportFooter
+						gpa={gpa}
+						totalCredits={totalCredits}
+						allCredits={allCredits}
+						totalPoints={totalPoints}
+					/>
+				}
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchData}
+						colors={[theme.colors.accent]}
+					/>
+				}
+				keyExtractor={(item, index) => `${item.semester}${index}`}
+			/>
+		</>
 	);
 };
 

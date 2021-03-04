@@ -26,8 +26,12 @@ const ReportManageHiddenUI = ({
 
 	useEffect(() => {
 		const {bx, newGPA} = currState().config;
-		helper
-			.getReport(bx, newGPA)
+		Promise.all([
+			helper.getReport(bx, newGPA, 1),
+			helper.getReport(bx, newGPA, 2),
+			helper.getReport(bx, newGPA, 3),
+		])
+			.then(([x, y, z]) => x.concat(y).concat(z))
 			.then((r) => {
 				setLessons([...new Set(r.map((it) => it.name))]);
 			})
