@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
 	createStackNavigator,
 	StackNavigationProp,
@@ -11,6 +11,8 @@ import {Root} from "./Root";
 import {FeedbackScreen} from "../ui/settings/feedback";
 import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
+import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
+import {refreshCalendarConfig} from "../redux/actions/config";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
@@ -26,8 +28,14 @@ const Stack = createStackNavigator<LoginStackParamList>();
 
 export type LoginNav = StackNavigationProp<LoginStackParamList>;
 
-const AuthFlowComponent = (props: AuthFlowProps) =>
-	props.status === LoginStatus.LoggedIn ? (
+const AuthFlowComponent = (props: AuthFlowProps) => {
+	useEffect(() => {
+		checkUpdate();
+		checkBroadcast();
+		refreshCalendarConfig();
+	}, []);
+
+	return props.status === LoginStatus.LoggedIn ? (
 		<Root />
 	) : (
 		<Stack.Navigator headerMode="none">
@@ -44,6 +52,7 @@ const AuthFlowComponent = (props: AuthFlowProps) =>
 			/>
 		</Stack.Navigator>
 	);
+};
 
 export const AuthFlow = connect((state: State) => {
 	return {status: state.auth.status};

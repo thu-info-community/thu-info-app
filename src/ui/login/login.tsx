@@ -23,11 +23,9 @@ import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
-import {checkBroadcast, checkUpdate} from "../../utils/checkUpdate";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
 import {leanCloudInit} from "../../utils/leanCloud";
-import {refreshCalendarConfig} from "../../redux/actions/config";
 
 interface LoginProps {
 	readonly userId: string;
@@ -66,8 +64,6 @@ const LoginUI = (props: LoginProps) => {
 			setLoginPhase(1);
 			performLogin();
 		}
-		checkUpdate();
-		checkBroadcast();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -252,7 +248,6 @@ export const LoginScreen = connect(
 				statusIndicator: () => void,
 			) => {
 				dispatch({type: LOGIN_REQUEST, payload: {userId, password}});
-				refreshCalendarConfig();
 				helper
 					.login(
 						{
