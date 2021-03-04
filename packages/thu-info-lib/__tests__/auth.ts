@@ -29,7 +29,7 @@ it("should enter mocked account", async()=> {
     await helper.login({userId:"8888", password:"8888"}, ()=>{});
     await helper.logout();
     expect(helper.mocked()).toEqual(true);
-}, 20000);
+}, 60000);
 
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
@@ -39,4 +39,4 @@ it("should login successfully.", async () => {
     expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);
     expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
-}, 20000);
+}, 60000);
