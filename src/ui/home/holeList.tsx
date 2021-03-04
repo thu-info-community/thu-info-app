@@ -17,11 +17,12 @@ import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import TimeAgo from "react-native-timeago";
-import {HoleMarkdown} from "../../components/home/hole";
+import {HoleMarkdown, LazyQuote} from "../../components/home/hole";
 import {HomeNav} from "./homeStack";
 import {Material} from "../../constants/styles";
 import Feather from "react-native-vector-icons/Feather";
 import {useColorScheme} from "react-native-appearance";
+import {split_text} from "../../utils/textSplitter";
 
 export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
@@ -136,96 +137,117 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 				data={data}
 				renderItem={({item}) => {
 					const needFold = holeConfig.foldTags.includes(item.tag);
+					const parts = split_text(item.text);
+					let quote_id = null;
+					for (let [mode, content] of parts) {
+						content = content.length > 0 ? content.substring(1) : content;
+						if (mode === "pid") {
+							if (quote_id === null) {
+								quote_id = parseInt(content, 10);
+							} else {
+								quote_id = null;
+								break;
+							}
+						}
+					}
 					return (
-						<TouchableOpacity
-							style={MaterialTheme.card}
-							onPress={() => navigation.navigate("HoleDetail", item)}>
-							<View
-								style={{flexDirection: "row", justifyContent: "space-between"}}>
-								<View style={{flexDirection: "row", alignItems: "center"}}>
-									<Text
-										style={{
-											fontWeight: "bold",
-											marginVertical: 2,
-											color: theme.colors.text,
-										}}>{`#${item.pid}`}</Text>
-									{item.tag && item.tag !== "折叠" && (
-										<View
+						<>
+							<TouchableOpacity
+								style={MaterialTheme.card}
+								onPress={() => navigation.navigate("HoleDetail", item)}>
+								<View
+									style={{
+										flexDirection: "row",
+										justifyContent: "space-between",
+									}}>
+									<View style={{flexDirection: "row", alignItems: "center"}}>
+										<Text
 											style={{
-												backgroundColor: "#00c",
-												borderRadius: 4,
-												marginLeft: 5,
-												paddingHorizontal: 4,
-											}}>
-											<Text style={{color: "white", fontWeight: "bold"}}>
-												{item.tag}
-											</Text>
-										</View>
-									)}
-									<Text> </Text>
-									<TimeAgo time={item.timestamp * 1000} />
+												fontWeight: "bold",
+												marginVertical: 2,
+												color: theme.colors.text,
+											}}>{`#${item.pid}`}</Text>
+										{item.tag && item.tag !== "折叠" && (
+											<View
+												style={{
+													backgroundColor: "#00c",
+													borderRadius: 4,
+													marginLeft: 5,
+													paddingHorizontal: 4,
+												}}>
+												<Text style={{color: "white", fontWeight: "bold"}}>
+													{item.tag}
+												</Text>
+											</View>
+										)}
+										<Text> </Text>
+										<TimeAgo time={item.timestamp * 1000} />
+									</View>
+									<View style={{flexDirection: "row", alignItems: "center"}}>
+										{needFold && (
+											<Text style={{color: theme.colors.text}}> 已隐藏</Text>
+										)}
+										{!needFold && item.reply > 0 && (
+											<View
+												style={{
+													flexDirection: "row",
+													alignItems: "center",
+												}}>
+												<Text style={{color: theme.colors.text}}>
+													{item.reply}
+												</Text>
+												<Icon
+													name="comment"
+													size={12}
+													style={{color: theme.colors.text}}
+												/>
+											</View>
+										)}
+										{!needFold && item.likenum > 0 && (
+											<View
+												style={{
+													flexDirection: "row",
+													alignItems: "center",
+												}}>
+												<Text style={{color: theme.colors.text}}>
+													{item.likenum}
+												</Text>
+												<Icon
+													name="star-o"
+													size={12}
+													style={{color: theme.colors.text}}
+												/>
+											</View>
+										)}
+									</View>
 								</View>
-								<View style={{flexDirection: "row", alignItems: "center"}}>
-									{needFold && (
-										<Text style={{color: theme.colors.text}}> 已隐藏</Text>
-									)}
-									{!needFold && item.reply > 0 && (
-										<View
-											style={{
-												flexDirection: "row",
-												alignItems: "center",
-											}}>
-											<Text style={{color: theme.colors.text}}>
-												{item.reply}
-											</Text>
-											<Icon
-												name="comment"
-												size={12}
-												style={{color: theme.colors.text}}
-											/>
-										</View>
-									)}
-									{!needFold && item.likenum > 0 && (
-										<View
-											style={{
-												flexDirection: "row",
-												alignItems: "center",
-											}}>
-											<Text style={{color: theme.colors.text}}>
-												{item.likenum}
-											</Text>
-											<Icon
-												name="star-o"
-												size={12}
-												style={{color: theme.colors.text}}
-											/>
-										</View>
-									)}
-								</View>
-							</View>
-							{needFold || (
-								<HoleMarkdown
-									text={item.text}
-									navigationHandler={(pid) =>
-										navigation.navigate("HoleDetail", {pid, lazy: true})
-									}
-								/>
-							)}
-							{!needFold && item.type === "image" && (
-								<Pressable
-									onPress={() =>
-										navigation.navigate("HoleImage", {
-											url: holeConfig.imageBase + item.url,
-										})
-									}>
-									<Image
-										source={{uri: holeConfig.imageBase + item.url}}
-										style={{height: 400}}
-										resizeMode="contain"
+								{needFold || (
+									<HoleMarkdown
+										text={item.text}
+										navigationHandler={(pid) =>
+											navigation.navigate("HoleDetail", {pid, lazy: true})
+										}
 									/>
-								</Pressable>
+								)}
+								{!needFold && item.type === "image" && (
+									<Pressable
+										onPress={() =>
+											navigation.navigate("HoleImage", {
+												url: holeConfig.imageBase + item.url,
+											})
+										}>
+										<Image
+											source={{uri: holeConfig.imageBase + item.url}}
+											style={{height: 400}}
+											resizeMode="contain"
+										/>
+									</Pressable>
+								)}
+							</TouchableOpacity>
+							{quote_id !== null && (
+								<LazyQuote pid={quote_id} navigation={navigation} />
 							)}
-						</TouchableOpacity>
+						</>
 					);
 				}}
 				keyExtractor={(item) => `${item.pid}`}

@@ -1,17 +1,25 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {split_text} from "../../utils/textSplitter";
 import {
-	URL_PID_RE,
-	URL_RE,
-	PID_RE,
-	NICKNAME_RE,
-	split_text,
-} from "../../utils/textSplitter";
-import {Linking, Text} from "react-native";
+	Image,
+	Linking,
+	Pressable,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Markdown from "react-native-markdown-display";
 import {docco} from "react-syntax-highlighter/dist/esm/styles/hljs";
 import SyntaxHighlighter from "react-native-syntax-highlighter";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
+import TimeAgo from "react-native-timeago";
+import Icon from "react-native-vector-icons/FontAwesome";
+import {getHoleDetail, holeConfig} from "../../network/hole";
+import {Material} from "../../constants/styles";
+import {HoleTitleCard} from "../../models/hole";
+import {dummyHoleTitleCard} from "../../ui/home/holeDetail";
+import {HomeNav} from "../../ui/home/homeStack";
 
 export type NavigationHandler = (pid: number) => void;
 
@@ -51,12 +59,7 @@ export const HoleMarkdown = ({
 		<Markdown
 			rules={{
 				text: (node) => {
-					const splitted = split_text(node.content, [
-						["url_pid", URL_PID_RE],
-						["url", URL_RE],
-						["pid", PID_RE],
-						["nickname", NICKNAME_RE],
-					]);
+					const splitted = split_text(node.content);
 
 					return (
 						<React.Fragment key={node.key}>
@@ -161,5 +164,114 @@ export const HoleMarkdown = ({
 			}}>
 			{text}
 		</Markdown>
+	);
+};
+
+export const LazyQuote = ({
+	pid,
+	navigation,
+}: {
+	pid: number;
+	navigation: HomeNav;
+}) => {
+	const [item, setData] = useState<HoleTitleCard>(dummyHoleTitleCard);
+	const themeName = useColorScheme();
+	const theme = themes[themeName];
+	const MaterialTheme = Material(themeName);
+
+	useEffect(() => {
+		getHoleDetail(pid).then(([title]) => setData(title));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const needFold = holeConfig.foldTags.includes(item.tag);
+
+	return (
+		<TouchableOpacity
+			style={[MaterialTheme.card, {marginLeft: 30}]}
+			onPress={() => navigation.navigate("HoleDetail", {pid, lazy: true})}>
+			<View
+				style={{
+					flexDirection: "row",
+					justifyContent: "space-between",
+				}}>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					<Text
+						style={{
+							fontWeight: "bold",
+							marginVertical: 2,
+							color: theme.colors.text,
+						}}>{`#${pid}`}</Text>
+					{item.tag !== null && item.tag !== "折叠" && (
+						<View
+							style={{
+								backgroundColor: "#00c",
+								borderRadius: 4,
+								marginLeft: 5,
+								paddingHorizontal: 4,
+							}}>
+							<Text style={{color: "white", fontWeight: "bold"}}>
+								{item.tag}
+							</Text>
+						</View>
+					)}
+					<Text> </Text>
+					<TimeAgo time={item.timestamp * 1000} />
+				</View>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					{needFold && <Text style={{color: theme.colors.text}}> 已隐藏</Text>}
+					{!needFold && item.reply > 0 && (
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+							}}>
+							<Text style={{color: theme.colors.text}}>{item.reply}</Text>
+							<Icon
+								name="comment"
+								size={12}
+								style={{color: theme.colors.text}}
+							/>
+						</View>
+					)}
+					{!needFold && item.likenum > 0 && (
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+							}}>
+							<Text style={{color: theme.colors.text}}>{item.likenum}</Text>
+							<Icon
+								name="star-o"
+								size={12}
+								style={{color: theme.colors.text}}
+							/>
+						</View>
+					)}
+				</View>
+			</View>
+			{needFold || (
+				<HoleMarkdown
+					text={item.text}
+					navigationHandler={(e) =>
+						navigation.navigate("HoleDetail", {pid: e, lazy: true})
+					}
+				/>
+			)}
+			{!needFold && item.type === "image" && (
+				<Pressable
+					onPress={() =>
+						navigation.navigate("HoleImage", {
+							url: holeConfig.imageBase + item.url,
+						})
+					}>
+					<Image
+						source={{uri: holeConfig.imageBase + item.url}}
+						style={{height: 400}}
+						resizeMode="contain"
+					/>
+				</Pressable>
+			)}
+		</TouchableOpacity>
 	);
 };

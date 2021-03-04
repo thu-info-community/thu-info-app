@@ -11,7 +11,15 @@ export const URL_PID_RE = /((?:https?:\/\/)?thuhole\.com\/?#(?:#|%23)(\d{1,7}))(
 export const NICKNAME_RE = /(^|[^A-Za-z])((?:(?:Angry|Baby|Crazy|Diligent|Excited|Fat|Greedy|Hungry|Interesting|Jolly|Kind|Little|Magic|Naïve|Old|PKU|Quiet|Rich|Superman|Tough|Undefined|Valuable|Wifeless|Xiangbuchulai|Young|Zombie)\s)?(?:Alice|Bob|Carol|Dave|Eve|Francis|Grace|Hans|Isabella|Jason|Kate|Louis|Margaret|Nathan|Olivia|Paul|Queen|Richard|Susan|Thomas|Uma|Vivian|Winnie|Xander|Yasmine|Zach)|You Win(?: \d+)?|洞主)(?![A-Za-z])/gi;
 export const URL_RE = /(^|[^.@a-zA-Z0-9_])((?:https?:\/\/)?(?:(?:[\w-]+\.)+[a-zA-Z]{2,3}|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d{1,5})?(?:\/[\w~!@#$%^&*()\-_=+[\]{};:,./?|]*)?)(?![a-zA-Z0-9])/gi;
 
-export function split_text(txt, rules) {
+export function split_text(
+	txt,
+	rules = [
+		["url_pid", URL_PID_RE],
+		["url", URL_RE],
+		["pid", PID_RE],
+		["nickname", NICKNAME_RE],
+	],
+) {
 	// rules: [['name',/regex/],...]
 	// return: [['name','part'],[null,'part'],...]
 

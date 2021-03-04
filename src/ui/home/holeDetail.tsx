@@ -32,7 +32,7 @@ import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
 import {launchImageLibrary} from "react-native-image-picker";
 
-const dummyHoleTitleCard = {
+export const dummyHoleTitleCard = {
 	pid: -1,
 	text: "",
 	type: "",
