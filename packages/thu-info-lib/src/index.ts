@@ -48,7 +48,8 @@ export class InfoHelper {
 
     public loginLocked = false;
 
-    public clearCookieHandler = async () => {};
+    public clearCookieHandler = async () => {
+    };
 
     public login = async (
         auth: {
@@ -66,7 +67,8 @@ export class InfoHelper {
     public getReport = (
         bx: boolean,
         newGPA: boolean,
-    ): Promise<Course[]> => getReport(this, bx, newGPA);
+        flag = 1,
+    ): Promise<Course[]> => getReport(this, bx, newGPA, flag);
 
     public getAssessmentList = (): Promise<[string, boolean, string][]> =>
         getAssessmentList(this);

@@ -59,12 +59,13 @@ export const getReport = (
     helper: InfoHelper,
     bx: boolean,
     newGPA: boolean,
+    flag = 1,
 ): Promise<Course[]> =>
     retryWrapperWithMocks(
         helper,
         792,
         () => Promise.all([
-            uFetch(helper.graduate() ? GET_YJS_REPORT_URL : GET_BKS_REPORT_URL, INFO_ROOT_URL),
+            uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`), INFO_ROOT_URL),
             bx
                 ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL, INFO_ROOT_URL)
                 : undefined,
