@@ -244,7 +244,7 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 									</Pressable>
 								)}
 							</TouchableOpacity>
-							{quote_id !== null && (
+							{quote_id !== null && !needFold && (
 								<LazyQuote pid={quote_id} navigation={navigation} />
 							)}
 						</>

@@ -202,7 +202,7 @@ export const LazyQuote = ({
 							marginVertical: 2,
 							color: theme.colors.text,
 						}}>{`#${pid}`}</Text>
-					{item.tag !== null && item.tag !== "折叠" && (
+					{item.tag !== null && item.tag !== undefined && item.tag !== "折叠" && (
 						<View
 							style={{
 								backgroundColor: "#00c",
