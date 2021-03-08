@@ -22,12 +22,25 @@ import {InfoHelper} from "thu-info-lib";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
 import CookieManager from "@react-native-community/cookies";
+import {AppState} from "react-native";
+import {retryWrapperWithMocks} from "thu-info-lib/dist/lib/core";
 
 export const helper = new InfoHelper();
 
 helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
+
+AppState.addEventListener("change", (state) => {
+	if (state === "active") {
+		retryWrapperWithMocks(
+			helper,
+			undefined,
+			() => Promise.reject(),
+			undefined,
+		).catch(() => console.log("Re-connection done."));
+	}
+});
 
 const KeychainStorage = createKeychainStorage();
 
