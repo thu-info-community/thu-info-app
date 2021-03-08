@@ -25,7 +25,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
-import {leanCloudInit} from "../../utils/leanCloud";
 
 interface LoginProps {
 	readonly userId: string;
@@ -259,7 +258,6 @@ export const LoginScreen = connect(
 					)
 					.then(() => {
 						dispatch({type: LOGIN_SUCCESS, payload: undefined});
-						leanCloudInit();
 					})
 					.catch((reason: LoginStatus) => {
 						dispatch({type: LOGIN_FAILURE, payload: reason});

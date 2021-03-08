@@ -13,6 +13,7 @@ import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
 import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
 import {refreshCalendarConfig} from "../redux/actions/config";
+import {leanCloudInit} from "../utils/leanCloud";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
@@ -32,6 +33,7 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 	useEffect(() => {
 		checkUpdate();
 		checkBroadcast();
+		leanCloudInit();
 		refreshCalendarConfig();
 	}, []);
 
