@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {LIBRARY_MAP_URL} from "../../constants/strings";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
-import {saveImg} from "../../utils/saveImg";
+import {saveRemoteImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {LibrarySection} from "thu-info-lib/dist/models/home/library";
@@ -57,7 +57,7 @@ export const LibrarySeatMapScreen = ({
 					imageUrls={[
 						{url: `${LIBRARY_MAP_URL}${route.params.section.id}/seat-free.jpg`},
 					]}
-					onSave={saveImg}
+					onSave={saveRemoteImg}
 					menuContext={{
 						saveToLocal: getStr("holeSaveImage"),
 						cancel: getStr("cancel"),

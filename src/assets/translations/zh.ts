@@ -98,7 +98,7 @@ export default {
 	deleteHoleConfirm: "您确定要撤回这条树洞吗？",
 	publish: "发表",
 	holeImage: "查看图片",
-	holeSaveImage: "保存图片（可能有bug）",
+	holeSaveImage: "保存图片",
 	originalText: "原文",
 	comments: "评论",
 	holePleaseSetToken:

@@ -34,6 +34,7 @@
 		"react-native": "0.63.4",
 		"react-native-appearance": "0.3.4",
 		"react-native-easy-grid": "0.2.2",
+		"react-native-fs": "2.16.6",
 		"react-native-gesture-handler": "1.10.3",
 		"react-native-github-markdown": "4.1.0",
 		"react-native-image-picker": "3.2.1",
@@ -89,7 +90,6 @@
 		"metro-react-native-babel-preset": "0.65.2",
 		"prettier": "2.2.1",
 		"react-native-codegen": "0.0.7",
-		"react-native-fs": "2.16.6",
 		"react-test-renderer": "17.0.1",
 		"redux-devtools": "3.7.0",
 		"typescript": "4.2.3"

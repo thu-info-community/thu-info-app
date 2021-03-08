@@ -102,7 +102,7 @@ export default {
 	deleteHoleConfirm: "Are you sure to delete this post?",
 	publish: "Publish",
 	holeImage: "Preview Image",
-	holeSaveImage: "Save image (might be buggy)",
+	holeSaveImage: "Save image",
 	originalText: "Original Text",
 	comments: "Comments",
 	holePleaseSetToken:

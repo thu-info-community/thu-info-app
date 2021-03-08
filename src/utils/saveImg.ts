@@ -3,6 +3,9 @@ import {hasAndroidPermission} from "./permissions";
 import CameraRoll from "@react-native-community/cameraroll";
 import {getStr} from "./i18n";
 import Snackbar from "react-native-snackbar";
+import RNFS from "react-native-fs";
+import md5 from "md5";
+import {NetworkRetry} from "../components/easySnackbars";
 
 export const saveImg = async (uri: string) => {
 	if (
@@ -29,5 +32,18 @@ export const saveImg = async (uri: string) => {
 					duration: Snackbar.LENGTH_SHORT,
 				}),
 			);
+	}
+};
+
+export const saveRemoteImg = async (url: string) => {
+	try {
+		const fileName = `${RNFS.DocumentDirectoryPath}/${md5(url)}.jpeg`;
+		await RNFS.downloadFile({
+			fromUrl: url,
+			toFile: fileName,
+		}).promise;
+		await saveImg("file://" + fileName);
+	} catch (e) {
+		NetworkRetry();
 	}
 };
