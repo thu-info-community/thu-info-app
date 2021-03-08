@@ -69,6 +69,9 @@ export default {
 	validateFail: "Validation failed.",
 	holeSettings: "Hole Settings",
 	holeTokenSettings: "Setup hole token",
+	holeSetBlockWords: "Setup block words",
+	holeSetBlockWordsDescription:
+		"Holes containing block words will be invisible. Write your block words one per line.",
 	acknowledgements: "Acknowledgements",
 	acknowledgeLearnX: "Great thanks to the `learnX` project 🎉",
 	acknowledgeCommunity: "Best regards to the JavaScript Community ❤️",

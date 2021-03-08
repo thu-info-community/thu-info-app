@@ -66,6 +66,8 @@ export default {
 	validateFail: "验证失败",
 	holeSettings: "树洞设置",
 	holeTokenSettings: "设置Token",
+	holeSetBlockWords: "设置屏蔽词",
+	holeSetBlockWordsDescription: "包含屏蔽词的树洞会被折叠，每行写一个屏蔽词",
 	acknowledgements: "致谢",
 	acknowledgeLearnX: "感谢 learnX 开源代码提供参考范例 🎉",
 	acknowledgeCommunity: "致敬 JavaScript 开源社区 ❤️",

@@ -48,4 +48,5 @@ export const defaultCache: Cache = {
 
 export const defaultHole: Hole = {
 	token: "",
+	blockWords: [],
 };

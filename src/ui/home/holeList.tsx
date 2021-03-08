@@ -23,8 +23,16 @@ import {Material} from "../../constants/styles";
 import Feather from "react-native-vector-icons/Feather";
 import {useColorScheme} from "react-native-appearance";
 import {split_text} from "../../utils/textSplitter";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
 
-export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
+const HoleListUI = ({
+	navigation,
+	blockWords,
+}: {
+	navigation: HomeNav;
+	blockWords: string[] | undefined;
+}) => {
 	const [data, setData] = useState<HoleTitleCard[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [page, setPage] = useState(1);
@@ -136,7 +144,12 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 			<FlatList
 				data={data}
 				renderItem={({item}) => {
-					const needFold = holeConfig.foldTags.includes(item.tag);
+					const needFold =
+						holeConfig.foldTags.includes(item.tag) ||
+						(blockWords &&
+							blockWords.some(
+								(word) => word.trim().length > 0 && item.text.includes(word),
+							));
 					const parts = split_text(item.text);
 					let quote_id = null;
 					for (let [mode, content] of parts) {
@@ -277,3 +290,5 @@ export const HoleListScreen = ({navigation}: {navigation: HomeNav}) => {
 		</>
 	);
 };
+
+export const HoleListScreen = connect((state: State) => state.hole)(HoleListUI);

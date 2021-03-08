@@ -157,6 +157,51 @@ export const SettingsEditValue = <T extends string | number>({
 	);
 };
 
+export const SettingsEditText = ({
+	text,
+	value,
+	onValueChange,
+	placeholder,
+}: {
+	text: string;
+	value: string;
+	onValueChange: (newValue: string) => void;
+	placeholder: string;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes[themeName];
+	return (
+		<View
+			style={{
+				padding: 8,
+				paddingRight: 16,
+				justifyContent: "space-between",
+				alignItems: "center",
+			}}>
+			<Text style={{fontSize: 17, flex: 4, color: colors.text}}>{text}</Text>
+			<TextInput
+				style={{
+					fontSize: 15,
+					height: 300,
+					flex: 1,
+					backgroundColor: colors.background,
+					color: colors.text,
+					textAlign: "left",
+					borderColor: "lightgrey",
+					borderWidth: 1,
+					borderRadius: 5,
+					padding: 6,
+					textAlignVertical: "top",
+				}}
+				multiline={true}
+				placeholder={placeholder}
+				value={value}
+				onChangeText={onValueChange}
+			/>
+		</View>
+	);
+};
+
 export const SettingsSetPassword = ({
 	text,
 	onValueChange,
