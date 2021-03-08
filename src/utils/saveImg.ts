@@ -6,6 +6,7 @@ import Snackbar from "react-native-snackbar";
 import RNFS from "react-native-fs";
 import md5 from "md5";
 import {NetworkRetry} from "../components/easySnackbars";
+import CookieManager from "@react-native-community/cookies";
 
 export const saveImg = async (uri: string) => {
 	if (
@@ -38,9 +39,14 @@ export const saveImg = async (uri: string) => {
 export const saveRemoteImg = async (url: string) => {
 	try {
 		const fileName = `${RNFS.DocumentDirectoryPath}/${md5(url)}.jpeg`;
+		const cookies = await CookieManager.get(url);
+		const Cookie = Object.keys(cookies)
+			.map((key) => `${key}=${cookies[key].value}`)
+			.join(";");
 		await RNFS.downloadFile({
 			fromUrl: url,
 			toFile: fileName,
+			headers: {Cookie},
 		}).promise;
 		await saveImg("file://" + fileName);
 	} catch (e) {
