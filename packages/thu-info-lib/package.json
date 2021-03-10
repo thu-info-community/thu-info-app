@@ -52,7 +52,7 @@
         "md5": "2.3.0"
     },
     "devDependencies": {
-        "@types/cheerio": "0.22.25",
+        "@types/cheerio": "0.22.26",
         "@types/convert-excel-to-json": "1.7.0",
         "@types/jest": "26.0.20",
         "@types/md5": "2.3.0",

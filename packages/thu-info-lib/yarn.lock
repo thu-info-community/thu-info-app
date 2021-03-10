@@ -560,10 +560,10 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/cheerio@0.22.25":
-  version "0.22.25"
-  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.25.tgz#2f77c99922a3459373a873d55caaa049ead26fa0"
-  integrity sha512-Y2kmbk74dSGRI1bBmo67bowDoVxNm9cs+IPZznsFPRuBN6ToK2RCATZipOJsgO0Unbtiy01o0hP2SS+MKdUNvQ==
+"@types/cheerio@0.22.26":
+  version "0.22.26"
+  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.26.tgz#190127a564d723e17f414d358e2453a5dced0300"
+  integrity sha512-ckxG5bCHk803zCbeq3GO4wbFan8AyVP8BuYynR0E0d/CD0N8I92kXyvikDWsbG14onoKTXR6B+sboxwjnTMSRg==
   dependencies:
     "@types/node" "*"
 
