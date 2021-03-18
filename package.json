@@ -27,7 +27,7 @@
 		"buffer": "6.0.3",
 		"dayjs": "1.10.4",
 		"events": "3.3.0",
-		"leancloud-storage": "4.10.0",
+		"leancloud-storage": "4.10.1",
 		"md5": "2.3.0",
 		"moment": "2.29.1",
 		"react": "17.0.1",
