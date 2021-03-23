@@ -62,7 +62,7 @@
 		"redux-persist-transform-filter": "0.0.20",
 		"redux-thunk": "2.3.0",
 		"safer-buffer": "2.1.2",
-		"semver": "7.3.4",
+		"semver": "7.3.5",
 		"stream": "0.0.2",
 		"thu-info-lib": "1.0.0-rc.10",
 		"typesafe-actions": "5.1.0"
