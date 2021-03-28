@@ -2339,6 +2339,11 @@ events@^3.2.0:
   resolved "https://registry.yarnpkg.com/events/-/events-3.2.0.tgz#93b87c18f8efcd4202a461aec4dfc0556b639379"
   integrity sha512-/46HWwbfCX2xTawVfkKLGxMifJYQBWMwY1mjywRtb4c9x8l5NP3KoJtnIOiL1hfdRkIuYhETxQlo62IF8tcnlg==
 
+events@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
+  integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
+
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/evp_bytestokey/-/evp_bytestokey-1.0.3.tgz#7fcbdb198dc71959432efe13842684e0525acb02"
@@ -2543,6 +2548,11 @@ fill-range@^7.0.1:
   integrity sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==
   dependencies:
     to-regex-range "^5.0.1"
+
+filter-obj@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/filter-obj/-/filter-obj-2.0.1.tgz#34d9f0536786f072df7aeac3a8bda1c6e767aec6"
+  integrity sha512-yDEp513p7+iLdFHWBVdZFnRiOYwg8ZqmpaAiZCMjzqsbo7tCS4Qm4ulXOht337NGzkukKa9u3W4wqQ9tQPm3Ug==
 
 find-up@^2.1.0:
   version "2.1.0"
@@ -4255,10 +4265,10 @@ node-notifier@^8.0.0:
     uuid "^8.3.0"
     which "^2.0.2"
 
-node-polyfill-webpack-plugin@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.0.3.tgz#eba2f0a7c17b4615bef7373f8218bae2599caf4a"
-  integrity sha512-80F4ThcBrcv8RoG7o/3NhIY0mvzkUITo6GZ0bfr8kRhFJ94/5Lf6O43Ctt5FacIG7pi/GANtr/Ozn86y2qTbQw==
+node-polyfill-webpack-plugin@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.1.0.tgz#bedfdfe2d0a02408c984e063ddb9ae488172a66e"
+  integrity sha512-6eKoqK2BpKqUFN1oI1TRoF9TgpsUC1Y8JaT+UUNuUiODhZIm3vcSoNrsqGAoHAhpZxKF0+9MU9VxOWJR/YjpIA==
   dependencies:
     assert "^2.0.0"
     browserify-zlib "^0.2.0"
@@ -4267,7 +4277,8 @@ node-polyfill-webpack-plugin@1.0.3:
     constants-browserify "^1.0.0"
     crypto-browserify "^3.12.0"
     domain-browser "^4.19.0"
-    events "^3.2.0"
+    events "^3.3.0"
+    filter-obj "^2.0.1"
     https-browserify "^1.0.0"
     os-browserify "^0.3.0"
     path-browserify "^1.0.1"
