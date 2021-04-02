@@ -146,6 +146,7 @@ export const login = async (
         );
     } finally {
         helper.loginLocked = false;
+        // @ts-ignore
         if (global.FileReader) {
             // Do not keep-alive for Node.js
             keepAlive(helper);
