@@ -36,16 +36,23 @@ jobs:
       - name: Install dependencies
         run: |
           yarn
+      - name: Prepare for building
+        env:
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+        run: |
+          openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
+          npx jetify
       - name: Build android release
+        uses: eskatos/gradle-command-action@v1
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
-          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
           NDK_VERSION: ${{ secrets.NDK_VERSION }}
-        run: |
-          openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
-          npx jetify && cd android && gradle assembleRelease && cd ..
+        with:
+          gradle-version: 6.5
+          arguments: assembleRelease
+          build-root-directory: android
       - name: Upload artifact
         if: endsWith(github.ref, 'master')
         uses: actions/upload-artifact@v2
