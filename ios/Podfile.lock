@@ -240,17 +240,19 @@ PODS:
     - React
   - react-native-blur (0.8.0):
     - React
-  - react-native-cameraroll (4.0.2):
+  - react-native-cameraroll (4.0.4):
     - React-Core
   - react-native-cookies (5.0.1):
     - React-Core
-  - react-native-safe-area-context (3.1.9):
+  - react-native-image-picker (3.3.4):
+    - React-Core
+  - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-version-number (0.3.6):
     - React
   - react-native-view-shot (3.1.2):
     - React
-  - react-native-webview (11.2.3):
+  - react-native-webview (11.4.2):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -312,21 +314,21 @@ PODS:
     - React-Core (= 0.63.4)
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
-  - RNCAsyncStorage (1.14.1):
+  - RNCAsyncStorage (1.15.4):
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
-  - RNDateTimePicker (3.0.9):
+  - RNDateTimePicker (3.4.6):
     - React-Core
-  - RNFS (2.16.6):
+  - RNFS (2.17.0):
     - React
-  - RNGestureHandler (1.10.1):
+  - RNGestureHandler (1.10.3):
     - React-Core
   - RNKeychain (4.0.5):
     - React
-  - RNLocalize (2.0.2):
+  - RNLocalize (2.0.3):
     - React-Core
-  - RNReanimated (2.0.0-rc.3):
+  - RNReanimated (2.1.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -355,13 +357,13 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (2.17.1):
+  - RNScreens (3.1.1):
     - React-Core
-  - RNSnackbar (2.3.2):
+  - RNSnackbar (2.4.0):
     - React-Core
-  - RNSVG (12.1.0):
+  - RNSVG (12.1.1):
     - React
-  - RNVectorIcons (8.0.0):
+  - RNVectorIcons (8.1.0):
     - React-Core
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -408,6 +410,7 @@ DEPENDENCIES:
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-version-number (from `../node_modules/react-native-version-number`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
@@ -490,6 +493,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-cookies:
     :path: "../node_modules/@react-native-community/cookies"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-version-number:
@@ -574,12 +579,13 @@ SPEC CHECKSUMS:
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-  react-native-cameraroll: 1965db75c851b15e77a22ca0ac78e32af6b571ae
+  react-native-cameraroll: 88f4e62d9ecd0e1f253abe4f685474f2ea14bfa2
   react-native-cookies: ce50e42ace7cf0dd47769260ca5bbe8eee607e4e
-  react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
+  react-native-image-picker: 32fbfa63b6eff82b13b037022dc1d25005290e36
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 4475fde003fe8a210053d1f98fb9e06c1d834e1c
-  react-native-webview: 6520e3e7b4933de76b95ef542c8d7115cf45b68e
+  react-native-webview: 4c85a3e5de574ee8c2c0985b4bebbdd240f49304
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -590,18 +596,18 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  RNCAsyncStorage: fe58eec522885718d6b297b7b658bf87d7ca557b
+  RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
-  RNDateTimePicker: 8a51a2216c307769e69ef827293d59549ab1ca23
-  RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
-  RNGestureHandler: 5e58135436aacc1c5d29b75547d3d2b9430d052c
+  RNDateTimePicker: 47e934943a8cc6e6faab372cfd5f8ccd8c1ab338
+  RNFS: 93d5b5535eb39d98e6b19009faa8fe717f7ea45d
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
-  RNLocalize: 43f6c30d8e19ad92282ae434d310fb463b31f419
-  RNReanimated: ca4f28c765329144d68bdad126bf6b0b1afc7a5a
-  RNScreens: b6c9607e6fe47c1b6e2f1910d2acd46dd7ecea3a
-  RNSnackbar: 2f790a7b5b685e9d3525968990ba3f82354b064c
-  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
-  RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
+  RNLocalize: 99e59cad311ca1b6872b1764514009416ccba03d
+  RNReanimated: 70f662b5232dd5d19ccff581e919a54ea73df51c
+  RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
+  RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
