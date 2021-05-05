@@ -1,7 +1,5 @@
-export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
-export const HOLE_USER_AGENT = "THUInfo/nightly";
 export const JWGG_MAIN_PREFIX =
 	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/jiaowugonggao/more?page=";
 export const BGTZ_MAIN_PREFIX =
@@ -27,18 +25,5 @@ export const TUNA_LATEST_URL =
 	"https://mirrors.tuna.tsinghua.edu.cn/github-release/UNIDY2002/THUInfo/LatestRelease/";
 export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
+export const WERKEYTOM_URL = "https://github.com/werkeytom";
 export const LIB_URL = "https://github.com/thu-info-community/thu-info-lib";
-
-export const HOLE_LOGIN_URL = "https://api.thuhole.com/contents/system_msg";
-export const HOLE_GET_LIST_URL = "https://api.thuhole.com/contents/post/list";
-export const HOLE_GET_ATTENTION_URL =
-	"https://api.thuhole.com/contents/post/attentions";
-export const HOLE_GET_COMMENTS_URL =
-	"https://api.thuhole.com/contents/post/detail";
-export const HOLE_NEW_POST_URL = "https://api.thuhole.com/send/post";
-export const HOLE_NEW_COMMENT_URL = "https://api.thuhole.com/send/comment";
-export const HOLE_SEARCH_URL = "https://api.thuhole.com/contents/search";
-export const HOLE_SET_ATTENTION_URL = "https://api.thuhole.com/edit/attention";
-export const HOLE_DELETE_POST_URL = "https://api.thuhole.com/edit/report/post";
-export const HOLE_DELETE_COMMENT_URL =
-	"https://api.thuhole.com/edit/report/comment";

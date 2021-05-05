@@ -7,6 +7,7 @@ import {
 	GITHUB_REPO_URL,
 	LIB_URL,
 	UNIDY2002_URL,
+	WERKEYTOM_URL,
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
 import {useColorScheme} from "react-native-appearance";
@@ -46,7 +47,7 @@ export const AboutScreen = () => {
 						styles.textStyle,
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
-					(Android) UNIDY2002 @ GitHub
+					UNIDY2002 @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(ASHITEMARU_URL)}>
@@ -55,13 +56,21 @@ export const AboutScreen = () => {
 						styles.textStyle,
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
-					(iOS) Ashitemaru @ GitHub
+					Ashitemaru @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(WERKEYTOM_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					werkeytom @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<View style={{height: 10}} />
 			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
 				{getStr("libText")}
-				<Text style={{color: "red"}}> [NEW]</Text>
 			</Text>
 			<TouchableOpacity onPress={() => makeLinking(LIB_URL)}>
 				<Text
