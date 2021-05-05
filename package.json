@@ -19,7 +19,7 @@
 		"@react-native-community/blur": "3.6.0",
 		"@react-native-community/cameraroll": "4.0.4",
 		"@react-native-community/cookies": "5.0.1",
-		"@react-native-community/datetimepicker": "3.4.6",
+		"@react-native-community/datetimepicker": "3.4.7",
 		"@react-native-community/masked-view": "0.1.11",
 		"@react-navigation/bottom-tabs": "5.11.10",
 		"@react-navigation/native": "5.9.4",
@@ -61,7 +61,7 @@
 		"safer-buffer": "2.1.2",
 		"semver": "7.3.5",
 		"stream": "0.0.2",
-		"thu-info-lib": "1.0.0-rc.10",
+		"thu-info-lib": "1.0.0-rc.11",
 		"typesafe-actions": "5.1.0"
 	},
 	"devDependencies": {

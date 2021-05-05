@@ -1371,10 +1371,10 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-community/datetimepicker@3.4.6":
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.4.6.tgz#bf54ebad54828c68afcb83c641c913721c295ae6"
-  integrity sha512-vE9YOL5w/H28YAYpWgT75HRPYP/JjdWyJEyFKfPntXtQC4YHsqueKYWsWydDN4vHVAf220/wEFkuj33gnFFZRA==
+"@react-native-community/datetimepicker@3.4.7":
+  version "3.4.7"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.4.7.tgz#84613cda2cf06315530628cdf07c77076eae5ec3"
+  integrity sha512-T5MG05ekf9iLSdpBPDbXcOUP6c9pNVhCEVCp9jfjQxj+4dpVQMiCSyLJdPM543uv9KloIZZ71vs+Um01AbwO7A==
   dependencies:
     invariant "^2.2.4"
 
@@ -2899,7 +2899,14 @@ crc-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-cross-fetch@3.0.6, cross-fetch@^3.0.4:
+cross-fetch@3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
+  integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
+  dependencies:
+    node-fetch "2.6.1"
+
+cross-fetch@^3.0.4:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
   integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
@@ -8254,15 +8261,15 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@1.0.0-rc.10:
-  version "1.0.0-rc.10"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.0.0-rc.10.tgz#b210bd8c1bfb061ae0b7b4fe1f0fa2a2418f6285"
-  integrity sha512-r4r0r/q1h9hn3nNuSU+zDqB3rRxyA236pUTYaEf2ToBi5q4k1EKz7Us8Hj8UEJJefOPMhONdUAMR70oWbRoUWw==
+thu-info-lib@1.0.0-rc.11:
+  version "1.0.0-rc.11"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.0.0-rc.11.tgz#4e1a8668a9e1e8025b1dcf7e24fbea9bbb8d1e17"
+  integrity sha512-l0PvS2sMfjgZE0UfI8b2sy1wr8yg6eQi4ha7AaE1yGlHA2PLWeOYKuEjk7bFmrrwo+8lHcUquEb6ijT0geDm3w==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
     convert-excel-to-json "1.7.0"
-    cross-fetch "3.0.6"
+    cross-fetch "3.1.4"
     dayjs "1.10.4"
     iconv-lite "0.6.2"
     md5 "2.3.0"

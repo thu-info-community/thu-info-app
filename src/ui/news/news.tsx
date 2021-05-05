@@ -17,36 +17,20 @@ import {
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import {
-	JWGG_MAIN_PREFIX,
-	BGTZ_MAIN_PREFIX,
-	KYTZ_MAIN_PREFIX,
-	HB_MAIN_PREFIX,
-} from "src/constants/strings";
 import {helper, State} from "../../redux/store";
 import {ADD_NEWS_CACHE} from "../../redux/constants";
 import {NewsCache} from "../../redux/states/cache";
 import {connect} from "react-redux";
 import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import themes from "../../assets/themes/themes";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native-appearance";
 import themedStyles from "../../utils/themedStyles";
 
-dayjs.extend(customParseFormat);
-
 class newsSourceList {
 	private newsLoadList: Array<NewsSlice[]>;
 	private counterList: number[];
-
-	private sourceList: string[] = [
-		JWGG_MAIN_PREFIX,
-		BGTZ_MAIN_PREFIX,
-		KYTZ_MAIN_PREFIX,
-		HB_MAIN_PREFIX,
-	];
 
 	private nameList: SourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
 
@@ -59,10 +43,7 @@ class newsSourceList {
 		for (let i = 0; i < 4; ++i) {
 			if (this.newsLoadList[i].length === 0) {
 				await helper
-					.getNewsList(
-						this.sourceList[i] + this.counterList[i],
-						this.nameList[i],
-					)
+					.getNewsList(this.nameList[i], this.counterList[i])
 					.then((res) => {
 						this.newsLoadList[i] = res;
 						this.counterList[i] += 1;

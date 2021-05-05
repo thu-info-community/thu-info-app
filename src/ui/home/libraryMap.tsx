@@ -1,13 +1,13 @@
 import {LibraryMapRouteProp, LibrarySeatMapRouteProp} from "./homeStack";
 import {Dimensions, Image, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
-import {LIBRARY_MAP_URL} from "../../constants/strings";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveRemoteImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {LibrarySection} from "thu-info-lib/dist/models/home/library";
+import {LIBRARY_IMAGE_BASE} from "thu-info-lib/dist/constants/strings";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);
@@ -24,7 +24,9 @@ export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	return (
 		<View>
 			<Image
-				source={{uri: `${LIBRARY_MAP_URL}${route.params.floor.id}/floor.jpg`}}
+				source={{
+					uri: `${LIBRARY_IMAGE_BASE}${route.params.floor.id}/floor.jpg`,
+				}}
 				style={{width, height}}
 				resizeMode="contain"
 			/>
@@ -55,7 +57,9 @@ export const LibrarySeatMapScreen = ({
 			{
 				<ImageViewer
 					imageUrls={[
-						{url: `${LIBRARY_MAP_URL}${route.params.section.id}/seat-free.jpg`},
+						{
+							url: `${LIBRARY_IMAGE_BASE}${route.params.section.id}/seat-free.jpg`,
+						},
 					]}
 					onSave={saveRemoteImg}
 					menuContext={{
