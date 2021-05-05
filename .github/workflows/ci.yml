@@ -106,7 +106,7 @@ jobs:
           path: node_modules
           key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            $cache-{{ runner.OS }}-
+            $temp-cache-{{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
