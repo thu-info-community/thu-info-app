@@ -62,6 +62,7 @@ export default {
 	sendErrReport: "Send error report",
 	emptyList: "The list seems empty.",
 	passwordManagement: "Password Management",
+	infoPassword: "INFO Password",
 	homePassword: "MyHome Password",
 	hidden: "Hidden",
 	validate: "Validate",

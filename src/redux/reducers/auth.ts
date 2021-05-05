@@ -1,6 +1,7 @@
 import {AuthState, LoginStatus} from "../states/auth";
 import {AuthAction} from "../actions/auth";
 import {
+	CHANGE_PASSWORD,
 	DO_LOGOUT,
 	LOGIN_FAILURE,
 	LOGIN_REQUEST,
@@ -34,6 +35,11 @@ export const auth = (
 				userId: "",
 				password: "",
 				status: action.payload,
+			};
+		case CHANGE_PASSWORD:
+			return {
+				...state,
+				password: action.payload,
 			};
 		case DO_LOGOUT:
 			return {

@@ -1,5 +1,6 @@
 import {ActionType, createAsyncAction} from "typesafe-actions";
 import {
+	CHANGE_PASSWORD,
 	DO_LOGOUT,
 	LOGIN_FAILURE,
 	LOGIN_REQUEST,
@@ -15,4 +16,5 @@ const authAction = createAsyncAction(
 
 export type AuthAction =
 	| ActionType<typeof authAction>
+	| {type: typeof CHANGE_PASSWORD; payload: string}
 	| {type: typeof DO_LOGOUT; payload: undefined};

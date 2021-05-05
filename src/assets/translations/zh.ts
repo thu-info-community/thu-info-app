@@ -59,6 +59,7 @@ export default {
 	sendErrReport: "发送错误报告",
 	emptyList: "列表空空如也，请刷新重试",
 	passwordManagement: "密码管理",
+	infoPassword: "INFO密码",
 	homePassword: "家园网密码",
 	hidden: "已隐藏",
 	validate: "验证",
