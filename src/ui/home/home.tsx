@@ -9,7 +9,6 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-import IconHole from "../../assets/icons/IconHole";
 import {helper} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
@@ -82,13 +81,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				</HomeIcon>
 			)}
 		</HomeSection>
-		{!helper.mocked() && (
-			<HomeSection title="hole">
-				<HomeIcon title="hole" onPress={() => navigation.navigate("HoleList")}>
-					<IconHole width={iconSize} height={iconSize} />
-				</HomeIcon>
-			</HomeSection>
-		)}
 	</ScrollView>
 );
 

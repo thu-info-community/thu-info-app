@@ -59,7 +59,7 @@ export const LibrarySeatMapScreen = ({
 					]}
 					onSave={saveRemoteImg}
 					menuContext={{
-						saveToLocal: getStr("holeSaveImage"),
+						saveToLocal: getStr("saveImage"),
 						cancel: getStr("cancel"),
 					}}
 				/>

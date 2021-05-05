@@ -16,8 +16,6 @@ import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
-import {Hole} from "./states/hole";
-import {hole} from "./reducers/hole";
 import {InfoHelper} from "thu-info-lib";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {defaultSchedule} from "./defaults";
@@ -51,7 +49,6 @@ export interface State {
 	config: Config;
 	credentials: Credentials;
 	cache: Cache;
-	hole: Hole;
 }
 
 const authTransform = createTransform(
@@ -118,7 +115,6 @@ const rootReducer = combineReducers({
 		credentials,
 	),
 	cache,
-	hole,
 });
 
 const calendarConfigTransform = createTransform(
@@ -155,7 +151,7 @@ const persistConfig = {
 	version: 2,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule", "config", "cache", "hole", "credentials"],
+	whitelist: ["auth", "schedule", "config", "cache", "credentials"],
 	transforms: [
 		calendarConfigTransform,
 		scheduleFilter,

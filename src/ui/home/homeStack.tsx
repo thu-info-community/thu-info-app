@@ -18,15 +18,10 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {HoleListScreen} from "./holeList";
-import {HoleDetailScreen} from "./holeDetail";
-import {HoleTitleCard} from "../../models/hole";
-import {HolePublishScreen} from "./holePublish";
 import {TouchableOpacity} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
-import {HoleImageScreen} from "./holeImage";
 import {
 	Library,
 	LibraryFloor,
@@ -50,10 +45,6 @@ export type HomeStackParamList = {
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
 	DormScore: undefined;
-	HoleList: undefined;
-	HoleDetail: HoleTitleCard | {pid: number; lazy: true};
-	HolePublish: undefined;
-	HoleImage: {url: string};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -67,8 +58,6 @@ export type LibrarySeatMapRouteProp = RouteProp<
 	HomeStackParamList,
 	"LibrarySeatMap"
 >;
-export type HoleDetailRouteProp = RouteProp<HomeStackParamList, "HoleDetail">;
-export type HoleImageRouteProp = RouteProp<HomeStackParamList, "HoleImage">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -174,35 +163,6 @@ export const HomeStackScreen = () => {
 				name="DormScore"
 				component={DormScoreScreen}
 				options={{title: getStr("dormScore")}}
-			/>
-			<Stack.Screen
-				name="HoleList"
-				component={HoleListScreen}
-				options={({navigation}: {navigation: HomeNav}) => ({
-					title: getStr("hole"),
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() => navigation.navigate("HolePublish")}>
-							<Icon name="plus" size={24} color={theme.colors.primary} />
-						</TouchableOpacity>
-					),
-				})}
-			/>
-			<Stack.Screen
-				name="HoleDetail"
-				component={HoleDetailScreen}
-				options={{title: getStr("holeDetail")}}
-			/>
-			<Stack.Screen
-				name="HolePublish"
-				component={HolePublishScreen}
-				options={{title: getStr("holePublish")}}
-			/>
-			<Stack.Screen
-				name="HoleImage"
-				component={HoleImageScreen}
-				options={{title: getStr("holeImage")}}
 			/>
 		</Stack.Navigator>
 	);

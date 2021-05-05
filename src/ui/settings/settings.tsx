@@ -21,7 +21,6 @@ import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {
 	DO_LOGOUT,
-	HOLE_SET_TOKEN,
 	SCHEDULE_CLEAR,
 	SET_DORM_PASSWORD,
 	SET_EMAIL_NAME,
@@ -64,11 +63,6 @@ export const SettingsUI = ({
 				<SettingsSeparator />
 				{!helper.mocked() && (
 					<>
-						<SettingsItem
-							text={getStr("holeSettings")}
-							onPress={() => navigation.navigate("HoleSettings")}
-							icon={<FontAwesome name="tree" size={16} />}
-						/>
 						<SettingsItem
 							text={getStr("passwordManagement")}
 							onPress={() => navigation.navigate("PasswordManagement")}
@@ -160,7 +154,6 @@ export const SettingsUI = ({
 										.logout()
 										.then(() => console.log("Successfully logged out."));
 									store.dispatch({type: DO_LOGOUT, payload: undefined});
-									store.dispatch({type: HOLE_SET_TOKEN, payload: ""});
 									store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
 									store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
 									store.dispatch({type: SET_EMAIL_NAME, payload: ""});

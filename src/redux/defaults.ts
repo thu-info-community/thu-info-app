@@ -3,7 +3,6 @@ import {Schedules} from "./states/schedule";
 import {Config} from "./states/config";
 import {Credentials} from "./states/credentials";
 import {Cache} from "./states/cache";
-import {Hole} from "./states/hole";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 export const defaultAuthState: AuthState = {
@@ -44,9 +43,4 @@ export const defaultCredentials: Credentials = {
 
 export const defaultCache: Cache = {
 	news: [],
-};
-
-export const defaultHole: Hole = {
-	token: "",
-	blockWords: [],
 };
