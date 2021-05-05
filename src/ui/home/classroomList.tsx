@@ -63,7 +63,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: HomeNav}) => (
 				"文北楼",
 				"文南楼",
 				"蒙楼",
-				"蒙民伟科技大楼",
+				"蒙民伟科技",
 				"逸夫图书馆",
 				"法图",
 				"建馆",
