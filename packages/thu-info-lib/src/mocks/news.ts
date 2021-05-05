@@ -1,10 +1,9 @@
-import {BGTZ_MAIN_PREFIX, HB_MAIN_PREFIX, JWGG_MAIN_PREFIX} from "../constants/strings";
 import {url0, url1, url2, url3, url4, url5, url6, url7, url8, url9} from "./source/newsHtml";
-import {NewsSlice} from "../models/news/news";
+import {NewsSlice, SourceTag} from "../models/news/news";
 
-export const MOCK_NEWS_LIST = (url: string): NewsSlice[] => {
-    switch (url) {
-    case JWGG_MAIN_PREFIX + 0:
+export const MOCK_NEWS_LIST = (channel: SourceTag): NewsSlice[] => {
+    switch (channel) {
+    case "JWGG":
         return [
             {
                 channel: "JWGG",
@@ -35,7 +34,7 @@ export const MOCK_NEWS_LIST = (url: string): NewsSlice[] => {
                 url: url3,
             },
         ];
-    case BGTZ_MAIN_PREFIX + 0:
+    case "BGTZ":
         return [
             {
                 channel: "BGTZ",
@@ -59,7 +58,7 @@ export const MOCK_NEWS_LIST = (url: string): NewsSlice[] => {
                 url: url6,
             },
         ];
-    case HB_MAIN_PREFIX + 0:
+    case "HB":
         return [
             {
                 channel: "HB",

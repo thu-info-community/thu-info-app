@@ -134,9 +134,9 @@ export class InfoHelper {
         cancelBooking(this, id);
 
     public getNewsList = async (
-        url: string,
         channel: SourceTag,
-    ): Promise<NewsSlice[]> => getNewsList(this, url, channel);
+        page: number,
+    ): Promise<NewsSlice[]> => getNewsList(this, channel, page);
 
     public getNewsDetail = async (
         url: string,

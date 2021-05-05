@@ -6,16 +6,24 @@ import {InfoHelper} from "../index";
 import {getCheerioText} from "../utils/cheerio";
 import {retryWrapperWithMocks} from "./core";
 import {MOCK_NEWS_LIST} from "../mocks/news";
+import {BGTZ_MAIN_PREFIX, HB_MAIN_PREFIX, JWGG_MAIN_PREFIX, KYTZ_MAIN_PREFIX} from "../constants/strings";
+
+const channelToUrl: {[key in SourceTag]: string} = {
+    "JWGG": JWGG_MAIN_PREFIX,
+    "BGTZ": BGTZ_MAIN_PREFIX,
+    "KYTZ": KYTZ_MAIN_PREFIX,
+    "HB": HB_MAIN_PREFIX,
+};
 
 export const getNewsList = (
     helper: InfoHelper,
-    url: string,
     channel: SourceTag,
+    page: number,
 ): Promise<NewsSlice[]> =>
     retryWrapperWithMocks(
         helper,
         undefined,
-        () => uFetch(url).then((str) => {
+        () => uFetch(channelToUrl[channel] + page).then((str) => {
             const $ = cheerio.load(str);
             const newsList: NewsSlice[] = [];
             $("ul.cont_list > li", str).each((_, item) => {
@@ -40,7 +48,7 @@ export const getNewsList = (
             });
             return newsList;
         }),
-        MOCK_NEWS_LIST(url),
+        MOCK_NEWS_LIST(channel),
     );
 
 const policyList: [string, [string, string]][] = [

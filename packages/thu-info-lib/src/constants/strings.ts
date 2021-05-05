@@ -83,6 +83,8 @@ export const BGTZ_MAIN_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/bangongtongzhi/more?field_bgtz_fl_tid=All&page=";
 export const HB_MAIN_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/haibao/more?page=";
+export const KYTZ_MAIN_PREFIX =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/f/keyantongzhi/more?field_kytz_fl_tid=All&page=";
 export const CLASSROOM_STATE_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/pk.classroomctrl.do?m=qyClassroomState&classroom=";
 export const CLASSROOM_STATE_MIDDLE = "&weeknumber=";
@@ -100,6 +102,8 @@ export const LIBRARY_DAYS_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/areadays/";
 export const LIBRARY_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/form/ef84f6d6784f6b834e5214f432d6173f/0?/api/id_tsinghua_callback";
+export const LIBRARY_IMAGE_BASE =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/Public/home/images/web/area/";
 export const ID_LOGIN_CHECK_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/check";
 export const LIBRARY_BOOK_URL_PREFIX =
