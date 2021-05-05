@@ -12,7 +12,6 @@ import {
 	SET_LAST_SELF_VERSION,
 	SET_LIB_INTRODUCED,
 	SET_NEW_GPA,
-	SET_REMAINDER_SHIFT,
 	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
@@ -64,11 +63,6 @@ export const config = (
 			return {
 				...state,
 				scheduleHeight: action.payload,
-			};
-		case SET_REMAINDER_SHIFT:
-			return {
-				...state,
-				remainderShift: action.payload,
 			};
 		case SET_LAST_BROADCAST_ID:
 			return {

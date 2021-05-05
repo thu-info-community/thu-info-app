@@ -123,9 +123,6 @@ export default {
 	income: "收入",
 	outgo: "支出",
 	remainder: "余额",
-	question: "疑问",
-	expenditureFAQ:
-		"\n余额≠收入-支出？\n\n收入和支出对应的是所选时段内的数据，而余额是全时间段的数据。\n\n余额与实际不符？\n\n由于尚未找到直接查询余额的接口，当前余额数据是根据您的全部收支记录得出的推算结果。另外，由于补办卡之后学校数据似乎会产生严重偏差，请在设置界面中手动修正余额。",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	classroomHeaderPrefix: "第",

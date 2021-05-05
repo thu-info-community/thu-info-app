@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {
-	Alert,
 	Button,
 	FlatList,
 	Platform,
@@ -14,8 +13,6 @@ import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
-import {connect} from "react-redux";
-import {State} from "../../redux/store";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {Record} from "thu-info-lib/dist/models/home/expenditure";
 import {useColorScheme} from "react-native-appearance";
@@ -68,7 +65,7 @@ export const Money = ({title, money}: {title: string; money: number}) => {
 	);
 };
 
-export const ExpenditureUI = ({shift}: {shift: number}) => {
+export const ExpenditureScreen = () => {
 	const [[expenditures, income, outgo, remainder], setExpenditures] = useState<
 		[Record[], number, number, number]
 	>([[], 0, 0, 0]);
@@ -103,10 +100,7 @@ export const ExpenditureUI = ({shift}: {shift: number}) => {
 			<View style={{flexDirection: "row"}}>
 				<Money title={getStr("income")} money={income} />
 				<Money title={getStr("outgo")} money={outgo} />
-				<Money
-					title={getStr("remainder")}
-					money={refreshing ? 0 : remainder + shift}
-				/>
+				<Money title={getStr("remainder")} money={refreshing ? 0 : remainder} />
 			</View>
 			{!helper.mocked() && (
 				<View style={styles.header}>
@@ -126,17 +120,6 @@ export const ExpenditureUI = ({shift}: {shift: number}) => {
 						title={getStr("query")}
 						onPress={refresh}
 						disabled={refreshing}
-					/>
-					<Button
-						title={getStr("question")}
-						onPress={() => {
-							Alert.alert(
-								getStr("question"),
-								getStr("expenditureFAQ"),
-								[{text: getStr("ok")}],
-								{cancelable: true},
-							);
-						}}
 					/>
 				</View>
 			)}
@@ -170,7 +153,3 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 });
-
-export const ExpenditureScreen = connect((state: State) => ({
-	shift: state.config.remainderShift ?? 0,
-}))(ExpenditureUI);

@@ -31,7 +31,6 @@ export const defaultConfigState: Config = {
 	bx: false,
 	reportHidden: [],
 	scheduleHeight: 65,
-	remainderShift: 0,
 	lastBroadcast: 0,
 	libIntroduced: true,
 	emailName: "",

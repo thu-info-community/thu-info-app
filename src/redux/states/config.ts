@@ -15,7 +15,6 @@ export interface Config {
 	bx: boolean;
 	reportHidden: string[];
 	scheduleHeight: number;
-	remainderShift: number;
 	lastBroadcast: number;
 	libIntroduced: boolean;
 	emailName: string;
