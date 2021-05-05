@@ -9,8 +9,6 @@ import {
 	View,
 } from "react-native";
 import Markdown from "react-native-markdown-display";
-import {docco} from "react-syntax-highlighter/dist/esm/styles/hljs";
-import SyntaxHighlighter from "react-native-syntax-highlighter";
 import {useColorScheme} from "react-native-appearance";
 import themes from "../../assets/themes/themes";
 import TimeAgo from "react-native-timeago";
@@ -151,15 +149,6 @@ export const HoleMarkdown = ({
 						]}>
 						{children}
 					</Text>
-				),
-				fence: (node) => (
-					<SyntaxHighlighter
-						language={((node as unknown) as {sourceInfo: string}).sourceInfo}
-						style={docco}
-						highlighter={"hljs"}
-						key={node.key}>
-						{node.content}
-					</SyntaxHighlighter>
 				),
 			}}>
 			{text}
