@@ -94,6 +94,20 @@ const policyList: [string, [string, string]][] = [
             "[style='width:647px;margin-left:6px;font-size:13px;line-height:20px;text-align:justify']",
         ],
     ],
+    [
+        "77726476706e69737468656265737421e8e442d23323615e79009cadd6502720f9b87b",
+        [
+            ".bt",
+            ".xqbox",
+        ],
+    ],
+    [
+        "77726476706e69737468656265737421e4ff459d207e6b597d469dbf915b243de94c4812e5c2e1599f",
+        [
+            ".TD_right > font",
+            "td[colspan=4]:not(td[height])",
+        ],
+    ],
 ];
 
 const getNewsDetailPolicy = (
