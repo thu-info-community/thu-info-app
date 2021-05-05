@@ -14,7 +14,6 @@ import {AcknowledgementsScreen} from "./acknowledgements";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
 import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
-import {SecondarySettingsScreen} from "./secondarySettings";
 import {RemainderSettingsScreen} from "./remainderSettings";
 import {ExperimentalScreen} from "./experimental";
 import {HoleSettingsScreen} from "./holeSettings";
@@ -93,11 +92,6 @@ export const SettingStackScreen = () => (
 			name="ReportManageHidden"
 			component={ReportManageHiddenScreen}
 			options={{title: getStr("manageHidden")}}
-		/>
-		<Stack.Screen
-			name="SecondarySettings"
-			component={SecondarySettingsScreen}
-			options={{title: getStr("secondarySchedule")}}
 		/>
 		<Stack.Screen
 			name="RemainderSettings"
