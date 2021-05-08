@@ -5,6 +5,7 @@ import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconClassroom from "../../assets/icons/IconClassroom";
+import IconEvaluation from "../../assets/icons/IconEvaluation";
 import IconLibrary from "../../assets/icons/IconLibrary";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
@@ -50,12 +51,12 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 				title="physicalExam"
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
-			</HomeIcon>
+			</HomeIcon>*/}
 			<HomeIcon
 				title="teachingEvaluation"
 				onPress={() => navigation.navigate("Evaluation")}>
 				<IconEvaluation width={iconSize} height={iconSize} />
-			</HomeIcon>*/}
+			</HomeIcon>
 		</HomeSection>
 		<HomeSection title="resources">
 			<HomeIcon
