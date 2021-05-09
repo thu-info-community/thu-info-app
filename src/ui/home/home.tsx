@@ -1,4 +1,4 @@
-import {ScrollView, Text, View} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
@@ -13,7 +13,6 @@ import {getStr} from "../../utils/i18n";
 import {helper, State} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
-import IconMain from "../../assets/icons/IconMain";
 import {connect} from "react-redux";
 
 const iconSize = 60;
@@ -55,16 +54,31 @@ const HomeUI = ({
 
 	return (
 		<ScrollView style={{padding: 4}}>
-			<View
-				style={[
-					style.sectionContainer,
-					{
-						borderColor: "#aaa",
-						borderWidth: themeName === "dark" ? 1 : 0,
-					},
-				]}>
-				<Text style={style.sectionTitle}>{emailUnseen}</Text>
-			</View>
+			{emailUnseen > 0 && (
+				<View
+					style={[
+						style.sectionContainer,
+						{
+							borderColor: "#aaa",
+							borderWidth: themeName === "dark" ? 1 : 0,
+							alignItems: "flex-end",
+						},
+					]}>
+					<TouchableOpacity onPress={() => navigation.navigate("EmailList")}>
+						<Text
+							style={{
+								textAlign: "right",
+								fontSize: 15,
+								paddingHorizontal: 10,
+								paddingVertical: 6,
+								fontWeight: "bold",
+								color: "red",
+							}}>
+							{emailUnseen}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 			<HomeSection title="study">
 				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
 					<IconReport width={iconSize} height={iconSize} />
@@ -74,41 +88,38 @@ const HomeUI = ({
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
 			</HomeIcon>*/}
-			<HomeIcon
-				title="teachingEvaluation"
-				onPress={() => navigation.navigate("Evaluation")}>
-				<IconEvaluation width={iconSize} height={iconSize} />
-			</HomeIcon>
-		</HomeSection>
-		<HomeSection title="resources">
-			<HomeIcon
-				title="classroomState"
-				onPress={() => navigation.navigate("ClassroomList")}>
-				<IconClassroom width={iconSize} height={iconSize} />
-			</HomeIcon>
-			<HomeIcon title="library" onPress={() => navigation.navigate("Library")}>
-				<IconLibrary width={iconSize} height={iconSize} />
-			</HomeIcon>
-		</HomeSection>
-		<HomeSection title="life">
-			<HomeIcon
-				title="expenditure"
-				onPress={() => navigation.navigate("Expenditure")}>
-				<IconExpenditure width={iconSize} height={iconSize} />
-			</HomeIcon>
-			{!helper.mocked() && (
 				<HomeIcon
-					title="dormScore"
-					onPress={() => navigation.navigate("DormScore")}>
-					<IconDormScore width={iconSize} height={iconSize} />
+					title="teachingEvaluation"
+					onPress={() => navigation.navigate("Evaluation")}>
+					<IconEvaluation width={iconSize} height={iconSize} />
 				</HomeIcon>
-			)}
-			<HomeIcon title="email" onPress={() => navigation.navigate("Email")}>
-				<IconMain width={iconSize} height={iconSize} />
-			</HomeIcon>
-		</HomeSection>
-	</ScrollView>
-);
+			</HomeSection>
+			<HomeSection title="resources">
+				<HomeIcon
+					title="classroomState"
+					onPress={() => navigation.navigate("ClassroomList")}>
+					<IconClassroom width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon title="library" onPress={() => navigation.navigate("Library")}>
+					<IconLibrary width={iconSize} height={iconSize} />
+				</HomeIcon>
+			</HomeSection>
+			<HomeSection title="life">
+				<HomeIcon
+					title="expenditure"
+					onPress={() => navigation.navigate("Expenditure")}>
+					<IconExpenditure width={iconSize} height={iconSize} />
+				</HomeIcon>
+				{!helper.mocked() && (
+					<HomeIcon
+						title="dormScore"
+						onPress={() => navigation.navigate("DormScore")}>
+						<IconDormScore width={iconSize} height={iconSize} />
+					</HomeIcon>
+				)}
+			</HomeSection>
+		</ScrollView>
+	);
 };
 
 export const HomeScreen = connect((state: State) => ({

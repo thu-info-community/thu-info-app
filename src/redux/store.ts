@@ -32,13 +32,15 @@ helper.clearCookieHandler = async () => {
 
 AppState.addEventListener("change", (state) => {
 	if (state === "active") {
-		retryWrapperWithMocks(
-			helper,
-			undefined,
-			() => Promise.reject(),
-			undefined,
-		).catch(() => console.log("Re-connection done."));
-		emailInit().then(() => console.log("Email re-login done."));
+		setTimeout(() => {
+			retryWrapperWithMocks(
+				helper,
+				undefined,
+				() => Promise.reject(),
+				undefined,
+			).catch(() => console.log("Re-connection done."));
+			emailInit().then(() => console.log("Email re-login done."));
+		}, 1000); // Wait for data to be rehydrated
 	}
 });
 

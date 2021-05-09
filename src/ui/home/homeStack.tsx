@@ -29,6 +29,7 @@ import {
 } from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native-appearance";
 import {EmailScreen} from "./email";
+import {EmailListScreen} from "./emailList";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -46,7 +47,8 @@ export type HomeStackParamList = {
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
 	DormScore: undefined;
-	Email: undefined;
+	Email: {messageId: number};
+	EmailList: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -60,6 +62,7 @@ export type LibrarySeatMapRouteProp = RouteProp<
 	HomeStackParamList,
 	"LibrarySeatMap"
 >;
+export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -169,6 +172,11 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="Email"
 				component={EmailScreen}
+				options={{title: getStr("email")}}
+			/>
+			<Stack.Screen
+				name="EmailList"
+				component={EmailListScreen}
 				options={{title: getStr("email")}}
 			/>
 		</Stack.Navigator>
