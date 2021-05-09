@@ -1,6 +1,7 @@
 import MailCore from "thu-info-mailcore";
-import {helper} from "../redux/store";
+import {helper, store} from "../redux/store";
 import {Platform} from "react-native";
+import {SET_EMAIL_UNSEEN} from "../redux/constants";
 
 export const emailInit = async () => {
 	if (Platform.OS === "ios") {
@@ -15,5 +16,5 @@ export const emailInit = async () => {
 		authType: 0,
 	});
 	const {unseenCount} = await MailCore.statusFolder({folder: INBOX});
-	console.log(unseenCount);
+	store.dispatch({type: SET_EMAIL_UNSEEN, payload: unseenCount});
 };

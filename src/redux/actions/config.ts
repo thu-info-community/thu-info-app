@@ -5,6 +5,7 @@ import {
 	SET_CALENDAR_CONFIG,
 	SET_DO_NOT_REMIND,
 	SET_EMAIL_NAME,
+	SET_EMAIL_UNSEEN,
 	SET_LAST_BROADCAST_ID,
 	SET_LAST_SELF_VERSION,
 	SET_LIB_INTRODUCED,
@@ -33,7 +34,8 @@ export type ConfigAction =
 	| {type: typeof SET_SCHEDULE_HEIGHT; payload: number}
 	| {type: typeof SET_LAST_BROADCAST_ID; payload: number}
 	| {type: typeof SET_LIB_INTRODUCED; payload: undefined}
-	| {type: typeof SET_EMAIL_NAME; payload: string};
+	| {type: typeof SET_EMAIL_NAME; payload: string}
+	| {type: typeof SET_EMAIL_UNSEEN; payload: number};
 
 export const refreshCalendarConfig = async () => {
 	const payload = (

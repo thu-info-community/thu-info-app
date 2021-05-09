@@ -10,10 +10,11 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native-appearance";
 import IconMain from "../../assets/icons/IconMain";
+import {connect} from "react-redux";
 
 const iconSize = 60;
 
@@ -42,13 +43,33 @@ export const HomeSection = ({
 	);
 };
 
-export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
-	<ScrollView style={{padding: 4}}>
-		<HomeSection title="study">
-			<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
-				<IconReport width={iconSize} height={iconSize} />
-			</HomeIcon>
-			{/*<HomeIcon
+const HomeUI = ({
+	navigation,
+	emailUnseen,
+}: {
+	navigation: HomeNav;
+	emailUnseen: number;
+}) => {
+	const themeName = useColorScheme();
+	const style = styles(themeName);
+
+	return (
+		<ScrollView style={{padding: 4}}>
+			<View
+				style={[
+					style.sectionContainer,
+					{
+						borderColor: "#aaa",
+						borderWidth: themeName === "dark" ? 1 : 0,
+					},
+				]}>
+				<Text style={style.sectionTitle}>{emailUnseen}</Text>
+			</View>
+			<HomeSection title="study">
+				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
+					<IconReport width={iconSize} height={iconSize} />
+				</HomeIcon>
+				{/*<HomeIcon
 				title="physicalExam"
 				onPress={() => navigation.navigate("PhysicalExam")}>
 				<IconPhysicalExam width={iconSize} height={iconSize} />
@@ -88,6 +109,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => (
 		</HomeSection>
 	</ScrollView>
 );
+};
+
+export const HomeScreen = connect((state: State) => ({
+	emailUnseen: state.config.emailUnseen,
+}))(HomeUI);
 
 const styles = themedStyles((theme) => ({
 	sectionContainer: {

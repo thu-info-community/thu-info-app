@@ -18,4 +18,5 @@ export interface Config {
 	lastBroadcast: number;
 	libIntroduced: boolean;
 	emailName: string;
+	emailUnseen: number;
 }
