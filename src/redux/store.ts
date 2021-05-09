@@ -22,6 +22,7 @@ import {defaultSchedule} from "./defaults";
 import CookieManager from "@react-native-community/cookies";
 import {AppState} from "react-native";
 import {retryWrapperWithMocks} from "thu-info-lib/dist/lib/core";
+import {emailInit} from "../utils/email";
 
 export const helper = new InfoHelper();
 
@@ -37,6 +38,7 @@ AppState.addEventListener("change", (state) => {
 			() => Promise.reject(),
 			undefined,
 		).catch(() => console.log("Re-connection done."));
+		emailInit().then(() => console.log("Email re-login done."));
 	}
 });
 

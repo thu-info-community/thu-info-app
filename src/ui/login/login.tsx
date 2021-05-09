@@ -25,6 +25,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native-appearance";
 import {LoginNav} from "../../components/AuthFlow";
+import {emailInit} from "../../utils/email";
 
 interface LoginProps {
 	readonly userId: string;
@@ -272,6 +273,11 @@ export const LoginScreen = connect(
 			loginSuccess: () => {
 				dispatch({type: LOGIN_SUCCESS, payload: undefined});
 				dispatch({type: SET_EMAIL_NAME, payload: helper.emailName});
+				emailInit().then(() =>
+					console.log(
+						`Successfully logged in with ${helper.emailName}@mails.tsinghua.edu.cn`,
+					),
+				);
 			},
 		};
 	},
