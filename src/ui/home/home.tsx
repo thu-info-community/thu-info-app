@@ -100,7 +100,9 @@ const HomeUI = ({
 					onPress={() => navigation.navigate("ClassroomList")}>
 					<IconClassroom width={iconSize} height={iconSize} />
 				</HomeIcon>
-				<HomeIcon title="library" onPress={() => navigation.navigate("Library")}>
+				<HomeIcon
+					title="library"
+					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>

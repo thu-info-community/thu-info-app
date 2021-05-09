@@ -3,6 +3,8 @@ import React, {useEffect, useState} from "react";
 import MailCore from "thu-info-mailcore";
 import WebView from "react-native-webview";
 import {EmailRouteProp} from "./homeStack";
+import {store} from "../../redux/store";
+import {SET_EMAIL_UNSEEN} from "../../redux/constants";
 
 export const EmailScreen = ({route}: {route: EmailRouteProp}) => {
 	const [mail, setMail] = useState<MailCore.MailDetail>();
@@ -11,7 +13,12 @@ export const EmailScreen = ({route}: {route: EmailRouteProp}) => {
 			folder: "INBOX",
 			messageId: route.params.messageId,
 			requestKind: 63,
-		}).then(setMail);
+		})
+			.then(setMail)
+			.then(async () => {
+				const {unseenCount} = await MailCore.statusFolder({folder: "INBOX"});
+				store.dispatch({type: SET_EMAIL_UNSEEN, payload: unseenCount});
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (mail) {
