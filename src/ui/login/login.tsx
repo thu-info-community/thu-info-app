@@ -74,7 +74,7 @@ const LoginUI = (props: LoginProps) => {
 		) {
 			Snackbar.show({
 				// @ts-ignore
-				text: `${getStr("loginFailure")}\n${props.status.message}`,
+				text: `${getStr("loginFailure")}:${props.status.message}`,
 				duration: Snackbar.LENGTH_LONG,
 			});
 			props.resetStatus();
