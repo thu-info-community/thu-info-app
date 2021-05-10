@@ -30,6 +30,7 @@ export default {
 	noSocket: "无插座",
 	confirmReportHasSocket: "确定报告为有插座吗？",
 	confirmReportNoSocket: "确定报告为无插座吗？",
+	socketReportShort: "长按以切换插座状态",
 	socketReportPrompt: "您应为自己的报告负责~",
 	reportSuccessful: "报告成功，谢谢您的贡献！",
 	reportFail: "报告失败，可能是网络原因，或尚未录入该座位。",

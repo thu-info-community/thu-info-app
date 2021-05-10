@@ -71,6 +71,12 @@ export function libraryRefreshListScreen<
 										paddingHorizontal: 12,
 										flex: 1,
 									}}
+									onPress={() =>
+										Snackbar.show({
+											text: getStr("socketReportShort"),
+											duration: Snackbar.LENGTH_SHORT,
+										})
+									}
 									onLongPress={() => {
 										Alert.alert(
 											getStr(

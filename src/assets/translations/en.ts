@@ -34,6 +34,7 @@ export default {
 		"You are going to report this seat as `socket available`.",
 	confirmReportNoSocket:
 		"You are going to report this seat as `socket unavailable`.",
+	socketReportShort: "Long press to report socket status",
 	socketReportPrompt: "You should be responsible for your report~",
 	reportSuccessful: "Report succeeded. Thanks for your contribution!",
 	reportFail:
