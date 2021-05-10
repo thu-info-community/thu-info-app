@@ -85,21 +85,18 @@ const ScheduleHiddenUI = ({
 					<TouchableOpacity
 						style={{padding: 5, marginHorizontal: 6}}
 						onPress={() => {
-							let overlapList: [
-								TimeBlock,
-								string,
-								boolean,
-							][] = getOverlappedBlock(
-								{
-									name: item.name,
-									location: "",
-									activeTime: [item.time],
-									delOrHideTime: [],
-									delOrHideDetail: [],
-									type: ScheduleType.PRIMARY,
-								},
-								baseSchedule,
-							);
+							let overlapList: [TimeBlock, string, boolean][] =
+								getOverlappedBlock(
+									{
+										name: item.name,
+										location: "",
+										activeTime: [item.time],
+										delOrHideTime: [],
+										delOrHideDetail: [],
+										type: ScheduleType.PRIMARY,
+									},
+									baseSchedule,
+								);
 							if (overlapList.length) {
 								Alert.alert(
 									getStr("scheduleConflict"),

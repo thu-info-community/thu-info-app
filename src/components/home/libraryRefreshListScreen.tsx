@@ -14,7 +14,7 @@ import themes, {Theme} from "../../assets/themes/themes";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
-	S extends "LibraryFloor" | "LibrarySection" | "LibrarySeat"
+	S extends "LibraryFloor" | "LibrarySection" | "LibrarySeat",
 >(
 	dataSource: (
 		props: PropsWithChildren<{
