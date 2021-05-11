@@ -1,6 +1,6 @@
 const mockRNGestureHandlerModule = 'react-native-gesture-handler/dist/src/__mocks__/RNGestureHandlerModule.js'
 jest.mock('react-native-gesture-handler', () => mockRNGestureHandlerModule)
-import mockAsyncStorage from "@react-native-community/async-storage/jest/async-storage-mock";
+import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 
 global.console = {
 	log: console.log,
