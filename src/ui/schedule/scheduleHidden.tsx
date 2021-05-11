@@ -18,9 +18,9 @@ import {
 	TimeBlock,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {
-	SCHEDULE_DEL_OR_HIDE,
-	SCHEDULE_REMOVE_HIDDEN_RULE,
-} from "../../redux/constants";
+	scheduleDelOrHideAction,
+	scheduleRemoveHiddenRuleAction,
+} from "../../redux/actions/schedule";
 import {getStr} from "../../utils/i18n";
 import {Choice} from "src/redux/reducers/schedule";
 import themes from "../../assets/themes/themes";
@@ -190,9 +190,9 @@ export const ScheduleHiddenScreen = connect(
 	}),
 	(dispatch) => ({
 		removeRule: (name: string, rule: TimeBlock) =>
-			dispatch({type: SCHEDULE_REMOVE_HIDDEN_RULE, payload: [name, rule]}),
+			dispatch(scheduleRemoveHiddenRuleAction([name, rule])),
 		delOrHide: (title: string, block: TimeBlock, choice: Choice) => {
-			dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [title, block, choice]});
+			dispatch(scheduleDelOrHideAction([title, block, choice]));
 		},
 	}),
 )(ScheduleHiddenUI);

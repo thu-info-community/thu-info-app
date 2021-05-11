@@ -18,7 +18,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {helper, State} from "../../redux/store";
-import {ADD_NEWS_CACHE} from "../../redux/constants";
+import {addNewsCacheAction} from "../../redux/actions/cache";
 import {NewsCache} from "../../redux/states/cache";
 import {connect} from "react-redux";
 import {NewsNav, NewsRouteProp} from "./newsStack";
@@ -385,7 +385,7 @@ export const NewsScreen = connect(
 	},
 	(dispatch) => ({
 		addCache: (payload: NewsCache) => {
-			dispatch({type: ADD_NEWS_CACHE, payload});
+			dispatch(addNewsCacheAction(payload));
 		},
 	}),
 )(NewsUI);

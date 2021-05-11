@@ -1,6 +1,7 @@
 import {SET_DORM_PASSWORD} from "../constants";
+import {ActionType, createAction} from "typesafe-actions";
 
-export type CredentialsAction = {
-	type: typeof SET_DORM_PASSWORD;
-	payload: string;
-};
+export const setDormPasswordAction = createAction(SET_DORM_PASSWORD)<string>();
+
+const credentialsAction = {setDormPasswordAction};
+export type CredentialsAction = ActionType<typeof credentialsAction>;

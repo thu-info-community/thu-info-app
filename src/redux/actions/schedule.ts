@@ -1,4 +1,4 @@
-import {ActionType, createAsyncAction} from "typesafe-actions";
+import {ActionType, createAction, createAsyncAction} from "typesafe-actions";
 import {
 	SCHEDULE_FAILURE,
 	SCHEDULE_REQUEST,
@@ -9,31 +9,37 @@ import {
 	SCHEDULE_UPDATE_LOCATION,
 	SCHEDULE_CLEAR,
 } from "../constants";
-import {Dispatch} from "redux";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeBlock} from "thu-info-lib/src/models/schedule/schedule";
-import {helper} from "../store";
 
-const scheduleAction = createAsyncAction(
+export const scheduleFetchAction = createAsyncAction(
 	SCHEDULE_REQUEST,
 	SCHEDULE_SUCCESS,
 	SCHEDULE_FAILURE,
 )<undefined, Schedule[], undefined>();
+export const scheduleUpdateAliasAction = createAction(SCHEDULE_UPDATE_ALIAS)<
+	[string, string?]
+>();
+export const scheduleAddCustomAction =
+	createAction(SCHEDULE_ADD_CUSTOM)<Schedule>();
+export const scheduleDelOrHideAction =
+	createAction(SCHEDULE_DEL_OR_HIDE)<[string, TimeBlock, Choice]>();
+export const scheduleRemoveHiddenRuleAction = createAction(
+	SCHEDULE_REMOVE_HIDDEN_RULE,
+)<[string, TimeBlock]>();
+export const scheduleUpdateLocationAction = createAction(
+	SCHEDULE_UPDATE_LOCATION,
+)<[string, string]>();
+export const scheduleClearAction = createAction(SCHEDULE_CLEAR)();
 
-export type ScheduleAction =
-	| ActionType<typeof scheduleAction>
-	| {type: typeof SCHEDULE_UPDATE_ALIAS; payload: [string, string]}
-	| {type: typeof SCHEDULE_ADD_CUSTOM; payload: Schedule}
-	| {type: typeof SCHEDULE_DEL_OR_HIDE; payload: [string, TimeBlock, Choice]}
-	| {type: typeof SCHEDULE_REMOVE_HIDDEN_RULE; payload: [string, TimeBlock]}
-	| {type: typeof SCHEDULE_UPDATE_LOCATION; payload: [string, string]}
-	| {type: typeof SCHEDULE_CLEAR; payload: undefined};
-
-export const scheduleThunk = () => (dispatch: Dispatch<ScheduleAction>) => {
-	dispatch(scheduleAction.request());
-	helper
-		.getSchedule()
-		.then((res) => dispatch(scheduleAction.success(res)))
-		.catch(() => dispatch(scheduleAction.failure()));
+const scheduleAction = {
+	scheduleFetchAction,
+	scheduleUpdateAliasAction,
+	scheduleAddCustomAction,
+	scheduleDelOrHideAction,
+	scheduleRemoveHiddenRuleAction,
+	scheduleUpdateLocationAction,
+	scheduleClearAction,
 };
+export type ScheduleAction = ActionType<typeof scheduleAction>;

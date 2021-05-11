@@ -19,7 +19,10 @@ import {
 	ScheduleType,
 	TimeBlock,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
+import {
+	scheduleAddCustomAction,
+	scheduleDelOrHideAction,
+} from "../../redux/actions/schedule";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
@@ -396,9 +399,9 @@ export const ScheduleAddScreen = connect(
 	}),
 	(dispatch) => ({
 		addCustom: (payload: Schedule) =>
-			dispatch({type: SCHEDULE_ADD_CUSTOM, payload}),
+			dispatch(scheduleAddCustomAction(payload)),
 		delOrHide: (title: string, block: TimeBlock, choice: Choice) => {
-			dispatch({type: SCHEDULE_DEL_OR_HIDE, payload: [title, block, choice]});
+			dispatch(scheduleDelOrHideAction([title, block, choice]));
 		},
 	}),
 )(ScheduleAddUI);

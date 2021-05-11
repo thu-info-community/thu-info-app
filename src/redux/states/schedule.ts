@@ -4,6 +4,6 @@ export interface Schedules {
 	baseSchedule: Schedule[];
 	cache: string;
 	refreshing: boolean;
-	shortenMap: {[key: string]: string};
+	shortenMap: {[key: string]: string | undefined};
 	customCnt: number;
 }

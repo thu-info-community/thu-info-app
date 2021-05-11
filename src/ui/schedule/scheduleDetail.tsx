@@ -10,10 +10,10 @@ import React, {useState} from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {Choice} from "src/redux/reducers/schedule";
 import {
-	SCHEDULE_DEL_OR_HIDE,
-	SCHEDULE_UPDATE_ALIAS,
-	SCHEDULE_UPDATE_LOCATION,
-} from "src/redux/constants";
+	scheduleDelOrHideAction,
+	scheduleUpdateAliasAction,
+	scheduleUpdateLocationAction,
+} from "../../redux/actions/schedule";
 import {store} from "src/redux/store";
 import {ScheduleType} from "thu-info-lib/src/models/schedule/schedule";
 import {TextInput} from "react-native-gesture-handler";
@@ -129,9 +129,8 @@ export const ScheduleDetailScreen = ({route}: any) => {
 				}}
 				onPress={() => {
 					setDelPressed(true);
-					store.dispatch({
-						type: SCHEDULE_DEL_OR_HIDE,
-						payload: [
+					store.dispatch(
+						scheduleDelOrHideAction([
 							props.name,
 							{
 								week: props.week,
@@ -140,8 +139,8 @@ export const ScheduleDetailScreen = ({route}: any) => {
 								end: props.end,
 							},
 							choice,
-						],
-					});
+						]),
+					);
 				}}
 				disabled={delPressed}>
 				<Text
@@ -331,10 +330,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 							(props.type === ScheduleType.CUSTOM
 								? props.name.substr(0, 6)
 								: "") + aliasInputText;
-						store.dispatch({
-							type: SCHEDULE_UPDATE_ALIAS,
-							payload: [props.name, res],
-						});
+						store.dispatch(scheduleUpdateAliasAction([props.name, res]));
 						setAlias(res);
 						setAliasInputText("");
 					}}
@@ -343,10 +339,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					<Button
 						title={getStr("delAlias")}
 						onPress={() => {
-							store.dispatch({
-								type: SCHEDULE_UPDATE_ALIAS,
-								payload: [props.name, undefined],
-							});
+							store.dispatch(
+								scheduleUpdateAliasAction([props.name, undefined]),
+							);
 							setAlias("");
 							setAliasInputText("");
 						}}
@@ -399,10 +394,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 							);
 							return;
 						}
-						store.dispatch({
-							type: SCHEDULE_UPDATE_LOCATION,
-							payload: [props.name, locationInputText],
-						});
+						store.dispatch(
+							scheduleUpdateLocationAction([props.name, locationInputText]),
+						);
 						setLocation(locationInputText);
 						setLocationInputText("");
 					}}
@@ -418,10 +412,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 									{
 										text: getStr("confirm"),
 										onPress: () => {
-											store.dispatch({
-												type: SCHEDULE_UPDATE_LOCATION,
-												payload: [props.name, ""],
-											});
+											store.dispatch(
+												scheduleUpdateLocationAction([props.name, ""]),
+											);
 											setLocation("");
 											setLocationInputText("");
 										},

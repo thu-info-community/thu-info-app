@@ -14,8 +14,8 @@ import {
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
-import {State} from "../../redux/store";
-import {scheduleThunk} from "../../redux/actions/schedule";
+import {helper, State} from "../../redux/store";
+import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -30,7 +30,7 @@ interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
 	readonly cache: string;
 	readonly refreshing: boolean;
-	readonly shortenMap: {[key: string]: string};
+	readonly shortenMap: {[key: string]: string | undefined};
 	readonly unitHeight: number;
 	getSchedule: () => void;
 	navigation: ScheduleNav;
@@ -219,10 +219,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 								dayOfWeek={block.dayOfWeek}
 								begin={block.begin}
 								end={block.end}
-								name={(props.shortenMap[val.name] === undefined
-									? val.name
-									: props.shortenMap[val.name]
-								).substr(val.type === ScheduleType.CUSTOM ? 6 : 0)}
+								name={(props.shortenMap[val.name] ?? val.name).substr(
+									val.type === ScheduleType.CUSTOM ? 6 : 0,
+								)}
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
@@ -240,7 +239,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										dayOfWeek: block.dayOfWeek,
 										begin: block.begin,
 										end: block.end,
-										alias: props.shortenMap[val.name],
+										alias: props.shortenMap[val.name] ?? "",
 										type: val.type,
 									});
 								}}
@@ -361,8 +360,11 @@ export const ScheduleScreen = connect(
 	}),
 	(dispatch) => ({
 		getSchedule: () => {
-			// @ts-ignore
-			dispatch(scheduleThunk());
+			dispatch(scheduleFetchAction.request());
+			helper
+				.getSchedule()
+				.then((res) => dispatch(scheduleFetchAction.success(res)))
+				.catch(() => dispatch(scheduleFetchAction.failure()));
 		},
 	}),
 )(ScheduleUI);

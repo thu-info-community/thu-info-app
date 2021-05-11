@@ -2,7 +2,7 @@ import {SettingsSetPassword} from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
 import React from "react";
 import {connect} from "react-redux";
-import {SET_DORM_PASSWORD} from "../../redux/constants";
+import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {View} from "react-native";
 import {helper} from "../../redux/store";
 import {changePasswordAction} from "../../redux/actions/auth";
@@ -47,7 +47,7 @@ export const PasswordManagementUI = ({
 
 export const PasswordManagementScreen = connect(undefined, (dispatch) => ({
 	setDormPassword: (password: string) =>
-		dispatch({type: SET_DORM_PASSWORD, payload: password}),
+		dispatch(setDormPasswordAction(password)),
 	setInfoPassword: (password: string) =>
 		dispatch(changePasswordAction(password)),
 }))(PasswordManagementUI);

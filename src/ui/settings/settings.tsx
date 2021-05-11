@@ -19,11 +19,9 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {
-	SCHEDULE_CLEAR,
-	SET_DORM_PASSWORD,
-	SET_EMAIL_NAME,
-} from "../../redux/constants";
+import {setDormPasswordAction} from "../../redux/actions/credentials";
+import {scheduleClearAction} from "../../redux/actions/schedule";
+import {SET_EMAIL_NAME} from "../../redux/constants";
 import {connect} from "react-redux";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -149,8 +147,8 @@ export const SettingsUI = ({
 										.logout()
 										.then(() => console.log("Successfully logged out."));
 									store.dispatch(doLogoutAction());
-									store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
-									store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
+									store.dispatch(setDormPasswordAction(""));
+									store.dispatch(scheduleClearAction());
 									store.dispatch({type: SET_EMAIL_NAME, payload: ""});
 								},
 							},
