@@ -32,9 +32,3 @@ export const submitFeedback = async (content: string) => {
 		return statistics.save();
 	}
 };
-
-export const submitSecondaryErr = async (content: string) => {
-	const statistics = new (AV.Object.extend("Secondary"))();
-	statistics.set("err", content);
-	return statistics.save();
-};
