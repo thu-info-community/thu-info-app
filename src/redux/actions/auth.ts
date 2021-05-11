@@ -1,4 +1,4 @@
-import {ActionType, createAsyncAction} from "typesafe-actions";
+import {ActionType, createAction, createAsyncAction} from "typesafe-actions";
 import {
 	CHANGE_PASSWORD,
 	DO_LOGOUT,
@@ -8,13 +8,13 @@ import {
 } from "../constants";
 import {Auth, LoginStatus} from "../states/auth";
 
-const authAction = createAsyncAction(
+export const loginAction = createAsyncAction(
 	LOGIN_REQUEST,
 	LOGIN_SUCCESS,
 	LOGIN_FAILURE,
 )<Auth, undefined, LoginStatus>();
+export const changePasswordAction = createAction(CHANGE_PASSWORD)<string>();
+export const doLogoutAction = createAction(DO_LOGOUT)();
 
-export type AuthAction =
-	| ActionType<typeof authAction>
-	| {type: typeof CHANGE_PASSWORD; payload: string}
-	| {type: typeof DO_LOGOUT; payload: undefined};
+const authAction = {loginAction, changePasswordAction, doLogoutAction};
+export type AuthAction = ActionType<typeof authAction>;

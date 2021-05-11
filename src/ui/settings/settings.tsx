@@ -20,7 +20,6 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {
-	DO_LOGOUT,
 	SCHEDULE_CLEAR,
 	SET_DORM_PASSWORD,
 	SET_EMAIL_NAME,
@@ -29,6 +28,7 @@ import {connect} from "react-redux";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import AV from "leancloud-storage";
+import {doLogoutAction} from "../../redux/actions/auth";
 
 export const SettingsUI = ({
 	navigation,
@@ -148,7 +148,7 @@ export const SettingsUI = ({
 									helper
 										.logout()
 										.then(() => console.log("Successfully logged out."));
-									store.dispatch({type: DO_LOGOUT, payload: undefined});
+									store.dispatch(doLogoutAction());
 									store.dispatch({type: SET_DORM_PASSWORD, payload: ""});
 									store.dispatch({type: SCHEDULE_CLEAR, payload: undefined});
 									store.dispatch({type: SET_EMAIL_NAME, payload: ""});

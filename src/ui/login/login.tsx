@@ -9,12 +9,7 @@ import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {
-	LOGIN_FAILURE,
-	LOGIN_REQUEST,
-	LOGIN_SUCCESS,
-	SET_EMAIL_NAME,
-} from "../../redux/constants";
+import {SET_EMAIL_NAME} from "../../redux/constants";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -26,6 +21,7 @@ import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {LoginNav} from "../../components/AuthFlow";
 import {emailInit} from "../../utils/email";
+import {loginAction} from "../../redux/actions/auth";
 
 interface LoginProps {
 	readonly userId: string;
@@ -247,7 +243,7 @@ export const LoginScreen = connect(
 				password: string,
 				statusIndicator: () => void,
 			) => {
-				dispatch({type: LOGIN_REQUEST, payload: {userId, password}});
+				dispatch(loginAction.request({userId, password}));
 				helper
 					.login(
 						{
@@ -258,20 +254,15 @@ export const LoginScreen = connect(
 						statusIndicator,
 					)
 					.then(() => {
-						dispatch({type: LOGIN_SUCCESS, payload: undefined});
+						dispatch(loginAction.success());
 					})
 					.catch((reason: LoginStatus) => {
-						dispatch({type: LOGIN_FAILURE, payload: reason});
+						dispatch(loginAction.failure(reason));
 					});
 			},
-			resetStatus: () => {
-				dispatch({
-					type: LOGIN_FAILURE,
-					payload: LoginStatus.None,
-				});
-			},
+			resetStatus: () => loginAction.failure(LoginStatus.None),
 			loginSuccess: () => {
-				dispatch({type: LOGIN_SUCCESS, payload: undefined});
+				dispatch(loginAction.success());
 				dispatch({type: SET_EMAIL_NAME, payload: helper.emailName});
 				emailInit().then(() =>
 					console.log(
