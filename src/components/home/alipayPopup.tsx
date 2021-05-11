@@ -4,7 +4,7 @@ import {getStr} from "../../utils/i18n";
 import React, {ReactElement, useState} from "react";
 import {Modal, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {helper} from "../../redux/store";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 export const AlipayPopup = ({
@@ -15,7 +15,7 @@ export const AlipayPopup = ({
 	trigger: (onPress: () => void) => ReactElement;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	const [popup, setPopup] = useState(false);
 	const [money, setMoney] = useState("");

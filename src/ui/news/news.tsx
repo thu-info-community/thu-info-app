@@ -25,7 +25,7 @@ import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import themes from "../../assets/themes/themes";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 
 class newsSourceList {
@@ -117,7 +117,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsSource] = useState(new newsSourceList());
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const renderIcon = (channel: SourceTag) => {

@@ -18,7 +18,7 @@ import {store} from "src/redux/store";
 import {ScheduleType} from "thu-info-lib/src/models/schedule/schedule";
 import {TextInput} from "react-native-gesture-handler";
 import {getStr} from "src/utils/i18n";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 const beginTime = [
@@ -88,7 +88,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 	const lineLength = Dimensions.get("window").width * 0.9;
 
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	const horizontalLine = () => (
 		<View

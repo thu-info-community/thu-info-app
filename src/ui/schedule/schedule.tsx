@@ -23,7 +23,7 @@ import ViewShot from "react-native-view-shot";
 import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import md5 from "md5";
 
 interface ScheduleProps {
@@ -44,7 +44,7 @@ const OptionButton = ({
 	title: React.ReactText;
 }) => {
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	return (
 		<TouchableOpacity
 			onPress={onPress}
@@ -69,7 +69,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const viewShot = useRef<ViewShot>(null);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const timeBlockNum = 14;
 	const daysInWeek = 7;

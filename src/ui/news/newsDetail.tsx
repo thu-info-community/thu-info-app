@@ -6,7 +6,7 @@ import {View, ActivityIndicator} from "react-native";
 import {NewsDetailRouteProp} from "./newsStack";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "thu-info-lib/dist/constants/strings";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 import {helper} from "../../redux/store";
 
@@ -15,7 +15,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [refreshing, setRefreshing] = useState(true);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const fetchHtml = () => {

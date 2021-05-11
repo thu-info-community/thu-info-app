@@ -9,7 +9,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: (props: PropsWithChildren<any>) => Promise<T[]>,
@@ -30,7 +30,7 @@ export function simpleRefreshListScreen<T>(
 		const [refreshing, setRefreshing] = useState(false);
 
 		const themeName = useColorScheme();
-		const theme = themes[themeName];
+		const theme = themes(themeName);
 
 		const refresh = () => {
 			setRefreshing(true);

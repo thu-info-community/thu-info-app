@@ -23,7 +23,7 @@ import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {LoginNav} from "../../components/AuthFlow";
 import {emailInit} from "../../utils/email";
 
@@ -48,7 +48,7 @@ const LoginUI = (props: LoginProps) => {
 	const [loginPhase, setLoginPhase] = React.useState(0);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const performLogin = () => {

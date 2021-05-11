@@ -2,7 +2,7 @@ import {Text, View} from "react-native";
 import React from "react";
 import {currState} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {getStr} from "../../utils/i18n";
 
 const gpaToStr = (gpa: number, dig: number) =>

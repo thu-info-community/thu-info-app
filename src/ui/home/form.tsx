@@ -11,7 +11,7 @@ import {StarRating} from "src/components/home/form";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, HomeNav} from "./homeStack";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
 
@@ -25,7 +25,7 @@ export const FormScreen = ({
 	const url: string = route.params.url;
 
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	const [refreshing, setRefreshing] = useState(true);
 	const [evaluationForm, setEvaluationForm] = useState<Form>();

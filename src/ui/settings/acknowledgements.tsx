@@ -2,7 +2,7 @@ import {ScrollView, StyleSheet, Text} from "react-native";
 import React from "react";
 import packageConfig from "../../../package.json";
 import {getStr} from "../../utils/i18n";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 const deps = [
@@ -12,7 +12,7 @@ const deps = [
 
 export const AcknowledgementsScreen = () => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	return (
 		<ScrollView style={{paddingVertical: 15}}>
 			<Text />

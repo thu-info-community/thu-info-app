@@ -14,7 +14,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../easySnackbars";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes, {ColorTheme} from "../../assets/themes/themes";
 
 const setIconWidth = (icon: ReactElement | undefined, colors: ColorTheme) =>
@@ -34,7 +34,7 @@ export const SettingsItem = ({
 	badge?: string;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	const content = (
 		<View
 			style={{
@@ -82,7 +82,7 @@ export const SettingsSwitch = ({
 	iconOff: ReactElement | undefined;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	const [status, setStatus] = useState(defaultValue);
 	return (
 		<View
@@ -118,7 +118,7 @@ export const SettingsEditValue = <T extends string | number>({
 	onValueChange: (newValue: T) => void;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	return (
 		<View
 			style={{
@@ -169,7 +169,7 @@ export const SettingsEditText = ({
 	placeholder: string;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	return (
 		<View
 			style={{
@@ -212,7 +212,7 @@ export const SettingsSetPassword = ({
 	validator: (password: string) => Promise<boolean>;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	const [value, setValue] = useState("");
 	const [disabled, setDisabled] = useState(false);
 	return (

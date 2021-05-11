@@ -13,7 +13,7 @@ import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
 import {submitFeedback} from "../../utils/leanCloud";
 import Snackbar from "react-native-snackbar";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 const BottomButton = ({
 	text,

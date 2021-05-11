@@ -9,7 +9,7 @@ import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {toggleSocketState} from "../../network/misc";
 import {LibraryBase} from "thu-info-lib/dist/models/home/library";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 
 export function libraryRefreshListScreen<
@@ -47,7 +47,7 @@ export function libraryRefreshListScreen<
 			props?.route?.params?.dateChoice ?? 0,
 		);
 		const themeName = useColorScheme();
-		const theme = themes[themeName];
+		const theme = themes(themeName);
 
 		const List = simpleRefreshListScreen(
 			() => dataSource(props, choice),

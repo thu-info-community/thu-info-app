@@ -14,8 +14,6 @@ export interface Theme {
 	colors: ColorTheme;
 }
 
-export default {
-	light: {colors: colorLight},
-	dark: {colors: colorDark},
-	"no-preference": {colors: colorLight},
-};
+export default (themeName: string | null | undefined): Theme => ({
+	colors: themeName === "dark" ? colorDark : colorLight,
+});

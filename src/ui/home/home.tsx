@@ -12,7 +12,7 @@ import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {helper, State} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {connect} from "react-redux";
 
 const iconSize = 60;

@@ -8,12 +8,12 @@ import {SettingsNav} from "./settingsStack";
 import {helper} from "../../redux/store";
 import {AlipayPopup} from "../../components/home/alipayPopup";
 import {doAlipay} from "../../utils/alipay";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	return (
 		<View style={{padding: 10}}>
 			<Text style={{padding: 8, textAlign: "center", color: colors.text}}>

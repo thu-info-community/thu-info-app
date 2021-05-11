@@ -7,7 +7,7 @@ import {getStr} from "../../utils/i18n";
 import {SettingsSwitch} from "../../components/settings/items";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 const ReportManageHiddenUI = ({
 	hidden,
@@ -22,7 +22,7 @@ const ReportManageHiddenUI = ({
 	const [refreshing, setRefreshing] = useState(true);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	useEffect(() => {
 		const {bx, newGPA} = currState().config;

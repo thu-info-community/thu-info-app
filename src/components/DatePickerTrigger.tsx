@@ -9,7 +9,7 @@ import {
 import React, {useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {getStr} from "src/utils/i18n";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../assets/themes/themes";
 
 // TODO: Adapt to fit the new date picker ui of iOS14
@@ -25,7 +25,7 @@ export const DatePickerTrigger = ({
 	text: string;
 }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	const [visible, setVisible] = useState(false);
 

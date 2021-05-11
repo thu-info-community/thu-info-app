@@ -19,7 +19,7 @@ import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
 import {Course} from "thu-info-lib/dist/models/home/report";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -117,7 +117,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const [flag, setFlag] = useState<1 | 2 | 3>(1);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const {bx, newGPA} = currState().config;
 

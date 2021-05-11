@@ -27,7 +27,7 @@ import {
 	LibraryFloor,
 	LibrarySection,
 } from "thu-info-lib/dist/models/home/library";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {EmailScreen} from "./email";
 import {EmailListScreen} from "./emailList";
 
@@ -70,7 +70,7 @@ export type HomeNav = StackNavigationProp<HomeStackParamList>;
 
 export const HomeStackScreen = () => {
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	return (
 		<Stack.Navigator>

@@ -11,7 +11,7 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
@@ -34,7 +34,7 @@ export const ClassroomDetailScreen = ({
 	const [refreshing, setRefreshing] = useState(false);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const refresh = () => {
 		setRefreshing(true);

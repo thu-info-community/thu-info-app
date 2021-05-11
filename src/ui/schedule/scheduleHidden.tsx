@@ -24,7 +24,7 @@ import {
 import {getStr} from "../../utils/i18n";
 import {Choice} from "src/redux/reducers/schedule";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 const ScheduleHiddenUI = ({
 	baseSchedule,
@@ -37,7 +37,7 @@ const ScheduleHiddenUI = ({
 }) => {
 	let screenHeight = Dimensions.get("window");
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const getData = () => {
 		let list = baseSchedule

@@ -2,11 +2,11 @@ import {svgGenerator} from "../../utils/svgGenerator";
 import Svg, {Path} from "react-native-svg";
 import React from "react";
 import themes from "../themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 export default svgGenerator((width, height) => {
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	return (
 		<Svg viewBox="0 0 300 300" width={width} height={height}>
 			<Path

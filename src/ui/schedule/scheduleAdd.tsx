@@ -23,7 +23,7 @@ import {SCHEDULE_ADD_CUSTOM, SCHEDULE_DEL_OR_HIDE} from "../../redux/constants";
 import {State} from "../../redux/store";
 import {Choice} from "src/redux/reducers/schedule";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 interface ScheduleAddProps {
 	scheduleList: Schedule[];
@@ -50,7 +50,7 @@ const ScheduleAddUI = ({
 	delOrHide,
 }: ScheduleAddProps) => {
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const NA = 0;

@@ -26,7 +26,7 @@ import {
 	SET_EMAIL_NAME,
 } from "../../redux/constants";
 import {connect} from "react-redux";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import AV from "leancloud-storage";
 
@@ -40,7 +40,7 @@ export const SettingsUI = ({
 	const [url, setUrl] = useState("");
 
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	return (
 		<>

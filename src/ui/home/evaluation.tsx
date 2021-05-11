@@ -6,7 +6,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {HomeNav} from "./homeStack";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 
 export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
@@ -15,7 +15,7 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [refreshing, setRefreshing] = useState(true);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const fetchList = () => {
 		setRefreshing(true);

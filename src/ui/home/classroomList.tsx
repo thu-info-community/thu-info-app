@@ -1,12 +1,12 @@
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 	return (
 		<TouchableOpacity
 			style={{

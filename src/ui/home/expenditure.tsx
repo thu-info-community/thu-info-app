@@ -15,11 +15,11 @@ import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import {Record} from "thu-info-lib/dist/models/home/expenditure";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	return (
 		<View
@@ -49,7 +49,7 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 
 export const Money = ({title, money}: {title: string; money: number}) => {
 	const themeName = useColorScheme();
-	const {colors} = themes[themeName];
+	const {colors} = themes(themeName);
 
 	const strMoney = money.toFixed(2);
 	const bigMoney = strMoney.substring(0, strMoney.length - 3);
@@ -76,7 +76,7 @@ export const ExpenditureScreen = () => {
 	const [refreshing, setRefreshing] = useState(false);
 
 	const themeName = useColorScheme();
-	const theme = themes[themeName];
+	const theme = themes(themeName);
 
 	const refresh = () => {
 		setRefreshing(true);

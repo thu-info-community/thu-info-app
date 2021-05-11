@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {useColorScheme} from "react-native-appearance";
+import {useColorScheme} from "react-native";
 
 interface ColorBoard {
 	dark: string;
