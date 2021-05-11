@@ -26,7 +26,7 @@ import {
     Overall,
     toPersons,
 } from "../models/home/assessment";
-import excelToJson from "convert-excel-to-json";
+import XLSX from "xlsx";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
 import {arbitraryEncode, uFetch} from "../utils/network";
@@ -278,19 +278,11 @@ export const getExpenditures = (
         824,
         () => uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
             (data) => {
-                const sheet = excelToJson({
-                    source: data,
-                    header: {rows: 1},
-                    columnToKey: {
-                        A: "value",
-                        B: "locale",
-                        C: "category",
-                        D: "value",
-                        E: "date",
-                        F: "value",
-                    },
-                }).Sheet1;
-                const result = sheet.slice(0, sheet.length - 1);
+                const workbook = XLSX.read(data, {sheetStubs: true, cellDates: true});
+                const sheet = XLSX.utils.sheet_to_json(
+                    workbook.Sheets.Sheet1, {header: ["index", "locale", "category", "terminal", "date", "value"]}
+                ) as any[];
+                const result = sheet.slice(1, sheet.length - 1);
                 result.forEach(
                     (record: {value: string | number; category: string}) => {
                         record.value = Number(record.value);
