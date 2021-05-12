@@ -10,7 +10,6 @@ import {PopiScreen} from "./popi";
 import {EleRecordScreen} from "./eleRecord";
 import {LibBookRecordScreen} from "./libBookRecord";
 import {ReportSettingsScreen} from "./reportSettings";
-import {AcknowledgementsScreen} from "./acknowledgements";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
 import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
@@ -24,7 +23,6 @@ type SettingsStackParamList = {
 	EleRecord: undefined;
 	LibBookRecord: undefined;
 	ReportSettings: undefined;
-	Acknowledgements: undefined;
 	ScheduleSettings: undefined;
 	ReportManageHidden: undefined;
 	SecondarySettings: undefined;
@@ -73,11 +71,6 @@ export const SettingStackScreen = () => (
 			name="ScheduleSettings"
 			component={ScheduleSettingsScreen}
 			options={{title: getStr("scheduleSettings")}}
-		/>
-		<Stack.Screen
-			name="Acknowledgements"
-			component={AcknowledgementsScreen}
-			options={{title: getStr("acknowledgements")}}
 		/>
 		<Stack.Screen
 			name="About"

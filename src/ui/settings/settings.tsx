@@ -82,11 +82,6 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 					icon={<Feather name="edit" size={16} />}
 				/>
 				<SettingsItem
-					text={getStr("acknowledgements")}
-					onPress={() => navigation.navigate("Acknowledgements")}
-					icon={<Feather name="tag" size={16} />}
-				/>
-				<SettingsItem
 					text={getStr("about")}
 					onPress={() => navigation.navigate("About")}
 					icon={<AntDesign name="copyright" size={16} />}
