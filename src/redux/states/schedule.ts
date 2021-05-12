@@ -7,3 +7,11 @@ export interface Schedules {
 	shortenMap: {[key: string]: string | undefined};
 	customCnt: number;
 }
+
+export const defaultSchedule: Schedules = {
+	baseSchedule: [],
+	cache: "",
+	refreshing: false,
+	shortenMap: {},
+	customCnt: 1,
+};

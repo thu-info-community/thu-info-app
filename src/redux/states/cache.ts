@@ -7,3 +7,7 @@ export interface NewsCache {
 export interface Cache {
 	news: NewsCache[];
 }
+
+export const defaultCache: Cache = {
+	news: [],
+};

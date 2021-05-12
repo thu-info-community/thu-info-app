@@ -1,5 +1,4 @@
-import {Schedules} from "../states/schedule";
-import {defaultSchedule} from "../defaults";
+import {defaultSchedule, Schedules} from "../states/schedule";
 import {ScheduleAction} from "../actions/schedule";
 import {
 	SCHEDULE_FAILURE,

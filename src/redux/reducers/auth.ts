@@ -1,4 +1,4 @@
-import {AuthState, LoginStatus} from "../states/auth";
+import {AuthState, defaultAuthState, LoginStatus} from "../states/auth";
 import {AuthAction} from "../actions/auth";
 import {
 	CHANGE_PASSWORD,
@@ -7,7 +7,6 @@ import {
 	LOGIN_REQUEST,
 	LOGIN_SUCCESS,
 } from "../constants";
-import {defaultAuthState} from "../defaults";
 
 export const auth = (
 	state: AuthState = defaultAuthState,

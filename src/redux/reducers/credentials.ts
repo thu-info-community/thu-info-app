@@ -1,5 +1,4 @@
-import {Credentials} from "../states/credentials";
-import {defaultCredentials} from "../defaults";
+import {Credentials, defaultCredentials} from "../states/credentials";
 import {CredentialsAction} from "../actions/credentials";
 import {SET_DORM_PASSWORD} from "../constants";
 import {helper} from "../store";

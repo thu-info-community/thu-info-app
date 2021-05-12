@@ -1,5 +1,4 @@
-import {Config} from "../states/config";
-import {defaultConfigState} from "../defaults";
+import {Config, defaultConfigState} from "../states/config";
 import {ConfigAction} from "../actions/config";
 import {
 	ADD_REPORT_HIDDEN,

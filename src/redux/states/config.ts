@@ -18,3 +18,19 @@ export interface Config {
 	emailName: string;
 	emailUnseen: number;
 }
+
+export const defaultConfigState: Config = {
+	doNotRemindSemver: "0.0.0",
+	lastSelfVersion: 0,
+	firstDay: Calendar.firstDay,
+	weekCount: Calendar.weekCount,
+	semesterType: Calendar.semesterType,
+	semesterId: Calendar.semesterId,
+	newGPA: true,
+	bx: false,
+	reportHidden: [],
+	scheduleHeight: 65,
+	lastBroadcast: 0,
+	emailName: "",
+	emailUnseen: 0,
+};

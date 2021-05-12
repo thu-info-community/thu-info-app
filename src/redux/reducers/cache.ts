@@ -1,5 +1,4 @@
-import {Cache} from "../states/cache";
-import {defaultCache} from "../defaults";
+import {Cache, defaultCache} from "../states/cache";
 import {CacheAction} from "../actions/cache";
 import {ADD_NEWS_CACHE} from "../constants";
 
