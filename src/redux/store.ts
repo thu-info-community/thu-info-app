@@ -1,5 +1,4 @@
-import {applyMiddleware, createStore} from "redux";
-import thunk from "redux-thunk";
+import {createStore} from "redux";
 import {AuthState, LoginStatus} from "./states/auth";
 import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
@@ -47,7 +46,6 @@ const KeychainStorage = createKeychainStorage();
 
 export interface State {
 	auth: AuthState;
-	fullName: string;
 	schedule: Schedules;
 	config: Config;
 	credentials: Credentials;
@@ -180,7 +178,7 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = createStore(persistedReducer, applyMiddleware(thunk));
+export const store = createStore(persistedReducer);
 
 export const persistor = persistStore(store);
 
