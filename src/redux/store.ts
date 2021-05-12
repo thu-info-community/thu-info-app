@@ -4,7 +4,6 @@ import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
-import {createBlacklistFilter} from "redux-persist-transform-filter";
 import {defaultSchedule, Schedules} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
 import {Config} from "./states/config";
@@ -52,56 +51,12 @@ export interface State {
 	cache: Cache;
 }
 
-const authTransform = createTransform(
-	(status) =>
-		status === LoginStatus.LoggedIn ? LoginStatus.LoggedIn : LoginStatus.None,
-	(status) => status,
-	{
-		whitelist: ["status"],
-	},
-);
-
-const authPlugin = createTransform(
-	(a: AuthState) => a,
-	(a: AuthState) => {
-		helper.userId = a.userId;
-		helper.password = a.password;
-		return a;
-	},
-	{
-		whitelist: ["auth"],
-	},
-);
-
-const credentialsPlugin = createTransform(
-	(c: Credentials) => c,
-	(c: Credentials) => {
-		helper.dormPassword = c.dormPassword;
-		return c;
-	},
-	{
-		whitelist: ["credentials"],
-	},
-);
-
-const configPlugin = createTransform(
-	(c: Config) => c,
-	(c: Config) => {
-		helper.emailName = c.emailName;
-		return c;
-	},
-	{
-		whitelist: ["config"],
-	},
-);
-
 const rootReducer = combineReducers({
 	auth: persistReducer(
 		{
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
-			transforms: [authTransform],
 		},
 		auth,
 	),
@@ -118,22 +73,23 @@ const rootReducer = combineReducers({
 	cache,
 });
 
-const calendarConfigTransform = createTransform(
-	(subState: Config) => ({
-		...subState,
-		firstDay: subState.firstDay.date.format("YYYY-MM-DD"),
+const authTransform = createTransform(
+	(a: AuthState) => ({
+		...a,
+		status:
+			a.status === LoginStatus.LoggedIn
+				? LoginStatus.LoggedIn
+				: LoginStatus.None,
 	}),
-	(state) => ({
-		...state,
-		firstDay: new Calendar(state.firstDay),
-	}),
-	{whitelist: ["config"]},
+	(a: AuthState) => {
+		helper.userId = a.userId;
+		helper.password = a.password;
+		return a;
+	},
+	{
+		whitelist: ["auth"],
+	},
 );
-
-const scheduleFilter = createBlacklistFilter("schedule", [
-	"primaryRefreshing",
-	"secondaryRefreshing",
-]);
 
 const cacheTransform = createTransform(
 	(subState: Cache) => ({
@@ -148,18 +104,38 @@ const cacheTransform = createTransform(
 	},
 );
 
+const credentialsTransform = createTransform(
+	(c: Credentials) => c,
+	(c: Credentials) => {
+		helper.dormPassword = c.dormPassword;
+		return c;
+	},
+	{
+		whitelist: ["credentials"],
+	},
+);
+
+const configTransform = createTransform(
+	(c: Config) => ({...c, firstDay: c.firstDay.date.format("YYYY-MM-DD")}),
+	(c) => {
+		helper.emailName = c.emailName;
+		return {...c, firstDay: new Calendar(c.firstDay)};
+	},
+	{
+		whitelist: ["config"],
+	},
+);
+
 const persistConfig = {
 	version: 2,
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule", "config", "cache", "credentials"],
 	transforms: [
-		calendarConfigTransform,
-		scheduleFilter,
 		cacheTransform,
-		authPlugin,
-		credentialsPlugin,
-		configPlugin,
+		authTransform,
+		credentialsTransform,
+		configTransform,
 	],
 	migrate: (state: any) =>
 		Promise.resolve(
@@ -176,9 +152,7 @@ const persistConfig = {
 		),
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-export const store = createStore(persistedReducer);
+export const store = createStore(persistReducer(persistConfig, rootReducer));
 
 export const persistor = persistStore(store);
 
