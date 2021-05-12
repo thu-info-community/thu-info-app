@@ -20,7 +20,6 @@ export const defaultSchedule: Schedules = {
 };
 
 export const defaultConfigState: Config = {
-	doNotRemind: 0,
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
 	firstDay: Calendar.firstDay,
@@ -32,7 +31,6 @@ export const defaultConfigState: Config = {
 	reportHidden: [],
 	scheduleHeight: 65,
 	lastBroadcast: 0,
-	libIntroduced: true,
 	emailName: "",
 	emailUnseen: 0,
 };

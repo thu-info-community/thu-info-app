@@ -2,7 +2,7 @@ import {SettingsItem, SettingsSwitch} from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
 import React from "react";
 import {currState, helper, store} from "../../redux/store";
-import {SET_BX, SET_NEW_GPA} from "../../redux/constants";
+import {configSet} from "../../redux/actions/config";
 import {SettingsNav} from "./settingsStack";
 import Feather from "react-native-vector-icons/Feather";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -17,8 +17,8 @@ export const ReportSettingsScreen = ({
 		<SettingsSwitch
 			textOn={getStr("newGPA")}
 			textOff={getStr("oldGPA")}
-			onValueChange={(state) => {
-				store.dispatch({type: SET_NEW_GPA, payload: state});
+			onValueChange={(newGPA) => {
+				store.dispatch(configSet("newGPA", newGPA));
 			}}
 			defaultValue={currState().config.newGPA}
 			iconOn={<Feather name="file-plus" size={17} />}
@@ -28,8 +28,8 @@ export const ReportSettingsScreen = ({
 			<SettingsSwitch
 				textOn={getStr("bx")}
 				textOff={getStr("bxr")}
-				onValueChange={(state) => {
-					store.dispatch({type: SET_BX, payload: state});
+				onValueChange={(bx) => {
+					store.dispatch(configSet("bx", bx));
 				}}
 				defaultValue={currState().config.bx}
 				iconOn={<Feather name="filter" size={17} />}

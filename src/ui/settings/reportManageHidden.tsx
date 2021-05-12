@@ -2,7 +2,10 @@ import {FlatList, RefreshControl, Text} from "react-native";
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
-import {ADD_REPORT_HIDDEN, REMOVE_REPORT_HIDDEN} from "../../redux/constants";
+import {
+	addReportHiddenAction,
+	removeReportHiddenAction,
+} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {SettingsSwitch} from "../../components/settings/items";
 import {NetworkRetry} from "../../components/easySnackbars";
@@ -81,8 +84,7 @@ export const ReportManageHiddenScreen = connect(
 		hidden: state.config.reportHidden ?? [],
 	}),
 	(dispatch) => ({
-		add: (payload: string) => dispatch({type: ADD_REPORT_HIDDEN, payload}),
-		remove: (payload: string) =>
-			dispatch({type: REMOVE_REPORT_HIDDEN, payload}),
+		add: (payload: string) => dispatch(addReportHiddenAction(payload)),
+		remove: (payload: string) => dispatch(removeReportHiddenAction(payload)),
 	}),
 )(ReportManageHiddenUI);

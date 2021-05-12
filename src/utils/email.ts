@@ -1,7 +1,7 @@
 import MailCore from "thu-info-mailcore";
 import {helper, store} from "../redux/store";
 import {Platform} from "react-native";
-import {SET_EMAIL_UNSEEN} from "../redux/constants";
+import {configSet} from "../redux/actions/config";
 import AV from "leancloud-storage/core";
 
 const INBOX = "INBOX";
@@ -19,7 +19,7 @@ export const emailInit = async () => {
 			authType: 0,
 		});
 		const {unseenCount} = await MailCore.statusFolder({folder: INBOX});
-		store.dispatch({type: SET_EMAIL_UNSEEN, payload: unseenCount});
+		store.dispatch(configSet("emailUnseen", unseenCount));
 	} catch (e) {
 		const feedback = new (AV.Object.extend("EmailFeedback"))();
 		feedback.set("e", String(e));

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {helper, State, store} from "../../redux/store";
+import {helper, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {
 	Alert,
@@ -21,19 +21,13 @@ import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {scheduleClearAction} from "../../redux/actions/schedule";
-import {SET_EMAIL_NAME} from "../../redux/constants";
-import {connect} from "react-redux";
+import {configSet} from "../../redux/actions/config";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import AV from "leancloud-storage";
 import {doLogoutAction} from "../../redux/actions/auth";
 
-export const SettingsUI = ({
-	navigation,
-}: {
-	navigation: SettingsNav;
-	libIntroduced: boolean;
-}) => {
+export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [showPopup, setShowPopup] = useState(false);
 	const [url, setUrl] = useState("");
 
@@ -149,7 +143,7 @@ export const SettingsUI = ({
 									store.dispatch(doLogoutAction());
 									store.dispatch(setDormPasswordAction(""));
 									store.dispatch(scheduleClearAction());
-									store.dispatch({type: SET_EMAIL_NAME, payload: ""});
+									store.dispatch(configSet("emailName", ""));
 								},
 							},
 						]);
@@ -183,7 +177,3 @@ export const SettingsUI = ({
 		</>
 	);
 };
-
-export const SettingsScreen = connect((state: State) => ({
-	libIntroduced: state.config.libIntroduced,
-}))(SettingsUI);

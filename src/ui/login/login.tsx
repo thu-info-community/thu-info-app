@@ -9,7 +9,7 @@ import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {SET_EMAIL_NAME} from "../../redux/constants";
+import {configSet} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -263,7 +263,7 @@ export const LoginScreen = connect(
 			resetStatus: () => loginAction.failure(LoginStatus.None),
 			loginSuccess: () => {
 				dispatch(loginAction.success());
-				dispatch({type: SET_EMAIL_NAME, payload: helper.emailName});
+				dispatch(configSet("emailName", helper.emailName));
 				emailInit().then(() =>
 					console.log(
 						`Successfully logged in with ${helper.emailName}@mails.tsinghua.edu.cn`,

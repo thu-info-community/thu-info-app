@@ -4,16 +4,7 @@ import {ConfigAction} from "../actions/config";
 import {
 	ADD_REPORT_HIDDEN,
 	REMOVE_REPORT_HIDDEN,
-	SET_BX,
 	SET_CALENDAR_CONFIG,
-	SET_DO_NOT_REMIND,
-	SET_EMAIL_NAME,
-	SET_EMAIL_UNSEEN,
-	SET_LAST_BROADCAST_ID,
-	SET_LAST_SELF_VERSION,
-	SET_LIB_INTRODUCED,
-	SET_NEW_GPA,
-	SET_SCHEDULE_HEIGHT,
 } from "../constants";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
@@ -22,10 +13,6 @@ export const config = (
 	action: ConfigAction,
 ): Config => {
 	switch (action.type) {
-		case SET_DO_NOT_REMIND:
-			return {...state, doNotRemindSemver: action.payload};
-		case SET_LAST_SELF_VERSION:
-			return {...state, lastSelfVersion: action.payload};
 		case SET_CALENDAR_CONFIG:
 			const {firstDay, weekCount, semesterType, semesterId} = action.payload;
 			return {
@@ -34,16 +21,6 @@ export const config = (
 				weekCount,
 				semesterType,
 				semesterId,
-			};
-		case SET_NEW_GPA:
-			return {
-				...state,
-				newGPA: action.payload,
-			};
-		case SET_BX:
-			return {
-				...state,
-				bx: action.payload,
 			};
 		case ADD_REPORT_HIDDEN:
 			return (state.reportHidden ?? []).indexOf(action.payload) === -1
@@ -60,32 +37,11 @@ export const config = (
 					(it) => it !== action.payload,
 				),
 			};
-		case SET_SCHEDULE_HEIGHT:
-			return {
-				...state,
-				scheduleHeight: action.payload,
-			};
-		case SET_LAST_BROADCAST_ID:
-			return {
-				...state,
-				lastBroadcast: action.payload,
-			};
-		case SET_LIB_INTRODUCED:
-			return {
-				...state,
-				libIntroduced: true,
-			};
-		case SET_EMAIL_NAME:
-			return {
-				...state,
-				emailName: action.payload,
-			};
-		case SET_EMAIL_UNSEEN:
-			return {
-				...state,
-				emailUnseen: action.payload,
-			};
-		default:
-			return state;
+		default: {
+			const newState = {...state};
+			// @ts-ignore
+			newState[action.type] = action.payload;
+			return newState;
+		}
 	}
 };

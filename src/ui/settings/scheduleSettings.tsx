@@ -2,7 +2,7 @@ import {SettingsEditValue} from "../../components/settings/items";
 import React from "react";
 import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
-import {SET_SCHEDULE_HEIGHT} from "../../redux/constants";
+import {configSet} from "../../redux/actions/config";
 import {connect} from "react-redux";
 import {View} from "react-native";
 import {SettingsNav} from "./settingsStack";
@@ -29,7 +29,6 @@ export const ScheduleSettingsScreen = connect(
 		height: state.config.scheduleHeight,
 	}),
 	(dispatch) => ({
-		setHeight: (newValue: number) =>
-			dispatch({type: SET_SCHEDULE_HEIGHT, payload: newValue}),
+		setHeight: (h: number) => dispatch(configSet("scheduleHeight", h)),
 	}),
 )(ScheduleSettingsUI);

@@ -1,7 +1,7 @@
 import AV from "leancloud-storage/core";
 import VersionNumber from "react-native-version-number";
 import {currState, helper, store} from "../redux/store";
-import {SET_LAST_SELF_VERSION} from "../redux/constants";
+import {configSet} from "../redux/actions/config";
 import {Platform} from "react-native";
 
 export const leanCloudInit = () => {
@@ -15,10 +15,9 @@ export const leanCloudInit = () => {
 		statistics.set("os", Platform.OS);
 		statistics.set("api", String(Platform.Version));
 		statistics.save().then(console.log);
-		store.dispatch({
-			type: SET_LAST_SELF_VERSION,
-			payload: Number(VersionNumber.buildVersion),
-		});
+		store.dispatch(
+			configSet("lastSelfVersion", Number(VersionNumber.buildVersion)),
+		);
 	}
 };
 

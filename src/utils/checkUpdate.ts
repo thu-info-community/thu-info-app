@@ -2,7 +2,7 @@ import {getBroadcastData, getUpdateInfo} from "../network/update";
 import {currState, store} from "../redux/store";
 import {Alert, Linking} from "react-native";
 import {getStr} from "./i18n";
-import {SET_DO_NOT_REMIND, SET_LAST_BROADCAST_ID} from "../redux/constants";
+import {configSet} from "../redux/actions/config";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 import {gt, lt} from "semver";
@@ -25,12 +25,10 @@ export const checkUpdate = (force: boolean = false) => {
 					[
 						{
 							text: getStr("doNotRemind"),
-							onPress: () => {
-								store.dispatch({
-									type: SET_DO_NOT_REMIND,
-									payload: r[0].versionName,
-								});
-							},
+							onPress: () =>
+								store.dispatch(
+									configSet("doNotRemindSemver", r[0].versionName),
+								),
 						},
 						{text: getStr("nextTimeMust")},
 						{
@@ -71,10 +69,7 @@ export const checkBroadcast = () => {
 					{
 						text: getStr("confirm"),
 						onPress: () =>
-							store.dispatch({
-								type: SET_LAST_BROADCAST_ID,
-								payload: r[0].createdAt,
-							}),
+							store.dispatch(configSet("lastBroadcast", r[0].createdAt)),
 					},
 				],
 				{cancelable: true},
