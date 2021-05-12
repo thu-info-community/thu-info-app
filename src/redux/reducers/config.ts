@@ -37,10 +37,14 @@ export const config = (
 				),
 			};
 		default: {
-			const newState = {...state};
-			// @ts-ignore
-			newState[action.type] = action.payload;
-			return newState;
+			if (defaultConfigState[action.type] !== undefined) {
+				const newState = {...state};
+				// @ts-ignore
+				newState[action.type] = action.payload;
+				return newState;
+			} else {
+				return state;
+			}
 		}
 	}
 };
