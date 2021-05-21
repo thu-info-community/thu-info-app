@@ -52,7 +52,7 @@
         "xlsx": "0.17.0"
     },
     "devDependencies": {
-        "@types/cheerio": "0.22.28",
+        "@types/cheerio": "0.22.29",
         "@types/convert-excel-to-json": "1.7.0",
         "@types/jest": "26.0.23",
         "@types/md5": "2.3.0",
