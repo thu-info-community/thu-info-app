@@ -11,7 +11,14 @@ export const PopiScreen = simpleRefreshListScreen<{
 		new AV.Query("Popi")
 			.limit(1000)
 			.find()
-			.then((r) => r.reverse().map((it) => it.toJSON())),
+			.then((r) =>
+				r
+					.sort(
+						(a, b) =>
+							(b.updatedAt?.getDate() ?? 0) - (a.updatedAt?.getDate() ?? 0),
+					)
+					.map((it) => it.toJSON()),
+			),
 	({question, answer}, _, __, {colors}) => (
 		<View style={{padding: 15, marginVertical: 5}}>
 			<Text
