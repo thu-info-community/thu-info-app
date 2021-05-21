@@ -66,7 +66,7 @@ export const getReport = (
         792,
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`), INFO_ROOT_URL),
-            bx
+            bx && flag === 1
                 ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL, INFO_ROOT_URL)
                 : undefined,
         ]).then(([str, bxStr]: [string, string | undefined]) => {
