@@ -108,6 +108,13 @@ const policyList: [string, [string, string]][] = [
             "td[colspan=4]:not(td[height])",
         ],
     ],
+    [
+        "jdbsc",
+        [
+            ".TD1",
+            "[width=95%]:nth-child(2) > tr:nth-child(1)",
+        ],
+    ],
 ];
 
 const getNewsDetailPolicy = (
