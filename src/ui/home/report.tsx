@@ -124,7 +124,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getReport(bx, newGPA, flag)
+			.getReport(bx && flag === 1, newGPA, flag)
 			.then((res) => {
 				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
 				setRefreshing(false);
