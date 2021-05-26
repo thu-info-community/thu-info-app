@@ -25,7 +25,7 @@
 		"@react-navigation/native": "5.9.4",
 		"@react-navigation/stack": "5.14.5",
 		"buffer": "6.0.3",
-		"dayjs": "1.10.4",
+		"dayjs": "1.10.5",
 		"events": "3.3.0",
 		"leancloud-storage": "4.10.1",
 		"md5": "2.3.0",
