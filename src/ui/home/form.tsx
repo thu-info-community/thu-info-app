@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Text, StyleSheet, View, RefreshControl} from "react-native";
+import {Text, View, RefreshControl} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {
@@ -14,6 +14,7 @@ import {FormRouteProp, HomeNav} from "./homeStack";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
+import themedStyles from "../../utils/themedStyles";
 
 export const FormScreen = ({
 	route,
@@ -26,6 +27,7 @@ export const FormScreen = ({
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const [refreshing, setRefreshing] = useState(true);
 	const [evaluationForm, setEvaluationForm] = useState<Form>();
@@ -53,15 +55,15 @@ export const FormScreen = ({
 		if (personList.length !== 0) {
 			personList.forEach((person, i) => {
 				evaluationList.push(
-					<Text style={styles.personNameStyle} key={`Teacher${i}Name`}>
+					<Text style={style.personNameStyle} key={`Teacher${i}Name`}>
 						{person.name}
 					</Text>,
 				);
 
 				person.inputGroups.forEach((inputGroup, j) => {
 					evaluationList.push(
-						<View style={styles.questionStyle} key={`Person${i}Question${j}`}>
-							<Text style={styles.questionTextStyle}>
+						<View style={style.questionStyle} key={`Person${i}Question${j}`}>
+							<Text style={style.questionTextStyle}>
 								{inputGroup.question ?? ""}
 							</Text>
 							<StarRating scoreRef={inputGroup.score} />
@@ -71,7 +73,7 @@ export const FormScreen = ({
 
 				evaluationList.push(
 					<View key={`Person${i}Suggestion`}>
-						<Text style={styles.textInputCaptionStyle}>
+						<Text style={style.textInputCaptionStyle}>
 							{personType === "teacher"
 								? getStr("moreSuggestionsToTeacher")
 								: getStr("moreSuggestionsToAssistant")}
@@ -112,7 +114,7 @@ export const FormScreen = ({
 			});
 		} else {
 			evaluationList.push(
-				<Text style={styles.captionStyle} key="stupidEvaluationWebsite">
+				<Text style={style.captionStyle} key="stupidEvaluationWebsite">
 					{getStr("noPersonToEvaluate")}
 				</Text>,
 			);
@@ -156,17 +158,17 @@ export const FormScreen = ({
 
 	return (
 		<ScrollView
-			style={styles.container}
+			style={style.container}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
 				<RefreshControl refreshing={refreshing} colors={[colors.accent]} />
 			}>
-			<View style={styles.titleContainer}>
+			<View style={style.titleContainer}>
 				<FontAwesome name="chevron-right" color="red" size={18} />
-				<Text style={styles.titleStyle}>{getStr("generalImpression")}</Text>
+				<Text style={style.titleStyle}>{getStr("generalImpression")}</Text>
 			</View>
 			{evaluationForm && <StarRating scoreRef={evaluationForm.overall.score} />}
-			<Text style={styles.textInputCaptionStyle}>
+			<Text style={style.textInputCaptionStyle}>
 				{getStr("moreSuggestionsToCourse")}
 			</Text>
 			<TextInput
@@ -192,20 +194,20 @@ export const FormScreen = ({
 					}
 				}}
 			/>
-			<View style={styles.titleContainer}>
+			<View style={style.titleContainer}>
 				<FontAwesome name="chevron-right" color="green" size={18} />
-				<Text style={styles.titleStyle}>{getStr("teacherEvaluation")}</Text>
+				<Text style={style.titleStyle}>{getStr("teacherEvaluation")}</Text>
 			</View>
 			{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
-			<View style={styles.titleContainer}>
+			<View style={style.titleContainer}>
 				<FontAwesome name="chevron-right" color="blue" size={18} />
-				<Text style={styles.titleStyle}>{getStr("assistantEvaluation")}</Text>
+				<Text style={style.titleStyle}>{getStr("assistantEvaluation")}</Text>
 			</View>
 			{evaluationForm &&
 				renderEvaluation(evaluationForm.assistants, "assistant")}
 			<TouchableOpacity
 				style={[
-					styles.buttonStyle,
+					style.buttonStyle,
 					{
 						backgroundColor:
 							evaluationForm === undefined ? "lightgrey" : colors.primary,
@@ -213,13 +215,13 @@ export const FormScreen = ({
 				]}
 				onPress={post}
 				disabled={evaluationForm === undefined}>
-				<Text style={styles.buttonTextStyle}>{getStr("post")}</Text>
+				<Text style={style.buttonTextStyle}>{getStr("post")}</Text>
 			</TouchableOpacity>
 		</ScrollView>
 	);
 };
 
-const styles = StyleSheet.create({
+const styles = themedStyles(({colors}) => ({
 	container: {
 		flex: 1,
 		marginHorizontal: 17,
@@ -238,12 +240,14 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		fontSize: 18,
 		marginHorizontal: 5,
+		color: colors.text,
 	},
 
 	textInputCaptionStyle: {
 		alignSelf: "flex-start",
 		marginTop: 20,
 		marginBottom: 10,
+		color: colors.text,
 	},
 
 	personNameStyle: {
@@ -251,6 +255,7 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		marginVertical: 15,
 		fontWeight: "bold",
+		color: colors.text,
 	},
 
 	questionStyle: {
@@ -259,11 +264,13 @@ const styles = StyleSheet.create({
 
 	questionTextStyle: {
 		marginVertical: 2,
+		color: colors.text,
 	},
 
 	captionStyle: {
 		alignSelf: "center",
 		marginVertical: 5,
+		color: colors.text,
 	},
 
 	buttonStyle: {
@@ -280,4 +287,4 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontWeight: "bold",
 	},
-});
+}));

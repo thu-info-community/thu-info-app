@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, StyleSheet, View, Text, RefreshControl} from "react-native";
+import {FlatList, View, Text, RefreshControl} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -8,6 +8,7 @@ import {HomeNav} from "./homeStack";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
+import themedStyles from "../../utils/themedStyles";
 
 export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	// eslint-disable-next-line prettier/prettier
@@ -16,6 +17,7 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const style = styles(themeName);
 
 	const fetchList = () => {
 		setRefreshing(true);
@@ -60,41 +62,45 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 	useEffect(fetchList, []);
 
 	return (
-		<View style={styles.container}>
+		<View style={style.container}>
 			<FlatList
 				data={evaluationList}
 				renderItem={({item}) => {
 					return item[1] ? (
 						<TouchableOpacity
-							style={styles.evaluatedStyle}
+							style={[
+								style.evaluatedStyle,
+								{
+									backgroundColor:
+										themeName === "light" ? "lightgrey" : "black",
+								},
+							]}
 							onPress={() =>
 								navigation.navigate("Form", {name: item[0], url: item[2]})
 							}
 							onLongPress={() => setFullGrade(item[2])}>
-							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
-							<View style={styles.iconContainerStyle}>
-								<Text style={styles.captionStyle}>{getStr("evaluated")}</Text>
+							<Text style={style.lessonNameStyle}>{item[0]}</Text>
+							<View style={style.iconContainerStyle}>
+								<Text style={style.captionStyle}>{getStr("evaluated")}</Text>
 								<AntDesign name="check" size={20} color="green" />
 							</View>
 						</TouchableOpacity>
 					) : (
 						<TouchableOpacity
-							style={styles.notEvaluatedStyle}
+							style={style.notEvaluatedStyle}
 							onPress={() =>
 								navigation.navigate("Form", {name: item[0], url: item[2]})
 							}
 							onLongPress={() => setFullGrade(item[2])}>
-							<Text style={styles.lessonNameStyle}>{item[0]}</Text>
-							<View style={styles.iconContainerStyle}>
-								<Text style={styles.captionStyle}>
-									{getStr("notEvaluated")}
-								</Text>
+							<Text style={style.lessonNameStyle}>{item[0]}</Text>
+							<View style={style.iconContainerStyle}>
+								<Text style={style.captionStyle}>{getStr("notEvaluated")}</Text>
 								<AntDesign name="close" size={20} color="red" />
 							</View>
 						</TouchableOpacity>
 					);
 				}}
-				style={styles.listStyle}
+				style={style.listStyle}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -107,9 +113,8 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 		</View>
 	);
 };
-// TODO: Color theme
 
-const styles = StyleSheet.create({
+const styles = themedStyles(({colors}) => ({
 	container: {
 		flex: 1,
 		alignItems: "center",
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
 
 	notEvaluatedStyle: {
 		flexDirection: "row",
-		backgroundColor: "white",
+		backgroundColor: colors.background,
 		justifyContent: "space-between",
 		alignItems: "center",
 		height: 50,
@@ -183,14 +188,17 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 
-	lessonNameStyle: {},
+	lessonNameStyle: {
+		color: colors.text,
+	},
 
 	captionStyle: {
 		fontWeight: "bold",
 		marginHorizontal: 5,
+		color: colors.text,
 	},
 
 	loadingCaptionStyle: {
 		marginTop: 5,
 	},
-});
+}));
