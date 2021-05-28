@@ -6721,10 +6721,10 @@ react-native-image-pan-zoom@^2.1.12:
   resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.12.tgz#eb98bf56fb5610379bdbfdb63219cc1baca98fd2"
   integrity sha512-BF66XeP6dzuANsPmmFsJshM2Jyh/Mo1t8FsGc1L9Q9/sVP8MJULDabB1hms+eAoqgtyhMr5BuXV3E1hJ5U5H6Q==
 
-react-native-image-picker@3.8.1:
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-3.8.1.tgz#6e830e9b69c882ad5f1160e10592a84963a7f2c9"
-  integrity sha512-Q7qaJ7Zkt8ipIkkF+7UcuRbI0cxaNwsHBcnDLZdlpHnxuMaLhS/xp6v/om/kBYhMg6BeT+NcncynZQoKz7dQqw==
+react-native-image-picker@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.0.1.tgz#90ba86d4d1afa0c448c47803d56d08942a4a9cb6"
+  integrity sha512-BOTS7Ic3vDrQ4lZbpYh282oVhiTkvXkFFs0jcIlTpPyM2AUrwrDzl2DarhycRXHn/dMMzRQtiB3yjXPr0J61YA==
 
 react-native-image-zoom-viewer@3.0.1:
   version "3.0.1"
