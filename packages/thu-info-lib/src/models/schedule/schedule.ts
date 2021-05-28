@@ -43,13 +43,17 @@ const endMap: {[key: string]: number} = {
 
 const examBeginMap: {[key: string]: number} = {
     "8:00": 1,
+    "2:30": 7,
     "14:30": 7,
+    "7:00": 12,
     "19:00": 12,
 };
 
 const examEndMap: {[key: string]: number} = {
     "10:00": 3,
+    "4:30": 9,
     "16:30": 9,
+    "9:00": 13,
     "21:00": 13,
 };
 
@@ -180,8 +184,8 @@ export const parseJSON = (json: any[]): Schedule[] => {
                 scheduleList[scheduleList.length - 1].activeTime.push({
                     week: date.weekNumber,
                     dayOfWeek: date.dayOfWeek,
-                    begin: examBeginMap[o.kssj],
-                    end: examEndMap[o.jssj],
+                    begin: examBeginMap[o.kssj.replace("：", ":")],
+                    end: examEndMap[o.jssj.replace("：", ":")],
                 });
                 break;
             }
