@@ -1439,10 +1439,10 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-community/datetimepicker@3.5.0":
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.5.0.tgz#f0e9443990b997589b565bb2f04dbb170ecc30dc"
-  integrity sha512-d+qI4iQYnB5ekA6hhMzoWjNGLWju+zG/T5kXZrfx+XtSeU0HB8flGNJwWOZc8pDAdKatrDHkfwtGb4wZ0aNjKg==
+"@react-native-community/datetimepicker@3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-3.5.1.tgz#b8dcc58d864aa7366670813852abe44d6c5e2e9a"
+  integrity sha512-vZXy7/eSQM4xtflboQ5U1f4Vkho2C5mpTSMcccKydX4hoCgxwwdAKx9SxLbHZNR+r1RthpLRwTAwnd2HAjGGEw==
   dependencies:
     invariant "^2.2.4"
 
