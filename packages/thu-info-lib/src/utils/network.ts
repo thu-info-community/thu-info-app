@@ -9,7 +9,7 @@ import AbortController from "abort-controller";
  */
 export type ValidTickets = -1 | -2 | 792 | 824 | 2005 | 5000 | 5001 | 424; // -1 and -2 for tsinghua home, 5000 for library, 5001 for library booking, 424 for sports
 
-const cookies: {[key: string]: string} = {};
+export const cookies: {[key: string]: string} = {};
 
 /**
  * Clear the cookies.
