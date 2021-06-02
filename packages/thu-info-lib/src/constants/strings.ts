@@ -135,6 +135,12 @@ export const PHYSICAL_EXAM_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=jsonCj";
 export const PHYSICAL_EXAM_REFERER =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=tc_bkscjcx";
+export const CR_CAPTCHA_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/login-jcaptcah.jpg?vpn-1&captchaflag=login1";
+export const CR_LOGIN_HOME_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xklogin.do";
+export const CR_LOGIN_SUBMIT_URL =
+    "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/j_acegi_formlogin_xsxk.do";
 export const SPORTS_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/j_spring_security_check";
 export const SPORTS_LOGIN_REFERER =

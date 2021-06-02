@@ -48,6 +48,7 @@ import {
     makeSportsReservation,
     updateSportsPhoneNumber,
 } from "./lib/sports";
+import {getCaptchaUrl, loginCr} from "./lib/cr";
 
 export class InfoHelper {
     public userId = "";
@@ -187,6 +188,10 @@ export class InfoHelper {
     public getSchedule = async () => getSchedule(this);
 
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
+
+    public getCrCaptchaUrl = async () => getCaptchaUrl();
+
+    public loginCr = async (captcha: string) => loginCr(this, captcha);
 
     public getSportsResources = async (
         gymId: string,
