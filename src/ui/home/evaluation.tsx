@@ -79,7 +79,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 								navigation.navigate("Form", {name: item[0], url: item[2]})
 							}
 							onLongPress={() => setFullGrade(item[2])}>
-							<Text style={style.lessonNameStyle}>{item[0]}</Text>
+							<Text style={style.lessonNameStyle} numberOfLines={1}>
+								{item[0]}
+							</Text>
 							<View style={style.iconContainerStyle}>
 								<Text style={style.captionStyle}>{getStr("evaluated")}</Text>
 								<AntDesign name="check" size={20} color="green" />
@@ -92,7 +94,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 								navigation.navigate("Form", {name: item[0], url: item[2]})
 							}
 							onLongPress={() => setFullGrade(item[2])}>
-							<Text style={style.lessonNameStyle}>{item[0]}</Text>
+							<Text style={style.lessonNameStyle} numberOfLines={1}>
+								{item[0]}
+							</Text>
 							<View style={style.iconContainerStyle}>
 								<Text style={style.captionStyle}>{getStr("notEvaluated")}</Text>
 								<AntDesign name="close" size={20} color="red" />
@@ -190,6 +194,7 @@ const styles = themedStyles(({colors}) => ({
 
 	lessonNameStyle: {
 		color: colors.text,
+		maxWidth: 200,
 	},
 
 	captionStyle: {
