@@ -52,7 +52,6 @@ export const postWaterSubmission = (
             address: water.address
         }
     ).then(res => {
-        console.log(res)
         if(!res.includes("成功")) {
             throw new Error("Submitting failed")
         }
