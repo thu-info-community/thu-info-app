@@ -117,7 +117,7 @@ export const PHYSICAL_EXAM_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=jsonCj";
 export const PHYSICAL_EXAM_REFERER =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=tc_bkscjcx";
-export const WATER_USER_URL = 
-    "http://dingshui.bjqzhd.com/auser/getuser.html"
-export const WATER_SUB_URL = 
-    "http://dingshui.bjqzhd.com/buy/subs.html"
+export const WATER_USER_URL =
+    "http://dingshui.bjqzhd.com/auser/getuser.html";
+export const WATER_SUB_URL =
+    "http://dingshui.bjqzhd.com/buy/subs.html";

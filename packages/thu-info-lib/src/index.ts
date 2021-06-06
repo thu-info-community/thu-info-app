@@ -11,7 +11,7 @@ import {
 import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
-import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water"
+import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
 import {
     bookLibrarySeat,
@@ -152,10 +152,10 @@ export class Water {
     public id = ""; // 档案号
     public num = ""; // 订水量
     public num1 = ""; // 订水票量
-    public lid = ""; // 水种类 
+    public lid = ""; // 水种类
     public address = ""; // 地址
     public phone = ""; // 电话
-    /* 
+    /*
     "6":清紫源泉矿泉水（高端）
     "10":燕园泉矿泉水（高端）
     "12":农夫山泉桶装水（19L)
