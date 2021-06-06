@@ -11,6 +11,7 @@ import {
 import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
+import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water"
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
 import {
     bookLibrarySeat,
@@ -145,4 +146,29 @@ export class InfoHelper {
     public getSchedule = async () => getSchedule(this);
 
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
+}
+
+export class Water {
+    public id = ""; // 档案号
+    public num = ""; // 订水量
+    public num1 = ""; // 订水票量
+    public lid = ""; // 水种类 
+    public address = ""; // 地址
+    public phone = ""; // 电话
+    /* 
+    "6":清紫源泉矿泉水（高端）
+    "10":燕园泉矿泉水（高端）
+    "12":农夫山泉桶装水（19L)
+    "11":清紫源泉矿泉水
+    "8":喜士天然矿泉水（大）
+    "9":喜士天然矿泉水（小）
+    "1":娃哈哈矿泉水
+    "7":娃哈哈纯净水
+    "5":清紫源泉纯净水
+    */
+    public getUserInformation = async (id: string) => getUserInformation(this, id);
+
+    public getUserInformationAndStore = async (id: string) => getUserInformationAndStore(this, id);
+
+    public postWaterSubmission = async (num: string, num1: string, lid: string) => postWaterSubmission(this, num, num1, lid);
 }
