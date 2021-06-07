@@ -79,6 +79,36 @@ export const activeWeek = (week: number, schedule: Schedule) => {
     return res;
 };
 
+export const mergeSchedules = (base: Schedule[]) => {
+    const existName: string[] = [];
+    const processedScheduleList: Schedule[] = [];
+    base.forEach((schedule) => {
+        const index = existName.indexOf(schedule.name);
+        if (index === -1) {
+            existName.push(schedule.name);
+            processedScheduleList.push(schedule);
+        } else {
+            schedule.activeTime.forEach((time) => {
+                const isExistedTime =
+                    processedScheduleList[index]
+                        .activeTime
+                        .reduce((prev, curr) => {
+                            return prev || (
+                                curr.week === time.week &&
+                                curr.dayOfWeek === time.dayOfWeek &&
+                                curr.begin === time.begin &&
+                                curr.end === time.end
+                            );
+                        }, false);
+                if (!isExistedTime) {
+                    processedScheduleList[index].activeTime.push(time);
+                }
+            });
+        }
+    });
+    return processedScheduleList;
+};
+
 export const mergeTimeBlocks = (schedule: Schedule) => {
     schedule.activeTime.sort(
         (a, b) =>

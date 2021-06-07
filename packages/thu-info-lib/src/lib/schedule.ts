@@ -10,6 +10,7 @@ import {
 } from "../constants/strings";
 import {
     Schedule,
+    mergeSchedules,
     mergeTimeBlocks,
     parseJSON,
     parseScript,
@@ -72,7 +73,8 @@ const getSecondary = (helper: InfoHelper) =>
     );
 
 export const getSchedule = async (helper: InfoHelper) => {
-    const scheduleList: Schedule[] = (await getPrimary(helper)).concat(await getSecondary(helper));
+    let scheduleList: Schedule[] = (await getPrimary(helper)).concat(await getSecondary(helper));
+    scheduleList = mergeSchedules(scheduleList);
     scheduleList.forEach(mergeTimeBlocks);
     return scheduleList;
 };
