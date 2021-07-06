@@ -64,7 +64,7 @@
 		"@babel/core": "7.14.6",
 		"@babel/runtime": "7.14.6",
 		"@react-native-community/eslint-config": "3.0.0",
-		"@types/jest": "26.0.23",
+		"@types/jest": "26.0.24",
 		"@types/md5": "2.3.0",
 		"@types/react-native": "0.64.10",
 		"@types/react-native-vector-icons": "6.4.7",
