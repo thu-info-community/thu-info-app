@@ -812,10 +812,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/convert-excel-to-json@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@types/convert-excel-to-json/-/convert-excel-to-json-1.7.0.tgz#6dafed3c564b948b0f938601dc6ef231c00d6ec2"
-  integrity sha512-a64gWsxoRYuUjJz/wf6qMtsxqQtoEcrH1V7MkWDdhf/xfl8a/6yUk9hk58pVoKcRe+n/KCCVuz+8TfNXiHxniw==
+"@types/convert-excel-to-json@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@types/convert-excel-to-json/-/convert-excel-to-json-1.7.1.tgz#64fe03a6d8da71d2f825aae7f2d3570071fa26d6"
+  integrity sha512-805sDQCnkbXBH/vkTm7fBYaH4OARNkXhJlC9COeRCb0sjNi0HCCOTINK4dFTIwcuwCZ5UICpkgD14EFa9d67fA==
   dependencies:
     "@types/node" "*"
 
