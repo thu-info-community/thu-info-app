@@ -68,7 +68,7 @@
 		"@types/md5": "2.3.1",
 		"@types/react-native": "0.64.11",
 		"@types/react-native-vector-icons": "6.4.8",
-		"@types/react-redux": "7.1.17",
+		"@types/react-redux": "7.1.18",
 		"@types/react-test-renderer": "17.0.1",
 		"@types/semver": "7.3.7",
 		"@typescript-eslint/eslint-plugin": "4.28.2",
