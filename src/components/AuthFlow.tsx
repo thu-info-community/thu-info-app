@@ -40,7 +40,7 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 	return props.status === LoginStatus.LoggedIn ? (
 		<Root />
 	) : (
-		<Stack.Navigator headerMode="none">
+		<Stack.Navigator screenOptions={{headerShown: false}}>
 			<Stack.Screen name="Login" component={LoginScreen} />
 			<Stack.Screen
 				name="Feedback"

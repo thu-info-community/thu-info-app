@@ -21,19 +21,19 @@ export const Root = () => {
 					let iconName;
 
 					switch (route.name) {
-						case "Home": {
+						case "HomeTab": {
 							iconName = "home";
 							break;
 						}
-						case "News": {
+						case "NewsTab": {
 							iconName = "newspaper-o";
 							break;
 						}
-						case "Schedule": {
+						case "ScheduleTab": {
 							iconName = "table";
 							break;
 						}
-						case "Settings": {
+						case "SettingsTab": {
 							iconName = "cogs";
 							break;
 						}
@@ -41,29 +41,28 @@ export const Root = () => {
 
 					return <Icon name={iconName || ""} size={size} color={color} />;
 				},
+				tabBarActiveTintColor: theme.colors.primary,
+				tabBarInactiveTintColor: "gray",
+				headerShown: false,
 			})}
-			backBehavior="initialRoute"
-			tabBarOptions={{
-				activeTintColor: theme.colors.primary,
-				inactiveTintColor: "gray",
-			}}>
+			backBehavior="initialRoute">
 			<Tab.Screen
-				name="Home"
+				name="HomeTab"
 				component={HomeStackScreen}
 				options={{title: getStr("home")}}
 			/>
 			<Tab.Screen
-				name="News"
+				name="NewsTab"
 				component={NewsStackScreen}
 				options={{title: getStr("news")}}
 			/>
 			<Tab.Screen
-				name="Schedule"
+				name="ScheduleTab"
 				component={ScheduleStackScreen}
 				options={{title: getStr("schedule")}}
 			/>
 			<Tab.Screen
-				name="Settings"
+				name="SettingsTab"
 				component={SettingStackScreen}
 				options={{title: getStr("settings")}}
 			/>
