@@ -1916,10 +1916,10 @@
   dependencies:
     nanoid "^3.1.23"
 
-"@react-navigation/stack@6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.0.2.tgz#79a68c28e251fa28f1f9ede9fc10d303c3426b61"
-  integrity sha512-lJRXvb8g8svG0wGEwIxJbbXnaVhFlc5xPvh+ktDUfnZ/PpJpeLbYLMnN7Glxcd44RYpXrUrSbmibR8bbBQvzQQ==
+"@react-navigation/stack@6.0.3":
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.0.3.tgz#203cd8f5851a36a315933db50159aaa52ea488eb"
+  integrity sha512-ACkvj5Ya/NW8Z1QPkxl4k58v7Va0Jf9Ilw5LBH85X3HlERdH8dU8Wn+80rEIlzfPcEEHH2YLeN7TimYVoTZ8Pw==
   dependencies:
     "@react-navigation/elements" "^1.0.2"
     color "^3.1.3"

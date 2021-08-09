@@ -23,7 +23,7 @@
 		"@react-native-community/masked-view": "0.1.11",
 		"@react-navigation/bottom-tabs": "6.0.2",
 		"@react-navigation/native": "6.0.2",
-		"@react-navigation/stack": "6.0.2",
+		"@react-navigation/stack": "6.0.3",
 		"buffer": "6.0.3",
 		"dayjs": "1.10.6",
 		"events": "3.3.0",
