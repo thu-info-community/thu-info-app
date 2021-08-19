@@ -49,7 +49,7 @@
         "dayjs": "1.10.6",
         "iconv-lite": "0.6.3",
         "md5": "2.3.0",
-        "xlsx": "0.17.0"
+        "xlsx": "0.17.1"
     },
     "devDependencies": {
         "@types/cheerio": "0.22.30",
