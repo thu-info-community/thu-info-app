@@ -7199,10 +7199,10 @@ react-native-reanimated@2.2.0:
     mockdate "^3.0.2"
     string-hash-64 "^1.0.3"
 
-react-native-safe-area-context@3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.3.1.tgz#70a8b366f35ad224b01967a65c86543b0f3fbbce"
-  integrity sha512-vVb6ahpo6WkMIzi7SzpYZdUgLADQQMBUmKnxwtAl3QpAjJ+YirCrF1uMZs8bPuLSMY7Z4V+s6zWdmQo/wNhfpQ==
+react-native-safe-area-context@3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.3.2.tgz#9549a2ce580f2374edb05e49d661258d1b8bcaed"
+  integrity sha512-yOwiiPJ1rk+/nfK13eafbpW6sKW0jOnsRem2C1LPJjM3tfTof6hlvV5eWHATye3XOpu2cJ7N+HdkUvUDGwFD2Q==
 
 react-native-screens@3.6.0:
   version "3.6.0"
