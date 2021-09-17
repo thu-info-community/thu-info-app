@@ -6,14 +6,14 @@ import {
     ELE_PAY_RECORD_URL,
     RECHARGE_ELE_REFERER,
     RECHARGE_ELE_URL,
-    RECHARGE_PAY_ELE_URL,
+    RECHARGE_PAY_ELE_URL, ELE_REMAINDER_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
-import {MOCK_ELE_PAY_RECORD} from "../mocks/dorm";
+import {MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -79,4 +79,17 @@ export const getElePayRecord = async (
                 .get();
         },
         MOCK_ELE_PAY_RECORD,
+    );
+
+export const getEleRemainder = async (
+    helper: InfoHelper,
+): Promise<number> =>
+    retryWrapperWithMocks(
+        helper,
+        -2,
+        async () => {
+            const $ = await uFetch(ELE_REMAINDER_URL, RECHARGE_ELE_URL).then(cheerio.load);
+            return Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
+        },
+        MOCK_ELE_REMAINDER,
     );

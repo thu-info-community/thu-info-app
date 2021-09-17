@@ -10,7 +10,7 @@ import {
 } from "./lib/basics";
 import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
-import {getDormScore, getElePayRecord, getEleRechargePayCode} from "./lib/dorm";
+import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
 import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
 import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
 import {
@@ -102,6 +102,8 @@ export class InfoHelper {
         getEleRechargePayCode(this, money);
 
     public getElePayRecord = async (): Promise<[string, string, string, string, string, string][]> => getElePayRecord(this);
+
+    public getEleRemainder = async (): Promise<Number> => getEleRemainder(this);
 
     public getLibraryList = async (): Promise<Library[]> => getLibraryList(this);
 
