@@ -79,3 +79,17 @@ export interface LibRoomRes {
     openEnd: string;  // HH:mm
     usage: LibRoomUsage[];
 }
+
+export interface LibRoomBookRecord {
+    regDate: string;  // yyyy-MM-dd HH:mm
+    over: boolean;
+    status: string;
+    name: string;
+    category: string;
+    owner: string;
+    members: string;
+    begin: string;  // MM-dd HH:mm
+    end: string;  // MM-dd HH:mm
+    description: string;
+    rsvId: string;
+}

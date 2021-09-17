@@ -6,10 +6,13 @@ import {
     LIBRARY_BOOK_RECORD_URL,
     LIBRARY_BOOK_URL_PREFIX,
     LIBRARY_BOOK_URL_SUFFIX,
+    LIBRARY_CANCEL_BOOKING_URL,
     LIBRARY_DAYS_URL,
     LIBRARY_HOME_URL,
     LIBRARY_LIST_URL,
+    LIBRARY_ROOM_BOOKING_ACTION_URL,
     LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
+    LIBRARY_ROOM_BOOKING_RECORD_URL,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_MIDDLE,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX,
@@ -23,6 +26,7 @@ import {
     LibraryFloor,
     LibrarySeat,
     LibrarySection,
+    LibRoomBookRecord,
     LibRoomRes,
     LibRoomUsage,
     weightedValidityAndId,
@@ -354,4 +358,67 @@ export const getLibraryRoomBookingResourceList = async (
             } as LibRoomRes));
         },
         [],
+    );
+
+export const bookLibraryRoom = async (
+    helper: InfoHelper,
+    roomRes: LibRoomRes,
+    start: string,  // yyyy-MM-dd HH:mm
+    end: string,  // yyyy-MM-dd HH:mm
+): Promise<{success: boolean, msg: string}> =>
+    retryWrapperWithMocks(
+        helper,
+        5001,
+        async (): Promise<{success: boolean, msg: string}> => {
+            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`).then(JSON.parse);
+            return {success: result.ret === 1, msg: result.msg};
+        },
+        {success: true, msg: "操作成功！"}
+    );
+
+export const getLibraryRoomBookingRecord = async (
+    helper: InfoHelper
+): Promise<LibRoomBookRecord[]> =>
+    retryWrapperWithMocks(
+        helper,
+        5001,
+        async() :Promise<LibRoomBookRecord[]> => {
+            const result = await uFetch(LIBRARY_ROOM_BOOKING_RECORD_URL).then(s => JSON.parse(s).msg);
+            if (result.includes("没有数据")) return [];
+            const tables = cheerio.load(result)("tbody");
+            return tables.map((_, table) => {
+                const tableElement = cheerio(table);
+                const tableAttr = tableElement.attr();
+                const tableRow = cheerio(tableElement.find("tr").get()[1]).children("td");
+                const textPrimary = cheerio(tableRow[3]).find(".text-primary").get();
+                return {
+                    regDate: tableAttr.date,
+                    over: tableAttr.over === "true",
+                    status: (tableElement.find(".orange")[0] as TagElement).children[0].data,
+                    name: cheerio(tableRow[0]).find(".box > a").text(),
+                    category: cheerio(tableRow[0]).find(".grey").text(),
+                    owner: (tableRow[1] as TagElement).children[0].data,
+                    members: cheerio(tableRow[2]).text(),
+                    begin: cheerio(textPrimary[0]).text(),
+                    end: cheerio(textPrimary[1]).text(),
+                    description: cheerio(tableRow[4]).text(),
+                    rsvId: cheerio(tableRow[5]).find("[rsvId]").attr().rsvid,
+                } as LibRoomBookRecord;
+            }).get();
+        },
+        [],
+    );
+
+export const cancelLibraryRoomBooking = async (
+    helper: InfoHelper,
+    id: string,
+): Promise<{success: boolean, msg: string}> =>
+    retryWrapperWithMocks(
+        helper,
+        5001,
+        async () : Promise<{success: boolean, msg: string}> => {
+            const result = await uFetch(LIBRARY_CANCEL_BOOKING_URL + id).then(JSON.parse);
+            return {success: result.ret === 1, msg: result.msg};
+        },
+        {success: true, msg: "操作成功！"},
     );

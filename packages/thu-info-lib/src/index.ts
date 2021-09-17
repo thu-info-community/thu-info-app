@@ -12,13 +12,24 @@ import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
 import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
-import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection, LibRoomRes} from "./models/home/library";
 import {
+    LibBookRecord,
+    Library,
+    LibraryFloor,
+    LibrarySeat,
+    LibrarySection,
+    LibRoomBookRecord,
+    LibRoomRes,
+} from "./models/home/library";
+import {
+    bookLibraryRoom,
     bookLibrarySeat,
     cancelBooking,
+    cancelLibraryRoomBooking,
     getBookingRecords,
     getLibraryFloorList,
     getLibraryList,
+    getLibraryRoomBookingRecord,
     getLibraryRoomBookingResourceList,
     getLibrarySeatList,
     getLibrarySectionList,
@@ -141,6 +152,16 @@ export class InfoHelper {
         date: string, // yyyyMMdd
         id: number,
     ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date, id);
+
+    public bookLibraryRoom = async (
+        roomRes: LibRoomRes,
+        start: string,  // yyyy-MM-dd HH:mm
+        end: string,  // yyyy-MM-dd HH:mm
+    ): Promise<{success: boolean, msg: string}> => bookLibraryRoom(this, roomRes, start, end);
+
+    public getLibraryRoomBookingRecord = async (): Promise<LibRoomBookRecord[]> => getLibraryRoomBookingRecord(this);
+
+    public cancelLibraryRoomBooking = async (id: string): Promise<{success: boolean, msg: string}> => cancelLibraryRoomBooking(this, id);
 
     public getNewsList = async (
         channel: SourceTag,
