@@ -12,6 +12,8 @@ import {
     INFO_LOGIN_URL,
     INFO_ROOT_URL,
     INFO_URL,
+    LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
+    LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LIBRARY_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
@@ -141,7 +143,7 @@ export const login = async (
         ]);
         await batchGetTickets(
             helper,
-            [792, 824, 2005, 5000, -1, -2] as ValidTickets[],
+            [792, 824, 2005, 5000, 5001, -1, -2] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -234,6 +236,12 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
             }),
         ).attr().href;
         await uFetch(redirect);
+    } else if (target === 5001) {
+        await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
+            id: helper.userId,
+            pwd: helper.password,
+            act: "login",
+        });
     } else {
         await uFetch(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
     }
@@ -298,6 +306,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [792, 824, 2005, 5000] as ValidTickets[]);
+        await batchGetTickets(helper, [792, 824, 2005, 5000, 5001] as ValidTickets[]);
     }, 60000);
 };

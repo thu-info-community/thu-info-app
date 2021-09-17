@@ -12,13 +12,14 @@ import {getTicket, login, logout} from "./lib/core";
 import {ValidTickets} from "./utils/network";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
 import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
-import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection} from "./models/home/library";
+import {LibBookRecord, Library, LibraryFloor, LibrarySeat, LibrarySection, LibRoomRes} from "./models/home/library";
 import {
     bookLibrarySeat,
     cancelBooking,
     getBookingRecords,
     getLibraryFloorList,
     getLibraryList,
+    getLibraryRoomBookingResourceList,
     getLibrarySeatList,
     getLibrarySectionList,
 } from "./lib/library";
@@ -39,7 +40,7 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
-    public static TOTAL_PHASES = 10;  // const
+    public static TOTAL_PHASES = 11;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
@@ -135,6 +136,11 @@ export class InfoHelper {
 
     public cancelBooking = async (id: string): Promise<void> =>
         cancelBooking(this, id);
+
+    public getLibraryRoomBookingResourceList = async (
+        date: string, // yyyyMMdd
+        id: number,
+    ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date, id);
 
     public getNewsList = async (
         channel: SourceTag,

@@ -43,3 +43,39 @@ export interface LibBookRecord {
     status: string;
     delId: string | undefined;
 }
+
+export interface LibRoomUsage {
+    start: string;  // HH:mm
+    end: string;  // HH:mm
+    state: "doing" | "undo";
+    title: string;
+    // owner: string;  // hidden due to security reason
+    // accno: string;  // hidden due to security reason
+    occupy: boolean;
+}
+
+export interface LibRoomRes {
+    id: string;
+    name: string;
+    devId: number;
+    devName: string;
+    kindId: number;
+    kindName: string;
+    classId: number;
+    className: string;
+    labId: number;
+    labName: string;
+    roomId: number;
+    roomName: string;
+    buildingId: number;
+    buildingName: string;
+    limit: number;
+    maxMinute: number;
+    minMinute: number;
+    cancelMinute: number;
+    maxUser: number;
+    minUser: number;
+    openStart: string;  // HH:mm
+    openEnd: string;  // HH:mm
+    usage: LibRoomUsage[];
+}

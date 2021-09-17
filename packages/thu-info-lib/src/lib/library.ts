@@ -9,6 +9,10 @@ import {
     LIBRARY_DAYS_URL,
     LIBRARY_HOME_URL,
     LIBRARY_LIST_URL,
+    LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
+    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_MIDDLE,
+    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX,
+    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX,
     LIBRARY_SEATS_URL,
 } from "../constants/strings";
 import {
@@ -19,6 +23,8 @@ import {
     LibraryFloor,
     LibrarySeat,
     LibrarySection,
+    LibRoomRes,
+    LibRoomUsage,
     weightedValidityAndId,
 } from "../models/home/library";
 import cheerio from "cheerio";
@@ -303,4 +309,49 @@ export const cancelBooking = async (
                 }
             }),
         undefined,
+    );
+
+export const getLibraryRoomBookingResourceList = async (
+    helper: InfoHelper,
+    date: string, // yyyyMMdd
+    id: number,
+): Promise<LibRoomRes[]> =>
+    retryWrapperWithMocks(
+        helper,
+        5001,
+        async (): Promise<LibRoomRes[]> => {
+            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${id}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_MIDDLE}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`, LIBRARY_ROOM_BOOKING_LOGIN_REFERER).then(JSON.parse);
+            return result.data.map((item: any) => ({
+                id: item.id,
+                name: item.name,
+                devId: Number(item.devId),
+                devName: item.devName,
+                kindId: Number(item.kindId),
+                kindName: item.kindName,
+                classId: Number(item.classId),
+                className: item.className,
+                labId: Number(item.labId),
+                labName: item.labName,
+                roomId: Number(item.roomId),
+                roomName: item.roomName,
+                buildingId: Number(item.buildingId),
+                buildingName: item.buildingName,
+                limit: item.limit,
+                maxMinute: item.max,
+                minMinute: item.min,
+                cancelMinute: item.cancel,
+                maxUser: item.maxUser,
+                minUser: item.minUser,
+                openStart: item.openStart,
+                openEnd: item.openEnd,
+                usage: item.ts.map((ts: any) => ({
+                    start: ts.start.substring(11),
+                    end: ts.end.substring(11),
+                    state: ts.state,
+                    title: ts.title,
+                    occupy: ts.occupy,
+                } as LibRoomUsage)),
+            } as LibRoomRes));
+        },
+        [],
     );
