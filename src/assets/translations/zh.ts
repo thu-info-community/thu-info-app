@@ -87,6 +87,7 @@ export default {
 	dorm: "我们的家园",
 	life: "生活",
 	thirdParty: "第三方服务",
+	qzyq: "清紫源泉",
 	washer: "洗衣机查询",
 	report: "成绩单",
 	reportFlag1: "一学位",

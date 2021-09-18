@@ -90,6 +90,7 @@ export default {
 	dorm: "Dormitory",
 	life: "Life",
 	thirdParty: "Third-party Services",
+	qzyq: "清紫源泉",
 	washer: "Washer Info",
 	report: "Report",
 	reportFlag1: "First",

@@ -17,6 +17,7 @@ import {connect} from "react-redux";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import IconWasher from "../../assets/icons/IconWasher";
+import IconWater from "../../assets/icons/IconWater";
 
 const iconSize = 60;
 
@@ -129,6 +130,9 @@ const HomeUI = ({
 				)}
 			</HomeSection>
 			<HomeSection title="thirdParty">
+				<HomeIcon title="qzyq" onPress={() => navigation.navigate("Qzyq")}>
+					<IconWater width={iconSize} height={iconSize} />
+				</HomeIcon>
 				<HomeIcon
 					title="washer"
 					onPress={() => navigation.navigate("WasherWeb")}>

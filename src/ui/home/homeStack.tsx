@@ -35,6 +35,7 @@ import {LibRoomBookScreen} from "./libRoomBook";
 import {LibRoomPerformBookScreen} from "./libRoomPerformBook";
 import {LibRoomBookRecordScreen} from "./libRoomBookRecord";
 import {WasherWebScreen} from "./washerWeb";
+import {WaterScreen} from "./water";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -57,6 +58,7 @@ export type HomeStackParamList = {
 	DormScore: undefined;
 	Email: {messageId: number};
 	EmailList: undefined;
+	Qzyq: undefined;
 	WasherWeb: undefined;
 };
 
@@ -215,6 +217,11 @@ export const HomeStackScreen = () => {
 				name="EmailList"
 				component={EmailListScreen}
 				options={{title: getStr("email")}}
+			/>
+			<Stack.Screen
+				name="Qzyq"
+				component={WaterScreen}
+				options={{title: getStr("qzyq")}}
 			/>
 			<Stack.Screen
 				name="WasherWeb"

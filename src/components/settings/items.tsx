@@ -162,11 +162,13 @@ export const SettingsEditText = ({
 	value,
 	onValueChange,
 	placeholder,
+	enabled,
 }: {
 	text: string;
 	value: string;
 	onValueChange: (newValue: string) => void;
 	placeholder: string;
+	enabled: boolean;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -175,15 +177,15 @@ export const SettingsEditText = ({
 			style={{
 				padding: 8,
 				paddingRight: 16,
+				flexDirection: "row",
 				justifyContent: "space-between",
 				alignItems: "center",
 			}}>
-			<Text style={{fontSize: 17, flex: 4, color: colors.text}}>{text}</Text>
+			<Text style={{fontSize: 17, flex: 1, color: colors.text}}>{text}</Text>
 			<TextInput
 				style={{
 					fontSize: 15,
-					height: 300,
-					flex: 1,
+					flex: 2,
 					backgroundColor: colors.background,
 					color: colors.text,
 					textAlign: "left",
@@ -191,12 +193,11 @@ export const SettingsEditText = ({
 					borderWidth: 1,
 					borderRadius: 5,
 					padding: 6,
-					textAlignVertical: "top",
 				}}
-				multiline={true}
 				placeholder={placeholder}
 				value={value}
 				onChangeText={onValueChange}
+				editable={enabled}
 			/>
 		</View>
 	);
