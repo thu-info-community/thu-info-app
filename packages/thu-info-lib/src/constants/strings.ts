@@ -111,11 +111,11 @@ export const LIBRARY_ROOM_BOOKING_LOGIN_URL =
 export const LIBRARY_ROOM_BOOKING_LOGIN_REFERER =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/xcus/ic2/Default.aspx";
 export const LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/device.aspx?dev_order=&kind_order=&classkind=1&display=cld&md=d&class_id=";
-export const LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_MIDDLE =
-    "&purpose=&selectOpenAty=&cld_name=default&date=";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/device.aspx?dev_order=&kind_order=&classkind=1&display=cld&md=d&purpose=&selectOpenAty=&cld_name=default&date=";
 export const LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX =
     "&act=get_rsv_sta";
+export const LIBRARY_FUZZY_SEARCH_ID_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/data/searchAccount.aspx?term=";
 export const LIBRARY_ROOM_BOOKING_ACTION_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/reserve.aspx";
 export const LIBRARY_ROOM_BOOKING_RECORD_URL =

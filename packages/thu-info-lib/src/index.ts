@@ -14,6 +14,7 @@ import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder} f
 import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
 import {
     LibBookRecord,
+    LibFuzzySearchResult,
     Library,
     LibraryFloor,
     LibrarySeat,
@@ -26,6 +27,7 @@ import {
     bookLibrarySeat,
     cancelBooking,
     cancelLibraryRoomBooking,
+    fuzzySearchLibraryId,
     getBookingRecords,
     getLibraryFloorList,
     getLibraryList,
@@ -150,14 +152,18 @@ export class InfoHelper {
 
     public getLibraryRoomBookingResourceList = async (
         date: string, // yyyyMMdd
-        id: number,
-    ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date, id);
+    ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date);
+
+    public fuzzySearchLibraryId = async (
+        keyword: string
+    ): Promise<LibFuzzySearchResult[]> => fuzzySearchLibraryId(this, keyword);
 
     public bookLibraryRoom = async (
         roomRes: LibRoomRes,
         start: string,  // yyyy-MM-dd HH:mm
         end: string,  // yyyy-MM-dd HH:mm
-    ): Promise<{success: boolean, msg: string}> => bookLibraryRoom(this, roomRes, start, end);
+        memberList: string[],  // student id's, empty for single user
+    ): Promise<{success: boolean, msg: string}> => bookLibraryRoom(this, roomRes, start, end, memberList);
 
     public getLibraryRoomBookingRecord = async (): Promise<LibRoomBookRecord[]> => getLibraryRoomBookingRecord(this);
 

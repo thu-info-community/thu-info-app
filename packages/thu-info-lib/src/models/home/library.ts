@@ -80,6 +80,11 @@ export interface LibRoomRes {
     usage: LibRoomUsage[];
 }
 
+export interface LibFuzzySearchResult {
+    id: string;
+    label: string;
+}
+
 export interface LibRoomBookRecord {
     regDate: string;  // yyyy-MM-dd HH:mm
     over: boolean;
