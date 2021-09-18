@@ -188,129 +188,138 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	useEffect(fetchNewsList, []);
 
 	let screenHeight = Dimensions.get("window");
+	const flatListRef = React.useRef(null);
 
 	return (
-		<FlatList
-			refreshControl={
-				<RefreshControl
-					refreshing={refreshing}
-					onRefresh={fetchNewsList}
-					colors={[theme.colors.accent]}
+		<>
+			<View style={style.headerContainer}>
+				<View style={style.textInputContainer}>
+					<Text style={{color: theme.colors.text}}>
+						{getStr("newsNumberOnPage")}
+					</Text>
+					<TextInput
+						style={style.textInputStyle}
+						placeholder="20"
+						onChangeText={(txt) => setNewsNumber(txt)}
+					/>
+				</View>
+				<Button title={getStr("confirm")} onPress={rerender} />
+				<Button
+					title={getStr("backToTop")}
+					onPress={() =>
+						// @ts-ignore
+						flatListRef?.current?.scrollToOffset({animated: true, offset: 0})
+					}
 				/>
-			}
-			ListEmptyComponent={
-				<View
-					style={{
-						margin: 15,
-						height: screenHeight.height * 0.6,
-						justifyContent: "center",
-						alignItems: "center",
-					}}>
-					<Text
+			</View>
+			<FlatList
+				ref={flatListRef}
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchNewsList}
+						colors={[theme.colors.accent]}
+					/>
+				}
+				ListEmptyComponent={
+					<View
 						style={{
-							fontSize: 18,
-							fontWeight: "bold",
-							alignSelf: "center",
-							margin: 5,
-							color: theme.colors.text,
+							margin: 15,
+							height: screenHeight.height * 0.6,
+							justifyContent: "center",
+							alignItems: "center",
 						}}>
-						{getStr("waitForLoading")}
-					</Text>
-					<Text
-						style={{
-							fontSize: 16,
-							alignSelf: "center",
-							color: "gray",
-							margin: 5,
-						}}>
-						{getStr("newsTip")}
-					</Text>
-				</View>
-			}
-			ListHeaderComponent={
-				<View style={style.headerContainer}>
-					<View style={style.textInputContainer}>
-						<Text style={{color: theme.colors.text}}>
-							{getStr("newsNumberOnPage")}
-						</Text>
-						<TextInput
-							style={style.textInputStyle}
-							placeholder="20"
-							onChangeText={(txt) => setNewsNumber(txt)}
-						/>
-					</View>
-					<Button title={getStr("confirm")} onPress={rerender} />
-				</View>
-			}
-			data={newsList}
-			keyExtractor={(item) => "" + newsList.indexOf(item)}
-			renderItem={({item}) => (
-				<View style={style.newsSliceContainer}>
-					<View style={style.titleContainer}>
-						<TouchableWithoutFeedback
-							onPress={() => {
-								if (route.params === undefined) {
-									navigation.push("News", {source: item.channel});
-								}
+						<Text
+							style={{
+								fontSize: 18,
+								fontWeight: "bold",
+								alignSelf: "center",
+								margin: 5,
+								color: theme.colors.text,
 							}}>
-							{renderIcon(item.channel)}
-						</TouchableWithoutFeedback>
-						<View>
-							<Text
-								style={{
-									fontSize: 18,
-									marginVertical: 2.5,
-									marginHorizontal: 10,
-									color: theme.colors.text,
-								}}>
-								{getStr(item.channel)}
-							</Text>
-							<Text
-								style={{
-									color: "gray",
-									marginVertical: 2.5,
-									marginHorizontal: 10,
-								}}>
-								{item.date}
-							</Text>
-						</View>
-					</View>
-					<TouchableOpacity
-						onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
+							{getStr("waitForLoading")}
+						</Text>
 						<Text
 							style={{
 								fontSize: 16,
-								fontWeight: "bold",
+								alignSelf: "center",
+								color: "gray",
 								margin: 5,
-								lineHeight: 20,
-								color: theme.colors.text,
 							}}>
-							{item.name}
-						</Text>
-						<Text style={{margin: 5, lineHeight: 18}} numberOfLines={5}>
-							<Text style={{fontWeight: "bold", color: theme.colors.text}}>
-								{item.source + (item.source ? getStr(":") : "")}
-							</Text>
-							<Text style={{color: "gray"}}>
-								{cache.get(item.url) ?? getStr("loading")}
-							</Text>
-						</Text>
-					</TouchableOpacity>
-				</View>
-			)}
-			onEndReached={() => fetchNewsList(false)}
-			onEndReachedThreshold={0.6}
-			ListFooterComponent={
-				loading && newsList.length !== 0 ? (
-					<View style={style.footerContainer}>
-						<ActivityIndicator size="small" />
-						<Text style={{margin: 10, color: theme.colors.text}}>
-							{getStr("loading")}
+							{getStr("newsTip")}
 						</Text>
 					</View>
-				) : null
-			}
-		/>
+				}
+				data={newsList}
+				keyExtractor={(item) => "" + newsList.indexOf(item)}
+				renderItem={({item}) => (
+					<View style={style.newsSliceContainer}>
+						<View style={style.titleContainer}>
+							<TouchableWithoutFeedback
+								onPress={() => {
+									if (route.params === undefined) {
+										navigation.push("News", {source: item.channel});
+									}
+								}}>
+								{renderIcon(item.channel)}
+							</TouchableWithoutFeedback>
+							<View>
+								<Text
+									style={{
+										fontSize: 18,
+										marginVertical: 2.5,
+										marginHorizontal: 10,
+										color: theme.colors.text,
+									}}>
+									{getStr(item.channel)}
+								</Text>
+								<Text
+									style={{
+										color: "gray",
+										marginVertical: 2.5,
+										marginHorizontal: 10,
+									}}>
+									{item.date}
+								</Text>
+							</View>
+						</View>
+						<TouchableOpacity
+							onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
+							<Text
+								style={{
+									fontSize: 16,
+									fontWeight: "bold",
+									margin: 5,
+									lineHeight: 20,
+									color: theme.colors.text,
+								}}>
+								{item.name}
+							</Text>
+							<Text style={{margin: 5, lineHeight: 18}} numberOfLines={5}>
+								<Text style={{fontWeight: "bold", color: theme.colors.text}}>
+									{item.source + (item.source ? getStr(":") : "")}
+								</Text>
+								<Text style={{color: "gray"}}>
+									{cache.get(item.url) ?? getStr("loading")}
+								</Text>
+							</Text>
+						</TouchableOpacity>
+					</View>
+				)}
+				onEndReached={() => fetchNewsList(false)}
+				onEndReachedThreshold={0.6}
+				ListFooterComponent={
+					loading && newsList.length !== 0 ? (
+						<View style={style.footerContainer}>
+							<ActivityIndicator size="small" />
+							<Text style={{margin: 10, color: theme.colors.text}}>
+								{getStr("loading")}
+							</Text>
+						</View>
+					) : null
+				}
+			/>
+		</>
 	);
 };
 
@@ -344,7 +353,7 @@ const styles = themedStyles(({colors}) => ({
 		justifyContent: "space-around",
 		alignItems: "center",
 		marginTop: 10,
-		marginBottom: 2,
+		marginBottom: 5,
 		marginHorizontal: 20,
 	},
 
