@@ -33,6 +33,7 @@ import {EmailScreen} from "./email";
 import {EmailListScreen} from "./emailList";
 import {LibRoomBookScreen} from "./libRoomBook";
 import {LibRoomPerformBookScreen} from "./libRoomPerformBook";
+import {LibRoomBookRecordScreen} from "./libRoomBookRecord";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -51,6 +52,7 @@ export type HomeStackParamList = {
 	LibrarySeatMap: {section: LibrarySection};
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
+	LibRoomBookRecord: undefined;
 	DormScore: undefined;
 	Email: {messageId: number};
 	EmailList: undefined;
@@ -142,7 +144,7 @@ export const HomeStackScreen = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibraryMap", route.params)}>
-							<Icon name="search" size={24} color={theme.colors.primary} />
+							<Icon name="map" size={24} color={theme.colors.primary} />
 						</TouchableOpacity>
 					),
 				})}
@@ -158,7 +160,7 @@ export const HomeStackScreen = () => {
 							onPress={() =>
 								navigation.navigate("LibrarySeatMap", route.params)
 							}>
-							<Icon name="search" size={24} color={theme.colors.primary} />
+							<Icon name="map" size={24} color={theme.colors.primary} />
 						</TouchableOpacity>
 					),
 				})}
@@ -176,12 +178,26 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="LibRoomBook"
 				component={LibRoomBookScreen}
-				options={{title: getStr("libRoomBook")}}
+				options={({navigation}) => ({
+					title: getStr("libRoomBook"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("LibRoomBookRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="LibRoomPerformBook"
 				component={LibRoomPerformBookScreen}
 				options={{title: getStr("libRoomBook")}}
+			/>
+			<Stack.Screen
+				name="LibRoomBookRecord"
+				component={LibRoomBookRecordScreen}
+				options={{title: getStr("libRoomBookRecord")}}
 			/>
 			<Stack.Screen
 				name="DormScore"

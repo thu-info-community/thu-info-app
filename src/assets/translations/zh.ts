@@ -268,4 +268,7 @@ export default {
 	libRoomBookDate: "申请日期",
 	libRoomBookTimeStart: "开始时间",
 	libRoomBookTimeEnd: "结束时间",
+	isOver: "已结束",
+	notOver: "未结束",
+	libRoomBookRecord: "研读间预约记录",
 };

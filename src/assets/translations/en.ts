@@ -285,4 +285,7 @@ export default {
 	libRoomBookDate: "Date",
 	libRoomBookTimeStart: "Start Time",
 	libRoomBookTimeEnd: "End Time",
+	isOver: "Over",
+	notOver: "Not over",
+	libRoomBookRecord: "Private Room Book Record",
 };
