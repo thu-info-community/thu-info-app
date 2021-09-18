@@ -89,6 +89,8 @@ export default {
 	eCard: "E-Card",
 	dorm: "Dormitory",
 	life: "Life",
+	thirdParty: "Third-party Services",
+	washer: "Washer Info",
 	report: "Report",
 	reportFlag1: "First",
 	reportFlag2: "Second",

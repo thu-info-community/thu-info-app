@@ -16,6 +16,7 @@ import {useColorScheme} from "react-native";
 import {connect} from "react-redux";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
+import IconWasher from "../../assets/icons/IconWasher";
 
 const iconSize = 60;
 
@@ -126,6 +127,13 @@ const HomeUI = ({
 						<IconDormScore width={iconSize} height={iconSize} />
 					</HomeIcon>
 				)}
+			</HomeSection>
+			<HomeSection title="thirdParty">
+				<HomeIcon
+					title="washer"
+					onPress={() => navigation.navigate("WasherWeb")}>
+					<IconWasher width={iconSize} height={iconSize} />
+				</HomeIcon>
 			</HomeSection>
 		</ScrollView>
 	);

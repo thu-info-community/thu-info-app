@@ -86,6 +86,8 @@ export default {
 	eCard: "校园卡",
 	dorm: "我们的家园",
 	life: "生活",
+	thirdParty: "第三方服务",
+	washer: "洗衣机查询",
 	report: "成绩单",
 	reportFlag1: "一学位",
 	reportFlag2: "二学位",
