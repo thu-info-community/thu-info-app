@@ -42,8 +42,8 @@ export class Calendar {
 
     diff = (other: Calendar) => this.date.diff(other.date);
 
-    static firstDay = new Calendar("2021-02-22");
+    static firstDay = new Calendar("2021-09-13");
     static weekCount = 18;
-    static semesterType = SemesterType.SPRING;
-    static semesterId = "2020-2021-2";
+    static semesterType = SemesterType.AUTUMN;
+    static semesterId = "2021-2022-1";
 }
