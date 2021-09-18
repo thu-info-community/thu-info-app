@@ -14,6 +14,7 @@ import {helper, State} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
 import {connect} from "react-redux";
+import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 
 const iconSize = 60;
 
@@ -83,11 +84,11 @@ const HomeUI = ({
 				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
 					<IconReport width={iconSize} height={iconSize} />
 				</HomeIcon>
-				{/*<HomeIcon
-				title="physicalExam"
-				onPress={() => navigation.navigate("PhysicalExam")}>
-				<IconPhysicalExam width={iconSize} height={iconSize} />
-			</HomeIcon>*/}
+				<HomeIcon
+					title="physicalExam"
+					onPress={() => navigation.navigate("PhysicalExam")}>
+					<IconPhysicalExam width={iconSize} height={iconSize} />
+				</HomeIcon>
 				<HomeIcon
 					title="teachingEvaluation"
 					onPress={() => navigation.navigate("Evaluation")}>
