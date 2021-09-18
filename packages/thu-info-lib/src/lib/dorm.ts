@@ -45,12 +45,13 @@ export const getEleRechargePayCode = async (
         {
             __EVENTTARGET: "",
             __EVENTARGUMENT: "",
-            __VIEWSTATE: "dummyContent",
+            __VIEWSTATE: "/wEPDwUJNzkyOTg4MDg4ZGTEGqvW9+JoVX5cqytAfdRw7k3JtQ==",
             __VIEWSTATEGENERATOR: "D6B25EB7",
             recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
             write_money: money,
             username,
             louhao,
+            student_id: helper.userId,
             banktype: "alipay",
         },
     ).then((s) => cheerio("#banksubmit", s).attr().action);
