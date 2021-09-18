@@ -10,6 +10,8 @@ import {AlipayPopup} from "../../components/home/alipayPopup";
 import {doAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
+import Snackbar from "react-native-snackbar";
+import {NetworkRetry} from "../../components/easySnackbars";
 
 export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const themeName = useColorScheme();
@@ -40,6 +42,27 @@ export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 			<SettingsItem
 				text={getStr("eleRecord")}
 				onPress={() => navigation.navigate("EleRecord")}
+				icon={<Feather name="zap" size={16} />}
+			/>
+			<SettingsItem
+				text={getStr("eleRemainder")}
+				onPress={() => {
+					Snackbar.show({
+						text: getStr("processing"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+					helper
+						.getEleRemainder()
+						.then((remainder) => {
+							Snackbar.show({
+								text: isNaN(remainder)
+									? getStr("eleRemainderFail")
+									: getStr("eleRemainderResult") + remainder,
+								duration: Snackbar.LENGTH_LONG,
+							});
+						})
+						.catch(NetworkRetry);
+				}}
 				icon={<Feather name="zap" size={16} />}
 			/>
 		</View>
