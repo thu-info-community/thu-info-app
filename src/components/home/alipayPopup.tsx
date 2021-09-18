@@ -22,7 +22,8 @@ export const AlipayPopup = ({
 	const [processing, setProcessing] = useState(false);
 
 	const regRes = /\d+/.exec(money);
-	const valid = regRes && regRes.length > 0 && regRes[0] === money;
+	const valid =
+		regRes && regRes.length > 0 && regRes[0] === money && Number(money) <= 42;
 
 	const close = () => {
 		setProcessing(false);
@@ -111,7 +112,7 @@ export const AlipayPopup = ({
 								{getStr("cancelPayment")}
 							</Text>
 						</TouchableOpacity>
-						<Text style={{textAlign: "left", color: colors.text}}>
+						<Text style={{textAlign: "left", color: "red"}}>
 							{getStr("eleRechargeHint")}
 						</Text>
 					</View>
