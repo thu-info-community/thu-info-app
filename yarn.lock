@@ -7203,6 +7203,11 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
+react-native-dropdown-picker@^5.1.27:
+  version "5.1.27"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-5.1.27.tgz#f7f328d2b695c11d14eadc58de4e38347b809da6"
+  integrity sha512-lQxn7kiVC+0BSHN4AMOwngR8jUgGMqhbw5vjeuTmlyYbbirfTrXXYqWNlpEs8+XUlAHmPgIkMVZrnQ3e4FIh4w==
+
 react-native-easy-grid@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-easy-grid/-/react-native-easy-grid-0.2.2.tgz#f0be33620be1ebe2d2295918eb58b0a27e8272ab"

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
 	FlatList,
+	Pressable,
 	RefreshControl,
 	Text,
 	TouchableOpacity,
@@ -13,44 +14,10 @@ import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
+import {LibRoomBookTimeIndicator} from "../../components/home/libRoomBookTimeIndicator";
+import {HomeNav} from "./homeStack";
 
-const timeDiff = (start: string, end: string): number => {
-	const startH = Number(start.substring(0, 2));
-	const startM = Number(start.substring(3, 5));
-	const endH = Number(end.substring(0, 2));
-	const endM = Number(end.substring(3, 5));
-	return endH * 60 + endM - (startH * 60 + startM);
-};
-
-// start, duration(minute), occupied
-const convertUsageToSegments = (
-	res: LibRoomRes,
-): [string, number, boolean][] => {
-	try {
-		const sorted = [...res.usage].sort((a, b) => (a.start < b.start ? -1 : 1));
-		const result: [string, number, boolean][] = [];
-		let lastTime = res.openStart;
-		for (let i = 0; i < sorted.length; i++) {
-			if (sorted[i].start > lastTime) {
-				result.push([lastTime, timeDiff(lastTime, sorted[i].start), false]);
-			}
-			result.push([
-				sorted[i].start,
-				timeDiff(sorted[i].start, sorted[i].end),
-				true,
-			]);
-			lastTime = sorted[i].end;
-		}
-		if (res.openEnd > lastTime) {
-			result.push([lastTime, timeDiff(lastTime, res.openEnd), false]);
-		}
-		return result;
-	} catch {
-		return [[res.openStart, timeDiff(res.openEnd, res.openStart), false]];
-	}
-};
-
-export const LibRoomBookScreen = () => {
+export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [rooms, setRooms] = useState<LibRoomRes[]>([]);
 	const [dateOffset, setDateOffset] = useState<0 | 1 | 2>(0);
 	const [refreshing, setRefreshing] = useState(false);
@@ -134,10 +101,14 @@ export const LibRoomBookScreen = () => {
 						colors={[theme.colors.accent]}
 					/>
 				}
-				renderItem={({item}) => {
-					const startH = Number(item.openStart.substring(0, 2));
-					const endH = Number(item.openEnd.substring(0, 2));
-					return (
+				renderItem={({item}) => (
+					<Pressable
+						onPress={() =>
+							navigation.navigate("LibRoomPerformBook", {
+								res: item,
+								date: dayjs().add(dateOffset, "day").format("YYYY-MM-DD"),
+							})
+						}>
 						<View
 							style={{
 								backgroundColor: theme.colors.background,
@@ -159,38 +130,10 @@ export const LibRoomBookScreen = () => {
 								{item.roomName}
 							</Text>
 							<Text style={{color: "grey"}}>{item.kindName}</Text>
-							<View style={{flexDirection: "row", paddingTop: 12}}>
-								{convertUsageToSegments(item).map(
-									([start, duration, occupied]) => (
-										<View
-											style={{
-												flex: duration,
-												backgroundColor: occupied ? "blue" : undefined,
-												height: 2,
-											}}
-											key={start}
-										/>
-									),
-								)}
-							</View>
-							<View style={{flexDirection: "row"}}>
-								{Array.from(new Array(endH - startH)).map((_, index) => (
-									<View
-										style={{
-											flex: 1,
-											borderLeftColor: "lightgrey",
-											borderLeftWidth: 1,
-											borderRightColor: "lightgrey",
-											borderRightWidth: index === endH - startH - 1 ? 1 : 0,
-										}}
-										key={index}>
-										<Text>{startH + index}</Text>
-									</View>
-								))}
-							</View>
+							<LibRoomBookTimeIndicator res={item} />
 						</View>
-					);
-				}}
+					</Pressable>
+				)}
 				keyExtractor={({id}) => id}
 			/>
 		</>

@@ -26,11 +26,13 @@ import {
 	Library,
 	LibraryFloor,
 	LibrarySection,
+	LibRoomRes,
 } from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native";
 import {EmailScreen} from "./email";
 import {EmailListScreen} from "./emailList";
 import {LibRoomBookScreen} from "./libRoomBook";
+import {LibRoomPerformBookScreen} from "./libRoomPerformBook";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -48,6 +50,7 @@ export type HomeStackParamList = {
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
 	LibRoomBook: undefined;
+	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	DormScore: undefined;
 	Email: {messageId: number};
 	EmailList: undefined;
@@ -63,6 +66,10 @@ export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
 export type LibrarySeatMapRouteProp = RouteProp<
 	HomeStackParamList,
 	"LibrarySeatMap"
+>;
+export type LibRoomPerformBookProp = RouteProp<
+	HomeStackParamList,
+	"LibRoomPerformBook"
 >;
 export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
 
@@ -169,6 +176,11 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="LibRoomBook"
 				component={LibRoomBookScreen}
+				options={{title: getStr("libRoomBook")}}
+			/>
+			<Stack.Screen
+				name="LibRoomPerformBook"
+				component={LibRoomPerformBookScreen}
 				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen

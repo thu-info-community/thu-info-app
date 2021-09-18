@@ -264,4 +264,8 @@ export default {
 	confirmDeletionText:
 		"是否确认删除地点？该操作不能撤销。点按“确认”来删除地点。",
 	libRoomBook: "研读间预约",
+	libRoomBookInfo: "申请信息",
+	libRoomBookDate: "申请日期",
+	libRoomBookTimeStart: "开始时间",
+	libRoomBookTimeEnd: "结束时间",
 };
