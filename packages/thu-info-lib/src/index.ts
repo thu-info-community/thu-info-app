@@ -42,6 +42,7 @@ import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
 import {NewsSlice, SourceTag} from "./models/news/news";
+import {getSportsAvailableTime} from "./lib/sports";
 
 export class InfoHelper {
     public userId = "";
@@ -53,7 +54,7 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
-    public static TOTAL_PHASES = 11;  // const
+    public static TOTAL_PHASES = 12;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
@@ -181,6 +182,10 @@ export class InfoHelper {
     public getSchedule = async () => getSchedule(this);
 
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
+
+    public getSportsAvailableTime = async (
+        date: string, // yyyy-MM-dd
+    ) => getSportsAvailableTime(this, date);
 }
 
 export class Water {
