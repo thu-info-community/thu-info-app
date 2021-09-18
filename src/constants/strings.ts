@@ -15,3 +15,5 @@ export const UNIDY2002_URL = "https://github.com/UNIDY2002";
 export const ASHITEMARU_URL = "https://github.com/Ashitemaru";
 export const WERKEYTOM_URL = "https://github.com/werkeytom";
 export const LIB_URL = "https://github.com/thu-info-community/thu-info-lib";
+export const WATER_USER_URL = "http://dingshui.bjqzhd.com/auser/getuser.html";
+export const WATER_SUB_URL = "http://dingshui.bjqzhd.com/buy/subs.html";
