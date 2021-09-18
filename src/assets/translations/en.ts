@@ -290,4 +290,7 @@ export default {
 	isOver: "Over",
 	notOver: "Not over",
 	libRoomBookRecord: "Private Room Book Record",
+	groupMembers: "Group Members",
+	findUser: "Find user",
+	add: "Add",
 };

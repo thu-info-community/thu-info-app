@@ -25,19 +25,11 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	useEffect(() => {
-		Snackbar.show({
-			text: "实验性功能，当前只支持文图个人研读间预约。",
-			duration: Snackbar.LENGTH_LONG,
-		});
-	}, []);
-
 	const refresh = () => {
 		setRefreshing(true);
 		helper
 			.getLibraryRoomBookingResourceList(
 				dayjs().add(dateOffset, "day").format("YYYYMMDD"),
-				10311,
 			)
 			.then(setRooms)
 			.catch(() =>
@@ -128,6 +120,7 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 							}}>
 							<Text style={{color: theme.colors.text, fontSize: 18}}>
 								{item.roomName}
+								{item.maxUser > 1 ? ` (${item.minUser}~${item.maxUser})` : ""}
 							</Text>
 							<Text style={{color: "grey"}}>{item.kindName}</Text>
 							<LibRoomBookTimeIndicator res={item} />

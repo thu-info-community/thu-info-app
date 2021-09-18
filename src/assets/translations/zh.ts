@@ -273,4 +273,7 @@ export default {
 	isOver: "已结束",
 	notOver: "未结束",
 	libRoomBookRecord: "研读间预约记录",
+	groupMembers: "小组成员",
+	findUser: "查找用户",
+	add: "添加",
 };
