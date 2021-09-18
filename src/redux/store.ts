@@ -119,7 +119,11 @@ const configTransform = createTransform(
 	(c: Config) => ({...c, firstDay: c.firstDay.date.format("YYYY-MM-DD")}),
 	(c) => {
 		helper.emailName = c.emailName;
-		return {...c, firstDay: new Calendar(c.firstDay)};
+		Calendar.firstDay = new Calendar(c.firstDay);
+		Calendar.weekCount = c.weekCount;
+		Calendar.semesterType = c.semesterType;
+		Calendar.semesterId = c.semesterId;
+		return {...c, firstDay: Calendar.firstDay};
 	},
 	{
 		whitelist: ["config"],
