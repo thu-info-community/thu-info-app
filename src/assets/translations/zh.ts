@@ -263,4 +263,5 @@ export default {
 	confirmDeletion: "确认删除",
 	confirmDeletionText:
 		"是否确认删除地点？该操作不能撤销。点按“确认”来删除地点。",
+	libRoomBook: "研读间预约",
 };

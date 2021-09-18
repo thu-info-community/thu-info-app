@@ -30,6 +30,7 @@ import {
 import {useColorScheme} from "react-native";
 import {EmailScreen} from "./email";
 import {EmailListScreen} from "./emailList";
+import {LibRoomBookScreen} from "./libRoomBook";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -46,6 +47,7 @@ export type HomeStackParamList = {
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
+	LibRoomBook: undefined;
 	DormScore: undefined;
 	Email: {messageId: number};
 	EmailList: undefined;
@@ -163,6 +165,11 @@ export const HomeStackScreen = () => {
 				name="LibrarySeatMap"
 				component={LibrarySeatMapScreen}
 				options={({route}) => ({title: route.params.section.zhNameTrace})}
+			/>
+			<Stack.Screen
+				name="LibRoomBook"
+				component={LibRoomBookScreen}
+				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen
 				name="DormScore"

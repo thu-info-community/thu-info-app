@@ -280,4 +280,5 @@ export default {
 	confirmDeletion: "Confirm deletion",
 	confirmDeletionText:
 		"Are you sure to delete the location? This operation cannot be undone. Press 'OK' to delete the location.",
+	libRoomBook: "Library Private Rooms",
 };

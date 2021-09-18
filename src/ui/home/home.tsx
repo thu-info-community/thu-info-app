@@ -15,6 +15,7 @@ import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
 import {connect} from "react-redux";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
+import IconLibRoom from "../../assets/icons/IconLibRoom";
 
 const iconSize = 60;
 
@@ -105,6 +106,11 @@ const HomeUI = ({
 					title="library"
 					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon
+					title="libRoomBook"
+					onPress={() => navigation.navigate("LibRoomBook")}>
+					<IconLibRoom width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="life">
