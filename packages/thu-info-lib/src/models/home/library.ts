@@ -75,8 +75,8 @@ export interface LibRoomRes {
     cancelMinute: number;
     maxUser: number;
     minUser: number;
-    openStart: string;  // HH:mm
-    openEnd: string;  // HH:mm
+    openStart: string | null;  // HH:mm
+    openEnd: string | null;  // HH:mm
     usage: LibRoomUsage[];
 }
 
