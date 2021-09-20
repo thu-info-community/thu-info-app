@@ -96,6 +96,8 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 				renderItem={({item}) => (
 					<Pressable
 						onPress={() =>
+							item.openStart !== null &&
+							item.openEnd !== null &&
 							navigation.navigate("LibRoomPerformBook", {
 								res: item,
 								date: dayjs().add(dateOffset, "day").format("YYYY-MM-DD"),

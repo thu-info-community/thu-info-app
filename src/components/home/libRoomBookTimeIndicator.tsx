@@ -14,6 +14,9 @@ export const timeDiff = (start: string, end: string): number => {
 export const convertUsageToSegments = (
 	res: LibRoomRes,
 ): [string, number, boolean][] => {
+	if (res.openStart === null || res.openEnd === null) {
+		return [];
+	}
 	try {
 		const sorted = [...res.usage].sort((a, b) => (a.start < b.start ? -1 : 1));
 		const result: [string, number, boolean][] = [];
@@ -39,6 +42,18 @@ export const convertUsageToSegments = (
 };
 
 export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
+	if (res.openStart === null || res.openEnd === null) {
+		return (
+			<View
+				style={{
+					flex: 1,
+					backgroundColor: "lightgrey",
+					height: 2,
+					marginTop: 12,
+				}}
+			/>
+		);
+	}
 	const startH = Number(res.openStart.substring(0, 2));
 	const endH = Number(res.openEnd.substring(0, 2));
 	return (
