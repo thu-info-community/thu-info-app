@@ -64,7 +64,7 @@
         "node-polyfill-webpack-plugin": "1.1.4",
         "semver": "7.3.5",
         "ts-jest": "27.0.5",
-        "ts-loader": "9.2.5",
+        "ts-loader": "9.2.6",
         "typescript": "4.4.3",
         "webpack": "5.53.0",
         "webpack-cli": "4.8.0"
