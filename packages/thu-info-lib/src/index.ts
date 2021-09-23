@@ -42,7 +42,12 @@ import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
 import {NewsSlice, SourceTag} from "./models/news/news";
-import {getSportsResources} from "./lib/sports";
+import {
+    getSportsCaptchaUrlMethod,
+    getSportsResources,
+    makeSportsReservation,
+    updateSportsPhoneNumber,
+} from "./lib/sports";
 
 export class InfoHelper {
     public userId = "";
@@ -184,8 +189,24 @@ export class InfoHelper {
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
 
     public getSportsResources = async (
+        gymId: string,
+        itemId: string,
         date: string, // yyyy-MM-dd
-    ) => getSportsResources(this, date);
+    ) => getSportsResources(this, gymId, itemId, date);
+
+    public updateSportsPhoneNumber = async (phone: string) => updateSportsPhoneNumber(this, phone);
+
+    public getSportsCaptchaUrl = () => getSportsCaptchaUrlMethod();
+
+    public makeSportsReservation = async (
+        totalCost: number,
+        phone: string,
+        gymId: string,
+        itemId: string,
+        date: string,  // yyyy-MM-dd
+        captcha: string,
+        fieldId: string,
+    ) => makeSportsReservation(this, totalCost, phone, gymId, itemId, date, captcha, fieldId);
 }
 
 export class Water {

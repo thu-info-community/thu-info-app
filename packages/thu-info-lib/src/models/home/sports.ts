@@ -10,3 +10,10 @@ export interface SportsResource {
     userType?: string;
     paymentStatus?: boolean;
 }
+
+export interface SportsResourcesInfo {
+    count: number;
+    init: number;
+    phone: string | undefined;
+    data: SportsResource[];
+}
