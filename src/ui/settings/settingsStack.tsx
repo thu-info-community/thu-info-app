@@ -15,6 +15,7 @@ import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
 import {ExperimentalScreen} from "./experimental";
 import {PasswordManagementScreen} from "./PasswordManagement";
+import {SportsExpScreen} from "./sportsExp";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -29,6 +30,7 @@ type SettingsStackParamList = {
 	Experimental: undefined;
 	PasswordManagement: undefined;
 	About: undefined;
+	SportsExp: undefined;
 };
 
 const Stack = createStackNavigator<SettingsStackParamList>();
@@ -91,6 +93,11 @@ export const SettingStackScreen = () => (
 			name="PasswordManagement"
 			component={PasswordManagementScreen}
 			options={{title: getStr("passwordManagement")}}
+		/>
+		<Stack.Screen
+			name="SportsExp"
+			component={SportsExpScreen}
+			options={{title: getStr("sportsBook")}}
 		/>
 	</Stack.Navigator>
 );

@@ -12,6 +12,7 @@ import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
+import md5 from "md5";
 
 export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const themeName = useColorScheme();
@@ -65,6 +66,14 @@ export const ExperimentalScreen = ({navigation}: {navigation: SettingsNav}) => {
 				}}
 				icon={<Feather name="zap" size={16} />}
 			/>
+			<SettingsSeparator />
+			{md5(helper.userId) === "c1b894ba0891b54456211a51e75ca487" && (
+				<SettingsItem
+					text={getStr("sportsBook")}
+					onPress={() => navigation.navigate("SportsExp")}
+					icon={<Feather name="activity" size={16} />}
+				/>
+			)}
 		</View>
 	);
 };
