@@ -140,7 +140,7 @@ export const SPORTS_LOGIN_URL =
 export const SPORTS_LOGIN_REFERER =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/login_m.jsp";
 export const SPORTS_DETAIL_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/gymsite/cacheAction.do?ms=viewBook&gymnasium_id=4836273&item_id=14567218&time_date=2021-09-19&userType=1";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/gymsite/cacheAction.do?ms=viewBook&gymnasium_id=4836273&item_id=14567218&userType=1&time_date=";
 export const WATER_USER_URL =
     "http://dingshui.bjqzhd.com/auser/getuser.html";
 export const WATER_SUB_URL =
