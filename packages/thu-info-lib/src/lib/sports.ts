@@ -7,11 +7,17 @@ import {
     SPORTS_DETAIL_URL,
     SPORTS_MAKE_ORDER_URL,
     SPORTS_MAKE_PAYMENT_URL,
+    SPORTS_PAYMENT_ACTION_URL,
+    SPORTS_PAYMENT_API_URL,
+    SPORTS_PAYMENT_CHECK_URL,
     SPORTS_QUERY_PHONE_URL,
     SPORTS_UPDATE_PHONE_URL,
 } from "../constants/strings";
 import {SportsResource, SportsResourcesInfo} from "../models/home/sports";
 import {MOCK_RESOURCES} from "../mocks/sports";
+import cheerio from "cheerio";
+import TagElement = cheerio.TagElement;
+import {generalGetPayCode} from "../utils/alipay";
 
 const getSportsResourceLimit = async (
     helper: InfoHelper,
@@ -124,38 +130,52 @@ export const makeSportsReservation = async (
     date: string,  // yyyy-MM-dd
     captcha: string,
     fieldId: string,
-) =>
-    retryWrapperWithMocks(
-        helper,
-        undefined,
-        async () => {
-            const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, SPORTS_BASE_URL, {
-                "bookData.totalCost": totalCost,
-                "bookData.book_person_zjh": "",
-                "bookData.book_person_name": "",
-                "bookData.book_person_phone": phone,
-                "bookData.book_mode": "from-phone",
-                "item_idForCache": itemId,
-                "time_dateForCache": date,
-                "userTypeNumForCache": 1,
-                "putongRes": "putongRes",
-                "code": captcha,
-                "selectedPayWay": 1,
-                "allFieldTime": `${fieldId}#${date}`,
-            }).then(JSON.parse);
-            if (orderResult.msg !== "预定成功") {
-                throw new Error(orderResult.msg);
-            }
-            const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
-                xm: "",
-                dept: "",
-                gymnasium_idForCache: gymId,
-                item_idForCache: itemId,
-                time_dateForCache: date,
-                userTypeNumForCache: 1,
-                allFieldTime: `${fieldId}#${date}`,
-            }).then(JSON.parse);
-            console.error(payRequestResult);
-        },
-        undefined,
-    );
+): Promise<string> => {
+    const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, SPORTS_BASE_URL, {
+        "bookData.totalCost": totalCost,
+        "bookData.book_person_zjh": "",
+        "bookData.book_person_name": "",
+        "bookData.book_person_phone": phone,
+        "bookData.book_mode": "from-phone",
+        "item_idForCache": itemId,
+        "time_dateForCache": date,
+        "userTypeNumForCache": 1,
+        "putongRes": "putongRes",
+        "code": captcha,
+        "selectedPayWay": 1,
+        "allFieldTime": `${fieldId}#${date}`,
+    }).then(JSON.parse);
+    if (orderResult.msg !== "预定成功") {
+        throw new Error(orderResult.msg);
+    }
+    const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
+        xm: "",
+        dept: "",
+        gymnasium_idForCache: gymId,
+        item_idForCache: itemId,
+        time_dateForCache: date,
+        userTypeNumForCache: 1,
+        allFieldTime: `${fieldId}#${date}`,
+    }).then(JSON.parse);
+    delete payRequestResult.action;
+    const paymentApiHtml = await uFetch(SPORTS_PAYMENT_API_URL, SPORTS_BASE_URL, payRequestResult);
+    const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
+    if (searchResult === null) {
+        throw new Error("id and token not found.");
+    }
+    const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, SPORTS_PAYMENT_API_URL, {
+        id: searchResult[1],
+        token: searchResult[2],
+    }).then(JSON.parse);
+    if (paymentCheckResult.code !== "0") {
+        throw new Error("Payment check failed: " + paymentCheckResult.message);
+    }
+    const inputs = cheerio.load(paymentApiHtml)("#payForm input");
+    const postForm: { [key: string]: string } = {};
+    inputs.each((_, element) => {
+        const {attribs} = element as TagElement;
+        postForm[attribs.name] = attribs.value;
+    });
+    postForm.channelId = "0101";
+    return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, SPORTS_PAYMENT_API_URL, postForm));
+};

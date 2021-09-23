@@ -6,7 +6,9 @@ import {
     ELE_PAY_RECORD_URL,
     RECHARGE_ELE_REFERER,
     RECHARGE_ELE_URL,
-    RECHARGE_PAY_ELE_URL, ELE_REMAINDER_URL,
+    RECHARGE_PAY_ELE_URL,
+    ELE_REMAINDER_URL,
+    SEND_TO_ALIPAY_ACTION_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
@@ -56,7 +58,11 @@ export const getEleRechargePayCode = async (
         },
     ).then((s) => cheerio("#banksubmit", s).attr().action);
 
-    return generalGetPayCode(redirect, RECHARGE_PAY_ELE_URL);
+    // Get pay id
+    const $1 = await uFetch(redirect, RECHARGE_PAY_ELE_URL).then(cheerio.load);
+    const id = $1("input[name=id]").attr().value;
+    const xxx = $1("#xxx2").attr().value;
+    return generalGetPayCode(await uFetch(SEND_TO_ALIPAY_ACTION_URL, redirect, { id, xxx }), "GBK");
 };
 
 export const getElePayRecord = async (

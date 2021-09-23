@@ -39,7 +39,7 @@ it("should login successfully.", async () => {
     const helper = new InfoHelper();
     const counter = jest.fn();
     await helper.login({userId, password, dormPassword}, counter);
-    const date = "2021-09-23";
+    const date = "2021-09-25";
     const gymId = "4836273";
     const itemId = "14567218";
     const resources = await helper.getSportsResources(gymId, itemId, date);
@@ -53,22 +53,25 @@ it("should login successfully.", async () => {
         output: process.stdout
     });
     console.error("Please enter");
-    rl.on("line", async (str) => {
-        const firstResource = resources.data.find((r) => r.locked !== true);
-        if (firstResource !== undefined && firstResource.cost !== undefined && resources.phone !== undefined) {
-            await helper.makeSportsReservation(
-                firstResource.cost,
-                resources.phone,
-                gymId,
-                itemId,
-                date,
-                str,
-                firstResource.resId,
-            );
-        }
-        await helper.logout();
-        expect(helper.mocked()).toEqual(false);
-        expect(helper.emailName).toEqual(emailName);
-        expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
+    await new Promise((resolve) => {
+        rl.on("line", async (str) => {
+            const firstResource = resources.data.find((r) => r.locked !== true);
+            if (firstResource !== undefined && firstResource.cost !== undefined && resources.phone !== undefined) {
+                console.error(await helper.makeSportsReservation(
+                    firstResource.cost,
+                    resources.phone,
+                    gymId,
+                    itemId,
+                    date,
+                    str,
+                    firstResource.resId,
+                ));
+            }
+            await helper.logout();
+            expect(helper.mocked()).toEqual(false);
+            expect(helper.emailName).toEqual(emailName);
+            expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
+            resolve(true);
+        });
     });
 }, 60000);
