@@ -92,7 +92,7 @@ export const updateSportsPhoneNumber = async (
 ): Promise<void> =>
     retryWrapperWithMocks(
         helper,
-        50,
+        424,
         async () => {
             if (!/^(1[3-9][0-9]|15[036789]|18[89])\d{8}$/.test(phone)) {
                 throw new Error("请正确填写手机号码!");
@@ -110,7 +110,7 @@ export const getSportsResources = async (
 ): Promise<SportsResourcesInfo> =>
     retryWrapperWithMocks(
         helper,
-        50,
+        424,
         async () => Promise.all([
             getSportsResourceLimit(helper, gymId, itemId, date),
             getSportsPhoneNumber(),

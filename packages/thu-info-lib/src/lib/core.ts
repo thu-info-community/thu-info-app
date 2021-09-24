@@ -22,8 +22,6 @@ import {
     PRE_ROAM_URL_PREFIX,
     TSINGHUA_HOME_LOGIN_URL,
     WEB_VPN_ROOT_URL,
-    SPORTS_LOGIN_URL,
-    SPORTS_LOGIN_REFERER,
 } from "../constants/strings";
 import md5 from "md5";
 import cheerio from "cheerio";
@@ -145,7 +143,7 @@ export const login = async (
         ]);
         await batchGetTickets(
             helper,
-            [792, 824, 2005, 5000, 5001, -1, -2, 50] as ValidTickets[],
+            [792, 824, 2005, 5000, 5001, -1, -2, 424] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -168,7 +166,7 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
 };
 
 export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promise<void> => {
-    if (target >= 100 && target <= 1000) {
+    if (target === 792 || target === 824) {
         const response = await uFetch(
             INFO_ROOT_URL,
             PRE_LOGIN_URL,
@@ -181,11 +179,6 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
             undefined,
             6000,
         );
-    } else if (target === 50) {
-        await uFetch(SPORTS_LOGIN_URL, SPORTS_LOGIN_REFERER, {
-            un: helper.userId,
-            pw: helper.password,
-        });
     } else if (target === -1) {
         const userId = helper.userId;
         const appId = md5(userId + new Date().getTime());
@@ -313,6 +306,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [792, 824, 2005, 5000, 5001, 50] as ValidTickets[]);
+        await batchGetTickets(helper, [792, 824, 2005, 5000, 5001, 424] as ValidTickets[]);
     }, 60000);
 };
