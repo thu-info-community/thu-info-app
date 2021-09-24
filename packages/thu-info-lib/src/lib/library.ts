@@ -310,7 +310,7 @@ export const cancelBooking = async (
             .then(JSON.parse)
             .then((data: any) => {
                 if (!data.status) {
-                    throw data.message;
+                    throw data.message ?? data.msg;
                 }
             }),
         undefined,
