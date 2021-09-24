@@ -45,6 +45,11 @@ export const SportsSelectScreen = ({
 	return (
 		<ScrollView>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
+				<Text style={{padding: 10, color: "red"}}>
+					{"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！"}
+				</Text>
+			</View>
+			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
 				<Text style={{padding: 10}}>{name}</Text>
 			</View>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
