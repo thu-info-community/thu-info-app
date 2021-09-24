@@ -18,6 +18,8 @@ export function simpleRefreshListScreen<T>(
 		refresh: () => void,
 		props: PropsWithChildren<any>,
 		theme: Theme,
+		index: number,
+		total: number,
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: (theme: Theme) => ReactElement,
@@ -58,7 +60,9 @@ export function simpleRefreshListScreen<T>(
 						colors={[theme.colors.accent]}
 					/>
 				}
-				renderItem={({item}) => renderItem(item, refresh, props, theme)}
+				renderItem={({item, index}) =>
+					renderItem(item, refresh, props, theme, index, data.length)
+				}
 				keyExtractor={keyExtractor}
 				ListHeaderComponent={
 					data.length === 0 ? null : header ? header(theme) : undefined

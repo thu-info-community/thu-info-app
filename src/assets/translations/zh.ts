@@ -225,6 +225,17 @@ export default {
 	remainderSettings: "修正余额",
 	experimental: "试验性功能",
 	sportsBook: "体育场馆预约",
+	sportsBookUnavailable: "暂未开放网上预约。",
+	sportsBookRestricted:
+		"您有 %d 项订单未交费或系统正在自动取消订单（建议5分钟后重试），当前不能预约。",
+	sportsBookPhoneRequired: "您尚未填写您的手机号，请填写手机号后刷新重试。",
+	pleaseEnterPhone: "请输入手机号：",
+	sportsPhoneSetSucceed: "手机号设置成功，请刷新页面。",
+	sportsPhoneSetFail: "手机号设置失败，请重试。",
+	confirmOrder: "确认订单",
+	selectField: "选择场地：",
+	captchaCaseSensitive: "验证码（大小写敏感）",
+	refresh: "刷新",
 	setNewRemainder: "设置新余额",
 	remainderTips:
 		"目前由于一些数据转移问题，补办后的显示余额会与实际余额有些许差距。如果您曾经有过校园卡丢失与补办的经历，请在上方输入当前实际余额。\n请注意：余额页面显示与实际余额的偏差也有可能因学校数据延迟导致，稍等片刻后便会恢复正常。",

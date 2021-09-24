@@ -239,6 +239,20 @@ export default {
 	courseTime: "Course Time",
 	remainderSettings: "Reset Remainder",
 	experimental: "Experimental",
+	sportsBook: "Gymnasium Registration",
+	sportsBookUnavailable: "Registration not available",
+	sportsBookRestricted:
+		"You have %d booking request(s) in progress, and are not allowed to make new bookings at this moment. Please try again later.",
+	sportsBookPhoneRequired:
+		"Phone number required; please enter your phone number and retry.",
+	pleaseEnterPhone: "Phone number: ",
+	sportsPhoneSetSucceed:
+		"Phone number set successfully, please swipe and refresh.",
+	sportsPhoneSetFail: "Phone number set failed, please retry.",
+	confirmOrder: "Confirm Order",
+	selectField: "Select field:",
+	captchaCaseSensitive: "Captcha (case sensitive)",
+	refresh: "Refresh",
 	setNewRemainder: "Set the New Remainder",
 	remainderTips:
 		"The remainder shown in expenditure page can go wrong due to data migration problems. If you ever lost your card and made a new one before, please reset the remainder in the box above.\nPS: The display error can also be caused by data translation delay, please wait for a moment before resetting the remainder.",

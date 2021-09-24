@@ -1,69 +1,77 @@
-import {Button, Image, Text, TextInput, View} from "react-native";
-import React, {useEffect, useState} from "react";
-import {getStr} from "../../utils/i18n";
-import {helper} from "../../redux/store";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import React, {useState} from "react";
 import dayjs from "dayjs";
-import Snackbar from "react-native-snackbar";
-import {doAlipay} from "../../utils/alipay";
+import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
+import themes from "../../assets/themes/themes";
+import {SettingsNav} from "./settingsStack";
+import {getStr} from "../../utils/i18n";
 
-export const SportsExpScreen = () => {
-	const [uri, setUri] = useState<string>();
-	const [input, setInput] = useState<string>("");
-	const date = dayjs().format("YYYY-MM-DD");
+export const SportsScreen = ({navigation}: {navigation: SettingsNav}) => {
+	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
+	const [idGym, setIdGym] = useState<string>();
+	const [idItem, setIdItem] = useState<string>();
 
-	useEffect(() => setUri(helper.getSportsCaptchaUrl()), []);
+	const today = dayjs();
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	const validDateNum = 4;
 
 	return (
-		<>
-			<Image source={{uri}} style={{height: 100}} />
-			<View style={{flexDirection: "row"}}>
-				<TextInput style={{flex: 1}} onChangeText={setInput} />
-				<Button
-					title={getStr("confirm")}
-					onPress={() =>
-						helper
-							.getSportsResources("4836273", "14567218", date)
-							.then(({phone, data, count, init}) => {
-								const item = data.find(
-									(r) => r.locked !== true && r.userType === undefined,
-								);
-								if (item === undefined) {
-									Snackbar.show({
-										text: "未找到空场地",
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								} else if (
-									phone === undefined ||
-									item.cost === undefined ||
-									count !== 1 ||
-									init !== 1
-								) {
-									Snackbar.show({
-										text: "其他错误",
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								} else {
-									Snackbar.show({
-										text: "正在处理",
-										duration: Snackbar.LENGTH_SHORT,
-									});
-									helper
-										.makeSportsReservation(
-											item.cost,
-											phone,
-											"4836273",
-											"14567218",
-											date,
-											input,
-											item.resId,
-										)
-										.then(doAlipay);
-								}
-							})
-					}
-				/>
+		<View style={{flexDirection: "row", margin: 10}}>
+			<View style={{flex: 1, paddingRight: 10}}>
+				{sportsIdInfoList.map(({name, gymId, itemId}, index) => (
+					<View
+						key={name}
+						style={{
+							borderTopColor: "lightgrey",
+							borderTopWidth: 1,
+							borderBottomColor: "lightgrey",
+							borderBottomWidth: index === sportsIdInfoList.length - 1 ? 1 : 0,
+						}}>
+						<TouchableOpacity
+							onPress={() => {
+								setNameStr(name);
+								setIdGym(gymId);
+								setIdItem(itemId);
+							}}>
+							<Text
+								style={{
+									color: idItem === itemId ? "blue" : colors.text,
+									padding: 10,
+								}}>
+								{name}
+							</Text>
+						</TouchableOpacity>
+					</View>
+				))}
 			</View>
-			<Text>将会在{date}的西体可用的台球场中随机选择一个预约。</Text>
-		</>
+			<View style={{flex: 1, paddingLeft: 10}}>
+				{idGym !== undefined &&
+					idItem !== undefined &&
+					Array.from(new Array(validDateNum), (_, k) =>
+						today.add(k, "day").format("YYYY-MM-DD"),
+					).map((dateStr, index) => (
+						<View
+							key={dateStr}
+							style={{
+								borderTopColor: "lightgrey",
+								borderTopWidth: 1,
+								borderBottomColor: "lightgrey",
+								borderBottomWidth: index === validDateNum - 1 ? 1 : 0,
+							}}>
+							<TouchableOpacity
+								onPress={() =>
+									navigation.navigate("SportsDetailExp", {
+										info: {name: nameStr, gymId: idGym, itemId: idItem},
+										date: dateStr,
+									})
+								}>
+								<Text style={{padding: 10}}>{dateStr}</Text>
+							</TouchableOpacity>
+						</View>
+					))}
+			</View>
+		</View>
 	);
 };
