@@ -304,6 +304,9 @@ export default {
 	isOver: "Over",
 	notOver: "Not over",
 	libRoomBookRecord: "Private Room Book Record",
+	warning: "Warning",
+	libRoomFirstTime:
+		"If it is the first time you use a library private room, it is required that you have your student ID activated before you enter the room. Please contact the library staff for more information.",
 	groupMembers: "Group Members",
 	findUser: "Find user",
 	add: "Add",

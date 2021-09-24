@@ -59,12 +59,6 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 					</>
 				)}
 				<SettingsItem
-					text={getStr("libBookRecord")}
-					onPress={() => navigation.navigate("LibBookRecord")}
-					icon={<Feather name="book-open" size={16} />}
-				/>
-				<SettingsSeparator />
-				<SettingsItem
 					text={getStr("experimental")}
 					onPress={() => navigation.navigate("Experimental")}
 					icon={<FontAwesome name="flask" size={16} />}
@@ -93,9 +87,7 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 							new AV.Query("_File")
 								.equalTo("name", "wechat.jpg")
 								.first()
-								.then((r) =>
-									setUrl(r?.get("url")?.replace("http://", "https://")),
-								)
+								.then((r) => setUrl(r?.get("url")))
 								.then(() => setShowPopup(true));
 						}}
 						icon={<FontAwesome name="wechat" size={16} />}

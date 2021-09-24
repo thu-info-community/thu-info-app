@@ -265,6 +265,7 @@ export const LibRoomPerformBookScreen = ({
 							.then(({success, msg}) => {
 								Snackbar.show({text: msg, duration: Snackbar.LENGTH_LONG});
 								if (success) {
+									Alert.alert(getStr("warning"), getStr("libRoomFirstTime"));
 									navigation.pop();
 								}
 							})

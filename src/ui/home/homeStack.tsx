@@ -18,7 +18,7 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {TouchableOpacity} from "react-native";
+import {TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
@@ -36,6 +36,7 @@ import {LibRoomPerformBookScreen} from "./libRoomPerformBook";
 import {LibRoomBookRecordScreen} from "./libRoomBookRecord";
 import {WasherWebScreen} from "./washerWeb";
 import {WaterScreen} from "./water";
+import {LibBookRecordScreen} from "./libBookRecord";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -52,6 +53,7 @@ export type HomeStackParamList = {
 	LibrarySeat: {section: LibrarySection; dateChoice: 0 | 1};
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
+	LibBookRecord: undefined;
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
@@ -132,12 +134,30 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="Library"
 				component={LibraryScreen}
-				options={{title: getStr("library")}}
+				options={({navigation}) => ({
+					title: getStr("library"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("LibBookRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="LibraryFloor"
 				component={LibraryFloorScreen}
-				options={({route}) => ({title: route.params.library.zhName})}
+				options={({route, navigation}) => ({
+					title: route.params.library.zhName,
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("LibBookRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="LibrarySection"
@@ -145,11 +165,18 @@ export const HomeStackScreen = () => {
 				options={({route, navigation}) => ({
 					title: route.params.floor.zhNameTrace,
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() => navigation.navigate("LibraryMap", route.params)}>
-							<Icon name="map" size={24} color={theme.colors.primary} />
-						</TouchableOpacity>
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 8, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("LibraryMap", route.params)}>
+								<Icon name="map" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("LibBookRecord")}>
+								<Icon name="history" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+						</View>
 					),
 				})}
 			/>
@@ -159,13 +186,20 @@ export const HomeStackScreen = () => {
 				options={({route, navigation}) => ({
 					title: route.params.section.zhNameTrace,
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() =>
-								navigation.navigate("LibrarySeatMap", route.params)
-							}>
-							<Icon name="map" size={24} color={theme.colors.primary} />
-						</TouchableOpacity>
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 8, marginHorizontal: 4}}
+								onPress={() =>
+									navigation.navigate("LibrarySeatMap", route.params)
+								}>
+								<Icon name="map" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("LibBookRecord")}>
+								<Icon name="history" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+						</View>
 					),
 				})}
 			/>
@@ -178,6 +212,11 @@ export const HomeStackScreen = () => {
 				name="LibrarySeatMap"
 				component={LibrarySeatMapScreen}
 				options={({route}) => ({title: route.params.section.zhNameTrace})}
+			/>
+			<Stack.Screen
+				name="LibBookRecord"
+				component={LibBookRecordScreen}
+				options={{title: getStr("libBookRecord")}}
 			/>
 			<Stack.Screen
 				name="LibRoomBook"

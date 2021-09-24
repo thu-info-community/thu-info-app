@@ -285,6 +285,9 @@ export default {
 	isOver: "已结束",
 	notOver: "未结束",
 	libRoomBookRecord: "研读间预约记录",
+	warning: "提醒",
+	libRoomFirstTime:
+		"初次使用研读间/研讨间的成员需要先在图书馆相应设备上刷卡激活，详情请咨询图书馆工作人员。",
 	groupMembers: "小组成员",
 	findUser: "查找用户",
 	add: "添加",
