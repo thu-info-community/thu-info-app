@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {
+	Alert,
 	Button,
 	Image,
 	ScrollView,
@@ -74,7 +75,7 @@ export const SportsSelectScreen = ({
 										? "blue"
 										: "lightgrey",
 							}}>
-							{f.name}
+							{f.name} （{f.cost}元）
 						</Text>
 					</TouchableOpacity>
 				</View>
@@ -112,6 +113,13 @@ export const SportsSelectScreen = ({
 					marginTop: 10,
 				}}
 				onPress={() => {
+					if (totalCost > 42) {
+						Alert.alert(
+							"无法通过该 APP 预约。",
+							"出于安全考虑，使用本 APP 发起支付请求时，单笔金额不得超过 42 元。",
+						);
+						return;
+					}
 					if (field !== undefined) {
 						Snackbar.show({
 							text: getStr("processing"),
