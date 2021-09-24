@@ -13,7 +13,7 @@ import {
     SPORTS_QUERY_PHONE_URL,
     SPORTS_UPDATE_PHONE_URL,
 } from "../constants/strings";
-import {SportsResource, SportsResourcesInfo} from "../models/home/sports";
+import {SportsIdInfo, SportsResource, SportsResourcesInfo} from "../models/home/sports";
 import {MOCK_RESOURCES} from "../mocks/sports";
 import cheerio from "cheerio";
 import TagElement = cheerio.TagElement;
@@ -179,3 +179,46 @@ export const makeSportsReservation = async (
     postForm.channelId = "0101";
     return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, SPORTS_PAYMENT_API_URL, postForm));
 };
+
+export const sportsIdInfoList: SportsIdInfo[] = [
+    {
+        name: "气膜馆羽毛球场",
+        gymId: "3998000",
+        itemId: "4045681",
+    },
+    {
+        name: "气膜馆乒乓球场",
+        gymId: "3998000",
+        itemId: "4037036",
+    },
+    {
+        name: "综体篮球场",
+        gymId: "4797914",
+        itemId: "4797898",
+    },
+    {
+        name: "综体羽毛球场",
+        gymId: "4797914",
+        itemId: "4797899",
+    },
+    {
+        name: "西体羽毛球场",
+        gymId: "4836273",
+        itemId: "4836196",
+    },
+    {
+        name: "西体台球",
+        gymId: "4836273",
+        itemId: "14567218",
+    },
+    {
+        name: "紫荆网球场",
+        gymId: "5843934",
+        itemId: "5845263",
+    },
+    {
+        name: "西网球场",
+        gymId: "5843934",
+        itemId: "10120539",
+    },
+];

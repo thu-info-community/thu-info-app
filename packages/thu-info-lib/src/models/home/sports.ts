@@ -17,3 +17,9 @@ export interface SportsResourcesInfo {
     phone: string | undefined;
     data: SportsResource[];
 }
+
+export interface SportsIdInfo {
+    name: string;
+    gymId: string;
+    itemId: string;
+}
