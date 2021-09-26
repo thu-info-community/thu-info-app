@@ -8,8 +8,10 @@ import {
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
-import {CoursePlan, SearchParams} from "../models/cr/cr";
+import {CoursePlan, CrRemainingInfo, CrRemainingSearchResult, SearchParams} from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
+import TagElement = cheerio.TagElement;
+import Element = cheerio.Element;
 
 export const getCrCaptchaUrlMethod = async () => {
     await uFetch(CR_LOGIN_HOME_URL);
@@ -48,8 +50,12 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => {
     return result;
 };
 
-export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id, seq, name, dayOfWeek, period}: SearchParams) => {
-    const result = await uFetch(CR_SEARCH_URL, CR_SEARCH_URL, {
+const getText = (e: Element, index: number) => {
+    return cheerio((e as TagElement).children[index]).text().trim();
+};
+
+export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id, seq, name, dayOfWeek, period}: SearchParams): Promise<CrRemainingSearchResult> => {
+    const $ = await uFetch(CR_SEARCH_URL, CR_SEARCH_URL, {
         m: "kylSearch",
         page: page ?? -1,
         "p_sort.p1": "",
@@ -64,6 +70,31 @@ export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id,
         p_skxq: dayOfWeek ?? "",
         p_skjc: period ?? "",
         goPageNumber: page ?? 1,
-    }, 60000, "GBK");
-    console.error(result);
+    }, 60000, "GBK").then(cheerio.load);
+    const footerText = (($("p.yeM").toArray()[0] as TagElement).children[5].data as string).trim();
+    const regResult = /第 (\d+) ?页 \/ 共 (\d+) 页（共 (\d+) 条记录）/.exec(footerText);
+    if (regResult === null || regResult.length !== 4) {
+        throw new Error("cannot parse cr remaining footer data");
+    }
+    const currPage = Number(regResult[1]);
+    const totalPage = Number(regResult[2]);
+    const totalCount = Number(regResult[3]);
+    const courses = $(".trr2").toArray().map((e) => {
+        return {
+            id: getText(e, 1),
+            seq: Number(getText(e, 3)),
+            name: getText(e, 5),
+            capacity: Number(getText(e, 7)),
+            remaining: Number(getText(e, 9)),
+            queue: Number(getText(e, 11)),
+            teacher: getText(e, 13),
+            time: getText(e, 15),
+        } as CrRemainingInfo;
+    });
+    return {
+        currPage,
+        totalPage,
+        totalCount,
+        courses,
+    };
 };

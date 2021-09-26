@@ -47,25 +47,25 @@ it("should login successfully.", async () => {
         output: process.stdout
     });
     console.error("Please enter");
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
         rl.on("line", async (str) => {
             try {
                 await helper.loginCr(str);
-                await helper.searchCrRemaining({
+                console.error(await helper.searchCrRemaining({
                     semester: "2021-2022-1",
                     name: "网络原理",
                     id: "40240513",
-                    seq: 1,
-                    dayOfWeek: 3,
-                    period: 2,
-                });
+                }));
                 await helper.logout();
                 expect(helper.mocked()).toEqual(false);
                 expect(helper.emailName).toEqual(emailName);
                 expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
                 resolve(true);
+                rl.close();
             } catch (e) {
                 console.error(e);
+                reject(false);
+                rl.close();
             }
         });
     });
