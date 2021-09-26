@@ -1,8 +1,4 @@
 import {InfoHelper} from "../src";
-import {cookies} from "../src/utils/network";
-import fetch from "cross-fetch";
-import * as fs from "fs";
-import * as readline from "readline";
 
 global.console = {
     ...global.console,
@@ -39,34 +35,8 @@ it("should login successfully.", async () => {
     const helper = new InfoHelper();
     const counter = jest.fn();
     await helper.login({userId, password, dormPassword}, counter);
-    await fetch(await helper.getCrCaptchaUrl(), {headers: {Cookie: Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";")}})
-        .then((r) => r.arrayBuffer())
-        .then((r) => fs.createWriteStream("captcha.jpg").write(Buffer.from(r)));
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    console.error("Please enter");
-    await new Promise((resolve, reject) => {
-        rl.on("line", async (str) => {
-            try {
-                await helper.loginCr(str);
-                console.error(await helper.searchCrCourses({
-                    semester: "2021-2022-1",
-                    name: "网络原理",
-                    id: "40240513",
-                }));
-                await helper.logout();
-                expect(helper.mocked()).toEqual(false);
-                expect(helper.emailName).toEqual(emailName);
-                expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
-                resolve(true);
-                rl.close();
-            } catch (e) {
-                console.error(e);
-                reject(false);
-                rl.close();
-            }
-        });
-    });
+    await helper.logout();
+    expect(helper.mocked()).toEqual(false);
+    expect(helper.emailName).toEqual(emailName);
+    expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
 }, 60000);

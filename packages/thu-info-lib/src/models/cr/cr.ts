@@ -6,6 +6,11 @@ export interface CoursePlan {
     group: string;     // 所属课组
 }
 
+export interface CrSemester {
+    id: string;
+    name: string;
+}
+
 export interface SearchParams {
     semester: string    // 学年学期
     id?: string;        // 课程号

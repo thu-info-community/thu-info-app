@@ -3,8 +3,8 @@ import {
     COURSE_PLAN_URL_PREFIX,
     CR_CAPTCHA_URL,
     CR_LOGIN_HOME_URL,
-    CR_LOGIN_SUBMIT_URL,
-    CR_SEARCH_URL,
+    CR_LOGIN_SUBMIT_URL, CR_MAIN_URL,
+    CR_SEARCH_URL, CR_TREE_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
@@ -14,12 +14,13 @@ import {
     CrPrimaryOpenSearchResult,
     CrRemainingInfo,
     CrRemainingSearchResult,
-    CrSearchResult,
+    CrSearchResult, CrSemester,
     SearchParams,
 } from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
 import TagElement = cheerio.TagElement;
 import Element = cheerio.Element;
+import TextElement = cheerio.TextElement;
 
 export const getCrCaptchaUrlMethod = async () => {
     await uFetch(CR_LOGIN_HOME_URL);
@@ -33,9 +34,22 @@ export const loginCr = async (helper: InfoHelper, captcha: string) => {
         captchaflag: "login1",
         _login_image_: captcha.toUpperCase(),
     });
-    if (!res.includes("本科生选课") || !res.includes("研究生选课")) {
+    if (!res.includes("本科生选课") && !res.includes("研究生选课")) {
         throw new Error("Failed to login to course registration.");
     }
+};
+
+export const getCrAvailableSemestersMethod = async (): Promise<CrSemester[]> => {
+    const root = await uFetch(CR_MAIN_URL, CR_MAIN_URL);
+    const baseSemIdRes = /m=showTree&p_xnxq=(\d\d\d\d-\d\d\d\d-\d)/.exec(root);
+    if (baseSemIdRes === null) {
+        throw new Error("Please login");
+    }
+    const $ = await uFetch(CR_TREE_URL + baseSemIdRes[1], CR_MAIN_URL).then(cheerio.load);
+    return $("option").toArray().map((e) => ({
+        id: (e as TagElement).attribs.value,
+        name: ((e as TagElement).children[0] as TextElement).data?.trim(),
+    } as CrSemester));
 };
 
 export const getCoursePlan = async (helper: InfoHelper, semester: string) => {

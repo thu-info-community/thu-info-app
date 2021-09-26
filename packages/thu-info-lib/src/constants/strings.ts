@@ -145,6 +145,10 @@ export const CR_SEARCH_URL =
     "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xkBks.vxkBksJxjhBs.do";
 export const COURSE_PLAN_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/jhBks.vjhBksPyfakcbBs.do?m=showBksZxZdxjxjhXmxqkclist&pathContent=%B1%BE%D1%A7%C6%DA%BD%CC%D1%A7%BC%C6%BB%AE&p_xnxq=";
+export const CR_MAIN_URL =
+    "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xkBks.vxkBksXkbBs.do?m=main";
+export const CR_TREE_URL =
+    "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xkBks.vxkBksXkbBs.do?m=showTree&p_xnxq=";
 export const SPORTS_BASE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/gymbook/gymBookAction.do?ms=viewGymBook&viewType=m";
 export const SPORTS_DETAIL_URL =

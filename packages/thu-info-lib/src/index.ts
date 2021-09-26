@@ -54,7 +54,7 @@ import {
     loginCr,
     searchCrRemaining,
     searchCrPrimaryOpen,
-    searchCrCourses,
+    searchCrCourses, getCrAvailableSemestersMethod,
 } from "./lib/cr";
 import {SearchParams} from "./models/cr/cr";
 
@@ -200,6 +200,8 @@ export class InfoHelper {
     public getCrCaptchaUrl = async () => getCrCaptchaUrlMethod();
 
     public loginCr = async (captcha: string) => loginCr(this, captcha);
+
+    public getCrAvailableSemesters = async () => getCrAvailableSemestersMethod();
 
     public getCrCoursePlan = async (semester: string) => getCoursePlan(this, semester);
 
