@@ -5,7 +5,7 @@ import cheerio from "cheerio";
 import {CoursePlan} from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
 
-export const getCaptchaUrl = async () => {
+export const getCrCaptchaUrlMethod = async () => {
     await uFetch(CR_LOGIN_HOME_URL);
     return CR_CAPTCHA_URL;
 };

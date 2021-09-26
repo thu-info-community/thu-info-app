@@ -48,7 +48,7 @@ import {
     makeSportsReservation,
     updateSportsPhoneNumber,
 } from "./lib/sports";
-import {getCaptchaUrl, getCoursePlan, loginCr} from "./lib/cr";
+import {getCrCaptchaUrlMethod, getCoursePlan, loginCr} from "./lib/cr";
 
 export class InfoHelper {
     public userId = "";
@@ -189,7 +189,7 @@ export class InfoHelper {
 
     public getSecondaryVerbose = async () => getSecondaryVerbose(this);
 
-    public getCrCaptchaUrl = async () => getCaptchaUrl();
+    public getCrCaptchaUrl = async () => getCrCaptchaUrlMethod();
 
     public loginCr = async (captcha: string) => loginCr(this, captcha);
 
