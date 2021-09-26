@@ -130,7 +130,7 @@ export const makeSportsReservation = async (
     date: string,  // yyyy-MM-dd
     captcha: string,
     fieldId: string,
-): Promise<string> => {
+): Promise<string | undefined> => {
     const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, SPORTS_BASE_URL, {
         "bookData.totalCost": totalCost,
         "bookData.book_person_zjh": "",
@@ -148,6 +148,7 @@ export const makeSportsReservation = async (
     if (orderResult.msg !== "预定成功") {
         throw new Error(orderResult.msg);
     }
+    if (totalCost === 0) return undefined;
     const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
         xm: "",
         dept: "",
