@@ -40,7 +40,6 @@ export const SportsSelectScreen = ({
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
 	const [captcha, setCaptcha] = useState("");
 	const [totalCost, setTotalCost] = useState(0);
-	console.log(imageUrl);
 
 	return (
 		<ScrollView>
@@ -140,7 +139,17 @@ export const SportsSelectScreen = ({
 								captcha,
 								field.id,
 							)
-							.then(doAlipay)
+							.then((paycode) => {
+								if (paycode === undefined) {
+									Snackbar.show({
+										text: getStr("success"),
+										duration: Snackbar.LENGTH_SHORT,
+									});
+									return Promise.resolve();
+								} else {
+									return doAlipay(paycode);
+								}
+							})
 							.then(() => navigation.pop())
 							.catch(NetworkRetry);
 					}
