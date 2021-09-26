@@ -51,7 +51,7 @@ it("should login successfully.", async () => {
         rl.on("line", async (str) => {
             try {
                 await helper.loginCr(str);
-                console.error(await helper.searchCrRemaining({
+                console.error(await helper.searchCrCourses({
                     semester: "2021-2022-1",
                     name: "网络原理",
                     id: "40240513",
