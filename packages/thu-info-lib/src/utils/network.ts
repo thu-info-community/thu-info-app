@@ -23,7 +23,7 @@ export const clearCookies = () => {
  * arbitrary charset.
  */
 export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
-    s
+    encoding === "UTF-8" ? encodeURIComponent(s) : String(s)
         .split("")
         .map((ch) => RegExp(/^[\u4e00-\u9fa5]*$/).test(ch)
             ? iconv.encode(ch, encoding).reduce((a: string, b: number) => a + "%" + b.toString(16), "")
@@ -34,9 +34,9 @@ export const arbitraryEncode = (s: string, encoding = "UTF-8") =>
 /**
  * Converts form data into url-encoded format (utf-8).
  */
-export const stringify = (form: any) =>
+export const stringify = (form: any, paramEncoding = "UTF-8") =>
     Object.keys(form)
-        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(form[key])}`)
+        .map((key) => `${arbitraryEncode(key, paramEncoding)}=${arbitraryEncode(form[key], paramEncoding)}`)
         .join("&");
 
 /**
@@ -47,12 +47,15 @@ export const stringify = (form: any) =>
  * be sent. Otherwise, a `GET` request will be sent.
  *
  * The `timeout` is `60000` by default, in milliseconds.
+ *
+ * The `paramEncoding` is `UTF-8` by default, used to encode post form params.
  */
 export const uFetch = async (
     url: string,
     referer?: string,
     post?: object,
     timeout = 60000,
+    paramEncoding = "UTF-8",
 ): Promise<string> => {
     // Prepare request headers
     const defaultHeaders = {
@@ -90,7 +93,7 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: stringify(post),
+                body: stringify(post, paramEncoding),
             };
 
     // Perform the network request

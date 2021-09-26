@@ -48,7 +48,8 @@ import {
     makeSportsReservation,
     updateSportsPhoneNumber,
 } from "./lib/sports";
-import {getCrCaptchaUrlMethod, getCoursePlan, loginCr} from "./lib/cr";
+import {getCrCaptchaUrlMethod, getCoursePlan, loginCr, searchCrRemaining} from "./lib/cr";
+import {SearchParams} from "./models/cr/cr";
 
 export class InfoHelper {
     public userId = "";
@@ -194,6 +195,8 @@ export class InfoHelper {
     public loginCr = async (captcha: string) => loginCr(this, captcha);
 
     public getCrCoursePlan = async (semester: string) => getCoursePlan(this, semester);
+
+    public searchCrRemaining = async (params: SearchParams) => searchCrRemaining(this, params);
 
     public getSportsResources = async (
         gymId: string,

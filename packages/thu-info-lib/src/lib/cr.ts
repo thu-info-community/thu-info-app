@@ -1,8 +1,14 @@
 import {InfoHelper} from "../index";
-import {COURSE_PLAN_URL_PREFIX, CR_CAPTCHA_URL, CR_LOGIN_HOME_URL, CR_LOGIN_SUBMIT_URL} from "../constants/strings";
+import {
+    COURSE_PLAN_URL_PREFIX,
+    CR_CAPTCHA_URL,
+    CR_LOGIN_HOME_URL,
+    CR_LOGIN_SUBMIT_URL,
+    CR_SEARCH_URL,
+} from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
-import {CoursePlan} from "../models/cr/cr";
+import {CoursePlan, SearchParams} from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
 
 export const getCrCaptchaUrlMethod = async () => {
@@ -40,4 +46,24 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => {
         }
     });
     return result;
+};
+
+export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id, seq, name, dayOfWeek, period}: SearchParams) => {
+    const result = await uFetch(CR_SEARCH_URL, CR_SEARCH_URL, {
+        m: "kylSearch",
+        page: page ?? -1,
+        "p_sort.p1": "",
+        "p_sort.p2": "",
+        "p_sort.asc1": "true",
+        "p_sort.asc2": "true",
+        p_xnxq: semester,
+        pathContent: "课余量查询",
+        p_kch: id ?? "",
+        p_kxh: seq ?? "",
+        p_kcm: name ?? "",
+        p_skxq: dayOfWeek ?? "",
+        p_skjc: period ?? "",
+        goPageNumber: page ?? 1,
+    }, 60000, "GBK");
+    console.error(result);
 };
