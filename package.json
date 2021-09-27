@@ -32,7 +32,7 @@
 		"moment": "2.29.1",
 		"react": "17.0.2",
 		"react-native": "0.64.2",
-		"react-native-dropdown-picker": "5.1.27",
+		"react-native-dropdown-picker": "5.1.28",
 		"react-native-easy-grid": "0.2.2",
 		"react-native-fs": "2.18.0",
 		"react-native-gesture-handler": "1.10.3",
