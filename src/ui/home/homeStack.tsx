@@ -41,6 +41,7 @@ import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
 import {SportsScreen} from "./sports";
 import {SportsDetailScreen} from "./sportsDetail";
 import {SportsSelectScreen} from "./sportsSelect";
+import {SportsRecordScreen} from "./sportsRecord";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -74,6 +75,7 @@ export type HomeStackParamList = {
 		phone: string;
 		availableFields: {id: string; name: string; cost: number}[];
 	};
+	SportsRecord: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -266,19 +268,49 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="Sports"
 				component={SportsScreen}
-				options={{title: getStr("sportsBook")}}
+				options={({navigation}) => ({
+					title: getStr("sportsBook"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("SportsRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="SportsDetail"
 				component={SportsDetailScreen}
-				options={({route}) => ({
+				options={({route, navigation}) => ({
 					title: route.params.info.name + " " + route.params.date,
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("SportsRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
 				})}
 			/>
 			<Stack.Screen
 				name="SportsSelect"
 				component={SportsSelectScreen}
-				options={{title: getStr("confirmOrder")}}
+				options={({navigation}) => ({
+					title: getStr("confirmOrder"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("SportsRecord")}>
+							<Icon name="history" size={24} color={theme.colors.primary} />
+						</TouchableOpacity>
+					),
+				})}
+			/>
+			<Stack.Screen
+				name="SportsRecord"
+				component={SportsRecordScreen}
+				options={{title: getStr("sportsRecord")}}
 			/>
 			<Stack.Screen
 				name="Email"

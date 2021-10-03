@@ -1,5 +1,11 @@
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
-import React, {useState} from "react";
+import {
+	Alert,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
+import React, {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
@@ -16,6 +22,10 @@ export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const {colors} = themes(themeName);
 
 	const validDateNum = 4;
+
+	useEffect(() => {
+		Alert.alert("试验性功能", "有 bug 请务必及时反馈！");
+	}, []);
 
 	return (
 		<View style={{flexDirection: "row", margin: 10}}>

@@ -236,6 +236,7 @@ export default {
 	selectField: "选择场地：",
 	captchaCaseSensitive: "验证码（大小写敏感）",
 	refresh: "刷新",
+	sportsRecord: "体育场馆预约记录",
 	setNewRemainder: "设置新余额",
 	remainderTips:
 		"目前由于一些数据转移问题，补办后的显示余额会与实际余额有些许差距。如果您曾经有过校园卡丢失与补办的经历，请在上方输入当前实际余额。\n请注意：余额页面显示与实际余额的偏差也有可能因学校数据延迟导致，稍等片刻后便会恢复正常。",
