@@ -11,13 +11,16 @@ import {
     SPORTS_PAYMENT_API_URL,
     SPORTS_PAYMENT_CHECK_URL,
     SPORTS_QUERY_PHONE_URL,
+    SPORTS_UNSUBSCRIBE_URL,
     SPORTS_UPDATE_PHONE_URL,
 } from "../constants/strings";
-import {SportsIdInfo, SportsResource, SportsResourcesInfo} from "../models/home/sports";
+import {SportsIdInfo, SportsReservationRecord, SportsResource, SportsResourcesInfo} from "../models/home/sports";
 import {MOCK_RESOURCES} from "../mocks/sports";
 import cheerio from "cheerio";
 import TagElement = cheerio.TagElement;
 import {generalGetPayCode} from "../utils/alipay";
+import {getCheerioText} from "../utils/cheerio";
+import Element = cheerio.Element;
 
 const getSportsResourceLimit = async (
     helper: InfoHelper,
@@ -180,6 +183,53 @@ export const makeSportsReservation = async (
     postForm.channelId = "0101";
     return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, SPORTS_PAYMENT_API_URL, postForm));
 };
+
+export const getSportsReservationRecords = async (
+    helper: InfoHelper,
+) => retryWrapperWithMocks(
+    helper,
+    424,
+    async () => {
+        const $ = await uFetch(SPORTS_BASE_URL + "&gymnasium_id=4836273", SPORTS_BASE_URL).then(cheerio.load);
+        const tables = $("table");
+        const rows = cheerio(tables.toArray()[tables.length - 1]).find("tbody tr");
+        const getId = (e: Element) => {
+            try {
+                const s0 = ((((e as TagElement).children[9] as TagElement).children[1] as TagElement).attribs.onclick);
+                const res0 = /unsubscribe\('(.+?)'/.exec(s0);
+                if (res0 === null) {
+                    const s1 = (((((e as TagElement).children[9] as TagElement).children[4] as TagElement).children[3] as TagElement).attribs.onclick);
+                    const res1 = /unsubscribeOnline\('(.+?)'/.exec(s1);
+                    if (res1 === null) return undefined;
+                    return res1[1];
+                }
+                return res0[1];
+            } catch {
+                return undefined;
+            }
+        };
+        return rows.toArray().map((e) => ({
+            name: getCheerioText(e, 1),
+            field: getCheerioText(e, 3),
+            time: getCheerioText(e, 5),
+            price: getCheerioText(e, 7),
+            bookId: getId(e),
+        } as SportsReservationRecord));
+    },
+    [],
+);
+
+export const unsubscribeSportsReservation = async (
+    helper: InfoHelper,
+    bookId: string,
+) => retryWrapperWithMocks(
+    helper,
+    424,
+    async () => {
+        await uFetch(SPORTS_UNSUBSCRIBE_URL, SPORTS_BASE_URL, {bookId});
+    },
+    undefined,
+);
 
 export const sportsIdInfoList: SportsIdInfo[] = [
     {

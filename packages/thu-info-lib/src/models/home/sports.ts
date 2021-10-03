@@ -23,3 +23,11 @@ export interface SportsIdInfo {
     gymId: string;
     itemId: string;
 }
+
+export interface SportsReservationRecord {
+    name: string;
+    field: string;
+    time: string;
+    price: string;
+    bookId: string | undefined;
+}

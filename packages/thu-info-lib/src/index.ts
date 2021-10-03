@@ -44,8 +44,10 @@ import {Record} from "./models/home/expenditure";
 import {NewsSlice, SourceTag} from "./models/news/news";
 import {
     getSportsCaptchaUrlMethod,
+    getSportsReservationRecords,
     getSportsResources,
     makeSportsReservation,
+    unsubscribeSportsReservation,
     updateSportsPhoneNumber,
 } from "./lib/sports";
 import {
@@ -230,6 +232,10 @@ export class InfoHelper {
         captcha: string,
         fieldId: string,
     ) => makeSportsReservation(this, totalCost, phone, gymId, itemId, date, captcha, fieldId);
+
+    public getSportsReservationRecords = async () => getSportsReservationRecords(this);
+
+    public unsubscribeSportsReservation = async (bookId: string) => unsubscribeSportsReservation(this, bookId);
 }
 
 export class Water {
