@@ -3,10 +3,10 @@ import React, {useState} from "react";
 import dayjs from "dayjs";
 import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
-import {SettingsNav} from "./settingsStack";
+import {HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
 
-export const SportsScreen = ({navigation}: {navigation: SettingsNav}) => {
+export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
 	const [idGym, setIdGym] = useState<string>();
 	const [idItem, setIdItem] = useState<string>();
@@ -62,7 +62,7 @@ export const SportsScreen = ({navigation}: {navigation: SettingsNav}) => {
 							}}>
 							<TouchableOpacity
 								onPress={() =>
-									navigation.navigate("SportsDetailExp", {
+									navigation.navigate("SportsDetail", {
 										info: {name: nameStr, gymId: idGym, itemId: idItem},
 										date: dateStr,
 									})

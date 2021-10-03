@@ -37,6 +37,10 @@ import {LibRoomBookRecordScreen} from "./libRoomBookRecord";
 import {WasherWebScreen} from "./washerWeb";
 import {WaterScreen} from "./water";
 import {LibBookRecordScreen} from "./libBookRecord";
+import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
+import {SportsScreen} from "./sports";
+import {SportsDetailScreen} from "./sportsDetail";
+import {SportsSelectScreen} from "./sportsSelect";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -62,6 +66,14 @@ export type HomeStackParamList = {
 	EmailList: undefined;
 	Qzyq: undefined;
 	WasherWeb: undefined;
+	Sports: undefined;
+	SportsDetail: {info: SportsIdInfo; date: string};
+	SportsSelect: {
+		info: SportsIdInfo;
+		date: string;
+		phone: string;
+		availableFields: {id: string; name: string; cost: number}[];
+	};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -80,6 +92,10 @@ export type LibRoomPerformBookProp = RouteProp<
 	"LibRoomPerformBook"
 >;
 export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
+
+export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
+
+export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -246,6 +262,23 @@ export const HomeStackScreen = () => {
 				name="DormScore"
 				component={DormScoreScreen}
 				options={{title: getStr("dormScore")}}
+			/>
+			<Stack.Screen
+				name="Sports"
+				component={SportsScreen}
+				options={{title: getStr("sportsBook")}}
+			/>
+			<Stack.Screen
+				name="SportsDetail"
+				component={SportsDetailScreen}
+				options={({route}) => ({
+					title: route.params.info.name + " " + route.params.date,
+				})}
+			/>
+			<Stack.Screen
+				name="SportsSelect"
+				component={SportsSelectScreen}
+				options={{title: getStr("confirmOrder")}}
 			/>
 			<Stack.Screen
 				name="Email"

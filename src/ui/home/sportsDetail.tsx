@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {SettingsNav, SportsDetailProp} from "./settingsStack";
+import {HomeNav, SportsDetailProp} from "./homeStack";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
@@ -16,7 +16,7 @@ export const SportsDetailScreen = ({
 	route,
 	navigation,
 }: {
-	navigation: SettingsNav;
+	navigation: HomeNav;
 	route: SportsDetailProp;
 }) => {
 	const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
@@ -84,7 +84,7 @@ export const SportsDetailScreen = ({
 				}}>
 				<TouchableOpacity
 					onPress={() =>
-						navigation.navigate("SportsSelectExp", {
+						navigation.navigate("SportsSelect", {
 							info: route.params.info,
 							date: route.params.date,
 							phone: phoneNumber ?? "",

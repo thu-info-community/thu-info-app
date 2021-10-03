@@ -14,11 +14,6 @@ import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
 import {ExperimentalScreen} from "./experimental";
 import {PasswordManagementScreen} from "./PasswordManagement";
-import {SportsScreen} from "./sportsExp";
-import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
-import {SportsDetailScreen} from "./sportsDetailExp";
-import {RouteProp} from "@react-navigation/native";
-import {SportsSelectScreen} from "./sportsSelectExp";
 
 type SettingsStackParamList = {
 	Settings: undefined;
@@ -32,29 +27,11 @@ type SettingsStackParamList = {
 	Experimental: undefined;
 	PasswordManagement: undefined;
 	About: undefined;
-	SportsExp: undefined;
-	SportsDetailExp: {info: SportsIdInfo; date: string};
-	SportsSelectExp: {
-		info: SportsIdInfo;
-		date: string;
-		phone: string;
-		availableFields: {id: string; name: string; cost: number}[];
-	};
 };
 
 const Stack = createStackNavigator<SettingsStackParamList>();
 
 export type SettingsNav = StackNavigationProp<SettingsStackParamList>;
-
-export type SportsDetailProp = RouteProp<
-	SettingsStackParamList,
-	"SportsDetailExp"
->;
-
-export type SportsSelectProp = RouteProp<
-	SettingsStackParamList,
-	"SportsSelectExp"
->;
 
 export const SettingStackScreen = () => (
 	<Stack.Navigator>
@@ -107,23 +84,6 @@ export const SettingStackScreen = () => (
 			name="PasswordManagement"
 			component={PasswordManagementScreen}
 			options={{title: getStr("passwordManagement")}}
-		/>
-		<Stack.Screen
-			name="SportsExp"
-			component={SportsScreen}
-			options={{title: getStr("sportsBook")}}
-		/>
-		<Stack.Screen
-			name="SportsDetailExp"
-			component={SportsDetailScreen}
-			options={({route}) => ({
-				title: route.params.info.name + " " + route.params.date,
-			})}
-		/>
-		<Stack.Screen
-			name="SportsSelectExp"
-			component={SportsSelectScreen}
-			options={{title: getStr("confirmOrder")}}
 		/>
 	</Stack.Navigator>
 );
