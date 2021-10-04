@@ -161,7 +161,7 @@ export const SportsDetailScreen = ({
 								}),
 							);
 					}}>
-					<Text style={{color: colors.text}}>{getStr("confirm")}</Text>
+					<Text style={{color: "black"}}>{getStr("confirm")}</Text>
 				</TouchableOpacity>
 			</View>
 			<RefreshList />

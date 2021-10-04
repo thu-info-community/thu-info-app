@@ -47,7 +47,7 @@ export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 							}}>
 							<Text
 								style={{
-									color: idItem === itemId ? "blue" : colors.text,
+									color: idItem === itemId ? colors.accent : colors.text,
 									padding: 10,
 								}}>
 								{name}
@@ -77,7 +77,7 @@ export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 										date: dateStr,
 									})
 								}>
-								<Text style={{padding: 10}}>{dateStr}</Text>
+								<Text style={{padding: 10, color: colors.text}}>{dateStr}</Text>
 							</TouchableOpacity>
 						</View>
 					))}

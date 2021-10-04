@@ -49,16 +49,18 @@ export const SportsSelectScreen = ({
 				</Text>
 			</View>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10}}>{name}</Text>
+				<Text style={{padding: 10, color: colors.text}}>{name}</Text>
 			</View>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10}}>{date}</Text>
+				<Text style={{padding: 10, color: colors.text}}>{date}</Text>
 			</View>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10}}>{phone}</Text>
+				<Text style={{padding: 10, color: colors.text}}>{phone}</Text>
 			</View>
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10}}>{getStr("selectField")}</Text>
+				<Text style={{padding: 10, color: colors.text}}>
+					{getStr("selectField")}
+				</Text>
 			</View>
 			{availableFields.map((f) => (
 				<View
@@ -85,7 +87,7 @@ export const SportsSelectScreen = ({
 				</View>
 			))}
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10}}>总计{totalCost}元</Text>
+				<Text style={{padding: 10, color: colors.text}}>总计{totalCost}元</Text>
 			</View>
 			<View
 				style={{
