@@ -1,6 +1,7 @@
 import {LibRoomRes} from "thu-info-lib/dist/models/home/library";
-import {Text, View} from "react-native";
+import {Text, useColorScheme, View} from "react-native";
 import React from "react";
+import themes from "../../assets/themes/themes";
 
 export const timeDiff = (start: string, end: string): number => {
 	const startH = Number(start.substring(0, 2));
@@ -42,6 +43,8 @@ export const convertUsageToSegments = (
 };
 
 export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
 	if (res.openStart === null || res.openEnd === null) {
 		return (
 			<View
@@ -81,7 +84,7 @@ export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
 							borderRightWidth: index === endH - startH - 1 ? 1 : 0,
 						}}
 						key={index}>
-						<Text>{startH + index}</Text>
+						<Text style={{color: colors.text}}>{startH + index}</Text>
 					</View>
 				))}
 			</View>

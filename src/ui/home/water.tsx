@@ -71,7 +71,9 @@ const WaterUI = ({
 
 	return (
 		<ScrollView style={{padding: 20}}>
-			<Text style={{fontSize: 24, alignSelf: "center"}}>在线订购</Text>
+			<Text style={{fontSize: 24, alignSelf: "center", color: colors.text}}>
+				在线订购
+			</Text>
 			<SettingsEditText
 				text="档案号"
 				value={waterId ?? ""}

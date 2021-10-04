@@ -108,15 +108,17 @@ export const LibRoomPerformBookScreen = ({
 			<View style={{padding: 20}}>
 				<LibRoomBookTimeIndicator res={res} />
 			</View>
-			<Text style={{padding: 12}}>
+			<Text style={{padding: 12, color: colors.text}}>
 				{getStr("libRoomBookInfo")} {res.roomName}
 			</Text>
-			<Text style={{padding: 12}}>
+			<Text style={{padding: 12, color: colors.text}}>
 				{getStr("libRoomBookDate")} {date}
 			</Text>
 			<View style={{padding: 12, flexDirection: "row"}}>
 				<View style={{flex: 1}}>
-					<Text>{getStr("libRoomBookTimeStart")} </Text>
+					<Text style={{color: colors.text}}>
+						{getStr("libRoomBookTimeStart")}{" "}
+					</Text>
 					<DropDownPicker
 						open={begOpen}
 						value={begValue}
@@ -143,7 +145,9 @@ export const LibRoomPerformBookScreen = ({
 					/>
 				</View>
 				<View style={{flex: 1}}>
-					<Text>{getStr("libRoomBookTimeEnd")} </Text>
+					<Text style={{color: colors.text}}>
+						{getStr("libRoomBookTimeEnd")}{" "}
+					</Text>
 					<DropDownPicker
 						open={endOpen}
 						value={endValue}
@@ -161,7 +165,7 @@ export const LibRoomPerformBookScreen = ({
 			</View>
 			{res.maxUser > 1 && (
 				<View style={{padding: 12}}>
-					<Text>
+					<Text style={{color: colors.text}}>
 						{getStr("groupMembers")} ({res.minUser}~{res.maxUser})
 					</Text>
 					{members.map(({id, label}) => (
@@ -184,11 +188,11 @@ export const LibRoomPerformBookScreen = ({
 							}
 							key={id}>
 							<View style={{flexDirection: "row", paddingVertical: 8}}>
-								<Text>{label}</Text>
+								<Text style={{color: colors.text}}>{label}</Text>
 							</View>
 						</TouchableOpacity>
 					))}
-					<Text>{getStr("findUser")}</Text>
+					<Text style={{color: colors.text}}>{getStr("findUser")}</Text>
 					<View style={{flexDirection: "row", alignItems: "center"}}>
 						<TextInput
 							style={{
