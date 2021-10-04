@@ -15,7 +15,7 @@ import {
     SPORTS_UPDATE_PHONE_URL,
 } from "../constants/strings";
 import {SportsIdInfo, SportsReservationRecord, SportsResource, SportsResourcesInfo} from "../models/home/sports";
-import {MOCK_RESOURCES} from "../mocks/sports";
+import {MOCK_RECORDS, MOCK_RESOURCES} from "../mocks/sports";
 import cheerio from "cheerio";
 import TagElement = cheerio.TagElement;
 import {generalGetPayCode} from "../utils/alipay";
@@ -135,6 +135,9 @@ export const makeSportsReservation = async (
     captcha: string,
     fieldId: string,
 ): Promise<string | undefined> => {
+    if (helper.mocked()) {
+        return undefined;
+    }
     const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, SPORTS_BASE_URL, {
         "bookData.totalCost": totalCost,
         "bookData.book_person_zjh": "",
@@ -217,7 +220,7 @@ export const getSportsReservationRecords = async (
             bookId: getId(e),
         } as SportsReservationRecord));
     },
-    [],
+    MOCK_RECORDS,
 );
 
 export const unsubscribeSportsReservation = async (
