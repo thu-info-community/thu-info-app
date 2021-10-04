@@ -30,10 +30,11 @@ const getSportsResourceLimit = async (
 ) => {
     const rawHtml = await uFetch(`${SPORTS_BASE_URL}&gymnasium_id=${gymId}&item_id=${itemId}&time_date=${date}`);
     const countSearch = /var limitBookCount = '(\d+?)';/.exec(rawHtml);
-    const count = countSearch === null ? 0 : Number(countSearch[1]);
     const initSearch = /var limitBookInit = '(\d+?)';/.exec(rawHtml);
-    const init = initSearch === null ? 0 : Number(initSearch[1]);
-    return {count, init};
+    if (countSearch === null || initSearch === null) {
+        throw new Error("Exception occurred during getting sports resource limit");
+    }
+    return {count: Number(countSearch[1]), init: Number(initSearch[1])};
 };
 
 const getSportsResourceData = async (
