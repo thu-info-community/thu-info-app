@@ -2,9 +2,17 @@ import React, {useState} from "react";
 import {HomeNav, SportsDetailProp} from "./homeStack";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
-import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {
+	Alert,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
+import themes from "../../assets/themes/themes";
 
 interface TimePeriod {
 	description: string;
@@ -22,7 +30,10 @@ export const SportsDetailScreen = ({
 	const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
 	const [phoneInput, setPhoneInput] = useState("");
 
-	return simpleRefreshListScreen(
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	const RefreshList = simpleRefreshListScreen(
 		() =>
 			helper
 				.getSportsResources(
@@ -74,7 +85,7 @@ export const SportsDetailScreen = ({
 						return Object.values(result).reverse();
 					}
 				}),
-		(item, refresh, props, {colors}, index, total) => (
+		(item, refresh, props, {}, index, total) => (
 			<View
 				style={{
 					borderTopColor: "lightgrey",
@@ -106,8 +117,10 @@ export const SportsDetailScreen = ({
 			</View>
 		),
 		({description}) => description,
-		undefined,
-		({colors}) => (
+	);
+
+	return (
+		<>
 			<View
 				style={{
 					paddingHorizontal: 18,
@@ -151,6 +164,7 @@ export const SportsDetailScreen = ({
 					<Text style={{color: colors.text}}>{getStr("confirm")}</Text>
 				</TouchableOpacity>
 			</View>
-		),
-	)({});
+			<RefreshList />
+		</>
+	);
 };
