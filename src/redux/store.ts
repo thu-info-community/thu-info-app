@@ -20,6 +20,8 @@ import CookieManager from "@react-native-community/cookies";
 import {AppState} from "react-native";
 import {retryWrapperWithMocks} from "thu-info-lib/dist/lib/core";
 import {emailInit} from "../utils/email";
+import React from "react";
+import ViewShot from "react-native-view-shot";
 
 export const helper = new InfoHelper();
 
@@ -161,3 +163,7 @@ export const store = createStore(persistReducer(persistConfig, rootReducer));
 export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
+
+export const globalObjects = {
+	scheduleViewShot: null as React.RefObject<ViewShot> | null,
+};

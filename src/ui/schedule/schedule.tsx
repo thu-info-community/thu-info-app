@@ -14,13 +14,12 @@ import {
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
-import {helper, State} from "../../redux/store";
+import {globalObjects, helper, State} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
-import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
@@ -36,37 +35,14 @@ interface ScheduleProps {
 	navigation: ScheduleNav;
 }
 
-const OptionButton = ({
-	onPress,
-	title,
-}: {
-	onPress: () => void;
-	title: React.ReactText;
-}) => {
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
-	return (
-		<TouchableOpacity
-			onPress={onPress}
-			style={{
-				flex: 1,
-				backgroundColor: theme.colors.accent,
-				padding: 8,
-				margin: 2,
-				borderRadius: 5,
-				justifyContent: "center",
-			}}>
-			<Text style={{textAlign: "center", color: "white"}}>{title}</Text>
-		</TouchableOpacity>
-	);
-};
-
 const ScheduleUI = (props: ScheduleProps) => {
 	const [week, setWeek] = useState(new Calendar().weekNumberCoerced);
 	const today = new Calendar().dayOfWeek;
 	const nowWeek = new Calendar().weekNumberCoerced;
 
 	const viewShot = useRef<ViewShot>(null);
+
+	globalObjects.scheduleViewShot = viewShot;
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -331,23 +307,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 					{todayMark()}
 				</ViewShot>
 			</ScrollView>
-			<View style={{flexDirection: "row"}}>
-				<OptionButton
-					title={getStr("scheduleAddCustom")}
-					onPress={() => props.navigation.navigate("ScheduleAdd")}
-				/>
-				<OptionButton
-					title={getStr("scheduleSaveImg")}
-					onPress={() => {
-						// @ts-ignore
-						viewShot.current.capture().then(saveImg);
-					}}
-				/>
-				<OptionButton
-					title={getStr("scheduleHidden")}
-					onPress={() => props.navigation.navigate("ScheduleHidden")}
-				/>
-			</View>
 		</>
 	);
 };
