@@ -1,12 +1,16 @@
-import {Text} from "react-native";
+import {Text, useColorScheme} from "react-native";
 import React, {useEffect, useState} from "react";
 import MailCore from "thu-info-mailcore";
 import WebView from "react-native-webview";
 import {EmailRouteProp} from "./homeStack";
 import {store} from "../../redux/store";
 import {configSet} from "../../redux/actions/config";
+import themes from "../../assets/themes/themes";
 
 export const EmailScreen = ({route}: {route: EmailRouteProp}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
 	const [mail, setMail] = useState<MailCore.MailDetail>();
 	useEffect(() => {
 		MailCore.getMail({
@@ -23,8 +27,8 @@ export const EmailScreen = ({route}: {route: EmailRouteProp}) => {
 	}, []);
 	if (mail) {
 		const adaptedHtml = `<head><meta name="viewport" content="width=100, initial-scale=1"></head><body>${mail.body}</body>`;
-		return <WebView source={{html: adaptedHtml}} />;
+		return <WebView source={{html: adaptedHtml}} forceDarkOn={true} />;
 	} else {
-		return <Text>Loading...</Text>;
+		return <Text style={{color: colors.text}}>Loading...</Text>;
 	}
 };

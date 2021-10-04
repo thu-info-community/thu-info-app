@@ -49,6 +49,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 					containerStyle={style.webContainer}
 					userAgent={USER_AGENT}
 					setSupportMultipleWindows={false}
+					forceDarkOn={true}
 				/>
 			</View>
 			{refreshing && (

@@ -12,7 +12,8 @@ export const WasherWebScreen = () => {
 		<View style={{backgroundColor: theme.colors.background, flex: 1}}>
 			<WebView
 				source={{uri: "https://washer.sdevs.top/"}}
-				containerStyle={{
+				forceDarkOn={true}
+				style={{
 					backgroundColor: theme.colors.background,
 					color: theme.colors.text,
 				}}
