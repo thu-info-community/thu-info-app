@@ -27,7 +27,12 @@ export const EmailScreen = ({route}: {route: EmailRouteProp}) => {
 	}, []);
 	if (mail) {
 		const adaptedHtml = `<head><meta name="viewport" content="width=100, initial-scale=1"></head><body>${mail.body}</body>`;
-		return <WebView source={{html: adaptedHtml}} forceDarkOn={true} />;
+		return (
+			<WebView
+				source={{html: adaptedHtml}}
+				forceDarkOn={themeName === "dark"}
+			/>
+		);
 	} else {
 		return <Text style={{color: colors.text}}>Loading...</Text>;
 	}
