@@ -85,7 +85,9 @@ export const LibRoomBookRecordScreen = simpleRefreshListScreen(
 								{cancelable: true},
 							)
 						}>
-						<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+						{!helper.mocked() && (
+							<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+						)}
 					</TouchableOpacity>
 				</View>
 			</View>

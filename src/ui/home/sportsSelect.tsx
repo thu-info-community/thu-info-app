@@ -43,11 +43,13 @@ export const SportsSelectScreen = ({
 
 	return (
 		<ScrollView>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: "red"}}>
-					{"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！"}
-				</Text>
-			</View>
+			{!helper.mocked() && (
+				<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
+					<Text style={{padding: 10, color: "red"}}>
+						{"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！"}
+					</Text>
+				</View>
+			)}
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
 				<Text style={{padding: 10, color: colors.text}}>{name}</Text>
 			</View>
@@ -89,31 +91,34 @@ export const SportsSelectScreen = ({
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
 				<Text style={{padding: 10, color: colors.text}}>总计{totalCost}元</Text>
 			</View>
-			<View
-				style={{
-					borderTopColor: "lightgrey",
-					borderTopWidth: 1,
-					borderBottomColor: "lightgrey",
-					borderBottomWidth: 1,
-					flexDirection: "row",
-					alignItems: "center",
-				}}>
-				<Image source={{uri: imageUrl}} style={{height: 50, width: 200}} />
-				<TextInput
-					style={{flex: 1}}
-					value={captcha}
-					onChangeText={setCaptcha}
-					placeholder={getStr("captchaCaseSensitive")}
-				/>
-				<Button
-					title={getStr("refresh")}
-					onPress={() => setImageUrl(helper.getSportsCaptchaUrl())}
-				/>
-			</View>
+			{!helper.mocked() && (
+				<View
+					style={{
+						borderTopColor: "lightgrey",
+						borderTopWidth: 1,
+						borderBottomColor: "lightgrey",
+						borderBottomWidth: 1,
+						flexDirection: "row",
+						alignItems: "center",
+					}}>
+					<Image source={{uri: imageUrl}} style={{height: 50, width: 200}} />
+					<TextInput
+						style={{flex: 1}}
+						value={captcha}
+						onChangeText={setCaptcha}
+						placeholder={getStr("captchaCaseSensitive")}
+					/>
+					<Button
+						title={getStr("refresh")}
+						onPress={() => setImageUrl(helper.getSportsCaptchaUrl())}
+					/>
+				</View>
+			)}
 			<TouchableOpacity
 				style={{
 					backgroundColor:
-						field === undefined || captcha.trim().length === 0
+						field === undefined ||
+						(!helper.mocked() && captcha.trim().length === 0)
 							? "lightgrey"
 							: colors.accent,
 					marginTop: 10,
@@ -156,7 +161,10 @@ export const SportsSelectScreen = ({
 							.catch(NetworkRetry);
 					}
 				}}
-				disabled={field === undefined || captcha.trim().length === 0}>
+				disabled={
+					field === undefined ||
+					(!helper.mocked() && captcha.trim().length === 0)
+				}>
 				<Text
 					style={{
 						fontSize: 20,

@@ -23,7 +23,7 @@ import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {configSet} from "../../redux/actions/config";
 
 const checkNum = (num: number) => num >= 0 && Math.floor(num) === num;
@@ -123,20 +123,27 @@ const WaterUI = ({
 							text: getStr("processing"),
 							duration: Snackbar.LENGTH_SHORT,
 						});
-						postWaterSubmission(
-							waterId ?? "",
-							String(waterNumber),
-							String(ticketNumber),
-							brand ?? "6",
-							address,
-						)
-							.then(() => {
-								Snackbar.show({
-									text: "订水成功！",
-									duration: Snackbar.LENGTH_LONG,
-								});
-							})
-							.catch(NetworkRetry);
+						if (helper.mocked()) {
+							Snackbar.show({
+								text: "订水成功！",
+								duration: Snackbar.LENGTH_LONG,
+							});
+						} else {
+							postWaterSubmission(
+								waterId ?? "",
+								String(waterNumber),
+								String(ticketNumber),
+								brand ?? "6",
+								address,
+							)
+								.then(() => {
+									Snackbar.show({
+										text: "订水成功！",
+										duration: Snackbar.LENGTH_LONG,
+									});
+								})
+								.catch(NetworkRetry);
+						}
 					}}
 					disabled={
 						waterId === undefined ||

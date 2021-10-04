@@ -39,22 +39,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 		</View>
 	),
 	(item) => String(item.id),
-	helper.mocked()
-		? undefined
-		: () => (
-				<View
-					style={{
-						padding: 6,
-						margin: 4,
-						alignItems: "center",
-						marginHorizontal: 14,
-					}}>
-					<Text style={{textAlign: "center", lineHeight: 20, color: "gray"}}>
-						{getStr("socketIntro")}
-					</Text>
-				</View>
-				// eslint-disable-next-line no-mixed-spaces-and-tabs
-		  ),
+	undefined,
 	({colors}) => (
 		<View>
 			<Text

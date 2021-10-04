@@ -11,6 +11,7 @@ import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
 import {HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
+import {helper} from "../../redux/store";
 
 export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
@@ -24,7 +25,9 @@ export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const validDateNum = 4;
 
 	useEffect(() => {
-		Alert.alert("试验性功能", "有 bug 请务必及时反馈！");
+		if (!helper.mocked()) {
+			Alert.alert("试验性功能", "有 bug 请务必及时反馈！");
+		}
 	}, []);
 
 	return (

@@ -48,41 +48,43 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 
 	return (
 		<>
-			<View style={{flexDirection: "row", margin: 5}}>
-				<TouchableOpacity
-					style={{padding: 3, flex: 1}}
-					onPress={() => setDateOffset(0)}>
-					<Text
-						style={{
-							color: dateOffset === 0 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{dayjs().add(0, "day").format("YYYY-MM-DD")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{padding: 3, flex: 1}}
-					onPress={() => setDateOffset(1)}>
-					<Text
-						style={{
-							color: dateOffset === 1 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{dayjs().add(1, "day").format("YYYY-MM-DD")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{padding: 3, flex: 1}}
-					onPress={() => setDateOffset(2)}>
-					<Text
-						style={{
-							color: dateOffset === 2 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{dayjs().add(2, "day").format("YYYY-MM-DD")}
-					</Text>
-				</TouchableOpacity>
-			</View>
+			{!helper.mocked() && (
+				<View style={{flexDirection: "row", margin: 5}}>
+					<TouchableOpacity
+						style={{padding: 3, flex: 1}}
+						onPress={() => setDateOffset(0)}>
+						<Text
+							style={{
+								color: dateOffset === 0 ? "blue" : theme.colors.text,
+								textAlign: "center",
+							}}>
+							{dayjs().add(0, "day").format("YYYY-MM-DD")}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{padding: 3, flex: 1}}
+						onPress={() => setDateOffset(1)}>
+						<Text
+							style={{
+								color: dateOffset === 1 ? "blue" : theme.colors.text,
+								textAlign: "center",
+							}}>
+							{dayjs().add(1, "day").format("YYYY-MM-DD")}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{padding: 3, flex: 1}}
+						onPress={() => setDateOffset(2)}>
+						<Text
+							style={{
+								color: dateOffset === 2 ? "blue" : theme.colors.text,
+								textAlign: "center",
+							}}>
+							{dayjs().add(2, "day").format("YYYY-MM-DD")}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			)}
 			<FlatList
 				style={{flex: 1}}
 				data={rooms}
