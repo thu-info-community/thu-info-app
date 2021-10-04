@@ -1,7 +1,7 @@
 {
 	"name": "thu_info",
-	"version": "2.5.0-alpha.4",
-	"build": 50,
+	"version": "2.5.0-alpha.5",
+	"build": 51,
 	"private": true,
 	"scripts": {
 		"android": "react-native run-android",
