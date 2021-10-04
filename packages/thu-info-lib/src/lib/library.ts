@@ -38,6 +38,8 @@ import dayjs from "dayjs";
 import {InfoHelper} from "../index";
 import {uFetch, stringify} from "../utils/network";
 import {
+    MOCK_LIB_ROOM_RECORD,
+    MOCK_LIB_ROOM_RES_LIST, MOCK_LIB_SEARCH_RES,
     MOCK_LIBRARY_ACCESS_TOKEN,
     MOCK_LIBRARY_BOOK_SEAT_RESPONSE,
     MOCK_LIBRARY_BOOKING_RECORDS,
@@ -357,7 +359,7 @@ export const getLibraryRoomBookingResourceList = async (
                 } as LibRoomUsage)),
             } as LibRoomRes));
         },
-        [],
+        MOCK_LIB_ROOM_RES_LIST,
     );
 
 export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string): Promise<LibFuzzySearchResult[]> =>
@@ -365,7 +367,7 @@ export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string):
         helper,
         5001,
         async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL+encodeURIComponent(keyword), LIBRARY_ROOM_BOOKING_ACTION_URL).then(JSON.parse),
-        [],
+        MOCK_LIB_SEARCH_RES(keyword),
     );
 
 export const bookLibraryRoom = async (
@@ -416,7 +418,7 @@ export const getLibraryRoomBookingRecord = async (
                 } as LibRoomBookRecord;
             }).get();
         },
-        [],
+        MOCK_LIB_ROOM_RECORD,
     );
 
 export const cancelLibraryRoomBooking = async (
