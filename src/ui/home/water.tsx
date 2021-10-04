@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
 	Button,
 	Linking,
@@ -22,20 +22,32 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
+import {configSet} from "../../redux/actions/config";
 
 const checkNum = (num: number) => num >= 0 && Math.floor(num) === num;
 
-export const WaterScreen = () => {
+const WaterUI = ({
+	waterId,
+	waterBrand,
+	setWaterId,
+	setWaterBrand,
+}: {
+	waterId: string | undefined;
+	waterBrand: string;
+	setWaterId: (id: string) => void;
+	setWaterBrand: (brand: string) => void;
+}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const {colors} = theme;
 
-	const [id, setId] = useState("");
 	const [phone, setPhone] = useState("");
 	const [address, setAddress] = useState("");
 	const [waterNumber, setWaterNumber] = useState(1);
 	const [ticketNumber, setTicketNumber] = useState(0);
-	const [brand, setBrand] = useState("6");
+	const [brand, setBrand] = useState(waterBrand);
 	const [open, setOpen] = useState(false);
 	const [brandList, setBrandList] = useState(
 		Object.keys(waterBrandIdToName).map((v) => ({
@@ -44,18 +56,27 @@ export const WaterScreen = () => {
 		})),
 	);
 
+	useEffect(() => {
+		if (waterId !== undefined) {
+			getWaterUserInformation(waterId).then((r) => {
+				setPhone(r.phone ?? "");
+				setAddress(r.address ?? "");
+			});
+		}
+	}, [waterId]);
+
+	useEffect(() => {
+		setWaterBrand(brand);
+	}, [setWaterBrand, brand]);
+
 	return (
 		<ScrollView style={{padding: 20}}>
 			<Text style={{fontSize: 24, alignSelf: "center"}}>在线订购</Text>
 			<SettingsEditText
 				text="档案号"
-				value={id}
+				value={waterId ?? ""}
 				onValueChange={(v) => {
-					setId(v);
-					getWaterUserInformation(v).then((r) => {
-						setPhone(r.phone ?? "");
-						setAddress(r.address ?? "");
-					});
+					setWaterId(v);
 				}}
 				placeholder=""
 				enabled={true}
@@ -101,10 +122,10 @@ export const WaterScreen = () => {
 							duration: Snackbar.LENGTH_SHORT,
 						});
 						postWaterSubmission(
-							id,
+							waterId ?? "",
 							String(waterNumber),
 							String(ticketNumber),
-							brand,
+							brand ?? "6",
 							address,
 						)
 							.then(() => {
@@ -116,7 +137,8 @@ export const WaterScreen = () => {
 							.catch(NetworkRetry);
 					}}
 					disabled={
-						id.trim().length === 0 ||
+						waterId === undefined ||
+						waterId.trim().length === 0 ||
 						phone.trim().length === 0 ||
 						address.trim().length === 0 ||
 						!checkNum(waterNumber) ||
@@ -140,3 +162,14 @@ export const WaterScreen = () => {
 		</ScrollView>
 	);
 };
+
+export const WaterScreen = connect(
+	(state: State) => ({
+		waterId: state.config.waterId,
+		waterBrand: state.config.waterBrand ?? "6",
+	}),
+	(dispatch) => ({
+		setWaterId: (id: string) => dispatch(configSet("waterId", id)),
+		setWaterBrand: (brand: string) => dispatch(configSet("waterBrand", brand)),
+	}),
+)(WaterUI);

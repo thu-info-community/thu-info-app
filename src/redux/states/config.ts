@@ -17,6 +17,8 @@ export interface Config {
 	lastBroadcast: number;
 	emailName: string;
 	emailUnseen: number;
+	waterId: string;
+	waterBrand: string;
 }
 
 export const defaultConfigState: Config = {
@@ -33,4 +35,6 @@ export const defaultConfigState: Config = {
 	lastBroadcast: 0,
 	emailName: "",
 	emailUnseen: 0,
+	waterId: "",
+	waterBrand: "6",
 };
