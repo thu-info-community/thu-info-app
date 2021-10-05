@@ -33,6 +33,7 @@ export function libraryRefreshListScreen<
 		refresh: () => void,
 	) => () => void,
 	header?: (theme: Theme) => ReactElement,
+	clickable?: boolean,
 ): FC<{
 	navigation: HomeNav;
 	route: RouteProp<HomeStackParamList, S>;
@@ -135,7 +136,7 @@ export function libraryRefreshListScreen<
 									paddingHorizontal: 12,
 									flex: 2,
 								}}
-								disabled={!item.valid}
+								disabled={!item.valid || clickable === false}
 								onPress={() =>
 									item.valid && onPress(props, item, choice, refresh)()
 								}>
