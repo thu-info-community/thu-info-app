@@ -1,17 +1,10 @@
-import {
-	Alert,
-	Text,
-	TouchableOpacity,
-	useColorScheme,
-	View,
-} from "react-native";
-import React, {useEffect, useState} from "react";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import React, {useState} from "react";
 import dayjs from "dayjs";
 import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
 import {HomeNav} from "./homeStack";
 import {getStr} from "../../utils/i18n";
-import {helper} from "../../redux/store";
 
 export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
@@ -23,12 +16,6 @@ export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
 	const {colors} = themes(themeName);
 
 	const validDateNum = 4;
-
-	useEffect(() => {
-		if (!helper.mocked()) {
-			Alert.alert("试验性功能", "有 bug 请务必及时反馈！");
-		}
-	}, []);
 
 	return (
 		<View style={{flexDirection: "row", margin: 10}}>
