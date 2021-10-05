@@ -91,13 +91,14 @@ export const SettingsSwitch = ({
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
+			<View style={{flexDirection: "row", alignItems: "center", flex: 1}}>
 				{setIconWidth(status ? iconOn : iconOff, colors)}
 				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
 					{status ? textOn : textOff}
 				</Text>
 			</View>
 			<Switch
+				style={{flex: 0}}
 				value={status}
 				onValueChange={(value) => {
 					setStatus(value);
