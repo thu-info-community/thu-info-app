@@ -17,7 +17,7 @@
 		"@leancloud/platform-adapters-react-native": "0.6.2",
 		"@react-native-async-storage/async-storage": "1.15.9",
 		"@react-native-community/blur": "3.6.0",
-		"@react-native-community/cameraroll": "4.0.4",
+		"@react-native-community/cameraroll": "4.1.1",
 		"@react-native-community/cookies": "5.0.1",
 		"@react-native-community/datetimepicker": "3.5.2",
 		"@react-native-community/masked-view": "0.1.11",
