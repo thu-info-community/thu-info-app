@@ -1,4 +1,4 @@
-import {ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
@@ -136,9 +136,11 @@ const HomeUI = ({
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="thirdParty">
-				<HomeIcon title="qzyq" onPress={() => navigation.navigate("Qzyq")}>
-					<IconWater width={iconSize} height={iconSize} />
-				</HomeIcon>
+				{Platform.OS === "android" && (
+					<HomeIcon title="qzyq" onPress={() => navigation.navigate("Qzyq")}>
+						<IconWater width={iconSize} height={iconSize} />
+					</HomeIcon>
+				)}
 				<HomeIcon
 					title="washer"
 					onPress={() => navigation.navigate("WasherWeb")}>
