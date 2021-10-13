@@ -17,7 +17,7 @@ import {
 	getWaterUserInformation,
 	postWaterSubmission,
 } from "../../network/water";
-import DropDownPicker from "react-native-dropdown-picker";
+import ModalDropdown from "react-native-modal-dropdown";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
@@ -48,13 +48,6 @@ const WaterUI = ({
 	const [waterNumber, setWaterNumber] = useState(1);
 	const [ticketNumber, setTicketNumber] = useState(0);
 	const [brand, setBrand] = useState(waterBrand);
-	const [open, setOpen] = useState(false);
-	const [brandList, setBrandList] = useState(
-		Object.keys(waterBrandIdToName).map((v) => ({
-			label: waterBrandIdToName[v],
-			value: v,
-		})),
-	);
 
 	useEffect(() => {
 		if (waterId !== undefined) {
@@ -107,13 +100,34 @@ const WaterUI = ({
 				value={ticketNumber}
 				onValueChange={setTicketNumber}
 			/>
-			<DropDownPicker
-				open={open}
-				value={brand}
-				items={brandList}
-				setOpen={setOpen}
-				setValue={setBrand}
-				setItems={setBrandList}
+			<ModalDropdown
+				options={Object.values(waterBrandIdToName)}
+				defaultValue={waterBrandIdToName["6"]}
+				style={{
+					padding: 8,
+					borderWidth: 1,
+					borderRadius: 4,
+					borderColor: "gray",
+				}}
+				textStyle={{
+					fontSize: 14,
+					color: colors.text,
+				}}
+				dropdownStyle={{
+					paddingHorizontal: 20,
+				}}
+				dropdownTextStyle={{
+					color: "black",
+					fontSize: 14,
+				}}
+				showsVerticalScrollIndicator={false}
+				onSelect={(_, value) =>
+					setBrand(
+						Object.keys(waterBrandIdToName).find(
+							(k) => waterBrandIdToName[k] === value,
+						) ?? "6",
+					)
+				}
 			/>
 			<View style={{marginVertical: 20}}>
 				<Button

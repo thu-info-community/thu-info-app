@@ -2140,7 +2140,7 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
   integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
 
-"@types/react-native-modal-dropdown@^0.7.1":
+"@types/react-native-modal-dropdown@0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@types/react-native-modal-dropdown/-/react-native-modal-dropdown-0.7.1.tgz#5dd2b218e7d2b3a033af68e73411fef57f0c597c"
   integrity sha512-2fN192/Vu224senlQGqdn5k3sH2jzCHdDLhBa1FQyoXhid80POVdKDgzlOhPJ/CjirAMq7Wqh0OCL4tTw70IvQ==
@@ -7246,11 +7246,6 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-dropdown-picker@5.1.28:
-  version "5.1.28"
-  resolved "https://registry.yarnpkg.com/react-native-dropdown-picker/-/react-native-dropdown-picker-5.1.28.tgz#c49a898ecff5baaf98770b35645d3fcef6049780"
-  integrity sha512-REF1QMuuJhVrNh71IvgCY594wT6+l4KQG8TRgwPUfvnWPukzbNHClGkqf6E7Y7xZS5eK6NeE1uAzoZZJntdwWA==
-
 react-native-easy-grid@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-easy-grid/-/react-native-easy-grid-0.2.2.tgz#f0be33620be1ebe2d2295918eb58b0a27e8272ab"
@@ -7299,7 +7294,7 @@ react-native-localize@2.1.5:
   resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-2.1.5.tgz#79b4cd39151d4f38f8d6602572b0cbf9d7e7578d"
   integrity sha512-1ADxILk78P1iA5vdhfD/UsrlliINA1iuExu0n7l+0XpYsNIo5S68HFAkhGiZqO8cZUPNlpx75klZkAu9c3iMXw==
 
-react-native-modal-dropdown@^1.0.2:
+react-native-modal-dropdown@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-native-modal-dropdown/-/react-native-modal-dropdown-1.0.2.tgz#3e1efae5a5eacc42f44ac96468ea2f1b5bb0d759"
   integrity sha512-X13RbwoQdaOb9Ffi7fjRVwh9OXauXIJhum0uXGzYZLMyoCQ5yt5cxf27P/YZbdh80Fb7bdPx6vTA4PTpUK2WDQ==
