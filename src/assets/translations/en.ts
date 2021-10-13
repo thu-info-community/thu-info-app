@@ -312,4 +312,7 @@ export default {
 	findUser: "Find user",
 	add: "Add",
 	occupation: "Occupation",
+	search: "Search",
+	choose: "Select",
+	"?": "?",
 };

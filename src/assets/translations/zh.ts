@@ -293,4 +293,7 @@ export default {
 	findUser: "查找用户",
 	add: "添加",
 	occupation: "占用情况",
+	search: "搜索",
+	choose: "选定",
+	"?": "？",
 };

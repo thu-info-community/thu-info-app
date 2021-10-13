@@ -17,7 +17,6 @@ import {
 	View,
 } from "react-native";
 import {getStr} from "../../utils/i18n";
-import {ItemType} from "react-native-dropdown-picker";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
@@ -26,9 +25,9 @@ import themes from "../../assets/themes/themes";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ModalDropdown from "react-native-modal-dropdown";
 
-interface ExtendedItemType extends ItemType {
+interface Segment {
 	start: string;
-	duration: number;
+	duration: number; // Setting it -1 means we do not care duration
 }
 
 const formatTime = (h: number, m: number) =>
@@ -47,29 +46,27 @@ export const LibRoomPerformBookScreen = ({
 	const {colors} = themes(themeName);
 
 	const segments = convertUsageToSegments(res);
-	const validBegs = segments
+	const validBegs: Segment[] = segments
 		.filter(([_, duration, occupied]) => duration >= res.minMinute && !occupied)
 		.flatMap(([start, duration]) => {
 			const startH = Number(start.substring(0, 2));
 			const startM = Number(start.substring(3, 5));
 			return Array.from(
 				new Array(Math.floor((duration - res.minMinute) / 5) + 1),
-				(v, k) => {
+				(_, k) => {
 					let m = startM + k * 5;
 					let h = startH + Math.floor(m / 60);
 					m -= Math.floor(m / 60) * 60;
 					return {
-						label: formatTime(h, m),
-						value: formatTime(h, m),
-						start,
-						duration,
-					} as ExtendedItemType;
+						start: formatTime(h, m),
+						duration: duration,
+					} as Segment;
 				},
 			);
 		});
 
-	const genValidEnds = (item: ExtendedItemType, beg: string): ItemType[] => {
-		const result: ItemType[] = [];
+	const genValidEnds = (item: Segment, beg: string): Segment[] => {
+		const result: Segment[] = [];
 		const {start, duration} = item;
 		let h = Number(beg.substring(0, 2));
 		let m = Number(beg.substring(3, 5)) + res.minMinute;
@@ -80,7 +77,7 @@ export const LibRoomPerformBookScreen = ({
 		) {
 			h += Math.floor(m / 60);
 			m -= Math.floor(m / 60) * 60;
-			result.push({label: formatTime(h, m), value: formatTime(h, m)});
+			result.push({start: formatTime(h, m), duration: -1});
 			m += 5;
 		}
 		return result;
@@ -167,24 +164,21 @@ export const LibRoomPerformBookScreen = ({
 	const validEnds =
 		validBegs.length > 0 ? genValidEnds(validBegs[0], validBegs[0].start) : [];
 
-	const [begValue, setBegValue] = useState(
-		validBegs.length > 0 ? validBegs[0].value ?? null : null,
+	const [begValue, setBegValue] = useState<string | null>(
+		validBegs.length > 0 ? validBegs[0].start ?? null : null,
 	);
-	const [begItems] = useState(validBegs);
-	const [endValue, setEndValue] = useState(
-		validEnds.length > 0 ? validEnds[0].value ?? null : null,
+	const [endValue, setEndValue] = useState<string | null>(
+		validEnds.length > 0 ? validEnds[0].start ?? null : null,
 	);
 	const [endItems, setEndItems] = useState(validEnds);
+
 	const [members, setMembers] = useState<LibFuzzySearchResult[]>([
 		{id: helper.userId, label: "自己"},
 	]);
-
-	const [userValue, setUserValue] = useState<string | null>(null);
-	const [userItems, setUserItems] = useState<ItemType[]>([]);
+	const [userKeyword, setUserKeyword] = useState<string>("");
+	const [userItems, setUserItems] = useState<LibFuzzySearchResult[]>([]);
 
 	const rightPickerRef = useRef<any>();
-
-	console.log(colors.text);
 
 	return (
 		<ScrollView style={{padding: containerPadding}}>
@@ -250,18 +244,18 @@ export const LibRoomPerformBookScreen = ({
 				}}>
 				{getDatePicker(
 					begValue === null ? "选择时间" : (begValue as string),
-					begItems.map((val) => val.value) as string[],
+					validBegs.map((val) => val.start),
 					true,
 					"开始时间",
 					(value) => {
 						setBegValue(value);
-						const item = validBegs.find((e) => e.value === value);
+						const item = validBegs.find((e) => e.start === value);
 						if (item === undefined) {
 							setEndValue(null);
 							setEndItems([]);
 						} else {
 							const newValidEnds = genValidEnds(item, value as string);
-							setEndValue(newValidEnds[0].value ?? null);
+							setEndValue(newValidEnds[0].start ?? null);
 							setEndItems(newValidEnds);
 						}
 						// Adjust the right picker text to default value
@@ -270,7 +264,7 @@ export const LibRoomPerformBookScreen = ({
 				)}
 				{getDatePicker(
 					endValue === null ? "选择时间" : (endValue as string),
-					endItems.map((val) => val.value) as string[],
+					endItems.map((val) => val.start) as string[],
 					false,
 					"结束时间",
 					(value) => setEndValue(value),
@@ -289,7 +283,7 @@ export const LibRoomPerformBookScreen = ({
 							{getStr("groupMembers")} ({res.minUser}~{res.maxUser})
 						</Text>
 					</View>
-					<Text style={{color: "gray", marginLeft: 4, marginBottom: 8}}>
+					<Text style={{marginLeft: 4, marginBottom: 8}}>
 						{getStr("findUser")}
 					</Text>
 					<View
@@ -313,37 +307,132 @@ export const LibRoomPerformBookScreen = ({
 								marginHorizontal: 4,
 							}}
 							onChangeText={(text) => {
-								helper.fuzzySearchLibraryId(text).then((r) => {
-									setUserItems(r.map(({id, label}) => ({label, value: id})));
-									if (r.length > 0) {
-										setUserValue(r[0].id);
-									} else {
-										setUserValue(null);
-									}
-								});
+								setUserKeyword(text);
 							}}
+							value={userKeyword}
 						/>
 						<Button
-							title={getStr("add")}
+							title={getStr("search")}
 							onPress={() => {
-								// TODO: Can not handle same names yet.
-								const result = userItems.find(({value}) => value === userValue);
-								setMembers((prev) => {
-									if (
-										userValue !== null &&
-										result !== undefined &&
-										result.label !== undefined &&
-										prev.find(({id}) => id === userValue) === undefined
-									) {
-										return prev.concat({id: userValue, label: result.label});
+								helper.fuzzySearchLibraryId(userKeyword).then((r) => {
+									console.log(userKeyword);
+									console.log(r);
+									if (r.length === 0) {
+										Alert.alert("没有搜索到匹配的用户");
+										setUserItems([]);
+										setUserKeyword("");
+									} else if (r.length === 1) {
+										const id = r[0].id;
+										const label = r[0].label;
+										setMembers((prev) => {
+											if (id === undefined || label === undefined) {
+												Alert.alert("用户不合法");
+												return prev;
+											} else if (prev.find((o) => id === o.id) !== undefined) {
+												Alert.alert("用户已经成为使用者");
+												return prev;
+											} else {
+												return prev.concat({id: id, label: label});
+											}
+										});
+										setUserItems([]);
+										setUserKeyword("");
 									} else {
-										return prev;
+										setUserItems(
+											r.map(({id, label}) => ({
+												id: id,
+												label: label,
+											})),
+										);
 									}
 								});
 							}}
 						/>
 					</View>
-					<Text style={{color: "gray", marginLeft: 4, marginBottom: 4}}>
+					{userItems.length === 0 ? null : (
+						<View>
+							<Text style={{marginLeft: 4, marginBottom: 4}}>
+								有多名用户符合要求，点按以选择用户
+							</Text>
+							<View
+								style={{
+									marginLeft: 4,
+									flexWrap: "wrap",
+									flex: 1,
+									flexDirection: "row",
+									marginBottom: 4,
+								}}>
+								{[
+									<TouchableOpacity
+										style={{
+											backgroundColor:
+												colors.text === "#000000" ? "white" : "black",
+											borderColor: "gray",
+											borderRadius: 5,
+											borderWidth: 1,
+											paddingHorizontal: 4,
+											margin: 4,
+											justifyContent: "center",
+										}}
+										onPress={() => setUserItems([])}>
+										<View style={{flexDirection: "row", paddingVertical: 8}}>
+											<Text style={{color: "red"}}>取消搜索</Text>
+										</View>
+									</TouchableOpacity>,
+								].concat(
+									userItems.map(({id, label}) => (
+										<TouchableOpacity
+											onPress={() =>
+												Alert.alert(
+													`${getStr("choose")} ${label} ${getStr("?")}`,
+													undefined,
+													[
+														{text: getStr("cancel")},
+														{
+															text: getStr("confirm"),
+															onPress: () => {
+																setMembers((prev) => {
+																	if (id === undefined || label === undefined) {
+																		Alert.alert("用户不合法");
+																		return prev;
+																	} else if (
+																		prev.find((o) => id === o.id) !== undefined
+																	) {
+																		Alert.alert("用户已经成为使用者");
+																		return prev;
+																	} else {
+																		return prev.concat({id: id, label: label});
+																	}
+																});
+																setUserItems([]);
+																setUserKeyword("");
+															},
+														},
+													],
+													{cancelable: true},
+												)
+											}
+											key={id}
+											style={{
+												backgroundColor:
+													colors.text === "#000000" ? "white" : "black",
+												borderColor: "gray",
+												borderRadius: 5,
+												borderWidth: 1,
+												paddingHorizontal: 4,
+												margin: 4,
+												justifyContent: "center",
+											}}>
+											<View style={{flexDirection: "row", paddingVertical: 8}}>
+												<Text style={{color: "gray"}}>{label}</Text>
+											</View>
+										</TouchableOpacity>
+									)),
+								)}
+							</View>
+						</View>
+					)}
+					<Text style={{marginLeft: 4, marginBottom: 4}}>
 						已有研读间使用者（点按可删除）
 					</Text>
 					<View
@@ -378,11 +467,12 @@ export const LibRoomPerformBookScreen = ({
 								style={{
 									backgroundColor:
 										colors.text === "#000000" ? "white" : "black",
-									borderColor: "lightgray",
+									borderColor: "gray",
 									borderRadius: 5,
 									borderWidth: 1,
 									paddingHorizontal: 4,
 									margin: 4,
+									justifyContent: "center",
 								}}>
 								<View style={{flexDirection: "row", paddingVertical: 8}}>
 									<Text style={{color: "gray"}}>{label}</Text>
