@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
 	FlatList,
-	Pressable,
 	RefreshControl,
 	Text,
 	TouchableOpacity,
@@ -87,7 +86,16 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 			)}
 			<FlatList
 				style={{flex: 1}}
-				data={rooms}
+				data={rooms.sort((a, b) => {
+					const [av, bv] = [a, b].map(
+						(val) => val.kindName.indexOf("暂未开放") !== -1,
+					);
+					if ((av && bv) || (!av && !bv)) {
+						return a.roomName.localeCompare(b.roomName, "zh-CN");
+					} else {
+						return av ? 1 : -1;
+					}
+				})}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -96,7 +104,7 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 					/>
 				}
 				renderItem={({item}) => (
-					<Pressable
+					<TouchableOpacity
 						onPress={() =>
 							item.openStart !== null &&
 							item.openEnd !== null &&
@@ -104,7 +112,8 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 								res: item,
 								date: dayjs().add(dateOffset, "day").format("YYYY-MM-DD"),
 							})
-						}>
+						}
+						disabled={item.kindName.indexOf("暂未开放") !== -1}>
 						<View
 							style={{
 								backgroundColor: theme.colors.background,
@@ -122,14 +131,28 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 								borderRadius: 5,
 								elevation: 2,
 							}}>
-							<Text style={{color: theme.colors.text, fontSize: 18}}>
+							<Text
+								style={{
+									color:
+										item.kindName.indexOf("暂未开放") === -1
+											? theme.colors.text
+											: "gray",
+									fontSize: 18,
+									marginBottom: 4,
+									textDecorationLine:
+										item.kindName.indexOf("暂未开放") === -1
+											? "none"
+											: "line-through",
+								}}>
 								{item.roomName}
 								{item.maxUser > 1 ? ` (${item.minUser}~${item.maxUser})` : ""}
 							</Text>
-							<Text style={{color: "grey"}}>{item.kindName}</Text>
+							<Text style={{color: "grey", marginBottom: 4}}>
+								{item.kindName}
+							</Text>
 							<LibRoomBookTimeIndicator res={item} />
 						</View>
-					</Pressable>
+					</TouchableOpacity>
 				)}
 				keyExtractor={({id}) => id}
 			/>

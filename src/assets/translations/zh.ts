@@ -292,4 +292,5 @@ export default {
 	groupMembers: "小组成员",
 	findUser: "查找用户",
 	add: "添加",
+	occupation: "占用情况",
 };

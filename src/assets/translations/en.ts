@@ -311,4 +311,5 @@ export default {
 	groupMembers: "Group Members",
 	findUser: "Find user",
 	add: "Add",
+	occupation: "Occupation",
 };
