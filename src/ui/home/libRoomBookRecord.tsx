@@ -50,48 +50,50 @@ export const LibRoomBookRecordScreen = simpleRefreshListScreen(
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 16, color: colors.text}}>{status}</Text>
-					<TouchableOpacity
-						style={{padding: 3}}
-						onPress={() =>
-							Alert.alert(
-								getStr("confirmCancelBooking"),
-								name,
-								[
-									{text: getStr("cancel")},
-									{
-										text: getStr("confirm"),
-										onPress: () => {
-											helper
-												.cancelLibraryRoomBooking(rsvId)
-												.then(({msg}) =>
-													Snackbar.show({
-														text: msg,
-														duration: Snackbar.LENGTH_SHORT,
-													}),
-												)
-												.catch((e) => {
-													Snackbar.show({
-														text:
-															typeof e === "string"
-																? e
-																: getStr("networkRetry"),
-														duration: Snackbar.LENGTH_SHORT,
-													});
-												})
-												.then(refresh);
+					{rsvId !== undefined && (
+						<TouchableOpacity
+							style={{padding: 3}}
+							onPress={() =>
+								Alert.alert(
+									getStr("confirmCancelBooking"),
+									name,
+									[
+										{text: getStr("cancel")},
+										{
+											text: getStr("confirm"),
+											onPress: () => {
+												helper
+													.cancelLibraryRoomBooking(rsvId)
+													.then(({msg}) =>
+														Snackbar.show({
+															text: msg,
+															duration: Snackbar.LENGTH_SHORT,
+														}),
+													)
+													.catch((e) => {
+														Snackbar.show({
+															text:
+																typeof e === "string"
+																	? e
+																	: getStr("networkRetry"),
+															duration: Snackbar.LENGTH_SHORT,
+														});
+													})
+													.then(refresh);
+											},
 										},
-									},
-								],
-								{cancelable: true},
-							)
-						}>
-						{!helper.mocked() && (
-							<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
-						)}
-					</TouchableOpacity>
+									],
+									{cancelable: true},
+								)
+							}>
+							{!helper.mocked() && (
+								<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+							)}
+						</TouchableOpacity>
+					)}
 				</View>
 			</View>
 		);
 	},
-	({rsvId}) => rsvId,
+	({begin, end, rsvId}) => begin + end + rsvId,
 );
