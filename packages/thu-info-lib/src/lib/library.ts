@@ -414,7 +414,7 @@ export const getLibraryRoomBookingRecord = async (
                     begin: cheerio(textPrimary[0]).text(),
                     end: cheerio(textPrimary[1]).text(),
                     description: cheerio(tableRow[4]).text(),
-                    rsvId: cheerio(tableRow[5]).find("[rsvId]").attr().rsvid,
+                    rsvId: cheerio(tableRow[5]).find("[rsvId]").attr()?.rsvid,
                 } as LibRoomBookRecord;
             }).get();
         },

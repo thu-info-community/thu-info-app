@@ -96,5 +96,5 @@ export interface LibRoomBookRecord {
     begin: string;  // MM-dd HH:mm
     end: string;  // MM-dd HH:mm
     description: string;
-    rsvId: string;
+    rsvId: string | undefined;
 }
