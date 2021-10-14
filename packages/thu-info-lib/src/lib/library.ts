@@ -406,7 +406,7 @@ export const getLibraryRoomBookingRecord = async (
                 return {
                     regDate: tableAttr.date,
                     over: tableAttr.over === "true",
-                    status: (tableElement.find(".orange")[0] as TagElement).children[0].data,
+                    status: ((tableElement.find(".orange")[0] ?? tableElement.find(".green")[0]) as TagElement).children[0].data,
                     name: cheerio(tableRow[0]).find(".box > a").text(),
                     category: cheerio(tableRow[0]).find(".grey").text(),
                     owner: (tableRow[1] as TagElement).children[0].data,
