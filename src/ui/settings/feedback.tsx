@@ -62,6 +62,7 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 						margin: 8,
 						padding: 10,
 						backgroundColor: dark ? "#000" : "#FFF",
+						color: dark ? "#FFF" : "#000",
 						borderColor: "#CCC",
 						borderWidth: 1,
 						borderRadius: 5,
