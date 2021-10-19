@@ -53,6 +53,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: HomeNav}) => (
 				"六教B区",
 				"六教C区",
 				"主楼后厅",
+				"西阶",
 				"东阶",
 				"中央主楼",
 				"主楼东配楼",
