@@ -48,6 +48,7 @@ const BottomButton = ({
 
 export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [text, setText] = useState("");
+	const [contact, setContact] = useState("");
 	const dark = useColorScheme() === "dark";
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -70,6 +71,23 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 					placeholder={getStr("feedbackHint")}
 					multiline={true}
 				/>
+				<TextInput
+					value={contact}
+					onChangeText={setContact}
+					style={{
+						flex: 0,
+						textAlignVertical: "top",
+						fontSize: 15,
+						margin: 8,
+						padding: 10,
+						backgroundColor: dark ? "#000" : "#FFF",
+						color: dark ? "#FFF" : "#000",
+						borderColor: "#CCC",
+						borderWidth: 1,
+						borderRadius: 5,
+					}}
+					placeholder={getStr("contact")}
+				/>
 				<View
 					style={{
 						flexDirection: "row",
@@ -84,7 +102,7 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 					<BottomButton
 						text="submit"
 						onPress={() => {
-							submitFeedback(text)
+							submitFeedback(text + "\nContact: " + contact)
 								.then(() =>
 									Snackbar.show({
 										text: getStr("feedbackSuccess"),

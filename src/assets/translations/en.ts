@@ -47,6 +47,7 @@ export default {
 	submit: "Submit",
 	feedbackHint:
 		"Both bug-report and suggestions are welcomed!\nWe do not know who you are, so don't be afraid~\nResponses can be found in the Popi Ask box.\nGitHub repo: https://github.com/UNIDY2002/THUInfo\nIssues and pull requests are also welcomed!",
+	contact: "Your contact (optional)",
 	feedbackSuccess: "Feedback successfully sent.",
 	undergraduate: "Undergraduate",
 	graduate: "Graduate",
