@@ -105,6 +105,8 @@ export default {
 	originalText: "Original Text",
 	comments: "Comments",
 	networkRetry: "Network failure, please retry.",
+	networkRetryInSports:
+		"Network failure. Please make sure your captcha is entered correctly, or try again later.",
 	homeNetworkRetry:
 		"Login failed. Please go to Settings->Password Management to setup MyHome password, or try again later.",
 	credentialNote:

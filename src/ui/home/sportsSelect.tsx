@@ -15,7 +15,6 @@ import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import {NetworkRetry} from "../../components/easySnackbars";
 import {doAlipay} from "../../utils/alipay";
 
 export const SportsSelectScreen = ({
@@ -158,7 +157,12 @@ export const SportsSelectScreen = ({
 								}
 							})
 							.then(() => navigation.pop())
-							.catch(NetworkRetry);
+							.catch(() => {
+								Snackbar.show({
+									text: getStr("networkRetryInSports"),
+									duration: Snackbar.LENGTH_LONG,
+								});
+							});
 					}
 				}}
 				disabled={
