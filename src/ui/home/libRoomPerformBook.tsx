@@ -59,7 +59,7 @@ export const LibRoomPerformBookScreen = ({
 					m -= Math.floor(m / 60) * 60;
 					return {
 						start: formatTime(h, m),
-						duration: duration,
+						duration: duration - k * 5,
 					} as Segment;
 				},
 			);
