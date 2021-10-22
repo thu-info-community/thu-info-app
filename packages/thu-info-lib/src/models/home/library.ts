@@ -44,6 +44,12 @@ export interface LibBookRecord {
     delId: string | undefined;
 }
 
+export const validLibName = [
+    "NORTH", "WEST", "LAW", "SOCIAL"
+] as const;
+
+export type LibName = typeof validLibName[number];
+
 export interface LibRoomUsage {
     start: string;  // HH:mm
     end: string;  // HH:mm
@@ -57,6 +63,7 @@ export interface LibRoomUsage {
 export interface LibRoomRes {
     id: string;
     name: string;
+    loc: LibName;
     devId: number;
     devName: string;
     kindId: number;

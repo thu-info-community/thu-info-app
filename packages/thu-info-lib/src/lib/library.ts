@@ -22,6 +22,7 @@ import {
     byId,
     LibBookRecord,
     LibFuzzySearchResult,
+    LibName,
     Library,
     LibraryDate,
     LibraryFloor,
@@ -57,6 +58,19 @@ const fetchJson = (
     post?: object,
 ): Promise<any> =>
     uFetch(url, referer, post).then((s) => JSON.parse(s).data.list);
+
+// This function needs to be updated periodically to avoid bugs
+const getLibName = (name: string, kindName: string): LibName => {
+    if (name.indexOf("北馆") !== -1 || kindName.indexOf("北馆") !== -1) {
+        return "NORTH";
+    } else if (name.indexOf("西馆") !== -1 || kindName.indexOf("西馆") !== -1) {
+        return "WEST";
+    } else if (name.indexOf("文科馆") !== -1 || kindName.indexOf("文科馆") !== -1) {
+        return "SOCIAL";
+    } else {
+        return "LAW";
+    }
+};
 
 export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
     retryWrapperWithMocks(
@@ -330,6 +344,7 @@ export const getLibraryRoomBookingResourceList = async (
             return result.data.map((item: any) => ({
                 id: item.id,
                 name: item.name,
+                loc: getLibName(item.name, item.kindName),
                 devId: Number(item.devId),
                 devName: item.devName,
                 kindId: Number(item.kindId),
