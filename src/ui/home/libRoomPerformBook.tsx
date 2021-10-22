@@ -8,7 +8,6 @@ import {
 import {
 	Alert,
 	Button,
-	Dimensions,
 	ScrollView,
 	Text,
 	TextInput,
@@ -23,7 +22,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import ModalDropdown from "react-native-modal-dropdown";
+import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
 
 interface Segment {
 	start: string;
@@ -109,58 +108,6 @@ export const LibRoomPerformBookScreen = ({
 	// TODO: Remember delete them when there are better solutions
 	const containerPadding: number = 16;
 
-	// TODO: This function only support 2 pickers in a row. Update later
-	const getDatePicker = (
-		defaultValue: string,
-		items: string[],
-		isLeft: boolean, // Whether the picker is on the left of the screen
-		text: string,
-		onSelect: (value: string) => void,
-	) => {
-		return (
-			<View style={{flex: 1, margin: 4}}>
-				<Text style={{marginBottom: 4, color: "gray"}}>{text}</Text>
-				<ModalDropdown
-					ref={isLeft ? undefined : rightPickerRef}
-					options={items}
-					defaultValue={defaultValue}
-					style={{
-						padding: 8,
-						borderWidth: 1,
-						borderRadius: 4,
-						borderColor: "gray",
-					}}
-					textStyle={{
-						fontSize: 14,
-						color: colors.text,
-					}}
-					dropdownStyle={{
-						paddingHorizontal: 20,
-					}}
-					dropdownTextStyle={{
-						color: "black",
-						fontSize: 14,
-					}}
-					showsVerticalScrollIndicator={false}
-					adjustFrame={(val) => {
-						return isLeft
-							? val
-							: {
-									...val,
-									left:
-										(val.right as number) +
-										Dimensions.get("window").width / 2 -
-										containerPadding,
-									right: undefined,
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  };
-					}}
-					onSelect={(_, value) => onSelect(value)}
-				/>
-			</View>
-		);
-	};
-
 	const validEnds =
 		validBegs.length > 0 ? genValidEnds(validBegs[0], validBegs[0].start) : [];
 
@@ -235,41 +182,33 @@ export const LibRoomPerformBookScreen = ({
 					申请时间
 				</Text>
 			</View>
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-around",
-					alignItems: "center",
-					marginBottom: 8,
-				}}>
-				{getDatePicker(
+			<PickerModalWrapper
+				defaultValue={[
 					begValue === null ? "选择时间" : (begValue as string),
-					validBegs.map((val) => val.start),
-					true,
-					"开始时间",
-					(value) => {
-						setBegValue(value);
-						const item = validBegs.find((e) => e.start === value);
-						if (item === undefined) {
-							setEndValue(null);
-							setEndItems([]);
-						} else {
-							const newValidEnds = genValidEnds(item, value as string);
-							setEndValue(newValidEnds[0].start ?? null);
-							setEndItems(newValidEnds);
-						}
-						// Adjust the right picker text to default value
-						rightPickerRef.current.select(-1);
-					},
-				)}
-				{getDatePicker(
 					endValue === null ? "选择时间" : (endValue as string),
-					endItems.map((val) => val.start) as string[],
-					false,
-					"结束时间",
-					(value) => setEndValue(value),
-				)}
-			</View>
+				]}
+				items={[
+					validBegs.map((val) => val.start),
+					endItems.map((val) => val.start),
+				]}
+				text={["开始时间", "结束时间"]}
+				onLeftSelect={(value) => {
+					setBegValue(value);
+					const item = validBegs.find((e) => e.start === value);
+					if (item === undefined) {
+						setEndValue(null);
+						setEndItems([]);
+					} else {
+						const newValidEnds = genValidEnds(item, value as string);
+						setEndValue(newValidEnds[0].start ?? null);
+						setEndItems(newValidEnds);
+					}
+				}}
+				onRightSelect={(value) => setEndValue(value)}
+				isModalGroup={true}
+				rightPickerRef={rightPickerRef}
+				containerPadding={containerPadding}
+			/>
 			{res.maxUser > 1 && (
 				<View>
 					<View style={{backgroundColor: "lightgray", height: 1}} />
