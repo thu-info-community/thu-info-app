@@ -157,10 +157,10 @@ export const makeSportsReservation = async (
         "allFieldTime": `${fieldId}#${date}`,
     }).then(JSON.parse);
     if (orderResult.msg !== "预定成功") {
-        throw new Error(orderResult.msg);
+        throw orderResult.msg;
     }
     if (totalCost === 0) return undefined;
-    const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
+    const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
         is_jsd: receiptTitle === undefined ? "0" : "1",
         xm: receiptTitle,
         gymnasium_idForCache: gymId,
@@ -168,9 +168,15 @@ export const makeSportsReservation = async (
         time_dateForCache: date,
         userTypeNumForCache: 1,
         allFieldTime: `${fieldId}#${date}`,
-    }).then(JSON.parse);
-    delete payRequestResult.action;
-    const paymentApiHtml = await uFetch(SPORTS_PAYMENT_API_URL, SPORTS_BASE_URL, payRequestResult);
+    }).then((s) => cheerio.load(s)("form"));
+    const paymentApiHtml = await uFetch(
+        paymentResultForm.attr().action,
+        SPORTS_MAKE_PAYMENT_URL,
+        paymentResultForm.serialize() as never as object,
+        60000,
+        "UTF-8",
+        true,
+    );
     const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
     if (searchResult === null) {
         throw new Error("id and token not found.");

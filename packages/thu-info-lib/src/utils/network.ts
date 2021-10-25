@@ -49,6 +49,9 @@ export const stringify = (form: any, paramEncoding = "UTF-8") =>
  * The `timeout` is `60000` by default, in milliseconds.
  *
  * The `paramEncoding` is `UTF-8` by default, used to encode post form params.
+ *
+ * If `serialized` is `true`, the method will treat `post` as a string that has
+ * already been serialized.
  */
 export const uFetch = async (
     url: string,
@@ -56,6 +59,7 @@ export const uFetch = async (
     post?: object,
     timeout = 60000,
     paramEncoding = "UTF-8",
+    serialized = false,
 ): Promise<string> => {
     // Prepare request headers
     const defaultHeaders = {
@@ -93,7 +97,7 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: stringify(post, paramEncoding),
+                body: serialized? (post as never as string) : stringify(post, paramEncoding),
             };
 
     // Perform the network request
