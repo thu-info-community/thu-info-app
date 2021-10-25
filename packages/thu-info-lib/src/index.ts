@@ -49,6 +49,7 @@ import {
     makeSportsReservation,
     unsubscribeSportsReservation,
     updateSportsPhoneNumber,
+    ValidReceiptTypes,
 } from "./lib/sports";
 import {
     getCrCaptchaUrlMethod,
@@ -226,12 +227,13 @@ export class InfoHelper {
     public makeSportsReservation = async (
         totalCost: number,
         phone: string,
+        receiptTitle: ValidReceiptTypes | undefined,
         gymId: string,
         itemId: string,
         date: string,  // yyyy-MM-dd
         captcha: string,
         fieldId: string,
-    ) => makeSportsReservation(this, totalCost, phone, gymId, itemId, date, captcha, fieldId);
+    ) => makeSportsReservation(this, totalCost, phone, receiptTitle, gymId, itemId, date, captcha, fieldId);
 
     public getSportsReservationRecords = async () => getSportsReservationRecords(this);
 

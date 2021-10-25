@@ -164,7 +164,7 @@ export const SPORTS_CAPTCHA_BASE_URL =
 export const SPORTS_MAKE_ORDER_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/gymbook/gymbook/gymBookAction.do?vpn-12-o1-50.tsinghua.edu.cn=&ms=saveGymBook";
 export const SPORTS_MAKE_PAYMENT_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/pay/payAction.do?vpn-12-o1-50.tsinghua.edu.cn=&ms=newPayWap";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00/pay/payAction.do?ms=newPay";
 export const SPORTS_PAYMENT_API_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/zjjsfw/zjjs/api.do";
 export const SPORTS_PAYMENT_CHECK_URL =

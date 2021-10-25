@@ -22,6 +22,9 @@ import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import Element = cheerio.Element;
 
+export const VALID_RECEIPT_TITLES = ["清华大学", "清华大学工会", "清华大学教育基金会"] as const;
+export type ValidReceiptTypes = typeof VALID_RECEIPT_TITLES[number];
+
 const getSportsResourceLimit = async (
     helper: InfoHelper,
     gymId: string,
@@ -129,6 +132,7 @@ export const makeSportsReservation = async (
     helper: InfoHelper,
     totalCost: number,
     phone: string,
+    receiptTitle: ValidReceiptTypes | undefined,
     gymId: string,
     itemId: string,
     date: string,  // yyyy-MM-dd
@@ -157,8 +161,8 @@ export const makeSportsReservation = async (
     }
     if (totalCost === 0) return undefined;
     const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
-        xm: "",
-        dept: "",
+        is_jsd: receiptTitle === undefined ? "0" : "1",
+        xm: receiptTitle,
         gymnasium_idForCache: gymId,
         item_idForCache: itemId,
         time_dateForCache: date,
