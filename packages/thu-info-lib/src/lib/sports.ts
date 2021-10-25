@@ -168,7 +168,7 @@ export const makeSportsReservation = async (
         time_dateForCache: date,
         userTypeNumForCache: 1,
         allFieldTime: `${fieldId}#${date}`,
-    }).then((s) => cheerio.load(s)("form"));
+    }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
     const paymentApiHtml = await uFetch(
         paymentResultForm.attr().action,
         SPORTS_MAKE_PAYMENT_URL,
