@@ -194,9 +194,9 @@ export const SportsSelectScreen = ({
 								}
 							})
 							.then(() => navigation.pop())
-							.catch(() => {
+							.catch((e) => {
 								Snackbar.show({
-									text: getStr("networkRetryInSports"),
+									text: typeof e === "string" ? e : getStr("networkRetry"),
 									duration: Snackbar.LENGTH_LONG,
 								});
 							});
