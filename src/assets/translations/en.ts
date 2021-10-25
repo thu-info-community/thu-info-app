@@ -254,6 +254,7 @@ export default {
 	sportsPhoneSetFail: "Phone number set failed, please retry.",
 	confirmOrder: "Confirm Order",
 	selectField: "Select field:",
+	receiptTitle: "[Experimental] Receipt Title: ",
 	captchaCaseSensitive: "Captcha (case sensitive)",
 	refresh: "Refresh",
 	sportsRecord: "Sports Reservation Record",

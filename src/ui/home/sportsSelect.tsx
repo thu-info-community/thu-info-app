@@ -16,6 +16,10 @@ import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {doAlipay} from "../../utils/alipay";
+import {
+	VALID_RECEIPT_TITLES,
+	ValidReceiptTypes,
+} from "thu-info-lib/dist/lib/sports";
 
 export const SportsSelectScreen = ({
 	route: {
@@ -36,6 +40,7 @@ export const SportsSelectScreen = ({
 	const [field, setField] = useState<{id: string; name: string} | undefined>(
 		undefined,
 	);
+	const [title, setTitle] = useState<ValidReceiptTypes | undefined>(undefined);
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
 	const [captcha, setCaptcha] = useState("");
 	const [totalCost, setTotalCost] = useState(0);
@@ -90,6 +95,37 @@ export const SportsSelectScreen = ({
 			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
 				<Text style={{padding: 10, color: colors.text}}>总计{totalCost}元</Text>
 			</View>
+			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
+				<Text style={{padding: 10, color: colors.text}}>
+					{getStr("receiptTitle")}
+				</Text>
+			</View>
+			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
+				<TouchableOpacity onPress={() => setTitle(undefined)}>
+					<Text
+						style={{
+							padding: 10,
+							color: title === undefined ? "blue" : "lightgrey",
+						}}>
+						{"不需要发票"}
+					</Text>
+				</TouchableOpacity>
+			</View>
+			{VALID_RECEIPT_TITLES.map((receiptTitle) => (
+				<View
+					style={{borderTopColor: "lightgrey", borderTopWidth: 1}}
+					key={receiptTitle}>
+					<TouchableOpacity onPress={() => setTitle(receiptTitle)}>
+						<Text
+							style={{
+								padding: 10,
+								color: title === receiptTitle ? "blue" : "lightgrey",
+							}}>
+							{receiptTitle}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			))}
 			{!helper.mocked() && (
 				<View
 					style={{
@@ -139,6 +175,7 @@ export const SportsSelectScreen = ({
 							.makeSportsReservation(
 								totalCost,
 								phone,
+								title,
 								gymId,
 								itemId,
 								date,

@@ -236,6 +236,7 @@ export default {
 	sportsPhoneSetFail: "手机号设置失败，请重试。",
 	confirmOrder: "确认订单",
 	selectField: "选择场地：",
+	receiptTitle: "[试验性功能] 发票抬头：",
 	captchaCaseSensitive: "验证码（大小写敏感）",
 	refresh: "刷新",
 	sportsRecord: "体育场馆预约记录",
