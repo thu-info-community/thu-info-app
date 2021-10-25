@@ -190,9 +190,10 @@ const pad = (ori: any, length: number) => {
     return result;
 };
 
-const currentTime = () => {
+const currentTime = (coerce: string) => {
     const date = new Date();
-    return `${pad(date.getHours(), 2)}:${pad(date.getMinutes(), 2)}`;
+    const result = `${pad(date.getHours(), 2)}:${pad(date.getMinutes(), 2)}`;
+    return coerce > result ? coerce : result;
 };
 
 export const getLibrarySeatList = (
@@ -207,7 +208,7 @@ export const getLibrarySeatList = (
                     area: id,
                     segment: segmentId,
                     day,
-                    startTime: today ? currentTime() : startTime,
+                    startTime: today ? currentTime(startTime) : startTime,
                     endTime,
                 }))
                     .then((r) =>
