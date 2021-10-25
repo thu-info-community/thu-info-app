@@ -7,6 +7,9 @@ import {
     SPORTS_DETAIL_URL,
     SPORTS_MAKE_ORDER_URL,
     SPORTS_MAKE_PAYMENT_URL,
+    SPORTS_PAYMENT_ACTION_URL,
+    SPORTS_PAYMENT_API_URL,
+    SPORTS_PAYMENT_CHECK_URL,
     SPORTS_QUERY_PHONE_URL,
     SPORTS_UNSUBSCRIBE_URL,
     SPORTS_UPDATE_PHONE_URL,
@@ -154,10 +157,10 @@ export const makeSportsReservation = async (
         "allFieldTime": `${fieldId}#${date}`,
     }).then(JSON.parse);
     if (orderResult.msg !== "预定成功") {
-        throw orderResult.msg;
+        throw new Error(orderResult.msg);
     }
     if (totalCost === 0) return undefined;
-    return generalGetPayCode(await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
+    const payRequestResult = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
         is_jsd: receiptTitle === undefined ? "0" : "1",
         xm: receiptTitle,
         gymnasium_idForCache: gymId,
@@ -165,7 +168,28 @@ export const makeSportsReservation = async (
         time_dateForCache: date,
         userTypeNumForCache: 1,
         allFieldTime: `${fieldId}#${date}`,
-    }));
+    }).then(JSON.parse);
+    delete payRequestResult.action;
+    const paymentApiHtml = await uFetch(SPORTS_PAYMENT_API_URL, SPORTS_BASE_URL, payRequestResult);
+    const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
+    if (searchResult === null) {
+        throw new Error("id and token not found.");
+    }
+    const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, SPORTS_PAYMENT_API_URL, {
+        id: searchResult[1],
+        token: searchResult[2],
+    }).then(JSON.parse);
+    if (paymentCheckResult.code !== "0") {
+        throw new Error("Payment check failed: " + paymentCheckResult.message);
+    }
+    const inputs = cheerio.load(paymentApiHtml)("#payForm input");
+    const postForm: { [key: string]: string } = {};
+    inputs.each((_, element) => {
+        const {attribs} = element as TagElement;
+        postForm[attribs.name] = attribs.value;
+    });
+    postForm.channelId = "0101";
+    return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, SPORTS_PAYMENT_API_URL, postForm));
 };
 
 export const getSportsReservationRecords = async (
