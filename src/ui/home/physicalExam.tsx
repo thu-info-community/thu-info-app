@@ -6,7 +6,7 @@ import {helper} from "../../redux/store";
 
 export const PhysicalExamScreen = simpleRefreshListScreen(
 	helper.getPhysicalExamResult,
-	([key, value]) => (
+	([key, value], _, __, {colors}) => (
 		<View style={{flexDirection: "row", alignItems: "center"}}>
 			<Text
 				style={{
@@ -16,11 +16,18 @@ export const PhysicalExamScreen = simpleRefreshListScreen(
 					fontSize: 16,
 					fontWeight: "bold",
 					marginHorizontal: 10,
+					color: colors.text,
 				}}>
 				{key + getStr(":")}
 			</Text>
 			<Text
-				style={{flex: 1, textAlign: "left", padding: 4, marginHorizontal: 10}}>
+				style={{
+					flex: 1,
+					textAlign: "left",
+					padding: 4,
+					marginHorizontal: 10,
+					color: colors.text,
+				}}>
 				{value}
 			</Text>
 		</View>
