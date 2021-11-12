@@ -33,7 +33,7 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	const [rooms, setRooms] = useState<LibRoomRes[]>([]);
-	const [dateOffset, setDateOffset] = useState<0 | 1 | 2>(0);
+	const [dateOffset, setDateOffset] = useState<0 | 1 | 2 | 3 | 4>(0);
 	const [refreshing, setRefreshing] = useState(false);
 
 	const [selectLib, setLib] = useState<LibName | undefined>(undefined);
@@ -66,62 +66,88 @@ export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
 	return (
 		<>
 			{!helper.mocked() && (
-				<View style={{flexDirection: "row", margin: 5}}>
-					<TouchableOpacity
-						style={{padding: 3, flex: 1}}
-						onPress={() => setDateOffset(0)}>
-						<Text
-							style={{
-								color: dateOffset === 0 ? "blue" : theme.colors.text,
-								textAlign: "center",
-							}}>
-							{dayjs().add(0, "day").format("YYYY-MM-DD")}
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={{padding: 3, flex: 1}}
-						onPress={() => setDateOffset(1)}>
-						<Text
-							style={{
-								color: dateOffset === 1 ? "blue" : theme.colors.text,
-								textAlign: "center",
-							}}>
-							{dayjs().add(1, "day").format("YYYY-MM-DD")}
-						</Text>
-					</TouchableOpacity>
-					<TouchableOpacity
-						style={{padding: 3, flex: 1}}
-						onPress={() => setDateOffset(2)}>
-						<Text
-							style={{
-								color: dateOffset === 2 ? "blue" : theme.colors.text,
-								textAlign: "center",
-							}}>
-							{dayjs().add(2, "day").format("YYYY-MM-DD")}
-						</Text>
-					</TouchableOpacity>
-				</View>
+				<>
+					<View style={{flexDirection: "row", margin: 5}}>
+						<TouchableOpacity
+							style={{padding: 3, flex: 1}}
+							onPress={() => setDateOffset(0)}>
+							<Text
+								style={{
+									color: dateOffset === 0 ? "blue" : theme.colors.text,
+									textAlign: "center",
+								}}>
+								{dayjs().add(0, "day").format("YYYY-MM-DD")}
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{padding: 3, flex: 1}}
+							onPress={() => setDateOffset(1)}>
+							<Text
+								style={{
+									color: dateOffset === 1 ? "blue" : theme.colors.text,
+									textAlign: "center",
+								}}>
+								{dayjs().add(1, "day").format("YYYY-MM-DD")}
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{padding: 3, flex: 1}}
+							onPress={() => setDateOffset(2)}>
+							<Text
+								style={{
+									color: dateOffset === 2 ? "blue" : theme.colors.text,
+									textAlign: "center",
+								}}>
+								{dayjs().add(2, "day").format("YYYY-MM-DD")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={{flexDirection: "row", margin: 5}}>
+						<TouchableOpacity
+							style={{padding: 3, flex: 1}}
+							onPress={() => setDateOffset(3)}>
+							<Text
+								style={{
+									color: dateOffset === 3 ? "blue" : theme.colors.text,
+									textAlign: "center",
+								}}>
+								{dayjs().add(3, "day").format("YYYY-MM-DD")}
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{padding: 3, flex: 1}}
+							onPress={() => setDateOffset(4)}>
+							<Text
+								style={{
+									color: dateOffset === 4 ? "blue" : theme.colors.text,
+									textAlign: "center",
+								}}>
+								{dayjs().add(4, "day").format("YYYY-MM-DD")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={{paddingHorizontal: 8}}>
+						<PickerModalWrapper
+							defaultValue={[
+								isSingle === undefined
+									? "请选择单人或团体"
+									: isSingle
+									? "单人"
+									: "团体",
+								selectLib === undefined ? "请选择图书馆" : selectLib,
+							]}
+							// TODO: Is it good or safe?
+							items={[["单人", "团体"], validLibName.map(libNameToString)]}
+							text={["人数", "图书馆"]}
+							onLeftSelect={(value) => setSingle(value === "单人")}
+							onRightSelect={(value) => setLib(stringToLibName(value))}
+							isModalGroup={false}
+							rightPickerRef={undefined}
+							containerPadding={8}
+						/>
+					</View>
+				</>
 			)}
-			<View style={{paddingHorizontal: 8}}>
-				<PickerModalWrapper
-					defaultValue={[
-						isSingle === undefined
-							? "请选择单人或团体"
-							: isSingle
-							? "单人"
-							: "团体",
-						selectLib === undefined ? "请选择图书馆" : selectLib,
-					]}
-					// TODO: Is it good or safe?
-					items={[["单人", "团体"], validLibName.map(libNameToString)]}
-					text={["人数", "图书馆"]}
-					onLeftSelect={(value) => setSingle(value === "单人")}
-					onRightSelect={(value) => setLib(stringToLibName(value))}
-					isModalGroup={false}
-					rightPickerRef={undefined}
-					containerPadding={8}
-				/>
-			</View>
 			<FlatList
 				style={{flex: 1}}
 				data={rooms
