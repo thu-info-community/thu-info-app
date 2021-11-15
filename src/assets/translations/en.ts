@@ -21,6 +21,7 @@ export default {
 	news: "News",
 	settings: "Settings",
 	feedback: "Feedback",
+	countdown: "Countdown",
 	popi: "Check Popi",
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",

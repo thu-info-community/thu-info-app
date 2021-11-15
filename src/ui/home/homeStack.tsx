@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
 	createStackNavigator,
 	StackNavigationProp,
@@ -18,7 +18,7 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {TouchableOpacity, View} from "react-native";
+import {Alert, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
@@ -43,7 +43,7 @@ import {SportsDetailScreen} from "./sportsDetail";
 import {SportsSelectScreen} from "./sportsSelect";
 import {SportsRecordScreen} from "./sportsRecord";
 import {connect} from "react-redux";
-import {State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -109,6 +109,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	const [countdown, setCountdown] = useState<string[]>([]);
+	useEffect(() => {
+		helper.getCountdown().then(setCountdown);
+	}, []);
+
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
@@ -118,6 +123,15 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 					title: getStr("home"),
 					headerRight: () => (
 						<View style={{flexDirection: "row"}}>
+							{countdown.length > 0 && (
+								<TouchableOpacity
+									style={{paddingHorizontal: 16, marginHorizontal: 4}}
+									onPress={() =>
+										Alert.alert(getStr("countdown"), countdown.join("\n"))
+									}>
+									<Icon name="bell" size={24} color={theme.colors.primary} />
+								</TouchableOpacity>
+							)}
 							<TouchableOpacity
 								style={{paddingHorizontal: 16, marginHorizontal: 4}}
 								onPress={() => navigation.navigate("EmailList")}>

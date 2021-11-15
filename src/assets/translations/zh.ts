@@ -19,6 +19,7 @@ export default {
 	news: "动态",
 	settings: "设置",
 	feedback: "反馈",
+	countdown: "倒计时提醒",
 	popi: "查看提问箱",
 	eleRecord: "电费充值记录",
 	eleRecordRestriction: "现仅支持查看最近25条记录。",
