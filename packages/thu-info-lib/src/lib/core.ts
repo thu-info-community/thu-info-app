@@ -207,12 +207,13 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
                 tempPassword += password.charAt(i);
             }
         }
+        const $ = cheerio.load(await uFetch(TSINGHUA_HOME_LOGIN_URL));
         await uFetch(
             TSINGHUA_HOME_LOGIN_URL,
             undefined,
             {
-                __VIEWSTATE: "",
-                __VIEWSTATEGENERATOR: "CA0B0334",
+                __VIEWSTATE: $("#__VIEWSTATE").attr().value,
+                __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
                 net_Default_LoginCtrl1$txtUserName: userId,
                 net_Default_LoginCtrl1$txtUserPwd: tempPassword,
                 "net_Default_LoginCtrl1$lbtnLogin.x": 17,
