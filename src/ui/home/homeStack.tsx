@@ -42,6 +42,8 @@ import {SportsScreen} from "./sports";
 import {SportsDetailScreen} from "./sportsDetail";
 import {SportsSelectScreen} from "./sportsSelect";
 import {SportsRecordScreen} from "./sportsRecord";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -103,7 +105,7 @@ const Stack = createStackNavigator<HomeStackParamList>();
 
 export type HomeNav = StackNavigationProp<HomeStackParamList>;
 
-export const HomeStackScreen = () => {
+const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
@@ -112,7 +114,22 @@ export const HomeStackScreen = () => {
 			<Stack.Screen
 				name="Home"
 				component={HomeScreen}
-				options={{title: getStr("home")}}
+				options={({navigation}) => ({
+					title: getStr("home"),
+					headerRight: () => (
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 16, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("EmailList")}>
+								<Icon
+									name={emailUnseen > 0 ? "envelope" : "envelope-o"}
+									size={24}
+									color={theme.colors.primary}
+								/>
+							</TouchableOpacity>
+						</View>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="Report"
@@ -335,3 +352,7 @@ export const HomeStackScreen = () => {
 		</Stack.Navigator>
 	);
 };
+
+export const HomeStackScreen = connect((state: State) => ({
+	emailUnseen: state.config.emailUnseen,
+}))(HomeStackUI);

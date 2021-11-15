@@ -1,4 +1,4 @@
-import {Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Platform, ScrollView, Text, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
@@ -10,10 +10,9 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-import {helper, State} from "../../redux/store";
+import {helper} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
-import {connect} from "react-redux";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import IconWasher from "../../assets/icons/IconWasher";
@@ -47,43 +46,9 @@ export const HomeSection = ({
 	);
 };
 
-const HomeUI = ({
-	navigation,
-	emailUnseen,
-}: {
-	navigation: HomeNav;
-	emailUnseen: number;
-}) => {
-	const themeName = useColorScheme();
-	const style = styles(themeName);
-
+export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 	return (
 		<ScrollView style={{padding: 4}}>
-			{emailUnseen > 0 && (
-				<View
-					style={[
-						style.sectionContainer,
-						{
-							borderColor: "#aaa",
-							borderWidth: themeName === "dark" ? 1 : 0,
-							alignItems: "flex-end",
-						},
-					]}>
-					<TouchableOpacity onPress={() => navigation.navigate("EmailList")}>
-						<Text
-							style={{
-								textAlign: "right",
-								fontSize: 15,
-								paddingHorizontal: 10,
-								paddingVertical: 6,
-								fontWeight: "bold",
-								color: "red",
-							}}>
-							{emailUnseen}
-						</Text>
-					</TouchableOpacity>
-				</View>
-			)}
 			<HomeSection title="study">
 				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
 					<IconReport width={iconSize} height={iconSize} />
@@ -150,10 +115,6 @@ const HomeUI = ({
 		</ScrollView>
 	);
 };
-
-export const HomeScreen = connect((state: State) => ({
-	emailUnseen: state.config.emailUnseen,
-}))(HomeUI);
 
 const styles = themedStyles((theme) => ({
 	sectionContainer: {
