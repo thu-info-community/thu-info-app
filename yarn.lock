@@ -8329,10 +8329,10 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@1.2.16:
-  version "1.2.16"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.2.16.tgz#60c7607593e88ed978e68b3e6e5384909b053d88"
-  integrity sha512-5lJqPmo0aYUvAhxHB8yBbP0sflzFju/iZ/bnsiDUHwIWhjF5d1bu7HVba4xDntZYrXr6HtJp74kUXvB1y3LcIg==
+thu-info-lib@1.2.18:
+  version "1.2.18"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.2.18.tgz#05f59723a91f14e98d1302a60f4938b35f2b4eaa"
+  integrity sha512-s8fstebiWE0ly8AUR3YHjKrNCwiKibjBp+pgWk5WbNBJAEpJFUgs1e0TeuvIK9SNU3txlujBr+AK0270zl9gwA==
   dependencies:
     abort-controller "3.0.0"
     cheerio "0.22.0"
