@@ -18,7 +18,7 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {Alert, TouchableOpacity, View} from "react-native";
+import {Alert, Platform, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
@@ -121,28 +121,29 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				component={HomeScreen}
 				options={({navigation}) => ({
 					title: getStr("home"),
-					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							{countdown.length > 0 && (
+					headerRight: () =>
+						Platform.OS === "android" && (
+							<View style={{flexDirection: "row"}}>
+								{countdown.length > 0 && (
+									<TouchableOpacity
+										style={{paddingHorizontal: 16, marginHorizontal: 4}}
+										onPress={() =>
+											Alert.alert(getStr("countdown"), countdown.join("\n"))
+										}>
+										<Icon name="bell" size={24} color={theme.colors.primary} />
+									</TouchableOpacity>
+								)}
 								<TouchableOpacity
 									style={{paddingHorizontal: 16, marginHorizontal: 4}}
-									onPress={() =>
-										Alert.alert(getStr("countdown"), countdown.join("\n"))
-									}>
-									<Icon name="bell" size={24} color={theme.colors.primary} />
+									onPress={() => navigation.navigate("EmailList")}>
+									<Icon
+										name={emailUnseen > 0 ? "envelope" : "envelope-o"}
+										size={24}
+										color={theme.colors.primary}
+									/>
 								</TouchableOpacity>
-							)}
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("EmailList")}>
-								<Icon
-									name={emailUnseen > 0 ? "envelope" : "envelope-o"}
-									size={24}
-									color={theme.colors.primary}
-								/>
-							</TouchableOpacity>
-						</View>
-					),
+							</View>
+						),
 				})}
 			/>
 			<Stack.Screen
