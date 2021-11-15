@@ -8,6 +8,7 @@ import {
     BKS_REPORT_BXR_URL,
     CLASSROOM_STATE_MIDDLE,
     CLASSROOM_STATE_PREFIX,
+    COUNT_DOWN_URL,
     EXPENDITURE_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
@@ -396,3 +397,9 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
         }),
         MOCK_LOSE_CARD_CODE,
     );
+
+export const countdown = async (): Promise<string[]> => {
+    const $ = cheerio.load(await uFetch(COUNT_DOWN_URL, INFO_ROOT_URL));
+    const data = $(".countdown li");
+    return data.map((_, e) => cheerio(e).text()).get();
+};

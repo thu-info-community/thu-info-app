@@ -1,4 +1,5 @@
 import {
+    countdown,
     getAssessmentForm,
     getAssessmentList,
     getClassroomState,
@@ -127,6 +128,8 @@ export class InfoHelper {
     ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
 
     public loseCard = async (): Promise<number> => loseCard(this);
+
+    public getCountdown = async (): Promise<string[]> => countdown();
 
     public getDormScore = async (): Promise<string> => getDormScore(this);
 
