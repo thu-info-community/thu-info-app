@@ -8,7 +8,6 @@ import {
     RECHARGE_ELE_URL,
     RECHARGE_PAY_ELE_URL,
     ELE_REMAINDER_URL,
-    SEND_TO_ALIPAY_ACTION_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
@@ -38,31 +37,27 @@ export const getEleRechargePayCode = async (
 
     const $ = await uFetch(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
 
-    const username = $("input[name=username]").attr().value;
-    const louhao = $("input[name=louhao]").attr().value;
-
     const redirect = await uFetch(
         RECHARGE_PAY_ELE_URL,
         RECHARGE_ELE_URL,
         {
             __EVENTTARGET: "",
             __EVENTARGUMENT: "",
-            __VIEWSTATE: "/wEPDwUJNzkyOTg4MDg4ZGTEGqvW9+JoVX5cqytAfdRw7k3JtQ==",
-            __VIEWSTATEGENERATOR: "D6B25EB7",
+            __VIEWSTATE: $("#__VIEWSTATE").attr().value,
+            __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
             recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
             write_money: money,
-            username,
-            louhao,
-            student_id: helper.userId,
+            username: $("input[name=username]").attr().value,
+            louhao: $("input[name=louhao]").attr().value,
+            room: $("input[name=room]").attr().value,
+            student_id: $("input[name=student_id]").attr().value,
             banktype: "alipay",
         },
-    ).then((s) => cheerio("#banksubmit", s).attr().action);
+        60000,
+        "GBK",
+    ).then((s) => cheerio("#banksubmit", s));
 
-    // Get pay id
-    const $1 = await uFetch(redirect, RECHARGE_PAY_ELE_URL).then(cheerio.load);
-    const id = $1("input[name=id]").attr().value;
-    const xxx = $1("#xxx2").attr().value;
-    return generalGetPayCode(await uFetch(SEND_TO_ALIPAY_ACTION_URL, redirect, { id, xxx }), "GBK");
+    return generalGetPayCode(await uFetch(redirect.attr().action, RECHARGE_PAY_ELE_URL, redirect.serialize() as never as object, 60000, "UTF-8", true), "GBK");
 };
 
 export const getElePayRecord = async (
