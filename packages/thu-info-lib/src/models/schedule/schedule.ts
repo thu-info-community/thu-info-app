@@ -42,7 +42,7 @@ const endMap: {[key: string]: number} = {
 };
 
 const examBeginMap: {[key: string]: number} = {
-    "8:00": 1,
+    "9:00": 1,
     "2:30": 7,
     "14:30": 7,
     "7:00": 12,
@@ -50,7 +50,7 @@ const examBeginMap: {[key: string]: number} = {
 };
 
 const examEndMap: {[key: string]: number} = {
-    "10:00": 3,
+    "11:00": 3,
     "4:30": 9,
     "16:30": 9,
     "9:00": 13,
