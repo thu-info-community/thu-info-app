@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from "react-native";
+import {Alert, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getMails} from "../../utils/email";
@@ -10,7 +10,23 @@ export const EmailListScreen = ({navigation}: {navigation: HomeNav}) => {
 		(mail, _, __, {colors}) => (
 			<View style={{flexDirection: "row", alignItems: "center"}}>
 				<TouchableOpacity
-					onPress={() => navigation.navigate("Email", {messageId: mail.id})}>
+					onPress={() => {
+						console.log(mail.from);
+						if (
+							mail.from.includes("tsginhua") ||
+							mail.from.includes("tsnighua") ||
+							mail.from.includes("tsignhua") ||
+							mail.from.includes("tsgnihua") ||
+							mail.from.includes("tsngihua")
+						) {
+							Alert.alert(
+								"钓鱼邮件警告",
+								`该邮件的发件人为${mail.from}，该邮件被判定为钓鱼邮件，已为您智能拦截。`,
+							);
+						} else {
+							navigation.navigate("Email", {messageId: mail.id});
+						}
+					}}>
 					<Text
 						style={{
 							flex: 1,
