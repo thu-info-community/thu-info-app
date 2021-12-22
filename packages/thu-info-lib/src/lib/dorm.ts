@@ -67,12 +67,9 @@ export const getElePayRecord = async (
         helper,
         -2,
         async () => {
-            const $ = await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load);
+            const data = (await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load))(".myTable tr");
 
-            return $(".myTable")
-                .first()
-                .children()
-                .slice(1)
+            return data.slice(1, data.length - 1)
                 .map((index, element) => [
                     (element as TagElement).children
                         .filter((it) => it.type === "tag" && it.tagName === "td")

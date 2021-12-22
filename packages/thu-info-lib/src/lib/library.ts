@@ -413,7 +413,7 @@ export const getLibraryRoomBookingRecord = async (
         async() :Promise<LibRoomBookRecord[]> => {
             const result = await uFetch(LIBRARY_ROOM_BOOKING_RECORD_URL).then(s => JSON.parse(s).msg);
             if (result.includes("没有数据")) return [];
-            const tables = cheerio.load(result)("tbody");
+            const tables = cheerio("tbody", result);
             return tables.map((_, table) => {
                 const tableElement = cheerio(table);
                 const tableAttr = tableElement.attr();
