@@ -1,5 +1,5 @@
 import cheerio from "cheerio";
-import {retryWrapperWithMocks} from "./core";
+import {retryWrapperWithMocks, roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
     ASSESSMENT_LIST_URL,
@@ -40,6 +40,7 @@ import {
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
 } from "../mocks/basics";
+import {ReportError} from "../utils/error";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -62,9 +63,10 @@ export const getReport = (
     newGPA: boolean,
     flag = 1,
 ): Promise<Course[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        792,
+        "default",
+        "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`), INFO_ROOT_URL),
             bx && flag === 1
@@ -113,7 +115,7 @@ export const getReport = (
                 })
                 .get();
             if (result.length === 0 && str.indexOf("table1") === -1) {
-                throw new Error("Getting report failure.");
+                throw new ReportError();
             }
             return result;
         }),

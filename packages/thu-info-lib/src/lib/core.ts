@@ -32,8 +32,24 @@ import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
+import {UrlError} from "../utils/error";
 
 type RoamingPolicy = "default";
+
+const HOST_MAP: {[key: string]: string} = {
+    "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
+};
+
+const parseUrl = (urlIn: string) => {
+    const protocol = urlIn.substring(0, urlIn.indexOf(":"));
+    const regRes = /:\/\/(.+?).tsinghua.edu.cn\/(.+)/.exec(urlIn);
+    if (regRes === null || regRes[1] === undefined || regRes[2] === undefined) {
+        throw new UrlError();
+    }
+    const host = regRes[1];
+    const path = regRes[2];
+    return `https://webvpn.tsinghua.edu.cn/${protocol}/${HOST_MAP[host]}/${path}`;
+};
 
 const getCsrfToken = async () => {
     const cookie = await uFetch(GET_COOKIE_URL);
@@ -120,7 +136,6 @@ const loginInfo2021 = async (
     helper: InfoHelper,
     userId: string,
     password: string,
-    indicator?: () => void,
 ) => {
     await uFetch(ID_INFO_2021_URL, ID_INFO_2021_URL);
     const response = await uFetch(
@@ -144,7 +159,6 @@ const loginInfo2021 = async (
     } catch {
         throw new Error("Failed to get meta data.");
     }
-    indicator && indicator();
 };
 
 /**
@@ -186,6 +200,7 @@ export const login = async (
         await Promise.all([
             loginInfo(helper, userId, password, statusIndicator),
             loginAcademic(helper, userId, password, statusIndicator),
+            loginInfo2021(helper, userId, password),
         ]);
         await batchGetTickets(
             helper,
@@ -216,7 +231,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     case "default": {
         const csrf = await getCsrfToken();
         const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, ROAMING_URL, {}).then(JSON.parse);
-        const url = object.roamingurl.replace(/&amp;/g, "&").replace("http://zhjw.cic.tsinghua.edu.cn", "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290");
+        const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
         await uFetch(url);
     }
     }
