@@ -157,7 +157,7 @@ const loginInfo2021 = async (
     await uFetch(redirectUrl, ID_LOGIN_URL);
     try {
         const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`, redirectUrl, {}).then(JSON.parse);
-        helper.emailName = ""; // TODO: email name!
+        // TODO: email name!
         helper.fullName = object.xm;
     } catch {
         throw new Error("Failed to get meta data.");
