@@ -1,5 +1,5 @@
 import cheerio from "cheerio";
-import {retryWrapperWithMocks, roamingWrapperWithMocks} from "./core";
+import {roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
     ASSESSMENT_LIST_URL,
@@ -125,9 +125,10 @@ export const getReport = (
 export const getAssessmentList = (
     helper: InfoHelper,
 ): Promise<[string, boolean, string][]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        2005,
+        "default",
+        "0D8B99BA23FD2BA22428D9C8AA0AB508",
         () => uFetch(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
             const result = cheerio("tbody", str)
                 .children()
@@ -159,9 +160,10 @@ export const getAssessmentForm = (
     helper: InfoHelper,
     url: string,
 ): Promise<Form> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        2005,
+        "default",
+        "0D8B99BA23FD2BA22428D9C8AA0AB508",
         () => uFetch(url, ASSESSMENT_MAIN_URL).then((str) => {
             const $ = cheerio.load(str);
             const basics = $("#xswjtxFormid > input")
@@ -187,9 +189,10 @@ export const postAssessmentForm = (
     helper: InfoHelper,
     form: Form,
 ): Promise<void> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        2005,
+        "default",
+        "0D8B99BA23FD2BA22428D9C8AA0AB508",
         () => uFetch(
             ASSESSMENT_SUBMIT_URL,
             ASSESSMENT_MAIN_URL,
@@ -216,9 +219,10 @@ const physicalExamResultTotal = (json: any) =>
 export const getPhysicalExamResult = (
     helper: InfoHelper,
 ): Promise<[string, string][]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        792,
+        "default",
+        "8BF4F9A706589060488B6B6179E462E5",
         () => uFetch(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
             const json = JSON.parse(
                 // eslint-disable-next-line quotes
@@ -269,9 +273,10 @@ export const getExpenditures = (
     beg: Date,
     end: Date,
 ): Promise<[Record[], number, number, number]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        824,
+        "default",
+        "2B56CC9B3BFFA26932C4110E0C5FB35A",
         () => uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
             (data) => {
                 const workbook = XLSX.read(data, {sheetStubs: true, cellDates: true});
@@ -326,9 +331,10 @@ export const getClassroomState = (
     name: string,
     week: number,
 ): Promise<[string, number[]][]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        792,
+        "default",
+        "40470BB47E0849E9EF717983490BC964",
         () => uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(name, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
             const result = cheerio("#scrollContent>table>tbody", s)
                 .map((_, element) =>
@@ -376,9 +382,10 @@ export const getClassroomState = (
     );
 
 export const loseCard = (helper: InfoHelper): Promise<number> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        824,
+        "default",
+        "2B56CC9B3BFFA26932C4110E0C5FB35A",
         () => uFetch(LOSE_CARD_URL).then((s) => {
             const index = s.indexOf("var result");
             const left = s.indexOf("=", index) + 1;
