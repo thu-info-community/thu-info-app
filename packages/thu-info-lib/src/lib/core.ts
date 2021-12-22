@@ -25,12 +25,24 @@ import {
     ID_LOGIN_URL,
     ID_INFO_2021_URL,
     USER_DATA_URL,
+    ROAMING_URL,
 } from "../constants/strings";
 import md5 from "md5";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
+
+type RoamingPolicy = "default";
+
+const getCsrfToken = async () => {
+    const cookie = await uFetch(GET_COOKIE_URL);
+    const q = /XSRF-TOKEN=(.+?);/.exec(cookie + ";");
+    if (q === null || q[1] === undefined) {
+        throw new Error("Failed to get csrf token.");
+    }
+    return q[1];
+};
 
 const loginInfo = async (
     helper: InfoHelper,
@@ -125,13 +137,8 @@ const loginInfo2021 = async (
     }
     const redirectUrl = cheerio("a", response).attr().href;
     await uFetch(redirectUrl, ID_LOGIN_URL);
-    const cookie = await uFetch(GET_COOKIE_URL, redirectUrl);
-    const q = /XSRF-TOKEN=(.+?);/.exec(cookie + ";");
-    if (q === null || q[1] === undefined) {
-        throw new Error("Failed to get meta data.");
-    }
     try {
-        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${q[1]}`, redirectUrl, {}).then(JSON.parse);
+        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`, redirectUrl, {}).then(JSON.parse);
         helper.emailName = ""; // TODO: email name!
         helper.fullName = object.xm;
     } catch {
@@ -201,6 +208,17 @@ export const login = async (
 export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
         await uFetch(LOGOUT_URL);
+    }
+};
+
+export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<void> => {
+    switch (policy) {
+    case "default": {
+        const csrf = await getCsrfToken();
+        const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, ROAMING_URL, {}).then(JSON.parse);
+        const url = object.roamingurl.replace(/&amp;/g, "&").replace("http://zhjw.cic.tsinghua.edu.cn", "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290");
+        await uFetch(url);
+    }
     }
 };
 
@@ -297,6 +315,43 @@ const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
         return false;
     }
 };
+
+export const roamingWrapper = async <R>(
+    helper: InfoHelper,
+    policy: RoamingPolicy | undefined,
+    payload: string,
+    operation: () => Promise<R>,
+): Promise<R> => {
+    try {
+        if (policy) {
+            try {
+                return await operation();
+            } catch {
+                await roam(helper, policy, payload);
+                return await operation();
+            }
+        } else {
+            return await operation();
+        }
+    } catch (e) {
+        if (await verifyAndReLogin(helper)) {
+            return await operation();
+        } else {
+            throw e;
+        }
+    }
+};
+
+export const roamingWrapperWithMocks = async <R>(
+    helper: InfoHelper,
+    policy: RoamingPolicy | undefined,
+    payload: string,
+    operation: () => Promise<R>,
+    fallback: R,
+): Promise<R> =>
+    helper.mocked()
+        ? Promise.resolve(fallback)
+        : roamingWrapper(helper, policy, payload, operation);
 
 const retryWrapper = async <R>(
     helper: InfoHelper,
