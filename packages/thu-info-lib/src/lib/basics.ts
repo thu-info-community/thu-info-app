@@ -73,14 +73,8 @@ export const getReport = (
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
             if (bxStr) {
-                const childrenOriginal = cheerio(
-                    ".table-striped",
-                    bxStr,
-                ).children();
-                const children = childrenOriginal.slice(
-                    1,
-                    childrenOriginal.length - 1,
-                );
+                const childrenOriginal = cheerio(".table-striped tr", bxStr);
+                const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
                 children.each((index, element) => {
                     if (element.type === "tag" && element.children.length === 25) {
                         const transformedElement = cheerio(element);
