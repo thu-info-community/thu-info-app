@@ -1,4 +1,4 @@
-import {retryWrapperWithMocks} from "./core";
+import {roamingWrapperWithMocks} from "./core";
 import {
     INFO_ROOT_URL,
     JXMH_REFERER,
@@ -21,15 +21,15 @@ import {uFetch} from "../utils/network";
 import {
     MOCK_PRIMARY_SCHEDULE,
     MOCK_SECONDARY_SCHEDULE,
-    MOCK_SECONDARY_VERBOSE,
 } from "../mocks/schedule";
 
 const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `Calendar.weekCount`.
 
 const getPrimary = (helper: InfoHelper) =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        792,
+        "default",
+        "287C0C6D90ABB364CD5FDF1495199962",
         () => Promise.all(
             Array.from(new Array(Calendar.weekCount / GROUP_SIZE), (_, id) =>
                 uFetch(
@@ -59,9 +59,10 @@ const getPrimary = (helper: InfoHelper) =>
     );
 
 const getSecondary = (helper: InfoHelper) =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        792,
+        "default",
+        "287C0C6D90ABB364CD5FDF1495199962",
         () => uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
@@ -78,19 +79,3 @@ export const getSchedule = async (helper: InfoHelper) => {
     scheduleList.forEach(mergeTimeBlocks);
     return scheduleList;
 };
-
-export const getSecondaryVerbose = (helper: InfoHelper) =>
-    retryWrapperWithMocks(
-        helper,
-        792,
-        () => uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
-            const lowerBound = str.indexOf("function setInitValue");
-            const upperBound = str.indexOf("}", lowerBound);
-            return parseScript(str.substring(lowerBound, upperBound), true) as [
-                string,
-                string,
-                boolean,
-            ][];
-        }),
-        MOCK_SECONDARY_VERBOSE,
-    );

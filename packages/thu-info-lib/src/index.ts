@@ -38,7 +38,7 @@ import {
     getLibrarySectionList,
 } from "./lib/library";
 import {getNewsDetail, getNewsList} from "./lib/news";
-import {getSchedule, getSecondaryVerbose} from "./lib/schedule";
+import {getSchedule} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {Record} from "./models/home/expenditure";
@@ -200,8 +200,6 @@ export class InfoHelper {
     ): Promise<[string, string, string]> => getNewsDetail(this, url);
 
     public getSchedule = async () => getSchedule(this);
-
-    public getSecondaryVerbose = async () => getSecondaryVerbose(this);
 
     public getCrCaptchaUrl = async () => getCrCaptchaUrlMethod();
 

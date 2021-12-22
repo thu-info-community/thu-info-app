@@ -176,5 +176,3 @@ export const MOCK_PRIMARY_SCHEDULE = [
 ];
 
 export const MOCK_SECONDARY_SCHEDULE = [];
-
-export const MOCK_SECONDARY_VERBOSE = [];
