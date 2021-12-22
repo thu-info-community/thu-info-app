@@ -14,6 +14,14 @@ export const INFO_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login";
 export const META_DATA_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/__service__/nav.json";
+export const ID_INFO_2021_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/form/10000ea055dd8d81d09d5a1ba55d39ad";
+export const ID_LOGIN_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/check";
+export const GET_COOKIE_URL =
+    "https://webvpn.tsinghua.edu.cn/wengine-vpn/cookie?method=get&host=info2021.tsinghua.edu.cn&scheme=https&path=/f/info/gxfw_fg/common/index";
+export const USER_DATA_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/grjbxx";
 export const ACADEMIC_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/";
 export const ACADEMIC_LOGIN_URL =

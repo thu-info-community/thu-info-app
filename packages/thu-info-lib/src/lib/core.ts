@@ -21,6 +21,10 @@ import {
     PRE_ROAM_URL_PREFIX,
     TSINGHUA_HOME_LOGIN_URL,
     WEB_VPN_ROOT_URL,
+    GET_COOKIE_URL,
+    ID_LOGIN_URL,
+    ID_INFO_2021_URL,
+    USER_DATA_URL,
 } from "../constants/strings";
 import md5 from "md5";
 import cheerio from "cheerio";
@@ -98,6 +102,42 @@ const loginAcademic = async (
     throw new Error(
         `Failed to login to Academic after ${MAX_ATTEMPT} attempts. (step 2).`,
     );
+};
+
+const loginInfo2021 = async (
+    helper: InfoHelper,
+    userId: string,
+    password: string,
+    indicator?: () => void,
+) => {
+    await uFetch(ID_INFO_2021_URL, ID_INFO_2021_URL);
+    const response = await uFetch(
+        ID_LOGIN_URL,
+        ID_INFO_2021_URL,
+        {
+            i_user: userId,
+            i_pass: password,
+            i_captcha: "",
+        },
+    );
+    if (!response.includes("登录成功")) {
+        throw new Error("Failed to login to INFO.");
+    }
+    const redirectUrl = cheerio("a", response).attr().href;
+    await uFetch(redirectUrl, ID_LOGIN_URL);
+    const cookie = await uFetch(GET_COOKIE_URL, redirectUrl);
+    const q = /XSRF-TOKEN=(.+?);/.exec(cookie + ";");
+    if (q === null || q[1] === undefined) {
+        throw new Error("Failed to get meta data.");
+    }
+    try {
+        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${q[1]}`, redirectUrl, {}).then(JSON.parse);
+        helper.emailName = ""; // TODO: email name!
+        helper.fullName = object.xm;
+    } catch {
+        throw new Error("Failed to get meta data.");
+    }
+    indicator && indicator();
 };
 
 /**
