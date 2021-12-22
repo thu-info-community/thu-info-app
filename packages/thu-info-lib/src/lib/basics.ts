@@ -97,8 +97,7 @@ export const getReport = (
                 });
             }
             const graduate = helper.graduate();
-            const result = cheerio("[cellspacing=1]", str)
-                .children()
+            const result = cheerio("[cellspacing=1] tr", str)
                 .slice(1)
                 .map((_, element) => {
                     const grade = getCheerioText(element, graduate ? 9 : 7);
