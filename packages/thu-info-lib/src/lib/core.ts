@@ -207,7 +207,7 @@ export const login = async (
         ]);
         await batchGetTickets(
             helper,
-            [792, 824, 2005, 5000, 5001, -1, -2, 424] as ValidTickets[],
+            [2005, 5000, 5001, -1, -2, 424] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -241,20 +241,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
 };
 
 export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promise<void> => {
-    if (target === 792 || target === 824) {
-        const response = await uFetch(
-            INFO_ROOT_URL,
-            PRE_LOGIN_URL,
-            undefined,
-            3000,
-        );
-        await uFetch(
-            cheerio(`#9-${target}_iframe`, response).attr().src,
-            INFO_ROOT_URL,
-            undefined,
-            6000,
-        );
-    } else if (target === -1) {
+    if (target === -1) {
         const userId = helper.userId;
         const appId = md5(userId + new Date().getTime());
         const url = DORM_LOGIN_URL_PREFIX + appId;
@@ -419,6 +406,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [792, 824, 2005, 5000, 5001, 424] as ValidTickets[]);
+        await batchGetTickets(helper, [2005, 5000, 5001, 424] as ValidTickets[]);
     }, 60000);
 };
