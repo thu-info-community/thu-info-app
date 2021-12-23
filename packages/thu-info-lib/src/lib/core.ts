@@ -161,7 +161,11 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
 const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
     try {
         const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
-        return object.ryh === helper.userId;
+        if (object.ryh !== helper.userId) {
+            const {userId, password, dormPassword} = helper;
+            await login(helper, userId, password, dormPassword);
+        }
+        return true;
     } catch {
         return false;
     }
