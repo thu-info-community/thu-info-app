@@ -9,3 +9,7 @@ export class UrlError extends LibError {
 export class ReportError extends LibError {
 
 }
+
+export class SportsError extends LibError {
+
+}

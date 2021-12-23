@@ -1,4 +1,4 @@
-import {retryWrapperWithMocks} from "./core";
+import {roamingWrapperWithMocks} from "./core";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {
@@ -21,6 +21,7 @@ import TagElement = cheerio.TagElement;
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import Element = cheerio.Element;
+import {SportsError} from "../utils/error";
 
 export const VALID_RECEIPT_TITLES = ["清华大学", "清华大学工会", "清华大学教育基金会"] as const;
 export type ValidReceiptTypes = typeof VALID_RECEIPT_TITLES[number];
@@ -97,9 +98,10 @@ export const updateSportsPhoneNumber = async (
     helper: InfoHelper,
     phone: string,
 ): Promise<void> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        424,
+        "default",
+        "5539ECF8CD815C7D3F5A8EE0A2D72441",
         async () => {
             if (!/^(1[3-9][0-9]|15[036789]|18[89])\d{8}$/.test(phone)) {
                 throw new Error("请正确填写手机号码!");
@@ -115,9 +117,10 @@ export const getSportsResources = async (
     itemId: string,
     date: string, // yyyy-MM-dd
 ): Promise<SportsResourcesInfo> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        424,
+        "default",
+        "5539ECF8CD815C7D3F5A8EE0A2D72441",
         async () => Promise.all([
             getSportsResourceLimit(helper, gymId, itemId, date),
             getSportsPhoneNumber(),
@@ -200,12 +203,16 @@ export const makeSportsReservation = async (
 
 export const getSportsReservationRecords = async (
     helper: InfoHelper,
-) => retryWrapperWithMocks(
+) => roamingWrapperWithMocks(
     helper,
-    424,
+    "default",
+    "5539ECF8CD815C7D3F5A8EE0A2D72441",
     async () => {
         const $ = await uFetch(SPORTS_BASE_URL + "&gymnasium_id=4836273", SPORTS_BASE_URL).then(cheerio.load);
         const tables = $("table");
+        if (tables.length === 0) {
+            throw new SportsError();
+        }
         const rows = cheerio(tables.toArray()[tables.length - 1]).find("tbody tr");
         const getId = (e: Element) => {
             try {
@@ -236,9 +243,10 @@ export const getSportsReservationRecords = async (
 export const unsubscribeSportsReservation = async (
     helper: InfoHelper,
     bookId: string,
-) => retryWrapperWithMocks(
+) => roamingWrapperWithMocks(
     helper,
-    424,
+    "default",
+    "5539ECF8CD815C7D3F5A8EE0A2D72441",
     async () => {
         await uFetch(SPORTS_UNSUBSCRIBE_URL, SPORTS_BASE_URL, {bookId});
     },

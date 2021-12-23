@@ -1,7 +1,4 @@
 import {
-    ACADEMIC_HOME_URL,
-    ACADEMIC_LOGIN_URL,
-    ACADEMIC_URL,
     CONFIRM_LOGIN_URL,
     DO_LOGIN_URL,
     DORM_LOGIN_URL_PREFIX,
@@ -41,6 +38,7 @@ const HOST_MAP: {[key: string]: string} = {
     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
     "ecard": "77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a",
     "learn": "77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc",
+    "50": "77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00",
 };
 
 const parseUrl = (urlIn: string) => {
@@ -97,42 +95,6 @@ const loginInfo = async (
         throw new Error("Failed to get meta data.");
     }
     indicator && indicator();
-};
-
-const loginAcademic = async (
-    helper: InfoHelper,
-    userId: string,
-    password: string,
-    indicator?: () => void,
-) => {
-    const responseA = await uFetch(
-        ACADEMIC_LOGIN_URL,
-        ACADEMIC_URL,
-        {
-            userName: userId,
-            password,
-        },
-    );
-    if (!responseA.includes("清华大学信息门户")) {
-        throw new Error("Failed to login to Academic (step 1).");
-    }
-    indicator && indicator();
-
-    const MAX_ATTEMPT = 3;
-    for (let i = 0; i < MAX_ATTEMPT; ++i) {
-        const iFrameUrl = cheerio(
-            helper.graduate() ? "#23-2604_iframe" : "#25-2649_iframe",
-            await uFetch(ACADEMIC_HOME_URL, ACADEMIC_URL),
-        ).attr().src;
-        const responseB = await uFetch(iFrameUrl, ACADEMIC_HOME_URL);
-        if (responseB.includes("清华大学教学门户")) {
-            indicator && indicator();
-            return;
-        }
-    }
-    throw new Error(
-        `Failed to login to Academic after ${MAX_ATTEMPT} attempts. (step 2).`,
-    );
 };
 
 const loginInfo2021 = async (
@@ -202,12 +164,11 @@ export const login = async (
         statusIndicator && statusIndicator();
         await Promise.all([
             loginInfo(helper, userId, password, statusIndicator),
-            loginAcademic(helper, userId, password, statusIndicator),
             loginInfo2021(helper, userId, password),
         ]);
         await batchGetTickets(
             helper,
-            [2005, 5000, 5001, -1, -2, 424] as ValidTickets[],
+            [2005, 5000, 5001, -1, -2] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -406,6 +367,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [2005, 5000, 5001, 424] as ValidTickets[]);
+        await batchGetTickets(helper, [2005, 5000, 5001] as ValidTickets[]);
     }, 60000);
 };

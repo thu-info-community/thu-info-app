@@ -72,7 +72,7 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
-    public static TOTAL_PHASES = 10;  // const
+    public static TOTAL_PHASES = 7;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
