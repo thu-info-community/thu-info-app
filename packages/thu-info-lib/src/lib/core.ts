@@ -6,7 +6,7 @@ import {
     LOGIN_URL,
     LOGOUT_URL,
     TSINGHUA_HOME_LOGIN_URL,
-    WEB_VPN_ROOT_URL,
+    USER_DATA_URL,
     GET_COOKIE_URL,
     ID_LOGIN_URL,
     ID_BASE_URL,
@@ -83,11 +83,6 @@ export const login = async (
         await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
     } finally {
         helper.loginLocked = false;
-        // @ts-ignore
-        if (global.FileReader) {
-            // Do not keep-alive for Node.js
-            keepAlive(helper);
-        }
     }
 };
 
@@ -164,12 +159,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
 };
 
 const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
-    const verification = await uFetch(WEB_VPN_ROOT_URL, WEB_VPN_ROOT_URL);
-    if (!verification.includes("个人信息")) {
-        const {userId, password, dormPassword} = helper;
-        await login(helper, userId, password, dormPassword);
-        return true;
-    } else {
+    try {
+        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
+        return object.ryh === helper.userId;
+    } catch {
         return false;
     }
 };
@@ -210,10 +203,3 @@ export const roamingWrapperWithMocks = async <R>(
     helper.mocked()
         ? Promise.resolve(fallback)
         : roamingWrapper(helper, policy, payload, operation);
-
-const keepAlive = (helper: InfoHelper) => {
-    helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
-    helper.keepAliveTimer = setInterval(async () => {
-        // TODO: keep alive
-    }, 60000);
-};

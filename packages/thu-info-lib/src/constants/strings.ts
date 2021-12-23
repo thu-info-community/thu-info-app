@@ -2,18 +2,11 @@ export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
 
-export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn";
 export const LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login";
 export const DO_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/do-login?local_login=true";
 export const CONFIRM_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/do-confirm-login";
-export const INFO_URL =
-    "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/";
-export const INFO_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/https-443/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/Login";
-export const META_DATA_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/__service__/nav.json";
 export const ID_BASE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/form/";
 export const ID_LOGIN_URL =
@@ -24,25 +17,11 @@ export const USER_DATA_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/grjbxx";
 export const ROAMING_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/yyfw/vyyfwxx/info/portal_fg/common/onlineAppRedirect";
-export const ACADEMIC_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/";
-export const ACADEMIC_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/Login";
-export const ACADEMIC_HOME_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/render.userLayoutRootNode.uP";
 export const LOGOUT_URL = "https://webvpn.tsinghua.edu.cn/logout";
 export const INFO_ROOT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/render.userLayoutRootNode.uP";
 export const COUNT_DOWN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?url=/portal3rd.do&m=tsxx";
-export const PRE_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/prelogin.jsp?result=1";
-export const DORM_LOGIN_URL_PREFIX =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_user_authenticate.aspx?url=%2fweixin%2fweixin_personal_information.aspx&weixin_appid=";
-export const DORM_SCORE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_health_linechart.aspx?id=0";
-export const DORM_SCORE_REFERER =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/index.aspx";
 export const GET_BKS_REPORT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw";
 export const GET_YJS_REPORT_URL =
@@ -67,8 +46,6 @@ export const ALIPAY_URL_PREFIX =
     "alipayqr://platformapi/startapp?saId=10000007&qrcode=https%3A%2F%2Fqr.alipay.com%2F";
 export const ELE_REMAINDER_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/Netweb_List/Netweb_Home_electricity_Detail.aspx";
-export const PRE_ROAM_URL_PREFIX =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/minichan/roamaction.jsp?mode=local&id=";
 export const ASSESSMENT_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f/jxpg/f/jxpg/wj/xs/pgkcList";
 export const ASSESSMENT_MAIN_URL =
@@ -130,8 +107,6 @@ export const LIBRARY_ROOM_BOOKING_RECORD_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/center.aspx?act=get_History_resv&strat=90&StatFlag=New";
 export const LIBRARY_CANCEL_BOOKING_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22f23265c770ac7b88b5c2d325e4285a3fcff91f772dc/ClientWeb/pro/ajax/reserve.aspx?act=del_resv&id=";
-export const ID_LOGIN_CHECK_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/check";
 export const LIBRARY_BOOK_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/spaces/";
 export const LIBRARY_BOOK_URL_SUFFIX = "/book";
