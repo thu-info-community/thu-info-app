@@ -13,3 +13,7 @@ export class ReportError extends LibError {
 export class SportsError extends LibError {
 
 }
+
+export class IdAuthError extends LibError {
+
+}

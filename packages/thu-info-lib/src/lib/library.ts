@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import {retryWrapperWithMocks} from "./core";
+import {retryWrapperWithMocks, roamingWrapperWithMocks} from "./core";
 import {
     CANCEL_BOOKING_URL,
     LIBRARY_AREAS_URL,
@@ -230,9 +230,10 @@ export const getLibrarySeatList = (
         ), []);
 
 const getAccessToken = (helper: InfoHelper): Promise<string> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5000,
+        "id",
+        "ef84f6d6784f6b834e5214f432d6173f/0?/api/id_tsinghua_callback",
         () => uFetch(LIBRARY_HOME_URL).then((response) => {
             if (helper.mocked()) {
                 return "";
@@ -255,9 +256,10 @@ export const bookLibrarySeat = async (
     section: LibrarySection,
     dateChoice: 0 | 1,
 ): Promise<{status: number; msg: string}> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         async () => JSON.parse(
             await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
                 uFetch(
@@ -278,9 +280,10 @@ export const bookLibrarySeat = async (
 export const getBookingRecords = async (
     helper: InfoHelper,
 ): Promise<LibBookRecord[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         async (): Promise<LibBookRecord[]> => {
             await getAccessToken(helper);
             const html = await uFetch(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
@@ -314,9 +317,10 @@ export const cancelBooking = async (
     helper: InfoHelper,
     id: string,
 ): Promise<void> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         () => getAccessToken(helper)
             .then((token) => uFetch(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
                 _method: "delete",

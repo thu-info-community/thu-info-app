@@ -4,13 +4,11 @@ import {
     DORM_LOGIN_URL_PREFIX,
     DORM_SCORE_REFERER,
     DORM_SCORE_URL,
-    ID_LOGIN_CHECK_URL,
     INFO_LOGIN_URL,
     INFO_ROOT_URL,
     INFO_URL,
     LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
     LIBRARY_ROOM_BOOKING_LOGIN_URL,
-    LIBRARY_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
     META_DATA_URL,
@@ -20,7 +18,7 @@ import {
     WEB_VPN_ROOT_URL,
     GET_COOKIE_URL,
     ID_LOGIN_URL,
-    ID_INFO_2021_URL,
+    ID_BASE_URL,
     USER_DATA_URL,
     ROAMING_URL,
 } from "../constants/strings";
@@ -29,9 +27,9 @@ import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
-import {UrlError} from "../utils/error";
+import {IdAuthError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default";
+type RoamingPolicy = "default" | "id";
 
 const HOST_MAP: {[key: string]: string} = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -97,28 +95,10 @@ const loginInfo = async (
     indicator && indicator();
 };
 
-const loginInfo2021 = async (
-    helper: InfoHelper,
-    userId: string,
-    password: string,
-) => {
-    await uFetch(ID_INFO_2021_URL, ID_INFO_2021_URL);
-    const response = await uFetch(
-        ID_LOGIN_URL,
-        ID_INFO_2021_URL,
-        {
-            i_user: userId,
-            i_pass: password,
-            i_captcha: "",
-        },
-    );
-    if (!response.includes("登录成功")) {
-        throw new Error("Failed to login to INFO.");
-    }
-    const redirectUrl = cheerio("a", response).attr().href;
-    await uFetch(redirectUrl, ID_LOGIN_URL);
+const loginInfo2021 = async (helper: InfoHelper) => {
+    await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
     try {
-        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`, redirectUrl, {}).then(JSON.parse);
+        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`, undefined, {}).then(JSON.parse);
         // TODO: email name!
         helper.fullName = object.xm;
     } catch {
@@ -164,11 +144,11 @@ export const login = async (
         statusIndicator && statusIndicator();
         await Promise.all([
             loginInfo(helper, userId, password, statusIndicator),
-            loginInfo2021(helper, userId, password),
+            loginInfo2021(helper),
         ]);
         await batchGetTickets(
             helper,
-            [2005, 5000, 5001, -1, -2] as ValidTickets[],
+            [5001, -1, -2] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -197,6 +177,25 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, ROAMING_URL, {}).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
         await uFetch(url);
+        break;
+    }
+    case "id": {
+        await uFetch(ID_BASE_URL + payload);
+        const response = await uFetch(
+            ID_LOGIN_URL,
+            ID_BASE_URL + payload,
+            {
+                i_user: helper.userId,
+                i_pass: helper.password,
+                i_captcha: "",
+            },
+        );
+        if (!response.includes("登录成功")) {
+            throw new IdAuthError();
+        }
+        const redirectUrl = cheerio("a", response).attr().href;
+        await uFetch(redirectUrl, ID_LOGIN_URL);
+        break;
     }
     }
 };
@@ -249,17 +248,6 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
                 Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
             },
         );
-    } else if (target === 5000) {
-        await uFetch(LIBRARY_LOGIN_URL, undefined);
-        const redirect = cheerio(
-            "div.wrapper>a",
-            await uFetch(ID_LOGIN_CHECK_URL, LIBRARY_LOGIN_URL, {
-                i_user: helper.userId,
-                i_pass: helper.password,
-                i_captcha: "",
-            }),
-        ).attr().href;
-        await uFetch(redirect);
     } else if (target === 5001) {
         await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
             id: helper.userId,
@@ -367,6 +355,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [2005, 5000, 5001] as ValidTickets[]);
+        await batchGetTickets(helper, [5001] as ValidTickets[]);
     }, 60000);
 };
