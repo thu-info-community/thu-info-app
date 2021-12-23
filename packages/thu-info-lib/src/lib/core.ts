@@ -12,8 +12,6 @@ import {
     LOGIN_URL,
     LOGOUT_URL,
     META_DATA_URL,
-    PRE_LOGIN_URL,
-    PRE_ROAM_URL_PREFIX,
     TSINGHUA_HOME_LOGIN_URL,
     WEB_VPN_ROOT_URL,
     GET_COOKIE_URL,
@@ -29,7 +27,7 @@ import {clearCookies, ValidTickets} from "../utils/network";
 import {uFetch} from "../utils/network";
 import {IdAuthError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id";
+type RoamingPolicy = "default" | "id" | "cab";
 
 const HOST_MAP: {[key: string]: string} = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -148,7 +146,7 @@ export const login = async (
         ]);
         await batchGetTickets(
             helper,
-            [5001, -1, -2] as ValidTickets[],
+            [-1, -2] as ValidTickets[],
             statusIndicator,
         );
     } finally {
@@ -195,6 +193,14 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         }
         const redirectUrl = cheerio("a", response).attr().href;
         await uFetch(redirectUrl, ID_LOGIN_URL);
+        break;
+    }
+    case "cab": {
+        await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
+            id: helper.userId,
+            pwd: helper.password,
+            act: "login",
+        });
         break;
     }
     }
@@ -248,14 +254,6 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
                 Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
             },
         );
-    } else if (target === 5001) {
-        await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
-            id: helper.userId,
-            pwd: helper.password,
-            act: "login",
-        });
-    } else {
-        await uFetch(`${PRE_ROAM_URL_PREFIX}${target}`, PRE_LOGIN_URL);
     }
 };
 
@@ -355,6 +353,6 @@ const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);
     helper.keepAliveTimer = setInterval(async () => {
-        await batchGetTickets(helper, [5001] as ValidTickets[]);
+        // TODO: keep alive
     }, 60000);
 };

@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import {retryWrapperWithMocks, roamingWrapperWithMocks} from "./core";
+import {roamingWrapperWithMocks} from "./core";
 import {
     CANCEL_BOOKING_URL,
     LIBRARY_AREAS_URL,
@@ -73,9 +73,10 @@ const getLibName = (name: string, kindName: string): LibName => {
 };
 
 export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         () => fetchJson(LIBRARY_LIST_URL, LIBRARY_HOME_URL).then(
             (r) =>
                 r.map((node: any) => ({
@@ -95,9 +96,10 @@ export const getLibrarySectionList = (
     {id, zhNameTrace, enNameTrace}: LibraryFloor,
     dateChoice: 0 | 1,
 ): Promise<LibrarySection[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         () => fetchJson(
             LIBRARY_AREAS_URL +
             id +
@@ -127,9 +129,10 @@ export const getLibraryFloorList = async (
     {id, zhName, enName}: Library,
     dateChoice: 0 | 1,
 ): Promise<LibraryFloor[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "ef84f6d6784f6b834e5214f432d6173f",
         () => fetchJson(LIBRARY_AREAS_URL + id, LIBRARY_HOME_URL)
             .then(
                 (r): Promise<LibraryFloor[]> => Promise.all(
@@ -201,7 +204,7 @@ export const getLibrarySeatList = (
     {id, zhNameTrace, enNameTrace}: LibrarySection,
     dateChoice: 0 | 1,
 ): Promise<LibrarySeat[]> =>
-    retryWrapperWithMocks(helper, undefined, () =>
+    roamingWrapperWithMocks(helper, undefined, "ef84f6d6784f6b834e5214f432d6173f", () =>
         getLibraryDay(id, dateChoice).then(
             ({day, startTime, endTime, segmentId, today}) =>
                 fetchJson(LIBRARY_SEATS_URL + "?" + stringify({
@@ -341,9 +344,10 @@ export const getLibraryRoomBookingResourceList = async (
     helper: InfoHelper,
     date: string, // yyyyMMdd
 ): Promise<LibRoomRes[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5001,
+        "cab",
+        "",
         async (): Promise<LibRoomRes[]> => {
             const result = await uFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`, LIBRARY_ROOM_BOOKING_LOGIN_REFERER).then(JSON.parse);
             return result.data.map((item: any) => ({
@@ -383,9 +387,10 @@ export const getLibraryRoomBookingResourceList = async (
     );
 
 export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string): Promise<LibFuzzySearchResult[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5001,
+        "cab",
+        "",
         async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL+encodeURIComponent(keyword), LIBRARY_ROOM_BOOKING_ACTION_URL).then(JSON.parse),
         MOCK_LIB_SEARCH_RES(keyword),
     );
@@ -397,9 +402,10 @@ export const bookLibraryRoom = async (
     end: string,  // yyyy-MM-dd HH:mm
     memberList: string[],  // student id's
 ): Promise<{success: boolean, msg: string}> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5001,
+        "cab",
+        "",
         async (): Promise<{success: boolean, msg: string}> => {
             const middle = memberList.length === 0 ? "" : `&min_user=${roomRes.minUser}&max_user=${roomRes.maxUser}&mb_list=$${memberList.join(',')}`;
             const result = await uFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=${middle}&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`).then(JSON.parse);
@@ -411,9 +417,10 @@ export const bookLibraryRoom = async (
 export const getLibraryRoomBookingRecord = async (
     helper: InfoHelper
 ): Promise<LibRoomBookRecord[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5001,
+        "cab",
+        "",
         async() :Promise<LibRoomBookRecord[]> => {
             const result = await uFetch(LIBRARY_ROOM_BOOKING_RECORD_URL).then(s => JSON.parse(s).msg);
             if (result.includes("没有数据")) return [];
@@ -445,9 +452,10 @@ export const cancelLibraryRoomBooking = async (
     helper: InfoHelper,
     id: string,
 ): Promise<{success: boolean, msg: string}> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        5001,
+        "cab",
+        "",
         async () : Promise<{success: boolean, msg: string}> => {
             const result = await uFetch(LIBRARY_CANCEL_BOOKING_URL + id).then(JSON.parse);
             return {success: result.ret === 1, msg: result.msg};
