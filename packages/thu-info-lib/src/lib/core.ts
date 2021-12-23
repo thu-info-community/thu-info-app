@@ -20,7 +20,7 @@ import {IdAuthError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "myhome";
 
-const HOST_MAP: {[key: string]: string} = {
+const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
     "ecard": "77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a",
@@ -158,17 +158,18 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
 };
 
-const verifyAndReLogin = async (helper: InfoHelper): Promise<void> => {
+const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
     try {
         const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
-        if (object.ryh !== helper.userId) {
-            const {userId, password, dormPassword} = helper;
-            await login(helper, userId, password, dormPassword);
+        if (object.ryh === helper.userId) {
+            return false;
         }
     } catch {
-        const {userId, password, dormPassword} = helper;
-        await login(helper, userId, password, dormPassword);
+        //
     }
+    const {userId, password, dormPassword} = helper;
+    await login(helper, userId, password, dormPassword);
+    return true;
 };
 
 export const roamingWrapper = async <R>(
@@ -188,9 +189,12 @@ export const roamingWrapper = async <R>(
         } else {
             return await operation();
         }
-    } catch {
-        await verifyAndReLogin(helper);
-        return await operation();
+    } catch (e) {
+        if (await verifyAndReLogin(helper)) {
+            return await operation();
+        } else {
+            throw e;
+        }
     }
 };
 
