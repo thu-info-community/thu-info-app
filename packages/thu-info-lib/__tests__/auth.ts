@@ -35,6 +35,9 @@ it("should login successfully.", async () => {
     const helper = new InfoHelper();
     const counter = jest.fn();
     await helper.login({userId, password, dormPassword}, counter);
+    const userInfo = await helper.getUserInfo();
+    helper.emailName = userInfo.emailName;
+    helper.fullName = userInfo.fullName;
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);

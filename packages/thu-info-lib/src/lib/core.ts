@@ -4,20 +4,15 @@ import {
     DORM_LOGIN_URL_PREFIX,
     DORM_SCORE_REFERER,
     DORM_SCORE_URL,
-    INFO_LOGIN_URL,
-    INFO_ROOT_URL,
-    INFO_URL,
     LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
     LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
-    META_DATA_URL,
     TSINGHUA_HOME_LOGIN_URL,
     WEB_VPN_ROOT_URL,
     GET_COOKIE_URL,
     ID_LOGIN_URL,
     ID_BASE_URL,
-    USER_DATA_URL,
     ROAMING_URL,
 } from "../constants/strings";
 import md5 from "md5";
@@ -34,6 +29,7 @@ const HOST_MAP: {[key: string]: string} = {
     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
     "ecard": "77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a",
     "learn": "77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc",
+    "mails": "77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40",
     "50": "77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00",
 };
 
@@ -57,56 +53,6 @@ const getCsrfToken = async () => {
     return q[1];
 };
 
-const loginInfo = async (
-    helper: InfoHelper,
-    userId: string,
-    password: string,
-    indicator?: () => void,
-) => {
-    const response = await uFetch(
-        INFO_LOGIN_URL,
-        INFO_URL,
-        {
-            redirect: "NO",
-            userName: userId,
-            password: password,
-            x: "0",
-            y: "0",
-        },
-    );
-    if (!response.includes("清华大学信息门户")) {
-        throw new Error("Failed to login to INFO.");
-    }
-    await uFetch(INFO_ROOT_URL, INFO_URL);
-    try {
-        const {config} = await uFetch(
-            META_DATA_URL,
-            INFO_ROOT_URL,
-            undefined,
-            2000,
-        ).then(JSON.parse);
-        helper.emailName = config.userInfo.yhm;
-        helper.fullName = config.userInfo.userName;
-    } catch {
-        throw new Error("Failed to get meta data.");
-    }
-    indicator && indicator();
-};
-
-const loginInfo2021 = async (helper: InfoHelper) => {
-    await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
-    try {
-        const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`, undefined, {}).then(JSON.parse);
-        // TODO: email name!
-        helper.fullName = object.xm;
-    } catch {
-        throw new Error("Failed to get meta data.");
-    }
-};
-
-/**
- * Logs-in to WebVPN, INFO and academic.
- */
 export const login = async (
     helper: InfoHelper,
     userId: string,
@@ -140,10 +86,7 @@ export const login = async (
             }
         }
         statusIndicator && statusIndicator();
-        await Promise.all([
-            loginInfo(helper, userId, password, statusIndicator),
-            loginInfo2021(helper),
-        ]);
+        await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
         await batchGetTickets(
             helper,
             [-1, -2] as ValidTickets[],
@@ -168,14 +111,13 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
     }
 };
 
-export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<void> => {
+export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<string> => {
     switch (policy) {
     case "default": {
         const csrf = await getCsrfToken();
         const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, ROAMING_URL, {}).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
-        await uFetch(url);
-        break;
+        return await uFetch(url);
     }
     case "id": {
         await uFetch(ID_BASE_URL + payload);
@@ -192,16 +134,14 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             throw new IdAuthError();
         }
         const redirectUrl = cheerio("a", response).attr().href;
-        await uFetch(redirectUrl, ID_LOGIN_URL);
-        break;
+        return uFetch(redirectUrl, ID_LOGIN_URL);
     }
     case "cab": {
-        await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
+        return uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
             id: helper.userId,
             pwd: helper.password,
             act: "login",
         });
-        break;
     }
     }
 };
@@ -272,15 +212,15 @@ export const roamingWrapper = async <R>(
     helper: InfoHelper,
     policy: RoamingPolicy | undefined,
     payload: string,
-    operation: () => Promise<R>,
+    operation: (param?: string) => Promise<R>,
 ): Promise<R> => {
     try {
         if (policy) {
             try {
                 return await operation();
             } catch {
-                await roam(helper, policy, payload);
-                return await operation();
+                const result = await roam(helper, policy, payload);
+                return await operation(result);
             }
         } else {
             return await operation();
@@ -298,7 +238,7 @@ export const roamingWrapperWithMocks = async <R>(
     helper: InfoHelper,
     policy: RoamingPolicy | undefined,
     payload: string,
-    operation: () => Promise<R>,
+    operation: (param?: string) => Promise<R>,
     fallback: R,
 ): Promise<R> =>
     helper.mocked()

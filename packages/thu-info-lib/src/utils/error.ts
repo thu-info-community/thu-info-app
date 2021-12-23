@@ -21,3 +21,7 @@ export class IdAuthError extends LibError {
 export class CabError extends LibError {
 
 }
+
+export class UserInfoError extends LibError {
+
+}

@@ -3,6 +3,7 @@ import {
     getAssessmentForm,
     getAssessmentList,
     getClassroomState,
+    getUserInfo,
     getExpenditures,
     getPhysicalExamResult,
     getReport,
@@ -72,7 +73,7 @@ export class InfoHelper {
 
     public MOCK = "8888";
 
-    public static TOTAL_PHASES = 4;  // const
+    public static TOTAL_PHASES = 3;  // const
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;
 
@@ -97,6 +98,8 @@ export class InfoHelper {
     public logout = async (): Promise<void> => logout(this);
 
     public getTicket = async (target: ValidTickets) => getTicket(this, target);
+
+    public getUserInfo = async () => getUserInfo(this);
 
     public getReport = (
         bx: boolean,

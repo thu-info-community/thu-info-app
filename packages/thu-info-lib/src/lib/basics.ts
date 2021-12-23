@@ -40,10 +40,38 @@ import {
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
 } from "../mocks/basics";
-import {ReportError} from "../utils/error";
+import {ReportError, UserInfoError} from "../utils/error";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
+
+export const getUserInfo = async (helper: InfoHelper): Promise<{
+    fullName: string;
+    emailName: string;
+}> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "F315577F5BF20E1B1668EDD594B2C04F",
+        async (param) => {
+            if (param === undefined) {
+                throw new Error();
+            } else {
+                const $ = cheerio.load(param);
+                const fullName = $(".account").text();
+                const email = $(".email").text();
+                const emailRes = /<(.+?)@mails.tsinghua.edu.cn>/g.exec(email);
+                if (emailRes === null || emailRes[1] === undefined) {
+                    throw new UserInfoError();
+                }
+                return {fullName, emailName: emailRes[1]};
+            }
+        },
+        {
+            fullName: "",
+            emailName: "",
+        },
+    );
 
 const gradeToOldGPA = new Map<string, number>([
     ["A-", 3.7],
