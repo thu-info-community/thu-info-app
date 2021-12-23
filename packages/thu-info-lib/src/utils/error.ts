@@ -17,3 +17,7 @@ export class SportsError extends LibError {
 export class IdAuthError extends LibError {
 
 }
+
+export class CabError extends LibError {
+
+}
