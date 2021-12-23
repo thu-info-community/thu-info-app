@@ -105,7 +105,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
     case "id": {
         await uFetch(ID_BASE_URL + payload);
-        const response = await uFetch(
+        let response = await uFetch(
             ID_LOGIN_URL,
             ID_BASE_URL + payload,
             {
@@ -114,14 +114,26 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
                 i_captcha: "",
             },
         );
-        if (!response.includes("登录成功")) {
-            throw new IdAuthError();
+        if (!response.includes("登录成功。正在重定向到")) {
+            await uFetch(ID_BASE_URL + payload);
+            response = await uFetch(
+                ID_LOGIN_URL,
+                ID_BASE_URL + payload,
+                {
+                    i_user: helper.userId,
+                    i_pass: helper.password,
+                    i_captcha: "",
+                },
+            );
+            if (!response.includes("登录成功。正在重定向到")) {
+                throw new IdAuthError();
+            }
         }
         const redirectUrl = cheerio("a", response).attr().href;
-        return uFetch(redirectUrl, ID_LOGIN_URL);
+        return await uFetch(redirectUrl, ID_LOGIN_URL);
     }
     case "cab": {
-        return uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
+        return await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
             id: helper.userId,
             pwd: helper.password,
             act: "login",
