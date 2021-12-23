@@ -158,16 +158,16 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
 };
 
-const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
+const verifyAndReLogin = async (helper: InfoHelper): Promise<void> => {
     try {
         const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
         if (object.ryh !== helper.userId) {
             const {userId, password, dormPassword} = helper;
             await login(helper, userId, password, dormPassword);
         }
-        return true;
     } catch {
-        return false;
+        const {userId, password, dormPassword} = helper;
+        await login(helper, userId, password, dormPassword);
     }
 };
 
@@ -188,12 +188,9 @@ export const roamingWrapper = async <R>(
         } else {
             return await operation();
         }
-    } catch (e) {
-        if (await verifyAndReLogin(helper)) {
-            return await operation();
-        } else {
-            throw e;
-        }
+    } catch {
+        await verifyAndReLogin(helper);
+        return await operation();
     }
 };
 
