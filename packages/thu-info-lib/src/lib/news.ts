@@ -4,7 +4,7 @@ import {newsHtml} from "../mocks/source/newsHtml";
 import {NewsSlice, SourceTag} from "../models/news/news";
 import {InfoHelper} from "../index";
 import {getCheerioText} from "../utils/cheerio";
-import {retryWrapperWithMocks} from "./core";
+import {roamingWrapperWithMocks} from "./core";
 import {MOCK_NEWS_LIST} from "../mocks/news";
 import {BGTZ_MAIN_PREFIX, HB_MAIN_PREFIX, JWGG_MAIN_PREFIX, KYTZ_MAIN_PREFIX} from "../constants/strings";
 
@@ -20,9 +20,10 @@ export const getNewsList = (
     channel: SourceTag,
     page: number,
 ): Promise<NewsSlice[]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
         undefined,
+        "",
         () => uFetch(channelToUrl[channel] + page).then((str) => {
             const $ = cheerio.load(str);
             const newsList: NewsSlice[] = [];

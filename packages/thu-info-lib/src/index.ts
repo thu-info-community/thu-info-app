@@ -10,9 +10,8 @@ import {
     loseCard,
     postAssessmentForm,
 } from "./lib/basics";
-import {getTicket, login, logout} from "./lib/core";
-import {ValidTickets} from "./utils/network";
-import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
+import {login, logout} from "./lib/core";
+import {getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
 import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
 import {
     LibBookRecord,
@@ -92,12 +91,9 @@ export class InfoHelper {
             password?: string;
             dormPassword?: string;
         },
-        statusIndicator?: () => void,
-    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword, statusIndicator);
+    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword);
 
     public logout = async (): Promise<void> => logout(this);
-
-    public getTicket = async (target: ValidTickets) => getTicket(this, target);
 
     public getUserInfo = async () => getUserInfo(this);
 
@@ -133,8 +129,6 @@ export class InfoHelper {
     public loseCard = async (): Promise<number> => loseCard(this);
 
     public getCountdown = async (): Promise<string[]> => countdown();
-
-    public getDormScore = async (): Promise<string> => getDormScore(this);
 
     public getEleRechargePayCode = async (money: number): Promise<string> =>
         getEleRechargePayCode(this, money);

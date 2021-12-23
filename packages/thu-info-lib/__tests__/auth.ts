@@ -26,20 +26,18 @@ try {
 
 it("should enter mocked account", async()=> {
     const helper = new InfoHelper();
-    await helper.login({userId:"8888", password:"8888"}, ()=>{});
+    await helper.login({userId:"8888", password:"8888"});
     await helper.logout();
     expect(helper.mocked()).toEqual(true);
 }, 60000);
 
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
-    const counter = jest.fn();
-    await helper.login({userId, password, dormPassword}, counter);
+    await helper.login({userId, password, dormPassword});
     const userInfo = await helper.getUserInfo();
     helper.emailName = userInfo.emailName;
     helper.fullName = userInfo.fullName;
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
     expect(helper.emailName).toEqual(emailName);
-    expect(counter).toBeCalledTimes(InfoHelper.TOTAL_PHASES);
 }, 60000);

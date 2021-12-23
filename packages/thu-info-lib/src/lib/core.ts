@@ -1,9 +1,6 @@
 import {
     CONFIRM_LOGIN_URL,
     DO_LOGIN_URL,
-    DORM_LOGIN_URL_PREFIX,
-    DORM_SCORE_REFERER,
-    DORM_SCORE_URL,
     LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
     LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LOGIN_URL,
@@ -15,14 +12,13 @@ import {
     ID_BASE_URL,
     ROAMING_URL,
 } from "../constants/strings";
-import md5 from "md5";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
-import {clearCookies, ValidTickets} from "../utils/network";
+import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
 import {IdAuthError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "cab";
+type RoamingPolicy = "default" | "id" | "cab" | "myhome";
 
 const HOST_MAP: {[key: string]: string} = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -58,7 +54,6 @@ export const login = async (
     userId: string,
     password: string,
     dormPassword: string,
-    statusIndicator?: () => void,
 ): Promise<void> => {
     helper.userId = userId;
     helper.password = password;
@@ -85,13 +80,7 @@ export const login = async (
                 throw new Error(loginResponse.message);
             }
         }
-        statusIndicator && statusIndicator();
         await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
-        await batchGetTickets(
-            helper,
-            [-1, -2] as ValidTickets[],
-            statusIndicator,
-        );
     } finally {
         helper.loginLocked = false;
         // @ts-ignore
@@ -143,32 +132,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             act: "login",
         });
     }
-    }
-};
-
-export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promise<void> => {
-    if (target === -1) {
-        const userId = helper.userId;
-        const appId = md5(userId + new Date().getTime());
-        const url = DORM_LOGIN_URL_PREFIX + appId;
-        await uFetch(url, url, {
-            __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
-            __VIEWSTATEGENERATOR: "7FA746C3",
-            __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
-            weixin_user_authenticateCtrl1$txtUserName: userId,
-            weixin_user_authenticateCtrl1$txtPassword: helper.dormPassword || helper.password,
-            weixin_user_authenticateCtrl1$btnLogin: "登录",
-        });
-        const response = await uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER);
-        if (cheerio("#weixin_health_linechartCtrl1_Chart1", response).length !== 1) {
-            throw new Error("login to tsinghua home error");
-        }
-    } else if (target === -2) {
-        const validChars = new Set(
-            "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~",
-        );
-        // TODO: these valid chars might be far from enough
-        const {userId} = helper;
+    case "myhome": {
+        const validChars = new Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~");
         const password = helper.dormPassword || helper.password;
         let tempPassword = "";
         for (let i = 0; i < password.length; i++) {
@@ -177,13 +142,13 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
             }
         }
         const $ = cheerio.load(await uFetch(TSINGHUA_HOME_LOGIN_URL));
-        await uFetch(
+        return await uFetch(
             TSINGHUA_HOME_LOGIN_URL,
             undefined,
             {
                 __VIEWSTATE: $("#__VIEWSTATE").attr().value,
                 __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
-                net_Default_LoginCtrl1$txtUserName: userId,
+                net_Default_LoginCtrl1$txtUserName: helper.userId,
                 net_Default_LoginCtrl1$txtUserPwd: tempPassword,
                 "net_Default_LoginCtrl1$lbtnLogin.x": 17,
                 "net_Default_LoginCtrl1$lbtnLogin.y": 10,
@@ -194,6 +159,7 @@ export const getTicket = async (helper: InfoHelper, target: ValidTickets): Promi
                 Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
             },
         );
+    }
     }
 };
 
@@ -244,51 +210,6 @@ export const roamingWrapperWithMocks = async <R>(
     helper.mocked()
         ? Promise.resolve(fallback)
         : roamingWrapper(helper, policy, payload, operation);
-
-const retryWrapper = async <R>(
-    helper: InfoHelper,
-    target: ValidTickets | undefined,
-    operation: () => Promise<R>,
-): Promise<R> => {
-    try {
-        if (target) {
-            try {
-                return await operation();
-            } catch {
-                await getTicket(helper, target);
-                return await operation();
-            }
-        } else {
-            return await operation();
-        }
-    } catch (e) {
-        if (await verifyAndReLogin(helper)) {
-            return await operation();
-        } else {
-            throw e;
-        }
-    }
-};
-
-export const retryWrapperWithMocks = async <R>(
-    helper: InfoHelper,
-    target: ValidTickets | undefined,
-    operation: () => Promise<R>,
-    fallback: R,
-): Promise<R> =>
-    helper.mocked()
-        ? Promise.resolve(fallback)
-        : retryWrapper(helper, target, operation);
-
-const batchGetTickets = (helper: InfoHelper, tickets: ValidTickets[], indicator?: () => void) =>
-    Promise.all(
-        tickets.map((target) =>
-            getTicket(helper, target)
-                .then(() => console.log(`Ticket ${target} get.`))
-                .catch(() => console.warn(`Getting ticket ${target} failed.`))
-                .then(indicator),
-        ),
-    );
 
 const keepAlive = (helper: InfoHelper) => {
     helper.keepAliveTimer && clearInterval(helper.keepAliveTimer);

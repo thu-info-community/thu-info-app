@@ -3,12 +3,6 @@ import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
 
-/**
- * The values that are valid as ticket numbers.
- * See wiki for more information.
- */
-export type ValidTickets = -1 | -2; // -1 and -2 for tsinghua home
-
 export const cookies: {[key: string]: string} = {};
 
 /**

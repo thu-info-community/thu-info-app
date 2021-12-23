@@ -1,8 +1,5 @@
-import {getTicket, retryWrapperWithMocks} from "./core";
+import {roam, roamingWrapperWithMocks} from "./core";
 import {
-    WEB_VPN_ROOT_URL,
-    DORM_SCORE_REFERER,
-    DORM_SCORE_URL,
     ELE_PAY_RECORD_URL,
     RECHARGE_ELE_REFERER,
     RECHARGE_ELE_URL,
@@ -19,21 +16,11 @@ type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
 
-export const getDormScore = (helper: InfoHelper): Promise<string> =>
-    retryWrapperWithMocks(
-        helper,
-        -1,
-        () => uFetch(DORM_SCORE_URL, DORM_SCORE_REFERER).then(
-            (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-        ),
-        "",
-    );
-
 export const getEleRechargePayCode = async (
     helper: InfoHelper,
     money: number,
 ): Promise<string> => {
-    await getTicket(helper, -2);
+    await roam(helper, "myhome", "");
 
     const $ = await uFetch(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
 
@@ -63,9 +50,10 @@ export const getEleRechargePayCode = async (
 export const getElePayRecord = async (
     helper: InfoHelper,
 ): Promise<[string, string, string, string, string, string][]> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        -2,
+        "myhome",
+        "",
         async () => {
             const data = (await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load))(".myTable tr");
 
@@ -83,9 +71,10 @@ export const getElePayRecord = async (
 export const getEleRemainder = async (
     helper: InfoHelper,
 ): Promise<number> =>
-    retryWrapperWithMocks(
+    roamingWrapperWithMocks(
         helper,
-        -2,
+        "myhome",
+        "",
         async () => {
             const $ = await uFetch(ELE_REMAINDER_URL, RECHARGE_ELE_URL).then(cheerio.load);
             return Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
