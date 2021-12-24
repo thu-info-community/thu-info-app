@@ -70,9 +70,6 @@ export class InfoHelper {
     public password = "";
     public dormPassword = "";
 
-    public fullName = "";
-    public emailName = "";    // without host
-
     public MOCK = "8888";
 
     public mocked = () => this.userId === this.MOCK && this.password === this.MOCK;

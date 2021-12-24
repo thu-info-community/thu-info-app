@@ -108,7 +108,7 @@ See [THUInfo APP](https://github.com/UNIDY2002/THUInfo) for an example.
 
 ## Testing
 
-Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must create a `secrets.json`  under the root folder, with `userId`, `password`, `dormPassword` and `emailName` as keys.
+Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must create a `secrets.json`  under the root folder, with `userId`, `password` and `dormPassword` as keys.
 
 It's ok if you meet `Timeout * Async callback was not invoked within the xxx-ms timeout...` error when running tests. Adjusting the third argument timeout of the failing testcase `it("xxx", async () => void, timeout)` might solve the problem.
 

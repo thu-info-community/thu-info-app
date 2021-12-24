@@ -29,7 +29,7 @@ export const getCrCaptchaUrlMethod = async () => {
 
 export const loginCr = async (helper: InfoHelper, captcha: string) => {
     const res = await uFetch(CR_LOGIN_SUBMIT_URL, {
-        j_username: helper.emailName,
+        j_username: helper.userId,
         j_password: helper.password,
         captchaflag: "login1",
         _login_image_: captcha.toUpperCase(),
