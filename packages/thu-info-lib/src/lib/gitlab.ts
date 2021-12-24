@@ -82,3 +82,17 @@ export const getPersonalProjects = async (
         },
         MOCK_GIT_PERSONAL_PROJECTS,
     );
+
+export const searchProjects = async (
+    helper: InfoHelper,
+    search: string,
+): Promise<Project[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return await fetchGitLab("/search", {scope: "projects", search});
+        },
+        [],
+    );

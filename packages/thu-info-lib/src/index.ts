@@ -63,7 +63,7 @@ import {
 } from "./lib/cr";
 import {SearchParams} from "./models/cr/cr";
 import {BankPaymentByMonth} from "./models/home/bank";
-import {getNamespaces, getPersonalProjects, getRecentProjects} from "./lib/gitlab";
+import {getNamespaces, getPersonalProjects, getRecentProjects, searchProjects} from "./lib/gitlab";
 
 export class InfoHelper {
     public userId = "";
@@ -241,6 +241,8 @@ export class InfoHelper {
     public getGitRecentProjects = async (page: number) => getRecentProjects(this, page);
 
     public getGitOwnedProjects = async (name: string, page: number) => getPersonalProjects(this, name, page);
+
+    public searchGitProjects = async (search: string) => searchProjects(this, search);
 }
 
 export class Water {
