@@ -1,5 +1,6 @@
 import {Form, InputTag, Overall, Person} from "../models/home/assessment";
 import {Record} from "../models/home/expenditure";
+import {BankPaymentByMonth} from "../models/home/bank";
 
 export const MOCK_REPORT = [
     {
@@ -431,3 +432,47 @@ const generatedPattern = [
 export const MOCK_CLASSROOM_STATE = generatedPattern;
 
 export const MOCK_LOSE_CARD_CODE = 2;
+
+export const MOCK_BANK_PAYMENT = [{
+    month: "2021年12月",
+    payment: [{
+        department: "024 计算机系",
+        project: "1234567890 元宇宙项目开发",
+        usage: "勤工俭学",
+        description: "",
+        bank: "中国银行",
+        time: "20771225 15:07:37",
+        total: "500.00",
+        deduction: "0.00",
+        actual: "500.00",
+        deposit: "500.00",
+        cash: "0.00",
+    }, {
+        department: "024 计算机系",
+        project: "1145142333 学术科技赛事",
+        usage: "勤工俭学",
+        description: "",
+        bank: "中国银行",
+        time: "20771211 11:24:51",
+        total: "200.00",
+        deduction: "0.00",
+        actual: "200.00",
+        deposit: "200.00",
+        cash: "0.00",
+    }],
+}, {
+    month: "2021年10月",
+    payment: [{
+        department: "999 清华大学",
+        project: "100000077 防疫物资专项",
+        usage: "医疗费",
+        description: "医疗费",
+        bank: "中国银行",
+        time: "20211024 10:24:28",
+        total: "120.00",
+        deduction: "0.00",
+        actual: "120.00",
+        deposit: "120.00",
+        cash: "0.00",
+    }],
+}] as BankPaymentByMonth[];

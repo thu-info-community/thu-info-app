@@ -9,6 +9,7 @@ import {
     getReport,
     loseCard,
     postAssessmentForm,
+    getBankPayment,
 } from "./lib/basics";
 import {login, logout} from "./lib/core";
 import {getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
@@ -61,6 +62,7 @@ import {
     searchCrCourses, getCrAvailableSemestersMethod,
 } from "./lib/cr";
 import {SearchParams} from "./models/cr/cr";
+import {BankPaymentByMonth} from "./models/home/bank";
 
 export class InfoHelper {
     public userId = "";
@@ -121,6 +123,8 @@ export class InfoHelper {
     ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
 
     public loseCard = async (): Promise<number> => loseCard(this);
+
+    public getBankPayment = async (): Promise<BankPaymentByMonth[]> => getBankPayment(this);
 
     public getCountdown = async (): Promise<string[]> => countdown();
 

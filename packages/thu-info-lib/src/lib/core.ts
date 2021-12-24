@@ -27,9 +27,14 @@ const HOST_MAP: { [key: string]: string } = {
     "learn": "77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc",
     "mails": "77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40",
     "50": "77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00",
+    "166.111.14.8": "77726476706e69737468656265737421a1a117d27661391e2f5cc7f4",
 };
 
 const parseUrl = (urlIn: string) => {
+    const rawRes = /http:\/\/(\d+.\d+.\d+.\d+):(\d+)\/(.+)/g.exec(urlIn);
+    if (rawRes !== null && rawRes[1] !== undefined && rawRes[2] !== undefined && rawRes[3] !== undefined) {
+        return `https://webvpn.tsinghua.edu.cn/http-${rawRes[2]}/${HOST_MAP[rawRes[1]]}/${rawRes[3]}`;
+    }
     const protocol = urlIn.substring(0, urlIn.indexOf(":"));
     const regRes = /:\/\/(.+?).tsinghua.edu.cn\/(.+)/.exec(urlIn);
     if (regRes === null || regRes[1] === undefined || regRes[2] === undefined) {
