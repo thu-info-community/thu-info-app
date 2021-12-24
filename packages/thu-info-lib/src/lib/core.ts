@@ -16,7 +16,7 @@ import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
-import {IdAuthError, UrlError} from "../utils/error";
+import {IdAuthError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "myhome";
 
@@ -58,11 +58,7 @@ export const login = async (
     helper.userId = userId;
     helper.password = password;
     helper.dormPassword = dormPassword;
-    if (helper.mocked() || helper.loginLocked) {
-        return;
-    }
-    try {
-        helper.loginLocked = true;
+    if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
         const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
@@ -77,18 +73,17 @@ export const login = async (
                 await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, {});
                 break;
             default:
-                throw new Error(loginResponse.message);
+                throw new LoginError(loginResponse.message);
             }
         }
-        await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
-    } finally {
-        helper.loginLocked = false;
+        try {
+            await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
+        } catch (e: any) {
+            throw new LoginError(e?.message);
+        }
     }
 };
 
-/**
- * Logs-out from WebVPN.
- */
 export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
         await uFetch(LOGOUT_URL);

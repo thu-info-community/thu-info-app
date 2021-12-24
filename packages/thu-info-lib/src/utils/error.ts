@@ -1,5 +1,13 @@
 export class LibError extends Error {
+    constructor(message?: string) {
+        super(message);
+    }
+}
 
+export class LoginError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
 }
 
 export class UrlError extends LibError {
