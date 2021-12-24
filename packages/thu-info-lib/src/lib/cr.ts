@@ -28,7 +28,7 @@ export const getCrCaptchaUrlMethod = async () => {
 };
 
 export const loginCr = async (helper: InfoHelper, captcha: string) => {
-    const res = await uFetch(CR_LOGIN_SUBMIT_URL, CR_LOGIN_HOME_URL, {
+    const res = await uFetch(CR_LOGIN_SUBMIT_URL, {
         j_username: helper.emailName,
         j_password: helper.password,
         captchaflag: "login1",
@@ -40,12 +40,12 @@ export const loginCr = async (helper: InfoHelper, captcha: string) => {
 };
 
 export const getCrAvailableSemestersMethod = async (): Promise<CrSemester[]> => {
-    const root = await uFetch(CR_MAIN_URL, CR_MAIN_URL);
+    const root = await uFetch(CR_MAIN_URL);
     const baseSemIdRes = /m=showTree&p_xnxq=(\d\d\d\d-\d\d\d\d-\d)/.exec(root);
     if (baseSemIdRes === null) {
         throw new Error("Please login");
     }
-    const $ = await uFetch(CR_TREE_URL + baseSemIdRes[1], CR_MAIN_URL).then(cheerio.load);
+    const $ = await uFetch(CR_TREE_URL + baseSemIdRes[1]).then(cheerio.load);
     return $("option").toArray().map((e) => ({
         id: (e as TagElement).attribs.value,
         name: ((e as TagElement).children[0] as TextElement).data?.trim(),
@@ -86,7 +86,7 @@ const parseFooter = ($: cheerio.Root) => {
 };
 
 export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id, name, dayOfWeek, period}: SearchParams): Promise<CrRemainingSearchResult> => {
-    const $ = await uFetch(CR_SEARCH_URL, CR_SEARCH_URL, {
+    const $ = await uFetch(CR_SEARCH_URL, {
         m: "kylSearch",
         page: page ?? -1,
         "p_sort.p1": "",
@@ -124,7 +124,7 @@ export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id,
 };
 
 export const searchCrPrimaryOpen = async (helper: InfoHelper, {page, semester, id, name, dayOfWeek, period}: SearchParams): Promise<CrPrimaryOpenSearchResult> => {
-    const $ = await uFetch(CR_SEARCH_URL, CR_SEARCH_URL, {
+    const $ = await uFetch(CR_SEARCH_URL, {
         m: "kkxxSearch",
         page: page ?? -1,
         "p_sort.p1": "",

@@ -1,7 +1,6 @@
 import {roam, roamingWrapperWithMocks} from "./core";
 import {
     ELE_PAY_RECORD_URL,
-    RECHARGE_ELE_REFERER,
     RECHARGE_ELE_URL,
     RECHARGE_PAY_ELE_URL,
     ELE_REMAINDER_URL,
@@ -22,29 +21,23 @@ export const getEleRechargePayCode = async (
 ): Promise<string> => {
     await roam(helper, "myhome", "");
 
-    const $ = await uFetch(RECHARGE_ELE_URL, RECHARGE_ELE_REFERER).then(cheerio.load);
+    const $ = await uFetch(RECHARGE_ELE_URL).then(cheerio.load);
 
-    const redirect = await uFetch(
-        RECHARGE_PAY_ELE_URL,
-        RECHARGE_ELE_URL,
-        {
-            __EVENTTARGET: "",
-            __EVENTARGUMENT: "",
-            __VIEWSTATE: $("#__VIEWSTATE").attr().value,
-            __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
-            recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
-            write_money: money,
-            username: $("input[name=username]").attr().value,
-            louhao: $("input[name=louhao]").attr().value,
-            room: $("input[name=room]").attr().value,
-            student_id: $("input[name=student_id]").attr().value,
-            banktype: "alipay",
-        },
-        60000,
-        "GBK",
-    ).then((s) => cheerio("#banksubmit", s));
+    const redirect = await uFetch(RECHARGE_PAY_ELE_URL, {
+        __EVENTTARGET: "",
+        __EVENTARGUMENT: "",
+        __VIEWSTATE: $("#__VIEWSTATE").attr().value,
+        __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
+        recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
+        write_money: money,
+        username: $("input[name=username]").attr().value,
+        louhao: $("input[name=louhao]").attr().value,
+        room: $("input[name=room]").attr().value,
+        student_id: $("input[name=student_id]").attr().value,
+        banktype: "alipay",
+    }, 60000, "GBK").then((s) => cheerio("#banksubmit", s));
 
-    return generalGetPayCode(await uFetch(redirect.attr().action, RECHARGE_PAY_ELE_URL, redirect.serialize() as never as object, 60000, "UTF-8", true), "GBK");
+    return generalGetPayCode(await uFetch(redirect.attr().action, redirect.serialize() as never as object, 60000, "UTF-8", true), "GBK");
 };
 
 export const getElePayRecord = async (
@@ -55,7 +48,7 @@ export const getElePayRecord = async (
         "myhome",
         "",
         async () => {
-            const data = (await uFetch(ELE_PAY_RECORD_URL, RECHARGE_ELE_URL).then(cheerio.load))(".myTable tr");
+            const data = (await uFetch(ELE_PAY_RECORD_URL).then(cheerio.load))(".myTable tr");
 
             return data.slice(1, data.length - 1)
                 .map((index, element) => [
@@ -76,7 +69,7 @@ export const getEleRemainder = async (
         "myhome",
         "",
         async () => {
-            const $ = await uFetch(ELE_REMAINDER_URL, RECHARGE_ELE_URL).then(cheerio.load);
+            const $ = await uFetch(ELE_REMAINDER_URL).then(cheerio.load);
             return Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
         },
         MOCK_ELE_REMAINDER,

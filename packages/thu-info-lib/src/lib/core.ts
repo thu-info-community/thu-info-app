@@ -1,9 +1,7 @@
 import {
     CONFIRM_LOGIN_URL,
     DO_LOGIN_URL,
-    LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
     LIBRARY_ROOM_BOOKING_LOGIN_URL,
-    LOGIN_URL,
     LOGOUT_URL,
     TSINGHUA_HOME_LOGIN_URL,
     USER_DATA_URL,
@@ -68,7 +66,7 @@ export const login = async (
     if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
-        const loginResponse = await uFetch(DO_LOGIN_URL, LOGIN_URL, {
+        const loginResponse = await uFetch(DO_LOGIN_URL, {
             auth_type: "local",
             username: userId,
             sms_code: "",
@@ -77,7 +75,7 @@ export const login = async (
         if (!loginResponse.success) {
             switch (loginResponse.error) {
             case "NEED_CONFIRM":
-                await uFetch(CONFIRM_LOGIN_URL, LOGIN_URL, {});
+                await uFetch(CONFIRM_LOGIN_URL, {});
                 break;
             default:
                 throw new LoginError(loginResponse.message);
@@ -101,41 +99,33 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     switch (policy) {
     case "default": {
         const csrf = await getCsrfToken();
-        const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, ROAMING_URL, {}).then(JSON.parse);
+        const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, {}).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
         return await uFetch(url);
     }
     case "id": {
         await uFetch(ID_BASE_URL + payload);
-        let response = await uFetch(
-            ID_LOGIN_URL,
-            ID_BASE_URL + payload,
-            {
+        let response = await uFetch(ID_LOGIN_URL, {
+            i_user: helper.userId,
+            i_pass: helper.password,
+            i_captcha: "",
+        });
+        if (!response.includes("登录成功。正在重定向到")) {
+            await uFetch(ID_BASE_URL + payload);
+            response = await uFetch(ID_LOGIN_URL, {
                 i_user: helper.userId,
                 i_pass: helper.password,
                 i_captcha: "",
-            },
-        );
-        if (!response.includes("登录成功。正在重定向到")) {
-            await uFetch(ID_BASE_URL + payload);
-            response = await uFetch(
-                ID_LOGIN_URL,
-                ID_BASE_URL + payload,
-                {
-                    i_user: helper.userId,
-                    i_pass: helper.password,
-                    i_captcha: "",
-                },
-            );
+            });
             if (!response.includes("登录成功。正在重定向到")) {
                 throw new IdAuthError();
             }
         }
         const redirectUrl = cheerio("a", response).attr().href;
-        return await uFetch(redirectUrl, ID_LOGIN_URL);
+        return await uFetch(redirectUrl);
     }
     case "cab": {
-        return await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, LIBRARY_ROOM_BOOKING_LOGIN_REFERER, {
+        return await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, {
             id: helper.userId,
             pwd: helper.password,
             act: "login",
@@ -151,28 +141,24 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             }
         }
         const $ = cheerio.load(await uFetch(TSINGHUA_HOME_LOGIN_URL));
-        return await uFetch(
-            TSINGHUA_HOME_LOGIN_URL,
-            undefined,
-            {
-                __VIEWSTATE: $("#__VIEWSTATE").attr().value,
-                __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
-                net_Default_LoginCtrl1$txtUserName: helper.userId,
-                net_Default_LoginCtrl1$txtUserPwd: tempPassword,
-                "net_Default_LoginCtrl1$lbtnLogin.x": 17,
-                "net_Default_LoginCtrl1$lbtnLogin.y": 10,
-                net_Default_LoginCtrl1$txtSearch1: "",
-                Home_Img_NewsCtrl1$hfJsImg: "",
-                Home_Img_ActivityCtrl1$hfScript: "",
-                Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
-                Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
-            },
-        );
+        return await uFetch(TSINGHUA_HOME_LOGIN_URL, {
+            __VIEWSTATE: $("#__VIEWSTATE").attr().value,
+            __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
+            net_Default_LoginCtrl1$txtUserName: helper.userId,
+            net_Default_LoginCtrl1$txtUserPwd: tempPassword,
+            "net_Default_LoginCtrl1$lbtnLogin.x": 17,
+            "net_Default_LoginCtrl1$lbtnLogin.y": 10,
+            net_Default_LoginCtrl1$txtSearch1: "",
+            Home_Img_NewsCtrl1$hfJsImg: "",
+            Home_Img_ActivityCtrl1$hfScript: "",
+            Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
+            Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
+        });
     }
     case "gitlab": {
         const authenticity_token = (await uFetch(GITLAB_LOGIN_URL).then(cheerio.load))("[name=authenticity_token]").attr().value;
-        await uFetch(GITLAB_AUTH_URL, undefined, {authenticity_token});
-        const response = await uFetch(ID_LOGIN_URL, undefined, {
+        await uFetch(GITLAB_AUTH_URL, {authenticity_token});
+        const response = await uFetch(ID_LOGIN_URL, {
             i_user: helper.userId,
             i_pass: helper.password,
             i_captcha: "",

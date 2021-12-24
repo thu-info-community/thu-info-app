@@ -12,7 +12,6 @@ import {
     LIBRARY_HOME_URL,
     LIBRARY_LIST_URL,
     LIBRARY_ROOM_BOOKING_ACTION_URL,
-    LIBRARY_ROOM_BOOKING_LOGIN_REFERER,
     LIBRARY_ROOM_BOOKING_RECORD_URL,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX,
@@ -58,7 +57,7 @@ const fetchJson = (
     referer?: string,
     post?: object,
 ): Promise<any> =>
-    uFetch(url, referer, post).then((s) => JSON.parse(s).data.list);
+    uFetch(url, post).then((s) => JSON.parse(s).data.list);
 
 // This function needs to be updated periodically to avoid bugs
 const getLibName = (name: string, kindName: string): LibName => {
@@ -266,16 +265,12 @@ export const bookLibrarySeat = async (
         "ef84f6d6784f6b834e5214f432d6173f",
         async () => JSON.parse(
             await getLibraryDay(section.id, dateChoice).then(async ({segmentId}) =>
-                uFetch(
-                    LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX,
-                    LIBRARY_HOME_URL,
-                    {
-                        access_token: await getAccessToken(helper),
-                        userid: helper.userId,
-                        segment: segmentId,
-                        type,
-                    },
-                ),
+                uFetch(LIBRARY_BOOK_URL_PREFIX + id + LIBRARY_BOOK_URL_SUFFIX, {
+                    access_token: await getAccessToken(helper),
+                    userid: helper.userId,
+                    segment: segmentId,
+                    type,
+                }),
             ),
         ),
         MOCK_LIBRARY_BOOK_SEAT_RESPONSE,
@@ -290,7 +285,7 @@ export const getBookingRecords = async (
         "ef84f6d6784f6b834e5214f432d6173f",
         async (): Promise<LibBookRecord[]> => {
             await getAccessToken(helper);
-            const html = await uFetch(LIBRARY_BOOK_RECORD_URL, LIBRARY_HOME_URL);
+            const html = await uFetch(LIBRARY_BOOK_RECORD_URL);
             const result = cheerio("tbody", html)
                 .children()
                 .map((index, element) => {
@@ -326,7 +321,7 @@ export const cancelBooking = async (
         undefined,
         "ef84f6d6784f6b834e5214f432d6173f",
         () => getAccessToken(helper)
-            .then((token) => uFetch(CANCEL_BOOKING_URL + id, LIBRARY_BOOK_RECORD_URL, {
+            .then((token) => uFetch(CANCEL_BOOKING_URL + id, {
                 _method: "delete",
                 id,
                 userid: helper.userId,
@@ -350,7 +345,7 @@ export const getLibraryRoomBookingResourceList = async (
         "cab",
         "",
         async (): Promise<LibRoomRes[]> => {
-            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`, LIBRARY_ROOM_BOOKING_LOGIN_REFERER).then(JSON.parse);
+            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`).then(JSON.parse);
             return result.data.map((item: any) => ({
                 id: item.id,
                 name: item.name,
@@ -392,7 +387,7 @@ export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string):
         helper,
         "cab",
         "",
-        async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL+encodeURIComponent(keyword), LIBRARY_ROOM_BOOKING_ACTION_URL).then(JSON.parse),
+        async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL + encodeURIComponent(keyword)).then(JSON.parse),
         MOCK_LIB_SEARCH_RES(keyword),
     );
 

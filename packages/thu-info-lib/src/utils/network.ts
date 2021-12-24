@@ -35,8 +35,7 @@ export const stringify = (form: any, paramEncoding = "UTF-8") =>
         .join("&");
 
 /**
- * Gets the response data from the given `url`, with a specified `referer` if
- * provided.
+ * Gets the response data from the given `url`.
  *
  * If param `post` is provided, a `POST` request with the given post form will
  * be sent. Otherwise, a `GET` request will be sent.
@@ -50,7 +49,6 @@ export const stringify = (form: any, paramEncoding = "UTF-8") =>
  */
 export const uFetch = async (
     url: string,
-    referer?: string,
     post?: object,
     timeout = 60000,
     paramEncoding = "UTF-8",
@@ -63,17 +61,11 @@ export const uFetch = async (
         "User-Agent": USER_AGENT,
     };
 
-    const headersWithCookies = global.FileReader === undefined ? {
+    const headers = global.FileReader === undefined ? {
         ...defaultHeaders,
         // Cookie should be manually set in Node.js
         Cookie: Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";"),
     } : defaultHeaders;
-
-    // Add referer to header if specified
-    const headers =
-        referer === undefined
-            ? headersWithCookies
-            : {...headersWithCookies, Referer: referer};
 
     // Handle timeout abortion
     const controller = new AbortController();

@@ -3,7 +3,6 @@ import {roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
     ASSESSMENT_LIST_URL,
-    ASSESSMENT_MAIN_URL,
     ASSESSMENT_SUBMIT_URL,
     BANK_PAYMENT_SEARCH_URL,
     BKS_REPORT_BXR_URL,
@@ -13,9 +12,7 @@ import {
     EXPENDITURE_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
-    INFO_ROOT_URL,
     LOSE_CARD_URL,
-    PHYSICAL_EXAM_REFERER,
     PHYSICAL_EXAM_URL,
     YJS_REPORT_BXR_URL,
 } from "../constants/strings";
@@ -100,9 +97,9 @@ export const getReport = (
         "default",
         "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
-            uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`), INFO_ROOT_URL),
+            uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`)),
             bx && flag === 1
-                ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL, INFO_ROOT_URL)
+                ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL)
                 : undefined,
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
@@ -161,7 +158,7 @@ export const getAssessmentList = (
         helper,
         "default",
         "0D8B99BA23FD2BA22428D9C8AA0AB508",
-        () => uFetch(ASSESSMENT_LIST_URL, ASSESSMENT_MAIN_URL).then((str) => {
+        () => uFetch(ASSESSMENT_LIST_URL).then((str) => {
             const result = cheerio("tbody", str)
                 .children()
                 .map((index, element) => {
@@ -196,7 +193,7 @@ export const getAssessmentForm = (
         helper,
         "default",
         "0D8B99BA23FD2BA22428D9C8AA0AB508",
-        () => uFetch(url, ASSESSMENT_MAIN_URL).then((str) => {
+        () => uFetch(url).then((str) => {
             const $ = cheerio.load(str);
             const basics = $("#xswjtxFormid > input")
                 .map((_, element) => new InputTag(element))
@@ -225,11 +222,7 @@ export const postAssessmentForm = (
         helper,
         "default",
         "0D8B99BA23FD2BA22428D9C8AA0AB508",
-        () => uFetch(
-            ASSESSMENT_SUBMIT_URL,
-            ASSESSMENT_MAIN_URL,
-            form.serialize(),
-        ).then((res) => {
+        () => uFetch(ASSESSMENT_SUBMIT_URL, form.serialize()).then((res) => {
             if (JSON.parse(res).result !== "success") {
                 throw 0;
             }
@@ -255,7 +248,7 @@ export const getPhysicalExamResult = (
         helper,
         "default",
         "8BF4F9A706589060488B6B6179E462E5",
-        () => uFetch(PHYSICAL_EXAM_URL, PHYSICAL_EXAM_REFERER).then((s) => {
+        () => uFetch(PHYSICAL_EXAM_URL).then((s) => {
             const json = JSON.parse(
                 // eslint-disable-next-line quotes
                 s.replace(/'/g, '"'),
@@ -309,7 +302,7 @@ export const getExpenditures = (
         helper,
         "default",
         "2B56CC9B3BFFA26932C4110E0C5FB35A",
-        () => uFetch(EXPENDITURE_URL, EXPENDITURE_URL).then(
+        () => uFetch(EXPENDITURE_URL).then(
             (data) => {
                 const workbook = XLSX.read(data, {sheetStubs: true, cellDates: true});
                 const sheet = XLSX.utils.sheet_to_json(
@@ -445,7 +438,7 @@ export const getBankPayment = async (
             }
             const options = cheerio("option", s).map((_, e) => (e as TagElement).attribs.value).get();
             const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
-            const result = await uFetch(BANK_PAYMENT_SEARCH_URL, undefined, form as never as object, 60000, "UTF-8", true);
+            const result = await uFetch(BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
             const $ = cheerio.load(result);
             const titles = $("div strong")
                 .map((_, e) => {
@@ -492,7 +485,7 @@ export const getBankPayment = async (
     );
 
 export const countdown = async (): Promise<string[]> => {
-    const $ = cheerio.load(await uFetch(COUNT_DOWN_URL, INFO_ROOT_URL));
+    const $ = cheerio.load(await uFetch(COUNT_DOWN_URL));
     const data = $(".countdown li");
     return data.map((_, e) => cheerio(e).text()).get();
 };

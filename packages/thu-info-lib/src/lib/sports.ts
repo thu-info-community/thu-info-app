@@ -8,7 +8,6 @@ import {
     SPORTS_MAKE_ORDER_URL,
     SPORTS_MAKE_PAYMENT_URL,
     SPORTS_PAYMENT_ACTION_URL,
-    SPORTS_PAYMENT_API_URL,
     SPORTS_PAYMENT_CHECK_URL,
     SPORTS_QUERY_PHONE_URL,
     SPORTS_UNSUBSCRIBE_URL,
@@ -106,7 +105,7 @@ export const updateSportsPhoneNumber = async (
             if (!/^(1[3-9][0-9]|15[036789]|18[89])\d{8}$/.test(phone)) {
                 throw new Error("请正确填写手机号码!");
             }
-            await uFetch(`${SPORTS_UPDATE_PHONE_URL}${phone}&gzzh=${helper.userId}`, SPORTS_BASE_URL, {});
+            await uFetch(`${SPORTS_UPDATE_PHONE_URL}${phone}&gzzh=${helper.userId}`, {});
         },
         undefined,
     );
@@ -145,7 +144,7 @@ export const makeSportsReservation = async (
     if (helper.mocked()) {
         return undefined;
     }
-    const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, SPORTS_BASE_URL, {
+    const orderResult = await uFetch(SPORTS_MAKE_ORDER_URL, {
         "bookData.totalCost": totalCost,
         "bookData.book_person_zjh": "",
         "bookData.book_person_name": "",
@@ -163,7 +162,7 @@ export const makeSportsReservation = async (
         throw orderResult.msg;
     }
     if (totalCost === 0) return undefined;
-    const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, SPORTS_BASE_URL, {
+    const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, {
         is_jsd: receiptTitle === undefined ? "0" : "1",
         xm: receiptTitle,
         gymnasium_idForCache: gymId,
@@ -174,7 +173,6 @@ export const makeSportsReservation = async (
     }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
     const paymentApiHtml = await uFetch(
         paymentResultForm.attr().action,
-        SPORTS_MAKE_PAYMENT_URL,
         paymentResultForm.serialize() as never as object,
         60000,
         "UTF-8",
@@ -184,7 +182,7 @@ export const makeSportsReservation = async (
     if (searchResult === null) {
         throw new Error("id and token not found.");
     }
-    const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, SPORTS_PAYMENT_API_URL, {
+    const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, {
         id: searchResult[1],
         token: searchResult[2],
     }).then(JSON.parse);
@@ -198,7 +196,7 @@ export const makeSportsReservation = async (
         postForm[attribs.name] = attribs.value;
     });
     postForm.channelId = "0101";
-    return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, SPORTS_PAYMENT_API_URL, postForm));
+    return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, postForm));
 };
 
 export const getSportsReservationRecords = async (
@@ -208,7 +206,7 @@ export const getSportsReservationRecords = async (
     "default",
     "5539ECF8CD815C7D3F5A8EE0A2D72441",
     async () => {
-        const $ = await uFetch(SPORTS_BASE_URL + "&gymnasium_id=4836273", SPORTS_BASE_URL).then(cheerio.load);
+        const $ = await uFetch(SPORTS_BASE_URL + "&gymnasium_id=4836273").then(cheerio.load);
         const tables = $("table");
         if (tables.length === 0) {
             throw new SportsError();
@@ -248,7 +246,7 @@ export const unsubscribeSportsReservation = async (
     "default",
     "5539ECF8CD815C7D3F5A8EE0A2D72441",
     async () => {
-        await uFetch(SPORTS_UNSUBSCRIBE_URL, SPORTS_BASE_URL, {bookId});
+        await uFetch(SPORTS_UNSUBSCRIBE_URL, {bookId});
     },
     undefined,
 );

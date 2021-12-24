@@ -12,14 +12,10 @@ export const getUserInformation = (
     id: string
 ): Promise<WaterUserInformation> => {
     water.id = id;
-    return uFetch(
-        WATER_USER_URL,
-        undefined,
-        {
-            name: "pw",
-            param: water.id
-        }
-    ).then(JSON.parse);
+    return uFetch(WATER_USER_URL, {
+        name: "pw",
+        param: water.id,
+    }).then(JSON.parse);
 };
 
 export const getUserInformationAndStore = (
@@ -41,17 +37,13 @@ export const postWaterSubmission = (
     num1: string,
     lid: string
 ): Promise<void> =>
-    uFetch(
-        WATER_SUB_URL,
-        undefined,
-        {
-            pw: water.id,
-            num: num,
-            num1: num1,
-            lid: lid,
-            address: water.address
-        }
-    ).then(res => {
+    uFetch(WATER_SUB_URL, {
+        pw: water.id,
+        num: num,
+        num1: num1,
+        lid: lid,
+        address: water.address,
+    }).then(res => {
         if(!res.includes("成功")) {
             throw new Error("Submitting failed");
         }

@@ -1,7 +1,5 @@
 import {roamingWrapperWithMocks} from "./core";
 import {
-    INFO_ROOT_URL,
-    JXMH_REFERER,
     JXRL_MIDDLE,
     JXRL_BKS_PREFIX,
     JXRL_SUFFIX,
@@ -38,7 +36,6 @@ const getPrimary = (helper: InfoHelper) =>
                     JXRL_MIDDLE +
                     new Calendar((id + 1) * GROUP_SIZE, 7).date.format("YYYYMMDD") +
                     JXRL_SUFFIX,
-                    INFO_ROOT_URL,
                 ),
             ),
         )
@@ -63,7 +60,7 @@ const getSecondary = (helper: InfoHelper) =>
         helper,
         "default",
         "287C0C6D90ABB364CD5FDF1495199962",
-        () => uFetch(SECONDARY_URL, JXMH_REFERER).then((str) => {
+        () => uFetch(SECONDARY_URL).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(

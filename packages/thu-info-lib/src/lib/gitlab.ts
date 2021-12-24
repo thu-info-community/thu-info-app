@@ -8,11 +8,7 @@ import {Namespace, Project} from "../models/gitlab/gitlab";
 
 const fetchGitLab = async (path: string, query?: object, post?: object) => {
     try {
-        return await uFetch(
-            GITLAB_API_BASE_URL + path + (query ? `?${stringify(query)}` : ""),
-            undefined,
-            post
-        ).then(JSON.parse);
+        return await uFetch(GITLAB_API_BASE_URL + path + (query ? `?${stringify(query)}` : ""), post).then(JSON.parse);
     } catch {
         throw new GitLabApiError();
     }
