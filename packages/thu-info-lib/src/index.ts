@@ -63,6 +63,7 @@ import {
 } from "./lib/cr";
 import {SearchParams} from "./models/cr/cr";
 import {BankPaymentByMonth} from "./models/home/bank";
+import {getRecentProjects} from "./lib/gitlab";
 
 export class InfoHelper {
     public userId = "";
@@ -234,6 +235,8 @@ export class InfoHelper {
     public getSportsReservationRecords = async () => getSportsReservationRecords(this);
 
     public unsubscribeSportsReservation = async (bookId: string) => unsubscribeSportsReservation(this, bookId);
+
+    public getGitRecentProjects = async (page: number) => getRecentProjects(this, page);
 }
 
 export class Water {

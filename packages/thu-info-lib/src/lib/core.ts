@@ -11,6 +11,8 @@ import {
     ID_LOGIN_URL,
     ID_BASE_URL,
     ROAMING_URL,
+    GITLAB_LOGIN_URL,
+    GITLAB_AUTH_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
@@ -18,7 +20,7 @@ import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
 import {IdAuthError, LoginError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "cab" | "myhome";
+type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "gitlab";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -166,6 +168,20 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
                 Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
             },
         );
+    }
+    case "gitlab": {
+        const authenticity_token = (await uFetch(GITLAB_LOGIN_URL).then(cheerio.load))("[name=authenticity_token]").attr().value;
+        await uFetch(GITLAB_AUTH_URL, undefined, {authenticity_token});
+        const response = await uFetch(ID_LOGIN_URL, undefined, {
+            i_user: helper.userId,
+            i_pass: helper.password,
+            i_captcha: "",
+        });
+        if (!response.includes("登录成功。正在重定向到")) {
+            throw new IdAuthError();
+        }
+        const redirectUrl = cheerio("a", response).attr().href;
+        return await uFetch(redirectUrl);
     }
     }
 };

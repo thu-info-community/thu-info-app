@@ -33,3 +33,13 @@ export class CabError extends LibError {
 export class UserInfoError extends LibError {
 
 }
+
+export class ResponseStatusError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class GitLabApiError extends LibError {
+
+}

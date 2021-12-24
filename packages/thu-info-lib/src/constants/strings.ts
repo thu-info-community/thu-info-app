@@ -156,6 +156,12 @@ export const SPORTS_PAYMENT_CHECK_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/zjjsfw/zjjs/check.do";
 export const SPORTS_PAYMENT_ACTION_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/zjjsfw/zjjs/webPay.do";
+export const GITLAB_LOGIN_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f7fe55d23323615e79009cadd6502720b178f0/users/sign_in";
+export const GITLAB_AUTH_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f7fe55d23323615e79009cadd6502720b178f0/users/auth/thuid";
+export const GITLAB_API_BASE_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f7fe55d23323615e79009cadd6502720b178f0/api/v4";
 export const WATER_USER_URL =
     "http://dingshui.bjqzhd.com/auser/getuser.html";
 export const WATER_SUB_URL =

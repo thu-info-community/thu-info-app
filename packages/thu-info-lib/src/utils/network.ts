@@ -2,6 +2,7 @@ import {CONTENT_TYPE_FORM, USER_AGENT} from "../constants/strings";
 import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
+import {ResponseStatusError} from "./error";
 
 export const cookies: {[key: string]: string} = {};
 
@@ -98,6 +99,10 @@ export const uFetch = async (
     try {
         const response = await fetch(url, init);
 
+        if (response.status !== 200) {
+            throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
+        }
+
         // Manage cookies
         response.headers.forEach((value, key) => {
             if (key === "set-cookie") {
@@ -116,7 +121,7 @@ export const uFetch = async (
                 base64 = true;
             } else {
                 /charset=(.*?);/.test(contentType + ";");
-                charset = RegExp.$1;
+                if (RegExp.$1) charset = RegExp.$1;
             }
         }
 
