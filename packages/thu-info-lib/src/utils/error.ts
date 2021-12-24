@@ -18,6 +18,20 @@ export class ReportError extends LibError {
 
 }
 
+export class AssessmentError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class ClassroomStateError extends LibError {
+
+}
+
+export class LoseCardError extends LibError {
+
+}
+
 export class SportsError extends LibError {
 
 }

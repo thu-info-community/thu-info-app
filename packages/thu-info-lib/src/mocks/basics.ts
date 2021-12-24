@@ -429,7 +429,7 @@ const generatedPattern = [
     ["205:150", generateWeek()],
 ];
 
-export const MOCK_CLASSROOM_STATE = generatedPattern;
+export const MOCK_CLASSROOM_STATE = generatedPattern as [string, number[]][];
 
 export const MOCK_LOSE_CARD_CODE = 2;
 

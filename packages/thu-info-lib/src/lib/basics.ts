@@ -39,7 +39,14 @@ import {
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
 } from "../mocks/basics";
-import {LibError, ReportError, UserInfoError} from "../utils/error";
+import {
+    AssessmentError,
+    ClassroomStateError,
+    LibError,
+    LoseCardError,
+    ReportError,
+    UserInfoError,
+} from "../utils/error";
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 
 type Cheerio = ReturnType<typeof cheerio>;
@@ -56,7 +63,7 @@ export const getUserInfo = async (helper: InfoHelper): Promise<{
         "F315577F5BF20E1B1668EDD594B2C04F",
         async (param) => {
             if (param === undefined) {
-                throw new Error();
+                throw new LibError();
             } else {
                 const $ = cheerio.load(param);
                 const fullName = $(".account").text();
@@ -178,7 +185,7 @@ export const getAssessmentList = (
                 })
                 .get();
             if (result.length === 0) {
-                throw 0;
+                throw new AssessmentError();
             }
             return result;
         }),
@@ -224,7 +231,7 @@ export const postAssessmentForm = (
         "0D8B99BA23FD2BA22428D9C8AA0AB508",
         () => uFetch(ASSESSMENT_SUBMIT_URL, form.serialize()).then((res) => {
             if (JSON.parse(res).result !== "success") {
-                throw 0;
+                throw new AssessmentError(JSON.parse(res).msg);
             }
         }),
         undefined,
@@ -399,9 +406,9 @@ export const getClassroomState = (
                 )
                 .get();
             if (result.length === 0 && s.indexOf("scrollContent") === -1) {
-                throw "Network exception when getting classroom state.";
+                throw new ClassroomStateError();
             }
-            return result;
+            return result as [string, number[]][];
         }),
         MOCK_CLASSROOM_STATE,
     );
@@ -417,7 +424,7 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
             const right = s.indexOf("\n", left);
             const value = s.substring(left, right).trim();
             if (value === "null") {
-                throw "null error";
+                throw new LoseCardError();
             } else {
                 return Number(value);
             }
