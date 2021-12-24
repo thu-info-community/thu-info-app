@@ -8,7 +8,6 @@ global.console = {
 let userId = "";
 let password = "";
 let dormPassword = "";
-let emailName = "";
 
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -16,12 +15,10 @@ try {
     userId = secrets.userId;
     password = secrets.password;
     dormPassword = secrets.dormPassword;
-    emailName = secrets.emailName;
 } catch (e) {
     userId = process.env.INFO_USER_ID!;
     password = process.env.INFO_PASSWORD!;
     dormPassword = process.env.INFO_DORM_PASSWORD!;
-    emailName = process.env.INFO_EMAIL_NAME!;
 }
 
 it("should enter mocked account", async()=> {
@@ -34,10 +31,6 @@ it("should enter mocked account", async()=> {
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
     await helper.login({userId, password, dormPassword});
-    const userInfo = await helper.getUserInfo();
-    helper.emailName = userInfo.emailName;
-    helper.fullName = userInfo.fullName;
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
-    expect(helper.emailName).toEqual(emailName);
 }, 60000);
