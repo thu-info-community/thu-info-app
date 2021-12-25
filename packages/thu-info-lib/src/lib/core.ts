@@ -156,7 +156,9 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         });
     }
     case "gitlab": {
-        const authenticity_token = (await uFetch(GITLAB_LOGIN_URL).then(cheerio.load))("[name=authenticity_token]").attr().value;
+        const data = await uFetch(GITLAB_LOGIN_URL);
+        if (data.includes("sign_out")) return data;
+        const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr().value;
         await uFetch(GITLAB_AUTH_URL, {authenticity_token});
         const response = await uFetch(ID_LOGIN_URL, {
             i_user: helper.userId,
