@@ -45,7 +45,7 @@ const parseUrl = (urlIn: string) => {
     return `https://webvpn.tsinghua.edu.cn/${protocol}/${HOST_MAP[host]}/${path}`;
 };
 
-const getCsrfToken = async () => {
+export const getCsrfToken = async () => {
     const cookie = await uFetch(GET_COOKIE_URL);
     const q = /XSRF-TOKEN=(.+?);/.exec(cookie + ";");
     if (q === null || q[1] === undefined) {

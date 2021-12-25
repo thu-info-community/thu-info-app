@@ -13,7 +13,7 @@ import {
     parseJSON,
     parseScript,
 } from "../models/schedule/schedule";
-import {Calendar} from "../models/schedule/calendar";
+import {CalendarData} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {
@@ -21,21 +21,23 @@ import {
     MOCK_SECONDARY_SCHEDULE,
 } from "../mocks/schedule";
 import {ScheduleError} from "../utils/error";
+import {getCalendar} from "./basics";
+import dayjs from "dayjs";
 
-const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `Calendar.weekCount`.
+const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `weekCount`.
 
-const getPrimary = (helper: InfoHelper) =>
+const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
     roamingWrapperWithMocks(
         helper,
         "default",
         "287C0C6D90ABB364CD5FDF1495199962",
         () => Promise.all(
-            Array.from(new Array(Calendar.weekCount / GROUP_SIZE), (_, id) =>
+            Array.from(new Array(weekCount / GROUP_SIZE), (_, id) =>
                 uFetch(
                     (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
-                    new Calendar(id * GROUP_SIZE + 1, 1).date.format("YYYYMMDD") +
+                    dayjs(firstDay).add((id * GROUP_SIZE) * 7, "day").format("YYYYMMDD") +
                     JXRL_MIDDLE +
-                    new Calendar((id + 1) * GROUP_SIZE, 7).date.format("YYYYMMDD") +
+                    dayjs(firstDay).add(((id + 1) * GROUP_SIZE - 1) * 7 + 6, "day").format("YYYYMMDD") +
                     JXRL_SUFFIX,
                 ),
             ),
@@ -51,8 +53,7 @@ const getPrimary = (helper: InfoHelper) =>
                     .filter((s) => s.trim().length > 0)
                     .join(","),
             )
-            .then((str) => JSON.parse(`[${str}]`))
-            .then(parseJSON),
+            .then((str) => parseJSON(JSON.parse(`[${str}]`), firstDay)),
         MOCK_PRIMARY_SCHEDULE,
     );
 
@@ -72,7 +73,8 @@ const getSecondary = (helper: InfoHelper) =>
     );
 
 export const getSchedule = async (helper: InfoHelper) => {
-    let scheduleList: Schedule[] = (await getPrimary(helper)).concat(await getSecondary(helper));
+    const calendarData = await getCalendar(helper);
+    let scheduleList: Schedule[] = (await getPrimary(helper, calendarData)).concat(await getSecondary(helper));
     scheduleList = mergeSchedules(scheduleList);
     scheduleList.forEach(mergeTimeBlocks);
     return scheduleList;

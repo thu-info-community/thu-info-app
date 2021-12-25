@@ -17,6 +17,8 @@ export const USER_DATA_URL =
 export const ROAMING_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/yyfw/vyyfwxx/info/portal_fg/common/onlineAppRedirect";
 export const LOGOUT_URL = "https://webvpn.tsinghua.edu.cn/logout";
+export const CALENDAR_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/xl";
 export const COUNT_DOWN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?url=/portal3rd.do&m=tsxx";
 export const GET_BKS_REPORT_URL =

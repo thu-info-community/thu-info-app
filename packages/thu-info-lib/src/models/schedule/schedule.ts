@@ -1,4 +1,4 @@
-import {Calendar} from "./calendar";
+import dayjs from "dayjs";
 
 export enum ScheduleType {
 	PRIMARY,
@@ -172,11 +172,13 @@ export const getOverlappedBlock = (
     return res;
 };
 
-export const parseJSON = (json: any[]): Schedule[] => {
+export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
     const scheduleList: Schedule[] = [];
     json.forEach((o) => {
         try {
-            const date = new Calendar(o.nq);
+            const current = dayjs(o.nq);
+            const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+            const dayOfWeek = current.day() === 0 ? 7 : current.day();
             switch (o.fl) {
             case "上课": {
                 const lessonList = scheduleList.filter((val) => val.name === o.nr);
@@ -195,8 +197,8 @@ export const parseJSON = (json: any[]): Schedule[] => {
                     lesson = scheduleList[scheduleList.length - 1];
                 }
                 lesson.activeTime.push({
-                    week: date.weekNumber,
-                    dayOfWeek: date.dayOfWeek,
+                    week: weekNumber,
+                    dayOfWeek: dayOfWeek,
                     begin: beginMap[o.kssj],
                     end: endMap[o.jssj],
                 });
@@ -212,8 +214,8 @@ export const parseJSON = (json: any[]): Schedule[] => {
                     type: ScheduleType.EXAM,
                 });
                 scheduleList[scheduleList.length - 1].activeTime.push({
-                    week: date.weekNumber,
-                    dayOfWeek: date.dayOfWeek,
+                    week: weekNumber,
+                    dayOfWeek: dayOfWeek,
                     begin: examBeginMap[o.kssj.replace("：", ":")],
                     end: examEndMap[o.jssj.replace("：", ":")],
                 });

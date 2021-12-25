@@ -1,11 +1,12 @@
 import cheerio from "cheerio";
-import {roamingWrapperWithMocks} from "./core";
+import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
     ASSESSMENT_LIST_URL,
     ASSESSMENT_SUBMIT_URL,
     BANK_PAYMENT_SEARCH_URL,
     BKS_REPORT_BXR_URL,
+    CALENDAR_URL,
     CLASSROOM_STATE_MIDDLE,
     CLASSROOM_STATE_PREFIX,
     COUNT_DOWN_URL,
@@ -33,6 +34,7 @@ import {
     MOCK_ASSESSMENT_FORM,
     MOCK_ASSESSMENT_LIST,
     MOCK_BANK_PAYMENT,
+    MOCK_CALENDAR_DATA,
     MOCK_CLASSROOM_STATE,
     MOCK_EXPENDITURES,
     MOCK_LOSE_CARD_CODE,
@@ -48,6 +50,7 @@ import {
     UserInfoError,
 } from "../utils/error";
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
+import {CalendarData} from "../models/schedule/calendar";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -489,6 +492,22 @@ export const getBankPayment = async (
                 .get() as BankPaymentByMonth[];
         },
         MOCK_BANK_PAYMENT,
+    );
+
+export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        async () => {
+            const {object} = await uFetch(`${CALENDAR_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
+            const firstDay = object.jyzdyt;
+            const semesterId = object.xnxq;
+            const semesterCode = semesterId[semesterId.length - 1];
+            const weekCount = semesterCode === "3" ? 12 : 18;
+            return {firstDay, semesterId, weekCount};
+        },
+        MOCK_CALENDAR_DATA,
     );
 
 export const countdown = async (): Promise<string[]> => {

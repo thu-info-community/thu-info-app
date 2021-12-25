@@ -1,6 +1,7 @@
 import {Form, InputTag, Overall, Person} from "../models/home/assessment";
 import {Record} from "../models/home/expenditure";
 import {BankPaymentByMonth} from "../models/home/bank";
+import {CalendarData} from "../models/schedule/calendar";
 
 export const MOCK_REPORT = [
     {
@@ -476,3 +477,9 @@ export const MOCK_BANK_PAYMENT = [{
         cash: "0.00",
     }],
 }] as BankPaymentByMonth[];
+
+export const MOCK_CALENDAR_DATA: CalendarData = {
+    firstDay: "2021-09-13",
+    semesterId: "2021-2022-1",
+    weekCount: 18,
+};
