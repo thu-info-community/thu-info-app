@@ -46,6 +46,7 @@ import {helper, State} from "../../redux/store";
 import {GitlabHomeScreen} from "./gitlabHome";
 import {GitlabProjectScreen} from "./gitlabProject";
 import {Project} from "thu-info-lib/dist/models/gitlab/gitlab";
+import {GitlabTreeScreen} from "./gitlabTree";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -81,6 +82,7 @@ export type HomeStackParamList = {
 	SportsRecord: undefined;
 	GitLabHome: undefined;
 	GitLabProject: {project: Project};
+	GitLabTree: {project: Project; path: string; ref: string};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -105,6 +107,8 @@ export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
 
 export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
+
+export type GitLabTreeProp = RouteProp<HomeStackParamList, "GitLabTree">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -353,6 +357,15 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="GitLabProject"
 				component={GitlabProjectScreen}
 				options={({route}) => ({title: route.params.project.name})}
+			/>
+			<Stack.Screen
+				name="GitLabTree"
+				component={GitlabTreeScreen}
+				options={({route}) => ({
+					title: route.params.path
+						? route.params.path
+						: getStr("gitlabViewCode"),
+				})}
 			/>
 			<Stack.Screen
 				name="Email"

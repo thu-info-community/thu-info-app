@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {GitLabProjectProp} from "./homeStack";
+import {GitLabProjectProp, HomeNav} from "./homeStack";
 import {ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -8,12 +8,15 @@ import {SettingsItem} from "../../components/settings/items";
 import {helper} from "../../redux/store";
 import {File} from "thu-info-lib/dist/models/gitlab/gitlab";
 import AutoheightWebView from "../../components/AutoheightWebView";
+import {getStr} from "src/utils/i18n";
 
 export const GitlabProjectScreen = ({
+	navigation,
 	route: {
 		params: {project},
 	},
 }: {
+	navigation: HomeNav;
 	route: GitLabProjectProp;
 }) => {
 	const themeName = useColorScheme();
@@ -116,6 +119,17 @@ export const GitlabProjectScreen = ({
 				text={project.default_branch}
 				onPress={() => {}}
 				icon={<Feather name="git-branch" size={20} />}
+			/>
+			<SettingsItem
+				text={getStr("gitlabViewCode")}
+				onPress={() =>
+					navigation.navigate("GitLabTree", {
+						project,
+						path: "",
+						ref: project.default_branch,
+					})
+				}
+				icon={<Feather name="code" size={20} />}
 			/>
 			{readmeFile !== undefined && readmeFileContent !== undefined && (
 				<>

@@ -229,6 +229,7 @@ export default {
 	newsTip: "Tip: Press the icon to filter the source of news.",
 	gitLab: "GitLab",
 	gitlabLastUpdate: "Updated",
+	gitlabViewCode: "Code",
 	classroomName: "Classroom",
 	classroomCapacity: "Capacity",
 	classroomCondition: "State",
