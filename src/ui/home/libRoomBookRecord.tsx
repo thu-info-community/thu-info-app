@@ -73,8 +73,8 @@ export const LibRoomBookRecordScreen = simpleRefreshListScreen(
 													.catch((e) => {
 														Snackbar.show({
 															text:
-																typeof e === "string"
-																	? e
+																typeof e.message === "string"
+																	? e.message
 																	: getStr("networkRetry"),
 															duration: Snackbar.LENGTH_SHORT,
 														});

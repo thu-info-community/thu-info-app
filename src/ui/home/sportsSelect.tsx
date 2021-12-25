@@ -196,7 +196,10 @@ export const SportsSelectScreen = ({
 							.then(() => navigation.pop())
 							.catch((e) => {
 								Snackbar.show({
-									text: typeof e === "string" ? e : getStr("networkRetry"),
+									text:
+										typeof e.message === "string"
+											? e.message
+											: getStr("networkRetry"),
 									duration: Snackbar.LENGTH_LONG,
 								});
 							});
