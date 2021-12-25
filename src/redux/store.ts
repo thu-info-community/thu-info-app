@@ -15,11 +15,8 @@ import {Credentials} from "./states/credentials";
 import {Cache} from "./states/cache";
 import {cache} from "./reducers/cache";
 import {InfoHelper} from "thu-info-lib";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import dayjs from "dayjs";
 import CookieManager from "@react-native-community/cookies";
-import {AppState} from "react-native";
-import {retryWrapperWithMocks} from "thu-info-lib/dist/lib/core";
-import {emailInit} from "../utils/email";
 import React from "react";
 import ViewShot from "react-native-view-shot";
 
@@ -28,20 +25,6 @@ export const helper = new InfoHelper();
 helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
-
-AppState.addEventListener("change", (state) => {
-	if (state === "active") {
-		setTimeout(() => {
-			retryWrapperWithMocks(
-				helper,
-				undefined,
-				() => Promise.reject(),
-				undefined,
-			).catch(() => console.log("Re-connection done."));
-			emailInit().then(() => console.log("Email re-login done."));
-		}, 1000); // Wait for data to be rehydrated
-	}
-});
 
 const KeychainStorage = createKeychainStorage();
 
@@ -118,15 +101,8 @@ const credentialsTransform = createTransform(
 );
 
 const configTransform = createTransform(
-	(c: Config) => ({...c, firstDay: c.firstDay.date.format("YYYY-MM-DD")}),
-	(c) => {
-		helper.emailName = c.emailName;
-		Calendar.firstDay = new Calendar(c.firstDay);
-		Calendar.weekCount = c.weekCount;
-		Calendar.semesterType = c.semesterType;
-		Calendar.semesterId = c.semesterId;
-		return {...c, firstDay: Calendar.firstDay};
-	},
+	(c: Config) => ({...c, firstDay: c.firstDay.format("YYYY-MM-DD")}),
+	(c) => ({...c, firstDay: dayjs(c.firstDay)}),
 	{
 		whitelist: ["config"],
 	},

@@ -13,7 +13,7 @@ import {getStr} from "../../utils/i18n";
 import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import dayjs from "dayjs";
 import {Record} from "thu-info-lib/dist/models/home/expenditure";
 import {useColorScheme} from "react-native";
 
@@ -70,9 +70,8 @@ export const ExpenditureScreen = () => {
 		[Record[], number, number, number]
 	>([[], 0, 0, 0]);
 
-	const today = new Calendar();
-	const [beg, setBeg] = useState(today.date.add(-1, "month").toDate());
-	const [end, setEnd] = useState(today.date.toDate());
+	const [beg, setBeg] = useState(dayjs().add(-1, "month").toDate());
+	const [end, setEnd] = useState(dayjs().toDate());
 	const [refreshing, setRefreshing] = useState(false);
 
 	const themeName = useColorScheme();

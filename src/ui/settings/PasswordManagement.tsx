@@ -23,7 +23,7 @@ export const PasswordManagementUI = ({
 					try {
 						await helper.logout();
 					} catch (e) {}
-					await helper.login({password}, () => {});
+					await helper.login({password});
 					return true;
 				} catch (e) {
 					return false;
@@ -36,7 +36,7 @@ export const PasswordManagementUI = ({
 			validator={() =>
 				new Promise((resolve) => {
 					helper
-						.getTicket(-1)
+						.getEleRemainder()
 						.then(() => resolve(true))
 						.catch(() => resolve(false));
 				})

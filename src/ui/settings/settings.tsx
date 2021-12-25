@@ -21,7 +21,7 @@ import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {scheduleClearAction} from "../../redux/actions/schedule";
-import {configSet} from "../../redux/actions/config";
+import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import AV from "leancloud-storage";
@@ -105,7 +105,10 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 							try {
 								await helper.logout();
 							} catch (e) {}
-							await helper.login({}, () => {});
+							await helper.login({});
+							helper.getCalendar().then((c) => {
+								store.dispatch(setCalendarConfigAction(c));
+							});
 							Snackbar.show({
 								text: getStr("success"),
 								duration: Snackbar.LENGTH_SHORT,

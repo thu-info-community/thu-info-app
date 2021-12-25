@@ -7,10 +7,8 @@ import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconClassroom from "../../assets/icons/IconClassroom";
 import IconEvaluation from "../../assets/icons/IconEvaluation";
 import IconLibrary from "../../assets/icons/IconLibrary";
-import IconDormScore from "../../assets/icons/IconDormScore";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-import {helper} from "../../redux/store";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
@@ -87,13 +85,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					onPress={() => navigation.navigate("Expenditure")}>
 					<IconExpenditure width={iconSize} height={iconSize} />
 				</HomeIcon>
-				{!helper.mocked() && (
-					<HomeIcon
-						title="dormScore"
-						onPress={() => navigation.navigate("DormScore")}>
-						<IconDormScore width={iconSize} height={iconSize} />
-					</HomeIcon>
-				)}
 				<HomeIcon
 					title="sportsBook"
 					onPress={() => navigation.navigate("Sports")}>

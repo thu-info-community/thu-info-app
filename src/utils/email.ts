@@ -5,7 +5,7 @@ import {configSet} from "../redux/actions/config";
 
 const INBOX = "INBOX";
 
-export const emailInit = async () => {
+export const emailInit = async (emailName: string) => {
 	if (Platform.OS === "ios") {
 		return;
 	}
@@ -13,7 +13,7 @@ export const emailInit = async () => {
 		await MailCore.loginImap({
 			hostname: "mails.tsinghua.edu.cn",
 			port: 993, // port for smtp is 465
-			username: `${helper.emailName}@mails.tsinghua.edu.cn`,
+			username: `${emailName}@mails.tsinghua.edu.cn`,
 			password: helper.password,
 			authType: 0,
 		});

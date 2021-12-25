@@ -14,10 +14,10 @@ import {
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
-import {globalObjects, helper, State} from "../../redux/store";
+import {currState, globalObjects, helper, State} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import dayjs from "dayjs";
 import Icon from "react-native-vector-icons/FontAwesome";
 import ViewShot from "react-native-view-shot";
 import {getStr} from "../../utils/i18n";
@@ -36,9 +36,20 @@ interface ScheduleProps {
 }
 
 const ScheduleUI = (props: ScheduleProps) => {
-	const [week, setWeek] = useState(new Calendar().weekNumberCoerced);
-	const today = new Calendar().dayOfWeek;
-	const nowWeek = new Calendar().weekNumberCoerced;
+	const {firstDay, weekCount} = currState().config;
+	const current = dayjs();
+	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+	const nowWeek = (() => {
+		if (weekNumber > weekCount) {
+			return weekCount;
+		} else if (weekNumber < 1) {
+			return 1;
+		} else {
+			return weekNumber;
+		}
+	})();
+	const today = current.day() === 0 ? 7 : current.day();
+	const [week, setWeek] = useState(nowWeek);
 
 	const viewShot = useRef<ViewShot>(null);
 
@@ -72,7 +83,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	useEffect(props.getSchedule, []);
 
 	useEffect(() => {
-		if (Calendar.semesterId !== props.cache) {
+		if (currState().config.semesterId !== props.cache) {
 			console.log(
 				"Schedule: Corresponding cache not found. Auto fetch from server.",
 			);
@@ -101,9 +112,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 					}}
 					key={`0-${ind + 1}`}>
 					<Text style={{textAlign: "center", color: "gray"}}>
-						{`${new Calendar(week, ind).date.format("MM.DD")}\n${
-							getStr("dayOfWeek")[ind]
-						}`}
+						{`${firstDay
+							.add((week - 1) * 7 + ind - 1, "day")
+							.format("MM.DD")}\n${getStr("dayOfWeek")[ind]}`}
 					</Text>
 				</View>,
 			);
@@ -195,7 +206,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								dayOfWeek={block.dayOfWeek}
 								begin={block.begin}
 								end={block.end}
-								name={(props.shortenMap[val.name] ?? val.name).substr(
+								name={(props.shortenMap[val.name] ?? val.name).substring(
 									val.type === ScheduleType.CUSTOM ? 6 : 0,
 								)}
 								location={val.location}
@@ -242,9 +253,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 					justifyContent: "center",
 				}}>
 				<Text style={{color: "white", textAlign: "center"}}>
-					{`${new Calendar(week, today).date.format("MM.DD")}\n${
-						getStr("dayOfWeek")[today]
-					}`}
+					{`${firstDay
+						.add((week - 1) * 7 + today - 1, "day")
+						.format("MM.DD")}\n${getStr("dayOfWeek")[today]}`}
 				</Text>
 			</View>
 		) : null;
@@ -269,7 +280,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					/>
 				</TouchableOpacity>
 				<Text
-					onPress={() => setWeek(new Calendar().weekNumberCoerced)}
+					onPress={() => setWeek(nowWeek)}
 					style={{
 						fontSize: 18,
 						textAlign: "center",
@@ -279,15 +290,13 @@ const ScheduleUI = (props: ScheduleProps) => {
 					{week}
 				</Text>
 				<TouchableOpacity
-					onPress={() =>
-						setWeek((o) => (week < Calendar.weekCount ? o + 1 : o))
-					}
-					disabled={week >= Calendar.weekCount}
+					onPress={() => setWeek((o) => (week < weekCount ? o + 1 : o))}
+					disabled={week >= weekCount}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-right"
 						size={24}
-						color={week < Calendar.weekCount ? theme.colors.text : "#888"}
+						color={week < weekCount ? theme.colors.text : "#888"}
 					/>
 				</TouchableOpacity>
 			</View>
@@ -322,7 +331,14 @@ export const ScheduleScreen = connect(
 			dispatch(scheduleFetchAction.request());
 			helper
 				.getSchedule()
-				.then((res) => dispatch(scheduleFetchAction.success(res)))
+				.then((res) =>
+					dispatch(
+						scheduleFetchAction.success({
+							schedule: res,
+							semesterId: currState().config.semesterId,
+						}),
+					),
+				)
 				.catch(() => dispatch(scheduleFetchAction.failure()));
 		},
 	}),

@@ -1,14 +1,10 @@
-import {
-	Calendar,
-	SemesterType,
-} from "thu-info-lib/dist/models/schedule/calendar";
+import dayjs from "dayjs";
 
 export interface Config {
 	doNotRemindSemver: string;
 	lastSelfVersion: number;
-	firstDay: Calendar;
+	firstDay: dayjs.Dayjs;
 	weekCount: number;
-	semesterType: SemesterType;
 	semesterId: string;
 	newGPA: boolean;
 	bx: boolean;
@@ -24,10 +20,9 @@ export interface Config {
 export const defaultConfigState: Config = {
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
-	firstDay: Calendar.firstDay,
-	weekCount: Calendar.weekCount,
-	semesterType: Calendar.semesterType,
-	semesterId: Calendar.semesterId,
+	firstDay: dayjs("2021-09-13"),
+	weekCount: 18,
+	semesterId: "2021-2022-1",
 	newGPA: true,
 	bx: false,
 	reportHidden: [],

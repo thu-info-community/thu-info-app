@@ -16,7 +16,6 @@ import {
 	Schedule,
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
 
 export enum Choice {
 	ONCE,
@@ -58,7 +57,7 @@ export const schedule = (
 					customList.push(val);
 				}
 			});
-			action.payload.forEach((val) => {
+			action.payload.schedule.forEach((val) => {
 				let selectedScheduleList = state.baseSchedule.filter(
 					(item) => item.name === val.name,
 				);
@@ -82,7 +81,7 @@ export const schedule = (
 			return {
 				...state,
 				baseSchedule: customList.concat(newScheduleList),
-				cache: Calendar.semesterId,
+				cache: action.payload.semesterId,
 				refreshing: false,
 			};
 		}

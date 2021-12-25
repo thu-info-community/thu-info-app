@@ -9016,17 +9016,16 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@1.3.5:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-1.3.5.tgz#de15a8d7bf569c0bff8587f9a9459a7affa3bd24"
-  integrity sha512-vxHMsdVzF7JzjRbSznlreJZCJujFs/aqQvPFtOKFV1vSdQJOI9MrfNrUgf+saYyEQTVFhSOjPK9P3/bEaYcjZA==
+thu-info-lib@2.0.0-alpha.7:
+  version "2.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-2.0.0-alpha.7.tgz#2d4c22a0139e9eac14710b31de09a847538c5347"
+  integrity sha512-AVm2Uy31uhs26I8cVcfidodIgzZ6xD//3Vppwdb9MGw1QKcnmmpI+/vpnzgvT/kl7/8qwFvgCjAbXDNt+K8sUw==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.10"
     cross-fetch "3.1.4"
     dayjs "1.10.7"
     iconv-lite "0.6.3"
-    md5 "2.3.0"
     xlsx "0.17.4"
 
 thu-info-mailcore@0.2.1:

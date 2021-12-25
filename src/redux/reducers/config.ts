@@ -5,7 +5,7 @@ import {
 	REMOVE_REPORT_HIDDEN,
 	SET_CALENDAR_CONFIG,
 } from "../constants";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import dayjs from "dayjs";
 
 export const config = (
 	state: Config = defaultConfigState,
@@ -13,12 +13,11 @@ export const config = (
 ): Config => {
 	switch (action.type) {
 		case SET_CALENDAR_CONFIG:
-			const {firstDay, weekCount, semesterType, semesterId} = action.payload;
+			const {firstDay, weekCount, semesterId} = action.payload;
 			return {
 				...state,
-				firstDay: new Calendar(firstDay),
+				firstDay: dayjs(firstDay),
 				weekCount,
-				semesterType,
 				semesterId,
 			};
 		case ADD_REPORT_HIDDEN:

@@ -12,8 +12,8 @@ import Snackbar from "react-native-snackbar";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
-import {helper} from "../../redux/store";
-import {Calendar} from "thu-info-lib/dist/models/schedule/calendar";
+import {currState, helper} from "../../redux/store";
+import dayjs from "dayjs";
 
 const colors = ["#26A69A", "#FFA726", "#29B6F6", "#868686", "#AB47BC"];
 
@@ -23,9 +23,23 @@ export const ClassroomDetailScreen = ({
 	route: ClassroomDetailRouteProp;
 }) => {
 	const name = route.params.name;
+	const {firstDay, weekCount} = currState().config;
+	const current = dayjs();
+	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+	const weekNumberCoerced = (() => {
+		if (weekNumber > weekCount) {
+			return weekCount;
+		} else if (weekNumber < 1) {
+			return 1;
+		} else {
+			return weekNumber;
+		}
+	})();
+	const dayOfWeek = current.day() === 0 ? 7 : current.day();
+
 	const [data, setData] = useState<[number, number, [string, number[]][]]>([
-		new Calendar().weekNumberCoerced,
-		new Calendar().dayOfWeek,
+		weekNumberCoerced,
+		dayOfWeek,
 		[],
 	]);
 	const prev = useRef<[number, [string, number[]][]]>();
@@ -82,7 +96,7 @@ export const ClassroomDetailScreen = ({
 				.then((res) => (prev.current = [data[0] - 1, res]));
 		}
 		if (
-			data[0] < Calendar.weekCount &&
+			data[0] < weekCount &&
 			(next.current === undefined || next.current[0] !== data[0] + 1)
 		) {
 			helper
@@ -121,11 +135,7 @@ export const ClassroomDetailScreen = ({
 				</TouchableOpacity>
 				<Text
 					onPress={() =>
-						setData(([_, __, table]) => [
-							new Calendar().weekNumberCoerced,
-							new Calendar().dayOfWeek,
-							table,
-						])
+						setData(([_, __, table]) => [weekNumberCoerced, dayOfWeek, table])
 					}
 					style={{
 						fontSize: 18,
@@ -144,18 +154,18 @@ export const ClassroomDetailScreen = ({
 						setData(([week, day, table]) =>
 							day < 7
 								? [week, day + 1, table]
-								: week < Calendar.weekCount
+								: week < weekCount
 								? [week + 1, 1, table]
 								: [week, day, table],
 						)
 					}
-					disabled={data[0] === Calendar.weekCount && data[1] === 7}
+					disabled={data[0] === weekCount && data[1] === 7}
 					style={{padding: 8}}>
 					<Icon
 						name="chevron-right"
 						size={24}
 						color={
-							data[0] === Calendar.weekCount && data[1] === 7
+							data[0] === weekCount && data[1] === 7
 								? "#888"
 								: theme.colors.text
 						}

@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {currState, helper, State} from "../../redux/store";
+import {currState, helper, State, store} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {configSet} from "../../redux/actions/config";
+import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -28,11 +28,7 @@ interface LoginProps {
 	readonly userId: string;
 	readonly password: string;
 	readonly status: LoginStatus;
-	login: (
-		userId: string,
-		password: string,
-		statusIndicator: () => void,
-	) => void;
+	login: (userId: string, password: string) => void;
 	loginSuccess: () => void;
 	resetStatus: () => void;
 	navigation: LoginNav;
@@ -42,23 +38,17 @@ interface LoginProps {
 const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
-	const [loginPhase, setLoginPhase] = React.useState(0);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const performLogin = () => {
-		props.login(userId, password, () => {
-			if (currState().auth.status !== LoginStatus.LoggedIn) {
-				setLoginPhase((i) => i + 1);
-			}
-		});
+		props.login(userId, password);
 	};
 
 	useEffect(() => {
 		if (props.userId !== "") {
-			setLoginPhase(1);
 			performLogin();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,13 +73,6 @@ const LoginUI = (props: LoginProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.status]);
-
-	useEffect(() => {
-		if (loginPhase === 5) {
-			props.loginSuccess();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginPhase]);
 
 	const width = Dimensions.get("window").width * 0.4;
 
@@ -128,7 +111,6 @@ const LoginUI = (props: LoginProps) => {
 				<TouchableOpacity
 					style={style.loginButtonStyle}
 					onPress={() => {
-						setLoginPhase(1);
 						performLogin();
 					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
@@ -156,9 +138,7 @@ const LoginUI = (props: LoginProps) => {
 						blurAmount={10}
 					/>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
-					<Text style={style.loggingInCaptionStyle}>
-						{getStr("loggingIn") + ` (${Math.round((loginPhase * 100) / 5)}%)`}
-					</Text>
+					<Text style={style.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
 				</View>
 			) : null}
 		</View>
@@ -243,38 +223,35 @@ export const LoginScreen = connect(
 	(state: State) => state.auth,
 	(dispatch) => {
 		return {
-			login: (
-				userId: string,
-				password: string,
-				statusIndicator: () => void,
-			) => {
+			login: (userId: string, password: string) => {
 				dispatch(loginAction.request({userId, password}));
 				helper
-					.login(
-						{
-							userId,
-							password,
-							dormPassword: currState().credentials.dormPassword,
-						},
-						statusIndicator,
-					)
+					.login({
+						userId,
+						password,
+						dormPassword: currState().credentials.dormPassword,
+					})
 					.then(() => {
 						dispatch(loginAction.success());
+						if (currState().config.emailName.length === 0) {
+							helper.getUserInfo().then(({emailName}) => {
+								dispatch(configSet("emailName", emailName));
+								emailInit(emailName).then(() =>
+									console.log(
+										`Successfully logged in with ${emailName}@mails.tsinghua.edu.cn`,
+									),
+								);
+							});
+						}
+						helper.getCalendar().then((c) => {
+							store.dispatch(setCalendarConfigAction(c));
+						});
 					})
 					.catch((reason: LoginStatus) => {
 						dispatch(loginAction.failure(reason));
 					});
 			},
 			resetStatus: () => loginAction.failure(LoginStatus.None),
-			loginSuccess: () => {
-				dispatch(loginAction.success());
-				dispatch(configSet("emailName", helper.emailName));
-				emailInit().then(() =>
-					console.log(
-						`Successfully logged in with ${helper.emailName}@mails.tsinghua.edu.cn`,
-					),
-				);
-			},
 		};
 	},
 )(LoginUI);

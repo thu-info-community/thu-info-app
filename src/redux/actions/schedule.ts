@@ -17,7 +17,7 @@ export const scheduleFetchAction = createAsyncAction(
 	SCHEDULE_REQUEST,
 	SCHEDULE_SUCCESS,
 	SCHEDULE_FAILURE,
-)<undefined, Schedule[], undefined>();
+)<undefined, {schedule: Schedule[]; semesterId: string}, undefined>();
 export const scheduleUpdateAliasAction = createAction(SCHEDULE_UPDATE_ALIAS)<
 	[string, string?]
 >();
