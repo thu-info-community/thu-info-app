@@ -43,6 +43,7 @@ import {SportsSelectScreen} from "./sportsSelect";
 import {SportsRecordScreen} from "./sportsRecord";
 import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
+import {GitlabHomeScreen} from "./gitlabHome";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -76,6 +77,7 @@ export type HomeStackParamList = {
 		availableFields: {id: string; name: string; cost: number}[];
 	};
 	SportsRecord: undefined;
+	GitLabHome: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -336,6 +338,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="SportsRecord"
 				component={SportsRecordScreen}
 				options={{title: getStr("sportsRecord")}}
+			/>
+			<Stack.Screen
+				name="GitLabHome"
+				component={GitlabHomeScreen}
+				options={{title: getStr("gitLab")}}
 			/>
 			<Stack.Screen
 				name="Email"

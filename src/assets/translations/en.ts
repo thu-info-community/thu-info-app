@@ -227,6 +227,8 @@ export default {
 	numberOfNewsNaN: "Your input is not a number",
 	waitForLoading: "It may take long time to load news...",
 	newsTip: "Tip: Press the icon to filter the source of news.",
+	gitLab: "GitLab",
+	gitlabLastUpdate: "Updated",
 	classroomName: "Classroom",
 	classroomCapacity: "Capacity",
 	classroomCondition: "State",

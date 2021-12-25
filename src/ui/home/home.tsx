@@ -16,6 +16,7 @@ import IconLibRoom from "../../assets/icons/IconLibRoom";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
+import IconGitLab from "../../assets/icons/IconGitLab";
 
 const iconSize = 60;
 
@@ -89,6 +90,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="sportsBook"
 					onPress={() => navigation.navigate("Sports")}>
 					<IconSports width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon
+					title="gitLab"
+					onPress={() => navigation.navigate("GitLabHome")}>
+					<IconGitLab width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="thirdParty">

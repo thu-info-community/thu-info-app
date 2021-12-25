@@ -211,6 +211,8 @@ export default {
 	numberOfNewsNaN: "您输入的不是一个数字",
 	waitForLoading: "新闻较多，加载时间较长，请耐心等待。",
 	newsTip: "小提示：点按新闻图标可只查看某一来源的新闻。",
+	gitLab: "代码托管",
+	gitlabLastUpdate: "最近活动于",
 	classroomName: "教室",
 	classroomCapacity: "教室容量",
 	classroomCondition: "教室状态",
