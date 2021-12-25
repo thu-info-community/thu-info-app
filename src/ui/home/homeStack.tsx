@@ -44,6 +44,8 @@ import {SportsRecordScreen} from "./sportsRecord";
 import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {GitlabHomeScreen} from "./gitlabHome";
+import {GitlabProjectScreen} from "./gitlabProject";
+import {Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -78,6 +80,7 @@ export type HomeStackParamList = {
 	};
 	SportsRecord: undefined;
 	GitLabHome: undefined;
+	GitLabProject: {project: Project};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -100,6 +103,8 @@ export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
+
+export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -343,6 +348,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="GitLabHome"
 				component={GitlabHomeScreen}
 				options={{title: getStr("gitLab")}}
+			/>
+			<Stack.Screen
+				name="GitLabProject"
+				component={GitlabProjectScreen}
+				options={({route}) => ({title: route.params.project.name})}
 			/>
 			<Stack.Screen
 				name="Email"

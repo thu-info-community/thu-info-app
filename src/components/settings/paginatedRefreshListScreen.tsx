@@ -11,12 +11,12 @@ import {FlatList, RefreshControl} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
-export function paginatedRefreshListScreen<T>(
-	dataSource: (props: PropsWithChildren<any>, page: number) => Promise<T[]>,
+export function paginatedRefreshListScreen<T, R>(
+	dataSource: (props: PropsWithChildren<R>, page: number) => Promise<T[]>,
 	renderItem: (
 		item: T,
 		refresh: () => void,
-		props: PropsWithChildren<any>,
+		props: PropsWithChildren<R>,
 		theme: Theme,
 		index: number,
 		total: number,
@@ -26,8 +26,8 @@ export function paginatedRefreshListScreen<T>(
 	header?: (theme: Theme) => ReactElement,
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
-): FC {
-	return (props) => {
+): FC<R> {
+	return (props: PropsWithChildren<R>) => {
 		const [data, setData] = useState<T[]>([]);
 		const [page, setPage] = useState<number>(1);
 		const [refreshing, setRefreshing] = useState(false);
