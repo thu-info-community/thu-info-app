@@ -46,7 +46,7 @@ import {
     MOCK_LIBRARY_FLOOR_LIST,
     MOCK_LIBRARY_LIST,
 } from "../mocks/library";
-import {CabError} from "../utils/error";
+import {CabError, LibraryError} from "../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -246,7 +246,7 @@ const getAccessToken = (helper: InfoHelper): Promise<string> =>
             const right = response.indexOf('"', left);
             const token = response.substring(left, right);
             if (token.trim() === "") {
-                throw new Error("Getting library token failed.");
+                throw new LibraryError("Getting library token failed.");
             }
             return token;
         }),
@@ -305,7 +305,7 @@ export const getBookingRecords = async (
                 })
                 .get();
             if (result.length === 0 && html.indexOf("tbody") === -1) {
-                throw new Error("Getting lib book record failed!");
+                throw new LibraryError();
             }
             return result;
         },
@@ -330,7 +330,7 @@ export const cancelBooking = async (
             .then(JSON.parse)
             .then((data: any) => {
                 if (!data.status) {
-                    throw data.message ?? data.msg;
+                    throw new LibraryError(data.message ?? data.msg);
                 }
             }),
         undefined,
@@ -405,8 +405,8 @@ export const bookLibraryRoom = async (
         async (): Promise<{success: boolean, msg: string}> => {
             const middle = memberList.length === 0 ? "" : `&min_user=${roomRes.minUser}&max_user=${roomRes.maxUser}&mb_list=$${memberList.join(',')}`;
             const result = await uFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=${middle}&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`).then(JSON.parse);
-            if (result.ret !== 1) {
-                throw new CabError();
+            if (result.ret === -1) {
+                throw new CabError(result.msg);
             }
             return {success: result.ret === 1, msg: result.msg};
         },
@@ -457,6 +457,9 @@ export const cancelLibraryRoomBooking = async (
         "",
         async () : Promise<{success: boolean, msg: string}> => {
             const result = await uFetch(LIBRARY_CANCEL_BOOKING_URL + id).then(JSON.parse);
+            if (result.ret === -1) {
+                throw new CabError(result.msg);
+            }
             return {success: result.ret === 1, msg: result.msg};
         },
         {success: true, msg: "操作成功！"},

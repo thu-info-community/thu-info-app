@@ -205,7 +205,12 @@ export const roamingWrapper = async <R>(
         }
     } catch (e) {
         if (await verifyAndReLogin(helper)) {
-            return await operation();
+            if (policy) {
+                const result = await roam(helper, policy, payload);
+                return await operation(result);
+            } else {
+                return await operation();
+            }
         } else {
             throw e;
         }

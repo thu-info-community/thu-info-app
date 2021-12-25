@@ -20,6 +20,7 @@ import {
     MOCK_PRIMARY_SCHEDULE,
     MOCK_SECONDARY_SCHEDULE,
 } from "../mocks/schedule";
+import {ScheduleError} from "../utils/error";
 
 const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `Calendar.weekCount`.
 
@@ -43,7 +44,7 @@ const getPrimary = (helper: InfoHelper) =>
                 results
                     .map((s) => {
                         if (s[0] !== "m") {
-                            throw 0;
+                            throw new ScheduleError();
                         }
                         return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
                     })

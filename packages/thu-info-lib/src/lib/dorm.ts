@@ -11,6 +11,7 @@ import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
+import {EleError} from "../utils/error";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -49,6 +50,7 @@ export const getElePayRecord = async (
         "",
         async () => {
             const data = (await uFetch(ELE_PAY_RECORD_URL).then(cheerio.load))(".myTable tr");
+            if (data.length === 0) throw new EleError();
 
             return data.slice(1, data.length - 1)
                 .map((index, element) => [
@@ -70,6 +72,7 @@ export const getEleRemainder = async (
         "",
         async () => {
             const $ = await uFetch(ELE_REMAINDER_URL).then(cheerio.load);
+            if ($("#net_Default_LoginCtrl1_txtUserName").length === 1) throw new EleError();
             return Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
         },
         MOCK_ELE_REMAINDER,

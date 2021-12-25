@@ -32,8 +32,20 @@ export class LoseCardError extends LibError {
 
 }
 
-export class SportsError extends LibError {
+export class EleError extends LibError {
 
+}
+
+export class LibraryError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
+export class SportsError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
 }
 
 export class IdAuthError extends LibError {
@@ -55,5 +67,9 @@ export class ResponseStatusError extends LibError {
 }
 
 export class GitLabApiError extends LibError {
+
+}
+
+export class ScheduleError extends LibError {
 
 }

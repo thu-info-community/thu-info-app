@@ -20,7 +20,7 @@ import TagElement = cheerio.TagElement;
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import Element = cheerio.Element;
-import {SportsError} from "../utils/error";
+import {LibError, SportsError} from "../utils/error";
 
 export const VALID_RECEIPT_TITLES = ["清华大学", "清华大学工会", "清华大学教育基金会"] as const;
 export type ValidReceiptTypes = typeof VALID_RECEIPT_TITLES[number];
@@ -35,7 +35,7 @@ const getSportsResourceLimit = async (
     const countSearch = /var limitBookCount = '(\d+?)';/.exec(rawHtml);
     const initSearch = /var limitBookInit = '(\d+?)';/.exec(rawHtml);
     if (countSearch === null || initSearch === null) {
-        throw new Error("Exception occurred during getting sports resource limit");
+        throw new SportsError("Exception occurred during getting sports resource limit");
     }
     return {count: Number(countSearch[1]), init: Number(initSearch[1])};
 };
@@ -103,9 +103,12 @@ export const updateSportsPhoneNumber = async (
         "5539ECF8CD815C7D3F5A8EE0A2D72441",
         async () => {
             if (!/^(1[3-9][0-9]|15[036789]|18[89])\d{8}$/.test(phone)) {
-                throw new Error("请正确填写手机号码!");
+                throw new SportsError("请正确填写手机号码!");
             }
-            await uFetch(`${SPORTS_UPDATE_PHONE_URL}${phone}&gzzh=${helper.userId}`, {});
+            const response = await uFetch(`${SPORTS_UPDATE_PHONE_URL}${phone}&gzzh=${helper.userId}`, {});
+            if (response.includes("找回密码")) {
+                throw new LibError();
+            }
         },
         undefined,
     );
@@ -159,7 +162,7 @@ export const makeSportsReservation = async (
         "allFieldTime": `${fieldId}#${date}`,
     }).then(JSON.parse);
     if (orderResult.msg !== "预定成功") {
-        throw orderResult.msg;
+        throw new SportsError(orderResult.msg);
     }
     if (totalCost === 0) return undefined;
     const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, {
@@ -180,14 +183,14 @@ export const makeSportsReservation = async (
     );
     const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
     if (searchResult === null) {
-        throw new Error("id and token not found.");
+        throw new SportsError("id and token not found.");
     }
     const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, {
         id: searchResult[1],
         token: searchResult[2],
     }).then(JSON.parse);
     if (paymentCheckResult.code !== "0") {
-        throw new Error("Payment check failed: " + paymentCheckResult.message);
+        throw new SportsError("Payment check failed: " + paymentCheckResult.message);
     }
     const inputs = cheerio.load(paymentApiHtml)("#payForm input");
     const postForm: { [key: string]: string } = {};

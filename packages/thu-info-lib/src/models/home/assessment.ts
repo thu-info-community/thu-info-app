@@ -1,4 +1,5 @@
 import cheerio from "cheerio";
+import {AssessmentError} from "../../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -13,7 +14,7 @@ const flatMap = <T, R>(arr: T[], transform: (item: T, index: number) => R[]) =>
 /**
  * The minimal component of a form to be posted to the school server.
  *
- * Nobody knows what `name` stands for, but it is sure that `value`
+ * Nobody knows what `name` stands for, but it is certain that `value`
  * stands for the score of a question in some occasions.
  */
 export class InputTag {
@@ -152,7 +153,7 @@ export class Form {
 
 const assert = (exp: boolean) => {
     if (!exp) {
-        throw 0;
+        throw new AssessmentError("Assertion failed!");
     }
 };
 
