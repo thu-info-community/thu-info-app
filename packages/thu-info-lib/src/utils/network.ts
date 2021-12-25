@@ -53,11 +53,12 @@ export const uFetch = async (
     timeout = 60000,
     paramEncoding = "UTF-8",
     serialized = false,
+    requestContentType = CONTENT_TYPE_FORM,
 ): Promise<string> => {
     // Prepare request headers
     const defaultHeaders = {
         // Setup content-type and user-agent
-        "Content-Type": CONTENT_TYPE_FORM,
+        "Content-Type": requestContentType,
         "User-Agent": USER_AGENT,
     };
 
@@ -91,7 +92,7 @@ export const uFetch = async (
     try {
         const response = await fetch(url, init);
 
-        if (response.status !== 200) {
+        if (response.status !== 200 && response.status !== 201) {
             throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
         }
 

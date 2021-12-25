@@ -4,11 +4,26 @@ import {stringify, uFetch} from "../utils/network";
 import {GITLAB_API_BASE_URL} from "../constants/strings";
 import {GitLabApiError} from "../utils/error";
 import {MOCK_GIT_NAMESPACES, MOCK_GIT_PERSONAL_PROJECTS, MOCK_GIT_RECENT_PROJECTS} from "../mocks/gitlab";
-import {Namespace, Project} from "../models/gitlab/gitlab";
+import {File, Namespace, Project, ProjectDetail} from "../models/gitlab/gitlab";
+
+const fetchGitLabRaw = async (path: string, query?: object, post?: object) => {
+    try {
+        return await uFetch(
+            GITLAB_API_BASE_URL + path + (query ? `?${stringify(query)}` : ""),
+            post ? JSON.stringify(post) as never as object : undefined,
+            60000,
+            "UTF-8",
+            true,
+            "application/json",
+        );
+    } catch {
+        throw new GitLabApiError();
+    }
+};
 
 const fetchGitLab = async (path: string, query?: object, post?: object) => {
     try {
-        return await uFetch(GITLAB_API_BASE_URL + path + (query ? `?${stringify(query)}` : ""), post).then(JSON.parse);
+        return await fetchGitLabRaw(path, query, post).then(JSON.parse);
     } catch {
         throw new GitLabApiError();
     }
@@ -91,4 +106,64 @@ export const searchProjects = async (
             return await fetchGitLab("/search", {scope: "projects", search});
         },
         [],
+    );
+
+export const getProjectDetail = async (
+    helper: InfoHelper,
+    id: number,
+): Promise<ProjectDetail> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return await fetchGitLab(`/projects/${id}`);
+        },
+        [],
+    );
+
+export const getProjectTree = async (
+    helper: InfoHelper,
+    id: number,
+    path: string,
+    ref: string,
+    page: number,
+): Promise<File[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return await fetchGitLab(`/projects/${id}/repository/tree`, {path, ref, page});
+        },
+        [],
+    );
+
+export const getProjectFileBlob = async (
+    helper: InfoHelper,
+    id: number,
+    sha: string,
+): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return await fetchGitLabRaw(`/projects/${id}/repository/blobs/${sha}/raw`);
+        },
+        "",
+    );
+
+export const renderMarkdown = async (
+    helper: InfoHelper,
+    text: string,
+): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return (await fetchGitLab("/markdown", undefined, {text})).html;
+        },
+        "",
     );

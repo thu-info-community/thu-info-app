@@ -64,7 +64,16 @@ import {
 } from "./lib/cr";
 import {SearchParams} from "./models/cr/cr";
 import {BankPaymentByMonth} from "./models/home/bank";
-import {getNamespaces, getPersonalProjects, getRecentProjects, searchProjects} from "./lib/gitlab";
+import {
+    getNamespaces,
+    getPersonalProjects,
+    getProjectDetail,
+    getProjectFileBlob,
+    getProjectTree,
+    getRecentProjects,
+    renderMarkdown,
+    searchProjects,
+} from "./lib/gitlab";
 import {CalendarData} from "./models/schedule/calendar";
 
 export class InfoHelper {
@@ -244,6 +253,19 @@ export class InfoHelper {
     public getGitOwnedProjects = async (name: string, page: number) => getPersonalProjects(this, name, page);
 
     public searchGitProjects = async (search: string) => searchProjects(this, search);
+
+    public getGitProjectDetail = async (id: number) => getProjectDetail(this, id);
+
+    public getGitProjectTree = async (
+        id: number,
+        path: string,
+        ref: string,
+        page: number,
+    ) => getProjectTree(this, id, path, ref, page);
+
+    public getGitProjectFileBlob = async (id: number, sha: string) => getProjectFileBlob(this, id, sha);
+
+    public renderGitMarkdown = async (text: string) => renderMarkdown(this, text);
 }
 
 export class Water {
