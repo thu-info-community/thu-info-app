@@ -47,7 +47,7 @@ import {GitlabHomeScreen, GitlabStarredScreen} from "./gitlabHome";
 import {GitlabProjectScreen} from "./gitlabProject";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {GitlabTreeScreen} from "./gitlabTree";
-import {GitlabCodeScreen} from "./gitlabCode";
+import {GitlabCodeScreen, GitlabMarkdownScreen} from "./gitlabCode";
 import {GitlabPDFScreen} from "./gitlabPDF";
 import {GitlabSearchScreen} from "./gitlabSearch";
 
@@ -89,6 +89,7 @@ export type HomeStackParamList = {
 	GitLabProject: {project: Project};
 	GitLabTree: {project: Project; path: string; ref: string};
 	GitLabCode: {project: Project; file: File};
+	GitLabMarkdown: {project: Project; file: File};
 	GitLabPDF: {project: Project; file: File; cookie: string};
 };
 
@@ -118,6 +119,11 @@ export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 export type GitLabTreeProp = RouteProp<HomeStackParamList, "GitLabTree">;
 
 export type GitLabCodeProp = RouteProp<HomeStackParamList, "GitLabCode">;
+
+export type GitLabMarkdownProp = RouteProp<
+	HomeStackParamList,
+	"GitLabMarkdown"
+>;
 
 export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
 
@@ -408,6 +414,29 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="GitLabCode"
 				component={GitlabCodeScreen}
 				options={({route}) => ({title: route.params.file.name})}
+			/>
+			<Stack.Screen
+				name="GitLabMarkdown"
+				component={GitlabMarkdownScreen}
+				options={({
+					route: {
+						params: {project, file},
+					},
+					navigation,
+				}) => ({
+					title: file.name,
+					headerRight: () => (
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 16, marginHorizontal: 4}}
+								onPress={() =>
+									navigation.navigate("GitLabCode", {project, file})
+								}>
+								<Icon name="code" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+						</View>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="GitLabPDF"

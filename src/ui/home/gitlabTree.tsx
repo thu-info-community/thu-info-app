@@ -51,6 +51,8 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 						.then((cookie) =>
 							navigation.navigate("GitLabPDF", {project, file, cookie}),
 						);
+				} else if (file.name.toLowerCase().endsWith(".md")) {
+					navigation.navigate("GitLabMarkdown", {project, file});
 				} else {
 					navigation.navigate("GitLabCode", {project, file});
 				}
