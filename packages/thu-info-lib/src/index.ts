@@ -71,6 +71,7 @@ import {
     getProjectFileBlob,
     getProjectTree,
     getRecentProjects,
+    getStarredProjects,
     renderMarkdown,
     searchProjects,
 } from "./lib/gitlab";
@@ -252,7 +253,9 @@ export class InfoHelper {
 
     public getGitOwnedProjects = async (name: string, page: number) => getPersonalProjects(this, name, page);
 
-    public searchGitProjects = async (search: string) => searchProjects(this, search);
+    public searchGitProjects = async (search: string, page: number) => searchProjects(this, search, page);
+
+    public getGitStarredProjects = async (page: number) => getStarredProjects(this, page);
 
     public getGitProjectDetail = async (id: number) => getProjectDetail(this, id);
 
