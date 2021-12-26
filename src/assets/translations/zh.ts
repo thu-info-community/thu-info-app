@@ -13,6 +13,7 @@ export default {
 	doNotRemind: "忽略该版本",
 	nextTimeMust: "下次一定",
 	download: "下载",
+	downloading: "下载中……",
 	alreadyLatest: "已是最新版本",
 	broadcast: "站内消息",
 	home: "主页",

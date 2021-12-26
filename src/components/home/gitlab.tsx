@@ -65,9 +65,11 @@ export const ProjectItem = ({
 export const FileItem = ({
 	file,
 	onPress,
+	onLongPress,
 }: {
 	file: File;
 	onPress: (event: GestureResponderEvent) => void;
+	onLongPress?: (event: GestureResponderEvent) => void;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -86,13 +88,17 @@ export const FileItem = ({
 		</View>
 	);
 	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+		<TouchableHighlight
+			underlayColor="#0002"
+			onPress={onPress}
+			onLongPress={onLongPress}>
 			{content}
 		</TouchableHighlight>
 	) : (
 		<TouchableNativeFeedback
 			background={TouchableNativeFeedback.Ripple("#0002", false)}
-			onPress={onPress}>
+			onPress={onPress}
+			onLongPress={onLongPress}>
 			{content}
 		</TouchableNativeFeedback>
 	);

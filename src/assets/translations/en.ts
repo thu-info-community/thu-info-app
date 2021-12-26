@@ -14,6 +14,7 @@ export default {
 	doNotRemind: "Forget",
 	nextTimeMust: "Dismiss",
 	download: "Download",
+	downloading: "Downloading...",
 	alreadyLatest: "This is the latest version.",
 	broadcast: "Broadcast",
 	hideKeyboard: "Hide Keyboard",
