@@ -109,5 +109,5 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 			}}
 		/>
 	),
-	({id}) => String(id),
+	({id, name}) => String(id) + name,
 );
