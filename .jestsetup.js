@@ -15,7 +15,17 @@ global.console = {
 			}
 		} catch (e) {}
 	}),
-	warn: console.warn,
+	warn: jest.fn((message) => {
+		try {
+			if (
+				message.indexOf(
+					"react-native-blob-util could not find valid native module.",
+				) === -1
+			) {
+				console.warn(message);
+			}
+		} catch (e) {}
+	}),
 	info: console.info,
 	debug: console.debug,
 };
@@ -59,3 +69,17 @@ jest.mock("redux-persist/lib/createPersistoid", () =>
 		flush: jest.fn(),
 	})),
 );
+
+jest.mock("react-native-blob-util/fs", () => ({dirs: {
+	DocumentDir: "",
+	CacheDir: "",
+	PictureDir: "",
+	MusicDir: "",
+	MovieDir: "",
+	DownloadDir: "",
+	DCIMDir: "",
+	SDCardDir: "", // Depracated
+	SDCardApplicationDir: "", // Deprecated
+	MainBundleDir: "",
+	LibraryDir: "",
+}}));
