@@ -45,8 +45,9 @@ import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {GitlabHomeScreen} from "./gitlabHome";
 import {GitlabProjectScreen} from "./gitlabProject";
-import {Project} from "thu-info-lib/dist/models/gitlab/gitlab";
+import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {GitlabTreeScreen} from "./gitlabTree";
+import {GitlabCodeScreen} from "./gitlabCode";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -83,6 +84,7 @@ export type HomeStackParamList = {
 	GitLabHome: undefined;
 	GitLabProject: {project: Project};
 	GitLabTree: {project: Project; path: string; ref: string};
+	GitLabCode: {project: Project; file: File};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -109,6 +111,8 @@ export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
 export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 
 export type GitLabTreeProp = RouteProp<HomeStackParamList, "GitLabTree">;
+
+export type GitLabCodeProp = RouteProp<HomeStackParamList, "GitLabCode">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -366,6 +370,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 						? route.params.path
 						: getStr("gitlabViewCode"),
 				})}
+			/>
+			<Stack.Screen
+				name="GitLabCode"
+				component={GitlabCodeScreen}
+				options={({route}) => ({title: route.params.file.name})}
 			/>
 			<Stack.Screen
 				name="Email"

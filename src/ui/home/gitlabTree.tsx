@@ -35,6 +35,8 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 						path: path + file.name + "/",
 						ref,
 					});
+				} else {
+					navigation.navigate("GitLabCode", {project, file});
 				}
 			}}
 		/>
