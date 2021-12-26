@@ -3503,7 +3503,7 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-base-64@^0.1.0:
+base-64@0.1.0, base-64@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
   integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
@@ -4101,6 +4101,11 @@ crypt@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
   integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
+
+crypto-js@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
+  integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==
 
 css-select@^2.1.0:
   version "2.1.0"
@@ -5196,6 +5201,18 @@ glob@^7.0.5, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4:
   version "7.1.6"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.6.tgz#141f33b81a7c2492e125594307480c46679278a6"
   integrity sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA==
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.4"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
+glob@^7.1.6:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.0.tgz#d15535af7732e02e948f4c41628bd910293f6023"
+  integrity sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==
   dependencies:
     fs.realpath "^1.0.0"
     inflight "^1.0.4"
@@ -7876,6 +7893,14 @@ react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-blob-util@0.13.18:
+  version "0.13.18"
+  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.13.18.tgz#7b924d55607bda380d6e9862b621ed1ac0c007ec"
+  integrity sha512-f9NyydQKMd24QiyW+LZmDg2rjCTi4GBff3UJzP1BDgEQ8aoHMs4MZmPs5erNH4E577qhEFp5v7HGzXVRQL8SnQ==
+  dependencies:
+    base-64 "0.1.0"
+    glob "^7.1.6"
+
 react-native-codegen@0.0.12:
   version "0.0.12"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.0.12.tgz#390712551e29f00cc9963e93fb4b6458b64dcf04"
@@ -7948,6 +7973,13 @@ react-native-modal-dropdown@1.0.2:
   integrity sha512-X13RbwoQdaOb9Ffi7fjRVwh9OXauXIJhum0uXGzYZLMyoCQ5yt5cxf27P/YZbdh80Fb7bdPx6vTA4PTpUK2WDQ==
   dependencies:
     prop-types "^15.6.0"
+
+react-native-pdf@6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.4.0.tgz#e3aa583e3a2ccce0838dcc0ac5a29987774eea4f"
+  integrity sha512-pfrCvHg4dqAPzl2FtRmGGl/D2dHec4w8+wGAKv7L97wxz5oF/QNvQ6q0KdfXdFlIZ22sS+BOwsRMzbB2mHPs2w==
+  dependencies:
+    crypto-js "^3.2.0"
 
 react-native-reanimated@2.3.1:
   version "2.3.1"

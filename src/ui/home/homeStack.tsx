@@ -48,6 +48,7 @@ import {GitlabProjectScreen} from "./gitlabProject";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {GitlabTreeScreen} from "./gitlabTree";
 import {GitlabCodeScreen} from "./gitlabCode";
+import {GitlabPDFScreen} from "./gitlabPDF";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -85,6 +86,7 @@ export type HomeStackParamList = {
 	GitLabProject: {project: Project};
 	GitLabTree: {project: Project; path: string; ref: string};
 	GitLabCode: {project: Project; file: File};
+	GitLabPDF: {project: Project; file: File; cookie: string};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -113,6 +115,8 @@ export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 export type GitLabTreeProp = RouteProp<HomeStackParamList, "GitLabTree">;
 
 export type GitLabCodeProp = RouteProp<HomeStackParamList, "GitLabCode">;
+
+export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -374,6 +378,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 			<Stack.Screen
 				name="GitLabCode"
 				component={GitlabCodeScreen}
+				options={({route}) => ({title: route.params.file.name})}
+			/>
+			<Stack.Screen
+				name="GitLabPDF"
+				component={GitlabPDFScreen}
 				options={({route}) => ({title: route.params.file.name})}
 			/>
 			<Stack.Screen

@@ -41,6 +41,16 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 						path: path + file.name + "/",
 						ref,
 					});
+				} else if (file.name.toLowerCase().endsWith(".pdf")) {
+					CookieManager.get("https://webvpn.tsinghua.edu.cn")
+						.then((r) =>
+							Object.values(r)
+								.map(({name, value}) => `${name}=${value}`)
+								.join(";"),
+						)
+						.then((cookie) =>
+							navigation.navigate("GitLabPDF", {project, file, cookie}),
+						);
 				} else {
 					navigation.navigate("GitLabCode", {project, file});
 				}
