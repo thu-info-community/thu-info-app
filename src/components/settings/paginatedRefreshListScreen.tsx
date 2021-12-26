@@ -23,7 +23,7 @@ export function paginatedRefreshListScreen<T, R>(
 	) => ReactElement,
 	keyExtractor: (item: T) => string,
 	footer?: (theme: Theme) => ReactElement,
-	header?: (theme: Theme) => ReactElement,
+	header?: (theme: Theme, refresh: () => void) => ReactElement,
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
 ): FC<R> {
@@ -91,7 +91,11 @@ export function paginatedRefreshListScreen<T, R>(
 				}
 				keyExtractor={keyExtractor}
 				ListHeaderComponent={
-					data.length === 0 ? null : header ? header(theme) : undefined
+					header
+						? header(theme, () => {
+								refresh(true); // eslint-disable-next-line no-mixed-spaces-and-tabs
+						  })
+						: undefined
 				}
 				ListFooterComponent={footer ? footer(theme) : undefined}
 				ListEmptyComponent={empty ? empty(theme) : undefined}

@@ -229,6 +229,7 @@ export default {
 	waitForLoading: "It may take long time to load news...",
 	newsTip: "Tip: Press the icon to filter the source of news.",
 	gitLab: "GitLab",
+	gitLabStar: "Starred",
 	gitlabLastUpdate: "Updated",
 	gitlabViewCode: "Code",
 	classroomName: "Classroom",

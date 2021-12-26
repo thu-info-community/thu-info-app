@@ -17,3 +17,17 @@ export const GitlabHomeScreen = paginatedRefreshListScreen(
 	),
 	({id}) => String(id),
 );
+
+export const GitlabStarredScreen = paginatedRefreshListScreen(
+	(_: PropsWithChildren<{navigation: HomeNav}>, page) =>
+		helper.getGitStarredProjects(page),
+	(project, _, {navigation}) => (
+		<ProjectItem
+			project={project}
+			onPress={() => {
+				navigation.navigate("GitLabProject", {project});
+			}}
+		/>
+	),
+	({id}) => String(id),
+);

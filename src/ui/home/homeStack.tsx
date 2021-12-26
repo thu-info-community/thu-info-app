@@ -43,12 +43,13 @@ import {SportsSelectScreen} from "./sportsSelect";
 import {SportsRecordScreen} from "./sportsRecord";
 import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
-import {GitlabHomeScreen} from "./gitlabHome";
+import {GitlabHomeScreen, GitlabStarredScreen} from "./gitlabHome";
 import {GitlabProjectScreen} from "./gitlabProject";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {GitlabTreeScreen} from "./gitlabTree";
 import {GitlabCodeScreen} from "./gitlabCode";
 import {GitlabPDFScreen} from "./gitlabPDF";
+import {GitlabSearchScreen} from "./gitlabSearch";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -83,6 +84,8 @@ export type HomeStackParamList = {
 	};
 	SportsRecord: undefined;
 	GitLabHome: undefined;
+	GitLabStar: undefined;
+	GitLabSearch: undefined;
 	GitLabProject: {project: Project};
 	GitLabTree: {project: Project; path: string; ref: string};
 	GitLabCode: {project: Project; file: File};
@@ -359,6 +362,32 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 			<Stack.Screen
 				name="GitLabHome"
 				component={GitlabHomeScreen}
+				options={({navigation}) => ({
+					title: getStr("gitLab"),
+					headerRight: () => (
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 16, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("GitLabStar")}>
+								<Icon name="star-o" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("GitLabSearch")}>
+								<Icon name="search" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+						</View>
+					),
+				})}
+			/>
+			<Stack.Screen
+				name="GitLabStar"
+				component={GitlabStarredScreen}
+				options={{title: getStr("gitLabStar")}}
+			/>
+			<Stack.Screen
+				name="GitLabSearch"
+				component={GitlabSearchScreen}
 				options={{title: getStr("gitLab")}}
 			/>
 			<Stack.Screen

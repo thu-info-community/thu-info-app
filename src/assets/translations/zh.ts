@@ -213,6 +213,7 @@ export default {
 	waitForLoading: "新闻较多，加载时间较长，请耐心等待。",
 	newsTip: "小提示：点按新闻图标可只查看某一来源的新闻。",
 	gitLab: "代码托管",
+	gitLabStar: "星标",
 	gitlabLastUpdate: "最近活动于",
 	gitlabViewCode: "浏览代码",
 	classroomName: "教室",
