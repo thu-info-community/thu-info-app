@@ -103,3 +103,38 @@ export const FileItem = ({
 		</TouchableNativeFeedback>
 	);
 };
+
+export const BranchItem = ({
+	name,
+	onPress,
+}: {
+	name: string;
+	onPress: (event: GestureResponderEvent) => void;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	const content = (
+		<View
+			style={{
+				padding: 8,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
+			<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+				{name}
+			</Text>
+		</View>
+	);
+	return Platform.OS === "ios" ? (
+		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+			{content}
+		</TouchableHighlight>
+	) : (
+		<TouchableNativeFeedback
+			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			onPress={onPress}>
+			{content}
+		</TouchableNativeFeedback>
+	);
+};

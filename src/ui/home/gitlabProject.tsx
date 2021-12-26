@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {GitLabProjectProp, HomeNav} from "./homeStack";
-import {ScrollView, Text, useColorScheme, View} from "react-native";
+import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Feather from "react-native-vector-icons/Feather";
 import {SettingsItem} from "../../components/settings/items";
 import {helper} from "../../redux/store";
-import {File} from "thu-info-lib/dist/models/gitlab/gitlab";
+import {Branch, File} from "thu-info-lib/dist/models/gitlab/gitlab";
 import AutoheightWebView from "../../components/AutoheightWebView";
 import {getStr} from "src/utils/i18n";
+import {BranchItem} from "../../components/home/gitlab";
 
 export const GitlabProjectScreen = ({
 	navigation,
@@ -22,18 +23,23 @@ export const GitlabProjectScreen = ({
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	const [branch, setBranch] = useState(project.default_branch);
+	const [branches, setBranches] = useState<Branch[]>([]);
+	const [modalShow, setModalShow] = useState(false);
 	const [readmeFile, setReadmeFile] = useState<File | undefined>(undefined);
 	const [readmeFileContent, setReadmeFileContent] = useState<
 		string | undefined
 	>(undefined);
 
 	useEffect(() => {
+		setReadmeFile(undefined);
+		setReadmeFileContent(undefined);
 		(async () => {
 			for (let page = 1; ; page++) {
 				const files = await helper.getGitProjectTree(
 					project.id,
 					"",
-					project.default_branch,
+					branch,
 					page,
 				);
 				if (files.length === 0) {
@@ -55,13 +61,32 @@ export const GitlabProjectScreen = ({
 					.then(setReadmeFileContent);
 			}
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [branch, project.id]);
 
 	const adaptedHtml = `<head><meta name="viewport" content="width=100, initial-scale=1"></head><body>${readmeFileContent}</body>`;
 
 	return (
 		<ScrollView>
+			<Modal
+				animationType="slide"
+				transparent={true}
+				visible={modalShow}
+				onRequestClose={() => {}}>
+				<View style={{flex: 1, justifyContent: "center"}}>
+					<View style={{marginHorizontal: 30, backgroundColor: "#EEE"}}>
+						{branches.map(({name}) => (
+							<BranchItem
+								name={name}
+								key={name}
+								onPress={() => {
+									setBranch(name);
+									setModalShow(false);
+								}}
+							/>
+						))}
+					</View>
+				</View>
+			</Modal>
 			<View
 				style={{
 					paddingHorizontal: 5,
@@ -116,18 +141,19 @@ export const GitlabProjectScreen = ({
 				</View>
 			</View>
 			<SettingsItem
-				text={project.default_branch}
-				onPress={() => {}}
+				text={branch}
+				onPress={() => {
+					helper.getGitProjectBranches(project.id).then((b) => {
+						setBranches(b);
+						setModalShow(b.length > 0);
+					});
+				}}
 				icon={<Feather name="git-branch" size={20} />}
 			/>
 			<SettingsItem
 				text={getStr("gitlabViewCode")}
 				onPress={() =>
-					navigation.navigate("GitLabTree", {
-						project,
-						path: "",
-						ref: project.default_branch,
-					})
+					navigation.navigate("GitLabTree", {project, path: "", ref: branch})
 				}
 				icon={<Feather name="code" size={20} />}
 			/>
