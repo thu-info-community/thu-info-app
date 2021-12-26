@@ -67,6 +67,7 @@ import {BankPaymentByMonth} from "./models/home/bank";
 import {
     getNamespaces,
     getPersonalProjects,
+    getProjectBranches,
     getProjectDetail,
     getProjectFileBlob,
     getProjectTree,
@@ -265,6 +266,8 @@ export class InfoHelper {
         ref: string,
         page: number,
     ) => getProjectTree(this, id, path, ref, page);
+
+    public getGitProjectBranches = async (id: number) => getProjectBranches(this, id);
 
     public getGitProjectFileBlob = async (id: number, sha: string) => getProjectFileBlob(this, id, sha);
 

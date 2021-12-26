@@ -4,7 +4,7 @@ import {stringify, uFetch} from "../utils/network";
 import {GITLAB_API_BASE_URL} from "../constants/strings";
 import {GitLabApiError} from "../utils/error";
 import {MOCK_GIT_NAMESPACES, MOCK_GIT_PERSONAL_PROJECTS, MOCK_GIT_RECENT_PROJECTS} from "../mocks/gitlab";
-import {File, Namespace, Project, ProjectDetail} from "../models/gitlab/gitlab";
+import {Branch, File, Namespace, Project, ProjectDetail} from "../models/gitlab/gitlab";
 
 const fetchGitLabRaw = async (path: string, query?: object, post?: object) => {
     try {
@@ -159,6 +159,20 @@ export const getProjectTree = async (
         "",
         async () => {
             return await fetchGitLab(`/projects/${id}/repository/tree`, {path, ref, page});
+        },
+        [],
+    );
+
+export const getProjectBranches = async (
+    helper: InfoHelper,
+    id: number,
+): Promise<Branch[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "gitlab",
+        "",
+        async () => {
+            return await fetchGitLab(`/projects/${id}/repository/branches`);
         },
         [],
     );
