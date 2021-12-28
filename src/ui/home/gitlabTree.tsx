@@ -35,13 +35,16 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 		<FileItem
 			file={file}
 			onPress={() => {
+				const extension = file.name.includes(".")
+					? file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase()
+					: "";
 				if (file.type === "tree") {
 					navigation.push("GitLabTree", {
 						project,
 						path: path + file.name + "/",
 						ref,
 					});
-				} else if (file.name.toLowerCase().endsWith(".pdf")) {
+				} else if (extension === "pdf") {
 					CookieManager.get("https://webvpn.tsinghua.edu.cn")
 						.then((r) =>
 							Object.values(r)
@@ -51,8 +54,22 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 						.then((cookie) =>
 							navigation.navigate("GitLabPDF", {project, file, cookie}),
 						);
-				} else if (file.name.toLowerCase().endsWith(".md")) {
+				} else if (extension === "md") {
 					navigation.navigate("GitLabMarkdown", {project, file});
+				} else if (
+					[
+						"png",
+						"jpg",
+						"jpeg",
+						"bmp",
+						"gif",
+						"webp",
+						"psd",
+						"svg",
+						"tiff",
+					].includes(extension)
+				) {
+					navigation.navigate("GitLabImage", {project, file});
 				} else {
 					navigation.navigate("GitLabCode", {project, file});
 				}

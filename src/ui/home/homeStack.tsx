@@ -50,6 +50,7 @@ import {GitlabTreeScreen} from "./gitlabTree";
 import {GitlabCodeScreen, GitlabMarkdownScreen} from "./gitlabCode";
 import {GitlabPDFScreen} from "./gitlabPDF";
 import {GitlabSearchScreen} from "./gitlabSearch";
+import {GitlabImageScreen} from "./gitlabImage";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -91,6 +92,7 @@ export type HomeStackParamList = {
 	GitLabCode: {project: Project; file: File};
 	GitLabMarkdown: {project: Project; file: File};
 	GitLabPDF: {project: Project; file: File; cookie: string};
+	GitLabImage: {project: Project; file: File};
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -126,6 +128,8 @@ export type GitLabMarkdownProp = RouteProp<
 >;
 
 export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
+
+export type GitLabImageProp = RouteProp<HomeStackParamList, "GitLabImage">;
 
 const Stack = createStackNavigator<HomeStackParamList>();
 
@@ -441,6 +445,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 			<Stack.Screen
 				name="GitLabPDF"
 				component={GitlabPDFScreen}
+				options={({route}) => ({title: route.params.file.name})}
+			/>
+			<Stack.Screen
+				name="GitLabImage"
+				component={GitlabImageScreen}
 				options={({route}) => ({title: route.params.file.name})}
 			/>
 			<Stack.Screen
