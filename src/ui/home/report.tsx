@@ -103,7 +103,7 @@ const prepareData = (
 	});
 	return {
 		gpa: totalPoints / totalCredits,
-		sections,
+		sections: sections.reverse(),
 		allCredits,
 		totalCredits,
 		totalPoints,
