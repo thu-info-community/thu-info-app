@@ -158,9 +158,22 @@ export const uFetch = async (
 };
 
 export const getRedirectUrl = async (
-    url: string, 
+    url: string,
     timeout = 60000
 ): Promise<string> => {
+    if (global.FileReader) {
+        // For browser and react-native
+        return new Promise((resolve) => {
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = () => {
+                if (req.readyState === req.DONE) {
+                    resolve(req.responseURL ?? "");
+                }
+            };
+            req.open("GET", url);
+            req.send();
+        });
+    }
     // Prepare request headers
     const defaultHeaders = {
         // Setup content-type and user-agent
