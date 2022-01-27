@@ -8,9 +8,9 @@ import cheerio from "cheerio";
 
 /**
  * Get News List
- * @param helper 
- * @param page 
- * @param length 
+ * @param helper
+ * @param page
+ * @param length
  * @param channel
  * @returns Array of NewsSlice
  */
@@ -133,7 +133,6 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
         });
     }
     content += "</div>";
-    console.log(content);
     const jianjie = parseXmlEscape(data.object.xxDto.nr).replace(/<[^>]+>/g, "");
     return [title, content, jianjie];
 };
