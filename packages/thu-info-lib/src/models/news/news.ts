@@ -1,4 +1,4 @@
-export type SourceTag = "JWGG" | "KYTZ" | "BGTZ" | "HB";
+export type SourceTag = "LM_BGTG"|"LM_ZYGG"|"LM_YQFKZT"|"LM_ZJQRXXHZ"|"LM_JWGG"|"LM_KYTZ"|"LM_ZBZZ"|"LM_HB"
 
 export interface NewsSlice {
     readonly name: string;

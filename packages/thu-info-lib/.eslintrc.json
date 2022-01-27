@@ -58,6 +58,7 @@
             4
         ],
         "linebreak-style": [
+            0,
             "error",
             "unix"
         ],

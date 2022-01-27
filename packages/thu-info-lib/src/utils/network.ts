@@ -1,10 +1,10 @@
-import {CONTENT_TYPE_FORM, USER_AGENT} from "../constants/strings";
+import { CONTENT_TYPE_FORM, USER_AGENT } from "../constants/strings";
 import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
-import {ResponseStatusError} from "./error";
+import { ResponseStatusError } from "./error";
 
-export const cookies: {[key: string]: string} = {};
+export const cookies: { [key: string]: string } = {};
 
 /**
  * Clear the cookies.
@@ -85,7 +85,7 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: serialized? (post as never as string) : stringify(post, paramEncoding),
+                body: serialized ? (post as never as string) : stringify(post, paramEncoding),
             };
 
     // Perform the network request
@@ -151,6 +151,52 @@ export const uFetch = async (
             // Use iconv-lite to transform arrayBuffer into string
             return iconv.decode(Buffer.from(arrayBuffer), charset);
         }
+    } finally {
+        // We have to clear the timeout
+        clearTimeout(timeoutEvent);
+    }
+};
+
+export const getRedirectUrl = async (
+    url: string, 
+    timeout = 60000
+): Promise<string> => {
+    // Prepare request headers
+    const defaultHeaders = {
+        // Setup content-type and user-agent
+        "Content-Type": CONTENT_TYPE_FORM,
+        "User-Agent": USER_AGENT,
+    };
+
+    const headers = global.FileReader === undefined ? {
+        ...defaultHeaders,
+        // Cookie should be manually set in Node.js
+        Cookie: Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";"),
+    } : defaultHeaders;
+
+    // Handle timeout abortion
+    const controller = new AbortController();
+    const timeoutEvent = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+    const init: RequestInit = {
+        headers: headers,
+        signal: controller.signal,
+        redirect: "manual" // Set the redirect mode to "manual" so fetch won't follow the http redirection
+    };
+
+    // Perform the network request
+    try {
+        const response = await fetch(url, init);
+
+        if (response.status !== 301 && response.status !== 302) {
+            throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
+        }
+
+        // Get the redirection target url in header "Location" and return it
+        const location = response.headers.get("Location");
+        return location ?? "";
+
     } finally {
         // We have to clear the timeout
         clearTimeout(timeoutEvent);

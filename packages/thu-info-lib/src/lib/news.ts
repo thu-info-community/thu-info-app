@@ -1,56 +1,34 @@
-import {uFetch} from "../utils/network";
+import { InfoHelper } from "../index";
+import { getCsrfToken } from "../lib/core";
+import { getRedirectUrl, uFetch } from "../utils/network";
+import { NewsSlice, SourceTag } from "../models/news/news";
+import { FILE_DOWNLOAD_URL, NEWS_DETAIL_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL } from "../constants/strings";
+import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
-import {newsHtml} from "../mocks/source/newsHtml";
-import {NewsSlice, SourceTag} from "../models/news/news";
-import {InfoHelper} from "../index";
-import {getCheerioText} from "../utils/cheerio";
-import {roamingWrapperWithMocks} from "./core";
-import {MOCK_NEWS_LIST} from "../mocks/news";
-import {BGTZ_MAIN_PREFIX, HB_MAIN_PREFIX, JWGG_MAIN_PREFIX, KYTZ_MAIN_PREFIX} from "../constants/strings";
 
-const channelToUrl: {[key in SourceTag]: string} = {
-    "JWGG": JWGG_MAIN_PREFIX,
-    "BGTZ": BGTZ_MAIN_PREFIX,
-    "KYTZ": KYTZ_MAIN_PREFIX,
-    "HB": HB_MAIN_PREFIX,
+/**
+ * Get News List
+ * @param helper 
+ * @param page 
+ * @param length 
+ * @param channel
+ * @returns Array of NewsSlice
+ */
+export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => {
+    const newsList: NewsSlice[] = [];
+    const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
+    const data: { object: { dataList: { bt: string, url: string, time: string, dwmc: string, lmid: SourceTag }[] } } = JSON.parse(json);
+    data.object.dataList.forEach(element => {
+        newsList.push({
+            name: parseXmlEscape(element.bt),
+            url: parseXmlEscape(element.url),
+            date: element.time,
+            source: element.dwmc,
+            channel: element.lmid
+        });
+    });
+    return newsList;
 };
-
-export const getNewsList = (
-    helper: InfoHelper,
-    channel: SourceTag,
-    page: number,
-): Promise<NewsSlice[]> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        () => uFetch(channelToUrl[channel] + page).then((str) => {
-            const $ = cheerio.load(str);
-            const newsList: NewsSlice[] = [];
-            $("ul.cont_list > li", str).each((_, item) => {
-                if (item.type === "tag" && item.children[3].type === "tag") {
-                    let newsUrl: string = item.children[3].attribs.href;
-                    if (newsUrl[0] === "/") {
-                        newsUrl = "https://webvpn.tsinghua.edu.cn" + newsUrl;
-                    }
-                    newsList.push(
-                        {
-                            name: getCheerioText(item, 3),
-                            url: newsUrl,
-                            date: getCheerioText(item, 7),
-                            source: item.children[4].data?.substr(
-                                3,
-                                item.children[4].data?.length - 5,
-                            ) ?? "",
-                            channel,
-                        },
-                    );
-                }
-            });
-            return newsList;
-        }),
-        MOCK_NEWS_LIST(channel),
-    );
 
 const policyList: [string, [string, string]][] = [
     ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
@@ -129,7 +107,43 @@ const getNewsDetailPolicy = (
     return [undefined, undefined];
 };
 
-export const getNewsDetail = async (
+const parseXmlEscape = (text: string): string => {
+    let result = text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&apos;/g, "'").replace(/&quot;/g, "\"").replace(/&nbsp;/g, " ");
+    const matches = result.match(/&#[0-9]+;/g);
+    if (!matches) return result;
+    matches.forEach(m => {
+        const number = /[0-9]+/.exec(m)?.[0] as string;
+        const char = String.fromCharCode(Number(number));
+        result = result.replace(m, char);
+    });
+    return result;
+};
+
+const handleNewApiNews = async (url: string): Promise<[string, string, string]> => {
+    const html = await uFetch(url);
+    const csrf = await getCsrfToken();
+    const xxid: string = /(?<=var xxid = ").*?(?=";)/.exec(html)?.[0] as string;
+    const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=false&_csrf=${csrf}`);
+    const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
+    const title = parseXmlEscape(data.object.xxDto.bt);
+    let content = "<div>" + parseXmlEscape(data.object.xxDto.nr);
+    if (data.object.xxDto.fjs_template) {
+        data.object.xxDto.fjs_template.forEach(file => {
+            content += `<a href="${FILE_DOWNLOAD_URL + file.wjid}?_csrf=${csrf}">${file.wjmc}</a>`;
+        });
+    }
+    content += "</div>";
+    console.log(content);
+    const jianjie = parseXmlEscape(data.object.xxDto.nr).replace(/<[^>]+>/g, "");
+    return [title, content, jianjie];
+};
+
+export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
+    if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
+    else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
+};
+
+const getNewsDetailOld = async (
     helper: InfoHelper,
     url: string,
 ): Promise<[string, string, string]> => {

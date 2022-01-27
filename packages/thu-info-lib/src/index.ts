@@ -12,9 +12,9 @@ import {
     getBankPayment,
     getCalendar,
 } from "./lib/basics";
-import {login, logout} from "./lib/core";
-import {getElePayRecord, getEleRechargePayCode, getEleRemainder} from "./lib/dorm";
-import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
+import { login, logout } from "./lib/core";
+import { getElePayRecord, getEleRechargePayCode, getEleRemainder } from "./lib/dorm";
+import { getUserInformation, getUserInformationAndStore, postWaterSubmission } from "./lib/water";
 import {
     LibBookRecord,
     LibFuzzySearchResult,
@@ -39,12 +39,12 @@ import {
     getLibrarySeatList,
     getLibrarySectionList,
 } from "./lib/library";
-import {getNewsDetail, getNewsList} from "./lib/news";
-import {getSchedule} from "./lib/schedule";
-import {Course} from "./models/home/report";
-import {Form} from "./models/home/assessment";
-import {Record} from "./models/home/expenditure";
-import {NewsSlice, SourceTag} from "./models/news/news";
+import { getNewsDetail, getNewsList } from "./lib/news";
+import { getSchedule } from "./lib/schedule";
+import { Course } from "./models/home/report";
+import { Form } from "./models/home/assessment";
+import { Record } from "./models/home/expenditure";
+import { NewsSlice, SourceTag } from "./models/news/news";
 import {
     getSportsCaptchaUrlMethod,
     getSportsReservationRecords,
@@ -62,8 +62,8 @@ import {
     searchCrPrimaryOpen,
     searchCrCourses, getCrAvailableSemestersMethod,
 } from "./lib/cr";
-import {SearchParams} from "./models/cr/cr";
-import {BankPaymentByMonth} from "./models/home/bank";
+import { SearchParams } from "./models/cr/cr";
+import { BankPaymentByMonth } from "./models/home/bank";
 import {
     getNamespaces,
     getPersonalProjects,
@@ -76,7 +76,7 @@ import {
     renderMarkdown,
     searchProjects,
 } from "./lib/gitlab";
-import {CalendarData} from "./models/schedule/calendar";
+import { CalendarData } from "./models/schedule/calendar";
 
 export class InfoHelper {
     public userId = "";
@@ -170,7 +170,7 @@ export class InfoHelper {
         librarySeat: LibrarySeat,
         section: LibrarySection,
         dateChoice: 0 | 1,
-    ): Promise<{status: number; msg: string}> =>
+    ): Promise<{ status: number; msg: string }> =>
         bookLibrarySeat(this, librarySeat, section, dateChoice);
 
     public getBookingRecords = async (): Promise<LibBookRecord[]> =>
@@ -192,16 +192,17 @@ export class InfoHelper {
         start: string,  // yyyy-MM-dd HH:mm
         end: string,  // yyyy-MM-dd HH:mm
         memberList: string[],  // student id's, empty for single user
-    ): Promise<{success: boolean, msg: string}> => bookLibraryRoom(this, roomRes, start, end, memberList);
+    ): Promise<{ success: boolean, msg: string }> => bookLibraryRoom(this, roomRes, start, end, memberList);
 
     public getLibraryRoomBookingRecord = async (): Promise<LibRoomBookRecord[]> => getLibraryRoomBookingRecord(this);
 
-    public cancelLibraryRoomBooking = async (id: string): Promise<{success: boolean, msg: string}> => cancelLibraryRoomBooking(this, id);
+    public cancelLibraryRoomBooking = async (id: string): Promise<{ success: boolean, msg: string }> => cancelLibraryRoomBooking(this, id);
 
     public getNewsList = async (
-        channel: SourceTag,
         page: number,
-    ): Promise<NewsSlice[]> => getNewsList(this, channel, page);
+        length: number,
+        channel?: SourceTag
+    ): Promise<NewsSlice[]> => getNewsList(this, page, length, channel);
 
     public getNewsDetail = async (
         url: string,
