@@ -61,7 +61,7 @@
 		"safer-buffer": "2.1.2",
 		"semver": "7.3.5",
 		"stream": "0.0.2",
-		"thu-info-lib": "2.0.0-alpha.10",
+		"thu-info-lib": "2.0.0-alpha.11",
 		"thu-info-mailcore": "0.2.1",
 		"typesafe-actions": "5.1.0"
 	},

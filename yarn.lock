@@ -4308,12 +4308,12 @@ crc-32@~1.2.0:
     exit-on-epipe "~1.0.1"
     printj "~1.1.0"
 
-cross-fetch@3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
-  integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
+cross-fetch@3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
+  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
   dependencies:
-    node-fetch "2.6.1"
+    node-fetch "2.6.7"
 
 cross-spawn@^6.0.0:
   version "6.0.5"
@@ -7580,10 +7580,12 @@ node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
-node-fetch@2.6.1, node-fetch@^2.2.0, node-fetch@^2.6.0:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
-  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
+node-fetch@2.6.7:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+  dependencies:
+    whatwg-url "^5.0.0"
 
 node-fetch@^1.0.1:
   version "1.7.3"
@@ -7592,6 +7594,11 @@ node-fetch@^1.0.1:
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
+
+node-fetch@^2.2.0, node-fetch@^2.6.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -9382,17 +9389,17 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@2.0.0-alpha.10:
-  version "2.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-2.0.0-alpha.10.tgz#970198de1418f2fb1b86fe5b7e2db44970688734"
-  integrity sha512-HZATJ4C5l8hgFfjd6P6CjjlAmU6dwPJ4jIFYii4EFf7rTN9WFWt+bxtXyce7Z+K8taTqmaBPzm0GXwIRN5m+pQ==
+thu-info-lib@2.0.0-alpha.11:
+  version "2.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-2.0.0-alpha.11.tgz#e295d86ae0888b8e19a93e00fec3638a82db71e2"
+  integrity sha512-OHyDh+2MreNLwMp2djKlSBLre0+v0eVLb84v3+PD+7IJJ+HGqE+S9LGEE3TZxGwMg7lch7QbsgV4NMpyMoyksg==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.10"
-    cross-fetch "3.1.4"
+    cross-fetch "3.1.5"
     dayjs "1.10.7"
     iconv-lite "0.6.3"
-    xlsx "0.17.4"
+    xlsx "0.17.5"
 
 thu-info-mailcore@0.2.1:
   version "0.2.1"
@@ -9461,6 +9468,11 @@ tr46@^2.0.2:
   integrity sha512-3n1qG+/5kg+jrbTzwAykB5yRYtQCTqOGKq5U5PE3b0a1/mzo6snDhjGS0zJVJunO0NrT3Dg1MLy5TjWP/UJppg==
   dependencies:
     punycode "^2.1.1"
+
+tr46@~0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
+  integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
 tslib@^1.8.1:
   version "1.14.1"
@@ -9710,6 +9722,11 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
+webidl-conversions@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
+  integrity sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=
+
 webidl-conversions@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-5.0.0.tgz#ae59c8a00b121543a2acc65c0434f57b0fc11aff"
@@ -9741,6 +9758,14 @@ whatwg-mimetype@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-2.3.0.tgz#3d4b1e0312d2079879f826aff18dbeeca5960fbf"
   integrity sha512-M4yMwr6mAnQz76TbJm914+gPpB/nCwvZbJU28cUD6dR004SAxDLOOSUaB1JDRqLtaOV/vi0IC5lEAGFgrjGv/g==
+
+whatwg-url@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
+  integrity sha1-lmRU6HZUYuN2RNNib2dCzotwll0=
+  dependencies:
+    tr46 "~0.0.3"
+    webidl-conversions "^3.0.0"
 
 whatwg-url@^8.0.0:
   version "8.4.0"
@@ -9889,10 +9914,10 @@ xcode@^2.0.0:
     simple-plist "^1.0.0"
     uuid "^3.3.2"
 
-xlsx@0.17.4:
-  version "0.17.4"
-  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.17.4.tgz#dc3e3a0954c835f4d0fdd643645db6f4ac3f28f2"
-  integrity sha512-9aKt8g9ZLP0CUdBX8L5xnoMDFwSiLI997eQnDThCaqQMYB9AEBIRzblSSNN/ICMGLYIHUO3VKaItcedZJ3ijIg==
+xlsx@0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.17.5.tgz#78b788fcfc0773d126cdcd7ea069cb7527c1ce81"
+  integrity sha512-lXNU0TuYsvElzvtI6O7WIVb9Zar1XYw7Xb3VAx2wn8N/n0whBYrCnHMxtFyIiUU1Wjf09WzmLALDfBO5PqTb1g==
   dependencies:
     adler-32 "~1.2.0"
     cfb "^1.1.4"

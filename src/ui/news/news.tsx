@@ -24,83 +24,9 @@ import {connect} from "react-redux";
 import {NewsNav, NewsRouteProp} from "./newsStack";
 import dayjs from "dayjs";
 import themes from "../../assets/themes/themes";
-import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
+import {NewsSlice} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
-
-class newsSourceList {
-	private newsLoadList: Array<NewsSlice[]>;
-	private counterList: number[];
-
-	private nameList: SourceTag[] = ["JWGG", "BGTZ", "KYTZ", "HB"];
-
-	private static dateForComp(x: NewsSlice): dayjs.Dayjs {
-		const date = dayjs(x.date, "YYYY.MM.DD");
-		return x.channel === "JWGG" ? date.add(3, "day") : date;
-	}
-
-	private async getLatestNews(source: SourceTag): Promise<NewsSlice> {
-		for (let i = 0; i < 4; ++i) {
-			if (this.newsLoadList[i].length === 0) {
-				await helper
-					.getNewsList(this.nameList[i], this.counterList[i])
-					.then((res) => {
-						this.newsLoadList[i] = res;
-						this.counterList[i] += 1;
-					});
-			}
-		}
-
-		let index: number =
-			source === undefined ? 0 : this.nameList.indexOf(source);
-		let result: NewsSlice = this.newsLoadList[index][0];
-		if (source === undefined) {
-			this.newsLoadList.forEach((val, ind) => {
-				if (
-					result === undefined ||
-					(val[0] &&
-						newsSourceList.dateForComp(val[0]) >
-							newsSourceList.dateForComp(result))
-				) {
-					result = val[0];
-					index = ind;
-				}
-			});
-		}
-
-		this.newsLoadList[index].shift();
-		if (result) {
-			return result;
-		} else {
-			throw new Error("Unknown error related to mocking.");
-		}
-	}
-
-	public constructor() {
-		this.newsLoadList = [[], [], [], []];
-		this.counterList = [0, 0, 0, 0];
-	}
-
-	public reset() {
-		this.newsLoadList = [[], [], [], []];
-		this.counterList = [0, 0, 0, 0];
-	}
-
-	public async getLatestNewsList(
-		listSize: number,
-		source: SourceTag,
-	): Promise<NewsSlice[]> {
-		let newsList = [];
-		for (let i = 0; i < listSize; ++i) {
-			try {
-				newsList.push(await this.getLatestNews(source));
-			} catch (e) {
-				console.warn(e);
-			}
-		}
-		return newsList;
-	}
-}
 
 interface NewsUIProps {
 	route: NewsRouteProp;
@@ -114,23 +40,11 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
 	const [newsNumberOnOnePage, setNewsNumber] = useState("20");
-	const [newsSource] = useState(new newsSourceList());
+	const [page, setPage] = useState(1);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
-
-	const renderIcon = (channel: SourceTag) => {
-		if (channel === "JWGG") {
-			return <FontAwesome name="file-text-o" size={40} color="green" />;
-		} else if (channel === "BGTZ") {
-			return <FontAwesome name="file-text-o" size={40} color="red" />;
-		} else if (channel === "KYTZ") {
-			return <FontAwesome name="file-text-o" size={40} color="blue" />;
-		} else if (channel === "HB") {
-			return <FontAwesome name="file-text-o" size={40} color="purple" />;
-		}
-	};
 
 	const fetchNewsList = (request: boolean = true) => {
 		setRefreshing(true);
@@ -138,11 +52,14 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 
 		if (request) {
 			setNewsList([]);
-			newsSource.reset();
+			setPage(1);
+		} else {
+			setPage((p) => p + 1);
 		}
 
-		newsSource
-			.getLatestNewsList(
+		helper
+			.getNewsList(
+				request ? 1 : page + 1,
 				parseInt(newsNumberOnOnePage, 10),
 				route.params?.source,
 			)
@@ -261,7 +178,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 										navigation.push("News", {source: item.channel});
 									}
 								}}>
-								{renderIcon(item.channel)}
+								{<FontAwesome name="file-text-o" size={40} color="purple" />}
 							</TouchableWithoutFeedback>
 							<View>
 								<Text
