@@ -34,7 +34,7 @@
 		"moment": "2.29.1",
 		"react": "17.0.2",
 		"react-native": "0.67.2",
-		"react-native-blob-util": "0.13.18",
+		"react-native-blob-util": "0.14.0",
 		"react-native-easy-grid": "0.2.2",
 		"react-native-fs": "2.18.0",
 		"react-native-gesture-handler": "2.2.0",
