@@ -66,10 +66,10 @@
 		"typesafe-actions": "5.1.0"
 	},
 	"devDependencies": {
-		"@babel/core": "7.17.0",
+		"@babel/core": "7.17.2",
 		"@babel/preset-env": "7.16.11",
 		"@babel/preset-typescript": "7.16.7",
-		"@babel/runtime": "7.17.0",
+		"@babel/runtime": "7.17.2",
 		"@react-native-community/eslint-config": "3.0.1",
 		"@types/jest": "27.4.0",
 		"@types/md5": "2.3.2",
