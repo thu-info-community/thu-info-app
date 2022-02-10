@@ -5,6 +5,7 @@ import { NewsSlice, SourceTag } from "../models/news/news";
 import { FILE_DOWNLOAD_URL, NEWS_DETAIL_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL } from "../constants/strings";
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
+import { decode } from "he"
 
 /**
  * Get News List
@@ -17,13 +18,14 @@ import cheerio from "cheerio";
 export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => {
     const newsList: NewsSlice[] = [];
     const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-    const data: { object: { dataList: { bt: string, url: string, time: string, dwmc: string, lmid: SourceTag }[] } } = JSON.parse(json);
+    const data: { object: { dataList: { bt: string, url: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
     data.object.dataList.forEach(element => {
         newsList.push({
-            name: parseXmlEscape(element.bt),
-            url: parseXmlEscape(element.url),
+            name: decode(element.bt),
+            url: decode(element.url),
             date: element.time,
             source: element.dwmc,
+            topped: element.yxzd.indexOf("1-") != -1 ? true : false,
             channel: element.lmid
         });
     });
@@ -107,33 +109,21 @@ const getNewsDetailPolicy = (
     return [undefined, undefined];
 };
 
-const parseXmlEscape = (text: string): string => {
-    let result = text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&apos;/g, "'").replace(/&quot;/g, "\"").replace(/&nbsp;/g, " ");
-    const matches = result.match(/&#[0-9]+;/g);
-    if (!matches) return result;
-    matches.forEach(m => {
-        const number = /[0-9]+/.exec(m)?.[0] as string;
-        const char = String.fromCharCode(Number(number));
-        result = result.replace(m, char);
-    });
-    return result;
-};
-
 const handleNewApiNews = async (url: string): Promise<[string, string, string]> => {
     const html = await uFetch(url);
     const csrf = await getCsrfToken();
     const xxid: string = /(?<=var xxid = ").*?(?=";)/.exec(html)?.[0] as string;
     const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=false&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
-    const title = parseXmlEscape(data.object.xxDto.bt);
-    let content = "<div>" + parseXmlEscape(data.object.xxDto.nr);
+    const title = decode(data.object.xxDto.bt);
+    let content = "<div>" + decode(data.object.xxDto.nr);
     if (data.object.xxDto.fjs_template) {
         data.object.xxDto.fjs_template.forEach(file => {
             content += `<a href="${FILE_DOWNLOAD_URL + file.wjid}?_csrf=${csrf}">${file.wjmc}</a>`;
         });
     }
     content += "</div>";
-    const jianjie = parseXmlEscape(data.object.xxDto.nr).replace(/<[^>]+>/g, "");
+    const jianjie = decode(data.object.xxDto.nr).replace(/<[^>]+>/g, "");
     return [title, content, jianjie];
 };
 
