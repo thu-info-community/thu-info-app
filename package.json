@@ -29,7 +29,7 @@
 		"dayjs": "1.10.7",
 		"eslint-plugin-react-hooks": "4.3.0",
 		"events": "3.3.0",
-		"leancloud-storage": "4.12.1",
+		"leancloud-storage": "4.12.2",
 		"md5": "2.3.0",
 		"moment": "2.29.1",
 		"react": "17.0.2",
