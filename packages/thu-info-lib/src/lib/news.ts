@@ -5,7 +5,7 @@ import { NewsSlice, SourceTag } from "../models/news/news";
 import { FILE_DOWNLOAD_URL, NEWS_DETAIL_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL } from "../constants/strings";
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
-import { decode } from "he"
+import { decode } from "he";
 
 /**
  * Get News List
