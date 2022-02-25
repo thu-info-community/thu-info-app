@@ -2,7 +2,7 @@ import { InfoHelper } from "../index";
 import { getCsrfToken } from "../lib/core";
 import { getRedirectUrl, uFetch } from "../utils/network";
 import { NewsSlice, SourceTag } from "../models/news/news";
-import { FILE_DOWNLOAD_URL, NEWS_DETAIL_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL } from "../constants/strings";
+import { FILE_DOWNLOAD_URL, NEWS_ADD_FAVOR_URL, NEWS_DETAIL_URL, NEWS_FAVOR_LIST_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL, NEWS_REMOVE_FAVOR_URL } from "../constants/strings";
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
 import { decode } from "he";
@@ -18,10 +18,11 @@ import { decode } from "he";
 export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => {
     const newsList: NewsSlice[] = [];
     const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-    const data: { object: { dataList: { bt: string, url: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
+    const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
     data.object.dataList.forEach(element => {
         newsList.push({
             name: decode(element.bt),
+            xxid: (element.xxid),
             url: decode(element.url),
             date: element.time,
             source: element.dwmc,
@@ -148,4 +149,37 @@ const getNewsDetailOld = async (
     } else {
         return ["", html, ""];
     }
+};
+
+export const addNewsToFavor = async (helper: InfoHelper, news: NewsSlice): Promise<boolean> => {
+    const csrf = await getCsrfToken();
+    const json = await uFetch(`${NEWS_ADD_FAVOR_URL}${news.xxid}?_csrf=${csrf}`);
+    const data: { result: string } = JSON.parse(json);
+    return data.result == "success";
+};
+
+export const removeNewsFromFavor = async (helper: InfoHelper, news: NewsSlice): Promise<boolean> => {
+    const csrf = await getCsrfToken();
+    const json = await uFetch(`${NEWS_REMOVE_FAVOR_URL}${news.xxid}?_csrf=${csrf}`);
+    const data: { result: string } = JSON.parse(json);
+    return data.result == "success";
+};
+
+export const getFavorNewsList = async (helper: InfoHelper, page: number = 1): Promise<[NewsSlice[], number]> => {
+    const csrf = await getCsrfToken();
+    const json = await uFetch(`${NEWS_FAVOR_LIST_URL}?_csrf=${csrf}`, { "currentPage": page });
+    const newsList: NewsSlice[] = [];
+    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: SourceTag }[] } } = JSON.parse(json);
+    data.object.resultList.forEach(element => {
+        newsList.push({
+            name: decode(element.bt),
+            xxid: (element.xxid),
+            url: decode(element.url),
+            date: element.time,
+            source: element.dwmc,
+            topped: false,
+            channel: element.lmid
+        });
+    });
+    return [newsList, data.object.totalPages];
 };

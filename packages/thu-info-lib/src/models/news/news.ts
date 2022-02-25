@@ -2,6 +2,7 @@ export type SourceTag = "LM_BGTG" | "LM_ZYGG" | "LM_YQFKZT" | "LM_JWGG" | "LM_KY
 
 export interface NewsSlice {
     readonly name: string;
+    readonly xxid: string;
     readonly url: string;
     readonly date: string;
     readonly source: string;

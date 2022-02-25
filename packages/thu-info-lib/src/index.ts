@@ -39,7 +39,7 @@ import {
     getLibrarySeatList,
     getLibrarySectionList,
 } from "./lib/library";
-import { getNewsDetail, getNewsList } from "./lib/news";
+import { addNewsToFavor, getFavorNewsList, getNewsDetail, getNewsList, removeNewsFromFavor } from "./lib/news";
 import { getSchedule } from "./lib/schedule";
 import { Course } from "./models/home/report";
 import { Form } from "./models/home/assessment";
@@ -207,6 +207,17 @@ export class InfoHelper {
     public getNewsDetail = async (
         url: string,
     ): Promise<[string, string, string]> => getNewsDetail(this, url);
+
+    public addNewsToFavor = async (news: NewsSlice): Promise<boolean> => addNewsToFavor(this, news);
+
+    public removeNewsFromFavor = async (news: NewsSlice): Promise<boolean> => removeNewsFromFavor(this, news);
+
+    /**
+     * if the page is out of range, the NewsSlice will be a 0 length array.
+     * @param page page of favor list
+     * @returns [array of NewsSlice,total pages]
+     */
+    public getFavorNewsList = async (page: number): Promise<[NewsSlice[], number]> => getFavorNewsList(this, page);
 
     public getSchedule = async () => getSchedule(this);
 
