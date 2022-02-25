@@ -165,7 +165,7 @@ export const removeNewsFromFavor = async (helper: InfoHelper, news: NewsSlice): 
     return data.result == "success";
 };
 
-export const getFavorNewsList = async (helper: InfoHelper, page: number = 1): Promise<[NewsSlice[], number]> => {
+export const getFavorNewsList = async (helper: InfoHelper, page = 1): Promise<[NewsSlice[], number]> => {
     const csrf = await getCsrfToken();
     const json = await uFetch(`${NEWS_FAVOR_LIST_URL}?_csrf=${csrf}`, { "currentPage": page });
     const newsList: NewsSlice[] = [];
