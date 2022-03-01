@@ -44,7 +44,7 @@
 		"react-native-modal-dropdown": "1.0.2",
 		"react-native-pdf": "6.4.0",
 		"react-native-reanimated": "2.4.1",
-		"react-native-safe-area-context": "3.4.1",
+		"react-native-safe-area-context": "4.1.2",
 		"react-native-screens": "3.13.0",
 		"react-native-snackbar": "2.4.0",
 		"react-native-svg": "12.1.1",
