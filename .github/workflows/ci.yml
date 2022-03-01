@@ -6,7 +6,7 @@ jobs:
   install-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup caching
         uses: actions/cache@v2
         with:
@@ -25,7 +25,7 @@ jobs:
     needs: install-and-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup caching
         uses: actions/cache@v2
         with:
@@ -99,7 +99,7 @@ jobs:
     needs: install-and-test
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup caching
         uses: actions/cache@v2
         with:
