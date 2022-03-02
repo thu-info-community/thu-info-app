@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 import {jsPDF} from 'jspdf';
-import imageSize from 'image-size';
+import imageSize from "../utils/image-size";
 import {roamingWrapperWithMocks} from "./core";
 import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL, ID_BASE_URL, ID_LOGIN_URL} from "../constants/strings";
 import {SearchResultItem, SearchResult, BookChapter, BookDetail} from "../models/home/reserves-lib";
