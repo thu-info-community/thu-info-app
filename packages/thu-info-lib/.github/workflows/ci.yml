@@ -61,10 +61,10 @@ jobs:
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
           yarn publish --new-version $TAG
-      - name: Build demo
-        run: |
-          yarn build-dist
-          zip -r demo.zip ./demo/*
+      # - name: Build demo
+      #   run: |
+      #     yarn build-dist
+      #     zip -r demo.zip ./demo/*
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -74,12 +74,12 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body_path: ./release
-      - name: Upload demo
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: demo.zip
-          asset_name: demo.zip
-          asset_content_type: application/zip
+      # - name: Upload demo
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: demo.zip
+      #     asset_name: demo.zip
+      #     asset_content_type: application/zip
