@@ -18,6 +18,9 @@ import * as adapters from "@leancloud/platform-adapters-react-native";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
+const Buffer = require('buffer/').Buffer;
+global.Buffer = Buffer;
+
 const moment = require("moment");
 require("moment/locale/zh-cn");
 moment.locale("zh-cn");
