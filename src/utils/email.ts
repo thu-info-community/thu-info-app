@@ -1,6 +1,6 @@
 import MailCore from "thu-info-mailcore";
-import {helper, store} from "../redux/store";
-import {Platform} from "react-native";
+import {currState, helper, store} from "../redux/store";
+import {AppState, Platform} from "react-native";
 import {configSet} from "../redux/actions/config";
 
 const INBOX = "INBOX";
@@ -30,3 +30,17 @@ export const getMails = () =>
 		.catch((e) => {
 			throw e;
 		});
+
+export const handleEmailInit = () => {
+	const emailName = currState().config.emailName;
+	if (emailName && emailName.length > 0) {
+		console.log("Relaunch email init!");
+		emailInit(currState().config.emailName);
+	}
+};
+
+AppState.addEventListener("change", (e) => {
+	if (e === "active") {
+		handleEmailInit();
+	}
+});
