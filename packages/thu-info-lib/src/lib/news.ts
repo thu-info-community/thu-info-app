@@ -1,5 +1,5 @@
 import { InfoHelper } from "../index";
-import { getCsrfToken } from "../lib/core";
+import {getCsrfToken, roamingWrapperWithMocks} from "../lib/core";
 import { getRedirectUrl, uFetch } from "../utils/network";
 import { NewsSlice, SourceTag } from "../models/news/news";
 import { FILE_DOWNLOAD_URL, NEWS_ADD_FAVOR_URL, NEWS_DETAIL_URL, NEWS_FAVOR_LIST_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL, NEWS_REMOVE_FAVOR_URL } from "../constants/strings";
@@ -15,23 +15,29 @@ import { decode } from "he";
  * @param channel
  * @returns Array of NewsSlice
  */
-export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => {
-    const newsList: NewsSlice[] = [];
-    const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-    const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
-    data.object.dataList.forEach(element => {
-        newsList.push({
-            name: decode(element.bt),
-            xxid: (element.xxid),
-            url: decode(element.url),
-            date: element.time,
-            source: element.dwmc,
-            topped: element.yxzd.indexOf("1-") != -1 ? true : false,
-            channel: element.lmid
+export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const newsList: NewsSlice[] = [];
+        const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
+        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
+        data.object.dataList.forEach(element => {
+            newsList.push({
+                name: decode(element.bt),
+                xxid: (element.xxid),
+                url: decode(element.url),
+                date: element.time,
+                source: element.dwmc,
+                topped: element.yxzd.indexOf("1-") != -1 ? true : false,
+                channel: element.lmid
+            });
         });
-    });
-    return newsList;
-};
+        return newsList;
+    },
+    [],
+);
 
 const policyList: [string, [string, string]][] = [
     ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
@@ -128,10 +134,16 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
     return [title, content, jianjie];
 };
 
-export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
-    if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
-    else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
-};
+export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
+        else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
+    },
+    ["", "", ""],
+);
 
 const getNewsDetailOld = async (
     helper: InfoHelper,
