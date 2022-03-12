@@ -8,7 +8,6 @@ import React from "react";
 import {FeedbackScreen} from "./feedback";
 import {PopiScreen} from "./popi";
 import {EleRecordScreen} from "./eleRecord";
-import {ReportSettingsScreen} from "./reportSettings";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
 import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
@@ -20,7 +19,6 @@ type SettingsStackParamList = {
 	Feedback: undefined;
 	Popi: undefined;
 	EleRecord: undefined;
-	ReportSettings: undefined;
 	ScheduleSettings: undefined;
 	ReportManageHidden: undefined;
 	SecondarySettings: undefined;
@@ -54,11 +52,6 @@ export const SettingStackScreen = () => (
 			name="EleRecord"
 			component={EleRecordScreen}
 			options={{title: getStr("eleRecord")}}
-		/>
-		<Stack.Screen
-			name="ReportSettings"
-			component={ReportSettingsScreen}
-			options={{title: getStr("reportSettings")}}
 		/>
 		<Stack.Screen
 			name="ScheduleSettings"

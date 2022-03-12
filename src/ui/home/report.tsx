@@ -16,8 +16,7 @@ import {
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
-import {connect} from "react-redux";
-import {currState, helper, State} from "../../redux/store";
+import {helper} from "../../redux/store";
 import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native";
 
@@ -110,23 +109,22 @@ const prepareData = (
 	};
 };
 
-const ReportUI = ({hidden}: {hidden: string[]}) => {
+export const ReportScreen = () => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
 	const [flag, setFlag] = useState<1 | 2 | 3>(1);
+	const [bx, setBx] = useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const {bx, newGPA} = currState().config;
-
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getReport(bx && flag === 1, newGPA, flag)
+			.getReport(bx && flag === 1, true, flag)
 			.then((res) => {
-				setReport(res.filter((it) => hidden.indexOf(it.name) === -1));
+				setReport(res);
 				setRefreshing(false);
 			})
 			.catch(() => {
@@ -138,8 +136,7 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 			});
 	};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(fetchData, [flag]);
+	useEffect(fetchData, [bx, flag]);
 
 	const {gpa, sections, allCredits, totalCredits, totalPoints} = prepareData(
 		report || [],
@@ -181,6 +178,13 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 						{getStr("reportFlag3")}
 					</Text>
 				</TouchableOpacity>
+				<TouchableOpacity
+					style={{padding: 6, flex: 1}}
+					onPress={() => setBx((o) => !o)}>
+					<Text style={{color: "blue", textAlign: "center"}}>
+						{getStr(bx ? "bx" : "bxr")}
+					</Text>
+				</TouchableOpacity>
 			</View>
 			<SectionList
 				sections={sections}
@@ -216,7 +220,3 @@ const ReportUI = ({hidden}: {hidden: string[]}) => {
 		</>
 	);
 };
-
-export const ReportScreen = connect((state: State) => ({
-	hidden: state.config.reportHidden ?? [],
-}))(ReportUI);

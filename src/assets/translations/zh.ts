@@ -55,7 +55,7 @@ export default {
 	totalPoints: "总学分绩",
 	newGPA: "新绩点",
 	oldGPA: "旧绩点",
-	bx: "必限",
+	bx: "只看必限",
 	bxr: "必限任",
 	manageHidden: "隐藏的科目",
 	reportHiddenWarning:

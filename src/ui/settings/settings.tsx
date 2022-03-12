@@ -38,11 +38,6 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 		<>
 			<ScrollView style={{padding: 10}}>
 				<SettingsItem
-					text={getStr("reportSettings")}
-					onPress={() => navigation.navigate("ReportSettings")}
-					icon={<Feather name="file-text" size={16} />}
-				/>
-				<SettingsItem
 					text={getStr("scheduleSettings")}
 					onPress={() => navigation.navigate("ScheduleSettings")}
 					icon={<Feather name="layout" size={16} />}
