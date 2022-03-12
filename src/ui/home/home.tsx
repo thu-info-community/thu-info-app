@@ -12,7 +12,6 @@ import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
-import IconLibRoom from "../../assets/icons/IconLibRoom";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
@@ -73,11 +72,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="library"
 					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="libRoomBook"
-					onPress={() => navigation.navigate("LibRoomBook")}>
-					<IconLibRoom width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="life">
