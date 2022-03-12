@@ -169,6 +169,9 @@ export const getAssessmentList = (
         "default",
         "0D8B99BA23FD2BA22428D9C8AA0AB508",
         () => uFetch(ASSESSMENT_LIST_URL).then((str) => {
+            if (str.includes("对不起，现在不是填写问卷时间")) {
+                throw new AssessmentError("对不起，现在不是填写问卷时间");
+            }
             const result = cheerio("tbody", str)
                 .children()
                 .map((index, element) => {
