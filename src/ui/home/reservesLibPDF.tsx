@@ -4,6 +4,7 @@ import {Dimensions, StyleSheet, Text, View} from "react-native";
 import Pdf from "react-native-pdf";
 import {helper} from "../../redux/store";
 import RNFS from "react-native-fs";
+import Snackbar from "react-native-snackbar";
 
 export const ReservesLibPDFScreen = ({
 	route: {
@@ -32,10 +33,21 @@ export const ReservesLibPDFScreen = ({
 							.output("datauristring")
 							.replace("filename=generated.pdf;", "");
 						setContent(base64);
-						const filename = `[${book.bookId}] ${book.title} - ${book.author}.pdf`;
-						const path = RNFS.DownloadDirectoryPath + "/" + filename;
-						const saveData = base64.substring(base64.indexOf("base64,") + 7);
-						return RNFS.writeFile(path, saveData, "base64");
+						try {
+							const filename =
+								`[${book.bookId}]${book.title}-${book.author}.pdf`.replace(
+									":",
+									"_",
+								);
+							const path = RNFS.DownloadDirectoryPath + "/" + filename;
+							const saveData = base64.substring(base64.indexOf("base64,") + 7);
+							return RNFS.writeFile(path, saveData, "base64");
+						} catch {
+							Snackbar.show({
+								text: "保存失败",
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						}
 					});
 			}
 		});

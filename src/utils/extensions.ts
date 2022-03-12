@@ -19,7 +19,7 @@ Date.prototype.format = function () {
 };
 
 if (global.FileReader) {
-	FileReader.prototype.readAsArrayBuffer = function(blob) {
+	FileReader.prototype.readAsArrayBuffer = function (blob) {
 		if (this.readyState === this.LOADING) {
 			throw new Error("InvalidStateError");
 		}
