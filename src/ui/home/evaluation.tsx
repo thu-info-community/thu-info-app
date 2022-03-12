@@ -27,9 +27,9 @@ export const EvaluationScreen = ({navigation}: {navigation: HomeNav}) => {
 				setEvaluationList(res);
 				setRefreshing(false);
 			})
-			.catch(() => {
+			.catch((e) => {
 				Snackbar.show({
-					text: getStr("networkRetry"),
+					text: e?.message ?? getStr("networkRetry"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
 				setRefreshing(false);
