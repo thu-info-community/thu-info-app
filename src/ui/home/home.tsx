@@ -68,11 +68,13 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
 				</HomeIcon>
-				<HomeIcon
-					title="reservesLib"
-					onPress={() => navigation.navigate("ReservesLibWelcome")}>
-					<IconBook width={iconSize} height={iconSize} />
-				</HomeIcon>
+				{Platform.OS === "android" && (
+					<HomeIcon
+						title="reservesLib"
+						onPress={() => navigation.navigate("ReservesLibWelcome")}>
+						<IconBook width={iconSize} height={iconSize} />
+					</HomeIcon>
+				)}
 			</HomeSection>
 			<HomeSection title="life">
 				<HomeIcon

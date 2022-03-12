@@ -83,3 +83,5 @@ jest.mock("react-native-blob-util/fs", () => ({dirs: {
 	MainBundleDir: "",
 	LibraryDir: "",
 }}));
+
+jest.mock('react-native-permissions', () => require('react-native-permissions/mock'));

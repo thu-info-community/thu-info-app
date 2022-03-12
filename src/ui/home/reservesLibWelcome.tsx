@@ -11,12 +11,13 @@ import {
 	TouchableNativeFeedback,
 } from "react-native";
 import themes from "../../assets/themes/themes";
-import React, {PropsWithChildren, useState} from "react";
+import React, {PropsWithChildren, useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {SearchResultItem} from "thu-info-lib/dist/models/home/reserves-lib";
+import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
 
 const BookItem = ({
 	book,
@@ -68,6 +69,14 @@ export const ReservesLibWelcomeScreen = (props: {navigation: HomeNav}) => {
 	const {colors} = themes(themeName);
 
 	const [search, setSearch] = useState("");
+
+	useEffect(() => {
+		check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then((r) => {
+			if (r === RESULTS.DENIED) {
+				request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+			}
+		});
+	}, []);
 
 	return paginatedRefreshListScreen(
 		async (_: PropsWithChildren<{navigation: HomeNav}>, page) =>

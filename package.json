@@ -47,6 +47,7 @@
 		"react-native-localize": "2.2.0",
 		"react-native-modal-dropdown": "1.0.2",
 		"react-native-pdf": "6.4.0",
+		"react-native-permissions": "3.3.1",
 		"react-native-polyfill-globals": "3.1.0",
 		"react-native-reanimated": "2.4.1",
 		"react-native-safe-area-context": "4.1.2",
@@ -111,7 +112,7 @@
 			"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|css|less)$": "<rootDir>/.assetstransformer.js"
 		},
 		"transformIgnorePatterns": [
-			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-community/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native|react-native-markdown-display|react-syntax-highlighter/dist/esm/styles/hljs|react-native-syntax-highlighter|thu-info-lib|react-native-appearance|react-native-image-picker|react-native-fs|thu-info-mailcore|@react-native-async-storage/async-storage|react-native-modal-dropdown|react-native-pdf|react-native-blob-util)/)"
+			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-community/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native|react-native-markdown-display|react-syntax-highlighter/dist/esm/styles/hljs|react-native-syntax-highlighter|thu-info-lib|react-native-appearance|react-native-image-picker|react-native-fs|thu-info-mailcore|@react-native-async-storage/async-storage|react-native-modal-dropdown|react-native-pdf|react-native-blob-util|react-native-permissions)/)"
 		],
 		"coveragePathIgnorePatterns": [
 			".+\\.js"
