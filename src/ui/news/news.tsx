@@ -3,8 +3,6 @@ import {
 	View,
 	RefreshControl,
 	ActivityIndicator,
-	Button,
-	Alert,
 	Dimensions,
 } from "react-native";
 import React, {useState, useEffect} from "react";
@@ -12,7 +10,6 @@ import {
 	FlatList,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
-	TextInput,
 } from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
@@ -39,7 +36,6 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [newsNumberOnOnePage, setNewsNumber] = useState("20");
 	const [page, setPage] = useState(1);
 
 	const themeName = useColorScheme();
@@ -58,11 +54,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 		}
 
 		helper
-			.getNewsList(
-				request ? 1 : page + 1,
-				parseInt(newsNumberOnOnePage, 10),
-				route.params?.source,
-			)
+			.getNewsList(request ? 1 : page + 1, 30, route.params?.source)
 			.then((res) => {
 				res.forEach(({url, date}) => {
 					if (cache.get(url) === undefined) {
@@ -89,18 +81,6 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 			});
 	};
 
-	const rerender = () => {
-		let n = parseInt(newsNumberOnOnePage, 10);
-
-		if (isNaN(n)) {
-			Alert.alert(getStr("numberOfNewsNaN"));
-		} else if (n < 10 || n > 100) {
-			Alert.alert(getStr("numberOfNewsOutOfRange"));
-		} else {
-			fetchNewsList();
-		}
-	};
-
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, []);
 
@@ -109,26 +89,6 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 
 	return (
 		<>
-			<View style={style.headerContainer}>
-				<View style={style.textInputContainer}>
-					<Text style={{color: theme.colors.text}}>
-						{getStr("newsNumberOnPage")}
-					</Text>
-					<TextInput
-						style={style.textInputStyle}
-						placeholder="20"
-						onChangeText={(txt) => setNewsNumber(txt)}
-					/>
-				</View>
-				<Button title={getStr("confirm")} onPress={rerender} />
-				<Button
-					title={getStr("backToTop")}
-					onPress={() =>
-						// @ts-ignore
-						flatListRef?.current?.scrollToOffset({animated: true, offset: 0})
-					}
-				/>
-			</View>
 			<FlatList
 				ref={flatListRef}
 				refreshControl={

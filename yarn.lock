@@ -9596,10 +9596,10 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@2.0.0-alpha.15:
-  version "2.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-2.0.0-alpha.15.tgz#983955c883799cfd9ac04553e97be67387859bfd"
-  integrity sha512-DLhSiZPfOIf9uUHGvQuTdTe7Lp5Dr4u8U412UYcoreHcjZGV8FIqrp2qu9fhvws6KIKiVdIhpoUdPuQ2nnQA3w==
+thu-info-lib@2.0.0-alpha.16:
+  version "2.0.0-alpha.16"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-2.0.0-alpha.16.tgz#717e67500db58b3281ed6d6d2752cc231f5c1873"
+  integrity sha512-5QoH1kzPSzPPJHsZA431gjFhot/Hb3nCF9R+ubUzQMpBSIdKfZnguKm3fo5VvvzhrX0nhEYY5HCfeoVl/SuI7Q==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.10"
@@ -9609,7 +9609,7 @@ thu-info-lib@2.0.0-alpha.15:
     iconv-lite "0.6.3"
     image-size "^1.0.1"
     jspdf "^2.5.1"
-    xlsx "0.18.2"
+    xlsx "0.18.3"
 
 thu-info-mailcore@0.2.1:
   version "0.2.1"
@@ -10145,10 +10145,10 @@ xcode@^2.0.0:
     simple-plist "^1.0.0"
     uuid "^3.3.2"
 
-xlsx@0.18.2:
-  version "0.18.2"
-  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.18.2.tgz#b30b80659623d0260173b3c96c4ad308e9a5151e"
-  integrity sha512-BWLS+GO5yg5Hnro8mpbNkZq/a+dZ8689otFuHmb9wgCtiMpL+I9dpc+Sans6K9yYxTLEZ235Kr/JkmoTEMunzQ==
+xlsx@0.18.3:
+  version "0.18.3"
+  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.18.3.tgz#03a95a1082b0ac436afa0fcbc50adb98ee4b288e"
+  integrity sha512-iNBdKSJO11bI59C/dJjYWfR2gglRUrbWtDK9YoKKvu+RA1dinyWU3XXc0BaZUoSYFkxvPrO/9dwBGu6mhVNVGQ==
   dependencies:
     adler-32 "~1.3.0"
     cfb "~1.2.1"
