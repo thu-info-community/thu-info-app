@@ -4,6 +4,7 @@ import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
 	ASHITEMARU_URL,
+	EVEELSEIF_URL,
 	GITHUB_REPO_URL,
 	LIB_URL,
 	UNIDY2002_URL,
@@ -63,6 +64,15 @@ export const AboutScreen = () => {
 					werkeytom @ GitHub
 				</Text>
 			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(EVEELSEIF_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					EveElseIf @ GitHub
+				</Text>
+			</TouchableOpacity>
 			<View style={{height: 10}} />
 			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
 				{getStr("libText")}
@@ -90,7 +100,7 @@ export const AboutScreen = () => {
 			</Text>
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
-				© 2021 | UNIDY
+				© 2022 | thu-info-community
 			</Text>
 		</View>
 	);
