@@ -3,6 +3,7 @@ import {GitLabCodeProp, GitLabMarkdownProp, HomeNav} from "./homeStack";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import WebView from "react-native-webview";
+import {encode} from "he";
 
 export const GitlabCodeScreen = ({
 	route: {
@@ -27,7 +28,7 @@ export const GitlabCodeScreen = ({
       href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/default.min.css">
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
 <script>hljs.highlightAll();</script>
-</head><body><pre><code>${content}</code></pre></body>`;
+</head><body><pre><code>${encode(content ?? "")}</code></pre></body>`;
 
 	return (
 		<WebView
