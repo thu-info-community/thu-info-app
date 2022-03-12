@@ -1,6 +1,7 @@
 import {
 	GestureResponderEvent,
 	Keyboard,
+	Platform,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -11,9 +12,22 @@ import React, {useState} from "react";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {SettingsNav} from "./settingsStack";
-import {submitFeedback} from "../../utils/leanCloud";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native";
+import {helper} from "../../redux/store";
+import AV from "leancloud-storage/core";
+import VersionNumber from "react-native-version-number";
+
+const submitFeedback = async (content: string) => {
+	if (!helper.mocked()) {
+		const statistics = new (AV.Object.extend("Feedback"))();
+		statistics.set("version", Number(VersionNumber.buildVersion));
+		statistics.set("os", Platform.OS);
+		statistics.set("api", String(Platform.Version));
+		statistics.set("content", content);
+		return statistics.save();
+	}
+};
 
 const BottomButton = ({
 	text,

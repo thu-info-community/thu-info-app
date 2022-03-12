@@ -22,7 +22,6 @@ import {useColorScheme} from "react-native";
 import {LoginNav} from "../../components/AuthFlow";
 import {emailInit} from "../../utils/email";
 import {loginAction} from "../../redux/actions/auth";
-import AV from "leancloud-storage/core";
 
 interface LoginProps {
 	readonly userId: string;
@@ -65,10 +64,6 @@ const LoginUI = (props: LoginProps) => {
 				text: `${getStr("loginFailure")}:${props.status.message}`,
 				duration: Snackbar.LENGTH_LONG,
 			});
-			const feedback = new (AV.Object.extend("LoginError"))();
-			// @ts-ignore
-			feedback.set("e", String(props.status.message));
-			feedback.save().then(console.log);
 			props.resetStatus();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
