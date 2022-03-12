@@ -86,6 +86,7 @@ export default {
 	schedule: "计划",
 	study: "学习与成绩",
 	resources: "资源",
+	reservesLib: "教參平台",
 	eCard: "校园卡",
 	dorm: "我们的家园",
 	life: "生活",

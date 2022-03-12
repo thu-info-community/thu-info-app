@@ -89,6 +89,7 @@ export default {
 	schedule: "Schedule",
 	study: "Academic and Score",
 	resources: "Resources",
+	reservesLib: "Course Reserve",
 	eCard: "E-Card",
 	dorm: "Dormitory",
 	life: "Life",

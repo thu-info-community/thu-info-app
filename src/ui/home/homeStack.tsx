@@ -51,6 +51,9 @@ import {GitlabCodeScreen, GitlabMarkdownScreen} from "./gitlabCode";
 import {GitlabPDFScreen} from "./gitlabPDF";
 import {GitlabSearchScreen} from "./gitlabSearch";
 import {GitlabImageScreen} from "./gitlabImage";
+import {ReservesLibWelcomeScreen} from "./reservesLibWelcome";
+import {SearchResultItem} from "thu-info-lib/dist/models/home/reserves-lib";
+import {ReservesLibPDFScreen} from "./reservesLibPDF";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -71,6 +74,8 @@ export type HomeStackParamList = {
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
+	ReservesLibWelcome: undefined;
+	ReservesLibPDF: {book: SearchResultItem};
 	Email: {messageId: number};
 	EmailList: undefined;
 	Qzyq: undefined;
@@ -110,6 +115,11 @@ export type LibRoomPerformBookProp = RouteProp<
 	HomeStackParamList,
 	"LibRoomPerformBook"
 >;
+export type ReservesLibPDFProp = RouteProp<
+	HomeStackParamList,
+	"ReservesLibPDF"
+>;
+
 export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
 
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
@@ -321,6 +331,16 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="LibRoomBookRecord"
 				component={LibRoomBookRecordScreen}
 				options={{title: getStr("libRoomBookRecord")}}
+			/>
+			<Stack.Screen
+				name="ReservesLibWelcome"
+				component={ReservesLibWelcomeScreen}
+				options={{title: getStr("reservesLib")}}
+			/>
+			<Stack.Screen
+				name="ReservesLibPDF"
+				component={ReservesLibPDFScreen}
+				options={({route}) => ({title: route.params.book.title})}
 			/>
 			<Stack.Screen
 				name="Sports"

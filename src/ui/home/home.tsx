@@ -15,6 +15,7 @@ import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
 import IconGitLab from "../../assets/icons/IconGitLab";
+import IconBook from "../../assets/icons/IconBook";
 
 const iconSize = 60;
 
@@ -66,6 +67,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="library"
 					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon
+					title="reservesLib"
+					onPress={() => navigation.navigate("ReservesLibWelcome")}>
+					<IconBook width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="life">
