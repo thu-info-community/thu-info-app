@@ -11,7 +11,6 @@ import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
 import {useColorScheme} from "react-native";
-import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
@@ -50,11 +49,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 			<HomeSection title="study">
 				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
 					<IconReport width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="physicalExam"
-					onPress={() => navigation.navigate("PhysicalExam")}>
-					<IconPhysicalExam width={iconSize} height={iconSize} />
 				</HomeIcon>
 				<HomeIcon
 					title="teachingEvaluation"
