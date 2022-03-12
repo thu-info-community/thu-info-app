@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {HomeNav, ReservesLibPDFProp} from "./homeStack";
-import {Dimensions, StyleSheet, Text, View} from "react-native";
+import {Dimensions, Platform, StyleSheet, Text, View} from "react-native";
 import Pdf from "react-native-pdf";
 import {helper} from "../../redux/store";
-import RNFS from "react-native-fs";
+import ReactNativeBlobUtil from "react-native-blob-util";
 import Snackbar from "react-native-snackbar";
 
 export const ReservesLibPDFScreen = ({
@@ -27,27 +27,41 @@ export const ReservesLibPDFScreen = ({
 						setTotal(t);
 						setDone(c);
 					})
-					.then((pdf) => {
+					.then(async (pdf) => {
 						setDownloading(false);
-						const base64 = pdf
-							.output("datauristring")
-							.replace("filename=generated.pdf;", "");
-						setContent(base64);
-						try {
-							const filename =
-								`[${book.bookId}]${book.title}-${book.author}.pdf`.replace(
-									":",
-									"_",
-								);
-							const path = RNFS.DownloadDirectoryPath + "/" + filename;
-							const saveData = base64.substring(base64.indexOf("base64,") + 7);
-							return RNFS.writeFile(path, saveData, "base64");
-						} catch {
-							Snackbar.show({
-								text: "保存失败",
-								duration: Snackbar.LENGTH_SHORT,
-							});
+						const data = new Uint8Array(pdf.output("arraybuffer"));
+						const filename =
+							`[${book.bookId}]${book.title}-${book.author}.pdf`.replace(
+								":",
+								"_",
+							);
+						const path =
+							(Platform.OS === "ios"
+								? ReactNativeBlobUtil.fs.dirs.DocumentDir
+								: ReactNativeBlobUtil.fs.dirs.DownloadDir) +
+							"/" +
+							filename;
+						const stream = await ReactNativeBlobUtil.fs.writeStream(
+							path,
+							"ascii",
+						);
+						const chunkSize = 100000;
+						for (let i = 0; i < data.byteLength; i += chunkSize) {
+							// @ts-ignore
+							await stream.write(Array.from(data.subarray(i, i + chunkSize)));
+							setTotal(Math.ceil(data.byteLength / chunkSize));
+							setDone(Math.floor(i / chunkSize));
 						}
+						return path;
+					})
+					.then((path) => {
+						setContent(`file://${path}`);
+					})
+					.catch(() => {
+						Snackbar.show({
+							text: "保存失败",
+							duration: Snackbar.LENGTH_SHORT,
+						});
 					});
 			}
 		});
