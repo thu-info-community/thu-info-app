@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {HomeNav, ReservesLibPDFProp} from "./homeStack";
-import {Dimensions, Platform, StyleSheet, Text, View} from "react-native";
+import {
+	Alert,
+	Dimensions,
+	Platform,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 import Pdf from "react-native-pdf";
 import {helper} from "../../redux/store";
 import ReactNativeBlobUtil from "react-native-blob-util";
@@ -44,6 +51,10 @@ export const ReservesLibPDFScreen = ({
 						const stream = await ReactNativeBlobUtil.fs.writeStream(
 							path,
 							"ascii",
+						);
+						Alert.alert(
+							"低性能",
+							"转码部分目前的实现方式性能较低，需要等候较长时间。",
 						);
 						const chunkSize = 100000;
 						for (let i = 0; i < data.byteLength; i += chunkSize) {
