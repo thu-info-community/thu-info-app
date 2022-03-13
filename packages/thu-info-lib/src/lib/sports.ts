@@ -167,7 +167,7 @@ export const makeSportsReservation = async (
     if (totalCost === 0) return undefined;
     const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, {
         is_jsd: receiptTitle === undefined ? "0" : "1",
-        xm: receiptTitle,
+        xm: receiptTitle ?? "清华大学",
         gymnasium_idForCache: gymId,
         item_idForCache: itemId,
         time_dateForCache: date,
