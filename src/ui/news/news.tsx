@@ -56,15 +56,17 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 		helper
 			.getNewsList(request ? 1 : page + 1, 30, route.params?.source)
 			.then((res) => {
-				res.forEach(({url, date}) => {
+				res.forEach(({url, date}, index) => {
 					if (cache.get(url) === undefined) {
-						helper.getNewsDetail(url).then(([_, __, abstract]) => {
-							addCache({
-								url,
-								timestamp: dayjs(date, "YYYY.MM.DD").toDate().valueOf(),
-								abstract: abstract.slice(0, 50),
+						setTimeout(() => {
+							helper.getNewsDetail(url).then(([_, __, abstract]) => {
+								addCache({
+									url,
+									timestamp: dayjs(date, "YYYY.MM.DD").toDate().valueOf(),
+									abstract: abstract.slice(0, 50),
+								});
 							});
-						});
+						}, index * 500);
 					}
 				});
 				setNewsList((o) => o.concat(res));
