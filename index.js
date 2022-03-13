@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React from "react";
-import {AppRegistry, Platform, Text} from "react-native";
+import {AppRegistry, LogBox, Platform, Text} from "react-native";
 import { polyfill as polyfillBase64 } from 'react-native-polyfill-globals/src/base64';
 import { polyfill as polyfillEncoding } from 'react-native-polyfill-globals/src/encoding';
 import { polyfill as polyfillReadableStream } from 'react-native-polyfill-globals/src/readable-stream';
@@ -54,5 +54,7 @@ Text.render = function (...args) {
 		style: [defaultFontFamily, origin.props.style],
 	});
 };
+
+LogBox.ignoreLogs(["[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!"]);
 
 AppRegistry.registerComponent(name, () => App);
