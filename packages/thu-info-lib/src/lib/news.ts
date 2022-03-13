@@ -150,7 +150,8 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
 };
 
 export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
-    if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
+    if (helper.mocked()) return await getNewsDetailOld(helper, url);
+    else if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
     else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
 };
 
