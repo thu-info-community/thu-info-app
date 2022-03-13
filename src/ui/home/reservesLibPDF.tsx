@@ -6,12 +6,14 @@ import {
 	Platform,
 	StyleSheet,
 	Text,
+	useColorScheme,
 	View,
 } from "react-native";
 import Pdf from "react-native-pdf";
 import {helper} from "../../redux/store";
 import ReactNativeBlobUtil from "react-native-blob-util";
 import Snackbar from "react-native-snackbar";
+import themes from "../../assets/themes/themes";
 
 export const ReservesLibPDFScreen = ({
 	route: {
@@ -21,6 +23,9 @@ export const ReservesLibPDFScreen = ({
 	navigation: HomeNav;
 	route: ReservesLibPDFProp;
 }) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
 	const [content, setContent] = useState<string>();
 	const [total, setTotal] = useState(0);
 	const [done, setDone] = useState(0);
@@ -82,7 +87,7 @@ export const ReservesLibPDFScreen = ({
 	return (
 		<View style={styles.container}>
 			{content === undefined && (
-				<Text>
+				<Text style={{color: colors.text}}>
 					{downloading ? "下载中，请勿离开本页面！" : "转码中"}({done}/{total})
 				</Text>
 			)}

@@ -119,7 +119,7 @@ export const ReservesLibWelcomeScreen = (props: {navigation: HomeNav}) => {
 					<TouchableOpacity
 						onPress={refresh}
 						style={{padding: 6, paddingLeft: 12}}>
-						<Icon name="search" size={20} />
+						<Icon name="search" size={20} color={colors.text} />
 					</TouchableOpacity>
 				</View>
 				<TouchableOpacity
