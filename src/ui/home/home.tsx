@@ -18,7 +18,7 @@ import IconGitLab from "../../assets/icons/IconGitLab";
 import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 
-const iconSize = 60;
+const iconSize = 40;
 
 export const HomeSection = ({
 	title,

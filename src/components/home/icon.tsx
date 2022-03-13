@@ -1,5 +1,10 @@
 import React, {ReactElement} from "react";
-import {GestureResponderEvent, Text, TouchableOpacity} from "react-native";
+import {
+	Dimensions,
+	GestureResponderEvent,
+	Text,
+	TouchableOpacity,
+} from "react-native";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
@@ -17,12 +22,17 @@ export const HomeIcon = ({
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	const width = Dimensions.get("window").width / 5;
+
 	return (
 		<TouchableOpacity
-			style={{alignItems: "center", margin: 8, marginHorizontal: 14}}
+			style={{alignItems: "center", marginVertical: 8, width}}
 			onPress={onPress}>
 			{children}
-			<Text style={{marginVertical: 4, color: theme.colors.text}}>
+			<Text
+				style={{marginVertical: 4, color: theme.colors.text}}
+				ellipsizeMode="tail"
+				numberOfLines={1}>
 				{getStr(title)}
 			</Text>
 		</TouchableOpacity>
