@@ -90,6 +90,7 @@ export default {
 	study: "Academic and Score",
 	resources: "Resources",
 	reservesLib: "Course Reserve",
+	invoice: "Invoice",
 	eCard: "E-Card",
 	bankPayment: "Bank",
 	dorm: "Dormitory",

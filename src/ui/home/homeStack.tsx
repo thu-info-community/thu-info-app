@@ -55,6 +55,8 @@ import {ReservesLibWelcomeScreen} from "./reservesLibWelcome";
 import {SearchResultItem} from "thu-info-lib/dist/models/home/reserves-lib";
 import {ReservesLibPDFScreen} from "./reservesLibPDF";
 import {BankPaymentScreen} from "./bankPayment";
+import {InvoiceScreen} from "./invoice";
+import {InvoicePDFScreen} from "./invoicePDF";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -75,6 +77,8 @@ export type HomeStackParamList = {
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
+	Invoice: undefined;
+	InvoicePDF: {base64: string};
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
 	Email: {messageId: number};
@@ -333,6 +337,16 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="LibRoomBookRecord"
 				component={LibRoomBookRecordScreen}
 				options={{title: getStr("libRoomBookRecord")}}
+			/>
+			<Stack.Screen
+				name="Invoice"
+				component={InvoiceScreen}
+				options={{title: getStr("invoice")}}
+			/>
+			<Stack.Screen
+				name="InvoicePDF"
+				component={InvoicePDFScreen}
+				options={{title: getStr("invoice")}}
 			/>
 			<Stack.Screen
 				name="ReservesLibWelcome"

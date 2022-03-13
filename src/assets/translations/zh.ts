@@ -87,6 +87,7 @@ export default {
 	study: "学习与成绩",
 	resources: "资源",
 	reservesLib: "教參平台",
+	invoice: "电子发票",
 	eCard: "校园卡",
 	bankPayment: "银行代发",
 	dorm: "我们的家园",
