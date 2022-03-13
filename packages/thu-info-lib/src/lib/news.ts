@@ -135,16 +135,10 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
     return [title, content, jianjie];
 };
 
-export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => roamingWrapperWithMocks(
-    helper,
-    undefined,
-    "",
-    async () => {
-        if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
-        else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
-    },
-    await getNewsDetailOld(helper, url),
-);
+export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
+    if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
+    else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
+};
 
 const getNewsDetailOld = async (
     helper: InfoHelper,
