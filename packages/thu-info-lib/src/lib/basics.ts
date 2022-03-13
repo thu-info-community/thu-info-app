@@ -13,6 +13,7 @@ import {
     EXPENDITURE_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
+    INVOICE_LIST_URL,
     LOSE_CARD_URL,
     PHYSICAL_EXAM_URL,
     YJS_REPORT_BXR_URL,
@@ -37,6 +38,7 @@ import {
     MOCK_CALENDAR_DATA,
     MOCK_CLASSROOM_STATE,
     MOCK_EXPENDITURES,
+    MOCK_INVOICE_LIST,
     MOCK_LOSE_CARD_CODE,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
@@ -51,6 +53,7 @@ import {
 } from "../utils/error";
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
+import {Invoice} from "../models/home/invoice";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -417,6 +420,23 @@ export const getClassroomState = (
             return result as [string, number[]][];
         }),
         MOCK_CLASSROOM_STATE,
+    );
+
+export const getInvoiceList = (helper: InfoHelper, page: number): Promise<Invoice[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "625B81A7A9D148B01DA59185CC4074E1",
+        async () => {
+            const {data} = await uFetch(INVOICE_LIST_URL, {
+                page,
+                limit: 20,
+                columnName: "inv_date",
+                sort: "desc",
+            }).then(JSON.parse);
+            return data;
+        },
+        MOCK_INVOICE_LIST,
     );
 
 export const loseCard = (helper: InfoHelper): Promise<number> =>

@@ -11,12 +11,13 @@ import {
     ROAMING_URL,
     GITLAB_LOGIN_URL,
     GITLAB_AUTH_URL,
+    INVOICE_LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
-import {IdAuthError, LoginError, UrlError} from "../utils/error";
+import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "gitlab";
 
@@ -28,6 +29,7 @@ const HOST_MAP: { [key: string]: string } = {
     "mails": "77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40",
     "50": "77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00",
     "166.111.14.8": "77726476706e69737468656265737421a1a117d27661391e2f5cc7f4",
+    "fa-online": "77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4",
 };
 
 const parseUrl = (urlIn: string) => {
@@ -101,6 +103,18 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const csrf = await getCsrfToken();
         const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, {}).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
+        if (url.includes(HOST_MAP["fa-online"])) {
+            const roamHtml = await uFetch(url);
+            const username = /\("username"\).value = '(.+?)';/.exec(roamHtml);
+            if (username === null || username[1] === undefined) {
+                throw new LibError("Failed to get username when roaming to fa-online");
+            }
+            const password = /\("password"\).value = '(.+?)';/.exec(roamHtml);
+            if (password === null || password[1] === undefined) {
+                throw new LibError("Failed to get password when roaming to fa-online");
+            }
+            return await uFetch(INVOICE_LOGIN_URL, {username: username[1], password: password[1]});
+        }
         return await uFetch(url);
     }
     case "id": {

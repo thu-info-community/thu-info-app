@@ -2,6 +2,7 @@ import {Form, InputTag, Overall, Person} from "../models/home/assessment";
 import {Record} from "../models/home/expenditure";
 import {BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
+import {Invoice} from "../models/home/invoice";
 
 export const MOCK_REPORT = [
     {
@@ -433,6 +434,69 @@ const generatedPattern = [
 export const MOCK_CLASSROOM_STATE = generatedPattern as [string, number[]][];
 
 export const MOCK_LOSE_CARD_CODE = 2;
+
+export const MOCK_INVOICE_LIST = [{
+    bill_amount: 15,
+    bmdm: "000",
+    bus_no: "2022031388888888888",
+    content: "",
+    cust_email: "dzpj@tsinghua.edu.cn",
+    cust_mob: "",
+    cust_name: "清华大学教育基金会",
+    cust_tax_no: "",
+    cust_ts_cardno: "8888",
+    cust_type: "1",
+    file_name: "",
+    financial_dept_name: "体育部",
+    financial_item_name: "西体场地费",
+    inv_amount: 15,
+    inv_code: "",
+    inv_crc: "2333",
+    inv_data_id: 123456,
+    inv_date: "2022-03-13",
+    inv_isred: "0",
+    inv_no: "8888888888",
+    inv_note: "2022-03-16西体育馆 台1",
+    inv_red_no: "",
+    inv_type: "D101",
+    inv_typeStr: "清华大学校内结算凭证（电子）",
+    is_allow_reimbursement: "1",
+    ists: "0",
+    payment_item_type_name: "场地费",
+    red_bus_no: "",
+    tax_amount: 0
+},
+{
+    bill_amount: 15,
+    bmdm: "000",
+    bus_no: "2022031288888888888",
+    content: "",
+    cust_email: "dzpj@tsinghua.edu.cn",
+    cust_mob: "",
+    cust_name: "undefined",
+    cust_tax_no: "",
+    cust_ts_cardno: "8888",
+    cust_type: "1",
+    file_name: "",
+    financial_dept_name: "体育部",
+    financial_item_name: "西体场地费",
+    inv_amount: 15,
+    inv_code: "",
+    inv_crc: "2333",
+    inv_data_id: 654321,
+    inv_date: "2022-03-12",
+    inv_isred: "0",
+    inv_no: "8888888888",
+    inv_note: "2022-03-15西体育馆 台6",
+    inv_red_no: "",
+    inv_type: "D101",
+    inv_typeStr: "清华大学校内结算凭证（电子）",
+    is_allow_reimbursement: "1",
+    ists: "0",
+    payment_item_type_name: "场地费",
+    red_bus_no: "",
+    tax_amount: 0
+}] as Invoice[];
 
 export const MOCK_BANK_PAYMENT = [{
     month: "2021年12月",

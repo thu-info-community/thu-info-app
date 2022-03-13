@@ -11,6 +11,7 @@ import {
     postAssessmentForm,
     getBankPayment,
     getCalendar,
+    getInvoiceList,
 } from "./lib/basics";
 import { login, logout } from "./lib/core";
 import { getElePayRecord, getEleRechargePayCode, getEleRemainder } from "./lib/dorm";
@@ -79,6 +80,7 @@ import {
 import { CalendarData } from "./models/schedule/calendar";
 import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-lib";
 import {BookChapter} from "./models/home/reserves-lib";
+import {Invoice} from "./models/home/invoice";
 
 export class InfoHelper {
     public userId = "";
@@ -134,6 +136,8 @@ export class InfoHelper {
         name: string,
         week: number,
     ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
+
+    public getInvoiceList = async (page: number): Promise<Invoice[]> => getInvoiceList(this, page);
 
     public loseCard = async (): Promise<number> => loseCard(this);
 
