@@ -3,7 +3,12 @@ import {roamingWrapperWithMocks} from "./core";
 import {stringify, uFetch} from "../utils/network";
 import {GITLAB_API_BASE_URL} from "../constants/strings";
 import {GitLabApiError} from "../utils/error";
-import {MOCK_GIT_NAMESPACES, MOCK_GIT_PERSONAL_PROJECTS, MOCK_GIT_RECENT_PROJECTS} from "../mocks/gitlab";
+import {
+    MOCK_GIT_NAMESPACES,
+    MOCK_GIT_PERSONAL_PROJECTS,
+    MOCK_GIT_RECENT_PROJECTS, MOCK_PROJECT_BRANCH,
+    MOCK_PROJECT_DETAIL,
+} from "../mocks/gitlab";
 import {Branch, File, Namespace, Project, ProjectDetail} from "../models/gitlab/gitlab";
 
 const fetchGitLabRaw = async (path: string, query?: object, post?: object) => {
@@ -68,7 +73,7 @@ export const getRecentProjects = async (
             }
             return result;
         },
-        MOCK_GIT_RECENT_PROJECTS,
+        page === 1 ? MOCK_GIT_RECENT_PROJECTS : [],
     );
 
 export const getPersonalProjects = async (
@@ -91,7 +96,7 @@ export const getPersonalProjects = async (
             }
             return result;
         },
-        MOCK_GIT_PERSONAL_PROJECTS,
+        page === 1 ? MOCK_GIT_PERSONAL_PROJECTS : [],
     );
 
 export const getStarredProjects = async (
@@ -114,7 +119,7 @@ export const getStarredProjects = async (
             }
             return result;
         },
-        MOCK_GIT_RECENT_PROJECTS,
+        page === 1 ? MOCK_GIT_RECENT_PROJECTS : [],
     );
 
 export const searchProjects = async (
@@ -143,7 +148,7 @@ export const getProjectDetail = async (
         async () => {
             return await fetchGitLab(`/projects/${id}`);
         },
-        [],
+        MOCK_PROJECT_DETAIL,
     );
 
 export const getProjectTree = async (
@@ -174,7 +179,7 @@ export const getProjectBranches = async (
         async () => {
             return await fetchGitLab(`/projects/${id}/repository/branches`);
         },
-        [],
+        [MOCK_PROJECT_BRANCH],
     );
 
 export const getProjectFileBlob = async (

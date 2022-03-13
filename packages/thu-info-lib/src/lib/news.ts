@@ -6,6 +6,7 @@ import { FILE_DOWNLOAD_URL, NEWS_ADD_FAVOR_URL, NEWS_DETAIL_URL, NEWS_FAVOR_LIST
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
 import { decode } from "he";
+import {MOCK_NEWS_LIST} from "../mocks/news";
 
 /**
  * Get News List
@@ -36,7 +37,7 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
         });
         return newsList;
     },
-    [],
+    channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
 
 const policyList: [string, [string, string]][] = [
@@ -142,7 +143,7 @@ export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[s
         if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
         else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
     },
-    ["", "", ""],
+    await getNewsDetailOld(helper, url),
 );
 
 const getNewsDetailOld = async (
