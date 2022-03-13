@@ -1,7 +1,7 @@
 {
 	"name": "thu_info",
-	"version": "2.5.6",
-	"build": 57,
+	"version": "2.6.0",
+	"build": 58,
 	"private": true,
 	"scripts": {
 		"android": "react-native run-android",
@@ -70,7 +70,7 @@
 		"semver": "7.3.5",
 		"stream": "0.0.2",
 		"text-encoding": "0.7.0",
-		"thu-info-lib": "2.0.0-alpha.18",
+		"thu-info-lib": "2.0.0-alpha.19",
 		"thu-info-mailcore": "0.2.1",
 		"typesafe-actions": "5.1.0",
 		"web-streams-polyfill": "3.2.0"
