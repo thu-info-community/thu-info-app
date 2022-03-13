@@ -57,6 +57,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					onPress={() => navigation.navigate("Evaluation")}>
 					<IconEvaluation width={iconSize} height={iconSize} />
 				</HomeIcon>
+				<HomeIcon
+					title="gitLab"
+					onPress={() => navigation.navigate("GitLabHome")}>
+					<IconGitLab width={iconSize} height={iconSize} />
+				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="resources">
 				<HomeIcon
@@ -92,11 +97,6 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="bankPayment"
 					onPress={() => navigation.navigate("BankPayment")}>
 					<IconBankPayment width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="gitLab"
-					onPress={() => navigation.navigate("GitLabHome")}>
-					<IconGitLab width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 			<HomeSection title="thirdParty">
