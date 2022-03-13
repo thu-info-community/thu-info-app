@@ -70,7 +70,7 @@ const policyList: [string, [string, string]][] = [
         "77726476706e69737468656265737421e8ef439b69336153301c9aa596522b20e1a870705b76e399",
         ["", ".td4"],
     ],
-    ["rscbg", ["[height=40]", "[width='95%'] > tr:nth-child(3)"]],
+    ["rscbg", ["[height=40]", "[width='95%'] > tbody > tr:nth(3)"]],
     [
         "77726476706e69737468656265737421e7e056d234297b437c0bc7b88b5c2d3212b31e4d37621d4714d6",
         ["", "[style='text-align:left']"],
@@ -104,6 +104,20 @@ const policyList: [string, [string, string]][] = [
             "[width=95%]:nth-child(2) > tr:nth-child(1)",
         ],
     ],
+    [
+        "xsglxt",
+        [
+            ".sideleft p:first",
+            ".sideleft",
+        ],
+    ],
+    [
+        "77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9",
+        [
+            "",
+            ".box3 table",
+        ],
+    ],
 ];
 
 const getNewsDetailPolicy = (
@@ -121,7 +135,7 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
     const html = await uFetch(url);
     const csrf = await getCsrfToken();
     const xxid: string = /(?<=var xxid = ").*?(?=";)/.exec(html)?.[0] as string;
-    const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=false&_csrf=${csrf}`);
+    const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
     const title = decode(data.object.xxDto.bt);
     let content = "<div>" + decode(data.object.xxDto.nr);
