@@ -88,6 +88,7 @@ export default {
 	resources: "资源",
 	reservesLib: "教參平台",
 	eCard: "校园卡",
+	bankPayment: "银行代发",
 	dorm: "我们的家园",
 	life: "生活",
 	thirdParty: "第三方服务",

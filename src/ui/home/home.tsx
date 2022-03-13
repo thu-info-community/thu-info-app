@@ -16,6 +16,7 @@ import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
 import IconGitLab from "../../assets/icons/IconGitLab";
 import IconBook from "../../assets/icons/IconBook";
+import IconBankPayment from "../../assets/icons/IconBankPayment";
 
 const iconSize = 60;
 
@@ -86,6 +87,11 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="sportsBook"
 					onPress={() => navigation.navigate("Sports")}>
 					<IconSports width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon
+					title="bankPayment"
+					onPress={() => navigation.navigate("BankPayment")}>
+					<IconBankPayment width={iconSize} height={iconSize} />
 				</HomeIcon>
 				<HomeIcon
 					title="gitLab"

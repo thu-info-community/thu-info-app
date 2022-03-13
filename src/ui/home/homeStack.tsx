@@ -54,6 +54,7 @@ import {GitlabImageScreen} from "./gitlabImage";
 import {ReservesLibWelcomeScreen} from "./reservesLibWelcome";
 import {SearchResultItem} from "thu-info-lib/dist/models/home/reserves-lib";
 import {ReservesLibPDFScreen} from "./reservesLibPDF";
+import {BankPaymentScreen} from "./bankPayment";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -89,6 +90,7 @@ export type HomeStackParamList = {
 		availableFields: {id: string; name: string; cost: number}[];
 	};
 	SportsRecord: undefined;
+	BankPayment: undefined;
 	GitLabHome: undefined;
 	GitLabStar: undefined;
 	GitLabSearch: undefined;
@@ -388,6 +390,11 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="SportsRecord"
 				component={SportsRecordScreen}
 				options={{title: getStr("sportsRecord")}}
+			/>
+			<Stack.Screen
+				name="BankPayment"
+				component={BankPaymentScreen}
+				options={{title: getStr("bankPayment")}}
 			/>
 			<Stack.Screen
 				name="GitLabHome"

@@ -91,6 +91,7 @@ export default {
 	resources: "Resources",
 	reservesLib: "Course Reserve",
 	eCard: "E-Card",
+	bankPayment: "Bank",
 	dorm: "Dormitory",
 	life: "Life",
 	thirdParty: "Third-party Services",
