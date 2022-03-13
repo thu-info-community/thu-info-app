@@ -9,6 +9,7 @@ import {
 	Platform,
 	TouchableHighlight,
 	TouchableNativeFeedback,
+	Linking,
 } from "react-native";
 import themes from "../../assets/themes/themes";
 import React, {PropsWithChildren, useEffect, useState} from "react";
@@ -92,34 +93,43 @@ export const ReservesLibWelcomeScreen = (props: {navigation: HomeNav}) => {
 		({bookId}) => bookId,
 		undefined,
 		(_, refresh) => (
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					paddingVertical: 8,
-					paddingHorizontal: 12,
-				}}>
-				<TextInput
+			<View style={{paddingVertical: 8, paddingHorizontal: 12}}>
+				<View
 					style={{
-						fontSize: 15,
-						flex: 1,
-						backgroundColor: colors.background,
-						color: colors.text,
-						textAlign: "left",
-						borderColor: "lightgrey",
-						borderWidth: 1,
-						borderRadius: 5,
-						padding: 6,
-					}}
-					placeholder={getStr("search")}
-					value={search}
-					onChangeText={setSearch}
-				/>
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<TextInput
+						style={{
+							fontSize: 15,
+							flex: 1,
+							backgroundColor: colors.background,
+							color: colors.text,
+							textAlign: "left",
+							borderColor: "lightgrey",
+							borderWidth: 1,
+							borderRadius: 5,
+							padding: 6,
+						}}
+						placeholder={getStr("search")}
+						value={search}
+						onChangeText={setSearch}
+					/>
+					<TouchableOpacity
+						onPress={refresh}
+						style={{padding: 6, paddingLeft: 12}}>
+						<Icon name="search" size={20} />
+					</TouchableOpacity>
+				</View>
 				<TouchableOpacity
-					onPress={refresh}
-					style={{padding: 6, paddingLeft: 12}}>
-					<Icon name="search" size={20} />
+					style={{marginVertical: 8}}
+					onPress={() =>
+						Linking.openURL("https://github.com/ayf19").then(() =>
+							console.log("Opening ayf19 GitHub page in system explorer"),
+						)
+					}>
+					<Text style={{color: colors.primaryLight}}>作者：ayf19 @ GitHub</Text>
 				</TouchableOpacity>
 			</View>
 		),
