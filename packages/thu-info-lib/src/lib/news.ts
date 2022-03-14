@@ -134,7 +134,7 @@ const getNewsDetailPolicy = (
 const handleNewApiNews = async (url: string): Promise<[string, string, string]> => {
     const html = await uFetch(url);
     const csrf = await getCsrfToken();
-    const xxid: string = /(?<=var xxid = ").*?(?=";)/.exec(html)?.[0] as string;
+    const xxid: string = /var xxid = "(.*?)";/.exec(html)?.[1] as string;
     const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
     const title = decode(data.object.xxDto.bt);
