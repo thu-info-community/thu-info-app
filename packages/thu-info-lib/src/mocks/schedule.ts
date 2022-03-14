@@ -1,178 +1,72 @@
-import {ScheduleType} from "../models/schedule/schedule";
+import {ScheduleType, Schedule, TimeSlice, ScheduleTime} from "../models/schedule/schedule";
 
 export const MOCK_PRIMARY_SCHEDULE = [
-    {
-        name: "回笼觉设计与梦境工程",
-        location: "2.0*0.9的宿舍床",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 1,
-                begin: 1,
-                end: 2,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "摸鱼学导论",
-        location: "实验室和社工组织",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 1,
-                begin: 6,
-                end: 7,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "临时进出校基本原理",
-        location: "学生部、研工部",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 2,
-                begin: 3,
-                end: 5,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "学婊艺术欣赏",
-        location: "院系年级微信群",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 2,
-                begin: 8,
-                end: 9,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "社畜学的想象力：拖延、甩锅与膜人",
-        location: "桃李一层",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 2,
-                begin: 12,
-                end: 13,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "初级校园新闻采写",
-        location: "知乎",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 3,
-                begin: 6,
-                end: 7,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "退学案例分析研讨课",
-        location: "教务处",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 4,
-                begin: 6,
-                end: 7,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "打包、取件与排队论",
-        location: "紫荆14号楼北快递点",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 4,
-                begin: 10,
-                end: 11,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "淘宝优惠数值计算",
-        location: "智能手机",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 4,
-                begin: 12,
-                end: 13,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "游戏氪金理论与实践",
-        location: "PC/主机/智能设备",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-            .map((val) => ({
-                week: val,
-                dayOfWeek: 5,
-                begin: 3,
-                end: 5,
-            }))
-            .concat(
-                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((val) => ({
-                    week: val,
-                    dayOfWeek: 6,
-                    begin: 1,
-                    end: 2,
-                })),
-            ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
-    {
-        name: "树洞文学中的清华形象",
-        location: "THUHole",
-        activeTime: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map(
-            (val) => ({
-                week: val,
-                dayOfWeek: 5,
-                begin: 8,
-                end: 9,
-            }),
-        ),
-        delOrHideTime: [],
-        delOrHideDetail: [],
-        type: ScheduleType.PRIMARY,
-    },
+    new Schedule(
+        "回笼觉设计与梦境工程",
+        "2.0*0.9的宿舍床",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(1, 1, 2, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "摸鱼学导论",
+        "实验室和社工组织",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(1, 6, 7, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "临时进出校基本原理",
+        "学生部、研工部",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(2, 3, 5, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "学婊艺术欣赏",
+        "院系年级微信群",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(2, 8, 9, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "社畜学的想象力：拖延、甩锅与膜人",
+        "桃李一层",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(2, 12, 13, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "初级校园新闻采写",
+        "知乎",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(3, 6, 7, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "退学案例分析研讨课",
+        "教务处",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(4, 6, 7, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "打包、取件与排队论",
+        "紫荆14号楼北快递点",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(4, 10, 11, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "淘宝优惠数值计算",
+        "智能手机",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(4, 12, 13, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "游戏氪金理论与实践",
+        "PC/主机/智能设备",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(5, 3, 5, ScheduleTime.MAX_WEEK_LIST)]
+    ),
+    new Schedule(
+        "树洞文学中的清华形象",
+        "THUHole",
+        ScheduleType.PRIMARY,
+        [new TimeSlice(5, 8, 9, ScheduleTime.MAX_WEEK_LIST)]
+    ),
 ];
 
 export const MOCK_SECONDARY_SCHEDULE = [];

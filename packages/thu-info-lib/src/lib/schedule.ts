@@ -9,7 +9,6 @@ import {
 import {
     Schedule,
     mergeSchedules,
-    mergeTimeBlocks,
     parseJSON,
     parseScript,
 } from "../models/schedule/schedule";
@@ -74,8 +73,6 @@ const getSecondary = (helper: InfoHelper) =>
 
 export const getSchedule = async (helper: InfoHelper) => {
     const calendarData = await getCalendar(helper);
-    let scheduleList: Schedule[] = (await getPrimary(helper, calendarData)).concat(await getSecondary(helper));
-    scheduleList = mergeSchedules(scheduleList);
-    scheduleList.forEach(mergeTimeBlocks);
-    return scheduleList;
+    const scheduleList: Schedule[] = (await getPrimary(helper, calendarData)).concat(await getSecondary(helper));
+    return mergeSchedules(scheduleList);
 };

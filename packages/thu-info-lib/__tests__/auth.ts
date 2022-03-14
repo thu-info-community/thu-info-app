@@ -21,9 +21,9 @@ try {
     dormPassword = process.env.INFO_DORM_PASSWORD!;
 }
 
-it("should enter mocked account", async()=> {
+it("should enter mocked account", async () => {
     const helper = new InfoHelper();
-    await helper.login({userId:"8888", password:"8888"});
+    await helper.login({userId: "8888", password: "8888"});
     await helper.logout();
     expect(helper.mocked()).toEqual(true);
 }, 60000);
