@@ -44,7 +44,7 @@ const policyList: [string, [string, string]][] = [
     ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
     [
         "kybg",
-        [".style1", "table[width='95%'][cellpadding='3'] tr:nth-child(3)"],
+        [".style1", "table[width='95%'][cellpadding='3'] tr:nth(1)"],
     ],
     ["gjc", [".style11", "[width='85%'] td"]],
     [
