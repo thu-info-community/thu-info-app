@@ -48,6 +48,10 @@ export class SportsError extends LibError {
     }
 }
 
+export class DormAuthError extends LibError {
+
+}
+
 export class IdAuthError extends LibError {
 
 }

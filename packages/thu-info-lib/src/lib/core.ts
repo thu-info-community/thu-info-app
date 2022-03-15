@@ -17,7 +17,7 @@ import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
-import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
+import {DormAuthError, IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "gitlab";
 
@@ -155,7 +155,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             }
         }
         const $ = cheerio.load(await uFetch(TSINGHUA_HOME_LOGIN_URL));
-        return await uFetch(TSINGHUA_HOME_LOGIN_URL, {
+        const response = await uFetch(TSINGHUA_HOME_LOGIN_URL, {
             __VIEWSTATE: $("#__VIEWSTATE").attr().value,
             __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
             net_Default_LoginCtrl1$txtUserName: helper.userId,
@@ -168,6 +168,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
             Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
         });
+        if (response.includes("window.alert('用户名或密码错误!');")) {
+            throw new DormAuthError();
+        }
+        return response;
     }
     case "gitlab": {
         const data = await uFetch(GITLAB_LOGIN_URL);
