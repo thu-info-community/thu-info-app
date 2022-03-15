@@ -82,7 +82,6 @@ const ElectricityUI = ({
 				}}
 				icon={<Feather name="zap" size={16} />}
 			/>
-			<View style={{flex: 1}} />
 			<View
 				style={{
 					justifyContent: "center",

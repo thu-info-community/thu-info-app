@@ -366,27 +366,34 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 							<TouchableOpacity
 								style={{paddingHorizontal: 16, marginHorizontal: 4}}
 								onPress={async () => {
-									const checkResult = await check(
-										PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-									);
-									switch (checkResult) {
-										case RESULTS.DENIED: {
-											const requestResult = await request(
-												PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-											);
-											if (requestResult !== RESULTS.GRANTED) {
-												return;
+									if (Platform.OS === "android") {
+										const checkResult = await check(
+											PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+										);
+										switch (checkResult) {
+											case RESULTS.DENIED: {
+												const requestResult = await request(
+													PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+												);
+												if (requestResult !== RESULTS.GRANTED) {
+													return;
+												}
+												break;
 											}
-											break;
+											case RESULTS.GRANTED: {
+												break;
+											}
+											default:
+												return;
 										}
-										case RESULTS.GRANTED: {
-											break;
-										}
-										default:
-											return;
 									}
 									const filename = `${id}.pdf`;
-									const path = RNFS.DownloadDirectoryPath + "/" + filename;
+									const path =
+										(Platform.OS === "android"
+											? RNFS.DownloadDirectoryPath
+											: RNFS.DocumentDirectoryPath) +
+										"/" +
+										filename;
 									await RNFS.writeFile(path, base64, "base64");
 									Snackbar.show({
 										text: getStr("success"),

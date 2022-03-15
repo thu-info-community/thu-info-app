@@ -195,7 +195,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 	};
 
 	const allSchedule = () => {
-		props.baseSchedule.forEach((val) => console.log(val));
 		let components: ReactElement[] = [];
 		props.baseSchedule
 			.filter((val) => activeWeek(val.activeTime, week))
