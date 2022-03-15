@@ -104,7 +104,16 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 						Alert.alert(getStr("logout"), getStr("confirmLogout"), [
 							{text: getStr("cancel")},
 							{
-								text: getStr("confirm"),
+								text: getStr("no"),
+								onPress: () => {
+									helper
+										.logout()
+										.then(() => console.log("Successfully logged out."));
+									store.dispatch(doLogoutAction());
+								},
+							},
+							{
+								text: getStr("yes"),
 								onPress: () => {
 									helper
 										.logout()
