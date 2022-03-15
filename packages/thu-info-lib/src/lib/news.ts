@@ -1,8 +1,17 @@
 import { InfoHelper } from "../index";
-import {getCsrfToken, roamingWrapperWithMocks} from "../lib/core";
+import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import { getRedirectUrl, uFetch } from "../utils/network";
 import { NewsSlice, SourceTag } from "../models/news/news";
-import { FILE_DOWNLOAD_URL, NEWS_ADD_FAVOR_URL, NEWS_DETAIL_URL, NEWS_FAVOR_LIST_URL, NEWS_LIST_URL, NEWS_REDIRECT_URL, NEWS_REMOVE_FAVOR_URL } from "../constants/strings";
+import {
+    FILE_DOWNLOAD_URL,
+    NEWS_ADD_FAVOR_URL,
+    NEWS_DETAIL_URL,
+    NEWS_FAVOR_LIST_URL,
+    NEWS_LIST_URL,
+    NEWS_REDIRECT_URL,
+    NEWS_REMOVE_FAVOR_URL,
+    PDF_NEWS_PREFIX,
+} from "../constants/strings";
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
 import { decode } from "he";
@@ -152,7 +161,13 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
 export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
     if (helper.mocked()) return await getNewsDetailOld(helper, url);
     else if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
+    else if (url.startsWith("/f/wj/openNewWindow?fileId=")) return await handlePdfNews(url.substring(27));
     else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
+};
+
+const handlePdfNews = async (fileId: string): Promise<[string, string, string]> => {
+    const pdf = await uFetch(PDF_NEWS_PREFIX + fileId + "?_csrf=" + await getCsrfToken());
+    return ["PdF", pdf, "PdF"];
 };
 
 const getNewsDetailOld = async (
