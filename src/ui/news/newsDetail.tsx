@@ -45,7 +45,10 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 		<>
 			<View style={style.container}>
 				<WebView
-					source={{html: adaptedHtml, baseUrl: route.params.detail.url}}
+					source={{
+						html: adaptedHtml,
+						baseUrl: "https://webvpn.tsinghua.edu.cn",
+					}}
 					containerStyle={style.webContainer}
 					userAgent={USER_AGENT}
 					setSupportMultipleWindows={false}
