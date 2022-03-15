@@ -126,7 +126,7 @@ const persistConfig = {
 				: {
 						...state,
 						schedule:
-							state.schedule.baseSchedule === undefined
+							state.schedule.baseSchedule?.[0]?.activeTime?.base === undefined
 								? defaultSchedule
 								: state.schedule,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
