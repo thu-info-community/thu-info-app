@@ -2,16 +2,18 @@ import React, {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
-import {View, ActivityIndicator} from "react-native";
+import {View, ActivityIndicator, Dimensions} from "react-native";
 import {NewsDetailRouteProp} from "./newsStack";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "thu-info-lib/dist/constants/strings";
 import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 import {helper} from "../../redux/store";
+import Pdf from "react-native-pdf";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
+	const [pdf, setPdf] = useState<string>("");
 	const [refreshing, setRefreshing] = useState(true);
 
 	const themeName = useColorScheme();
@@ -22,8 +24,12 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 		setRefreshing(true);
 		helper
 			.getNewsDetail(route.params.detail.url)
-			.then(([title, res]) => {
-				setHtml(`<h2>${title}</h2>${res}`);
+			.then(([title, res, abstract]) => {
+				if (title === "PdF" && abstract === "PdF") {
+					setPdf(res);
+				} else {
+					setHtml(`<h2>${title}</h2>${res}`);
+				}
 				setRefreshing(false);
 			})
 			.catch(() => {
@@ -44,16 +50,23 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	return (
 		<>
 			<View style={style.container}>
-				<WebView
-					source={{
-						html: adaptedHtml,
-						baseUrl: "https://webvpn.tsinghua.edu.cn",
-					}}
-					containerStyle={style.webContainer}
-					userAgent={USER_AGENT}
-					setSupportMultipleWindows={false}
-					forceDarkOn={themeName === "dark"}
-				/>
+				{pdf === "" ? (
+					<WebView
+						source={{
+							html: adaptedHtml,
+							baseUrl: "https://webvpn.tsinghua.edu.cn",
+						}}
+						containerStyle={style.webContainer}
+						userAgent={USER_AGENT}
+						setSupportMultipleWindows={false}
+						forceDarkOn={themeName === "dark"}
+					/>
+				) : (
+					<Pdf
+						style={style.pdf}
+						source={{uri: `data:application/pdf;base64,${pdf}`}}
+					/>
+				)}
 			</View>
 			{refreshing && (
 				<View style={style.container}>
@@ -79,5 +92,11 @@ const styles = themedStyles((theme) => ({
 	webContainer: {
 		backgroundColor: theme.colors.background,
 		color: theme.colors.text,
+	},
+
+	pdf: {
+		flex: 1,
+		width: Dimensions.get("window").width,
+		height: Dimensions.get("window").height,
 	},
 }));
