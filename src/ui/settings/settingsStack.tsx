@@ -7,22 +7,18 @@ import {getStr} from "../../utils/i18n";
 import React from "react";
 import {FeedbackScreen} from "./feedback";
 import {PopiScreen} from "./popi";
-import {EleRecordScreen} from "./eleRecord";
 import {ScheduleSettingsScreen} from "./scheduleSettings";
 import {AboutScreen} from "./about";
 import {ReportManageHiddenScreen} from "./reportManageHidden";
-import {ExperimentalScreen} from "./experimental";
 import {PasswordManagementScreen} from "./PasswordManagement";
 
 type SettingsStackParamList = {
 	Settings: undefined;
 	Feedback: undefined;
 	Popi: undefined;
-	EleRecord: undefined;
 	ScheduleSettings: undefined;
 	ReportManageHidden: undefined;
 	SecondarySettings: undefined;
-	Experimental: undefined;
 	PasswordManagement: undefined;
 	About: undefined;
 };
@@ -49,11 +45,6 @@ export const SettingStackScreen = () => (
 			options={{title: getStr("popi")}}
 		/>
 		<Stack.Screen
-			name="EleRecord"
-			component={EleRecordScreen}
-			options={{title: getStr("eleRecord")}}
-		/>
-		<Stack.Screen
 			name="ScheduleSettings"
 			component={ScheduleSettingsScreen}
 			options={{title: getStr("scheduleSettings")}}
@@ -67,11 +58,6 @@ export const SettingStackScreen = () => (
 			name="ReportManageHidden"
 			component={ReportManageHiddenScreen}
 			options={{title: getStr("manageHidden")}}
-		/>
-		<Stack.Screen
-			name="Experimental"
-			component={ExperimentalScreen}
-			options={{title: getStr("experimental")}}
 		/>
 		<Stack.Screen
 			name="PasswordManagement"

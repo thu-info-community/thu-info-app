@@ -54,12 +54,6 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 					</>
 				)}
 				<SettingsItem
-					text={getStr("experimental")}
-					onPress={() => navigation.navigate("Experimental")}
-					icon={<FontAwesome name="flask" size={16} />}
-				/>
-				<SettingsSeparator />
-				<SettingsItem
 					text={getStr("checkUpdate")}
 					onPress={() => checkUpdate(true)}
 					icon={<Feather name="download" size={16} />}

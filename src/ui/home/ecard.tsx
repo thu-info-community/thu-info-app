@@ -1,9 +1,19 @@
-import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import React from "react";
+import Feather from "react-native-vector-icons/Feather";
+import {
+	Alert,
+	Platform,
+	Text,
+	TouchableHighlight,
+	TouchableNativeFeedback,
+	View,
+} from "react-native";
 import {helper} from "../../redux/store";
+import Snackbar from "react-native-snackbar";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-export const performLoseCard = () => {
+const performLoseCard = () => {
 	Alert.alert(
 		getStr("confirmLoseCard"),
 		getStr("loseCardCannotBeUndone"),
@@ -62,5 +72,40 @@ export const performLoseCard = () => {
 			},
 		],
 		{cancelable: true},
+	);
+};
+
+export const ECardScreen = () => {
+	const content = (
+		<View
+			style={{
+				padding: 8,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
+			<View style={{flexDirection: "row", alignItems: "center"}}>
+				<Feather name="credit-card" size={16} color="red" />
+				<Text style={{fontSize: 17, marginHorizontal: 10, color: "red"}}>
+					{getStr("loseCard")}
+				</Text>
+			</View>
+			<Icon name="angle-right" size={24} color="red" />
+		</View>
+	);
+	return (
+		<View style={{padding: 10}}>
+			{Platform.OS === "ios" ? (
+				<TouchableHighlight underlayColor="#F002" onPress={performLoseCard}>
+					{content}
+				</TouchableHighlight>
+			) : (
+				<TouchableNativeFeedback
+					background={TouchableNativeFeedback.Ripple("#F002", false)}
+					onPress={performLoseCard}>
+					{content}
+				</TouchableNativeFeedback>
+			)}
+		</View>
 	);
 };

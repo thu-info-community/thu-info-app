@@ -57,6 +57,9 @@ import {ReservesLibPDFScreen} from "./reservesLibPDF";
 import {BankPaymentScreen} from "./bankPayment";
 import {InvoiceScreen} from "./invoice";
 import {InvoicePDFScreen} from "./invoicePDF";
+import {ElectricityScreen} from "./electricity";
+import {EleRecordScreen} from "./eleRecord";
+import {ECardScreen} from "./ecard";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -104,6 +107,9 @@ export type HomeStackParamList = {
 	GitLabMarkdown: {project: Project; file: File};
 	GitLabPDF: {project: Project; file: File; cookie: string};
 	GitLabImage: {project: Project; file: File};
+	Electricity: undefined;
+	EleRecord: undefined;
+	ECard: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -512,6 +518,21 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 				name="WasherWeb"
 				component={WasherWebScreen}
 				options={{title: getStr("washer")}}
+			/>
+			<Stack.Screen
+				name="Electricity"
+				component={ElectricityScreen}
+				options={{title: getStr("electricity")}}
+			/>
+			<Stack.Screen
+				name="EleRecord"
+				component={EleRecordScreen}
+				options={{title: getStr("eleRecord")}}
+			/>
+			<Stack.Screen
+				name="ECard"
+				component={ECardScreen}
+				options={{title: getStr("eCard")}}
 			/>
 		</Stack.Navigator>
 	);

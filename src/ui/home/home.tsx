@@ -18,6 +18,8 @@ import IconGitLab from "../../assets/icons/IconGitLab";
 import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
+import IconEleRecharge from "../../assets/icons/IconEleRecharge";
+import IconCard from "../../assets/icons/IconCard";
 
 const iconSize = 40;
 
@@ -115,6 +117,16 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					title="washer"
 					onPress={() => navigation.navigate("WasherWeb")}>
 					<IconWasher width={iconSize} height={iconSize} />
+				</HomeIcon>
+			</HomeSection>
+			<HomeSection title="sensitive">
+				<HomeIcon
+					title="electricity"
+					onPress={() => navigation.navigate("Electricity")}>
+					<IconEleRecharge width={iconSize} height={iconSize} />
+				</HomeIcon>
+				<HomeIcon title="eCard" onPress={() => navigation.navigate("ECard")}>
+					<IconCard width={iconSize} height={iconSize} />
 				</HomeIcon>
 			</HomeSection>
 		</ScrollView>
