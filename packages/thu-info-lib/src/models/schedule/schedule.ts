@@ -313,6 +313,47 @@ export interface Schedule {
 }
 
 /**
+ * 返回计划的深拷贝
+ * @param schedule 需要拷贝的计划
+ * @returns 拷贝得到的计划
+ * @note 这个函数的是为了触发 redux 的重新渲染，仅仅修改内部成员无法触发
+ *       如果有更好的解决方法，欢迎废弃该函数
+ */
+export const scheduleDeepCopy = (schedule: Schedule): Schedule => {
+    const res: Schedule = {
+        name: schedule.name,
+        location: schedule.location,
+        type: schedule.type,
+        activeTime: {base: []},
+        delOrHideTime: {base: []},
+    };
+
+    schedule.activeTime.base.forEach((val) => {
+        const weeks: number[] = [];
+        val.activeWeeks.forEach((num) => weeks.push(num));
+        res.activeTime.base.push({
+            dayOfWeek: val.dayOfWeek,
+            begin: val.begin,
+            end: val.end,
+            activeWeeks: weeks,
+        });
+    });
+
+    schedule.delOrHideTime.base.forEach((val) => {
+        const weeks: number[] = [];
+        val.activeWeeks.forEach((num) => weeks.push(num));
+        res.delOrHideTime.base.push({
+            dayOfWeek: val.dayOfWeek,
+            begin: val.begin,
+            end: val.end,
+            activeWeeks: weeks,
+        });
+    });
+
+    return res;
+};
+
+/**
  * 用于删除或隐藏某一个时间片
  * @param schedule 需要操作的计划
  * @param elem 需要删除或隐藏的时间片
