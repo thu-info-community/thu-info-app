@@ -25,6 +25,7 @@ const PaymentItem = ({payment}: {payment: BankPayment}) => {
 	const content = (
 		<View
 			style={{
+				paddingVertical: 10,
 				paddingRight: 8,
 			}}>
 			<View
