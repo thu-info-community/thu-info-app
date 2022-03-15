@@ -78,7 +78,10 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 		<InvoiceItem
 			invoice={invoice}
 			onPress={() => {
-				navigation.navigate("InvoicePDF", {base64: invoice.content});
+				navigation.navigate("InvoicePDF", {
+					base64: invoice.content,
+					id: invoice.inv_no,
+				});
 			}}
 		/>
 	),

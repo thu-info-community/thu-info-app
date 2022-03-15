@@ -60,6 +60,9 @@ import {InvoicePDFScreen} from "./invoicePDF";
 import {ElectricityScreen} from "./electricity";
 import {EleRecordScreen} from "./eleRecord";
 import {ECardScreen} from "./ecard";
+import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
+import RNFS from "react-native-fs";
+import Snackbar from "react-native-snackbar";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -81,7 +84,7 @@ export type HomeStackParamList = {
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
 	Invoice: undefined;
-	InvoicePDF: {base64: string};
+	InvoicePDF: {base64: string; id: string};
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
 	Email: {messageId: number};
@@ -352,7 +355,49 @@ const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
 			<Stack.Screen
 				name="InvoicePDF"
 				component={InvoicePDFScreen}
-				options={{title: getStr("invoice")}}
+				options={({
+					route: {
+						params: {base64, id},
+					},
+				}) => ({
+					title: getStr("invoice"),
+					headerRight: () => (
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 16, marginHorizontal: 4}}
+								onPress={async () => {
+									const checkResult = await check(
+										PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+									);
+									switch (checkResult) {
+										case RESULTS.DENIED: {
+											const requestResult = await request(
+												PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+											);
+											if (requestResult !== RESULTS.GRANTED) {
+												return;
+											}
+											break;
+										}
+										case RESULTS.GRANTED: {
+											break;
+										}
+										default:
+											return;
+									}
+									const filename = `${id}.pdf`;
+									const path = RNFS.DownloadDirectoryPath + "/" + filename;
+									await RNFS.writeFile(path, base64, "base64");
+									Snackbar.show({
+										text: getStr("success"),
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								}}>
+								<Icon name="download" size={24} color={theme.colors.primary} />
+							</TouchableOpacity>
+						</View>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="ReservesLibWelcome"
