@@ -1,4 +1,3 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
 import {connect} from "react-redux";
 import React from "react";
 import {
@@ -15,7 +14,7 @@ import {
 	getOverlappedBlock,
 	Schedule,
 	ScheduleType,
-	TimeBlock,
+	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {
 	scheduleDelOrHideAction,
@@ -32,28 +31,65 @@ const ScheduleHiddenUI = ({
 	delOrHide,
 }: {
 	baseSchedule: Schedule[];
-	removeRule: (name: string, rule: TimeBlock) => void;
-	delOrHide: (title: string, block: TimeBlock, choice: Choice) => void;
+	removeRule: (name: string, rule: TimeSlice) => void;
+	delOrHide: (title: string, block: TimeSlice, choice: Choice) => void;
 }) => {
 	let screenHeight = Dimensions.get("window");
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
 	const getData = () => {
-		let list = baseSchedule
-			.filter((val) => val.delOrHideTime.length !== 0)
-			.map((val) =>
-				val.delOrHideTime.map((block) => ({
-					name: val.name,
-					time: block,
-					type: val.type,
-				})),
-			);
-		if (list.length === 0) {
-			return [];
-		} else {
-			return list.reduce((total, array) => total.concat(array));
-		}
+		let res: {
+			name: string;
+			type: ScheduleType;
+			time: TimeSlice;
+			weekPrefix: string;
+		}[] = [];
+		baseSchedule
+			.filter((val) => val.delOrHideTime.base.length !== 0)
+			.forEach((val) => {
+				val.delOrHideTime.base.forEach((slice) => {
+					const rangeList: [number, number][] = [];
+					slice.activeWeeks.sort((a, b) => a - b);
+					rangeList.push([slice.activeWeeks[0], -1]);
+					slice.activeWeeks.forEach((week, ind) => {
+						if (!ind || week === slice.activeWeeks[ind - 1] + 1) {
+							return;
+						}
+
+						rangeList[rangeList.length - 1][1] = slice.activeWeeks[ind - 1];
+						rangeList.push([week, -1]);
+					});
+					rangeList[rangeList.length - 1][1] =
+						slice.activeWeeks[slice.activeWeeks.length - 1];
+
+					let resStr = "";
+					if (
+						rangeList.length === 1 &&
+						rangeList[0][0] === 1 &&
+						rangeList[0][1] === 16
+					) {
+						resStr += getStr("schedulePrefixRepeat");
+					} else {
+						resStr += getStr("schedulePrefixOncePrefix");
+						resStr += rangeList
+							.map((range) =>
+								range[0] === range[1]
+									? `${range[0]}`
+									: `${range[0]} ~ ${range[1]}`,
+							)
+							.join(", ");
+						resStr += getStr("schedulePrefixOnceSuffix");
+					}
+					res.push({
+						name: val.name,
+						type: val.type,
+						time: slice,
+						weekPrefix: resStr,
+					});
+				});
+			});
+		return res;
 	};
 
 	return (
@@ -68,31 +104,22 @@ const ScheduleHiddenUI = ({
 							fontSize: 15,
 							color: theme.colors.text,
 						}}>
-						{item.time.week === 0
-							? `${getStr("schedulePrefixAll")} ${item.name}`
-							: `${
-									item.time.week === -1
-										? getStr("schedulePrefixRepeat")
-										: getStr("schedulePrefixOncePrefix") +
-										  item.time.week +
-										  getStr("schedulePrefixOnceSuffix")
-							  } ${item.name.substr(
-									item.type === ScheduleType.CUSTOM ? 6 : 0,
-							  )} ${getStr("dayOfWeek")[item.time.dayOfWeek]} [${
-									item.time.begin
-							  }, ${item.time.end}]`}
+						{`${item.weekPrefix} ${item.name.substr(
+							item.type === ScheduleType.CUSTOM ? 6 : 0,
+						)} ${getStr("dayOfWeek")[item.time.dayOfWeek]} [${
+							item.time.begin
+						}, ${item.time.end}]`}
 					</Text>
 					<TouchableOpacity
 						style={{padding: 5, marginHorizontal: 6}}
 						onPress={() => {
-							let overlapList: [TimeBlock, string, boolean][] =
+							let overlapList: [string, ScheduleType, TimeSlice][] =
 								getOverlappedBlock(
 									{
 										name: item.name,
 										location: "",
-										activeTime: [item.time],
-										delOrHideTime: [],
-										delOrHideDetail: [],
+										activeTime: {base: [item.time]},
+										delOrHideTime: {base: []},
 										type: ScheduleType.PRIMARY,
 									},
 									baseSchedule,
@@ -105,19 +132,21 @@ const ScheduleHiddenUI = ({
 											.map(
 												(val) =>
 													"「" +
-													val[1].substr(val[2] ? 6 : 0) +
+													val[0].substr(
+														val[1] === ScheduleType.CUSTOM ? 6 : 0,
+													) +
 													"」\n" +
 													getStr("weekNumPrefix") +
-													val[0].week +
+													val[2].activeWeeks[0] +
 													getStr("weekNumSuffix") +
 													" " +
-													getStr("dayOfWeek")[val[0].dayOfWeek] +
+													getStr("dayOfWeek")[val[2].dayOfWeek] +
 													" " +
 													getStr("periodNumPrefix") +
-													val[0].begin +
-													(val[0].begin === val[0].end
+													val[2].begin +
+													(val[2].begin === val[2].end
 														? ""
-														: " ~ " + val[0].end) +
+														: " ~ " + val[2].end) +
 													getStr("periodNumSuffix"),
 											)
 											.join("\n\n") +
@@ -128,7 +157,7 @@ const ScheduleHiddenUI = ({
 											onPress: () => {
 												removeRule(item.name, item.time);
 												overlapList.forEach((val) => {
-													delOrHide(val[1], val[0], Choice.ONCE);
+													delOrHide(val[0], val[2], Choice.ONCE);
 												});
 											},
 										},
@@ -178,7 +207,7 @@ const ScheduleHiddenUI = ({
 				padding: 5,
 			}}
 			keyExtractor={(item) =>
-				`${item.name}.${item.time.week}.${item.time.dayOfWeek}.[${item.time.begin}-${item.time.end}]`
+				`${item.name}.${item.time.dayOfWeek}.[${item.time.begin}-${item.time.end}]`
 			}
 		/>
 	);
@@ -189,9 +218,9 @@ export const ScheduleHiddenScreen = connect(
 		baseSchedule: state.schedule.baseSchedule,
 	}),
 	(dispatch) => ({
-		removeRule: (name: string, rule: TimeBlock) =>
+		removeRule: (name: string, rule: TimeSlice) =>
 			dispatch(scheduleRemoveHiddenRuleAction([name, rule])),
-		delOrHide: (title: string, block: TimeBlock, choice: Choice) => {
+		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
 			dispatch(scheduleDelOrHideAction([title, block, choice]));
 		},
 	}),

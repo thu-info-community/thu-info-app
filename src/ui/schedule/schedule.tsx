@@ -195,44 +195,48 @@ const ScheduleUI = (props: ScheduleProps) => {
 	};
 
 	const allSchedule = () => {
+		props.baseSchedule.forEach((val) => console.log(val));
 		let components: ReactElement[] = [];
 		props.baseSchedule
-			.filter((val) => activeWeek(week, val))
+			.filter((val) => activeWeek(val.activeTime, week))
 			.forEach((val) => {
-				val.activeTime.forEach((block) => {
-					if (block.week === week) {
-						components.push(
-							<ScheduleBlock
-								dayOfWeek={block.dayOfWeek}
-								begin={block.begin}
-								end={block.end}
-								name={(props.shortenMap[val.name] ?? val.name).substring(
-									val.type === ScheduleType.CUSTOM ? 6 : 0,
-								)}
-								location={val.location}
-								gridHeight={unitHeight}
-								gridWidth={unitWidth}
-								key={`${val.name}-${block.week}-${block.dayOfWeek}-${block.begin}-${val.location}`}
-								blockColor={
-									colorList[
-										parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
-									]
-								}
-								onPress={() => {
-									props.navigation.navigate("ScheduleDetail", {
-										name: val.name,
-										location: val.location,
-										week: week,
-										dayOfWeek: block.dayOfWeek,
-										begin: block.begin,
-										end: block.end,
-										alias: props.shortenMap[val.name] ?? "",
-										type: val.type,
-									});
-								}}
-							/>,
-						);
-					}
+				val.activeTime.base.forEach((slice) => {
+					slice.activeWeeks.forEach((num) => {
+						if (num === week) {
+							components.push(
+								<ScheduleBlock
+									dayOfWeek={slice.dayOfWeek}
+									begin={slice.begin}
+									end={slice.end}
+									name={(props.shortenMap[val.name] ?? val.name).substring(
+										val.type === ScheduleType.CUSTOM ? 6 : 0,
+									)}
+									location={val.location}
+									gridHeight={unitHeight}
+									gridWidth={unitWidth}
+									key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
+									blockColor={
+										colorList[
+											parseInt(md5(val.name).substr(0, 6), 16) %
+												colorList.length
+										]
+									}
+									onPress={() => {
+										props.navigation.navigate("ScheduleDetail", {
+											name: val.name,
+											location: val.location,
+											week: week,
+											dayOfWeek: slice.dayOfWeek,
+											begin: slice.begin,
+											end: slice.end,
+											alias: props.shortenMap[val.name] ?? "",
+											type: val.type,
+										});
+									}}
+								/>,
+							);
+						}
+					});
 				});
 			});
 		return components;

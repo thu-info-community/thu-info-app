@@ -13,11 +13,11 @@ import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
 import {ScheduleNav} from "./scheduleStack";
 import {
-	addActiveTimeBlocks,
 	getOverlappedBlock,
 	Schedule,
+	scheduleTimeAdd,
 	ScheduleType,
-	TimeBlock,
+	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {
 	scheduleAddCustomAction,
@@ -32,7 +32,7 @@ interface ScheduleAddProps {
 	customCnt: number;
 	navigation: ScheduleNav;
 	addCustom: (payload: Schedule) => void;
-	delOrHide: (title: string, block: TimeBlock, choice: Choice) => void;
+	delOrHide: (title: string, block: TimeSlice, choice: Choice) => void;
 }
 
 export const numberToCode = (num: number): string => {
@@ -247,6 +247,7 @@ const ScheduleAddUI = ({
 				}}
 				disabled={!valid}
 				onPress={() => {
+					// TODO: 需要禁止添加和已有计划重名的计划
 					const heads = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].filter(
 						(i) => sessions[i] && !sessions[i - 1],
 					);
@@ -258,24 +259,28 @@ const ScheduleAddUI = ({
 						new Array(weekCount),
 						(_, index) => index + 1,
 					).filter((week) => weeks[week]);
-					let newSchedule = {
+					let newSchedule: Schedule = {
 						name: numberToCode(customCnt) + title,
 						location: locale,
-						activeTime: [],
-						delOrHideTime: [],
-						delOrHideDetail: [],
+						activeTime: {base: []},
+						delOrHideTime: {base: []},
 						type: ScheduleType.CUSTOM,
 					};
+
+					// TODO: 删除第二层回调
 					ranges.flatMap((range) =>
 						selectedWeeks.map((week) => {
-							addActiveTimeBlocks(week, day, range[0], range[1], newSchedule);
+							scheduleTimeAdd(newSchedule.activeTime, {
+								dayOfWeek: day,
+								begin: range[0],
+								end: range[1],
+								activeWeeks: [week],
+							});
 						}),
 					);
 
-					let overlapList: [TimeBlock, string, boolean][] = getOverlappedBlock(
-						newSchedule,
-						scheduleList,
-					);
+					let overlapList: [string, ScheduleType, TimeSlice][] =
+						getOverlappedBlock(newSchedule, scheduleList);
 
 					if (overlapList.length) {
 						Alert.alert(
@@ -285,17 +290,17 @@ const ScheduleAddUI = ({
 									.map(
 										(val) =>
 											"「" +
-											val[1].substr(val[2] ? 6 : 0) +
+											val[0].substr(val[1] === ScheduleType.CUSTOM ? 6 : 0) +
 											"」\n" +
 											getStr("weekNumPrefix") +
-											val[0].week +
+											val[2].activeWeeks[0] +
 											getStr("weekNumSuffix") +
 											" " +
-											getStr("dayOfWeek")[val[0].dayOfWeek] +
+											getStr("dayOfWeek")[val[2].dayOfWeek] +
 											" " +
 											getStr("periodNumPrefix") +
-											val[0].begin +
-											(val[0].begin === val[0].end ? "" : " ~ " + val[0].end) +
+											val[2].begin +
+											(val[2].begin === val[2].end ? "" : " ~ " + val[2].end) +
 											getStr("periodNumSuffix"),
 									)
 									.join("\n\n") +
@@ -305,7 +310,7 @@ const ScheduleAddUI = ({
 									text: getStr("confirm"),
 									onPress: () => {
 										overlapList.forEach((val) => {
-											delOrHide(val[1], val[0], Choice.ONCE);
+											delOrHide(val[0], val[2], Choice.ONCE);
 										});
 										addCustom(newSchedule);
 										navigation.pop();
@@ -401,7 +406,7 @@ export const ScheduleAddScreen = connect(
 	(dispatch) => ({
 		addCustom: (payload: Schedule) =>
 			dispatch(scheduleAddCustomAction(payload)),
-		delOrHide: (title: string, block: TimeBlock, choice: Choice) => {
+		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
 			dispatch(scheduleDelOrHideAction([title, block, choice]));
 		},
 	}),

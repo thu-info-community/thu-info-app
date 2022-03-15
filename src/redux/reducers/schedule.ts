@@ -12,8 +12,11 @@ import {
 	SCHEDULE_CLEAR,
 } from "../constants";
 import {
-	TimeBlock,
+	delOrHide,
+	MAX_WEEK_LIST,
+	removeDelOrHide,
 	Schedule,
+	scheduleDeepCopy,
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 
@@ -22,22 +25,6 @@ export enum Choice {
 	REPEAT,
 	ALL,
 }
-
-const getSelectedSchedule = (
-	state: Schedules,
-	title: string,
-): [Schedule[], Schedule] => {
-	let newBaseSchedule: Schedule[] = [];
-	let selectedScheduleList: Schedule[] = [];
-	state.baseSchedule.forEach((val) => {
-		if (val.name === title) {
-			selectedScheduleList.push(val);
-		} else {
-			newBaseSchedule.push(val);
-		}
-	});
-	return [newBaseSchedule, selectedScheduleList[0]];
-};
 
 export const schedule = (
 	state: Schedules = defaultSchedule,
@@ -52,31 +39,31 @@ export const schedule = (
 		case SCHEDULE_SUCCESS: {
 			let customList: Schedule[] = [];
 			let newScheduleList: Schedule[] = [];
+
+			// 备份所有自定义计划
 			state.baseSchedule.forEach((val) => {
 				if (val.type === ScheduleType.CUSTOM) {
 					customList.push(val);
 				}
 			});
+
+			// 以新获取到的课表为基准
 			action.payload.schedule.forEach((val) => {
 				let selectedScheduleList = state.baseSchedule.filter(
 					(item) => item.name === val.name,
 				);
+
 				if (selectedScheduleList.length === 0) {
 					newScheduleList.push(val);
 					return;
 				}
+
 				let selectedSchedule = selectedScheduleList[0];
-				newScheduleList.push(
-					selectedSchedule.delOrHideTime.length === 0
-						? val
-						: {
-								...val,
-								activeTime: selectedSchedule.activeTime,
-								delOrHideTime: selectedSchedule.delOrHideTime,
-								delOrHideDetail: selectedSchedule.delOrHideDetail,
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  },
-				);
+				selectedSchedule.delOrHideTime.base.forEach((slice) => {
+					delOrHide(val, slice);
+				});
+				val.location = selectedSchedule.location;
+				newScheduleList.push(val);
 			});
 			return {
 				...state,
@@ -99,20 +86,14 @@ export const schedule = (
 			};
 		}
 		case SCHEDULE_UPDATE_LOCATION: {
-			let newScheduleList: Schedule[] = [];
 			state.baseSchedule.forEach((val) => {
 				if (val.name === action.payload[0]) {
-					newScheduleList.push({
-						...val,
-						location: action.payload[1],
-					});
-				} else {
-					newScheduleList.push(val);
+					val.location = action.payload[1];
 				}
 			});
 			return {
 				...state,
-				baseSchedule: newScheduleList,
+				baseSchedule: state.baseSchedule.map((val) => scheduleDeepCopy(val)),
 			};
 		}
 		case SCHEDULE_ADD_CUSTOM: {
@@ -124,129 +105,63 @@ export const schedule = (
 		}
 		case SCHEDULE_DEL_OR_HIDE: {
 			const [title, time, choice] = action.payload;
-			let [newBaseSchedule, selectedSchedule] = getSelectedSchedule(
-				state,
-				title,
-			);
 
-			const blockFilter = (block: TimeBlock) => {
-				if (choice === Choice.ALL) {
-					return true;
-				} else if (choice === Choice.REPEAT) {
-					return (
-						block.dayOfWeek === time.dayOfWeek && block.begin === time.begin
-					);
-				} else {
-					return (
-						block.week === time.week &&
-						block.dayOfWeek === time.dayOfWeek &&
-						block.begin === time.begin
-					);
-				}
-			};
+			// 如果自定义计划没有活跃时间片了则直接删除
+			let wastedCustom = false;
+			state.baseSchedule.forEach((val) => {
+				if (val.name === title) {
+					switch (choice) {
+						case Choice.ONCE: {
+							delOrHide(val, time);
+							break;
+						}
+						case Choice.REPEAT: {
+							delOrHide(val, {
+								...time,
+								activeWeeks: MAX_WEEK_LIST,
+							});
+							break;
+						}
+						case Choice.ALL: {
+							const timeSliceList = val.activeTime.base;
+							timeSliceList.forEach((slice) => {
+								delOrHide(val, slice);
+							});
+							break;
+						}
+						default:
+							break;
+					}
 
-			let newActiveBlocks: TimeBlock[] = [];
-			let hideBlocks: TimeBlock[] = [];
-			selectedSchedule.activeTime.forEach((block) => {
-				if (blockFilter(block)) {
-					hideBlocks.push(block);
-				} else {
-					newActiveBlocks.push(block);
+					wastedCustom =
+						val.type === ScheduleType.CUSTOM &&
+						val.activeTime.base.length === 0;
 				}
 			});
-			selectedSchedule = Object.assign(
-				{},
-				{
-					...selectedSchedule,
-					activeTime: newActiveBlocks,
-					// week: 0 means ALL, week: -1 means REPEAT
-					delOrHideTime:
-						choice === Choice.ONCE
-							? selectedSchedule.delOrHideTime.concat([time])
-							: choice === Choice.REPEAT
-							? selectedSchedule.delOrHideTime
-									.filter(
-										(val) =>
-											val.dayOfWeek !== time.dayOfWeek ||
-											val.begin !== time.begin,
-									)
-									.concat([
-										{
-											...time,
-											week: -1,
-										},
-									])
-							: [
-									{
-										...time,
-										week: 0,
-									},
-									// eslint-disable-next-line no-mixed-spaces-and-tabs
-							  ],
-					delOrHideDetail: selectedSchedule.delOrHideDetail.concat(hideBlocks),
-				},
-			);
+
+			if (wastedCustom) {
+				state.baseSchedule = state.baseSchedule.filter(
+					(val) => val.name !== title,
+				);
+			}
 
 			return {
 				...state,
-				baseSchedule:
-					newActiveBlocks.length === 0 &&
-					selectedSchedule.type === ScheduleType.CUSTOM
-						? newBaseSchedule
-						: newBaseSchedule.concat([selectedSchedule]),
+				baseSchedule: state.baseSchedule.map((val) => scheduleDeepCopy(val)),
 			};
 		}
 		case SCHEDULE_REMOVE_HIDDEN_RULE: {
 			const [title, time] = action.payload;
-			let [newBaseSchedule, selectedSchedule] = getSelectedSchedule(
-				state,
-				title,
-			);
 
-			selectedSchedule = {
-				...selectedSchedule,
-				activeTime:
-					time.week === 0
-						? selectedSchedule.delOrHideDetail
-						: time.week === -1
-						? selectedSchedule.activeTime.concat(
-								selectedSchedule.delOrHideDetail.filter(
-									(val) =>
-										val.dayOfWeek === time.dayOfWeek &&
-										val.begin === time.begin,
-								),
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  )
-						: selectedSchedule.activeTime.concat([time]),
-				delOrHideTime: selectedSchedule.delOrHideTime.filter(
-					(val) =>
-						val.week !== time.week ||
-						val.dayOfWeek !== time.dayOfWeek ||
-						val.begin !== time.begin ||
-						val.end !== time.end,
-				),
-				delOrHideDetail:
-					time.week === 0
-						? []
-						: time.week === -1
-						? selectedSchedule.delOrHideDetail.filter(
-								(val) =>
-									val.dayOfWeek !== time.dayOfWeek || val.begin !== time.begin,
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  )
-						: selectedSchedule.delOrHideDetail.filter(
-								(val) =>
-									val.week !== time.week ||
-									val.dayOfWeek !== time.dayOfWeek ||
-									val.begin !== time.begin ||
-									val.end !== time.end,
-								// eslint-disable-next-line no-mixed-spaces-and-tabs
-						  ),
-			};
+			state.baseSchedule.forEach((val) => {
+				if (val.name === title) {
+					removeDelOrHide(val, time);
+				}
+			});
 
 			return {
 				...state,
-				baseSchedule: newBaseSchedule.concat([selectedSchedule]),
+				baseSchedule: state.baseSchedule.map((val) => scheduleDeepCopy(val)),
 			};
 		}
 		case SCHEDULE_CLEAR:

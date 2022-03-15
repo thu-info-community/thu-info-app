@@ -133,7 +133,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 						scheduleDelOrHideAction([
 							props.name,
 							{
-								week: props.week,
+								activeWeeks: [props.week],
 								dayOfWeek: props.dayOfWeek,
 								begin: props.begin,
 								end: props.end,
@@ -159,6 +159,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 		);
 	};
 
+	// TODO: 要允许修改计划的时间
 	return (
 		<View
 			style={{

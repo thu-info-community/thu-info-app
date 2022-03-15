@@ -11,7 +11,7 @@ import {
 } from "../constants";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Choice} from "../reducers/schedule";
-import {Schedule, TimeBlock} from "thu-info-lib/src/models/schedule/schedule";
+import {Schedule, TimeSlice} from "thu-info-lib/dist/models/schedule/schedule";
 
 export const scheduleFetchAction = createAsyncAction(
 	SCHEDULE_REQUEST,
@@ -24,10 +24,10 @@ export const scheduleUpdateAliasAction = createAction(SCHEDULE_UPDATE_ALIAS)<
 export const scheduleAddCustomAction =
 	createAction(SCHEDULE_ADD_CUSTOM)<Schedule>();
 export const scheduleDelOrHideAction =
-	createAction(SCHEDULE_DEL_OR_HIDE)<[string, TimeBlock, Choice]>();
+	createAction(SCHEDULE_DEL_OR_HIDE)<[string, TimeSlice, Choice]>();
 export const scheduleRemoveHiddenRuleAction = createAction(
 	SCHEDULE_REMOVE_HIDDEN_RULE,
-)<[string, TimeBlock]>();
+)<[string, TimeSlice]>();
 export const scheduleUpdateLocationAction = createAction(
 	SCHEDULE_UPDATE_LOCATION,
 )<[string, string]>();
