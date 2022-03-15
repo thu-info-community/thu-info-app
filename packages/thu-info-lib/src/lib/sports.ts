@@ -199,7 +199,7 @@ export const makeSportsReservation = async (
         postForm[attribs.name] = attribs.value;
     });
     postForm.channelId = "0101";
-    return generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, postForm));
+    return await generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, postForm));
 };
 
 export const getSportsReservationRecords = async (
