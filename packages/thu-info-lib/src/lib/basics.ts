@@ -452,7 +452,11 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
             if (value === "null") {
                 throw new LoseCardError();
             } else {
-                return Number(value);
+                const code = Number(value);
+                if (isNaN(code)) {
+                    throw new LoseCardError();
+                }
+                return code;
             }
         }),
         MOCK_LOSE_CARD_CODE,
