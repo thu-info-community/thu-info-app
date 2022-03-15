@@ -82,82 +82,84 @@ const ElectricityUI = ({
 				}}
 				icon={<Feather name="zap" size={16} />}
 			/>
-			<View
-				style={{
-					justifyContent: "center",
-					alignItems: "center",
-					padding: 25,
-				}}>
-				<Text style={{fontSize: 17, color: colors.text}}>
-					{getStr("eleRecharge")}
-				</Text>
-				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<Text style={{color: colors.text}}>￥</Text>
-					<TextInput
-						keyboardType="numeric"
-						placeholder="0"
-						value={money}
-						onChangeText={setMoney}
-						editable={!processing}
-						style={{
-							fontSize: 27,
-							width: "90%",
-							color: colors.text,
-							backgroundColor: colors.background,
-						}}
-					/>
-				</View>
-				<TouchableOpacity
+			{!helper.mocked() && (
+				<View
 					style={{
-						backgroundColor: valid ? "#128FEC" : "#6CB7EE",
-						margin: 20,
-						height: 40,
-						width: "100%",
-						alignItems: "center",
 						justifyContent: "center",
-					}}
-					disabled={!valid || processing}
-					onPress={() => {
-						valid &&
-							!processing &&
-							hasAlipay()
-								.then(() => {
-									setProcessing(true);
-									helper
-										.getEleRechargePayCode(Number(money))
-										.then(doAlipay)
-										.then(() => {
-											setProcessing(false);
-											setMoney("");
-										})
-										.catch(() => {
-											Snackbar.show({
-												text: getStr("payFailure"),
-												duration: Snackbar.LENGTH_INDEFINITE,
-												action: {text: getStr("ok")},
-											});
-											setProcessing(false);
-										});
-								})
-								.catch(() =>
-									Snackbar.show({
-										text: getStr("alipayRequired"),
-										duration: Snackbar.LENGTH_SHORT,
-									}),
-								);
+						alignItems: "center",
+						padding: 25,
 					}}>
-					<Text
-						style={{
-							color: valid && !processing ? "white" : "#C3E3FA",
-							fontSize: 18,
-						}}>
-						{getStr(processing ? "processing" : "payWithAlipay")}
+					<Text style={{fontSize: 17, color: colors.text}}>
+						{getStr("eleRecharge")}
 					</Text>
-				</TouchableOpacity>
-				<Text style={{textAlign: "left", color: "red"}}>
-					{getStr("eleRechargeHint")}
-				</Text>
-			</View>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text style={{color: colors.text}}>￥</Text>
+						<TextInput
+							keyboardType="numeric"
+							placeholder="0"
+							value={money}
+							onChangeText={setMoney}
+							editable={!processing}
+							style={{
+								fontSize: 27,
+								width: "90%",
+								color: colors.text,
+								backgroundColor: colors.background,
+							}}
+						/>
+					</View>
+					<TouchableOpacity
+						style={{
+							backgroundColor: valid ? "#128FEC" : "#6CB7EE",
+							margin: 20,
+							height: 40,
+							width: "100%",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+						disabled={!valid || processing}
+						onPress={() => {
+							valid &&
+								!processing &&
+								hasAlipay()
+									.then(() => {
+										setProcessing(true);
+										helper
+											.getEleRechargePayCode(Number(money))
+											.then(doAlipay)
+											.then(() => {
+												setProcessing(false);
+												setMoney("");
+											})
+											.catch(() => {
+												Snackbar.show({
+													text: getStr("payFailure"),
+													duration: Snackbar.LENGTH_INDEFINITE,
+													action: {text: getStr("ok")},
+												});
+												setProcessing(false);
+											});
+									})
+									.catch(() =>
+										Snackbar.show({
+											text: getStr("alipayRequired"),
+											duration: Snackbar.LENGTH_SHORT,
+										}),
+									);
+						}}>
+						<Text
+							style={{
+								color: valid && !processing ? "white" : "#C3E3FA",
+								fontSize: 18,
+							}}>
+							{getStr(processing ? "processing" : "payWithAlipay")}
+						</Text>
+					</TouchableOpacity>
+					<Text style={{textAlign: "left", color: "red"}}>
+						{getStr("eleRechargeHint")}
+					</Text>
+				</View>
+			)}
 		</View>
 	);
 };
