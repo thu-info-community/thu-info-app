@@ -43,16 +43,6 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 					icon={<Feather name="layout" size={16} />}
 				/>
 				<SettingsSeparator />
-				{!helper.mocked() && (
-					<>
-						<SettingsItem
-							text={getStr("passwordManagement")}
-							onPress={() => navigation.navigate("PasswordManagement")}
-							icon={<FontAwesome name="lock" size={16} />}
-						/>
-						<SettingsSeparator />
-					</>
-				)}
 				<SettingsItem
 					text={getStr("checkUpdate")}
 					onPress={() => checkUpdate(true)}

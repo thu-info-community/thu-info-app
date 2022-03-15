@@ -69,7 +69,7 @@ export default {
 	infoPassword: "INFO密码",
 	homePassword: "家园网密码",
 	hidden: "已隐藏",
-	validate: "验证",
+	validate: "保存并验证",
 	validateSucceed: "验证成功",
 	validateFail: "验证失败",
 	acknowledgements: "致谢",

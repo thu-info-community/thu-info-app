@@ -72,7 +72,7 @@ export default {
 	infoPassword: "INFO Password",
 	homePassword: "MyHome Password",
 	hidden: "Hidden",
-	validate: "Validate",
+	validate: "Save & Validate",
 	validateSucceed: "Validation succeeded.",
 	validateFail: "Validation failed.",
 	acknowledgements: "Acknowledgements",
