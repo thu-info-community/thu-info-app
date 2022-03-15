@@ -36,9 +36,6 @@ const ElectricityUI = ({
 
 	return (
 		<View style={{padding: 10, flex: 1}}>
-			<Text style={{padding: 8, textAlign: "center", color: colors.text}}>
-				{getStr("experimentalHint")}
-			</Text>
 			{!helper.mocked() && (
 				<SettingsSetPassword
 					text={getStr("homePassword")}

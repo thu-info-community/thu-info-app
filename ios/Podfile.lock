@@ -337,7 +337,7 @@ PODS:
     - React-jsi (= 0.67.3)
     - React-logger (= 0.67.3)
     - React-perflogger (= 0.67.3)
-  - RNCAsyncStorage (1.16.1):
+  - RNCAsyncStorage (1.16.2):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
@@ -686,7 +686,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: d0361f15ea978958fab7ffb6960f475b5063d83f
   React-runtimeexecutor: af1946623656f9c5fd64ca6f36f3863516193446
   ReactCommon: 650e33cde4fb7d36781cd3143f5276da0abb2f96
-  RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
+  RNCAsyncStorage: 7ebe0ebbb533d9336de2734866d172cce6515fce
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNDateTimePicker: 9afe1067027ec48370edd97097af382d7718c7b8
   RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002

@@ -1,5 +1,6 @@
 import React, {PropsWithChildren} from "react";
 import {
+	Dimensions,
 	GestureResponderEvent,
 	Platform,
 	Text,
@@ -13,6 +14,7 @@ import {useColorScheme} from "react-native";
 import {Invoice} from "thu-info-lib/dist/models/home/invoice";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {HomeNav} from "./homeStack";
+import {getStr} from "src/utils/i18n";
 
 const InvoiceItem = ({
 	invoice,
@@ -86,4 +88,30 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 		/>
 	),
 	({bus_no}) => bus_no,
+	undefined,
+	undefined,
+	() => {
+		const themeName = useColorScheme();
+		const {colors} = themes(themeName);
+		return (
+			<View
+				style={{
+					margin: 15,
+					height: Dimensions.get("window").height * 0.6,
+					justifyContent: "center",
+					alignItems: "center",
+				}}>
+				<Text
+					style={{
+						fontSize: 18,
+						fontWeight: "bold",
+						alignSelf: "center",
+						margin: 5,
+						color: colors.text,
+					}}>
+					{getStr("noInvoice")}
+				</Text>
+			</View>
+		);
+	},
 );
