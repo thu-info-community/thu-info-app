@@ -1,4 +1,4 @@
-import {Platform, ScrollView, Text, View} from "react-native";
+import {Linking, Platform, ScrollView, Text, View} from "react-native";
 import React from "react";
 import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
@@ -82,7 +82,9 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 				{!helper.mocked() && (
 					<HomeIcon
 						title="libRoomBook"
-						onPress={() => navigation.navigate("LibRoomBook")}>
+						onPress={() =>
+							Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn")
+						}>
 						<IconLibRoom width={iconSize} height={iconSize} />
 					</HomeIcon>
 				)}
