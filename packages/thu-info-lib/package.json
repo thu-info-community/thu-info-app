@@ -51,7 +51,7 @@
         "iconv-lite": "0.6.3",
         "image-size": "^1.0.1",
         "jspdf": "^2.5.1",
-        "xlsx": "0.18.3"
+        "xlsx": "0.18.4"
     },
     "devDependencies": {
         "@types/cheerio": "0.22.31",
