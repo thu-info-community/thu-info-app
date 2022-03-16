@@ -52,6 +52,7 @@ Text.render = function (...args) {
 	const origin = oldRender.call(this, ...args);
 	return React.cloneElement(origin, {
 		style: [defaultFontFamily, origin.props.style],
+		textBreakStrategy: "simple",
 	});
 };
 
