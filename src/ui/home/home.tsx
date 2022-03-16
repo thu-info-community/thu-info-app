@@ -20,6 +20,8 @@ import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconCard from "../../assets/icons/IconCard";
+import IconLibRoom from "../../assets/icons/IconLibRoom";
+import {helper} from "../../redux/store";
 
 const iconSize = 40;
 
@@ -77,6 +79,13 @@ export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
 					onPress={() => navigation.navigate("Library")}>
 					<IconLibrary width={iconSize} height={iconSize} />
 				</HomeIcon>
+				{!helper.mocked() && (
+					<HomeIcon
+						title="libRoomBook"
+						onPress={() => navigation.navigate("LibRoomBook")}>
+						<IconLibRoom width={iconSize} height={iconSize} />
+					</HomeIcon>
+				)}
 				{Platform.OS === "android" && (
 					<HomeIcon
 						title="reservesLib"
