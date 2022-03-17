@@ -164,7 +164,7 @@ const persistConfig = {
 							...state.schedule,
 							baseSchedule:
 								state.schedule.baseSchedule?.[0]?.activeTime?.base === undefined
-									? state.schedule.baseSchedule.map(migrateSchedule)
+									? state.schedule.baseSchedule?.map(migrateSchedule) ?? []
 									: state.schedule.baseSchedule,
 						},
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
