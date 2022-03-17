@@ -157,7 +157,7 @@ const wrappedConcat = (time: ScheduleTime, newList: TimeSlice[]): void => {
         }
 
         const tail: TimeSlice = mergedList[mergedList.length - 1];
-        if (tail.begin === val.begin && tail.end === val.end) {
+        if (tail.begin === val.begin && tail.end === val.end && tail.dayOfWeek === val.dayOfWeek) {
             tail.activeWeeks = tail.activeWeeks.concat(val.activeWeeks);
             tail.activeWeeks.sort((a, b) => a - b);
         } else {
