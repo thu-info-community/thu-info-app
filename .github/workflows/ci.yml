@@ -111,6 +111,6 @@ jobs:
         run: |
           yarn
           cd ios && pod install && cd ..
-      - name: Run ios app
+      - name: Build ios app
         run: |
-          yarn ios
+          cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Debug -archivePath $PWD/thu_info IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO && cd ..
