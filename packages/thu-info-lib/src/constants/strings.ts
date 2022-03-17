@@ -2,6 +2,8 @@ export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
 
+export const LOGIN_URL =
+    "https://webvpn.tsinghua.edu.cn/login";
 export const DO_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/do-login";
 export const CONFIRM_LOGIN_URL =

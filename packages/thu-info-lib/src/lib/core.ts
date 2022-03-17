@@ -12,6 +12,7 @@ import {
     GITLAB_LOGIN_URL,
     GITLAB_AUTH_URL,
     INVOICE_LOGIN_URL,
+    LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
@@ -68,11 +69,15 @@ export const login = async (
     if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
+        const $ = cheerio.load(await uFetch(LOGIN_URL));
         const loginResponse = await uFetch(DO_LOGIN_URL, {
             auth_type: "local",
             username: userId,
             sms_code: "",
             password: password,
+            captcha: "",
+            needCaptcha: false,
+            captcha_id: $("input[name=captcha_id]").attr().value,
         }).then(JSON.parse);
         if (!loginResponse.success) {
             switch (loginResponse.error) {
