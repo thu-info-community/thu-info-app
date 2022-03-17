@@ -4,7 +4,7 @@ import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-community/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
-import {defaultSchedule, Schedules} from "./states/schedule";
+import {Schedules} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
 import {Config} from "./states/config";
 import {config} from "./reducers/config";
@@ -19,6 +19,10 @@ import dayjs from "dayjs";
 import CookieManager from "@react-native-community/cookies";
 import React from "react";
 import ViewShot from "react-native-view-shot";
+import {
+	Schedule,
+	scheduleTimeAdd,
+} from "thu-info-lib/dist/models/schedule/schedule";
 
 export const helper = new InfoHelper();
 
@@ -108,8 +112,39 @@ const configTransform = createTransform(
 	},
 );
 
+// 该函数用于计划部分数据库重构后的数据迁移
+const migrateSchedule = (old: any): Schedule => {
+	const res: Schedule = {
+		location: old.location || "[数据迁移错误]",
+		name: old.name || "[数据迁移错误]",
+		type: old.type,
+		activeTime: {base: []},
+		delOrHideTime: {base: []},
+	};
+
+	old?.activeTime?.forEach((val: any) => {
+		scheduleTimeAdd(res.activeTime, {
+			dayOfWeek: val.dayOfWeek,
+			begin: val.begin,
+			end: val.end,
+			activeWeeks: [val.week],
+		});
+	});
+
+	old?.delOrHideDetail?.forEach((val: any) => {
+		scheduleTimeAdd(res.delOrHideTime, {
+			dayOfWeek: val.dayOfWeek,
+			begin: val.begin,
+			end: val.end,
+			activeWeeks: [val.week],
+		});
+	});
+
+	return res;
+};
+
 const persistConfig = {
-	version: 2,
+	version: 3,
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: ["auth", "schedule", "config", "cache", "credentials"],
@@ -125,10 +160,13 @@ const persistConfig = {
 				? undefined
 				: {
 						...state,
-						schedule:
-							state.schedule.baseSchedule?.[0]?.activeTime?.base === undefined
-								? defaultSchedule
-								: state.schedule,
+						schedule: {
+							...state.schedule,
+							baseSchedule:
+								state.schedule.baseSchedule?.[0]?.activeTime?.base === undefined
+									? state.schedule.baseSchedule.map(migrateSchedule)
+									: state.schedule.baseSchedule,
+						},
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),
