@@ -260,7 +260,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.4.0):
     - React-Core
-  - react-native-safe-area-context (4.1.4):
+  - react-native-safe-area-context (4.2.1):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -670,7 +670,7 @@ SPEC CHECKSUMS:
   react-native-cookies: ce50e42ace7cf0dd47769260ca5bbe8eee607e4e
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-pdf: a6a5a3f0bdf340eb2eed6c96034424d2cc3f84b0
-  react-native-safe-area-context: 989fa91e705bc7f2bc2a0d76d72104111f825c2a
+  react-native-safe-area-context: 806f8370bf9fc9db90a3413aaa1aab0d2e22fdf3
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 4475fde003fe8a210053d1f98fb9e06c1d834e1c
   react-native-webview: 380c1a03ec94b7ed764dac8db1e7c9952d08c93a
@@ -702,6 +702,6 @@ SPEC CHECKSUMS:
   THUInfoMailcore: da8ff57df01e2ebc7330ac04f354f0b5719fdb4a
   Yoga: 90dcd029e45d8a7c1ff059e8b3c6612ff409061a
 
-PODFILE CHECKSUM: 1b051832ac147dc727db00059e40caa68b59e501
+PODFILE CHECKSUM: d7a5b1c33aab6cd4ee8bbae660591329ab2072d1
 
 COCOAPODS: 1.11.2

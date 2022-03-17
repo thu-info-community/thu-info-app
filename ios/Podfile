@@ -25,6 +25,11 @@ target 'thu_info' do
   # you should disable the next line.
   # use_flipper!()
 
+  post_install do |installer|
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'Permission-AppTrackingTransparency', :path => "#{permissions_path}/AppTrackingTransparency/Permission-AppTrackingTransparency.podspec"
@@ -48,9 +53,4 @@ target 'thu_info' do
   pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit/Permission-StoreKit.podspec"
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
-
-  post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-  end
 end
