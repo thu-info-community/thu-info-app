@@ -327,6 +327,8 @@ export default {
 	confirmDeletionText:
 		"Are you sure to delete the location? This operation cannot be undone. Press 'OK' to delete the location.",
 	libRoomBook: "Library Private Rooms",
+	externalLink: "External Link",
+	libRoomBookHint: "About to visit http://cab.hs.lib.tsinghua.edu.cn",
 	libRoomBookInfo: "Register Info",
 	libRoomBookDate: "Date",
 	libRoomBookTimeStart: "Start Time",

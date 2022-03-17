@@ -307,6 +307,8 @@ export default {
 	confirmDeletionText:
 		"是否确认删除地点？该操作不能撤销。点按“确认”来删除地点。",
 	libRoomBook: "研读间预约",
+	externalLink: "外部链接",
+	libRoomBookHint: "即将访问 http://cab.hs.lib.tsinghua.edu.cn",
 	libRoomBookInfo: "申请信息",
 	libRoomBookDate: "申请日期",
 	libRoomBookTimeStart: "开始时间",
