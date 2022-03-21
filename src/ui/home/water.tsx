@@ -160,22 +160,31 @@ const WaterUI = ({
 						}
 					}}
 					disabled={
+						// only those required by postWaterSubmission need to be checked
 						waterId === undefined ||
 						waterId.trim().length === 0 ||
-						correspondent.trim().length === 0 ||
 						address.trim().length === 0 ||
 						!checkNum(waterNumber) ||
 						!checkNum(ticketNumber)
 					}
 				/>
 			</View>
+			<Text style={{color: colors.primaryLight}}>作者：</Text>
 			<TouchableOpacity
 				onPress={() =>
 					Linking.openURL("https://github.com/THUzxj").then(() =>
 						console.log("Opening THUzxj GitHub page in system explorer"),
 					)
 				}>
-				<Text style={{color: colors.primaryLight}}>作者：THUzxj @ GitHub</Text>
+				<Text style={{color: colors.primaryLight}}>THUzxj @ GitHub</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() =>
+					Linking.openURL("https://github.com/t4rf9").then(() =>
+						console.log("Opening t4rf9 GitHub page in system explorer"),
+					)
+				}>
+				<Text style={{color: colors.primaryLight}}>t4rf9 @ GitHub</Text>
 			</TouchableOpacity>
 			<Text style={{marginTop: 8, color: "red"}}>
 				{
