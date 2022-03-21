@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup caching
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
@@ -37,7 +37,7 @@ jobs:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Setup caching
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
