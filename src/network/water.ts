@@ -6,7 +6,7 @@ import {stringify} from "thu-info-lib/dist/utils/network";
 import {CONTENT_TYPE_FORM} from "thu-info-lib/dist/constants/strings";
 
 export interface WaterUserInformation {
-	phone: string;
+	name: string;
 	address: string;
 }
 
@@ -14,7 +14,7 @@ export const getWaterUserInformation = async (
 	id: string,
 ): Promise<WaterUserInformation> => {
 	if (id.trim().length === 0) {
-		return {phone: "", address: ""};
+		return {name: "", address: ""};
 	} else {
 		return fetch(WATER_USER_URL, {
 			headers: {"Content-Type": CONTENT_TYPE_FORM},
