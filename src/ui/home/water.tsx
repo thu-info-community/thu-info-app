@@ -43,7 +43,7 @@ const WaterUI = ({
 	const theme = themes(themeName);
 	const {colors} = theme;
 
-	const [phone, setPhone] = useState("");
+	const [correspondent, setCorrespondent] = useState("");
 	const [address, setAddress] = useState("");
 	const [waterNumber, setWaterNumber] = useState(1);
 	const [ticketNumber, setTicketNumber] = useState(0);
@@ -52,7 +52,7 @@ const WaterUI = ({
 	useEffect(() => {
 		if (waterId !== undefined) {
 			getWaterUserInformation(waterId).then((r) => {
-				setPhone(r.phone ?? "");
+				setCorrespondent(r.name ?? "");
 				setAddress(r.address ?? "");
 			});
 		}
@@ -77,9 +77,9 @@ const WaterUI = ({
 				enabled={true}
 			/>
 			<SettingsEditText
-				text="电话"
-				value={phone}
-				onValueChange={setPhone}
+				text="联系人"
+				value={correspondent}
+				onValueChange={setCorrespondent}
 				placeholder=""
 				enabled={false}
 			/>
@@ -160,9 +160,9 @@ const WaterUI = ({
 						}
 					}}
 					disabled={
+						// only fields required by postWaterSubmission need checking
 						waterId === undefined ||
 						waterId.trim().length === 0 ||
-						phone.trim().length === 0 ||
 						address.trim().length === 0 ||
 						!checkNum(waterNumber) ||
 						!checkNum(ticketNumber)
