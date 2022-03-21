@@ -42,7 +42,8 @@ If you are a developer...
 
 ### Requirements
 
-Whatever you need to build a [React Native](https://reactnative.cn/docs/getting-started.html) project.
+- Whatever you need to build a [React Native](https://reactnative.cn/docs/getting-started.html) project.
+- Uninstall any version of THUInfo on you test device.
 
 ### Procedure
 
