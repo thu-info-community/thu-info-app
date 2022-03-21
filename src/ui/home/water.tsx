@@ -169,13 +169,22 @@ const WaterUI = ({
 					}
 				/>
 			</View>
+			<Text style={{color: colors.primaryLight}}>作者：</Text>
 			<TouchableOpacity
 				onPress={() =>
 					Linking.openURL("https://github.com/THUzxj").then(() =>
 						console.log("Opening THUzxj GitHub page in system explorer"),
 					)
 				}>
-				<Text style={{color: colors.primaryLight}}>作者：THUzxj @ GitHub</Text>
+				<Text style={{color: colors.primaryLight}}>THUzxj @ GitHub</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() =>
+					Linking.openURL("https://github.com/t4rf9").then(() =>
+						console.log("Opening t4rf9 GitHub page in system explorer"),
+					)
+				}>
+				<Text style={{color: colors.primaryLight}}>t4rf9 @ GitHub</Text>
 			</TouchableOpacity>
 			<Text style={{marginTop: 8, color: "red"}}>
 				{
