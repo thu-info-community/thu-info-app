@@ -213,6 +213,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 			<View
 				style={{
 					flexDirection: "row",
+					flexWrap: "wrap",
 					alignItems: "center",
 					marginVertical: 10,
 					alignSelf: "flex-start",
