@@ -37,7 +37,7 @@
 		"moment": "2.29.1",
 		"react": "17.0.2",
 		"react-native": "0.67.4",
-		"react-native-blob-util": "0.14.1",
+		"react-native-blob-util": "0.15.0",
 		"react-native-easy-grid": "0.2.2",
 		"react-native-fetch-api": "3.0.0",
 		"react-native-fs": "2.19.0",
