@@ -8534,10 +8534,10 @@ react-native-reanimated@2.5.0:
     setimmediate "^1.0.5"
     string-hash-64 "^1.0.3"
 
-react-native-safe-area-context@4.2.2:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.2.2.tgz#e7989125bd905ae27433bd8579ed4bf90e686a38"
-  integrity sha512-uFyUDKHNGz6RHu7UKgf7twd7GRl4RbxY0blp/gB/ZAlZCsNYLiaWW6+HlRea4Vt3wmoZHgvMmW0l6OL2naW+iQ==
+react-native-safe-area-context@4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.2.3.tgz#728f71984c363a47f4fac86b98c6ec1ed68e363e"
+  integrity sha512-x82aq+OVe1GXlJhvbj83JDKZgEjdb/ROWJ7yOlAe8k+vo+lD2WyBXSxR7pmzIJVDhuBh3ZWZhgejuR3IojaDhw==
 
 react-native-screens@3.13.1, react-native-screens@^3.11.1:
   version "3.13.1"
