@@ -50,7 +50,7 @@ jest.mock("react-native-view-shot", () => ({
 	RNViewShot: jest.fn().mockResolvedValue(),
 }));
 
-jest.mock("@react-native-community/async-storage", () => mockAsyncStorage);
+jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
 jest.mock("react-native-keychain", () => ({
 	SECURITY_LEVEL_ANY: "MOCK_SECURITY_LEVEL_ANY",
