@@ -2,7 +2,7 @@ import {createStore} from "redux";
 import {AuthState, LoginStatus} from "./states/auth";
 import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {persistStore, persistReducer} from "redux-persist";
 import {Schedules} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
