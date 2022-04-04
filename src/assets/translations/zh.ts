@@ -33,8 +33,6 @@ export default {
 	cancelBooking: "取消预约",
 	confirmCancelBooking: "确认要取消预约吗？",
 	cancelSucceeded: "取消成功",
-	hasSocket: "有插座",
-	noSocket: "无插座",
 	socketAvailable: "有插座",
 	socketUnavailable: "无插座",
 	socketUnknown: "插座未知",
