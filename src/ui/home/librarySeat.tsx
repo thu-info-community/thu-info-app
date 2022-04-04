@@ -6,23 +6,17 @@ import {libraryRefreshListScreen} from "../../components/home/libraryRefreshList
 import {helper} from "../../redux/store";
 import React from "react";
 import {Text, View} from "react-native";
-import AV from "leancloud-storage/core";
+import {getSocketsStatusBySectionId} from "../../utils/webApi";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
 		Promise.all([
 			helper.getLibrarySeatList(route.params.section, dateChoice),
-			new AV.Query("Sockets")
-				.equalTo("sectionId", route.params.section.id)
-				.limit(1000)
-				.find(),
+			getSocketsStatusBySectionId(route.params.section.id),
 		]).then(([r, s]) =>
 			r.map((seat) => ({
 				...seat,
-				hasSocket:
-					s.find((it) => it.get("seatId") === seat.id)?.get("available") ??
-					false,
-				lcObjId: s.find((it) => it.get("seatId") === seat.id)?.get("objectId"),
+				status: s.find((i) => i.seatId === seat.id)?.status,
 			})),
 		),
 	(props, item, choice, refresh) => () => {

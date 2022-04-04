@@ -6,7 +6,6 @@ import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {
 	Alert,
 	Dimensions,
-	Image,
 	Modal,
 	ScrollView,
 	Text,
@@ -24,12 +23,14 @@ import {scheduleClearAction} from "../../redux/actions/schedule";
 import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
-import AV from "leancloud-storage";
 import {doLogoutAction} from "../../redux/actions/auth";
+import QRCode from "react-native-qrcode-svg";
+import {getWeChatGroupQRCodeContent} from "../../utils/webApi";
 
 export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 	const [showPopup, setShowPopup] = useState(false);
-	const [url, setUrl] = useState("");
+	//const [url, setUrl] = useState("");
+	const [qrcodeContent, setQrcodeContent] = useState("");
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -62,12 +63,9 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 				{!helper.mocked() && (
 					<SettingsItem
 						text={getStr("wechatGroup")}
-						onPress={() => {
-							new AV.Query("_File")
-								.equalTo("name", "wechat.jpg")
-								.first()
-								.then((r) => setUrl(r?.get("url")))
-								.then(() => setShowPopup(true));
+						onPress={async () => {
+							setQrcodeContent(await getWeChatGroupQRCodeContent());
+							setShowPopup(true);
 						}}
 						icon={<FontAwesome name="wechat" size={16} />}
 					/>
@@ -136,13 +134,9 @@ export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
 				onRequestClose={() => setShowPopup(false)}>
 				<View style={{flex: 1, alignSelf: "center", justifyContent: "center"}}>
 					<View style={{backgroundColor: colors.background}}>
-						<Image
-							source={{uri: url}}
-							style={{
-								height: Dimensions.get("window").width * 0.7,
-								width: Dimensions.get("window").width * 0.7,
-							}}
-							resizeMode="contain"
+						<QRCode
+							value={qrcodeContent}
+							size={Dimensions.get("window").width * 0.7}
 						/>
 						<TouchableOpacity
 							style={{padding: 8}}

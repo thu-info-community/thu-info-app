@@ -1,18 +1,13 @@
 import React from "react";
 import {Text, View} from "react-native";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
-import AV from "leancloud-storage/core";
+import {getFeedbackReplies} from "../../utils/webApi";
 
 export const PopiScreen = simpleRefreshListScreen<{
 	question: string;
 	answer: string;
 }>(
-	() =>
-		new AV.Query("Popi")
-			.descending("updatedAt")
-			.limit(1000)
-			.find()
-			.then((r) => r.map((it) => it.toJSON())),
+	async () => await getFeedbackReplies(),
 	({question, answer}, _, __, {colors}) => (
 		<View style={{padding: 15, marginVertical: 5}}>
 			<Text

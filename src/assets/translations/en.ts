@@ -35,12 +35,15 @@ export default {
 	cancelBooking: "Cancel",
 	confirmCancelBooking: "Sure to cancel?",
 	cancelSucceeded: "Successfully cancelled.",
-	hasSocket: "Socket Available",
-	noSocket: "Socket Unavailable",
+	socketAvailable: "Socket Available",
+	socketUnavailable: "Socket Unavailable",
+	socketUnknown: "Socket Unknown",
 	confirmReportHasSocket:
 		"You are going to report this seat as `socket available`.",
 	confirmReportNoSocket:
 		"You are going to report this seat as `socket unavailable`.",
+	confirmReportUnknownSocket:
+		"You are going to report this seat as a certain status.",
 	socketReportShort: "Long press to report socket status",
 	socketReportPrompt: "You should be responsible for your report~",
 	reportSuccessful: "Report succeeded. Thanks for your contribution!",

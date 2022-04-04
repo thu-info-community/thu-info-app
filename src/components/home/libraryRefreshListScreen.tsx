@@ -7,10 +7,10 @@ import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import {toggleSocketState} from "../../network/misc";
 import {LibraryBase} from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
+import {toggleSocketState} from "../../utils/webApi";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -62,7 +62,7 @@ export function libraryRefreshListScreen<
 				return (
 					<View>
 						<View style={{flexDirection: "row"}}>
-							{"hasSocket" in item && (
+							{"status" in item && (
 								<TouchableOpacity
 									style={{
 										backgroundColor: colors.background,
@@ -79,50 +79,118 @@ export function libraryRefreshListScreen<
 										})
 									}
 									onLongPress={() => {
-										Alert.alert(
-											getStr(
-												// @ts-ignore
-												item.hasSocket
-													? "confirmReportNoSocket"
-													: "confirmReportHasSocket",
-											),
-											getStr("socketReportPrompt"),
-											[
-												{text: getStr("cancel")},
-												{
-													text: getStr("confirm"),
-													onPress: () => {
-														toggleSocketState(
-															item.id, // @ts-ignore
-															item.lcObjId, // @ts-ignore
-															!item.hasSocket,
-														)
-															.then(() =>
-																Snackbar.show({
-																	text: getStr("reportSuccessful"),
-																	duration: Snackbar.LENGTH_SHORT,
-																}),
+										// @ts-ignore
+										if (item.status === "unknown") {
+											Alert.alert(
+												getStr("socketReportPrompt"),
+												getStr("confirmReportUnknownSocket"),
+												[
+													{text: getStr("cancel")},
+													{
+														text: getStr("socketUnavailable"),
+														onPress: () => {
+															toggleSocketState(
+																item.id, // @ts-ignore
+																"unavailable", // @ts-ignore
 															)
-															.catch(() =>
-																Snackbar.show({
-																	text: getStr("reportFail"),
-																	duration: Snackbar.LENGTH_SHORT,
-																}),
-															);
+																.then(() =>
+																	Snackbar.show({
+																		text: getStr("reportSuccessful"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																)
+																.catch(() =>
+																	Snackbar.show({
+																		text: getStr("reportFail"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																);
+														},
 													},
-												},
-											],
-											{cancelable: true},
-										);
+													{
+														text: getStr("socketAvailable"),
+														onPress: () => {
+															toggleSocketState(
+																item.id, // @ts-ignore
+																"available", // @ts-ignore
+															)
+																.then(() =>
+																	Snackbar.show({
+																		text: getStr("reportSuccessful"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																)
+																.catch(() =>
+																	Snackbar.show({
+																		text: getStr("reportFail"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																);
+														},
+													},
+												],
+												{cancelable: true},
+											);
+										} else {
+											Alert.alert(
+												getStr(
+													// @ts-ignore
+													item.status === "available"
+														? "confirmReportNoSocket"
+														: "confirmReportHasSocket",
+												),
+												getStr("socketReportPrompt"),
+												[
+													{text: getStr("cancel")},
+													{
+														text: getStr("confirm"),
+														onPress: () => {
+															toggleSocketState(
+																item.id, // @ts-ignore
+																item.status === "available"
+																	? "unavailable"
+																	: "available", // @ts-ignore
+															)
+																.then(() =>
+																	Snackbar.show({
+																		text: getStr("reportSuccessful"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																)
+																.catch(() =>
+																	Snackbar.show({
+																		text: getStr("reportFail"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																);
+														},
+													},
+												],
+												{cancelable: true},
+											);
+										}
 									}}>
 									<Text
 										style={{
 											textAlign: "center", // @ts-ignore
-											color: item.hasSocket ? "green" : "blue",
+											//color: item.hasSocket ? "green" : "blue",
+											color:
+												item.status === "available"
+													? "green"
+													: item.status === "unavailable"
+													? "blue"
+													: "black",
 										}}>
 										{
 											// @ts-ignore
-											getStr(item.hasSocket ? "hasSocket" : "noSocket")
+											//getStr(item.hasSocket ? "hasSocket" : "noSocket")
+											getStr(
+												item.status === "available"
+													? "socketAvailable"
+													: item.status === "unavailable"
+													? "socketUnavailable"
+													: "socketUnknown",
+											)
 										}
 									</Text>
 								</TouchableOpacity>
