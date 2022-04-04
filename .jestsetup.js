@@ -2,6 +2,10 @@ const mockRNGestureHandlerModule = 'react-native-gesture-handler/dist/src/__mock
 jest.mock('react-native-gesture-handler', () => mockRNGestureHandlerModule)
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 
+import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock'
+jest.mock('react-native-device-info', () => mockRNDeviceInfo)
+jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
+
 global.console = {
 	log: console.log,
 	error: jest.fn((message) => {

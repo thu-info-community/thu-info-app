@@ -172,12 +172,13 @@ export function libraryRefreshListScreen<
 									}}>
 									<Text
 										style={{
-											textAlign: "center", // @ts-ignore
-											//color: item.hasSocket ? "green" : "blue",
+											textAlign: "center",
 											color:
+												// @ts-ignore
 												item.status === "available"
 													? "green"
-													: item.status === "unavailable"
+													: // @ts-ignore
+													item.status === "unavailable"
 													? "blue"
 													: "black",
 										}}>
@@ -185,9 +186,11 @@ export function libraryRefreshListScreen<
 											// @ts-ignore
 											//getStr(item.hasSocket ? "hasSocket" : "noSocket")
 											getStr(
+												// @ts-ignore
 												item.status === "available"
 													? "socketAvailable"
-													: item.status === "unavailable"
+													: // @ts-ignore
+													item.status === "unavailable"
 													? "socketUnavailable"
 													: "socketUnknown",
 											)
