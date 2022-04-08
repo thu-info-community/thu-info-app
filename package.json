@@ -73,7 +73,7 @@
 		"thu-info-lib": "2.0.0-alpha.27",
 		"thu-info-mailcore": "0.2.1",
 		"typesafe-actions": "5.1.0",
-		"web-streams-polyfill": "3.2.0"
+		"web-streams-polyfill": "3.2.1"
 	},
 	"devDependencies": {
 		"@babel/core": "7.17.9",
