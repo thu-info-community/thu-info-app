@@ -27,7 +27,7 @@
 		"@react-navigation/stack": "6.2.1",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
-		"dayjs": "1.11.0",
+		"dayjs": "1.11.1",
 		"eslint-plugin-react-hooks": "4.4.0",
 		"events": "3.3.0",
 		"he": "1.2.0",
