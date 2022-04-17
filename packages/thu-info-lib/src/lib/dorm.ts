@@ -4,6 +4,8 @@ import {
     RECHARGE_ELE_URL,
     RECHARGE_PAY_ELE_URL,
     ELE_REMAINDER_URL,
+    DORM_SCORE_URL,
+    WEB_VPN_ROOT_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
@@ -15,6 +17,17 @@ import {EleError} from "../utils/error";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
+
+export const getDormScore = (helper: InfoHelper): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        "myhome_mobile",
+        "",
+        () => uFetch(DORM_SCORE_URL).then(
+            (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
+        ),
+        "",
+    );
 
 export const getEleRechargePayCode = async (
     helper: InfoHelper,

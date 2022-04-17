@@ -14,7 +14,7 @@ import {
     getInvoiceList,
 } from "./lib/basics";
 import { login, logout } from "./lib/core";
-import { getElePayRecord, getEleRechargePayCode, getEleRemainder } from "./lib/dorm";
+import { getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder } from "./lib/dorm";
 import { getUserInformation, getUserInformationAndStore, postWaterSubmission } from "./lib/water";
 import {
     LibBookRecord,
@@ -146,6 +146,8 @@ export class InfoHelper {
     public getCalendar = async (): Promise<CalendarData> => getCalendar(this);
 
     public getCountdown = async (): Promise<string[]> => countdown();
+
+    public getDormScore = async (): Promise<string> => getDormScore(this);
 
     public getEleRechargePayCode = async (money: number): Promise<string> =>
         getEleRechargePayCode(this, money);

@@ -2,6 +2,7 @@ export const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
 export const USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
 
+export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn";
 export const LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/login";
 export const DO_LOGIN_URL =
@@ -23,6 +24,10 @@ export const CALENDAR_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/xl";
 export const COUNT_DOWN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?url=/portal3rd.do&m=tsxx";
+export const DORM_LOGIN_URL_PREFIX =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_user_authenticate.aspx?url=%2fweixin%2fweixin_personal_information.aspx&weixin_appid=";
+export const DORM_SCORE_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_health_linechart.aspx?id=0";
 export const GET_BKS_REPORT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_cjdcx&cjdlx=zw";
 export const GET_YJS_REPORT_URL =

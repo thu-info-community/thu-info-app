@@ -13,14 +13,17 @@ import {
     GITLAB_AUTH_URL,
     INVOICE_LOGIN_URL,
     LOGIN_URL,
+    DORM_LOGIN_URL_PREFIX,
+    DORM_SCORE_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
+import {createHash} from "crypto";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
 import {DormAuthError, IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "gitlab";
+type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "myhome_mobile" | "gitlab";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -174,6 +177,25 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
         });
         if (response.includes("window.alert('用户名或密码错误!');")) {
+            throw new DormAuthError();
+        }
+        return response;
+    }
+    case "myhome_mobile": {
+        const userId = helper.userId;
+        const hash = createHash("sha256");
+        hash.update(userId + new Date().getTime());
+        const appId = hash.digest("hex");
+        await uFetch(DORM_LOGIN_URL_PREFIX + appId, {
+            __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
+            __VIEWSTATEGENERATOR: "7FA746C3",
+            __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
+            weixin_user_authenticateCtrl1$txtUserName: userId,
+            weixin_user_authenticateCtrl1$txtPassword: helper.dormPassword || helper.password,
+            weixin_user_authenticateCtrl1$btnLogin: "登录",
+        });
+        const response = await uFetch(DORM_SCORE_URL);
+        if (cheerio("#weixin_health_linechartCtrl1_Chart1", response).length !== 1) {
             throw new DormAuthError();
         }
         return response;
