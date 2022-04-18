@@ -2,7 +2,6 @@ export interface Invoice {
     bill_amount: number,
     bmdm: string,
     bus_no: string,
-    content: string,
     cust_email: string,
     cust_mob: string,
     cust_name: string,

@@ -85,6 +85,8 @@ export const CLASSROOM_STATE_PREFIX =
 export const CLASSROOM_STATE_MIDDLE = "&weeknumber=";
 export const INVOICE_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/dzpj/invoiceSys/getList.do";
+export const INVOICE_CONTENT_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/dzpj/invoiceSys/invoiceShow.do?bus_no=";
 export const INVOICE_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4/dzpj/j_spring_security_check";
 export const LOSE_CARD_URL =

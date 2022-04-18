@@ -13,6 +13,7 @@ import {
     EXPENDITURE_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
+    INVOICE_CONTENT_URL,
     INVOICE_LIST_URL,
     LOSE_CARD_URL,
     PHYSICAL_EXAM_URL,
@@ -42,6 +43,7 @@ import {
     MOCK_LOSE_CARD_CODE,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
+    SAMPLE_INVOICE_BASE64,
 } from "../mocks/basics";
 import {
     AssessmentError,
@@ -437,6 +439,15 @@ export const getInvoiceList = (helper: InfoHelper, page: number): Promise<Invoic
             return data;
         },
         MOCK_INVOICE_LIST,
+    );
+
+export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "625B81A7A9D148B01DA59185CC4074E1",
+        () => uFetch(INVOICE_CONTENT_URL + busNumber),
+        SAMPLE_INVOICE_BASE64,
     );
 
 export const loseCard = (helper: InfoHelper): Promise<number> =>

@@ -12,6 +12,7 @@ import {
     getBankPayment,
     getCalendar,
     getInvoiceList,
+    getInvoicePDF,
 } from "./lib/basics";
 import { login, logout } from "./lib/core";
 import { getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder } from "./lib/dorm";
@@ -138,6 +139,8 @@ export class InfoHelper {
     ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
 
     public getInvoiceList = async (page: number): Promise<Invoice[]> => getInvoiceList(this, page);
+
+    public getInvoicePDF = async (busNumber: string): Promise<string> => getInvoicePDF(this, busNumber);
 
     public loseCard = async (): Promise<number> => loseCard(this);
 
