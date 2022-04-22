@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {
 	createStackNavigator,
 	StackNavigationProp,
@@ -17,7 +17,7 @@ import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
 import {LibrarySeatScreen} from "./librarySeat";
 import {PhysicalExamScreen} from "./physicalExam";
-import {Alert, Platform, TouchableOpacity, View} from "react-native";
+import {Platform, TouchableOpacity, View} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {LibraryMapScreen, LibrarySeatMapScreen} from "./libraryMap";
@@ -42,7 +42,7 @@ import {SportsDetailScreen} from "./sportsDetail";
 import {SportsSelectScreen} from "./sportsSelect";
 import {SportsRecordScreen} from "./sportsRecord";
 import {connect} from "react-redux";
-import {helper, State} from "../../redux/store";
+import {State} from "../../redux/store";
 import {GitlabHomeScreen, GitlabStarredScreen} from "./gitlabHome";
 import {GitlabProjectScreen} from "./gitlabProject";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
@@ -160,46 +160,19 @@ const Stack = createStackNavigator<HomeStackParamList>();
 
 export type HomeNav = StackNavigationProp<HomeStackParamList>;
 
-const HomeStackUI = ({emailUnseen}: {emailUnseen: number}) => {
+const HomeStackUI = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-
-	const [countdown, setCountdown] = useState<string[]>([]);
-	useEffect(() => {
-		helper.getCountdown().then(setCountdown);
-	}, []);
 
 	return (
 		<Stack.Navigator>
 			<Stack.Screen
 				name="Home"
 				component={HomeScreen}
-				options={({navigation}) => ({
+				options={{
 					title: getStr("home"),
-					headerRight: () =>
-						Platform.OS === "android" && (
-							<View style={{flexDirection: "row"}}>
-								{countdown.length > 0 && (
-									<TouchableOpacity
-										style={{paddingHorizontal: 16, marginHorizontal: 4}}
-										onPress={() =>
-											Alert.alert(getStr("countdown"), countdown.join("\n"))
-										}>
-										<Icon name="bell" size={24} color={theme.colors.primary} />
-									</TouchableOpacity>
-								)}
-								<TouchableOpacity
-									style={{paddingHorizontal: 16, marginHorizontal: 4}}
-									onPress={() => navigation.navigate("EmailList")}>
-									<Icon
-										name={emailUnseen > 0 ? "envelope" : "envelope-o"}
-										size={24}
-										color={theme.colors.primary}
-									/>
-								</TouchableOpacity>
-							</View>
-						),
-				})}
+					headerShown: false,
+				}}
 			/>
 			<Stack.Screen
 				name="Report"

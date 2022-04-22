@@ -329,4 +329,6 @@ export default {
 	choose: "选定",
 	"?": "？",
 	noInvoice: "您目前没有可用电子发票。",
+	recentlyUsedFunction: "常用功能",
+	allFunction: "全部功能",
 };

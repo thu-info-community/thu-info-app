@@ -350,4 +350,6 @@ export default {
 	choose: "Select",
 	"?": "?",
 	noInvoice: "You have no invoice now.",
+	recentlyUsedFunction: "xxxx",
+	allFunction: "xxxx",
 };

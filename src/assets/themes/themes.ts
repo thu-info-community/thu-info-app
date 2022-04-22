@@ -8,6 +8,7 @@ export interface ColorTheme {
 	accent: string;
 	text: string;
 	background: string;
+	background2: string;
 }
 
 export interface Theme {
