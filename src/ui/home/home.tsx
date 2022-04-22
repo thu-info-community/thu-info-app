@@ -1,6 +1,6 @@
 import {Alert, Linking, ScrollView, Text, View} from "react-native";
 import React, {ReactElement} from "react";
-import {HomeNav, HomeStackParamList} from "./homeStack";
+import {HomeNav} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
@@ -22,6 +22,9 @@ import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
+import {top5UpdateAction} from "../../redux/actions/top5";
 
 const iconSize = 40;
 
@@ -69,146 +72,188 @@ export type HomeFunction =
 	| "electricity"
 	| "eCard";
 
-const recordAndNavigate = (
-	functionName: HomeFunction,
-	navigateTo: keyof HomeStackParamList | null,
+const getHomeFunctions = (
 	navigation: HomeNav,
-) => {
-	if (functionName === "libRoomBook") {
-		Alert.alert(getStr("externalLink"), getStr("libRoomBookHint"), [
-			{text: getStr("cancel")},
-			{
-				text: getStr("confirm"),
-				onPress: () => {
-					Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn");
-				},
-			},
-		]);
-	} else {
-		navigation.navigate(navigateTo as keyof HomeStackParamList);
-	}
-};
-
-const getHomeFunctions = ({
-	navigation,
-}: {
-	navigation: HomeNav;
-}): ReactElement[] => [
+	updateTop5: (func: HomeFunction) => void,
+): ReactElement[] => [
 	<HomeIcon
 		key="report"
 		title="report"
-		onPress={() => recordAndNavigate("report", "Report", navigation)}>
+		onPress={() => {
+			updateTop5("report");
+			navigation.navigate("Report");
+		}}>
 		<IconReport width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="teachingEvaluation"
 		title="teachingEvaluation"
-		onPress={() =>
-			recordAndNavigate("teachingEvaluation", "Evaluation", navigation)
-		}>
+		onPress={() => {
+			updateTop5("teachingEvaluation");
+			navigation.navigate("Evaluation");
+		}}>
 		<IconEvaluation width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="gitLab"
 		title="gitLab"
-		onPress={() => recordAndNavigate("gitLab", "GitLabHome", navigation)}>
+		onPress={() => {
+			updateTop5("gitLab");
+			navigation.navigate("GitLabHome");
+		}}>
 		<IconGitLab width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="classroomState"
 		title="classroomState"
-		onPress={() =>
-			recordAndNavigate("classroomState", "ClassroomList", navigation)
-		}>
+		onPress={() => {
+			updateTop5("classroomState");
+			navigation.navigate("ClassroomList");
+		}}>
 		<IconClassroom width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="library"
 		title="library"
-		onPress={() => recordAndNavigate("library", "Library", navigation)}>
+		onPress={() => {
+			updateTop5("library");
+			navigation.navigate("Library");
+		}}>
 		<IconLibrary width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="libRoomBook"
 		title="libRoomBook"
-		onPress={() => recordAndNavigate("libRoomBook", null, navigation)}>
+		onPress={() => {
+			updateTop5("libRoomBook");
+			Alert.alert(getStr("externalLink"), getStr("libRoomBookHint"), [
+				{text: getStr("cancel")},
+				{
+					text: getStr("confirm"),
+					onPress: () => {
+						Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn");
+					},
+				},
+			]);
+		}}>
 		<IconLibRoom width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="reservesLib"
 		title="reservesLib"
-		onPress={() =>
-			recordAndNavigate("reservesLib", "ReservesLibWelcome", navigation)
-		}>
+		onPress={() => {
+			updateTop5("reservesLib");
+			navigation.navigate("ReservesLibWelcome");
+		}}>
 		<IconBook width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="expenditure"
 		title="expenditure"
-		onPress={() => recordAndNavigate("expenditure", "Expenditure", navigation)}>
+		onPress={() => {
+			updateTop5("expenditure");
+			navigation.navigate("Expenditure");
+		}}>
 		<IconExpenditure width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="sportsBook"
 		title="sportsBook"
-		onPress={() => recordAndNavigate("sportsBook", "Sports", navigation)}>
+		onPress={() => {
+			updateTop5("sportsBook");
+			navigation.navigate("Sports");
+		}}>
 		<IconSports width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="bankPayment"
 		title="bankPayment"
-		onPress={() => recordAndNavigate("bankPayment", "BankPayment", navigation)}>
+		onPress={() => {
+			updateTop5("bankPayment");
+			navigation.navigate("BankPayment");
+		}}>
 		<IconBankPayment width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="invoice"
 		title="invoice"
-		onPress={() => recordAndNavigate("invoice", "Invoice", navigation)}>
+		onPress={() => {
+			updateTop5("invoice");
+			navigation.navigate("Invoice");
+		}}>
 		<IconInvoice width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="qzyq"
 		title="qzyq"
-		onPress={() => recordAndNavigate("qzyq", "Qzyq", navigation)}>
+		onPress={() => {
+			updateTop5("qzyq");
+			navigation.navigate("Qzyq");
+		}}>
 		<IconWater width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="washer"
 		title="washer"
-		onPress={() => recordAndNavigate("washer", "WasherWeb", navigation)}>
+		onPress={() => {
+			updateTop5("washer");
+			navigation.navigate("WasherWeb");
+		}}>
 		<IconWasher width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="electricity"
 		title="electricity"
-		onPress={() => recordAndNavigate("electricity", "Electricity", navigation)}>
+		onPress={() => {
+			updateTop5("electricity");
+			navigation.navigate("Electricity");
+		}}>
 		<IconEleRecharge width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="eCard"
 		title="eCard"
-		onPress={() => recordAndNavigate("eCard", "ECard", navigation)}>
+		onPress={() => {
+			updateTop5("eCard");
+			navigation.navigate("ECard");
+		}}>
 		<IconCard width={iconSize} height={iconSize} />
 	</HomeIcon>,
 ];
 
-let homeFunctions: ReactElement[];
+interface HomeProps {
+	navigation: HomeNav;
+	top5Functions: string[];
+	updateTop5: (payload: string) => void;
+}
 
-export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
+const HomeUI = (props: HomeProps) => {
 	const theme = themes(useColorScheme());
-	homeFunctions = getHomeFunctions({navigation});
+	const homeFunctions = getHomeFunctions(props.navigation, props.updateTop5);
+	const top5 = props.top5Functions.map((x) =>
+		homeFunctions.find((y) => y.key === x),
+	);
 
 	return (
 		<ScrollView style={{backgroundColor: theme.colors.background2}}>
 			<HomeFunctionSection title="recentlyUsedFunction">
-				{[homeFunctions.slice(1, 6)]}
+				{top5}
 			</HomeFunctionSection>
 			<HomeFunctionSection title="allFunction">
-				{[...homeFunctions]}
+				{homeFunctions}
 			</HomeFunctionSection>
 		</ScrollView>
 	);
 };
+
+export const HomeScreen = connect(
+	(state: State) => ({
+		...state.top5,
+	}),
+	(dispatch) => ({
+		updateTop5: (payload: string) => dispatch(top5UpdateAction(payload)),
+	}),
+)(HomeUI);
 
 const styles = themedStyles((theme) => ({
 	functionSectionContainer: {
@@ -220,6 +265,7 @@ const styles = themedStyles((theme) => ({
 		borderRadius: 20,
 		paddingHorizontal: 12,
 		paddingBottom: 12,
+		minHeight: 92, // this value is produced by trying many times...
 	},
 	functionSectionTitle: {
 		textAlign: "left",

@@ -23,6 +23,8 @@ import {
 	Schedule,
 	scheduleTimeAdd,
 } from "thu-info-lib/dist/models/schedule/schedule";
+import {Top5} from "./states/top5";
+import {top5} from "./reducers/top5";
 
 export const helper = new InfoHelper();
 
@@ -38,6 +40,7 @@ export interface State {
 	config: Config;
 	credentials: Credentials;
 	cache: Cache;
+	top5: Top5;
 }
 
 const rootReducer = combineReducers({
@@ -60,6 +63,7 @@ const rootReducer = combineReducers({
 		credentials,
 	),
 	cache,
+	top5,
 });
 
 const authTransform = createTransform(
