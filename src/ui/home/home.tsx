@@ -1,6 +1,6 @@
-import {Alert, Linking, Platform, ScrollView, Text, View} from "react-native";
-import React from "react";
-import {HomeNav} from "./homeStack";
+import {Alert, Linking, ScrollView, Text, View} from "react-native";
+import React, {ReactElement} from "react";
+import {HomeNav, HomeStackParamList} from "./homeStack";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
@@ -21,11 +21,11 @@ import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
-import {helper} from "../../redux/store";
+import themes from "../../assets/themes/themes";
 
 const iconSize = 40;
 
-export const HomeSection = ({
+export const HomeFunctionSection = ({
 	title,
 	children,
 }: {
@@ -36,149 +36,203 @@ export const HomeSection = ({
 	const style = styles(themeName);
 
 	return (
-		<View
-			style={[
-				style.sectionContainer,
-				{
-					borderColor: "#aaa",
-					borderWidth: themeName === "dark" ? 1 : 0,
-				},
-			]}>
-			<Text style={style.sectionTitle}>{getStr(title)}</Text>
-			<View style={style.sectionContent}>{children}</View>
+		<View style={style.functionSectionContainer}>
+			<Text style={style.functionSectionTitle}>{getStr(title)}</Text>
+			<View style={style.functionSectionContentContainer}>
+				<View style={style.functionSectionContent}>{children}</View>
+			</View>
 		</View>
 	);
 };
 
+export const HomeLibrarySection = ({}: {
+	title: keyof typeof zh;
+	children: any;
+}) => {
+	// TODO
+};
+
+export type HomeFunction =
+	| "report"
+	| "teachingEvaluation"
+	| "gitLab"
+	| "classroomState"
+	| "library"
+	| "libRoomBook"
+	| "reservesLib"
+	| "expenditure"
+	| "sportsBook"
+	| "bankPayment"
+	| "invoice"
+	| "qzyq"
+	| "washer"
+	| "electricity"
+	| "eCard";
+
+const recordAndNavigate = (
+	functionName: HomeFunction,
+	navigateTo: keyof HomeStackParamList | null,
+	navigation: HomeNav,
+) => {
+	if (functionName === "libRoomBook") {
+		Alert.alert(getStr("externalLink"), getStr("libRoomBookHint"), [
+			{text: getStr("cancel")},
+			{
+				text: getStr("confirm"),
+				onPress: () => {
+					Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn");
+				},
+			},
+		]);
+	} else {
+		navigation.navigate(navigateTo as keyof HomeStackParamList);
+	}
+};
+
+const getHomeFunctions = ({
+	navigation,
+}: {
+	navigation: HomeNav;
+}): ReactElement[] => [
+	<HomeIcon
+		key="report"
+		title="report"
+		onPress={() => recordAndNavigate("report", "Report", navigation)}>
+		<IconReport width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="teachingEvaluation"
+		title="teachingEvaluation"
+		onPress={() =>
+			recordAndNavigate("teachingEvaluation", "Evaluation", navigation)
+		}>
+		<IconEvaluation width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="gitLab"
+		title="gitLab"
+		onPress={() => recordAndNavigate("gitLab", "GitLabHome", navigation)}>
+		<IconGitLab width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="classroomState"
+		title="classroomState"
+		onPress={() =>
+			recordAndNavigate("classroomState", "ClassroomList", navigation)
+		}>
+		<IconClassroom width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="library"
+		title="library"
+		onPress={() => recordAndNavigate("library", "Library", navigation)}>
+		<IconLibrary width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="libRoomBook"
+		title="libRoomBook"
+		onPress={() => recordAndNavigate("libRoomBook", null, navigation)}>
+		<IconLibRoom width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="reservesLib"
+		title="reservesLib"
+		onPress={() =>
+			recordAndNavigate("reservesLib", "ReservesLibWelcome", navigation)
+		}>
+		<IconBook width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="expenditure"
+		title="expenditure"
+		onPress={() => recordAndNavigate("expenditure", "Expenditure", navigation)}>
+		<IconExpenditure width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="sportsBook"
+		title="sportsBook"
+		onPress={() => recordAndNavigate("sportsBook", "Sports", navigation)}>
+		<IconSports width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="bankPayment"
+		title="bankPayment"
+		onPress={() => recordAndNavigate("bankPayment", "BankPayment", navigation)}>
+		<IconBankPayment width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="invoice"
+		title="invoice"
+		onPress={() => recordAndNavigate("invoice", "Invoice", navigation)}>
+		<IconInvoice width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="qzyq"
+		title="qzyq"
+		onPress={() => recordAndNavigate("qzyq", "Qzyq", navigation)}>
+		<IconWater width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="washer"
+		title="washer"
+		onPress={() => recordAndNavigate("washer", "WasherWeb", navigation)}>
+		<IconWasher width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="electricity"
+		title="electricity"
+		onPress={() => recordAndNavigate("electricity", "Electricity", navigation)}>
+		<IconEleRecharge width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="eCard"
+		title="eCard"
+		onPress={() => recordAndNavigate("eCard", "ECard", navigation)}>
+		<IconCard width={iconSize} height={iconSize} />
+	</HomeIcon>,
+];
+
+let homeFunctions: ReactElement[];
+
 export const HomeScreen = ({navigation}: {navigation: HomeNav}) => {
+	const theme = themes(useColorScheme());
+	homeFunctions = getHomeFunctions({navigation});
+
 	return (
-		<ScrollView style={{padding: 4}}>
-			<HomeSection title="study">
-				<HomeIcon title="report" onPress={() => navigation.navigate("Report")}>
-					<IconReport width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="teachingEvaluation"
-					onPress={() => navigation.navigate("Evaluation")}>
-					<IconEvaluation width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="gitLab"
-					onPress={() => navigation.navigate("GitLabHome")}>
-					<IconGitLab width={iconSize} height={iconSize} />
-				</HomeIcon>
-			</HomeSection>
-			<HomeSection title="resources">
-				<HomeIcon
-					title="classroomState"
-					onPress={() => navigation.navigate("ClassroomList")}>
-					<IconClassroom width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="library"
-					onPress={() => navigation.navigate("Library")}>
-					<IconLibrary width={iconSize} height={iconSize} />
-				</HomeIcon>
-				{!helper.mocked() && (
-					<HomeIcon
-						title="libRoomBook"
-						onPress={() =>
-							Alert.alert(getStr("externalLink"), getStr("libRoomBookHint"), [
-								{text: getStr("cancel")},
-								{
-									text: getStr("confirm"),
-									onPress: () => {
-										Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn");
-									},
-								},
-							])
-						}>
-						<IconLibRoom width={iconSize} height={iconSize} />
-					</HomeIcon>
-				)}
-				{Platform.OS === "android" && (
-					<HomeIcon
-						title="reservesLib"
-						onPress={() => navigation.navigate("ReservesLibWelcome")}>
-						<IconBook width={iconSize} height={iconSize} />
-					</HomeIcon>
-				)}
-			</HomeSection>
-			<HomeSection title="life">
-				<HomeIcon
-					title="expenditure"
-					onPress={() => navigation.navigate("Expenditure")}>
-					<IconExpenditure width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="sportsBook"
-					onPress={() => navigation.navigate("Sports")}>
-					<IconSports width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="bankPayment"
-					onPress={() => navigation.navigate("BankPayment")}>
-					<IconBankPayment width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon
-					title="invoice"
-					onPress={() => navigation.navigate("Invoice")}>
-					<IconInvoice width={iconSize} height={iconSize} />
-				</HomeIcon>
-			</HomeSection>
-			<HomeSection title="thirdParty">
-				{Platform.OS === "android" && (
-					<HomeIcon title="qzyq" onPress={() => navigation.navigate("Qzyq")}>
-						<IconWater width={iconSize} height={iconSize} />
-					</HomeIcon>
-				)}
-				<HomeIcon
-					title="washer"
-					onPress={() => navigation.navigate("WasherWeb")}>
-					<IconWasher width={iconSize} height={iconSize} />
-				</HomeIcon>
-			</HomeSection>
-			<HomeSection title="sensitive">
-				<HomeIcon
-					title="electricity"
-					onPress={() => navigation.navigate("Electricity")}>
-					<IconEleRecharge width={iconSize} height={iconSize} />
-				</HomeIcon>
-				<HomeIcon title="eCard" onPress={() => navigation.navigate("ECard")}>
-					<IconCard width={iconSize} height={iconSize} />
-				</HomeIcon>
-			</HomeSection>
+		<ScrollView style={{backgroundColor: theme.colors.background2}}>
+			<HomeFunctionSection title="recentlyUsedFunction">
+				{[homeFunctions.slice(1, 6)]}
+			</HomeFunctionSection>
+			<HomeFunctionSection title="allFunction">
+				{[...homeFunctions]}
+			</HomeFunctionSection>
 		</ScrollView>
 	);
 };
 
 const styles = themedStyles((theme) => ({
-	sectionContainer: {
-		justifyContent: "center",
-		backgroundColor: theme.colors.background,
-		alignItems: "center",
-		shadowColor: "grey",
-		margin: 10,
-		padding: 4,
-		shadowOffset: {
-			width: 2,
-			height: 2,
-		},
-		shadowOpacity: 0.8,
-		shadowRadius: 2,
-		borderRadius: 5,
-		elevation: 2,
+	functionSectionContainer: {
+		marginHorizontal: 12,
 	},
-	sectionTitle: {
-		textAlign: "center",
+	functionSectionContentContainer: {
+		backgroundColor: theme.colors.background,
+		shadowColor: "grey",
+		borderRadius: 20,
+		paddingHorizontal: 12,
+		paddingBottom: 12,
+	},
+	functionSectionTitle: {
+		textAlign: "left",
 		fontSize: 15,
-		marginTop: 6,
+		marginTop: 18,
+		marginLeft: 12,
+		marginBottom: 8,
 		fontWeight: "bold",
 		color: theme.colors.text,
 	},
-	sectionContent: {
+	functionSectionContent: {
 		flexDirection: "row",
 		flexWrap: "wrap",
-		justifyContent: "center",
+		justifyContent: "flex-start",
 	},
 }));

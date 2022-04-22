@@ -7,4 +7,5 @@ export const colorDark: ColorTheme = {
 	accent: "#023ea2",
 	text: "#cccccc",
 	background: "#000000",
+	background2: "#000000",
 };
