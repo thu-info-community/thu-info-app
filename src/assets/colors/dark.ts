@@ -8,4 +8,14 @@ export const colorDark: ColorTheme = {
 	text: "#cccccc",
 	background: "#000000",
 	background2: "#000000",
+
+	// to be decided
+	mainTheme: "#B791F0",
+	fontB0: "#000000",
+	fontB1: "#333333",
+	fontB2: "#666666",
+	fontB3: "#999999",
+	statusNormal: "", //TODO
+	statusDisabled: {rgb: "#999999", alpha: 0.3},
+	statusWarning: "#FF3B30",
 };

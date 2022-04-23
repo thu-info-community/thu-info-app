@@ -4,10 +4,10 @@ import zh from "../assets/translations/zh";
 
 export const getLocale = () => {
 	const preferredLocales = getLocales();
-	return preferredLocales[0].languageTag;
+	return preferredLocales[0].languageTag.startsWith("zh") ? zh : en;
 };
 
-const translations = (getLocale().startsWith("zh") ? zh : en) as typeof zh;
+const translations = getLocale() as typeof zh;
 
 export function getStr<K extends keyof typeof zh>(key: K): string {
 	// @ts-ignore
