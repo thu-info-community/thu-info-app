@@ -331,4 +331,6 @@ export default {
 	noInvoice: "您目前没有可用电子发票。",
 	recentlyUsedFunction: "常用功能",
 	allFunction: "全部功能",
+	schedulePreview: "计划概览",
+	scheduleTomorrow: "明天",
 };

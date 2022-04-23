@@ -151,7 +151,7 @@ const persistConfig = {
 	version: 3,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule", "config", "cache", "credentials"],
+	whitelist: ["auth", "schedule", "config", "cache", "credentials", "top5"],
 	transforms: [
 		cacheTransform,
 		authTransform,
