@@ -9,6 +9,15 @@ export interface ColorTheme {
 	text: string;
 	background: string;
 	background2: string;
+
+	mainTheme: string;
+	fontB0: string;
+	fontB1: string;
+	fontB2: string;
+	fontB3: string;
+	statusNormal: string;
+	statusDisabled: {rgb: string; alpha: number};
+	statusWarning: string;
 }
 
 export interface Theme {
