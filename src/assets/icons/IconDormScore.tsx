@@ -1,26 +1,21 @@
+import {svgGenerator} from "../../utils/svgGenerator";
 import Svg, {Path} from "react-native-svg";
 import React from "react";
-import {svgGenerator} from "../../utils/svgGenerator";
-import themes from "../themes/themes";
 import {useColorScheme} from "react-native";
+import themes from "../themes/themes";
 
 export default svgGenerator((width, height) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	return (
-		<Svg viewBox="0 0 48 48" width={width} height={height}>
+		<Svg viewBox="0 0 48 48" height={height} width={width}>
+			<Path fillOpacity=".01" fill="#fff" d="M0 0h48v48H0z" />
 			<Path
 				strokeLinejoin="round"
 				strokeLinecap="round"
 				strokeWidth="3"
 				stroke="#333"
-				d="M26 36H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h36a2 2 0 0 1 2 2v26a2 2 0 0 1-2 2h-8M12 14h24M12 21h6M12 28h4"
-			/>
-			<Path
-				strokeWidth="3"
-				stroke="#333"
-				fill={theme.colors.mainTheme}
-				d="M30 33a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+				d="M8 12a3 3 0 0 1 3-3h26a3 3 0 0 1 3 3v11H8V12zM6 35v4M42 35v4"
 			/>
 			<Path
 				strokeLinejoin="round"
@@ -28,7 +23,14 @@ export default svgGenerator((width, height) => {
 				strokeWidth="3"
 				stroke="#333"
 				fill={theme.colors.mainTheme}
-				d="m30 40 4 2V31.472S32.86 33 30 33c-2.86 0-4-1.5-4-1.5V42l4-2z"
+				d="M29 18H19a3 3 0 0 0-3 3v2h16v-2a3 3 0 0 0-3-3z"
+			/>
+			<Path
+				strokeLinejoin="round"
+				strokeLinecap="round"
+				strokeWidth="3"
+				stroke="#333"
+				d="M4 26a3 3 0 0 1 3-3h34a3 3 0 0 1 3 3v9H4v-9z"
 			/>
 		</Svg>
 	);

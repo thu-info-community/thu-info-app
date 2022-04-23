@@ -63,6 +63,10 @@ import {ECardScreen} from "./ecard";
 import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
 import RNFS from "react-native-fs";
 import Snackbar from "react-native-snackbar";
+import {
+	ScheduleDetailProps,
+	ScheduleDetailScreen,
+} from "../schedule/scheduleDetail";
 
 export type HomeStackParamList = {
 	Home: undefined;
@@ -113,6 +117,7 @@ export type HomeStackParamList = {
 	Electricity: undefined;
 	EleRecord: undefined;
 	ECard: undefined;
+	ScheduleDetail: ScheduleDetailProps;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -558,6 +563,11 @@ const HomeStackUI = () => {
 				name="ECard"
 				component={ECardScreen}
 				options={{title: getStr("eCard")}}
+			/>
+			<Stack.Screen
+				name="ScheduleDetail"
+				component={ScheduleDetailScreen}
+				options={{title: getStr("scheduleDetail")}}
 			/>
 		</Stack.Navigator>
 	);
