@@ -13,8 +13,9 @@ import {helper} from "../../redux/store";
 import {useColorScheme} from "react-native";
 import {Invoice} from "thu-info-lib/dist/models/home/invoice";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {getStr} from "src/utils/i18n";
+import Snackbar from "react-native-snackbar";
 
 const InvoiceItem = ({
 	invoice,
@@ -74,15 +75,21 @@ const InvoiceItem = ({
 };
 
 export const InvoiceScreen = paginatedRefreshListScreen(
-	(_: PropsWithChildren<{navigation: HomeNav}>, page) =>
+	(_: PropsWithChildren<{navigation: RootNav}>, page) =>
 		helper.getInvoiceList(page),
 	(invoice, _, {navigation}) => (
 		<InvoiceItem
 			invoice={invoice}
 			onPress={() => {
-				navigation.navigate("InvoicePDF", {
-					base64: invoice.content,
-					id: invoice.inv_no,
+				Snackbar.show({
+					text: getStr("loading"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+				helper.getInvoicePDF(invoice.bus_no).then((pdf) => {
+					navigation.navigate("InvoicePDF", {
+						base64: pdf,
+						id: invoice.inv_no,
+					});
 				});
 			}}
 		/>

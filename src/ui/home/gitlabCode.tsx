@@ -1,5 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {GitLabCodeProp, GitLabMarkdownProp, HomeNav} from "./homeStack";
+import {
+	GitLabCodeProp,
+	GitLabMarkdownProp,
+	RootNav,
+} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import WebView from "react-native-webview";
@@ -10,7 +14,7 @@ export const GitlabCodeScreen = ({
 		params: {project, file},
 	},
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: GitLabCodeProp;
 }) => {
 	const themeName = useColorScheme();
@@ -44,7 +48,7 @@ export const GitlabMarkdownScreen = ({
 		params: {project, file},
 	},
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: GitLabMarkdownProp;
 }) => {
 	const themeName = useColorScheme();

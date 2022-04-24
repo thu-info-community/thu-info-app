@@ -1,4 +1,4 @@
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {
 	TextInput,
 	TouchableOpacity,
@@ -65,7 +65,7 @@ const BookItem = ({
 	);
 };
 
-export const ReservesLibWelcomeScreen = (props: {navigation: HomeNav}) => {
+export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -80,7 +80,7 @@ export const ReservesLibWelcomeScreen = (props: {navigation: HomeNav}) => {
 	}, []);
 
 	return paginatedRefreshListScreen(
-		async (_: PropsWithChildren<{navigation: HomeNav}>, page) =>
+		async (_: PropsWithChildren<{navigation: RootNav}>, page) =>
 			search.length === 0
 				? []
 				: (await helper.searchReservesLib(search, page)).data,

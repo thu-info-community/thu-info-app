@@ -10,7 +10,7 @@ import {
 import {StarRating} from "src/components/home/form";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
-import {FormRouteProp, HomeNav} from "./homeStack";
+import {FormRouteProp, RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
@@ -21,7 +21,7 @@ export const FormScreen = ({
 	navigation,
 }: {
 	route: FormRouteProp;
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const url: string = route.params.url;
 

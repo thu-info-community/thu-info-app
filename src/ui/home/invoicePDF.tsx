@@ -1,5 +1,5 @@
 import React from "react";
-import {HomeStackParamList} from "./homeStack";
+import {RootStackParamList} from "../../components/Root";
 import {Dimensions, StyleSheet, View} from "react-native";
 import Pdf from "react-native-pdf";
 import {RouteProp} from "@react-navigation/native";
@@ -9,7 +9,7 @@ export const InvoicePDFScreen = ({
 		params: {base64},
 	},
 }: {
-	route: RouteProp<HomeStackParamList, "InvoicePDF">;
+	route: RouteProp<RootStackParamList, "InvoicePDF">;
 }) => {
 	return (
 		<View style={styles.container}>

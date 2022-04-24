@@ -6,7 +6,7 @@ import {
 	View,
 } from "react-native";
 import React, {useEffect, useRef, useState} from "react";
-import {ClassroomDetailRouteProp} from "./homeStack";
+import {ClassroomDetailRouteProp} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import Icon from "react-native-vector-icons/FontAwesome";

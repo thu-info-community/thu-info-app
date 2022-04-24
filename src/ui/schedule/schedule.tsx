@@ -13,7 +13,7 @@ import {
 	Schedule,
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {ScheduleNav} from "./scheduleStack";
+import {RootNav} from "../../components/Root";
 import {currState, globalObjects, helper, State} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
@@ -32,7 +32,7 @@ interface ScheduleProps {
 	readonly shortenMap: {[key: string]: string | undefined};
 	readonly unitHeight: number;
 	getSchedule: () => void;
-	navigation: ScheduleNav;
+	navigation: RootNav;
 }
 
 const ScheduleUI = (props: ScheduleProps) => {

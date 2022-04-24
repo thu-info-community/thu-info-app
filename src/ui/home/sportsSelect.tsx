@@ -10,7 +10,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {HomeNav, SportsSelectProp} from "./homeStack";
+import {RootNav, SportsSelectProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
@@ -33,7 +33,7 @@ export const SportsSelectScreen = ({
 	navigation,
 }: {
 	route: SportsSelectProp;
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);

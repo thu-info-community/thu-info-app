@@ -5,7 +5,7 @@ import {State} from "../../redux/store";
 import {configSet} from "../../redux/actions/config";
 import {connect} from "react-redux";
 import {View} from "react-native";
-import {SettingsNav} from "./settingsStack";
+import {RootNav} from "../../components/Root";
 
 export const ScheduleSettingsUI = ({
 	height,
@@ -13,7 +13,7 @@ export const ScheduleSettingsUI = ({
 }: {
 	height: number;
 	setHeight: (newHeight: number) => void;
-	navigation: SettingsNav;
+	navigation: RootNav;
 }) => (
 	<View style={{padding: 10}}>
 		<SettingsEditValue

@@ -2,9 +2,9 @@ import {Alert, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getMails} from "../../utils/email";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 
-export const EmailListScreen = ({navigation}: {navigation: HomeNav}) => {
+export const EmailListScreen = ({navigation}: {navigation: RootNav}) => {
 	const List = simpleRefreshListScreen(
 		getMails,
 		(mail, _, __, {colors}) => (

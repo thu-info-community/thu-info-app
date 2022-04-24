@@ -18,7 +18,7 @@ import {helper, State} from "../../redux/store";
 import {addNewsCacheAction} from "../../redux/actions/cache";
 import {NewsCache} from "../../redux/states/cache";
 import {connect} from "react-redux";
-import {NewsNav, NewsRouteProp} from "./newsStack";
+import {RootNav} from "../../components/Root";
 import dayjs from "dayjs";
 import themes from "../../assets/themes/themes";
 import {NewsSlice} from "thu-info-lib/dist/models/news/news";
@@ -26,8 +26,8 @@ import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 
 interface NewsUIProps {
-	route: NewsRouteProp;
-	navigation: NewsNav;
+	route: any;
+	navigation: RootNav;
 	cache: Map<string, string>;
 	addCache: (payload: NewsCache) => void;
 }
@@ -118,7 +118,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 							}}>
 							{getStr("waitForLoading")}
 						</Text>
-						<Text
+						{/* <Text
 							style={{
 								fontSize: 16,
 								alignSelf: "center",
@@ -126,7 +126,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 								margin: 5,
 							}}>
 							{getStr("newsTip")}
-						</Text>
+						</Text> */}
 					</View>
 				}
 				data={newsList}
@@ -137,7 +137,7 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 							<TouchableWithoutFeedback
 								onPress={() => {
 									if (route.params === undefined) {
-										navigation.push("News", {source: item.channel});
+										// navigation.push("RootTabs", {source: item.channel});
 									}
 								}}>
 								{<FontAwesome name="file-text-o" size={40} color="purple" />}
