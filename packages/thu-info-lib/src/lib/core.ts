@@ -17,7 +17,7 @@ import {
     DORM_SCORE_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
-import {createHash} from "crypto";
+import {v4} from "uuid";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
@@ -182,15 +182,12 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         return response;
     }
     case "myhome_mobile": {
-        const userId = helper.userId;
-        const hash = createHash("sha256");
-        hash.update(userId + new Date().getTime());
-        const appId = hash.digest("hex");
+        const appId = v4();
         await uFetch(DORM_LOGIN_URL_PREFIX + appId, {
             __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
             __VIEWSTATEGENERATOR: "7FA746C3",
             __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
-            weixin_user_authenticateCtrl1$txtUserName: userId,
+            weixin_user_authenticateCtrl1$txtUserName: helper.userId,
             weixin_user_authenticateCtrl1$txtPassword: helper.dormPassword || helper.password,
             weixin_user_authenticateCtrl1$btnLogin: "登录",
         });
