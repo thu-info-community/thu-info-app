@@ -9,7 +9,7 @@ import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State, store} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
-import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
+import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
@@ -20,7 +20,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {LoginNav} from "../../components/AuthFlow";
-import {emailInit} from "../../utils/email";
 import {loginAction} from "../../redux/actions/auth";
 
 interface LoginProps {
@@ -228,16 +227,6 @@ export const LoginScreen = connect(
 					})
 					.then(() => {
 						dispatch(loginAction.success());
-						if (currState().config.emailName.length === 0) {
-							helper.getUserInfo().then(({emailName}) => {
-								dispatch(configSet("emailName", emailName));
-								emailInit(emailName).then(() =>
-									console.log(
-										`Successfully logged in with ${emailName}@mails.tsinghua.edu.cn`,
-									),
-								);
-							});
-						}
 						helper.getCalendar().then((c) => {
 							store.dispatch(setCalendarConfigAction(c));
 						});
