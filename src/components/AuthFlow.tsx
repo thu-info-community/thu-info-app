@@ -12,7 +12,6 @@ import {FeedbackScreen} from "../ui/settings/feedback";
 import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
 import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
-import {handleEmailInit} from "../utils/email";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
@@ -32,7 +31,6 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 	useEffect(() => {
 		checkUpdate();
 		checkBroadcast();
-		handleEmailInit();
 	}, []);
 
 	return props.status === LoginStatus.LoggedIn ? (
