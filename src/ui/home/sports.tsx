@@ -3,10 +3,10 @@ import React, {useState} from "react";
 import dayjs from "dayjs";
 import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 
-export const SportsScreen = ({navigation}: {navigation: HomeNav}) => {
+export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
 	const [idGym, setIdGym] = useState<string>();
 	const [idItem, setIdItem] = useState<string>();

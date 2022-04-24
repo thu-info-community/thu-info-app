@@ -1,7 +1,7 @@
 import React, {PropsWithChildren} from "react";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
-import {GitLabTreeProp, HomeNav} from "./homeStack";
+import {GitLabTreeProp, RootNav} from "../../components/Root";
 import {FileItem} from "../../components/home/gitlab";
 import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
@@ -17,7 +17,7 @@ export const GitlabTreeScreen = paginatedRefreshListScreen(
 				params: {project, path, ref},
 			},
 		}: PropsWithChildren<{
-			navigation: HomeNav;
+			navigation: RootNav;
 			route: GitLabTreeProp;
 		}>,
 		page,

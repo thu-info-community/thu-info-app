@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import {HomeNav, LibRoomPerformBookProp} from "./homeStack";
+import {RootNav, LibRoomPerformBookProp} from "../../components/Root";
 import {
 	convertUsageToSegments,
 	LibRoomBookTimeIndicator,
@@ -39,7 +39,7 @@ export const LibRoomPerformBookScreen = ({
 	navigation,
 }: {
 	route: LibRoomPerformBookProp;
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);

@@ -11,7 +11,7 @@ import {connect} from "react-redux";
 import themes from "../../assets/themes/themes";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
-import {ScheduleNav} from "./scheduleStack";
+import {RootNav} from "../../components/Root";
 import {
 	getOverlappedBlock,
 	Schedule,
@@ -30,7 +30,7 @@ import {useColorScheme} from "react-native";
 interface ScheduleAddProps {
 	scheduleList: Schedule[];
 	customCnt: number;
-	navigation: ScheduleNav;
+	navigation: RootNav;
 	addCustom: (payload: Schedule) => void;
 	delOrHide: (title: string, block: TimeSlice, choice: Choice) => void;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import {GitLabImageProp, HomeNav} from "./homeStack";
+import {GitLabImageProp, RootNav} from "../../components/Root";
 import {View} from "react-native";
 import {GITLAB_API_BASE_URL} from "thu-info-lib/dist/constants/strings";
 import ImageViewer from "react-native-image-zoom-viewer";
@@ -11,7 +11,7 @@ export const GitlabImageScreen = ({
 		params: {project, file},
 	},
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: GitLabImageProp;
 }) => {
 	return (

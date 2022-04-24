@@ -2,21 +2,21 @@ import React, {PropsWithChildren, useState} from "react";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {ProjectItem} from "../../components/home/gitlab";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {TextInput, TouchableOpacity, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Snackbar from "react-native-snackbar";
 
-export const GitlabSearchScreen = (props: {navigation: HomeNav}) => {
+export const GitlabSearchScreen = (props: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const [search, setSearch] = useState("");
 
 	return paginatedRefreshListScreen(
-		async (_: PropsWithChildren<{navigation: HomeNav}>, page) =>
+		async (_: PropsWithChildren<{navigation: RootNav}>, page) =>
 			search.length === 0 ? [] : helper.searchGitProjects(search, page),
 		(project, _, {navigation}) => (
 			<ProjectItem

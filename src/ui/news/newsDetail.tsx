@@ -3,7 +3,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {WebView} from "react-native-webview";
 import {View, ActivityIndicator, Dimensions} from "react-native";
-import {NewsDetailRouteProp} from "./newsStack";
+import {NewsDetailRouteProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "thu-info-lib/dist/constants/strings";
 import {useColorScheme} from "react-native";

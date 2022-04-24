@@ -19,7 +19,7 @@ import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
 import {LibRoomBookTimeIndicator} from "../../components/home/libRoomBookTimeIndicator";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
 
 const validLibNameCN = ["北馆", "西馆", "法图", "文图"];
@@ -29,7 +29,7 @@ const libNameToString = (o: LibName) => validLibNameCN[validLibName.indexOf(o)];
 const stringToLibName = (str: string) =>
 	validLibName[validLibNameCN.indexOf(str)];
 
-export const LibRoomBookScreen = ({navigation}: {navigation: HomeNav}) => {
+export const LibRoomBookScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	const [rooms, setRooms] = useState<LibRoomRes[]>([]);
