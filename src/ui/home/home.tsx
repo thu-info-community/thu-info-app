@@ -523,7 +523,7 @@ const getHomeFunctions = (
 		title="dormScore"
 		onPress={() => {
 			updateTop5("dormScore");
-			//TODO
+			navigation.navigate("DormScore");
 		}}>
 		<IconDormScore width={iconSize} height={iconSize} />
 	</HomeIcon>,
