@@ -64,8 +64,6 @@ import {GitlabTreeScreen} from "../ui/home/gitlabTree";
 import {GitlabCodeScreen, GitlabMarkdownScreen} from "../ui/home/gitlabCode";
 import {GitlabPDFScreen} from "../ui/home/gitlabPDF";
 import {GitlabImageScreen} from "../ui/home/gitlabImage";
-import {EmailScreen} from "../ui/home/email";
-import {EmailListScreen} from "../ui/home/emailList";
 import {WaterScreen} from "../ui/home/water";
 import {WasherWebScreen} from "../ui/home/washerWeb";
 import {ElectricityScreen} from "../ui/home/electricity";
@@ -207,8 +205,6 @@ type HomeStackParamList = {
 	InvoicePDF: {base64: string; id: string};
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
-	Email: {messageId: number};
-	EmailList: undefined;
 	Qzyq: undefined;
 	WasherWeb: undefined;
 	Sports: undefined;
@@ -255,8 +251,6 @@ export type ReservesLibPDFProp = RouteProp<
 	HomeStackParamList,
 	"ReservesLibPDF"
 >;
-
-export type EmailRouteProp = RouteProp<HomeStackParamList, "Email">;
 
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
@@ -672,16 +666,6 @@ export const Root = () => {
 				name="GitLabImage"
 				component={GitlabImageScreen}
 				options={({route}) => ({title: route.params.file.name})}
-			/>
-			<Stack.Screen
-				name="Email"
-				component={EmailScreen}
-				options={{title: getStr("email")}}
-			/>
-			<Stack.Screen
-				name="EmailList"
-				component={EmailListScreen}
-				options={{title: getStr("email")}}
 			/>
 			<Stack.Screen
 				name="Qzyq"

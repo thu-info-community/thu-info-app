@@ -9356,11 +9356,6 @@ thu-info-lib@2.0.0-alpha.29:
     uuid "8.3.2"
     xlsx "0.18.5"
 
-thu-info-mailcore@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/thu-info-mailcore/-/thu-info-mailcore-0.2.1.tgz#542967f1fa870548c8c8e8a2a3adf76e7cb95764"
-  integrity sha512-6ZfhFSdJaPWakCF7j5rkYw3hJzuGq4GaEg13Af1xd1O+0KPjVXGOx6fYS+5nfaZvvRi0pVunqYMatzStnUsJaA==
-
 tmpl@1.0.x:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
