@@ -12,6 +12,7 @@ import {ExpenditureScreen} from "./expenditure";
 import {ClassroomListScreen} from "./classroomList";
 import {ClassroomDetailScreen} from "./classroomDetail";
 import {RouteProp} from "@react-navigation/native";
+import {DormScoreScreen} from "./dormScore";
 import {LibraryScreen} from "./library";
 import {LibraryFloorScreen} from "./libraryFloor";
 import {LibrarySectionScreen} from "./librarySection";
@@ -87,6 +88,7 @@ export type HomeStackParamList = {
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
+	DormScore: undefined;
 	Invoice: undefined;
 	InvoicePDF: {base64: string; id: string};
 	ReservesLibWelcome: undefined;
@@ -324,6 +326,11 @@ const HomeStackUI = () => {
 				name="LibRoomBookRecord"
 				component={LibRoomBookRecordScreen}
 				options={{title: getStr("libRoomBookRecord")}}
+			/>
+			<Stack.Screen
+				name="DormScore"
+				component={DormScoreScreen}
+				options={{title: getStr("dormScore")}}
 			/>
 			<Stack.Screen
 				name="Invoice"
