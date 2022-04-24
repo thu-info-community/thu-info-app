@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import React, {ReactElement} from "react";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
@@ -149,7 +149,7 @@ const HomeSchedule = ({
 	navigation,
 }: {
 	schedule: ScheduleViewModel;
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -232,7 +232,7 @@ export const HomeScheduleSection = ({
 }: {
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
@@ -372,7 +372,7 @@ export type HomeFunction =
 	| "dormScore";
 
 const getHomeFunctions = (
-	navigation: HomeNav,
+	navigation: RootNav,
 	updateTop5: (func: HomeFunction) => void,
 ): ReactElement[] => [
 	<HomeIcon
@@ -530,7 +530,7 @@ const getHomeFunctions = (
 ];
 
 interface HomeProps {
-	navigation: HomeNav;
+	navigation: RootNav;
 	top5Functions: string[];
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {HomeNav, SportsDetailProp} from "./homeStack";
+import {RootNav, SportsDetailProp} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {
 	Alert,
@@ -26,7 +26,7 @@ export const SportsDetailScreen = ({
 	route,
 	navigation,
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: SportsDetailProp;
 }) => {
 	const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);

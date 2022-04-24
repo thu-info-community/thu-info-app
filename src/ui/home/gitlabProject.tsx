@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {GitLabProjectProp, HomeNav} from "./homeStack";
+import {GitLabProjectProp, RootNav} from "../../components/Root";
 import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -17,7 +17,7 @@ export const GitlabProjectScreen = ({
 		params: {project},
 	},
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: GitLabProjectProp;
 }) => {
 	const themeName = useColorScheme();

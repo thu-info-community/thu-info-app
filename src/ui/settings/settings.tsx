@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {SettingsNav} from "./settingsStack";
+import {RootNav} from "../../components/Root";
 import {helper, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {
@@ -27,7 +27,7 @@ import {doLogoutAction} from "../../redux/actions/auth";
 import QRCode from "react-native-qrcode-svg";
 import {getWeChatGroupQRCodeContent} from "../../utils/webApi";
 
-export const SettingsScreen = ({navigation}: {navigation: SettingsNav}) => {
+export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [showPopup, setShowPopup] = useState(false);
 	//const [url, setUrl] = useState("");
 	const [qrcodeContent, setQrcodeContent] = useState("");

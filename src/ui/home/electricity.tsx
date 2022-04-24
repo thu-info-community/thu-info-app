@@ -6,7 +6,7 @@ import {getStr} from "../../utils/i18n";
 import React, {useState} from "react";
 import Feather from "react-native-vector-icons/Feather";
 import {Text, TextInput, TouchableOpacity, View} from "react-native";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {doAlipay, hasAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
@@ -22,7 +22,7 @@ const ElectricityUI = ({
 	navigation,
 }: {
 	setDormPassword: (newToken: string) => void;
-	navigation: HomeNav;
+	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);

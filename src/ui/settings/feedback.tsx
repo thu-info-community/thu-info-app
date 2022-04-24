@@ -10,7 +10,7 @@ import {
 import React, {useState} from "react";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-import {SettingsNav} from "./settingsStack";
+import {RootNav} from "../../components/Root";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native";
 import {submitFeedback} from "../../utils/webApi";
@@ -46,7 +46,7 @@ const BottomButton = ({
 	);
 };
 
-export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
+export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const [text, setText] = useState("");
 	const [contact, setContact] = useState("");
 	const dark = useColorScheme() === "dark";
