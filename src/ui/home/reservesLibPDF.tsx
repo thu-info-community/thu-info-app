@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {HomeNav, ReservesLibPDFProp} from "./homeStack";
+import {RootNav, ReservesLibPDFProp} from "../../components/Root";
 import {
 	Alert,
 	Dimensions,
@@ -20,7 +20,7 @@ export const ReservesLibPDFScreen = ({
 		params: {book},
 	},
 }: {
-	navigation: HomeNav;
+	navigation: RootNav;
 	route: ReservesLibPDFProp;
 }) => {
 	const themeName = useColorScheme();

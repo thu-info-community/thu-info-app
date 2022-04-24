@@ -1,10 +1,10 @@
 import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
-const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => {
+const Classroom = ({name, navigation}: {name: string; navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	return (
@@ -34,7 +34,7 @@ const Classroom = ({name, navigation}: {name: string; navigation: HomeNav}) => {
 	);
 };
 
-export const ClassroomListScreen = ({navigation}: {navigation: HomeNav}) => (
+export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => (
 	<ScrollView>
 		<View
 			style={{

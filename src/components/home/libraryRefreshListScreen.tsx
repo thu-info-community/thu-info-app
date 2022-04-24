@@ -2,7 +2,7 @@ import React, {FC, PropsWithChildren, ReactElement, useState} from "react";
 import {simpleRefreshListScreen} from "../settings/simpleRefreshListScreen";
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
-import {HomeNav, HomeStackParamList} from "../../ui/home/homeStack";
+import {RootNav, RootStackParamList} from "../Root";
 import {RouteProp} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {helper} from "../../redux/store";
@@ -18,15 +18,15 @@ export function libraryRefreshListScreen<
 >(
 	dataSource: (
 		props: PropsWithChildren<{
-			navigation: HomeNav;
-			route: RouteProp<HomeStackParamList, S>;
+			navigation: RootNav;
+			route: RouteProp<RootStackParamList, S>;
 		}>,
 		dateChoice: 0 | 1,
 	) => Promise<T[]>,
 	onPress: (
 		props: PropsWithChildren<{
-			navigation: HomeNav;
-			route: RouteProp<HomeStackParamList, S>;
+			navigation: RootNav;
+			route: RouteProp<RootStackParamList, S>;
 		}>,
 		item: T,
 		choice: 0 | 1,
@@ -35,13 +35,13 @@ export function libraryRefreshListScreen<
 	header?: (theme: Theme) => ReactElement,
 	clickable?: boolean,
 ): FC<{
-	navigation: HomeNav;
-	route: RouteProp<HomeStackParamList, S>;
+	navigation: RootNav;
+	route: RouteProp<RootStackParamList, S>;
 }> {
 	return (
 		props: PropsWithChildren<{
-			navigation: HomeNav;
-			route: RouteProp<HomeStackParamList, S>;
+			navigation: RootNav;
+			route: RouteProp<RootStackParamList, S>;
 		}>,
 	) => {
 		const [choice, setChoice] = useState<0 | 1>(

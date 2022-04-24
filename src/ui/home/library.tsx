@@ -1,5 +1,5 @@
 import {Text, TouchableOpacity, View} from "react-native";
-import {HomeNav} from "./homeStack";
+import {RootNav} from "../../components/Root";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -8,7 +8,7 @@ import {helper} from "../../redux/store";
 
 export const LibraryScreen = simpleRefreshListScreen(
 	helper.getLibraryList,
-	(item, _, {navigation}: {navigation: HomeNav}, {colors}) => (
+	(item, _, {navigation}: {navigation: RootNav}, {colors}) => (
 		<View>
 			<TouchableOpacity
 				style={{

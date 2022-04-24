@@ -1,4 +1,4 @@
-import {LibrarySeatRouteProp} from "./homeStack";
+import {LibrarySeatRouteProp} from "../../components/Root";
 import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";

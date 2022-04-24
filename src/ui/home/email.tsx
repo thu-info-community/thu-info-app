@@ -2,7 +2,7 @@ import {Text, useColorScheme} from "react-native";
 import React, {useEffect, useState} from "react";
 import MailCore from "thu-info-mailcore";
 import WebView from "react-native-webview";
-import {EmailRouteProp} from "./homeStack";
+import {EmailRouteProp} from "../../components/Root";
 import {store} from "../../redux/store";
 import {configSet} from "../../redux/actions/config";
 import themes from "../../assets/themes/themes";

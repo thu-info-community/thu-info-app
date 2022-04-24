@@ -1,4 +1,7 @@
-import {LibraryMapRouteProp, LibrarySeatMapRouteProp} from "./homeStack";
+import {
+	LibraryMapRouteProp,
+	LibrarySeatMapRouteProp,
+} from "../../components/Root";
 import {Dimensions, Image, Text, View} from "react-native";
 import React, {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
