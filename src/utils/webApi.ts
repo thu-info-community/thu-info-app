@@ -69,7 +69,6 @@ export const getFeedbackReplies = async () => {
 	let resp = await fetch(`${rootUrl}/api/repliedfeedback`);
 	let json: {
 		content: string;
-		nickName: string;
 		reply: string;
 		replierName: string;
 		repliedTime: string;
