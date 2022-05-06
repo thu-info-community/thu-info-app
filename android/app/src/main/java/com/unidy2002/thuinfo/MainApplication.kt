@@ -5,15 +5,12 @@ import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.swmansion.reanimated.ReanimatedJSIModulePackage
 
 class MainApplication : Application(), ReactApplication {
     private val mReactNativeHost = object : ReactNativeHost(this) {
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
 
         override fun getPackages() = PackageList(this).packages
-
-        override fun getJSIModulePackage() = ReanimatedJSIModulePackage()
 
         override fun getJSMainModuleName() = "index"
     }
