@@ -82,6 +82,7 @@ import { CalendarData } from "./models/schedule/calendar";
 import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-lib";
 import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
+import {LoginError} from "./utils/error";
 
 export class InfoHelper {
     public userId = "";
@@ -96,6 +97,8 @@ export class InfoHelper {
 
     public clearCookieHandler = async () => {
     };
+
+    public loginErrorHook: ((e: LoginError) => any) | undefined = undefined;
 
     public login = async (
         auth: {

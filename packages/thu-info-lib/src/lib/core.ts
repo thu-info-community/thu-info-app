@@ -69,6 +69,11 @@ export const login = async (
     helper.userId = userId;
     helper.password = password;
     helper.dormPassword = dormPassword;
+    if (helper.userId === "" || helper.password === "") {
+        const e = new LoginError("Please login.");
+        helper.loginErrorHook && helper.loginErrorHook(e);
+        throw e;
+    }
     if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
@@ -87,14 +92,19 @@ export const login = async (
             case "NEED_CONFIRM":
                 await uFetch(CONFIRM_LOGIN_URL, {});
                 break;
-            default:
-                throw new LoginError(loginResponse.message);
+            default: {
+                const e = new LoginError(loginResponse.message);
+                helper.loginErrorHook && helper.loginErrorHook(e);
+                throw e;
+            }
             }
         }
         try {
             await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
         } catch (e: any) {
-            throw new LoginError(e?.message);
+            const loginError = new LoginError(e?.message);
+            helper.loginErrorHook && helper.loginErrorHook(loginError);
+            throw loginError;
         }
     }
 };
