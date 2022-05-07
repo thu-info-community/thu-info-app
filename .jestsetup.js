@@ -63,7 +63,7 @@ jest.mock("react-native-keychain", () => ({
 	resetGenericPassword: jest.fn().mockResolvedValue(),
 }));
 
-jest.mock("react-native-snackbar", () => ({LENGTH_LONG: 0, LENGTH_SHORT: 0}));
+jest.mock("react-native-snackbar", () => ({LENGTH_LONG: 0, LENGTH_SHORT: 0, show: jest.fn()}));
 
 jest.mock("@react-native-community/cookies", () => ({
 	clearAll: jest.fn().mockResolvedValue(),
