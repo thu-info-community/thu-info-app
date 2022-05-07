@@ -31,9 +31,7 @@ export const auth = (
 		case LOGIN_FAILURE:
 			return {
 				...state,
-				userId: "",
-				password: "",
-				status: action.payload,
+				status: LoginStatus.Failed,
 			};
 		case CHANGE_PASSWORD:
 			return {

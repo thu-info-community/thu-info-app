@@ -1,4 +1,5 @@
 import {createStore} from "redux";
+import {loginAction} from "./actions/auth";
 import {AuthState, LoginStatus} from "./states/auth";
 import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
@@ -25,6 +26,7 @@ import {
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {Top5} from "./states/top5";
 import {top5} from "./reducers/top5";
+import Snackbar from "react-native-snackbar";
 
 export const helper = new InfoHelper();
 
@@ -69,15 +71,15 @@ const rootReducer = combineReducers({
 const authTransform = createTransform(
 	(a: AuthState) => ({
 		...a,
-		status:
-			a.status === LoginStatus.LoggedIn
-				? LoginStatus.LoggedIn
-				: LoginStatus.None,
+		status: LoginStatus.LoggedIn,
 	}),
 	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
-		return a;
+		return {
+			...a,
+			status: LoginStatus.LoggedIn,
+		};
 	},
 	{
 		whitelist: ["auth"],
@@ -184,4 +186,16 @@ export const currState = () => store.getState() as State;
 
 export const globalObjects = {
 	scheduleViewShot: null as React.RefObject<ViewShot> | null,
+};
+
+helper.loginErrorHook = (e) => {
+	store.dispatch(loginAction.failure(LoginStatus.Failed));
+	setTimeout(
+		() =>
+			Snackbar.show({
+				text: `LoginError: ${e.message}`,
+				duration: Snackbar.LENGTH_SHORT,
+			}),
+		100,
+	);
 };

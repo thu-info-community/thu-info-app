@@ -12,7 +12,6 @@ import {LoginStatus} from "../../redux/states/auth";
 import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {TouchableOpacity} from "react-native-gesture-handler";
-import Snackbar from "react-native-snackbar";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
@@ -28,11 +27,9 @@ interface LoginProps {
 	readonly status: LoginStatus;
 	login: (userId: string, password: string) => void;
 	loginSuccess: () => void;
-	resetStatus: () => void;
 	navigation: LoginNav;
 }
 
-// Not That Ugly UI
 const LoginUI = (props: LoginProps) => {
 	const [userId, setUserId] = React.useState(props.userId);
 	const [password, setPassword] = React.useState(props.password);
@@ -51,22 +48,6 @@ const LoginUI = (props: LoginProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-		if (
-			props.status !== LoginStatus.None &&
-			props.status !== LoginStatus.LoggingIn &&
-			props.status !== LoginStatus.LoggedIn
-		) {
-			Snackbar.show({
-				// @ts-ignore
-				text: `${getStr("loginFailure")}:${props.status.message}`,
-				duration: Snackbar.LENGTH_LONG,
-			});
-			props.resetStatus();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.status]);
 
 	const width = Dimensions.get("window").width * 0.4;
 
@@ -232,11 +213,10 @@ export const LoginScreen = connect(
 							store.dispatch(setCalendarConfigAction(c));
 						});
 					})
-					.catch((reason: LoginStatus) => {
-						dispatch(loginAction.failure(reason));
+					.catch(() => {
+						// Do nothing
 					});
 			},
-			resetStatus: () => loginAction.failure(LoginStatus.None),
 		};
 	},
 )(LoginUI);
