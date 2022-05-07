@@ -3,7 +3,7 @@ import React from "react";
 import {App} from "../src/App";
 import renderer from "react-test-renderer";
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 it("renders correctly", async () => {
