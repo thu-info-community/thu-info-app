@@ -95,7 +95,7 @@
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"eslint": "8.15.0",
 		"eslint-plugin-prettier": "4.0.0",
-		"jest": "27.5.1",
+		"jest": "28.1.0",
 		"metro-react-native-babel-preset": "0.70.3",
 		"prettier": "2.6.2",
 		"react-native-codegen": "0.0.16",
