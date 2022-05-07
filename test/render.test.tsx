@@ -27,13 +27,13 @@ it("renders correctly", async () => {
 
 	// Press a home page function
 	root.findByProps({title: "report"}).props.onPress();
-	await sleep(3000);
+	await sleep(10000);
 
 	// Perform login
 	root.findByProps({testID: "loginUserId"}).props.onChangeText("8888");
 	root.findByProps({testID: "loginPassword"}).props.onChangeText("8888");
 	root.findByProps({testID: "loginButton"}).props.onPress();
-	await sleep(3000);
+	await sleep(10000);
 
 	const top5RecentlyNew = root.findByProps({
 		testID: "homeFunctions-recentlyUsedFunction",
