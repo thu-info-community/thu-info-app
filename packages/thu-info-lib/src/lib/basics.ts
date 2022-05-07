@@ -61,6 +61,9 @@ type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
 
+const webVPNTitle = "<title>清华大学WebVPN</title>";
+const systemMessage = "time out用户登陆超时或访问内容不存在。请重试";
+
 export const getUserInfo = async (helper: InfoHelper): Promise<{
     fullName: string;
     emailName: string;
@@ -159,7 +162,13 @@ export const getReport = (
                 })
                 .get();
             if (result.length === 0 && str.indexOf("table1") === -1) {
-                throw new ReportError();
+                if (str.includes(systemMessage)) {
+                    throw new ReportError(systemMessage);
+                } else if (str.includes(webVPNTitle)) {
+                    throw new LibError();
+                } else {
+                    throw new ReportError("thu-info-lib 未处理的异常");
+                }
             }
             return result;
         }),
@@ -417,7 +426,13 @@ export const getClassroomState = (
                 )
                 .get();
             if (result.length === 0 && s.indexOf("scrollContent") === -1) {
-                throw new ClassroomStateError();
+                if (s.includes(systemMessage)) {
+                    throw new ClassroomStateError(systemMessage);
+                } else if (s.includes(webVPNTitle)) {
+                    throw new LibError();
+                } else {
+                    throw new ClassroomStateError("thu-info-lib 未处理的异常");
+                }
             }
             return result as [string, number[]][];
         }),

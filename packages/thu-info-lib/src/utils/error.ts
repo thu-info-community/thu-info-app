@@ -15,7 +15,9 @@ export class UrlError extends LibError {
 }
 
 export class ReportError extends LibError {
-
+    constructor(message?: string) {
+        super(message);
+    }
 }
 
 export class AssessmentError extends LibError {
