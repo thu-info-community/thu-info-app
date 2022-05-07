@@ -104,6 +104,7 @@ const LoginUI = (props: LoginProps) => {
 				</View>
 				<TouchableOpacity
 					style={style.loginButtonStyle}
+					testID="loginButton"
 					onPress={() => {
 						performLogin();
 					}}>
