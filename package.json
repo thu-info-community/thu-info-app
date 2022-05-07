@@ -34,7 +34,7 @@
 		"md5": "2.3.0",
 		"moment": "2.29.3",
 		"react": "18.1.0",
-		"react-native": "0.67.4",
+		"react-native": "0.68.1",
 		"react-native-blob-util": "0.16.0",
 		"react-native-device-info": "8.7.1",
 		"react-native-easy-grid": "0.2.2",
