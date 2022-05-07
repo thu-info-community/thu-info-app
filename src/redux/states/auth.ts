@@ -17,5 +17,5 @@ export interface AuthState extends Auth {
 export const defaultAuthState: AuthState = {
 	userId: "",
 	password: "",
-	status: LoginStatus.None,
+	status: LoginStatus.LoggedIn,
 };
