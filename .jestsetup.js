@@ -4,6 +4,29 @@ import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-
 jest.mock('react-native-device-info', () => mockRNDeviceInfo)
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
+jest.mock("react-native-localize", () => ({
+	findBestAvailableLanguage: () => ({
+		languageTag: "zh-CN",
+		isRTL: false,
+	}),
+	getLocales: () => [
+		{countryCode: "CN", languageTag: "zh-CN", languageCode: "zh", isRTL: false},
+	],
+	getNumberFormatSettings: () => ({
+		decimalSeparator: ".",
+		groupingSeparator: ",",
+	}),
+	getCalendar: () => "gregorian",
+	getCountry: () => "CN",
+	getCurrencies: () => [],
+	getTemperatureUnit: () => "celsius",
+	getTimeZone: () => "China/Beijing",
+	uses24HourClock: () => true,
+	usesMetricSystem: () => true,
+	addEventListener: jest.fn(),
+	removeEventListener: jest.fn(),
+}));
+
 jest.mock('scheduler', () => ({
 	unstable_now: () => new Date().getTime(),
 }));
