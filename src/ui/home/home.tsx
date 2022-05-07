@@ -57,7 +57,11 @@ export const HomeFunctionSection = ({
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr(title)}</Text>
 			<View style={style.SectionContentContainer}>
-				<View style={style.functionSectionContent}>{children}</View>
+				<View
+					style={style.functionSectionContent}
+					testID={"homeFunctions-" + title}>
+					{children}
+				</View>
 			</View>
 		</View>
 	);
