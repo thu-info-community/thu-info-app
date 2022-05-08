@@ -33,7 +33,7 @@ If you are a developer...
 
 #### iOS
 
-**Make sure you have Xcode >= 11.6 installed and the command line tools enabled.**
+**Make sure you have Xcode >= 12 installed and the command line tools enabled.**
 
 We recommend using [Homebrew](https://brew.sh/) to install the tools required.
 
