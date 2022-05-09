@@ -41,22 +41,6 @@ const endMap: {[key: string]: number} = {
     "21:45": 14,
 };
 
-const examBeginMap: {[key: string]: number} = {
-    "9:00": 2,
-    "2:30": 7,
-    "14:30": 7,
-    "7:00": 12,
-    "19:00": 12,
-};
-
-const examEndMap: {[key: string]: number} = {
-    "11:00": 4,
-    "4:30": 9,
-    "16:30": 9,
-    "9:00": 13,
-    "21:00": 13,
-};
-
 export const MAX_WEEK_LIST = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
     11, 12, 13, 14, 15, 16, 17, 18,
@@ -73,6 +57,13 @@ export interface TimeSlice {
     begin: number,
     end: number,
     activeWeeks: number[], // 请尽量保持该数组有序
+}
+
+export interface ExamTimeSlice {
+    dayOfWeek: number,
+    weekNumber: number,
+    begin: string,  // HH:mm
+    end: string,    // HH:mm
 }
 
 // TimeSlice methods BEGIN
@@ -133,6 +124,9 @@ export interface ScheduleTime {
     // 添加新方法时，请始终保持这个数组是有序的、时间块不重叠、不存在相邻未合并时间块的
     // @warning 请勿通过除了 scheduleTimeAdd, scheduleTimeRemove 函数之外的任何方式修改该数组！
     base: TimeSlice[];
+
+    // 仅用于存储考试类型的时间信息
+    exams?: ExamTimeSlice[];
 }
 
 // ScheduleTime methods BEGIN
@@ -474,12 +468,12 @@ export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
                     activeTime: {base: []},
                     delOrHideTime: {base: []}
                 });
-                scheduleTimeAdd(scheduleList[scheduleList.length - 1].activeTime, {
+                scheduleList[scheduleList.length - 1].activeTime.exams = [{
                     dayOfWeek,
-                    begin: examBeginMap[o.kssj.replace("：", ":")],
-                    end: examEndMap[o.jssj.replace("：", ":")],
-                    activeWeeks: [weekNumber],
-                });
+                    begin: o.kssj.replace("：", ":"),
+                    end: o.jssj.replace("：", ":"),
+                    weekNumber,
+                }];
                 break;
             }
             }
