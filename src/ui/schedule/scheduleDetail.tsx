@@ -69,8 +69,8 @@ export interface ScheduleDetailProps {
 	location: string;
 	week: number;
 	dayOfWeek: number;
-	begin: number;
-	end: number;
+	begin: number | string;
+	end: number | string;
 	alias: string;
 	type: ScheduleType;
 }
@@ -102,6 +102,9 @@ export const ScheduleDetailScreen = ({route}: any) => {
 	);
 
 	const delButton = (choice: Choice) => {
+		if (props.type === ScheduleType.EXAM) {
+			return null;
+		}
 		const verbText: string =
 			props.type === ScheduleType.CUSTOM && choice === Choice.ALL
 				? getStr("delSchedule")
@@ -238,19 +241,32 @@ export const ScheduleDetailScreen = ({route}: any) => {
 				<Text style={{marginLeft: 5, color: colors.text}}>
 					{getStr("dayOfWeek")[props.dayOfWeek]}
 				</Text>
-				<Text style={{marginLeft: 5, color: colors.text}}>
-					{getStr("periodNumPrefix") +
-						props.begin +
-						(props.begin === props.end ? "" : " ~ " + props.end) +
-						getStr("periodNumSuffix")}
-				</Text>
-				<Text style={{marginLeft: 5, color: "gray"}}>
-					{(getStr("mark") === "CH" ? "（" : "(") +
-						beginTime[props.begin] +
-						" ~ " +
-						endTime[props.end] +
-						(getStr("mark") === "CH" ? "）" : ")")}
-				</Text>
+				{props.type !== ScheduleType.EXAM && (
+					<>
+						<Text style={{marginLeft: 5, color: colors.text}}>
+							{getStr("periodNumPrefix") +
+								props.begin +
+								(props.begin === props.end ? "" : " ~ " + props.end) +
+								getStr("periodNumSuffix")}
+						</Text>
+						<Text style={{marginLeft: 5, color: "gray"}}>
+							{(getStr("mark") === "CH" ? "（" : "(") +
+								beginTime[props.begin] +
+								" ~ " +
+								endTime[props.end] +
+								(getStr("mark") === "CH" ? "）" : ")")}
+						</Text>
+					</>
+				)}
+				{props.type === ScheduleType.EXAM && (
+					<Text style={{marginLeft: 5, color: "gray"}}>
+						{(getStr("mark") === "CH" ? "（" : "(") +
+							props.begin +
+							" ~ " +
+							props.end +
+							(getStr("mark") === "CH" ? "）" : ")")}
+					</Text>
+				)}
 			</View>
 			{nullAlias(newAlias) ? null : (
 				<View
