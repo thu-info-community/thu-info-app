@@ -246,6 +246,11 @@ export const roamingWrapper = async <R>(
     payload: string,
     operation: (param?: string) => Promise<R>,
 ): Promise<R> => {
+    if (helper.userId === "" || helper.password === "") {
+        const e = new LoginError("Please login.");
+        helper.loginErrorHook && helper.loginErrorHook(e);
+        throw e;
+    }
     try {
         if (policy) {
             try {
