@@ -25,6 +25,22 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import md5 from "md5";
 
+const examBeginMap: {[key: string]: number} = {
+	"9:00": 2.5,
+	"2:30": 7.5,
+	"14:30": 7.5,
+	"7:00": 6.5,
+	"19:00": 6.5,
+};
+
+const examEndMap: {[key: string]: number} = {
+	"11:00": 3.5,
+	"4:30": 8.5,
+	"16:30": 8.5,
+	"9:00": 13,
+	"21:00": 13,
+};
+
 interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
 	readonly cache: string;
@@ -236,6 +252,41 @@ const ScheduleUI = (props: ScheduleProps) => {
 							);
 						}
 					});
+				});
+				val.activeTime.exams?.forEach((slice) => {
+					if (slice.weekNumber === week) {
+						components.push(
+							<ScheduleBlock
+								dayOfWeek={slice.dayOfWeek}
+								begin={examBeginMap[slice.begin]}
+								end={examEndMap[slice.end]}
+								name={(props.shortenMap[val.name] ?? val.name).substring(
+									val.type === ScheduleType.CUSTOM ? 6 : 0,
+								)}
+								location={val.location}
+								gridHeight={unitHeight}
+								gridWidth={unitWidth}
+								key={`${val.name}-${week}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
+								blockColor={
+									colorList[
+										parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
+									]
+								}
+								onPress={() => {
+									props.navigation.navigate("ScheduleDetail", {
+										name: val.name,
+										location: val.location,
+										week: week,
+										dayOfWeek: slice.dayOfWeek,
+										begin: slice.begin,
+										end: slice.end,
+										alias: props.shortenMap[val.name] ?? "",
+										type: val.type,
+									});
+								}}
+							/>,
+						);
+					}
 				});
 			});
 		return components;
