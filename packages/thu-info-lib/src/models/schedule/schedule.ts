@@ -169,9 +169,13 @@ const wrappedConcat = (time: ScheduleTime, newList: TimeSlice[]): void => {
  * @returns 布尔值，表示是否安排
  */
 export const activeWeek = (time: ScheduleTime, week: number): boolean => {
-    return time.base.reduce((prev: boolean, curr: TimeSlice) => (
+    const baseIsActive = time.base.reduce((prev: boolean, curr: TimeSlice) => (
         prev || (curr.activeWeeks.indexOf(week) > -1)
     ), false);
+    const examIsActive = time.exams?.reduce((prev: boolean, curr: ExamTimeSlice) => (
+        prev || (curr.weekNumber === week)
+    ), false) ?? false;
+    return baseIsActive || examIsActive;
 };
 
 /**
