@@ -79,7 +79,7 @@
 		"@babel/preset-env": "7.17.10",
 		"@babel/preset-typescript": "7.16.7",
 		"@babel/runtime": "7.17.9",
-		"@react-native-community/eslint-config": "3.0.1",
+		"@react-native-community/eslint-config": "3.0.2",
 		"@types/he": "1.1.2",
 		"@types/jest": "27.5.1",
 		"@types/md5": "2.3.2",
