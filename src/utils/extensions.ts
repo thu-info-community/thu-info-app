@@ -31,7 +31,6 @@ if (global.FileReader) {
 		this._error = null;
 		const fr = new FileReader();
 		fr.onloadend = () => {
-			// eslint-disable-next-line no-undef
 			const content = atob(
 				// @ts-ignore
 				fr.result.substr("data:application/octet-stream;base64,".length),
