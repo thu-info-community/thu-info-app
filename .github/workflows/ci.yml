@@ -103,8 +103,10 @@ jobs:
       - name: Setup caching
         uses: actions/cache@v3
         with:
-          path: node_modules
-          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            node_modules
+            ios/Pods
+          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
             $cache-{{ runner.OS }}-
       - name: Install dependencies
