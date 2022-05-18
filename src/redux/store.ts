@@ -26,7 +26,9 @@ import {
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {Top5} from "./states/top5";
 import {top5} from "./reducers/top5";
+import {reservation} from "./reducers/reservation";
 import Snackbar from "react-native-snackbar";
+import {defaultReservation, Reservation} from "./states/reservation";
 
 export const helper = new InfoHelper();
 
@@ -43,6 +45,7 @@ export interface State {
 	credentials: Credentials;
 	cache: Cache;
 	top5: Top5;
+	reservation: Reservation;
 }
 
 const rootReducer = combineReducers({
@@ -66,6 +69,7 @@ const rootReducer = combineReducers({
 	),
 	cache,
 	top5,
+	reservation,
 });
 
 const authTransform = createTransform(
@@ -150,10 +154,18 @@ const migrateSchedule = (old: any): Schedule => {
 };
 
 const persistConfig = {
-	version: 3,
+	version: 4,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: ["auth", "schedule", "config", "cache", "credentials", "top5"],
+	whitelist: [
+		"auth",
+		"schedule",
+		"config",
+		"cache",
+		"credentials",
+		"top5",
+		"reservation",
+	],
 	transforms: [
 		cacheTransform,
 		authTransform,
@@ -173,6 +185,7 @@ const persistConfig = {
 									? state.schedule.baseSchedule?.map(migrateSchedule) ?? []
 									: state.schedule.baseSchedule,
 						},
+						reservation: state.reservation ?? defaultReservation,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),

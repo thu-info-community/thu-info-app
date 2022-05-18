@@ -30,7 +30,7 @@ import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {currState, helper, State} from "../../redux/store";
+import {currState, helper, State, store} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
@@ -40,6 +40,9 @@ import {
 import dayjs from "dayjs";
 import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
+import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
+import Snackbar from "react-native-snackbar";
+import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 
 const iconSize = 40;
 
@@ -226,6 +229,103 @@ const HomeSchedule = ({
 				</View>
 			</View>
 		</TouchableOpacity>
+	);
+};
+
+export const HomeReservationSection = ({
+	activeLibBookRecords,
+}: {
+	activeLibBookRecords: LibBookRecord[];
+}) => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	const style = styles(themeName);
+
+	const transformedRecords = activeLibBookRecords
+		.map((e) => ({
+			...e,
+			lib: e.pos.substring(0, e.pos.indexOf(":")).replace(/-/g, " - "),
+			seat: e.pos.substring(e.pos.indexOf(":") + 1),
+			due: dayjs(e.time, "YYYY-MM-DD HH:mm"),
+		}))
+		.sort((a, b) => a.due.valueOf() - b.due.valueOf());
+
+	return (
+		<View style={style.SectionContainer}>
+			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
+			<View style={style.SectionContentContainer}>
+				<View style={style.reservationSectionContainer}>
+					{transformedRecords.length === 0 ? (
+						<Text>{getStr("noActiveLibBookRecord")}</Text>
+					) : (
+						<>
+							<Text>{transformedRecords[0].lib}</Text>
+							<View
+								style={{
+									padding: 10,
+									flexDirection: "row",
+									alignItems: "center",
+								}}>
+								<Text style={{fontSize: 20, fontWeight: "600"}}>
+									{transformedRecords[0].seat}
+								</Text>
+								<TouchableOpacity
+									onPress={() =>
+										Alert.alert(
+											getStr("confirmCancelBooking"),
+											transformedRecords[0].pos,
+											[
+												{text: getStr("cancel")},
+												{
+													text: getStr("confirm"),
+													onPress: () => {
+														transformedRecords[0].delId !== undefined &&
+															helper
+																.cancelBooking(transformedRecords[0].delId)
+																.then(() =>
+																	Snackbar.show({
+																		text: getStr("cancelSucceeded"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	}),
+																)
+																.catch((e) => {
+																	Snackbar.show({
+																		text:
+																			typeof e.message === "string"
+																				? e.message
+																				: getStr("networkRetry"),
+																		duration: Snackbar.LENGTH_SHORT,
+																	});
+																})
+																.then(helper.getBookingRecords)
+																.then((r) => {
+																	store.dispatch(
+																		setActiveLibBookRecordAction(r),
+																	);
+																});
+													},
+												},
+											],
+											{cancelable: true},
+										)
+									}>
+									<Text style={{color: theme.colors.accent, marginLeft: 12}}>
+										{getStr("cancelBooking")}
+									</Text>
+								</TouchableOpacity>
+							</View>
+							<Text style={{textAlign: "center"}}>
+								{getStr("bookingHintPrefix")}
+								<Text style={{fontWeight: "bold"}}>
+									{transformedRecords[0].due.add(30, "minute").format("HH:mm")}
+								</Text>
+								{getStr("bookingHintSuffix")}
+							</Text>
+						</>
+					)}
+				</View>
+			</View>
+		</View>
 	);
 };
 
@@ -552,9 +652,11 @@ const getHomeFunctions = (
 interface HomeProps {
 	navigation: RootNav;
 	top5Functions: string[];
+	activeLibBookRecords: LibBookRecord[];
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
 	updateTop5: (payload: string) => void;
+	setActiveLibBookRecord: (payload: LibBookRecord[]) => void;
 }
 
 const HomeUI = (props: HomeProps) => {
@@ -575,11 +677,22 @@ const HomeUI = (props: HomeProps) => {
 		homeFunctions.find((y) => y.key === x),
 	);
 
+	React.useEffect(() => {
+		setTimeout(() => {
+			helper.getBookingRecords().then(props.setActiveLibBookRecord);
+			// To avoid login hazard between getBookingRecords and getCountdown
+		}, 3000);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<ScrollView style={{backgroundColor: theme.colors.background2}}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5}
 			</HomeFunctionSection>
+			<HomeReservationSection
+				activeLibBookRecords={props.activeLibBookRecords}
+			/>
 			<HomeScheduleSection
 				baseSchedule={props.baseSchedule}
 				shortenMap={props.shortenMap}
@@ -596,9 +709,12 @@ export const HomeScreen = connect(
 	(state: State) => ({
 		...state.top5,
 		...state.schedule,
+		...state.reservation,
 	}),
 	(dispatch) => ({
 		updateTop5: (payload: string) => dispatch(top5UpdateAction(payload)),
+		setActiveLibBookRecord: (payload: LibBookRecord[]) =>
+			dispatch(setActiveLibBookRecordAction(payload)),
 	}),
 )(HomeUI);
 
@@ -637,5 +753,11 @@ const styles = themedStyles((theme) => ({
 		color: theme.colors.fontB2,
 		fontWeight: "bold",
 		paddingTop: 8,
+	},
+	reservationSectionContainer: {
+		paddingHorizontal: 24,
+		paddingVertical: 20,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 }));
