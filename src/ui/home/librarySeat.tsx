@@ -3,10 +3,11 @@ import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
-import {helper} from "../../redux/store";
+import {helper, store} from "../../redux/store";
 import React from "react";
 import {Text, View} from "react-native";
 import {getSocketsStatusBySectionId} from "../../utils/webApi";
+import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
@@ -46,6 +47,9 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 										duration: Snackbar.LENGTH_SHORT,
 									});
 									refresh();
+									helper.getBookingRecords().then((r) => {
+										store.dispatch(setActiveLibBookRecordAction(r));
+									});
 								})
 								.catch(() =>
 									Snackbar.show({
