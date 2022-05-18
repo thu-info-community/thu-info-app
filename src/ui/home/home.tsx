@@ -246,8 +246,9 @@ export const HomeReservationSection = ({
 			...e,
 			lib: e.pos.substring(0, e.pos.indexOf(":")).replace(/-/g, " - "),
 			seat: e.pos.substring(e.pos.indexOf(":") + 1),
-			due: dayjs(e.time, "YYYY-MM-DD HH:mm"),
+			due: dayjs(e.time, "YYYY-MM-DD HH:mm").add(30, "minute"),
 		}))
+		.filter((e) => e.due.add(30, "minute").valueOf() > dayjs().valueOf())
 		.sort((a, b) => a.due.valueOf() - b.due.valueOf());
 
 	return (
@@ -317,7 +318,7 @@ export const HomeReservationSection = ({
 							<Text style={{textAlign: "center"}}>
 								{getStr("bookingHintPrefix")}
 								<Text style={{fontWeight: "bold"}}>
-									{transformedRecords[0].due.add(30, "minute").format("HH:mm")}
+									{transformedRecords[0].due.format("HH:mm")}
 								</Text>
 								{getStr("bookingHintSuffix")}
 							</Text>
