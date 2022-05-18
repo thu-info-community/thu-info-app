@@ -3,10 +3,15 @@ import React from "react";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
-import {helper} from "../../redux/store";
+import {helper, store} from "../../redux/store";
+import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 
 export const LibBookRecordScreen = simpleRefreshListScreen(
-	helper.getBookingRecords,
+	() =>
+		helper.getBookingRecords().then((r) => {
+			store.dispatch(setActiveLibBookRecordAction(r));
+			return r;
+		}),
 	({pos, time, status, delId}, refresh, _, {colors}) => {
 		const [lib, seat] = pos.split(":");
 		return (
