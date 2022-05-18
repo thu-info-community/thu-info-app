@@ -8,7 +8,6 @@ export const reservation = (
 ): Reservation => {
 	switch (action.type) {
 		case SET_ACTIVE_LIB_BOOK_RECORD:
-			console.log(action);
 			return {
 				activeLibBookRecords: action.payload.filter(
 					({delId}) => delId !== undefined,
