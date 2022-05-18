@@ -6,8 +6,10 @@ import {
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
 	GITHUB_REPO_URL,
+	Johnny_URL,
 	LIB_URL,
 	UNIDY2002_URL,
+	VZHAO_21_URL,
 	WERKEYTOM_URL,
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
@@ -71,6 +73,24 @@ export const AboutScreen = () => {
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
 					EveElseIf @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(Johnny_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					Johnny @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(VZHAO_21_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					vzhao-21 @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<View style={{height: 10}} />
