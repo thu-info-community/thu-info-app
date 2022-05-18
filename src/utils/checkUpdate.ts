@@ -1,6 +1,6 @@
 import {getBroadcastData, getUpdateInfo} from "../network/update";
 import {currState, store} from "../redux/store";
-import {Alert, Linking} from "react-native";
+import {Alert, Linking, Platform} from "react-native";
 import {getStr} from "./i18n";
 import {configSet} from "../redux/actions/config";
 import Snackbar from "react-native-snackbar";
@@ -39,7 +39,9 @@ export const checkUpdate = (force: boolean = false) => {
 										TUNA_BASE_URL + r[0].versionName,
 									);
 									await Linking.openURL(
-										status === 404 ? r[0].url : TUNA_LATEST_URL,
+										Platform.OS === "ios" || status === 404
+											? r[0].url
+											: TUNA_LATEST_URL,
 									);
 								} catch (e) {
 									NetworkRetry();
