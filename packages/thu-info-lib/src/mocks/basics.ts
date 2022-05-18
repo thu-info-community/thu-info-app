@@ -547,3 +547,10 @@ export const MOCK_CALENDAR_DATA: CalendarData = {
     semesterId: "2021-2022-2",
     weekCount: 18,
 };
+
+export const MOCK_COUNTDOWN_DATA = [
+    "距22-23秋 本科生预选 开始还有5天",
+    "距21-22夏 本研选课 开始还有13天",
+    "距22-23秋 本科生正选 开始还有14天",
+];
+

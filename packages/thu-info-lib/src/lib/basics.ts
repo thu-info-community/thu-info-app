@@ -38,6 +38,7 @@ import {
     MOCK_BANK_PAYMENT,
     MOCK_CALENDAR_DATA,
     MOCK_CLASSROOM_STATE,
+    MOCK_COUNTDOWN_DATA,
     MOCK_EXPENDITURES,
     MOCK_INVOICE_LIST,
     MOCK_LOSE_CARD_CODE,
@@ -563,8 +564,18 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
         MOCK_CALENDAR_DATA,
     );
 
-export const countdown = async (): Promise<string[]> => {
-    const $ = cheerio.load(await uFetch(COUNT_DOWN_URL));
-    const data = $(".countdown li");
-    return data.map((_, e) => cheerio(e).text()).get();
-};
+export const countdown = async (helper: InfoHelper): Promise<string[]> =>
+    roamingWrapperWithMocks(
+        helper, 
+        undefined,
+        "", 
+        async () =>{
+            const $ = cheerio.load(await uFetch(COUNT_DOWN_URL));
+            const data = $(".countdown li");
+            if (data.html() === null) {
+                throw new LibError();
+            }
+            return data.map((_, e) => cheerio(e).text()).get();
+        },
+        MOCK_COUNTDOWN_DATA
+    );

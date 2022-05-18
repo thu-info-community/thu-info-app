@@ -151,7 +151,7 @@ export class InfoHelper {
 
     public getCalendar = async (): Promise<CalendarData> => getCalendar(this);
 
-    public getCountdown = async (): Promise<string[]> => countdown();
+    public getCountdown = async (): Promise<string[]> => countdown(this);
 
     public getDormScore = async (): Promise<string> => getDormScore(this);
 

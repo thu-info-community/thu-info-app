@@ -1,10 +1,5 @@
 import {InfoHelper} from "../src";
 
-global.console = {
-    ...global.console,
-    log: jest.fn,
-};
-
 let userId = "";
 let password = "";
 let dormPassword = "";
