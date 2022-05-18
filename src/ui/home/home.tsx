@@ -30,7 +30,7 @@ import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {currState, State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
@@ -334,10 +334,26 @@ export const HomeScheduleSection = ({
 
 	const dayEn = ["", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
 
+	const [countdown, setCountdown] = React.useState<string[]>([]);
+
+	React.useEffect(() => {
+		helper.getCountdown().then(setCountdown);
+	}, []);
+
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("schedulePreview")}</Text>
 			<View style={style.SectionContentContainer}>
+				{countdown.length > 0 && (
+					<>
+						<Text style={style.scheduleSectionContentPrimaryTitle}>
+							{getStr("countdown")}
+						</Text>
+						{countdown.map((item) => (
+							<Text style={{marginTop: 8}}>{item}</Text>
+						))}
+					</>
+				)}
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
 					{getLocale() === zh
 						? `${now.month() + 1}月${now.date()}日 ${dayZh[today]}`
