@@ -437,7 +437,7 @@ export const HomeScheduleSection = ({
 	const [countdown, setCountdown] = React.useState<string[]>([]);
 
 	React.useEffect(() => {
-		helper.getCountdown().then(setCountdown);
+		helper.userId !== "" && helper.getCountdown().then(setCountdown);
 	}, []);
 
 	return (
@@ -679,7 +679,8 @@ const HomeUI = (props: HomeProps) => {
 
 	React.useEffect(() => {
 		setTimeout(() => {
-			helper.getBookingRecords().then(props.setActiveLibBookRecord);
+			helper.userId !== "" &&
+				helper.getBookingRecords().then(props.setActiveLibBookRecord);
 			// To avoid login hazard between getBookingRecords and getCountdown
 		}, 3000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
