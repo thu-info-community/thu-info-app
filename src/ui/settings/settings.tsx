@@ -4,7 +4,6 @@ import {RootNav} from "../../components/Root";
 import {helper, store} from "../../redux/store";
 import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
 import {Alert, ScrollView} from "react-native";
-import {checkUpdate} from "../../utils/checkUpdate";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Snackbar from "react-native-snackbar";
@@ -22,12 +21,6 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 					text={getStr("scheduleSettings")}
 					onPress={() => navigation.navigate("ScheduleSettings")}
 					icon={<Feather name="layout" size={16} />}
-				/>
-				<SettingsSeparator />
-				<SettingsItem
-					text={getStr("checkUpdate")}
-					onPress={() => checkUpdate(true)}
-					icon={<Feather name="download" size={16} />}
 				/>
 				<SettingsSeparator />
 				<SettingsItem
