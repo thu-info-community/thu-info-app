@@ -1,19 +1,29 @@
 import {
 	GestureResponderEvent,
-	Keyboard,
+	ScrollView,
 	Text,
 	TextInput,
 	TouchableOpacity,
-	TouchableWithoutFeedback,
 	View,
 } from "react-native";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native";
-import {submitFeedback} from "../../utils/webApi";
+import {
+	getFeedbackReplies,
+	getWeChatGroupQRCodeContent,
+	submitFeedback,
+} from "../../utils/webApi";
+import {
+	SettingsItem,
+	SettingsMiddleText,
+	SettingsSeparator,
+} from "../../components/settings/items";
+import QRCode from "react-native-qrcode-svg";
+import themes from "../../assets/themes/themes";
 
 const BottomButton = ({
 	text,
@@ -46,80 +56,117 @@ const BottomButton = ({
 	);
 };
 
+type AsyncReturnType<T extends (...args: any) => any> = T extends (
+	...args: any
+) => Promise<infer U>
+	? U
+	: T extends (...args: any) => infer U
+	? U
+	: any;
+
 export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const [text, setText] = useState("");
 	const [contact, setContact] = useState("");
-	const dark = useColorScheme() === "dark";
+	const [qrcodeContent, setQrcodeContent] = useState<string>();
+	const [feedbackData, setFeedbackData] = useState<
+		AsyncReturnType<typeof getFeedbackReplies>
+	>([]);
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	useEffect(() => {
+		getFeedbackReplies().then(setFeedbackData);
+		getWeChatGroupQRCodeContent().then(setQrcodeContent);
+	}, []);
+
 	return (
-		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			<View style={{flex: 1, paddingHorizontal: 20, paddingTop: 20}}>
-				<TextInput
-					value={text}
-					onChangeText={setText}
-					style={{
-						flex: 1,
-						textAlignVertical: "top",
-						fontSize: 15,
-						margin: 8,
-						padding: 10,
-						backgroundColor: dark ? "#000" : "#FFF",
-						color: dark ? "#FFF" : "#000",
-						borderColor: "#CCC",
-						borderWidth: 1,
-						borderRadius: 5,
-					}}
-					placeholder={getStr("feedbackHint")}
-					multiline={true}
+		<ScrollView style={{flex: 1, marginHorizontal: 12}}>
+			<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
+				{getStr("askBox")}
+			</Text>
+			{feedbackData.slice(0, 5).map(({question}) => (
+				<SettingsItem
+					key={question}
+					text={question}
+					onPress={() => navigation.navigate("Popi")}
+					icon={undefined}
+					normalText={true}
 				/>
+			))}
+			<SettingsMiddleText
+				text={getStr("more")}
+				onPress={() => navigation.navigate("Popi")}
+			/>
+			<SettingsSeparator />
+			<View style={{backgroundColor: colors.background, alignItems: "center"}}>
+				{qrcodeContent !== undefined && (
+					<>
+						<QRCode value={qrcodeContent} size={80} />
+						<Text style={{marginTop: 6, color: "grey"}}>
+							{getStr("wechatPrompt")}
+						</Text>
+					</>
+				)}
+			</View>
+			<TextInput
+				value={text}
+				onChangeText={setText}
+				style={{
+					textAlignVertical: "top",
+					fontSize: 15,
+					marginTop: 12,
+					padding: 12,
+					backgroundColor: colors.background,
+					color: colors.text,
+					borderColor: "#CCC",
+					borderWidth: 1,
+					borderRadius: 5,
+				}}
+				placeholder={getStr("feedbackHint")}
+				multiline={true}
+			/>
+			<View
+				style={{
+					flexDirection: "row",
+					alignItems: "center",
+				}}>
 				<TextInput
 					value={contact}
 					onChangeText={setContact}
 					style={{
-						flex: 0,
+						flex: 3,
 						textAlignVertical: "top",
 						fontSize: 15,
-						margin: 8,
-						padding: 10,
-						backgroundColor: dark ? "#000" : "#FFF",
-						color: dark ? "#FFF" : "#000",
+						marginVertical: 8,
+						padding: 12,
+						backgroundColor: colors.background,
+						color: colors.text,
 						borderColor: "#CCC",
 						borderWidth: 1,
 						borderRadius: 5,
 					}}
 					placeholder={getStr("contact")}
 				/>
-				<View
-					style={{
-						flexDirection: "row",
-						justifyContent: "space-around",
-						padding: 5,
-					}}>
-					<BottomButton
-						text="popi"
-						onPress={() => navigation.navigate("Popi")}
-						disabled={false}
-					/>
-					<BottomButton
-						text="submit"
-						onPress={() => {
-							submitFeedback(text, contact)
-								.then(() =>
-									Snackbar.show({
-										text: getStr("feedbackSuccess"),
-										duration: Snackbar.LENGTH_SHORT,
-									}),
-								)
-								.catch(() =>
-									Snackbar.show({
-										text: getStr("networkRetry"),
-										duration: Snackbar.LENGTH_SHORT,
-									}),
-								);
-						}}
-						disabled={text.length === 0}
-					/>
-				</View>
+				<BottomButton
+					text="submit"
+					onPress={() => {
+						submitFeedback(text, contact)
+							.then(() =>
+								Snackbar.show({
+									text: getStr("feedbackSuccess"),
+									duration: Snackbar.LENGTH_SHORT,
+								}),
+							)
+							.catch(() =>
+								Snackbar.show({
+									text: getStr("networkRetry"),
+									duration: Snackbar.LENGTH_SHORT,
+								}),
+							);
+					}}
+					disabled={text.length === 0}
+				/>
 			</View>
-		</TouchableWithoutFeedback>
+		</ScrollView>
 	);
 };
