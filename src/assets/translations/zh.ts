@@ -123,6 +123,11 @@ export default {
 	homeNetworkRetry:
 		"登录失败，请前往设置→密码管理部分设置家园网密码，或稍后重试。",
 	credentialNote: "您的用户信息仅会被保存在本地，并经操作系统安全地加密。",
+	myhomeLogin: "登录家园网",
+	myhomeLoginNote: "「卫生成绩」「宿舍电费」等功能需要登录家园网。",
+	wrongPassword: "密码错误。",
+	kwh: "度",
+	loadFail: "加载失败",
 	exceptionOccurred: "发生异常，请重试。",
 	teachingEvaluation: "教学评估",
 	overallOutOfRange: "请为课程总体印象打分。",
