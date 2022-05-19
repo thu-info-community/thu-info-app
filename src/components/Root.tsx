@@ -290,6 +290,7 @@ type ScheduleStackParamList = {
 };
 
 type SettingsStackParamList = {
+	HelpAndFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
 	ScheduleSettings: undefined;
@@ -748,9 +749,9 @@ export const Root = () => {
 			/>
 			{/* Settings */}
 			<Stack.Screen
-				name="Feedback"
+				name="HelpAndFeedback"
 				component={FeedbackScreen}
-				options={{title: getStr("feedback")}}
+				options={{title: getStr("helpAndFeedback")}}
 			/>
 			<Stack.Screen
 				name="Popi"
