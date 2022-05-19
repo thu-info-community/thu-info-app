@@ -97,7 +97,7 @@ export default {
 	about: "About",
 	currentVersion: "Current version: ",
 	maintainers: "Maintainers",
-	libText: "Opensource Lib",
+	sourceText: "Source",
 	builtWithRN: "Proudly built with React Native⚛️",
 	wechatGroup: "Wechat Group",
 	schedule: "Schedule",
