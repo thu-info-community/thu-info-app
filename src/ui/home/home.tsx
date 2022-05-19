@@ -453,7 +453,9 @@ export const HomeScheduleSection = ({
 							{getStr("countdown")}
 						</Text>
 						{countdown.map((item) => (
-							<Text style={{marginTop: 8}}>{item}</Text>
+							<Text style={{marginTop: 8}} key={item}>
+								{item}
+							</Text>
 						))}
 					</>
 				)}
