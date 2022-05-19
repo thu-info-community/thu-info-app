@@ -6,6 +6,7 @@ import {
 	TextInput,
 	TouchableHighlight,
 	TouchableNativeFeedback,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import React, {cloneElement, ReactElement, useState} from "react";
@@ -143,6 +144,48 @@ export const SettingsMiddleText = ({
 			onPress={onPress}>
 			{content}
 		</TouchableNativeFeedback>
+	);
+};
+
+export const SettingsLargeButton = ({
+	text,
+	onPress,
+	disabled,
+	redText,
+}: {
+	text: string;
+	onPress: (event: GestureResponderEvent) => void;
+	disabled: boolean;
+	redText: boolean;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	return (
+		<TouchableOpacity
+			style={{
+				backgroundColor:
+					themeName === "dark"
+						? disabled
+							? "#FFF4"
+							: "#ccc"
+						: disabled
+						? "#0000"
+						: "#0002",
+				marginHorizontal: 20,
+				borderRadius: 4,
+			}}
+			disabled={disabled}
+			onPress={(e) => !disabled && onPress(e)}>
+			<Text
+				style={{
+					textAlign: "center",
+					padding: 12,
+					fontSize: 20,
+					color: redText ? "red" : colors.text,
+				}}>
+				{text}
+			</Text>
+		</TouchableOpacity>
 	);
 };
 

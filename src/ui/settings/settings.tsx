@@ -1,9 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {helper, store} from "../../redux/store";
-import {SettingsItem, SettingsSeparator} from "../../components/settings/items";
-import {Alert, ScrollView} from "react-native";
+import {
+	SettingsItem,
+	SettingsLargeButton,
+	SettingsSeparator,
+} from "../../components/settings/items";
+import {Alert, View} from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Snackbar from "react-native-snackbar";
@@ -14,9 +18,10 @@ import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {doLogoutAction} from "../../redux/actions/auth";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
+	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
 		<>
-			<ScrollView style={{padding: 10}}>
+			<View style={{padding: 10, flex: 1}}>
 				<SettingsItem
 					text={getStr("scheduleSettings")}
 					onPress={() => navigation.navigate("ScheduleSettings")}
@@ -33,10 +38,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 					onPress={() => navigation.navigate("About")}
 					icon={<AntDesign name="copyright" size={16} />}
 				/>
-				<SettingsSeparator />
-				<SettingsItem
+				<View style={{flex: 1}} />
+				<SettingsLargeButton
 					text={getStr("forceLogin")}
 					onPress={async () => {
+						setForceLoginDisabled(true);
 						try {
 							Snackbar.show({
 								text: getStr("processing"),
@@ -56,10 +62,13 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						} catch (e) {
 							NetworkRetry();
 						}
+						setForceLoginDisabled(false);
 					}}
-					icon={<Feather name="refresh-cw" size={16} />}
+					disabled={forceLoginDisabled}
+					redText={false}
 				/>
-				<SettingsItem
+				<View style={{height: 20}} />
+				<SettingsLargeButton
 					text={getStr("logout")}
 					onPress={() => {
 						Alert.alert(getStr("logout"), getStr("confirmLogout"), [
@@ -87,9 +96,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 							},
 						]);
 					}}
-					icon={<Feather name="user-x" size={16} />}
+					disabled={false}
+					redText={true}
 				/>
-			</ScrollView>
+				<View style={{height: 20}} />
+			</View>
 		</>
 	);
 };
