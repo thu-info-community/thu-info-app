@@ -1,4 +1,11 @@
-import {Linking, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+	Linking,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import React from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
@@ -14,6 +21,7 @@ import {
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
 import {useColorScheme} from "react-native";
+import {checkUpdate} from "../../utils/checkUpdate";
 
 const makeLinking = (url: string) =>
 	Linking.openURL(url).then(() =>
@@ -23,16 +31,22 @@ const makeLinking = (url: string) =>
 export const AboutScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const {colors} = theme;
 
 	return (
-		<View style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>
-			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
-				{`${getStr("currentVersion")}v${VersionNumber.appVersion}`}
+		<ScrollView style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>
+			<Text
+				style={[
+					styles.textStyle,
+					{color: theme.colors.text, fontSize: 20, fontWeight: "bold"},
+				]}>
+				THU Info
 			</Text>
-			<TouchableOpacity onPress={() => makeLinking(GITHUB_REPO_URL)}>
+			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
+				{`${getStr("currentVersion")}V${VersionNumber.appVersion}`}
+			</Text>
+			<TouchableOpacity onPress={() => checkUpdate(true)}>
 				<Text style={[styles.textStyle, {color: theme.colors.primaryLight}]}>
-					UNIDY2002 / THUInfo @ GitHub
+					{getStr("checkUpdate")}
 				</Text>
 			</TouchableOpacity>
 			<View style={{height: 10}} />
@@ -94,9 +108,19 @@ export const AboutScreen = () => {
 				</Text>
 			</TouchableOpacity>
 			<View style={{height: 10}} />
-			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
-				{getStr("libText")}
+			<Text
+				style={[styles.textStyle, {color: theme.colors.text, fontSize: 14}]}>
+				{getStr("sourceText")}
 			</Text>
+			<TouchableOpacity onPress={() => makeLinking(GITHUB_REPO_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 14},
+					]}>
+					UNIDY2002 / THUInfo @ GitHub
+				</Text>
+			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(LIB_URL)}>
 				<Text
 					style={[
@@ -106,23 +130,12 @@ export const AboutScreen = () => {
 					thu-info-community / thu-info-lib @ GitHub
 				</Text>
 			</TouchableOpacity>
-			<Text />
-			<Text style={[styles.textStyle, {color: colors.text}]}>
-				{getStr("acknowledgeLearnX")}
-			</Text>
-			<Text style={[styles.textStyle, {color: colors.text}]}>
-				{getStr("acknowledgeCommunity")}
-			</Text>
 			<View style={{flex: 1}} />
-			<Text
-				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
-				{getStr("builtWithRN")}
-			</Text>
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
 				© 2022 | thu-info-community
 			</Text>
-		</View>
+		</ScrollView>
 	);
 };
 
