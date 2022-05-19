@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import {
-	ReportFooter,
+	ReportSummary,
 	ReportHeader,
 	ReportHeaderProps,
 	ReportItem,
@@ -71,7 +71,7 @@ const prepareData = (
 		);
 		totalCredits += credits;
 		totalPoints += points;
-		allCredits += courses.reduce(
+		const allCreditsPerSection = courses.reduce(
 			(acc, course) =>
 				acc +
 				(isNaN(course.credit) ||
@@ -94,9 +94,13 @@ const prepareData = (
 					: course.credit),
 			0,
 		);
+		allCredits += allCreditsPerSection;
 		return {
 			semester,
 			gpa: points / credits,
+			totalCredits: credits,
+			allCredits: allCreditsPerSection,
+			totalPoints: points,
 			data: courses,
 		};
 	});
@@ -143,7 +147,7 @@ export const ReportScreen = () => {
 	);
 
 	return (
-		<>
+		<View style={{marginHorizontal: 20, flex: 1}}>
 			<View style={{flexDirection: "row", margin: 5}}>
 				<TouchableOpacity
 					style={{padding: 6, flex: 1}}
@@ -190,7 +194,13 @@ export const ReportScreen = () => {
 				sections={sections}
 				stickySectionHeadersEnabled={true}
 				renderSectionHeader={({section}) => (
-					<ReportHeader semester={section.semester} gpa={section.gpa} />
+					<ReportHeader
+						semester={section.semester}
+						gpa={section.gpa}
+						totalCredits={section.totalCredits}
+						allCredits={section.allCredits}
+						totalPoints={section.totalPoints}
+					/>
 				)}
 				renderItem={({item}) => (
 					<ReportItem
@@ -200,8 +210,8 @@ export const ReportScreen = () => {
 						point={item.point}
 					/>
 				)}
-				ListFooterComponent={
-					<ReportFooter
+				ListHeaderComponent={
+					<ReportSummary
 						gpa={gpa}
 						totalCredits={totalCredits}
 						allCredits={allCredits}
@@ -217,6 +227,6 @@ export const ReportScreen = () => {
 				}
 				keyExtractor={(item, index) => `${item.semester}${index}`}
 			/>
-		</>
+		</View>
 	);
 };
