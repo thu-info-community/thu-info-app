@@ -338,7 +338,7 @@ export const HomeScheduleSection = ({
 	navigation,
 }: {
 	baseSchedule: Schedule[];
-	shortenMap: {[key: string]: string | undefined};
+	shortenMap: {[_: string]: string | undefined};
 	navigation: RootNav;
 }) => {
 	const now = dayjs();
