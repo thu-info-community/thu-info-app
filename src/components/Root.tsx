@@ -85,6 +85,7 @@ import {FinanceScreen} from "../ui/home/finance";
 import {DormScreen} from "../ui/home/dorm";
 import IconLoseCard from "../assets/icons/IconLoseCard";
 import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
+import {AccountScreen} from "../ui/settings/account";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -290,6 +291,7 @@ type ScheduleStackParamList = {
 };
 
 type SettingsStackParamList = {
+	Account: undefined;
 	HelpAndFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
@@ -748,6 +750,11 @@ export const Root = () => {
 				options={{title: getStr("scheduleDetail")}}
 			/>
 			{/* Settings */}
+			<Stack.Screen
+				name="Account"
+				component={AccountScreen}
+				options={{title: getStr("accountAndSecurity")}}
+			/>
 			<Stack.Screen
 				name="HelpAndFeedback"
 				component={FeedbackScreen}

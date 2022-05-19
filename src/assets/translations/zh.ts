@@ -1,5 +1,7 @@
 export default {
 	mark: "CH",
+	infoAccount: "INFO 帐号",
+	myhomeAccount: "家园网帐号",
 	userId: "学号",
 	password: "密码",
 	login: "登录",
@@ -22,6 +24,7 @@ export default {
 	news: "动态",
 	settings: "设置",
 	feedback: "反馈",
+	accountAndSecurity: "帐号与安全",
 	helpAndFeedback: "帮助与反馈",
 	countdown: "倒计时提醒",
 	askBox: "提问箱",

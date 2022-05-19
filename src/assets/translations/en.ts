@@ -1,5 +1,7 @@
 export default {
 	mark: "EN",
+	infoAccount: "INFO Account",
+	myhomeAccount: "Myhome Account",
 	userId: "School ID",
 	password: "Password",
 	login: "Login",
@@ -24,6 +26,7 @@ export default {
 	news: "News",
 	settings: "Settings",
 	feedback: "Feedback",
+	accountAndSecurity: "Account and Security",
 	helpAndFeedback: "Help and Support",
 	countdown: "Countdown",
 	askBox: "Tape",
