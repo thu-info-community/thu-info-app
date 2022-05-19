@@ -77,6 +77,13 @@ import {PopiScreen} from "../ui/settings/popi";
 import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {AboutScreen} from "../ui/settings/about";
 import {RouteProp} from "@react-navigation/native";
+import IconHomeTab from "../assets/icons/IconHomeTab";
+import IconNewsTab from "../assets/icons/IconNewsTab";
+import IconScheduleTab from "../assets/icons/IconScheduleTab";
+import IconSettingsTab from "../assets/icons/IconSettingsTab";
+import {FinanceScreen} from "../ui/home/finance";
+import {DormScreen} from "../ui/home/dorm";
+import IconLoseCard from "../assets/icons/IconLoseCard";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -95,28 +102,22 @@ const RootTabs = () => {
 		<Tab.Navigator
 			screenOptions={({route}) => ({
 				tabBarIcon: ({color, size}) => {
-					let iconName;
-
 					switch (route.name) {
 						case "HomeTab": {
-							iconName = "home";
-							break;
+							return <IconHomeTab size={size} color={color} />;
 						}
 						case "NewsTab": {
-							iconName = "newspaper-o";
-							break;
+							return <IconNewsTab size={size} color={color} />;
 						}
 						case "ScheduleTab": {
-							iconName = "table";
-							break;
+							return <IconScheduleTab size={size} color={color} />;
 						}
 						case "SettingsTab": {
-							iconName = "cogs";
-							break;
+							return <IconSettingsTab size={size} color={color} />;
 						}
 					}
 
-					return <Icon name={iconName || ""} size={size} color={color} />;
+					return null;
 				},
 				tabBarActiveTintColor: theme.colors.primary,
 				tabBarInactiveTintColor: "gray",
@@ -187,7 +188,9 @@ type HomeStackParamList = {
 	Evaluation: undefined;
 	Form: {name: string; url: string};
 	PhysicalExam: undefined;
+	Finance: undefined;
 	Expenditure: undefined;
+	LoseCard: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
 	Library: undefined;
@@ -200,6 +203,7 @@ type HomeStackParamList = {
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
+	Dorm: undefined;
 	DormScore: undefined;
 	Invoice: undefined;
 	InvoicePDF: {base64: string; id: string};
@@ -333,9 +337,25 @@ export const Root = () => {
 				options={{title: getStr("physicalExam")}}
 			/>
 			<Stack.Screen
+				name="Finance"
+				component={FinanceScreen}
+				options={{title: getStr("campusFinance")}}
+			/>
+			<Stack.Screen
 				name="Expenditure"
 				component={ExpenditureScreen}
-				options={{title: getStr("expenditure")}}
+				options={({navigation}) => ({
+					title: getStr("expenditure"),
+					headerRight: () => (
+						<View style={{flexDirection: "row"}}>
+							<TouchableOpacity
+								style={{paddingHorizontal: 16, marginHorizontal: 4}}
+								onPress={() => navigation.navigate("LoseCard")}>
+								<IconLoseCard width={24} height={24} />
+							</TouchableOpacity>
+						</View>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="ClassroomList"
@@ -457,6 +477,11 @@ export const Root = () => {
 				name="LibRoomBookRecord"
 				component={LibRoomBookRecordScreen}
 				options={{title: getStr("libRoomBookRecord")}}
+			/>
+			<Stack.Screen
+				name="Dorm"
+				component={DormScreen}
+				options={{title: getStr("dorm")}}
 			/>
 			<Stack.Screen
 				name="DormScore"
@@ -688,9 +713,9 @@ export const Root = () => {
 				options={{title: getStr("eleRecord")}}
 			/>
 			<Stack.Screen
-				name="ECard"
+				name="LoseCard"
 				component={ECardScreen}
-				options={{title: getStr("eCard")}}
+				options={{title: getStr("loseCard")}}
 			/>
 			{/* News */}
 			<Stack.Screen
