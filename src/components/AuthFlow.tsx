@@ -19,7 +19,7 @@ interface AuthFlowProps {
 
 type LoginStackParamList = {
 	Login: undefined;
-	Feedback: undefined;
+	HelpAndFeedback: undefined;
 	Popi: undefined;
 };
 
@@ -39,7 +39,7 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 		<Stack.Navigator screenOptions={{headerShown: false}}>
 			<Stack.Screen name="Login" component={LoginScreen} />
 			<Stack.Screen
-				name="Feedback"
+				name="HelpAndFeedback"
 				component={FeedbackScreen}
 				options={{title: getStr("feedback")}}
 			/>

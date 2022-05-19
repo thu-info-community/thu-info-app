@@ -23,11 +23,13 @@ export const SettingsItem = ({
 	onPress,
 	icon,
 	badge,
+	normalText,
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
 	icon: ReactElement | undefined;
 	badge?: string;
+	normalText?: boolean;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -41,7 +43,13 @@ export const SettingsItem = ({
 			}}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
 				{setIconWidth(icon, colors)}
-				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+				<Text
+					style={
+						normalText
+							? {color: colors.text}
+							: {fontSize: 17, marginHorizontal: 10, color: colors.text}
+					}
+					numberOfLines={1}>
 					{text}
 					{badge && <Text style={{color: "red", fontSize: 12}}>[{badge}]</Text>}
 				</Text>
@@ -92,6 +100,37 @@ export const SettingsDoubleText = ({
 			<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
 				{textRight}
 			</Text>
+		</View>
+	);
+	return Platform.OS === "ios" ? (
+		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+			{content}
+		</TouchableHighlight>
+	) : (
+		<TouchableNativeFeedback
+			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			onPress={onPress}>
+			{content}
+		</TouchableNativeFeedback>
+	);
+};
+
+export const SettingsMiddleText = ({
+	text,
+	onPress,
+}: {
+	text: string;
+	onPress: (event: GestureResponderEvent) => void;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	const content = (
+		<View
+			style={{
+				padding: 8,
+				alignItems: "center",
+			}}>
+			<Text style={{color: colors.text}}>{text}</Text>
 		</View>
 	);
 	return Platform.OS === "ios" ? (

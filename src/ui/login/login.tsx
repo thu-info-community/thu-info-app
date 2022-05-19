@@ -99,7 +99,8 @@ const LoginUI = (props: LoginProps) => {
 					}}>
 					{getStr("slogan")}
 				</Text>
-				<TouchableOpacity onPress={() => props.navigation.navigate("Feedback")}>
+				<TouchableOpacity
+					onPress={() => props.navigation.navigate("HelpAndFeedback")}>
 					<Text style={style.feedbackTextStyle}>{getStr("feedback")}</Text>
 				</TouchableOpacity>
 				<Text style={style.credentialNoteStyle}>
