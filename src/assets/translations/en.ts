@@ -129,6 +129,11 @@ export default {
 		"Login failed. Please go to Settings->Password Management to setup MyHome password, or try again later.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
+	myhomeLogin: "Login myhome",
+	myhomeLoginNote: "Login myhome to access dorm score and ele recharge.",
+	wrongPassword: "Wrong password.",
+	kwh: "kWh",
+	loadFail: "Failed to load",
 	exceptionOccurred: "Exception occurred, please retry.",
 	teachingEvaluation: "Teaching Evaluation",
 	overallOutOfRange: "Please rate your overall impression of the course.",

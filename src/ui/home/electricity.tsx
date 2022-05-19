@@ -1,9 +1,9 @@
 import {
 	SettingsItem,
-	SettingsSetPassword,
+	SettingsDoubleText,
 } from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Feather from "react-native-vector-icons/Feather";
 import {Text, TextInput, TouchableOpacity, View} from "react-native";
 import {RootNav} from "../../components/Root";
@@ -12,71 +12,65 @@ import {doAlipay, hasAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
-import {NetworkRetry} from "../../components/easySnackbars";
-import {connect} from "react-redux";
-import {setDormPasswordAction} from "../../redux/actions/credentials";
-import {roam} from "thu-info-lib/dist/lib/core";
+import {DormAuthError} from "thu-info-lib/dist/utils/error";
 
-const ElectricityUI = ({
-	setDormPassword,
-	navigation,
-}: {
-	setDormPassword: (newToken: string) => void;
-	navigation: RootNav;
-}) => {
+export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const [money, setMoney] = useState("");
 	const [processing, setProcessing] = useState(false);
 
+	const [remainderValue, setRemainderValue] = useState<number>(Number.NaN);
+	const [remainderStatus, setRemainderStatus] = useState<
+		"loading" | "done" | "error"
+	>("loading");
+
 	const regRes = /\d+/.exec(money);
 	const valid =
 		regRes && regRes.length > 0 && regRes[0] === money && Number(money) <= 42;
 
+	const getRemainder = () => {
+		setRemainderStatus("loading");
+		helper
+			.getEleRemainder()
+			.then((remainder) => {
+				setRemainderValue(remainder);
+				setRemainderStatus("done");
+			})
+			.catch((e) => {
+				setRemainderStatus("error");
+				if (e instanceof DormAuthError) {
+					navigation.navigate("MyhomeLogin");
+				}
+			});
+	};
+
+	useEffect(() => {
+		getRemainder();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<View style={{padding: 10, flex: 1}}>
-			{!helper.mocked() && (
-				<SettingsSetPassword
-					text={getStr("homePassword")}
-					onValueChange={setDormPassword}
-					validator={(newPassword) =>
-						new Promise((resolve) => {
-							helper.dormPassword = newPassword;
-							helper
-								.logout()
-								.then(() => helper.login({}))
-								.then(() => roam(helper, "myhome", ""))
-								.then(() => resolve(true))
-								.catch(() => resolve(false));
-						})
-					}
-				/>
-			)}
 			<SettingsItem
 				text={getStr("eleRecord")}
 				onPress={() => navigation.navigate("EleRecord")}
 				icon={<Feather name="zap" size={16} />}
 			/>
-			<SettingsItem
-				text={getStr("eleRemainder")}
-				onPress={() => {
-					Snackbar.show({
-						text: getStr("processing"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
-					helper
-						.getEleRemainder()
-						.then((remainder) => {
-							Snackbar.show({
-								text: isNaN(remainder)
-									? getStr("eleRemainderFail")
-									: getStr("eleRemainderResult") + remainder,
-								duration: Snackbar.LENGTH_LONG,
-							});
-						})
-						.catch(NetworkRetry);
-				}}
+			<SettingsDoubleText
+				textLeft={getStr("eleRemainder")}
+				textRight={(() => {
+					switch (remainderStatus) {
+						case "loading":
+							return getStr("loading");
+						case "done":
+							return `${remainderValue} ${getStr("kwh")}`;
+						case "error":
+							return getStr("loadFail");
+					}
+				})()}
+				onPress={() => remainderStatus !== "loading" && getRemainder()}
 				icon={<Feather name="zap" size={16} />}
 			/>
 			{!helper.mocked() && (
@@ -160,8 +154,3 @@ const ElectricityUI = ({
 		</View>
 	);
 };
-
-export const ElectricityScreen = connect(undefined, (dispatch) => ({
-	setDormPassword: (password: string) =>
-		dispatch(setDormPasswordAction(password)),
-}))(ElectricityUI);

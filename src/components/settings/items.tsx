@@ -1,5 +1,4 @@
 import {
-	Button,
 	GestureResponderEvent,
 	Platform,
 	Switch,
@@ -11,9 +10,6 @@ import {
 } from "react-native";
 import React, {cloneElement, ReactElement, useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
-import {NetworkRetry} from "../easySnackbars";
 import {useColorScheme} from "react-native";
 import themes, {ColorTheme} from "../../assets/themes/themes";
 
@@ -51,6 +47,51 @@ export const SettingsItem = ({
 				</Text>
 			</View>
 			<Icon name="angle-right" size={24} color="lightgrey" />
+		</View>
+	);
+	return Platform.OS === "ios" ? (
+		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+			{content}
+		</TouchableHighlight>
+	) : (
+		<TouchableNativeFeedback
+			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			onPress={onPress}>
+			{content}
+		</TouchableNativeFeedback>
+	);
+};
+
+export const SettingsDoubleText = ({
+	textLeft,
+	textRight,
+	onPress,
+	icon,
+}: {
+	textLeft: string;
+	textRight: string;
+	onPress: (event: GestureResponderEvent) => void;
+	icon: ReactElement | undefined;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	const content = (
+		<View
+			style={{
+				padding: 8,
+				paddingRight: 16,
+				flexDirection: "row",
+				justifyContent: "space-between",
+			}}>
+			<View style={{flexDirection: "row", alignItems: "center"}}>
+				{setIconWidth(icon, colors)}
+				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+					{textLeft}
+				</Text>
+			</View>
+			<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+				{textRight}
+			</Text>
 		</View>
 	);
 	return Platform.OS === "ios" ? (
@@ -199,69 +240,6 @@ export const SettingsEditText = ({
 				value={value}
 				onChangeText={onValueChange}
 				editable={enabled}
-			/>
-		</View>
-	);
-};
-
-export const SettingsSetPassword = ({
-	text,
-	onValueChange,
-	validator,
-}: {
-	text: string;
-	onValueChange: (newValue: string) => void;
-	validator: (password: string) => Promise<boolean>;
-}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	const [value, setValue] = useState("");
-	const [disabled, setDisabled] = useState(false);
-	return (
-		<View
-			style={{
-				padding: 8,
-				paddingRight: 16,
-				flexDirection: "row",
-				justifyContent: "space-between",
-				alignItems: "center",
-			}}>
-			<Text style={{fontSize: 17, flex: 2, color: colors.text}}>{text}</Text>
-			<TextInput
-				style={{
-					fontSize: 15,
-					flex: 2,
-					backgroundColor: colors.background,
-					color: colors.text,
-					textAlign: "left",
-					borderColor: "lightgrey",
-					borderWidth: 1,
-					borderRadius: 5,
-					padding: 6,
-				}}
-				placeholder={getStr("hidden")}
-				value={value}
-				onChangeText={(newText) => {
-					setValue(newText);
-					onValueChange(newText);
-				}}
-				secureTextEntry
-			/>
-			<Button
-				title={getStr("validate")}
-				disabled={disabled}
-				onPress={() => {
-					setDisabled(true);
-					validator(value)
-						.then((result) => {
-							Snackbar.show({
-								text: getStr(result ? "validateSucceed" : "validateFail"),
-								duration: Snackbar.LENGTH_SHORT,
-							});
-						})
-						.catch(NetworkRetry)
-						.then(() => setDisabled(false));
-				}}
 			/>
 		</View>
 	);

@@ -84,6 +84,7 @@ import IconSettingsTab from "../assets/icons/IconSettingsTab";
 import {FinanceScreen} from "../ui/home/finance";
 import {DormScreen} from "../ui/home/dorm";
 import IconLoseCard from "../assets/icons/IconLoseCard";
+import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -230,6 +231,7 @@ type HomeStackParamList = {
 	GitLabMarkdown: {project: Project; file: File};
 	GitLabPDF: {project: Project; file: File; cookie: string};
 	GitLabImage: {project: Project; file: File};
+	MyhomeLogin: undefined;
 	Electricity: undefined;
 	EleRecord: undefined;
 	ECard: undefined;
@@ -701,6 +703,11 @@ export const Root = () => {
 				name="WasherWeb"
 				component={WasherWebScreen}
 				options={{title: getStr("washer")}}
+			/>
+			<Stack.Screen
+				name="MyhomeLogin"
+				component={MyhomeLoginScreen}
+				options={{title: getStr("myhomeLogin")}}
 			/>
 			<Stack.Screen
 				name="Electricity"
