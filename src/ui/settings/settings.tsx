@@ -29,6 +29,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				/>
 				<SettingsSeparator />
 				<SettingsItem
+					text={getStr("accountAndSecurity")}
+					onPress={() => navigation.navigate("Account")}
+					icon={<AntDesign name="user" size={16} />}
+				/>
+				<SettingsItem
 					text={getStr("helpAndFeedback")}
 					onPress={() => navigation.navigate("HelpAndFeedback")}
 					icon={<Feather name="edit" size={16} />}

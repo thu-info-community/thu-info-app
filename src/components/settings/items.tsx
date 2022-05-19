@@ -79,7 +79,7 @@ export const SettingsDoubleText = ({
 }: {
 	textLeft: string;
 	textRight: string;
-	onPress: (event: GestureResponderEvent) => void;
+	onPress: ((event: GestureResponderEvent) => void) | undefined;
 	icon: ReactElement | undefined;
 }) => {
 	const themeName = useColorScheme();
@@ -103,7 +103,9 @@ export const SettingsDoubleText = ({
 			</Text>
 		</View>
 	);
-	return Platform.OS === "ios" ? (
+	return onPress === undefined ? (
+		content
+	) : Platform.OS === "ios" ? (
 		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
 			{content}
 		</TouchableHighlight>
