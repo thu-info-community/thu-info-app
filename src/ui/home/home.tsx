@@ -12,6 +12,7 @@ import {RootNav} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
+import IconFinance from "../../assets/icons/IconFinance";
 import IconClassroom from "../../assets/icons/IconClassroom";
 import IconEvaluation from "../../assets/icons/IconEvaluation";
 import IconLibrary from "../../assets/icons/IconLibrary";
@@ -43,6 +44,7 @@ import {ScheduleDetailProps} from "../schedule/scheduleDetail";
 import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
 import Snackbar from "react-native-snackbar";
 import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import IconDorm from "../../assets/icons/IconDorm";
 
 const iconSize = 40;
 
@@ -483,6 +485,7 @@ export type HomeFunction =
 	| "libRoomBook"
 	| "reservesLib"
 	| "expenditure"
+	| "finance"
 	| "sportsBook"
 	| "bankPayment"
 	| "invoice"
@@ -490,6 +493,7 @@ export type HomeFunction =
 	| "washer"
 	| "electricity"
 	| "eCard"
+	| "dormitory"
 	| "dormScore";
 
 const getHomeFunctions = (
@@ -577,6 +581,14 @@ const getHomeFunctions = (
 		<IconExpenditure width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
+		key="finance"
+		title="campusFinance"
+		onPress={() => {
+			navigation.navigate("Finance");
+		}}>
+		<IconFinance width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
 		key="sportsBook"
 		title="sportsBook"
 		onPress={() => {
@@ -648,6 +660,14 @@ const getHomeFunctions = (
 		}}>
 		<IconDormScore width={iconSize} height={iconSize} />
 	</HomeIcon>,
+	<HomeIcon
+		key="dormitory"
+		title="dorm"
+		onPress={() => {
+			navigation.navigate("Dorm");
+		}}>
+		<IconDorm width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 interface HomeProps {
@@ -667,12 +687,14 @@ const HomeUI = (props: HomeProps) => {
 		homeFunctions.find((y) => y.key === x),
 	);
 	const needToShowFunctionNames: HomeFunction[] = [
-		"library",
-		"expenditure",
-		"dormScore",
+		"teachingEvaluation",
 		"report",
 		"classroomState",
-		"teachingEvaluation",
+		"library",
+		"sportsBook",
+		"finance",
+		"reservesLib",
+		"dormitory",
 	];
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
 		homeFunctions.find((y) => y.key === x),
