@@ -68,6 +68,7 @@ export default {
 	totalPoints: "Total points",
 	newGPA: "New GPA Policy",
 	oldGPA: "Old GPA Policy",
+	allGPA: "GPA : ",
 	bx: "RR",
 	bxr: "RRE",
 	manageHidden: "Hidden Subjects",

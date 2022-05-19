@@ -65,6 +65,6 @@ export const styles = themedStyles((theme) => ({
 	},
 	SecondaryItemSeparator: {
 		height: 1,
-		backgroundColor: "#666666",
+		backgroundColor: theme.colors.fontB2,
 	},
 }));
