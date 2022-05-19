@@ -1,24 +1,42 @@
-import Svg, {Path} from "react-native-svg";
+import Svg, {Path, Rect, Circle} from "react-native-svg";
 import React from "react";
 import {svgGenerator} from "../../utils/svgGenerator";
+import {useColorScheme} from "react-native";
+import themes from "../themes/themes";
 
-export default svgGenerator((width, height, colors) => (
-	<Svg viewBox="0 0 1024 1024" width={width} height={height}>
-		<Path
-			d="M863.807284 0H159.018067a88.098652 88.098652 0 0 0-88.098652 88.098652v847.802696a88.098652 88.098652 0 0 0 88.098652 88.098652h704.789217a88.098652 88.098652 0 0 0 88.098652-88.098652V88.098652a88.098652 88.098652 0 0 0-88.098652-88.098652zM159.018067 58.732435h704.789217a29.366217 29.366217 0 0 1 29.366218 29.366217v123.925437H129.65185V88.098652a29.366217 29.366217 0 0 1 29.366217-29.366217z m704.789217 906.53513H159.018067a29.366217 29.366217 0 0 1-29.366217-29.366217V270.756524h763.521652v665.144824a29.366217 29.366217 0 0 1-29.366218 29.366217z"
-			fill={colors.dark}
-		/>
-		<Path
-			d="M795.090336 134.497276m-44.049327 0a44.049326 44.049326 0 1 0 88.098653 0 44.049326 44.049326 0 1 0-88.098653 0Z"
-			fill={colors.blue}
-		/>
-		<Path
-			d="M664.70433 134.497276m-44.049326 0a44.049326 44.049326 0 1 0 88.098652 0 44.049326 44.049326 0 1 0-88.098652 0Z"
-			fill={colors.blue}
-		/>
-		<Path
-			d="M511.412676 349.751649a268.407227 268.407227 0 1 0 268.113564 268.407227A268.700889 268.700889 0 0 0 511.412676 349.751649z m0 477.788357a209.674792 209.674792 0 1 1 209.38113-209.38113A209.674792 209.674792 0 0 1 511.412676 827.540006z"
-			fill={colors.blue}
-		/>
-	</Svg>
-));
+export default svgGenerator((width, height) => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	return (
+		<Svg viewBox="0 0 48 48" width={width} height={height}>
+			<Path
+				fillOpacity=".01"
+				fill={theme.colors.background}
+				d="M0 0h48v48H0z"
+			/>
+			<Rect
+				strokeWidth="3"
+				stroke={theme.colors.text}
+				rx={2}
+				height={40}
+				width={32}
+				y={4}
+				x={8}
+			/>
+			<Path
+				strokeWidth="3"
+				stroke={theme.colors.text}
+				d="M8 12a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v6Z"
+			/>
+			<Circle fill={theme.colors.text} r={2} cy={9} cx={14} />
+			<Circle fill={theme.colors.text} r={2} cy={9} cx={20} />
+			<Circle
+				stroke={theme.colors.text}
+				strokeWidth={3}
+				r={7}
+				cy={29}
+				cx={24}
+			/>
+		</Svg>
+	);
+});

@@ -1,16 +1,26 @@
 import Svg, {Path} from "react-native-svg";
 import React from "react";
 import {svgGenerator} from "../../utils/svgGenerator";
+import {useColorScheme} from "react-native";
+import themes from "../themes/themes";
 
-export default svgGenerator((width, height, colors) => (
-	<Svg viewBox="0 0 1024 1024" width={width} height={height}>
-		<Path
-			d="M516.6 960.4c-192.1 0-348.4-156.3-348.4-348.4 0-121.6 130.7-334.5 240.4-491.7 24.6-35.3 65-56.4 108-56.4s83.4 21.1 108 56.4C734.3 277.5 865 490.4 865 612c0 192.1-156.3 348.4-348.4 348.4z m0-806.9c-13.9 0-26.5 6.6-34.5 18.1C339.6 375.9 257.8 536.4 257.8 612c0 142.7 116.1 258.8 258.8 258.8 142.7 0 258.8-116.1 258.8-258.8 0-75.6-81.7-236.1-224.3-440.4-8-11.5-20.6-18.1-34.5-18.1z"
-			fill={colors.dark}
-		/>
-		<Path
-			d="M480.7 788.4c-5.2 0-10.4-0.9-15.5-2.8-64.3-23.7-114.7-77-134.9-142.4-7.3-23.7 6-48.7 29.6-56 23.7-7.4 48.7 6 56 29.6 12 38.9 42 70.6 80.3 84.7 23.2 8.6 35.1 34.3 26.5 57.6-6.7 18.1-23.8 29.3-42 29.3z"
-			fill={colors.blue}
-		/>
-	</Svg>
-));
+export default svgGenerator((width, height) => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	return (
+		<Svg viewBox="0 0 48 48" width={width} height={height}>
+			<Path
+				strokeLinecap="square"
+				strokeWidth={3}
+				stroke={theme.colors.text}
+				d="M28.375 38h-8.75L10 32.82V4h28v28.82L28.375 38ZM20 44h8v-6h-8v6Z"
+			/>
+			<Path
+				strokeLinecap="square"
+				strokeWidth={3}
+				stroke={theme.colors.text}
+				d="M16 21a3 3 0 1 0 6 0v-6a3 3 0 1 0-6 0v6Z"
+			/>
+		</Svg>
+	);
+});
