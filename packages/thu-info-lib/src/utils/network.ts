@@ -112,7 +112,7 @@ export const uFetch = async (
         let base64 = false;
         let charset = "UTF-8";
         if (contentType) {
-            if (contentType.includes("application/octet-stream")) {
+            if (contentType.includes("application/octet-stream") || contentType.includes("application/pdf")) {
                 base64 = true;
             } else {
                 /charset=(.*?);/.test(contentType + ";");
