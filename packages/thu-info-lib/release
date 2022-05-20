@@ -1,0 +1,3 @@
+fix: fix auto re-login of `getCountdown`；
+fix: fix bug regarding teaching evaluation with no teacher；
+fix: use base64 format to receive responses with content-type of `application/pdf`。
