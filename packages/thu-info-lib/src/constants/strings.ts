@@ -68,6 +68,8 @@ export const PDF_NEWS_PREFIX =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/wj/downloadPdfStream/";
 export const NEWS_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/xxfb_fg/xnzx/template/more?oType=xs&lydw=";
+export const SEARCH_NEWS_LIST_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/xnzx/search/info/xxfb_fg/teacher/getMobilePageList";
 export const NEWS_REDIRECT_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f";
 export const NEWS_DETAIL_URL =

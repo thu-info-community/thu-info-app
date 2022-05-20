@@ -41,7 +41,14 @@ import {
     getLibrarySeatList,
     getLibrarySectionList,
 } from "./lib/library";
-import { addNewsToFavor, getFavorNewsList, getNewsDetail, getNewsList, removeNewsFromFavor } from "./lib/news";
+import {
+    addNewsToFavor,
+    getFavorNewsList,
+    getNewsDetail,
+    getNewsList,
+    removeNewsFromFavor,
+    searchNewsList,
+} from "./lib/news";
 import { getSchedule } from "./lib/schedule";
 import { Course } from "./models/home/report";
 import { Form } from "./models/home/assessment";
@@ -217,6 +224,12 @@ export class InfoHelper {
         length: number,
         channel?: SourceTag
     ): Promise<NewsSlice[]> => getNewsList(this, page, length, channel);
+
+    public searchNewsList = async (
+        page: number,
+        key: string,
+        channel?: SourceTag
+    ): Promise<NewsSlice[]> => searchNewsList(this, page, key, channel);
 
     public getNewsDetail = async (
         url: string,

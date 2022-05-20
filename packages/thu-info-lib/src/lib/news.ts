@@ -11,6 +11,7 @@ import {
     NEWS_REDIRECT_URL,
     NEWS_REMOVE_FAVOR_URL,
     PDF_NEWS_PREFIX,
+    SEARCH_NEWS_LIST_URL,
 } from "../constants/strings";
 import { newsHtml } from "../mocks/source/newsHtml";
 import cheerio from "cheerio";
@@ -40,7 +41,7 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
                 url: decode(element.url),
                 date: element.time,
                 source: element.dwmc,
-                topped: element.yxzd.indexOf("1-") != -1 ? true : false,
+                topped: element.yxzd.includes("1-"),
                 channel: element.lmid
             });
         });
@@ -48,6 +49,66 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
     },
     channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
+
+const channelToLmmc = (channel: SourceTag): string => {
+    switch (channel) {
+    case "LM_BGTG": return "办公通知";
+    case "LM_ZYGG": return "重要公告";
+    case "LM_YQFKZT": return "疫情防控专题";
+    case "LM_JWGG": return "教务通知";
+    case "LM_KYTZ": return "科研通知";
+    case "LM_HB": return "海报";
+    case "LM_XJ_XTWBGTZ": return "校团委通知";
+    case "LM_XSBGGG": return "学生工作通知";
+    case "LM_TTGGG": return "图书馆信息";
+    case "LM_JYGG": return "学生社区通知";
+    case "LM_XJ_XSSQDT": return "学生社区动态";
+    case "LM_BYJYXX": return "就业通知";
+    case "LM_JYZPXX": return "招聘信息";
+    case "LM_XJ_GJZZSXRZ": return "国际组织实习任职";
+    }
+};
+
+/**
+ * Search News List
+ * @param helper
+ * @param page
+ * @param key
+ * @param channel
+ */
+export const searchNewsList = async (helper: InfoHelper, page: number, key: string, channel?: SourceTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const newsList: NewsSlice[] = [];
+        const json = await uFetch(
+            `${SEARCH_NEWS_LIST_URL}?_csrf=${await getCsrfToken()}`,
+            {esParamClass: JSON.stringify({
+                params: { bt: key, tag: key, xxfl: key },
+                filterParams: channel === undefined ? {} : { lmmcgroup: channelToLmmc(channel) },
+                orderMap: { sort: "time" },
+                matchExact: "否",
+                currentPage: page,
+            })},
+        );
+        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: SourceTag }[] } } = JSON.parse(json);
+        data.object.resultsList.forEach(element => {
+            newsList.push({
+                name: cheerio.load(decode(element.bt)).root().text(),
+                xxid: (element.xxid),
+                url: decode(element.url),
+                date: element.time,
+                source: element.dwmc,
+                topped: false,
+                channel: element.lmid
+            });
+        });
+        return newsList;
+    },
+    channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
+);
+
 
 const policyList: [string, [string, string]][] = [
     ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
