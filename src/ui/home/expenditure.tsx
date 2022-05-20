@@ -82,9 +82,9 @@ export const ExpenditureScreen = () => {
 		helper
 			.getExpenditures(beg, end)
 			.then(setExpenditures)
-			.catch(() => {
+			.catch((e) => {
 				Snackbar.show({
-					text: getStr("networkRetry"),
+					text: getStr("networkRetry") + e?.message,
 					duration: Snackbar.LENGTH_SHORT,
 				});
 			})
