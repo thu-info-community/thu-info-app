@@ -6,33 +6,17 @@ import {
 	Dimensions,
 } from "react-native";
 import React, {useState, useEffect} from "react";
-import {
-	FlatList,
-	TouchableOpacity,
-	TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+import {FlatList, TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import {helper, State} from "../../redux/store";
-import {addNewsCacheAction} from "../../redux/actions/cache";
-import {NewsCache} from "../../redux/states/cache";
-import {connect} from "react-redux";
+import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
-import dayjs from "dayjs";
 import themes from "../../assets/themes/themes";
 import {NewsSlice} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 
-interface NewsUIProps {
-	route: any;
-	navigation: RootNav;
-	cache: Map<string, string>;
-	addCache: (payload: NewsCache) => void;
-}
-
-export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
+export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -54,21 +38,8 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 		}
 
 		helper
-			.getNewsList(request ? 1 : page + 1, 30, route.params?.source)
+			.getNewsList(request ? 1 : page + 1, 30, undefined)
 			.then((res) => {
-				res.forEach(({url, date}, index) => {
-					if (cache.get(url) === undefined) {
-						setTimeout(() => {
-							helper.getNewsDetail(url).then(([_, __, abstract]) => {
-								addCache({
-									url,
-									timestamp: dayjs(date, "YYYY.MM.DD").toDate().valueOf(),
-									abstract: abstract.slice(0, 50),
-								});
-							});
-						}, index * 500);
-					}
-				});
 				setNewsList((o) => o.concat(res));
 			})
 			.catch(() => {
@@ -118,53 +89,16 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 							}}>
 							{getStr("waitForLoading")}
 						</Text>
-						{/* <Text
-							style={{
-								fontSize: 16,
-								alignSelf: "center",
-								color: "gray",
-								margin: 5,
-							}}>
-							{getStr("newsTip")}
-						</Text> */}
 					</View>
 				}
 				data={newsList}
-				keyExtractor={(item) => "" + newsList.indexOf(item)}
+				keyExtractor={(item) => item.url}
 				renderItem={({item}) => (
 					<View style={style.newsSliceContainer}>
-						<View style={style.titleContainer}>
-							<TouchableWithoutFeedback
-								onPress={() => {
-									if (route.params === undefined) {
-										// navigation.push("RootTabs", {source: item.channel});
-									}
-								}}>
-								{<FontAwesome name="file-text-o" size={40} color="purple" />}
-							</TouchableWithoutFeedback>
-							<View>
-								<Text
-									style={{
-										fontSize: 18,
-										marginVertical: 2.5,
-										marginHorizontal: 10,
-										color: theme.colors.text,
-									}}>
-									{getStr(item.channel)}
-								</Text>
-								<Text
-									style={{
-										color: "gray",
-										marginVertical: 2.5,
-										marginHorizontal: 10,
-									}}>
-									{item.date}
-								</Text>
-							</View>
-						</View>
 						<TouchableOpacity
 							onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
 							<Text
+								numberOfLines={2}
 								style={{
 									fontSize: 16,
 									fontWeight: "bold",
@@ -172,16 +106,32 @@ export const NewsUI = ({route, navigation, cache, addCache}: NewsUIProps) => {
 									lineHeight: 20,
 									color: theme.colors.text,
 								}}>
-								{item.name}
+								{item.name.trim()}
 							</Text>
-							<Text style={{margin: 5, lineHeight: 18}} numberOfLines={5}>
+							<View
+								style={{margin: 5, flexDirection: "row", alignItems: "center"}}>
+								{item.source.length > 0 && (
+									<>
+										<Text
+											style={{fontWeight: "bold", color: theme.colors.text}}>
+											{item.source}
+										</Text>
+										<View
+											style={{
+												marginHorizontal: 6,
+												height: 12,
+												width: 4,
+												borderRadius: 2,
+												backgroundColor: theme.colors.accent,
+											}}
+										/>
+									</>
+								)}
 								<Text style={{fontWeight: "bold", color: theme.colors.text}}>
-									{item.source + (item.source ? getStr(":") : "")}
+									{getStr(item.channel)}
 								</Text>
-								<Text style={{color: "gray"}}>
-									{cache.get(item.url) ?? getStr("loading")}
-								</Text>
-							</Text>
+							</View>
+							<Text style={{color: "gray", margin: 5}}>{item.date}</Text>
 						</TouchableOpacity>
 					</View>
 				)}
@@ -206,9 +156,9 @@ const styles = themedStyles(({colors}) => ({
 	newsSliceContainer: {
 		backgroundColor: colors.background,
 		justifyContent: "center",
-		padding: 15,
-		marginVertical: 8,
-		marginHorizontal: 16,
+		padding: 6,
+		marginVertical: 6,
+		marginHorizontal: 12,
 		shadowColor: "grey",
 		shadowOffset: {
 			width: 2,
@@ -220,40 +170,6 @@ const styles = themedStyles(({colors}) => ({
 		elevation: 2,
 	},
 
-	titleContainer: {
-		flexDirection: "row",
-		justifyContent: "flex-start",
-		alignItems: "center",
-		margin: 5,
-	},
-
-	headerContainer: {
-		flexDirection: "row",
-		justifyContent: "space-around",
-		alignItems: "center",
-		marginTop: 10,
-		marginBottom: 5,
-		marginHorizontal: 20,
-	},
-
-	textInputContainer: {
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-
-	textInputStyle: {
-		height: 30,
-		width: 60,
-		backgroundColor: colors.background,
-		color: colors.text,
-		textAlign: "left",
-		borderColor: "lightgrey",
-		borderWidth: 1,
-		borderRadius: 5,
-		padding: 7,
-	},
-
 	footerContainer: {
 		flexDirection: "row",
 		alignSelf: "stretch",
@@ -262,18 +178,3 @@ const styles = themedStyles(({colors}) => ({
 		alignItems: "center",
 	},
 }));
-
-export const NewsScreen = connect(
-	(state: State) => {
-		const cache = new Map<string, string>();
-		state.cache.news.forEach(({url, abstract}: NewsCache) => {
-			cache.set(url, abstract);
-		});
-		return {cache};
-	},
-	(dispatch) => ({
-		addCache: (payload: NewsCache) => {
-			dispatch(addNewsCacheAction(payload));
-		},
-	}),
-)(NewsUI);

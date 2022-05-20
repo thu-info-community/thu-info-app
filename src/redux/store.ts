@@ -13,8 +13,6 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
-import {Cache} from "./states/cache";
-import {cache} from "./reducers/cache";
 import {InfoHelper} from "thu-info-lib";
 import dayjs from "dayjs";
 import CookieManager from "@react-native-community/cookies";
@@ -43,7 +41,6 @@ export interface State {
 	schedule: Schedules;
 	config: Config;
 	credentials: Credentials;
-	cache: Cache;
 	top5: Top5;
 	reservation: Reservation;
 }
@@ -67,7 +64,6 @@ const rootReducer = combineReducers({
 		},
 		credentials,
 	),
-	cache,
 	top5,
 	reservation,
 });
@@ -87,19 +83,6 @@ const authTransform = createTransform(
 	},
 	{
 		whitelist: ["auth"],
-	},
-);
-
-const cacheTransform = createTransform(
-	(subState: Cache) => ({
-		...subState,
-		news: subState.news.filter(
-			(it) => it.timestamp > new Date().valueOf() - 864000000, // 10 days
-		),
-	}),
-	undefined,
-	{
-		whitelist: ["cache"],
 	},
 );
 
@@ -154,24 +137,18 @@ const migrateSchedule = (old: any): Schedule => {
 };
 
 const persistConfig = {
-	version: 4,
+	version: 5,
 	key: "root",
 	storage: AsyncStorage,
 	whitelist: [
 		"auth",
 		"schedule",
 		"config",
-		"cache",
 		"credentials",
 		"top5",
 		"reservation",
 	],
-	transforms: [
-		cacheTransform,
-		authTransform,
-		credentialsTransform,
-		configTransform,
-	],
+	transforms: [authTransform, credentialsTransform, configTransform],
 	migrate: (state: any) =>
 		Promise.resolve(
 			state === undefined
