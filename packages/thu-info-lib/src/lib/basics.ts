@@ -228,7 +228,7 @@ export const getAssessmentForm = (
                 .get();
             const overallSuggestion = new InputTag(
                 "kcpgjgDtos[0].jtjy",
-                getCheerioText($("textarea")[1]),
+                $("#kcpgjgDtos\\[0\\]\\.jtjy").text(),
             );
             const overallScore = new InputTag($("#kcpjfs")[0]);
             const overall = new Overall(overallSuggestion, overallScore);
