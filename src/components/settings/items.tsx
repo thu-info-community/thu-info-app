@@ -175,6 +175,7 @@ export const SettingsLargeButton = ({
 						: "#0002",
 				marginHorizontal: 20,
 				borderRadius: 4,
+				justifyContent: "center",
 			}}
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
