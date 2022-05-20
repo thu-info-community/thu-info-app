@@ -132,7 +132,10 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={{marginHorizontal: 12}}>
-			<ScrollView style={{margin: 6}} horizontal={true}>
+			<ScrollView
+				style={{margin: 6}}
+				showsHorizontalScrollIndicator={false}
+				horizontal={true}>
 				<ChannelTag
 					channel={undefined}
 					selected={channel === undefined}

@@ -192,7 +192,7 @@ export const ReportScreen = () => {
 			</View>
 			<SectionList
 				sections={sections}
-				stickySectionHeadersEnabled={true}
+				stickySectionHeadersEnabled={false}
 				renderSectionHeader={({section}) => (
 					<ReportHeader
 						semester={section.semester}
