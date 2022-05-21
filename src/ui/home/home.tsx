@@ -1,6 +1,5 @@
 import {
 	Alert,
-	Linking,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -483,6 +482,7 @@ export type HomeFunction =
 	| "teachingEvaluation"
 	| "gitLab"
 	| "classroomState"
+	| "reserve"
 	| "library"
 	| "libRoomBook"
 	| "reservesLib"
@@ -539,6 +539,14 @@ const getHomeFunctions = (
 		<IconClassroom width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
+		key="reserve"
+		title="reservation"
+		onPress={() => {
+			navigation.navigate("Reserve");
+		}}>
+		<IconLibrary width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
 		key="library"
 		title="library"
 		onPress={() => {
@@ -552,15 +560,7 @@ const getHomeFunctions = (
 		title="libRoomBook"
 		onPress={() => {
 			updateTop5("libRoomBook");
-			Alert.alert(getStr("externalLink"), getStr("libRoomBookHint"), [
-				{text: getStr("cancel")},
-				{
-					text: getStr("confirm"),
-					onPress: () => {
-						Linking.openURL("http://cab.hs.lib.tsinghua.edu.cn");
-					},
-				},
-			]);
+			navigation.navigate("LibRoomBook");
 		}}>
 		<IconLibRoom width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -692,8 +692,7 @@ const HomeUI = (props: HomeProps) => {
 		"teachingEvaluation",
 		"report",
 		"classroomState",
-		"library",
-		"sportsBook",
+		"reserve",
 		"finance",
 		"reservesLib",
 		"dormitory",

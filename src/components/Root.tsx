@@ -86,6 +86,8 @@ import {DormScreen} from "../ui/home/dorm";
 import IconLoseCard from "../assets/icons/IconLoseCard";
 import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 import {AccountScreen} from "../ui/settings/account";
+import {ReserveScreen} from "../ui/home/reserve";
+import {LibRoomCaptchaScreen} from "../ui/home/libRoomCaptcha";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -195,6 +197,7 @@ type HomeStackParamList = {
 	LoseCard: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
+	Reserve: undefined;
 	Library: undefined;
 	LibraryFloor: {library: Library; dateChoice: 0 | 1};
 	LibrarySection: {floor: LibraryFloor; dateChoice: 0 | 1};
@@ -202,6 +205,7 @@ type HomeStackParamList = {
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
 	LibBookRecord: undefined;
+	LibRoomCaptcha: undefined;
 	LibRoomBook: undefined;
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
@@ -373,6 +377,11 @@ export const Root = () => {
 				options={({route}) => ({title: route.params.name})}
 			/>
 			<Stack.Screen
+				name="Reserve"
+				component={ReserveScreen}
+				options={{title: getStr("reservation")}}
+			/>
+			<Stack.Screen
 				name="Library"
 				component={LibraryScreen}
 				options={({navigation}) => ({
@@ -458,6 +467,11 @@ export const Root = () => {
 				name="LibBookRecord"
 				component={LibBookRecordScreen}
 				options={{title: getStr("libBookRecord")}}
+			/>
+			<Stack.Screen
+				name="LibRoomCaptcha"
+				component={LibRoomCaptchaScreen}
+				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen
 				name="LibRoomBook"
