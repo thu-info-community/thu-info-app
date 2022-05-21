@@ -12,6 +12,9 @@ import {
     LIBRARY_HOME_URL,
     LIBRARY_LIST_URL,
     LIBRARY_ROOM_BOOKING_ACTION_URL,
+    LIBRARY_ROOM_BOOKING_CAPTCHA_URL,
+    LIBRARY_ROOM_BOOKING_HOME_URL,
+    LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LIBRARY_ROOM_BOOKING_RECORD_URL,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX,
@@ -46,7 +49,7 @@ import {
     MOCK_LIBRARY_FLOOR_LIST,
     MOCK_LIBRARY_LIST,
 } from "../mocks/library";
-import {CabError, LibraryError} from "../utils/error";
+import {CabError, CabTimeoutError, LibError, LibraryError} from "../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -336,16 +339,68 @@ export const cancelBooking = async (
         undefined,
     );
 
+export const getLibraryRoomBookingCaptchaUrl = async (helper: InfoHelper) => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        if ((await uFetch(LIBRARY_ROOM_BOOKING_HOME_URL)).includes("needCaptcha")) {
+            throw new LibError();
+        }
+        return LIBRARY_ROOM_BOOKING_CAPTCHA_URL;
+    },
+    LIBRARY_ROOM_BOOKING_CAPTCHA_URL,
+);
+
+export const loginLibraryRoomBooking = async (helper: InfoHelper, captcha: string) => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const loginResult = await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, {
+            id: helper.userId,
+            pwd: helper.password,
+            act: "login",
+            number: captcha,
+        }).then(JSON.parse);
+        if (loginResult.ret === 0) {
+            throw new CabError(loginResult.msg);
+        }
+    },
+    undefined,
+);
+
+const cabFetch = async (
+    url: string,
+    post?: object,
+): Promise<{
+    ret: number;
+    act: string;
+    msg: string;
+    data: any | null | undefined;
+    ext: any | null | undefined;
+}> => {
+    const result = await uFetch(url, post);
+    if (result.includes("needCaptcha")) {
+        throw new LibError();
+    }
+    const parsedResult = JSON.parse(result);
+    if (parsedResult.ret === -1 && parsedResult.msg.includes("未登录或登录超时")) {
+        throw new CabTimeoutError("未登录或登录超时");
+    }
+    return parsedResult;
+};
+
 export const getLibraryRoomBookingResourceList = async (
     helper: InfoHelper,
     date: string, // yyyyMMdd
 ): Promise<LibRoomRes[]> =>
     roamingWrapperWithMocks(
         helper,
-        "cab",
+        undefined,
         "",
         async (): Promise<LibRoomRes[]> => {
-            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`).then(JSON.parse);
+            const result = await cabFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`);
             return result.data.map((item: any) => ({
                 id: item.id,
                 name: item.name,
@@ -385,7 +440,7 @@ export const getLibraryRoomBookingResourceList = async (
 export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string): Promise<LibFuzzySearchResult[]> =>
     roamingWrapperWithMocks(
         helper,
-        "cab",
+        undefined,
         "",
         async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL + encodeURIComponent(keyword)).then(JSON.parse),
         MOCK_LIB_SEARCH_RES(keyword),
@@ -400,11 +455,11 @@ export const bookLibraryRoom = async (
 ): Promise<{success: boolean, msg: string}> =>
     roamingWrapperWithMocks(
         helper,
-        "cab",
+        undefined,
         "",
         async (): Promise<{success: boolean, msg: string}> => {
             const middle = memberList.length === 0 ? "" : `&min_user=${roomRes.minUser}&max_user=${roomRes.maxUser}&mb_list=$${memberList.join(',')}`;
-            const result = await uFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=${middle}&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`).then(JSON.parse);
+            const result = await cabFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=${middle}&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`);
             if (result.ret === -1) {
                 throw new CabError(result.msg);
             }
@@ -418,10 +473,10 @@ export const getLibraryRoomBookingRecord = async (
 ): Promise<LibRoomBookRecord[]> =>
     roamingWrapperWithMocks(
         helper,
-        "cab",
+        undefined,
         "",
         async() :Promise<LibRoomBookRecord[]> => {
-            const result = await uFetch(LIBRARY_ROOM_BOOKING_RECORD_URL).then(s => JSON.parse(s).msg);
+            const result = (await cabFetch(LIBRARY_ROOM_BOOKING_RECORD_URL)).msg;
             if (result.includes("没有数据")) return [];
             const tables = cheerio("tbody", result);
             return tables.map((_, table) => {
@@ -453,10 +508,10 @@ export const cancelLibraryRoomBooking = async (
 ): Promise<{success: boolean, msg: string}> =>
     roamingWrapperWithMocks(
         helper,
-        "cab",
+        undefined,
         "",
         async () : Promise<{success: boolean, msg: string}> => {
-            const result = await uFetch(LIBRARY_CANCEL_BOOKING_URL + id).then(JSON.parse);
+            const result = await cabFetch(LIBRARY_CANCEL_BOOKING_URL + id);
             if (result.ret === -1) {
                 throw new CabError(result.msg);
             }

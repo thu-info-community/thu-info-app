@@ -36,10 +36,12 @@ import {
     getBookingRecords,
     getLibraryFloorList,
     getLibraryList,
+    getLibraryRoomBookingCaptchaUrl,
     getLibraryRoomBookingRecord,
     getLibraryRoomBookingResourceList,
     getLibrarySeatList,
     getLibrarySectionList,
+    loginLibraryRoomBooking,
 } from "./lib/library";
 import {
     addNewsToFavor,
@@ -200,6 +202,10 @@ export class InfoHelper {
 
     public cancelBooking = async (id: string): Promise<void> =>
         cancelBooking(this, id);
+
+    public getLibraryRoomBookingCaptchaUrl = () => getLibraryRoomBookingCaptchaUrl(this);
+
+    public loginLibraryRoomBooking = async (captcha: string) => loginLibraryRoomBooking(this, captcha);
 
     public getLibraryRoomBookingResourceList = async (
         date: string, // yyyyMMdd
