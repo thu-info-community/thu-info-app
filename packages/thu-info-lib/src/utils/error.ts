@@ -87,3 +87,7 @@ export class CrError extends LibError {
 export class CrCaptchaError extends CrError {
 
 }
+
+export class CrTimeoutError extends CrError {
+
+}

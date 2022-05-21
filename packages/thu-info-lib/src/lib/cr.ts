@@ -22,7 +22,7 @@ import TagElement = cheerio.TagElement;
 import Element = cheerio.Element;
 import TextElement = cheerio.TextElement;
 import {roamingWrapperWithMocks} from "./core";
-import {CrCaptchaError, CrError, LibError} from "../utils/error";
+import {CrCaptchaError, CrError, CrTimeoutError, LibError} from "../utils/error";
 import {
     MOCK_AVAILABLE_SEMESTERS,
     MOCK_COURSE_PLAN,
@@ -85,7 +85,7 @@ const crFetch = async (
         throw new LibError();
     }
     if (result.includes("用户登陆超时或访问内容不存在。请重试")) {
-        throw new CrError("用户登陆超时或访问内容不存在。请重试");
+        throw new CrTimeoutError("用户登陆超时或访问内容不存在。请重试");
     }
     return result;
 };
