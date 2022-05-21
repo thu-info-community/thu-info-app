@@ -126,8 +126,7 @@ export default {
 	saveImage: "保存图片",
 	originalText: "原文",
 	comments: "评论",
-	networkRetry: "网络异常，请重试。",
-	networkRetryInSports: "网络异常，请检查验证码是否输入正确，或稍后重试。",
+	networkRetry: "网络请求失败，请重试。",
 	homeNetworkRetry:
 		"登录失败，请前往设置→密码管理部分设置家园网密码，或稍后重试。",
 	credentialNote: "您的用户信息仅会被保存在本地，并经操作系统安全地加密。",
