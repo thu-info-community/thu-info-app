@@ -302,6 +302,7 @@ export default {
 	confirmOrder: "Confirm Order",
 	selectField: "Select field:",
 	receiptTitle: "[Experimental] Receipt Title: ",
+	captcha: "Captcha",
 	captchaCaseSensitive: "Captcha (case sensitive)",
 	refresh: "Refresh",
 	sportsRecord: "Sports Reservation Record",
