@@ -21,7 +21,7 @@ import {v4} from "uuid";
 import {InfoHelper} from "../index";
 import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
-import {DormAuthError, IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
+import {CrError, DormAuthError, IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "myhome_mobile" | "gitlab";
 
@@ -263,6 +263,9 @@ export const roamingWrapper = async <R>(
             return await operation();
         }
     } catch (e) {
+        if (e instanceof CrError) {
+            throw e;
+        }
         if (await verifyAndReLogin(helper)) {
             if (policy) {
                 const result = await roam(helper, policy, payload);

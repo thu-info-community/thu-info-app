@@ -64,12 +64,13 @@ import {
     ValidReceiptTypes,
 } from "./lib/sports";
 import {
-    getCrCaptchaUrlMethod,
+    getCrCaptchaUrl,
     getCoursePlan,
     loginCr,
     searchCrRemaining,
     searchCrPrimaryOpen,
-    searchCrCourses, getCrAvailableSemestersMethod,
+    searchCrCourses,
+    getCrAvailableSemesters,
 } from "./lib/cr";
 import { SearchParams } from "./models/cr/cr";
 import { BankPaymentByMonth } from "./models/home/bank";
@@ -248,11 +249,11 @@ export class InfoHelper {
 
     public getSchedule = async () => getSchedule(this);
 
-    public getCrCaptchaUrl = async () => getCrCaptchaUrlMethod();
+    public getCrCaptchaUrl = async () => getCrCaptchaUrl(this);
 
     public loginCr = async (captcha: string) => loginCr(this, captcha);
 
-    public getCrAvailableSemesters = async () => getCrAvailableSemestersMethod();
+    public getCrAvailableSemesters = async () => getCrAvailableSemesters(this);
 
     public getCrCoursePlan = async (semester: string) => getCoursePlan(this, semester);
 

@@ -79,3 +79,11 @@ export class GitLabApiError extends LibError {
 export class ScheduleError extends LibError {
 
 }
+
+export class CrError extends LibError {
+
+}
+
+export class CrCaptchaError extends CrError {
+
+}
