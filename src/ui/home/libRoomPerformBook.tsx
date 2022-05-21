@@ -18,11 +18,11 @@ import {
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
-import {NetworkRetry} from "../../components/easySnackbars";
 import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
+import {CabTimeoutError} from "thu-info-lib/dist/utils/error";
 
 interface Segment {
 	start: string;
@@ -443,7 +443,16 @@ export const LibRoomPerformBookScreen = ({
 									navigation.pop();
 								}
 							})
-							.catch(NetworkRetry);
+							.catch((e) => {
+								if (e instanceof CabTimeoutError) {
+									navigation.navigate("LibRoomCaptcha");
+								} else {
+									Snackbar.show({
+										text: getStr("networkRetry") + e?.message,
+										duration: Snackbar.LENGTH_LONG,
+									});
+								}
+							});
 					}}
 					disabled={
 						begValue === null ||
