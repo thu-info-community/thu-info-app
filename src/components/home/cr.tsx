@@ -24,6 +24,7 @@ export const CourseTimeQuickGlance = ({
 		<View style={{width, height, borderColor: "lightgrey", borderWidth: 1}}>
 			{segments.map(({dayOfWeek, section}) => (
 				<View
+					key={`${dayOfWeek}-${section}`}
 					style={{
 						position: "absolute",
 						top: heightPerSection * (section - 1),
