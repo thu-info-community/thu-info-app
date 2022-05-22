@@ -96,7 +96,9 @@ export const CrSearchResultScreen = ({
 						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 							{name}
 						</Text>
-						<Text style={{marginVertical: 2}}>{teacher}</Text>
+						<Text style={{marginVertical: 2, color: colors.text}}>
+							{teacher}
+						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
 							{id}-{seq} ({credits} pts)
 						</Text>

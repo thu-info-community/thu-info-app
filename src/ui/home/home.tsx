@@ -259,17 +259,26 @@ export const HomeReservationSection = ({
 			<View style={style.SectionContentContainer}>
 				<View style={style.reservationSectionContainer}>
 					{transformedRecords.length === 0 ? (
-						<Text>{getStr("noActiveLibBookRecord")}</Text>
+						<Text style={{color: theme.colors.text}}>
+							{getStr("noActiveLibBookRecord")}
+						</Text>
 					) : (
 						<>
-							<Text>{transformedRecords[0].lib}</Text>
+							<Text style={{color: theme.colors.text}}>
+								{transformedRecords[0].lib}
+							</Text>
 							<View
 								style={{
 									padding: 10,
 									flexDirection: "row",
 									alignItems: "center",
 								}}>
-								<Text style={{fontSize: 20, fontWeight: "600"}}>
+								<Text
+									style={{
+										fontSize: 20,
+										fontWeight: "600",
+										color: theme.colors.text,
+									}}>
 									{transformedRecords[0].seat}
 								</Text>
 								<TouchableOpacity
@@ -317,7 +326,7 @@ export const HomeReservationSection = ({
 									</Text>
 								</TouchableOpacity>
 							</View>
-							<Text style={{textAlign: "center"}}>
+							<Text style={{textAlign: "center", color: theme.colors.text}}>
 								{getStr("bookingHintPrefix")}
 								<Text style={{fontWeight: "bold"}}>
 									{transformedRecords[0].due.format("HH:mm")}
@@ -422,6 +431,7 @@ export const HomeScheduleSection = ({
 	const tomorrowSchedules = selectSchedule(baseSchedule, tomorrow);
 
 	const themeName = useColorScheme();
+	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const dayZh = [
@@ -453,7 +463,7 @@ export const HomeScheduleSection = ({
 							{getStr("countdown")}
 						</Text>
 						{countdown.map((item) => (
-							<Text style={{marginTop: 8}} key={item}>
+							<Text style={{marginTop: 8, color: theme.colors.text}} key={item}>
 								{item}
 							</Text>
 						))}
