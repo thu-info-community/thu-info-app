@@ -86,6 +86,12 @@ export const CrSearchResultScreen = ({
 				},
 			}) => (
 				<TouchableOpacity
+					onPress={() => {
+						Snackbar.show({
+							text: "选课功能还在开发中，敬请期待……",
+							duration: Snackbar.LENGTH_SHORT,
+						});
+					}}
 					style={{
 						paddingHorizontal: 15,
 						paddingVertical: 6,

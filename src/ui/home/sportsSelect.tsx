@@ -50,7 +50,9 @@ export const SportsSelectScreen = ({
 			{!helper.mocked() && (
 				<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
 					<Text style={{padding: 10, color: "red"}}>
-						{"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！"}
+						{
+							"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！\n目前观察到的现象是，早上八点使用本软件预约几乎不可能成功，开发人员还在思考怎么解决这个问题，敬请期待……"
+						}
 					</Text>
 				</View>
 			)}
