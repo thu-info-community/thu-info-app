@@ -8,7 +8,6 @@ import {
 	TouchableNativeFeedback,
 	View,
 } from "react-native";
-import {ReportHeader} from "../../components/home/report";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -104,15 +103,40 @@ export const BankPaymentScreen = () => {
 					month,
 					data: payment,
 				}))}
-				stickySectionHeadersEnabled={true}
 				renderSectionHeader={({section}) => (
-					<ReportHeader
-						semester={section.month}
-						gpa={section.data.reduce(
-							(acc, payment) => acc + Number(payment.total),
-							0,
-						)}
-					/>
+					<View style={{marginTop: 12, paddingTop: 12}}>
+						<View
+							style={{
+								padding: 9,
+								paddingBottom: 0,
+								flexDirection: "row",
+								justifyContent: "space-between",
+								alignItems: "center",
+							}}>
+							<Text
+								numberOfLines={1}
+								style={{
+									fontSize: 20,
+									fontWeight: "bold",
+									flex: 1,
+									color: theme.colors.text,
+								}}>
+								{section.month}
+							</Text>
+							<Text
+								numberOfLines={1}
+								style={{
+									fontSize: 20,
+									fontWeight: "bold",
+									flex: 0,
+									color: theme.colors.text,
+								}}>
+								{section.data
+									.reduce((acc, payment) => acc + Number(payment.total), 0)
+									.toFixed(2)}
+							</Text>
+						</View>
+					</View>
 				)}
 				renderItem={({item}) => <PaymentItem payment={item} />}
 				refreshControl={
