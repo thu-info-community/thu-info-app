@@ -90,6 +90,9 @@ import {ReserveScreen} from "../ui/home/reserve";
 import {LibRoomCaptchaScreen} from "../ui/home/libRoomCaptcha";
 import {CrHomeScreen} from "../ui/home/crHome";
 import {CrCaptchaScreen} from "../ui/home/crCaptcha";
+import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
+import {SearchParams} from "thu-info-lib/dist/models/cr/cr";
+import {CrSearchResultScreen} from "../ui/home/crSearchResult";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -201,6 +204,8 @@ type HomeStackParamList = {
 	ClassroomDetail: {name: string};
 	CrCaptcha: undefined;
 	CrHome: undefined;
+	CrCoursePlan: {semesterId: string};
+	CrSearchResult: {searchParams: SearchParams};
 	Reserve: undefined;
 	Library: undefined;
 	LibraryFloor: {library: Library; dateChoice: 0 | 1};
@@ -251,6 +256,14 @@ export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
 export type ClassroomDetailRouteProp = RouteProp<
 	HomeStackParamList,
 	"ClassroomDetail"
+>;
+export type CrCoursePlanRouteProp = RouteProp<
+	HomeStackParamList,
+	"CrCoursePlan"
+>;
+export type CrSearchResultRouteProp = RouteProp<
+	HomeStackParamList,
+	"CrSearchResult"
 >;
 export type LibraryMapRouteProp = RouteProp<HomeStackParamList, "LibraryMap">;
 export type LibrarySeatRouteProp = RouteProp<HomeStackParamList, "LibrarySeat">;
@@ -389,6 +402,16 @@ export const Root = () => {
 				name="CrHome"
 				component={CrHomeScreen}
 				options={{title: getStr("courseRegistration")}}
+			/>
+			<Stack.Screen
+				name="CrCoursePlan"
+				component={CrCoursePlanScreen}
+				options={{title: getStr("coursePlan")}}
+			/>
+			<Stack.Screen
+				name="CrSearchResult"
+				component={CrSearchResultScreen}
+				options={{title: getStr("search")}}
 			/>
 			<Stack.Screen
 				name="Reserve"

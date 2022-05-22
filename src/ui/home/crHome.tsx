@@ -12,7 +12,7 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrError} from "thu-info-lib/dist/utils/error";
+import {CrTimeoutError} from "thu-info-lib/dist/utils/error";
 import {CrSemester} from "thu-info-lib/dist/models/cr/cr";
 
 export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -28,7 +28,7 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 			.getCrAvailableSemesters()
 			.then(setSemesters)
 			.catch((e) => {
-				if (e instanceof CrError) {
+				if (e instanceof CrTimeoutError) {
 					navigation.navigate("CrCaptcha");
 				} else {
 					Snackbar.show({
@@ -55,6 +55,7 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 			}
 			renderItem={({item: {id, name}}) => (
 				<TouchableOpacity
+					onPress={() => navigation.navigate("CrCoursePlan", {semesterId: id})}
 					style={{
 						padding: 15,
 						flexDirection: "row",
