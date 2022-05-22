@@ -10,17 +10,17 @@ import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
-import {CabError} from "thu-info-lib/dist/utils/error";
-import IconLibRoom from "../../assets/icons/IconLibRoom";
+import {CrError} from "thu-info-lib/dist/utils/error";
+import IconEvaluation from "../../assets/icons/IconEvaluation";
 import {uFetch} from "thu-info-lib/dist/utils/network";
 
-export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
+export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 	const [captcha, setCaptcha] = React.useState("");
 	const [processing, setProcessing] = React.useState(false);
 	const [imageBase64, setImageBase64] = useState<string>();
 
 	React.useEffect(() => {
-		helper.getLibraryRoomBookingCaptchaUrl().then(uFetch).then(setImageBase64);
+		helper.getCrCaptchaUrl().then(uFetch).then(setImageBase64);
 	}, []);
 
 	const themeName = useColorScheme();
@@ -29,7 +29,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={style.container}>
-			<IconLibRoom width={80} height={80} />
+			<IconEvaluation width={80} height={80} />
 			<View style={{height: 20}} />
 			<View style={{flexDirection: "row", alignItems: "center"}}>
 				<Icon name="user" size={18} color={theme.colors.primary} />
@@ -54,10 +54,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 			</View>
 			<TouchableOpacity
 				onPress={() =>
-					helper
-						.getLibraryRoomBookingCaptchaUrl()
-						.then(uFetch)
-						.then(setImageBase64)
+					helper.getCrCaptchaUrl().then(uFetch).then(setImageBase64)
 				}>
 				<Image
 					source={{uri: `data:image/jpg;base64,${imageBase64}`}}
@@ -74,10 +71,10 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 						duration: Snackbar.LENGTH_SHORT,
 					});
 					helper
-						.loginLibraryRoomBooking(captcha)
+						.loginCr(captcha.toUpperCase())
 						.then(() => navigation.pop())
 						.catch((e) => {
-							if (e instanceof CabError) {
+							if (e instanceof CrError) {
 								Snackbar.show({
 									text: e.message,
 									duration: Snackbar.LENGTH_LONG,
@@ -85,10 +82,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 							} else {
 								NetworkRetry();
 							}
-							helper
-								.getLibraryRoomBookingCaptchaUrl()
-								.then(uFetch)
-								.then(setImageBase64);
+							helper.getCrCaptchaUrl().then(uFetch).then(setImageBase64);
 						})
 						.then(() => setProcessing(false));
 				}}>

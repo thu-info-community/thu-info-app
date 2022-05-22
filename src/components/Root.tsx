@@ -88,6 +88,8 @@ import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 import {AccountScreen} from "../ui/settings/account";
 import {ReserveScreen} from "../ui/home/reserve";
 import {LibRoomCaptchaScreen} from "../ui/home/libRoomCaptcha";
+import {CrHomeScreen} from "../ui/home/crHome";
+import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -197,6 +199,8 @@ type HomeStackParamList = {
 	LoseCard: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: {name: string};
+	CrCaptcha: undefined;
+	CrHome: undefined;
 	Reserve: undefined;
 	Library: undefined;
 	LibraryFloor: {library: Library; dateChoice: 0 | 1};
@@ -375,6 +379,16 @@ export const Root = () => {
 				name="ClassroomDetail"
 				component={ClassroomDetailScreen}
 				options={({route}) => ({title: route.params.name})}
+			/>
+			<Stack.Screen
+				name="CrCaptcha"
+				component={CrCaptchaScreen}
+				options={{title: getStr("courseRegistration")}}
+			/>
+			<Stack.Screen
+				name="CrHome"
+				component={CrHomeScreen}
+				options={{title: getStr("courseRegistration")}}
 			/>
 			<Stack.Screen
 				name="Reserve"
