@@ -11,7 +11,7 @@ import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {CrError} from "thu-info-lib/dist/utils/error";
-import IconEvaluation from "../../assets/icons/IconEvaluation";
+import IconCr from "../../assets/icons/IconCr";
 import {uFetch} from "thu-info-lib/dist/utils/network";
 
 export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
@@ -29,7 +29,7 @@ export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={style.container}>
-			<IconEvaluation width={80} height={80} />
+			<IconCr width={80} height={80} />
 			<View style={{height: 20}} />
 			<View style={{flexDirection: "row", alignItems: "center"}}>
 				<Icon name="user" size={18} color={theme.colors.primary} />
