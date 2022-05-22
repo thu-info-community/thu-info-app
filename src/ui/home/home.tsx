@@ -483,6 +483,7 @@ export type HomeFunction =
 	| "gitLab"
 	| "classroomState"
 	| "reserve"
+	| "cr"
 	| "library"
 	| "libRoomBook"
 	| "reservesLib"
@@ -545,6 +546,15 @@ const getHomeFunctions = (
 			navigation.navigate("Reserve");
 		}}>
 		<IconLibrary width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="cr"
+		title="courseRegistration"
+		onPress={() => {
+			updateTop5("cr");
+			navigation.navigate("CrHome");
+		}}>
+		<IconEvaluation width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="library"
@@ -696,6 +706,7 @@ const HomeUI = (props: HomeProps) => {
 		"finance",
 		"reservesLib",
 		"dormitory",
+		"cr",
 	];
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
 		homeFunctions.find((y) => y.key === x),
