@@ -14,6 +14,7 @@ import {CrSearchResultRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {CrTimeoutError} from "thu-info-lib/dist/utils/error";
 import {CrSearchResultInfo} from "thu-info-lib/dist/models/cr/cr";
+import {CourseTimeQuickGlance} from "../../components/home/cr";
 
 export const CrSearchResultScreen = ({
 	route,
@@ -108,6 +109,10 @@ export const CrSearchResultScreen = ({
 						<Text style={{color: "grey", marginVertical: 2}}>
 							{getStr("courseQueue")} {queue}
 						</Text>
+					</View>
+					<View
+						style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+						<CourseTimeQuickGlance time={time} width={7 * 15} height={6 * 15} />
 					</View>
 				</TouchableOpacity>
 			)}
