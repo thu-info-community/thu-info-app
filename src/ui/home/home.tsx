@@ -44,6 +44,7 @@ import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
 import Snackbar from "react-native-snackbar";
 import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
+import IconCr from "../../assets/icons/IconCr";
 
 const iconSize = 40;
 
@@ -554,7 +555,7 @@ const getHomeFunctions = (
 			updateTop5("cr");
 			navigation.navigate("CrHome");
 		}}>
-		<IconEvaluation width={iconSize} height={iconSize} />
+		<IconCr width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="library"
