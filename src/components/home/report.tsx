@@ -23,7 +23,8 @@ export const ReportHeader = (props: ReportHeaderProps) => {
 	const style = styles(themeName);
 
 	return (
-		<View style={{marginTop: 12, paddingTop: 12, backgroundColor: "lightgrey"}}>
+		<View
+			style={{marginTop: 12, paddingTop: 12, backgroundColor: colors.fontB3}}>
 			<View style={[style.reportContainer, {paddingBottom: 0}]}>
 				<Text
 					numberOfLines={1}
@@ -80,10 +81,11 @@ const gradeToColor: {[key: string]: string} = {
 
 export const ReportItem = (props: ReportItemProps) => {
 	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
 	const style = styles(themeName);
 
 	return (
-		<View style={[style.reportContainer, {backgroundColor: "lightgrey"}]}>
+		<View style={[style.reportContainer, {backgroundColor: colors.fontB3}]}>
 			<View
 				style={[
 					style.reportItem,
@@ -163,7 +165,7 @@ export const ReportSummary = (props: {
 
 const styles = themedStyles((theme) => ({
 	reportSummaryContainer: {
-		backgroundColor: "lightgrey",
+		backgroundColor: theme.colors.fontB3,
 	},
 	reportContainer: {
 		padding: 6,
