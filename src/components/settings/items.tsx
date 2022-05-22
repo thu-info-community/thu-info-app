@@ -169,7 +169,7 @@ export const SettingsLargeButton = ({
 					themeName === "dark"
 						? disabled
 							? "#FFF4"
-							: "#ccc"
+							: "#ccc4"
 						: disabled
 						? "#0000"
 						: "#0002",
