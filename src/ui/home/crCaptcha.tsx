@@ -49,7 +49,7 @@ export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 					placeholderTextColor={theme.colors.primary}
 					selectionColor={theme.colors.accent}
 					value={captcha}
-					onChangeText={setCaptcha}
+					onChangeText={(text) => setCaptcha(text.toUpperCase())}
 				/>
 			</View>
 			<TouchableOpacity
