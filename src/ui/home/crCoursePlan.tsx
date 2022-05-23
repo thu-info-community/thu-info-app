@@ -66,7 +66,7 @@ export const CrCoursePlanScreen = ({
 							textAlignVertical: "center",
 							fontSize: 15,
 							paddingHorizontal: 12,
-							backgroundColor: colors.background,
+							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							borderColor: "#CCC",
 							borderWidth: 1,

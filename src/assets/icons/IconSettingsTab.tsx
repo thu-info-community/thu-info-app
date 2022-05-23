@@ -10,7 +10,7 @@ export default ({size, color}: {size: number; color: string}) => {
 		<Svg viewBox="0 0 48 48" width={size} height={size}>
 			<Path
 				fillOpacity=".01"
-				fill={theme.colors.background}
+				fill={theme.colors.contentBackground}
 				d="M0 0h48v48H0z"
 			/>
 			<Path

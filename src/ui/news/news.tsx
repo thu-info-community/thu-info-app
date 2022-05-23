@@ -170,7 +170,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								textAlignVertical: "center",
 								fontSize: 15,
 								paddingHorizontal: 12,
-								backgroundColor: theme.colors.background,
+								backgroundColor: theme.colors.themeBackground,
 								color: theme.colors.text,
 								borderColor: "#CCC",
 								borderWidth: 1,
@@ -279,19 +279,11 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 const styles = themedStyles(({colors}) => ({
 	newsSliceContainer: {
-		backgroundColor: colors.background,
+		backgroundColor: colors.contentBackground,
 		justifyContent: "center",
 		padding: 6,
 		marginVertical: 6,
-		shadowColor: "grey",
-		shadowOffset: {
-			width: 2,
-			height: 2,
-		},
-		shadowOpacity: 0.8,
-		shadowRadius: 2,
 		borderRadius: 5,
-		elevation: 2,
 	},
 
 	footerContainer: {

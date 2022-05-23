@@ -98,7 +98,8 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 				onPress={() => navigation.navigate("Popi")}
 			/>
 			<SettingsSeparator />
-			<View style={{backgroundColor: colors.background, alignItems: "center"}}>
+			<View
+				style={{backgroundColor: colors.themeBackground, alignItems: "center"}}>
 				{qrcodeContent !== undefined && (
 					<>
 						<QRCode value={qrcodeContent} size={80} />
@@ -116,7 +117,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					fontSize: 15,
 					marginTop: 12,
 					padding: 12,
-					backgroundColor: colors.background,
+					backgroundColor: colors.themeBackground,
 					color: colors.text,
 					borderColor: "#CCC",
 					borderWidth: 1,
@@ -139,7 +140,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						fontSize: 15,
 						marginVertical: 8,
 						padding: 12,
-						backgroundColor: colors.background,
+						backgroundColor: colors.themeBackground,
 						color: colors.text,
 						borderColor: "#CCC",
 						borderWidth: 1,

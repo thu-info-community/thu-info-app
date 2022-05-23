@@ -33,7 +33,7 @@ const styles = themedStyles((theme) => ({
 	},
 	pdf: {
 		flex: 1,
-		backgroundColor: theme.colors.background,
+		backgroundColor: theme.colors.themeBackground,
 		width: Dimensions.get("window").width,
 		height: Dimensions.get("window").height,
 	},

@@ -47,7 +47,7 @@ export const GitlabSearchScreen = (props: {navigation: RootNav}) => {
 					style={{
 						fontSize: 15,
 						flex: 1,
-						backgroundColor: colors.background,
+						backgroundColor: colors.themeBackground,
 						color: colors.text,
 						textAlign: "left",
 						borderColor: "lightgrey",

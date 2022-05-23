@@ -215,7 +215,7 @@ export const SportsSelectScreen = ({
 					style={{
 						fontSize: 20,
 						padding: 10,
-						color: colors.background,
+						color: colors.themeBackground,
 						textAlign: "center",
 					}}>
 					{getStr("submit")}

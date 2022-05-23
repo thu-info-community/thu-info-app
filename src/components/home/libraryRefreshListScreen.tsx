@@ -65,7 +65,7 @@ export function libraryRefreshListScreen<
 							{"status" in item && (
 								<TouchableOpacity
 									style={{
-										backgroundColor: colors.background,
+										backgroundColor: colors.themeBackground,
 										flexDirection: "row",
 										justifyContent: "center",
 										alignItems: "center",
@@ -200,7 +200,7 @@ export function libraryRefreshListScreen<
 							)}
 							<TouchableOpacity
 								style={{
-									backgroundColor: colors.background,
+									backgroundColor: colors.themeBackground,
 									flexDirection: "row",
 									justifyContent: "space-between",
 									alignItems: "center",

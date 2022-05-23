@@ -12,7 +12,7 @@ export const LibraryScreen = simpleRefreshListScreen(
 		<View>
 			<TouchableOpacity
 				style={{
-					backgroundColor: colors.background,
+					backgroundColor: colors.themeBackground,
 					flexDirection: "row",
 					justifyContent: "space-between",
 					alignItems: "center",
