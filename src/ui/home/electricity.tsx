@@ -95,7 +95,7 @@ export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 								fontSize: 27,
 								width: "90%",
 								color: colors.text,
-								backgroundColor: colors.background,
+								backgroundColor: colors.themeBackground,
 							}}
 						/>
 					</View>

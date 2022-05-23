@@ -260,7 +260,7 @@ export const SettingsEditValue = <T extends string | number>({
 				style={{
 					fontSize: 15,
 					flex: 1,
-					backgroundColor: colors.background,
+					backgroundColor: colors.themeBackground,
 					color: colors.text,
 					textAlign: "left",
 					borderColor: "lightgrey",
@@ -313,7 +313,7 @@ export const SettingsEditText = ({
 				style={{
 					fontSize: 15,
 					flex: 2,
-					backgroundColor: colors.background,
+					backgroundColor: colors.themeBackground,
 					color: colors.text,
 					textAlign: "left",
 					borderColor: "lightgrey",

@@ -10,7 +10,7 @@ const Classroom = ({name, navigation}: {name: string; navigation: RootNav}) => {
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: colors.background,
+				backgroundColor: colors.themeBackground,
 				padding: 7,
 				marginHorizontal: 5,
 				marginTop: 10,

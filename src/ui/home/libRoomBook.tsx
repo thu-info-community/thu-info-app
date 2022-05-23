@@ -187,7 +187,7 @@ export const LibRoomBookScreen = ({navigation}: {navigation: RootNav}) => {
 						disabled={item.kindName.indexOf("暂未开放") !== -1}>
 						<View
 							style={{
-								backgroundColor: theme.colors.background,
+								backgroundColor: theme.colors.themeBackground,
 								justifyContent: "center",
 								padding: 15,
 								marginVertical: 8,

@@ -124,7 +124,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 						borderLeftWidth: ind === 1 ? 2 : 1,
 						alignContent: "center",
 						justifyContent: "center",
-						backgroundColor: theme.colors.background,
+						backgroundColor: theme.colors.themeBackground,
 					}}
 					key={`0-${ind + 1}`}>
 					<Text style={{textAlign: "center", color: "gray"}}>
@@ -143,11 +143,11 @@ const ScheduleUI = (props: ScheduleProps) => {
 					borderBottomColor: "lightgray",
 					borderBottomWidth: 2,
 					height: unitHeight / 2,
-					backgroundColor: theme.colors.background,
+					backgroundColor: theme.colors.themeBackground,
 				}}
 				key="0">
 				<View
-					style={{flex: 1, backgroundColor: theme.colors.background}}
+					style={{flex: 1, backgroundColor: theme.colors.themeBackground}}
 					key="0-0"
 				/>
 				{daysOfWeekList}
@@ -162,7 +162,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 						flex: 1,
 						alignContent: "center",
 						justifyContent: "center",
-						backgroundColor: theme.colors.background,
+						backgroundColor: theme.colors.themeBackground,
 					}}
 					key={`${ind}-0`}>
 					<Text style={{textAlign: "center", color: "gray"}}>{ind}</Text>
@@ -177,10 +177,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 							borderLeftWidth: i ? 1 : 2,
 							backgroundColor:
 								week === nowWeek && i + 1 === today
-									? theme.colors.background === "#000000"
+									? theme.colors.contentBackground === "#000000"
 										? "#3D3D3D"
 										: "#F4F4F4"
-									: theme.colors.background,
+									: theme.colors.contentBackground,
 						}}
 						key={`${ind}-${i + 1}`}
 					/>,

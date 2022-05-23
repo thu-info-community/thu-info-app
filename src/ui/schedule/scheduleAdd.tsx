@@ -348,7 +348,7 @@ const styles = themedStyles(({colors}) => {
 			flex: 1,
 			padding: 6,
 			margin: 5,
-			backgroundColor: colors.background,
+			backgroundColor: colors.themeBackground,
 			justifyContent: "center",
 			borderRadius: 3,
 			shadowColor: "grey",
@@ -386,7 +386,7 @@ const styles = themedStyles(({colors}) => {
 		textInputStyle: {
 			height: 38,
 			flex: 1,
-			backgroundColor: colors.background,
+			backgroundColor: colors.themeBackground,
 			color: colors.text,
 			textAlign: "left",
 			borderColor: "lightgrey",

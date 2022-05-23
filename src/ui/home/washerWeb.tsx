@@ -9,12 +9,12 @@ export const WasherWebScreen = () => {
 	const theme = themes(themeName);
 
 	return (
-		<View style={{backgroundColor: theme.colors.background, flex: 1}}>
+		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<WebView
 				source={{uri: "https://washer.sdevs.top/"}}
 				forceDarkOn={themeName === "dark"}
 				style={{
-					backgroundColor: theme.colors.background,
+					backgroundColor: theme.colors.themeBackground,
 					color: theme.colors.text,
 				}}
 				setSupportMultipleWindows={false}

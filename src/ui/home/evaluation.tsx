@@ -156,7 +156,7 @@ const styles = themedStyles(({colors}) => ({
 
 	notEvaluatedStyle: {
 		flexDirection: "row",
-		backgroundColor: colors.background,
+		backgroundColor: colors.themeBackground,
 		justifyContent: "space-between",
 		alignItems: "center",
 		height: 50,

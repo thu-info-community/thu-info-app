@@ -6,8 +6,8 @@ export const colorLight: ColorTheme = {
 	primaryDark: "#380052",
 	accent: "#2979ff",
 	text: "#000000",
-	background: "#ffffff",
-	background2: "#f6f6f6",
+	contentBackground: "#ffffff",
+	themeBackground: "#f6f6f6",
 
 	mainTheme: "#B791F0",
 	fontB0: "#000000",

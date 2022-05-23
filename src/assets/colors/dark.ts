@@ -6,8 +6,8 @@ export const colorDark: ColorTheme = {
 	primaryDark: "#3e0558",
 	accent: "#023ea2",
 	text: "#cccccc",
-	background: "#000000",
-	background2: "#000000",
+	contentBackground: "#000000",
+	themeBackground: "#000000",
 
 	// to be decided
 	mainTheme: "#B791F0",

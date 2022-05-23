@@ -323,7 +323,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					style={{
 						fontSize: 15,
 						flex: 5,
-						backgroundColor: colors.background,
+						backgroundColor: colors.themeBackground,
 						color: colors.text,
 						textAlign: "left",
 						textAlignVertical: "center",
@@ -388,7 +388,7 @@ export const ScheduleDetailScreen = ({route}: any) => {
 					style={{
 						fontSize: 15,
 						flex: 5,
-						backgroundColor: colors.background,
+						backgroundColor: colors.themeBackground,
 						color: colors.text,
 						textAlign: "left",
 						textAlignVertical: "center",
