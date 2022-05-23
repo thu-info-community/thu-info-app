@@ -4,6 +4,7 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    SelectedCourse,
 } from "../models/cr/cr";
 
 export const MOCK_AVAILABLE_SEMESTERS: CrSemester[] = [
@@ -1113,3 +1114,50 @@ export const MOCK_CR_SEARCH_RESULT: CrSearchResult = {
         }
     ]
 };
+
+export const MOCK_SELECTED_COURSES: SelectedCourse[] = [
+    {
+        type: "必修",
+        will: 3,
+        id: "30240243",
+        seq: "0",
+        name: "操作系统",
+        time: "3-2(全周)",
+        teacher: "向勇",
+        credit: 3,
+        secondary: false
+    },
+    {
+        type: "限选",
+        will: 3,
+        id: "30240402",
+        seq: "0",
+        name: "操作系统专题训练",
+        time: "4-2(前八周),1-2(前八周)",
+        teacher: "向勇",
+        credit: 2,
+        secondary: false
+    },
+    {
+        type: "限选",
+        will: 3,
+        id: "40240552",
+        seq: "0",
+        name: "嵌入式系统",
+        time: "3-1(前八周),(后八周)",
+        teacher: "陶品",
+        credit: 2,
+        secondary: false
+    },
+    {
+        type: "任选",
+        will: 1,
+        id: "00780461",
+        seq: "91",
+        name: "钢琴入门与音乐基础",
+        time: "2-3(全周)",
+        teacher: "黄垚",
+        credit: 1,
+        secondary: false
+    }
+];

@@ -73,6 +73,8 @@ import {
     searchCrPrimaryOpen,
     searchCrCourses,
     getCrAvailableSemesters,
+    selectCourse,
+    Priority, deleteCourse, getSelectedCourses, changeCourseWill,
 } from "./lib/cr";
 import { SearchParams } from "./models/cr/cr";
 import { BankPaymentByMonth } from "./models/home/bank";
@@ -268,6 +270,29 @@ export class InfoHelper {
     public searchCrPrimaryOpen = async (params: SearchParams) => searchCrPrimaryOpen(this, params);
 
     public searchCrCourses = async (params: SearchParams) => searchCrCourses(this, params);
+
+    public selectCourse = async (
+        semesterId: string,
+        priority: Priority,
+        courseId: string,
+        courseSeq: string,
+        will: 1 | 2 | 3,
+    ) => selectCourse(this, semesterId, priority, courseId, courseSeq, will);
+
+    public deleteCourse = async (
+        semesterId: string,
+        courseId: string,
+        courseSeq: string,
+    ) => deleteCourse(this, semesterId, courseId, courseSeq);
+
+    public getSelectedCourses = async (semesterId: string) => getSelectedCourses(this, semesterId);
+
+    public changeCourseWill = async (
+        semesterId: string,
+        courseId: string,
+        courseSeq: string,
+        will: 1 | 2 | 3,
+    ) => changeCourseWill(this, semesterId, courseId, courseSeq, will);
 
     public getSportsResources = async (
         gymId: string,

@@ -3,8 +3,11 @@ import {
     COURSE_PLAN_URL_PREFIX,
     CR_CAPTCHA_URL,
     CR_LOGIN_HOME_URL,
-    CR_LOGIN_SUBMIT_URL, CR_MAIN_URL,
-    CR_SEARCH_URL, CR_TREE_URL,
+    CR_LOGIN_SUBMIT_URL,
+    CR_MAIN_URL,
+    CR_SEARCH_URL,
+    CR_SELECT_URL,
+    CR_TREE_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
@@ -14,13 +17,12 @@ import {
     CrPrimaryOpenSearchResult,
     CrRemainingInfo,
     CrRemainingSearchResult,
-    CrSearchResult, CrSemester,
+    CrSearchResult,
+    CrSemester,
     SearchParams,
+    SelectedCourse,
 } from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
-import TagElement = cheerio.TagElement;
-import Element = cheerio.Element;
-import TextElement = cheerio.TextElement;
 import {roamingWrapperWithMocks} from "./core";
 import {CrCaptchaError, CrError, CrTimeoutError, LibError} from "../utils/error";
 import {
@@ -29,7 +31,11 @@ import {
     MOCK_CR_PRIMARY_OPEN_SEARCH_RESULT,
     MOCK_CR_REMAINING_SEARCH_RESULT,
     MOCK_CR_SEARCH_RESULT,
+    MOCK_SELECTED_COURSES,
 } from "../mocks/cr";
+import TagElement = cheerio.TagElement;
+import Element = cheerio.Element;
+import TextElement = cheerio.TextElement;
 
 export const getCrCaptchaUrl = (helper: InfoHelper) => roamingWrapperWithMocks(
     helper,
@@ -270,4 +276,116 @@ export const searchCrCourses = async (helper: InfoHelper, params: SearchParams):
         };
     },
     MOCK_CR_SEARCH_RESULT,
+);
+
+export type Priority = "bx" | "xx" | "rx" | "ty" | "cx"
+
+export const selectCourse = async (helper: InfoHelper, semesterId: string, priority: Priority, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const mainHtml = await crFetch(`${CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
+        const $ = cheerio.load(mainHtml);
+        const m = `save${priority[0].toUpperCase()}${priority[1]}Kc`;
+        const token = $("input[name=token]").attr().value;
+        const post: {[key: string]: string | number} = {
+            m,
+            token,
+            p_xnxq: semesterId,
+            tokenPriFlag: priority,
+        };
+        const fieldKey = priority === "rx" ? "rx" : priority === "ty" ? "rxTy" : priority + "k";
+        post[`p_${fieldKey}_id`] = `${semesterId};${courseId};${courseSeq};`;
+        post[`p_${fieldKey}_xkzy`] = will;
+        const responseHtml = await crFetch(CR_SELECT_URL, post);
+        const responseMsg = /showMsg\("(.+?)"\);/g.exec(responseHtml);
+        if (responseMsg === null) {
+            throw new CrError("Failed to match regex");
+        }
+        return responseMsg[1];
+    },
+    "提交选课成功;",
+);
+
+export const deleteCourse = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string) => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const $ = cheerio.load(yxHtml);
+        const post: {[key: string]: string | number} = {
+            m: "deleteYxk",
+            token: $("input[name=token]").attr().value,
+            p_xnxq: semesterId,
+            tokenPriFlag: "yx",
+        };
+        post["p_del_id"] = `${semesterId};${courseId};${courseSeq};`;
+        const responseHtml = await crFetch(CR_SELECT_URL, post);
+        const responseMsg = /showMsg\("(.+?)"\);/g.exec(responseHtml);
+        if (responseMsg === null) {
+            throw new CrError("Failed to match regex");
+        }
+        return responseMsg[1];
+    },
+    "删除选课成功",
+);
+
+const willStringToNumber = (will: string): 1 | 2 | 3 => {
+    switch (will) {
+    case "第一志愿": return 1;
+    case "第二志愿": return 2;
+    default: return 3;
+    }
+};
+
+export const getSelectedCourses = async (helper: InfoHelper, semesterId: string): Promise<SelectedCourse[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const $ = cheerio.load(yxHtml);
+        return $(".trr2").map((_, e) => {
+            const tds = cheerio(e).find(".tdd2");
+            return {
+                type: cheerio(tds[1]).text(),
+                will: willStringToNumber(cheerio(tds[2]).text()),
+                id: cheerio(tds[3]).text(),
+                seq: cheerio(tds[5]).text(),
+                name: cheerio(tds[4]).text().trim(),
+                time: cheerio(tds[6]).text(),
+                teacher: cheerio(tds[7]).text(),
+                credit: Number(cheerio(tds[8]).text()),
+                secondary: cheerio(tds[9]).text() === "是",
+            } as SelectedCourse;
+        }).get();
+    },
+    MOCK_SELECTED_COURSES,
+);
+
+export const changeCourseWill = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const $ = cheerio.load(yxHtml);
+        const responseHtml = await crFetch(CR_SELECT_URL, {
+            m: "changeZY",
+            token: $("input[name=token]").attr().value,
+            p_xnxq: semesterId,
+            tokenPriFlag: "yx",
+            jhzy_kch: courseId,
+            jhzy_kxh: courseSeq,
+            jhzy_zy: will,
+        });
+        const responseMsg = /showMsg\("(.+?)"\);/g.exec(responseHtml);
+        if (responseMsg === null) {
+            throw new CrError("Failed to match regex");
+        }
+        return responseMsg[1];
+    },
+    "该修改志愿成功",
 );

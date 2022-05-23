@@ -72,3 +72,15 @@ export interface CrSearchResult {
     totalCount: number;
     courses: CrSearchResultInfo[];
 }
+
+export interface SelectedCourse {
+    type: string;        // 选课属性
+    will: 1 | 2 | 3;     // 选课志愿
+    id: string;          // 课程号
+    seq: string;         // 课序号
+    name: string;        // 课程名
+    time: string;        // 上课时间
+    teacher: string;     // 教室名
+    credit: number;      // 学分
+    secondary: boolean;  // 是否二级选课
+}
