@@ -79,7 +79,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 
 const styles = themedStyles((theme) => ({
 	container: {
-		backgroundColor: theme.colors.background,
+		backgroundColor: theme.colors.themeBackground,
 		flex: 1,
 		padding: 15,
 		position: "absolute",
@@ -90,7 +90,7 @@ const styles = themedStyles((theme) => ({
 	},
 
 	webContainer: {
-		backgroundColor: theme.colors.background,
+		backgroundColor: theme.colors.themeBackground,
 		color: theme.colors.text,
 	},
 

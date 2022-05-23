@@ -11,7 +11,7 @@ export default svgGenerator((width, height) => {
 		<Svg viewBox="0 0 48 48" width={width} height={height}>
 			<Path
 				fillOpacity=".01"
-				fill={theme.colors.background}
+				fill={theme.colors.contentBackground}
 				d="M0 0h48v48H0z"
 			/>
 			<Rect

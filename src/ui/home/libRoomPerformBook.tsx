@@ -234,7 +234,7 @@ export const LibRoomPerformBookScreen = ({
 						}}>
 						<TextInput
 							style={{
-								backgroundColor: colors.background,
+								backgroundColor: colors.themeBackground,
 								color: colors.text,
 								textAlign: "left",
 								borderColor: "lightgrey",

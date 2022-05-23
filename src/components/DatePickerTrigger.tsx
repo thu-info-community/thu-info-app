@@ -72,7 +72,7 @@ export const DatePickerTrigger = ({
 						}}>
 						<View
 							style={{
-								backgroundColor: colors.background,
+								backgroundColor: colors.themeBackground,
 								flexDirection: "row",
 								alignItems: "center",
 								justifyContent: "space-around",
@@ -103,12 +103,12 @@ export const DatePickerTrigger = ({
 							}}
 							style={{
 								width: "100%",
-								backgroundColor: colors.background,
+								backgroundColor: colors.themeBackground,
 								alignSelf: "center",
 							}}
 						/>
 					</View>
-					<View style={{height: 15, backgroundColor: colors.background}} />
+					<View style={{height: 15, backgroundColor: colors.themeBackground}} />
 				</Modal>
 			)}
 		</>

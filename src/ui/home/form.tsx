@@ -90,7 +90,7 @@ export const FormScreen = ({
 								padding: 10,
 								marginBottom: 20,
 								color: colors.text,
-								backgroundColor: colors.background,
+								backgroundColor: colors.themeBackground,
 							}}
 							multiline={true}
 							placeholder={getStr("inputSuggestions")}
@@ -183,7 +183,7 @@ export const FormScreen = ({
 					padding: 10,
 					marginBottom: 20,
 					color: colors.text,
-					backgroundColor: colors.background,
+					backgroundColor: colors.themeBackground,
 				}}
 				multiline={true}
 				placeholder={getStr("inputSuggestions")}

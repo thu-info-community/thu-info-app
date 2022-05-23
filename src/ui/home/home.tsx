@@ -733,7 +733,7 @@ const HomeUI = (props: HomeProps) => {
 	}, []);
 
 	return (
-		<ScrollView style={{backgroundColor: theme.colors.background2}}>
+		<ScrollView style={{backgroundColor: theme.colors.themeBackground}}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5}
 			</HomeFunctionSection>
@@ -770,7 +770,7 @@ const styles = themedStyles((theme) => ({
 		marginHorizontal: 12,
 	},
 	SectionContentContainer: {
-		backgroundColor: theme.colors.background,
+		backgroundColor: theme.colors.contentBackground,
 		shadowColor: "grey",
 		borderRadius: 20,
 		paddingHorizontal: 12,
