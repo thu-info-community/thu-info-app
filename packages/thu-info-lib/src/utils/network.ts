@@ -90,6 +90,7 @@ export const uFetch = async (
 
     // Perform the network request
     try {
+        // @ts-ignore
         const response = await fetch(url, init);
 
         if (response.status !== 200 && response.status !== 201) {
@@ -197,6 +198,7 @@ export const getRedirectUrl = async (
     }, timeout);
     const init: RequestInit = {
         headers: headers,
+        // @ts-ignore
         signal: controller.signal,
         redirect: "manual" // Set the redirect mode to "manual" so fetch won't follow the http redirection
     };
