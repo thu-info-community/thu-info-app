@@ -36,26 +36,4 @@ target 'thu_info' do
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
-
-  permissions_path = '../node_modules/react-native-permissions/ios'
-
-  pod 'Permission-AppTrackingTransparency', :path => "#{permissions_path}/AppTrackingTransparency/Permission-AppTrackingTransparency.podspec"
-  pod 'Permission-BluetoothPeripheral', :path => "#{permissions_path}/BluetoothPeripheral/Permission-BluetoothPeripheral.podspec"
-  pod 'Permission-Calendars', :path => "#{permissions_path}/Calendars/Permission-Calendars.podspec"
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera/Permission-Camera.podspec"
-  pod 'Permission-Contacts', :path => "#{permissions_path}/Contacts/Permission-Contacts.podspec"
-  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID/Permission-FaceID.podspec"
-  pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy/Permission-LocationAccuracy.podspec"
-  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways/Permission-LocationAlways.podspec"
-  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse/Permission-LocationWhenInUse.podspec"
-  pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary/Permission-MediaLibrary.podspec"
-  pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone/Permission-Microphone.podspec"
-  pod 'Permission-Motion', :path => "#{permissions_path}/Motion/Permission-Motion.podspec"
-  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications/Permission-Notifications.podspec"
-  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary/Permission-PhotoLibrary.podspec"
-  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly/Permission-PhotoLibraryAddOnly.podspec"
-  pod 'Permission-Reminders', :path => "#{permissions_path}/Reminders/Permission-Reminders.podspec"
-  pod 'Permission-Siri', :path => "#{permissions_path}/Siri/Permission-Siri.podspec"
-  pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition/Permission-SpeechRecognition.podspec"
-  pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit/Permission-StoreKit.podspec"
 end
