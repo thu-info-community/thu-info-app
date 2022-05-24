@@ -58,6 +58,4 @@ target 'thu_info' do
   pod 'Permission-Siri', :path => "#{permissions_path}/Siri/Permission-Siri.podspec"
   pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition/Permission-SpeechRecognition.podspec"
   pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit/Permission-StoreKit.podspec"
-
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
 end
