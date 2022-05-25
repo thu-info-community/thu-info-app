@@ -74,9 +74,15 @@ import {
     searchCrCourses,
     getCrAvailableSemesters,
     selectCourse,
-    Priority, deleteCourse, getSelectedCourses, changeCourseWill,
+    Priority,
+    deleteCourse,
+    getSelectedCourses,
+    changeCourseWill,
+    searchCoursePriorityInformation,
+    searchCoursePriorityMeta,
+    getCrCurrentStage,
 } from "./lib/cr";
-import { SearchParams } from "./models/cr/cr";
+import { SearchCoursePriorityQuery, SearchParams } from "./models/cr/cr";
 import { BankPaymentByMonth } from "./models/home/bank";
 import {
     getNamespaces,
@@ -293,6 +299,15 @@ export class InfoHelper {
         courseSeq: string,
         will: 1 | 2 | 3,
     ) => changeCourseWill(this, semesterId, courseId, courseSeq, will);
+
+    public getCrCurrentStage = async (semesterId: string) => getCrCurrentStage(this, semesterId);
+
+    public searchCoursePriorityMeta = async (semesterId: string) => searchCoursePriorityMeta(this, semesterId);
+
+    public searchCoursePriorityInformation = async (
+        semesterId: string,
+        query: SearchCoursePriorityQuery,
+    ) => searchCoursePriorityInformation(this, semesterId, query);
 
     public getSportsResources = async (
         gymId: string,

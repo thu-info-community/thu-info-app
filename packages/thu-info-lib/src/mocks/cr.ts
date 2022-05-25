@@ -4,6 +4,7 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    SearchCoursePriorityResult,
     SelectedCourse,
 } from "../models/cr/cr";
 
@@ -1159,5 +1160,66 @@ export const MOCK_SELECTED_COURSES: SelectedCourse[] = [
         teacher: "黄垚",
         credit: 1,
         secondary: false
+    }
+];
+
+export const MOCK_CR_CURRENT_STAGE = {
+    stage: "本科生预选",
+    beginTime: "2022年05月23日13时",
+    endTime: "2022年05月26日16时",
+};
+
+export const MOCK_SEARCH_COURSE_PRIORITY_META = {curr: "2022年05月25日12时00分", next: "2022年05月25日16时00分"};
+
+export const MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT: SearchCoursePriorityResult[] = [
+    {
+        courseId: "00460072",
+        courseSeq: "90",
+        courseName: "中国历史地理",
+        departmentName: "地学系",
+        capacity: 60,
+        bxSelected: [ 0, 0, 0, 0 ],
+        xxSelected: [ 0, 0, 0, 0 ],
+        rxSelected: [ 0, 11, 46, 33 ]
+    },
+    {
+        courseId: "00690302",
+        courseSeq: "90",
+        courseName: "昆曲艺术欣赏",
+        departmentName: "人文学院",
+        capacity: 50,
+        bxSelected: [ 0, 0, 0, 0 ],
+        xxSelected: [ 0, 0, 0, 0 ],
+        rxSelected: [ 0, 6, 45, 34 ]
+    },
+    {
+        courseId: "00780461",
+        courseSeq: "91",
+        courseName: "钢琴入门与音乐基础",
+        departmentName: "艺教中心",
+        capacity: 15,
+        bxSelected: [ 0, 0, 0, 0 ],
+        xxSelected: [ 0, 0, 0, 0 ],
+        rxSelected: [ 0, 59, 10, 28 ]
+    },
+    {
+        courseId: "30240402",
+        courseSeq: "0",
+        courseName: "操作系统专题训练",
+        departmentName: "计算机系",
+        capacity: 40,
+        bxSelected: [ 0, 0, 0, 0 ],
+        xxSelected: [ 0, 20, 9, 10 ],
+        rxSelected: [ 3, 0, 0, 0 ]
+    },
+    {
+        courseId: "40240931",
+        courseSeq: "0",
+        courseName: "认知机器人",
+        departmentName: "计算机系",
+        capacity: 50,
+        bxSelected: [ 0, 0, 0, 0 ],
+        xxSelected: [ 0, 25, 18, 18 ],
+        rxSelected: [ 8, 0, 0, 5 ]
     }
 ];

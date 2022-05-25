@@ -84,3 +84,29 @@ export interface SelectedCourse {
     credit: number;      // 学分
     secondary: boolean;  // 是否二级选课
 }
+
+export type SearchCoursePriorityQuery = {
+    selected: false,
+    isSports: boolean,
+    page?: number,
+    courseId?: string,
+    courseSeq?: string,
+    courseName?: string,
+    departmentId?: string,
+} | {
+    selected: true,         // 已选课程
+    isSports: boolean,      // 是否为体育
+};
+
+type SelectedCount = [number, number, number, number];  // 优先，第一，第二，第三
+
+export interface SearchCoursePriorityResult {
+    courseId: string;           // 课程号
+    courseSeq: string;          // 课序号
+    courseName: string;         // 课程名
+    departmentName: string;     // 开课系
+    capacity: number;           // 课容量
+    bxSelected: SelectedCount;  // 必修报名人数
+    xxSelected: SelectedCount;  // 限选报名人数
+    rxSelected: SelectedCount;  // 任选报名人数
+}

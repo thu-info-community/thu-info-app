@@ -8,6 +8,7 @@ import {
     CR_SEARCH_URL,
     CR_SELECT_URL,
     CR_TREE_URL,
+    CR_ZYTJB_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
@@ -19,6 +20,8 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    SearchCoursePriorityQuery,
+    SearchCoursePriorityResult,
     SearchParams,
     SelectedCourse,
 } from "../models/cr/cr";
@@ -28,9 +31,12 @@ import {CrCaptchaError, CrError, CrTimeoutError, LibError} from "../utils/error"
 import {
     MOCK_AVAILABLE_SEMESTERS,
     MOCK_COURSE_PLAN,
+    MOCK_CR_CURRENT_STAGE,
     MOCK_CR_PRIMARY_OPEN_SEARCH_RESULT,
     MOCK_CR_REMAINING_SEARCH_RESULT,
     MOCK_CR_SEARCH_RESULT,
+    MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
+    MOCK_SEARCH_COURSE_PRIORITY_META,
     MOCK_SELECTED_COURSES,
 } from "../mocks/cr";
 import TagElement = cheerio.TagElement;
@@ -388,4 +394,106 @@ export const changeCourseWill = async (helper: InfoHelper, semesterId: string, c
         return responseMsg[1];
     },
     "该修改志愿成功",
+);
+
+export const getCrCurrentStage = async (
+    helper: InfoHelper,
+    semesterId: string,
+): Promise<{
+    stage: string;
+    beginTime: string;
+    endTime: string;
+}> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const html = await crFetch(`${CR_SELECT_URL}?m=selectKc&p_xnxq=${semesterId}&pathContent=%D2%BB%BC%B6%D1%A1%BF%CE`);
+        const stageRes = /"当前选课阶段：(.+?)&nbsp;&nbsp;"/.exec(html);
+        const beginRes = /"(.+?)开始&nbsp;&nbsp;"/.exec(html);
+        const endRes = /"(.+?)结束"/.exec(html);
+        if (stageRes === null || beginRes === null || endRes === null) {
+            throw new CrError("Failed to match regex");
+        }
+        return {
+            stage: stageRes[1],
+            beginTime: beginRes[1],
+            endTime: endRes[1],
+        };
+    },
+    MOCK_CR_CURRENT_STAGE,
+);
+
+export const searchCoursePriorityMeta = async (
+    helper: InfoHelper,
+    semesterId: string,
+): Promise<{ curr: string, next: string }> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const $ = cheerio.load(await crFetch(`${CR_SELECT_URL}?m=xkqkSearch&p_xnxq=${semesterId}`));
+        const pad = $(".pad");
+        return {
+            curr: pad.find("font").text(),
+            next: (pad[0] as TagElement).children[5].data?.trim() ?? "",
+        };
+    },
+    MOCK_SEARCH_COURSE_PRIORITY_META,
+);
+
+export const searchCoursePriorityInformation = async (
+    helper: InfoHelper,
+    semesterId: string,
+    query: SearchCoursePriorityQuery,
+): Promise<SearchCoursePriorityResult[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const responseHtml = await (async () => {
+            const tag = query.isSports ? "Ty" : "BR";
+            if (query.selected) {
+                return await crFetch(`${CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}&type=GR`);
+            } else {
+                const xkHtml = await crFetch(`${CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}`);
+                const $ = cheerio.load(xkHtml);
+                return await crFetch(CR_ZYTJB_URL, {
+                    m: `tbzySearch${tag}`,
+                    page: query.page ?? -1,
+                    token: $("input[name=token]").attr().value,
+                    p_xnxq: semesterId,
+                    tokenPriFlag: query.isSports ? undefined : "yx",
+                    p_kch: query.courseId ?? "",
+                    p_kxh: query.courseSeq ?? "",
+                    p_kcm: query.courseName ?? "",
+                    p_lrdwnm: query.departmentId ?? "",
+                    p_tbzyType: query.isSports ? "tbzySearchTy" : undefined,
+                }, "GBK");
+            }
+        })();
+        const $ = cheerio.load(responseHtml);
+        const parseSelectedCount = (s: string): [number, number, number, number] => {
+            const pri = Number(/\((\d+)\)/.exec(s)?.[1] ?? 0);
+            const data = /(\d+),(\d+),(\d+)/.exec(s);
+            if (data === null || data.length < 4) {
+                throw new CrError("Failed to parse selected count (regex parse error)");
+            }
+            return [pri, Number(data[1]), Number(data[2]), Number(data[3])];
+        };
+        return $("#content_1 tr").map((_, e) => {
+            const tds = cheerio(e).find("td");
+            return {
+                courseId: cheerio(tds[0]).text(),
+                courseSeq: cheerio(tds[1]).text(),
+                courseName: cheerio(tds[2]).text(),
+                departmentName: query.isSports ? "" : cheerio(tds[3]).text(),
+                capacity: Number(cheerio(tds[query.isSports ? 3 : 4]).text()),
+                bxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio(tds[6]).text()),
+                xxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio(tds[7]).text()),
+                rxSelected: parseSelectedCount(cheerio(tds[query.isSports ? 5 : 8]).text()),
+            } as SearchCoursePriorityResult;
+        }).get();
+    },
+    MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
 );
