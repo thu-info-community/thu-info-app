@@ -1,10 +1,4 @@
-import {
-	TextInput,
-	View,
-	Text,
-	ActivityIndicator,
-	Dimensions,
-} from "react-native";
+import {TextInput, View, Text, ActivityIndicator} from "react-native";
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State, store} from "../../redux/store";
@@ -49,13 +43,11 @@ const LoginUI = (props: LoginProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const width = Dimensions.get("window").width * 0.4;
-
 	return (
 		<View style={style.container}>
 			<View style={style.absoluteContainer}>
 				<View style={{height: 80}} />
-				<IconMain width={width} height={width} />
+				<IconMain width={108} height={108} />
 				<View style={{height: 20}} />
 				<View style={{flexDirection: "row", alignItems: "center"}}>
 					<Icon name="user" size={18} color={theme.colors.primary} />
