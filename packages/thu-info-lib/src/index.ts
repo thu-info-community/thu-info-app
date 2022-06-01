@@ -81,6 +81,7 @@ import {
     searchCoursePriorityInformation,
     searchCoursePriorityMeta,
     getCrCurrentStage,
+    getQueueInfo,
 } from "./lib/cr";
 import { SearchCoursePriorityQuery, SearchParams } from "./models/cr/cr";
 import { BankPaymentByMonth } from "./models/home/bank";
@@ -308,6 +309,8 @@ export class InfoHelper {
         semesterId: string,
         query: SearchCoursePriorityQuery,
     ) => searchCoursePriorityInformation(this, semesterId, query);
+
+    public getQueueInfo = async (semesterId: string) => getQueueInfo(this, semesterId);
 
     public getSportsResources = async (
         gymId: string,

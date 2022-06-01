@@ -4,6 +4,7 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    QueueInfo,
     SearchCoursePriorityResult,
     SelectedCourse,
 } from "../models/cr/cr";
@@ -1221,5 +1222,30 @@ export const MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT: SearchCoursePriorityResult
         bxSelected: [ 0, 0, 0, 0 ],
         xxSelected: [ 0, 25, 18, 18 ],
         rxSelected: [ 8, 0, 0, 5 ]
+    }
+];
+
+export const MOCK_QUEUE_INFO: QueueInfo[] = [
+    {
+        property: "限选",
+        will: 3,
+        courseId: "40240931",
+        courseSeq: "0",
+        courseName: "认知机器人",
+        inQueue: 34,
+        position: 12,
+        time: "1-4(前八周)",
+        teacher: "孙富春"
+    },
+    {
+        property: "任选",
+        will: 3,
+        courseId: "00780461",
+        courseSeq: "91",
+        courseName: "钢琴入门与音乐基础",
+        inQueue: 67,
+        position: 4,
+        time: "2-3(全周)",
+        teacher: "黄垚"
     }
 ];

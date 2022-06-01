@@ -20,6 +20,7 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    QueueInfo,
     SearchCoursePriorityQuery,
     SearchCoursePriorityResult,
     SearchParams,
@@ -35,6 +36,7 @@ import {
     MOCK_CR_PRIMARY_OPEN_SEARCH_RESULT,
     MOCK_CR_REMAINING_SEARCH_RESULT,
     MOCK_CR_SEARCH_RESULT,
+    MOCK_QUEUE_INFO,
     MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
     MOCK_SEARCH_COURSE_PRIORITY_META,
     MOCK_SELECTED_COURSES,
@@ -496,4 +498,34 @@ export const searchCoursePriorityInformation = async (
         }).get();
     },
     MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
+);
+
+export const getQueueInfo = async (
+    helper: InfoHelper,
+    semesterId: string,
+): Promise<QueueInfo[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const data = await crFetch(`${CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
+        const courses = cheerio(".trr2", data);
+        const result: QueueInfo[] = [];
+        courses.each((_, e) => {
+            const tds = cheerio(e).find("td");
+            result.push({
+                property: cheerio(tds[0]).text().trim(),
+                will: willStringToNumber(cheerio(tds[1]).text()),
+                courseId: cheerio(tds[2]).text(),
+                courseSeq: cheerio(tds[4]).text(),
+                courseName: cheerio(tds[3]).text().trim(),
+                inQueue: Number(cheerio(tds[5]).text()),
+                position: Number(cheerio(tds[6]).text()),
+                time: cheerio(tds[7]).text(),
+                teacher: cheerio(tds[8]).text(),
+            });
+        });
+        return result;
+    },
+    MOCK_QUEUE_INFO,
 );

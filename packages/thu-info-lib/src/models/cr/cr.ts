@@ -110,3 +110,15 @@ export interface SearchCoursePriorityResult {
     xxSelected: SelectedCount;  // 限选报名人数
     rxSelected: SelectedCount;  // 任选报名人数
 }
+
+export interface QueueInfo {
+    property: string;     // 选课属性
+    will: 1 | 2 | 3;      // 选课志愿
+    courseId: string;     // 课程号
+    courseSeq: string;    // 课序号
+    courseName: string;   // 课程名
+    inQueue: number;      // 队列人数
+    position: number;     // 本人所在位置
+    time: string;         // 上课时间
+    teacher: string;      // 任课教师
+}
