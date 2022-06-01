@@ -57,7 +57,7 @@
     "devDependencies": {
         "@types/cheerio": "0.22.31",
         "@types/he": "1.1.2",
-        "@types/jest": "27.5.2",
+        "@types/jest": "28.1.0",
         "@types/uuid": "8.3.4",
         "@typescript-eslint/eslint-plugin": "5.27.0",
         "@typescript-eslint/parser": "5.27.0",
