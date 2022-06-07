@@ -63,7 +63,7 @@
         "@typescript-eslint/parser": "5.27.1",
         "eslint": "8.17.0",
         "esm": "3.2.25",
-        "jest": "28.1.0",
+        "jest": "28.1.1",
         "node-polyfill-webpack-plugin": "1.1.4",
         "semver": "7.3.7",
         "ts-jest": "28.0.4",
