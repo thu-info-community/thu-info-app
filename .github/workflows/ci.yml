@@ -112,6 +112,11 @@ jobs:
         run: |
           yarn
           cd ios && pod install && cd ..
+          echo '### Summary of command `pod-install`' >> $GITHUB_STEP_SUMMARY
+          echo 'Content of `Podfile.lock`:' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat ios/Podfile.lock >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
       - uses: Apple-Actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
