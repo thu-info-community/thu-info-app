@@ -7,7 +7,7 @@ import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
 import RNFS from "react-native-fs";
 import Snackbar from "react-native-snackbar";
-import CookieManager from "@react-native-community/cookies";
+import CookieManager from "@react-native-cookies/cookies";
 import {GITLAB_API_BASE_URL} from "thu-info-lib/dist/constants/strings";
 
 export const GitlabTreeScreen = paginatedRefreshListScreen(
