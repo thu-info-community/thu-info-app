@@ -50,7 +50,6 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           NDK_VERSION: ${{ secrets.NDK_VERSION }}
         with:
-          gradle-version: 6.5
           arguments: assembleRelease
           build-root-directory: android
       - name: Upload artifact
