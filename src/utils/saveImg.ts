@@ -6,7 +6,7 @@ import Snackbar from "react-native-snackbar";
 import RNFS from "react-native-fs";
 import md5 from "md5";
 import {NetworkRetry} from "../components/easySnackbars";
-import CookieManager from "@react-native-community/cookies";
+import CookieManager from "@react-native-cookies/cookies";
 
 export const saveImg = async (uri: string) => {
 	if (
