@@ -15,7 +15,7 @@ import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
 import {InfoHelper} from "thu-info-lib";
 import dayjs from "dayjs";
-import CookieManager from "@react-native-community/cookies";
+import CookieManager from "@react-native-cookies/cookies";
 import React from "react";
 import ViewShot from "react-native-view-shot";
 import {
