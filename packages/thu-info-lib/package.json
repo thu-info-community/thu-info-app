@@ -61,7 +61,7 @@
         "@types/uuid": "8.3.4",
         "@typescript-eslint/eslint-plugin": "5.30.3",
         "@typescript-eslint/parser": "5.30.3",
-        "eslint": "8.18.0",
+        "eslint": "8.19.0",
         "esm": "3.2.25",
         "jest": "28.1.2",
         "node-polyfill-webpack-plugin": "2.0.0",
