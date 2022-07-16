@@ -47,7 +47,7 @@
 		"react-native-localize": "2.2.2",
 		"react-native-modal-dropdown": "1.0.2",
 		"react-native-pdf": "6.5.0",
-		"react-native-permissions": "3.3.1",
+		"react-native-permissions": "3.5.0",
 		"react-native-polyfill-globals": "3.1.0",
 		"react-native-qrcode-svg": "6.1.2",
 		"react-native-reanimated": "2.8.0",
