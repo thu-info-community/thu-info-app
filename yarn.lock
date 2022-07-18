@@ -7277,10 +7277,10 @@ react-native-pdf@6.5.0:
   dependencies:
     crypto-js "^3.2.0"
 
-react-native-permissions@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.5.0.tgz#ebd81a2928f1fb215cef01c8e39c21c96de330ef"
-  integrity sha512-9HrmW1BDVsWAFhaGMfQErxoUBDdsrUY19LAtnExYMaNTd3LsT7R+yXX0oN/XLtF7wok68izN8iCLmieX4/MElA==
+react-native-permissions@3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.6.0.tgz#4b284b6374fdb8b9b6702c6a0719bfb1a97aa7ff"
+  integrity sha512-aiancYU5eAC3lCtdAFNz/8OQAShAXSgFJAcNrsspXiMulL4zjClIa52uWMi5NTU4skU0KoWG5rCfqjxWAkJL8w==
 
 react-native-polyfill-globals@3.1.0:
   version "3.1.0"
