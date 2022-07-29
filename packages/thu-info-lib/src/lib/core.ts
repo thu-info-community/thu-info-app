@@ -34,6 +34,7 @@ const HOST_MAP: { [key: string]: string } = {
     "50": "77726476706e69737468656265737421a5a70f8834396657761d88e29d51367b6a00",
     "166.111.14.8": "77726476706e69737468656265737421a1a117d27661391e2f5cc7f4",
     "fa-online": "77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4",
+    "dzpj": "77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51",
 };
 
 const parseUrl = (urlIn: string) => {
@@ -121,7 +122,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const csrf = await getCsrfToken();
         const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, {}).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
-        if (url.includes(HOST_MAP["fa-online"])) {
+        if (url.includes(HOST_MAP["dzpj"])) {
             const roamHtml = await uFetch(url);
             const username = /\("username"\).value = '(.+?)';/.exec(roamHtml);
             if (username === null || username[1] === undefined) {
