@@ -204,7 +204,10 @@ const getNewsDetailPolicy = (
 const handleNewApiNews = async (url: string): Promise<[string, string, string]> => {
     const html = await uFetch(url);
     const csrf = await getCsrfToken();
-    const xxid: string = /var xxid = "(.*?)";/.exec(html)?.[1] as string;
+    const xxid: string | undefined = /var xxid = "(.*?)";/.exec(html)?.[1] as string;
+    if (xxid === undefined) {
+        return await getNewsDetailOld(await getRedirectUrl(url), false);
+    }
     const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
     const title = decode(data.object.xxDto.bt);
@@ -220,10 +223,10 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
 };
 
 export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
-    if (helper.mocked()) return await getNewsDetailOld(helper, url);
+    if (helper.mocked()) return await getNewsDetailOld(url, true);
     else if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
     else if (url.startsWith("/f/wj/openNewWindow?fileId=")) return await handlePdfNews(url.substring(27));
-    else return await getNewsDetailOld(helper, await getRedirectUrl(NEWS_REDIRECT_URL + url));
+    else return await getNewsDetailOld(await getRedirectUrl(NEWS_REDIRECT_URL + url), false);
 };
 
 const handlePdfNews = async (fileId: string): Promise<[string, string, string]> => {
@@ -232,11 +235,11 @@ const handlePdfNews = async (fileId: string): Promise<[string, string, string]> 
 };
 
 const getNewsDetailOld = async (
-    helper: InfoHelper,
     url: string,
+    mocked: boolean,
 ): Promise<[string, string, string]> => {
     const [title, content] = getNewsDetailPolicy(url);
-    const html = helper.mocked() ? newsHtml[url] ?? "" : await uFetch(url);
+    const html = mocked ? newsHtml[url] ?? "" : await uFetch(url);
     if (title !== undefined && content) {
         const r = cheerio(content, html);
         return [

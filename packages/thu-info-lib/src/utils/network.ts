@@ -205,16 +205,18 @@ export const getRedirectUrl = async (
 
     // Perform the network request
     try {
-        const response = await fetch(url, init);
+        let location = url;
+        for (let i = 0; i < 5; i++) {
+            const response = await fetch(location, init);
 
-        if (response.status !== 301 && response.status !== 302) {
-            throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
+            if (response.status !== 301 && response.status !== 302) {
+                return location;
+            }
+
+            location = response.headers.get("Location") ?? "";
         }
 
-        // Get the redirection target url in header "Location" and return it
-        const location = response.headers.get("Location");
-        return location ?? "";
-
+        throw new ResponseStatusError("Max redirect times reached.");
     } finally {
         // We have to clear the timeout
         clearTimeout(timeoutEvent);
