@@ -162,7 +162,7 @@ export default {
 	query: "查询",
 	income: "收入",
 	outgo: "支出",
-	remainder: "余额",
+	remainder: "当前余额",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
 	classroomHeaderPrefix: "第",
