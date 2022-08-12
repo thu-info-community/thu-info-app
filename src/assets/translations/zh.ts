@@ -38,6 +38,7 @@ export default {
 	eleRemainderFail: "很抱歉，未能查到电表余额数据。",
 	eleRemainderResult: "您的电表余额为 ",
 	reservation: "预约",
+	alreadyReserved: "已有预约",
 	libBookRecord: "图书馆预约记录",
 	cancelBooking: "取消预约",
 	confirmCancelBooking: "确认要取消预约吗？",

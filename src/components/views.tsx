@@ -62,14 +62,12 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 			{props.data.length > 0 && (
 				<RoundedView style={{padding: 16}}>
 					{props.data.map((item, index) => (
-						<>
+						<View key={props.keyExtractor?.(item, index)}>
 							{index > 0 && (
 								<View style={{height: 0.5, backgroundColor: colors.fontB3}} />
 							)}
-							{React.cloneElement(props.renderItem(item, colors, index), {
-								key: props.keyExtractor?.(item, index),
-							})}
-						</>
+							{props.renderItem(item, colors, index)}
+						</View>
 					))}
 				</RoundedView>
 			)}
