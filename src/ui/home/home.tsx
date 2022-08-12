@@ -1,5 +1,4 @@
 import {
-	Alert,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -30,7 +29,7 @@ import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {currState, helper, State, store} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
@@ -41,7 +40,7 @@ import dayjs from "dayjs";
 import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
 import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
-import Snackbar from "react-native-snackbar";
+import {LibraryReservationCard} from "./library";
 import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
@@ -240,103 +239,12 @@ export const HomeReservationSection = ({
 	activeLibBookRecords: LibBookRecord[];
 }) => {
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
 	const style = styles(themeName);
-
-	const transformedRecords = activeLibBookRecords
-		.map((e) => ({
-			...e,
-			lib: e.pos.substring(0, e.pos.indexOf(":")).replace(/-/g, " - "),
-			seat: e.pos.substring(e.pos.indexOf(":") + 1),
-			due: dayjs(e.time, "YYYY-MM-DD HH:mm").add(30, "minute"),
-		}))
-		.filter((e) => e.due.add(30, "minute").valueOf() > dayjs().valueOf())
-		.sort((a, b) => a.due.valueOf() - b.due.valueOf());
 
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
-			<View style={style.SectionContentContainer}>
-				<View style={style.reservationSectionContainer}>
-					{transformedRecords.length === 0 ? (
-						<Text style={{color: theme.colors.text}}>
-							{getStr("noActiveLibBookRecord")}
-						</Text>
-					) : (
-						<>
-							<Text style={{color: theme.colors.text}}>
-								{transformedRecords[0].lib}
-							</Text>
-							<View
-								style={{
-									padding: 10,
-									flexDirection: "row",
-									alignItems: "center",
-								}}>
-								<Text
-									style={{
-										fontSize: 20,
-										fontWeight: "600",
-										color: theme.colors.text,
-									}}>
-									{transformedRecords[0].seat}
-								</Text>
-								<TouchableOpacity
-									onPress={() =>
-										Alert.alert(
-											getStr("confirmCancelBooking"),
-											transformedRecords[0].pos,
-											[
-												{text: getStr("cancel")},
-												{
-													text: getStr("confirm"),
-													onPress: () => {
-														transformedRecords[0].delId !== undefined &&
-															helper
-																.cancelBooking(transformedRecords[0].delId)
-																.then(() =>
-																	Snackbar.show({
-																		text: getStr("cancelSucceeded"),
-																		duration: Snackbar.LENGTH_SHORT,
-																	}),
-																)
-																.catch((e) => {
-																	Snackbar.show({
-																		text:
-																			typeof e.message === "string"
-																				? e.message
-																				: getStr("networkRetry"),
-																		duration: Snackbar.LENGTH_SHORT,
-																	});
-																})
-																.then(helper.getBookingRecords)
-																.then((r) => {
-																	store.dispatch(
-																		setActiveLibBookRecordAction(r),
-																	);
-																});
-													},
-												},
-											],
-											{cancelable: true},
-										)
-									}>
-									<Text style={{color: theme.colors.accent, marginLeft: 12}}>
-										{getStr("cancelBooking")}
-									</Text>
-								</TouchableOpacity>
-							</View>
-							<Text style={{textAlign: "center", color: theme.colors.text}}>
-								{getStr("bookingHintPrefix")}
-								<Text style={{fontWeight: "bold"}}>
-									{transformedRecords[0].due.format("HH:mm")}
-								</Text>
-								{getStr("bookingHintSuffix")}
-							</Text>
-						</>
-					)}
-				</View>
-			</View>
+			<LibraryReservationCard activeLibBookRecords={activeLibBookRecords} />
 		</View>
 	);
 };
