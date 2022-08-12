@@ -1,5 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
+	FlatList,
+	Modal,
 	RefreshControl,
 	ScrollView,
 	Text,
@@ -13,6 +15,7 @@ import {helper} from "../../redux/store";
 import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native";
 import {RoundedView} from "../../components/views";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -186,11 +189,15 @@ export const ReportScreen = () => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
 
+	const [open, setOpen] = useState<"flag" | "bx" | undefined>(undefined);
 	const [flag, setFlag] = useState<1 | 2 | 3>(1);
 	const [bx, setBx] = useState(false);
 
+	const [dropdownTop, setDropdownTop] = useState(0);
+	const DropdownContainer = useRef<View>();
+
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
 
 	const fetchData = () => {
 		setRefreshing(true);
@@ -211,69 +218,154 @@ export const ReportScreen = () => {
 
 	useEffect(fetchData, [bx, flag]);
 
+	useEffect(() => {
+		DropdownContainer.current?.measure((_fx, _fy, _w, h, _px, py) => {
+			setDropdownTop(py + h);
+		});
+	}, [open]);
+
 	const {gpa, sections, allCredits, totalCredits, totalPoints} = prepareData(
 		report || [],
 	);
 
+	const dropdownData =
+		open === undefined
+			? []
+			: open === "flag"
+			? [getStr("reportFlag1"), getStr("reportFlag2"), getStr("reportFlag3")]
+			: [getStr("bxr"), getStr("bx")];
+
 	return (
-		<View style={{marginHorizontal: 12, flex: 1}}>
-			<View style={{flexDirection: "row", margin: 5}}>
+		<View style={{flex: 1}}>
+			<View
+				// @ts-ignore
+				ref={DropdownContainer}
+				style={{
+					flexDirection: "row",
+					height: 32,
+					alignItems: "center",
+					backgroundColor: colors.contentBackground,
+				}}>
 				<TouchableOpacity
-					style={{padding: 6, flex: 1}}
-					onPress={() => setFlag(1)}>
+					onPress={() => setOpen((v) => (v === "flag" ? undefined : "flag"))}
+					style={{marginLeft: 36, flexDirection: "row", alignItems: "center"}}>
 					<Text
-						style={{
-							color: flag === 1 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{getStr("reportFlag1")}
+						style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
+						{getStr(`reportFlag${flag}`)}
 					</Text>
+					<Icon
+						name="caret-down"
+						size={12}
+						color={open === "flag" ? colors.primary : colors.fontB2}
+						style={{marginLeft: 8}}
+					/>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={{padding: 6, flex: 1}}
-					onPress={() => setFlag(2)}>
-					<Text
-						style={{
-							color: flag === 2 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{getStr("reportFlag2")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{padding: 6, flex: 1}}
-					onPress={() => setFlag(3)}>
-					<Text
-						style={{
-							color: flag === 3 ? "blue" : theme.colors.text,
-							textAlign: "center",
-						}}>
-						{getStr("reportFlag3")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{padding: 6, flex: 1}}
-					onPress={() => setBx((o) => !o)}>
-					<Text style={{color: "blue", textAlign: "center"}}>
+					onPress={() => setOpen((v) => (v === "bx" ? undefined : "bx"))}
+					style={{marginLeft: 32, flexDirection: "row", alignItems: "center"}}>
+					<Text style={{color: open === "bx" ? colors.primary : colors.fontB2}}>
 						{getStr(bx ? "bx" : "bxr")}
 					</Text>
+					<Icon
+						name="caret-down"
+						size={12}
+						color={open === "bx" ? colors.primary : colors.fontB2}
+						style={{marginLeft: 8}}
+					/>
 				</TouchableOpacity>
+				<Modal visible={open !== undefined} transparent>
+					<TouchableOpacity
+						style={{
+							width: "100%",
+							height: "100%",
+						}}
+						onPress={() => setOpen(undefined)}>
+						<View
+							style={{
+								position: "absolute",
+								backgroundColor: colors.text,
+								opacity: 0.3,
+								width: "100%",
+								top: dropdownTop,
+								bottom: 0,
+							}}
+						/>
+						<View
+							style={{
+								position: "absolute",
+								backgroundColor: colors.contentBackground,
+								width: "100%",
+								top: dropdownTop,
+								borderBottomStartRadius: 12,
+								borderBottomEndRadius: 12,
+							}}>
+							<FlatList
+								data={dropdownData}
+								renderItem={({item, index}) => {
+									const showTick =
+										open === "flag" ? index + 1 === flag : (index === 1) === bx;
+									return (
+										<TouchableOpacity
+											onPress={() => {
+												setOpen((o) => {
+													if (o === "flag") {
+														switch (index) {
+															case 1: {
+																setFlag(2);
+																break;
+															}
+															case 2: {
+																setFlag(3);
+																break;
+															}
+															default: {
+																setFlag(1);
+																break;
+															}
+														}
+													} else {
+														setBx(index === 1);
+													}
+													return undefined;
+												});
+											}}
+											style={{
+												paddingHorizontal: 16,
+												marginVertical: 8,
+												flexDirection: "row",
+												justifyContent: "space-between",
+											}}>
+											<Text style={{color: colors.text, fontSize: 14}}>
+												{item}
+											</Text>
+											{showTick ? (
+												<Icon name="check" size={14} color={colors.primary} />
+											) : null}
+										</TouchableOpacity>
+									);
+								}}
+								keyExtractor={(item) => item}
+							/>
+						</View>
+					</TouchableOpacity>
+				</Modal>
 			</View>
 			<ScrollView
+				style={{marginHorizontal: 12}}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
-						colors={[theme.colors.accent]}
+						colors={[colors.accent]}
 					/>
 				}>
 				<View>
-					<RoundedView style={{marginBottom: 16}}>
+					<RoundedView style={{marginVertical: 16}}>
 						<Text
 							style={{
 								fontSize: 16,
 								fontWeight: "bold",
-								color: theme.colors.text,
+								color: colors.text,
 								textAlign: "center",
 							}}>
 							{getStr("allGPA")}
@@ -282,7 +374,7 @@ export const ReportScreen = () => {
 						<Text
 							style={{
 								fontSize: 12,
-								color: theme.colors.fontB2,
+								color: colors.fontB2,
 								textAlign: "center",
 							}}>
 							{getStr("allCredits")}:{allCredits}
@@ -300,7 +392,7 @@ export const ReportScreen = () => {
 									style={{
 										fontSize: 16,
 										fontWeight: "bold",
-										color: theme.colors.text,
+										color: colors.text,
 										flex: 1,
 									}}>
 									{section.semester}
@@ -310,7 +402,7 @@ export const ReportScreen = () => {
 									style={{
 										fontSize: 16,
 										fontWeight: "bold",
-										color: theme.colors.text,
+										color: colors.text,
 										flex: 0,
 									}}>
 									{gpaToStr(section.gpa, 3)}
@@ -323,7 +415,7 @@ export const ReportScreen = () => {
 									marginTop: 4,
 									marginBottom: 8,
 								}}>
-								<Text style={{fontSize: 12, color: theme.colors.fontB2}}>
+								<Text style={{fontSize: 12, color: colors.fontB2}}>
 									{getStr("allCredits")}:{section.allCredits}
 									{"  "}
 									{getStr("totalCredits")}:{section.totalCredits}
@@ -338,7 +430,7 @@ export const ReportScreen = () => {
 											style={{
 												height: 0.5,
 												marginHorizontal: 16,
-												backgroundColor: theme.colors.fontB3,
+												backgroundColor: colors.fontB3,
 											}}
 										/>
 									)}
@@ -351,7 +443,7 @@ export const ReportScreen = () => {
 										<ReportIcon grade={course.grade} />
 										<Text
 											numberOfLines={1}
-											style={{fontSize: 16, flex: 2, color: theme.colors.text}}>
+											style={{fontSize: 16, flex: 2, color: colors.text}}>
 											{course.name}
 										</Text>
 										<Text
@@ -359,7 +451,7 @@ export const ReportScreen = () => {
 											style={{
 												fontSize: 16,
 												flex: 0,
-												color: theme.colors.fontB2,
+												color: colors.fontB2,
 											}}>
 											{course.credit}
 											{" pts · "}
