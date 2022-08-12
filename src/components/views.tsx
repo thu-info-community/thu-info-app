@@ -1,6 +1,12 @@
 import React from "react";
-import {useColorScheme, View, ViewProps} from "react-native";
-import themes from "../assets/themes/themes";
+import {
+	RefreshControl,
+	ScrollView,
+	useColorScheme,
+	View,
+	ViewProps,
+} from "react-native";
+import themes, {ColorTheme} from "../assets/themes/themes";
 
 export const RoundedView = (props: ViewProps) => {
 	const themeName = useColorScheme();
@@ -17,3 +23,56 @@ export const RoundedView = (props: ViewProps) => {
 		],
 	});
 };
+
+interface ListProps<T> {
+	data: T[];
+	renderItem: (
+		item: T,
+		colors: ColorTheme,
+		index: number,
+	) => React.ReactElement;
+	keyExtractor?: (item: T, index: number) => string;
+	refreshing?: boolean;
+	onRefresh?: () => void;
+}
+
+export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	const viewProps = {
+		...props,
+		data: undefined,
+		renderItem: undefined,
+		keyExtractor: undefined,
+		refreshing: undefined,
+		onRefresh: undefined,
+	};
+	return (
+		<ScrollView
+			refreshControl={
+				props.refreshing !== undefined && props.onRefresh !== undefined ? (
+					<RefreshControl
+						refreshing={props.refreshing}
+						onRefresh={props.onRefresh}
+						colors={[colors.accent]}
+					/>
+				) : undefined
+			}
+			{...viewProps}>
+			{props.data.length > 0 && (
+				<RoundedView style={{padding: 16}}>
+					{props.data.map((item, index) => (
+						<>
+							{index > 0 && (
+								<View style={{height: 0.5, backgroundColor: colors.fontB3}} />
+							)}
+							{React.cloneElement(props.renderItem(item, colors, index), {
+								key: props.keyExtractor?.(item, index),
+							})}
+						</>
+					))}
+				</RoundedView>
+			)}
+		</ScrollView>
+	);
+}
