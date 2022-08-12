@@ -1,21 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {
-	Button,
-	FlatList,
-	Platform,
+	NativeScrollEvent,
 	RefreshControl,
-	StyleSheet,
+	ScrollView,
 	Text,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {DatePickerTrigger} from "../../components/DatePickerTrigger";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
-import dayjs from "dayjs";
 import {Record} from "thu-info-lib/dist/models/home/expenditure";
 import {useColorScheme} from "react-native";
+import {RoundedView} from "../../components/views";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	const themeName = useColorScheme();
@@ -24,7 +23,7 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 	return (
 		<View
 			style={{
-				padding: 10,
+				marginHorizontal: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
@@ -38,49 +37,58 @@ const ExpenditureCard = ({record}: {record: Record}) => {
 				<Text style={{color: "grey", marginVertical: 2}}>{record.date}</Text>
 			</View>
 			<View style={{flex: 1, alignItems: "flex-end"}}>
-				<Text
-					style={{fontSize: 20, color: record.value > 0 ? "red" : colors.text}}>
-					{(record.value >= 0 ? "+" : "") + record.value.toFixed(2)}
+				<Text style={{fontSize: 20, color: colors.text}}>
+					{record.value.toFixed(2)}
 				</Text>
 			</View>
 		</View>
 	);
 };
 
-export const Money = ({title, money}: {title: string; money: number}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-
-	const strMoney = money.toFixed(2);
-	const bigMoney = strMoney.substring(0, strMoney.length - 3);
-	const smallMoney = strMoney.substring(strMoney.length - 3);
+const isCloseToBottom = ({
+	layoutMeasurement,
+	contentOffset,
+	contentSize,
+}: NativeScrollEvent) => {
+	const paddingToBottom = 100;
 	return (
-		<View style={{alignItems: "center", flex: 1, padding: 5}}>
-			<Text style={{color: colors.text}}>{title}</Text>
-			<View style={{flexDirection: "row", alignItems: "flex-end"}}>
-				<Text style={{fontSize: 28, color: colors.text}}>{bigMoney}</Text>
-				<Text style={{fontSize: 18, color: colors.text}}>{smallMoney}</Text>
-			</View>
-		</View>
+		layoutMeasurement.height + contentOffset.y >=
+		contentSize.height - paddingToBottom
 	);
 };
 
 export const ExpenditureScreen = () => {
-	const [[expenditures, income, outgo, remainder], setExpenditures] = useState<
-		[Record[], number, number, number]
-	>([[], 0, 0, 0]);
+	const [expenditures, setExpenditures] = useState<Record[]>([]);
+	const [ymBound, setYmBound] = useState<number>(1);
 
-	const [beg, setBeg] = useState(dayjs().add(-1, "month").toDate());
-	const [end, setEnd] = useState(dayjs().toDate());
 	const [refreshing, setRefreshing] = useState(false);
 
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
+
+	const remainder = expenditures.reduce(
+		(prev: number, curr: Record) =>
+			prev + (curr.category === "领取旧卡余额" ? 0 : curr.value),
+		0,
+	);
+
+	const strRemainder = remainder.toFixed(2);
+
+	const ymList: {year: number; month: number; records: Record[]}[] = [];
+	for (const record of expenditures) {
+		const year = Number(record.date.substring(0, 4));
+		const month = Number(record.date.substring(5, 7));
+		if (ymList[0]?.year === year && ymList[0]?.month === month) {
+			ymList[0].records.unshift(record);
+		} else {
+			ymList.unshift({year, month, records: [record]});
+		}
+	}
 
 	const refresh = () => {
 		setRefreshing(true);
 		helper
-			.getExpenditures(beg, end)
+			.getExpenditures()
 			.then(setExpenditures)
 			.catch((e) => {
 				Snackbar.show({
@@ -91,64 +99,86 @@ export const ExpenditureScreen = () => {
 			.then(() => setRefreshing(false));
 	};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(refresh, []);
 
 	return (
-		<View style={{padding: 10, flex: 1}}>
-			<View style={{flexDirection: "row"}}>
-				<Money title={getStr("income")} money={income} />
-				<Money title={getStr("outgo")} money={outgo} />
-				<Money title={getStr("remainder")} money={refreshing ? 0 : remainder} />
-			</View>
-			{!helper.mocked() && (
-				<View style={styles.header}>
-					<DatePickerTrigger
-						date={beg}
-						onChange={setBeg}
-						disabled={refreshing}
-						text={Platform.OS === "ios" ? getStr("begDate") : ""}
-					/>
-					<DatePickerTrigger
-						date={end}
-						onChange={setEnd}
-						disabled={refreshing}
-						text={Platform.OS === "ios" ? getStr("endDate") : ""}
-					/>
-					<Button
-						title={getStr("query")}
-						onPress={refresh}
-						disabled={refreshing}
-					/>
-				</View>
-			)}
-			<View style={styles.container}>
-				<FlatList
-					data={expenditures}
-					refreshControl={
-						<RefreshControl
-							refreshing={refreshing}
-							onRefresh={refresh}
-							colors={[theme.colors.accent]}
-						/>
-					}
-					renderItem={({item}) => <ExpenditureCard record={item} />}
-					keyExtractor={(item, index) => `${item.date}-${item.value}-${index}`}
+		<ScrollView
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={refresh}
+					colors={[colors.accent]}
 				/>
-			</View>
-		</View>
+			}
+			onScroll={({nativeEvent}) => {
+				if (isCloseToBottom(nativeEvent)) {
+					setYmBound(Math.min(ymBound, ymList.length) + 1);
+				}
+			}}
+			scrollEventThrottle={400}>
+			<RoundedView style={{margin: 12}}>
+				<View style={{alignItems: "center", flex: 1, padding: 5}}>
+					<Text style={{color: colors.fontB2, fontSize: 11}}>
+						{getStr("remainder")}
+					</Text>
+					<Text style={{fontSize: 24, fontWeight: "bold", color: colors.text}}>
+						￥{strRemainder}
+					</Text>
+				</View>
+			</RoundedView>
+			{ymList.slice(0, ymBound).map(({year, month, records}) => {
+				let outgo = 0;
+				let income = 0;
+				for (const record of records) {
+					if (record.category !== "领取旧卡余额") {
+						if (record.value > 0) {
+							income += record.value;
+						} else {
+							outgo -= record.value;
+						}
+					}
+				}
+				return (
+					<View style={{margin: 12}} key={`${year}-${month}`}>
+						<View style={{flexDirection: "row", alignItems: "center"}}>
+							<TouchableOpacity
+								style={{flexDirection: "row", alignItems: "center"}}>
+								<Text style={{color: colors.text, fontSize: 16}}>
+									{year} 年 {month} 月
+								</Text>
+								<Icon
+									name="chevron-down"
+									size={12}
+									color={colors.text}
+									style={{marginHorizontal: 8}}
+								/>
+							</TouchableOpacity>
+							<Text style={{color: colors.fontB2, fontSize: 14}}>
+								{getStr("outgo")} ￥ {outgo.toFixed(2)}
+								{"  "}
+								{getStr("income")} ￥ {income.toFixed(2)}
+							</Text>
+						</View>
+						<RoundedView style={{marginTop: 8}}>
+							{records.map((record, index) => (
+								<View key={record.locale + record.date + record.value + index}>
+									{index > 0 && (
+										<View
+											style={{
+												height: 0.5,
+												marginHorizontal: 16,
+												marginVertical: 12,
+												backgroundColor: colors.fontB3,
+											}}
+										/>
+									)}
+									<ExpenditureCard record={record} />
+								</View>
+							))}
+						</RoundedView>
+					</View>
+				);
+			})}
+		</ScrollView>
 	);
 };
-
-const styles = StyleSheet.create({
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	container: {
-		alignItems: "stretch",
-		justifyContent: "center",
-		letterSpacing: 12,
-		flex: 1,
-	},
-});
