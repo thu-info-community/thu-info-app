@@ -1,12 +1,7 @@
 import React from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme, View} from "react-native";
-import {
-	SecondaryItem,
-	secondaryItemIconSize,
-	SecondaryItemSeparator,
-	styles,
-} from "../../components/home/secondaryItems";
+import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
@@ -20,40 +15,23 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 				<SecondaryItem
 					title="expenditure"
 					destKey="expenditure"
-					icon={
-						<IconExpenditure
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconExpenditure />}
 					onPress={() => {
 						navigation.navigate("Expenditure");
 					}}
 				/>
-				<SecondaryItemSeparator />
 				<SecondaryItem
 					title="bankPayment"
 					destKey="bankPayment"
-					icon={
-						<IconBankPayment
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconBankPayment />}
 					onPress={() => {
 						navigation.navigate("BankPayment");
 					}}
 				/>
-				<SecondaryItemSeparator />
 				<SecondaryItem
 					title="invoice"
 					destKey="invoice"
-					icon={
-						<IconInvoice
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconInvoice />}
 					onPress={() => {
 						navigation.navigate("Invoice");
 					}}

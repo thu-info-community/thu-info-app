@@ -1,12 +1,17 @@
 import themedStyles from "../../utils/themedStyles";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	Dimensions,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import React, {ReactElement} from "react";
 import {store} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
-
-export const secondaryItemIconSize = 30;
+import {RoundedView} from "../views";
 
 export const SecondaryItem = ({
 	title,
@@ -21,6 +26,8 @@ export const SecondaryItem = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const windowWidth = Dimensions.get("window").width;
+	const viewSize = (windowWidth - 32) / 2;
 	return (
 		<TouchableOpacity
 			style={style.SecondaryItemButton}
@@ -28,18 +35,13 @@ export const SecondaryItem = ({
 				onPress();
 				store.dispatch(top5UpdateAction(destKey));
 			}}>
-			<View style={style.SecondaryItemView}>
-				{icon}
+			<RoundedView
+				style={[style.SecondaryItemView, {width: viewSize, height: viewSize}]}>
+				<View style={{width: "60%", height: "60%"}}>{icon}</View>
 				<Text style={style.SecondaryItemText}>{getStr(title)}</Text>
-			</View>
+			</RoundedView>
 		</TouchableOpacity>
 	);
-};
-
-export const SecondaryItemSeparator = () => {
-	const themeName = useColorScheme();
-	const style = styles(themeName);
-	return <View style={style.SecondaryItemSeparator} />;
 };
 
 export const styles = themedStyles((theme) => ({
@@ -47,21 +49,26 @@ export const styles = themedStyles((theme) => ({
 		alignItems: "center",
 		justifyContent: "center",
 		flex: 1,
+		padding: 8,
 	},
 	SecondaryContentView: {
-		width: 180,
+		alignItems: "center",
+		flexDirection: "row",
+		flexWrap: "wrap",
 	},
 	SecondaryItemButton: {
-		marginVertical: 24,
+		margin: 4,
 	},
 	SecondaryItemView: {
-		flexDirection: "row",
+		borderRadius: 20,
 		alignItems: "center",
+		justifyContent: "center",
+		paddingVertical: 32,
 	},
 	SecondaryItemText: {
-		marginLeft: 24,
-		fontSize: 20,
-		color: theme.colors.text,
+		marginTop: 8,
+		fontSize: 16,
+		color: theme.colors.fontB2,
 	},
 	SecondaryItemSeparator: {
 		height: 1,
