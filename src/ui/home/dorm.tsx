@@ -1,12 +1,7 @@
 import React from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme, View} from "react-native";
-import {
-	SecondaryItem,
-	secondaryItemIconSize,
-	SecondaryItemSeparator,
-	styles,
-} from "../../components/home/secondaryItems";
+import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconDormScore from "../../assets/icons/IconDormScore";
@@ -21,54 +16,31 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 				<SecondaryItem
 					title="washer"
 					destKey="washer"
-					icon={
-						<IconWasher
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconWasher />}
 					onPress={() => {
 						navigation.navigate("WasherWeb");
 					}}
 				/>
-				<SecondaryItemSeparator />
 				<SecondaryItem
 					title="qzyq"
 					destKey="qzyq"
-					icon={
-						<IconWater
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconWater />}
 					onPress={() => {
 						navigation.navigate("Qzyq");
 					}}
 				/>
-				<SecondaryItemSeparator />
 				<SecondaryItem
 					title="dormScore"
 					destKey="dormScore"
-					icon={
-						<IconDormScore
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconDormScore />}
 					onPress={() => {
 						navigation.navigate("DormScore");
 					}}
 				/>
-				<SecondaryItemSeparator />
 				<SecondaryItem
 					title="electricity"
 					destKey="electricity"
-					icon={
-						<IconEleRecharge
-							width={secondaryItemIconSize}
-							height={secondaryItemIconSize}
-						/>
-					}
+					icon={<IconEleRecharge />}
 					onPress={() => {
 						navigation.navigate("Electricity");
 					}}
