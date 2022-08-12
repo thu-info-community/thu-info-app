@@ -187,7 +187,8 @@ export default {
 	tomorrow: "Tomorrow",
 	checkDate: "Please check the date of booking: ",
 	checkSeat: "Please check your seat.",
-	seatInvalid: " (invalid)",
+	clickToBook: "Book",
+	seatInvalid: "Unavailable",
 	bookSuccess: "Successfully booked.",
 	bookFailureColon: "Book failed: ",
 	todayBookHint:
@@ -315,8 +316,6 @@ export default {
 	remainderTips:
 		"The remainder shown in expenditure page can go wrong due to data migration problems. If you ever lost your card and made a new one before, please reset the remainder in the box above.\nPS: The display error can also be caused by data translation delay, please wait for a moment before resetting the remainder.",
 	resetRemainderShift: "Cancel Reset",
-	chooseLibrary: "Please select a library to check/book a seat",
-	chooseLibraryMocked: "Please select a library",
 	bookTips: "Press the list below to book a seat",
 	location: "Locale",
 	timeLocation: "Time",

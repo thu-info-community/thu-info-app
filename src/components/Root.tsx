@@ -427,7 +427,11 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibBookRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<Icon
+								name="history"
+								size={24}
+								color={theme.colors.primaryLight}
+							/>
 						</TouchableOpacity>
 					),
 				})}
@@ -441,7 +445,11 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibBookRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<Icon
+								name="history"
+								size={24}
+								color={theme.colors.primaryLight}
+							/>
 						</TouchableOpacity>
 					),
 				})}
@@ -450,18 +458,17 @@ export const Root = () => {
 				name="LibrarySection"
 				component={LibrarySectionScreen}
 				options={({route, navigation}) => ({
-					title: route.params.floor.zhNameTrace,
+					title: route.params.floor.zhName,
 					headerRight: () => (
 						<View style={{flexDirection: "row"}}>
 							<TouchableOpacity
 								style={{paddingHorizontal: 8, marginHorizontal: 4}}
 								onPress={() => navigation.navigate("LibraryMap", route.params)}>
-								<Icon name="map" size={24} color={theme.colors.primary} />
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("LibBookRecord")}>
-								<Icon name="history" size={24} color={theme.colors.primary} />
+								<Icon
+									name="map-marker"
+									size={24}
+									color={theme.colors.primaryLight}
+								/>
 							</TouchableOpacity>
 						</View>
 					),
@@ -471,7 +478,7 @@ export const Root = () => {
 				name="LibrarySeat"
 				component={LibrarySeatScreen}
 				options={({route, navigation}) => ({
-					title: route.params.section.zhNameTrace,
+					title: route.params.section.zhName,
 					headerRight: () => (
 						<View style={{flexDirection: "row"}}>
 							<TouchableOpacity
@@ -479,12 +486,11 @@ export const Root = () => {
 								onPress={() =>
 									navigation.navigate("LibrarySeatMap", route.params)
 								}>
-								<Icon name="map" size={24} color={theme.colors.primary} />
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("LibBookRecord")}>
-								<Icon name="history" size={24} color={theme.colors.primary} />
+								<Icon
+									name="map-marker"
+									size={24}
+									color={theme.colors.primaryLight}
+								/>
 							</TouchableOpacity>
 						</View>
 					),
@@ -493,12 +499,12 @@ export const Root = () => {
 			<Stack.Screen
 				name="LibraryMap"
 				component={LibraryMapScreen}
-				options={({route}) => ({title: route.params.floor.zhNameTrace})}
+				options={({route}) => ({title: route.params.floor.zhName})}
 			/>
 			<Stack.Screen
 				name="LibrarySeatMap"
 				component={LibrarySeatMapScreen}
-				options={({route}) => ({title: route.params.section.zhNameTrace})}
+				options={({route}) => ({title: route.params.section.zhName})}
 			/>
 			<Stack.Screen
 				name="LibBookRecord"

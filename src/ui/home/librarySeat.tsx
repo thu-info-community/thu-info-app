@@ -24,7 +24,7 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 		if (!helper.mocked()) {
 			Alert.alert(
 				getStr("checkSeat"),
-				item.zhName +
+				item.zhNameTrace +
 					"\n" +
 					getStr(choice === 0 ? "todayBookHint" : "tomorrowBookHint"),
 				[
