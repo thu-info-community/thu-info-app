@@ -1,24 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {
 	RefreshControl,
-	SectionList,
-	SectionListData,
+	ScrollView,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
-import {
-	ReportSummary,
-	ReportHeader,
-	ReportHeaderProps,
-	ReportItem,
-} from "../../components/home/report";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native";
+import {RoundedView} from "../../components/views";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -39,7 +33,36 @@ export const semesterWeight = (semester: string): number => {
 	return year * 10 + term;
 };
 
-type Section = SectionListData<Course> & ReportHeaderProps;
+const gpaToStr = (gpa: number, dig: number) =>
+	isNaN(gpa) ? "N/A" : gpa.toFixed(dig);
+
+const gradeToColor: {[key: string]: string} = {
+	"A+": "#8B55E4",
+	A: "#5856D6",
+	"A-": "#007AFF",
+	"B+": "#32ADE6",
+	B: "#00C7BE",
+	"B-": "#34C759",
+	"C+": "#98C734",
+	C: "#FFCC00",
+	"C-": "#FF9500",
+	"D+": "#B8831C",
+	D: "#DE970E",
+	P: "#8B55E4",
+	F: "#FF3B30",
+	W: "#C7C7CC",
+	I: "#FF3B30",
+	EX: "#00C7BE",
+};
+
+type Section = {
+	semester: string;
+	gpa: number;
+	totalCredits: number;
+	allCredits: number;
+	totalPoints: number;
+	data: Course[];
+};
 
 // totalCredits <= allCredits
 const prepareData = (
@@ -113,6 +136,52 @@ const prepareData = (
 	};
 };
 
+const ReportIcon = ({grade}: {grade: string}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	return (
+		<View
+			style={{
+				marginRight: 8,
+				alignItems: "center",
+				justifyContent: "center",
+				width: 24,
+				height: 24,
+				borderStyle: ["P", "W", "I", "EX"].includes(grade) ? "dashed" : "solid",
+				borderRadius: 12,
+				borderWidth: 1.5,
+				borderColor: grade in gradeToColor ? gradeToColor[grade] : "#A6A6A6",
+				flexDirection: "row",
+			}}>
+			<Text
+				style={{
+					fontSize: 16,
+					color: colors.text,
+				}}>
+				{grade[0]}
+			</Text>
+			{grade[1] === "X" ? (
+				<Text
+					style={{
+						fontSize: 12,
+						color: colors.text,
+					}}>
+					X
+				</Text>
+			) : grade.length > 1 ? (
+				<Text
+					style={{
+						fontSize: 12,
+						color: colors.text,
+						lineHeight: 12,
+					}}>
+					{grade[1]}
+				</Text>
+			) : null}
+		</View>
+	);
+};
+
 export const ReportScreen = () => {
 	const [report, setReport] = useState<Course[]>();
 	const [refreshing, setRefreshing] = useState(true);
@@ -147,7 +216,7 @@ export const ReportScreen = () => {
 	);
 
 	return (
-		<View style={{marginHorizontal: 20, flex: 1}}>
+		<View style={{marginHorizontal: 12, flex: 1}}>
 			<View style={{flexDirection: "row", margin: 5}}>
 				<TouchableOpacity
 					style={{padding: 6, flex: 1}}
@@ -190,43 +259,119 @@ export const ReportScreen = () => {
 					</Text>
 				</TouchableOpacity>
 			</View>
-			<SectionList
-				sections={sections}
-				stickySectionHeadersEnabled={false}
-				renderSectionHeader={({section}) => (
-					<ReportHeader
-						semester={section.semester}
-						gpa={section.gpa}
-						totalCredits={section.totalCredits}
-						allCredits={section.allCredits}
-						totalPoints={section.totalPoints}
-					/>
-				)}
-				renderItem={({item}) => (
-					<ReportItem
-						name={item.name}
-						credit={item.credit}
-						grade={item.grade}
-						point={item.point}
-					/>
-				)}
-				ListHeaderComponent={
-					<ReportSummary
-						gpa={gpa}
-						totalCredits={totalCredits}
-						allCredits={allCredits}
-						totalPoints={totalPoints}
-					/>
-				}
+			<ScrollView
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
 						colors={[theme.colors.accent]}
 					/>
-				}
-				keyExtractor={(item, index) => `${item.semester}${index}`}
-			/>
+				}>
+				<View>
+					<RoundedView style={{marginBottom: 16}}>
+						<Text
+							style={{
+								fontSize: 16,
+								fontWeight: "bold",
+								color: theme.colors.text,
+								textAlign: "center",
+							}}>
+							{getStr("allGPA")}
+							{gpaToStr(gpa, 3)}
+						</Text>
+						<Text
+							style={{
+								fontSize: 12,
+								color: theme.colors.fontB2,
+								textAlign: "center",
+							}}>
+							{getStr("allCredits")}:{allCredits}
+							{"   "}
+							{getStr("totalCredits")}:{totalCredits}
+							{"   "}
+							{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
+						</Text>
+					</RoundedView>
+					{sections.map((section) => (
+						<RoundedView key={section.semester} style={{marginBottom: 16}}>
+							<View style={{flexDirection: "row", marginHorizontal: 12}}>
+								<Text
+									numberOfLines={1}
+									style={{
+										fontSize: 16,
+										fontWeight: "bold",
+										color: theme.colors.text,
+										flex: 1,
+									}}>
+									{section.semester}
+								</Text>
+								<Text
+									numberOfLines={1}
+									style={{
+										fontSize: 16,
+										fontWeight: "bold",
+										color: theme.colors.text,
+										flex: 0,
+									}}>
+									{gpaToStr(section.gpa, 3)}
+								</Text>
+							</View>
+							<View
+								style={{
+									flexDirection: "row",
+									marginHorizontal: 12,
+									marginTop: 4,
+									marginBottom: 8,
+								}}>
+								<Text style={{fontSize: 12, color: theme.colors.fontB2}}>
+									{getStr("allCredits")}:{section.allCredits}
+									{"  "}
+									{getStr("totalCredits")}:{section.totalCredits}
+									{"  "}
+									{getStr("totalPoints")}:{gpaToStr(section.totalPoints, 1)}
+								</Text>
+							</View>
+							{section.data.map((course, index) => (
+								<>
+									{index > 0 && (
+										<View
+											style={{
+												height: 0.5,
+												marginHorizontal: 16,
+												backgroundColor: theme.colors.fontB3,
+											}}
+										/>
+									)}
+									<View
+										style={{
+											flexDirection: "row",
+											marginHorizontal: 16,
+											marginVertical: 8,
+										}}>
+										<ReportIcon grade={course.grade} />
+										<Text
+											numberOfLines={1}
+											style={{fontSize: 16, flex: 2, color: theme.colors.text}}>
+											{course.name}
+										</Text>
+										<Text
+											numberOfLines={1}
+											style={{
+												fontSize: 16,
+												flex: 0,
+												color: theme.colors.fontB2,
+											}}>
+											{course.credit}
+											{" pts · "}
+											{gpaToStr(course.point, 1)}
+										</Text>
+									</View>
+								</>
+							))}
+						</RoundedView>
+					))}
+				</View>
+			</ScrollView>
 		</View>
 	);
 };
