@@ -40,6 +40,7 @@ export default {
 	eleRemainderFail: "Exception occurred when querying ele-remainder",
 	eleRemainderResult: "Your ele-remainder is ",
 	reservation: "Reservation",
+	alreadyReserved: "Reservation",
 	libBookRecord: "Library Booking Records",
 	cancelBooking: "Cancel",
 	confirmCancelBooking: "Sure to cancel?",

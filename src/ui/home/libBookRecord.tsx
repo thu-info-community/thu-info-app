@@ -1,23 +1,24 @@
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
-import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper, store} from "../../redux/store";
 import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 
-export const LibBookRecordScreen = simpleRefreshListScreen(
+export const LibBookRecordScreen = roundedRefreshListScreen(
 	() =>
 		helper.getBookingRecords().then((r) => {
 			store.dispatch(setActiveLibBookRecordAction(r));
 			return r;
 		}),
-	({pos, time, status, delId}, refresh, _, {colors}) => {
+	({pos, time, status, delId}, refresh, _, {colors}, index, total) => {
 		const [lib, seat] = pos.split(":");
 		return (
 			<View
 				style={{
-					padding: 15,
+					marginTop: index === 0 ? 0 : 12,
+					marginBottom: index === total - 1 ? 0 : 12,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>

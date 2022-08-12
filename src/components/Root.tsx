@@ -93,6 +93,8 @@ import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
 import {SearchParams} from "thu-info-lib/dist/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
+import IconHistory from "../assets/icons/IconHistory";
+import IconLocal from "../assets/icons/IconLocal";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -427,11 +429,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibBookRecord")}>
-							<Icon
-								name="history"
-								size={24}
-								color={theme.colors.primaryLight}
-							/>
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}
@@ -445,11 +443,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibBookRecord")}>
-							<Icon
-								name="history"
-								size={24}
-								color={theme.colors.primaryLight}
-							/>
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}
@@ -464,11 +458,7 @@ export const Root = () => {
 							<TouchableOpacity
 								style={{paddingHorizontal: 8, marginHorizontal: 4}}
 								onPress={() => navigation.navigate("LibraryMap", route.params)}>
-								<Icon
-									name="map-marker"
-									size={24}
-									color={theme.colors.primaryLight}
-								/>
+								<IconLocal width={24} height={24} />
 							</TouchableOpacity>
 						</View>
 					),
@@ -486,11 +476,7 @@ export const Root = () => {
 								onPress={() =>
 									navigation.navigate("LibrarySeatMap", route.params)
 								}>
-								<Icon
-									name="map-marker"
-									size={24}
-									color={theme.colors.primaryLight}
-								/>
+								<IconLocal width={24} height={24} />
 							</TouchableOpacity>
 						</View>
 					),
@@ -525,7 +511,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("LibRoomBookRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}
@@ -628,7 +614,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("SportsRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}
@@ -642,7 +628,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("SportsRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}
@@ -656,7 +642,7 @@ export const Root = () => {
 						<TouchableOpacity
 							style={{paddingHorizontal: 16, marginHorizontal: 4}}
 							onPress={() => navigation.navigate("SportsRecord")}>
-							<Icon name="history" size={24} color={theme.colors.primary} />
+							<IconHistory width={24} height={24} />
 						</TouchableOpacity>
 					),
 				})}

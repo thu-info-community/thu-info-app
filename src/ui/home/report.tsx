@@ -490,7 +490,7 @@ export const ReportScreen = () => {
 								</Text>
 							</View>
 							{section.data.map((course, index) => (
-								<>
+								<View key={course.name}>
 									{index > 0 && (
 										<View
 											style={{
@@ -524,14 +524,14 @@ export const ReportScreen = () => {
 											{gpaToStr(course.point, 1)}
 										</Text>
 									</View>
-								</>
+								</View>
 							))}
 						</RoundedView>
 					))}
 					{mode === "gather" && (
 						<RoundedView style={{marginBottom: 16}}>
 							{reportSorted.map((course, index) => (
-								<>
+								<View key={course.name}>
 									{index > 0 && (
 										<View
 											style={{
@@ -565,7 +565,7 @@ export const ReportScreen = () => {
 											{gpaToStr(course.point, 1)}
 										</Text>
 									</View>
-								</>
+								</View>
 							))}
 						</RoundedView>
 					)}

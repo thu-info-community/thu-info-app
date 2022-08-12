@@ -16,6 +16,8 @@ import {LibraryBase} from "thu-info-lib/dist/models/home/library";
 import {useColorScheme} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {RoundedListView} from "../views";
+import IconSocket from "../../assets/icons/IconSocket";
+import IconDisable from "../../assets/icons/IconDisable";
 
 export function libraryRefreshListScreen<
 	T extends LibraryBase,
@@ -73,7 +75,7 @@ export function libraryRefreshListScreen<
 		useEffect(refresh, [choice]);
 
 		return (
-			<View style={{margin: 12}}>
+			<View style={{margin: 12, flex: 1}}>
 				<View style={{flexDirection: "row", marginLeft: 8}}>
 					<TouchableOpacity style={{padding: 6}} onPress={() => setChoice(0)}>
 						<Text
@@ -118,35 +120,22 @@ export function libraryRefreshListScreen<
 								onPress={() =>
 									item.valid && onPress(props, item, choice, refresh)()
 								}>
-								{"status" in item && (
-									<Text
-										style={{
-											textAlign: "center",
-											color:
-												// @ts-ignore
-												item.status === "available"
-													? "green"
-													: // @ts-ignore
-													item.status === "unavailable"
-													? "blue"
-													: "black",
-										}}>
-										{getStr(
-											// @ts-ignore
-											item.status === "available"
-												? "socketAvailable"
-												: // @ts-ignore
-												item.status === "unavailable"
-												? "socketUnavailable"
-												: "socketUnknown",
-										)}
-									</Text>
-								)}
+								{"status" in item &&
+									// @ts-ignore
+									(item.status === "available" ? (
+										<IconSocket size={24} color={colors.primaryLight} />
+									) : // @ts-ignore
+									item.status === "unavailable" ? (
+										<IconSocket size={24} color={colors.fontB2} />
+									) : (
+										<IconDisable size={24} />
+									))}
 								<Text
 									style={{
 										color: item.valid ? colors.text : colors.fontB2,
 										fontSize: 16,
 										flex: 0,
+										marginLeft: 8,
 									}}>
 									{item.zhName + moreInformation}
 								</Text>

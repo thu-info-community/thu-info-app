@@ -1,4 +1,5 @@
 import {
+	Alert,
 	RefreshControl,
 	ScrollView,
 	Text,
@@ -9,13 +10,130 @@ import {
 import {RootNav} from "../../components/Root";
 import React, {useEffect, useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {helper} from "../../redux/store";
+import {helper, State, store} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {Library} from "thu-info-lib/dist/models/home/library";
+import {LibBookRecord, Library} from "thu-info-lib/dist/models/home/library";
+import {getStr} from "../../utils/i18n";
+import Snackbar from "react-native-snackbar";
+import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import dayjs from "dayjs";
+import {connect} from "react-redux";
 
-export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
+export const LibraryReservationCard = ({
+	activeLibBookRecords,
+}: {
+	activeLibBookRecords: LibBookRecord[];
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	const transformedRecords = activeLibBookRecords
+		.map((e) => ({
+			...e,
+			lib: e.pos.substring(0, e.pos.indexOf(":")).replace(/-/g, " - "),
+			seat: e.pos.substring(e.pos.indexOf(":") + 1),
+			due: dayjs(e.time, "YYYY-MM-DD HH:mm").add(30, "minute"),
+		}))
+		.filter((e) => e.due.add(30, "minute").valueOf() > dayjs().valueOf())
+		.sort((a, b) => a.due.valueOf() - b.due.valueOf());
+
+	return (
+		<RoundedView
+			style={{
+				alignItems: "center",
+				justifyContent: "center",
+			}}>
+			{transformedRecords.length === 0 ? (
+				<Text style={{color: colors.text}}>
+					{getStr("noActiveLibBookRecord")}
+				</Text>
+			) : (
+				<>
+					<Text style={{color: colors.text}}>{transformedRecords[0].lib}</Text>
+					<View
+						style={{
+							padding: 10,
+							flexDirection: "row",
+							alignItems: "center",
+						}}>
+						<Text
+							style={{
+								fontSize: 20,
+								fontWeight: "600",
+								color: colors.text,
+							}}>
+							{transformedRecords[0].seat}
+						</Text>
+						<TouchableOpacity
+							onPress={() =>
+								Alert.alert(
+									getStr("confirmCancelBooking"),
+									transformedRecords[0].pos,
+									[
+										{text: getStr("cancel")},
+										{
+											text: getStr("confirm"),
+											onPress: () => {
+												transformedRecords[0].delId !== undefined &&
+													helper
+														.cancelBooking(transformedRecords[0].delId)
+														.then(() =>
+															Snackbar.show({
+																text: getStr("cancelSucceeded"),
+																duration: Snackbar.LENGTH_SHORT,
+															}),
+														)
+														.catch((e) => {
+															Snackbar.show({
+																text:
+																	typeof e.message === "string"
+																		? e.message
+																		: getStr("networkRetry"),
+																duration: Snackbar.LENGTH_SHORT,
+															});
+														})
+														.then(helper.getBookingRecords)
+														.then((r) => {
+															store.dispatch(setActiveLibBookRecordAction(r));
+														});
+											},
+										},
+									],
+									{cancelable: true},
+								)
+							}>
+							<Text
+								style={{
+									color: colors.primaryLight,
+									marginLeft: 12,
+									textDecorationLine: "underline",
+								}}>
+								{getStr("cancelBooking")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<Text style={{textAlign: "center", color: colors.text}}>
+						{getStr("bookingHintPrefix")}
+						<Text style={{fontWeight: "bold"}}>
+							{transformedRecords[0].due.format("HH:mm")}
+						</Text>
+						{getStr("bookingHintSuffix")}
+					</Text>
+				</>
+			)}
+		</RoundedView>
+	);
+};
+
+const LibraryUI = ({
+	navigation,
+	activeLibBookRecords,
+}: {
+	navigation: RootNav;
+	activeLibBookRecords: LibBookRecord[];
+}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -45,46 +163,66 @@ export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 					colors={[colors.accent]}
 				/>
 			}>
-			{libraryList.length > 0 && (
-				<RoundedView style={{margin: 16}}>
-					{libraryList.map((library, index) => (
-						<>
-							{index > 0 && (
-								<View
+			<>
+				{libraryList.length > 0 && (
+					<RoundedView style={{margin: 16}}>
+						{libraryList.map((library, index) => (
+							<View key={library.id}>
+								{index > 0 && (
+									<View
+										style={{
+											height: 0.5,
+											marginHorizontal: 16,
+											backgroundColor: colors.fontB3,
+										}}
+									/>
+								)}
+								<TouchableOpacity
+									disabled={!library.valid}
+									onPress={() =>
+										library.valid &&
+										navigation.navigate("LibraryFloor", {
+											library,
+											dateChoice: 0,
+										})
+									}
 									style={{
-										height: 0.5,
+										flexDirection: "row",
+										justifyContent: "space-between",
+										alignItems: "center",
 										marginHorizontal: 16,
-										backgroundColor: colors.fontB3,
-									}}
-								/>
-							)}
-							<TouchableOpacity
-								disabled={!library.valid}
-								onPress={() =>
-									library.valid &&
-									navigation.navigate("LibraryFloor", {library, dateChoice: 0})
-								}
-								style={{
-									flexDirection: "row",
-									justifyContent: "space-between",
-									alignItems: "center",
-									marginHorizontal: 16,
-									marginTop: index === 0 ? 0 : 12,
-									marginBottom: index === libraryList.length - 1 ? 0 : 12,
-								}}>
-								<Text
-									style={{
-										fontSize: 16,
-										color: library.valid ? colors.text : colors.fontB2,
+										marginTop: index === 0 ? 0 : 12,
+										marginBottom: index === libraryList.length - 1 ? 0 : 12,
 									}}>
-									{library.zhName}
-								</Text>
-								<Icon name="angle-right" size={16} color={colors.fontB2} />
-							</TouchableOpacity>
-						</>
-					))}
-				</RoundedView>
-			)}
+									<Text
+										style={{
+											fontSize: 16,
+											color: library.valid ? colors.text : colors.fontB2,
+										}}>
+										{library.zhName}
+									</Text>
+									<Icon name="angle-right" size={16} color={colors.fontB2} />
+								</TouchableOpacity>
+							</View>
+						))}
+					</RoundedView>
+				)}
+				<View style={{margin: 16}}>
+					<Text
+						style={{
+							fontWeight: "bold",
+							color: colors.text,
+							marginBottom: 8,
+						}}>
+						{getStr("alreadyReserved")}
+					</Text>
+					<LibraryReservationCard activeLibBookRecords={activeLibBookRecords} />
+				</View>
+			</>
 		</ScrollView>
 	);
 };
+
+export const LibraryScreen = connect((state: State) => ({
+	...state.reservation,
+}))(LibraryUI);
