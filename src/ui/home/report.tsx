@@ -265,7 +265,10 @@ export const ReportScreen = () => {
 
 	useEffect(() => {
 		DropdownContainer.current?.measure((_fx, _fy, _w, h, _px, py) => {
-			setDropdownTop(py + h);
+			const newValue = py + h;
+			if (!isNaN(newValue)) {
+				setDropdownTop(py + h);
+			}
 		});
 	}, [open]);
 
