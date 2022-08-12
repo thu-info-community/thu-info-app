@@ -139,6 +139,50 @@ const prepareData = (
 	};
 };
 
+const cmp = (a: Course, b: Course) => {
+	const grades = [
+		"P",
+		"A+",
+		"A",
+		"A-",
+		"B+",
+		"B",
+		"B-",
+		"C+",
+		"C",
+		"C-",
+		"D+",
+		"D",
+		"F",
+		"W",
+		"I",
+		"EX",
+	];
+	const gradeRankA = grades.indexOf(a.grade);
+	const gradeRankB = grades.indexOf(b.grade);
+	const semesterWeightA = semesterWeight(a.semester);
+	const semesterWeightB = semesterWeight(b.semester);
+	if (gradeRankA < gradeRankB) {
+		return 1;
+	} else if (gradeRankA > gradeRankB) {
+		return -1;
+	} else if (semesterWeightA > semesterWeightB) {
+		return 1;
+	} else if (semesterWeightA < semesterWeightB) {
+		return -1;
+	} else if (a.credit > b.credit) {
+		return 1;
+	} else if (a.credit < b.credit) {
+		return -1;
+	} else if (a.name > b.name) {
+		return 1;
+	} else if (a.name < b.name) {
+		return -1;
+	} else {
+		return 0;
+	}
+};
+
 const ReportIcon = ({grade}: {grade: string}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -186,12 +230,13 @@ const ReportIcon = ({grade}: {grade: string}) => {
 };
 
 export const ReportScreen = () => {
-	const [report, setReport] = useState<Course[]>();
+	const [report, setReport] = useState<Course[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 
 	const [open, setOpen] = useState<"flag" | "bx" | undefined>(undefined);
 	const [flag, setFlag] = useState<1 | 2 | 3>(1);
 	const [bx, setBx] = useState(false);
+	const [mode, setMode] = useState<"split" | "gather">("split");
 
 	const [dropdownTop, setDropdownTop] = useState(0);
 	const DropdownContainer = useRef<View>();
@@ -224,9 +269,11 @@ export const ReportScreen = () => {
 		});
 	}, [open]);
 
-	const {gpa, sections, allCredits, totalCredits, totalPoints} = prepareData(
-		report || [],
-	);
+	const {gpa, sections, allCredits, totalCredits, totalPoints} =
+		prepareData(report);
+
+	const reportSorted =
+		mode === "gather" ? [...report].sort((a, b) => -cmp(a, b)) : [];
 
 	const dropdownData =
 		open === undefined
@@ -248,7 +295,12 @@ export const ReportScreen = () => {
 				}}>
 				<TouchableOpacity
 					onPress={() => setOpen((v) => (v === "flag" ? undefined : "flag"))}
-					style={{marginLeft: 36, flexDirection: "row", alignItems: "center"}}>
+					style={{
+						marginLeft: 36,
+						flexDirection: "row",
+						alignItems: "center",
+						flex: 0,
+					}}>
 					<Text
 						style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
 						{getStr(`reportFlag${flag}`)}
@@ -262,7 +314,12 @@ export const ReportScreen = () => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => setOpen((v) => (v === "bx" ? undefined : "bx"))}
-					style={{marginLeft: 32, flexDirection: "row", alignItems: "center"}}>
+					style={{
+						marginLeft: 32,
+						flexDirection: "row",
+						alignItems: "center",
+						flex: 0,
+					}}>
 					<Text style={{color: open === "bx" ? colors.primary : colors.fontB2}}>
 						{getStr(bx ? "bx" : "bxr")}
 					</Text>
@@ -272,6 +329,12 @@ export const ReportScreen = () => {
 						color={open === "bx" ? colors.primary : colors.fontB2}
 						style={{marginLeft: 8}}
 					/>
+				</TouchableOpacity>
+				<View style={{flex: 1}} />
+				<TouchableOpacity
+					onPress={() => setMode((m) => (m === "split" ? "gather" : "split"))}
+					style={{marginRight: 36, alignItems: "center", flex: 0}}>
+					<Icon name="exchange" size={12} color={colors.fontB2} />
 				</TouchableOpacity>
 				<Modal visible={open !== undefined} transparent>
 					<TouchableOpacity
@@ -384,7 +447,7 @@ export const ReportScreen = () => {
 							{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
 						</Text>
 					</RoundedView>
-					{sections.map((section) => (
+					{(mode === "split" ? sections : []).map((section) => (
 						<RoundedView key={section.semester} style={{marginBottom: 16}}>
 							<View style={{flexDirection: "row", marginHorizontal: 12}}>
 								<Text
@@ -462,6 +525,47 @@ export const ReportScreen = () => {
 							))}
 						</RoundedView>
 					))}
+					{mode === "gather" && (
+						<RoundedView style={{marginBottom: 16}}>
+							{reportSorted.map((course, index) => (
+								<>
+									{index > 0 && (
+										<View
+											style={{
+												height: 0.5,
+												marginHorizontal: 16,
+												backgroundColor: colors.fontB3,
+											}}
+										/>
+									)}
+									<View
+										style={{
+											flexDirection: "row",
+											marginHorizontal: 16,
+											marginVertical: 8,
+										}}>
+										<ReportIcon grade={course.grade} />
+										<Text
+											numberOfLines={1}
+											style={{fontSize: 16, flex: 2, color: colors.text}}>
+											[{course.semester}] {course.name}
+										</Text>
+										<Text
+											numberOfLines={1}
+											style={{
+												fontSize: 16,
+												flex: 0,
+												color: colors.fontB2,
+											}}>
+											{course.credit}
+											{" pts · "}
+											{gpaToStr(course.point, 1)}
+										</Text>
+									</View>
+								</>
+							))}
+						</RoundedView>
+					)}
 				</View>
 			</ScrollView>
 		</View>
