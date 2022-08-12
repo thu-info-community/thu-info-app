@@ -149,11 +149,7 @@ export class InfoHelper {
     public getPhysicalExamResult = (): Promise<[string, string][]> =>
         getPhysicalExamResult(this);
 
-    public getExpenditures = (
-        beg: Date,
-        end: Date,
-    ): Promise<[Record[], number, number, number]> =>
-        getExpenditures(this, beg, end);
+    public getExpenditures = (): Promise<Record[]> => getExpenditures(this);
 
     public getClassroomState = (
         name: string,

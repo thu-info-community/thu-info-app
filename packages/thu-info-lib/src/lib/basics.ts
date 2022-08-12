@@ -29,7 +29,6 @@ import {
     toPersons,
 } from "../models/home/assessment";
 import XLSX from "xlsx";
-import dayjs from "dayjs";
 import {InfoHelper} from "../index";
 import {arbitraryEncode, uFetch} from "../utils/network";
 import {
@@ -323,9 +322,7 @@ export const getPhysicalExamResult = (
 
 export const getExpenditures = (
     helper: InfoHelper,
-    beg: Date,
-    end: Date,
-): Promise<[Record[], number, number, number]> =>
+): Promise<Record[]> =>
     roamingWrapperWithMocks(
         helper,
         "default",
@@ -349,31 +346,7 @@ export const getExpenditures = (
                         }
                     },
                 );
-                const remainder = result.reduce(
-                    (prev: number, curr: Record) =>
-                        prev + (curr.category === "领取旧卡余额" ? 0 : curr.value),
-                    0,
-                );
-                let income = 0;
-                let outgo = 0;
-                const filtered = result
-                    .filter((it: Record) => {
-                        const d = dayjs(it.date.split(" ")[0], "YYYY-MM-DD")
-                            .toDate()
-                            .valueOf();
-                        const valid =
-                            d >= beg.valueOf() - 86400000 && d <= end.valueOf(); // Locales are nasty.
-                        if (valid && it.category !== "领取旧卡余额") {
-                            if (it.value > 0) {
-                                income += it.value;
-                            } else {
-                                outgo -= it.value;
-                            }
-                        }
-                        return valid;
-                    })
-                    .reverse();
-                return [filtered, income, outgo, remainder];
+                return result;
             },
         ),
         MOCK_EXPENDITURES,
@@ -566,9 +539,9 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
 
 export const countdown = async (helper: InfoHelper): Promise<string[]> =>
     roamingWrapperWithMocks(
-        helper, 
+        helper,
         undefined,
-        "", 
+        "",
         async () =>{
             const $ = cheerio.load(await uFetch(COUNT_DOWN_URL));
             const data = $(".countdown li");
