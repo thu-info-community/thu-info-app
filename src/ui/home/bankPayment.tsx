@@ -1,81 +1,19 @@
 import React, {useEffect, useState} from "react";
-import {
-	Platform,
-	RefreshControl,
-	SectionList,
-	Text,
-	TouchableHighlight,
-	TouchableNativeFeedback,
-	View,
-} from "react-native";
+import {RefreshControl, ScrollView, Text, View} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {useColorScheme} from "react-native";
-import {
-	BankPayment,
-	BankPaymentByMonth,
-} from "thu-info-lib/dist/models/home/bank";
-
-const PaymentItem = ({payment}: {payment: BankPayment}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	const content = (
-		<View
-			style={{
-				paddingVertical: 10,
-				paddingRight: 8,
-			}}>
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-between",
-				}}>
-				<View
-					style={{flexDirection: "column", flex: 3, alignItems: "flex-start"}}>
-					<Text style={{fontSize: 13, marginHorizontal: 10, color: "grey"}}>
-						{payment.department}
-					</Text>
-					<Text
-						style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
-						{payment.project}
-					</Text>
-					<Text style={{fontSize: 14, marginHorizontal: 10, color: "grey"}}>
-						{payment.usage}
-					</Text>
-				</View>
-				<View
-					style={{flexDirection: "column", flex: 1, alignItems: "flex-end"}}>
-					<Text style={{fontSize: 18, marginHorizontal: 6, color: colors.text}}>
-						{payment.total}
-					</Text>
-					<Text style={{fontSize: 12, marginHorizontal: 6, color: "grey"}}>
-						{payment.time}
-					</Text>
-				</View>
-			</View>
-			<Text style={{fontSize: 14, marginHorizontal: 10, color: "grey"}}>
-				{payment.description}
-			</Text>
-		</View>
-	);
-	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002">{content}</TouchableHighlight>
-	) : (
-		<TouchableNativeFeedback
-			background={TouchableNativeFeedback.Ripple("#0002", false)}>
-			{content}
-		</TouchableNativeFeedback>
-	);
-};
+import {BankPaymentByMonth} from "thu-info-lib/dist/models/home/bank";
+import {RoundedView} from "../../components/views";
 
 export const BankPaymentScreen = () => {
 	const [data, setData] = useState<BankPaymentByMonth[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
 
 	const fetchData = () => {
 		setRefreshing(true);
@@ -98,56 +36,121 @@ export const BankPaymentScreen = () => {
 
 	return (
 		<>
-			<SectionList
-				sections={data.map(({month, payment}) => ({
-					month,
-					data: payment,
-				}))}
-				renderSectionHeader={({section}) => (
-					<View style={{marginTop: 12, paddingTop: 12}}>
-						<View
-							style={{
-								padding: 9,
-								paddingBottom: 0,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								alignItems: "center",
-							}}>
-							<Text
-								numberOfLines={1}
-								style={{
-									fontSize: 20,
-									fontWeight: "bold",
-									flex: 1,
-									color: theme.colors.text,
-								}}>
-								{section.month}
-							</Text>
-							<Text
-								numberOfLines={1}
-								style={{
-									fontSize: 20,
-									fontWeight: "bold",
-									flex: 0,
-									color: theme.colors.text,
-								}}>
-								{section.data
-									.reduce((acc, payment) => acc + Number(payment.total), 0)
-									.toFixed(2)}
-							</Text>
-						</View>
-					</View>
-				)}
-				renderItem={({item}) => <PaymentItem payment={item} />}
+			<ScrollView
+				style={{flex: 1, margin: 12, marginTop: 4}}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
-						colors={[theme.colors.accent]}
+						colors={[colors.accent]}
 					/>
-				}
-				keyExtractor={(item) => `${item.time}`}
-			/>
+				}>
+				<View>
+					{data.map(({month, payment}) => (
+						<View key={month} style={{marginTop: 12}}>
+							<View
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-between",
+									alignItems: "center",
+								}}>
+								<Text
+									numberOfLines={1}
+									style={{
+										fontSize: 16,
+										color: colors.text,
+										marginLeft: 6,
+									}}>
+									{month}
+								</Text>
+								<Text
+									numberOfLines={1}
+									style={{
+										fontSize: 16,
+										color: colors.text,
+										marginRight: 16,
+									}}>
+									￥
+									{payment
+										.reduce((acc, {total}) => acc + Number(total), 0)
+										.toFixed(2)}
+								</Text>
+							</View>
+							<RoundedView style={{marginTop: 8}}>
+								{payment.map((item, index) => (
+									<View key={item.time}>
+										{index > 0 && (
+											<View
+												style={{
+													height: 0.5,
+													backgroundColor: colors.fontB3,
+													margin: 12,
+												}}
+											/>
+										)}
+										<View style={{flexDirection: "row", marginHorizontal: 16}}>
+											<Text
+												style={{flex: 3, fontSize: 16, color: colors.text}}
+												numberOfLines={2}>
+												{item.project}
+											</Text>
+											<Text
+												style={{
+													flex: 1,
+													fontSize: 16,
+													color: colors.text,
+													textAlign: "right",
+												}}>
+												{item.total}
+											</Text>
+										</View>
+										<View
+											style={{
+												flexDirection: "row",
+												marginHorizontal: 16,
+												marginTop: 4,
+											}}>
+											<Text
+												style={{flex: 3, fontSize: 14, color: colors.fontB2}}>
+												{item.department}
+											</Text>
+											<Text
+												style={{
+													flex: 1,
+													fontSize: 14,
+													color: colors.fontB2,
+													textAlign: "right",
+												}}>
+												{item.usage}
+											</Text>
+										</View>
+										{item.description.length > 0 && (
+											<Text
+												style={{
+													fontSize: 14,
+													color: colors.fontB2,
+													marginHorizontal: 16,
+													marginTop: 4,
+												}}>
+												{item.description}
+											</Text>
+										)}
+										<Text
+											style={{
+												fontSize: 14,
+												color: colors.fontB2,
+												marginHorizontal: 16,
+												marginTop: 4,
+											}}>
+											{item.time}
+										</Text>
+									</View>
+								))}
+							</RoundedView>
+						</View>
+					))}
+				</View>
+			</ScrollView>
 		</>
 	);
 };
