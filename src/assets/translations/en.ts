@@ -28,6 +28,8 @@ export default {
 	settings: "Settings",
 	feedback: "Feedback",
 	accountAndSecurity: "Account and Security",
+	functionManagement: "Features",
+	functionManagementTip: "Switch to enable/disable features",
 	general: "General",
 	darkMode: "Dark mode",
 	enable: "Enabled",

@@ -26,6 +26,8 @@ export default {
 	settings: "设置",
 	feedback: "反馈",
 	accountAndSecurity: "帐号与安全",
+	functionManagement: "功能管理",
+	functionManagementTip: "管理在「主页」出现的功能",
 	general: "通用",
 	darkMode: "深色模式",
 	enable: "启用",
