@@ -370,7 +370,7 @@ export default {
 	choose: "选定",
 	"?": "？",
 	noInvoice: "您目前没有可用电子发票。",
-	recentlyUsedFunction: "常用功能",
+	recentlyUsedFunction: "最近使用",
 	allFunction: "全部功能",
 	schedulePreview: "计划概览",
 	scheduleTomorrow: "明天",

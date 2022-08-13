@@ -9,17 +9,20 @@ export default svgGenerator((width, height) => {
 	const theme = themes(themeName);
 	return (
 		<Svg viewBox="0 0 48 48" width={width} height={height}>
+			<Path fill={theme.colors.mainTheme} d="M36 18h6V4H6v14h30Z" />
 			<Path
-				strokeLinecap="square"
+				strokeLinejoin="round"
+				strokeLinecap="round"
 				strokeWidth={3}
-				stroke={theme.colors.text}
-				d="M12 16v28h24V16"
+				stroke={theme.colors.fontB1}
+				d="M18 32h12m-12-6h12M14 10h20m2 8h6V4H6v14h30Z"
 			/>
 			<Path
+				strokeLinejoin="round"
 				strokeLinecap="square"
 				strokeWidth={3}
-				stroke={theme.colors.text}
-				d="M18 32h12m-12-6h12M14 10h20m2 8h6V4H6v14h6"
+				stroke={theme.colors.fontB1}
+				d="M12 18v26h24V18"
 			/>
 		</Svg>
 	);

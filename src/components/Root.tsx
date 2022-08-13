@@ -123,26 +123,26 @@ const RootTabs = () => {
 	return (
 		<Tab.Navigator
 			screenOptions={({route}) => ({
-				tabBarIcon: ({color, size}) => {
+				tabBarIcon: ({focused, size}) => {
 					switch (route.name) {
 						case "HomeTab": {
-							return <IconHomeTab size={size} color={color} />;
+							return <IconHomeTab size={size} active={focused} />;
 						}
 						case "NewsTab": {
-							return <IconNewsTab size={size} color={color} />;
+							return <IconNewsTab size={size} active={focused} />;
 						}
 						case "ScheduleTab": {
-							return <IconScheduleTab size={size} color={color} />;
+							return <IconScheduleTab size={size} active={focused} />;
 						}
 						case "SettingsTab": {
-							return <IconSettingsTab size={size} color={color} />;
+							return <IconSettingsTab size={size} active={focused} />;
 						}
 					}
 
 					return null;
 				},
-				tabBarActiveTintColor: theme.colors.primary,
-				tabBarInactiveTintColor: "gray",
+				tabBarActiveTintColor: theme.colors.mainTheme,
+				tabBarInactiveTintColor: theme.colors.fontB2,
 			})}
 			backBehavior="initialRoute">
 			<Tab.Screen

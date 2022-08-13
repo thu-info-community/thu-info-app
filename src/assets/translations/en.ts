@@ -391,7 +391,7 @@ export default {
 	choose: "Select",
 	"?": "?",
 	noInvoice: "You have no invoice now.",
-	recentlyUsedFunction: "Recently Use",
+	recentlyUsedFunction: "Recent",
 	allFunction: "All Functions",
 	schedulePreview: "Schedule Preview",
 	scheduleTomorrow: "Tomorrow",

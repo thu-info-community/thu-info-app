@@ -1,13 +1,20 @@
 import Svg, {Path, Rect} from "react-native-svg";
 import React from "react";
+import {useColorScheme} from "react-native";
+import themes from "../themes/themes";
 
-export default ({size, color}: {size: number; color: string}) => {
+export default ({size, active}: {size: number; active: boolean}) => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	const color = active ? theme.colors.mainTheme : "#0000";
 	return (
 		<Svg viewBox="0 0 48 48" width={size} height={size}>
 			<Rect
-				strokeLinecap="square"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 				strokeWidth={3}
-				stroke={color}
+				stroke={theme.colors.fontB1}
+				fill={color}
 				rx={2}
 				height={30}
 				width={40}
@@ -15,9 +22,9 @@ export default ({size, color}: {size: number; color: string}) => {
 				x={4}
 			/>
 			<Path
-				strokeLinecap="square"
+				strokeLinecap="round"
 				strokeWidth={3}
-				stroke={color}
+				stroke={theme.colors.fontB1}
 				d="M14 6v8M25 23H14M34 31H14M34 6v8"
 			/>
 		</Svg>
