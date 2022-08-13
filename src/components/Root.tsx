@@ -3,12 +3,18 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
-import {Platform, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	Platform,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
-import {globalObjects} from "../redux/store";
+import {globalObjects, store} from "../redux/store";
 import {saveImg} from "../utils/saveImg";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
@@ -95,6 +101,9 @@ import {CrSearchResultScreen} from "../ui/home/crSearchResult";
 import IconHistory from "../assets/icons/IconHistory";
 import IconLocal from "../assets/icons/IconLocal";
 import {PrivacyScreen} from "../ui/settings/privacy";
+import {GeneralScreen} from "../ui/settings/general";
+import {LanguageScreen} from "../ui/settings/language";
+import {configSet} from "../redux/actions/config";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -315,6 +324,8 @@ type ScheduleStackParamList = {
 
 type SettingsStackParamList = {
 	Account: undefined;
+	General: undefined;
+	Language: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
 	Feedback: undefined;
@@ -797,6 +808,36 @@ export const Root = () => {
 				name="Account"
 				component={AccountScreen}
 				options={{title: getStr("accountAndSecurity")}}
+			/>
+			<Stack.Screen
+				name="General"
+				component={GeneralScreen}
+				options={{title: getStr("general")}}
+			/>
+			<Stack.Screen
+				name="Language"
+				component={LanguageScreen}
+				options={({navigation}) => ({
+					title: getStr("language"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, margin: 4}}
+							onPress={() => {
+								navigation.pop();
+								store.dispatch(
+									configSet("language", globalObjects.languageSelected),
+								);
+								Snackbar.show({
+									text: getStr("restartToApply"),
+									duration: Snackbar.LENGTH_SHORT,
+								});
+							}}>
+							<Text style={{color: theme.colors.primaryLight, fontSize: 16}}>
+								{getStr("done")}
+							</Text>
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="Privacy"

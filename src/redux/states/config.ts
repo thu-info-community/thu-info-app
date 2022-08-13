@@ -6,6 +6,7 @@ export interface Config {
 	firstDay: dayjs.Dayjs;
 	weekCount: number;
 	semesterId: string;
+	language: string;
 	newGPA: boolean;
 	bx: boolean;
 	reportHidden: string[];
@@ -23,6 +24,7 @@ export const defaultConfigState: Config = {
 	firstDay: dayjs("2021-09-13"),
 	weekCount: 18,
 	semesterId: "2021-2022-1",
+	language: "auto",
 	newGPA: true,
 	bx: false,
 	reportHidden: [],
