@@ -74,7 +74,6 @@ import {ScheduleAddScreen} from "../ui/schedule/scheduleAdd";
 import {ScheduleHiddenScreen} from "../ui/schedule/scheduleHidden";
 import {FeedbackScreen} from "../ui/settings/feedback";
 import {PopiScreen} from "../ui/settings/popi";
-import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {AboutScreen} from "../ui/settings/about";
 import {RouteProp} from "@react-navigation/native";
 import IconHomeTab from "../assets/icons/IconHomeTab";
@@ -95,6 +94,7 @@ import {SearchParams} from "thu-info-lib/dist/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
 import IconHistory from "../assets/icons/IconHistory";
 import IconLocal from "../assets/icons/IconLocal";
+import {PrivacyScreen} from "../ui/settings/privacy";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -315,10 +315,10 @@ type ScheduleStackParamList = {
 
 type SettingsStackParamList = {
 	Account: undefined;
+	Privacy: undefined;
 	HelpAndFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
-	ScheduleSettings: undefined;
 	About: undefined;
 };
 
@@ -799,6 +799,11 @@ export const Root = () => {
 				options={{title: getStr("accountAndSecurity")}}
 			/>
 			<Stack.Screen
+				name="Privacy"
+				component={PrivacyScreen}
+				options={{title: getStr("privacy")}}
+			/>
+			<Stack.Screen
 				name="HelpAndFeedback"
 				component={FeedbackScreen}
 				options={{title: getStr("helpAndFeedback")}}
@@ -807,11 +812,6 @@ export const Root = () => {
 				name="Popi"
 				component={PopiScreen}
 				options={{title: getStr("popi")}}
-			/>
-			<Stack.Screen
-				name="ScheduleSettings"
-				component={ScheduleSettingsScreen}
-				options={{title: getStr("scheduleSettings")}}
 			/>
 			<Stack.Screen
 				name="About"
