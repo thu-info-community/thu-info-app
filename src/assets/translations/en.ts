@@ -180,8 +180,12 @@ export default {
 	experimentalHint:
 		"The following functionalities are experimental. Take care when using them and do report any problems to us, thank you!",
 	loseCard: "Report lost card",
-	confirmLoseCard: "Are you sure to report the loss of your card?",
-	loseCardCannotBeUndone: "This process cannot be undone.",
+	loseCardButton: "REPORT",
+	loseCardHint:
+		"Click to report the loss of your card, in case any financial loss occurs.",
+	confirmLoseCard: "REPORT",
+	loseCardCannotBeUndone:
+		"Are you sure to report the loss of your card?\nThis process CANNOT be undone.",
 	backToTop: "Top",
 	library: "Library",
 	today: "Today",
