@@ -10,13 +10,17 @@ import {styles} from "./settings";
 
 export const GeneralUI = ({
 	language,
+	darkMode,
 	navigation,
 }: {
 	navigation: RootNav;
 	language: string;
+	darkMode: boolean | undefined;
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const colorString = getStr(darkMode === true ? "enable" : "autoFollow");
 
 	const languageString =
 		language === "zh"
@@ -27,6 +31,17 @@ export const GeneralUI = ({
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					style={style.touchable}
+					onPress={() => navigation.navigate("DarkMode")}>
+					<Text style={style.text}>{getStr("darkMode")}</Text>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text style={style.version}>{colorString}</Text>
+						<IconRight height={20} width={20} />
+					</View>
+				</TouchableOpacity>
+			</RoundedView>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

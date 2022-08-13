@@ -7,6 +7,7 @@ export interface Config {
 	weekCount: number;
 	semesterId: string;
 	language: string;
+	darkMode: boolean;
 	newGPA: boolean;
 	bx: boolean;
 	reportHidden: string[];
@@ -25,6 +26,7 @@ export const defaultConfigState: Config = {
 	weekCount: 18,
 	semesterId: "2021-2022-1",
 	language: "auto",
+	darkMode: false,
 	newGPA: true,
 	bx: false,
 	reportHidden: [],
