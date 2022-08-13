@@ -3756,11 +3756,6 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.11.tgz#d66700c5eacfac1940deb4e3ee5642792d85cd33"
   integrity sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==
 
-dayjs@1.11.4:
-  version "1.11.4"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.4.tgz#3b3c10ca378140d8917e06ebc13a4922af4f433e"
-  integrity sha512-Zj/lPM5hOvQ1Bf7uAvewDaUcsJoI6JmNqmHhHl3nyumwe0XHwt8sWdOVAPACJzCebL8gQCi+K49w7iKWnGwX9g==
-
 dayjs@1.11.5:
   version "1.11.5"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.5.tgz#00e8cc627f231f9499c19b38af49f56dc0ac5e93"
@@ -8313,15 +8308,15 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-3.0.0.tgz#4ad967eb4c71fef9119424b3d0513ec1e6cb0491"
-  integrity sha512-IpyD7Xlw7Y9WxmSY7+qWChWBt6KhZixdjNcbfFhL/gnq9ipbSjKL24eh6RIv7RTbcsX0nx2HSXPwNO/Se6tduQ==
+thu-info-lib@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-3.0.1.tgz#5f829b866476b0ffcfefd5399ff4accab1c024fc"
+  integrity sha512-GgX9qmak3xxY2+nKWcb18668domcfe6VlgSqRWloBJtpHtfoSvJiginhk37bmlzt13fl3yV+q1XGoRyyfe4hyQ==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
     cross-fetch "3.1.5"
-    dayjs "1.11.4"
+    dayjs "1.11.5"
     he "^1.2.0"
     iconv-lite "0.6.3"
     image-size "^1.0.1"
