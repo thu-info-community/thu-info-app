@@ -3,49 +3,71 @@ import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {helper, store} from "../../redux/store";
 import {
-	SettingsItem,
-	SettingsLargeButton,
-	SettingsSeparator,
-} from "../../components/settings/items";
-import {Alert, View} from "react-native";
-import Feather from "react-native-vector-icons/Feather";
-import AntDesign from "react-native-vector-icons/AntDesign";
+	Alert,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {scheduleClearAction} from "../../redux/actions/schedule";
 import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {doLogoutAction} from "../../redux/actions/auth";
+import {RoundedView} from "../../components/views";
+import themedStyles from "../../utils/themedStyles";
+import IconRight from "../../assets/icons/IconRight";
+import VersionNumber from "react-native-version-number";
+import themes from "../../assets/themes/themes";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
+	const themeName = useColorScheme();
+	const style = styles(themeName);
+	const theme = themes(themeName);
+
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
-		<>
-			<View style={{padding: 10, flex: 1}}>
-				<SettingsItem
-					text={getStr("scheduleSettings")}
-					onPress={() => navigation.navigate("ScheduleSettings")}
-					icon={<Feather name="layout" size={16} />}
-				/>
-				<SettingsSeparator />
-				<SettingsItem
-					text={getStr("accountAndSecurity")}
-					onPress={() => navigation.navigate("Account")}
-					icon={<AntDesign name="user" size={16} />}
-				/>
-				<SettingsItem
-					text={getStr("helpAndFeedback")}
-					onPress={() => navigation.navigate("HelpAndFeedback")}
-					icon={<Feather name="edit" size={16} />}
-				/>
-				<SettingsItem
-					text={getStr("about")}
-					onPress={() => navigation.navigate("About")}
-					icon={<AntDesign name="copyright" size={16} />}
-				/>
-				<View style={{flex: 1}} />
-				<SettingsLargeButton
-					text={getStr("forceLogin")}
+		<View style={{flex: 1, padding: 12}}>
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					style={style.touchable}
+					onPress={() => navigation.navigate("Account")}>
+					<Text style={style.text}>{getStr("accountAndSecurity")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					style={style.touchable}
+					onPress={() => navigation.navigate("Privacy")}>
+					<Text style={style.text}>{getStr("privacy")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+				<View style={style.separator} />
+				<TouchableOpacity
+					style={style.touchable}
+					onPress={() => navigation.navigate("HelpAndFeedback")}>
+					<Text style={style.text}>{getStr("helpAndFeedback")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+				<View style={style.separator} />
+				<TouchableOpacity
+					style={style.touchable}
+					onPress={() => navigation.navigate("About")}>
+					<Text style={style.text}>{getStr("aboutApp")}</Text>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text style={style.version}>
+							{getStr("version")} {VersionNumber.appVersion}
+						</Text>
+						<IconRight height={20} width={20} />
+					</View>
+				</TouchableOpacity>
+			</RoundedView>
+			<View style={{flex: 1}} />
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					style={style.touchable}
 					onPress={async () => {
 						setForceLoginDisabled(true);
 						try {
@@ -69,12 +91,15 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						}
 						setForceLoginDisabled(false);
 					}}
-					disabled={forceLoginDisabled}
-					redText={false}
-				/>
-				<View style={{height: 20}} />
-				<SettingsLargeButton
-					text={getStr("logout")}
+					disabled={forceLoginDisabled}>
+					<Text style={[style.text, {textAlign: "center", flex: 1}]}>
+						{getStr("forceLogin")}
+					</Text>
+				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					style={style.touchable}
 					onPress={() => {
 						Alert.alert(getStr("logout"), getStr("confirmLogout"), [
 							{text: getStr("cancel")},
@@ -100,12 +125,43 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								},
 							},
 						]);
-					}}
-					disabled={false}
-					redText={true}
-				/>
-				<View style={{height: 20}} />
-			</View>
-		</>
+					}}>
+					<Text
+						style={[
+							style.text,
+							{textAlign: "center", flex: 1, color: theme.colors.statusWarning},
+						]}>
+						{getStr("logout")}
+					</Text>
+				</TouchableOpacity>
+			</RoundedView>
+			<View style={{height: 80}} />
+		</View>
 	);
 };
+
+export const styles = themedStyles(({colors}) => ({
+	rounded: {
+		marginTop: 16,
+	},
+	touchable: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		paddingHorizontal: 16,
+	},
+	text: {
+		color: colors.text,
+		fontSize: 16,
+	},
+	version: {
+		color: colors.fontB3,
+		fontSize: 16,
+	},
+	separator: {
+		height: 0.5,
+		backgroundColor: colors.fontB3,
+		marginVertical: 12,
+		marginHorizontal: 16,
+	},
+}));
