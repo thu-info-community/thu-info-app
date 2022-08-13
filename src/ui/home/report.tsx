@@ -16,6 +16,8 @@ import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native";
 import {RoundedView} from "../../components/views";
 import Icon from "react-native-vector-icons/FontAwesome";
+import IconExchange from "../../assets/icons/IconExchange";
+import IconCheck from "../../assets/icons/IconCheck";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -336,8 +338,8 @@ export const ReportScreen = () => {
 				<View style={{flex: 1}} />
 				<TouchableOpacity
 					onPress={() => setMode((m) => (m === "split" ? "gather" : "split"))}
-					style={{marginRight: 36, alignItems: "center", flex: 0}}>
-					<Icon name="exchange" size={12} color={colors.fontB2} />
+					style={{marginRight: 36, padding: 4, alignItems: "center", flex: 0}}>
+					<IconExchange height={18} width={18} />
 				</TouchableOpacity>
 				<Modal visible={open !== undefined} transparent>
 					<TouchableOpacity
@@ -404,9 +406,7 @@ export const ReportScreen = () => {
 											<Text style={{color: colors.text, fontSize: 14}}>
 												{item}
 											</Text>
-											{showTick ? (
-												<Icon name="check" size={14} color={colors.primary} />
-											) : null}
+											{showTick ? <IconCheck height={18} width={18} /> : null}
 										</TouchableOpacity>
 									);
 								}}
@@ -531,7 +531,7 @@ export const ReportScreen = () => {
 					{mode === "gather" && (
 						<RoundedView style={{marginBottom: 16}}>
 							{reportSorted.map((course, index) => (
-								<View key={course.name}>
+								<View key={course.name + course.semester}>
 									{index > 0 && (
 										<View
 											style={{
