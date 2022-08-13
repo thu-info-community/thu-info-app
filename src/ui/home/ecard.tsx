@@ -1,17 +1,17 @@
 import {getStr} from "../../utils/i18n";
 import React from "react";
-import Feather from "react-native-vector-icons/Feather";
 import {
 	Alert,
-	Platform,
 	Text,
-	TouchableHighlight,
-	TouchableNativeFeedback,
+	TouchableOpacity,
+	useColorScheme,
 	View,
 } from "react-native";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import Icon from "react-native-vector-icons/FontAwesome";
+import themes from "../../assets/themes/themes";
+import IconExclamation from "../../assets/icons/IconExclamation";
+import {RoundedView} from "../../components/views";
 
 const performLoseCard = () => {
 	Alert.alert(
@@ -76,36 +76,43 @@ const performLoseCard = () => {
 };
 
 export const ECardScreen = () => {
-	const content = (
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	return (
 		<View
 			style={{
-				padding: 8,
-				paddingRight: 16,
-				flexDirection: "row",
-				justifyContent: "space-between",
+				flex: 1,
+				marginHorizontal: 12,
+				marginTop: 16,
+				backgroundColor: colors.contentBackground,
+				alignItems: "center",
 			}}>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Feather name="credit-card" size={16} color="red" />
-				<Text style={{fontSize: 17, marginHorizontal: 10, color: "red"}}>
-					{getStr("loseCard")}
-				</Text>
+			<View style={{marginTop: 56}}>
+				<IconExclamation width={128} height={128} />
 			</View>
-			<Icon name="angle-right" size={24} color="red" />
-		</View>
-	);
-	return (
-		<View style={{padding: 10}}>
-			{Platform.OS === "ios" ? (
-				<TouchableHighlight underlayColor="#F002" onPress={performLoseCard}>
-					{content}
-				</TouchableHighlight>
-			) : (
-				<TouchableNativeFeedback
-					background={TouchableNativeFeedback.Ripple("#F002", false)}
-					onPress={performLoseCard}>
-					{content}
-				</TouchableNativeFeedback>
-			)}
+			<TouchableOpacity style={{marginTop: 108}} onPress={performLoseCard}>
+				<RoundedView
+					style={{
+						backgroundColor: colors.statusWarning,
+						paddingVertical: 8,
+						paddingHorizontal: 36,
+						borderRadius: 4,
+					}}>
+					<Text style={{color: "white", fontSize: 20}}>
+						{getStr("loseCardButton")}
+					</Text>
+				</RoundedView>
+			</TouchableOpacity>
+			<Text
+				style={{
+					color: colors.text,
+					fontSize: 14,
+					marginHorizontal: 92,
+					marginTop: 54,
+					textAlign: "center",
+				}}>
+				{getStr("loseCardHint")}
+			</Text>
 		</View>
 	);
 };
