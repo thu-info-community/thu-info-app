@@ -105,6 +105,7 @@ import {GeneralScreen} from "../ui/settings/general";
 import {LanguageScreen} from "../ui/settings/language";
 import {configSet} from "../redux/actions/config";
 import {DarkModeScreen} from "../ui/settings/darkMode";
+import {FunctionManagementScreen} from "../ui/settings/functionManagement";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -325,6 +326,7 @@ type ScheduleStackParamList = {
 
 type SettingsStackParamList = {
 	Account: undefined;
+	FunctionManagement: undefined;
 	General: undefined;
 	Language: undefined;
 	DarkMode: undefined;
@@ -810,6 +812,11 @@ export const Root = () => {
 				name="Account"
 				component={AccountScreen}
 				options={{title: getStr("accountAndSecurity")}}
+			/>
+			<Stack.Screen
+				name="FunctionManagement"
+				component={FunctionManagementScreen}
+				options={{title: getStr("functionManagement")}}
 			/>
 			<Stack.Screen
 				name="General"
