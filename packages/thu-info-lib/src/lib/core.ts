@@ -257,7 +257,12 @@ export const roamingWrapper = async <R>(
             try {
                 return await operation();
             } catch {
-                const result = await roam(helper, policy, payload);
+                let result: string;
+                try {
+                    result = await roam(helper, policy, payload);
+                } catch {
+                    result = await roam(helper, policy, payload);
+                }
                 return await operation(result);
             }
         } else {
