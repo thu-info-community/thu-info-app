@@ -104,6 +104,7 @@ import {PrivacyScreen} from "../ui/settings/privacy";
 import {GeneralScreen} from "../ui/settings/general";
 import {LanguageScreen} from "../ui/settings/language";
 import {configSet} from "../redux/actions/config";
+import {DarkModeScreen} from "../ui/settings/darkMode";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -326,6 +327,7 @@ type SettingsStackParamList = {
 	Account: undefined;
 	General: undefined;
 	Language: undefined;
+	DarkMode: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
 	Feedback: undefined;
@@ -838,6 +840,11 @@ export const Root = () => {
 						</TouchableOpacity>
 					),
 				})}
+			/>
+			<Stack.Screen
+				name="DarkMode"
+				component={DarkModeScreen}
+				options={{title: getStr("darkMode")}}
 			/>
 			<Stack.Screen
 				name="Privacy"
