@@ -46,7 +46,6 @@ interface ScheduleProps {
 	readonly cache: string;
 	readonly refreshing: boolean;
 	readonly shortenMap: {[key: string]: string | undefined};
-	readonly unitHeight: number;
 	getSchedule: () => void;
 	navigation: RootNav;
 }
@@ -78,7 +77,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const daysInWeek = 7;
 	const borderTotWidth = daysInWeek + 1;
 
-	const unitHeight = props.unitHeight;
+	const unitHeight = 65;
 	const unitWidth =
 		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
 
@@ -377,8 +376,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 export const ScheduleScreen = connect(
 	(state: State) => ({
 		...state.schedule,
-		unitHeight:
-			state.config.scheduleHeight > 10 ? state.config.scheduleHeight : 10,
 	}),
 	(dispatch) => ({
 		getSchedule: () => {
