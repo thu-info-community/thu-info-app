@@ -341,7 +341,7 @@ export const ReportScreen = () => {
 					style={{marginRight: 36, padding: 4, alignItems: "center", flex: 0}}>
 					<IconExchange height={18} width={18} />
 				</TouchableOpacity>
-				<Modal visible={open !== undefined} transparent>
+				<Modal visible={open !== undefined && dropdownTop > 0} transparent>
 					<TouchableOpacity
 						style={{
 							width: "100%",
