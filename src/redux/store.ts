@@ -176,6 +176,7 @@ export const currState = () => store.getState() as State;
 
 export const globalObjects = {
 	scheduleViewShot: null as React.RefObject<ViewShot> | null,
+	languageSelected: "auto" as "auto" | "zh" | "en",
 };
 
 helper.loginErrorHook = (e) => {
