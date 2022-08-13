@@ -25,7 +25,6 @@ import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
-import IconCard from "../../assets/icons/IconCard";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
@@ -44,6 +43,8 @@ import {LibraryReservationCard} from "./library";
 import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
+import IconReserve from "../../assets/icons/IconReserve";
+import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 
 const iconSize = 40;
 
@@ -398,6 +399,7 @@ export const HomeScheduleSection = ({
 
 export type HomeFunction =
 	| "report"
+	| "physicalExam"
 	| "teachingEvaluation"
 	| "gitLab"
 	| "classroomState"
@@ -414,7 +416,6 @@ export type HomeFunction =
 	| "qzyq"
 	| "washer"
 	| "electricity"
-	| "eCard"
 	| "dormitory"
 	| "dormScore";
 
@@ -430,6 +431,15 @@ const getHomeFunctions = (
 			navigation.navigate("Report");
 		}}>
 		<IconReport width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="physicalExam"
+		title="physicalExam"
+		onPress={() => {
+			updateTop5("physicalExam");
+			navigation.navigate("PhysicalExam");
+		}}>
+		<IconPhysicalExam width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="teachingEvaluation"
@@ -464,7 +474,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			navigation.navigate("Reserve");
 		}}>
-		<IconLibrary width={iconSize} height={iconSize} />
+		<IconReserve width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="cr"
@@ -574,15 +584,6 @@ const getHomeFunctions = (
 		<IconEleRecharge width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
-		key="eCard"
-		title="eCard"
-		onPress={() => {
-			updateTop5("eCard");
-			navigation.navigate("ECard");
-		}}>
-		<IconCard width={iconSize} height={iconSize} />
-	</HomeIcon>,
-	<HomeIcon
 		key="dormScore"
 		title="dormScore"
 		onPress={() => {
@@ -618,7 +619,7 @@ const HomeUI = (props: HomeProps) => {
 		homeFunctions.find((y) => y.key === x),
 	);
 	const needToShowFunctionNames: HomeFunction[] = [
-		"teachingEvaluation",
+		"physicalExam",
 		"report",
 		"classroomState",
 		"reserve",

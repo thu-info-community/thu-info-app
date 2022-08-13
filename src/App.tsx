@@ -18,7 +18,7 @@ export const App = () => (
 						...DefaultTheme.colors,
 						text: themes(useColorScheme()).colors.text,
 						background: themes(useColorScheme()).colors.themeBackground,
-						card: themes(useColorScheme()).colors.themeBackground,
+						card: themes(useColorScheme()).colors.contentBackground,
 						border:
 							useColorScheme() === "dark"
 								? "white"
