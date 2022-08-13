@@ -1,1 +1,1 @@
-breaking: change getExpenditures API。
+fix: broken methods getInvoiceList and getInvoicePDF。
