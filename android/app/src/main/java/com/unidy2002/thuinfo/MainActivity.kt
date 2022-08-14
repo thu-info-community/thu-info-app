@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo
 
 import android.content.res.Configuration
+import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.ReactRootView
@@ -11,6 +12,10 @@ class MainActivity : ReactActivity() {
      * rendering of the component.
      */
     override fun getMainComponentName() = "thu_info"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(null)
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
