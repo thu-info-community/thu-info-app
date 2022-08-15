@@ -82,7 +82,7 @@
 		"@babel/runtime": "7.18.9",
 		"@react-native-community/eslint-config": "3.1.0",
 		"@types/he": "1.1.2",
-		"@types/jest": "28.1.6",
+		"@types/jest": "28.1.7",
 		"@types/md5": "2.3.2",
 		"@types/react-native": "0.69.5",
 		"@types/react-native-modal-dropdown": "0.7.2",
