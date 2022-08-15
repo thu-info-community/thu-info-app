@@ -36,6 +36,7 @@
 		"react": "18.2.0",
 		"react-native": "0.69.4",
 		"react-native-blob-util": "0.16.2",
+		"react-native-confirmation-code-field": "7.3.0",
 		"react-native-device-info": "10.0.2",
 		"react-native-easy-grid": "0.2.2",
 		"react-native-fetch-api": "3.0.0",
@@ -111,7 +112,7 @@
 			"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|css|less)$": "<rootDir>/.assetstransformer.js"
 		},
 		"transformIgnorePatterns": [
-			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-cookies/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native|react-native-markdown-display|react-syntax-highlighter/dist/esm/styles/hljs|react-native-syntax-highlighter|thu-info-lib|react-native-appearance|react-native-image-picker|react-native-fs|thu-info-mailcore|@react-native-async-storage/async-storage|react-native-modal-dropdown|react-native-pdf|react-native-blob-util|react-native-permissions|react-native-qrcode-svg)/)"
+			"node_modules/(?!(react-native|redux-persist|react-native-iphone-x-helper|react-native-gesture-handler|react-native-vector-icons|redux-persist-keychain-storage|react-native-keychain|react-native-version-number|@react-native-cookies/cookies|@react-native-community/blur|@react-native-community/datetimepicker|react-native-image-zoom-viewer|react-native-image-pan-zoom|react-native-timeago|react-native-webview|react-native-easy-grid|react-native-view-shot|@react-native-community/cameraroll|@react-native|react-native-markdown-display|react-syntax-highlighter/dist/esm/styles/hljs|react-native-syntax-highlighter|thu-info-lib|react-native-appearance|react-native-image-picker|react-native-fs|thu-info-mailcore|@react-native-async-storage/async-storage|react-native-modal-dropdown|react-native-pdf|react-native-blob-util|react-native-permissions|react-native-qrcode-svg|react-native-confirmation-code-field)/)"
 		],
 		"coveragePathIgnorePatterns": [
 			".+\\.js"
