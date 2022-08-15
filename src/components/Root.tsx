@@ -106,6 +106,8 @@ import {LanguageScreen} from "../ui/settings/language";
 import {configSet} from "../redux/actions/config";
 import {DarkModeScreen} from "../ui/settings/darkMode";
 import {FunctionManagementScreen} from "../ui/settings/functionManagement";
+import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
+import {AppSecretScreen} from "../ui/settings/appSecret";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -326,6 +328,11 @@ type ScheduleStackParamList = {
 
 type SettingsStackParamList = {
 	Account: undefined;
+	DigitalPassword:
+		| {action: "new"}
+		| {action: "confirm"; payload: string}
+		| {action: "verify"; target: keyof RootStackParamList};
+	AppSecret: undefined;
 	FunctionManagement: undefined;
 	General: undefined;
 	Language: undefined;
@@ -336,6 +343,11 @@ type SettingsStackParamList = {
 	Popi: undefined;
 	About: undefined;
 };
+
+export type DigitalPasswordRouteProp = RouteProp<
+	SettingsStackParamList,
+	"DigitalPassword"
+>;
 
 export type RootStackParamList = {RootTabs: undefined} & HomeStackParamList &
 	NewsStackParamList &
@@ -817,6 +829,16 @@ export const Root = () => {
 				name="FunctionManagement"
 				component={FunctionManagementScreen}
 				options={{title: getStr("functionManagement")}}
+			/>
+			<Stack.Screen
+				name="DigitalPassword"
+				component={DigitalPasswordScreen}
+				options={{title: getStr("digitalPassword")}}
+			/>
+			<Stack.Screen
+				name="AppSecret"
+				component={AppSecretScreen}
+				options={{title: getStr("appSecret")}}
 			/>
 			<Stack.Screen
 				name="General"
