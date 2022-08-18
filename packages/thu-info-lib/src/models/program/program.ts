@@ -1,15 +1,15 @@
 export enum CourseState {
     COMPLETED,
     ELECTED,
-    NON_ELECTED,
+    NOT_ELECTED,
 }
 
 export interface CourseItem {
     id: number,
     name: string,
     credit: number,
-    point: number,
-    grade: string,
+    point?: number, // 未修课程、退课课程、选课中课程、PF 课程不应当具有绩点
+    grade?: string, // 未修课程、选课中课程不应当具有成绩，退课课程成绩为 W
     state: CourseState,
 }
 

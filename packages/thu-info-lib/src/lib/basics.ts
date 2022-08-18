@@ -61,8 +61,8 @@ type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
 
-const webVPNTitle = "<title>清华大学WebVPN</title>";
-const systemMessage = "time out用户登陆超时或访问内容不存在。请重试";
+export const webVPNTitle = "<title>清华大学WebVPN</title>";
+export const systemMessage = "time out用户登陆超时或访问内容不存在。请重试";
 
 export const getUserInfo = async (helper: InfoHelper): Promise<{
     fullName: string;

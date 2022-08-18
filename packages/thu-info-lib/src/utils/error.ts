@@ -20,6 +20,12 @@ export class ReportError extends LibError {
     }
 }
 
+export class ProgramError extends LibError {
+    constructor(message?: string) {
+        super(message);
+    }
+}
+
 export class AssessmentError extends LibError {
     constructor(message?: string) {
         super(message);

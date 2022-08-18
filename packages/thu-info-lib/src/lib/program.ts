@@ -3,8 +3,9 @@ import {PROGRAM_URL} from "../constants/strings";
 import {InfoHelper} from "../index";
 import {CourseItem, CourseSet, CourseState, CourseType, Program} from "../models/program/program";
 import {getTrimmedData} from "../utils/cheerio";
-import {LibError} from "../utils/error";
+import {ProgramError} from "../utils/error";
 import {uFetch} from "../utils/network";
+import {systemMessage} from "./basics";
 import {roamingWrapperWithMocks} from "./core";
 
 export const getDegreeProgram = async (helper: InfoHelper) =>
@@ -21,6 +22,10 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                 duplicatedCourse: [],
                 courseSet: []
             };
+
+            if (str.includes(systemMessage)) { // 强制重新登陆
+                throw new ProgramError(systemMessage);
+            }
 
             const getSubstr = (base: string, prefix: string, suffix: string): string => {
                 const lowerBound = base.indexOf(prefix);
@@ -55,167 +60,155 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                 }
             };
 
-            // Use cheerio to parse courses
+            const mayFailParseFloat = (x: string): number | undefined => {
+                const f = parseFloat(x);
+                if (Number.isNaN(f)) {
+                    return undefined;
+                } else {
+                    return f;
+                }
+            };
+
+            /**
+             * level 表示该课程在表格中的层级
+             * 每个课程属性部分的第一个课程 - 2
+             * 每个课组的第一个课程 - 1
+             * 其余课程 - 0
+             */
+            const parseCourse = (element: any, level: 2 | 1 | 0): CourseItem | undefined => {
+                let courseName = getTrimmedData(element, [level + 1, 1, 0]);
+                if (courseName === "") { // 未修完的课程会显示蓝名，导致标签层次不同
+                    courseName = getTrimmedData(element, [level + 1, 1, 1, 0]);
+                }
+                if (courseName === "") { // 两次尝试均未获取合法课程名称
+                    return undefined;
+                }
+
+                const gradeOrState = getTrimmedData(element, [level + 3, 1, 0]);
+
+                let state = CourseState.COMPLETED;
+                let grade: string | undefined = gradeOrState;
+                if (gradeOrState === "未修") {
+                    state = CourseState.NOT_ELECTED;
+                    grade = undefined;
+                } else if (gradeOrState === "选课") {
+                    state = CourseState.ELECTED;
+                    grade = undefined;
+                } else if (gradeOrState === "W") {
+                    state = CourseState.NOT_ELECTED;
+                    grade = "W";
+                }
+
+                const course: CourseItem = {
+                    id: parseInt(getTrimmedData(element, [level, 1, 0]), 10),
+                    name: courseName,
+                    credit: parseInt(getTrimmedData(element, [level + 2, 1, 0]), 10),
+                    point: mayFailParseFloat(getTrimmedData(element, [level + 4, 0])),
+                    grade: grade,
+                    state: state,
+                };
+
+                return course;
+            };
+
+            /**
+             * level 表示该课程在表格中的层级
+             * 每个课程属性部分的第一个课程 - 1
+             * 每个课组的第一个课程 - 0
+             */
+            const parseCourseSet = (element: any, level: 1 | 0): CourseSet => {
+                let name = getTrimmedData(element, [level, 1, 1, 2]);
+                if (name === "") { // 未修完的课组会显示红名，导致标签层次不同
+                    name = getTrimmedData(element, [level, 1, 1, 1, 1]);
+                }
+
+                const courseSet: CourseSet = {
+                    setName: name,
+                    type: courseTypeNow as CourseType,
+                    course: [], // 稍后填充
+                    requiredCredit: mayFailParseInt(getTrimmedData(element, [level + 6, 1, 0])),
+                    completedCredit: mayFailParseInt(getTrimmedData(element, [level + 7, 1, 0])),
+                    requiredCourseNum: mayFailParseInt(getTrimmedData(element, [level + 8, 1, 0])),
+                    completedCourseNum: mayFailParseInt(getTrimmedData(element, [level + 9, 1, 0])),
+                    fullCompleted: getTrimmedData(element, [level + 10, 1, 1, 0]) === "是",
+                };
+
+                return courseSet;
+            };
+
             let courseTypeNow = -1;
-            let courseSetNameNow = "";
+            let illegalCourseLevelFlag = false;
+
             cheerio(".table-striped tr", str)
                 .slice(1) // 跳过表头
                 .each((index, element) => {
                     if (element.type === "tag") {
                         if (element.children.length === 25) { // 每个课程属性部分的第一个课程
-                            // 设置课程属性以及课组名称
-                            courseTypeNow += 1;
-                            courseSetNameNow = getTrimmedData(element, [1, 1, 1, 2]);
-
-                            // TODO: 下述分支并未验证过
-                            if (courseSetNameNow === "") { // 未修完的课组会显示红名，导致标签层次不同
-                                courseSetNameNow = getTrimmedData(element, [1, 1, 1, 1, 1]);
-                            }
-
-                            const courseSet: CourseSet = {
-                                setName: courseSetNameNow,
-                                type: courseTypeNow as CourseType,
-                                course: [], // 稍后填充
-                                requiredCredit: mayFailParseInt(getTrimmedData(element, [7, 1, 0])),
-                                completedCredit: mayFailParseInt(getTrimmedData(element, [8, 1, 0])),
-                                requiredCourseNum: mayFailParseInt(getTrimmedData(element, [9, 1, 0])),
-                                completedCourseNum: mayFailParseInt(getTrimmedData(element, [10, 1, 0])),
-                                fullCompleted: getTrimmedData(element, [11, 1, 1, 0]) === "是",
-                            };
-
-                            let courseName = getTrimmedData(element, [3, 1, 0]);
-
-                            // TODO: 下述分支并未验证过
-                            if (courseName === "") { // 未修完的课程会显示蓝名，导致标签层次不同
-                                courseName = getTrimmedData(element, [3, 1, 1, 0]);
-                            }
-
-                            if (courseName.length > 0) { // 当前课组有课程
-                                const gradeOrState = getTrimmedData(element, [5, 1, 0]);
-
-                                let state = CourseState.COMPLETED;
-                                if (gradeOrState === "未修") {
-                                    state = CourseState.NON_ELECTED;
-                                } else if (gradeOrState === "选课") {
-                                    state = CourseState.ELECTED;
-                                }
-
-                                const course: CourseItem = {
-                                    id: parseInt(getTrimmedData(element, [2, 1, 0]), 10),
-                                    name: courseName,
-                                    credit: parseInt(getTrimmedData(element, [4, 1, 0]), 10),
-                                    point: parseFloat(getTrimmedData(element, [6, 0])),
-                                    grade: state === CourseState.COMPLETED ? gradeOrState : "N/A",
-                                    state: state,
-                                };
-
+                            courseTypeNow += 1; // 递增课程属性
+                            
+                            const courseSet = parseCourseSet(element, 1);
+                            const course = parseCourse(element, 2);
+                            if (course !== undefined) {
                                 courseSet.course.push(course);
                             }
-
                             program.courseSet.push(courseSet);
 
                         } else if (element.children.length === 23) { // 每个课组的第一个课程
-                            courseSetNameNow = getTrimmedData(element, [0, 1, 1, 2]);
-                            if (courseSetNameNow === "") { // 未修完的课组会显示红名，导致标签层次不同
-                                courseSetNameNow = getTrimmedData(element, [0, 1, 1, 1, 1]);
-                            }
-
-                            const courseSet: CourseSet = {
-                                setName: courseSetNameNow,
-                                type: courseTypeNow as CourseType,
-                                course: [], // 稍后填充
-                                requiredCredit: mayFailParseInt(getTrimmedData(element, [6, 1, 0])),
-                                completedCredit: mayFailParseInt(getTrimmedData(element, [7, 1, 0])),
-                                requiredCourseNum: mayFailParseInt(getTrimmedData(element, [8, 1, 0])),
-                                completedCourseNum: mayFailParseInt(getTrimmedData(element, [9, 1, 0])),
-                                fullCompleted: getTrimmedData(element, [10, 1, 1, 0]) === "是",
-                            };
-
-                            let courseName = getTrimmedData(element, [2, 1, 0]);
-                            if (courseName === "") { // 未修完的课程会显示蓝名，导致标签层次不同
-                                courseName = getTrimmedData(element, [2, 1, 1, 0]);
-                            }
-
-                            if (courseName.length > 0) { // 当前课组有课程
-                                const gradeOrState = getTrimmedData(element, [4, 1, 0]);
-
-                                let state = CourseState.COMPLETED;
-                                if (gradeOrState === "未修") {
-                                    state = CourseState.NON_ELECTED;
-                                } else if (gradeOrState === "选课") {
-                                    state = CourseState.ELECTED;
-                                }
-
-                                const course: CourseItem = {
-                                    id: parseInt(getTrimmedData(element, [1, 1, 0]), 10),
-                                    name: courseName,
-                                    credit: parseInt(getTrimmedData(element, [3, 1, 0]), 10),
-                                    point: parseFloat(getTrimmedData(element, [5, 0])),
-                                    grade: state === CourseState.COMPLETED ? gradeOrState : "N/A",
-                                    state: state,
-                                };
-
+                            const courseSet = parseCourseSet(element, 0);
+                            const course = parseCourse(element, 1);
+                            if (course !== undefined) {
                                 courseSet.course.push(course);
                             }
-
                             program.courseSet.push(courseSet);
                             
+                        } else if (element.children.length === 11) { // 其余课程
+                            const course = parseCourse(element, 0);
+                            if (course !== undefined) {
+                                program.courseSet[program.courseSet.length - 1].course.push(course);
+                            }
+
                         } else if (element.children.length === 21) { // 培养方案外课程
                             const idStr = getTrimmedData(element, [0, 0, 0]);
                             if (idStr.length > 0) {
+                                const credit = parseInt(getTrimmedData(element, [3, 0, 0]), 10);
+                                const grade = getTrimmedData(element, [5, 1, 0]);
                                 const course: CourseItem = {
                                     id: parseInt(idStr, 10),
                                     name: getTrimmedData(element, [2, 0, 0]),
-                                    credit: parseInt(getTrimmedData(element, [3, 0, 0]), 10),
-                                    point: parseFloat(getTrimmedData(element, [6, 0, 0])),
-                                    grade: getTrimmedData(element, [5, 1, 0]),
+                                    credit: credit,
+                                    point: mayFailParseFloat(getTrimmedData(element, [6, 0, 0])),
+                                    grade: grade,
                                     state: CourseState.COMPLETED,
                                 };
 
                                 program.courseSet[program.courseSet.length - 1].course.push(course);
+                                if (grade !== "W") {
+                                    (program.courseSet[program.courseSet.length - 1].completedCredit as number)
+                                        += credit;
+                                }
                             } else {
                                 const courseSet: CourseSet = {
                                     setName: "方案外课程",
                                     type: CourseType.EXCLUDED,
                                     course: [], // 稍后填充
+                                    completedCredit: 0, // 稍后计算
                                     fullCompleted: false,
                                 };
 
                                 program.courseSet.push(courseSet);
                             }
 
-                        } else if (element.children.length === 11) { // 其余课程
-                            let courseName = getTrimmedData(element, [1, 1, 0]);
-                            if (courseName === "") { // 未修完的课程会显示蓝名，导致标签层次不同
-                                courseName = getTrimmedData(element, [1, 1, 1, 0]);
-                            }
-
-                            const gradeOrState = getTrimmedData(element, [3, 1, 0]);
-
-                            let state = CourseState.COMPLETED;
-                            if (gradeOrState === "未修") {
-                                state = CourseState.NON_ELECTED;
-                            } else if (gradeOrState === "选课") {
-                                state = CourseState.ELECTED;
-                            }
-
-                            const course: CourseItem = {
-                                id: parseInt(getTrimmedData(element, [0, 1, 0]), 10),
-                                name: courseName,
-                                credit: parseInt(getTrimmedData(element, [2, 1, 0]), 10),
-                                point: parseFloat(getTrimmedData(element, [4, 0])),
-                                grade: state === CourseState.COMPLETED ? gradeOrState : "N/A",
-                                state: state,
-                            };
-
-                            program.courseSet[program.courseSet.length - 1].course.push(course);
-
                         } else {
-                            throw new LibError();
+                            illegalCourseLevelFlag = true;
                         }
                     }
                 });
 
+            if (illegalCourseLevelFlag) {
+                throw new ProgramError("检测到未知层级课程");
+            }
+            
+            console.log(JSON.stringify(program));
             return program;
         }),
         {
