@@ -8,13 +8,13 @@ import {
 	TouchableOpacity,
 } from "react-native-gesture-handler";
 import {StarRating} from "src/components/home/form";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
 import themedStyles from "../../utils/themedStyles";
+import {RoundedView} from "../../components/views";
 
 export const FormScreen = ({
 	route,
@@ -50,75 +50,100 @@ export const FormScreen = ({
 			});
 	};
 
-	const renderEvaluation = (personList: Person[], personType: string) => {
-		let evaluationList = [];
-		if (personList.length !== 0) {
-			personList.forEach((person, i) => {
-				evaluationList.push(
-					<Text style={style.personNameStyle} key={`Teacher${i}Name`}>
-						{person.name}
-					</Text>,
-				);
-
-				person.inputGroups.forEach((inputGroup, j) => {
-					evaluationList.push(
-						<View style={style.questionStyle} key={`Person${i}Question${j}`}>
-							<Text style={style.questionTextStyle}>
-								{inputGroup.question ?? ""}
-							</Text>
-							<StarRating scoreRef={inputGroup.score} />
-						</View>,
-					);
-				});
-
-				evaluationList.push(
-					<View key={`Person${i}Suggestion`}>
-						<Text style={style.textInputCaptionStyle}>
-							{personType === "teacher"
-								? getStr("moreSuggestionsToTeacher")
-								: getStr("moreSuggestionsToAssistant")}
-						</Text>
-						<TextInput
-							style={{
-								height: 80,
-								textAlign: "left",
-								borderColor: "lightgrey",
-								borderWidth: 1,
-								borderRadius: 5,
-								alignSelf: "stretch",
-								textAlignVertical: "top",
-								padding: 10,
-								marginBottom: 20,
-								color: colors.text,
-								backgroundColor: colors.themeBackground,
-							}}
-							multiline={true}
-							placeholder={getStr("inputSuggestions")}
-							defaultValue={
-								(personType === "teacher"
-									? evaluationForm?.teachers[i]?.suggestion
-									: evaluationForm?.assistants[i]?.suggestion) ?? ""
-							}
-							onChangeText={(text) => {
-								if (evaluationForm) {
-									if (personType === "teacher") {
-										evaluationForm.teachers[i].suggestion = text;
-									} else {
-										evaluationForm.assistants[i].suggestion = text;
-									}
-								}
-							}}
-						/>
-					</View>,
-				);
-			});
-		} else {
+	const renderEvaluation = (
+		personList: Person[],
+		personType: "teacher" | "assistant",
+	) => {
+		let evaluationList: JSX.Element[] = [];
+		personList.forEach((person, i) => {
 			evaluationList.push(
-				<Text style={style.captionStyle} key="stupidEvaluationWebsite">
-					{getStr("noPersonToEvaluate")}
-				</Text>,
+				<View
+					style={[style.titleContainer, {marginTop: 24}]}
+					key={`Teacher${i}Name`}>
+					<View
+						style={[
+							style.titleIcon,
+							{
+								backgroundColor:
+									personType === "teacher"
+										? colors.themeGreen
+										: colors.themeBlue,
+							},
+						]}
+					/>
+					<Text style={style.titleStyle}>
+						{getStr(
+							personType === "teacher"
+								? "teacherEvaluation"
+								: "assistantEvaluation",
+						)}
+						{getStr(":")}
+						{person.name}
+					</Text>
+				</View>,
 			);
-		}
+
+			evaluationList.push(
+				<RoundedView key={`Person${i}Questions`}>
+					{person.inputGroups.map((inputGroup, index) => (
+						<View key={`Person${i}Question${index}`}>
+							{index > 0 && (
+								<View
+									style={{
+										height: 0.5,
+										marginHorizontal: 16,
+										marginVertical: 12,
+										backgroundColor: colors.fontB3,
+									}}
+								/>
+							)}
+							<View style={{marginHorizontal: 12}}>
+								<Text style={style.questionTextStyle}>
+									{inputGroup.question ?? ""}
+								</Text>
+								<StarRating scoreRef={inputGroup.score} />
+							</View>
+						</View>
+					))}
+				</RoundedView>,
+			);
+
+			evaluationList.push(
+				<RoundedView
+					key={`Person${i}Suggestion`}
+					style={{marginTop: 8, padding: 16}}>
+					<TextInput
+						style={{
+							height: 100,
+							textAlign: "left",
+							alignSelf: "stretch",
+							textAlignVertical: "top",
+							color: colors.text,
+						}}
+						multiline={true}
+						placeholder={
+							personType === "teacher"
+								? getStr("moreSuggestionsToTeacher")
+								: getStr("moreSuggestionsToAssistant")
+						}
+						defaultValue={
+							(personType === "teacher"
+								? evaluationForm?.teachers[i]?.suggestion
+								: evaluationForm?.assistants[i]?.suggestion) ?? ""
+						}
+						onChangeText={(text) => {
+							if (evaluationForm) {
+								if (personType === "teacher") {
+									evaluationForm.teachers[i].suggestion = text;
+								} else {
+									evaluationForm.assistants[i].suggestion = text;
+								}
+							}
+						}}
+					/>
+				</RoundedView>,
+			);
+		});
 		return <View>{evaluationList}</View>;
 	};
 
@@ -163,46 +188,49 @@ export const FormScreen = ({
 			refreshControl={
 				<RefreshControl refreshing={refreshing} colors={[colors.accent]} />
 			}>
-			<View style={style.titleContainer}>
-				<FontAwesome name="chevron-right" color="red" size={18} />
+			<View style={[style.titleContainer, {marginTop: 16}]}>
+				<View
+					style={[style.titleIcon, {backgroundColor: colors.statusWarning}]}
+				/>
 				<Text style={style.titleStyle}>{getStr("generalImpression")}</Text>
 			</View>
-			{evaluationForm && <StarRating scoreRef={evaluationForm.overall.score} />}
-			<Text style={style.textInputCaptionStyle}>
-				{getStr("moreSuggestionsToCourse")}
-			</Text>
-			<TextInput
-				style={{
-					height: 80,
-					textAlign: "left",
-					borderColor: "lightgrey",
-					borderWidth: 1,
-					borderRadius: 5,
-					alignSelf: "stretch",
-					textAlignVertical: "top",
-					padding: 10,
-					marginBottom: 20,
-					color: colors.text,
-					backgroundColor: colors.themeBackground,
-				}}
-				multiline={true}
-				placeholder={getStr("inputSuggestions")}
-				defaultValue={evaluationForm?.overall?.suggestion ?? ""}
-				onChangeText={(text) => {
-					if (evaluationForm) {
-						evaluationForm.overall.suggestion = text;
-					}
-				}}
-			/>
-			<View style={style.titleContainer}>
-				<FontAwesome name="chevron-right" color="green" size={18} />
-				<Text style={style.titleStyle}>{getStr("teacherEvaluation")}</Text>
-			</View>
+			{evaluationForm && (
+				<RoundedView>
+					<Text
+						style={{
+							color: colors.text,
+							marginTop: 12,
+							fontSize: 20,
+							fontWeight: "bold",
+							textAlign: "center",
+						}}>
+						{route.params.name}
+					</Text>
+					<View style={{marginTop: 8, alignItems: "center"}}>
+						<StarRating scoreRef={evaluationForm.overall.score} />
+					</View>
+				</RoundedView>
+			)}
+			<RoundedView style={{marginTop: 8, padding: 16}}>
+				<TextInput
+					style={{
+						height: 100,
+						textAlign: "left",
+						alignSelf: "stretch",
+						textAlignVertical: "top",
+						color: colors.text,
+					}}
+					multiline={true}
+					placeholder={getStr("moreSuggestionsToCourse")}
+					defaultValue={evaluationForm?.overall?.suggestion ?? ""}
+					onChangeText={(text) => {
+						if (evaluationForm) {
+							evaluationForm.overall.suggestion = text;
+						}
+					}}
+				/>
+			</RoundedView>
 			{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
-			<View style={style.titleContainer}>
-				<FontAwesome name="chevron-right" color="blue" size={18} />
-				<Text style={style.titleStyle}>{getStr("assistantEvaluation")}</Text>
-			</View>
 			{evaluationForm &&
 				renderEvaluation(evaluationForm.assistants, "assistant")}
 			<TouchableOpacity
@@ -210,7 +238,7 @@ export const FormScreen = ({
 					style.buttonStyle,
 					{
 						backgroundColor:
-							evaluationForm === undefined ? "lightgrey" : colors.primary,
+							evaluationForm === undefined ? "lightgrey" : colors.primaryLight,
 					},
 				]}
 				onPress={post}
@@ -232,15 +260,21 @@ const styles = themedStyles(({colors}) => ({
 		alignContent: "center",
 		justifyContent: "flex-start",
 		alignItems: "center",
-		marginBottom: 10,
-		marginTop: 15,
+		marginBottom: 8,
+		marginTop: 24,
 	},
 
 	titleStyle: {
 		fontWeight: "bold",
-		fontSize: 18,
-		marginHorizontal: 5,
+		fontSize: 16,
+		marginHorizontal: 8,
 		color: colors.text,
+	},
+
+	titleIcon: {
+		width: 4,
+		height: 16,
+		borderRadius: 4,
 	},
 
 	textInputCaptionStyle: {
@@ -258,12 +292,9 @@ const styles = themedStyles(({colors}) => ({
 		color: colors.text,
 	},
 
-	questionStyle: {
-		marginVertical: 3,
-	},
-
 	questionTextStyle: {
-		marginVertical: 2,
+		fontSize: 16,
+		marginBottom: 2,
 		color: colors.text,
 	},
 
@@ -274,17 +305,18 @@ const styles = themedStyles(({colors}) => ({
 	},
 
 	buttonStyle: {
-		height: 35,
-		width: 100,
+		paddingHorizontal: 16,
+		paddingVertical: 8,
 		justifyContent: "center",
 		alignItems: "center",
-		borderRadius: 8,
-		alignSelf: "center",
-		marginVertical: 10,
+		borderRadius: 4,
+		alignSelf: "flex-end",
+		marginVertical: 40,
 	},
 
 	buttonTextStyle: {
 		color: "white",
 		fontWeight: "bold",
+		fontSize: 20,
 	},
 }));
