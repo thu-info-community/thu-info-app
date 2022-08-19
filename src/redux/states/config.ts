@@ -19,6 +19,7 @@ export interface Config {
 	waterBrand: string;
 	verifyPasswordBeforeEnterApp: boolean | undefined;
 	verifyPasswordBeforeEnterReport: boolean | undefined;
+	useBiometrics: boolean | undefined;
 }
 
 export const defaultConfigState: Config = {
@@ -40,4 +41,5 @@ export const defaultConfigState: Config = {
 	waterBrand: "6",
 	verifyPasswordBeforeEnterApp: false,
 	verifyPasswordBeforeEnterReport: false,
+	useBiometrics: false,
 };

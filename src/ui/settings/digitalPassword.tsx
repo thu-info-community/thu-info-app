@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -12,16 +12,21 @@ import {
 import {State, store} from "../../redux/store";
 import {setAppSecretAction} from "../../redux/actions/credentials";
 import {connect} from "react-redux";
+import ReactNativeBiometrics from "react-native-biometrics";
 
 const PASSWORD_LENGTH = 4;
+
+const rnBiometrics = new ReactNativeBiometrics();
 
 const DigitalPasswordUI = ({
 	navigation,
 	appSecret,
+	useBiometrics,
 	route: {params},
 }: {
 	navigation: RootNav;
 	appSecret: string | undefined;
+	useBiometrics: boolean | undefined;
 	route: DigitalPasswordRouteProp;
 }) => {
 	const themeName = useColorScheme();
@@ -44,6 +49,23 @@ const DigitalPasswordUI = ({
 		value.length === PASSWORD_LENGTH &&
 		((params.action === "confirm" && params.payload !== value) ||
 			(params.action === "verify" && appSecret !== value));
+
+	useEffect(() => {
+		if (
+			params.action === "verify" &&
+			params.target !== "AppSecret" &&
+			useBiometrics === true
+		) {
+			rnBiometrics
+				.simplePrompt({promptMessage: getStr("useBiometrics")})
+				.then(({success}) => {
+					if (success) {
+						navigation.replace(params.target);
+					}
+				});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<View style={{flex: 1, padding: 12, justifyContent: "center"}}>
@@ -143,4 +165,5 @@ const DigitalPasswordUI = ({
 
 export const DigitalPasswordScreen = connect((state: State) => ({
 	...state.credentials,
+	...state.config,
 }))(DigitalPasswordUI);
