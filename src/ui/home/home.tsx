@@ -627,6 +627,7 @@ const HomeUI = (props: HomeProps) => {
 	);
 	const needToShowFunctionNames: HomeFunction[] = [
 		"physicalExam",
+		"teachingEvaluation",
 		"report",
 		"classroomState",
 		"reserve",

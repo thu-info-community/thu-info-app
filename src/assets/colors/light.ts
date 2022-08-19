@@ -17,4 +17,6 @@ export const colorLight: ColorTheme = {
 	statusNormal: "", //TODO
 	statusDisabled: {rgb: "#999999", alpha: 0.3},
 	statusWarning: "#FF3B30",
+	themeGreen: "#34C759",
+	themeBlue: "#007AFF",
 };

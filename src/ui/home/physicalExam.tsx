@@ -1,10 +1,10 @@
 import {Text, View} from "react-native";
 import React from "react";
-import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 
-export const PhysicalExamScreen = simpleRefreshListScreen(
+export const PhysicalExamScreen = roundedRefreshListScreen(
 	helper.getPhysicalExamResult,
 	([key, value], _, __, {colors}) => (
 		<View style={{flexDirection: "row", alignItems: "center"}}>
@@ -33,8 +33,4 @@ export const PhysicalExamScreen = simpleRefreshListScreen(
 		</View>
 	),
 	([x]) => x,
-	undefined,
-	undefined,
-	undefined,
-	27,
 );
