@@ -17,6 +17,8 @@ export interface Config {
 	emailUnseen: number;
 	waterId: string;
 	waterBrand: string;
+	verifyPasswordBeforeEnterApp: boolean | undefined;
+	verifyPasswordBeforeEnterReport: boolean | undefined;
 }
 
 export const defaultConfigState: Config = {
@@ -36,4 +38,6 @@ export const defaultConfigState: Config = {
 	emailUnseen: 0,
 	waterId: "",
 	waterBrand: "6",
+	verifyPasswordBeforeEnterApp: false,
+	verifyPasswordBeforeEnterReport: false,
 };

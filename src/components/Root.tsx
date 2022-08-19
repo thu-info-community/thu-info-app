@@ -108,6 +108,7 @@ import {DarkModeScreen} from "../ui/settings/darkMode";
 import {FunctionManagementScreen} from "../ui/settings/functionManagement";
 import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
 import {AppSecretScreen} from "../ui/settings/appSecret";
+import {AppSecretCustomizeScreen} from "../ui/settings/appSecretCustomize";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -333,6 +334,7 @@ type SettingsStackParamList = {
 		| {action: "confirm"; payload: string}
 		| {action: "verify"; target: keyof RootStackParamList};
 	AppSecret: undefined;
+	AppSecretCustomize: undefined;
 	FunctionManagement: undefined;
 	General: undefined;
 	Language: undefined;
@@ -839,6 +841,11 @@ export const Root = () => {
 				name="AppSecret"
 				component={AppSecretScreen}
 				options={{title: getStr("appSecret")}}
+			/>
+			<Stack.Screen
+				name="AppSecretCustomize"
+				component={AppSecretCustomizeScreen}
+				options={{title: getStr("custom")}}
 			/>
 			<Stack.Screen
 				name="General"
