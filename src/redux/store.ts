@@ -27,12 +27,23 @@ import {top5} from "./reducers/top5";
 import {reservation} from "./reducers/reservation";
 import Snackbar from "react-native-snackbar";
 import {defaultReservation, Reservation} from "./states/reservation";
+import {AppState} from "react-native";
+import {configSet} from "./actions/config";
 
 export const helper = new InfoHelper();
 
 helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
+
+AppState.addEventListener("change", (state) => {
+	if (state === "active") {
+		const s = currState();
+		if (s.config.verifyPasswordBeforeEnterApp) {
+			store.dispatch(configSet("appLocked", true));
+		}
+	}
+});
 
 const KeychainStorage = createKeychainStorage();
 
@@ -98,7 +109,11 @@ const credentialsTransform = createTransform(
 );
 
 const configTransform = createTransform(
-	(c: Config) => ({...c, firstDay: c.firstDay.format("YYYY-MM-DD")}),
+	(c: Config) => ({
+		...c,
+		firstDay: c.firstDay.format("YYYY-MM-DD"),
+		appLocked: c.verifyPasswordBeforeEnterApp,
+	}),
 	(c) => ({...c, firstDay: dayjs(c.firstDay)}),
 	{
 		whitelist: ["config"],

@@ -20,6 +20,7 @@ export interface Config {
 	verifyPasswordBeforeEnterApp: boolean | undefined;
 	verifyPasswordBeforeEnterReport: boolean | undefined;
 	useBiometrics: boolean | undefined;
+	appLocked: boolean | undefined;
 }
 
 export const defaultConfigState: Config = {
@@ -42,4 +43,5 @@ export const defaultConfigState: Config = {
 	verifyPasswordBeforeEnterApp: false,
 	verifyPasswordBeforeEnterReport: false,
 	useBiometrics: false,
+	appLocked: false,
 };
