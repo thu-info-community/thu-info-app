@@ -37,6 +37,7 @@ export default {
 	enterApp: "Entering APP",
 	enter: "Entering ",
 	when: "",
+	useBiometrics: "Biometric verification",
 	verifyPassword: "Enter digital password",
 	newPassword: "Enter new password",
 	confirmPassword: "Confirm new password",

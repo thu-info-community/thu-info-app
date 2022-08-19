@@ -17,15 +17,21 @@ import {RootNav} from "../../components/Root";
 import {setAppSecretAction} from "../../redux/actions/credentials";
 import IconRight from "../../assets/icons/IconRight";
 import {configSet} from "../../redux/actions/config";
+import ReactNativeBiometrics from "react-native-biometrics";
+import Snackbar from "react-native-snackbar";
+
+const rnBiometrics = new ReactNativeBiometrics();
 
 const AppSecretUI = ({
 	navigation,
 	verifyPasswordBeforeEnterApp,
 	verifyPasswordBeforeEnterReport,
+	useBiometrics,
 }: {
 	navigation: RootNav;
 	verifyPasswordBeforeEnterApp: boolean | undefined;
 	verifyPasswordBeforeEnterReport: boolean | undefined;
+	useBiometrics: boolean | undefined;
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
@@ -113,6 +119,37 @@ const AppSecretUI = ({
 						<IconRight height={20} width={20} />
 					</View>
 				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={style.rounded}>
+				<View style={style.touchable}>
+					<Text style={style.text}>{getStr("useBiometrics")}</Text>
+					<Switch
+						thumbColor={
+							useBiometrics === true ? colors.primaryLight : undefined
+						}
+						trackColor={{true: colors.mainTheme}}
+						value={useBiometrics === true}
+						onValueChange={(enable) => {
+							if (enable) {
+								rnBiometrics
+									.simplePrompt({promptMessage: getStr("useBiometrics")})
+									.then(({success}) => {
+										if (success) {
+											store.dispatch(configSet("useBiometrics", true));
+										}
+									})
+									.catch((e) => {
+										Snackbar.show({
+											text: e?.message,
+											duration: Snackbar.LENGTH_SHORT,
+										});
+									});
+							} else {
+								store.dispatch(configSet("useBiometrics", false));
+							}
+						}}
+					/>
+				</View>
 			</RoundedView>
 		</View>
 	);

@@ -35,6 +35,7 @@ export default {
 	enterApp: "进入应用",
 	enter: "进入",
 	when: "时",
+	useBiometrics: "生物识别解锁",
 	verifyPassword: "请输入数字密码",
 	newPassword: "请输入新密码",
 	confirmPassword: "请再次输入新密码",
