@@ -12,9 +12,11 @@ import {FeedbackScreen} from "../ui/settings/feedback";
 import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
 import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
+import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
+	readonly appLocked: boolean | undefined;
 }
 
 type LoginStackParamList = {
@@ -33,7 +35,13 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 		checkBroadcast();
 	}, []);
 
-	return props.status === LoginStatus.LoggedIn ? (
+	return props.appLocked === true ? (
+		<DigitalPasswordScreen
+			navigation={undefined}
+			// @ts-ignore
+			route={{params: {action: "verify"}}}
+		/>
+	) : props.status === LoginStatus.LoggedIn ? (
 		<Root />
 	) : (
 		<Stack.Navigator screenOptions={{headerShown: false}}>
@@ -53,5 +61,5 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 };
 
 export const AuthFlow = connect((state: State) => {
-	return {status: state.auth.status};
+	return {status: state.auth.status, appLocked: state.config.appLocked};
 })(AuthFlowComponent);

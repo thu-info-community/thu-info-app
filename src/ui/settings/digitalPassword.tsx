@@ -13,6 +13,7 @@ import {State, store} from "../../redux/store";
 import {setAppSecretAction} from "../../redux/actions/credentials";
 import {connect} from "react-redux";
 import ReactNativeBiometrics from "react-native-biometrics";
+import {configSet, setupAppSecretAction} from "../../redux/actions/config";
 
 const PASSWORD_LENGTH = 4;
 
@@ -24,7 +25,7 @@ const DigitalPasswordUI = ({
 	useBiometrics,
 	route: {params},
 }: {
-	navigation: RootNav;
+	navigation: RootNav | undefined; // undefined indicates that this screen is invoked directly from AuthFlow
 	appSecret: string | undefined;
 	useBiometrics: boolean | undefined;
 	route: DigitalPasswordRouteProp;
@@ -60,7 +61,11 @@ const DigitalPasswordUI = ({
 				.simplePrompt({promptMessage: getStr("useBiometrics")})
 				.then(({success}) => {
 					if (success) {
-						navigation.replace(params.target);
+						if (navigation) {
+							navigation.replace(params.target);
+						} else {
+							store.dispatch(configSet("appLocked", false));
+						}
 					}
 				});
 		}
@@ -86,19 +91,26 @@ const DigitalPasswordUI = ({
 						if (v.match(/^\d{0,4}$/)) {
 							setValue(v);
 							if (v.length === 4) {
-								if (params.action === "new") {
-									navigation.replace("DigitalPassword", {
-										action: "confirm",
-										payload: v,
-									});
-								} else if (params.action === "confirm") {
-									if (v === params.payload) {
-										navigation.replace("AppSecret");
-										store.dispatch(setAppSecretAction(v));
+								if (navigation) {
+									if (params.action === "new") {
+										navigation.replace("DigitalPassword", {
+											action: "confirm",
+											payload: v,
+										});
+									} else if (params.action === "confirm") {
+										if (v === params.payload) {
+											navigation.replace("AppSecret");
+											store.dispatch(setAppSecretAction(v));
+											store.dispatch(setupAppSecretAction());
+										}
+									} else if (params.action === "verify") {
+										if (appSecret === v) {
+											navigation.replace(params.target);
+										}
 									}
-								} else if (params.action === "verify") {
+								} else {
 									if (appSecret === v) {
-										navigation.replace(params.target);
+										store.dispatch(configSet("appLocked", false));
 									}
 								}
 							}

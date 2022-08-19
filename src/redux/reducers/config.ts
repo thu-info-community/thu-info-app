@@ -2,8 +2,10 @@ import {Config, defaultConfigState} from "../states/config";
 import {ConfigAction} from "../actions/config";
 import {
 	ADD_REPORT_HIDDEN,
+	CLEAR_APP_SECRET,
 	REMOVE_REPORT_HIDDEN,
 	SET_CALENDAR_CONFIG,
+	SETUP_APP_SECRET,
 } from "../constants";
 import dayjs from "dayjs";
 
@@ -34,6 +36,20 @@ export const config = (
 				reportHidden: (state.reportHidden ?? []).filter(
 					(it) => it !== action.payload,
 				),
+			};
+		case SETUP_APP_SECRET:
+			return {
+				...state,
+				verifyPasswordBeforeEnterApp: false,
+				verifyPasswordBeforeEnterReport: true,
+				useBiometrics: false,
+			};
+		case CLEAR_APP_SECRET:
+			return {
+				...state,
+				verifyPasswordBeforeEnterApp: false,
+				verifyPasswordBeforeEnterReport: false,
+				useBiometrics: false,
 			};
 		default: {
 			if (defaultConfigState[action.type] !== undefined) {

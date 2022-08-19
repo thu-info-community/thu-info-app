@@ -16,7 +16,7 @@ import {styles} from "./settings";
 import {RootNav} from "../../components/Root";
 import {setAppSecretAction} from "../../redux/actions/credentials";
 import IconRight from "../../assets/icons/IconRight";
-import {configSet} from "../../redux/actions/config";
+import {clearAppSecretAction, configSet} from "../../redux/actions/config";
 import ReactNativeBiometrics from "react-native-biometrics";
 import Snackbar from "react-native-snackbar";
 
@@ -68,6 +68,7 @@ const AppSecretUI = ({
 										onPress: () => {
 											navigation.pop();
 											store.dispatch(setAppSecretAction(undefined));
+											store.dispatch(clearAppSecretAction());
 										},
 									},
 								],
