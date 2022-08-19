@@ -428,7 +428,14 @@ const getHomeFunctions = (
 		title="report"
 		onPress={() => {
 			updateTop5("report");
-			navigation.navigate("Report");
+			if (currState().config.verifyPasswordBeforeEnterReport) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "Report",
+				});
+			} else {
+				navigation.navigate("Report");
+			}
 		}}>
 		<IconReport width={iconSize} height={iconSize} />
 	</HomeIcon>,
