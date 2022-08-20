@@ -299,7 +299,7 @@ export const ClassroomDetailScreen = ({
 							}}>
 							{item[0].split(":")[1]}
 						</Text>
-						{Array.from(new Array(6), (_, index) => (
+						{Array.from(new Array(6)).map((_, index) => (
 							<View
 								style={{
 									backgroundColor:

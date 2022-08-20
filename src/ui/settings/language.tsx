@@ -1,27 +1,44 @@
-import React, {useEffect, useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {globalObjects, State} from "../../redux/store";
+import {State, store} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import {connect} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
+import {RootNav} from "../../components/Root";
+import {configSet} from "../../redux/actions/config";
+import Snackbar from "react-native-snackbar";
+import themes from "../../assets/themes/themes";
 
-export const LanguageUI = (props: {language: string}) => {
+export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const {colors} = themes(themeName);
 
 	const [language, setLanguage] = useState(props.language);
 
-	useEffect(() => {
-		if (language === "zh") {
-			globalObjects.languageSelected = "zh";
-		} else if (language === "en") {
-			globalObjects.languageSelected = "en";
-		} else {
-			globalObjects.languageSelected = "auto";
-		}
-	}, [language]);
+	useLayoutEffect(() => {
+		props.navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					style={{paddingHorizontal: 16, margin: 4}}
+					onPress={() => {
+						props.navigation.pop();
+						store.dispatch(configSet("language", language));
+						Snackbar.show({
+							text: getStr("restartToApply"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
+					}}>
+					<Text style={{color: colors.primaryLight, fontSize: 16}}>
+						{getStr("done")}
+					</Text>
+				</TouchableOpacity>
+			),
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.navigation, language]);
 
 	return (
 		<View style={{flex: 1, padding: 12}}>

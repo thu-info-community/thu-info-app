@@ -3,18 +3,11 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
-import {
-	Platform,
-	Text,
-	TouchableOpacity,
-	useColorScheme,
-	View,
-} from "react-native";
+import {Platform, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
-import {globalObjects, store} from "../redux/store";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
 	createStackNavigator,
@@ -102,7 +95,6 @@ import IconLocal from "../assets/icons/IconLocal";
 import {PrivacyScreen} from "../ui/settings/privacy";
 import {GeneralScreen} from "../ui/settings/general";
 import {LanguageScreen} from "../ui/settings/language";
-import {configSet} from "../redux/actions/config";
 import {DarkModeScreen} from "../ui/settings/darkMode";
 import {FunctionManagementScreen} from "../ui/settings/functionManagement";
 import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
@@ -823,27 +815,7 @@ export const Root = () => {
 			<Stack.Screen
 				name="Language"
 				component={LanguageScreen}
-				options={({navigation}) => ({
-					title: getStr("language"),
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, margin: 4}}
-							onPress={() => {
-								navigation.pop();
-								store.dispatch(
-									configSet("language", globalObjects.languageSelected),
-								);
-								Snackbar.show({
-									text: getStr("restartToApply"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-							}}>
-							<Text style={{color: theme.colors.primaryLight, fontSize: 16}}>
-								{getStr("done")}
-							</Text>
-						</TouchableOpacity>
-					),
-				})}
+				options={{title: getStr("language")}}
 			/>
 			<Stack.Screen
 				name="DarkMode"

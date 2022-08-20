@@ -16,8 +16,6 @@ import {Credentials} from "./states/credentials";
 import {InfoHelper} from "thu-info-lib";
 import dayjs from "dayjs";
 import CookieManager from "@react-native-cookies/cookies";
-import React from "react";
-import ViewShot from "react-native-view-shot";
 import {
 	Schedule,
 	scheduleTimeAdd,
@@ -188,11 +186,6 @@ export const store = createStore(persistReducer(persistConfig, rootReducer));
 export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
-
-export const globalObjects = {
-	scheduleViewShot: null as React.RefObject<ViewShot> | null,
-	languageSelected: "auto" as "auto" | "zh" | "en",
-};
 
 helper.loginErrorHook = (e) => {
 	store.dispatch(loginAction.failure(LoginStatus.Failed));
