@@ -20,4 +20,6 @@ export const colorDark: ColorTheme = {
 	statusWarning: "#FF3B30",
 	themeGreen: "#34C759",
 	themeBlue: "#007AFF",
+	themePurple: "#8B55E4",
+	themeGrey: "#D6D3DB",
 };

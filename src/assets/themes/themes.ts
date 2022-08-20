@@ -21,6 +21,8 @@ export interface ColorTheme {
 	statusWarning: string;
 	themeGreen: string;
 	themeBlue: string;
+	themePurple: string;
+	themeGrey: string;
 }
 
 export interface Theme {

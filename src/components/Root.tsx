@@ -15,7 +15,6 @@ import {NewsScreen} from "../ui/news/news";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
 import {globalObjects, store} from "../redux/store";
-import {saveImg} from "../utils/saveImg";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
 	createStackNavigator,
@@ -166,38 +165,7 @@ const RootTabs = () => {
 			<Tab.Screen
 				name="ScheduleTab"
 				component={ScheduleScreen}
-				options={({navigation}) => ({
-					title: getStr("schedule"),
-					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => {
-									if (
-										globalObjects.scheduleViewShot !== null &&
-										globalObjects.scheduleViewShot.current !== null &&
-										globalObjects.scheduleViewShot.current.capture
-									) {
-										globalObjects.scheduleViewShot.current
-											.capture()
-											.then(saveImg);
-									}
-								}}>
-								<Icon name="camera" size={24} color={theme.colors.primary} />
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("ScheduleHidden")}>
-								<Icon name="eye-slash" size={24} color={theme.colors.primary} />
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("ScheduleAdd")}>
-								<Icon name="plus" size={24} color={theme.colors.primary} />
-							</TouchableOpacity>
-						</View>
-					),
-				})}
+				options={{title: getStr("schedule")}}
 			/>
 			<Tab.Screen
 				name="SettingsTab"

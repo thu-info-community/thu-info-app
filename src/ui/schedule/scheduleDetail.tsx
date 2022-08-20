@@ -21,7 +21,7 @@ import {getStr} from "src/utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
-const beginTime = [
+export const beginTime = [
 	"",
 	"08:00",
 	"08:50",
@@ -39,7 +39,7 @@ const beginTime = [
 	"21:00",
 ];
 
-const endTime = [
+export const endTime = [
 	"",
 	"08:45",
 	"09:35",
