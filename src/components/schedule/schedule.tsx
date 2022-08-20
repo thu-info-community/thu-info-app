@@ -1,5 +1,5 @@
 import React from "react";
-import {Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity} from "react-native";
 
 interface ScheduleBlockProps {
 	dayOfWeek: number;
@@ -23,19 +23,19 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const blockColor = props.blockColor || "#1f1e33";
 
 	const blockLeftPos =
-		(props.dayOfWeek * 2 - 1) * gridHalfWidth + // Block Width
+		(props.dayOfWeek * 2 - 2) * gridHalfWidth + // Block Width
 		(props.dayOfWeek + 1) + // Border Width
 		blockInterval; // Block Interval
 	const blockTopPos =
-		(props.begin * 2 - 1) * gridHalfHeight + // Block Width
+		(props.begin * 2 - 2) * gridHalfHeight + // Block Width
 		1 + // Border Width
 		blockInterval; // Block Interval
 	const blockRightPos =
-		(props.dayOfWeek * 2 + 1) * gridHalfWidth + // Block Width
+		props.dayOfWeek * 2 * gridHalfWidth + // Block Width
 		(props.dayOfWeek + 1) - // Border Width
 		blockInterval; // Block Interval
 	const blockBottomPos =
-		(props.end * 2 + 1) * gridHalfHeight - // Block Width
+		props.end * 2 * gridHalfHeight - // Block Width
 		([2, 5, 7, 9, 11].indexOf(props.end) === -1 ? 0 : 1) - // Border Width
 		blockInterval; // Block Interval
 
@@ -48,37 +48,31 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				width: blockRightPos - blockLeftPos,
 				height: blockBottomPos - blockTopPos,
 				backgroundColor: blockColor,
-				borderRadius: 5,
-				alignContent: "center",
-				justifyContent: "center",
-				paddingVertical: 3,
-				paddingLeft: 2,
-				paddingRight: 0,
+				borderRadius: 4,
+				paddingVertical: 4,
+				paddingHorizontal: 2,
 			}}
 			onPress={props.onPress}>
-			<View>
+			<Text
+				style={{
+					textAlign: "left",
+					color: "white",
+					lineHeight: 18,
+					fontWeight: "bold",
+					fontSize: 13,
+				}}>
+				{props.name}
+			</Text>
+			{props.location.length ? (
 				<Text
 					style={{
 						textAlign: "left",
 						color: "white",
-						lineHeight: 16,
-						fontWeight: "bold",
-						fontSize: 14,
+						fontSize: 8,
 					}}>
-					{props.name}
+					{"@" + props.location}
 				</Text>
-				{props.location.length ? (
-					<Text
-						style={{
-							textAlign: "left",
-							color: "white",
-							lineHeight: 14,
-							fontSize: 12,
-						}}>
-						{"@" + props.location}
-					</Text>
-				) : null}
-			</View>
+			) : null}
 		</TouchableOpacity>
 	);
 };

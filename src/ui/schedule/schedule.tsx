@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	RefreshControl,
 } from "react-native";
-import React, {ReactElement, useState, useRef, useEffect} from "react";
+import React, {ReactElement, useState, useEffect} from "react";
 import {connect} from "react-redux";
 import {
 	activeWeek,
@@ -14,16 +14,17 @@ import {
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
-import {currState, globalObjects, helper, State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import dayjs from "dayjs";
-import Icon from "react-native-vector-icons/FontAwesome";
-import ViewShot from "react-native-view-shot";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import md5 from "md5";
+import {beginTime, endTime} from "./scheduleDetail";
+import IconAdd from "../../assets/icons/IconAdd";
+import IconDown from "../../assets/icons/IconDown";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -51,7 +52,7 @@ interface ScheduleProps {
 }
 
 const ScheduleUI = (props: ScheduleProps) => {
-	const {firstDay, weekCount} = currState().config;
+	const {firstDay, weekCount, semesterId} = currState().config;
 	const current = dayjs();
 	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
 	const nowWeek = (() => {
@@ -64,34 +65,25 @@ const ScheduleUI = (props: ScheduleProps) => {
 		}
 	})();
 	const today = current.day() === 0 ? 7 : current.day();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [week, setWeek] = useState(nowWeek);
 
-	const viewShot = useRef<ViewShot>(null);
-
-	globalObjects.scheduleViewShot = viewShot;
+	const semesterType = Number(semesterId[semesterId.length - 1]);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const timeBlockNum = 14;
-	const daysInWeek = 7;
-	const borderTotWidth = daysInWeek + 1;
-
-	const unitHeight = 65;
-	const unitWidth =
-		(Dimensions.get("window").width - borderTotWidth) / (daysInWeek + 1 / 2);
+	const unitHeight = 60;
+	const unitWidth = (Dimensions.get("window").width - 8) / (7 + 1 / 2);
 
 	const colorList: string[] = [
-		"#16A085",
-		"#27AE60",
-		"#2980B9",
-		"#8E44AD",
-		"#2C3E50",
-		"#F39C12",
-		"#D35400",
-		"#C0392B",
-		"#BDC3C7",
-		"#7F8C8D",
+		"#4DD28D",
+		"#55E4C6",
+		"#E8CE4F",
+		"#E48555",
+		"#8B55E4",
+		"#5599E4",
+		"#BC4C55",
 	];
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,108 +98,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.cache]);
-
-	const horizontalLine = () => (
-		<View style={{backgroundColor: "lightgray", height: 1}} />
-	);
-
-	const basicGrid = () => {
-		let daysOfWeekList: ReactElement[] = [];
-
-		for (let ind = 1; ind <= 7; ++ind) {
-			daysOfWeekList.push(
-				<View
-					style={{
-						flex: 2,
-						borderLeftColor: "lightgray",
-						borderLeftWidth: ind === 1 ? 2 : 1,
-						alignContent: "center",
-						justifyContent: "center",
-						backgroundColor: theme.colors.themeBackground,
-					}}
-					key={`0-${ind + 1}`}>
-					<Text style={{textAlign: "center", color: "gray"}}>
-						{`${firstDay
-							.add((week - 1) * 7 + ind - 1, "day")
-							.format("MM.DD")}\n${getStr("dayOfWeek")[ind]}`}
-					</Text>
-				</View>,
-			);
-		}
-
-		let gridHead = (
-			<View
-				style={{
-					flexDirection: "row",
-					borderBottomColor: "lightgray",
-					borderBottomWidth: 2,
-					height: unitHeight / 2,
-					backgroundColor: theme.colors.themeBackground,
-				}}
-				key="0">
-				<View
-					style={{flex: 1, backgroundColor: theme.colors.themeBackground}}
-					key="0-0"
-				/>
-				{daysOfWeekList}
-			</View>
-		);
-
-		let basicRow = (ind: number) => {
-			let blockList = [];
-			blockList.push(
-				<View
-					style={{
-						flex: 1,
-						alignContent: "center",
-						justifyContent: "center",
-						backgroundColor: theme.colors.themeBackground,
-					}}
-					key={`${ind}-0`}>
-					<Text style={{textAlign: "center", color: "gray"}}>{ind}</Text>
-				</View>,
-			);
-			for (let i = 0; i < daysInWeek; ++i) {
-				blockList.push(
-					<View
-						style={{
-							flex: 2,
-							borderLeftColor: "lightgray",
-							borderLeftWidth: i ? 1 : 2,
-							backgroundColor:
-								week === nowWeek && i + 1 === today
-									? theme.colors.contentBackground === "#000000"
-										? "#3D3D3D"
-										: "#F4F4F4"
-									: theme.colors.contentBackground,
-						}}
-						key={`${ind}-${i + 1}`}
-					/>,
-				);
-			}
-			return blockList;
-		};
-
-		let rowList: ReactElement[] = [gridHead];
-		for (let i = 1; i <= timeBlockNum; ++i) {
-			rowList.push(
-				<View
-					style={{
-						flex: 2,
-						flexDirection: "row",
-						height: unitHeight,
-						borderBottomColor: "lightgray",
-						borderBottomWidth: [2, 5, 7, 9, 11].indexOf(i) === -1 ? 1 : 2,
-						backgroundColor: "white",
-					}}
-					key={`${i}`}>
-					{basicRow(i)}
-				</View>,
-			);
-		}
-
-		return <View style={{flex: 1, backgroundColor: "white"}}>{rowList}</View>;
-	};
 
 	const allSchedule = () => {
 		let components: ReactElement[] = [];
@@ -291,67 +181,109 @@ const ScheduleUI = (props: ScheduleProps) => {
 		return components;
 	};
 
-	const todayMark = () =>
-		week === nowWeek ? (
-			<View
-				style={{
-					position: "absolute",
-					left: ((today * 2 - 1) * unitWidth) / 2 + today + 2,
-					top: 2,
-					width: unitWidth - 2,
-					height: unitHeight / 2 - 4,
-					backgroundColor: "gray",
-					borderRadius: 5,
-					alignContent: "center",
-					justifyContent: "center",
-				}}>
-				<Text style={{color: "white", textAlign: "center"}}>
-					{`${firstDay
-						.add((week - 1) * 7 + today - 1, "day")
-						.format("MM.DD")}\n${getStr("dayOfWeek")[today]}`}
-				</Text>
-			</View>
-		) : null;
-
 	return (
 		<>
 			<View
 				style={{
-					padding: 10,
-					justifyContent: "space-between",
+					paddingVertical: 4,
 					alignItems: "center",
-					flexDirection: "row",
+					backgroundColor: theme.colors.contentBackground,
 				}}>
-				<TouchableOpacity
-					onPress={() => setWeek((o) => (o > 1 ? o - 1 : o))}
-					disabled={week <= 1}
-					style={{padding: 8}}>
-					<Icon
-						name="chevron-left"
-						size={24}
-						color={week > 1 ? theme.colors.text : "#888"}
-					/>
-				</TouchableOpacity>
-				<Text
-					onPress={() => setWeek(nowWeek)}
+				<View
 					style={{
-						fontSize: 18,
-						textAlign: "center",
-						flex: 1,
-						color: theme.colors.text,
+						width: "100%",
+						alignItems: "center",
+						justifyContent: "center",
 					}}>
-					{week}
-				</Text>
-				<TouchableOpacity
-					onPress={() => setWeek((o) => (week < weekCount ? o + 1 : o))}
-					disabled={week >= weekCount}
-					style={{padding: 8}}>
-					<Icon
-						name="chevron-right"
-						size={24}
-						color={week < weekCount ? theme.colors.text : "#888"}
+					<TouchableOpacity>
+						<View style={{flexDirection: "row", alignItems: "flex-end"}}>
+							<Text
+								style={{
+									fontSize: 18,
+									fontWeight: "bold",
+									color: theme.colors.fontB1,
+								}}>
+								{getStr("weekNumPrefix")}
+								{nowWeek}
+								{getStr("weekNumSuffix")}
+							</Text>
+							<IconDown width={16} height={16} />
+						</View>
+						<Text
+							style={{
+								fontSize: 12,
+								color: theme.colors.fontB2,
+							}}>
+							{getStr(
+								semesterType === 1
+									? "autumn"
+									: semesterType === 2
+									? "spring"
+									: semesterType === 3
+									? "summer"
+									: "winter",
+							)}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => props.navigation.navigate("ScheduleAdd")}
+						style={{position: "absolute", right: 16}}>
+						<IconAdd width={24} height={24} />
+					</TouchableOpacity>
+				</View>
+				<View
+					style={{
+						flexDirection: "row",
+						paddingVertical: 2,
+						alignItems: "center",
+					}}
+					key="0">
+					<View
+						style={{
+							flex: 0,
+							width: 32,
+						}}
+						key="0-0"
 					/>
-				</TouchableOpacity>
+					{Array.from(new Array(7)).map((_, index) => (
+						<View
+							style={{
+								flex: 1,
+								padding: 4,
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+							key={`0-${index + 1}`}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 12,
+									color: theme.colors.fontB1,
+								}}>
+								{getStr("dayOfWeek")[index + 1]}
+							</Text>
+							<View
+								style={{
+									width: 18,
+									height: 2,
+									borderRadius: 1,
+									backgroundColor:
+										week === nowWeek && today === index + 1
+											? theme.colors.themePurple
+											: undefined,
+								}}
+							/>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 9,
+									color: theme.colors.fontB1,
+								}}>
+								{firstDay.add((week - 1) * 7 + index, "day").format("MM/DD")}
+							</Text>
+						</View>
+					))}
+				</View>
 			</View>
 			<ScrollView
 				style={{flex: 1, flexDirection: "column"}}
@@ -362,12 +294,89 @@ const ScheduleUI = (props: ScheduleProps) => {
 						colors={[theme.colors.accent]}
 					/>
 				}>
-				<ViewShot ref={viewShot}>
-					{horizontalLine()}
-					{basicGrid()}
-					{allSchedule()}
-					{todayMark()}
-				</ViewShot>
+				<View style={{flexDirection: "row"}}>
+					<View style={{width: 32}}>
+						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
+							<View
+								style={{
+									alignItems: "center",
+									justifyContent: "center",
+									height: unitHeight,
+								}}
+								key={`${session}-0`}>
+								<Text
+									style={{
+										textAlign: "center",
+										color: theme.colors.fontB1,
+										fontSize: 12,
+									}}>
+									{session}
+								</Text>
+								<Text
+									style={{
+										textAlign: "center",
+										color: theme.colors.fontB2,
+										fontSize: 8,
+										marginTop: 4,
+									}}>
+									{beginTime[session]}
+								</Text>
+								<Text
+									style={{
+										textAlign: "center",
+										color: theme.colors.fontB2,
+										fontSize: 8,
+										marginTop: 1,
+									}}>
+									{endTime[session]}
+								</Text>
+							</View>
+						))}
+					</View>
+					<View style={{flex: 1}}>
+						<View
+							style={{
+								backgroundColor: theme.colors.themeGrey,
+								height: 1,
+								position: "absolute",
+								left: 0,
+								right: 0,
+								top: 300,
+							}}
+						/>
+						<View
+							style={{
+								backgroundColor: theme.colors.themeGrey,
+								height: 1,
+								position: "absolute",
+								left: 0,
+								right: 0,
+								top: 660,
+							}}
+						/>
+						<Text
+							style={{
+								position: "absolute",
+								right: 12,
+								top: 302,
+								fontSize: 12,
+								color: theme.colors.fontB3,
+							}}>
+							{getStr("lunch")}
+						</Text>
+						<Text
+							style={{
+								position: "absolute",
+								right: 12,
+								top: 662,
+								fontSize: 12,
+								color: theme.colors.fontB3,
+							}}>
+							{getStr("supper")}
+						</Text>
+						{allSchedule()}
+					</View>
+				</View>
 			</ScrollView>
 		</>
 	);
