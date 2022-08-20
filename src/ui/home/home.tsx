@@ -28,7 +28,7 @@ import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
-import {currState, helper, State} from "../../redux/store";
+import {currState, helper, State, store} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
@@ -45,6 +45,7 @@ import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
+import {setCalendarConfigAction} from "../../redux/actions/config";
 
 const iconSize = 40;
 
@@ -644,7 +645,11 @@ const HomeUI = (props: HomeProps) => {
 		setTimeout(() => {
 			helper.userId !== "" &&
 				helper.getBookingRecords().then(props.setActiveLibBookRecord);
-			// To avoid login hazard between getBookingRecords and getCountdown
+			helper.userId !== "" &&
+				helper.getCalendar().then((c) => {
+					store.dispatch(setCalendarConfigAction(c));
+				});
+			// To avoid login hazard between getBookingRecords, getCalendar and getCountdown
 		}, 3000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
