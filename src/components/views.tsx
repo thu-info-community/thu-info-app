@@ -1,12 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import {
+	Modal,
 	RefreshControl,
 	ScrollView,
+	Text,
+	TouchableOpacity,
+	TouchableOpacityProps,
 	useColorScheme,
 	View,
 	ViewProps,
 } from "react-native";
 import themes, {ColorTheme} from "../assets/themes/themes";
+import {getStr} from "../utils/i18n";
 
 export const RoundedView = (props: ViewProps) => {
 	const themeName = useColorScheme();
@@ -74,3 +79,114 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 		</ScrollView>
 	);
 }
+
+interface PopupProps {
+	popupTitle: string;
+	popupContent: JSX.Element;
+	popupCanFulfill: boolean;
+	popupOnFulfilled: () => void;
+	popupOnCancelled: () => void;
+}
+
+export const BottomPopupTriggerView = (
+	props: TouchableOpacityProps & PopupProps,
+) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+	const touchableProps = {
+		...props,
+		onPress: () => setOpen(true),
+		popupTitle: undefined,
+	};
+
+	const [open, setOpen] = useState(false);
+
+	return (
+		<>
+			<TouchableOpacity {...touchableProps} />
+			<Modal visible={open} transparent>
+				<View
+					style={{
+						width: "100%",
+						height: "100%",
+						justifyContent: "flex-end",
+					}}>
+					<View
+						style={{
+							position: "absolute",
+							backgroundColor: colors.fontB1,
+							opacity: 0.1,
+							top: 0,
+							bottom: 0,
+							left: 0,
+							right: 0,
+						}}
+					/>
+					<View
+						style={{
+							backgroundColor: colors.contentBackground,
+							borderTopStartRadius: 12,
+							borderTopEndRadius: 12,
+						}}>
+						<View
+							style={{
+								flexDirection: "row",
+								margin: 16,
+								alignItems: "center",
+								justifyContent: "center",
+							}}>
+							<Text
+								style={{
+									color: colors.fontB1,
+									fontSize: 18,
+									fontWeight: "500",
+								}}>
+								{props.popupTitle}
+							</Text>
+							<TouchableOpacity
+								style={{
+									position: "absolute",
+									left: 0,
+								}}
+								onPress={() => {
+									props.popupOnCancelled();
+									setOpen(false);
+								}}>
+								<Text
+									style={{
+										color: colors.fontB1,
+										fontSize: 16,
+										fontWeight: "400",
+									}}>
+									{getStr("cancel")}
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={{
+									position: "absolute",
+									right: 0,
+								}}
+								disabled={!props.popupCanFulfill}
+								onPress={() => {
+									props.popupOnFulfilled();
+									setOpen(false);
+								}}>
+								<Text
+									style={{
+										color: props.popupCanFulfill
+											? colors.themePurple
+											: colors.themeGrey,
+										fontSize: 16,
+										fontWeight: "600",
+									}}>
+									{getStr("done")}
+								</Text>
+							</TouchableOpacity>
+						</View>
+						{props.popupContent}
+					</View>
+				</View>
+			</Modal>
+		</>
+	);
+};

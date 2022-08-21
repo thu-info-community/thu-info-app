@@ -3,7 +3,13 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
-import {Platform, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	Platform,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
@@ -282,10 +288,20 @@ type NewsStackParamList = {
 export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
 
 type ScheduleStackParamList = {
-	ScheduleAdd: undefined;
+	ScheduleAdd: ScheduleDetailProps | undefined;
 	ScheduleHidden: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 };
+
+export type ScheduleAddRouteProp = RouteProp<
+	ScheduleStackParamList,
+	"ScheduleAdd"
+>;
+
+export type ScheduleDetailRouteProp = RouteProp<
+	ScheduleStackParamList,
+	"ScheduleDetail"
+>;
 
 type SettingsStackParamList = {
 	Account: undefined;
@@ -769,7 +785,11 @@ export const Root = () => {
 			<Stack.Screen
 				name="ScheduleAdd"
 				component={ScheduleAddScreen}
-				options={{title: getStr("scheduleAddCustom")}}
+				options={({route: {params}}) => ({
+					title: getStr(
+						params === undefined ? "scheduleAddCustom" : "scheduleEdit",
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="ScheduleHidden"
@@ -779,7 +799,18 @@ export const Root = () => {
 			<Stack.Screen
 				name="ScheduleDetail"
 				component={ScheduleDetailScreen}
-				options={{title: getStr("scheduleDetail")}}
+				options={({navigation, route: {params}}) => ({
+					title: getStr("scheduleDetail"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, margin: 4}}
+							onPress={() => navigation.navigate("ScheduleAdd", params)}>
+							<Text style={{color: theme.colors.primaryLight, fontSize: 16}}>
+								{getStr("edit")}
+							</Text>
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			{/* Settings */}
 			<Stack.Screen
