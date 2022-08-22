@@ -1,77 +1,58 @@
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
-import React, {useState} from "react";
-import dayjs from "dayjs";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
+import React from "react";
 import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
 import {RootNav} from "../../components/Root";
-import {getStr} from "../../utils/i18n";
+import {RoundedView} from "../../components/views";
+import IconRight from "../../assets/icons/IconRight";
 
 export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
-	const [nameStr, setNameStr] = useState(getStr("sportsBook"));
-	const [idGym, setIdGym] = useState<string>();
-	const [idItem, setIdItem] = useState<string>();
-
-	const today = dayjs();
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	const validDateNum = 4;
-
 	return (
-		<View style={{flexDirection: "row", margin: 10}}>
-			<View style={{flex: 1, paddingRight: 10}}>
-				{sportsIdInfoList.map(({name, gymId, itemId}, index) => (
-					<View
-						key={name}
-						style={{
-							borderTopColor: "lightgrey",
-							borderTopWidth: 1,
-							borderBottomColor: "lightgrey",
-							borderBottomWidth: index === sportsIdInfoList.length - 1 ? 1 : 0,
-						}}>
+		<ScrollView style={{flex: 1}}>
+			<RoundedView
+				style={{marginHorizontal: 12, marginVertical: 24, padding: 16}}>
+				{sportsIdInfoList.map((info, index) => (
+					<View key={info.name}>
+						{index > 0 && (
+							<View
+								style={{
+									height: 0.5,
+									backgroundColor: colors.themeGrey,
+									marginVertical: 12,
+								}}
+							/>
+						)}
 						<TouchableOpacity
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "space-between",
+							}}
 							onPress={() => {
-								setNameStr(name);
-								setIdGym(gymId);
-								setIdItem(itemId);
+								navigation.navigate("SportsDetail", {info});
 							}}>
 							<Text
 								style={{
-									color: idItem === itemId ? colors.accent : colors.text,
-									padding: 10,
+									color: colors.text,
+									fontSize: 16,
+									lineHeight: 24,
 								}}>
-								{name}
+								{info.name}
 							</Text>
+							<IconRight height={24} width={24} />
 						</TouchableOpacity>
 					</View>
 				))}
-			</View>
-			<View style={{flex: 1, paddingLeft: 10}}>
-				{idGym !== undefined &&
-					idItem !== undefined &&
-					Array.from(new Array(validDateNum), (_, k) =>
-						today.add(k, "day").format("YYYY-MM-DD"),
-					).map((dateStr, index) => (
-						<View
-							key={dateStr}
-							style={{
-								borderTopColor: "lightgrey",
-								borderTopWidth: 1,
-								borderBottomColor: "lightgrey",
-								borderBottomWidth: index === validDateNum - 1 ? 1 : 0,
-							}}>
-							<TouchableOpacity
-								onPress={() =>
-									navigation.navigate("SportsDetail", {
-										info: {name: nameStr, gymId: idGym, itemId: idItem},
-										date: dateStr,
-									})
-								}>
-								<Text style={{padding: 10, color: colors.text}}>{dateStr}</Text>
-							</TouchableOpacity>
-						</View>
-					))}
-			</View>
-		</View>
+			</RoundedView>
+		</ScrollView>
 	);
 };

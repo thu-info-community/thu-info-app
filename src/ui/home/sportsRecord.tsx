@@ -1,17 +1,18 @@
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
-import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
+import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 
-export const SportsRecordScreen = simpleRefreshListScreen(
+export const SportsRecordScreen = roundedRefreshListScreen(
 	helper.getSportsReservationRecords,
-	({name, field, price, time, bookId}, refresh, _, {colors}) => {
+	({name, field, price, time, bookId}, refresh, _, {colors}, index, total) => {
 		return (
 			<View
 				style={{
-					padding: 15,
+					marginTop: index === 0 ? 0 : 12,
+					marginBottom: index === total - 1 ? 0 : 12,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>
