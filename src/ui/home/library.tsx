@@ -132,7 +132,7 @@ const LibraryUI = ({
 	activeLibBookRecords,
 }: {
 	navigation: RootNav;
-	activeLibBookRecords: LibBookRecord[];
+	activeLibBookRecords: LibBookRecord[] | undefined;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -216,7 +216,9 @@ const LibraryUI = ({
 						}}>
 						{getStr("alreadyReserved")}
 					</Text>
-					<LibraryReservationCard activeLibBookRecords={activeLibBookRecords} />
+					<LibraryReservationCard
+						activeLibBookRecords={activeLibBookRecords ?? []}
+					/>
 				</View>
 			</>
 		</ScrollView>

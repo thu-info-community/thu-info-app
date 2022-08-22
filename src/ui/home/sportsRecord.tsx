@@ -3,10 +3,15 @@ import React from "react";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
-import {helper} from "../../redux/store";
+import {helper, store} from "../../redux/store";
+import {setActiveSportsReservationRecordAction} from "../../redux/actions/reservation";
 
 export const SportsRecordScreen = roundedRefreshListScreen(
-	helper.getSportsReservationRecords,
+	() =>
+		helper.getSportsReservationRecords().then((r) => {
+			store.dispatch(setActiveSportsReservationRecordAction(r));
+			return r;
+		}),
 	({name, field, price, time, bookId}, refresh, _, {colors}, index, total) => {
 		return (
 			<View

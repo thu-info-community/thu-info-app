@@ -75,6 +75,7 @@ export default {
 	confirmCancelBooking: "Sure to cancel?",
 	cancelSucceeded: "Successfully cancelled.",
 	noActiveLibBookRecord: "No reservation.",
+	noActiveSportsReservationRecord: "No reservation",
 	bookingHintPrefix: "Please check in before ",
 	bookingHintSuffix: " and check out when you leave.",
 	socketAvailable: "Socket Available",
