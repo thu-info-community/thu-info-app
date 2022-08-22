@@ -108,6 +108,7 @@ import {AppSecretScreen} from "../ui/settings/appSecret";
 import {AppSecretCustomizeScreen} from "../ui/settings/appSecretCustomize";
 import {SportsSelectFieldScreen} from "../ui/home/sportsSelectField";
 import {SportsSelectTitleScreen} from "../ui/home/sportsSelectTitle";
+import {SportsSuccessScreen} from "../ui/home/sportsSuccess";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -215,6 +216,7 @@ type HomeStackParamList = {
 	SportsSelect: SportsSelectParams;
 	SportsSelectField: SportsSelectParams;
 	SportsSelectTitle: SportsSelectParams;
+	SportsSuccess: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
 	GitLabHome: undefined;
@@ -644,6 +646,11 @@ export const Root = () => {
 				name="SportsSelectTitle"
 				component={SportsSelectTitleScreen}
 				options={{title: getStr("receiptTitle")}}
+			/>
+			<Stack.Screen
+				name="SportsSuccess"
+				component={SportsSuccessScreen}
+				options={{title: getStr("bookSuccess")}}
 			/>
 			<Stack.Screen
 				name="SportsRecord"
