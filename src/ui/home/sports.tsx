@@ -11,8 +11,65 @@ import themes from "../../assets/themes/themes";
 import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
+import {getStr} from "../../utils/i18n";
+import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
+import {connect} from "react-redux";
+import {State} from "../../redux/store";
 
-export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
+export const SportsReservationCard = ({
+	activeSportsReservationRecords,
+}: {
+	activeSportsReservationRecords: SportsReservationRecord[];
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	const firstRecord = activeSportsReservationRecords[0];
+
+	return (
+		<RoundedView
+			style={{
+				alignItems: "center",
+				justifyContent: "center",
+			}}>
+			{firstRecord === undefined ? (
+				<Text style={{color: colors.text}}>
+					{getStr("noActiveSportsReservationRecord")}
+				</Text>
+			) : (
+				<>
+					<Text style={{color: colors.text}}>{firstRecord.name}</Text>
+					<View
+						style={{
+							padding: 10,
+							flexDirection: "row",
+							alignItems: "center",
+						}}>
+						<Text
+							style={{
+								fontSize: 20,
+								fontWeight: "600",
+								color: colors.text,
+							}}>
+							{firstRecord.field}
+						</Text>
+					</View>
+					<Text style={{textAlign: "center", color: colors.text}}>
+						{firstRecord.time}
+					</Text>
+				</>
+			)}
+		</RoundedView>
+	);
+};
+
+const SportsUI = ({
+	navigation,
+	activeSportsReservationRecords,
+}: {
+	navigation: RootNav;
+	activeSportsReservationRecords: SportsReservationRecord[] | undefined;
+}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -53,6 +110,23 @@ export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				))}
 			</RoundedView>
+			<View style={{margin: 16}}>
+				<Text
+					style={{
+						fontWeight: "bold",
+						color: colors.text,
+						marginBottom: 8,
+					}}>
+					{getStr("alreadyReserved")}
+				</Text>
+				<SportsReservationCard
+					activeSportsReservationRecords={activeSportsReservationRecords ?? []}
+				/>
+			</View>
 		</ScrollView>
 	);
 };
+
+export const SportsScreen = connect((state: State) => ({
+	...state.reservation,
+}))(SportsUI);

@@ -40,12 +40,17 @@ import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
 import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
 import {LibraryReservationCard} from "./library";
-import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import {
+	setActiveLibBookRecordAction,
+	setActiveSportsReservationRecordAction,
+} from "../../redux/actions/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {setCalendarConfigAction} from "../../redux/actions/config";
+import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
+import {SportsReservationCard} from "./sports";
 
 const iconSize = 40;
 
@@ -237,8 +242,10 @@ const HomeSchedule = ({
 
 export const HomeReservationSection = ({
 	activeLibBookRecords,
+	activeSportsReservationRecords,
 }: {
 	activeLibBookRecords: LibBookRecord[];
+	activeSportsReservationRecords: SportsReservationRecord[];
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
@@ -247,6 +254,10 @@ export const HomeReservationSection = ({
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
 			<LibraryReservationCard activeLibBookRecords={activeLibBookRecords} />
+			<View style={{height: 8}} />
+			<SportsReservationCard
+				activeSportsReservationRecords={activeSportsReservationRecords}
+			/>
 		</View>
 	);
 };
@@ -613,11 +624,15 @@ const getHomeFunctions = (
 interface HomeProps {
 	navigation: RootNav;
 	top5Functions: string[];
-	activeLibBookRecords: LibBookRecord[];
+	activeLibBookRecords: LibBookRecord[] | undefined;
+	activeSportsReservationRecords: SportsReservationRecord[] | undefined;
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
 	updateTop5: (payload: string) => void;
 	setActiveLibBookRecord: (payload: LibBookRecord[]) => void;
+	setActiveSportsReservationRecord: (
+		payload: SportsReservationRecord[],
+	) => void;
 }
 
 const HomeUI = (props: HomeProps) => {
@@ -646,10 +661,14 @@ const HomeUI = (props: HomeProps) => {
 			helper.userId !== "" &&
 				helper.getBookingRecords().then(props.setActiveLibBookRecord);
 			helper.userId !== "" &&
+				helper
+					.getSportsReservationRecords()
+					.then(props.setActiveSportsReservationRecord);
+			helper.userId !== "" &&
 				helper.getCalendar().then((c) => {
 					store.dispatch(setCalendarConfigAction(c));
 				});
-			// To avoid login hazard between getBookingRecords, getCalendar and getCountdown
+			// To avoid login hazard between getBookingRecords, getSportsReservationRecords, getCalendar and getCountdown
 		}, 3000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -660,7 +679,10 @@ const HomeUI = (props: HomeProps) => {
 				{top5}
 			</HomeFunctionSection>
 			<HomeReservationSection
-				activeLibBookRecords={props.activeLibBookRecords}
+				activeLibBookRecords={props.activeLibBookRecords ?? []}
+				activeSportsReservationRecords={
+					props.activeSportsReservationRecords ?? []
+				}
 			/>
 			<HomeScheduleSection
 				baseSchedule={props.baseSchedule}
@@ -684,6 +706,8 @@ export const HomeScreen = connect(
 		updateTop5: (payload: string) => dispatch(top5UpdateAction(payload)),
 		setActiveLibBookRecord: (payload: LibBookRecord[]) =>
 			dispatch(setActiveLibBookRecordAction(payload)),
+		setActiveSportsReservationRecord: (payload: SportsReservationRecord[]) =>
+			dispatch(setActiveSportsReservationRecordAction(payload)),
 	}),
 )(HomeUI);
 

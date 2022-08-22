@@ -12,13 +12,14 @@ import {
 import {RootNav, SportsSelectProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
-import {helper} from "../../redux/store";
+import {helper, store} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {doAlipay} from "../../utils/alipay";
 import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
+import {setActiveSportsReservationRecordAction} from "../../redux/actions/reservation";
 
 export interface SportsSelectParams {
 	info: SportsIdInfo;
@@ -344,7 +345,14 @@ export const SportsSelectScreen = ({
 									return doAlipay(paycode);
 								}
 							})
-							.then(() => navigation.replace("SportsSuccess", params))
+							.then(() => {
+								navigation.replace("SportsSuccess", params);
+								helper
+									.getSportsReservationRecords()
+									.then((r) =>
+										store.dispatch(setActiveSportsReservationRecordAction(r)),
+									);
+							})
 							.catch((e) => {
 								Snackbar.show({
 									text:

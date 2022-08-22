@@ -72,6 +72,7 @@ export default {
 	confirmCancelBooking: "确认要取消预约吗？",
 	cancelSucceeded: "取消成功",
 	noActiveLibBookRecord: "当前无图书馆座位预约",
+	noActiveSportsReservationRecord: "当前无体育场馆预约",
 	bookingHintPrefix: "请您在 ",
 	bookingHintSuffix: " 前完成签到，并在使用结束后签退",
 	socketAvailable: "有插座",
