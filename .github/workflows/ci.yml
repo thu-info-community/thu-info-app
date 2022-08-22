@@ -54,7 +54,7 @@ jobs:
           arguments: assembleRelease
           build-root-directory: android
       - name: Upload artifact
-        if: endsWith(github.ref, 'master')
+        if: endsWith(github.ref, 'patch')
         uses: actions/upload-artifact@v3
         with:
           name: app-release.apk
@@ -95,22 +95,3 @@ jobs:
           asset_path: android/app/build/outputs/apk/release/THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
           asset_name: THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
           asset_content_type: 'application/vnd.android.package-archive'
-  build-ios:
-    needs: install-and-test
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup caching
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            $cache-{{ runner.OS }}-
-      - name: Install dependencies
-        run: |
-          yarn
-          cd ios && pod install && cd ..
-      - name: Build ios app
-        run: |
-          cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Debug -archivePath $PWD/thu_info IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO && cd ..
