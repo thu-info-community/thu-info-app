@@ -58,7 +58,7 @@ import {ReservesLibWelcomeScreen} from "../ui/home/reservesLibWelcome";
 import {ReservesLibPDFScreen} from "../ui/home/reservesLibPDF";
 import {SportsScreen} from "../ui/home/sports";
 import {SportsDetailScreen} from "../ui/home/sportsDetail";
-import {SportsSelectScreen} from "../ui/home/sportsSelect";
+import {SportsSelectParams, SportsSelectScreen} from "../ui/home/sportsSelect";
 import {SportsRecordScreen} from "../ui/home/sportsRecord";
 import {BankPaymentScreen} from "../ui/home/bankPayment";
 import {GitlabHomeScreen, GitlabStarredScreen} from "../ui/home/gitlabHome";
@@ -106,6 +106,8 @@ import {FunctionManagementScreen} from "../ui/settings/functionManagement";
 import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
 import {AppSecretScreen} from "../ui/settings/appSecret";
 import {AppSecretCustomizeScreen} from "../ui/settings/appSecretCustomize";
+import {SportsSelectFieldScreen} from "../ui/home/sportsSelectField";
+import {SportsSelectTitleScreen} from "../ui/home/sportsSelectTitle";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -209,13 +211,10 @@ type HomeStackParamList = {
 	Qzyq: undefined;
 	WasherWeb: undefined;
 	Sports: undefined;
-	SportsDetail: {info: SportsIdInfo; date: string};
-	SportsSelect: {
-		info: SportsIdInfo;
-		date: string;
-		phone: string;
-		availableFields: {id: string; name: string; cost: number}[];
-	};
+	SportsDetail: {info: SportsIdInfo};
+	SportsSelect: SportsSelectParams;
+	SportsSelectField: SportsSelectParams;
+	SportsSelectTitle: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
 	GitLabHome: undefined;
@@ -627,30 +626,24 @@ export const Root = () => {
 			<Stack.Screen
 				name="SportsDetail"
 				component={SportsDetailScreen}
-				options={({route, navigation}) => ({
-					title: route.params.info.name + " " + route.params.date,
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() => navigation.navigate("SportsRecord")}>
-							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
-					),
+				options={({route}) => ({
+					title: route.params.info.name,
 				})}
 			/>
 			<Stack.Screen
 				name="SportsSelect"
 				component={SportsSelectScreen}
-				options={({navigation}) => ({
-					title: getStr("confirmOrder"),
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() => navigation.navigate("SportsRecord")}>
-							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
-					),
-				})}
+				options={{title: getStr("confirmOrder")}}
+			/>
+			<Stack.Screen
+				name="SportsSelectField"
+				component={SportsSelectFieldScreen}
+				options={{title: getStr("selectField")}}
+			/>
+			<Stack.Screen
+				name="SportsSelectTitle"
+				component={SportsSelectTitleScreen}
+				options={{title: getStr("receiptTitle")}}
 			/>
 			<Stack.Screen
 				name="SportsRecord"

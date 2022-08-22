@@ -3,18 +3,18 @@ import {RootNav, SportsDetailProp} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {
 	Alert,
-	FlatList,
 	RefreshControl,
+	ScrollView,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	useColorScheme,
 	View,
 } from "react-native";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 import {NetworkRetry} from "../../components/easySnackbars";
+import dayjs from "dayjs";
+import {RoundedView} from "../../components/views";
 
 interface TimePeriod {
 	description: string;
@@ -29,24 +29,33 @@ export const SportsDetailScreen = ({
 	navigation: RootNav;
 	route: SportsDetailProp;
 }) => {
+	const [dateSelected, setDateSelected] = useState<string | undefined>(
+		undefined,
+	);
 	const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
-	const [phoneInput, setPhoneInput] = useState("");
 	const [resources, setResources] = useState<TimePeriod[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 
+	const today = dayjs();
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	const validDateNum = 4;
+	const format = "YYYY-MM-DD";
+
 	const refresh = () => {
+		if (dateSelected === undefined) {
+			return;
+		}
 		setRefreshing(true);
+		setResources([]);
 		helper
 			.getSportsResources(
 				route.params.info.gymId,
 				route.params.info.itemId,
-				route.params.date,
+				dateSelected,
 			)
 			.then(({data, init, count, phone}) => {
-				setPhoneInput(phone ?? "");
 				setPhoneNumber(phone);
 				if (init <= 0) {
 					Alert.alert(getStr("failure"), getStr("sportsBookUnavailable"));
@@ -98,98 +107,88 @@ export const SportsDetailScreen = ({
 	useEffect(() => {
 		refresh();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dateSelected]);
 
 	return (
-		<>
-			<View
-				style={{
-					paddingHorizontal: 18,
-					flexDirection: "row",
-					alignItems: "center",
-					borderBottomWidth: 1,
-					borderBottomColor: "lightgrey",
-				}}>
-				<Text style={{color: colors.text}}>{getStr("pleaseEnterPhone")}</Text>
-				<TextInput
-					style={{flex: 1}}
-					value={phoneInput}
-					onChangeText={setPhoneInput}
-					textContentType="telephoneNumber"
-					keyboardType="number-pad"
+		<ScrollView
+			style={{flex: 1}}
+			refreshControl={
+				<RefreshControl
+					refreshing={refreshing}
+					onRefresh={refresh}
+					colors={[colors.accent]}
 				/>
-				<TouchableOpacity
-					style={{backgroundColor: "lightgrey", padding: 10}}
-					onPress={() => {
-						Snackbar.show({
-							text: getStr("processing"),
-							duration: Snackbar.LENGTH_SHORT,
-						});
-						const phoneCopy = phoneInput;
-						helper
-							.updateSportsPhoneNumber(phoneCopy)
-							.then(() => {
-								Snackbar.show({
-									text: getStr("sportsPhoneSetSucceed"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-								setPhoneNumber(phoneCopy);
-							})
-							.catch(() =>
-								Snackbar.show({
-									text: getStr("sportsPhoneSetFail"),
-									duration: Snackbar.LENGTH_SHORT,
-								}),
-							);
-					}}>
-					<Text style={{color: "black"}}>{getStr("confirm")}</Text>
-				</TouchableOpacity>
-			</View>
-			<FlatList
-				style={{flex: 1}}
-				refreshControl={
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={refresh}
-						colors={[colors.accent]}
-					/>
-				}
-				data={resources}
-				renderItem={({item, index}) => (
-					<View
-						style={{
-							borderTopColor: "lightgrey",
-							borderTopWidth: 1,
-							borderBottomColor: "lightgrey",
-							borderBottomWidth: index === resources.length - 1 ? 1 : 0,
-						}}>
-						<TouchableOpacity
-							onPress={() =>
-								navigation.navigate("SportsSelect", {
-									info: route.params.info,
-									date: route.params.date,
-									phone: phoneNumber ?? "",
-									availableFields: item.availableFields,
-								})
-							}
-							disabled={item.availableFields.length === 0}>
-							<Text
+			}>
+			<RoundedView
+				style={{marginHorizontal: 12, marginVertical: 24, padding: 16}}>
+				{Array.from(new Array(validDateNum), (_, k) => today.add(k, "day")).map(
+					(date, index) => (
+						<View key={date.format(format)}>
+							{index > 0 && (
+								<View
+									style={{
+										height: 0.5,
+										backgroundColor: colors.themeGrey,
+										marginVertical: 12,
+									}}
+								/>
+							)}
+							<TouchableOpacity
+								onPress={() => setDateSelected(date.format(format))}
 								style={{
-									padding: 10,
-									textDecorationLine:
-										item.availableFields.length === 0 ? "line-through" : "none",
-									color:
-										item.availableFields.length === 0
-											? "lightgrey"
-											: colors.text,
+									flexDirection: "row",
+									alignItems: "center",
 								}}>
-								{item.description} ({item.availableFields.length}/{item.total})
-							</Text>
-						</TouchableOpacity>
-					</View>
+								<Text
+									style={{
+										color: colors.text,
+										fontSize: 16,
+										lineHeight: 24,
+									}}>
+									{date.format(format)} {getStr("dayOfWeek")[date.day()]}
+								</Text>
+							</TouchableOpacity>
+							{date.format(format) === dateSelected &&
+								resources.map((item) => (
+									<View key={`${date.format(format)}-r-${item.description}`}>
+										<View
+											style={{
+												height: 0.5,
+												backgroundColor: colors.themeGrey,
+												marginVertical: 12,
+											}}
+										/>
+										<TouchableOpacity
+											onPress={() =>
+												navigation.navigate("SportsSelect", {
+													info: route.params.info,
+													date: date.format(format),
+													phone: phoneNumber ?? "",
+													period: item.description,
+													availableFields: item.availableFields,
+												})
+											}
+											disabled={item.availableFields.length === 0}>
+											<Text
+												style={{
+													marginLeft: 16,
+													color:
+														item.availableFields.length === 0
+															? colors.fontB3
+															: colors.text,
+													fontSize: 16,
+													lineHeight: 24,
+												}}>
+												{item.description} ({item.availableFields.length}/
+												{item.total})
+											</Text>
+										</TouchableOpacity>
+									</View>
+								))}
+						</View>
+					),
 				)}
-				keyExtractor={({description}) => description}
-			/>
-		</>
+			</RoundedView>
+		</ScrollView>
 	);
 };

@@ -1,7 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
 	Alert,
-	Button,
 	Image,
 	ScrollView,
 	Text,
@@ -16,152 +15,302 @@ import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {doAlipay} from "../../utils/alipay";
-import {
-	VALID_RECEIPT_TITLES,
-	ValidReceiptTypes,
-} from "thu-info-lib/dist/lib/sports";
+import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
+import {RoundedView} from "../../components/views";
+import IconRight from "../../assets/icons/IconRight";
+import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
+
+export interface SportsSelectParams {
+	info: SportsIdInfo;
+	date: string;
+	phone: string;
+	period: string;
+	availableFields: {id: string; name: string; cost: number}[];
+	selectedFieldIndex?: number;
+	receiptTitle?: ValidReceiptTypes;
+}
 
 export const SportsSelectScreen = ({
-	route: {
-		params: {
-			info: {name, gymId, itemId},
-			date,
-			phone,
-			availableFields,
-		},
-	},
+	route: {params},
 	navigation,
 }: {
 	route: SportsSelectProp;
 	navigation: RootNav;
 }) => {
+	const {
+		info: {name, gymId, itemId},
+		date,
+		phone,
+		period,
+		availableFields,
+		selectedFieldIndex,
+		receiptTitle,
+	} = params;
+
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const [field, setField] = useState<{id: string; name: string} | undefined>(
-		undefined,
-	);
+	const [field, setField] = useState<
+		{id: string; name: string; cost: number} | undefined
+	>(undefined);
 	const [title, setTitle] = useState<ValidReceiptTypes | undefined>(undefined);
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
 	const [captcha, setCaptcha] = useState("");
-	const [totalCost, setTotalCost] = useState(0);
+
+	useEffect(() => {
+		if (selectedFieldIndex !== undefined) {
+			setField(availableFields[selectedFieldIndex]);
+		}
+	}, [availableFields, selectedFieldIndex]);
+
+	useEffect(() => {
+		setTitle(receiptTitle);
+	}, [receiptTitle]);
 
 	return (
-		<ScrollView>
-			{!helper.mocked() && (
-				<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-					<Text style={{padding: 10, color: "red"}}>
-						{
-							"该功能为试验性功能，如遇任何问题请第一时间向我们反馈！\n目前观察到的现象是，早上八点使用本软件预约几乎不可能成功，开发人员还在思考怎么解决这个问题，敬请期待……"
-						}
-					</Text>
-				</View>
-			)}
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>{name}</Text>
-			</View>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>{date}</Text>
-			</View>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>{phone}</Text>
-			</View>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>
-					{getStr("selectField")}
-				</Text>
-			</View>
-			{availableFields.map((f) => (
-				<View
-					style={{borderTopColor: "lightgrey", borderTopWidth: 1}}
-					key={f.id}>
-					<TouchableOpacity
-						onPress={() => {
-							setField(f);
-							setTotalCost(f.cost);
-						}}>
-						<Text
-							style={{
-								padding: 10,
-								color:
-									field === undefined
-										? colors.text
-										: f.id === field.id
-										? "blue"
-										: "lightgrey",
-							}}>
-							{f.name} （{f.cost}元）
-						</Text>
-					</TouchableOpacity>
-				</View>
-			))}
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>总计{totalCost}元</Text>
-			</View>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<Text style={{padding: 10, color: colors.text}}>
-					{getStr("receiptTitle")}
-				</Text>
-			</View>
-			<View style={{borderTopColor: "lightgrey", borderTopWidth: 1}}>
-				<TouchableOpacity onPress={() => setTitle(undefined)}>
-					<Text
-						style={{
-							padding: 10,
-							color: title === undefined ? "blue" : "lightgrey",
-						}}>
-						{"不需要发票"}
-					</Text>
-				</TouchableOpacity>
-			</View>
-			{VALID_RECEIPT_TITLES.map((receiptTitle) => (
-				<View
-					style={{borderTopColor: "lightgrey", borderTopWidth: 1}}
-					key={receiptTitle}>
-					<TouchableOpacity onPress={() => setTitle(receiptTitle)}>
-						<Text
-							style={{
-								padding: 10,
-								color: title === receiptTitle ? "blue" : "lightgrey",
-							}}>
-							{receiptTitle}
-						</Text>
-					</TouchableOpacity>
-				</View>
-			))}
-			{!helper.mocked() && (
+		<ScrollView style={{flex: 1}}>
+			<RoundedView style={{marginHorizontal: 12, marginTop: 24, padding: 16}}>
 				<View
 					style={{
-						borderTopColor: "lightgrey",
-						borderTopWidth: 1,
-						borderBottomColor: "lightgrey",
-						borderBottomWidth: 1,
 						flexDirection: "row",
 						alignItems: "center",
+						justifyContent: "space-between",
 					}}>
-					<Image source={{uri: imageUrl}} style={{height: 50, width: 200}} />
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("gym")}
+					</Text>
+					<Text
+						style={{
+							color: colors.fontB3,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{name}
+					</Text>
+				</View>
+				<View
+					style={{
+						height: 0.5,
+						backgroundColor: colors.themeGrey,
+						marginVertical: 12,
+					}}
+				/>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("date")}
+					</Text>
+					<Text
+						style={{
+							color: colors.fontB3,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{date}
+					</Text>
+				</View>
+				<View
+					style={{
+						height: 0.5,
+						backgroundColor: colors.themeGrey,
+						marginVertical: 12,
+					}}
+				/>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("duration")}
+					</Text>
+					<Text
+						style={{
+							color: colors.fontB3,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{period}
+					</Text>
+				</View>
+				<View
+					style={{
+						height: 0.5,
+						backgroundColor: colors.themeGrey,
+						marginVertical: 12,
+					}}
+				/>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("SportsSelectField", params)}
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("field")}
+					</Text>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text
+							style={{
+								color: colors.fontB3,
+								fontSize: 16,
+								lineHeight: 24,
+							}}>
+							{field === undefined
+								? getStr("pleaseSelect")
+								: `${field.name}（${field.cost}元）`}
+						</Text>
+						<IconRight height={24} width={24} />
+					</View>
+				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={{marginHorizontal: 12, marginTop: 16, padding: 16}}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("SportsSelectTitle", params)}
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("receiptTitle")}
+					</Text>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text
+							style={{
+								color: colors.fontB3,
+								fontSize: 16,
+								lineHeight: 24,
+							}}>
+							{title ?? getStr("noReceiptTitle")}
+						</Text>
+						<IconRight height={24} width={24} />
+					</View>
+				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={{marginHorizontal: 12, marginTop: 16, padding: 16}}>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{getStr("phoneNumber")}
+					</Text>
+					<Text
+						style={{
+							color: colors.fontB3,
+							fontSize: 16,
+							lineHeight: 24,
+						}}>
+						{phone}
+					</Text>
+				</View>
+			</RoundedView>
+			{!helper.mocked() && (
+				<RoundedView style={{marginHorizontal: 12, marginTop: 16, padding: 16}}>
 					<TextInput
-						style={{flex: 1}}
+						style={{
+							color: colors.text,
+							padding: 0,
+							fontSize: 16,
+							lineHeight: 24,
+						}}
 						value={captcha}
 						onChangeText={setCaptcha}
 						placeholder={getStr("captchaCaseSensitive")}
 					/>
-					<Button
-						title={getStr("refresh")}
-						onPress={() => setImageUrl(helper.getSportsCaptchaUrl())}
+					<View
+						style={{
+							height: 0.5,
+							backgroundColor: colors.themeGrey,
+							marginVertical: 12,
+						}}
 					/>
-				</View>
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "center",
+						}}>
+						<Image source={{uri: imageUrl}} style={{height: 50, width: 200}} />
+						<TouchableOpacity
+							onPress={() => setImageUrl(helper.getSportsCaptchaUrl())}>
+							<Text
+								style={{
+									color: colors.themePurple,
+									fontSize: 16,
+									lineHeight: 24,
+								}}>
+								{getStr("clickToRefresh")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</RoundedView>
 			)}
+			<Text
+				style={{
+					marginTop: 50,
+					marginRight: 12,
+					alignSelf: "flex-end",
+					fontSize: 16,
+					color: colors.text,
+				}}>
+				{getStr("needToPay")}
+				{field?.cost ?? 0}
+			</Text>
 			<TouchableOpacity
 				style={{
+					padding: 8,
+					justifyContent: "center",
+					alignItems: "center",
+					borderRadius: 4,
+					alignSelf: "flex-end",
+					margin: 12,
 					backgroundColor:
 						field === undefined ||
 						(!helper.mocked() && captcha.trim().length === 0)
 							? "lightgrey"
-							: colors.accent,
-					marginTop: 10,
+							: colors.themePurple,
 				}}
 				onPress={() => {
-					if (totalCost > 42) {
+					if (field && field.cost > 42) {
 						Alert.alert(
 							"无法通过该 APP 预约。",
 							"出于安全考虑，使用本 APP 发起支付请求时，单笔金额不得超过 42 元。",
@@ -175,7 +324,7 @@ export const SportsSelectScreen = ({
 						});
 						helper
 							.makeSportsReservation(
-								totalCost,
+								field.cost,
 								phone,
 								title,
 								gymId,
@@ -213,12 +362,12 @@ export const SportsSelectScreen = ({
 				}>
 				<Text
 					style={{
+						color: "white",
+						fontWeight: "400",
 						fontSize: 20,
-						padding: 10,
-						color: colors.themeBackground,
-						textAlign: "center",
+						lineHeight: 24,
 					}}>
-					{getStr("submit")}
+					{getStr("submitAndPay")}
 				</Text>
 			</TouchableOpacity>
 		</ScrollView>
