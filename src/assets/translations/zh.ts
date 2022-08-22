@@ -323,6 +323,7 @@ export default {
 	pleaseSelect: "请选择",
 	phoneNumber: "手机号",
 	needToPay: "需支付：￥",
+	paid: "支付金额",
 	submitAndPay: "提交并支付",
 	sportsBookUnavailable: "暂未开放网上预约。",
 	sportsBookRestricted:

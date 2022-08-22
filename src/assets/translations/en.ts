@@ -341,6 +341,7 @@ export default {
 	pleaseSelect: "Select",
 	phoneNumber: "Phone",
 	needToPay: "Price: ￥",
+	paid: "Price",
 	submitAndPay: "Submit & Pay",
 	sportsBookUnavailable: "Registration not available",
 	sportsBookRestricted:

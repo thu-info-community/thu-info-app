@@ -344,7 +344,7 @@ export const SportsSelectScreen = ({
 									return doAlipay(paycode);
 								}
 							})
-							.then(() => navigation.pop())
+							.then(() => navigation.replace("SportsSuccess", params))
 							.catch((e) => {
 								Snackbar.show({
 									text:
