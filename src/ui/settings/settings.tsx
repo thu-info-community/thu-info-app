@@ -174,8 +174,8 @@ export const styles = themedStyles(({colors}) => ({
 		fontSize: 16,
 	},
 	separator: {
-		height: 0.5,
-		backgroundColor: colors.fontB3,
+		borderWidth: 0.2,
+		borderColor: colors.themeGrey,
 		marginVertical: 12,
 		marginHorizontal: 16,
 	},

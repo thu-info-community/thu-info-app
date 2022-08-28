@@ -171,9 +171,9 @@ const LibraryUI = ({
 								{index > 0 && (
 									<View
 										style={{
-											height: 0.5,
+											borderWidth: 0.2,
 											marginHorizontal: 16,
-											backgroundColor: colors.fontB3,
+											borderColor: colors.themeGrey,
 										}}
 									/>
 								)}
