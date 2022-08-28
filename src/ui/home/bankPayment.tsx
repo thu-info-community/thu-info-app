@@ -82,8 +82,8 @@ export const BankPaymentScreen = () => {
 										{index > 0 && (
 											<View
 												style={{
-													height: 0.5,
-													backgroundColor: colors.fontB3,
+													borderWidth: 0.2,
+													borderColor: colors.themeGrey,
 													margin: 12,
 												}}
 											/>

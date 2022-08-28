@@ -127,8 +127,8 @@ export const SportsDetailScreen = ({
 							{index > 0 && (
 								<View
 									style={{
-										height: 0.5,
-										backgroundColor: colors.themeGrey,
+										borderWidth: 0.2,
+										borderColor: colors.themeGrey,
 										marginVertical: 12,
 									}}
 								/>
@@ -153,8 +153,8 @@ export const SportsDetailScreen = ({
 									<View key={`${date.format(format)}-r-${item.description}`}>
 										<View
 											style={{
-												height: 0.5,
-												backgroundColor: colors.themeGrey,
+												borderWidth: 0.2,
+												borderColor: colors.themeGrey,
 												marginVertical: 12,
 											}}
 										/>
