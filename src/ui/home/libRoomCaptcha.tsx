@@ -1,8 +1,7 @@
-import {TextInput, View, Text, Image} from "react-native";
+import {TextInput, View, Text, Image, TouchableOpacity} from "react-native";
 import React, {useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
-import {TouchableOpacity} from "react-native-gesture-handler";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
 import Icon from "react-native-vector-icons/FontAwesome";

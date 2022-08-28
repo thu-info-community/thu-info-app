@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import {View} from "react-native";
+import {TouchableWithoutFeedback, View} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import {TouchableWithoutFeedback} from "react-native-gesture-handler";
 import {InputTag} from "thu-info-lib/dist/models/home/assessment";
 
 interface starRatingProps {

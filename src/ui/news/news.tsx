@@ -6,9 +6,10 @@ import {
 	Dimensions,
 	ScrollView,
 	TextInput,
+	FlatList,
+	TouchableOpacity,
 } from "react-native";
 import React, {useState, useEffect} from "react";
-import {FlatList, TouchableOpacity} from "react-native-gesture-handler";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
