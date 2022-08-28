@@ -208,7 +208,6 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                 throw new ProgramError("检测到未知层级课程");
             }
 
-            console.log(JSON.stringify(program));
             return program;
         }),
         MOCK_PROGRAM,
