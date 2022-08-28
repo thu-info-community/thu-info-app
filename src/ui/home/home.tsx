@@ -648,9 +648,7 @@ const HomeUI = (props: HomeProps) => {
 		"classroomState",
 		"reserve",
 		"finance",
-		"reservesLib",
 		"dormitory",
-		"cr",
 	];
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
 		homeFunctions.find((y) => y.key === x),
