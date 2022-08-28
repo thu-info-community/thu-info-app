@@ -1,10 +1,9 @@
 import React from "react";
-import {View, Text} from "react-native";
+import {View, Text, TouchableOpacity} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import IconRight from "../../assets/icons/IconRight";
 import IconCheckGrey from "../../assets/icons/IconCheckGrey";
-import {TouchableOpacity} from "react-native-gesture-handler";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
 

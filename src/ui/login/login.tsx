@@ -1,11 +1,16 @@
-import {TextInput, View, Text, ActivityIndicator} from "react-native";
+import {
+	TextInput,
+	View,
+	Text,
+	ActivityIndicator,
+	TouchableOpacity,
+} from "react-native";
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {currState, helper, State, store} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
 import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
-import {TouchableOpacity} from "react-native-gesture-handler";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";

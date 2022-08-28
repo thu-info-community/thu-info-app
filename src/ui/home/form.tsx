@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Text, View, RefreshControl} from "react-native";
-import Snackbar from "react-native-snackbar";
-import {getStr} from "src/utils/i18n";
 import {
+	Text,
+	View,
+	RefreshControl,
 	TextInput,
 	ScrollView,
 	TouchableOpacity,
-} from "react-native-gesture-handler";
+} from "react-native";
+import Snackbar from "react-native-snackbar";
+import {getStr} from "src/utils/i18n";
 import {StarRating} from "src/components/home/form";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, RootNav} from "../../components/Root";
