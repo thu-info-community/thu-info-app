@@ -1,6 +1,7 @@
 import cheerio from "cheerio";
 import {PROGRAM_URL} from "../constants/strings";
 import {InfoHelper} from "../index";
+import {MOCK_PROGRAM} from "../mocks/program";
 import {CourseItem, CourseSet, CourseState, CourseType, Program} from "../models/program/program";
 import {getTrimmedData} from "../utils/cheerio";
 import {ProgramError} from "../utils/error";
@@ -51,6 +52,9 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                 getSubstr(basicInfoStr, "重复课程：", "属于多个课组")
                     .replace(/[\t{&#034;}]/g, "")
                     .split("、");
+            const excludedCredit = parseInt(
+                getSubstr(str, "本科生已修培养方案外课程完成总学分：", "<b></strong>"), 10
+            );
 
             const mayFailParseInt = (x: string): number | undefined => {
                 if (x === "") {
@@ -89,18 +93,18 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                 let state = CourseState.COMPLETED;
                 let grade: string | undefined = gradeOrState;
                 if (gradeOrState === "未修") {
-                    state = CourseState.NOT_ELECTED;
+                    state = CourseState.NOT_COMPLETED;
                     grade = undefined;
                 } else if (gradeOrState === "选课") {
                     state = CourseState.ELECTED;
                     grade = undefined;
-                } else if (gradeOrState === "W") {
-                    state = CourseState.NOT_ELECTED;
-                    grade = "W";
+                } else if (gradeOrState === "W" || gradeOrState === "F" || gradeOrState === "I") {
+                    state = CourseState.NOT_COMPLETED;
+                    grade = gradeOrState;
                 }
 
                 const course: CourseItem = {
-                    id: parseInt(getTrimmedData(element, [level, 1, 0]), 10),
+                    id: getTrimmedData(element, [level, 1, 0]),
                     name: courseName,
                     credit: parseInt(getTrimmedData(element, [level + 2, 1, 0]), 10),
                     point: mayFailParseFloat(getTrimmedData(element, [level + 4, 0])),
@@ -173,7 +177,7 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                                 const credit = parseInt(getTrimmedData(element, [3, 0, 0]), 10);
                                 const grade = getTrimmedData(element, [5, 1, 0]);
                                 const course: CourseItem = {
-                                    id: parseInt(idStr, 10),
+                                    id: idStr,
                                     name: getTrimmedData(element, [2, 0, 0]),
                                     credit: credit,
                                     point: mayFailParseFloat(getTrimmedData(element, [6, 0, 0])),
@@ -182,16 +186,12 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
                                 };
 
                                 program.courseSet[program.courseSet.length - 1].course.push(course);
-                                if (grade !== "W") {
-                                    (program.courseSet[program.courseSet.length - 1].completedCredit as number)
-                                        += credit;
-                                }
                             } else {
                                 const courseSet: CourseSet = {
                                     setName: "方案外课程",
                                     type: CourseType.EXCLUDED,
                                     course: [], // 稍后填充
-                                    completedCredit: 0, // 稍后计算
+                                    completedCredit: excludedCredit,
                                     fullCompleted: false,
                                 };
 
@@ -207,16 +207,9 @@ export const getDegreeProgram = async (helper: InfoHelper) =>
             if (illegalCourseLevelFlag) {
                 throw new ProgramError("检测到未知层级课程");
             }
-            
+
             console.log(JSON.stringify(program));
             return program;
         }),
-        {
-            completedCredit: 0,
-            compulsoryCredit: 0,
-            restrictedCredit: 0,
-            electiveCredit: 0,
-            duplicatedCourse: [],
-            courseSet: []
-        }, // TODO: Mock!
+        MOCK_PROGRAM,
     );

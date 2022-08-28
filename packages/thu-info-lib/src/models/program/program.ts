@@ -1,11 +1,11 @@
 export enum CourseState {
     COMPLETED,
     ELECTED,
-    NOT_ELECTED,
+    NOT_COMPLETED,
 }
 
 export interface CourseItem {
-    id: number,
+    id: string,
     name: string,
     credit: number,
     point?: number, // 未修课程、退课课程、选课中课程、PF 课程不应当具有绩点
