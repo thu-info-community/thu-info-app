@@ -22,7 +22,6 @@ import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
-import {CabTimeoutError} from "thu-info-lib/dist/utils/error";
 
 interface Segment {
 	start: string;
@@ -430,11 +429,14 @@ export const LibRoomPerformBookScreen = ({
 							duration: Snackbar.LENGTH_SHORT,
 						});
 						helper
-							.bookLibraryRoom(
-								res,
-								`${date} ${begValue}`,
-								`${date} ${endValue}`,
-								res.maxUser > 1 ? members.map((it) => it.id) : [],
+							.loginLibraryRoomBooking("")
+							.then(() =>
+								helper.bookLibraryRoom(
+									res,
+									`${date} ${begValue}`,
+									`${date} ${endValue}`,
+									res.maxUser > 1 ? members.map((it) => it.id) : [],
+								),
 							)
 							.then(({success, msg}) => {
 								Snackbar.show({text: msg, duration: Snackbar.LENGTH_LONG});
@@ -444,14 +446,10 @@ export const LibRoomPerformBookScreen = ({
 								}
 							})
 							.catch((e) => {
-								if (e instanceof CabTimeoutError) {
-									navigation.navigate("LibRoomCaptcha");
-								} else {
-									Snackbar.show({
-										text: getStr("networkRetry") + e?.message,
-										duration: Snackbar.LENGTH_LONG,
-									});
-								}
+								Snackbar.show({
+									text: getStr("networkRetry") + e?.message,
+									duration: Snackbar.LENGTH_LONG,
+								});
 							});
 					}}
 					disabled={
