@@ -20,6 +20,7 @@ import {
 	StackNavigationProp,
 } from "@react-navigation/stack";
 import {
+	LibName,
 	Library,
 	LibraryFloor,
 	LibrarySection,
@@ -109,6 +110,7 @@ import {AppSecretCustomizeScreen} from "../ui/settings/appSecretCustomize";
 import {SportsSelectFieldScreen} from "../ui/home/sportsSelectField";
 import {SportsSelectTitleScreen} from "../ui/home/sportsSelectTitle";
 import {SportsSuccessScreen} from "../ui/home/sportsSuccess";
+import {LibRoomSelectScreen} from "../ui/home/libRoomSelect";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -200,7 +202,8 @@ type HomeStackParamList = {
 	LibrarySeatMap: {section: LibrarySection};
 	LibBookRecord: undefined;
 	LibRoomCaptcha: undefined;
-	LibRoomBook: undefined;
+	LibRoomSelect: undefined;
+	LibRoomBook: {dateOffset: number; libName: LibName};
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
 	Dorm: undefined;
@@ -254,6 +257,7 @@ export type LibrarySeatMapRouteProp = RouteProp<
 	HomeStackParamList,
 	"LibrarySeatMap"
 >;
+export type LibRoomBookProp = RouteProp<HomeStackParamList, "LibRoomBook">;
 export type LibRoomPerformBookProp = RouteProp<
 	HomeStackParamList,
 	"LibRoomPerformBook"
@@ -509,8 +513,8 @@ export const Root = () => {
 				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen
-				name="LibRoomBook"
-				component={LibRoomBookScreen}
+				name="LibRoomSelect"
+				component={LibRoomSelectScreen}
 				options={({navigation}) => ({
 					title: getStr("libRoomBook"),
 					headerRight: () => (
@@ -521,6 +525,11 @@ export const Root = () => {
 						</TouchableOpacity>
 					),
 				})}
+			/>
+			<Stack.Screen
+				name="LibRoomBook"
+				component={LibRoomBookScreen}
+				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen
 				name="LibRoomPerformBook"

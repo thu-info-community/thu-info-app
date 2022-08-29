@@ -518,7 +518,7 @@ const getHomeFunctions = (
 		title="libRoomBook"
 		onPress={() => {
 			updateTop5("libRoomBook");
-			navigation.navigate("LibRoomBook");
+			navigation.navigate("LibRoomSelect");
 		}}>
 		<IconLibRoom width={iconSize} height={iconSize} />
 	</HomeIcon>,
