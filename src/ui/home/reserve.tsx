@@ -33,7 +33,7 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="libRoomBook"
 					icon={<IconLibRoom />}
 					onPress={() => {
-						navigation.navigate("LibRoomBook");
+						navigation.navigate("LibRoomSelect");
 					}}
 				/>
 			</View>
