@@ -18,6 +18,7 @@ export const colorDark: ColorTheme = {
 	statusNormal: "", //TODO
 	statusDisabled: {rgb: "#999999", alpha: 0.3},
 	statusWarning: "#FF3B30",
+	statusWarningOpacity: "#FF3B3019",
 	themeGreen: "#34C759",
 	themeBlue: "#007AFF",
 	themePurple: "#8B55E4",
