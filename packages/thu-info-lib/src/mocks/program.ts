@@ -365,4 +365,4 @@ export const MOCK_PROGRAM = {
             fullCompleted: false
         }
     ]
-}
+};
