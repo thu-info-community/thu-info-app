@@ -2,7 +2,6 @@ import {
 	Text,
 	View,
 	RefreshControl,
-	ActivityIndicator,
 	Dimensions,
 	ScrollView,
 	TextInput,
@@ -15,14 +14,72 @@ import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {
-	NewsSlice,
-	SourceTag,
-	sourceTags,
-} from "thu-info-lib/dist/models/news/news";
+import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native";
-import themedStyles from "../../utils/themedStyles";
-import {SettingsLargeButton} from "../../components/settings/items";
+import IconSearch from "../../assets/icons/IconSearch";
+import IconStar from "../../assets/icons/IconStar";
+
+type Category =
+	| "catPublicInformation"
+	| "catStudyAndResearch"
+	| "catStudentAffairs"
+	| "catCampusLife"
+	| "catEmploymentInformation";
+
+const categoryChannelGroups: {category: Category; channels: SourceTag[]}[] = [
+	{
+		category: "catPublicInformation",
+		channels: ["LM_ZYGG", "LM_YQFKZT", "LM_BGTG", "LM_HB"],
+	},
+	{
+		category: "catStudyAndResearch",
+		channels: ["LM_JWGG", "LM_TTGGG", "LM_KYTZ"],
+	},
+	{category: "catStudentAffairs", channels: ["LM_XSBGGG", "LM_XJ_XTWBGTZ"]},
+	{category: "catCampusLife", channels: ["LM_XJ_XSSQDT"]},
+	{
+		category: "catEmploymentInformation",
+		channels: ["LM_JYGG", "LM_JYZPXX", "LM_XJ_GJZZSXRZ"],
+	},
+];
+
+const CategoryTag = ({
+	category,
+	selected,
+	onPress,
+}: {
+	category: Category | undefined;
+	selected: boolean;
+	onPress: () => void;
+}) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
+	return (
+		<TouchableOpacity
+			style={{alignItems: "center", marginVertical: 12, marginHorizontal: 8}}
+			onPress={onPress}
+			disabled={selected}>
+			<Text
+				style={{
+					fontSize: 16,
+					fontWeight: selected ? "600" : "400",
+					color: selected ? colors.text : colors.fontB2,
+				}}>
+				{getStr(category ?? "all")}
+			</Text>
+			<View
+				style={{
+					height: 2,
+					width: 24,
+					borderRadius: 1,
+					marginVertical: 2,
+					backgroundColor: selected ? colors.themePurple : undefined,
+				}}
+			/>
+		</TouchableOpacity>
+	);
+};
 
 const ChannelTag = ({
 	channel,
@@ -38,25 +95,25 @@ const ChannelTag = ({
 
 	return (
 		<TouchableOpacity
-			style={{alignItems: "center", marginHorizontal: 6}}
+			style={{
+				alignItems: "center",
+				marginVertical: 4,
+				marginHorizontal: 2,
+				borderRadius: 20,
+				borderWidth: 1,
+				borderColor: selected ? colors.themePurple : colors.themeGrey,
+				paddingHorizontal: 8,
+				paddingVertical: 2,
+			}}
 			onPress={onPress}
 			disabled={selected}>
 			<Text
 				style={{
-					fontSize: 15,
-					color: selected ? colors.primaryLight : colors.text,
+					fontSize: 14,
+					color: selected ? colors.themePurple : colors.fontB2,
 				}}>
 				{getStr(channel ?? "all")}
 			</Text>
-			<View
-				style={{
-					height: 2,
-					width: 12,
-					borderRadius: 1,
-					margin: 2,
-					backgroundColor: selected ? colors.primaryLight : undefined,
-				}}
-			/>
 		</TouchableOpacity>
 	);
 };
@@ -68,12 +125,16 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [page, setPage] = useState(1);
 	const [inSearchMode, setInSearchMode] = useState(false);
 	const [searchKey, setSearchKey] = useState("");
-	const [channel, setChannel] = useState<SourceTag | undefined>();
+	const [categorySelected, setCategorySelected] = useState<
+		Category | undefined
+	>();
+	const [channelSelected, setChannelSelected] = useState<
+		SourceTag | undefined
+	>();
 	const [fetchedAll, setFetchedAll] = useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const style = styles(themeName);
 
 	const fetchNewsList = (
 		request: boolean = true,
@@ -103,8 +164,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 		(searchMode === true ||
 		(searchMode === undefined && !request && inSearchMode)
-			? helper.searchNewsList(request ? 1 : page + 1, searchKey, channel)
-			: helper.getNewsList(request ? 1 : page + 1, 30, channel)
+			? helper.searchNewsList(
+					request ? 1 : page + 1,
+					searchKey,
+					channelSelected,
+					// eslint-disable-next-line no-mixed-spaces-and-tabs
+			  )
+			: helper.getNewsList(request ? 1 : page + 1, 30, channelSelected)
 		)
 			.then((res) => {
 				if (res.length === 0) {
@@ -126,68 +192,114 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(fetchNewsList, [channel]);
+	useEffect(fetchNewsList, [channelSelected]);
+
+	useEffect(() => {
+		if (categorySelected === undefined) {
+			setChannelSelected(undefined);
+		} else {
+			setChannelSelected(
+				categoryChannelGroups.find(
+					({category}) => category === categorySelected,
+				)?.channels?.[0],
+			);
+		}
+	}, [categorySelected]);
 
 	let screenHeight = Dimensions.get("window");
-	const flatListRef = React.useRef(null);
 
 	return (
-		<View style={{marginHorizontal: 12}}>
-			<ScrollView
-				style={{margin: 6}}
-				showsHorizontalScrollIndicator={false}
-				horizontal={true}>
-				<ChannelTag
-					channel={undefined}
-					selected={channel === undefined}
-					onPress={() => setChannel(undefined)}
-				/>
-				{sourceTags.map((tag) => (
-					<ChannelTag
-						key={tag}
-						channel={tag}
-						selected={channel === tag}
-						onPress={() => setChannel(tag)}
+		<View style={{flex: 1}}>
+			<View style={{flex: 0}}>
+				<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
+					<CategoryTag
+						category={undefined}
+						selected={categorySelected === undefined}
+						onPress={() => setCategorySelected(undefined)}
 					/>
-				))}
-			</ScrollView>
+					{categoryChannelGroups.map(({category}) => (
+						<CategoryTag
+							key={category}
+							category={category}
+							selected={categorySelected === category}
+							onPress={() => setCategorySelected(category)}
+						/>
+					))}
+				</ScrollView>
+			</View>
+			{categorySelected === undefined ? (
+				<View
+					style={{
+						flex: 0,
+						flexDirection: "row",
+						marginLeft: 28,
+						marginTop: 4,
+						marginRight: 12,
+						alignItems: "center",
+					}}>
+					<TextInput
+						value={searchKey}
+						onChangeText={setSearchKey}
+						style={{
+							flex: 1,
+							textAlignVertical: "center",
+							fontSize: 14,
+							paddingVertical: 4,
+							paddingLeft: 39,
+							backgroundColor: theme.colors.themeBackground,
+							color: theme.colors.fontB3,
+							borderColor: theme.colors.themePurple,
+							borderWidth: 1.5,
+							borderRadius: 20,
+						}}
+						placeholder={getStr("searchNewsPrompt")}
+						onEndEditing={() => {
+							if (!refreshing && !loading) {
+								fetchNewsList(true, searchKey !== "");
+							}
+						}}
+					/>
+					<View style={{position: "absolute", left: 12}}>
+						<IconSearch height={18} width={18} />
+					</View>
+					<TouchableOpacity style={{marginLeft: 8}}>
+						<IconStar height={18} width={18} />
+					</TouchableOpacity>
+				</View>
+			) : (
+				<View
+					style={{
+						flex: 0,
+						flexDirection: "row",
+						marginTop: 4,
+						marginHorizontal: 12,
+						alignItems: "center",
+					}}>
+					<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
+						{categoryChannelGroups
+							.find(({category}) => category === categorySelected)
+							?.channels.map((channel) => (
+								<ChannelTag
+									key={channel}
+									channel={channel}
+									onPress={() => setChannelSelected(channel)}
+									selected={channelSelected === channel}
+								/>
+							))}
+					</ScrollView>
+					<TouchableOpacity style={{marginLeft: 8}}>
+						<IconStar height={18} width={18} />
+					</TouchableOpacity>
+				</View>
+			)}
 			<FlatList
-				ref={flatListRef}
+				style={{flex: 1, margin: 12, marginBottom: 0}}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
 						colors={[theme.colors.accent]}
 					/>
-				}
-				ListHeaderComponent={
-					<View style={{flexDirection: "row"}}>
-						<TextInput
-							value={searchKey}
-							onChangeText={setSearchKey}
-							style={{
-								flex: 3,
-								marginLeft: 12,
-								textAlignVertical: "center",
-								fontSize: 15,
-								paddingHorizontal: 12,
-								backgroundColor: theme.colors.themeBackground,
-								color: theme.colors.text,
-								borderColor: "#CCC",
-								borderWidth: 1,
-								borderRadius: 5,
-							}}
-							placeholder={getStr("searchNewsPrompt")}
-						/>
-						<SettingsLargeButton
-							text={getStr("search")}
-							onPress={() => {
-								fetchNewsList(true, searchKey !== "");
-							}}
-							disabled={refreshing || loading}
-							redText={false}
-						/>
-					</View>
 				}
 				ListEmptyComponent={
 					<View
@@ -212,86 +324,87 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				data={newsList}
 				keyExtractor={(item) => item.url}
 				renderItem={({item}) => (
-					<View style={style.newsSliceContainer}>
-						<TouchableOpacity
-							onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
-							<Text
-								numberOfLines={2}
-								style={{
-									fontSize: 16,
-									fontWeight: "bold",
-									margin: 5,
-									lineHeight: 20,
-									color: theme.colors.text,
-								}}>
-								{item.name.trim()}
-							</Text>
-							<View
-								style={{margin: 5, flexDirection: "row", alignItems: "center"}}>
-								{item.source.length > 0 && (
-									<>
-										<Text
-											style={{fontWeight: "bold", color: theme.colors.text}}>
-											{item.source}
-										</Text>
-										<View
-											style={{
-												marginHorizontal: 6,
-												height: 12,
-												width: 4,
-												borderRadius: 2,
-												backgroundColor: theme.colors.accent,
-											}}
-										/>
-									</>
-								)}
-								<Text style={{fontWeight: "bold", color: theme.colors.text}}>
-									{getStr(item.channel)}
-								</Text>
-							</View>
-							<Text style={{color: "gray", margin: 5}}>
-								{item.date}
-								{item.topped && (
-									<Text style={{color: "red"}}>
-										{"   "}
-										{getStr("topped")}
+					<TouchableOpacity
+						style={{
+							backgroundColor: theme.colors.contentBackground,
+							justifyContent: "center",
+							paddingVertical: 12,
+							paddingHorizontal: 16,
+							marginVertical: 4,
+							borderRadius: 8,
+						}}
+						onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
+						<Text
+							numberOfLines={3}
+							style={{
+								fontSize: 16,
+								fontWeight: "600",
+								lineHeight: 20,
+								color: theme.colors.fontB1,
+							}}>
+							{item.name.trim()}
+						</Text>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								marginTop: 12,
+							}}>
+							{item.source.length > 0 && (
+								<>
+									<Text
+										style={{
+											fontWeight: "600",
+											color: theme.colors.fontB2,
+											fontSize: 12,
+										}}>
+										{item.source}
 									</Text>
-								)}
+									<View
+										style={{
+											marginHorizontal: 6,
+											height: 11,
+											width: 3,
+											borderRadius: 1.5,
+											backgroundColor: theme.colors.accent,
+										}}
+									/>
+								</>
+							)}
+							<Text
+								style={{
+									fontWeight: "600",
+									color: theme.colors.fontB2,
+									fontSize: 12,
+								}}>
+								{getStr(item.channel)}
 							</Text>
-						</TouchableOpacity>
-					</View>
+							{item.topped && (
+								<View
+									style={{
+										marginLeft: 8,
+										borderColor: theme.colors.statusWarning,
+										backgroundColor: theme.colors.statusWarningOpacity,
+										borderWidth: 1,
+										borderRadius: 20,
+										paddingHorizontal: 8,
+									}}>
+									<Text>
+										<Text
+											style={{color: theme.colors.statusWarning, fontSize: 11}}>
+											{getStr("topped")}
+										</Text>
+									</Text>
+								</View>
+							)}
+							<View style={{flex: 1}} />
+							<Text style={{color: theme.colors.fontB2}}>{item.date}</Text>
+						</View>
+					</TouchableOpacity>
 				)}
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
-				ListFooterComponent={
-					loading && newsList.length !== 0 ? (
-						<View style={style.footerContainer}>
-							<ActivityIndicator size="small" />
-							<Text style={{margin: 10, color: theme.colors.text}}>
-								{getStr("loading")}
-							</Text>
-						</View>
-					) : null
-				}
 			/>
 		</View>
 	);
 };
-
-const styles = themedStyles(({colors}) => ({
-	newsSliceContainer: {
-		backgroundColor: colors.contentBackground,
-		justifyContent: "center",
-		padding: 6,
-		marginVertical: 6,
-		borderRadius: 5,
-	},
-
-	footerContainer: {
-		flexDirection: "row",
-		alignSelf: "stretch",
-		height: 80,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-}));
