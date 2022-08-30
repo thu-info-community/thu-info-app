@@ -85,7 +85,7 @@
 		"@types/md5": "2.3.2",
 		"@types/react-native": "0.69.6",
 		"@types/react-native-modal-dropdown": "0.7.2",
-		"@types/react-native-vector-icons": "6.4.11",
+		"@types/react-native-vector-icons": "6.4.12",
 		"@types/react-test-renderer": "18.0.0",
 		"@types/semver": "7.3.12",
 		"babel-jest": "29.0.1",
