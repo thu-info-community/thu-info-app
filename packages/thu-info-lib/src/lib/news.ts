@@ -210,7 +210,7 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
             const redirectUrl = await getRedirectUrl(url);
             const fileIdPos = redirectUrl.indexOf("fileId=");
             const fileId = redirectUrl.substring(fileIdPos + 7);
-            return await handlePdfNews(fileId)
+            return await handlePdfNews(fileId);
         } else {
             return await getNewsDetailOld(await getRedirectUrl(url), false);
         }
