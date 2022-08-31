@@ -18,6 +18,7 @@ export const colorLight: ColorTheme = {
 	statusDisabled: {rgb: "#999999", alpha: 0.3},
 	statusWarning: "#FF3B30",
 	statusWarningOpacity: "#FF3B3019",
+	statusError: "#DF1515",
 	themeGreen: "#34C759",
 	themeBlue: "#007AFF",
 	themePurple: "#8B55E4",

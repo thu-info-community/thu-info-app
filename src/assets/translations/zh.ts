@@ -391,6 +391,8 @@ export default {
 		"\n\n点击“确认”则会覆盖已有计划（如果自定义计划所有时间段均被覆盖，这个计划会被删除），点击“取消”放弃恢复计划",
 	delSchedule: "删除",
 	hideSchedule: "隐藏",
+	hideScheduleText: "隐藏计划",
+	hideScheduleConfirmationText: "您确定要隐藏此计划吗？此为重复计划。",
 	allTime: "所有时段该计划",
 	repeatly: "每周同时段该计划",
 	once: "该时段计划",

@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import {View, Text, TouchableOpacity} from "react-native";
+import {View, Text, TouchableOpacity, Modal} from "react-native";
 import React, {useState} from "react";
 import {Choice} from "src/redux/reducers/schedule";
 import {scheduleDelOrHideAction} from "../../redux/actions/schedule";
@@ -9,7 +9,7 @@ import {getStr} from "src/utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
-import {ScheduleDetailRouteProp} from "../../components/Root";
+import {RootNav, ScheduleDetailRouteProp} from "../../components/Root";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
@@ -69,12 +69,14 @@ export interface ScheduleDetailProps {
 }
 
 export const ScheduleDetailScreen = ({
+	navigation,
 	route,
 }: {
+	navigation: RootNav;
 	route: ScheduleDetailRouteProp;
 }) => {
 	const props = route.params;
-	const [delPressed, setDelPressed] = useState<boolean>(false);
+	const [delPopupShow, setDelPopupShow] = useState<boolean>(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -95,21 +97,8 @@ export const ScheduleDetailScreen = ({
 				: verbText + getStr("once");
 		return (
 			<TouchableOpacity
-				style={{
-					borderRadius: 2,
-					backgroundColor: "white",
-					alignSelf: "stretch",
-					justifyContent: "center",
-					alignItems: "center",
-					shadowColor: "gray",
-					shadowOpacity: 0.8,
-					shadowRadius: 2,
-					shadowOffset: {height: 2, width: 2},
-					margin: 5,
-					padding: 12,
-				}}
 				onPress={() => {
-					setDelPressed(true);
+					setDelPopupShow(false);
 					store.dispatch(
 						scheduleDelOrHideAction([
 							props.name,
@@ -124,17 +113,13 @@ export const ScheduleDetailScreen = ({
 							choice,
 						]),
 					);
-				}}
-				disabled={delPressed}>
+					navigation.pop();
+				}}>
 				<Text
 					style={{
-						fontWeight: "bold",
-						fontSize: 18,
-						color: delPressed
-							? "gray"
-							: choice === Choice.ALL
-							? "red"
-							: "black",
+						textAlign: "center",
+						fontSize: 20,
+						color: colors.text,
 					}}>
 					{buttonText}
 				</Text>
@@ -206,9 +191,91 @@ export const ScheduleDetailScreen = ({
 				}}
 			/>
 			<View style={{flex: 1}} />
-			{delButton(Choice.ONCE)}
-			{delButton(Choice.REPEAT)}
-			{delButton(Choice.ALL)}
+			<TouchableOpacity
+				onPress={() => setDelPopupShow(true)}
+				style={{
+					alignSelf: "stretch",
+					justifyContent: "center",
+					alignItems: "center",
+					margin: 12,
+					padding: 12,
+				}}>
+				<Text style={{color: colors.statusError, fontSize: 20}}>
+					{getStr("hideScheduleText")}
+				</Text>
+			</TouchableOpacity>
+			<Modal visible={delPopupShow} transparent>
+				<TouchableOpacity
+					onPress={() => setDelPopupShow(false)}
+					style={{
+						width: "100%",
+						height: "100%",
+						justifyContent: "flex-end",
+					}}>
+					<View
+						style={{
+							position: "absolute",
+							backgroundColor: colors.fontB1,
+							opacity: 0.1,
+							top: 0,
+							bottom: 0,
+							left: 0,
+							right: 0,
+						}}
+					/>
+					<RoundedView
+						style={{marginHorizontal: 7, backgroundColor: "#FFFFFF55"}}>
+						<Text
+							style={{
+								color: colors.text,
+								fontWeight: "600",
+								fontSize: 13,
+								textAlign: "center",
+								marginTop: 13,
+							}}>
+							{getStr("hideScheduleConfirmationText")}
+						</Text>
+						<View
+							style={{
+								height: 1,
+								backgroundColor: "#00000033",
+								marginVertical: 15,
+							}}
+						/>
+						{delButton(Choice.ONCE)}
+						<View
+							style={{
+								height: 1,
+								backgroundColor: "#00000033",
+								marginVertical: 15,
+							}}
+						/>
+						{delButton(Choice.REPEAT)}
+						<View
+							style={{
+								height: 1,
+								backgroundColor: "#00000033",
+								marginVertical: 15,
+							}}
+						/>
+						{delButton(Choice.ALL)}
+					</RoundedView>
+					<TouchableOpacity
+						onPress={() => setDelPopupShow(false)}
+						style={{margin: 7}}>
+						<RoundedView style={{padding: 16, alignItems: "center"}}>
+							<Text
+								style={{
+									color: colors.statusWarning,
+									fontWeight: "bold",
+									fontSize: 20,
+								}}>
+								{getStr("cancel")}
+							</Text>
+						</RoundedView>
+					</TouchableOpacity>
+				</TouchableOpacity>
+			</Modal>
 		</RoundedView>
 	);
 };
