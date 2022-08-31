@@ -88,6 +88,7 @@ interface PopupProps {
 	popupCanFulfill: boolean;
 	popupOnFulfilled: () => void;
 	popupOnCancelled: () => void;
+	popupOnTriggered?: () => void;
 }
 
 export const BottomPopupTriggerView = (
@@ -97,7 +98,10 @@ export const BottomPopupTriggerView = (
 	const {colors} = themes(themeName);
 	const touchableProps = {
 		...props,
-		onPress: () => setOpen(true),
+		onPress: () => {
+			props.popupOnTriggered?.();
+			setOpen(true);
+		},
 		popupTitle: undefined,
 	};
 

@@ -4,7 +4,6 @@ import {
 	RefreshControl,
 	ScrollView,
 	Text,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
@@ -13,8 +12,9 @@ import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {Record} from "thu-info-lib/dist/models/home/expenditure";
 import {useColorScheme} from "react-native";
-import {RoundedView} from "../../components/views";
-import Icon from "react-native-vector-icons/FontAwesome";
+import {BottomPopupTriggerView, RoundedView} from "../../components/views";
+import IconDown from "../../assets/icons/IconDown";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 const ExpenditureCard = ({record}: {record: Record}) => {
 	const themeName = useColorScheme();
@@ -63,6 +63,11 @@ export const ExpenditureScreen = () => {
 
 	const [refreshing, setRefreshing] = useState(false);
 
+	const [popupYear, setPopupYear] = useState<number>();
+	const [popupMonth, setPopupMonth] = useState<number>();
+	const [filterYear, setFilterYear] = useState<number | undefined>();
+	const [filterMonth, setFilterMonth] = useState<number | undefined>();
+
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -84,6 +89,14 @@ export const ExpenditureScreen = () => {
 			ymList.unshift({year, month, records: [record]});
 		}
 	}
+
+	const years = Array.from(new Set(ymList.map(({year}) => year)));
+	const yearsSorted = [...years].sort((a, b) => a - b);
+
+	const months = ymList
+		.filter(({year}) => year === popupYear)
+		.map(({month}) => month);
+	const monthsSorted = [...months].sort((a, b) => a - b);
 
 	const refresh = () => {
 		setRefreshing(true);
@@ -126,7 +139,13 @@ export const ExpenditureScreen = () => {
 					</Text>
 				</View>
 			</RoundedView>
-			{ymList.slice(0, ymBound).map(({year, month, records}) => {
+			{(filterYear !== undefined && filterMonth !== undefined
+				? ymList.filter(
+						({year, month}) => year === filterYear && month === filterMonth,
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  )
+				: ymList.slice(0, ymBound)
+			).map(({year, month, records}) => {
 				let outgo = 0;
 				let income = 0;
 				for (const record of records) {
@@ -140,20 +159,79 @@ export const ExpenditureScreen = () => {
 				}
 				return (
 					<View style={{margin: 12}} key={`${year}-${month}`}>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
-							<TouchableOpacity
-								style={{flexDirection: "row", alignItems: "center"}}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								marginLeft: 8,
+							}}>
+							<BottomPopupTriggerView
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+								popupTitle={`${popupYear} 年 ${popupMonth} 月`}
+								popupOnTriggered={() => {
+									setPopupYear(year);
+									setPopupMonth(month);
+								}}
+								popupContent={
+									<View style={{flexDirection: "row"}}>
+										<ScrollPicker
+											style={{flex: 1}}
+											dataSource={yearsSorted}
+											selectedIndex={yearsSorted.indexOf(year)}
+											renderItem={(data) => (
+												<Text
+													style={{color: colors.fontB1, fontSize: 20}}
+													key={data}>
+													{data}
+												</Text>
+											)}
+											onValueChange={(_, selectedIndex) => {
+												setPopupYear(yearsSorted[selectedIndex]);
+											}}
+											wrapperHeight={200}
+											wrapperColor={colors.contentBackground}
+											itemHeight={48}
+											highlightColor={colors.themeGrey}
+											highlightBorderWidth={1}
+										/>
+										<ScrollPicker
+											style={{flex: 1}}
+											dataSource={monthsSorted}
+											selectedIndex={monthsSorted.indexOf(month)}
+											renderItem={(data) => (
+												<Text
+													style={{color: colors.fontB1, fontSize: 20}}
+													key={data}>
+													{data}
+												</Text>
+											)}
+											onValueChange={(_, selectedIndex) => {
+												setPopupMonth(monthsSorted[selectedIndex]);
+											}}
+											wrapperHeight={200}
+											wrapperColor={colors.contentBackground}
+											itemHeight={48}
+											highlightColor={colors.themeGrey}
+											highlightBorderWidth={1}
+										/>
+									</View>
+								}
+								popupCanFulfill={true}
+								popupOnFulfilled={() => {
+									setFilterYear(popupYear);
+									setFilterMonth(popupMonth);
+								}}
+								popupOnCancelled={() => {}}>
 								<Text style={{color: colors.text, fontSize: 16}}>
 									{year} 年 {month} 月
 								</Text>
-								<Icon
-									name="chevron-down"
-									size={12}
-									color={colors.text}
-									style={{marginHorizontal: 8}}
-								/>
-							</TouchableOpacity>
-							<Text style={{color: colors.fontB2, fontSize: 14}}>
+								<IconDown height={18} width={18} />
+							</BottomPopupTriggerView>
+							<Text style={{color: colors.fontB2, fontSize: 14, marginLeft: 8}}>
 								{getStr("outgo")} ￥ {outgo.toFixed(2)}
 								{"  "}
 								{getStr("income")} ￥ {income.toFixed(2)}
