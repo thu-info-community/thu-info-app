@@ -1,7 +1,7 @@
 import {ColorTheme} from "../themes/themes";
 
 export const colorLight: ColorTheme = {
-	primaryLight: "#984daf",
+	primaryLight: "#9E64FF",
 	primary: "#671e7f",
 	primaryDark: "#380052",
 	accent: "#2979ff",
@@ -22,5 +22,7 @@ export const colorLight: ColorTheme = {
 	themeGreen: "#34C759",
 	themeBlue: "#007AFF",
 	themePurple: "#8B55E4",
+	themeLightPurple: "#a883e8",
 	themeGrey: "#D6D3DB",
+	themeLightGrey: "#E9E9E9",
 };

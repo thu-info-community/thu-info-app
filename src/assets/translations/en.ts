@@ -65,9 +65,8 @@ export default {
 	popi: "Check Tape",
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",
-	eleRemainder: "Ele-remainder Query",
-	eleRemainderFail: "Exception occurred when querying ele-remainder",
-	eleRemainderResult: "Your ele-remainder is ",
+	eleRemainder: "Ele-remainder",
+	enterEleRechargeValue: "How much do you want to recharge?",
 	reservation: "Reservation",
 	alreadyReserved: "Reservation",
 	libBookRecord: "Library Booking Records",
@@ -244,13 +243,13 @@ export default {
 	alipayRequired: "Alipay required.",
 	payFailure:
 		"Exception occurred when processing. No money is lost as long as you have not performed the payment on alipay.",
-	payWithAlipay: "Pay with Alipay",
+	payForElectricity: "Recharge",
 	processing: "Processing...",
 	cancelPayment: "Cancel",
 	testAccountNotSupportEleRecharge:
 		"Electricity recharge with testing account is not supported.",
 	eleRechargeHint:
-		"As this functionality is money-related, and we are not sure whether this functionality always works, do be careful when using it, and do not pay too much in one action(You cannot pay more than 42 yuan in one action now).\nIn case of any failure, do contact us as soon as possible.\nOf course, if you have doubt in this functionality and do not want to use it, that is also okay.",
+		"As this functionality is money-related, and we are not sure whether this functionality always works, do be careful when using it, and do not pay too much in one action(You cannot pay more than 42 yuan in one action now).\nIn case of any failure, do contact us as soon as possible.",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleEdit: "Edit Schedule",
