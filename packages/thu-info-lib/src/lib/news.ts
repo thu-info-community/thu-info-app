@@ -206,7 +206,14 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
     const csrf = await getCsrfToken();
     const xxid: string | undefined = /var xxid = "(.*?)";/.exec(html)?.[1] as string;
     if (xxid === undefined) {
-        return await getNewsDetailOld(await getRedirectUrl(url), false);
+        if (html.includes("_playFile")) {
+            const redirectUrl = await getRedirectUrl(url);
+            const fileIdPos = redirectUrl.indexOf("fileId=");
+            const fileId = redirectUrl.substring(fileIdPos + 7);
+            return await handlePdfNews(fileId)
+        } else {
+            return await getNewsDetailOld(await getRedirectUrl(url), false);
+        }
     }
     const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
@@ -224,9 +231,7 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
 
 export const getNewsDetail = async (helper: InfoHelper, url: string): Promise<[string, string, string]> => {
     if (helper.mocked()) return await getNewsDetailOld(url, true);
-    else if (url.includes("xxid")) return await handleNewApiNews(NEWS_REDIRECT_URL + url);
-    else if (url.startsWith("/f/wj/openNewWindow?fileId=")) return await handlePdfNews(url.substring(27));
-    else return await getNewsDetailOld(await getRedirectUrl(NEWS_REDIRECT_URL + url), false);
+    else return await handleNewApiNews(NEWS_REDIRECT_URL + url);
 };
 
 const handlePdfNews = async (fileId: string): Promise<[string, string, string]> => {
