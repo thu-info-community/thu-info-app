@@ -278,7 +278,7 @@ export const getPhysicalExamResult = (
         () => uFetch(PHYSICAL_EXAM_URL).then((s) => {
             const json = JSON.parse(
                 // eslint-disable-next-line quotes
-                s.replace(/'/g, '"'),
+                s.substring(1, s.length - 1).replace(/'/g, '"'),
             );
             if (json.success === "false") {
                 return [["状态", "暂无可查成绩"]];
