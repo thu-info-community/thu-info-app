@@ -99,9 +99,9 @@ export function roundedRefreshListScreen<T>(
 			setRefreshing(true);
 			dataSource(props)
 				.then(setData)
-				.catch(() =>
+				.catch((e) =>
 					Snackbar.show({
-						text: getStr("networkRetry"),
+						text: getStr("networkRetry") + e?.message,
 						duration: Snackbar.LENGTH_SHORT,
 					}),
 				)
