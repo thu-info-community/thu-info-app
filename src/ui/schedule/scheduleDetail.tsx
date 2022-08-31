@@ -4,7 +4,7 @@ import React, {useState} from "react";
 import {Choice} from "src/redux/reducers/schedule";
 import {scheduleDelOrHideAction} from "../../redux/actions/schedule";
 import {store} from "src/redux/store";
-import {ScheduleType} from "thu-info-lib/src/models/schedule/schedule";
+import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";
 import {getStr} from "src/utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";

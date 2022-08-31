@@ -5,9 +5,9 @@ import {helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
-import Icon from "react-native-vector-icons/FontAwesome";
 import {useColorScheme} from "react-native";
-import IconDorm from "../../assets/icons/IconDorm";
+import IconLock from "../../assets/icons/IconLock";
+import IconPerson from "../../assets/icons/IconPerson";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {roam} from "thu-info-lib/dist/lib/core";
 import {RootNav} from "../../components/Root";
@@ -33,10 +33,8 @@ const MyhomeLoginUI = ({
 
 	return (
 		<View style={style.container}>
-			<IconDorm width={80} height={80} />
-			<View style={{height: 20}} />
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Icon name="user" size={18} color={theme.colors.primary} />
+				<IconPerson width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("userId")}
@@ -47,7 +45,7 @@ const MyhomeLoginUI = ({
 				/>
 			</View>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Icon name="key" size={18} color={theme.colors.primary} />
+				<IconLock width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("password")}
@@ -88,7 +86,6 @@ const MyhomeLoginUI = ({
 				}}>
 				<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 			</TouchableOpacity>
-			<Text style={style.credentialNoteStyle}>{getStr("myhomeLoginNote")}</Text>
 		</View>
 	);
 };

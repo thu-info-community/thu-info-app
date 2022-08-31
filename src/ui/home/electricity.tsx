@@ -1,10 +1,5 @@
-import {
-	SettingsItem,
-	SettingsDoubleText,
-} from "../../components/settings/items";
 import {getStr} from "../../utils/i18n";
 import React, {useEffect, useState} from "react";
-import Feather from "react-native-vector-icons/Feather";
 import {Text, TextInput, TouchableOpacity, View} from "react-native";
 import {RootNav} from "../../components/Root";
 import {helper} from "../../redux/store";
@@ -53,26 +48,33 @@ export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={{padding: 10, flex: 1}}>
-			<SettingsItem
-				text={getStr("eleRecord")}
-				onPress={() => navigation.navigate("EleRecord")}
-				icon={<Feather name="zap" size={16} />}
-			/>
-			<SettingsDoubleText
-				textLeft={getStr("eleRemainder")}
-				textRight={(() => {
-					switch (remainderStatus) {
-						case "loading":
-							return getStr("loading");
-						case "done":
-							return `${remainderValue} ${getStr("kwh")}`;
-						case "error":
-							return getStr("loadFail");
-					}
-				})()}
+			<TouchableOpacity
 				onPress={() => remainderStatus !== "loading" && getRemainder()}
-				icon={<Feather name="zap" size={16} />}
-			/>
+				style={{
+					padding: 8,
+					paddingRight: 16,
+					flexDirection: "row",
+					justifyContent: "space-between",
+				}}>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					<Text
+						style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+						{getStr("eleRemainder")}
+					</Text>
+				</View>
+				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
+					{(() => {
+						switch (remainderStatus) {
+							case "loading":
+								return getStr("loading");
+							case "done":
+								return `${remainderValue} ${getStr("kwh")}`;
+							case "error":
+								return getStr("loadFail");
+						}
+					})()}
+				</Text>
+			</TouchableOpacity>
 			{!helper.mocked() && (
 				<View
 					style={{

@@ -20,7 +20,6 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
 
 interface Segment {
@@ -81,7 +80,7 @@ export const LibRoomPerformBookScreen = ({
 		return result;
 	};
 
-	const getSubtitle = (title: string, color: string) => {
+	const getSubtitle = (title: string) => {
 		return (
 			<View
 				style={{
@@ -90,7 +89,6 @@ export const LibRoomPerformBookScreen = ({
 					alignItems: "center",
 					marginVertical: 8,
 				}}>
-				<FontAwesome name="chevron-right" color={color} size={18} />
 				<Text
 					style={{
 						fontWeight: "bold",
@@ -140,7 +138,7 @@ export const LibRoomPerformBookScreen = ({
 				numberOfLines={2}>
 				{res.roomName}
 			</Text>
-			{getSubtitle(getStr("occupation"), "red")}
+			{getSubtitle(getStr("occupation"))}
 			<View
 				style={{
 					flexDirection: "row",
@@ -170,7 +168,7 @@ export const LibRoomPerformBookScreen = ({
 			<View style={{padding: 20}}>
 				<LibRoomBookTimeIndicator res={res} />
 			</View>
-			{getSubtitle(getStr("libRoomBookInfo"), "green")}
+			{getSubtitle(getStr("libRoomBookInfo"))}
 			<View
 				style={{
 					flexDirection: "row",
