@@ -25,6 +25,7 @@ import md5 from "md5";
 import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconDown from "../../assets/icons/IconDown";
+import {BottomPopupTriggerView} from "src/components/views";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -65,16 +66,19 @@ const ScheduleUI = (props: ScheduleProps) => {
 		}
 	})();
 	const today = current.day() === 0 ? 7 : current.day();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 	const [week, setWeek] = useState(nowWeek);
+	const [weekSelected, setWeekSelected] = useState(nowWeek);
 
 	const semesterType = Number(semesterId[semesterId.length - 1]);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	const windowWidth = Dimensions.get("window").width;
 	const unitHeight = 60;
-	const unitWidth = (Dimensions.get("window").width - 8) / (7 + 1 / 2);
+	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
+	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 
 	const colorList: string[] = [
 		"#4DD28D",
@@ -195,7 +199,55 @@ const ScheduleUI = (props: ScheduleProps) => {
 						alignItems: "center",
 						justifyContent: "center",
 					}}>
-					<TouchableOpacity>
+					<BottomPopupTriggerView
+						popupTitle={`${getStr("weekNumPrefix")}${weekSelected}${getStr(
+							"weekNumSuffix",
+						)}`}
+						popupContent={
+							<View
+								style={{
+									margin: 12,
+									marginTop: 7,
+									flexDirection: "row",
+									flexWrap: "wrap",
+								}}>
+								{Array.from(new Array(weekCount), (_, k) => k + 1).map(
+									(weekButton) => (
+										<TouchableOpacity
+											style={{
+												width: weekButtonWidth,
+												marginHorizontal: 3,
+												marginVertical: 4,
+												alignItems: "center",
+												backgroundColor:
+													weekSelected === weekButton
+														? theme.colors.themePurple
+														: undefined,
+												borderRadius: 8,
+											}}
+											onPress={() => {
+												setWeekSelected(weekButton);
+											}}
+											key={weekButton}>
+											<Text
+												style={{
+													fontSize: 18,
+													lineHeight: 40,
+													color:
+														weekSelected === weekButton
+															? "white"
+															: theme.colors.fontB1,
+												}}>
+												{weekButton}
+											</Text>
+										</TouchableOpacity>
+									),
+								)}
+							</View>
+						}
+						popupCanFulfill={true}
+						popupOnFulfilled={() => setWeek(weekSelected)}
+						popupOnCancelled={() => {}}>
 						<View style={{flexDirection: "row", alignItems: "flex-end"}}>
 							<Text
 								style={{
@@ -204,7 +256,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 									color: theme.colors.fontB1,
 								}}>
 								{getStr("weekNumPrefix")}
-								{nowWeek}
+								{week}
 								{getStr("weekNumSuffix")}
 							</Text>
 							<IconDown width={16} height={16} />
@@ -224,7 +276,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 									: "winter",
 							)}
 						</Text>
-					</TouchableOpacity>
+					</BottomPopupTriggerView>
 					<TouchableOpacity
 						onPress={() => props.navigation.navigate("ScheduleAdd")}
 						style={{position: "absolute", right: 16}}>
