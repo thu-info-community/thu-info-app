@@ -17,14 +17,9 @@ export default svgGenerator((width, height) => {
 			<Path
 				strokeWidth="3"
 				strokeLinecap="round"
-				stroke={theme.colors.themePurple}
-				d="M24 44s15-12 15-25c0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15 0 13 15 25 15 25Z"
-			/>
-			<Path
-				strokeWidth="3"
-				strokeLinecap="round"
-				stroke={theme.colors.themePurple}
-				d="M24 25a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"
+				strokeLinejoin="round"
+				stroke={theme.colors.fontB3}
+				d="M24 20a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM6 40.8V42h36v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496C35.92 28 33.68 28 29.2 28H18.8c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C6 34.08 6 36.32 6 40.8Z"
 			/>
 		</Svg>
 	);

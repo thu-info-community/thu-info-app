@@ -1,7 +1,6 @@
 import React from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
-import Icon from "react-native-vector-icons/FontAwesome";
 import themes from "../assets/themes/themes";
 import {
 	Platform,
@@ -97,8 +96,11 @@ import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
 import {SearchParams} from "thu-info-lib/dist/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
+import IconDownload from "../assets/icons/IconDownload";
 import IconHistory from "../assets/icons/IconHistory";
 import IconLocal from "../assets/icons/IconLocal";
+import IconStar from "../assets/icons/IconStar";
+import IconSearch from "../assets/icons/IconSearch";
 import {PrivacyScreen} from "../ui/settings/privacy";
 import {GeneralScreen} from "../ui/settings/general";
 import {LanguageScreen} from "../ui/settings/language";
@@ -604,7 +606,7 @@ export const Root = () => {
 										duration: Snackbar.LENGTH_SHORT,
 									});
 								}}>
-								<Icon name="download" size={24} color={theme.colors.primary} />
+								<IconDownload height={24} width={24} />
 							</TouchableOpacity>
 						</View>
 					),
@@ -681,12 +683,12 @@ export const Root = () => {
 							<TouchableOpacity
 								style={{paddingHorizontal: 16, marginHorizontal: 4}}
 								onPress={() => navigation.navigate("GitLabStar")}>
-								<Icon name="star-o" size={24} color={theme.colors.primary} />
+								<IconStar width={24} height={24} />
 							</TouchableOpacity>
 							<TouchableOpacity
 								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
 								onPress={() => navigation.navigate("GitLabSearch")}>
-								<Icon name="search" size={24} color={theme.colors.primary} />
+								<IconSearch width={24} height={24} />
 							</TouchableOpacity>
 						</View>
 					),
@@ -738,7 +740,7 @@ export const Root = () => {
 								onPress={() =>
 									navigation.navigate("GitLabCode", {project, file})
 								}>
-								<Icon name="code" size={24} color={theme.colors.primary} />
+								<IconLocal width={24} height={24} />
 							</TouchableOpacity>
 						</View>
 					),
@@ -772,7 +774,16 @@ export const Root = () => {
 			<Stack.Screen
 				name="Electricity"
 				component={ElectricityScreen}
-				options={{title: getStr("electricity")}}
+				options={({navigation}) => ({
+					title: getStr("electricity"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, margin: 4}}
+							onPress={() => navigation.navigate("EleRecord")}>
+							<IconHistory width={24} height={24} />
+						</TouchableOpacity>
+					),
+				})}
 			/>
 			<Stack.Screen
 				name="EleRecord"

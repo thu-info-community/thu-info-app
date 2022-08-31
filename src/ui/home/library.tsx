@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import {RootNav} from "../../components/Root";
 import React, {useEffect, useState} from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconRight from "../../assets/icons/IconRight";
 import {helper, State, store} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
@@ -201,7 +201,7 @@ const LibraryUI = ({
 										}}>
 										{library.zhName}
 									</Text>
-									<Icon name="angle-right" size={16} color={colors.fontB2} />
+									<IconRight height={16} width={16} />
 								</TouchableOpacity>
 							</View>
 						))}

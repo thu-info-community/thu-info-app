@@ -11,7 +11,7 @@ import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import dayjs from "dayjs";
 import {RoundedView} from "../../components/views";
-import {LibName, validLibName} from "thu-info-lib/src/models/home/library";
+import {LibName, validLibName} from "thu-info-lib/dist/models/home/library";
 
 export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 	const [libSelected, setLibSelected] = useState<LibName | undefined>(

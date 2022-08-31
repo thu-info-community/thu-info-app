@@ -1,7 +1,6 @@
 import {
 	GestureResponderEvent,
 	Platform,
-	Switch,
 	Text,
 	TextInput,
 	TouchableHighlight,
@@ -9,8 +8,8 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, {cloneElement, ReactElement, useState} from "react";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React, {cloneElement, ReactElement} from "react";
+import IconRight from "../../assets/icons/IconRight";
 import {useColorScheme} from "react-native";
 import themes, {ColorTheme} from "../../assets/themes/themes";
 
@@ -55,57 +54,10 @@ export const SettingsItem = ({
 					{badge && <Text style={{color: "red", fontSize: 12}}>[{badge}]</Text>}
 				</Text>
 			</View>
-			<Icon name="angle-right" size={24} color="lightgrey" />
+			<IconRight height={24} width={24} />
 		</View>
 	);
 	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
-			{content}
-		</TouchableHighlight>
-	) : (
-		<TouchableNativeFeedback
-			background={TouchableNativeFeedback.Ripple("#0002", false)}
-			onPress={onPress}>
-			{content}
-		</TouchableNativeFeedback>
-	);
-};
-
-export const SettingsDoubleText = ({
-	textLeft,
-	textRight,
-	onPress,
-	icon,
-}: {
-	textLeft: string;
-	textRight: string;
-	onPress: ((event: GestureResponderEvent) => void) | undefined;
-	icon: ReactElement | undefined;
-}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	const content = (
-		<View
-			style={{
-				padding: 8,
-				paddingRight: 16,
-				flexDirection: "row",
-				justifyContent: "space-between",
-			}}>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{setIconWidth(icon, colors)}
-				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
-					{textLeft}
-				</Text>
-			</View>
-			<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
-				{textRight}
-			</Text>
-		</View>
-	);
-	return onPress === undefined ? (
-		content
-	) : Platform.OS === "ios" ? (
 		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
 			{content}
 		</TouchableHighlight>
@@ -189,49 +141,6 @@ export const SettingsLargeButton = ({
 				{text}
 			</Text>
 		</TouchableOpacity>
-	);
-};
-
-export const SettingsSwitch = ({
-	textOn,
-	textOff,
-	onValueChange,
-	defaultValue,
-	iconOn,
-	iconOff,
-}: {
-	textOn: string;
-	textOff: string;
-	onValueChange: (state: boolean) => void;
-	defaultValue: boolean;
-	iconOn: ReactElement | undefined;
-	iconOff: ReactElement | undefined;
-}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	const [status, setStatus] = useState(defaultValue);
-	return (
-		<View
-			style={{
-				padding: 8,
-				flexDirection: "row",
-				justifyContent: "space-between",
-			}}>
-			<View style={{flexDirection: "row", alignItems: "center", flex: 1}}>
-				{setIconWidth(status ? iconOn : iconOff, colors)}
-				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
-					{status ? textOn : textOff}
-				</Text>
-			</View>
-			<Switch
-				style={{flex: 0}}
-				value={status}
-				onValueChange={(value) => {
-					setStatus(value);
-					onValueChange(value);
-				}}
-			/>
-		</View>
 	);
 };
 

@@ -14,7 +14,7 @@ export default svgGenerator((width, height) => {
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth={3}
-				stroke={theme.colors.primary}
+				stroke={theme.colors.themePurple}
 				d="m10 24 10 10 20-20"
 			/>
 		</Svg>

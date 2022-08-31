@@ -14,7 +14,8 @@ import {getStr} from "../../utils/i18n";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconLock from "../../assets/icons/IconLock";
+import IconPerson from "../../assets/icons/IconPerson";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {LoginNav} from "../../components/AuthFlow";
@@ -55,7 +56,7 @@ const LoginUI = (props: LoginProps) => {
 				<IconMain width={108} height={108} />
 				<View style={{height: 20}} />
 				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<Icon name="user" size={18} color={theme.colors.primary} />
+					<IconPerson width={18} height={18} />
 					<TextInput
 						style={style.textInputStyle}
 						placeholder={getStr("userId")}
@@ -68,7 +69,7 @@ const LoginUI = (props: LoginProps) => {
 					/>
 				</View>
 				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<Icon name="key" size={18} color={theme.colors.primary} />
+					<IconLock width={18} height={18} />
 					<TextInput
 						style={style.textInputStyle}
 						placeholder={getStr("password")}

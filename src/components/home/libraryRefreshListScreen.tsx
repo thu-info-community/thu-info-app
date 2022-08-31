@@ -9,7 +9,7 @@ import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {RootNav, RootStackParamList} from "../Root";
 import {RouteProp} from "@react-navigation/native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconRight from "../../assets/icons/IconRight";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {LibraryBase} from "thu-info-lib/dist/models/home/library";
@@ -141,12 +141,7 @@ export function libraryRefreshListScreen<
 								</Text>
 								<View style={{flex: 1}} />
 								{(!helper.mocked() || header) && !("status" in item) && (
-									<Icon
-										style={{flex: 0}}
-										name="angle-right"
-										size={16}
-										color={colors.fontB2}
-									/>
+									<IconRight height={16} width={16} />
 								)}
 								{"status" in item && (
 									<Text

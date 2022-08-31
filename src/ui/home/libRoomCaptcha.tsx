@@ -4,7 +4,8 @@ import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
 import themes from "../../assets/themes/themes";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconLock from "../../assets/icons/IconLock";
+import IconPerson from "../../assets/icons/IconPerson";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
@@ -31,7 +32,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 			<IconLibRoom width={80} height={80} />
 			<View style={{height: 20}} />
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Icon name="user" size={18} color={theme.colors.primary} />
+				<IconPerson width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholderTextColor={theme.colors.primary}
@@ -41,7 +42,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 				/>
 			</View>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Icon name="key" size={18} color={theme.colors.primary} />
+				<IconLock width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("captcha")}
