@@ -1,20 +1,23 @@
 import {Text, View} from "react-native";
 import React from "react";
-import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
-import {getStr} from "../../utils/i18n";
+import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
 
-export const EleRecordScreen = simpleRefreshListScreen(
+export const EleRecordScreen = roundedRefreshListScreen(
 	helper.getElePayRecord,
-	(item, _, __, {colors}) => {
-		// const [name, id, time, channel, value, status] = item;
-		const time = item[2];
-		const value = item[4];
-		const status = item[5];
+	(
+		[_name, _id, time, _channel, value, status],
+		_,
+		__,
+		{colors},
+		index,
+		total,
+	) => {
 		return (
 			<View
 				style={{
-					padding: 15,
+					marginTop: index === 0 ? 0 : 12,
+					marginBottom: index === total - 1 ? 0 : 12,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>
@@ -31,12 +34,4 @@ export const EleRecordScreen = simpleRefreshListScreen(
 		);
 	},
 	(item) => item[1],
-	({colors}) => (
-		<Text style={{padding: 10, marginTop: 10, textAlign: "center"}}>
-			<Text style={{fontWeight: "bold", fontSize: 16, color: colors.text}}>
-				{getStr("tips")}
-			</Text>
-			<Text style={{color: "gray"}}>{getStr("eleRecordRestriction")}</Text>
-		</Text>
-	),
 );

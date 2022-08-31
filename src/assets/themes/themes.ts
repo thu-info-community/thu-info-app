@@ -24,7 +24,9 @@ export interface ColorTheme {
 	themeGreen: string;
 	themeBlue: string;
 	themePurple: string;
+	themeLightPurple: string;
 	themeGrey: string;
+	themeLightGrey: string;
 }
 
 export interface Theme {
