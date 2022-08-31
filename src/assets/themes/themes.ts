@@ -20,6 +20,7 @@ export interface ColorTheme {
 	statusDisabled: {rgb: string; alpha: number};
 	statusWarning: string;
 	statusWarningOpacity: string;
+	statusError: string;
 	themeGreen: string;
 	themeBlue: string;
 	themePurple: string;

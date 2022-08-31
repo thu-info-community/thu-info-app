@@ -413,6 +413,8 @@ export default {
 		"\n\nPress 'OK' to delete or hide the overlapped schedules, press 'Cancel' to cancel unhiding the schedule.",
 	delSchedule: "Delete ",
 	hideSchedule: "Hide ",
+	hideScheduleText: "Hide Schedule",
+	hideScheduleConfirmationText: "Are you sure to delete the schedule?",
 	allTime: "the schedule(All time)",
 	repeatly: "the schedule(Weekly)",
 	once: "the schedule(Once)",
