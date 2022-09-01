@@ -1,6 +1,6 @@
 import React from "react";
 import {Text, useColorScheme, View} from "react-native";
-import {SportsSelectProp} from "../../components/Root";
+import {SportsSuccessProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
 import {RoundedView} from "../../components/views";
@@ -24,7 +24,7 @@ const Row = ({left, right}: {left: string; right: string}) => {
 	);
 };
 
-export const SportsSuccessScreen = ({route}: {route: SportsSelectProp}) => {
+export const SportsSuccessScreen = ({route}: {route: SportsSuccessProp}) => {
 	const {
 		info: {name},
 		date,

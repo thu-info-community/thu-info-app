@@ -279,8 +279,21 @@ export type ReservesLibPDFProp = RouteProp<
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
+export type SportsSelectFieldProp = RouteProp<
+	HomeStackParamList,
+	"SportsSelectField"
+>;
+export type SportsSelectTitleProp = RouteProp<
+	HomeStackParamList,
+	"SportsSelectTitle"
+>;
+export type SportsSuccessProp = RouteProp<HomeStackParamList, "SportsSuccess">;
 
 export type QzyqSelectProp = RouteProp<HomeStackParamList, "Qzyq">;
+export type WaterSelectTicketNumberProp = RouteProp<
+	HomeStackParamList,
+	"WaterSelectTicketNumber"
+>;
 
 export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 
