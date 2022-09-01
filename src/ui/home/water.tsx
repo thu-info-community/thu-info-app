@@ -22,7 +22,11 @@ import {helper, State} from "../../redux/store";
 import {configSet} from "../../redux/actions/config";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
-import {QzyqSelectProp, RootNav} from "../../components/Root";
+import {
+	QzyqSelectProp,
+	RootNav,
+	WaterSelectTicketNumberProp,
+} from "../../components/Root";
 import {styles} from "../settings/settings";
 import IconCheck from "../../assets/icons/IconCheck";
 
@@ -443,7 +447,7 @@ export const WaterSelectTicketNumberScreen = ({
 	},
 }: {
 	navigation: RootNav;
-	route: QzyqSelectProp;
+	route: WaterSelectTicketNumberProp;
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);

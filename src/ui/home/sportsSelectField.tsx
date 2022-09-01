@@ -2,14 +2,14 @@ import React, {useState} from "react";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconCheck from "../../assets/icons/IconCheck";
-import {RootNav, SportsSelectProp} from "../../components/Root";
+import {RootNav, SportsSelectFieldProp} from "../../components/Root";
 import {styles} from "../settings/settings";
 
 export const SportsSelectFieldScreen = ({
 	route: {params},
 	navigation,
 }: {
-	route: SportsSelectProp;
+	route: SportsSelectFieldProp;
 	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();

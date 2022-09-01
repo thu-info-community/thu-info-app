@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconCheck from "../../assets/icons/IconCheck";
-import {RootNav, SportsSelectProp} from "../../components/Root";
+import {RootNav, SportsSelectTitleProp} from "../../components/Root";
 import {styles} from "../settings/settings";
 import {
 	VALID_RECEIPT_TITLES,
@@ -14,7 +14,7 @@ export const SportsSelectTitleScreen = ({
 	route: {params},
 	navigation,
 }: {
-	route: SportsSelectProp;
+	route: SportsSelectTitleProp;
 	navigation: RootNav;
 }) => {
 	const themeName = useColorScheme();
