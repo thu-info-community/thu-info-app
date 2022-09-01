@@ -7,7 +7,6 @@ import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
-import themes from "../../assets/themes/themes";
 
 export const AccountUI = ({
 	userId,
@@ -20,7 +19,6 @@ export const AccountUI = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
-	const {colors} = themes(themeName);
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
@@ -29,26 +27,7 @@ export const AccountUI = ({
 					<Text style={style.text}>{getStr("infoAccount")}</Text>
 					<Text style={style.version}>{userId}</Text>
 				</View>
-				<View style={style.separator} />
-				<TouchableOpacity
-					style={style.touchable}
-					onPress={() => navigation.navigate("MyhomeLogin")}>
-					<Text style={style.text}>{getStr("myhomeAccount")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
-						<Text style={style.version}>{}</Text>
-						<IconRight height={20} width={20} />
-					</View>
-				</TouchableOpacity>
 			</RoundedView>
-			<Text
-				style={{
-					marginHorizontal: 12,
-					marginVertical: 4,
-					color: colors.fontB2,
-					fontSize: 12,
-				}}>
-				{getStr("myhomeAccountTip")}
-			</Text>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

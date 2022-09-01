@@ -66,6 +66,7 @@ export default {
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",
 	eleRemainder: "Ele-remainder",
+	eleRemainderUpdateTime: "Updated at: ",
 	enterEleRechargeValue: "How much do you want to recharge?",
 	reservation: "Reservation",
 	alreadyReserved: "Reservation",

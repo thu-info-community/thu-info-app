@@ -63,6 +63,7 @@ export default {
 	eleRecord: "电费充值记录",
 	eleRecordRestriction: "现仅支持查看最近 25 条记录。",
 	eleRemainder: "电表余额",
+	eleRemainderUpdateTime: "抄表时间：",
 	enterEleRechargeValue: "请输入购电金额",
 	reservation: "预约",
 	alreadyReserved: "已有预约",
