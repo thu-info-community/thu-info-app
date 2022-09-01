@@ -9,7 +9,6 @@ import {useColorScheme} from "react-native";
 import IconLock from "../../assets/icons/IconLock";
 import IconPerson from "../../assets/icons/IconPerson";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
-import {roam} from "thu-info-lib/dist/lib/core";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
@@ -64,13 +63,12 @@ const MyhomeLoginUI = ({
 						text: getStr("processing"),
 						duration: Snackbar.LENGTH_SHORT,
 					});
-					helper.dormPassword = password;
 					helper
-						.logout()
-						.then(() => helper.login({}))
-						.then(() => roam(helper, "myhome", ""))
-						.then(() => setDormPassword(password))
-						.then(() => navigation.pop())
+						.getDormScore(password)
+						.then(() => {
+							navigation.pop();
+							setDormPassword(password);
+						})
 						.catch((e) => {
 							if (e instanceof DormAuthError) {
 								Snackbar.show({

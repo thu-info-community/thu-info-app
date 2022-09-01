@@ -3,17 +3,24 @@ import React, {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
 import ImageViewer from "react-native-image-zoom-viewer";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {saveRemoteImg} from "../../utils/saveImg";
 import {DormAuthError} from "thu-info-lib/dist/utils/error";
 import {RootNav} from "../../components/Root";
+import {connect} from "react-redux";
 
-export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
-	const [url, setUrl] = useState<string>();
+const DormScoreUI = ({
+	navigation,
+	dormPassword,
+}: {
+	navigation: RootNav;
+	dormPassword: string;
+}) => {
+	const [base64, setBase64] = useState<string>();
 	useEffect(() => {
 		helper
-			.getDormScore()
-			.then(setUrl)
+			.getDormScore(dormPassword)
+			.then(setBase64)
 			.catch((e) => {
 				if (e instanceof DormAuthError) {
 					navigation.navigate("MyhomeLogin");
@@ -22,12 +29,12 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dormPassword]);
 	return (
 		<View style={{flex: 1}}>
-			{url && (
+			{base64 && (
 				<ImageViewer
-					imageUrls={[{url}]}
+					imageUrls={[{url: `data:image/png;base64,${base64}`}]}
 					onSave={saveRemoteImg}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),
@@ -38,3 +45,7 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 		</View>
 	);
 };
+
+export const DormScoreScreen = connect((state: State) => ({
+	...state.credentials,
+}))(DormScoreUI);

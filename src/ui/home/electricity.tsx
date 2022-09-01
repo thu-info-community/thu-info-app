@@ -7,17 +7,15 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import {RootNav} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {doAlipay, hasAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
-import {DormAuthError} from "thu-info-lib/dist/utils/error";
 import {RoundedView} from "../../components/views";
 import IconRefresh from "../../assets/icons/IconRefresh";
 
-export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
+export const ElectricityScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -31,6 +29,7 @@ export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 	const [remainderStatus, setRemainderStatus] = useState<
 		"loading" | "done" | "error"
 	>("loading");
+	const [updateTimeValue, setUpdateTimeValue] = useState<string | undefined>();
 
 	const regRes = /\d+/.exec(money);
 	const valid =
@@ -40,21 +39,16 @@ export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 		setRemainderStatus("loading");
 		helper
 			.getEleRemainder()
-			.then((remainder) => {
+			.then(({remainder, updateTime}) => {
 				setRemainderValue(remainder);
 				setRemainderStatus("done");
+				setUpdateTimeValue(updateTime);
 			})
-			.catch((e) => {
-				setRemainderStatus("error");
-				if (e instanceof DormAuthError) {
-					navigation.navigate("MyhomeLogin");
-				}
-			});
+			.catch(() => setRemainderStatus("error"));
 	};
 
 	useEffect(() => {
 		getRemainder();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -79,6 +73,10 @@ export const ElectricityScreen = ({navigation}: {navigation: RootNav}) => {
 								return getStr("loadFail");
 						}
 					})()}
+				</Text>
+				<Text style={{color: colors.fontB3, fontSize: 11}}>
+					{getStr("eleRemainderUpdateTime")}
+					{updateTimeValue}
 				</Text>
 				<TouchableOpacity
 					onPress={() => remainderStatus !== "loading" && getRemainder()}

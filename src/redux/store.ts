@@ -95,17 +95,6 @@ const authTransform = createTransform(
 	},
 );
 
-const credentialsTransform = createTransform(
-	(c: Credentials) => c,
-	(c: Credentials) => {
-		helper.dormPassword = c.dormPassword;
-		return c;
-	},
-	{
-		whitelist: ["credentials"],
-	},
-);
-
 const configTransform = createTransform(
 	(c: Config) => ({
 		...c,
@@ -161,7 +150,7 @@ const persistConfig = {
 		"top5",
 		"reservation",
 	],
-	transforms: [authTransform, credentialsTransform, configTransform],
+	transforms: [authTransform, configTransform],
 	migrate: (state: any) =>
 		Promise.resolve(
 			state === undefined

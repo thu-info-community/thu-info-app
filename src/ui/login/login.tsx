@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {currState, helper, State, store} from "../../redux/store";
+import {helper, State, store} from "../../redux/store";
 import {LoginStatus} from "../../redux/states/auth";
 import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
@@ -201,11 +201,7 @@ export const LoginScreen = connect(
 			login: (userId: string, password: string) => {
 				dispatch(loginAction.request({userId, password}));
 				helper
-					.login({
-						userId,
-						password,
-						dormPassword: currState().credentials.dormPassword,
-					})
+					.login({userId, password})
 					.then(() => {
 						dispatch(loginAction.success());
 						helper.getCalendar().then((c) => {

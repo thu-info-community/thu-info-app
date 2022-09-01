@@ -76,7 +76,7 @@ const InvoiceItem = ({
 
 export const InvoiceScreen = paginatedRefreshListScreen(
 	(_: PropsWithChildren<{navigation: RootNav}>, page) =>
-		helper.getInvoiceList(page),
+		helper.getInvoiceList(page).then(({data}) => data),
 	(invoice, _, {navigation}) => (
 		<InvoiceItem
 			invoice={invoice}
