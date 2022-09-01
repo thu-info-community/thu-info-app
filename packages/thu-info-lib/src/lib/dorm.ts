@@ -33,7 +33,7 @@ export const getEleRechargePayCode = async (
     helper: InfoHelper,
     money: number,
 ): Promise<string> => {
-    await roam(helper, "myhome", "");
+    await roam(helper, "id", "051bb58cba58a1c5f67857606497387f");
 
     const $ = await uFetch(RECHARGE_ELE_URL).then(cheerio.load);
 
@@ -59,8 +59,8 @@ export const getElePayRecord = async (
 ): Promise<[string, string, string, string, string, string][]> =>
     roamingWrapperWithMocks(
         helper,
-        "myhome",
-        "",
+        "id",
+        "051bb58cba58a1c5f67857606497387f",
         async () => {
             const data = (await uFetch(ELE_PAY_RECORD_URL).then(cheerio.load))(".myTable tr");
             if (data.length === 0) throw new EleError();
@@ -81,8 +81,8 @@ export const getEleRemainder = async (
 ): Promise<number> =>
     roamingWrapperWithMocks(
         helper,
-        "myhome",
-        "",
+        "id",
+        "051bb58cba58a1c5f67857606497387f",
         async () => {
             const $ = await uFetch(ELE_REMAINDER_URL).then(cheerio.load);
             if ($("#net_Default_LoginCtrl1_txtUserName").length === 1) throw new EleError();

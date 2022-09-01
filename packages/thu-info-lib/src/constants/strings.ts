@@ -36,8 +36,6 @@ export const BKS_REPORT_BXR_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=bks_yxkccj";
 export const YJS_REPORT_BXR_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/cj.cjCjbAll.do?m=yjs_yxkccj";
-export const TSINGHUA_HOME_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/default.aspx";
 export const RECHARGE_ELE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9/netweb_user/recharge_ele.aspx";
 export const RECHARGE_PAY_ELE_URL =

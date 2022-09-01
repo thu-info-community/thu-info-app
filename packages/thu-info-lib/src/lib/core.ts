@@ -3,7 +3,6 @@ import {
     DO_LOGIN_URL,
     LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LOGOUT_URL,
-    TSINGHUA_HOME_LOGIN_URL,
     USER_DATA_URL,
     GET_COOKIE_URL,
     ID_LOGIN_URL,
@@ -23,7 +22,7 @@ import {clearCookies} from "../utils/network";
 import {uFetch} from "../utils/network";
 import {DormAuthError, IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "cab" | "myhome" | "myhome_mobile" | "gitlab";
+type RoamingPolicy = "default" | "id" | "cab" | "myhome_mobile" | "gitlab";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -163,34 +162,6 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             pwd: helper.password,
             act: "login",
         });
-    }
-    case "myhome": {
-        const validChars = new Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz =+-/_()<>,.'`~");
-        const password = helper.dormPassword || helper.password;
-        let tempPassword = "";
-        for (let i = 0; i < password.length; i++) {
-            if (validChars.has(password.charAt(i))) {
-                tempPassword += password.charAt(i);
-            }
-        }
-        const $ = cheerio.load(await uFetch(TSINGHUA_HOME_LOGIN_URL));
-        const response = await uFetch(TSINGHUA_HOME_LOGIN_URL, {
-            __VIEWSTATE: $("#__VIEWSTATE").attr().value,
-            __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
-            net_Default_LoginCtrl1$txtUserName: helper.userId,
-            net_Default_LoginCtrl1$txtUserPwd: tempPassword,
-            "net_Default_LoginCtrl1$lbtnLogin.x": 17,
-            "net_Default_LoginCtrl1$lbtnLogin.y": 10,
-            net_Default_LoginCtrl1$txtSearch1: "",
-            Home_Img_NewsCtrl1$hfJsImg: "",
-            Home_Img_ActivityCtrl1$hfScript: "",
-            Home_Vote_InfoCtrl1$Repeater1$ctl01$hfID: 52,
-            Home_Vote_InfoCtrl1$Repeater1$ctl01$rdolstSelect: 221,
-        });
-        if (response.includes("window.alert('用户名或密码错误!');")) {
-            throw new DormAuthError();
-        }
-        return response;
     }
     case "myhome_mobile": {
         const appId = v4();
