@@ -142,6 +142,7 @@ export default {
 	life: "生活",
 	thirdParty: "第三方服务",
 	qzyq: "清紫源泉",
+	submitOrder: "提交订单",
 	washer: "洗衣机查询",
 	sensitive: "敏感功能",
 	electricity: "宿舍电费",

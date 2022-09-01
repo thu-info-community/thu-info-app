@@ -580,7 +580,7 @@ const getHomeFunctions = (
 		title="qzyq"
 		onPress={() => {
 			updateTop5("qzyq");
-			navigation.navigate("Qzyq");
+			navigation.navigate("Qzyq", {ticketNumber: 0});
 		}}>
 		<IconWater width={iconSize} height={iconSize} />
 	</HomeIcon>,

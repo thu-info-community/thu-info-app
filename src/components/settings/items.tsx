@@ -2,7 +2,6 @@ import {
 	GestureResponderEvent,
 	Platform,
 	Text,
-	TextInput,
 	TouchableHighlight,
 	TouchableNativeFeedback,
 	TouchableOpacity,
@@ -141,101 +140,6 @@ export const SettingsLargeButton = ({
 				{text}
 			</Text>
 		</TouchableOpacity>
-	);
-};
-
-export const SettingsEditValue = <T extends string | number>({
-	text,
-	value,
-	onValueChange,
-}: {
-	text: string;
-	value: T;
-	onValueChange: (newValue: T) => void;
-}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	return (
-		<View
-			style={{
-				padding: 8,
-				paddingRight: 16,
-				flexDirection: "row",
-				justifyContent: "space-between",
-				alignItems: "center",
-			}}>
-			<Text style={{fontSize: 17, flex: 4, color: colors.text}}>{text}</Text>
-			<TextInput
-				style={{
-					fontSize: 15,
-					flex: 1,
-					backgroundColor: colors.themeBackground,
-					color: colors.text,
-					textAlign: "left",
-					borderColor: "lightgrey",
-					borderWidth: 1,
-					borderRadius: 5,
-					padding: 6,
-				}}
-				value={String(value)}
-				onChangeText={(newText) => {
-					if (typeof value === "string") {
-						// @ts-ignore
-						onValueChange(newText);
-					} else if (!isNaN(Number(newText))) {
-						// @ts-ignore
-						onValueChange(Number(newText));
-					}
-				}}
-				keyboardType={typeof value === "string" ? "default" : "numeric"}
-			/>
-		</View>
-	);
-};
-
-export const SettingsEditText = ({
-	text,
-	value,
-	onValueChange,
-	placeholder,
-	enabled,
-}: {
-	text: string;
-	value: string;
-	onValueChange: (newValue: string) => void;
-	placeholder: string;
-	enabled: boolean;
-}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	return (
-		<View
-			style={{
-				padding: 8,
-				paddingRight: 16,
-				flexDirection: "row",
-				justifyContent: "space-between",
-				alignItems: "center",
-			}}>
-			<Text style={{fontSize: 17, flex: 1, color: colors.text}}>{text}</Text>
-			<TextInput
-				style={{
-					fontSize: 15,
-					flex: 2,
-					backgroundColor: colors.themeBackground,
-					color: colors.text,
-					textAlign: "left",
-					borderColor: "lightgrey",
-					borderWidth: 1,
-					borderRadius: 5,
-					padding: 6,
-				}}
-				placeholder={placeholder}
-				value={value}
-				onChangeText={onValueChange}
-				editable={enabled}
-			/>
-		</View>
 	);
 };
 
