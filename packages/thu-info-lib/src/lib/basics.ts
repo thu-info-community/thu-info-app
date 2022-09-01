@@ -413,19 +413,18 @@ export const getClassroomState = (
         MOCK_CLASSROOM_STATE,
     );
 
-export const getInvoiceList = (helper: InfoHelper, page: number): Promise<Invoice[]> =>
+export const getInvoiceList = (helper: InfoHelper, page: number): Promise<{data: Invoice[]; count: number}> =>
     roamingWrapperWithMocks(
         helper,
         "default",
         "625B81A7A9D148B01DA59185CC4074E1",
         async () => {
-            const {data} = await uFetch(INVOICE_LIST_URL, {
+            return await uFetch(INVOICE_LIST_URL, {
                 page,
                 limit: 20,
                 columnName: "inv_date",
                 sort: "desc",
             }).then(JSON.parse);
-            return data;
         },
         MOCK_INVOICE_LIST,
     );

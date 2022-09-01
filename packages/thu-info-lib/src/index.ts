@@ -155,7 +155,7 @@ export class InfoHelper {
         week: number,
     ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
 
-    public getInvoiceList = async (page: number): Promise<Invoice[]> => getInvoiceList(this, page);
+    public getInvoiceList = async (page: number): Promise<{data: Invoice[]; count: number}> => getInvoiceList(this, page);
 
     public getInvoicePDF = async (busNumber: string): Promise<string> => getInvoicePDF(this, busNumber);
 
