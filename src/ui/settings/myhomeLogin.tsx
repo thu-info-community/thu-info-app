@@ -14,6 +14,7 @@ import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {DormAuthError} from "thu-info-lib/dist/utils/error";
+import {RoundedView} from "../../components/views";
 
 const MyhomeLoginUI = ({
 	userId,
@@ -33,29 +34,27 @@ const MyhomeLoginUI = ({
 
 	return (
 		<View style={style.container}>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
+			<RoundedView style={style.inputRounded}>
 				<IconPerson width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("userId")}
-					placeholderTextColor={theme.colors.primary}
-					selectionColor={theme.colors.accent}
+					placeholderTextColor={theme.colors.fontB3}
 					value={userId}
 					editable={false}
 				/>
-			</View>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
+			</RoundedView>
+			<RoundedView style={style.inputRounded}>
 				<IconLock width={18} height={18} />
 				<TextInput
 					style={style.textInputStyle}
 					placeholder={getStr("password")}
-					placeholderTextColor={theme.colors.primary}
-					selectionColor={theme.colors.accent}
+					placeholderTextColor={theme.colors.fontB3}
 					value={password}
 					onChangeText={setPassword}
 					secureTextEntry
 				/>
-			</View>
+			</RoundedView>
 			<TouchableOpacity
 				style={style.loginButtonStyle}
 				disabled={processing}
@@ -84,7 +83,9 @@ const MyhomeLoginUI = ({
 						})
 						.then(() => setProcessing(false));
 				}}>
-				<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
+				<RoundedView style={style.loginRounded}>
+					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
+				</RoundedView>
 			</TouchableOpacity>
 		</View>
 	);
@@ -94,38 +95,42 @@ const styles = themedStyles((theme) => {
 	return {
 		container: {
 			flex: 1,
+			padding: 12,
 			justifyContent: "center",
 			alignItems: "center",
+		},
+
+		inputRounded: {
+			flexDirection: "row",
+			alignItems: "center",
+			paddingHorizontal: 16,
+			paddingVertical: 12,
+			marginVertical: 8,
 		},
 
 		textInputStyle: {
-			color: theme.colors.primary,
-			width: "36%",
+			color: theme.colors.text,
+			flex: 1,
 			textAlign: "left",
-			marginHorizontal: 10,
-			padding: 10,
+			marginLeft: 16,
+			padding: 0,
 		},
 
 		loginButtonStyle: {
-			height: 35,
-			width: 100,
-			backgroundColor: theme.colors.accent,
-			marginTop: 30,
-			marginBottom: 20,
+			flexDirection: "row",
+			marginTop: 83,
 			justifyContent: "center",
 			alignItems: "center",
-			borderRadius: 8,
+		},
+
+		loginRounded: {
+			flex: 1,
+			justifyContent: "center",
+			alignItems: "center",
 		},
 
 		loginButtonTextStyle: {
-			color: "white",
-			fontWeight: "bold",
-		},
-
-		credentialNoteStyle: {
-			color: theme.colors.primaryDark,
-			marginHorizontal: 40,
-			marginTop: 20,
+			color: theme.colors.themePurple,
 		},
 	};
 });
