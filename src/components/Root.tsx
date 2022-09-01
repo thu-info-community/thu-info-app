@@ -362,7 +362,7 @@ export const Root = () => {
 			<Stack.Screen
 				name="RootTabs"
 				component={RootTabs}
-				options={{headerShown: false}}
+				options={{title: "", headerShown: false}}
 			/>
 			{/* Home */}
 			<Stack.Screen

@@ -247,12 +247,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							paddingVertical: 4,
 							paddingLeft: 39,
 							backgroundColor: theme.colors.themeBackground,
-							color: theme.colors.fontB3,
+							color: theme.colors.text,
 							borderColor: theme.colors.themePurple,
 							borderWidth: 1.5,
 							borderRadius: 20,
 						}}
 						placeholder={getStr("searchNewsPrompt")}
+						placeholderTextColor={theme.colors.fontB3}
 						onEndEditing={() => {
 							if (!refreshing && !loading) {
 								fetchNewsList(true, searchKey !== "");
