@@ -26,7 +26,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="qzyq"
 					icon={<IconWater />}
 					onPress={() => {
-						navigation.navigate("Qzyq");
+						navigation.navigate("Qzyq", {ticketNumber: 0});
 					}}
 				/>
 				<SecondaryItem

@@ -68,7 +68,12 @@ import {GitlabTreeScreen} from "../ui/home/gitlabTree";
 import {GitlabCodeScreen, GitlabMarkdownScreen} from "../ui/home/gitlabCode";
 import {GitlabPDFScreen} from "../ui/home/gitlabPDF";
 import {GitlabImageScreen} from "../ui/home/gitlabImage";
-import {WaterScreen} from "../ui/home/water";
+import {
+	QzyqSelectParams,
+	WaterScreen,
+	WaterSelectBrandScreen,
+	WaterSelectTicketNumberScreen,
+} from "../ui/home/water";
 import {WasherWebScreen} from "../ui/home/washerWeb";
 import {ElectricityScreen} from "../ui/home/electricity";
 import {EleRecordScreen} from "../ui/home/eleRecord";
@@ -214,7 +219,9 @@ type HomeStackParamList = {
 	InvoicePDF: {base64: string; id: string};
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
-	Qzyq: undefined;
+	Qzyq: QzyqSelectParams;
+	WaterSelectBrand: undefined;
+	WaterSelectTicketNumber: QzyqSelectParams;
 	WasherWeb: undefined;
 	Sports: undefined;
 	SportsDetail: {info: SportsIdInfo};
@@ -272,6 +279,8 @@ export type ReservesLibPDFProp = RouteProp<
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
+
+export type QzyqSelectProp = RouteProp<HomeStackParamList, "Qzyq">;
 
 export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
 
@@ -759,6 +768,16 @@ export const Root = () => {
 			<Stack.Screen
 				name="Qzyq"
 				component={WaterScreen}
+				options={{title: getStr("qzyq")}}
+			/>
+			<Stack.Screen
+				name="WaterSelectBrand"
+				component={WaterSelectBrandScreen}
+				options={{title: getStr("qzyq")}}
+			/>
+			<Stack.Screen
+				name="WaterSelectTicketNumber"
+				component={WaterSelectTicketNumberScreen}
 				options={{title: getStr("qzyq")}}
 			/>
 			<Stack.Screen

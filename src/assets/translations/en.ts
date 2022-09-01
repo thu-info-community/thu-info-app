@@ -149,6 +149,7 @@ export default {
 	sensitive: "Sensitive Services",
 	electricity: "Electricity",
 	qzyq: "清紫源泉",
+	submitOrder: "Submit",
 	washer: "Washer Info",
 	report: "Report",
 	reportFlag1: "First class degree",
