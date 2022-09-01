@@ -6,6 +6,7 @@ import {
     ELE_REMAINDER_URL,
     DORM_SCORE_URL,
     WEB_VPN_ROOT_URL,
+    DORM_LOGIN_URL_PREFIX,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
@@ -13,19 +14,34 @@ import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
-import {EleError} from "../utils/error";
+import {DormAuthError, EleError} from "../utils/error";
+import {v4} from "uuid";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
 
-export const getDormScore = (helper: InfoHelper): Promise<string> =>
+export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<string> =>
     roamingWrapperWithMocks(
         helper,
-        "myhome_mobile",
+        undefined,
         "",
-        () => uFetch(DORM_SCORE_URL).then(
-            (s) => WEB_VPN_ROOT_URL + cheerio("#weixin_health_linechartCtrl1_Chart1", s).attr().src,
-        ),
+        async () => {
+            await uFetch(DORM_LOGIN_URL_PREFIX + v4(), {
+                __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
+                __VIEWSTATEGENERATOR: "7FA746C3",
+                __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
+                weixin_user_authenticateCtrl1$txtUserName: helper.userId,
+                weixin_user_authenticateCtrl1$txtPassword: dormPassword,
+                weixin_user_authenticateCtrl1$btnLogin: "登录",
+            });
+            const response = await uFetch(DORM_SCORE_URL);
+            const chart = cheerio("#weixin_health_linechartCtrl1_Chart1", response);
+            if (chart.length !== 1) {
+                throw new DormAuthError();
+            }
+            const url = WEB_VPN_ROOT_URL + chart.attr().src;
+            return await uFetch(url);
+        },
         "",
     );
 

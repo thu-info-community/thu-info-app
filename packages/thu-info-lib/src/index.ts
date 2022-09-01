@@ -107,7 +107,6 @@ import { getDegreeProgram } from "./lib/program";
 export class InfoHelper {
     public userId = "";
     public password = "";
-    public dormPassword = "";
 
     public MOCK = "8888";
 
@@ -124,9 +123,8 @@ export class InfoHelper {
         auth: {
             userId?: string;
             password?: string;
-            dormPassword?: string;
         },
-    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password, auth.dormPassword ?? this.dormPassword);
+    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password);
 
     public logout = async (): Promise<void> => logout(this);
 
@@ -169,7 +167,7 @@ export class InfoHelper {
 
     public getCountdown = async (): Promise<string[]> => countdown(this);
 
-    public getDormScore = async (): Promise<string> => getDormScore(this);
+    public getDormScore = async (dormPassword: string): Promise<string> => getDormScore(this, dormPassword);
 
     public getEleRechargePayCode = async (money: number): Promise<string> =>
         getEleRechargePayCode(this, money);

@@ -6,7 +6,6 @@ import {InfoHelper} from "./dist";
         {
             userId: "", // Fill your credentials information here
             password: "",
-            dormPassword: "",
         },
     );
 
