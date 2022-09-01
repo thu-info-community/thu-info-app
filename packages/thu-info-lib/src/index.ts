@@ -174,7 +174,7 @@ export class InfoHelper {
 
     public getElePayRecord = async (): Promise<[string, string, string, string, string, string][]> => getElePayRecord(this);
 
-    public getEleRemainder = async (): Promise<number> => getEleRemainder(this);
+    public getEleRemainder = async (): Promise<{remainder: number; updateTime: string}> => getEleRemainder(this);
 
     public getLibraryList = async (): Promise<Library[]> => getLibraryList(this);
 

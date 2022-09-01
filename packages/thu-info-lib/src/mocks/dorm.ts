@@ -10,4 +10,4 @@ export const MOCK_ELE_PAY_RECORD = [
     ["", "6", "2020-08-22 23:12:49", "", "5.00", "已成功"],
 ];
 
-export const MOCK_ELE_REMAINDER = 88;
+export const MOCK_ELE_REMAINDER = {remainder: 88, updateTime: "2022/9/1 1:29:01"};

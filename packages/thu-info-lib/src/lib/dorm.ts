@@ -94,7 +94,7 @@ export const getElePayRecord = async (
 
 export const getEleRemainder = async (
     helper: InfoHelper,
-): Promise<number> =>
+): Promise<{remainder: number; updateTime: string}> =>
     roamingWrapperWithMocks(
         helper,
         "id",
@@ -102,7 +102,9 @@ export const getEleRemainder = async (
         async () => {
             const $ = await uFetch(ELE_REMAINDER_URL).then(cheerio.load);
             if ($("#net_Default_LoginCtrl1_txtUserName").length === 1) throw new EleError();
-            return Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
+            const remainder = Number($("#Netweb_Home_electricity_DetailCtrl1_lblele").text().trim());
+            const updateTime = $("#Netweb_Home_electricity_DetailCtrl1_lbltime").text().trim();
+            return {remainder, updateTime};
         },
         MOCK_ELE_REMAINDER,
     );
