@@ -1,1 +1,6 @@
-fix: broken methods getInvoiceList and getInvoicePDF。
+fix: broken method getPhysicalExamResult；
+fix: broken method getNewsDetail；
+breaking: dorm password is no longer required for login；
+breaking: `getEleRemainder` now returns another field `updateTime`；
+breaking: `getInvoiceList` now returns total invoice count；
+feat: new API `getDegreeProgram`。
