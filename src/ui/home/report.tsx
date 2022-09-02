@@ -18,6 +18,24 @@ import {RoundedView} from "../../components/views";
 import IconDropdown from "../../assets/icons/IconDropdown";
 import IconExchange from "../../assets/icons/IconExchange";
 import IconCheck from "../../assets/icons/IconCheck";
+import {
+	GradeA,
+	GradeAMinus,
+	GradeAPlus,
+	GradeB,
+	GradeBMinus,
+	GradeBPlus,
+	GradeC,
+	GradeCMinus,
+	GradeCPlus,
+	GradeD,
+	GradeDPlus,
+	GradeEX,
+	GradeF,
+	GradeI,
+	GradeP,
+	GradeW,
+} from "../../assets/icons/IconGrades";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -40,25 +58,6 @@ export const semesterWeight = (semester: string): number => {
 
 const gpaToStr = (gpa: number, dig: number) =>
 	isNaN(gpa) ? "N/A" : gpa.toFixed(dig);
-
-const gradeToColor: {[key: string]: string} = {
-	"A+": "#8B55E4",
-	A: "#5856D6",
-	"A-": "#007AFF",
-	"B+": "#32ADE6",
-	B: "#00C7BE",
-	"B-": "#34C759",
-	"C+": "#98C734",
-	C: "#FFCC00",
-	"C-": "#FF9500",
-	"D+": "#B8831C",
-	D: "#DE970E",
-	P: "#8B55E4",
-	F: "#FF3B30",
-	W: "#C7C7CC",
-	I: "#FF3B30",
-	EX: "#00C7BE",
-};
 
 type Section = {
 	semester: string;
@@ -186,49 +185,41 @@ const cmp = (a: Course, b: Course) => {
 };
 
 const ReportIcon = ({grade}: {grade: string}) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-	return (
-		<View
-			style={{
-				marginRight: 8,
-				alignItems: "center",
-				justifyContent: "center",
-				width: 24,
-				height: 24,
-				borderStyle: ["P", "W", "I", "EX"].includes(grade) ? "dashed" : "solid",
-				borderRadius: 12,
-				borderWidth: 1.5,
-				borderColor: grade in gradeToColor ? gradeToColor[grade] : "#A6A6A6",
-				flexDirection: "row",
-			}}>
-			<Text
-				style={{
-					fontSize: 16,
-					color: colors.text,
-				}}>
-				{grade[0]}
-			</Text>
-			{grade[1] === "X" ? (
-				<Text
-					style={{
-						fontSize: 12,
-						color: colors.text,
-					}}>
-					X
-				</Text>
-			) : grade.length > 1 ? (
-				<Text
-					style={{
-						fontSize: 12,
-						color: colors.text,
-						lineHeight: 12,
-					}}>
-					{grade[1]}
-				</Text>
-			) : null}
-		</View>
-	);
+	switch (grade) {
+		case "A-":
+			return <GradeAMinus />;
+		case "A":
+			return <GradeA />;
+		case "A+":
+			return <GradeAPlus />;
+		case "B-":
+			return <GradeBMinus />;
+		case "B":
+			return <GradeB />;
+		case "B+":
+			return <GradeBPlus />;
+		case "C-":
+			return <GradeCMinus />;
+		case "C":
+			return <GradeC />;
+		case "C+":
+			return <GradeCPlus />;
+		case "D":
+			return <GradeD />;
+		case "D+":
+			return <GradeDPlus />;
+		case "EX":
+			return <GradeEX />;
+		case "F":
+			return <GradeF />;
+		case "I":
+			return <GradeI />;
+		case "P":
+			return <GradeP />;
+		case "W":
+			return <GradeW />;
+	}
+	return null;
 };
 
 export const ReportScreen = () => {
@@ -511,7 +502,12 @@ export const ReportScreen = () => {
 										<ReportIcon grade={course.grade} />
 										<Text
 											numberOfLines={1}
-											style={{fontSize: 16, flex: 2, color: colors.text}}>
+											style={{
+												fontSize: 16,
+												flex: 2,
+												color: colors.text,
+												marginLeft: 8,
+											}}>
 											{course.name}
 										</Text>
 										<Text
@@ -552,7 +548,12 @@ export const ReportScreen = () => {
 										<ReportIcon grade={course.grade} />
 										<Text
 											numberOfLines={1}
-											style={{fontSize: 16, flex: 2, color: colors.text}}>
+											style={{
+												fontSize: 16,
+												flex: 2,
+												color: colors.text,
+												marginLeft: 8,
+											}}>
 											[{course.semester}] {course.name}
 										</Text>
 										<Text
