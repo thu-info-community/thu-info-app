@@ -15,7 +15,7 @@ import {helper} from "../../redux/store";
 import {Course} from "thu-info-lib/dist/models/home/report";
 import {useColorScheme} from "react-native";
 import {RoundedView} from "../../components/views";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconDropdown from "../../assets/icons/IconDropdown";
 import IconExchange from "../../assets/icons/IconExchange";
 import IconCheck from "../../assets/icons/IconCheck";
 
@@ -310,12 +310,13 @@ export const ReportScreen = () => {
 						style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
 						{getStr(`reportFlag${flag}`)}
 					</Text>
-					<Icon
-						name="caret-down"
-						size={12}
-						color={open === "flag" ? colors.primary : colors.fontB2}
-						style={{marginLeft: 8}}
-					/>
+					<View style={{marginLeft: 6}}>
+						<IconDropdown
+							width={6}
+							height={4}
+							color={open === "flag" ? colors.primary : colors.fontB2}
+						/>
+					</View>
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => setOpen((v) => (v === "bx" ? undefined : "bx"))}
@@ -328,12 +329,13 @@ export const ReportScreen = () => {
 					<Text style={{color: open === "bx" ? colors.primary : colors.fontB2}}>
 						{getStr(bx ? "bx" : "bxr")}
 					</Text>
-					<Icon
-						name="caret-down"
-						size={12}
-						color={open === "bx" ? colors.primary : colors.fontB2}
-						style={{marginLeft: 8}}
-					/>
+					<View style={{marginLeft: 6}}>
+						<IconDropdown
+							width={6}
+							height={4}
+							color={open === "bx" ? colors.primary : colors.fontB2}
+						/>
+					</View>
 				</TouchableOpacity>
 				<View style={{flex: 1}} />
 				<TouchableOpacity
