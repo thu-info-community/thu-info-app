@@ -2,8 +2,6 @@ import React, {useEffect, useState} from "react";
 import {GitLabProjectProp, RootNav} from "../../components/Root";
 import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Feather from "react-native-vector-icons/Feather";
 import {SettingsItem} from "../../components/settings/items";
 import {helper} from "../../redux/store";
 import {Branch, File} from "thu-info-lib/dist/models/gitlab/gitlab";
@@ -130,11 +128,11 @@ export const GitlabProjectScreen = ({
 						marginVertical: 3,
 						alignItems: "center",
 					}}>
-					<Icon name="star-o" size={18} color="grey" />
+					{/* <Icon name="star-o" size={18} color="grey" /> */}
 					<Text style={{paddingHorizontal: 6, fontSize: 16, color: "grey"}}>
 						{project.star_count}
 					</Text>
-					<Icon name="code-fork" size={18} color="grey" />
+					{/* <Icon name="code-fork" size={18} color="grey" /> */}
 					<Text style={{paddingHorizontal: 6, fontSize: 16, color: "grey"}}>
 						{project.forks_count}
 					</Text>
@@ -148,14 +146,14 @@ export const GitlabProjectScreen = ({
 						setModalShow(b.length > 0);
 					});
 				}}
-				icon={<Feather name="git-branch" size={20} />}
+				icon={undefined /* <Feather name="git-branch" size={20} /> */}
 			/>
 			<SettingsItem
 				text={getStr("gitlabViewCode")}
 				onPress={() =>
 					navigation.navigate("GitLabTree", {project, path: "", ref: branch})
 				}
-				icon={<Feather name="code" size={20} />}
+				icon={undefined /* <Feather name="code" size={20} /> */}
 			/>
 			{readmeFile !== undefined && readmeFileContent !== undefined && (
 				<>
@@ -166,7 +164,7 @@ export const GitlabProjectScreen = ({
 							marginTop: 8,
 							alignItems: "center",
 						}}>
-						<Feather name="info" size={20} color="grey" />
+						{/* <Feather name="info" size={20} color="grey" /> */}
 						<Text style={{marginLeft: 8, fontSize: 15, color: "grey"}}>
 							{readmeFile.name}
 						</Text>

@@ -12,7 +12,6 @@ import themes from "../../assets/themes/themes";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {getStr} from "../../utils/i18n";
 import TimeAgo from "react-native-timeago";
-import Feather from "react-native-vector-icons/Feather";
 
 export const ProjectItem = ({
 	project,
@@ -81,7 +80,7 @@ export const FileItem = ({
 				justifyContent: "flex-start",
 				alignItems: "center",
 			}}>
-			<Feather name={file.type === "tree" ? "folder" : "code"} size={20} />
+			{/* <Feather name={file.type === "tree" ? "folder" : "code"} size={20} /> */}
 			<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
 				{file.name}
 			</Text>

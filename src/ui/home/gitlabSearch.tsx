@@ -6,7 +6,7 @@ import {RootNav} from "../../components/Root";
 import {TextInput, TouchableOpacity, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconSearch from "../../assets/icons/IconSearch";
 import Snackbar from "react-native-snackbar";
 
 export const GitlabSearchScreen = (props: {navigation: RootNav}) => {
@@ -62,7 +62,7 @@ export const GitlabSearchScreen = (props: {navigation: RootNav}) => {
 				<TouchableOpacity
 					onPress={refresh}
 					style={{padding: 6, paddingLeft: 12}}>
-					<Icon name="search" size={20} color={colors.text} />
+					<IconSearch width={20} height={20} />
 				</TouchableOpacity>
 			</View>
 		),

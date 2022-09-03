@@ -9,7 +9,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {ClassroomDetailRouteProp} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
-import Icon from "react-native-vector-icons/FontAwesome";
+import IconRight from "../../assets/icons/IconRight";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {currState, helper} from "../../redux/store";
@@ -127,11 +127,12 @@ export const ClassroomDetailScreen = ({
 					}
 					disabled={data[0] === 1 && data[1] === 1}
 					style={{padding: 8}}>
-					<Icon
+					{/* <Icon
 						name="chevron-left"
 						size={24}
 						color={data[0] === 1 && data[1] === 1 ? "#888" : theme.colors.text}
-					/>
+					/> */}
+					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 				<Text
 					onPress={() =>
@@ -161,7 +162,7 @@ export const ClassroomDetailScreen = ({
 					}
 					disabled={data[0] === weekCount && data[1] === 7}
 					style={{padding: 8}}>
-					<Icon
+					{/* <Icon
 						name="chevron-right"
 						size={24}
 						color={
@@ -169,7 +170,8 @@ export const ClassroomDetailScreen = ({
 								? "#888"
 								: theme.colors.text
 						}
-					/>
+					/> */}
+					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 			</View>
 			<View
