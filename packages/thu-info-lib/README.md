@@ -114,11 +114,6 @@ It's ok if you meet `Timeout * Async callback was not invoked within the xxx-ms 
 
 Due to various reasons, some test cases might fail. Re-running them might solve the problem.
 
-## Changelog
-
-- v1.0.0
-  - First release
-
 ## Acknowledgement
 
 Great thanks to [Harry-Chen](https://github.com/Harry-Chen) and his [thu-learn-lib](https://github.com/Harry-Chen/thu-learn-lib)!
