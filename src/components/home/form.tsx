@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {TouchableWithoutFeedback, View} from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import IconFormStar from "../../assets/icons/IconFormStar";
 import {InputTag} from "thu-info-lib/dist/models/home/assessment";
 
 interface starRatingProps {
@@ -15,7 +15,6 @@ export const StarRating = (props: starRatingProps) => {
 	let starTotal: number = props.starTotal || 7;
 	let starSize: number = props.starSize || 26;
 	let starSpacing: number = props.starSpacing || 3;
-	let starColor: string = props.starColor || "gold";
 
 	const changeVal = (x: number) => {
 		props.scoreRef.value = x.toString();
@@ -33,7 +32,9 @@ export const StarRating = (props: starRatingProps) => {
 					changeVal(i);
 				}}
 				style={{marginHorizontal: starSpacing}}>
-				<FontAwesome name="star" size={starSize} color={starColor} />
+				<View style={{height: starSize, width: starSize}}>
+					<IconFormStar full={true} />
+				</View>
 			</TouchableWithoutFeedback>,
 		);
 	}
@@ -46,7 +47,9 @@ export const StarRating = (props: starRatingProps) => {
 					changeVal(j);
 				}}
 				style={{marginHorizontal: starSpacing}}>
-				<FontAwesome name="star-o" size={starSize} color="lightgray" />
+				<View style={{height: starSize, width: starSize}}>
+					<IconFormStar full={false} />
+				</View>
 			</TouchableWithoutFeedback>,
 		);
 	}
