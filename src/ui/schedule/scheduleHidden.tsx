@@ -8,7 +8,6 @@ import {
 	Dimensions,
 	Alert,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import {State} from "../../redux/store";
 import {
 	getOverlappedBlock,
@@ -170,7 +169,7 @@ const ScheduleHiddenUI = ({
 								removeRule(item.name, item.time);
 							}
 						}}>
-						<Icon name="trash-o" size={18} color={theme.colors.text} />
+						{/* <Icon name="trash-o" size={18} color={theme.colors.text} /> */}
 					</TouchableOpacity>
 				</View>
 			)}
