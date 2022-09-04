@@ -113,7 +113,7 @@ export const getReport = (
     roamingWrapperWithMocks(
         helper,
         "default",
-        "B7EF0ADF9406335AD7905B30CD7B49B1",
+        helper.graduate() ? "E35232808C08C8C5F199F13BF6B7F5D0": "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`)),
             bx && flag === 1
@@ -326,7 +326,7 @@ export const getExpenditures = (
     roamingWrapperWithMocks(
         helper,
         "default",
-        "2B56CC9B3BFFA26932C4110E0C5FB35A",
+        helper.graduate() ? "048DD1B6BBBDFA7A6310D8F3CA53E290": "2B56CC9B3BFFA26932C4110E0C5FB35A",
         () => uFetch(EXPENDITURE_URL).then(
             (data) => {
                 const workbook = XLSX.read(data, {sheetStubs: true, cellDates: true});

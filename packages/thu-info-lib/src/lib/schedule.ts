@@ -29,7 +29,7 @@ const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
     roamingWrapperWithMocks(
         helper,
         "default",
-        "287C0C6D90ABB364CD5FDF1495199962",
+        helper.graduate() ? "BEABB32641DC4EC3510B048BAF42471A": "287C0C6D90ABB364CD5FDF1495199962",
         () => Promise.all(
             Array.from(new Array(weekCount / GROUP_SIZE), (_, id) =>
                 uFetch(
@@ -60,7 +60,7 @@ const getSecondary = (helper: InfoHelper) =>
     roamingWrapperWithMocks(
         helper,
         "default",
-        "287C0C6D90ABB364CD5FDF1495199962",
+        helper.graduate() ? "BEABB32641DC4EC3510B048BAF42471A": "287C0C6D90ABB364CD5FDF1495199962",
         () => uFetch(SECONDARY_URL).then((str) => {
             const lowerBound = str.indexOf("function setInitValue");
             const upperBound = str.indexOf("}", lowerBound);
