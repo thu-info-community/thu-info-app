@@ -118,3 +118,14 @@ jest.mock("react-native-blob-util/fs", () => ({dirs: {
 }}));
 
 jest.mock('react-native-permissions', () => require('react-native-permissions/mock'));
+
+jest.mock("src/utils/webApi", () => ({
+	getLatestAnnounces: () => Promise.resolve([]),
+	getLatestVersion: () => Promise.resolve([{
+		versionName: "",
+		url: "",
+		description: "",
+	}]),
+	FunctionType: {},
+	addUsageStat: () => {},
+}));
