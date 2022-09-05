@@ -108,3 +108,24 @@ export const toggleSocketState = async (
 		throw new Error();
 	}
 };
+
+export enum FunctionType {
+	PhysicalExam,
+	TeachingEvaluation,
+	Report,
+	Classrooms,
+	Library,
+	GymnasiumReg,
+	PrivateRooms,
+	Expenditures,
+	Bank,
+	Invoice,
+	WasherInfo,
+	QZYQ,
+	DormScore,
+	Electricity,
+}
+
+export const addUsageStat = (func: FunctionType) => {
+	fetch(`${rootUrl}/stat/usage/${func.valueOf()}`);
+};
