@@ -5,6 +5,7 @@ import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
+import {addUsageStat, FunctionType} from "../../utils/webApi";
 
 export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -17,6 +18,7 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="expenditure"
 					icon={<IconExpenditure />}
 					onPress={() => {
+						addUsageStat(FunctionType.Expenditures);
 						navigation.navigate("Expenditure");
 					}}
 				/>
@@ -25,6 +27,7 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="bankPayment"
 					icon={<IconBankPayment />}
 					onPress={() => {
+						addUsageStat(FunctionType.Bank);
 						navigation.navigate("BankPayment");
 					}}
 				/>
@@ -33,6 +36,7 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="invoice"
 					icon={<IconInvoice />}
 					onPress={() => {
+						addUsageStat(FunctionType.Invoice);
 						navigation.navigate("Invoice");
 					}}
 				/>

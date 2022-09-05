@@ -51,6 +51,7 @@ import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {setCalendarConfigAction} from "../../redux/actions/config";
 import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
 import {SportsReservationCard} from "./sports";
+import {addUsageStat, FunctionType} from "../../utils/webApi";
 
 const iconSize = 40;
 
@@ -439,6 +440,7 @@ const getHomeFunctions = (
 		key="report"
 		title="report"
 		onPress={() => {
+			addUsageStat(FunctionType.Report);
 			updateTop5("report");
 			if (currState().config.verifyPasswordBeforeEnterReport) {
 				navigation.navigate("DigitalPassword", {
@@ -455,6 +457,7 @@ const getHomeFunctions = (
 		key="physicalExam"
 		title="physicalExam"
 		onPress={() => {
+			addUsageStat(FunctionType.PhysicalExam);
 			updateTop5("physicalExam");
 			navigation.navigate("PhysicalExam");
 		}}>
@@ -464,6 +467,7 @@ const getHomeFunctions = (
 		key="teachingEvaluation"
 		title="teachingEvaluation"
 		onPress={() => {
+			addUsageStat(FunctionType.TeachingEvaluation);
 			updateTop5("teachingEvaluation");
 			navigation.navigate("Evaluation");
 		}}>
@@ -482,6 +486,7 @@ const getHomeFunctions = (
 		key="classroomState"
 		title="classroomState"
 		onPress={() => {
+			addUsageStat(FunctionType.Classrooms);
 			updateTop5("classroomState");
 			navigation.navigate("ClassroomList");
 		}}>
@@ -508,6 +513,7 @@ const getHomeFunctions = (
 		key="library"
 		title="library"
 		onPress={() => {
+			addUsageStat(FunctionType.Library);
 			updateTop5("library");
 			navigation.navigate("Library");
 		}}>
@@ -517,6 +523,7 @@ const getHomeFunctions = (
 		key="libRoomBook"
 		title="libRoomBook"
 		onPress={() => {
+			addUsageStat(FunctionType.PrivateRooms);
 			updateTop5("libRoomBook");
 			navigation.navigate("LibRoomSelect");
 		}}>
@@ -535,6 +542,7 @@ const getHomeFunctions = (
 		key="expenditure"
 		title="expenditure"
 		onPress={() => {
+			addUsageStat(FunctionType.Expenditures);
 			updateTop5("expenditure");
 			navigation.navigate("Expenditure");
 		}}>
@@ -552,6 +560,7 @@ const getHomeFunctions = (
 		key="sportsBook"
 		title="sportsBook"
 		onPress={() => {
+			addUsageStat(FunctionType.GymnasiumReg);
 			updateTop5("sportsBook");
 			navigation.navigate("Sports");
 		}}>
@@ -561,6 +570,7 @@ const getHomeFunctions = (
 		key="bankPayment"
 		title="bankPayment"
 		onPress={() => {
+			addUsageStat(FunctionType.Bank);
 			updateTop5("bankPayment");
 			navigation.navigate("BankPayment");
 		}}>
@@ -570,6 +580,7 @@ const getHomeFunctions = (
 		key="invoice"
 		title="invoice"
 		onPress={() => {
+			addUsageStat(FunctionType.Invoice);
 			updateTop5("invoice");
 			navigation.navigate("Invoice");
 		}}>
@@ -579,6 +590,7 @@ const getHomeFunctions = (
 		key="qzyq"
 		title="qzyq"
 		onPress={() => {
+			addUsageStat(FunctionType.QZYQ);
 			updateTop5("qzyq");
 			navigation.navigate("Qzyq", {ticketNumber: 0});
 		}}>
@@ -588,6 +600,7 @@ const getHomeFunctions = (
 		key="washer"
 		title="washer"
 		onPress={() => {
+			addUsageStat(FunctionType.WasherInfo);
 			updateTop5("washer");
 			navigation.navigate("WasherWeb");
 		}}>
@@ -597,6 +610,7 @@ const getHomeFunctions = (
 		key="electricity"
 		title="electricity"
 		onPress={() => {
+			addUsageStat(FunctionType.Electricity);
 			updateTop5("electricity");
 			navigation.navigate("Electricity");
 		}}>
@@ -606,6 +620,7 @@ const getHomeFunctions = (
 		key="dormScore"
 		title="dormScore"
 		onPress={() => {
+			addUsageStat(FunctionType.DormScore);
 			updateTop5("dormScore");
 			navigation.navigate("DormScore");
 		}}>

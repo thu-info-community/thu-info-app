@@ -6,6 +6,7 @@ import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
+import {addUsageStat, FunctionType} from "../../utils/webApi";
 
 export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -18,6 +19,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="washer"
 					icon={<IconWasher />}
 					onPress={() => {
+						addUsageStat(FunctionType.WasherInfo);
 						navigation.navigate("WasherWeb");
 					}}
 				/>
@@ -26,6 +28,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="qzyq"
 					icon={<IconWater />}
 					onPress={() => {
+						addUsageStat(FunctionType.QZYQ);
 						navigation.navigate("Qzyq", {ticketNumber: 0});
 					}}
 				/>
@@ -34,6 +37,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="dormScore"
 					icon={<IconDormScore />}
 					onPress={() => {
+						addUsageStat(FunctionType.DormScore);
 						navigation.navigate("DormScore");
 					}}
 				/>
@@ -42,6 +46,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="electricity"
 					icon={<IconEleRecharge />}
 					onPress={() => {
+						addUsageStat(FunctionType.Electricity);
 						navigation.navigate("Electricity");
 					}}
 				/>

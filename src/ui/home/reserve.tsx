@@ -5,6 +5,7 @@ import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconLibrary from "../../assets/icons/IconLibrary";
 import IconSports from "../../assets/icons/IconSports";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
+import {addUsageStat, FunctionType} from "../../utils/webApi";
 
 export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -17,6 +18,7 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="library"
 					icon={<IconLibrary />}
 					onPress={() => {
+						addUsageStat(FunctionType.Library);
 						navigation.navigate("Library");
 					}}
 				/>
@@ -25,6 +27,7 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="sportsBook"
 					icon={<IconSports />}
 					onPress={() => {
+						addUsageStat(FunctionType.GymnasiumReg);
 						navigation.navigate("Sports");
 					}}
 				/>
@@ -33,6 +36,7 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 					destKey="libRoomBook"
 					icon={<IconLibRoom />}
 					onPress={() => {
+						addUsageStat(FunctionType.PrivateRooms);
 						navigation.navigate("LibRoomSelect");
 					}}
 				/>
