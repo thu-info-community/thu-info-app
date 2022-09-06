@@ -44,10 +44,11 @@ import {
     loginLibraryRoomBooking,
 } from "./lib/library";
 import {
+    addNewsSubscription,
     addNewsToFavor,
-    getFavorNewsList,
+    getFavorNewsList, getNewsChannelList,
     getNewsDetail,
-    getNewsList,
+    getNewsList, getNewsListBySubscription, getNewsSourceList, getNewsSubscriptionList,
     removeNewsFromFavor,
     searchNewsList,
 } from "./lib/news";
@@ -55,7 +56,7 @@ import { getSchedule } from "./lib/schedule";
 import { Course } from "./models/home/report";
 import { Form } from "./models/home/assessment";
 import { Record } from "./models/home/expenditure";
-import { NewsSlice, SourceTag } from "./models/news/news";
+import {NewsSlice, NewsSubscription, ChannelTag} from "./models/news/news";
 import {
     getSportsCaptchaUrlMethod,
     getSportsReservationRecords,
@@ -233,14 +234,24 @@ export class InfoHelper {
     public getNewsList = async (
         page: number,
         length: number,
-        channel?: SourceTag
+        channel?: ChannelTag
     ): Promise<NewsSlice[]> => getNewsList(this, page, length, channel);
 
     public searchNewsList = async (
         page: number,
         key: string,
-        channel?: SourceTag
+        channel?: ChannelTag
     ): Promise<NewsSlice[]> => searchNewsList(this, page, key, channel);
+
+    public getNewsSubscriptionList = async (): Promise<NewsSubscription[]> => getNewsSubscriptionList(this);
+
+    public getNewsSourceList = async (): Promise<{ sourceId: string, sourceName: string }[]> => getNewsSourceList(this);
+
+    public getNewsChannelList = async (needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => getNewsChannelList(this, needEnglish);
+
+    public addNewsSubscription = async (channelId: ChannelTag, sourceId: string): Promise<boolean> => addNewsSubscription(this, channelId, sourceId);
+
+    public getNewsListBySubscription = async (page = 1, subscriptionId?: string) => getNewsListBySubscription(this, page, subscriptionId ?? "");
 
     public getNewsDetail = async (
         url: string,

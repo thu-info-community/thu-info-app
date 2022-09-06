@@ -1,7 +1,7 @@
 import {url0, url1, url2, url3, url4, url5, url6, url7, url8, url9} from "./source/newsHtml";
-import {NewsSlice, SourceTag} from "../models/news/news";
+import {NewsSlice, ChannelTag} from "../models/news/news";
 
-export const MOCK_NEWS_LIST = (channel: SourceTag): NewsSlice[] => {
+export const MOCK_NEWS_LIST = (channel: ChannelTag): NewsSlice[] => {
     switch (channel) {
     case "LM_JWGG":
         return [

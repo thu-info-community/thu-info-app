@@ -1,15 +1,15 @@
 import { InfoHelper } from "../index";
 import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import { getRedirectUrl, uFetch } from "../utils/network";
-import { NewsSlice, SourceTag } from "../models/news/news";
+import {NewsSlice, NewsSubscription, ChannelTag} from "../models/news/news";
 import {
     FILE_DOWNLOAD_URL,
-    NEWS_ADD_FAVOR_URL,
+    NEWS_ADD_FAVOR_URL, NEWS_ADD_SUBSCRIPTION_URL, NEWS_CHANNEL_LIST_URL,
     NEWS_DETAIL_URL,
-    NEWS_FAVOR_LIST_URL,
+    NEWS_FAVOR_LIST_URL, NEWS_LIST_BY_SUBSCRIPTION_URL,
     NEWS_LIST_URL,
     NEWS_REDIRECT_URL,
-    NEWS_REMOVE_FAVOR_URL,
+    NEWS_REMOVE_FAVOR_URL, NEWS_SOURCE_LIST_URL, NEWS_SUBSCRIPTION_LIST_URL,
     PDF_NEWS_PREFIX,
     SEARCH_NEWS_LIST_URL,
 } from "../constants/strings";
@@ -26,14 +26,14 @@ import {MOCK_NEWS_LIST} from "../mocks/news";
  * @param channel
  * @returns Array of NewsSlice
  */
-export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: SourceTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
+export const getNewsList = async (helper: InfoHelper, page: number, length: number, channel?: ChannelTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
     async () => {
         const newsList: NewsSlice[] = [];
         const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: SourceTag }[] } } = JSON.parse(json);
+        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag }[] } } = JSON.parse(json);
         data.object.dataList.forEach(element => {
             newsList.push({
                 name: decode(element.bt),
@@ -50,7 +50,7 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
     channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
 
-const channelToLmmc = (channel: SourceTag): string => {
+const channelToLmmc = (channel: ChannelTag): string => {
     switch (channel) {
     case "LM_BGTG": return "办公通知";
     case "LM_ZYGG": return "重要公告";
@@ -76,7 +76,7 @@ const channelToLmmc = (channel: SourceTag): string => {
  * @param key
  * @param channel
  */
-export const searchNewsList = async (helper: InfoHelper, page: number, key: string, channel?: SourceTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
+export const searchNewsList = async (helper: InfoHelper, page: number, key: string, channel?: ChannelTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
@@ -92,7 +92,7 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
                 currentPage: page,
             })},
         );
-        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: SourceTag }[] } } = JSON.parse(json);
+        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: ChannelTag }[] } } = JSON.parse(json);
         data.object.resultsList.forEach(element => {
             newsList.push({
                 name: cheerio.load(decode(element.bt)).root().text(),
@@ -109,6 +109,75 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
     channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
 
+export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSubscription[]> => {
+    const json = await uFetch(`${NEWS_SUBSCRIPTION_LIST_URL}?_csrf=${await getCsrfToken()}`);
+    // I think the pxz is the order of subscriptions
+    const data: { object: { id: string, fbdwmcList: string[], lmmcList: string[], pxz: number, titile: string }[] } = JSON.parse(json);
+    return data.object.map((i) => {
+        return {
+            channel: i.lmmcList?.[0],
+            source: i.fbdwmcList?.[0],
+            id: i.id,
+            title: i.titile,
+            order: i.pxz,
+        };
+    });
+};
+
+export const getNewsSourceList = async (helper: InfoHelper): Promise<{ sourceId: string, sourceName: string }[]> => {
+    const json = await uFetch(`${NEWS_SOURCE_LIST_URL}?_csrf=${await getCsrfToken()}`);
+    const data: { object: { id: string, text: string }[] } = JSON.parse(json);
+    return data.object.map(i => {
+        return {
+            sourceId: i.id,
+            sourceName: i.text,
+        };
+    });
+};
+
+export const getNewsChannelList = async (h: InfoHelper, needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => {
+    const json = await uFetch(`${NEWS_CHANNEL_LIST_URL}?_csrf=${await getCsrfToken()}`);
+    const data: { object: { lmlist: { id: ChannelTag, title_zh: string, title_en: string }[] } } = JSON.parse(json);
+    return data.object.lmlist.map(i => {
+        return {
+            id: i.id,
+            title: needEnglish ? i.title_en : i.title_zh,
+        };
+    });
+};
+
+export const addNewsSubscription = async (h: InfoHelper, channelId: ChannelTag, sourceId: string): Promise<boolean> => {
+    const json = await uFetch(`${NEWS_ADD_SUBSCRIPTION_URL}?_csrf=${await getCsrfToken()}`,
+        {
+            dygz: JSON.stringify({lmid: channelId, fbdwnm: sourceId, bt: ""}),
+            mkid: "XXFB",
+        });
+    const data: { result: string } = JSON.parse(json);
+    return data.result === "success";
+};
+
+export const getNewsListBySubscription = async (h: InfoHelper, page: number, subscriptionId: string): Promise<NewsSlice[]> => {
+    const json = await uFetch(`${NEWS_LIST_BY_SUBSCRIPTION_URL}?_csrf=${await getCsrfToken()}`,
+        {
+            "currentPage": page,
+            "dyid": subscriptionId,
+        });
+    const data: { object: { resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag }[] } } = JSON.parse(json);
+    const newsList: NewsSlice[] = [];
+    // copy from line 37 to 47
+    data.object.resultList.forEach(element => {
+        newsList.push({
+            name: decode(element.bt),
+            xxid: (element.xxid),
+            url: decode(element.url),
+            date: element.time,
+            source: element.dwmc,
+            topped: false,
+            channel: element.lmid,
+        });
+    });
+    return newsList;
+};
 
 const policyList: [string, [string, string]][] = [
     ["jwcbg", [".TD4", "td[colspan=4]:not(td[height])"]],
@@ -275,7 +344,7 @@ export const getFavorNewsList = async (helper: InfoHelper, page = 1): Promise<[N
     const csrf = await getCsrfToken();
     const json = await uFetch(`${NEWS_FAVOR_LIST_URL}?_csrf=${csrf}`, { "currentPage": page });
     const newsList: NewsSlice[] = [];
-    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: SourceTag }[] } } = JSON.parse(json);
+    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: ChannelTag }[] } } = JSON.parse(json);
     data.object.resultList.forEach(element => {
         newsList.push({
             name: decode(element.bt),
