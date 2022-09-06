@@ -14,19 +14,25 @@ import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
+import {
+	NewsSlice,
+	ChannelTag,
+	NewsSubscription,
+} from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native";
 import IconSearch from "../../assets/icons/IconSearch";
 import IconStar from "../../assets/icons/IconStar";
+import IconSubscriptionLogo from "../../assets/icons/IconSubscriptionLogo";
 
 type Category =
+	| "catSubscribed"
 	| "catPublicInformation"
 	| "catStudyAndResearch"
 	| "catStudentAffairs"
 	| "catCampusLife"
 	| "catEmploymentInformation";
 
-const categoryChannelGroups: {category: Category; channels: SourceTag[]}[] = [
+const categoryChannelGroups: {category: Category; channels: ChannelTag[]}[] = [
 	{
 		category: "catPublicInformation",
 		channels: ["LM_ZYGG", "LM_YQFKZT", "LM_BGTG", "LM_HB"],
@@ -36,14 +42,14 @@ const categoryChannelGroups: {category: Category; channels: SourceTag[]}[] = [
 		channels: ["LM_JWGG", "LM_TTGGG", "LM_KYTZ"],
 	},
 	{category: "catStudentAffairs", channels: ["LM_XSBGGG", "LM_XJ_XTWBGTZ"]},
-	{category: "catCampusLife", channels: ["LM_XJ_XSSQDT"]},
+	{category: "catCampusLife", channels: ["LM_JYGG", "LM_XJ_XSSQDT"]},
 	{
 		category: "catEmploymentInformation",
-		channels: ["LM_JYGG", "LM_JYZPXX", "LM_XJ_GJZZSXRZ"],
+		channels: ["LM_BYJYXX", "LM_JYZPXX", "LM_XJ_GJZZSXRZ"],
 	},
 ];
 
-const CategoryTag = ({
+const CategoryTagButton = ({
 	category,
 	selected,
 	onPress,
@@ -81,14 +87,28 @@ const CategoryTag = ({
 	);
 };
 
-const ChannelTag = ({
+const makeSubscriptionText = (n: NewsSubscription) => {
+	if (n.id === "0") {
+		return getStr("all");
+	} else if (!n.source) {
+		return n.channel;
+	} else if (!n.channel) {
+		return n.source;
+	} else {
+		return `${n.source} | ${n.channel}`;
+	}
+};
+
+const ChannelTagButton = ({
 	channel,
 	selected,
 	onPress,
+	isSubscription,
 }: {
-	channel: SourceTag | undefined;
+	channel: ChannelTag | NewsSubscription | undefined;
 	selected: boolean;
 	onPress: () => void;
+	isSubscription: boolean;
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -107,16 +127,28 @@ const ChannelTag = ({
 			}}
 			onPress={onPress}
 			disabled={selected}>
-			<Text
-				style={{
-					fontSize: 14,
-					color: selected ? colors.themePurple : colors.fontB2,
-				}}>
-				{getStr(channel ?? "all")}
-			</Text>
+			{isSubscription ? (
+				<Text
+					style={{
+						fontSize: 14,
+						color: selected ? colors.themePurple : colors.fontB2,
+					}}>
+					{makeSubscriptionText(channel as NewsSubscription)}
+				</Text>
+			) : (
+				<Text
+					style={{
+						fontSize: 14,
+						color: selected ? colors.themePurple : colors.fontB2,
+					}}>
+					{getStr((channel as ChannelTag | undefined) ?? "all")}
+				</Text>
+			)}
 		</TouchableOpacity>
 	);
 };
+
+type NewsSubscriptionId = string;
 
 export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
@@ -129,9 +161,18 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 		Category | undefined
 	>();
 	const [channelSelected, setChannelSelected] = useState<
-		SourceTag | undefined
-	>();
+		ChannelTag | undefined | NewsSubscriptionId
+	>(); // channelSelected can be used to specify which subscription is selected.
 	const [fetchedAll, setFetchedAll] = useState(false);
+	const [subscriptions, setSubscriptions] = useState<NewsSubscription[]>(
+		[
+			{
+				id: "0",
+				title: getStr("all"),
+				order: -1,
+			},
+		], // The initial NewsSubscription means using ALL subscription rules.
+	);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -142,6 +183,45 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	) => {
 		setRefreshing(true);
 		setLoading(true);
+
+		// for news subscription
+		if (categorySelected === "catSubscribed") {
+			if (request) {
+				setNewsList([]);
+				setPage(1);
+				setFetchedAll(false);
+			} else {
+				if (fetchedAll) {
+					setRefreshing(false);
+					setLoading(false);
+					return;
+				}
+				setPage((p) => p + 1);
+			}
+			helper
+				.getNewsListBySubscription(
+					request ? 1 : page + 1,
+					channelSelected === "0" ? undefined : channelSelected,
+				)
+				.then((res) => {
+					if (res.length === 0) {
+						setFetchedAll(true);
+					} else {
+						setNewsList((o) => o.concat(res));
+					}
+				})
+				.catch(() => {
+					Snackbar.show({
+						text: getStr("networkRetry"),
+						duration: Snackbar.LENGTH_LONG,
+					});
+				})
+				.then(() => {
+					setRefreshing(false);
+					setLoading(false);
+				});
+			return;
+		}
 
 		if (request) {
 			setNewsList([]);
@@ -167,10 +247,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			? helper.searchNewsList(
 					request ? 1 : page + 1,
 					searchKey,
-					channelSelected,
-					// eslint-disable-next-line no-mixed-spaces-and-tabs
+					channelSelected as ChannelTag,
 			  )
-			: helper.getNewsList(request ? 1 : page + 1, 30, channelSelected)
+			: helper.getNewsList(
+					request ? 1 : page + 1,
+					30,
+					channelSelected as ChannelTag,
+			  )
 		)
 			.then((res) => {
 				if (res.length === 0) {
@@ -191,12 +274,16 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			});
 	};
 
+	useEffect(() => {}, [subscriptions]);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, [channelSelected]);
 
 	useEffect(() => {
 		if (categorySelected === undefined) {
 			setChannelSelected(undefined);
+		} else if (categorySelected === "catSubscribed") {
+			setChannelSelected("0");
 		} else {
 			setChannelSelected(
 				categoryChannelGroups.find(
@@ -212,13 +299,33 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 		<View style={{flex: 1}}>
 			<View style={{flex: 0}}>
 				<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-					<CategoryTag
+					<CategoryTagButton
+						category={"catSubscribed"}
+						selected={categorySelected === "catSubscribed"}
+						onPress={() => {
+							setCategorySelected("catSubscribed");
+							helper
+								.getNewsSubscriptionList()
+								.then((res) => {
+									if (subscriptions.length === 1) {
+										setSubscriptions(subscriptions.concat(res));
+									}
+								})
+								.catch(() => {
+									Snackbar.show({
+										text: getStr("networkRetry"),
+										duration: Snackbar.LENGTH_LONG,
+									});
+								});
+						}}
+					/>
+					<CategoryTagButton
 						category={undefined}
 						selected={categorySelected === undefined}
 						onPress={() => setCategorySelected(undefined)}
 					/>
 					{categoryChannelGroups.map(({category}) => (
-						<CategoryTag
+						<CategoryTagButton
 							key={category}
 							category={category}
 							selected={categorySelected === category}
@@ -227,72 +334,113 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					))}
 				</ScrollView>
 			</View>
-			{categorySelected === undefined ? (
-				<View
-					style={{
-						flex: 0,
-						flexDirection: "row",
-						marginLeft: 28,
-						marginTop: 4,
-						marginRight: 12,
-						alignItems: "center",
-					}}>
-					<TextInput
-						value={searchKey}
-						onChangeText={setSearchKey}
-						style={{
-							flex: 1,
-							textAlignVertical: "center",
-							fontSize: 14,
-							paddingVertical: 4,
-							paddingLeft: 39,
-							backgroundColor: theme.colors.themeBackground,
-							color: theme.colors.text,
-							borderColor: theme.colors.themePurple,
-							borderWidth: 1.5,
-							borderRadius: 20,
-						}}
-						placeholder={getStr("searchNewsPrompt")}
-						placeholderTextColor={theme.colors.fontB3}
-						onEndEditing={() => {
-							if (!refreshing && !loading) {
-								fetchNewsList(true, searchKey !== "");
-							}
-						}}
-					/>
-					<View style={{position: "absolute", left: 12}}>
-						<IconSearch height={18} width={18} />
-					</View>
-					<TouchableOpacity style={{marginLeft: 8}}>
-						<IconStar height={18} width={18} />
-					</TouchableOpacity>
-				</View>
-			) : (
-				<View
-					style={{
-						flex: 0,
-						flexDirection: "row",
-						marginTop: 4,
-						marginHorizontal: 12,
-						alignItems: "center",
-					}}>
-					<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-						{categoryChannelGroups
-							.find(({category}) => category === categorySelected)
-							?.channels.map((channel) => (
-								<ChannelTag
-									key={channel}
-									channel={channel}
-									onPress={() => setChannelSelected(channel)}
-									selected={channelSelected === channel}
-								/>
-							))}
-					</ScrollView>
-					<TouchableOpacity style={{marginLeft: 8}}>
-						<IconStar height={18} width={18} />
-					</TouchableOpacity>
-				</View>
-			)}
+			{(() => {
+				if (categorySelected === undefined) {
+					return (
+						<View
+							style={{
+								flex: 0,
+								flexDirection: "row",
+								marginLeft: 28,
+								marginTop: 4,
+								marginRight: 12,
+								alignItems: "center",
+							}}>
+							<TextInput
+								value={searchKey}
+								onChangeText={setSearchKey}
+								style={{
+									flex: 1,
+									textAlignVertical: "center",
+									fontSize: 14,
+									paddingVertical: 4,
+									paddingLeft: 39,
+									backgroundColor: theme.colors.themeBackground,
+									color: theme.colors.text,
+									borderColor: theme.colors.themePurple,
+									borderWidth: 1.5,
+									borderRadius: 20,
+								}}
+								placeholder={getStr("searchNewsPrompt")}
+								placeholderTextColor={theme.colors.fontB3}
+								onEndEditing={() => {
+									if (!refreshing && !loading) {
+										fetchNewsList(true, searchKey !== "");
+									}
+								}}
+							/>
+							<View style={{position: "absolute", left: 12}}>
+								<IconSearch height={18} width={18} />
+							</View>
+							<TouchableOpacity style={{marginLeft: 8}}>
+								<IconStar height={18} width={18} />
+							</TouchableOpacity>
+						</View>
+					);
+				} else if (categorySelected === "catSubscribed") {
+					if (subscriptions.length === 1) {
+						return <></>;
+					} else {
+						return (
+							<View
+								style={{
+									flex: 0,
+									flexDirection: "row",
+									marginTop: 4,
+									marginHorizontal: 12,
+									alignItems: "center",
+								}}>
+								<ScrollView
+									showsHorizontalScrollIndicator={false}
+									horizontal={true}>
+									{subscriptions.map((s) => (
+										<ChannelTagButton
+											key={s.id}
+											channel={s}
+											selected={channelSelected === s.id}
+											onPress={() => setChannelSelected(s.id)}
+											isSubscription={true}
+										/>
+									))}
+								</ScrollView>
+								<TouchableOpacity style={{marginLeft: 8}}>
+									<IconStar height={18} width={18} />
+								</TouchableOpacity>
+							</View>
+						);
+					}
+				} else {
+					return (
+						<View
+							style={{
+								flex: 0,
+								flexDirection: "row",
+								marginTop: 4,
+								marginHorizontal: 12,
+								alignItems: "center",
+							}}>
+							<ScrollView
+								showsHorizontalScrollIndicator={false}
+								horizontal={true}>
+								{categoryChannelGroups
+									.find(({category}) => category === categorySelected)
+									?.channels.map((channel) => (
+										<ChannelTagButton
+											key={channel}
+											channel={channel}
+											onPress={() => setChannelSelected(channel)}
+											selected={channelSelected === channel}
+											isSubscription={false}
+										/>
+									))}
+							</ScrollView>
+							<TouchableOpacity style={{marginLeft: 8}}>
+								<IconStar height={18} width={18} />
+							</TouchableOpacity>
+						</View>
+					);
+				}
+			})()}
 			<FlatList
 				style={{flex: 1, margin: 12, marginBottom: 0}}
 				refreshControl={
@@ -303,24 +451,58 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				}
 				ListEmptyComponent={
-					<View
-						style={{
-							margin: 15,
-							height: screenHeight.height * 0.6,
-							justifyContent: "center",
-							alignItems: "center",
-						}}>
-						<Text
+					categorySelected === "catSubscribed" ? (
+						subscriptions.length === 1 ? (
+							<View style={{alignItems: "center", marginTop: 100}}>
+								<IconSubscriptionLogo width={128} height={128} />
+								<TouchableOpacity
+									style={{
+										borderWidth: 2,
+										borderColor: theme.colors.mainTheme,
+										borderRadius: 8,
+										marginTop: 40,
+									}}
+									onPress={() => Snackbar.show({text: "TODO"})} //TODO
+								>
+									<Text
+										style={{
+											fontSize: 32,
+											textAlign: "center",
+											textAlignVertical: "center",
+											color: theme.colors.mainTheme,
+											marginHorizontal: 40,
+											marginVertical: 5,
+										}}>
+										{getStr("addSubscription")}
+									</Text>
+								</TouchableOpacity>
+								<Text style={{marginTop: 6, fontWeight: "100", fontSize: 12}}>
+									{getStr("subscriptionInstruction")}
+								</Text>
+							</View>
+						) : (
+							<Text>No Content</Text> //TODO
+						)
+					) : (
+						<View
 							style={{
-								fontSize: 18,
-								fontWeight: "bold",
-								alignSelf: "center",
-								margin: 5,
-								color: theme.colors.text,
+								margin: 15,
+								height: screenHeight.height * 0.6,
+								justifyContent: "center",
+								alignItems: "center",
 							}}>
-							{getStr("waitForLoading")}
-						</Text>
-					</View>
+							<Text
+								style={{
+									fontSize: 18,
+									fontWeight: "bold",
+									alignSelf: "center",
+									margin: 5,
+									color: theme.colors.text,
+								}}>
+								{getStr("waitForLoading")}
+							</Text>
+						</View>
+					)
 				}
 				data={newsList}
 				keyExtractor={(item) => item.url}

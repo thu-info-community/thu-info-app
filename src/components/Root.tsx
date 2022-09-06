@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
-import {NewsSlice, SourceTag} from "thu-info-lib/dist/models/news/news";
+import {NewsSlice, ChannelTag} from "thu-info-lib/dist/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
@@ -121,7 +121,7 @@ import {LibRoomSelectScreen} from "../ui/home/libRoomSelect";
 
 type RootTabParamList = {
 	HomeTab: undefined;
-	NewsTab: {source: SourceTag};
+	NewsTab: {source: ChannelTag};
 	ScheduleTab: undefined;
 	SettingsTab: undefined;
 };
