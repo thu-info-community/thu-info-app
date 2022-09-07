@@ -21,8 +21,9 @@ import {
 } from "thu-info-lib/dist/models/news/news";
 import {useColorScheme} from "react-native";
 import IconSearch from "../../assets/icons/IconSearch";
-import IconStar from "../../assets/icons/IconStar";
 import IconSubscriptionLogo from "../../assets/icons/IconSubscriptionLogo";
+import {NewsListItem} from "../../components/news/NewsListItem";
+import {IconStarButton} from "../../components/news/IconStarButton";
 
 type Category =
 	| "catSubscribed"
@@ -248,11 +249,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					request ? 1 : page + 1,
 					searchKey,
 					channelSelected as ChannelTag,
+					// eslint-disable-next-line no-mixed-spaces-and-tabs
 			  )
 			: helper.getNewsList(
 					request ? 1 : page + 1,
 					30,
 					channelSelected as ChannelTag,
+					// eslint-disable-next-line no-mixed-spaces-and-tabs
 			  )
 		)
 			.then((res) => {
@@ -372,9 +375,12 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<View style={{position: "absolute", left: 12}}>
 								<IconSearch height={18} width={18} />
 							</View>
-							<TouchableOpacity style={{marginLeft: 8}}>
-								<IconStar height={18} width={18} />
-							</TouchableOpacity>
+							<IconStarButton
+								active={false}
+								onPress={() => {
+									navigation.navigate("NewsFav");
+								}}
+							/>
 						</View>
 					);
 				} else if (categorySelected === "catSubscribed") {
@@ -403,9 +409,12 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 										/>
 									))}
 								</ScrollView>
-								<TouchableOpacity style={{marginLeft: 8}}>
-									<IconStar height={18} width={18} />
-								</TouchableOpacity>
+								<IconStarButton
+									active={false}
+									onPress={() => {
+										navigation.navigate("NewsFav");
+									}}
+								/>
 							</View>
 						);
 					}
@@ -434,9 +443,12 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 										/>
 									))}
 							</ScrollView>
-							<TouchableOpacity style={{marginLeft: 8}}>
-								<IconStar height={18} width={18} />
-							</TouchableOpacity>
+							<IconStarButton
+								active={false}
+								onPress={() => {
+									navigation.navigate("NewsFav");
+								}}
+							/>
 						</View>
 					);
 				}
@@ -481,7 +493,24 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								</Text>
 							</View>
 						) : (
-							<Text>No Content</Text> //TODO
+							<View
+								style={{
+									margin: 15,
+									height: screenHeight.height * 0.6,
+									justifyContent: "center",
+									alignItems: "center",
+								}}>
+								<Text
+									style={{
+										fontSize: 18,
+										fontWeight: "bold",
+										alignSelf: "center",
+										margin: 5,
+										color: theme.colors.text,
+									}}>
+									{getStr("waitForLoading")}
+								</Text>
+							</View> //TODO
 						)
 					) : (
 						<View
@@ -507,83 +536,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				data={newsList}
 				keyExtractor={(item) => item.url}
 				renderItem={({item}) => (
-					<TouchableOpacity
-						style={{
-							backgroundColor: theme.colors.contentBackground,
-							justifyContent: "center",
-							paddingVertical: 12,
-							paddingHorizontal: 16,
-							marginVertical: 4,
-							borderRadius: 8,
-						}}
-						onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
-						<Text
-							numberOfLines={3}
-							style={{
-								fontSize: 16,
-								fontWeight: "600",
-								lineHeight: 20,
-								color: theme.colors.fontB1,
-							}}>
-							{item.name.trim()}
-						</Text>
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-								marginTop: 12,
-							}}>
-							{item.source.length > 0 && (
-								<>
-									<Text
-										style={{
-											fontWeight: "600",
-											color: theme.colors.fontB2,
-											fontSize: 12,
-										}}>
-										{item.source}
-									</Text>
-									<View
-										style={{
-											marginHorizontal: 6,
-											height: 11,
-											width: 3,
-											borderRadius: 1.5,
-											backgroundColor: theme.colors.accent,
-										}}
-									/>
-								</>
-							)}
-							<Text
-								style={{
-									fontWeight: "600",
-									color: theme.colors.fontB2,
-									fontSize: 12,
-								}}>
-								{getStr(item.channel)}
-							</Text>
-							{item.topped && (
-								<View
-									style={{
-										marginLeft: 8,
-										borderColor: theme.colors.statusWarning,
-										backgroundColor: theme.colors.statusWarningOpacity,
-										borderWidth: 1,
-										borderRadius: 20,
-										paddingHorizontal: 8,
-									}}>
-									<Text>
-										<Text
-											style={{color: theme.colors.statusWarning, fontSize: 11}}>
-											{getStr("topped")}
-										</Text>
-									</Text>
-								</View>
-							)}
-							<View style={{flex: 1}} />
-							<Text style={{color: theme.colors.fontB2}}>{item.date}</Text>
-						</View>
-					</TouchableOpacity>
+					<NewsListItem item={item} theme={theme} navigation={navigation} />
 				)}
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}

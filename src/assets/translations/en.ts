@@ -292,6 +292,7 @@ export default {
 	schedulePrefixOncePrefix: "[Week ",
 	schedulePrefixOnceSuffix: "]",
 	newsDetail: "Detail of News",
+	newsFav: "Favourite of News",
 	catSubscribed: "Subscribed",
 	catPublicInformation: "Public Information",
 	catStudyAndResearch: "Study & Research",
