@@ -24,6 +24,7 @@ import IconSearch from "../../assets/icons/IconSearch";
 import IconSubscriptionLogo from "../../assets/icons/IconSubscriptionLogo";
 import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
+import {useSelector} from "react-redux";
 
 type Category =
 	| "catSubscribed"
@@ -178,6 +179,10 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	// @ts-ignore
+	const dark = useSelector((s) => s.config.darkMode);
+	const darkModeHook = dark || themeName === "dark";
+
 	const fetchNewsList = (
 		request: boolean = true,
 		searchMode: boolean | undefined = undefined,
@@ -299,7 +304,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<View style={{flex: 1}}>
+		<View style={{flex: 1}} key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
 					<CategoryTagButton
