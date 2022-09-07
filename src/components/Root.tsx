@@ -118,6 +118,7 @@ import {SportsSelectFieldScreen} from "../ui/home/sportsSelectField";
 import {SportsSelectTitleScreen} from "../ui/home/sportsSelectTitle";
 import {SportsSuccessScreen} from "../ui/home/sportsSuccess";
 import {LibRoomSelectScreen} from "../ui/home/libRoomSelect";
+import {NewsFavScreen} from "../ui/news/newsFav";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -312,6 +313,7 @@ export type GitLabImageProp = RouteProp<HomeStackParamList, "GitLabImage">;
 
 type NewsStackParamList = {
 	NewsDetail: {detail: NewsSlice};
+	NewsFav: undefined;
 };
 
 export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
@@ -832,6 +834,11 @@ export const Root = () => {
 				name="NewsDetail"
 				component={NewsDetailScreen}
 				options={{title: getStr("newsDetail")}}
+			/>
+			<Stack.Screen
+				name={"NewsFav"}
+				component={NewsFavScreen}
+				options={{title: getStr("newsFav")}}
 			/>
 			{/* Schedule */}
 			<Stack.Screen
