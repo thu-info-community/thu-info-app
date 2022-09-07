@@ -1,32 +1,49 @@
 import "./utils/extensions";
-import {Provider} from "react-redux";
+import {Provider, useSelector} from "react-redux";
 import {persistor, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
 import React from "react";
 import {AuthFlow} from "./components/AuthFlow";
 import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
-import {useColorScheme} from "react-native";
+import {StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 
-export const App = () => (
-	<Provider store={store}>
-		<PersistGate persistor={persistor}>
+const RootComponent = () => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	// @ts-ignore
+	const dark = useSelector((s) => s.config.darkMode);
+	const darkModeHook = dark || themeName === "dark";
+	return (
+		<>
+			<StatusBar
+				barStyle={darkModeHook ? "light-content" : "dark-content"}
+				backgroundColor={darkModeHook ? "black" : "white"}
+				animated
+			/>
 			<NavigationContainer
 				theme={{
 					...DefaultTheme,
 					colors: {
 						...DefaultTheme.colors,
-						text: themes(useColorScheme()).colors.text,
-						background: themes(useColorScheme()).colors.themeBackground,
-						card: themes(useColorScheme()).colors.contentBackground,
-						border:
-							useColorScheme() === "dark"
-								? "white"
-								: DefaultTheme.colors.border,
+						text: theme.colors.text,
+						background: theme.colors.themeBackground,
+						card: theme.colors.contentBackground,
+						border: darkModeHook ? "white" : DefaultTheme.colors.border,
 					},
 				}}>
 				<AuthFlow />
 			</NavigationContainer>
-		</PersistGate>
-	</Provider>
-);
+		</>
+	);
+};
+
+export const App = () => {
+	return (
+		<Provider store={store}>
+			<PersistGate persistor={persistor}>
+				<RootComponent />
+			</PersistGate>
+		</Provider>
+	);
+};

@@ -27,7 +27,7 @@ import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {currState, helper, State, store} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
@@ -651,7 +651,11 @@ interface HomeProps {
 }
 
 const HomeUI = (props: HomeProps) => {
-	const theme = themes(useColorScheme());
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+	// @ts-ignore
+	const dark = useSelector((s) => s.config.darkMode);
+	const darkModeHook = dark || themeName === "dark";
 	const homeFunctions = getHomeFunctions(props.navigation, props.updateTop5);
 	const top5 = props.top5Functions.map((x) =>
 		homeFunctions.find((y) => y.key === x),
@@ -687,7 +691,9 @@ const HomeUI = (props: HomeProps) => {
 	}, []);
 
 	return (
-		<ScrollView style={{backgroundColor: theme.colors.themeBackground}}>
+		<ScrollView
+			style={{backgroundColor: theme.colors.themeBackground}}
+			key={darkModeHook}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5}
 			</HomeFunctionSection>

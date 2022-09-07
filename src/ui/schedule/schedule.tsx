@@ -7,7 +7,7 @@ import {
 	RefreshControl,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {
 	activeWeek,
 	Schedule,
@@ -74,6 +74,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+
+	// @ts-ignore
+	const dark = useSelector((s) => s.config.darkMode);
+	const darkModeHook = dark || themeName === "dark";
 
 	const windowWidth = Dimensions.get("window").width;
 	const unitHeight = 60;
@@ -192,7 +196,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-				}}>
+				}}
+				key={darkModeHook}>
 				<View
 					style={{
 						width: "100%",

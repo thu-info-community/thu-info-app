@@ -7,7 +7,6 @@ import {connect} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
 import {configSet} from "../../redux/actions/config";
-import Snackbar from "react-native-snackbar";
 
 export const DarkModeUI = ({
 	darkMode,
@@ -26,10 +25,6 @@ export const DarkModeUI = ({
 					style={style.touchable}
 					onPress={() => {
 						setDarkMode(false);
-						Snackbar.show({
-							text: getStr("restartToApply"),
-							duration: Snackbar.LENGTH_SHORT,
-						});
 					}}>
 					<Text style={style.text}>{getStr("autoFollow")}</Text>
 					{darkMode !== true && <IconCheck width={18} height={18} />}
@@ -39,10 +34,6 @@ export const DarkModeUI = ({
 					style={style.touchable}
 					onPress={() => {
 						setDarkMode(true);
-						Snackbar.show({
-							text: getStr("restartToApply"),
-							duration: Snackbar.LENGTH_SHORT,
-						});
 					}}>
 					<Text style={style.text}>{getStr("enableDarkMode")}</Text>
 					{darkMode === true && <IconCheck width={18} height={18} />}

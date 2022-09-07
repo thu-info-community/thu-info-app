@@ -20,15 +20,19 @@ import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
 import VersionNumber from "react-native-version-number";
 import themes from "../../assets/themes/themes";
+import {useSelector} from "react-redux";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const theme = themes(themeName);
+	// @ts-ignore
+	const dark = useSelector((s) => s.config.darkMode);
+	const darkModeHook = dark || themeName === "dark";
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<View style={{flex: 1, padding: 12}} key={darkModeHook}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
