@@ -104,9 +104,9 @@ jobs:
           path: |
             node_modules
             ios/Pods
-          key: $cache-{{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('ios/Podfile.lock') }}
+          key: $cache-{{ runner.OS }}-${{ github.ref }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
-            $cache-{{ runner.OS }}-
+            $cache-{{ runner.OS }}-${{ github.ref }}-
       - name: Install dependencies
         run: |
           yarn
