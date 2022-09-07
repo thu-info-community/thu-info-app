@@ -11,9 +11,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: $cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            $cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: $cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            $cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
@@ -104,13 +104,12 @@ jobs:
           path: |
             node_modules
             ios/Pods
-          key: $cache-${{ runner.OS }}-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('ios/Podfile.lock') }}
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            $cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
-          rm ios/Podfile.lock
           cd ios && pod install && cd ..
           echo '### Summary of command `pod-install`' >> $GITHUB_STEP_SUMMARY
           echo 'Content of `Podfile.lock`:' >> $GITHUB_STEP_SUMMARY
