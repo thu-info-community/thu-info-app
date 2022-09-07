@@ -41,7 +41,6 @@ jobs:
           SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in android/app/THUInfo.jks.enc -out android/app/THUInfo.jks -d
-          npx jetify
       - name: Build android release
         uses: gradle/gradle-build-action@v2
         env:
