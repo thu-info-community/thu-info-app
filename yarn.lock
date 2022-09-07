@@ -7256,10 +7256,10 @@ react-is@^18.2.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react-native-biometrics@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-biometrics/-/react-native-biometrics-2.2.0.tgz#6fc3e801b83389ae1f6c9c41f7b37b50e7014c4e"
-  integrity sha512-V2O0s2ic7PxVP76CguCfBXvVEyazbjtWv7r20T7D+ZQqBB1XSZ1WzK/Gnr12CVRxHLUZ3/tKHOsz7mzIaXyNoA==
+react-native-biometrics@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-biometrics/-/react-native-biometrics-2.2.2.tgz#736033062ad575e07be135aa5e09bf3d632340e8"
+  integrity sha512-gA4G8ADHupvW7NUNhElkse6R14EbSglr97FlMEdvZrEfB6BGl808/KSyDl7+d238qu3b2AqcARQMiC1FUgDT9Q==
 
 react-native-blob-util@0.16.2:
   version "0.16.2"
