@@ -10,6 +10,7 @@ export interface NewsSlice {
     readonly source: string;
     readonly topped: boolean;
     readonly channel: ChannelTag;
+    readonly inFav: boolean;
 }
 
 export interface NewsSubscription {

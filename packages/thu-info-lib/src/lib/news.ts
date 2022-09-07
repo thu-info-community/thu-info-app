@@ -9,7 +9,7 @@ import {
     NEWS_FAVOR_LIST_URL, NEWS_LIST_BY_SUBSCRIPTION_URL,
     NEWS_LIST_URL,
     NEWS_REDIRECT_URL,
-    NEWS_REMOVE_FAVOR_URL, NEWS_SOURCE_LIST_URL, NEWS_SUBSCRIPTION_LIST_URL,
+    NEWS_REMOVE_FAVOR_URL, NEWS_REMOVE_SUBSCRIPTION_URL_FORMAT, NEWS_SOURCE_LIST_URL, NEWS_SUBSCRIPTION_LIST_URL,
     PDF_NEWS_PREFIX,
     SEARCH_NEWS_LIST_URL,
 } from "../constants/strings";
@@ -33,7 +33,7 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
     async () => {
         const newsList: NewsSlice[] = [];
         const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag }[] } } = JSON.parse(json);
+        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
         data.object.dataList.forEach(element => {
             newsList.push({
                 name: decode(element.bt),
@@ -42,7 +42,8 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
                 date: element.time,
                 source: element.dwmc,
                 topped: element.yxzd.includes("1-"),
-                channel: element.lmid
+                channel: element.lmid,
+                inFav:element.sfsc
             });
         });
         return newsList;
@@ -92,7 +93,7 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
                 currentPage: page,
             })},
         );
-        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: ChannelTag }[] } } = JSON.parse(json);
+        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
         data.object.resultsList.forEach(element => {
             newsList.push({
                 name: cheerio.load(decode(element.bt)).root().text(),
@@ -101,7 +102,8 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
                 date: element.time,
                 source: element.dwmc,
                 topped: false,
-                channel: element.lmid
+                channel: element.lmid,
+                inFav: element.sfsc,
             });
         });
         return newsList;
@@ -156,13 +158,19 @@ export const addNewsSubscription = async (h: InfoHelper, channelId: ChannelTag, 
     return data.result === "success";
 };
 
+export const removeNewsSubscription = async (h: InfoHelper, subscriptionId: string): Promise<boolean> => {
+    const json = await uFetch(NEWS_REMOVE_SUBSCRIPTION_URL_FORMAT.replace("{id}", subscriptionId).replace("{csrf}", await getCsrfToken()));
+    const data: { result: string } = JSON.parse(json);
+    return data.result === "success";
+};
+
 export const getNewsListBySubscription = async (h: InfoHelper, page: number, subscriptionId: string): Promise<NewsSlice[]> => {
     const json = await uFetch(`${NEWS_LIST_BY_SUBSCRIPTION_URL}?_csrf=${await getCsrfToken()}`,
         {
             "currentPage": page,
             "dyid": subscriptionId,
         });
-    const data: { object: { resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag }[] } } = JSON.parse(json);
+    const data: { object: { resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
     const newsList: NewsSlice[] = [];
     // copy from line 37 to 47
     data.object.resultList.forEach(element => {
@@ -174,6 +182,7 @@ export const getNewsListBySubscription = async (h: InfoHelper, page: number, sub
             source: element.dwmc,
             topped: false,
             channel: element.lmid,
+            inFav: element.sfsc,
         });
     });
     return newsList;
@@ -344,7 +353,7 @@ export const getFavorNewsList = async (helper: InfoHelper, page = 1): Promise<[N
     const csrf = await getCsrfToken();
     const json = await uFetch(`${NEWS_FAVOR_LIST_URL}?_csrf=${csrf}`, { "currentPage": page });
     const newsList: NewsSlice[] = [];
-    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: ChannelTag }[] } } = JSON.parse(json);
+    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
     data.object.resultList.forEach(element => {
         newsList.push({
             name: decode(element.bt),
@@ -353,7 +362,8 @@ export const getFavorNewsList = async (helper: InfoHelper, page = 1): Promise<[N
             date: element.time,
             source: element.dwmc,
             topped: false,
-            channel: element.lmid
+            channel: element.lmid,
+            inFav:element.sfsc
         });
     });
     return [newsList, data.object.totalPages];

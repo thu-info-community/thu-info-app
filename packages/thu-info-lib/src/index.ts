@@ -49,7 +49,7 @@ import {
     getFavorNewsList, getNewsChannelList,
     getNewsDetail,
     getNewsList, getNewsListBySubscription, getNewsSourceList, getNewsSubscriptionList,
-    removeNewsFromFavor,
+    removeNewsFromFavor, removeNewsSubscription,
     searchNewsList,
 } from "./lib/news";
 import { getSchedule } from "./lib/schedule";
@@ -250,6 +250,8 @@ export class InfoHelper {
     public getNewsChannelList = async (needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => getNewsChannelList(this, needEnglish);
 
     public addNewsSubscription = async (channelId: ChannelTag, sourceId: string): Promise<boolean> => addNewsSubscription(this, channelId, sourceId);
+
+    public removeNewsSubscription = async (subscriptionId: string): Promise<boolean> => removeNewsSubscription(this, subscriptionId);
 
     public getNewsListBySubscription = async (page = 1, subscriptionId?: string) => getNewsListBySubscription(this, page, subscriptionId ?? "");
 
