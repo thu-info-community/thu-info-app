@@ -11,8 +11,6 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.70.0)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - hermes-engine (0.70.0)
-  - libevent (2.1.12)
   - Permission-PhotoLibrary (3.6.1):
     - RNPermissions
   - Permission-PhotoLibraryAddOnly (3.6.1):
@@ -28,12 +26,6 @@ PODS:
     - DoubleConversion
     - fmt (~> 6.2.1)
     - glog
-  - RCT-Folly/Futures (2021.07.22.00):
-    - boost
-    - DoubleConversion
-    - fmt (~> 6.2.1)
-    - glog
-    - libevent
   - RCTRequired (0.70.0)
   - RCTTypeSafety (0.70.0):
     - FBLazyVector (= 0.70.0)
@@ -211,17 +203,6 @@ PODS:
     - React-logger (= 0.70.0)
     - React-perflogger (= 0.70.0)
     - React-runtimeexecutor (= 0.70.0)
-  - React-hermes (0.70.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
-    - RCT-Folly/Futures (= 2021.07.22.00)
-    - React-cxxreact (= 0.70.0)
-    - React-jsi (= 0.70.0)
-    - React-jsiexecutor (= 0.70.0)
-    - React-jsinspector (= 0.70.0)
-    - React-perflogger (= 0.70.0)
   - React-jsi (0.70.0):
     - boost (= 1.76.0)
     - DoubleConversion
@@ -391,8 +372,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - hermes-engine (from `../node_modules/react-native/sdks/hermes/hermes-engine.podspec`)
-  - libevent (~> 2.1.12)
   - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary`)
   - Permission-PhotoLibraryAddOnly (from `../node_modules/react-native-permissions/ios/PhotoLibraryAddOnly`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -406,7 +385,6 @@ DEPENDENCIES:
   - React-Core/RCTWebSocket (from `../node_modules/react-native/`)
   - React-CoreModules (from `../node_modules/react-native/React/CoreModules`)
   - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
-  - React-hermes (from `../node_modules/react-native/ReactCommon/hermes`)
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
@@ -450,7 +428,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - fmt
-    - libevent
 
 EXTERNAL SOURCES:
   boost:
@@ -463,8 +440,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
-  hermes-engine:
-    :podspec: "../node_modules/react-native/sdks/hermes/hermes-engine.podspec"
   Permission-PhotoLibrary:
     :path: "../node_modules/react-native-permissions/ios/PhotoLibrary"
   Permission-PhotoLibraryAddOnly:
@@ -489,8 +464,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/CoreModules"
   React-cxxreact:
     :path: "../node_modules/react-native/ReactCommon/cxxreact"
-  React-hermes:
-    :path: "../node_modules/react-native/ReactCommon/hermes"
   React-jsi:
     :path: "../node_modules/react-native/ReactCommon/jsi"
   React-jsiexecutor:
@@ -577,8 +550,6 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 1a270246542f5c52248cb26a96db119cfe3cb760
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  hermes-engine: 8e84f1284180801c1a1b241f443ba64f931ff561
-  libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   Permission-PhotoLibrary: 5b34ca67279f7201ae109cef36f9806a6596002d
   Permission-PhotoLibraryAddOnly: 6dba8924024e239af2e282daa8a88967679b4983
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
@@ -591,7 +562,6 @@ SPEC CHECKSUMS:
   React-Core: 0a760f00a2cf3f44324266c227b01594f95ef7a0
   React-CoreModules: 4c5bc80e046efcb695d826ba276567051f91321e
   React-cxxreact: b07535295fd2c773a681f09d87dcba342e46dc7d
-  React-hermes: 05a55bdc1b6887fdaf7a871f59728a007ddee30b
   React-jsi: baa181d7aa5867d5438f7969a257846cd7a97559
   React-jsiexecutor: be588b7abbea4f1d03840bc675d68d99380e5bf3
   React-jsinspector: bd839d6c2c28e49fe1373f055735d2abecbd6cf3
@@ -632,6 +602,6 @@ SPEC CHECKSUMS:
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   Yoga: 82c9e8f652789f67d98bed5aef9d6653f71b04a9
 
-PODFILE CHECKSUM: 01bfc97e88750b6927e1b295d3164a07b7cb6a97
+PODFILE CHECKSUM: c1206eedf86132848bc5f2d12c87a37edfc6a9d3
 
 COCOAPODS: 1.11.3
