@@ -32,6 +32,7 @@ ios/.xcode.env.local
 local.properties
 *.iml
 *.hprof
+.cxx/
 
 # Visual Studio Code
 #
