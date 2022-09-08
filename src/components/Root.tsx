@@ -315,11 +315,19 @@ export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
 export type GitLabImageProp = RouteProp<HomeStackParamList, "GitLabImage">;
 
 type NewsStackParamList = {
-	NewsDetail: {detail: NewsSlice; inFavInit: boolean; setInFavFunc: any};
-	NewsFav: undefined;
+	NewsDetail: {
+		detail: NewsSlice;
+		inFavInit: boolean;
+		setInFavFunc: any;
+		isFromFav?: boolean;
+		reloadFunc?: () => void;
+	};
+	NewsFav: {reloadFunc: () => void};
 };
 
 export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
+
+export type NewsFavRouteProp = RouteProp<NewsStackParamList, "NewsFav">;
 
 type ScheduleStackParamList = {
 	ScheduleAdd: ScheduleDetailProps | undefined;
@@ -841,6 +849,7 @@ export const Root = () => {
 					headerRight: () => {
 						// eslint-disable-next-line react-hooks/rules-of-hooks
 						const [inFav, setInFav] = useState(route.params.inFavInit);
+						const isFromFav = route.params.isFromFav ?? false; // only changing news detail navigated from fav need to reload news main page
 						return (
 							<View style={{flexDirection: "row", marginRight: 16}}>
 								<IconStarButton
@@ -853,6 +862,9 @@ export const Root = () => {
 													if (res) {
 														route.params.setInFavFunc(!inFav);
 														setInFav(!inFav);
+														if (isFromFav) {
+															route.params.reloadFunc?.();
+														}
 													} else {
 														return;
 													}
@@ -866,6 +878,9 @@ export const Root = () => {
 													if (res) {
 														route.params.setInFavFunc(!inFav);
 														setInFav(!inFav);
+														if (isFromFav) {
+															route.params.reloadFunc?.();
+														}
 													} else {
 														return;
 													}

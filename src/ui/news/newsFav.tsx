@@ -1,4 +1,4 @@
-import {RootNav} from "../../components/Root";
+import {NewsFavRouteProp, RootNav} from "../../components/Root";
 import {
 	Dimensions,
 	FlatList,
@@ -15,7 +15,13 @@ import {NewsSlice} from "thu-info-lib/dist/models/news/news";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 
-export const NewsFavScreen = ({navigation}: {navigation: RootNav}) => {
+export const NewsFavScreen = ({
+	navigation,
+	route,
+}: {
+	navigation: RootNav;
+	route: NewsFavRouteProp;
+}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	let screenHeight = Dimensions.get("window");
@@ -105,7 +111,13 @@ export const NewsFavScreen = ({navigation}: {navigation: RootNav}) => {
 				data={newsList}
 				keyExtractor={(item) => item.url}
 				renderItem={({item}) => (
-					<NewsListItem item={item} theme={theme} navigation={navigation} />
+					<NewsListItem
+						item={item}
+						theme={theme}
+						navigation={navigation}
+						isFromFav={true}
+						reloadFunc={route.params.reloadFunc}
+					/>
 				)}
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}

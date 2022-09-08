@@ -287,6 +287,15 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, [channelSelected]);
 
+	const [reload, setReload] = useState(1);
+	useEffect(() => {
+		if (reload === 1) {
+			return;
+		}
+		fetchNewsList();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [reload]);
+
 	useEffect(() => {
 		if (categorySelected === undefined) {
 			setChannelSelected(undefined);
@@ -383,7 +392,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<IconStarButton
 								active={false}
 								onPress={() => {
-									navigation.navigate("NewsFav");
+									navigation.navigate("NewsFav", {
+										reloadFunc: () => setReload((i) => i + 1),
+									});
 								}}
 							/>
 						</View>
