@@ -428,7 +428,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								<IconStarButton
 									active={false}
 									onPress={() => {
-										navigation.navigate("NewsFav");
+										navigation.navigate("NewsFav", {
+											reloadFunc: () => setReload((i) => i + 1),
+										});
 									}}
 								/>
 							</View>
@@ -462,7 +464,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<IconStarButton
 								active={false}
 								onPress={() => {
-									navigation.navigate("NewsFav");
+									navigation.navigate("NewsFav", {
+										reloadFunc: () => setReload((i) => i + 1),
+									});
 								}}
 							/>
 						</View>
