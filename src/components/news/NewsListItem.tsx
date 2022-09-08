@@ -12,10 +12,14 @@ export const NewsListItem = ({
 	item,
 	theme,
 	navigation,
+	isFromFav = false,
+	reloadFunc = undefined,
 }: {
 	item: NewsSlice;
 	theme: Theme;
 	navigation: RootNav;
+	isFromFav?: boolean;
+	reloadFunc?: any;
 }) => {
 	const [inFav, setInFav] = useState(item.inFav);
 
@@ -34,6 +38,8 @@ export const NewsListItem = ({
 					detail: item,
 					inFavInit: inFav,
 					setInFavFunc: setInFav,
+					isFromFav: isFromFav,
+					reloadFunc: reloadFunc,
 				})
 			}>
 			<Text
@@ -111,6 +117,7 @@ export const NewsListItem = ({
 								.then((res) => {
 									if (res) {
 										setInFav(!inFav);
+										reloadFunc?.();
 									} else {
 										return;
 									}
