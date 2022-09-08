@@ -25,7 +25,7 @@ export const CALENDAR_URL =
 export const COUNT_DOWN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?url=/portal3rd.do&m=tsxx";
 export const DORM_LOGIN_URL_PREFIX =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_user_authenticate.aspx?url=%2fweixin%2fweixin_personal_information.aspx&weixin_appid=";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_user_authenticate.aspx";
 export const DORM_SCORE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fdb94c852f3f6555301c9aa596522b20e7a45e0b22fda391/weixin/weixin_health_linechart.aspx?id=0";
 export const GET_BKS_REPORT_URL =

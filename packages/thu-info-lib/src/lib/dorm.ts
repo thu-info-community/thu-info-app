@@ -16,7 +16,6 @@ import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
 import {DormAuthError, EleError} from "../utils/error";
-import {v4} from "uuid";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
 type TagElement = Element & {type: "tag"};
@@ -27,7 +26,7 @@ export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<
         undefined,
         "",
         async () => {
-            await uFetch(DORM_LOGIN_URL_PREFIX + v4(), {
+            await uFetch(DORM_LOGIN_URL_PREFIX, {
                 __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
                 __VIEWSTATEGENERATOR: "7FA746C3",
                 __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
