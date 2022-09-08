@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import themes from "../assets/themes/themes";
@@ -119,6 +119,9 @@ import {SportsSelectTitleScreen} from "../ui/home/sportsSelectTitle";
 import {SportsSuccessScreen} from "../ui/home/sportsSuccess";
 import {LibRoomSelectScreen} from "../ui/home/libRoomSelect";
 import {NewsFavScreen} from "../ui/news/newsFav";
+import {IconStarButton} from "./news/IconStarButton";
+import {helper} from "../redux/store";
+import {NetworkRetry} from "./easySnackbars";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -312,7 +315,7 @@ export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
 export type GitLabImageProp = RouteProp<HomeStackParamList, "GitLabImage">;
 
 type NewsStackParamList = {
-	NewsDetail: {detail: NewsSlice};
+	NewsDetail: {detail: NewsSlice; inFavInit: boolean; setInFavFunc: any};
 	NewsFav: undefined;
 };
 
@@ -833,7 +836,49 @@ export const Root = () => {
 			<Stack.Screen
 				name="NewsDetail"
 				component={NewsDetailScreen}
-				options={{title: getStr("newsDetail")}}
+				options={({route}) => ({
+					title: getStr("newsDetail"),
+					headerRight: () => {
+						// eslint-disable-next-line react-hooks/rules-of-hooks
+						const [inFav, setInFav] = useState(route.params.inFavInit);
+						return (
+							<View style={{flexDirection: "row", marginRight: 16}}>
+								<IconStarButton
+									active={inFav}
+									onPress={() => {
+										if (inFav) {
+											helper
+												.removeNewsFromFavor(route.params.detail)
+												.then((res) => {
+													if (res) {
+														route.params.setInFavFunc(!inFav);
+														setInFav(!inFav);
+													} else {
+														return;
+													}
+												})
+												.catch(NetworkRetry);
+										} else {
+											// not in fav
+											helper
+												.addNewsToFavor(route.params.detail)
+												.then((res) => {
+													if (res) {
+														route.params.setInFavFunc(!inFav);
+														setInFav(!inFav);
+													} else {
+														return;
+													}
+												})
+												.catch(NetworkRetry);
+										}
+									}}
+									size={24}
+								/>
+							</View>
+						);
+					},
+				})}
 			/>
 			<Stack.Screen
 				name={"NewsFav"}
