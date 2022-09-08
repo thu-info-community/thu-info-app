@@ -7,6 +7,7 @@ import {
     DORM_SCORE_URL,
     WEB_VPN_ROOT_URL,
     DORM_LOGIN_URL_PREFIX,
+    CHANGE_HOME_PASSWORD_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {generalGetPayCode} from "../utils/alipay";
@@ -107,4 +108,33 @@ export const getEleRemainder = async (
             return {remainder, updateTime};
         },
         MOCK_ELE_REMAINDER,
+    );
+
+export const resetDormPassword = async (
+    helper: InfoHelper,
+    newPassword: string,
+): Promise<void> =>
+    roamingWrapperWithMocks(
+        helper,
+        "id",
+        "051bb58cba58a1c5f67857606497387f",
+        async () => {
+            const $ = await uFetch(CHANGE_HOME_PASSWORD_URL).then(cheerio.load);
+            if ($("#ChangePasswordCtrl1_txtoldpassword").length === 0) {
+                throw new DormAuthError();
+            }
+            const hiddenInputs = $("input[type=hidden]");
+            const form: {[key: string]: string} = {};
+            hiddenInputs.each((_, element) => {
+                if (element.type === "tag") {
+                    form[element.attribs.name] = element.attribs.value;
+                }
+            });
+            form.__EVENTTARGET = "ChangePasswordCtrl1:btnOK";
+            form.ChangePasswordCtrl1$txtoldpassword = "";
+            form.ChangePasswordCtrl1$txtnewpassword = newPassword;
+            form.ChangePasswordCtrl1$txtnewpassword1 = newPassword;
+            await uFetch(CHANGE_HOME_PASSWORD_URL, form);
+        },
+        undefined,
     );
