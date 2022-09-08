@@ -6,20 +6,22 @@ import React from "react";
 export const IconStarButton = ({
 	active,
 	onPress,
+	size = 18,
 }: {
 	active: boolean;
 	onPress: () => void;
+	size?: number;
 }) => {
 	if (active) {
 		return (
 			<TouchableOpacity onPress={onPress} style={{marginLeft: 8}}>
-				<IconStarActive height={18} width={18} />
+				<IconStarActive height={size} width={size} />
 			</TouchableOpacity>
 		);
 	} else {
 		return (
 			<TouchableOpacity onPress={onPress} style={{marginLeft: 8}}>
-				<IconStar height={18} width={18} />
+				<IconStar height={size} width={size} />
 			</TouchableOpacity>
 		);
 	}

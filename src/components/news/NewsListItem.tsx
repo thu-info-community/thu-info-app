@@ -29,7 +29,13 @@ export const NewsListItem = ({
 				marginVertical: 4,
 				borderRadius: 8,
 			}}
-			onPress={() => navigation.navigate("NewsDetail", {detail: item})}>
+			onPress={() =>
+				navigation.navigate("NewsDetail", {
+					detail: item,
+					inFavInit: inFav,
+					setInFavFunc: setInFav,
+				})
+			}>
 			<Text
 				numberOfLines={3}
 				style={{
