@@ -1,1 +1,2 @@
-feat: implement news remove subscription add news is in fav property.。
+feat: implement `resetDormPassword`；
+fix: fix mock data of newsHTML。
