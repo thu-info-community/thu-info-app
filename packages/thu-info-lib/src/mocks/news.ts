@@ -1,5 +1,40 @@
-import {url0, url1, url2, url3, url4, url5, url6, url7, url8, url9} from "./source/newsHtml";
 import {NewsSlice, ChannelTag} from "../models/news/news";
+
+const url0 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9fd528569336153301c9aa596522b20735d12f268e561f0/boarddetail_cat.jsp?columnId=0010106&itemSeq=46224";
+const url1 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fae0429e207e6b597d469dbf915b243d8ae9128e1cdcffb247/jwcbg/detail_cat.jsp?boardid=57&seq=7632";
+const url2 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fae0429e207e6b597d469dbf915b243d8ae9128e1cdcffb247/jwcbg/detail_cat.jsp?boardid=57&seq=7631";
+const url3 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fae0429e207e6b597d469dbf915b243d8ae9128e1cdcffb247/jwcbg/detail_cat.jsp?boardid=57&seq=7627";
+const url4 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3/boarddetail_cat.jsp?columnId=xtw01&itemSeq=124715";
+const url5 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3/boarddetail_cat.jsp?columnId=xtw01&itemSeq=124712";
+const url6 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e2e442d23323615e79009cadd650272001f8dd/rscbg/detail.jsp?boardid=22&seq=5182";
+const url7 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279771";
+const url8 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f2fa598421322653770bc7b88b5c2d32530b094045c3bd5cabf3/boarddetail_cat.jsp?columnId=dwxcb01&itemSeq=124530";
+const url9 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279661";
+export const newsHtml = {} as {[key: string]: string};
+
+const sampleHtml = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Latest News</title>
+  </head>
+  <body>
+    This is a sample news file.
+  </body>
+</html>
+`;
+
+newsHtml[url0] = sampleHtml;
+newsHtml[url1] = sampleHtml;
+newsHtml[url2] = sampleHtml;
+newsHtml[url3] = sampleHtml;
+newsHtml[url4] = sampleHtml;
+newsHtml[url5] = sampleHtml;
+newsHtml[url6] = sampleHtml;
+newsHtml[url7] = sampleHtml;
+newsHtml[url8] = sampleHtml;
+newsHtml[url9] = sampleHtml;
 
 export const MOCK_NEWS_LIST = (channel: ChannelTag): NewsSlice[] => {
     switch (channel) {

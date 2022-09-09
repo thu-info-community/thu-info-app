@@ -13,7 +13,7 @@ import {
     PDF_NEWS_PREFIX,
     SEARCH_NEWS_LIST_URL,
 } from "../constants/strings";
-import { newsHtml } from "../mocks/source/newsHtml";
+import { newsHtml } from "../mocks/news";
 import cheerio from "cheerio";
 import { decode } from "he";
 import {MOCK_NEWS_LIST} from "../mocks/news";
@@ -48,7 +48,7 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
         });
         return newsList;
     },
-    channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
+    page !== 1 ? [] : channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
 
 const channelToLmmc = (channel: ChannelTag): string => {
@@ -323,7 +323,7 @@ const getNewsDetailOld = async (
 ): Promise<[string, string, string]> => {
     const [title, content] = getNewsDetailPolicy(url);
     const html = mocked ? newsHtml[url] ?? "" : await uFetch(url);
-    if (title !== undefined && content) {
+    if (title !== undefined && content && !mocked) {
         const r = cheerio(content, html);
         return [
             cheerio(title, html).text(),
