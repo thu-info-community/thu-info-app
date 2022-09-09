@@ -25,6 +25,7 @@ import IconSubscriptionLogo from "../../assets/icons/IconSubscriptionLogo";
 import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
+import IconSubscription from "../../assets/icons/IconSubscription";
 
 type Category =
 	| "catSubscribed"
@@ -282,17 +283,17 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			});
 	};
 
-	useEffect(() => {}, [subscriptions]);
-
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, [channelSelected]);
 
 	const [reload, setReload] = useState(1);
+	const [inited, setInited] = useState(false);
 	useEffect(() => {
-		if (reload === 1) {
+		if (!inited) {
+			setInited(true);
 			return;
 		}
-		fetchNewsList();
+		fetchNewsList(); // comment this line for better debugging experience
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [reload]);
 
@@ -391,6 +392,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							</View>
 							<IconStarButton
 								active={false}
+								size={24}
 								onPress={() => {
 									navigation.navigate("NewsFav", {
 										reloadFunc: () => setReload((i) => i + 1),
@@ -412,6 +414,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 									marginHorizontal: 12,
 									alignItems: "center",
 								}}>
+								<TouchableOpacity
+									style={{marginRight: 8}}
+									onPress={() => {
+										navigation.navigate("NewsSub");
+									}}>
+									<IconSubscription width={18} height={18} />
+								</TouchableOpacity>
 								<ScrollView
 									showsHorizontalScrollIndicator={false}
 									horizontal={true}>
@@ -427,6 +436,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								</ScrollView>
 								<IconStarButton
 									active={false}
+									size={24}
 									onPress={() => {
 										navigation.navigate("NewsFav", {
 											reloadFunc: () => setReload((i) => i + 1),
@@ -463,6 +473,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							</ScrollView>
 							<IconStarButton
 								active={false}
+								size={24}
 								onPress={() => {
 									navigation.navigate("NewsFav", {
 										reloadFunc: () => setReload((i) => i + 1),

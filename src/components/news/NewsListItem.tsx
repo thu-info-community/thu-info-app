@@ -58,96 +58,115 @@ export const NewsListItem = ({
 					alignItems: "center",
 					marginTop: 12,
 				}}>
-				{item.source.length > 0 && (
-					<>
-						<Text
-							style={{
-								fontWeight: "600",
-								color: theme.colors.fontB2,
-								fontSize: 12,
-							}}>
-							{item.source}
-						</Text>
-						<View
-							style={{
-								marginHorizontal: 6,
-								height: 11,
-								width: 3,
-								borderRadius: 1.5,
-								backgroundColor: theme.colors.accent,
-							}}
-						/>
-					</>
-				)}
-				<Text
+				<View
 					style={{
-						fontWeight: "600",
-						color: theme.colors.fontB2,
-						fontSize: 12,
+						flexDirection: "row",
+						flex: item.topped ? 18 : 21,
+						marginRight: 2,
+						alignItems: "center",
 					}}>
-					{getStr(item.channel)}
-				</Text>
+					{item.source.length > 0 && (
+						<>
+							<Text
+								style={{
+									fontWeight: "600",
+									color: theme.colors.fontB2,
+									fontSize: 12,
+								}}>
+								{item.source}
+							</Text>
+							<View
+								style={{
+									marginHorizontal: 6,
+									height: 12,
+									width: 3,
+									borderRadius: 1.5,
+									backgroundColor: theme.colors.accent,
+								}}
+							/>
+						</>
+					)}
+					<Text
+						numberOfLines={1}
+						style={{
+							flex: 1,
+							fontWeight: "600",
+							color: theme.colors.fontB2,
+							fontSize: 12,
+						}}>
+						{getStr(item.channel)}
+					</Text>
+				</View>
 				{item.topped && (
 					<View
 						style={{
-							marginLeft: 8,
 							borderColor: theme.colors.statusWarning,
 							backgroundColor: theme.colors.statusWarningOpacity,
 							borderWidth: 1,
 							borderRadius: 20,
-							paddingHorizontal: 8,
+							paddingHorizontal: 6,
+							marginHorizontal: 2,
+							flex: 3,
+							alignItems: "center",
 						}}>
-						<Text>
-							<Text style={{color: theme.colors.statusWarning, fontSize: 11}}>
-								{getStr("topped")}
-							</Text>
+						<Text style={{color: theme.colors.statusWarning, fontSize: 11}}>
+							{getStr("topped")}
 						</Text>
 					</View>
 				)}
-				<View style={{flex: 1}} />
-				<Text style={{color: theme.colors.fontB2}}>
-					{item.date.slice(0, 10)}
-				</Text>
-				<IconStarButton
-					active={inFav}
-					onPress={() => {
-						if (inFav) {
-							helper
-								.removeNewsFromFavor(item)
-								.then((res) => {
-									if (res) {
-										setInFav(!inFav);
-										reloadFunc?.();
-									} else {
-										return;
-									}
-								})
-								.catch(() => {
-									Snackbar.show({
-										text: getStr("networkRetry"),
-										duration: Snackbar.LENGTH_LONG,
+				<View
+					style={{
+						flexDirection: "row",
+						flex: 8,
+						marginLeft: 2,
+						alignItems: "center",
+					}}>
+					<Text
+						numberOfLines={1}
+						style={{color: theme.colors.fontB2, marginRight: -6}}>
+						{item.date.slice(0, 10)}
+					</Text>
+					<IconStarButton
+						active={inFav}
+						onPress={() => {
+							if (inFav) {
+								helper
+									.removeNewsFromFavor(item)
+									.then((res) => {
+										if (res) {
+											setInFav(!inFav);
+											reloadFunc?.();
+										} else {
+											return;
+										}
+									})
+									.catch(() => {
+										Snackbar.show({
+											text: getStr("networkRetry"),
+											duration: Snackbar.LENGTH_LONG,
+										});
 									});
-								});
-						} else {
-							// not in fav
-							helper
-								.addNewsToFavor(item)
-								.then((res) => {
-									if (res) {
-										setInFav(!inFav);
-									} else {
-										return;
-									}
-								})
-								.catch(() => {
-									Snackbar.show({
-										text: getStr("networkRetry"),
-										duration: Snackbar.LENGTH_LONG,
+							} else {
+								// not in fav
+								helper
+									.addNewsToFavor(item)
+									.then((res) => {
+										if (res) {
+											setInFav(!inFav);
+										} else {
+											return;
+										}
+									})
+									.catch(() => {
+										Snackbar.show({
+											text: getStr("networkRetry"),
+											duration: Snackbar.LENGTH_LONG,
+										});
 									});
-								});
-						}
-					}}
-				/>
+							}
+						}}
+					/>
+				</View>
 			</View>
 		</TouchableOpacity>
 	);

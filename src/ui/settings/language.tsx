@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {State, store} from "../../redux/store";
+import {helper, State, store} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import {connect} from "react-redux";
@@ -30,6 +30,11 @@ export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
 							text: getStr("restartToApply"),
 							duration: Snackbar.LENGTH_SHORT,
 						});
+						if (language === "auto") {
+							helper.switchLang(getStr("mark") === "CH" ? "zh" : "en");
+						} else {
+							helper.switchLang(language as "zh" | "en");
+						}
 					}}>
 					<Text style={{color: colors.primaryLight, fontSize: 16}}>
 						{getStr("done")}

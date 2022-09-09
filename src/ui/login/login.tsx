@@ -207,6 +207,7 @@ export const LoginScreen = connect(
 						helper.getCalendar().then((c) => {
 							store.dispatch(setCalendarConfigAction(c));
 						});
+						helper.switchLang(getStr("mark") === "CH" ? "zh" : "en");
 					})
 					.catch(() => {
 						// Do nothing

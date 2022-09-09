@@ -122,6 +122,11 @@ import {NewsFavScreen} from "../ui/news/newsFav";
 import {IconStarButton} from "./news/IconStarButton";
 import {helper} from "../redux/store";
 import {NetworkRetry} from "./easySnackbars";
+import {
+	NewsSubChannelSelectScreen,
+	NewsSubScreen,
+	NewsSubSourceSelectScreen,
+} from "../ui/news/newsSub";
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 
 type RootTabParamList = {
@@ -325,6 +330,9 @@ type NewsStackParamList = {
 		reloadFunc?: () => void;
 	};
 	NewsFav: {reloadFunc: () => void};
+	NewsSub: undefined;
+	NewsSubSourceSelect: undefined;
+	NewsSubChannelSelect: undefined;
 };
 
 export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
@@ -906,6 +914,21 @@ export const Root = () => {
 				name={"NewsFav"}
 				component={NewsFavScreen}
 				options={{title: getStr("newsFav")}}
+			/>
+			<Stack.Screen
+				name={"NewsSub"}
+				component={NewsSubScreen}
+				options={{title: getStr("newsSub")}}
+			/>
+			<Stack.Screen
+				name={"NewsSubSourceSelect"}
+				component={NewsSubSourceSelectScreen}
+				options={{title: getStr("newsSubSourceSelect")}}
+			/>
+			<Stack.Screen
+				name={"NewsSubChannelSelect"}
+				component={NewsSubChannelSelectScreen}
+				options={{title: getStr("newsSubChannelSelect")}}
 			/>
 			{/* Schedule */}
 			<Stack.Screen
