@@ -33,14 +33,14 @@ export const getNewsList = async (helper: InfoHelper, page: number, length: numb
     async () => {
         const newsList: NewsSlice[] = [];
         const json = await uFetch(`${NEWS_LIST_URL}&lmid=${channel ?? "all"}&currentPage=${page}&length=${length}&_csrf=${await getCsrfToken()}`);
-        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
+        const data: { object: { dataList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
         data.object.dataList.forEach(element => {
             newsList.push({
                 name: decode(element.bt),
                 xxid: (element.xxid),
                 url: decode(element.url),
                 date: element.time,
-                source: element.dwmc,
+                source: element.dwmc_show,
                 topped: element.yxzd.includes("1-"),
                 channel: element.lmid,
                 inFav:element.sfsc
@@ -93,14 +93,14 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
                 currentPage: page,
             })},
         );
-        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
+        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
         data.object.resultsList.forEach(element => {
             newsList.push({
                 name: cheerio.load(decode(element.bt)).root().text(),
                 xxid: (element.xxid),
                 url: decode(element.url),
                 date: element.time,
-                source: element.dwmc,
+                source: element.dwmc_show,
                 topped: false,
                 channel: element.lmid,
                 inFav: element.sfsc,
@@ -172,7 +172,7 @@ export const getNewsListBySubscription = async (h: InfoHelper, page: number, sub
             "currentPage": page,
             "dyid": subscriptionId,
         });
-    const data: { object: { resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, yxzd: string, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
+    const data: { object: { resultList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: string, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
     const newsList: NewsSlice[] = [];
     // copy from line 37 to 47
     data.object.resultList.forEach(element => {
@@ -181,7 +181,7 @@ export const getNewsListBySubscription = async (h: InfoHelper, page: number, sub
             xxid: (element.xxid),
             url: decode(element.url),
             date: element.time,
-            source: element.dwmc,
+            source: element.dwmc_show,
             topped: false,
             channel: element.lmid,
             inFav: element.sfsc,
@@ -355,14 +355,14 @@ export const getFavorNewsList = async (helper: InfoHelper, page = 1): Promise<[N
     const csrf = await getCsrfToken();
     const json = await uFetch(`${NEWS_FAVOR_LIST_URL}?_csrf=${csrf}`, { "currentPage": page });
     const newsList: NewsSlice[] = [];
-    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
+    const data: { object: { totalPages: number, resultList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, lmid: ChannelTag, sfsc:boolean }[] } } = JSON.parse(json);
     data.object.resultList.forEach(element => {
         newsList.push({
             name: decode(element.bt),
             xxid: (element.xxid),
             url: decode(element.url),
             date: element.time,
-            source: element.dwmc,
+            source: element.dwmc_show,
             topped: false,
             channel: element.lmid,
             inFav:element.sfsc
