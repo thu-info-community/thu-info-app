@@ -21,6 +21,10 @@ import IconRight from "../../assets/icons/IconRight";
 import VersionNumber from "react-native-version-number";
 import themes from "../../assets/themes/themes";
 import {useSelector} from "react-redux";
+import {
+	setActiveLibBookRecordAction,
+	setActiveSportsReservationRecordAction,
+} from "../../redux/actions/reservation";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -141,6 +145,8 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									store.dispatch(setDormPasswordAction(""));
 									store.dispatch(scheduleClearAction());
 									store.dispatch(configSet("emailName", ""));
+									store.dispatch(setActiveLibBookRecordAction([]));
+									store.dispatch(setActiveSportsReservationRecordAction([]));
 								},
 							},
 						]);
