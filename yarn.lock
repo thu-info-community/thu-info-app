@@ -8418,10 +8418,10 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-4.1.1.tgz#341a3b41cafc11b01ea3c60a5e1fe9737803812d"
-  integrity sha512-qSMoRQNmqIiscqXyc3Egw5kj78SIH/kd3NeYidNC9WyJ0WZYcbNJivXLG7/QDYAtGIUhFrCT1ya5q8BKk4AOlg==
+thu-info-lib@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-4.2.0.tgz#8312b7eec0fad13391e6e1b29f4e6f3866cf159b"
+  integrity sha512-xIhEkLIqoKd45z08oXmBwLvVF3ET8tvxik++r227bmL+6iBuCjJnPYeKto3jVJcntv3w27zzwMaH76m18tEcbQ==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
@@ -8431,7 +8431,6 @@ thu-info-lib@4.1.1:
     iconv-lite "0.6.3"
     image-size "^1.0.1"
     jspdf "^2.5.1"
-    uuid "9.0.0"
     xlsx "0.18.5"
 
 tmpl@1.0.5:
@@ -8662,11 +8661,6 @@ utrie@^1.0.2:
   integrity sha512-1MLa5ouZiOmQzUbjbu9VmjLzn1QLXBhwpUa7kdLUQK+KQ5KA9I1vk5U4YHe/X2Ch7PYnJfWuWT+VbuxbGwljhw==
   dependencies:
     base64-arraybuffer "^1.0.2"
-
-uuid@9.0.0:
-  version "9.0.0"
-  resolved "https://registry.npmjs.org/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
-  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 v8-to-istanbul@^9.0.1:
   version "9.0.1"
