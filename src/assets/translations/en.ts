@@ -5,6 +5,8 @@ export default {
 	appSecret: "APP Secret",
 	userId: "School ID",
 	password: "Password",
+	resetPassword: "Reset Password",
+	resetDormPasswordHint: "Identity has been verified with INFO account.",
 	login: "Login",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",

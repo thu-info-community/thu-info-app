@@ -85,11 +85,21 @@ const MyhomeLoginUI = ({
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</RoundedView>
 			</TouchableOpacity>
+			<TouchableOpacity
+				style={style.resetButtonStyle}
+				disabled={processing}
+				onPress={() => navigation.navigate("ResetDormPassword")}>
+				<RoundedView style={style.loginRounded}>
+					<Text style={style.loginButtonTextStyle}>
+						{getStr("resetPassword")}
+					</Text>
+				</RoundedView>
+			</TouchableOpacity>
 		</View>
 	);
 };
 
-const styles = themedStyles((theme) => {
+export const styles = themedStyles((theme) => {
 	return {
 		container: {
 			flex: 1,
@@ -129,6 +139,13 @@ const styles = themedStyles((theme) => {
 
 		loginButtonTextStyle: {
 			color: theme.colors.themePurple,
+		},
+
+		resetButtonStyle: {
+			flexDirection: "row",
+			marginTop: 12,
+			justifyContent: "center",
+			alignItems: "center",
 		},
 	};
 });

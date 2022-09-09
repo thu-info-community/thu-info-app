@@ -5,6 +5,8 @@ export default {
 	appSecret: "应用密码",
 	userId: "学号",
 	password: "密码",
+	resetPassword: "重置密码",
+	resetDormPasswordHint: "已使用 INFO 帐号智能完成身份认证",
 	login: "登录",
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",

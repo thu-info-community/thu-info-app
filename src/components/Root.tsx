@@ -122,6 +122,7 @@ import {NewsFavScreen} from "../ui/news/newsFav";
 import {IconStarButton} from "./news/IconStarButton";
 import {helper} from "../redux/store";
 import {NetworkRetry} from "./easySnackbars";
+import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -245,6 +246,7 @@ type HomeStackParamList = {
 	GitLabPDF: {project: Project; file: File; cookie: string};
 	GitLabImage: {project: Project; file: File};
 	MyhomeLogin: undefined;
+	ResetDormPassword: undefined;
 	Electricity: undefined;
 	EleRecord: undefined;
 	ECard: undefined;
@@ -815,6 +817,11 @@ export const Root = () => {
 				name="MyhomeLogin"
 				component={MyhomeLoginScreen}
 				options={{title: getStr("myhomeLogin")}}
+			/>
+			<Stack.Screen
+				name="ResetDormPassword"
+				component={ResetDormPasswordScreen}
+				options={{title: getStr("resetPassword")}}
 			/>
 			<Stack.Screen
 				name="Electricity"
