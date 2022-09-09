@@ -17,6 +17,7 @@ import {
     INVOICE_LIST_URL,
     LOSE_CARD_URL,
     PHYSICAL_EXAM_URL,
+    SWITCH_LANG_URL,
     YJS_REPORT_BXR_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
@@ -551,3 +552,7 @@ export const countdown = async (helper: InfoHelper): Promise<string[]> =>
         },
         MOCK_COUNTDOWN_DATA
     );
+
+export const switchLang = async (helper: InfoHelper, lang: "zh" | "en"): Promise<void> => {
+    await uFetch(`${SWITCH_LANG_URL}${lang === "zh" ? "awefawef" : "en_US"}&_csrf=${await getCsrfToken()}`);
+};

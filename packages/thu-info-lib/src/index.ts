@@ -13,6 +13,7 @@ import {
     getCalendar,
     getInvoiceList,
     getInvoicePDF,
+    switchLang,
 } from "./lib/basics";
 import { login, logout } from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -128,6 +129,8 @@ export class InfoHelper {
     ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password);
 
     public logout = async (): Promise<void> => logout(this);
+
+    public switchLang = async (lang: "zh" | "en"): Promise<void> => switchLang(this, lang);
 
     public getUserInfo = async () => getUserInfo(this);
 
@@ -251,7 +254,13 @@ export class InfoHelper {
 
     public getNewsChannelList = async (needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => getNewsChannelList(this, needEnglish);
 
-    public addNewsSubscription = async (channelId: ChannelTag, sourceId: string): Promise<boolean> => addNewsSubscription(this, channelId, sourceId);
+    /**
+     * if channelId and sourceId is null or undefined at the same time, this function will terminate and return false.
+     * @param channelId channel id
+     * @param sourceId source id
+     * @returns
+     */
+    public addNewsSubscription = async (channelId?: ChannelTag, sourceId?: string): Promise<boolean> => addNewsSubscription(this, channelId, sourceId);
 
     public removeNewsSubscription = async (subscriptionId: string): Promise<boolean> => removeNewsSubscription(this, subscriptionId);
 
