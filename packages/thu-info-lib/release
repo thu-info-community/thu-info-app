@@ -1,2 +1,1 @@
-feat: implement `resetDormPassword`；
-fix: fix mock data of newsHTML。
+feat: implement language switch。
