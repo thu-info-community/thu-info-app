@@ -153,7 +153,7 @@ export const addNewsSubscription = async (h: InfoHelper, channelId?: ChannelTag,
         return false;
     const json = await uFetch(`${NEWS_ADD_SUBSCRIPTION_URL}?_csrf=${await getCsrfToken()}`,
         {
-            dygz: JSON.stringify({lmid: channelId ?? "", fbdwnm: sourceId ?? "", bt: ""}),
+            dygz: JSON.stringify({lmid: !channelId ? undefined : channelId, fbdwnm: !sourceId ? undefined : sourceId, bt: ""}),
             mkid: "XXFB",
         });
     const data: { result: string } = JSON.parse(json);
