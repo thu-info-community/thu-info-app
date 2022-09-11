@@ -448,4 +448,5 @@ export default {
 	schedulePreview: "计划概览",
 	scheduleTomorrow: "明天",
 	notSelected: "未选择",
+	seasonalFeatures: "时令功能",
 };

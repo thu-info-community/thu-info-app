@@ -471,4 +471,5 @@ export default {
 	schedulePreview: "Schedule Preview",
 	scheduleTomorrow: "Tomorrow",
 	notSelected: "Not Selected",
+	seasonalFeatures: "Seasonal Features",
 };

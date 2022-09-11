@@ -19,6 +19,10 @@ export const top5 = (state: Top5 = defaultTop5, action: Top5Action): Top5 => {
 			return {
 				top5Functions: newFunctions.slice(0, 5),
 			};
+		case "TOP5_SET":
+			return {
+				top5Functions: action.payload.slice(0, 5),
+			};
 		default:
 			return state;
 	}

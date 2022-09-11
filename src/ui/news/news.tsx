@@ -293,7 +293,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			setInited(true);
 			return;
 		}
-		fetchNewsList(); // comment this line for better debugging experience
+		if (!__DEV__) {
+			fetchNewsList();
+		} // disable this line during debugging for better debugging experience
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [reload]);
 

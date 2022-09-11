@@ -48,7 +48,7 @@ import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
-import {setCalendarConfigAction} from "../../redux/actions/config";
+import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
@@ -656,19 +656,49 @@ const HomeUI = (props: HomeProps) => {
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+
+	const disabledList = useSelector(
+		// @ts-ignore
+		(state) => state.config.homeFunctionDisabled,
+	);
+	if (!disabledList) {
+		store.dispatch(configSet("homeFunctionDisabled", []));
+	}
 	const homeFunctions = getHomeFunctions(props.navigation, props.updateTop5);
 	const top5 = props.top5Functions.map((x) =>
 		homeFunctions.find((y) => y.key === x),
 	);
-	const needToShowFunctionNames: HomeFunction[] = [
-		"physicalExam",
-		"teachingEvaluation",
-		"report",
-		"classroomState",
-		"reserve",
-		"finance",
-		"dormitory",
-	];
+	let needToShowFunctionNames: HomeFunction[] = [];
+	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
+		(i) => {
+			if (!disabledList.includes(i as HomeFunction)) {
+				needToShowFunctionNames.push(i as HomeFunction);
+			}
+		},
+	);
+	if (
+		!["library", "sportsBook", "libRoomBook"].every((i) =>
+			disabledList.includes(i as HomeFunction),
+		)
+	) {
+		// not all reserve functions are disabled
+		needToShowFunctionNames.push("reserve");
+	}
+	if (
+		!["expenditure", "bankPayment", "invoice"].every((i) =>
+			disabledList.includes(i as HomeFunction),
+		)
+	) {
+		needToShowFunctionNames.push("finance");
+	}
+	if (
+		!["washer", "qzyq", "dormScore", "electricity"].every((i) =>
+			disabledList.includes(i as HomeFunction),
+		)
+	) {
+		needToShowFunctionNames.push("dormitory");
+	}
+
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
 		homeFunctions.find((y) => y.key === x),
 	);
@@ -695,7 +725,7 @@ const HomeUI = (props: HomeProps) => {
 			style={{backgroundColor: theme.colors.themeBackground}}
 			key={darkModeHook}>
 			<HomeFunctionSection title="recentlyUsedFunction">
-				{top5}
+				{top5.filter((f) => !disabledList.includes((f as any).key))}
 			</HomeFunctionSection>
 			<HomeReservationSection
 				activeLibBookRecords={props.activeLibBookRecords ?? []}

@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {HomeFunction} from "src/ui/home/home";
 
 export interface Config {
 	doNotRemindSemver: string;
@@ -21,6 +22,7 @@ export interface Config {
 	verifyPasswordBeforeEnterReport: boolean | undefined;
 	useBiometrics: boolean | undefined;
 	appLocked: boolean | undefined;
+	homeFunctionDisabled: HomeFunction[];
 }
 
 export const defaultConfigState: Config = {
@@ -44,4 +46,5 @@ export const defaultConfigState: Config = {
 	verifyPasswordBeforeEnterReport: false,
 	useBiometrics: false,
 	appLocked: false,
+	homeFunctionDisabled: [],
 };
