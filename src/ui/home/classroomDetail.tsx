@@ -5,40 +5,31 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ClassroomDetailRouteProp} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import IconRight from "../../assets/icons/IconRight";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
-import {currState, helper} from "../../redux/store";
+import {helper} from "../../redux/store";
 import dayjs from "dayjs";
 
 const colors = ["#26A69A", "#FFA726", "#29B6F6", "#868686", "#AB47BC"];
 
 export const ClassroomDetailScreen = ({
-	route,
+	route: {
+		params: {searchName, weekNumber},
+	},
 }: {
 	route: ClassroomDetailRouteProp;
 }) => {
-	const name = route.params.name;
-	const {firstDay, weekCount} = currState().config;
+	const weekCount = 18;
 	const current = dayjs();
-	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
-	const weekNumberCoerced = (() => {
-		if (weekNumber > weekCount) {
-			return weekCount;
-		} else if (weekNumber < 1) {
-			return 1;
-		} else {
-			return weekNumber;
-		}
-	})();
 	const dayOfWeek = current.day() === 0 ? 7 : current.day();
 
 	const [data, setData] = useState<[number, number, [string, number[]][]]>([
-		weekNumberCoerced,
+		Math.max(weekNumber, 1),
 		dayOfWeek,
 		[],
 	]);
@@ -52,11 +43,8 @@ export const ClassroomDetailScreen = ({
 
 	const refresh = () => {
 		setRefreshing(true);
-		const six =
-			!helper.mocked() && ["六教A区", "六教B区", "六教C区"].includes(name);
 		helper
-			.getClassroomState(six ? "六教" : name, data[0])
-			.then((res) => (six ? res.filter((it) => it[0][1] === name[2]) : res))
+			.getClassroomState(searchName, currWeek)
 			.then((res) =>
 				setData((o) => {
 					if (o[0] === data[0]) {
@@ -92,7 +80,7 @@ export const ClassroomDetailScreen = ({
 			(prev.current === undefined || prev.current[0] !== data[0] - 1)
 		) {
 			helper
-				.getClassroomState(name, data[0] - 1)
+				.getClassroomState(searchName, data[0] - 1)
 				.then((res) => (prev.current = [data[0] - 1, res]));
 		}
 		if (
@@ -100,7 +88,7 @@ export const ClassroomDetailScreen = ({
 			(next.current === undefined || next.current[0] !== data[0] + 1)
 		) {
 			helper
-				.getClassroomState(name, data[0] + 1)
+				.getClassroomState(searchName, data[0] + 1)
 				.then((res) => (next.current = [data[0] + 1, res]));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,9 +123,6 @@ export const ClassroomDetailScreen = ({
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 				<Text
-					onPress={() =>
-						setData(([_, __, table]) => [weekNumberCoerced, dayOfWeek, table])
-					}
 					style={{
 						fontSize: 18,
 						textAlign: "center",

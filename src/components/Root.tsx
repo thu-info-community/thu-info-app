@@ -128,6 +128,7 @@ import {
 	NewsSubSourceSelectScreen,
 } from "../ui/news/newsSub";
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
+import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -205,7 +206,7 @@ type HomeStackParamList = {
 	Expenditure: undefined;
 	LoseCard: undefined;
 	ClassroomList: undefined;
-	ClassroomDetail: {name: string};
+	ClassroomDetail: Classroom;
 	CrCaptcha: undefined;
 	CrHome: undefined;
 	CrCoursePlan: {semesterId: string};
