@@ -171,7 +171,7 @@ const RootTabs = () => {
 			<Tab.Screen
 				name="HomeTab"
 				component={HomeScreen}
-				options={{title: getStr("home")}}
+				options={{title: getStr("home"), headerShown: false}}
 			/>
 			<Tab.Screen
 				name="NewsTab"
@@ -181,12 +181,13 @@ const RootTabs = () => {
 						route.params === undefined
 							? getStr("news")
 							: getStr(route.params.source),
+					headerShown: false,
 				})}
 			/>
 			<Tab.Screen
 				name="ScheduleTab"
 				component={ScheduleScreen}
-				options={{title: getStr("schedule")}}
+				options={{title: getStr("schedule"), headerShown: false}}
 			/>
 			<Tab.Screen
 				name="SettingsTab"
