@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
-import {NewsSlice, ChannelTag} from "thu-info-lib/dist/models/news/news";
+import {NewsSlice} from "thu-info-lib/dist/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
@@ -132,7 +132,7 @@ import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 
 type RootTabParamList = {
 	HomeTab: undefined;
-	NewsTab: {source: ChannelTag};
+	NewsTab: undefined;
 	ScheduleTab: undefined;
 	SettingsTab: undefined;
 };
@@ -176,13 +176,7 @@ const RootTabs = () => {
 			<Tab.Screen
 				name="NewsTab"
 				component={NewsScreen}
-				options={({route}) => ({
-					title:
-						route.params === undefined
-							? getStr("news")
-							: getStr(route.params.source),
-					headerShown: false,
-				})}
+				options={{title: getStr("news"), headerShown: false}}
 			/>
 			<Tab.Screen
 				name="ScheduleTab"
