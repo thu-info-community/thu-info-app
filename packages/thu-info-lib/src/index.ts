@@ -2,6 +2,7 @@ import {
     countdown,
     getAssessmentForm,
     getAssessmentList,
+    getClassroomList,
     getClassroomState,
     getUserInfo,
     getExpenditures,
@@ -153,6 +154,8 @@ export class InfoHelper {
         getPhysicalExamResult(this);
 
     public getExpenditures = (): Promise<Record[]> => getExpenditures(this);
+
+    public getClassroomList = (): Promise<any[]> => getClassroomList(this);
 
     public getClassroomState = (
         name: string,

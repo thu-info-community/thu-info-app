@@ -7,6 +7,7 @@ import {
     BANK_PAYMENT_SEARCH_URL,
     BKS_REPORT_BXR_URL,
     CALENDAR_URL,
+    CLASSROOM_LIST_URL,
     CLASSROOM_STATE_MIDDLE,
     CLASSROOM_STATE_PREFIX,
     COUNT_DOWN_URL,
@@ -37,6 +38,7 @@ import {
     MOCK_ASSESSMENT_LIST,
     MOCK_BANK_PAYMENT,
     MOCK_CALENDAR_DATA,
+    MOCK_CLASSROOM_LIST,
     MOCK_CLASSROOM_STATE,
     MOCK_COUNTDOWN_DATA,
     MOCK_EXPENDITURES,
@@ -57,6 +59,7 @@ import {
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
+import {Classroom} from "../models/home/classroom";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -351,6 +354,37 @@ export const getExpenditures = (
             },
         ),
         MOCK_EXPENDITURES,
+    );
+
+export const getClassroomList = (
+    helper: InfoHelper,
+): Promise<Classroom[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "40470BB47E0849E9EF717983490BC964",
+        async () => {
+            const html = await uFetch(CLASSROOM_LIST_URL);
+            if (html.includes(systemMessage)) {
+                throw new ReportError(systemMessage);
+            }
+            const $ = cheerio.load(html);
+            const result: Classroom[] = [];
+            $(".w30 a[href^=\"/http/\"]").each((_, e) => {
+                if (e.type === "tag") {
+                    const name = getCheerioText(e);
+                    const href = e.attribs.href;
+                    const match = /classroom=(.+?)&weeknumber=(\d+?)/g.exec(href);
+                    if (match !== null) {
+                        const searchName = match[1];
+                        const weekNumber = Number(match[2]);
+                        result.push({name, weekNumber, searchName});
+                    }
+                }
+            });
+            return result;
+        },
+        MOCK_CLASSROOM_LIST,
     );
 
 export const getClassroomState = (
