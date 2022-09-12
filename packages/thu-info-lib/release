@@ -1,1 +1,1 @@
-fix: fix bug of `addNewsSubscription` when either channelId or sourceId is falsy。
+feat: add `getClassroomList` API。
