@@ -14,7 +14,13 @@ import {
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {ScheduleNav} from "./scheduleStack";
-import {currState, globalObjects, helper, State} from "../../redux/store";
+import {
+	currState,
+	globalObjects,
+	helper,
+	State,
+	store,
+} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import dayjs from "dayjs";
@@ -24,6 +30,7 @@ import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import md5 from "md5";
+import {setCalendarConfigAction} from "../../redux/actions/config";
 
 interface ScheduleProps {
 	readonly baseSchedule: Schedule[];
@@ -332,6 +339,9 @@ export const ScheduleScreen = connect(
 	(dispatch) => ({
 		getSchedule: () => {
 			dispatch(scheduleFetchAction.request());
+			helper.getCalendar().then((c) => {
+				store.dispatch(setCalendarConfigAction(c));
+			});
 			helper
 				.getSchedule()
 				.then((res) =>

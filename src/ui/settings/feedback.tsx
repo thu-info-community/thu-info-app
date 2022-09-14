@@ -103,12 +103,13 @@ export const FeedbackScreen = ({navigation}: {navigation: SettingsNav}) => {
 						text="submit"
 						onPress={() => {
 							submitFeedback(text, contact)
-								.then(() =>
+								.then(() => {
 									Snackbar.show({
 										text: getStr("feedbackSuccess"),
 										duration: Snackbar.LENGTH_SHORT,
-									}),
-								)
+									});
+									setText("");
+								})
 								.catch(() =>
 									Snackbar.show({
 										text: getStr("networkRetry"),
