@@ -1,4 +1,5 @@
 import {InfoHelper} from "../src";
+import dayjs from "dayjs";
 
 let userId = "";
 let password = "";
@@ -23,6 +24,9 @@ it("should enter mocked account", async () => {
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
     await helper.login({userId, password});
+    const {firstDay, weekCount} = await helper.getCalendar();
+    expect(weekCount % 3).toEqual(0);
+    expect(dayjs(firstDay).day()).toEqual(1);
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
 }, 60000);
