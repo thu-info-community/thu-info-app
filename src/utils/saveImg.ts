@@ -1,6 +1,6 @@
 import {PermissionsAndroid, Platform} from "react-native";
 import {hasAndroidPermission} from "./permissions";
-import {CameraRoll} from "@react-native-camera-roll/camera-roll";
+import CameraRoll from "@react-native-community/cameraroll";
 import {getStr} from "./i18n";
 import Snackbar from "react-native-snackbar";
 import RNFS from "react-native-fs";
