@@ -1,6 +1,7 @@
 import {
-	FlatList,
+	Dimensions,
 	RefreshControl,
+	ScrollView,
 	Text,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
@@ -16,6 +17,7 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
+import IconClassroomTooltip from "../../assets/icons/IconClassroomTooltip";
 
 export const ClassroomDetailScreen = ({
 	route: {
@@ -36,7 +38,15 @@ export const ClassroomDetailScreen = ({
 	const prev = useRef<[number, [string, number[]][]]>();
 	const next = useRef<[number, [string, number[]][]]>();
 	const currWeek = data[0];
+	const currDay = data[1];
 	const [refreshing, setRefreshing] = useState(false);
+
+	const [statesLayoutX, setStatesLayoutX] = useState<number | undefined>();
+	const [tipPosition, setTipPosition] = useState<
+		{top: number; left: number} | undefined
+	>();
+	const [tipItem, setTipItem] = useState({row: -1, col: -1});
+	const [tipState, setTipState] = useState(0);
 
 	const currentTime = current.format("HHmm");
 	const currentPeriod = (() => {
@@ -123,6 +133,11 @@ export const ClassroomDetailScreen = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currWeek]);
 
+	useEffect(() => {
+		setTipItem({row: -1, col: -1});
+		setTipPosition(undefined);
+	}, [currDay]);
+
 	return (
 		<View style={{backgroundColor: theme.colors.contentBackground, flex: 1}}>
 			<View
@@ -169,8 +184,7 @@ export const ClassroomDetailScreen = ({
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 			</View>
-			<FlatList
-				data={data[2]}
+			<ScrollView
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -181,124 +195,171 @@ export const ClassroomDetailScreen = ({
 				style={{
 					marginHorizontal: 16,
 					marginTop: 27,
-				}}
-				ListHeaderComponent={
-					<View
+				}}>
+				<View
+					style={{
+						flexDirection: "row",
+						marginBottom: 8,
+					}}>
+					<Text
 						style={{
-							flexDirection: "row",
-							marginBottom: 8,
+							flex: 3,
+							fontSize: 14,
+							color: theme.colors.fontB2,
 						}}>
+						{getStr("classroomName")}
+					</Text>
+					<View style={{flex: 1, marginRight: 41}}>
 						<Text
 							style={{
-								flex: 3,
+								textAlign: "center",
 								fontSize: 14,
 								color: theme.colors.fontB2,
 							}}>
-							{getStr("classroomName")}
-						</Text>
-						<View style={{flex: 1, marginRight: 41}}>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 14,
-									color: theme.colors.fontB2,
-								}}>
-								{getStr("classroomCapacity")}
-							</Text>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 11,
-									marginTop: 4,
-									color: theme.colors.fontB3,
-								}}>
-								（人）
-							</Text>
-						</View>
-						<View style={{flex: 5}}>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 14,
-									marginBottom: 4,
-									color: theme.colors.fontB2,
-								}}>
-								{getStr("classroomCondition")}
-							</Text>
-							<View
-								style={{
-									flexDirection: "row",
-									alignItems: "center",
-								}}>
-								{[1, 2, 3, 4, 5, 6].map((val) => (
-									<Text
-										key={val}
-										style={{
-											flex: 1,
-											textAlign: "center",
-											fontSize: 11,
-											color:
-												val >= currentPeriod
-													? theme.colors.fontB1
-													: theme.colors.fontB3,
-										}}>
-										{val}
-									</Text>
-								))}
-							</View>
-						</View>
-					</View>
-				}
-				renderItem={({item}) => (
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-						}}>
-						<Text
-							style={{
-								flex: 3,
-								fontSize: 16,
-								color: theme.colors.text,
-							}}>
-							{item[0].split(":")[0]}
+							{getStr("classroomCapacity")}
 						</Text>
 						<Text
 							style={{
-								flex: 1,
-								marginRight: 41,
 								textAlign: "center",
-								fontSize: 16,
-								color: theme.colors.text,
+								fontSize: 11,
+								marginTop: 4,
+								color: theme.colors.fontB3,
 							}}>
-							{item[0].split(":")[1].replace("(人)", "")}
+							（人）
 						</Text>
-						<View style={{flex: 5, flexDirection: "row"}}>
-							{Array.from(new Array(6)).map((_, index) => (
-								<TouchableWithoutFeedback
-									key={index}>
-									<View
-										style={{
-											backgroundColor:
-												item[1][(data[1] - 1) * 6 + index] === 5
-													? index + 1 >= currentPeriod
-														? theme.colors.themeDarkGrey
-														: theme.colors.themeGrey
-													: index + 1 >= currentPeriod
-													? theme.colors.themePurple
-													: theme.colors.themeTransparentPurple,
-											flex: 1,
-											height: 26,
-											margin: 2,
-										}}
-									/>
-								</TouchableWithoutFeedback>
+					</View>
+					<View style={{flex: 5}}>
+						<Text
+							style={{
+								textAlign: "center",
+								fontSize: 14,
+								marginBottom: 4,
+								color: theme.colors.fontB2,
+							}}>
+							{getStr("classroomCondition")}
+						</Text>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+							}}>
+							{[1, 2, 3, 4, 5, 6].map((val) => (
+								<Text
+									key={val}
+									style={{
+										flex: 1,
+										textAlign: "center",
+										fontSize: 11,
+										color:
+											val >= currentPeriod
+												? theme.colors.fontB1
+												: theme.colors.fontB3,
+									}}>
+									{val}
+								</Text>
 							))}
 						</View>
 					</View>
-				)}
-				keyExtractor={(item, index) => item[0] + index}
-			/>
+				</View>
+				<View>
+					{data[2].map(([name, states], classroomIndex) => (
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+							}}
+							key={name}>
+							<Text
+								style={{
+									flex: 3,
+									fontSize: 16,
+									color: theme.colors.text,
+								}}>
+								{name.split(":")[0]}
+							</Text>
+							<Text
+								style={{
+									flex: 1,
+									marginRight: 41,
+									textAlign: "center",
+									fontSize: 16,
+									color: theme.colors.text,
+								}}>
+								{name.split(":")[1].replace("(人)", "")}
+							</Text>
+							<View
+								style={{flex: 5, flexDirection: "row"}}
+								onLayout={(e) => {
+									if (classroomIndex === 0) {
+										setStatesLayoutX(e.nativeEvent.layout.x);
+									}
+								}}>
+								{Array.from(new Array(6)).map((_, index) => (
+									<TouchableWithoutFeedback
+										onPress={() => {
+											if (statesLayoutX !== undefined) {
+												if (
+													tipItem.row !== classroomIndex ||
+													tipItem.col !== index
+												) {
+													const totalWidth =
+														Dimensions.get("window").width - 32 - statesLayoutX;
+													const elementWidth = totalWidth / 6;
+													const top = classroomIndex * 30;
+													const left =
+														statesLayoutX + elementWidth * (index + 0.5);
+													setTipPosition({top, left});
+													setTipItem({row: classroomIndex, col: index});
+													setTipState(states[(data[1] - 1) * 6 + index]);
+												} else {
+													setTipPosition(undefined);
+													setTipItem({row: -1, col: -1});
+												}
+											}
+										}}
+										key={index}>
+										<View
+											style={{
+												backgroundColor:
+													states[(data[1] - 1) * 6 + index] === 5
+														? index + 1 >= currentPeriod
+															? theme.colors.themeDarkGrey
+															: theme.colors.themeGrey
+														: index + 1 >= currentPeriod
+														? theme.colors.themePurple
+														: theme.colors.themeTransparentPurple,
+												flex: 1,
+												height: 26,
+												margin: 2,
+											}}
+										/>
+									</TouchableWithoutFeedback>
+								))}
+							</View>
+						</View>
+					))}
+					{tipPosition !== undefined && (
+						<View
+							style={{
+								position: "absolute",
+								left: tipPosition.left - 13,
+								top: tipPosition.top - 14,
+								alignItems: "center",
+							}}>
+							<IconClassroomTooltip />
+							<Text
+								style={{
+									position: "absolute",
+									color: theme.colors.contentBackground,
+									fontSize: 9,
+									marginTop: 1,
+								}}>
+								{getStr("classroomStatus")[tipState]}
+							</Text>
+						</View>
+					)}
+				</View>
+			</ScrollView>
 		</View>
 	);
 };

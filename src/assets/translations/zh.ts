@@ -198,7 +198,7 @@ export default {
 	outgo: "支出",
 	remainder: "当前余额",
 	classroomState: "教室资源",
-	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知"],
+	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知", "空闲"],
 	classroomHeaderPrefix: "第",
 	classroomHeaderMiddle: "周 ",
 	experimentalHint:

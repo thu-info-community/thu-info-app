@@ -209,7 +209,14 @@ export default {
 	outgo: "Expenditure",
 	remainder: "Remainder",
 	classroomState: "Classrooms",
-	classroomStatus: ["Teaching", "Exam", "Borrowed", "Disabled", "Unknown"],
+	classroomStatus: [
+		"Teaching",
+		"Exam",
+		"Borrowed",
+		"Disabled",
+		"Unknown",
+		"Available",
+	],
 	classroomHeaderPrefix: "Week ",
 	classroomHeaderMiddle: ", ",
 	experimentalHint:
