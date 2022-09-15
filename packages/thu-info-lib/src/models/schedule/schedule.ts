@@ -441,7 +441,8 @@ export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
             const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
             const dayOfWeek = current.day() === 0 ? 7 : current.day();
             switch (o.fl) {
-            case "上课": {
+            case "上课":
+            case "实验": {
                 const lessonList = scheduleList.filter((val) => val.name === o.nr);
                 let lesson: Schedule;
                 if (lessonList.length) {
