@@ -15,7 +15,7 @@ export default svgGenerator((width, height) => {
 				strokeLinejoin="round"
 				strokeWidth={1.5}
 				stroke={theme.colors.fontB3}
-				d="M9 6L15 12L9 18"
+				d="M15 18L9 12L15 6"
 			/>
 		</Svg>
 	);

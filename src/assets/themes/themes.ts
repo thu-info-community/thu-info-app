@@ -23,8 +23,10 @@ export interface ColorTheme {
 	statusError: string;
 	themeGreen: string;
 	themeBlue: string;
+	themeTransparentPurple: string;
 	themePurple: string;
 	themeLightPurple: string;
+	themeDarkGrey: string;
 	themeGrey: string;
 	themeLightGrey: string;
 }

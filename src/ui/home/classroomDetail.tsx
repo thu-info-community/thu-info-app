@@ -3,19 +3,19 @@ import {
 	RefreshControl,
 	Text,
 	TouchableOpacity,
+	TouchableWithoutFeedback,
 	View,
 } from "react-native";
 import {useEffect, useRef, useState} from "react";
 import {ClassroomDetailRouteProp} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
+import IconLeft from "../../assets/icons/IconLeft";
 import IconRight from "../../assets/icons/IconRight";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
-
-const colors = ["#26A69A", "#FFA726", "#29B6F6", "#868686", "#AB47BC"];
 
 export const ClassroomDetailScreen = ({
 	route: {
@@ -37,6 +37,35 @@ export const ClassroomDetailScreen = ({
 	const next = useRef<[number, [string, number[]][]]>();
 	const currWeek = data[0];
 	const [refreshing, setRefreshing] = useState(false);
+
+	const currentTime = current.format("HHmm");
+	const currentPeriod = (() => {
+		if (
+			weekNumber < data[0] ||
+			(weekNumber === data[0] && dayOfWeek < data[1])
+		) {
+			return 1;
+		} else if (
+			weekNumber > data[0] ||
+			(weekNumber === data[0] && dayOfWeek > data[1])
+		) {
+			return 7;
+		} else if (currentTime < "0935") {
+			return 1;
+		} else if (currentTime < "1215") {
+			return 2;
+		} else if (currentTime < "1505") {
+			return 3;
+		} else if (currentTime < "1655") {
+			return 4;
+		} else if (currentTime < "1840") {
+			return 5;
+		} else if (currentTime < "2145") {
+			return 6;
+		} else {
+			return 7;
+		}
+	})();
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -95,11 +124,10 @@ export const ClassroomDetailScreen = ({
 	}, [currWeek]);
 
 	return (
-		<>
+		<View style={{backgroundColor: theme.colors.contentBackground, flex: 1}}>
 			<View
 				style={{
-					padding: 4,
-					justifyContent: "space-between",
+					justifyContent: "center",
 					alignItems: "center",
 					flexDirection: "row",
 				}}>
@@ -113,21 +141,13 @@ export const ClassroomDetailScreen = ({
 								: [week, day, table],
 						)
 					}
-					disabled={data[0] === 1 && data[1] === 1}
-					style={{padding: 8}}>
-					{/* <Icon
-						name="chevron-left"
-						size={24}
-						color={data[0] === 1 && data[1] === 1 ? "#888" : theme.colors.text}
-					/> */}
-					<IconRight height={24} width={24} />
+					disabled={data[0] === 1 && data[1] === 1}>
+					<IconLeft height={24} width={24} />
 				</TouchableOpacity>
 				<Text
 					style={{
-						fontSize: 18,
-						textAlign: "center",
-						flex: 1,
-						marginHorizontal: 10,
+						fontSize: 16,
+						marginHorizontal: 11,
 						color: theme.colors.text,
 					}}>
 					{getStr("classroomHeaderPrefix") +
@@ -145,45 +165,9 @@ export const ClassroomDetailScreen = ({
 								: [week, day, table],
 						)
 					}
-					disabled={data[0] === weekCount && data[1] === 7}
-					style={{padding: 8}}>
-					{/* <Icon
-						name="chevron-right"
-						size={24}
-						color={
-							data[0] === weekCount && data[1] === 7
-								? "#888"
-								: theme.colors.text
-						}
-					/> */}
+					disabled={data[0] === weekCount && data[1] === 7}>
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
-			</View>
-			<View
-				style={{
-					flexWrap: "wrap",
-					flexDirection: "row",
-					justifyContent: "space-around",
-					alignItems: "center",
-					margin: 4,
-				}}>
-				{colors.flatMap((color, index) => [
-					<View
-						style={{
-							flexDirection: "row",
-							justifyContent: "center",
-							alignItems: "center",
-							marginHorizontal: 3,
-						}}
-						key={index}>
-						<View
-							style={{backgroundColor: color, width: 14, height: 14, margin: 2}}
-						/>
-						<Text style={{marginLeft: 2, color: theme.colors.text}}>
-							{getStr("classroomStatus")[index]}
-						</Text>
-					</View>,
-				])}
 			</View>
 			<FlatList
 				data={data[2]}
@@ -195,53 +179,55 @@ export const ClassroomDetailScreen = ({
 					/>
 				}
 				style={{
-					marginHorizontal: 20,
-					marginTop: 10,
+					marginHorizontal: 16,
+					marginTop: 27,
 				}}
 				ListHeaderComponent={
 					<View
 						style={{
 							flexDirection: "row",
-							alignItems: "center",
-							marginHorizontal: 0,
-							justifyContent: "space-around",
-							marginBottom: 4,
+							marginBottom: 8,
 						}}>
 						<Text
 							style={{
-								flex: 4,
-								textAlign: "center",
-								fontSize: 15,
-								fontWeight: "bold",
-								color: theme.colors.text,
+								flex: 3,
+								fontSize: 14,
+								color: theme.colors.fontB2,
 							}}>
 							{getStr("classroomName")}
 						</Text>
-						<Text
-							style={{
-								flex: 4,
-								textAlign: "center",
-								fontSize: 15,
-								fontWeight: "bold",
-								color: theme.colors.text,
-							}}>
-							{getStr("classroomCapacity")}
-						</Text>
+						<View style={{flex: 1, marginRight: 41}}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 14,
+									color: theme.colors.fontB2,
+								}}>
+								{getStr("classroomCapacity")}
+							</Text>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 11,
+									marginTop: 4,
+									color: theme.colors.fontB3,
+								}}>
+								（人）
+							</Text>
+						</View>
 						<View style={{flex: 5}}>
 							<Text
 								style={{
 									textAlign: "center",
-									fontSize: 15,
-									fontWeight: "bold",
-									marginBottom: 2,
-									color: theme.colors.text,
+									fontSize: 14,
+									marginBottom: 4,
+									color: theme.colors.fontB2,
 								}}>
 								{getStr("classroomCondition")}
 							</Text>
 							<View
 								style={{
 									flexDirection: "row",
-									justifyContent: "space-around",
 									alignItems: "center",
 								}}>
 								{[1, 2, 3, 4, 5, 6].map((val) => (
@@ -250,7 +236,11 @@ export const ClassroomDetailScreen = ({
 										style={{
 											flex: 1,
 											textAlign: "center",
-											color: theme.colors.text,
+											fontSize: 11,
+											color:
+												val >= currentPeriod
+													? theme.colors.fontB1
+													: theme.colors.fontB3,
 										}}>
 										{val}
 									</Text>
@@ -264,15 +254,11 @@ export const ClassroomDetailScreen = ({
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
-							marginHorizontal: 0,
-							justifyContent: "space-around",
 						}}>
 						<Text
 							style={{
-								flex: 1,
-								textAlign: "center",
-								fontSize: 15,
-								fontWeight: "bold",
+								flex: 3,
+								fontSize: 16,
 								color: theme.colors.text,
 							}}>
 							{item[0].split(":")[0]}
@@ -280,28 +266,39 @@ export const ClassroomDetailScreen = ({
 						<Text
 							style={{
 								flex: 1,
+								marginRight: 41,
 								textAlign: "center",
-								fontSize: 15,
+								fontSize: 16,
 								color: theme.colors.text,
 							}}>
-							{item[0].split(":")[1]}
+							{item[0].split(":")[1].replace("(人)", "")}
 						</Text>
-						{Array.from(new Array(6)).map((_, index) => (
-							<View
-								style={{
-									backgroundColor:
-										colors[item[1][(data[1] - 1) * 6 + index]] ?? "#E2E2E2",
-									width: 20,
-									height: 20,
-									margin: 2,
-								}}
-								key={index}
-							/>
-						))}
+						<View style={{flex: 5, flexDirection: "row"}}>
+							{Array.from(new Array(6)).map((_, index) => (
+								<TouchableWithoutFeedback
+									key={index}>
+									<View
+										style={{
+											backgroundColor:
+												item[1][(data[1] - 1) * 6 + index] === 5
+													? index + 1 >= currentPeriod
+														? theme.colors.themeDarkGrey
+														: theme.colors.themeGrey
+													: index + 1 >= currentPeriod
+													? theme.colors.themePurple
+													: theme.colors.themeTransparentPurple,
+											flex: 1,
+											height: 26,
+											margin: 2,
+										}}
+									/>
+								</TouchableWithoutFeedback>
+							))}
+						</View>
 					</View>
 				)}
 				keyExtractor={(item, index) => item[0] + index}
 			/>
-		</>
+		</View>
 	);
 };

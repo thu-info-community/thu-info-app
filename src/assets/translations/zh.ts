@@ -321,7 +321,7 @@ export default {
 	gitlabLastUpdate: "最近活动于",
 	gitlabViewCode: "浏览代码",
 	classroomName: "教室",
-	classroomCapacity: "教室容量",
+	classroomCapacity: "容量",
 	classroomCondition: "教室状态",
 	courseName: "课程原名",
 	courseNameShorten: "课程简称",

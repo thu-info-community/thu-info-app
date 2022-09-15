@@ -22,8 +22,10 @@ export const colorDark: ColorTheme = {
 	statusError: "#DF1515",
 	themeGreen: "#34C759",
 	themeBlue: "#007AFF",
+	themeTransparentPurple: "#8B55E46A",
 	themePurple: "#8B55E4",
 	themeLightPurple: "#a883e8",
+	themeDarkGrey: "#B5B5B5",
 	themeGrey: "#D6D3DB",
 	themeLightGrey: "#E9E9E9",
 };
