@@ -275,7 +275,7 @@ export const HomeScheduleSection = ({
 }) => {
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
-	const tomorrow = today === 7 ? 1 : today + 1;
+	const tomorrow = today === 7 ? 8 : today + 1;
 	const week = (() => {
 		const {firstDay, weekCount} = currState().config;
 		const weekNumber = Math.floor(now.diff(firstDay) / 604800000) + 1;
@@ -302,10 +302,16 @@ export const HomeScheduleSection = ({
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
 	const selectSchedule = (schedules: Schedule[], dayOfWeek: number) => {
+		// dayOfWeek use 8 to specify Monday of next week
+		let _week = week;
+		if (dayOfWeek === 8) {
+			_week += 1;
+			dayOfWeek = 1;
+		}
 		const a: ScheduleViewModel[] = [];
 		for (const s of schedules) {
 			for (const ss of s.activeTime.base) {
-				if (ss.activeWeeks.includes(week)) {
+				if (ss.activeWeeks.includes(_week)) {
 					if (ss.dayOfWeek === dayOfWeek) {
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
@@ -317,7 +323,7 @@ export const HomeScheduleSection = ({
 								navProps: {
 									name: s.name,
 									location: s.location,
-									week: week,
+									week: _week,
 									dayOfWeek: today,
 									begin: ss.begin,
 									end: ss.end,
@@ -335,7 +341,7 @@ export const HomeScheduleSection = ({
 								navProps: {
 									name: s.name,
 									location: s.location,
-									week: week,
+									week: _week,
 									dayOfWeek: today,
 									begin: ss.begin,
 									end: ss.end,
