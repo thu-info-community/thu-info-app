@@ -7,6 +7,7 @@ import {
 	TextInput,
 	FlatList,
 	TouchableOpacity,
+	Platform,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
@@ -316,9 +317,14 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<View style={{flex: 1}} key={darkModeHook}>
+		<View
+			style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 0}}
+			key={darkModeHook}>
 			<View style={{flex: 0}}>
-				<ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
+				<ScrollView
+					showsHorizontalScrollIndicator={false}
+					horizontal={true}
+					style={{marginHorizontal: 8}}>
 					<CategoryTagButton
 						category={"catSubscribed"}
 						selected={categorySelected === "catSubscribed"}

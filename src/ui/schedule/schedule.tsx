@@ -5,6 +5,7 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	RefreshControl,
+	Platform,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
 import {connect, useSelector} from "react-redux";
@@ -196,6 +197,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
+					paddingTop: Platform.OS === "ios" ? 60 : 0,
 				}}
 				key={darkModeHook}>
 				<View
