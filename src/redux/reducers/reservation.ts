@@ -14,7 +14,7 @@ export const reservation = (
 			return {
 				...state,
 				activeLibBookRecords: action.payload.filter(
-					({delId}) => delId !== undefined,
+					({status}) => status === "预约成功" || status === "使用中",
 				),
 			};
 		case SET_ACTIVE_SPORTS_RESERVATION_RECORD:
