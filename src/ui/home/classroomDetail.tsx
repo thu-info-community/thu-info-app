@@ -323,11 +323,11 @@ export const ClassroomDetailScreen = ({
 												backgroundColor:
 													states[(data[1] - 1) * 6 + index] === 5
 														? index + 1 >= currentPeriod
-															? theme.colors.themeDarkGrey
-															: theme.colors.themeGrey
+															? theme.colors.themePurple
+															: theme.colors.themeTransparentPurple
 														: index + 1 >= currentPeriod
-														? theme.colors.themePurple
-														: theme.colors.themeTransparentPurple,
+														? theme.colors.themeDarkGrey
+														: theme.colors.themeGrey,
 												flex: 1,
 												height: 26,
 												margin: 2,
