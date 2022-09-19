@@ -21,6 +21,7 @@ import {helper} from "../../redux/store";
 import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
+import {CabTimeoutError} from "thu-info-lib/dist/utils/error";
 
 interface Segment {
 	start: string;
@@ -427,14 +428,11 @@ export const LibRoomPerformBookScreen = ({
 							duration: Snackbar.LENGTH_SHORT,
 						});
 						helper
-							.loginLibraryRoomBooking("")
-							.then(() =>
-								helper.bookLibraryRoom(
-									res,
-									`${date} ${begValue}`,
-									`${date} ${endValue}`,
-									res.maxUser > 1 ? members.map((it) => it.id) : [],
-								),
+							.bookLibraryRoom(
+								res,
+								`${date} ${begValue}`,
+								`${date} ${endValue}`,
+								res.maxUser > 1 ? members.map((it) => it.id) : [],
 							)
 							.then(({success, msg}) => {
 								Snackbar.show({text: msg, duration: Snackbar.LENGTH_LONG});
@@ -444,10 +442,14 @@ export const LibRoomPerformBookScreen = ({
 								}
 							})
 							.catch((e) => {
-								Snackbar.show({
-									text: getStr("networkRetry") + e?.message,
-									duration: Snackbar.LENGTH_LONG,
-								});
+								if (e instanceof CabTimeoutError) {
+									navigation.navigate("LibRoomCaptcha");
+								} else {
+									Snackbar.show({
+										text: getStr("networkRetry") + e?.message,
+										duration: Snackbar.LENGTH_LONG,
+									});
+								}
 							});
 					}}
 					disabled={

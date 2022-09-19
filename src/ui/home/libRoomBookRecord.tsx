@@ -11,11 +11,16 @@ import React, {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
+import {RootNav} from "../../components/Root";
 import {LibRoomBookRecord} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import {CabError} from "thu-info-lib/dist/utils/error";
 
-export const LibRoomBookRecordScreen = () => {
+export const LibRoomBookRecordScreen = ({
+	navigation,
+}: {
+	navigation: RootNav;
+}) => {
 	const [record, setRecord] = useState<LibRoomBookRecord[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 
@@ -29,16 +34,7 @@ export const LibRoomBookRecordScreen = () => {
 			.then(setRecord)
 			.catch((e) => {
 				if (e instanceof CabError) {
-					helper
-						.loginLibraryRoomBooking("")
-						.then(() => helper.getLibraryRoomBookingRecord())
-						.then(setRecord)
-						.catch(() =>
-							Snackbar.show({
-								text: getStr("networkRetry") + e?.message,
-								duration: Snackbar.LENGTH_SHORT,
-							}),
-						);
+					navigation.navigate("LibRoomCaptcha");
 				} else {
 					Snackbar.show({
 						text: getStr("networkRetry") + e?.message,
@@ -48,7 +44,7 @@ export const LibRoomBookRecordScreen = () => {
 			})
 			.then(() => setRefreshing(false));
 	};
-
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(refresh, []);
 
 	return (
@@ -124,10 +120,17 @@ export const LibRoomBookRecordScreen = () => {
 															}),
 														)
 														.catch((e) => {
-															Snackbar.show({
-																text: getStr("networkRetry") + e?.message,
-																duration: Snackbar.LENGTH_SHORT,
-															});
+															if (e instanceof CabError) {
+																navigation.navigate("LibRoomCaptcha");
+															} else {
+																Snackbar.show({
+																	text:
+																		typeof e.message === "string"
+																			? e.message
+																			: getStr("networkRetry"),
+																	duration: Snackbar.LENGTH_SHORT,
+																});
+															}
 														})
 														.then(refresh);
 												},
