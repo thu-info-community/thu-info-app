@@ -119,6 +119,7 @@ export const ElectricityScreen = () => {
 										setMoneyQuickSelected(price);
 										setMoney(String(price));
 									}}
+									disabled={processing}
 									key={price}>
 									<Text
 										style={{
