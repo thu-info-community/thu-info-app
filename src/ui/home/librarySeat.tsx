@@ -13,7 +13,7 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
 		Promise.all([
 			helper.getLibrarySeatList(route.params.section, dateChoice),
-			getSocketsStatusBySectionId(route.params.section.id),
+			getSocketsStatusBySectionId(route.params.section.id).catch(() => []),
 		]).then(([r, s]) =>
 			r.map((seat) => ({
 				...seat,
