@@ -18,7 +18,7 @@ try {
 it("It should get program & course plan", async () => {
     const helper = new InfoHelper();
     await helper.login({userId, password});
-    await helper.getDegreeProgram();
+    await helper.getUncompletedDegreeProgram();
 
     // Go on with your code here.
     /*

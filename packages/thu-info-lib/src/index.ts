@@ -106,7 +106,7 @@ import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-li
 import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
-import { getDegreeProgram } from "./lib/program";
+import { getDegreeProgramCompletion, getFullDegreeProgram } from "./lib/program";
 
 export class InfoHelper {
     public userId = "";
@@ -393,7 +393,9 @@ export class InfoHelper {
 
     public reservesLibDownloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void) => downloadChapters(chapters, setCompletion);
 
-    public getDegreeProgram = async () => getDegreeProgram(this);
+    public getDegreeProgramCompletion = async () => getDegreeProgramCompletion(this);
+
+    public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
 }
 
 export class Water {

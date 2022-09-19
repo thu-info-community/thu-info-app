@@ -206,3 +206,7 @@ export const RESERVES_LIB_DETAIL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e2f2529935266d43300480aed641303c455d43259619a3eaf6eebb99/Search/BookDetail";
 export const PROGRAM_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.by_fascjgmxb_gr.do?m=queryFaScjgmx_gr&xsViewFlag=pyfa&pathContent=%E5%9F%B9%E5%85%BB%E6%96%B9%E6%A1%88%E5%AE%8C%E6%88%90%E6%83%85%E5%86%B5";
+export const PROGRAM_LIST_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfabBs.do?m=grPyfabks&theRole=&theModule=pyfa&pathContent=%E4%B8%AA%E4%BA%BA%E5%9F%B9%E5%85%BB%E6%96%B9%E6%A1%88";
+export const FULL_PROGRAM_URL_PREFIX =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfakcbBs.do?m=index2&theModule=pyfa&p_fajhh=";
