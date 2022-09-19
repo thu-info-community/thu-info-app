@@ -1,32 +1,30 @@
 import {Text, View} from "react-native";
 import React from "react";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
-import {getStr} from "src/utils/i18n";
 import {helper} from "../../redux/store";
 
 export const PhysicalExamScreen = roundedRefreshListScreen(
 	helper.getPhysicalExamResult,
-	([key, value], _, __, {colors}) => (
-		<View style={{flexDirection: "row", alignItems: "center"}}>
+	([key, value], _, __, {colors}, index, total) => (
+		<View
+			style={{
+				marginTop: index === 0 ? 0 : 12,
+				marginBottom: index === total - 1 ? 0 : 12,
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "space-between",
+			}}>
 			<Text
 				style={{
-					flex: 1,
-					textAlign: "right",
-					padding: 4,
 					fontSize: 16,
-					fontWeight: "bold",
-					marginHorizontal: 10,
 					color: colors.text,
 				}}>
-				{key + getStr(":")}
+				{key}
 			</Text>
 			<Text
 				style={{
-					flex: 1,
-					textAlign: "left",
-					padding: 4,
-					marginHorizontal: 10,
-					color: colors.text,
+					fontSize: 16,
+					color: colors.fontB3,
 				}}>
 				{value}
 			</Text>
