@@ -15,6 +15,7 @@ import {
     getInvoiceList,
     getInvoicePDF,
     switchLang,
+    naiveSendMail,
 } from "./lib/basics";
 import { login, logout } from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -134,6 +135,8 @@ export class InfoHelper {
     public switchLang = async (lang: "zh" | "en"): Promise<void> => switchLang(this, lang);
 
     public getUserInfo = async () => getUserInfo(this);
+
+    public naiveSendMail = async (subject: string, content: string, recipient: string) => naiveSendMail(this, subject, content, recipient);
 
     public getReport = (
         bx: boolean,

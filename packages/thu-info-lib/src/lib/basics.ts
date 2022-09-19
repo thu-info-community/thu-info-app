@@ -11,6 +11,7 @@ import {
     CLASSROOM_STATE_MIDDLE,
     CLASSROOM_STATE_PREFIX,
     COUNT_DOWN_URL,
+    EMAIL_BASE_URL,
     EXPENDITURE_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
@@ -94,6 +95,46 @@ export const getUserInfo = async (helper: InfoHelper): Promise<{
             fullName: "",
             emailName: "",
         },
+    );
+
+export const naiveSendMail = async (helper: InfoHelper, subject: string, content: string, recipient: string): Promise<void> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "F315577F5BF20E1B1668EDD594B2C04F",
+        async (param) => {
+            if (param === undefined) {
+                throw new LibError();
+            } else {
+                const composeUrl = EMAIL_BASE_URL + cheerio.load(param)(".compose").attr().href;
+                const composeHtml = await uFetch(composeUrl);
+                const $ = cheerio.load(composeHtml);
+                const form: {[key: string]: string} = {};
+                const formInputs = $("#sendmail input");
+                formInputs.each((_, e) => {
+                    if (e.type === "tag" && e.attribs.name) {
+                        form[e.attribs.name] = e.attribs.value ?? "";
+                    }
+                });
+                form.subject = subject;
+                form.content = content;
+                form.to = `""<${recipient}>,`;
+                form.chkSaveToSent = "on";
+                delete form.chkUrgent;
+                delete form.chkNeedRcpt;
+                delete form.autoDel;
+                delete form.encryptPassword;
+                delete form.savePassword;
+                form.btnAddAttach = "0";
+                form.btnCreateImg = "0";
+                form.signSet = "-1";
+                const result = await uFetch(EMAIL_BASE_URL + "compose/" + $("#sendmail").attr().action + "&action=deliver&needAudit=undefined&smsAddrs=", form);
+                if (!result.includes("savercpt.jsp")) {
+                    throw new LibError();
+                }
+            }
+        },
+        undefined,
     );
 
 const gradeToOldGPA = new Map<string, number>([
