@@ -280,10 +280,7 @@ export const getPhysicalExamResult = (
         "default",
         "8BF4F9A706589060488B6B6179E462E5",
         () => uFetch(PHYSICAL_EXAM_URL).then((s) => {
-            const json = JSON.parse(
-                // eslint-disable-next-line quotes
-                s.substring(1, s.length - 1).replace(/'/g, '"'),
-            );
+            const json = JSON.parse(s);
             if (json.success === "false") {
                 return [["状态", "暂无可查成绩"]];
             } else {
