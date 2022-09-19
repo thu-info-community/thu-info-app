@@ -20,6 +20,7 @@ import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
 import {setActiveSportsReservationRecordAction} from "../../redux/actions/reservation";
+import {uFetch} from "thu-info-lib/dist/utils/network";
 
 export interface SportsSelectParams {
 	info: SportsIdInfo;
@@ -55,6 +56,7 @@ export const SportsSelectScreen = ({
 	>(undefined);
 	const [title, setTitle] = useState<ValidReceiptTypes | undefined>(undefined);
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
+	const [imageBase64, setImageBase64] = useState("");
 	const [captcha, setCaptcha] = useState("");
 
 	useEffect(() => {
@@ -62,6 +64,10 @@ export const SportsSelectScreen = ({
 			setField(availableFields[selectedFieldIndex]);
 		}
 	}, [availableFields, selectedFieldIndex]);
+
+	useEffect(() => {
+		uFetch(imageUrl).then(setImageBase64);
+	}, [imageUrl]);
 
 	useEffect(() => {
 		setTitle(receiptTitle);
@@ -270,7 +276,10 @@ export const SportsSelectScreen = ({
 							justifyContent: "space-between",
 							alignItems: "center",
 						}}>
-						<Image source={{uri: imageUrl}} style={{height: 50, width: 200}} />
+						<Image
+							source={{uri: `data:image/jpg;base64,${imageBase64}`}}
+							style={{height: 50, width: 200}}
+						/>
 						<TouchableOpacity
 							onPress={() => setImageUrl(helper.getSportsCaptchaUrl())}>
 							<Text
