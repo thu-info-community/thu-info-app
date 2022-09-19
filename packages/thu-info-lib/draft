@@ -1,3 +1,0 @@
-fix: (schedule) parse 实验 the same way as 上课
-fix: physical exam parse error
-feat: implement `naiveSendMail` (using webpage api)
