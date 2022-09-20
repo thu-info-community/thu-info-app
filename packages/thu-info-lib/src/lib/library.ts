@@ -49,7 +49,7 @@ import {
     MOCK_LIBRARY_FLOOR_LIST,
     MOCK_LIBRARY_LIST,
 } from "../mocks/library";
-import {CabError, CabTimeoutError, LibError, LibraryError} from "../utils/error";
+import {CabError, CabTimeoutError, LibError, LibraryError, ResponseStatusError} from "../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -380,7 +380,16 @@ const cabFetch = async (
     data: any | null | undefined;
     ext: any | null | undefined;
 }> => {
-    const result = await uFetch(url, post);
+    let result: string;
+    try {
+        result = await uFetch(url, post);
+    } catch (e) {
+        if (e instanceof ResponseStatusError) {
+            throw new CabTimeoutError("未登录或登录超时");
+        } else {
+            throw e;
+        }
+    }
     if (result.includes("needCaptcha")) {
         throw new LibError();
     }
