@@ -66,53 +66,55 @@ export const LibraryReservationCard = ({
 							}}>
 							{transformedRecords[0].seat}
 						</Text>
-						<TouchableOpacity
-							onPress={() =>
-								Alert.alert(
-									getStr("confirmCancelBooking"),
-									transformedRecords[0].pos,
-									[
-										{text: getStr("cancel")},
-										{
-											text: getStr("confirm"),
-											onPress: () => {
-												transformedRecords[0].delId !== undefined &&
-													helper
-														.cancelBooking(transformedRecords[0].delId)
-														.then(() =>
-															Snackbar.show({
-																text: getStr("cancelSucceeded"),
-																duration: Snackbar.LENGTH_SHORT,
-															}),
-														)
-														.catch((e) => {
-															Snackbar.show({
-																text:
-																	typeof e.message === "string"
-																		? e.message
-																		: getStr("networkRetry"),
-																duration: Snackbar.LENGTH_SHORT,
+						{transformedRecords[0].delId !== undefined &&
+							((delId: string) => (
+								<TouchableOpacity
+									onPress={() =>
+										Alert.alert(
+											getStr("confirmCancelBooking"),
+											transformedRecords[0].pos,
+											[
+												{text: getStr("cancel")},
+												{
+													text: getStr("confirm"),
+													onPress: () => {
+														helper
+															.cancelBooking(delId)
+															.then(() =>
+																Snackbar.show({
+																	text: getStr("cancelSucceeded"),
+																	duration: Snackbar.LENGTH_SHORT,
+																}),
+															)
+															.catch((e) => {
+																Snackbar.show({
+																	text:
+																		typeof e.message === "string"
+																			? e.message
+																			: getStr("networkRetry"),
+																	duration: Snackbar.LENGTH_SHORT,
+																});
+															})
+															.then(helper.getBookingRecords)
+															.then((r) => {
+																store.dispatch(setActiveLibBookRecordAction(r));
 															});
-														})
-														.then(helper.getBookingRecords)
-														.then((r) => {
-															store.dispatch(setActiveLibBookRecordAction(r));
-														});
-											},
-										},
-									],
-									{cancelable: true},
-								)
-							}>
-							<Text
-								style={{
-									color: colors.primaryLight,
-									marginLeft: 12,
-									textDecorationLine: "underline",
-								}}>
-								{getStr("cancelBooking")}
-							</Text>
-						</TouchableOpacity>
+													},
+												},
+											],
+											{cancelable: true},
+										)
+									}>
+									<Text
+										style={{
+											color: colors.primaryLight,
+											marginLeft: 12,
+											textDecorationLine: "underline",
+										}}>
+										{getStr("cancelBooking")}
+									</Text>
+								</TouchableOpacity>
+							))(transformedRecords[0].delId)}
 					</View>
 					<Text style={{textAlign: "center", color: colors.text}}>
 						{getStr("bookingHintPrefix")}
