@@ -23,12 +23,8 @@ const AppSecretCustomizeUI = ({
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("report")}</Text>
 					<Switch
-						thumbColor={
-							verifyPasswordBeforeEnterReport === true
-								? colors.primaryLight
-								: undefined
-						}
-						trackColor={{true: colors.mainTheme}}
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
 						value={verifyPasswordBeforeEnterReport === true}
 						onValueChange={(value) => {
 							store.dispatch(

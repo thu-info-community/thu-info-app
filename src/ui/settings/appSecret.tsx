@@ -50,8 +50,8 @@ const AppSecretUI = ({
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
 					<Switch
-						thumbColor={enabled ? colors.primaryLight : undefined}
-						trackColor={{true: colors.mainTheme}}
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
 						value={enabled}
 						onValueChange={() => {
 							setEnabled(false);
@@ -98,12 +98,8 @@ const AppSecretUI = ({
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("enterApp")}</Text>
 					<Switch
-						thumbColor={
-							verifyPasswordBeforeEnterApp === true
-								? colors.primaryLight
-								: undefined
-						}
-						trackColor={{true: colors.mainTheme}}
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
 						value={verifyPasswordBeforeEnterApp === true}
 						onValueChange={(value) => {
 							store.dispatch(configSet("verifyPasswordBeforeEnterApp", value));
@@ -125,10 +121,8 @@ const AppSecretUI = ({
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("useBiometrics")}</Text>
 					<Switch
-						thumbColor={
-							useBiometrics === true ? colors.primaryLight : undefined
-						}
-						trackColor={{true: colors.mainTheme}}
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
 						value={useBiometrics === true}
 						onValueChange={(enable) => {
 							if (enable) {

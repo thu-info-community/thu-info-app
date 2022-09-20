@@ -47,8 +47,8 @@ const FunctionItem = ({
 			<View style={style.touchable}>
 				<Text style={style.text}>{getStr(func as any)}</Text>
 				<Switch
-					thumbColor={value ? colors.primaryLight : undefined}
-					trackColor={{true: colors.mainTheme}}
+					thumbColor={colors.contentBackground}
+					trackColor={{true: colors.themePurple}}
 					value={value}
 					onValueChange={onValueChange}
 				/>
