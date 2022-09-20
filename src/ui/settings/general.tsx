@@ -20,6 +20,7 @@ export const GeneralUI = ({
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const colorString = getStr(darkMode === true ? "enable" : "autoFollow");
 
 	const languageString =
@@ -31,17 +32,6 @@ export const GeneralUI = ({
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
-			<RoundedView style={style.rounded}>
-				<TouchableOpacity
-					style={style.touchable}
-					onPress={() => navigation.navigate("DarkMode")}>
-					<Text style={style.text}>{getStr("darkMode")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
-						<Text style={style.version}>{colorString}</Text>
-						<IconRight height={20} width={20} />
-					</View>
-				</TouchableOpacity>
-			</RoundedView>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

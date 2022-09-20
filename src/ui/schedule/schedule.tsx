@@ -78,6 +78,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
 
 	const windowWidth = Dimensions.get("window").width;
@@ -198,8 +199,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
 					paddingTop: Platform.OS === "ios" ? 60 : 0,
-				}}
-				key={darkModeHook}>
+				}}>
 				<View
 					style={{
 						width: "100%",
