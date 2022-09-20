@@ -389,7 +389,11 @@ export const Root = () => {
 	const theme = themes(themeName);
 
 	return (
-		<Stack.Navigator>
+		<Stack.Navigator
+			defaultScreenOptions={{
+				headerBackTitleStyle: {color: theme.colors.themePurple},
+				headerTintColor: theme.colors.themePurple,
+			}}>
 			{/* Root Tabs */}
 			<Stack.Screen
 				name="RootTabs"
