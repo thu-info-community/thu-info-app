@@ -67,12 +67,12 @@ export const LibraryReservationCard = ({
 							{transformedRecords[0].seat}
 						</Text>
 						{transformedRecords[0].delId !== undefined &&
-							((delId: string) => (
+							((delId: string, pos: string) => (
 								<TouchableOpacity
 									onPress={() =>
 										Alert.alert(
 											getStr("confirmCancelBooking"),
-											transformedRecords[0].pos,
+											pos,
 											[
 												{text: getStr("cancel")},
 												{
@@ -114,7 +114,7 @@ export const LibraryReservationCard = ({
 										{getStr("cancelBooking")}
 									</Text>
 								</TouchableOpacity>
-							))(transformedRecords[0].delId)}
+							))(transformedRecords[0].delId, transformedRecords[0].pos)}
 					</View>
 					<Text style={{textAlign: "center", color: colors.text}}>
 						{getStr("bookingHintPrefix")}
