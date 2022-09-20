@@ -32,11 +32,12 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
-		<View style={{flex: 1, padding: 12}} key={darkModeHook}>
+		<View style={{flex: 1, padding: 12}}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
