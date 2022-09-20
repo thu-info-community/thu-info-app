@@ -68,7 +68,7 @@
 		"semver": "7.3.7",
 		"stream": "0.0.2",
 		"text-encoding": "0.7.0",
-		"thu-info-lib": "4.5.0",
+		"thu-info-lib": "4.5.1",
 		"typesafe-actions": "5.1.0",
 		"web-streams-polyfill": "3.2.1"
 	},
