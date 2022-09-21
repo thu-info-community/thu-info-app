@@ -1,7 +1,6 @@
 import {
 	Platform,
 	ScrollView,
-	StatusBar,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
@@ -54,7 +53,6 @@ import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
 import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
-import {useFocusEffect} from "@react-navigation/native";
 
 const iconSize = 40;
 
@@ -666,14 +664,6 @@ const HomeUI = (props: HomeProps) => {
 	const dark = useSelector((s) => s.config.darkMode);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
-
-	useFocusEffect(() => {
-		StatusBar.setBackgroundColor(theme.colors.themeBackground);
-
-		return () => {
-			StatusBar.setBackgroundColor(theme.colors.contentBackground);
-		};
-	});
 
 	const disabledList = useSelector(
 		// @ts-ignore

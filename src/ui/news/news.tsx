@@ -8,7 +8,6 @@ import {
 	FlatList,
 	TouchableOpacity,
 	Platform,
-	StatusBar,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
@@ -28,7 +27,6 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
-import {useFocusEffect} from "@react-navigation/native";
 
 type Category =
 	| "catSubscribed"
@@ -187,14 +185,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const dark = useSelector((s) => s.config.darkMode);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
-
-	useFocusEffect(() => {
-		StatusBar.setBackgroundColor(theme.colors.themeBackground);
-
-		return () => {
-			StatusBar.setBackgroundColor(theme.colors.contentBackground);
-		};
-	});
 
 	const fetchNewsList = (
 		request: boolean = true,
