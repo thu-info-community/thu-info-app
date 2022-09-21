@@ -6,15 +6,15 @@ export const colorDark: ColorTheme = {
 	primaryDark: "#3e0558",
 	accent: "#023ea2",
 	text: "#cccccc",
-	contentBackground: "#000000",
+	contentBackground: "#222222",
 	themeBackground: "#000000",
 
 	// to be decided
-	mainTheme: "#B791F0",
+	mainTheme: "#672AD7",
 	fontB0: "#FFFFFF",
-	fontB1: "#999999",
-	fontB2: "#666666",
-	fontB3: "#333333",
+	fontB1: "#CCCCCC",
+	fontB2: "#999999",
+	fontB3: "#666666",
 	statusNormal: "", //TODO
 	statusDisabled: {rgb: "#999999", alpha: 0.3},
 	statusWarning: "#FF3B30",

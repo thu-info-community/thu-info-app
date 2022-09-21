@@ -13,11 +13,14 @@ const RootComponent = () => {
 	const theme = themes(themeName);
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
 	return (
 		<>
-			<StatusBar barStyle={"dark-content"} backgroundColor={"white"} animated />
+			<StatusBar
+				barStyle={darkModeHook ? "light-content" : "dark-content"}
+				backgroundColor={darkModeHook ? "black" : "white"}
+				animated
+			/>
 			<NavigationContainer
 				theme={{
 					...DefaultTheme,
@@ -26,7 +29,7 @@ const RootComponent = () => {
 						text: theme.colors.text,
 						background: theme.colors.themeBackground,
 						card: theme.colors.contentBackground,
-						border: DefaultTheme.colors.border,
+						border: darkModeHook ? "white" : DefaultTheme.colors.border,
 					},
 				}}>
 				<AuthFlow />

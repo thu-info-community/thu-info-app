@@ -1,4 +1,6 @@
 import {colorLight} from "../colors/light";
+import {colorDark} from "../colors/dark";
+import {currState} from "../../redux/store";
 
 export interface ColorTheme {
 	primaryLight: string;
@@ -33,6 +35,9 @@ export interface Theme {
 	colors: ColorTheme;
 }
 
-export default (_: string | null | undefined): Theme => ({
-	colors: colorLight,
+export default (themeName: string | null | undefined): Theme => ({
+	colors:
+		currState().config.darkMode || themeName === "dark"
+			? colorDark
+			: colorLight,
 });
