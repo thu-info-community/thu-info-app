@@ -198,7 +198,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: Platform.OS === "ios" ? 60 : 0,
+					paddingTop: Platform.OS === "ios" ? 60 : 60,
 				}}>
 				<View
 					style={{

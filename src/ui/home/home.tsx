@@ -732,7 +732,7 @@ const HomeUI = (props: HomeProps) => {
 		<ScrollView
 			style={{
 				backgroundColor: theme.colors.themeBackground,
-				marginTop: Platform.OS === "ios" ? 40 : 0,
+				marginTop: Platform.OS === "ios" ? 40 : 40,
 			}}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5.filter((f) => !disabledList.includes((f as any).key))}

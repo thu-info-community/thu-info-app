@@ -318,7 +318,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<View style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 0}}>
+		<View style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 40}}>
 			<View style={{flex: 0}}>
 				<ScrollView
 					showsHorizontalScrollIndicator={false}
