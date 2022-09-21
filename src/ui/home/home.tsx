@@ -662,7 +662,6 @@ const HomeUI = (props: HomeProps) => {
 	const theme = themes(themeName);
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
 
 	const disabledList = useSelector(
@@ -733,7 +732,8 @@ const HomeUI = (props: HomeProps) => {
 			style={{
 				backgroundColor: theme.colors.themeBackground,
 				marginTop: Platform.OS === "ios" ? 40 : 0,
-			}}>
+			}}
+			key={darkModeHook}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5.filter((f) => !disabledList.includes((f as any).key))}
 			</HomeFunctionSection>

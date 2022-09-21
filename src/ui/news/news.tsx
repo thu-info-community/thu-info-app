@@ -183,7 +183,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const darkModeHook = dark || themeName === "dark";
 
 	const fetchNewsList = (
@@ -318,7 +317,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<View style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 0}}>
+		<View
+			style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 0}}
+			key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView
 					showsHorizontalScrollIndicator={false}
