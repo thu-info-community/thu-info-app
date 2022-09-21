@@ -275,7 +275,7 @@ export const HomeScheduleSection = ({
 }) => {
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
-	const tomorrow = today === 7 ? 8 : today + 1;
+	const tomorrow = today + 1;
 	const week = (() => {
 		const {firstDay, weekCount} = currState().config;
 		const weekNumber = Math.floor(now.diff(firstDay) / 604800000) + 1;
@@ -354,6 +354,7 @@ export const HomeScheduleSection = ({
 				}
 			}
 		}
+		a.sort((x, y) => x.from - y.from);
 		return a;
 	};
 	const todaySchedules = selectSchedule(baseSchedule, today);
