@@ -25,6 +25,7 @@ import {useColorScheme} from "react-native";
 import md5 from "md5";
 import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
+import IconMinus from "../../assets/icons/IconMinus";
 import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
 
@@ -284,11 +285,17 @@ const ScheduleUI = (props: ScheduleProps) => {
 							)}
 						</Text>
 					</BottomPopupTriggerView>
-					<TouchableOpacity
-						onPress={() => props.navigation.navigate("ScheduleAdd")}
-						style={{position: "absolute", right: 16}}>
-						<IconAdd width={24} height={24} />
-					</TouchableOpacity>
+					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
+						<TouchableOpacity
+							onPress={() => props.navigation.navigate("ScheduleHidden")}>
+							<IconMinus width={24} height={24} />
+						</TouchableOpacity>
+						<View style={{width: 8}} />
+						<TouchableOpacity
+							onPress={() => props.navigation.navigate("ScheduleAdd")}>
+							<IconAdd width={24} height={24} />
+						</TouchableOpacity>
+					</View>
 				</View>
 				<View
 					style={{

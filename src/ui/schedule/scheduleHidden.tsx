@@ -169,7 +169,7 @@ const ScheduleHiddenUI = ({
 								removeRule(item.name, item.time);
 							}
 						}}>
-						{/* <Icon name="trash-o" size={18} color={theme.colors.text} /> */}
+						<Text style={{color: theme.colors.themePurple}}>解除隐藏</Text>
 					</TouchableOpacity>
 				</View>
 			)}
