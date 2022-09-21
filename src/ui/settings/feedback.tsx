@@ -109,6 +109,9 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					</>
 				)}
 			</View>
+			<Text style={{textAlign: "center", fontSize: 20, fontWeight: "bold"}}>
+				请用流量提交反馈！
+			</Text>
 			<TextInput
 				value={text}
 				onChangeText={setText}
