@@ -63,6 +63,7 @@ const DigitalPasswordUI = ({
 					if (success) {
 						if (navigation) {
 							navigation.replace(params.target);
+							store.dispatch(configSet("subFunctionUnlocked", true));
 						} else {
 							store.dispatch(configSet("appLocked", false));
 						}
