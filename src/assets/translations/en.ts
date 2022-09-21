@@ -32,6 +32,7 @@ export default {
 	feedback: "Feedback",
 	accountAndSecurity: "Account and Security",
 	digitalPassword: "Digital Password",
+	changePassword: "Change password",
 	confirmDisableAppSecretTitle: "Disable digital password",
 	confirmDisableAppSecretMessage: "Are you sure to disable digital password?",
 	usePasswordIn: "Verify password before...",
@@ -333,6 +334,7 @@ export default {
 	LM_JYZPXX: "Recruitment Information",
 	LM_XJ_GJZZSXRZ: "International Organization Internship and Recruitment",
 	":": ": ",
+	"、": ", ",
 	addSubscription: "+ Subscription",
 	subscriptionInstruction:
 		"Subscribe to the source of information, the latest news will be updated here",

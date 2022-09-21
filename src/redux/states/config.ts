@@ -20,6 +20,8 @@ export interface Config {
 	waterBrand: string;
 	verifyPasswordBeforeEnterApp: boolean | undefined;
 	verifyPasswordBeforeEnterReport: boolean | undefined;
+	verifyPasswordBeforeEnterFinance: boolean | undefined;
+	verifyPasswordBeforeEnterPhysicalExam: boolean | undefined;
 	useBiometrics: boolean | undefined;
 	appLocked: boolean | undefined;
 	homeFunctionDisabled: HomeFunction[];
@@ -42,8 +44,10 @@ export const defaultConfigState: Config = {
 	emailUnseen: 0,
 	waterId: "",
 	waterBrand: "6",
-	verifyPasswordBeforeEnterApp: false,
+	verifyPasswordBeforeEnterApp: true,
 	verifyPasswordBeforeEnterReport: false,
+	verifyPasswordBeforeEnterFinance: false,
+	verifyPasswordBeforeEnterPhysicalExam: false,
 	useBiometrics: false,
 	appLocked: false,
 	homeFunctionDisabled: [],

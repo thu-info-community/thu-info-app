@@ -99,7 +99,7 @@ const DigitalPasswordUI = ({
 										});
 									} else if (params.action === "confirm") {
 										if (v === params.payload) {
-											navigation.replace("AppSecret");
+											navigation.pop();
 											store.dispatch(setAppSecretAction(v));
 											store.dispatch(setupAppSecretAction());
 										}

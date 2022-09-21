@@ -10,8 +10,12 @@ import {configSet} from "../../redux/actions/config";
 
 const AppSecretCustomizeUI = ({
 	verifyPasswordBeforeEnterReport,
+	verifyPasswordBeforeEnterFinance,
+	verifyPasswordBeforeEnterPhysicalExam,
 }: {
 	verifyPasswordBeforeEnterReport: boolean | undefined;
+	verifyPasswordBeforeEnterFinance: boolean | undefined;
+	verifyPasswordBeforeEnterPhysicalExam: boolean | undefined;
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
@@ -29,6 +33,34 @@ const AppSecretCustomizeUI = ({
 						onValueChange={(value) => {
 							store.dispatch(
 								configSet("verifyPasswordBeforeEnterReport", value),
+							);
+						}}
+					/>
+				</View>
+				<View style={style.separator} />
+				<View style={style.touchable}>
+					<Text style={style.text}>{getStr("campusFinance")}</Text>
+					<Switch
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
+						value={verifyPasswordBeforeEnterFinance === true}
+						onValueChange={(value) => {
+							store.dispatch(
+								configSet("verifyPasswordBeforeEnterFinance", value),
+							);
+						}}
+					/>
+				</View>
+				<View style={style.separator} />
+				<View style={style.touchable}>
+					<Text style={style.text}>{getStr("physicalExam")}</Text>
+					<Switch
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
+						value={verifyPasswordBeforeEnterPhysicalExam === true}
+						onValueChange={(value) => {
+							store.dispatch(
+								configSet("verifyPasswordBeforeEnterPhysicalExam", value),
 							);
 						}}
 					/>

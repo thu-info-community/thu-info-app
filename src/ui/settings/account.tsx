@@ -31,14 +31,16 @@ export const AccountUI = ({
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
-					onPress={() =>
-						navigation.navigate(
-							"DigitalPassword",
-							appSecret === undefined
-								? {action: "new"}
-								: {action: "verify", target: "AppSecret"},
-						)
-					}>
+					onPress={() => {
+						if (appSecret === undefined) {
+							navigation.navigate("AppSecret");
+						} else {
+							navigation.navigate("DigitalPassword", {
+								action: "verify",
+								target: "AppSecret",
+							});
+						}
+					}}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
 					<View style={{flexDirection: "row", alignItems: "center"}}>
 						<Text style={style.version}>

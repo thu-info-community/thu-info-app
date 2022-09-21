@@ -40,8 +40,10 @@ export const config = (
 		case SETUP_APP_SECRET:
 			return {
 				...state,
-				verifyPasswordBeforeEnterApp: false,
-				verifyPasswordBeforeEnterReport: true,
+				verifyPasswordBeforeEnterApp: true,
+				verifyPasswordBeforeEnterReport: false,
+				verifyPasswordBeforeEnterFinance: false,
+				verifyPasswordBeforeEnterPhysicalExam: false,
 				useBiometrics: false,
 			};
 		case CLEAR_APP_SECRET:
@@ -49,6 +51,8 @@ export const config = (
 				...state,
 				verifyPasswordBeforeEnterApp: false,
 				verifyPasswordBeforeEnterReport: false,
+				verifyPasswordBeforeEnterFinance: false,
+				verifyPasswordBeforeEnterPhysicalExam: false,
 				useBiometrics: false,
 			};
 		default: {
