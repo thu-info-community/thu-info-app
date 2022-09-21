@@ -466,7 +466,14 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.PhysicalExam);
 			updateTop5("physicalExam");
-			navigation.navigate("PhysicalExam");
+			if (currState().config.verifyPasswordBeforeEnterPhysicalExam) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "PhysicalExam",
+				});
+			} else {
+				navigation.navigate("PhysicalExam");
+			}
 		}}>
 		<IconPhysicalExam width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -551,7 +558,14 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Expenditures);
 			updateTop5("expenditure");
-			navigation.navigate("Expenditure");
+			if (currState().config.verifyPasswordBeforeEnterFinance) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "Expenditure",
+				});
+			} else {
+				navigation.navigate("Expenditure");
+			}
 		}}>
 		<IconExpenditure width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -559,7 +573,14 @@ const getHomeFunctions = (
 		key="finance"
 		title="campusFinance"
 		onPress={() => {
-			navigation.navigate("Finance");
+			if (currState().config.verifyPasswordBeforeEnterFinance) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "Finance",
+				});
+			} else {
+				navigation.navigate("Finance");
+			}
 		}}>
 		<IconFinance width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -579,7 +600,14 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Bank);
 			updateTop5("bankPayment");
-			navigation.navigate("BankPayment");
+			if (currState().config.verifyPasswordBeforeEnterFinance) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "BankPayment",
+				});
+			} else {
+				navigation.navigate("BankPayment");
+			}
 		}}>
 		<IconBankPayment width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -589,7 +617,14 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Invoice);
 			updateTop5("invoice");
-			navigation.navigate("Invoice");
+			if (currState().config.verifyPasswordBeforeEnterFinance) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "Invoice",
+				});
+			} else {
+				navigation.navigate("Invoice");
+			}
 		}}>
 		<IconInvoice width={iconSize} height={iconSize} />
 	</HomeIcon>,
