@@ -439,6 +439,17 @@ export type HomeFunction =
 	| "dormitory"
 	| "dormScore";
 
+const subFunctionLocked = () => {
+	const s = currState();
+	const currTime = Date.now();
+	const lastTime = s.config.exitTimestamp ?? 0;
+	const numMinutes = (currTime - lastTime) / 1000 / 60;
+	return (
+		numMinutes > (s.config.appSecretLockMinutes ?? 0) &&
+		s.config.subFunctionUnlocked === false
+	);
+};
+
 const getHomeFunctions = (
 	navigation: RootNav,
 	updateTop5: (func: HomeFunction) => void,
@@ -449,7 +460,10 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Report);
 			updateTop5("report");
-			if (currState().config.verifyPasswordBeforeEnterReport) {
+			if (
+				currState().config.verifyPasswordBeforeEnterReport &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "Report",
@@ -466,7 +480,10 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.PhysicalExam);
 			updateTop5("physicalExam");
-			if (currState().config.verifyPasswordBeforeEnterPhysicalExam) {
+			if (
+				currState().config.verifyPasswordBeforeEnterPhysicalExam &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "PhysicalExam",
@@ -558,7 +575,10 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Expenditures);
 			updateTop5("expenditure");
-			if (currState().config.verifyPasswordBeforeEnterFinance) {
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "Expenditure",
@@ -573,7 +593,10 @@ const getHomeFunctions = (
 		key="finance"
 		title="campusFinance"
 		onPress={() => {
-			if (currState().config.verifyPasswordBeforeEnterFinance) {
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "Finance",
@@ -600,7 +623,10 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Bank);
 			updateTop5("bankPayment");
-			if (currState().config.verifyPasswordBeforeEnterFinance) {
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "BankPayment",
@@ -617,7 +643,10 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Invoice);
 			updateTop5("invoice");
-			if (currState().config.verifyPasswordBeforeEnterFinance) {
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
 				navigation.navigate("DigitalPassword", {
 					action: "verify",
 					target: "Invoice",

@@ -37,9 +37,18 @@ helper.clearCookieHandler = async () => {
 AppState.addEventListener("change", (state) => {
 	if (state === "active") {
 		const s = currState();
-		if (s.config.verifyPasswordBeforeEnterApp) {
+		const currTime = Date.now();
+		const lastTime = s.config.exitTimestamp ?? 0;
+		const numMinutes = (currTime - lastTime) / 1000 / 60;
+		if (
+			s.config.verifyPasswordBeforeEnterApp &&
+			numMinutes > (s.config.appSecretLockMinutes ?? 0)
+		) {
 			store.dispatch(configSet("appLocked", true));
 		}
+	} else {
+		store.dispatch(configSet("exitTimestamp", Date.now()));
+		store.dispatch(configSet("subFunctionUnlocked", false));
 	}
 });
 

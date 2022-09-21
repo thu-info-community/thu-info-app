@@ -25,6 +25,7 @@ const AppSecretUI = ({
 	navigation,
 	appSecret,
 	clearAppSecret,
+	appSecretLockMinutes,
 	verifyPasswordBeforeEnterApp,
 	verifyPasswordBeforeEnterReport,
 	verifyPasswordBeforeEnterFinance,
@@ -36,6 +37,7 @@ const AppSecretUI = ({
 	navigation: RootNav;
 	appSecret: string | undefined;
 	clearAppSecret: () => void;
+	appSecretLockMinutes: number | undefined;
 	verifyPasswordBeforeEnterApp: boolean | undefined;
 	verifyPasswordBeforeEnterReport: boolean | undefined;
 	verifyPasswordBeforeEnterFinance: boolean | undefined;
@@ -59,6 +61,12 @@ const AppSecretUI = ({
 		protectedStrings.push(getStr("physicalExam"));
 	}
 	const protectedText = protectedStrings.join(getStr("、"));
+
+	const minuteText = getStr(appSecretLockMinutes === 1 ? "minute" : "minutes");
+	const lockText =
+		appSecretLockMinutes === 0
+			? getStr("instantly")
+			: `${appSecretLockMinutes} ${minuteText}`;
 
 	const customizeText =
 		protectedText.length === 0
@@ -100,8 +108,21 @@ const AppSecretUI = ({
 							onPress={() =>
 								navigation.navigate("DigitalPassword", {action: "new"})
 							}>
-							<Text style={style.text}>{getStr("changePassword")}</Text>
-							<IconRight height={20} width={20} />
+							<Text style={style.text}>{getStr("digitalPassword")}</Text>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text style={style.version}>{getStr("changePassword")}</Text>
+								<IconRight height={20} width={20} />
+							</View>
+						</TouchableOpacity>
+						<View style={style.separator} />
+						<TouchableOpacity
+							style={style.touchable}
+							onPress={() => navigation.navigate("AppSecretSelectLockTime")}>
+							<Text style={style.text}>{getStr("lockTime")}</Text>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text style={style.version}>{lockText}</Text>
+								<IconRight height={20} width={20} />
+							</View>
 						</TouchableOpacity>
 					</RoundedView>
 					<Text style={{marginLeft: 8, marginTop: 16, color: colors.fontB2}}>

@@ -129,6 +129,7 @@ import {
 } from "../ui/news/newsSub";
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 import {Classroom} from "thu-info-lib/dist/models/home/classroom";
+import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -359,6 +360,7 @@ type SettingsStackParamList = {
 		| {action: "verify"; target: keyof RootStackParamList};
 	AppSecret: undefined;
 	AppSecretCustomize: undefined;
+	AppSecretSelectLockTime: undefined;
 	FunctionManagement: undefined;
 	General: undefined;
 	Language: undefined;
@@ -986,6 +988,11 @@ export const Root = () => {
 				name="AppSecretCustomize"
 				component={AppSecretCustomizeScreen}
 				options={{title: getStr("custom")}}
+			/>
+			<Stack.Screen
+				name="AppSecretSelectLockTime"
+				component={AppSecretSelectLockTimeScreen}
+				options={{title: getStr("lockTime")}}
 			/>
 			<Stack.Screen
 				name="General"

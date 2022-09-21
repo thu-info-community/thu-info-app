@@ -40,6 +40,7 @@ export const config = (
 		case SETUP_APP_SECRET:
 			return {
 				...state,
+				appSecretLockMinutes: 0,
 				verifyPasswordBeforeEnterApp: true,
 				verifyPasswordBeforeEnterReport: false,
 				verifyPasswordBeforeEnterFinance: false,
@@ -49,6 +50,7 @@ export const config = (
 		case CLEAR_APP_SECRET:
 			return {
 				...state,
+				appSecretLockMinutes: 0,
 				verifyPasswordBeforeEnterApp: false,
 				verifyPasswordBeforeEnterReport: false,
 				verifyPasswordBeforeEnterFinance: false,

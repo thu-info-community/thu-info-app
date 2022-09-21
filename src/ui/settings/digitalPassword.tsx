@@ -106,6 +106,7 @@ const DigitalPasswordUI = ({
 									} else if (params.action === "verify") {
 										if (appSecret === v) {
 											navigation.replace(params.target);
+											store.dispatch(configSet("subFunctionUnlocked", true));
 										}
 									}
 								} else {
