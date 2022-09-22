@@ -20,7 +20,7 @@ import {
 	Schedule,
 	scheduleTimeAdd,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {Top5} from "./states/top5";
+import {defaultTop5, Top5} from "./states/top5";
 import {top5} from "./reducers/top5";
 import {reservation} from "./reducers/reservation";
 import Snackbar from "react-native-snackbar";
@@ -173,6 +173,7 @@ const persistConfig = {
 									? state.schedule.baseSchedule?.map(migrateSchedule) ?? []
 									: state.schedule.baseSchedule,
 						},
+						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
