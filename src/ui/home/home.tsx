@@ -729,7 +729,7 @@ const HomeUI = (props: HomeProps) => {
 	const dark = useSelector((s) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
 
-	const disabledList = useSelector(
+	const disabledList: HomeFunction[] | undefined = useSelector(
 		// @ts-ignore
 		(state) => state.config.homeFunctionDisabled,
 	);
@@ -743,14 +743,14 @@ const HomeUI = (props: HomeProps) => {
 	let needToShowFunctionNames: HomeFunction[] = [];
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
-			if (!disabledList.includes(i as HomeFunction)) {
+			if (!(disabledList ?? []).includes(i as HomeFunction)) {
 				needToShowFunctionNames.push(i as HomeFunction);
 			}
 		},
 	);
 	if (
 		!["library", "sportsBook", "libRoomBook"].every((i) =>
-			disabledList.includes(i as HomeFunction),
+			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
 		// not all reserve functions are disabled
@@ -758,21 +758,21 @@ const HomeUI = (props: HomeProps) => {
 	}
 	if (
 		!["expenditure", "bankPayment", "invoice"].every((i) =>
-			disabledList.includes(i as HomeFunction),
+			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
 		needToShowFunctionNames.push("finance");
 	}
 	if (
 		!["washer", "qzyq", "dormScore", "electricity"].every((i) =>
-			disabledList.includes(i as HomeFunction),
+			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
 		needToShowFunctionNames.push("dormitory");
 	}
 
 	const top5Filtered = top5.filter(
-		(f) => !disabledList.includes((f as any).key),
+		(f) => !(disabledList ?? []).includes((f as any).key),
 	);
 
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
