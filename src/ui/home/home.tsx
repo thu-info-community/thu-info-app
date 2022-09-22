@@ -392,11 +392,35 @@ export const HomeScheduleSection = ({
 						<Text style={style.scheduleSectionContentPrimaryTitle}>
 							{getStr("countdown")}
 						</Text>
-						{countdown.map((item) => (
-							<Text style={{marginTop: 8, color: theme.colors.text}} key={item}>
-								{item}
-							</Text>
-						))}
+						{countdown.map((item) => {
+							if (item.slice(-2) === "结束" && item.indexOf("于") !== -1) {
+								const [event, time] = item.slice(0, -2).split("于");
+								return (
+									<Text style={{marginTop: 8}} key={item}>
+										<Text style={{color: theme.colors.text}} key={item}>
+											{event.trim()}
+										</Text>
+										<Text style={{color: theme.colors.fontB3}} key={item}>
+											{" 于 "}
+										</Text>
+										<Text style={{color: theme.colors.text}} key={item}>
+											{time.trim()}
+										</Text>
+										<Text style={{color: theme.colors.fontB3}} key={item}>
+											{" 结束"}
+										</Text>
+									</Text>
+								);
+							} else {
+								return (
+									<Text
+										style={{marginTop: 8, color: theme.colors.text}}
+										key={item}>
+										{item}
+									</Text>
+								);
+							}
+						})}
 					</>
 				)}
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
@@ -404,12 +428,20 @@ export const HomeScheduleSection = ({
 						? `${now.month() + 1}月${now.date()}日 ${dayZh[today]}`
 						: `${dayEn[today]} ${now.month() + 1}/${now.date()}`}
 				</Text>
-				{todaySchedules.map((x) => (
-					<HomeSchedule key={x.name} schedule={x} navigation={navigation} />
-				))}
-				<Text style={style.scheduleSectionContentSecondaryTitle}>
-					{getStr("scheduleTomorrow")}
-				</Text>
+				{todaySchedules.length > 0 ? (
+					todaySchedules.map((x) => (
+						<HomeSchedule key={x.name} schedule={x} navigation={navigation} />
+					))
+				) : (
+					<Text style={{color: theme.colors.text, marginTop: 8}}>
+						{getStr("noScheduleToday")}
+					</Text>
+				)}
+				{tomorrowSchedules.length > 0 && (
+					<Text style={style.scheduleSectionContentSecondaryTitle}>
+						{getStr("scheduleTomorrow")}
+					</Text>
+				)}
 				{tomorrowSchedules.map((x) => (
 					<HomeSchedule key={x.name} schedule={x} navigation={navigation} />
 				))}
@@ -855,7 +887,8 @@ const styles = themedStyles((theme) => ({
 		shadowColor: "grey",
 		borderRadius: 20,
 		paddingHorizontal: 12,
-		paddingBottom: 12,
+		paddingTop: 8,
+		paddingBottom: 16,
 		minHeight: 92, // this value is produced by trying many times...
 	},
 	SectionTitle: {

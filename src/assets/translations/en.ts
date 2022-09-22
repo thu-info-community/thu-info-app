@@ -486,4 +486,6 @@ export default {
 	scheduleTomorrow: "Tomorrow",
 	notSelected: "Not Selected",
 	seasonalFeatures: "Seasonal Features",
+	noScheduleToday: "No schedule today.",
+	noFavNews: "You have no favourite news now.",
 };

@@ -456,4 +456,6 @@ export default {
 	scheduleTomorrow: "明天",
 	notSelected: "未选择",
 	seasonalFeatures: "时令功能",
+	noScheduleToday: "今日暂无计划",
+	noFavNews: "您目前还未收藏新闻",
 };

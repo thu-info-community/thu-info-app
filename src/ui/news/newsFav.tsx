@@ -78,7 +78,7 @@ export const NewsFavScreen = ({
 	}
 
 	return (
-		<View>
+		<View style={{flex: 1}}>
 			<FlatList
 				style={{margin: 12, marginBottom: 0}}
 				refreshControl={
@@ -104,7 +104,7 @@ export const NewsFavScreen = ({
 								margin: 5,
 								color: theme.colors.text,
 							}}>
-							{getStr("waitForLoading")}
+							{getStr("noFavNews")}
 						</Text>
 					</View>
 				}

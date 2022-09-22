@@ -224,6 +224,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 						onPress={() => {
 							helper
 								.addNewsSubscription(
+									// @ts-ignore
 									channelSelected.id,
 									sourceSelected.sourceId,
 								)
