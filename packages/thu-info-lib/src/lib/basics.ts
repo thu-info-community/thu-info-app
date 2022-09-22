@@ -404,7 +404,7 @@ export const getClassroomList = (
         async () => {
             const html = await uFetch(CLASSROOM_LIST_URL);
             if (html.includes(systemMessage)) {
-                throw new ReportError(systemMessage);
+                throw new LibError(systemMessage);
             }
             const $ = cheerio.load(html);
             const result: Classroom[] = [];
@@ -420,6 +420,9 @@ export const getClassroomList = (
                     }
                 }
             });
+            if (result.length === 0) {
+                throw new LibError();
+            }
             return result;
         },
         MOCK_CLASSROOM_LIST,
