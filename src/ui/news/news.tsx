@@ -510,8 +510,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 										borderRadius: 8,
 										marginTop: 40,
 									}}
-									onPress={() => Snackbar.show({text: "TODO"})} //TODO
-								>
+									onPress={() => navigation.navigate("NewsSub")}>
 									<Text
 										style={{
 											fontSize: 32,
