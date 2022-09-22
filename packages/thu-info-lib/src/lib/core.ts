@@ -148,7 +148,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
                 throw new IdAuthError();
             }
         }
-        const redirectUrl = cheerio("a", response).attr().href;
+        // Purpose of replace: optimize myhome redirect speed
+        const redirectUrl = cheerio("a", response).attr().href.replace("77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9//?", "77726476706e69737468656265737421fdee49932a3526446d0187ab9040227bca90a6e14cc9?");
         return await uFetch(redirectUrl);
     }
     case "cab": {
