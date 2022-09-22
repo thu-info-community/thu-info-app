@@ -48,7 +48,7 @@ export const defaultConfigState: Config = {
 	waterId: "",
 	waterBrand: "6",
 	appSecretLockMinutes: 0,
-	verifyPasswordBeforeEnterApp: true,
+	verifyPasswordBeforeEnterApp: false,
 	verifyPasswordBeforeEnterReport: false,
 	verifyPasswordBeforeEnterFinance: false,
 	verifyPasswordBeforeEnterPhysicalExam: false,
