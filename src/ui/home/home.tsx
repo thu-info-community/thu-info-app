@@ -771,6 +771,10 @@ const HomeUI = (props: HomeProps) => {
 		needToShowFunctionNames.push("dormitory");
 	}
 
+	const top5Filtered = top5.filter(
+		(f) => !disabledList.includes((f as any).key),
+	);
+
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
 		homeFunctions.find((y) => y.key === x),
 	);
@@ -800,7 +804,13 @@ const HomeUI = (props: HomeProps) => {
 			}}
 			key={darkModeHook}>
 			<HomeFunctionSection title="recentlyUsedFunction">
-				{top5.filter((f) => !disabledList.includes((f as any).key))}
+				{top5Filtered.length === 0 ? (
+					<View style={{flex: 1, marginTop: 32, alignItems: "center"}}>
+						<Text>{getStr("recentUseHint")}</Text>
+					</View>
+				) : (
+					top5Filtered
+				)}
 			</HomeFunctionSection>
 			<HomeReservationSection
 				activeLibBookRecords={props.activeLibBookRecords ?? []}

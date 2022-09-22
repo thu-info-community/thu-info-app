@@ -22,7 +22,7 @@ it("renders correctly", async () => {
 	if (typeof top5Recently === "string" || typeof top5All === "string") {
 		return;
 	}
-	expect(top5Recently.children.length).toEqual(0);
+	expect(top5Recently.children.length).toEqual(1);
 	expect(top5All.children.length).toBeGreaterThan(0);
 
 	// Press a home page function
