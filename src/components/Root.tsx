@@ -392,10 +392,15 @@ export const Root = () => {
 
 	return (
 		<Stack.Navigator
-			defaultScreenOptions={{
-				headerBackTitleStyle: {color: theme.colors.themePurple},
-				headerTintColor: theme.colors.themePurple,
-			}}>
+			screenOptions={
+				Platform.OS === "ios"
+					? {
+							headerBackTitleStyle: {color: theme.colors.themePurple},
+							headerTintColor: theme.colors.themePurple,
+							// eslint-disable-next-line no-mixed-spaces-and-tabs
+					  }
+					: undefined
+			}>
 			{/* Root Tabs */}
 			<Stack.Screen
 				name="RootTabs"
