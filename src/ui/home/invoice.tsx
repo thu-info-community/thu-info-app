@@ -78,4 +78,11 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 		</>
 	),
 	({bus_no}) => bus_no,
+	undefined,
+	undefined,
+	({colors}) => (
+		<Text style={{color: colors.text, textAlign: "center"}}>
+			{getStr("noInvoice")}
+		</Text>
+	),
 );
