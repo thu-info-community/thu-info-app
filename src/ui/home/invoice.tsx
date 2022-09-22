@@ -14,7 +14,7 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 			{index > 0 && (
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}

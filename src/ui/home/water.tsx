@@ -106,7 +106,7 @@ const WaterUI = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -136,7 +136,7 @@ const WaterUI = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -232,7 +232,7 @@ const WaterUI = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -266,7 +266,7 @@ const WaterUI = ({
 				</TouchableOpacity>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}

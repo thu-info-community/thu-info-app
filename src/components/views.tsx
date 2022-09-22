@@ -70,7 +70,7 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 						<View key={props.keyExtractor?.(item, index)}>
 							{index > 0 && (
 								<View
-									style={{borderWidth: 0.2, borderColor: colors.themeGrey}}
+									style={{borderWidth: 0.4, borderColor: colors.themeGrey}}
 								/>
 							)}
 							{props.renderItem(item, colors, index)}

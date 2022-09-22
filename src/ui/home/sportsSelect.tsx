@@ -101,7 +101,7 @@ export const SportsSelectScreen = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -131,7 +131,7 @@ export const SportsSelectScreen = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -161,7 +161,7 @@ export const SportsSelectScreen = ({
 				</View>
 				<View
 					style={{
-						borderWidth: 0.2,
+						borderWidth: 0.4,
 						borderColor: colors.themeGrey,
 						marginVertical: 12,
 					}}
@@ -265,7 +265,7 @@ export const SportsSelectScreen = ({
 					/>
 					<View
 						style={{
-							borderWidth: 0.2,
+							borderWidth: 0.4,
 							borderColor: colors.themeGrey,
 							marginVertical: 12,
 						}}

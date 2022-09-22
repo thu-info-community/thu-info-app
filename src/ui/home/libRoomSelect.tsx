@@ -34,7 +34,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 						{index > 0 && (
 							<View
 								style={{
-									borderWidth: 0.2,
+									borderWidth: 0.4,
 									borderColor: colors.themeGrey,
 									marginVertical: 12,
 								}}
@@ -62,7 +62,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 								<View key={`${libName}-r-${date.date()}`}>
 									<View
 										style={{
-											borderWidth: 0.2,
+											borderWidth: 0.4,
 											borderColor: colors.themeGrey,
 											marginVertical: 12,
 										}}

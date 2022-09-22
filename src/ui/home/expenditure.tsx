@@ -243,7 +243,7 @@ export const ExpenditureScreen = () => {
 									{index > 0 && (
 										<View
 											style={{
-												borderWidth: 0.2,
+												borderWidth: 0.4,
 												marginHorizontal: 16,
 												marginVertical: 12,
 												borderColor: colors.themeGrey,
