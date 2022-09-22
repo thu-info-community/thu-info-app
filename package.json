@@ -1,6 +1,6 @@
 {
 	"name": "thu_info",
-	"version": "2.6.7",
+	"version": "3.0.0",
 	"build": 65,
 	"private": true,
 	"scripts": {
