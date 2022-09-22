@@ -226,7 +226,11 @@ const ScheduleAddUI = ({
 						padding: 0,
 						fontSize: 16,
 					}}
-					placeholder={params?.name ?? getStr("title")}
+					placeholder={
+						params?.name?.substring(
+							params?.type === ScheduleType.CUSTOM ? 6 : 0,
+						) ?? getStr("title")
+					}
 					value={title}
 					onChangeText={setTitle}
 				/>
