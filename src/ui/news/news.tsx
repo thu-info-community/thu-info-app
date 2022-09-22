@@ -368,7 +368,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								flex: 0,
 								flexDirection: "row",
 								marginLeft: 28,
-								marginTop: 4,
 								marginRight: 12,
 								alignItems: "center",
 							}}>
@@ -418,7 +417,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									flex: 0,
 									flexDirection: "row",
-									marginTop: 4,
 									marginHorizontal: 12,
 									alignItems: "center",
 								}}>
@@ -460,7 +458,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							style={{
 								flex: 0,
 								flexDirection: "row",
-								marginTop: 4,
 								marginHorizontal: 12,
 								alignItems: "center",
 							}}>
