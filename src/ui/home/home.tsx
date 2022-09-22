@@ -826,6 +826,7 @@ const HomeUI = (props: HomeProps) => {
 			<HomeFunctionSection title="allFunction">
 				{needToShowFunctions}
 			</HomeFunctionSection>
+			<View style={{height: 12}} />
 		</ScrollView>
 	);
 };

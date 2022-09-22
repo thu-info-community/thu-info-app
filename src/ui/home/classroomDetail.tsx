@@ -145,6 +145,7 @@ export const ClassroomDetailScreen = ({
 					justifyContent: "center",
 					alignItems: "center",
 					flexDirection: "row",
+					marginTop: 12,
 				}}>
 				<TouchableOpacity
 					onPress={() =>
