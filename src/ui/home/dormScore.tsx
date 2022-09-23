@@ -34,7 +34,13 @@ const DormScoreUI = ({
 		<View style={{flex: 1}}>
 			{base64 && (
 				<ImageViewer
-					imageUrls={[{url: `data:image/png;base64,${Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""}${base64}`}]}
+					imageUrls={[
+						{
+							url: `data:image/png;base64,${
+								Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""
+							}${base64}`,
+						},
+					]}
 					onSave={saveRemoteImg}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),

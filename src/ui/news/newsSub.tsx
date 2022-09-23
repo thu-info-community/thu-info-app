@@ -97,10 +97,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 	const [channelSelected, setChannelSelected] = useState(emptyChannel);
 
 	const fetchSubscriptionList = () => {
-		helper
-			.getNewsSubscriptionList()
-			.then(setSubList)
-			.catch(NetworkRetry);
+		helper.getNewsSubscriptionList().then(setSubList).catch(NetworkRetry);
 	};
 
 	useEffect(fetchSubscriptionList, []);
