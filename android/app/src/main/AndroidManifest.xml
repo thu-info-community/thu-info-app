@@ -16,6 +16,7 @@
       android:networkSecurityConfig="@xml/network_config"
       android:allowBackup="false"
       android:requestLegacyExternalStorage="true"
+      android:taskAffinity=""
       android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"
