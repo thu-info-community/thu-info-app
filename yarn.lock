@@ -7657,10 +7657,10 @@ react-native@0.70.1:
     whatwg-fetch "^3.0.0"
     ws "^6.1.4"
 
-react-redux@8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.0.3.tgz#a00d3efc04e79dd95cd9a91385ab6205805f0888"
-  integrity sha512-3roUGeIweX0tKbNteUYW6h+tlA79uyhLjMUH8hyYfoveZ2ZWKKfQJSNYFei3CfvVWo0x4tLQYXHdC4Q2OG2ebg==
+react-redux@8.0.4:
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.0.4.tgz#80c31dffa8af9526967c4267022ae1525ff0e36a"
+  integrity sha512-yMfQ7mX6bWuicz2fids6cR1YT59VTuT8MKyyE310wJQlINKENCeT1UcPdEiX6znI5tF8zXyJ/VYvDgeGuaaNwQ==
   dependencies:
     "@babel/runtime" "^7.12.1"
     "@types/hoist-non-react-statics" "^3.3.1"
