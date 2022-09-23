@@ -68,10 +68,7 @@ export const SportsSelectScreen = ({
 	}, [availableFields, selectedFieldIndex]);
 
 	useEffect(() => {
-		uFetch(imageUrl).then((r) => {
-			console.log(r);
-			setImageBase64(r);
-		});
+		uFetch(imageUrl).then(setImageBase64);
 	}, [imageUrl]);
 
 	useEffect(() => {

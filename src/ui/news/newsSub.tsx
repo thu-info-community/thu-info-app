@@ -99,10 +99,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 	const fetchSubscriptionList = () => {
 		helper
 			.getNewsSubscriptionList()
-			.then((res) => {
-				setSubList(res);
-				// console.log(res);
-			})
+			.then(setSubList)
 			.catch(NetworkRetry);
 	};
 
