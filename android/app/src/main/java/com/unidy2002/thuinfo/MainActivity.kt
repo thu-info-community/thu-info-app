@@ -1,7 +1,6 @@
 package com.unidy2002.thuinfo
 
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -16,12 +15,6 @@ class MainActivity : ReactActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
-        if (!BuildConfig.DEBUG) {
-            // Check if running in emulator
-            if (Build.BOARD == "unknown" || Build.BOOTLOADER == "unknown" || Build.BRAND == "generic" || Build.DEVICE == "generic" || Build.MODEL == "sdk" || Build.PRODUCT == "sdk" || Build.HARDWARE == "goldfish") {
-                finish()
-            }
-        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
