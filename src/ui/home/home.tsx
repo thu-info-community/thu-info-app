@@ -393,20 +393,21 @@ export const HomeScheduleSection = ({
 							{getStr("countdown")}
 						</Text>
 						{countdown.map((item) => {
-							if ((item.slice(-2) === "结束" || item.slice(-2) === "开始") && item.indexOf("于") !== -1) {
+							if (
+								(item.slice(-2) === "结束" || item.slice(-2) === "开始") &&
+								item.indexOf("于") !== -1
+							) {
 								const [event, time] = item.slice(0, -2).split("于");
 								return (
 									<Text style={{marginTop: 8}} key={item}>
-										<Text style={{color: theme.colors.text}} key={item}>
+										<Text style={{color: theme.colors.text}}>
 											{event.trim()}
 										</Text>
-										<Text style={{color: theme.colors.fontB3}} key={item}>
-											{" 于 "}
-										</Text>
-										<Text style={{color: theme.colors.text}} key={item}>
+										<Text style={{color: theme.colors.fontB3}}>{" 于 "}</Text>
+										<Text style={{color: theme.colors.text}}>
 											{time.trim()}
 										</Text>
-										<Text style={{color: theme.colors.fontB3}} key={item}>
+										<Text style={{color: theme.colors.fontB3}}>
 											{" " + item.slice(-2)}
 										</Text>
 									</Text>
