@@ -215,7 +215,18 @@ const ScheduleAddUI = ({
 			),
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [navigation, valid, params, title, locale, weeks, periodBegin, periodEnd]);
+	}, [
+		navigation,
+		valid,
+		params,
+		customCnt,
+		title,
+		locale,
+		weeks,
+		day,
+		periodBegin,
+		periodEnd,
+	]);
 
 	return (
 		<ScrollView style={{padding: 12}}>
