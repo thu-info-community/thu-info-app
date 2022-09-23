@@ -1,4 +1,4 @@
-import {TextInput, View, Text, Image, TouchableOpacity} from "react-native";
+import {TextInput, View, Text, Image, TouchableOpacity, Platform} from "react-native";
 import React, {useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -60,7 +60,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 						.then(setImageBase64)
 				}>
 				<Image
-					source={{uri: `data:image/jpg;base64,${imageBase64}`}}
+					source={{uri: `data:image/jpg;base64,${Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""}${imageBase64}`}}
 					style={{height: 50, width: 200}}
 				/>
 			</TouchableOpacity>

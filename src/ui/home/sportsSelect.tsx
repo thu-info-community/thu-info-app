@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {
 	Alert,
 	Image,
+	Platform,
 	ScrollView,
 	Text,
 	TextInput,
@@ -21,6 +22,7 @@ import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
 import {setActiveSportsReservationRecordAction} from "../../redux/actions/reservation";
 import {uFetch} from "thu-info-lib/dist/utils/network";
+import WebView from "react-native-webview";
 
 export interface SportsSelectParams {
 	info: SportsIdInfo;
@@ -66,7 +68,10 @@ export const SportsSelectScreen = ({
 	}, [availableFields, selectedFieldIndex]);
 
 	useEffect(() => {
-		uFetch(imageUrl).then(setImageBase64);
+		uFetch(imageUrl).then((r) => {
+			console.log(r);
+			setImageBase64(r);
+		});
 	}, [imageUrl]);
 
 	useEffect(() => {
@@ -277,7 +282,7 @@ export const SportsSelectScreen = ({
 							alignItems: "center",
 						}}>
 						<Image
-							source={{uri: `data:image/jpg;base64,${imageBase64}`}}
+							source={{uri: `data:image/jpg;base64,${Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""}${imageBase64}`}}
 							style={{height: 50, width: 200}}
 						/>
 						<TouchableOpacity

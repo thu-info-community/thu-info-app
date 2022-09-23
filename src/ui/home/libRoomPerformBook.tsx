@@ -252,8 +252,8 @@ export const LibRoomPerformBookScreen = ({
 							title={getStr("search")}
 							onPress={() => {
 								helper.fuzzySearchLibraryId(userKeyword).then((r) => {
-									console.log(userKeyword);
-									console.log(r);
+									// console.log(userKeyword);
+									// console.log(r);
 									if (r.length === 0) {
 										Alert.alert("没有搜索到匹配的用户");
 										setUserItems([]);

@@ -101,7 +101,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 			.getNewsSubscriptionList()
 			.then((res) => {
 				setSubList(res);
-				console.log(res);
+				// console.log(res);
 			})
 			.catch(NetworkRetry);
 	};
