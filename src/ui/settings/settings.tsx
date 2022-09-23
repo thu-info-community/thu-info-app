@@ -87,6 +87,9 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableOpacity>
 			</RoundedView>
+			<Text style={{marginLeft: 8, marginTop: 12, color: theme.colors.fontB2}}>
+				{getStr("betaVersion")}
+			</Text>
 			<View style={{flex: 1}} />
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity

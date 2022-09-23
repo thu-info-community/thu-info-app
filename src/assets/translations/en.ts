@@ -54,6 +54,7 @@ export default {
 	notConfigured: "Disabled",
 	myhomeAccountTip:
 		"Login with Myhome Account to enable electricity bill and dorm score services",
+	betaVersion: "Beta version 1",
 	functionManagement: "Features",
 	functionManagementTip: "Switch to enable/disable features",
 	general: "General",
