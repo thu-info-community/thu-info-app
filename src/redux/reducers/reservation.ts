@@ -14,7 +14,10 @@ export const reservation = (
 			return {
 				...state,
 				activeLibBookRecords: action.payload.filter(
-					({status}) => status === "预约成功" || status === "使用中",
+					({status}) =>
+						status === "预约成功" ||
+						status === "使用中" ||
+						status === "预约开始提醒",
 				),
 			};
 		case SET_ACTIVE_SPORTS_RESERVATION_RECORD:
