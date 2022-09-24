@@ -28,6 +28,7 @@ export interface Config {
 	exitTimestamp: number | undefined;
 	subFunctionUnlocked: boolean | undefined;
 	homeFunctionDisabled: HomeFunction[];
+	beta3Notified: boolean | undefined;
 }
 
 export const defaultConfigState: Config = {
@@ -57,4 +58,5 @@ export const defaultConfigState: Config = {
 	exitTimestamp: 0,
 	subFunctionUnlocked: false,
 	homeFunctionDisabled: [],
+	beta3Notified: false,
 };

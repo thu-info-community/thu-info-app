@@ -6,13 +6,15 @@ import {
 import {connect} from "react-redux";
 import {LoginStatus} from "../redux/states/auth";
 import {LoginScreen} from "../ui/login/login";
-import {State} from "../redux/store";
+import {currState, State, store} from "../redux/store";
 import {Root} from "./Root";
 import {FeedbackScreen} from "../ui/settings/feedback";
 import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
 import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
 import {DigitalPasswordScreen} from "../ui/settings/digitalPassword";
+import {Alert} from "react-native";
+import {configSet} from "../redux/actions/config";
 
 interface AuthFlowProps {
 	readonly status: LoginStatus;
@@ -33,6 +35,19 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 	useEffect(() => {
 		checkUpdate();
 		checkBroadcast();
+		if (currState().config.beta3Notified !== true) {
+			Alert.alert(
+				"公测提示",
+				"公测版虽已排除大部分问题，但并非稳定版。\n参与公测即表示您自愿接受软件错误导致的潜在风险。\n如有问题请及时反馈。",
+				[
+					{
+						text: "确定",
+						onPress: () => store.dispatch(configSet("beta3Notified", true)),
+					},
+				],
+				{cancelable: false},
+			);
+		}
 	}, []);
 
 	return props.appLocked === true ? (
