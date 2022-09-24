@@ -130,6 +130,7 @@ import {
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
+import {CampusMapScreen} from "../ui/home/campusMap";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -238,6 +239,7 @@ type HomeStackParamList = {
 	SportsSuccess: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
+	CampusMap: undefined;
 	GitLabHome: undefined;
 	GitLabStar: undefined;
 	GitLabSearch: undefined;
@@ -724,6 +726,11 @@ export const Root = () => {
 				name="BankPayment"
 				component={BankPaymentScreen}
 				options={{title: getStr("bankPayment")}}
+			/>
+			<Stack.Screen
+				name="CampusMap"
+				component={CampusMapScreen}
+				options={{title: getStr("campusMap")}}
 			/>
 			<Stack.Screen
 				name="GitLabHome"

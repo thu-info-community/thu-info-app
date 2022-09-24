@@ -153,6 +153,7 @@ export default {
 	invoice: "Invoice",
 	eCard: "E-Card",
 	bankPayment: "Bank",
+	campusMap: "Map",
 	dorm: "Dormitory",
 	life: "Life",
 	thirdParty: "Third-party Services",

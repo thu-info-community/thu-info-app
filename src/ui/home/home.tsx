@@ -47,6 +47,7 @@ import {
 } from "../../redux/actions/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
+import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
@@ -467,6 +468,7 @@ export type HomeFunction =
 	| "sportsBook"
 	| "bankPayment"
 	| "invoice"
+	| "campusMap"
 	| "qzyq"
 	| "washer"
 	| "electricity"
@@ -692,6 +694,15 @@ const getHomeFunctions = (
 		<IconInvoice width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
+		key="campusMap"
+		title="campusMap"
+		onPress={() => {
+			updateTop5("campusMap");
+			navigation.navigate("CampusMap");
+		}}>
+		<IconLocal width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
 		key="qzyq"
 		title="qzyq"
 		onPress={() => {
@@ -803,6 +814,8 @@ const HomeUI = (props: HomeProps) => {
 	) {
 		needToShowFunctionNames.push("dormitory");
 	}
+
+	needToShowFunctionNames.push("campusMap");
 
 	const top5Filtered = top5.filter(
 		(f) => !(disabledList ?? []).includes((f as any).key),

@@ -148,6 +148,7 @@ export default {
 	invoice: "电子发票",
 	eCard: "校园卡相关",
 	bankPayment: "银行代发",
+	campusMap: "校园地图",
 	dorm: "宿舍",
 	life: "生活",
 	thirdParty: "第三方服务",
