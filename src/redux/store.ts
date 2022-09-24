@@ -46,9 +46,9 @@ AppState.addEventListener("change", (state) => {
 		) {
 			store.dispatch(configSet("appLocked", true));
 		}
+		store.dispatch(configSet("subFunctionUnlocked", false));
 	} else {
 		store.dispatch(configSet("exitTimestamp", Date.now()));
-		store.dispatch(configSet("subFunctionUnlocked", false));
 	}
 });
 
