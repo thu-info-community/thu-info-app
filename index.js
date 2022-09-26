@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React from "react";
-import {AppRegistry, LogBox, Platform, Text} from "react-native";
+import {AppRegistry, LogBox, Platform, StyleSheet, Text} from "react-native";
 import { polyfill as polyfillBase64 } from 'react-native-polyfill-globals/src/base64';
 import { polyfill as polyfillEncoding } from 'react-native-polyfill-globals/src/encoding';
 import { polyfill as polyfillReadableStream } from 'react-native-polyfill-globals/src/readable-stream';
@@ -25,7 +25,7 @@ moment.locale("zh-cn");
 
 dayjs.extend(customParseFormat);
 
-// Fix MIUI12 font problem: https://segmentfault.com/a/1190000023622085
+// Fix MIUI font problem: https://juejin.cn/post/7127811778620162078
 
 const defaultFontFamily = {
 	...Platform.select({
@@ -34,12 +34,13 @@ const defaultFontFamily = {
 };
 
 const oldRender = Text.render;
-Text.render = function (...args) {
-	const origin = oldRender.call(this, ...args);
-	return React.cloneElement(origin, {
-		style: [defaultFontFamily, origin.props.style],
-		textBreakStrategy: "simple",
-	});
+Text.render = function (props, ...extraArgs) {
+	const { style, ..._extraProps } = props;
+	return oldRender.call(
+		this,
+		{..._extraProps, style: [defaultFontFamily, style]},
+		...extraArgs,
+	);
 };
 
 LogBox.ignoreLogs(["ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'."]);
