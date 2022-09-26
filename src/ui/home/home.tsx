@@ -815,8 +815,6 @@ const HomeUI = (props: HomeProps) => {
 		needToShowFunctionNames.push("dormitory");
 	}
 
-	needToShowFunctionNames.push("campusMap");
-
 	const top5Filtered = top5.filter(
 		(f) => !(disabledList ?? []).includes((f as any).key),
 	);

@@ -1,10 +1,11 @@
-import {Image, useColorScheme, View} from "react-native";
+import {useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 } from "react-native-reanimated";
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
+import {LazyImage} from "../../components/LazyImage";
 
 const mapUrl = (scale: number, row: number, col: number) =>
 	`https://ditu.pt.tsinghua.edu.cn/api/geoserver/gwc/service/wmts?layer=tsinghua:qhMap&style=&tilematrixset=3857&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/png&TileMatrix=3857:${scale}&TileCol=${col}&TileRow=${row}`;
@@ -68,17 +69,21 @@ export const CampusMapScreen = () => {
 		};
 	});
 
+	const rowBase = 24807;
+	const colBase = 53941;
+
 	return (
 		<View style={{flex: 1}}>
 			<GestureDetector
 				gesture={Gesture.Exclusive(transformGesture, tapGesture)}>
 				<Animated.View style={animatedStyle}>
-					{[24807, 24808, 24809, 24810, 24811, 24812, 24813].map((row) => (
+					{[0, 1, 2, 3, 4, 5].map((row) => (
 						<View style={{flexDirection: "row"}} key={row}>
-							{[53941, 53942, 53943, 53944, 53945].map((col) => (
-								<Image
+							{[0, 1, 2, 3, 4].map((col) => (
+								<LazyImage
+									appearance={true}
 									source={{
-										uri: mapUrl(16, row, col),
+										uri: mapUrl(16, rowBase + row, colBase + col),
 									}}
 									style={{height: 128, width: 128}}
 									key={col}
