@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React from "react";
-import {AppRegistry, LogBox, Platform, StyleSheet, Text} from "react-native";
+import {AppRegistry, Text} from "react-native";
 import { polyfill as polyfillBase64 } from 'react-native-polyfill-globals/src/base64';
 import { polyfill as polyfillEncoding } from 'react-native-polyfill-globals/src/encoding';
 import { polyfill as polyfillReadableStream } from 'react-native-polyfill-globals/src/readable-stream';
@@ -25,20 +25,11 @@ moment.locale("zh-cn");
 
 dayjs.extend(customParseFormat);
 
-// Fix MIUI font problem: https://juejin.cn/post/7127811778620162078
-
-const defaultFontFamily = {
-	...Platform.select({
-		android: {fontFamily: ""},
-	}),
-};
-
 const oldRender = Text.render;
 Text.render = function (props, ...extraArgs) {
-	const { style, ..._extraProps } = props;
 	return oldRender.call(
 		this,
-		{..._extraProps, style: [defaultFontFamily, style]},
+		{...props, textBreakStrategy: "simple"},
 		...extraArgs,
 	);
 };
