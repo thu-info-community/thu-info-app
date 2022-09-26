@@ -117,8 +117,10 @@ export const uFetch = async (
                 base64 = true;
                 charset = "base64";
             } else {
-                /charset=(.*?);/.test(contentType + ";");
-                if (RegExp.$1) charset = RegExp.$1;
+                const regRes = /charset=(.*?);/.exec(contentType + ";");
+                if (regRes !== null && regRes[1] !== undefined) {
+                    charset = regRes[1];
+                }
             }
         }
 
