@@ -268,6 +268,20 @@ const policyList: [string, [string, string]][] = [
             ".box3 table",
         ],
     ],
+    [
+        "77726476706e69737468656265737421fcfe43d23323615e79009cadd6502720703f47",
+        [
+            "h2",
+            "#vsb_content",
+        ],
+    ],
+    [
+        "77726476706e69737468656265737421f3f65399222226446d0187ab9040227b8e4026c4ffd2",
+        [
+            "h1",
+            ".WordSection1",
+        ],
+    ],
 ];
 
 const getNewsDetailPolicy = (
