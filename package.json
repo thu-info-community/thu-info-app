@@ -96,7 +96,7 @@
 		"prettier": "2.7.1",
 		"react-native-codegen": "0.71.0",
 		"react-test-renderer": "18.2.0",
-		"typescript": "4.8.3"
+		"typescript": "4.8.4"
 	},
 	"pre-commit": [
 		"lint"
