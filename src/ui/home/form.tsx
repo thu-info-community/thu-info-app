@@ -79,7 +79,7 @@ export const FormScreen = ({
 								? "teacherEvaluation"
 								: "assistantEvaluation",
 						)}
-						{getStr(":")}
+						{getStr("colonMark")}
 						{person.name}
 					</Text>
 				</View>,

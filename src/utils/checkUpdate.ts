@@ -26,13 +26,13 @@ export const checkUpdate = (force: boolean = false) => {
 					r[0].versionName + "\n" + r[0].description,
 					[
 						{
-							text: getStr("doNotRemind"),
+							text: getStr("ignoreThisVersion"),
 							onPress: () =>
 								store.dispatch(
 									configSet("doNotRemindSemver", r[0].versionName),
 								),
 						},
-						{text: getStr("nextTimeMust")},
+						{text: getStr("dismiss")},
 						{
 							text: getStr("download"),
 							onPress: async () => {

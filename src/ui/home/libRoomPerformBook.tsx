@@ -319,7 +319,8 @@ export const LibRoomPerformBookScreen = ({
 										<TouchableOpacity
 											onPress={() =>
 												Alert.alert(
-													`${getStr("choose")} ${label} ${getStr("?")}`,
+													`${getStr("choose")} ${label}
+														${getStr("questionMark")}`,
 													undefined,
 													[
 														{text: getStr("cancel")},
