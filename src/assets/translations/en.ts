@@ -420,7 +420,7 @@ export default {
 	noWeek: "Empty",
 	lp: "(",
 	rp: ")",
-	weekNumPrefix: "W. ",
+	weekNumPrefix: "Week ",
 	weekNumSuffix: "",
 	till: "till ",
 	periodNumPrefix: "S. ",
