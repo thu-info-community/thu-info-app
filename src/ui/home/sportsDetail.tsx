@@ -66,9 +66,6 @@ export const SportsDetailScreen = ({
 						getStr("sportsBookRestricted").replace("%d", String(init)),
 					);
 					setResources([]);
-				} else if (phone === undefined) {
-					Alert.alert(getStr("sportsBookPhoneRequired"));
-					setResources([]);
 				} else {
 					const result: {[key: string]: TimePeriod} = {};
 					for (let {

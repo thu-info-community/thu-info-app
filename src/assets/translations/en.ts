@@ -386,7 +386,7 @@ export default {
 		"You have %d booking request(s) in progress, and are not allowed to make new bookings at this moment. Please try again later.",
 	sportsBookPhoneRequired:
 		"Phone number required; please enter your phone number and retry.",
-	pleaseEnterPhone: "Phone number: ",
+	pleaseEnterPhone: "phone number",
 	sportsPhoneSetSucceed:
 		"Phone number set successfully, please swipe and refresh.",
 	sportsPhoneSetFail: "Phone number set failed, please retry.",

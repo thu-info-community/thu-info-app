@@ -56,6 +56,7 @@ export const SportsSelectScreen = ({
 		{id: string; name: string; cost: number} | undefined
 	>(undefined);
 	const [title, setTitle] = useState<ValidReceiptTypes | undefined>(undefined);
+	const [phoneNumber, setPhoneNumber] = useState(phone);
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
 	const [imageBase64, setImageBase64] = useState("");
 	const [captcha, setCaptcha] = useState("");
@@ -241,14 +242,18 @@ export const SportsSelectScreen = ({
 						}}>
 						{getStr("phoneNumber")}
 					</Text>
-					<Text
+					<TextInput
 						style={{
-							color: colors.fontB3,
+							color: colors.text,
+							padding: 0,
 							fontSize: 16,
 							lineHeight: 24,
-						}}>
-						{phone}
-					</Text>
+							textAlign: "right",
+						}}
+						value={phoneNumber}
+						onChangeText={setPhoneNumber}
+						placeholder={getStr("pleaseEnterPhone")}
+					/>
 				</View>
 			</RoundedView>
 			{!helper.mocked() && (
@@ -340,7 +345,7 @@ export const SportsSelectScreen = ({
 						helper
 							.makeSportsReservation(
 								field.cost,
-								phone,
+								phoneNumber,
 								title,
 								gymId,
 								itemId,
@@ -360,7 +365,10 @@ export const SportsSelectScreen = ({
 								}
 							})
 							.then(() => {
-								navigation.replace("SportsSuccess", params);
+								navigation.replace("SportsSuccess", {
+									...params,
+									phone: phoneNumber,
+								});
 								helper
 									.getSportsReservationRecords()
 									.then((r) =>
@@ -380,7 +388,8 @@ export const SportsSelectScreen = ({
 				}}
 				disabled={
 					field === undefined ||
-					(!helper.mocked() && captcha.trim().length === 0)
+					(!helper.mocked() &&
+						(captcha.trim().length === 0 || phoneNumber.trim().length === 0))
 				}>
 				<Text
 					style={{

@@ -359,7 +359,7 @@ export default {
 	sportsBookRestricted:
 		"您有 %d 项订单未交费或系统正在自动取消订单（建议 5 分钟后重试），当前不能预约。",
 	sportsBookPhoneRequired: "您尚未填写您的手机号，请填写手机号后刷新重试。",
-	pleaseEnterPhone: "请输入手机号：",
+	pleaseEnterPhone: "请输入手机号",
 	sportsPhoneSetSucceed: "手机号设置成功，请刷新页面。",
 	sportsPhoneSetFail: "手机号设置失败，请重试。",
 	confirmOrder: "确认订单",
