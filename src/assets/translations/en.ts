@@ -83,7 +83,7 @@ export default {
 	confirmCancelBooking: "Sure to cancel?",
 	cancelSucceeded: "Successfully cancelled.",
 	recentUseHint: "Recently used functions will show up here.",
-	noActiveLibBookRecord: "No library reservation.",
+	noActiveLibBookRecord: "No library reservation",
 	noActiveSportsReservationRecord: "No sports reservation",
 	bookingHintPrefix: "Please check in before ",
 	bookingHintSuffix: " and check out when you leave.",
