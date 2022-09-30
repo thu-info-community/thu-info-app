@@ -60,7 +60,7 @@ const AppSecretUI = ({
 	if (verifyPasswordBeforeEnterPhysicalExam) {
 		protectedStrings.push(getStr("physicalExam"));
 	}
-	const protectedText = protectedStrings.join(getStr("、"));
+	const protectedText = protectedStrings.join(getStr("slightPauseMark"));
 
 	const minuteText = getStr(appSecretLockMinutes === 1 ? "minute" : "minutes");
 	const lockText =
@@ -126,7 +126,7 @@ const AppSecretUI = ({
 						</TouchableOpacity>
 					</RoundedView>
 					<Text style={{marginLeft: 8, marginTop: 16, color: colors.fontB2}}>
-						{getStr("usePasswordIn")}
+						{getStr("passwordUsedWhen")}
 					</Text>
 					<RoundedView style={[style.rounded, {marginTop: 4}]}>
 						<View style={style.touchable}>
