@@ -325,7 +325,8 @@ export const SportsSelectScreen = ({
 					margin: 12,
 					backgroundColor:
 						field === undefined ||
-						(!helper.mocked() && captcha.trim().length === 0)
+						(!helper.mocked() &&
+							(captcha.trim().length === 0 || phoneNumber.trim().length === 0))
 							? "lightgrey"
 							: colors.themePurple,
 				}}
