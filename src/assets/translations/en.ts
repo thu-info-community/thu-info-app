@@ -490,4 +490,6 @@ export default {
 	seasonalFeatures: "Seasonal Features",
 	noScheduleToday: "No schedule today.",
 	noFavNews: "You have no favourite news now.",
+	submitFeedbackWithMobileData:
+		"Please submit feedback using your mobile data!",
 };
