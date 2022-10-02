@@ -2,12 +2,13 @@ import {ColorTheme} from "../themes/themes";
 
 export const colorLight: ColorTheme = {
 	primaryLight: "#9E64FF",
-	primary: "#671e7f",
+	primary: "#671E7F",
 	primaryDark: "#380052",
-	accent: "#2979ff",
+	accent: "#2979FF",
 	text: "#000000",
-	contentBackground: "#ffffff",
-	themeBackground: "#f6f6f6",
+	contentBackground: "#FFFFFF",
+	themeBackground: "#F6F6F6",
+	inputBorder: "#CCCCCC",
 
 	mainTheme: "#B791F0",
 	fontB0: "#000000",
@@ -23,7 +24,7 @@ export const colorLight: ColorTheme = {
 	themeBlue: "#007AFF",
 	themeTransparentPurple: "#8B55E46A",
 	themePurple: "#8B55E4",
-	themeLightPurple: "#a883e8",
+	themeLightPurple: "#A883E8",
 	themeDarkGrey: "#B5B5B5",
 	themeGrey: "#D6D3DB",
 	themeLightGrey: "#E9E9E9",

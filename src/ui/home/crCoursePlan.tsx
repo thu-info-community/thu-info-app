@@ -68,7 +68,7 @@ export const CrCoursePlanScreen = ({
 							paddingHorizontal: 12,
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
-							borderColor: "#CCC",
+							borderColor: colors.inputBorder,
 							borderWidth: 1,
 							borderRadius: 5,
 						}}

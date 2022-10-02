@@ -10,6 +10,7 @@ export interface ColorTheme {
 	text: string;
 	contentBackground: string;
 	themeBackground: string;
+	inputBorder: string;
 
 	mainTheme: string;
 	fontB0: string;
