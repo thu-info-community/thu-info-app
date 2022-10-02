@@ -850,7 +850,9 @@ const HomeUI = (props: HomeProps) => {
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5Filtered.length === 0 ? (
 					<View style={{flex: 1, marginTop: 32, alignItems: "center"}}>
-						<Text>{getStr("recentUseHint")}</Text>
+						<Text style={{color: theme.colors.text}}>
+							{getStr("recentUseHint")}
+						</Text>
 					</View>
 				) : (
 					top5Filtered
