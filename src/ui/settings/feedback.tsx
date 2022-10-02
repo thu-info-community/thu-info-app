@@ -34,24 +34,22 @@ const BottomButton = ({
 	onPress: (event: GestureResponderEvent) => void;
 	disabled: boolean;
 }) => {
-	const dark = useColorScheme() === "dark";
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: dark
-					? disabled
-						? "#FFF4"
-						: "#ccc"
-					: disabled
-					? "#0000"
-					: "#0002",
+				backgroundColor: theme.colors.themeBackground,
 				flex: 1,
 				margin: 4,
 				borderRadius: 4,
 			}}
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
-			<Text style={{textAlign: "center", padding: 10}}>{getStr(text)}</Text>
+			<Text
+				style={{textAlign: "center", padding: 10, color: theme.colors.text}}>
+				{getStr(text)}
+			</Text>
 		</TouchableOpacity>
 	);
 };
@@ -127,6 +125,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					borderRadius: 5,
 				}}
 				placeholder={getStr("feedbackHint")}
+				placeholderTextColor={colors.fontB2}
 				multiline={true}
 			/>
 			<View
@@ -150,6 +149,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						borderRadius: 5,
 					}}
 					placeholder={getStr("contact")}
+					placeholderTextColor={colors.fontB2}
 				/>
 				<BottomButton
 					text="submit"
