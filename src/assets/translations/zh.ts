@@ -63,6 +63,7 @@ export default {
 	restartToApply: "重启应用后生效。",
 	privacy: "隐私",
 	helpAndFeedback: "帮助与反馈",
+	feishuFeedback: "反馈问卷",
 	countdown: "倒计时提醒",
 	askBox: "提问箱",
 	more: "查看更多",

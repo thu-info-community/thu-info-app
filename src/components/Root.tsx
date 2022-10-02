@@ -82,6 +82,7 @@ import {NewsDetailScreen} from "../ui/news/newsDetail";
 import {ScheduleAddScreen} from "../ui/schedule/scheduleAdd";
 import {ScheduleHiddenScreen} from "../ui/schedule/scheduleHidden";
 import {FeedbackScreen} from "../ui/settings/feedback";
+import {FeishuFeedbackScreen} from "../ui/settings/feishuFeedback";
 import {PopiScreen} from "../ui/settings/popi";
 import {AboutScreen} from "../ui/settings/about";
 import {RouteProp} from "@react-navigation/native";
@@ -369,6 +370,7 @@ type SettingsStackParamList = {
 	DarkMode: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
+	FeishuFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
 	About: undefined;
@@ -1029,6 +1031,11 @@ export const Root = () => {
 			<Stack.Screen
 				name="HelpAndFeedback"
 				component={FeedbackScreen}
+				options={{title: getStr("helpAndFeedback")}}
+			/>
+			<Stack.Screen
+				name="FeishuFeedback"
+				component={FeishuFeedbackScreen}
 				options={{title: getStr("helpAndFeedback")}}
 			/>
 			<Stack.Screen

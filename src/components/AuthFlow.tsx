@@ -9,6 +9,7 @@ import {LoginScreen} from "../ui/login/login";
 import {currState, State, store} from "../redux/store";
 import {Root} from "./Root";
 import {FeedbackScreen} from "../ui/settings/feedback";
+import {FeishuFeedbackScreen} from "../ui/settings/feishuFeedback";
 import {getStr} from "../utils/i18n";
 import {PopiScreen} from "../ui/settings/popi";
 import {checkBroadcast, checkUpdate} from "../utils/checkUpdate";
@@ -24,6 +25,7 @@ interface AuthFlowProps {
 type LoginStackParamList = {
 	Login: undefined;
 	HelpAndFeedback: undefined;
+	FeishuFeedback: undefined;
 	Popi: undefined;
 };
 
@@ -65,6 +67,11 @@ const AuthFlowComponent = (props: AuthFlowProps) => {
 				name="HelpAndFeedback"
 				component={FeedbackScreen}
 				options={{title: getStr("feedback")}}
+			/>
+			<Stack.Screen
+				name="FeishuFeedback"
+				component={FeishuFeedbackScreen}
+				options={{title: getStr("helpAndFeedback")}}
 			/>
 			<Stack.Screen
 				name="Popi"

@@ -177,6 +177,13 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					disabled={text.length === 0}
 				/>
 			</View>
+			<BottomButton
+				text="feishuFeedback"
+				onPress={() => {
+					navigation.navigate("FeishuFeedback");
+				}}
+				disabled={false}
+			/>
 		</ScrollView>
 	);
 };

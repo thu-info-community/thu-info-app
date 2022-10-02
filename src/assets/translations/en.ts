@@ -66,6 +66,7 @@ export default {
 	restartToApply: "Restart APP to apply changes.",
 	privacy: "Privacy",
 	helpAndFeedback: "Help and Support",
+	feishuFeedback: "Questionnaire",
 	countdown: "Countdown",
 	askBox: "Tape",
 	more: "More",
