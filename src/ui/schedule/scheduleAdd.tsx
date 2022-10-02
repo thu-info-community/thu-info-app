@@ -90,6 +90,8 @@ const ScheduleAddUI = ({
 		String([...popupWeeks].sort((a, b) => a - b)) ===
 		String(Array.from(new Array(Math.floor(weekCount)), (_, k) => k + 1));
 
+	const popupIsEmptyWeeks = String([...popupWeeks]) === String([]);
+
 	const [day, setDay] = useState(1);
 	const [popupDay, setPopupDay] = useState(1);
 
@@ -341,6 +343,7 @@ const ScheduleAddUI = ({
 										flexDirection: "row",
 										alignItems: "center",
 										justifyContent: "center",
+										marginHorizontal: 16,
 									}}>
 									{popupIsAllOdd ? (
 										<IconSelected height={16} width={16} />
@@ -369,7 +372,7 @@ const ScheduleAddUI = ({
 										flexDirection: "row",
 										alignItems: "center",
 										justifyContent: "center",
-										marginHorizontal: 32,
+										marginHorizontal: 16,
 									}}>
 									{popupIsAllEven ? (
 										<IconSelected height={16} width={16} />
@@ -398,6 +401,7 @@ const ScheduleAddUI = ({
 										flexDirection: "row",
 										alignItems: "center",
 										justifyContent: "center",
+										marginHorizontal: 16,
 									}}>
 									{popupIsAllWeeks ? (
 										<IconSelected height={16} width={16} />
@@ -411,6 +415,28 @@ const ScheduleAddUI = ({
 											marginLeft: 8,
 										}}>
 										{getStr("allWeeks")}
+									</Text>
+								</TouchableOpacity>
+								<TouchableOpacity
+									onPress={() => setPopupWeeks(Array.from([]))}
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+										justifyContent: "center",
+										marginHorizontal: 16,
+									}}>
+									{popupIsEmptyWeeks ? (
+										<IconSelected height={16} width={16} />
+									) : (
+										<IconNotSelected height={16} width={16} />
+									)}
+									<Text
+										style={{
+											color: theme.colors.fontB1,
+											fontSize: 14,
+											marginLeft: 8,
+										}}>
+										{getStr("noWeek")}
 									</Text>
 								</TouchableOpacity>
 							</View>
