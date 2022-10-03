@@ -18,7 +18,7 @@ export const WasherWebScreen = () => {
 			.washer-hex { background-color: ${theme.colors.themePurple} !important; }
 			.status-idle { background-color: ${theme.colors.contentBackground} !important; }
 			.status-error { background-color: ${theme.colors.statusError} !important; }
-			#query_button { background-color: ${theme.colors.themePurple} !important; }
+			.pure-button-primary { background-color: ${theme.colors.themePurple} !important; }
 		\`
 		document.getElementsByTagName("head")[0].appendChild(style);
 	`;
