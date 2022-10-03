@@ -15,7 +15,10 @@ export const WasherWebScreen = () => {
 			div { color: ${theme.colors.text} !important; }
 			a { color: ${theme.colors.themePurple} !important; }
 			.l-box-header { background-color: ${theme.colors.themeBackground} !important; }
-			.l-box { background-color: ${theme.colors.themeBackground} !important; }
+			.l-box {
+				background-color: ${theme.colors.themeBackground} !important;
+				border-top: 1px solid ${theme.colors.inputBorder} !important;
+			}
 			.washer-hex { background-color: ${theme.colors.themePurple} !important; }
 			.status-idle { background-color: ${theme.colors.contentBackground} !important; }
 			.status-error { background-color: ${theme.colors.statusError} !important; }
