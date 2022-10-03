@@ -3,10 +3,13 @@ import {WebView} from "react-native-webview";
 import {View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
+import {State} from "../../redux/store";
+import {useSelector} from "react-redux";
 
 export const WasherWebScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const dark = useSelector((s: State) => s.config.darkMode);
 
 	// Override the webpage color theme with ours
 	const injectedJS = `
@@ -31,7 +34,7 @@ export const WasherWebScreen = () => {
 		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<WebView
 				source={{uri: "https://washer.sdevs.top/"}}
-				forceDarkOn={themeName === "dark"}
+				forceDarkOn={dark || themeName === "dark"}
 				style={{
 					backgroundColor: theme.colors.themeBackground,
 					color: theme.colors.text,
