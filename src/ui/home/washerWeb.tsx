@@ -8,6 +8,21 @@ export const WasherWebScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	const injectedJS = `
+		var style = document.createElement("style");
+		style.textContent = \`
+			div { color: ${theme.colors.text} !important; }
+			a { color: ${theme.colors.themePurple} !important; }
+			.l-box-header { background-color: ${theme.colors.themeBackground} !important; }
+			.l-box { background-color: ${theme.colors.themeBackground} !important; }
+			.washer-hex { background-color: ${theme.colors.themePurple} !important; }
+			.status-idle { background-color: ${theme.colors.contentBackground} !important; }
+			.status-error { background-color: ${theme.colors.statusError} !important; }
+			#query_button { background-color: ${theme.colors.themePurple} !important; }
+		\`
+		document.getElementsByTagName("head")[0].appendChild(style);
+	`;
+
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<WebView
@@ -18,6 +33,7 @@ export const WasherWebScreen = () => {
 					color: theme.colors.text,
 				}}
 				setSupportMultipleWindows={false}
+				injectedJavaScript={injectedJS}
 			/>
 		</View>
 	);
