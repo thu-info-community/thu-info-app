@@ -17,7 +17,6 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
-import IconClassroomTooltip from "../../assets/icons/IconClassroomTooltip";
 
 export const ClassroomDetailScreen = ({
 	route: {
@@ -47,6 +46,7 @@ export const ClassroomDetailScreen = ({
 	>();
 	const [tipItem, setTipItem] = useState({row: -1, col: -1});
 	const [tipState, setTipState] = useState(0);
+	const [tipWidth, setTipWidth] = useState(26);
 
 	const currentTime = current.format("HHmm");
 	const currentPeriod = (() => {
@@ -343,20 +343,47 @@ export const ClassroomDetailScreen = ({
 						<View
 							style={{
 								position: "absolute",
-								left: tipPosition.left - 13,
+								left: tipPosition.left - tipWidth / 2,
 								top: tipPosition.top - 14,
 								alignItems: "center",
 							}}>
-							<IconClassroomTooltip />
 							<Text
+								onLayout={(e) => {
+									const {width} = e.nativeEvent.layout;
+									setTipWidth((oldWidth) => {
+										if (Math.abs(width - oldWidth) < 2) {
+											return oldWidth;
+										} else {
+											return width;
+										}
+									});
+								}}
 								style={{
-									position: "absolute",
+									minWidth: 26,
+									height: 14,
+									textAlign: "center",
 									color: theme.colors.contentBackground,
+									backgroundColor: theme.colors.fontB1,
 									fontSize: 9,
-									marginTop: 1,
+									padding: 1,
 								}}>
 								{getStr("classroomStatus")[tipState]}
 							</Text>
+							<View
+								style={{
+									position: "absolute",
+									top: 13,
+									width: 0,
+									height: 0,
+									borderLeftWidth: 4,
+									borderRightWidth: 4,
+									borderTopWidth: 4,
+									borderTopColor: theme.colors.fontB1,
+									borderLeftColor: "transparent",
+									borderRightColor: "transparent",
+									borderBottomColor: "transparent",
+								}}
+							/>
 						</View>
 					)}
 				</View>
