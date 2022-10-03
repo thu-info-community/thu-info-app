@@ -11,6 +11,7 @@ export const ScheduleSyncScreen = (props: any) => {
 	const [show, setShow] = useState(false);
 	const [status, setStatus] = useState("Matching another device...");
 	const [canSync, setCanSync] = useState(false);
+	const [canStart, setCanStart] = useState(true);
 	const isSending = props.route.params.isSending;
 	const client = useRef<any>();
 	if (!client.current) {
@@ -38,8 +39,10 @@ export const ScheduleSyncScreen = (props: any) => {
 			{isSending ? (
 				<>
 					<TouchableOpacity
+						disabled={!canStart}
 						onPress={async () => {
 							try {
+								setCanStart(false);
 								await client.current.start((token: string) => {
 									setStatus(
 										`The matching token is ${token}, please ensure the token on another device is the same.`,
@@ -48,6 +51,7 @@ export const ScheduleSyncScreen = (props: any) => {
 								});
 								setShow(true);
 							} catch {
+								setCanStart(true);
 								NetworkRetry();
 							}
 						}}>
@@ -70,6 +74,7 @@ export const ScheduleSyncScreen = (props: any) => {
 									onPress={async () => {
 										await client.current.stop();
 										setShow(false);
+										setCanStart(true);
 									}}>
 									<Text>Cancel</Text>
 								</TouchableOpacity>
@@ -79,6 +84,7 @@ export const ScheduleSyncScreen = (props: any) => {
 										await client.current.confirmAndSend(
 											JSON.stringify(payload),
 											() => {
+												setShow(false);
 												props.navigation.pop();
 												Snackbar.show({
 													text: "Sync completed",
@@ -98,8 +104,10 @@ export const ScheduleSyncScreen = (props: any) => {
 			) : (
 				<>
 					<TouchableOpacity
+						disabled={!canStart}
 						onPress={async () => {
 							try {
+								setCanStart(false);
 								await client.current.start((token: string) => {
 									setStatus(
 										`The matching token is ${token}, please ensure the token on another device is the same.`,
@@ -108,6 +116,7 @@ export const ScheduleSyncScreen = (props: any) => {
 								});
 								setShow(true);
 							} catch {
+								setCanStart(true);
 								NetworkRetry();
 							}
 						}}>
@@ -130,6 +139,7 @@ export const ScheduleSyncScreen = (props: any) => {
 									onPress={async () => {
 										await client.current.stop();
 										setShow(false);
+										setCanStart(true);
 									}}>
 									<Text>Cancel</Text>
 								</TouchableOpacity>
@@ -138,6 +148,7 @@ export const ScheduleSyncScreen = (props: any) => {
 									onPress={async () => {
 										await client.current.confirmAndReceive((json: string) => {
 											store.dispatch(scheduleSyncAction(JSON.parse(json)));
+											setShow(false);
 											props.navigation.pop();
 											Snackbar.show({
 												text: "Sync completed",
