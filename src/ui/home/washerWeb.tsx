@@ -8,6 +8,7 @@ export const WasherWebScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
+	// Override the webpage color theme with ours
 	const injectedJS = `
 		var style = document.createElement("style");
 		style.textContent = \`
