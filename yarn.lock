@@ -2309,7 +2309,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@microsoft/signalr@^6.0.9":
+"@microsoft/signalr@6.0.9":
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-6.0.9.tgz#50f0960e2858e2c8b1656dd0810af12639302fa9"
   integrity sha512-DGVYe3ycT2PfRU7m3xCbv1HjhvClKl2VB1HyFlvf8SqBGXz3Cx+oalNWGYrGIgADA6Q2xaB4GaDmDdprTa2U0Q==
