@@ -150,7 +150,6 @@ export class ScheduleSyncSending {
 		ScheduleSyncSending._conn = new HubConnectionBuilder()
 			.withUrl(`${rootUrl}/schedulesynchub`)
 			.build();
-		console.log("Hello World");
 	}
 
 	public async start(matched: (token: string) => void): Promise<void> {
