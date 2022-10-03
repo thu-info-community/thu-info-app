@@ -2,6 +2,11 @@ import VersionNumber from "react-native-version-number";
 import {Platform} from "react-native";
 import {getModel} from "react-native-device-info";
 import {helper} from "../redux/store";
+import {
+	HubConnection,
+	HubConnectionBuilder,
+	HubConnectionState,
+} from "@microsoft/signalr";
 
 const rootUrl = "https://thuinfo.net";
 
@@ -10,12 +15,11 @@ export const getLatestAnnounces = async () => {
 	let resp = await fetch(url);
 	let json: {id: number; content: string; createdTime: string}[] =
 		await resp.json();
-	let result = json.map((i) => ({
+	return json.map((i) => ({
 		id: i.id,
 		message: i.content,
 		createdAt: Date.parse(i.createdTime),
 	}));
-	return result;
 };
 
 export const getLatestVersion = async (isIos: boolean) => {
@@ -96,7 +100,7 @@ export const toggleSocketState = async (
 ) => {
 	let dto = {
 		seatId,
-		isavailable: target === "available" ? true : false,
+		isavailable: target === "available",
 	};
 	let json = JSON.stringify(dto);
 	let resp = await fetch(`${rootUrl}/api/socket`, {
@@ -129,3 +133,107 @@ export enum FunctionType {
 export const addUsageStat = (func: FunctionType) => {
 	fetch(`${rootUrl}/stat/usage/${func.valueOf()}`);
 };
+
+export class ScheduleSyncSending {
+	private readonly _id: string;
+	private static _conn?: HubConnection;
+	private _token?: string;
+
+	constructor(id: string) {
+		this._id = id;
+		if (
+			ScheduleSyncSending._conn &&
+			ScheduleSyncSending._conn.state === HubConnectionState.Connected
+		) {
+			ScheduleSyncSending._conn.stop();
+		}
+		ScheduleSyncSending._conn = new HubConnectionBuilder()
+			.withUrl(`${rootUrl}/schedulesynchub`)
+			.build();
+		console.log("Hello World");
+	}
+
+	public async start(matched: (token: string) => void): Promise<void> {
+		ScheduleSyncSending._conn?.off("SetTarget");
+		ScheduleSyncSending._conn?.off("ConfirmMatch");
+
+		await ScheduleSyncSending._conn?.start();
+		ScheduleSyncSending._conn?.on("ConfirmMatch", (token) => {
+			this._token = token;
+			matched(token);
+		});
+		await ScheduleSyncSending._conn?.send("StartMatch", this._id, true);
+	}
+
+	public async confirmAndSend(json: string, sent?: () => void): Promise<void> {
+		ScheduleSyncSending._conn?.on("SetTarget", async (target) => {
+			await ScheduleSyncSending._conn?.send("SendToTarget", target, json);
+			await ScheduleSyncSending._conn?.stop();
+			sent?.();
+		});
+		await ScheduleSyncSending._conn?.send(
+			"ConfirmMatch",
+			this._id,
+			this._token,
+			true,
+		);
+	}
+
+	public async stop(): Promise<void> {
+		if (ScheduleSyncSending._conn?.state === HubConnectionState.Connected) {
+			await ScheduleSyncSending._conn?.stop();
+		}
+	}
+}
+
+export class ScheduleSyncReceiving {
+	private readonly _id: string;
+	private static _conn?: HubConnection;
+	private _token?: string;
+
+	constructor(id: string) {
+		this._id = id;
+		if (
+			ScheduleSyncReceiving._conn &&
+			ScheduleSyncReceiving._conn.state === HubConnectionState.Connected
+		) {
+			ScheduleSyncReceiving._conn.stop();
+		}
+		ScheduleSyncReceiving._conn = new HubConnectionBuilder()
+			.withUrl(`${rootUrl}/schedulesynchub`)
+			.build();
+	}
+
+	public async start(matched?: (token: string) => void): Promise<void> {
+		ScheduleSyncReceiving._conn?.off("ReceiveSchedules");
+		ScheduleSyncReceiving._conn?.off("ConfirmMatch");
+
+		await ScheduleSyncReceiving._conn?.start();
+		ScheduleSyncReceiving._conn?.on("ConfirmMatch", (token) => {
+			this._token = token;
+			matched?.(token);
+		});
+		await ScheduleSyncReceiving._conn?.send("StartMatch", this._id, false);
+	}
+
+	public async confirmAndReceive(
+		receive: (json: string) => void,
+	): Promise<void> {
+		ScheduleSyncReceiving._conn?.on("ReceiveSchedules", async (json) => {
+			receive(json);
+			await ScheduleSyncReceiving._conn?.stop();
+		});
+		await ScheduleSyncReceiving._conn?.send(
+			"ConfirmMatch",
+			this._id,
+			this._token,
+			false,
+		);
+	}
+
+	public async stop(): Promise<void> {
+		if (ScheduleSyncReceiving._conn?.state === HubConnectionState.Connected) {
+			await ScheduleSyncReceiving._conn?.stop();
+		}
+	}
+}

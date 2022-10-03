@@ -8,10 +8,12 @@ import {
 	SCHEDULE_DEL_OR_HIDE,
 	SCHEDULE_UPDATE_LOCATION,
 	SCHEDULE_CLEAR,
+	SCHEDULE_SYNC,
 } from "../constants";
 import {SCHEDULE_UPDATE_ALIAS} from "../constants";
 import {Choice} from "../reducers/schedule";
 import {Schedule, TimeSlice} from "thu-info-lib/dist/models/schedule/schedule";
+import {Schedules} from "../states/schedule";
 
 export const scheduleFetchAction = createAsyncAction(
 	SCHEDULE_REQUEST,
@@ -32,6 +34,7 @@ export const scheduleUpdateLocationAction = createAction(
 	SCHEDULE_UPDATE_LOCATION,
 )<[string, string]>();
 export const scheduleClearAction = createAction(SCHEDULE_CLEAR)();
+export const scheduleSyncAction = createAction(SCHEDULE_SYNC)<Schedules>();
 
 const scheduleAction = {
 	scheduleFetchAction,
@@ -41,5 +44,6 @@ const scheduleAction = {
 	scheduleRemoveHiddenRuleAction,
 	scheduleUpdateLocationAction,
 	scheduleClearAction,
+	scheduleSyncAction,
 };
 export type ScheduleAction = ActionType<typeof scheduleAction>;

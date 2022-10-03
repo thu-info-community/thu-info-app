@@ -164,6 +164,12 @@ export const schedule = (
 				baseSchedule: state.baseSchedule.map((val) => scheduleDeepCopy(val)),
 			};
 		}
+		case "SCHEDULE_SYNC": {
+			return {
+				...action.payload,
+				refreshing: false,
+			};
+		}
 		case SCHEDULE_CLEAR:
 			return defaultSchedule;
 		default:

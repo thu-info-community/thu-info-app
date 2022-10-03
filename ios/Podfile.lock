@@ -230,7 +230,7 @@ PODS:
     - React-Core
   - react-native-blur (4.2.0):
     - React-Core
-  - react-native-cameraroll (5.0.2):
+  - react-native-cameraroll (5.0.3):
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
@@ -238,7 +238,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.6.2):
     - React-Core
-  - react-native-safe-area-context (4.3.4):
+  - react-native-safe-area-context (4.4.1):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -326,7 +326,7 @@ PODS:
     - React-Core
   - RNKeychain (4.0.5):
     - React
-  - RNLocalize (2.2.3):
+  - RNLocalize (2.2.4):
     - React-Core
   - RNPermissions (3.6.1):
     - React-Core
@@ -569,11 +569,11 @@ SPEC CHECKSUMS:
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-blob-util: c3b0faecd2919db568e9d552084396f3e50b57c7
   react-native-blur: 3e9c8e8e9f7d17fa1b94e1a0ae9fd816675f5382
-  react-native-cameraroll: 4d0cb1c3413d4b7b85beb68a8c14325d887b404c
+  react-native-cameraroll: db9ebe8fc29baf68defdb1691fb6642e8a8ad04d
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
-  react-native-safe-area-context: dfe5aa13bee37a0c7e8059d14f72ffc076d120e9
+  react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: a60a98a18c72bcaaaf2138f9aab960ae9b0d96c7
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
@@ -594,7 +594,7 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 4defbd70b2faf3d6761b82fa7880285241762cb0
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
-  RNLocalize: a64514b46a01375fdfae9349036b4dc7130333b5
+  RNLocalize: 0df7970cfc60389f00eb62fd7c097dc75af3fb4f
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 60e291d42c77752a0f6d6f358387bdf225a87c6e
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9

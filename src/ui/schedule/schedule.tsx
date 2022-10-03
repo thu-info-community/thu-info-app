@@ -6,6 +6,7 @@ import {
 	TouchableOpacity,
 	RefreshControl,
 	Platform,
+	Alert,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
 import {connect, useSelector} from "react-redux";
@@ -286,6 +287,36 @@ const ScheduleUI = (props: ScheduleProps) => {
 						</Text>
 					</BottomPopupTriggerView>
 					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
+						<TouchableOpacity
+							onPress={() => {
+								Alert.alert(
+									"Sync Custom Schedule",
+									"Select send or receive please",
+									[
+										{
+											text: "Cancel",
+										},
+										{
+											text: "Send",
+											onPress: () => {
+												props.navigation.navigate("ScheduleSync", {
+													isSending: true,
+												});
+											},
+										},
+										{
+											text: "Receive",
+											onPress: () => {
+												props.navigation.navigate("ScheduleSync", {
+													isSending: false,
+												});
+											},
+										},
+									],
+								);
+							}}>
+							<Text>Sync</Text>
+						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => props.navigation.navigate("ScheduleHidden")}>
 							<IconMinus width={24} height={24} />

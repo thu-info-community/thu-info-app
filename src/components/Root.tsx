@@ -132,6 +132,7 @@ import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {CampusMapScreen} from "../ui/home/campusMap";
+import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -343,6 +344,7 @@ type ScheduleStackParamList = {
 	ScheduleAdd: ScheduleDetailProps | undefined;
 	ScheduleHidden: undefined;
 	ScheduleDetail: ScheduleDetailProps;
+	ScheduleSync: {isSending: boolean};
 };
 
 export type ScheduleAddRouteProp = RouteProp<
@@ -977,6 +979,7 @@ export const Root = () => {
 					),
 				})}
 			/>
+			<Stack.Screen name="ScheduleSync" component={ScheduleSyncScreen} />
 			{/* Settings */}
 			<Stack.Screen
 				name="Account"
