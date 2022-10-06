@@ -104,7 +104,8 @@ const ScheduleAddUI = ({
 	const [title, setTitle] = useState(params?.alias ?? "");
 	const [locale, setLocale] = useState(params?.location ?? "");
 
-	const valid = title.trim().length > 0 && weeks.length > 0;
+	const valid =
+		(title.trim().length > 0 || params !== undefined) && weeks.length > 0;
 
 	const windowWidth = Dimensions.get("window").width;
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
