@@ -277,8 +277,7 @@ export const HomeScheduleSection = ({
 	navigation: RootNav;
 }) => {
 	const now = dayjs();
-	//const today = now.day() === 0 ? 7 : now.day();
-	const today = 2;
+	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
 	const week = (() => {
 		const {firstDay, weekCount} = currState().config;
