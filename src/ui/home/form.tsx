@@ -128,6 +128,7 @@ export const FormScreen = ({
 								? getStr("moreSuggestionsToTeacher")
 								: getStr("moreSuggestionsToAssistant")
 						}
+						placeholderTextColor={colors.fontB3}
 						defaultValue={
 							(personType === "teacher"
 								? evaluationForm?.teachers[i]?.suggestion
@@ -224,6 +225,7 @@ export const FormScreen = ({
 					}}
 					multiline={true}
 					placeholder={getStr("moreSuggestionsToCourse")}
+					placeholderTextColor={colors.fontB3}
 					defaultValue={evaluationForm?.overall?.suggestion ?? ""}
 					onChangeText={(text) => {
 						if (evaluationForm) {

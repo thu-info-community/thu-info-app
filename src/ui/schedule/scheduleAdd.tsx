@@ -245,6 +245,7 @@ const ScheduleAddUI = ({
 							params?.type === ScheduleType.CUSTOM ? 6 : 0,
 						) ?? getStr("title")
 					}
+					placeholderTextColor={theme.colors.fontB3}
 					value={title}
 					onChangeText={setTitle}
 				/>
@@ -262,6 +263,7 @@ const ScheduleAddUI = ({
 						fontSize: 16,
 					}}
 					placeholder={getStr("location")}
+					placeholderTextColor={theme.colors.fontB3}
 					value={locale}
 					onChangeText={setLocale}
 				/>

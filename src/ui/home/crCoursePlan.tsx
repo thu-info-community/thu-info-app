@@ -73,6 +73,7 @@ export const CrCoursePlanScreen = ({
 							borderRadius: 5,
 						}}
 						placeholder={getStr("searchCourseName")}
+						placeholderTextColor={colors.fontB3}
 					/>
 					<SettingsLargeButton
 						text={getStr("search")}

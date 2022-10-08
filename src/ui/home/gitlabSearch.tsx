@@ -56,6 +56,7 @@ export const GitlabSearchScreen = (props: {navigation: RootNav}) => {
 						padding: 6,
 					}}
 					placeholder={getStr("search")}
+					placeholderTextColor={colors.fontB3}
 					value={search}
 					onChangeText={setSearch}
 				/>
