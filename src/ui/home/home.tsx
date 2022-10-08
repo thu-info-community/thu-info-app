@@ -83,38 +83,38 @@ export const HomeFunctionSection = ({
 
 const beginTimeZh = [
 	"",
-	"上午   8:00",
-	"上午   8:50",
-	"上午   9:50",
-	"上午 10:40",
-	"上午 11:30",
-	"下午   1:30",
-	"下午   2:20",
-	"下午   3:20",
-	"下午   4:10",
-	"下午   5:05",
-	"下午   5:55",
-	"下午   7:20",
-	"下午   8:10",
-	"下午   9:00",
+	"上午 8:00",
+	"上午 8:50",
+	"上午 9:50",
+	"上午10:40",
+	"上午11:30",
+	"下午 1:30",
+	"下午 2:20",
+	"下午 3:20",
+	"下午 4:10",
+	"下午 5:05",
+	"下午 5:55",
+	"下午 7:20",
+	"下午 8:10",
+	"下午 9:00",
 ];
 
 const endTimeZh = [
 	"",
-	"上午  8:45",
-	"上午  9:35",
-	"上午 10:35",
-	"上午 11:25",
-	"下午 12:15",
-	"下午   2:15",
-	"下午   3:05",
-	"下午   4:05",
-	"下午   4:55",
-	"下午   5:50",
-	"下午   6:40",
-	"下午   8:05",
-	"下午   8:55",
-	"下午   9:45",
+	"上午 8:45",
+	"上午 9:35",
+	"上午10:35",
+	"上午11:25",
+	"下午12:15",
+	"下午 2:15",
+	"下午 3:05",
+	"下午 4:05",
+	"下午 4:55",
+	"下午 5:50",
+	"下午 6:40",
+	"下午 8:05",
+	"下午 8:55",
+	"下午 9:45",
 ];
 
 const beginTimeEn = [
@@ -210,6 +210,7 @@ const HomeSchedule = ({
 								alignSelf: "center",
 								textAlign: "right",
 								color: theme.colors.fontB0,
+								fontFamily: getLocale() === zh ? "monospace" : "",
 							}}>
 							{getLocale() === zh
 								? beginTimeZh[schedule.from]
@@ -231,6 +232,7 @@ const HomeSchedule = ({
 								alignSelf: "center",
 								textAlign: "right",
 								color: theme.colors.fontB2,
+								fontFamily: getLocale() === zh ? "monospace" : "",
 							}}>
 							{getLocale() === zh
 								? endTimeZh[schedule.to]
@@ -275,7 +277,8 @@ export const HomeScheduleSection = ({
 	navigation: RootNav;
 }) => {
 	const now = dayjs();
-	const today = now.day() === 0 ? 7 : now.day();
+	//const today = now.day() === 0 ? 7 : now.day();
+	const today = 2;
 	const tomorrow = today + 1;
 	const week = (() => {
 		const {firstDay, weekCount} = currState().config;
