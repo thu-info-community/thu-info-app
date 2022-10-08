@@ -18,6 +18,14 @@ Date.prototype.format = function () {
 	return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}`;
 };
 
+// eslint-disable-next-line no-extend-native
+String.prototype.format = function () {
+	var args = arguments;
+	return this.replace(/{(\d+)}/g, function (match, number) {
+		return typeof args[number] !== "undefined" ? args[number] : match;
+	});
+};
+
 if (global.FileReader) {
 	FileReader.prototype.readAsArrayBuffer = function (blob) {
 		if (this.readyState === this.LOADING) {

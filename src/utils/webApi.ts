@@ -134,7 +134,14 @@ export const addUsageStat = (func: FunctionType) => {
 	fetch(`${rootUrl}/stat/usage/${func.valueOf()}`);
 };
 
+export interface ScheduleSyncSending {
+	kind: "send";
+	start: (matched: (token: string) => void) => Promise<void>;
+	confirmAndSend: (json: string, sent?: () => void) => Promise<void>;
+	stop: () => Promise<void>;
+}
 export class ScheduleSyncSending {
+	kind: "send" = "send";
 	private readonly _id: string;
 	private static _conn?: HubConnection;
 	private _token?: string;
@@ -152,7 +159,7 @@ export class ScheduleSyncSending {
 			.build();
 	}
 
-	public async start(matched: (token: string) => void): Promise<void> {
+	start = async (matched: (token: string) => void) => {
 		ScheduleSyncSending._conn?.off("SetTarget");
 		ScheduleSyncSending._conn?.off("ConfirmMatch");
 
@@ -162,9 +169,9 @@ export class ScheduleSyncSending {
 			matched(token);
 		});
 		await ScheduleSyncSending._conn?.send("StartMatch", this._id, true);
-	}
+	};
 
-	public async confirmAndSend(json: string, sent?: () => void): Promise<void> {
+	confirmAndSend = async (json: string, sent?: () => void) => {
 		ScheduleSyncSending._conn?.on("SetTarget", async (target) => {
 			await ScheduleSyncSending._conn?.send("SendToTarget", target, json);
 			await ScheduleSyncSending._conn?.stop();
@@ -176,16 +183,23 @@ export class ScheduleSyncSending {
 			this._token,
 			true,
 		);
-	}
+	};
 
-	public async stop(): Promise<void> {
+	stop = async () => {
 		if (ScheduleSyncSending._conn?.state === HubConnectionState.Connected) {
 			await ScheduleSyncSending._conn?.stop();
 		}
-	}
+	};
 }
 
+export interface ScheduleSyncReceiving {
+	kind: "receive";
+	start: (matched: (token: string) => void) => Promise<void>;
+	confirmAndReceive: (receive: (json: string) => void) => Promise<void>;
+	stop: () => Promise<void>;
+}
 export class ScheduleSyncReceiving {
+	kind: "receive" = "receive";
 	private readonly _id: string;
 	private static _conn?: HubConnection;
 	private _token?: string;
@@ -203,7 +217,7 @@ export class ScheduleSyncReceiving {
 			.build();
 	}
 
-	public async start(matched?: (token: string) => void): Promise<void> {
+	start = async (matched: (token: string) => void) => {
 		ScheduleSyncReceiving._conn?.off("ReceiveSchedules");
 		ScheduleSyncReceiving._conn?.off("ConfirmMatch");
 
@@ -213,11 +227,9 @@ export class ScheduleSyncReceiving {
 			matched?.(token);
 		});
 		await ScheduleSyncReceiving._conn?.send("StartMatch", this._id, false);
-	}
+	};
 
-	public async confirmAndReceive(
-		receive: (json: string) => void,
-	): Promise<void> {
+	confirmAndReceive = async (receive: (json: string) => void) => {
 		ScheduleSyncReceiving._conn?.on("ReceiveSchedules", async (json) => {
 			receive(json);
 			await ScheduleSyncReceiving._conn?.stop();
@@ -228,11 +240,11 @@ export class ScheduleSyncReceiving {
 			this._token,
 			false,
 		);
-	}
+	};
 
-	public async stop(): Promise<void> {
+	stop = async () => {
 		if (ScheduleSyncReceiving._conn?.state === HubConnectionState.Connected) {
 			await ScheduleSyncReceiving._conn?.stop();
 		}
-	}
+	};
 }

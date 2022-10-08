@@ -493,4 +493,27 @@ export default {
 	noFavNews: "You have no favourite news now.",
 	submitFeedbackWithMobileData:
 		"Please submit feedback using your mobile data!",
+	scheduleSync: "Schedule Synchronization",
+	sendSchedule: "Send Your Schedule",
+	receiveSchedule: "Receive Your Schedule",
+	matching: "Matching...",
+	confirmSync: "Confirm Synchronization",
+	syncing: "Synchronizing...",
+	syncSendInitialCaption:
+		"You are going to send schedule data to other device.",
+	syncReceiveInitialCaption:
+		"You are going to receive schedule data from other device.",
+	syncSendWaitOtherCaption:
+		"Waiting for your other device to receive schedule data...",
+	syncReceiveWaitOtherCaption:
+		"Waiting for your other device to send schedule data...",
+	syncToConfirmCaption:
+		"The matching token is {0}, please ensure the token on the other device is the same.",
+	syncWaitSyncCaption: "Waiting for your other device to confirm...",
+	syncDoneCaption: "Synchronized successfully.",
+	syncReceiveWarning:
+		"Warning! You are going to receive schedule data from other device, which will overwrite your current schedule data.",
+	start: "Start",
+	sync: "Synchronize",
+	return: "Return",
 };

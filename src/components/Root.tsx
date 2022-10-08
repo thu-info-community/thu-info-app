@@ -979,7 +979,11 @@ export const Root = () => {
 					),
 				})}
 			/>
-			<Stack.Screen name="ScheduleSync" component={ScheduleSyncScreen} />
+			<Stack.Screen
+				name="ScheduleSync"
+				component={ScheduleSyncScreen}
+				options={{title: getStr("scheduleSync")}}
+			/>
 			{/* Settings */}
 			<Stack.Screen
 				name="Account"
