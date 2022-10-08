@@ -102,6 +102,7 @@ const WaterUI = ({
 						onChangeText={setWaterId}
 						onEndEditing={load}
 						placeholder="请输入"
+						placeholderTextColor={colors.fontB3}
 					/>
 				</View>
 				<View

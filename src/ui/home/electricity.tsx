@@ -143,6 +143,7 @@ export const ElectricityScreen = () => {
 							<TextInput
 								keyboardType="numeric"
 								placeholder={getStr("enterEleRechargeValue")}
+								placeholderTextColor={colors.fontB3}
 								value={money}
 								onChangeText={(v) => {
 									setMoney(v);

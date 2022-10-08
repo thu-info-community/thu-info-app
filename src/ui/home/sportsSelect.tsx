@@ -253,6 +253,7 @@ export const SportsSelectScreen = ({
 						value={phoneNumber}
 						onChangeText={setPhoneNumber}
 						placeholder={getStr("pleaseEnterPhone")}
+						placeholderTextColor={colors.fontB3}
 					/>
 				</View>
 			</RoundedView>
@@ -268,6 +269,7 @@ export const SportsSelectScreen = ({
 						value={captcha}
 						onChangeText={setCaptcha}
 						placeholder={getStr("captchaCaseSensitive")}
+						placeholderTextColor={colors.fontB3}
 					/>
 					<View
 						style={{

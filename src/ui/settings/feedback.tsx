@@ -131,7 +131,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					borderRadius: 5,
 				}}
 				placeholder={getStr("feedbackHint")}
-				placeholderTextColor={colors.fontB2}
+				placeholderTextColor={colors.fontB3}
 				multiline={true}
 			/>
 			<View
@@ -155,7 +155,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						borderRadius: 5,
 					}}
 					placeholder={getStr("contact")}
-					placeholderTextColor={colors.fontB2}
+					placeholderTextColor={colors.fontB3}
 				/>
 				<BottomButton
 					text="submit"
