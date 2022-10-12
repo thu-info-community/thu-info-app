@@ -83,16 +83,12 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
 						<View style={{flexDirection: "row", alignItems: "center"}}>
 							<Text style={style.version}>
-								{getStr("version")} {VersionNumber.appVersion}
+								{getStr("version")} {VersionNumber.appVersion}-beta.2
 							</Text>
 							<IconRight height={20} width={20} />
 						</View>
 					</TouchableOpacity>
 				</RoundedView>
-				<Text
-					style={{marginLeft: 8, marginTop: 12, color: theme.colors.fontB2}}>
-					{getStr("betaVersion")}
-				</Text>
 				<View style={{flex: 1}} />
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity

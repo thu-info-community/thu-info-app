@@ -51,7 +51,6 @@ export default {
 	configured: "已设置",
 	notConfigured: "未设置",
 	myhomeAccountTip: "家园网账号将用于「宿舍电费」「卫生成绩」等服务",
-	betaVersion: "第一版公测",
 	functionManagement: "功能管理",
 	functionManagementTip: "管理在「主页」出现的功能",
 	general: "通用",
