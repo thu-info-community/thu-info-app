@@ -157,7 +157,7 @@ export const SportsDetailScreen = ({
 										/>
 										<TouchableOpacity
 											onPress={() =>
-												navigation.navigate("SportsSelect", {
+												navigation.navigate("SportsSelectField", {
 													info: route.params.info,
 													date: date.format(format),
 													phone: phoneNumber ?? "",

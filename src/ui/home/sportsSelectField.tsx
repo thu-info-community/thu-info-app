@@ -29,10 +29,19 @@ export const SportsSelectFieldScreen = ({
 							style={style.touchable}
 							onPress={() => {
 								setIndexSelected(index);
-								navigation.navigate("SportsSelect", {
-									...params,
-									selectedFieldIndex: index,
-								});
+								const {routes} = navigation.getState();
+								const prevRoute = routes[routes.length - 2].name;
+								if (prevRoute === "SportsDetail") {
+									navigation.replace("SportsSelect", {
+										...params,
+										selectedFieldIndex: index,
+									});
+								} else {
+									navigation.navigate("SportsSelect", {
+										...params,
+										selectedFieldIndex: index,
+									});
+								}
 							}}>
 							<Text style={style.text}>{`${name}（${cost}元）`}</Text>
 							{index === indexSelected && <IconCheck width={18} height={18} />}

@@ -58,7 +58,7 @@ export const config = (
 				useBiometrics: false,
 			};
 		default: {
-			if (defaultConfigState[action.type] !== undefined) {
+			if (action.type in defaultConfigState) {
 				const newState = {...state};
 				// @ts-ignore
 				newState[action.type] = action.payload;

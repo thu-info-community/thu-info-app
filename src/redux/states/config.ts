@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {HomeFunction} from "src/ui/home/home";
+import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
 
 export interface Config {
 	doNotRemindSemver: string;
@@ -16,6 +17,7 @@ export interface Config {
 	lastBroadcast: number;
 	emailName: string;
 	emailUnseen: number;
+	receiptTitle: ValidReceiptTypes | undefined;
 	waterId: string;
 	waterBrand: string;
 	appSecretLockMinutes: number | undefined;
@@ -46,6 +48,7 @@ export const defaultConfigState: Config = {
 	lastBroadcast: 0,
 	emailName: "",
 	emailUnseen: 0,
+	receiptTitle: undefined,
 	waterId: "",
 	waterBrand: "6",
 	appSecretLockMinutes: 0,
