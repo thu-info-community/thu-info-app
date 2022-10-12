@@ -106,7 +106,12 @@ export const login = async (
 
 export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
+        helper.userId = "";
+        helper.password = "";
         await uFetch(LOGOUT_URL);
+    } else {
+        helper.userId = "";
+        helper.password = "";
     }
 };
 
