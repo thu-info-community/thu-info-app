@@ -24,6 +24,7 @@ export const colorLight: ColorTheme = {
 	themeBlue: "#007AFF",
 	themeTransparentPurple: "#8B55E46A",
 	themePurple: "#8B55E4",
+	themeDarkPurple: "#6300BB",
 	themeLightPurple: "#A883E8",
 	themeDarkGrey: "#B5B5B5",
 	themeGrey: "#D6D3DB",

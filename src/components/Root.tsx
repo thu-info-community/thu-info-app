@@ -168,8 +168,8 @@ const RootTabs = () => {
 
 					return null;
 				},
-				tabBarActiveTintColor: theme.colors.mainTheme,
-				tabBarInactiveTintColor: theme.colors.fontB2,
+				tabBarActiveTintColor: theme.colors.themeDarkPurple,
+				tabBarInactiveTintColor: theme.colors.text,
 			})}
 			backBehavior="initialRoute">
 			<Tab.Screen
