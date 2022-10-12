@@ -12,7 +12,7 @@ export default svgGenerator((width, height) => {
 			<Rect
 				strokeLinejoin="round"
 				strokeWidth={3}
-				stroke={theme.colors.themePurple}
+				stroke={theme.colors.statusWarning}
 				rx={2}
 				height={32}
 				width={40}
@@ -22,14 +22,14 @@ export default svgGenerator((width, height) => {
 			<Path
 				strokeLinejoin="round"
 				strokeWidth={3}
-				stroke={theme.colors.themePurple}
+				stroke={theme.colors.statusWarning}
 				d="M17 25a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
 			/>
 			<Path
 				strokeLinejoin="round"
 				strokeLinecap="round"
 				strokeWidth={3}
-				stroke={theme.colors.themePurple}
+				stroke={theme.colors.statusWarning}
 				d="M23 31a6 6 0 0 0-12 0M28 20h8M30 28h6"
 			/>
 		</Svg>
