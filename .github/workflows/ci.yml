@@ -47,7 +47,6 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
-          NDK_VERSION: ${{ secrets.NDK_VERSION }}
         with:
           arguments: assembleRelease
           build-root-directory: android
