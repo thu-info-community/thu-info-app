@@ -71,7 +71,6 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const today = current.day() === 0 ? 7 : current.day();
 
 	const [week, setWeek] = useState(nowWeek);
-	const [weekSelected, setWeekSelected] = useState(nowWeek);
 
 	const semesterType = Number(semesterId[semesterId.length - 1]);
 
@@ -209,10 +208,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 						justifyContent: "center",
 					}}>
 					<BottomPopupTriggerView
-						popupTitle={`${getStr("weekNumPrefix")}${weekSelected}${getStr(
+						popupTitle={`${getStr("weekNumPrefix")}${week}${getStr(
 							"weekNumSuffix",
 						)}`}
-						popupContent={
+						popupContent={(done) => (
 							<View
 								style={{
 									margin: 12,
@@ -229,13 +228,14 @@ const ScheduleUI = (props: ScheduleProps) => {
 												marginVertical: 4,
 												alignItems: "center",
 												backgroundColor:
-													weekSelected === weekButton
+													week === weekButton
 														? theme.colors.themePurple
 														: undefined,
 												borderRadius: 8,
 											}}
 											onPress={() => {
-												setWeekSelected(weekButton);
+												setWeek(weekButton);
+												done();
 											}}
 											key={weekButton}>
 											<Text
@@ -243,9 +243,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 													fontSize: 18,
 													lineHeight: 40,
 													color:
-														weekSelected === weekButton
-															? "white"
-															: theme.colors.fontB1,
+														week === weekButton ? "white" : theme.colors.fontB1,
 												}}>
 												{weekButton}
 											</Text>
@@ -253,9 +251,10 @@ const ScheduleUI = (props: ScheduleProps) => {
 									),
 								)}
 							</View>
-						}
+						)}
 						popupCanFulfill={true}
-						popupOnFulfilled={() => setWeek(weekSelected)}
+						popupCancelable={true}
+						popupOnFulfilled={() => {}}
 						popupOnCancelled={() => {}}>
 						<View style={{flexDirection: "row", alignItems: "flex-end"}}>
 							<Text

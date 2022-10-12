@@ -84,11 +84,12 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 
 interface PopupProps {
 	popupTitle: string;
-	popupContent: JSX.Element;
+	popupContent: ((done: () => void) => JSX.Element) | JSX.Element;
 	popupCanFulfill: boolean;
 	popupOnFulfilled: () => void;
 	popupOnCancelled: () => void;
 	popupOnTriggered?: () => void;
+	popupCancelable?: boolean;
 }
 
 export const BottomPopupTriggerView = (
@@ -111,7 +112,9 @@ export const BottomPopupTriggerView = (
 		<>
 			<TouchableOpacity {...touchableProps} />
 			<Modal visible={open} transparent>
-				<View
+				<TouchableOpacity
+					disabled={props.popupCancelable !== true}
+					onPress={() => setOpen(false)}
 					style={{
 						width: "100%",
 						height: "100%",
@@ -189,9 +192,11 @@ export const BottomPopupTriggerView = (
 								</Text>
 							</TouchableOpacity>
 						</View>
-						{props.popupContent}
+						{typeof props.popupContent === "function"
+							? props.popupContent(() => setOpen(false))
+							: props.popupContent}
 					</View>
-				</View>
+				</TouchableOpacity>
 			</Modal>
 		</>
 	);
