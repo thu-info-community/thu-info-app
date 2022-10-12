@@ -1,7 +1,4 @@
-export const LOGIN_REQUEST = "LOGIN_REQUEST";
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const LOGIN_FAILURE = "LOGIN_FAILURE";
-export const CHANGE_PASSWORD = "CHANGE_PASSWORD";
+export const DO_LOGIN = "DO_LOGIN";
 export const DO_LOGOUT = "DO_LOGOUT";
 
 export const SET_CALENDAR_CONFIG = "SET_CALENDAR_CONFIG";

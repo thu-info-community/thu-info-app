@@ -1,6 +1,5 @@
 import {createStore} from "redux";
-import {loginAction} from "./actions/auth";
-import {AuthState, LoginStatus} from "./states/auth";
+import {Auth} from "./states/auth";
 import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,6 +26,7 @@ import Snackbar from "react-native-snackbar";
 import {defaultReservation, Reservation} from "./states/reservation";
 import {AppState} from "react-native";
 import {configSet} from "./actions/config";
+import {createNavigationContainerRef} from "@react-navigation/native";
 
 export const helper = new InfoHelper();
 
@@ -55,7 +55,7 @@ AppState.addEventListener("change", (state) => {
 const KeychainStorage = createKeychainStorage();
 
 export interface State {
-	auth: AuthState;
+	auth: Auth;
 	schedule: Schedules;
 	config: Config;
 	credentials: Credentials;
@@ -87,17 +87,11 @@ const rootReducer = combineReducers({
 });
 
 const authTransform = createTransform(
-	(a: AuthState) => ({
-		...a,
-		status: LoginStatus.LoggedIn,
-	}),
-	(a: AuthState) => {
+	undefined,
+	(a: Auth) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
-		return {
-			...a,
-			status: LoginStatus.LoggedIn,
-		};
+		return a;
 	},
 	{
 		whitelist: ["auth"],
@@ -186,8 +180,12 @@ export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
 
+export const navigationRef = createNavigationContainerRef<{Login: undefined}>();
+
 helper.loginErrorHook = (e) => {
-	store.dispatch(loginAction.failure(LoginStatus.Failed));
+	if (navigationRef.isReady()) {
+		navigationRef.navigate("Login");
+	}
 	setTimeout(
 		() =>
 			Snackbar.show({

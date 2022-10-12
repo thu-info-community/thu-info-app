@@ -5,10 +5,9 @@ import {
 	ActivityIndicator,
 	TouchableOpacity,
 } from "react-native";
-import React, {useEffect} from "react";
-import {connect} from "react-redux";
-import {helper, State, store} from "../../redux/store";
-import {LoginStatus} from "../../redux/states/auth";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {helper, State} from "../../redux/store";
 import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {BlurView} from "@react-native-community/blur";
@@ -18,36 +17,42 @@ import IconLock from "../../assets/icons/IconLock";
 import IconPerson from "../../assets/icons/IconPerson";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
-import {LoginNav} from "../../components/AuthFlow";
-import {loginAction} from "../../redux/actions/auth";
+import {RootNav} from "../../components/Root";
+import {doLoginAction} from "../../redux/actions/auth";
 
-interface LoginProps {
-	readonly userId: string;
-	readonly password: string;
-	readonly status: LoginStatus;
-	login: (userId: string, password: string) => void;
-	loginSuccess: () => void;
-	navigation: LoginNav;
-}
+export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
+	const auth = useSelector((s: State) => s.auth);
+	const dispatch = useDispatch();
 
-const LoginUI = (props: LoginProps) => {
-	const [userId, setUserId] = React.useState(props.userId);
-	const [password, setPassword] = React.useState(props.password);
+	const [userId, setUserId] = useState(auth.userId);
+	const [password, setPassword] = useState(auth.password);
+	const [processing, setProcessing] = useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const performLogin = () => {
-		props.login(userId, password);
+		setProcessing(true);
+		helper
+			.login({userId, password})
+			.then(() => {
+				dispatch(doLoginAction({userId, password}));
+				navigation.pop();
+			})
+			.then(() => {
+				helper.getCalendar().then((c) => {
+					dispatch(setCalendarConfigAction(c));
+				});
+			})
+			.then(() => helper.switchLang(getStr("mark") === "CH" ? "zh" : "en"))
+			.catch(() => {
+				// Do nothing
+			})
+			.then(() => {
+				setProcessing(false);
+			});
 	};
-
-	useEffect(() => {
-		if (props.userId !== "") {
-			performLogin();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	return (
 		<View style={style.container}>
@@ -98,14 +103,14 @@ const LoginUI = (props: LoginProps) => {
 					{getStr("slogan")}
 				</Text>
 				<TouchableOpacity
-					onPress={() => props.navigation.navigate("HelpAndFeedback")}>
+					onPress={() => navigation.navigate("HelpAndFeedback")}>
 					<Text style={style.feedbackTextStyle}>{getStr("feedback")}</Text>
 				</TouchableOpacity>
 				<Text style={style.credentialNoteStyle}>
 					{getStr("credentialNote")}
 				</Text>
 			</View>
-			{props.status === LoginStatus.LoggingIn ? (
+			{processing ? (
 				<View style={style.absoluteContainer}>
 					<BlurView
 						style={style.blurViewStyle}
@@ -193,26 +198,3 @@ const styles = themedStyles((theme) => {
 		},
 	};
 });
-
-export const LoginScreen = connect(
-	(state: State) => state.auth,
-	(dispatch) => {
-		return {
-			login: (userId: string, password: string) => {
-				dispatch(loginAction.request({userId, password}));
-				helper
-					.login({userId, password})
-					.then(() => {
-						dispatch(loginAction.success());
-						helper.getCalendar().then((c) => {
-							store.dispatch(setCalendarConfigAction(c));
-						});
-						helper.switchLang(getStr("mark") === "CH" ? "zh" : "en");
-					})
-					.catch(() => {
-						// Do nothing
-					});
-			},
-		};
-	},
-)(LoginUI);

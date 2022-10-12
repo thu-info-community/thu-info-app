@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
-import {helper, store} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {
 	Alert,
 	Text,
@@ -21,7 +21,7 @@ import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
 import VersionNumber from "react-native-version-number";
 import themes from "../../assets/themes/themes";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
 	setActiveLibBookRecordAction,
 	setActiveSportsReservationRecordAction,
@@ -31,14 +31,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const theme = themes(themeName);
-	// @ts-ignore
-	const dark = useSelector((s) => s.config.darkMode);
+	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+	const dispatch = useDispatch();
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
 		<ScrollView>
-			<View style={{flex: 1, padding: 12}} key={darkModeHook}>
+			<View style={{flex: 1, padding: 12}} key={String(darkModeHook)}>
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
@@ -105,7 +105,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								} catch (e) {}
 								await helper.login({});
 								helper.getCalendar().then((c) => {
-									store.dispatch(setCalendarConfigAction(c));
+									dispatch(setCalendarConfigAction(c));
 								});
 								Snackbar.show({
 									text: getStr("success"),
@@ -131,24 +131,28 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								{
 									text: getStr("no"),
 									onPress: () => {
+										helper.userId = "";
+										helper.password = "";
 										helper
 											.logout()
 											.then(() => console.log("Successfully logged out."));
-										store.dispatch(doLogoutAction());
+										dispatch(doLogoutAction());
 									},
 								},
 								{
 									text: getStr("yes"),
 									onPress: () => {
+										helper.userId = "";
+										helper.password = "";
 										helper
 											.logout()
 											.then(() => console.log("Successfully logged out."));
-										store.dispatch(doLogoutAction());
-										store.dispatch(setDormPasswordAction(""));
-										store.dispatch(scheduleClearAction());
-										store.dispatch(configSet("emailName", ""));
-										store.dispatch(setActiveLibBookRecordAction([]));
-										store.dispatch(setActiveSportsReservationRecordAction([]));
+										dispatch(doLogoutAction());
+										dispatch(setDormPasswordAction(""));
+										dispatch(scheduleClearAction());
+										dispatch(configSet("emailName", ""));
+										dispatch(setActiveLibBookRecordAction([]));
+										dispatch(setActiveSportsReservationRecordAction([]));
 									},
 								},
 							]);

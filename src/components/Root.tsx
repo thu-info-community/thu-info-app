@@ -133,6 +133,7 @@ import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
+import {LoginScreen} from "../ui/login/login";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -358,6 +359,7 @@ export type ScheduleDetailRouteProp = RouteProp<
 >;
 
 type SettingsStackParamList = {
+	Login: undefined;
 	Account: undefined;
 	DigitalPassword:
 		| {action: "new"}
@@ -985,6 +987,11 @@ export const Root = () => {
 				options={{title: getStr("scheduleSync")}}
 			/>
 			{/* Settings */}
+			<Stack.Screen
+				name="Login"
+				component={LoginScreen}
+				options={{title: getStr("login")}}
+			/>
 			<Stack.Screen
 				name="Account"
 				component={AccountScreen}

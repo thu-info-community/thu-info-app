@@ -1,19 +1,44 @@
 import "./utils/extensions";
 import {Provider, useSelector} from "react-redux";
-import {persistor, store} from "./redux/store";
+import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
-import React from "react";
-import {AuthFlow} from "./components/AuthFlow";
+import {useEffect} from "react";
 import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
-import {StatusBar, useColorScheme} from "react-native";
+import {Alert, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
+import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
+import {configSet} from "./redux/actions/config";
+import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
+import {Root} from "./components/Root";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	// @ts-ignore
-	const dark = useSelector((s) => s.config.darkMode);
+	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+
+	const appLocked = useSelector((s: State) => s.config.appLocked);
+	const beta3Notified = useSelector((s: State) => s.config.beta3Notified);
+
+	useEffect(() => {
+		checkUpdate();
+		checkBroadcast();
+		if (beta3Notified !== true) {
+			Alert.alert(
+				"公测提示",
+				"公测版虽已排除大部分问题，但并非稳定版。\n参与公测即表示您自愿接受软件错误导致的潜在风险。\n如有问题请及时反馈。",
+				[
+					{
+						text: "确定",
+						onPress: () => store.dispatch(configSet("beta3Notified", true)),
+					},
+				],
+				{cancelable: false},
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<StatusBar
@@ -22,6 +47,7 @@ const RootComponent = () => {
 				animated
 			/>
 			<NavigationContainer
+				ref={navigationRef}
 				theme={{
 					...DefaultTheme,
 					colors: {
@@ -32,7 +58,15 @@ const RootComponent = () => {
 						border: darkModeHook ? "white" : DefaultTheme.colors.border,
 					},
 				}}>
-				<AuthFlow />
+				{appLocked === true ? (
+					<DigitalPasswordScreen
+						navigation={undefined}
+						// @ts-ignore
+						route={{params: {action: "verify"}}}
+					/>
+				) : (
+					<Root />
+				)}
 			</NavigationContainer>
 		</>
 	);

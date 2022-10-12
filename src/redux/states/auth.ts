@@ -1,21 +1,9 @@
-export enum LoginStatus {
-	None,
-	LoggingIn,
-	LoggedIn,
-	Failed,
-}
-
 export interface Auth {
 	userId: string;
 	password: string;
 }
 
-export interface AuthState extends Auth {
-	status: LoginStatus;
-}
-
-export const defaultAuthState: AuthState = {
+export const defaultAuth: Auth = {
 	userId: "",
 	password: "",
-	status: LoginStatus.LoggedIn,
 };
