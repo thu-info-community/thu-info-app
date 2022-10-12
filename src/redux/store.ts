@@ -1,9 +1,18 @@
-import {createStore} from "redux";
+import {configureStore} from "@reduxjs/toolkit";
 import {Auth} from "./states/auth";
 import {combineReducers} from "redux";
 import {auth} from "./reducers/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {persistStore, persistReducer} from "redux-persist";
+import {
+	persistStore,
+	persistReducer,
+	FLUSH,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+	REHYDRATE,
+} from "redux-persist";
 import {Schedules} from "./states/schedule";
 import {schedule} from "./reducers/schedule";
 import {Config} from "./states/config";
@@ -13,7 +22,6 @@ import createTransform from "redux-persist/es/createTransform";
 import {credentials} from "./reducers/credentials";
 import {Credentials} from "./states/credentials";
 import {InfoHelper} from "thu-info-lib";
-import dayjs from "dayjs";
 import CookieManager from "@react-native-cookies/cookies";
 import {
 	Schedule,
@@ -101,10 +109,9 @@ const authTransform = createTransform(
 const configTransform = createTransform(
 	(c: Config) => ({
 		...c,
-		firstDay: c.firstDay.format("YYYY-MM-DD"),
 		appLocked: c.verifyPasswordBeforeEnterApp,
 	}),
-	(c) => ({...c, firstDay: dayjs(c.firstDay)}),
+	undefined,
 	{
 		whitelist: ["config"],
 	},
@@ -174,7 +181,15 @@ const persistConfig = {
 		),
 };
 
-export const store = createStore(persistReducer(persistConfig, rootReducer));
+export const store = configureStore({
+	reducer: persistReducer(persistConfig, rootReducer),
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+		}),
+});
 
 export const persistor = persistStore(store);
 

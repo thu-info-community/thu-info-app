@@ -1,11 +1,10 @@
-import dayjs from "dayjs";
 import {HomeFunction} from "src/ui/home/home";
 import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
 
 export interface Config {
 	doNotRemindSemver: string;
 	lastSelfVersion: number;
-	firstDay: dayjs.Dayjs;
+	firstDay: string;
 	weekCount: number;
 	semesterId: string;
 	language: string;
@@ -36,7 +35,7 @@ export interface Config {
 export const defaultConfigState: Config = {
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
-	firstDay: dayjs("2021-09-13"),
+	firstDay: "2022-09-12",
 	weekCount: 18,
 	semesterId: "2021-2022-1",
 	language: "auto",

@@ -375,7 +375,9 @@ const ScheduleUI = (props: ScheduleProps) => {
 									fontSize: 9,
 									color: theme.colors.fontB1,
 								}}>
-								{firstDay.add((week - 1) * 7 + index, "day").format("MM/DD")}
+								{dayjs(firstDay)
+									.add((week - 1) * 7 + index, "day")
+									.format("MM/DD")}
 							</Text>
 						</View>
 					))}

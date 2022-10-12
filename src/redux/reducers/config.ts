@@ -7,7 +7,6 @@ import {
 	SET_CALENDAR_CONFIG,
 	SETUP_APP_SECRET,
 } from "../constants";
-import dayjs from "dayjs";
 
 export const config = (
 	state: Config = defaultConfigState,
@@ -18,7 +17,7 @@ export const config = (
 			const {firstDay, weekCount, semesterId} = action.payload;
 			return {
 				...state,
-				firstDay: dayjs(firstDay),
+				firstDay,
 				weekCount,
 				semesterId,
 			};
