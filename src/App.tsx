@@ -1,5 +1,5 @@
 import "./utils/extensions";
-import {Provider, useSelector} from "react-redux";
+import {Provider, useDispatch, useSelector} from "react-redux";
 import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {useEffect} from "react";
@@ -19,6 +19,7 @@ const RootComponent = () => {
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const beta3Notified = useSelector((s: State) => s.config.beta3Notified);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		checkUpdate();
@@ -31,7 +32,7 @@ const RootComponent = () => {
 					{
 						text: "确定",
 						onPress: () =>
-							store.dispatch(configSet({key: "beta3Notified", value: true})),
+							dispatch(configSet({key: "beta3Notified", value: true})),
 					},
 				],
 				{cancelable: false},

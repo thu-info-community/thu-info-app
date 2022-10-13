@@ -242,19 +242,12 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 export const HomeReservationSection = () => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
-
-	const r = useSelector((s: State) => s.reservation);
-	const activeLibBookRecords = r.activeLibBookRecords ?? [];
-	const activeSportsReservationRecords = r.activeSportsReservationRecords ?? [];
-
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
-			<LibraryReservationCard activeLibBookRecords={activeLibBookRecords} />
+			<LibraryReservationCard />
 			<View style={{height: 8}} />
-			<SportsReservationCard
-				activeSportsReservationRecords={activeSportsReservationRecords}
-			/>
+			<SportsReservationCard />
 		</View>
 	);
 };

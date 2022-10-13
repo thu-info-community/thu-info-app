@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {RootNav, ScheduleAddRouteProp} from "../../components/Root";
@@ -19,7 +19,7 @@ import {
 	ScheduleType,
 	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {currState, State, store} from "../../redux/store";
+import {State} from "../../redux/store";
 import {
 	Choice,
 	scheduleAddCustom,
@@ -35,15 +35,6 @@ import IconSelected from "../../assets/icons/IconSelected";
 import IconNotSelected from "../../assets/icons/IconNotSelected";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 
-interface ScheduleAddProps {
-	scheduleList: Schedule[];
-	customCnt: number;
-	navigation: RootNav;
-	route: ScheduleAddRouteProp;
-	addCustom: (payload: Schedule) => void;
-	delOrHide: (title: string, block: TimeSlice, choice: Choice) => void;
-}
-
 export const numberToCode = (num: number): string => {
 	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
 	let res: string = "";
@@ -53,18 +44,22 @@ export const numberToCode = (num: number): string => {
 	return res;
 };
 
-const ScheduleAddUI = ({
-	scheduleList,
-	customCnt,
+export const ScheduleAddScreen = ({
 	navigation,
-	addCustom,
-	delOrHide,
 	route: {params},
-}: ScheduleAddProps) => {
+}: {
+	navigation: RootNav;
+	route: ScheduleAddRouteProp;
+}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const weekCount = currState().config.weekCount;
+	const scheduleList = useSelector((s: State) => s.schedule.baseSchedule);
+	const customCnt = useSelector((s: State) => s.schedule.customCnt);
+
+	const weekCount = useSelector((s: State) => s.config.weekCount);
+
+	const dispatch = useDispatch();
 
 	const [weeks, setWeeks] = useState(
 		Array.from(new Array(weekCount), (_, k) => k + 1),
@@ -120,15 +115,15 @@ const ScheduleAddUI = ({
 						if (params !== undefined) {
 							// 代表是在修改现有计划
 							if (title.length === 0) {
-								store.dispatch(scheduleUpdateAlias([params.name, undefined]));
+								dispatch(scheduleUpdateAlias([params.name, undefined]));
 							} else {
 								const res: string =
 									(params.type === ScheduleType.CUSTOM
 										? params.name.substring(0, 6)
 										: "") + title;
-								store.dispatch(scheduleUpdateAlias([params.name, res]));
+								dispatch(scheduleUpdateAlias([params.name, res]));
 							}
-							store.dispatch(scheduleUpdateLocation([params.name, locale]));
+							dispatch(scheduleUpdateLocation([params.name, locale]));
 							// TODO: 要允许修改计划的时间
 							navigation.pop();
 							return;
@@ -187,9 +182,11 @@ const ScheduleAddUI = ({
 										text: getStr("confirm"),
 										onPress: () => {
 											overlapList.forEach((val) => {
-												delOrHide(val[0], val[2], Choice.ONCE);
+												dispatch(
+													scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
+												);
 											});
-											addCustom(newSchedule);
+											dispatch(scheduleAddCustom(newSchedule));
 											navigation.pop();
 										},
 									},
@@ -199,7 +196,7 @@ const ScheduleAddUI = ({
 								],
 							);
 						} else {
-							addCustom(newSchedule);
+							dispatch(scheduleAddCustom(newSchedule));
 							navigation.pop();
 						}
 					}}>
@@ -225,6 +222,8 @@ const ScheduleAddUI = ({
 		day,
 		periodBegin,
 		periodEnd,
+		dispatch,
+		scheduleList,
 	]);
 
 	return (
@@ -573,16 +572,3 @@ const ScheduleAddUI = ({
 		</ScrollView>
 	);
 };
-
-export const ScheduleAddScreen = connect(
-	(state: State) => ({
-		scheduleList: state.schedule.baseSchedule,
-		customCnt: state.schedule.customCnt,
-	}),
-	(dispatch) => ({
-		addCustom: (payload: Schedule) => dispatch(scheduleAddCustom(payload)),
-		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
-			dispatch(scheduleDelOrHide([title, block, choice]));
-		},
-	}),
-)(ScheduleAddUI);

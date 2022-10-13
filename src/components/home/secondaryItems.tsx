@@ -6,8 +6,8 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import React, {ReactElement} from "react";
-import {store} from "../../redux/store";
+import {ReactElement} from "react";
+import {useDispatch} from "react-redux";
 import {top5Update} from "../../redux/slices/top5";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
@@ -28,12 +28,13 @@ export const SecondaryItem = ({
 	const style = styles(themeName);
 	const windowWidth = Dimensions.get("window").width;
 	const viewSize = (windowWidth - 32) / 2;
+	const dispatch = useDispatch();
 	return (
 		<TouchableOpacity
 			style={style.SecondaryItemButton}
 			onPress={() => {
 				onPress();
-				store.dispatch(top5Update(destKey));
+				dispatch(top5Update(destKey));
 			}}>
 			<RoundedView
 				style={[style.SecondaryItemView, {width: viewSize, height: viewSize}]}>

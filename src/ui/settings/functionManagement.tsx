@@ -1,8 +1,8 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {currState, State, store} from "../../redux/store";
+import {State} from "../../redux/store";
 import {ScrollView, Switch, Text, useColorScheme, View} from "react-native";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {configSet} from "../../redux/slices/config";
 import {RoundedView} from "../../components/views";
@@ -57,14 +57,17 @@ const FunctionItem = ({
 	);
 };
 
-const FunctionManagementUI = ({
-	homeFunctionDisabled,
-}: {
-	homeFunctionDisabled: HomeFunction[];
-}) => {
+export const FunctionManagementScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
+
+	const homeFunctionDisabled = useSelector(
+		(s: State) => s.config.homeFunctionDisabled,
+	);
+	const top5 = useSelector((s: State) => s.top5.top5Functions);
+	const dispatch = useDispatch();
+
 	const [disabledFuncList, setDisabledFuncList] =
 		useState(homeFunctionDisabled);
 
@@ -74,21 +77,16 @@ const FunctionManagementUI = ({
 			if (disabledFuncList.includes(f)) {
 				const payload = disabledFuncList.filter((i) => i !== f);
 				setDisabledFuncList(payload);
-				store.dispatch(
-					configSet({key: "homeFunctionDisabled", value: payload}),
-				);
+				dispatch(configSet({key: "homeFunctionDisabled", value: payload}));
 			}
 		} else {
 			// add to disabled list
 			if (!disabledFuncList.includes(f)) {
 				const payload = disabledFuncList.concat([f]);
 				setDisabledFuncList(payload);
-				store.dispatch(
-					configSet({key: "homeFunctionDisabled", value: payload}),
-				);
-				const top5 = currState().top5.top5Functions;
+				dispatch(configSet({key: "homeFunctionDisabled", value: payload}));
 				if (top5.includes(f)) {
-					store.dispatch(top5Set(top5.filter((i) => i !== f))); // remove from top5
+					dispatch(top5Set(top5.filter((i) => i !== f))); // remove from top5
 				}
 			}
 		}
@@ -180,7 +178,3 @@ const FunctionManagementUI = ({
 		</ScrollView>
 	);
 };
-
-export const FunctionManagementScreen = connect((state: State) => ({
-	...state.config,
-}))(FunctionManagementUI);

@@ -1,5 +1,4 @@
-import {connect} from "react-redux";
-import React from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {
 	FlatList,
 	Text,
@@ -11,7 +10,6 @@ import {
 import {State} from "../../redux/store";
 import {
 	getOverlappedBlock,
-	Schedule,
 	ScheduleType,
 	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
@@ -24,18 +22,13 @@ import {
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
-const ScheduleHiddenUI = ({
-	baseSchedule,
-	removeRule,
-	delOrHide,
-}: {
-	baseSchedule: Schedule[];
-	removeRule: (name: string, rule: TimeSlice) => void;
-	delOrHide: (title: string, block: TimeSlice, choice: Choice) => void;
-}) => {
+export const ScheduleHiddenScreen = () => {
 	let screenHeight = Dimensions.get("window");
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+
+	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
+	const dispatch = useDispatch();
 
 	const getData = () => {
 		let res: {
@@ -154,9 +147,13 @@ const ScheduleHiddenUI = ({
 										{
 											text: getStr("confirm"),
 											onPress: () => {
-												removeRule(item.name, item.time);
+												dispatch(
+													scheduleRemoveHiddenRule([item.name, item.time]),
+												);
 												overlapList.forEach((val) => {
-													delOrHide(val[0], val[2], Choice.ONCE);
+													dispatch(
+														scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
+													);
 												});
 											},
 										},
@@ -166,7 +163,7 @@ const ScheduleHiddenUI = ({
 									],
 								);
 							} else {
-								removeRule(item.name, item.time);
+								dispatch(scheduleRemoveHiddenRule([item.name, item.time]));
 							}
 						}}>
 						<Text style={{color: theme.colors.themePurple}}>解除隐藏</Text>
@@ -211,16 +208,3 @@ const ScheduleHiddenUI = ({
 		/>
 	);
 };
-
-export const ScheduleHiddenScreen = connect(
-	(state: State) => ({
-		baseSchedule: state.schedule.baseSchedule,
-	}),
-	(dispatch) => ({
-		removeRule: (name: string, rule: TimeSlice) =>
-			dispatch(scheduleRemoveHiddenRule([name, rule])),
-		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
-			dispatch(scheduleDelOrHide([title, block, choice]));
-		},
-	}),
-)(ScheduleHiddenUI);

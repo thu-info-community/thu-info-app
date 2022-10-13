@@ -5,20 +5,15 @@ import {State} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
-import {connect} from "react-redux";
+import {useSelector} from "react-redux";
 import {styles} from "./settings";
 
-export const GeneralUI = ({
-	language,
-	darkMode,
-	navigation,
-}: {
-	navigation: RootNav;
-	language: string;
-	darkMode: boolean | undefined;
-}) => {
+export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const language = useSelector((s: State) => s.config.language);
 
 	const colorString = getStr(darkMode === true ? "enable" : "autoFollow");
 
@@ -56,7 +51,3 @@ export const GeneralUI = ({
 		</View>
 	);
 };
-
-export const GeneralScreen = connect((state: State) => ({
-	...state.config,
-}))(GeneralUI);

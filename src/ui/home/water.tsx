@@ -17,7 +17,7 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {configSet} from "../../redux/slices/config";
 import {RoundedView} from "../../components/views";
@@ -34,22 +34,20 @@ export interface QzyqSelectParams {
 	ticketNumber: number;
 }
 
-const WaterUI = ({
-	waterId,
-	waterBrand,
-	setWaterId,
+export const WaterScreen = ({
 	navigation,
 	route: {params},
 }: {
-	waterId: string | undefined;
-	waterBrand: string;
-	setWaterId: (id: string) => void;
 	navigation: RootNav;
 	route: QzyqSelectProp;
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const {colors} = theme;
+
+	const waterId = useSelector((s: State) => s.config.waterId);
+	const waterBrand = useSelector((s: State) => s.config.waterBrand) ?? "6";
+	const dispatch = useDispatch();
 
 	const [correspondent, setCorrespondent] = useState("");
 	const [address, setAddress] = useState("");
@@ -99,7 +97,9 @@ const WaterUI = ({
 							padding: 0,
 						}}
 						value={waterId ?? ""}
-						onChangeText={setWaterId}
+						onChangeText={(value) =>
+							dispatch(configSet({key: "waterId", value}))
+						}
 						onEndEditing={load}
 						placeholder="请输入"
 						placeholderTextColor={colors.fontB3}
@@ -382,28 +382,12 @@ const WaterUI = ({
 	);
 };
 
-export const WaterScreen = connect(
-	(state: State) => ({
-		waterId: state.config.waterId,
-		waterBrand: state.config.waterBrand ?? "6",
-	}),
-	(dispatch) => ({
-		setWaterId: (id: string) =>
-			dispatch(configSet({key: "waterId", value: id})),
-	}),
-)(WaterUI);
-
-const WaterSelectBrandUI = ({
-	waterBrand,
-	setWaterBrand,
-	navigation,
-}: {
-	waterBrand: string;
-	setWaterBrand: (brand: string) => void;
-	navigation: RootNav;
-}) => {
+export const WaterSelectBrandScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const waterBrand = useSelector((s: State) => s.config.waterBrand) ?? "6";
+	const dispatch = useDispatch();
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
@@ -414,11 +398,11 @@ const WaterSelectBrandUI = ({
 						<TouchableOpacity
 							style={style.touchable}
 							onPress={() => {
-								setWaterBrand(
+								const brand =
 									Object.keys(waterBrandIdToName).find(
 										(k) => waterBrandIdToName[k] === brandName,
-									) ?? "6",
-								);
+									) ?? "6";
+								dispatch(configSet({key: "waterBrand", value: brand}));
 								navigation.pop();
 							}}>
 							<Text style={style.text}>{brandName}</Text>
@@ -432,16 +416,6 @@ const WaterSelectBrandUI = ({
 		</View>
 	);
 };
-
-export const WaterSelectBrandScreen = connect(
-	(state: State) => ({
-		waterBrand: state.config.waterBrand ?? "6",
-	}),
-	(dispatch) => ({
-		setWaterBrand: (brand: string) =>
-			dispatch(configSet({key: "waterBrand", value: brand})),
-	}),
-)(WaterSelectBrandUI);
 
 export const WaterSelectTicketNumberScreen = ({
 	navigation,

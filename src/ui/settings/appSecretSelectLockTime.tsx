@@ -1,24 +1,25 @@
 import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
 import {configSet} from "../../redux/slices/config";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
 
-const AppSecretSelectLockTimeUI = ({
+export const AppSecretSelectLockTimeScreen = ({
 	navigation,
-	appSecretLockMinutes,
-	setLockTime,
 }: {
 	navigation: RootNav;
-	appSecretLockMinutes: number | undefined;
-	setLockTime: (numMinutes: number) => void;
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const appSecretLockMinutes = useSelector(
+		(s: State) => s.config.appSecretLockMinutes,
+	);
+	const dispatch = useDispatch();
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
@@ -26,7 +27,7 @@ const AppSecretSelectLockTimeUI = ({
 				<TouchableOpacity
 					style={style.touchable}
 					onPress={() => {
-						setLockTime(0);
+						dispatch(configSet({key: "appSecretLockMinutes", value: 0}));
 						navigation.pop();
 					}}>
 					<Text style={style.text}>{getStr("instantly")}</Text>
@@ -39,7 +40,7 @@ const AppSecretSelectLockTimeUI = ({
 						<TouchableOpacity
 							style={style.touchable}
 							onPress={() => {
-								setLockTime(num);
+								dispatch(configSet({key: "appSecretLockMinutes", value: num}));
 								navigation.pop();
 							}}>
 							<Text style={style.text}>
@@ -55,13 +56,3 @@ const AppSecretSelectLockTimeUI = ({
 		</View>
 	);
 };
-
-export const AppSecretSelectLockTimeScreen = connect(
-	(state: State) => ({
-		...state.config,
-	}),
-	(dispatch) => ({
-		setLockTime: (numMinutes: number) =>
-			dispatch(configSet({key: "appSecretLockMinutes", value: numMinutes})),
-	}),
-)(AppSecretSelectLockTimeUI);

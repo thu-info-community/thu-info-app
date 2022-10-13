@@ -1,24 +1,18 @@
-import React from "react";
 import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
-import {connect} from "react-redux";
+import {useSelector} from "react-redux";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
 
-export const AccountUI = ({
-	userId,
-	appSecret,
-	navigation,
-}: {
-	userId: string;
-	appSecret: string | undefined;
-	navigation: RootNav;
-}) => {
+export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const userId = useSelector((s: State) => s.auth.userId);
+	const appSecret = useSelector((s: State) => s.credentials.appSecret);
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
@@ -53,8 +47,3 @@ export const AccountUI = ({
 		</View>
 	);
 };
-
-export const AccountScreen = connect((state: State) => ({
-	...state.auth,
-	...state.credentials,
-}))(AccountUI);

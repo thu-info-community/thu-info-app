@@ -7,16 +7,11 @@ import {helper, State} from "../../redux/store";
 import {saveRemoteImg} from "../../utils/saveImg";
 import {DormAuthError} from "thu-info-lib/dist/utils/error";
 import {RootNav} from "../../components/Root";
-import {connect} from "react-redux";
+import {useSelector} from "react-redux";
 
-const DormScoreUI = ({
-	navigation,
-	dormPassword,
-}: {
-	navigation: RootNav;
-	dormPassword: string;
-}) => {
+export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 	const [base64, setBase64] = useState<string>();
+	const dormPassword = useSelector((s: State) => s.credentials.dormPassword);
 	useEffect(() => {
 		helper
 			.getDormScore(dormPassword)
@@ -51,7 +46,3 @@ const DormScoreUI = ({
 		</View>
 	);
 };
-
-export const DormScoreScreen = connect((state: State) => ({
-	...state.credentials,
-}))(DormScoreUI);

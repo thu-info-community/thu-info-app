@@ -2,7 +2,7 @@
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import React, {useState} from "react";
 import {Choice, scheduleDelOrHide} from "src/redux/slices/schedule";
-import {store} from "src/redux/store";
+import {useDispatch} from "react-redux";
 import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";
 import {getStr} from "src/utils/i18n";
 import {useColorScheme} from "react-native";
@@ -80,6 +80,8 @@ export const ScheduleDetailScreen = ({
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	const dispatch = useDispatch();
+
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
 			return null;
@@ -98,7 +100,7 @@ export const ScheduleDetailScreen = ({
 			<TouchableOpacity
 				onPress={() => {
 					setDelPopupShow(false);
-					store.dispatch(
+					dispatch(
 						scheduleDelOrHide([
 							props.name,
 							{

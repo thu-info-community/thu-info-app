@@ -10,24 +10,24 @@ import {
 import {RootNav} from "../../components/Root";
 import React, {useEffect, useState} from "react";
 import IconRight from "../../assets/icons/IconRight";
-import {helper, State, store} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {LibBookRecord, Library} from "thu-info-lib/dist/models/home/library";
+import {Library} from "thu-info-lib/dist/models/home/library";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 import dayjs from "dayjs";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
-export const LibraryReservationCard = ({
-	activeLibBookRecords,
-}: {
-	activeLibBookRecords: LibBookRecord[];
-}) => {
+export const LibraryReservationCard = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+
+	const activeLibBookRecords =
+		useSelector((s: State) => s.reservation.activeLibBookRecords) ?? [];
+	const dispatch = useDispatch();
 
 	const transformedRecords = activeLibBookRecords
 		.map((e) => ({
@@ -97,7 +97,7 @@ export const LibraryReservationCard = ({
 															})
 															.then(helper.getBookingRecords)
 															.then((r) => {
-																store.dispatch(setActiveLibBookRecord(r));
+																dispatch(setActiveLibBookRecord(r));
 															});
 													},
 												},
@@ -129,13 +129,7 @@ export const LibraryReservationCard = ({
 	);
 };
 
-const LibraryUI = ({
-	navigation,
-	activeLibBookRecords,
-}: {
-	navigation: RootNav;
-	activeLibBookRecords: LibBookRecord[] | undefined;
-}) => {
+export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -218,15 +212,9 @@ const LibraryUI = ({
 						}}>
 						{getStr("alreadyReserved")}
 					</Text>
-					<LibraryReservationCard
-						activeLibBookRecords={activeLibBookRecords ?? []}
-					/>
+					<LibraryReservationCard />
 				</View>
 			</>
 		</ScrollView>
 	);
 };
-
-export const LibraryScreen = connect((state: State) => ({
-	...state.reservation,
-}))(LibraryUI);

@@ -1,9 +1,9 @@
 import React, {useLayoutEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {helper, State, store} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
@@ -11,21 +11,24 @@ import {configSet} from "../../redux/slices/config";
 import Snackbar from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 
-export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
+export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const {colors} = themes(themeName);
 
-	const [language, setLanguage] = useState(props.language);
+	const configLanguage = useSelector((s: State) => s.config.language);
+	const dispatch = useDispatch();
+
+	const [language, setLanguage] = useState(configLanguage);
 
 	useLayoutEffect(() => {
-		props.navigation.setOptions({
+		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity
 					style={{paddingHorizontal: 16, margin: 4}}
 					onPress={() => {
-						props.navigation.pop();
-						store.dispatch(configSet({key: "language", value: language}));
+						navigation.pop();
+						dispatch(configSet({key: "language", value: language}));
 						Snackbar.show({
 							text: getStr("restartToApply"),
 							duration: Snackbar.LENGTH_SHORT,
@@ -43,7 +46,7 @@ export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
 			),
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.navigation, language]);
+	}, [navigation, language, dispatch]);
 
 	return (
 		<View style={{flex: 1, padding: 12}}>
@@ -74,7 +77,3 @@ export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
 		</View>
 	);
 };
-
-export const LanguageScreen = connect((state: State) => ({
-	...state.config,
-}))(LanguageUI);

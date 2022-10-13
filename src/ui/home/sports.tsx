@@ -12,17 +12,16 @@ import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {getStr} from "../../utils/i18n";
-import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
-import {connect} from "react-redux";
+import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
 
-export const SportsReservationCard = ({
-	activeSportsReservationRecords,
-}: {
-	activeSportsReservationRecords: SportsReservationRecord[];
-}) => {
+export const SportsReservationCard = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+
+	const activeSportsReservationRecords =
+		useSelector((s: State) => s.reservation.activeSportsReservationRecords) ??
+		[];
 
 	const firstRecord = activeSportsReservationRecords[0];
 
@@ -63,13 +62,7 @@ export const SportsReservationCard = ({
 	);
 };
 
-const SportsUI = ({
-	navigation,
-	activeSportsReservationRecords,
-}: {
-	navigation: RootNav;
-	activeSportsReservationRecords: SportsReservationRecord[] | undefined;
-}) => {
+export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -119,14 +112,8 @@ const SportsUI = ({
 					}}>
 					{getStr("alreadyReserved")}
 				</Text>
-				<SportsReservationCard
-					activeSportsReservationRecords={activeSportsReservationRecords ?? []}
-				/>
+				<SportsReservationCard />
 			</View>
 		</ScrollView>
 	);
 };
-
-export const SportsScreen = connect((state: State) => ({
-	...state.reservation,
-}))(SportsUI);

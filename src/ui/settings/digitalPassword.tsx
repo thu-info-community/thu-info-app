@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -9,9 +9,9 @@ import {
 	Cursor,
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
-import {State, store} from "../../redux/store";
+import {State} from "../../redux/store";
 import {setAppSecret} from "../../redux/slices/credentials";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import ReactNativeBiometrics from "react-native-biometrics";
 import {configSet, setupAppSecret} from "../../redux/slices/config";
 
@@ -36,6 +36,7 @@ export const DigitalPasswordScreen = ({
 
 	const appSecret = useSelector((s: State) => s.credentials.appSecret);
 	const useBiometrics = useSelector((s: State) => s.config.useBiometrics);
+	const dispatch = useDispatch();
 
 	const title = getStr(
 		params.action === "new"
@@ -62,11 +63,9 @@ export const DigitalPasswordScreen = ({
 					if (success) {
 						if (navigation) {
 							navigation.replace(params.target);
-							store.dispatch(
-								configSet({key: "subFunctionUnlocked", value: true}),
-							);
+							dispatch(configSet({key: "subFunctionUnlocked", value: true}));
 						} else {
-							store.dispatch(configSet({key: "appLocked", value: false}));
+							dispatch(configSet({key: "appLocked", value: false}));
 						}
 					}
 				});
@@ -102,20 +101,20 @@ export const DigitalPasswordScreen = ({
 									} else if (params.action === "confirm") {
 										if (v === params.payload) {
 											navigation.pop();
-											store.dispatch(setAppSecret(v));
-											store.dispatch(setupAppSecret());
+											dispatch(setAppSecret(v));
+											dispatch(setupAppSecret());
 										}
 									} else if (params.action === "verify") {
 										if (appSecret === v) {
 											navigation.replace(params.target);
-											store.dispatch(
+											dispatch(
 												configSet({key: "subFunctionUnlocked", value: true}),
 											);
 										}
 									}
 								} else {
 									if (appSecret === v) {
-										store.dispatch(configSet({key: "appLocked", value: false}));
+										dispatch(configSet({key: "appLocked", value: false}));
 									}
 								}
 							}

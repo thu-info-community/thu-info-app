@@ -11,7 +11,7 @@ export interface ConfigState {
 	weekCount: number;
 	semesterId: string;
 	language: string;
-	darkMode: boolean;
+	darkMode: boolean | undefined;
 	newGPA: boolean;
 	bx: boolean;
 	reportHidden: string[];
