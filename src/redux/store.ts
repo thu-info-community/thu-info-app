@@ -160,14 +160,6 @@ const persistConfig = {
 	version: 5,
 	key: "root",
 	storage: AsyncStorage,
-	whitelist: [
-		"auth",
-		"schedule",
-		"config",
-		"credentials",
-		"top5",
-		"reservation",
-	],
 	transforms: [authTransform, configTransform],
 	migrate: (state: any) =>
 		Promise.resolve(
