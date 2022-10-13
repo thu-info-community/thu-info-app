@@ -39,7 +39,7 @@ const initialState: ConfigState = {
 	lastSelfVersion: 0,
 	firstDay: "2022-09-12",
 	weekCount: 18,
-	semesterId: "2021-2022-1",
+	semesterId: "2022-2023-1",
 	language: "auto",
 	darkMode: false,
 	newGPA: true,
