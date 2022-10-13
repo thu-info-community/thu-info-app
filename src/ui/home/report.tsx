@@ -518,7 +518,7 @@ export const ReportScreen = () => {
 												color: colors.fontB2,
 											}}>
 											{course.credit}
-											{" pts · "}
+											{" cr · "}
 											{gpaToStr(course.point, 1)}
 										</Text>
 									</View>
