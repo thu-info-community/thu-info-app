@@ -14,7 +14,7 @@ import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
-import {MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
+import {MOCK_DORM_SCORE_BASE64, MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
 import {DormAuthError, EleError} from "../utils/error";
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -42,7 +42,7 @@ export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<
             const url = WEB_VPN_ROOT_URL + chart.attr().src;
             return await uFetch(url);
         },
-        "",
+        MOCK_DORM_SCORE_BASE64,
     );
 
 export const getEleRechargePayCode = async (
