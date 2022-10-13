@@ -74,5 +74,8 @@ const getSecondary = (helper: InfoHelper) =>
 export const getSchedule = async (helper: InfoHelper) => {
     const calendarData = await getCalendar(helper);
     const scheduleList: Schedule[] = (await getPrimary(helper, calendarData)).concat(await getSecondary(helper));
-    return mergeSchedules(scheduleList);
+    return {
+        schedule: mergeSchedules(scheduleList),
+        calendar: calendarData,
+    };
 };
