@@ -8,7 +8,6 @@ import {
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
-import {setCalendarConfigAction} from "../../redux/actions/config";
 import {getStr} from "../../utils/i18n";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
@@ -39,11 +38,6 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(() => {
 				dispatch(doLoginAction({userId, password}));
 				navigation.pop();
-			})
-			.then(() => {
-				helper.getCalendar().then((c) => {
-					dispatch(setCalendarConfigAction(c));
-				});
 			})
 			.then(() => helper.switchLang(getStr("mark") === "CH" ? "zh" : "en"))
 			.catch(() => {

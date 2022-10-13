@@ -29,6 +29,7 @@ import IconMinus from "../../assets/icons/IconMinus";
 import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
 import Snackbar from "react-native-snackbar";
+import {setCalendarConfigAction} from "../../redux/actions/config";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -57,8 +58,11 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		setRefreshing(true);
 		helper
 			.getSchedule()
-			.then((schedule) => {
-				dispatch(scheduleFetchAction({schedule, semesterId}));
+			.then(({schedule, calendar}) => {
+				dispatch(setCalendarConfigAction(calendar));
+				dispatch(
+					scheduleFetchAction({schedule, semesterId: calendar.semesterId}),
+				);
 			})
 			.catch((e) => {
 				Snackbar.show({

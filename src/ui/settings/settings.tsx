@@ -11,10 +11,9 @@ import {
 	ScrollView,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
-import {NetworkRetry} from "../../components/easySnackbars";
 import {setDormPasswordAction} from "../../redux/actions/credentials";
 import {scheduleClearAction} from "../../redux/actions/schedule";
-import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
+import {configSet} from "../../redux/actions/config";
 import {doLogoutAction} from "../../redux/actions/auth";
 import {RoundedView} from "../../components/views";
 import themedStyles from "../../utils/themedStyles";
@@ -104,15 +103,15 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									await helper.logout();
 								} catch (e) {}
 								await helper.login({});
-								helper.getCalendar().then((c) => {
-									dispatch(setCalendarConfigAction(c));
-								});
 								Snackbar.show({
 									text: getStr("success"),
 									duration: Snackbar.LENGTH_SHORT,
 								});
-							} catch (e) {
-								NetworkRetry();
+							} catch (e: any) {
+								Snackbar.show({
+									text: getStr("networkRetry") + e?.message,
+									duration: Snackbar.LENGTH_SHORT,
+								});
 							}
 							setForceLoginDisabled(false);
 						}}

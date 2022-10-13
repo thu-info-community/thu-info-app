@@ -28,7 +28,7 @@ import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
-import {connect, useSelector} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 import {currState, helper, State, store} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
@@ -50,7 +50,7 @@ import IconCr from "../../assets/icons/IconCr";
 import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
-import {configSet, setCalendarConfigAction} from "../../redux/actions/config";
+import {configSet} from "../../redux/actions/config";
 import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
@@ -380,11 +380,7 @@ export const HomeScheduleSection = ({
 
 	const dayEn = ["", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
 
-	const [countdown, setCountdown] = React.useState<string[]>([]);
-
-	React.useEffect(() => {
-		helper.userId !== "" && helper.getCountdown().then(setCountdown);
-	}, []);
+	const [countdown] = React.useState<string[]>([]);
 
 	return (
 		<View style={style.SectionContainer}>
@@ -761,28 +757,24 @@ interface HomeProps {
 	activeSportsReservationRecords: SportsReservationRecord[] | undefined;
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
-	updateTop5: (payload: string) => void;
-	setActiveLibBookRecord: (payload: LibBookRecord[]) => void;
-	setActiveSportsReservationRecord: (
-		payload: SportsReservationRecord[],
-	) => void;
 }
 
 const HomeUI = (props: HomeProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	// @ts-ignore
-	const dark = useSelector((s) => s.config.darkMode);
+	const dispatch = useDispatch();
+	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
 
 	const disabledList: HomeFunction[] | undefined = useSelector(
-		// @ts-ignore
-		(state) => state.config.homeFunctionDisabled,
+		(state: State) => state.config.homeFunctionDisabled,
 	);
 	if (!disabledList) {
 		store.dispatch(configSet("homeFunctionDisabled", []));
 	}
-	const homeFunctions = getHomeFunctions(props.navigation, props.updateTop5);
+	const homeFunctions = getHomeFunctions(props.navigation, (func) =>
+		dispatch(top5UpdateAction(func)),
+	);
 	const top5 = props.top5Functions.map((x) =>
 		homeFunctions.find((y) => y.key === x),
 	);
@@ -826,19 +818,12 @@ const HomeUI = (props: HomeProps) => {
 	);
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			helper.userId !== "" &&
-				helper.getBookingRecords().then(props.setActiveLibBookRecord);
-			helper.userId !== "" &&
-				helper
-					.getSportsReservationRecords()
-					.then(props.setActiveSportsReservationRecord);
-			helper.userId !== "" &&
-				helper.getCalendar().then((c) => {
-					store.dispatch(setCalendarConfigAction(c));
-				});
-			// To avoid login hazard between getBookingRecords, getSportsReservationRecords, getCalendar and getCountdown
-		}, 3000);
+		helper.appStartUp().then(({bookingRecords, sportsReservationRecords}) => {
+			dispatch(setActiveLibBookRecordAction(bookingRecords));
+			dispatch(
+				setActiveSportsReservationRecordAction(sportsReservationRecords),
+			);
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -848,7 +833,7 @@ const HomeUI = (props: HomeProps) => {
 				backgroundColor: theme.colors.themeBackground,
 				marginTop: Platform.OS === "ios" ? 40 : 40,
 			}}
-			key={darkModeHook}>
+			key={String(darkModeHook)}>
 			<HomeFunctionSection title="recentlyUsedFunction">
 				{top5Filtered.length === 0 ? (
 					<View style={{flex: 1, marginTop: 32, alignItems: "center"}}>
@@ -879,20 +864,11 @@ const HomeUI = (props: HomeProps) => {
 	);
 };
 
-export const HomeScreen = connect(
-	(state: State) => ({
-		...state.top5,
-		...state.schedule,
-		...state.reservation,
-	}),
-	(dispatch) => ({
-		updateTop5: (payload: string) => dispatch(top5UpdateAction(payload)),
-		setActiveLibBookRecord: (payload: LibBookRecord[]) =>
-			dispatch(setActiveLibBookRecordAction(payload)),
-		setActiveSportsReservationRecord: (payload: SportsReservationRecord[]) =>
-			dispatch(setActiveSportsReservationRecordAction(payload)),
-	}),
-)(HomeUI);
+export const HomeScreen = connect((state: State) => ({
+	...state.top5,
+	...state.schedule,
+	...state.reservation,
+}))(HomeUI);
 
 const styles = themedStyles((theme) => ({
 	SectionContainer: {
