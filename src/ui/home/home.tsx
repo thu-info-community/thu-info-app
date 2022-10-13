@@ -28,8 +28,8 @@ import IconInvoice from "../../assets/icons/IconInvoice";
 import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
-import {connect, useDispatch, useSelector} from "react-redux";
-import {currState, helper, State, store} from "../../redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {currState, helper, State} from "../../redux/store";
 import {top5UpdateAction} from "../../redux/actions/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
@@ -39,7 +39,6 @@ import {
 import dayjs from "dayjs";
 import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
-import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
 import {LibraryReservationCard} from "./library";
 import {
 	setActiveLibBookRecordAction,
@@ -51,9 +50,9 @@ import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/actions/config";
-import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
+import {useNavigation} from "@react-navigation/native";
 
 const iconSize = 40;
 
@@ -162,15 +161,10 @@ interface ScheduleViewModel {
 	navProps: ScheduleDetailProps;
 }
 
-const HomeSchedule = ({
-	schedule,
-	navigation,
-}: {
-	schedule: ScheduleViewModel;
-	navigation: RootNav;
-}) => {
+const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const navigation = useNavigation<RootNav>();
 	return (
 		<TouchableOpacity
 			onPress={() => {
@@ -245,15 +239,13 @@ const HomeSchedule = ({
 	);
 };
 
-export const HomeReservationSection = ({
-	activeLibBookRecords,
-	activeSportsReservationRecords,
-}: {
-	activeLibBookRecords: LibBookRecord[];
-	activeSportsReservationRecords: SportsReservationRecord[];
-}) => {
+export const HomeReservationSection = () => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+
+	const r = useSelector((s: State) => s.reservation);
+	const activeLibBookRecords = r.activeLibBookRecords ?? [];
+	const activeSportsReservationRecords = r.activeSportsReservationRecords ?? [];
 
 	return (
 		<View style={style.SectionContainer}>
@@ -267,29 +259,14 @@ export const HomeReservationSection = ({
 	);
 };
 
-export const HomeScheduleSection = ({
-	baseSchedule,
-	shortenMap,
-	navigation,
-}: {
-	baseSchedule: Schedule[];
-	shortenMap: {[_: string]: string | undefined};
-	navigation: RootNav;
-}) => {
+export const HomeScheduleSection = () => {
+	const firstDay = useSelector((s: State) => s.config.firstDay);
+	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
+	const shortenMap = useSelector((s: State) => s.schedule.shortenMap);
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
-	const week = (() => {
-		const {firstDay, weekCount} = currState().config;
-		const weekNumber = Math.floor(now.diff(firstDay) / 604800000) + 1;
-		if (weekNumber > weekCount) {
-			return weekCount;
-		} else if (weekNumber < 1) {
-			return 1;
-		} else {
-			return weekNumber;
-		}
-	})();
+	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
 	const colorList: string[] = [
 		"#16A085",
 		"#27AE60",
@@ -429,9 +406,7 @@ export const HomeScheduleSection = ({
 						: `${dayEn[today]} ${now.month() + 1}/${now.date()}`}
 				</Text>
 				{todaySchedules.length > 0 ? (
-					todaySchedules.map((x) => (
-						<HomeSchedule key={x.name} schedule={x} navigation={navigation} />
-					))
+					todaySchedules.map((x) => <HomeSchedule key={x.name} schedule={x} />)
 				) : (
 					<Text style={{color: theme.colors.text, marginTop: 8}}>
 						{getStr("noScheduleToday")}
@@ -443,7 +418,7 @@ export const HomeScheduleSection = ({
 					</Text>
 				)}
 				{tomorrowSchedules.map((x) => (
-					<HomeSchedule key={x.name} schedule={x} navigation={navigation} />
+					<HomeSchedule key={x.name} schedule={x} />
 				))}
 			</View>
 		</View>
@@ -750,34 +725,24 @@ const getHomeFunctions = (
 	</HomeIcon>,
 ];
 
-interface HomeProps {
-	navigation: RootNav;
-	top5Functions: string[];
-	activeLibBookRecords: LibBookRecord[] | undefined;
-	activeSportsReservationRecords: SportsReservationRecord[] | undefined;
-	baseSchedule: Schedule[];
-	shortenMap: {[key: string]: string | undefined};
-}
-
-const HomeUI = (props: HomeProps) => {
+export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const dispatch = useDispatch();
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
 
+	const top5Functions = useSelector((s: State) => s.top5.top5Functions);
 	const disabledList: HomeFunction[] | undefined = useSelector(
 		(state: State) => state.config.homeFunctionDisabled,
 	);
 	if (!disabledList) {
-		store.dispatch(configSet("homeFunctionDisabled", []));
+		dispatch(configSet("homeFunctionDisabled", []));
 	}
-	const homeFunctions = getHomeFunctions(props.navigation, (func) =>
+	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5UpdateAction(func)),
 	);
-	const top5 = props.top5Functions.map((x) =>
-		homeFunctions.find((y) => y.key === x),
-	);
+	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
@@ -845,17 +810,8 @@ const HomeUI = (props: HomeProps) => {
 					top5Filtered
 				)}
 			</HomeFunctionSection>
-			<HomeReservationSection
-				activeLibBookRecords={props.activeLibBookRecords ?? []}
-				activeSportsReservationRecords={
-					props.activeSportsReservationRecords ?? []
-				}
-			/>
-			<HomeScheduleSection
-				baseSchedule={props.baseSchedule}
-				shortenMap={props.shortenMap}
-				navigation={props.navigation}
-			/>
+			<HomeReservationSection />
+			<HomeScheduleSection />
 			<HomeFunctionSection title="allFunction">
 				{needToShowFunctions}
 			</HomeFunctionSection>
@@ -863,12 +819,6 @@ const HomeUI = (props: HomeProps) => {
 		</ScrollView>
 	);
 };
-
-export const HomeScreen = connect((state: State) => ({
-	...state.top5,
-	...state.schedule,
-	...state.reservation,
-}))(HomeUI);
 
 const styles = themedStyles((theme) => ({
 	SectionContainer: {
