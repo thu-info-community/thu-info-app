@@ -1,8 +1,6 @@
-import {ActionType, createAction, createAsyncAction} from "typesafe-actions";
+import {ActionType, createAction} from "typesafe-actions";
 import {
-	SCHEDULE_FAILURE,
-	SCHEDULE_REQUEST,
-	SCHEDULE_SUCCESS,
+	SCHEDULE_FETCH,
 	SCHEDULE_ADD_CUSTOM,
 	SCHEDULE_REMOVE_HIDDEN_RULE,
 	SCHEDULE_DEL_OR_HIDE,
@@ -15,11 +13,10 @@ import {Choice} from "../reducers/schedule";
 import {Schedule, TimeSlice} from "thu-info-lib/dist/models/schedule/schedule";
 import {Schedules} from "../states/schedule";
 
-export const scheduleFetchAction = createAsyncAction(
-	SCHEDULE_REQUEST,
-	SCHEDULE_SUCCESS,
-	SCHEDULE_FAILURE,
-)<undefined, {schedule: Schedule[]; semesterId: string}, undefined>();
+export const scheduleFetchAction = createAction(SCHEDULE_FETCH)<{
+	schedule: Schedule[];
+	semesterId: string;
+}>();
 export const scheduleUpdateAliasAction = createAction(SCHEDULE_UPDATE_ALIAS)<
 	[string, string?]
 >();

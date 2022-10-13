@@ -1,15 +1,14 @@
 import {defaultSchedule, Schedules} from "../states/schedule";
 import {ScheduleAction} from "../actions/schedule";
 import {
-	SCHEDULE_FAILURE,
-	SCHEDULE_REQUEST,
-	SCHEDULE_SUCCESS,
 	SCHEDULE_ADD_CUSTOM,
-	SCHEDULE_DEL_OR_HIDE,
-	SCHEDULE_UPDATE_ALIAS,
-	SCHEDULE_REMOVE_HIDDEN_RULE,
-	SCHEDULE_UPDATE_LOCATION,
 	SCHEDULE_CLEAR,
+	SCHEDULE_DEL_OR_HIDE,
+	SCHEDULE_FETCH,
+	SCHEDULE_REMOVE_HIDDEN_RULE,
+	SCHEDULE_SYNC,
+	SCHEDULE_UPDATE_ALIAS,
+	SCHEDULE_UPDATE_LOCATION,
 } from "../constants";
 import {
 	delOrHide,
@@ -31,12 +30,7 @@ export const schedule = (
 	action: ScheduleAction,
 ): Schedules => {
 	switch (action.type) {
-		case SCHEDULE_REQUEST:
-			return {
-				...state,
-				refreshing: true,
-			};
-		case SCHEDULE_SUCCESS: {
+		case SCHEDULE_FETCH: {
 			let customList: Schedule[] = [];
 			let newScheduleList: Schedule[] = [];
 
@@ -68,15 +62,8 @@ export const schedule = (
 			return {
 				...state,
 				baseSchedule: customList.concat(newScheduleList),
-				cache: action.payload.semesterId,
-				refreshing: false,
 			};
 		}
-		case SCHEDULE_FAILURE:
-			return {
-				...state,
-				refreshing: false,
-			};
 		case SCHEDULE_UPDATE_ALIAS: {
 			const shortenMap = {...state.shortenMap};
 			shortenMap[action.payload[0]] = action.payload[1];
@@ -164,10 +151,9 @@ export const schedule = (
 				baseSchedule: state.baseSchedule.map((val) => scheduleDeepCopy(val)),
 			};
 		}
-		case "SCHEDULE_SYNC": {
+		case SCHEDULE_SYNC: {
 			return {
 				...action.payload,
-				refreshing: false,
 			};
 		}
 		case SCHEDULE_CLEAR:

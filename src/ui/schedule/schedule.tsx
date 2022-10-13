@@ -9,14 +9,13 @@ import {
 	Alert,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
-import {connect, useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
 	activeWeek,
-	Schedule,
 	ScheduleType,
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
-import {currState, helper, State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {scheduleFetchAction} from "../../redux/actions/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import dayjs from "dayjs";
@@ -29,6 +28,7 @@ import IconAdd from "../../assets/icons/IconAdd";
 import IconMinus from "../../assets/icons/IconMinus";
 import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
+import Snackbar from "react-native-snackbar";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -46,17 +46,30 @@ const examEndMap: {[key: string]: number} = {
 	"21:00": 13,
 };
 
-interface ScheduleProps {
-	readonly baseSchedule: Schedule[];
-	readonly cache: string;
-	readonly refreshing: boolean;
-	readonly shortenMap: {[key: string]: string | undefined};
-	getSchedule: () => void;
-	navigation: RootNav;
-}
+export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
+	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
+	const {firstDay, weekCount, semesterId} = useSelector((s: State) => s.config);
+	const dispatch = useDispatch();
 
-const ScheduleUI = (props: ScheduleProps) => {
-	const {firstDay, weekCount, semesterId} = currState().config;
+	const [refreshing, setRefreshing] = useState(false);
+
+	const getSchedule = () => {
+		setRefreshing(true);
+		helper
+			.getSchedule()
+			.then((schedule) => {
+				dispatch(scheduleFetchAction({schedule, semesterId}));
+			})
+			.catch((e) => {
+				Snackbar.show({
+					text:
+						typeof e.message === "string" ? e.message : getStr("networkRetry"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+			})
+			.then(() => setRefreshing(false));
+	};
+
 	const current = dayjs();
 	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
 	const nowWeek = (() => {
@@ -77,8 +90,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	// @ts-ignore
-	const dark = useSelector((s) => s.config.darkMode);
+	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
 
 	const windowWidth = Dimensions.get("window").width;
@@ -97,21 +109,11 @@ const ScheduleUI = (props: ScheduleProps) => {
 	];
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(props.getSchedule, []);
-
-	useEffect(() => {
-		if (currState().config.semesterId !== props.cache) {
-			console.log(
-				"Schedule: Corresponding cache not found. Auto fetch from server.",
-			);
-			props.getSchedule();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.cache]);
+	useEffect(getSchedule, []);
 
 	const allSchedule = () => {
 		let components: ReactElement[] = [];
-		props.baseSchedule
+		baseSchedule
 			.filter((val) => activeWeek(val.activeTime, week))
 			.forEach((val) => {
 				val.activeTime.base.forEach((slice) => {
@@ -122,7 +124,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 									dayOfWeek={slice.dayOfWeek}
 									begin={slice.begin}
 									end={slice.end}
-									name={(props.shortenMap[val.name] ?? val.name).substring(
+									name={(shortenMap[val.name] ?? val.name).substring(
 										val.type === ScheduleType.CUSTOM ? 6 : 0,
 									)}
 									location={val.location}
@@ -136,14 +138,14 @@ const ScheduleUI = (props: ScheduleProps) => {
 										]
 									}
 									onPress={() => {
-										props.navigation.navigate("ScheduleDetail", {
+										navigation.navigate("ScheduleDetail", {
 											name: val.name,
 											location: val.location,
 											week: week,
 											dayOfWeek: slice.dayOfWeek,
 											begin: slice.begin,
 											end: slice.end,
-											alias: props.shortenMap[val.name] ?? "",
+											alias: shortenMap[val.name] ?? "",
 											type: val.type,
 										});
 									}}
@@ -159,7 +161,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 								dayOfWeek={slice.dayOfWeek}
 								begin={examBeginMap[slice.begin]}
 								end={examEndMap[slice.end]}
-								name={(props.shortenMap[val.name] ?? val.name).substring(
+								name={(shortenMap[val.name] ?? val.name).substring(
 									val.type === ScheduleType.CUSTOM ? 6 : 0,
 								)}
 								location={val.location}
@@ -172,14 +174,14 @@ const ScheduleUI = (props: ScheduleProps) => {
 									]
 								}
 								onPress={() => {
-									props.navigation.navigate("ScheduleDetail", {
+									navigation.navigate("ScheduleDetail", {
 										name: val.name,
 										location: val.location,
 										week: week,
 										dayOfWeek: slice.dayOfWeek,
 										begin: slice.begin,
 										end: slice.end,
-										alias: props.shortenMap[val.name] ?? "",
+										alias: shortenMap[val.name] ?? "",
 										type: val.type,
 									});
 								}}
@@ -200,7 +202,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 					backgroundColor: theme.colors.contentBackground,
 					paddingTop: Platform.OS === "ios" ? 60 : 60,
 				}}
-				key={darkModeHook}>
+				key={String(darkModeHook)}>
 				<View
 					style={{
 						width: "100%",
@@ -298,7 +300,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										{
 											text: "Send",
 											onPress: () => {
-												props.navigation.navigate("ScheduleSync", {
+												navigation.navigate("ScheduleSync", {
 													isSending: true,
 												});
 											},
@@ -306,7 +308,7 @@ const ScheduleUI = (props: ScheduleProps) => {
 										{
 											text: "Receive",
 											onPress: () => {
-												props.navigation.navigate("ScheduleSync", {
+												navigation.navigate("ScheduleSync", {
 													isSending: false,
 												});
 											},
@@ -317,12 +319,12 @@ const ScheduleUI = (props: ScheduleProps) => {
 							<Text>Sync</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => props.navigation.navigate("ScheduleHidden")}>
+							onPress={() => navigation.navigate("ScheduleHidden")}>
 							<IconMinus width={24} height={24} />
 						</TouchableOpacity>
 						<View style={{width: 8}} />
 						<TouchableOpacity
-							onPress={() => props.navigation.navigate("ScheduleAdd")}>
+							onPress={() => navigation.navigate("ScheduleAdd")}>
 							<IconAdd width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -387,8 +389,8 @@ const ScheduleUI = (props: ScheduleProps) => {
 				style={{flex: 1, flexDirection: "column"}}
 				refreshControl={
 					<RefreshControl
-						refreshing={props.refreshing}
-						onRefresh={props.getSchedule}
+						refreshing={refreshing}
+						onRefresh={getSchedule}
 						colors={[theme.colors.accent]}
 					/>
 				}>
@@ -479,25 +481,3 @@ const ScheduleUI = (props: ScheduleProps) => {
 		</>
 	);
 };
-
-export const ScheduleScreen = connect(
-	(state: State) => ({
-		...state.schedule,
-	}),
-	(dispatch) => ({
-		getSchedule: () => {
-			dispatch(scheduleFetchAction.request());
-			helper
-				.getSchedule()
-				.then((res) =>
-					dispatch(
-						scheduleFetchAction.success({
-							schedule: res,
-							semesterId: currState().config.semesterId,
-						}),
-					),
-				)
-				.catch(() => dispatch(scheduleFetchAction.failure()));
-		},
-	}),
-)(ScheduleUI);
