@@ -41,17 +41,19 @@ helper.clearCookieHandler = async () => {
 
 AppState.addEventListener("change", (state) => {
 	if (state === "active") {
+		if (!persistor.getState().bootstrapped) {
+			return;
+		}
 		const s = currState();
 		const currTime = Date.now();
 		const lastTime = s.config.exitTimestamp ?? 0;
 		const numMinutes = (currTime - lastTime) / 1000 / 60;
-		if (
-			s.config.verifyPasswordBeforeEnterApp &&
-			numMinutes > (s.config.appSecretLockMinutes ?? 0)
-		) {
-			store.dispatch(configSet({key: "appLocked", value: true}));
+		if (numMinutes > (s.config.appSecretLockMinutes ?? 0)) {
+			if (s.config.verifyPasswordBeforeEnterApp) {
+				store.dispatch(configSet({key: "appLocked", value: true}));
+			}
+			store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 		}
-		store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 	} else {
 		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));
 	}
@@ -104,11 +106,20 @@ const authTransform = createTransform(
 );
 
 const configTransform = createTransform(
-	(c: ConfigState) => ({
-		...c,
-		appLocked: c.verifyPasswordBeforeEnterApp,
-	}),
 	undefined,
+	(c: ConfigState) => {
+		const outState = {...c};
+		const currTime = Date.now();
+		const lastTime = c.exitTimestamp ?? 0;
+		const numMinutes = (currTime - lastTime) / 1000 / 60;
+		if (numMinutes > (c.appSecretLockMinutes ?? 0)) {
+			if (c.verifyPasswordBeforeEnterApp) {
+				outState.appLocked = true;
+			}
+			outState.subFunctionUnlocked = false;
+		}
+		return outState;
+	},
 	{
 		whitelist: ["config"],
 	},
