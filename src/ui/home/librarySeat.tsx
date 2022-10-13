@@ -7,7 +7,7 @@ import {helper, store} from "../../redux/store";
 import React from "react";
 import {Text, View} from "react-native";
 import {getSocketsStatusBySectionId} from "../../utils/webApi";
-import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
@@ -48,7 +48,7 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 									});
 									refresh();
 									helper.getBookingRecords().then((r) => {
-										store.dispatch(setActiveLibBookRecordAction(r));
+										store.dispatch(setActiveLibBookRecord(r));
 									});
 								})
 								.catch(() =>

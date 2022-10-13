@@ -1,8 +1,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import React, {useState} from "react";
-import {Choice} from "src/redux/reducers/schedule";
-import {scheduleDelOrHideAction} from "../../redux/actions/schedule";
+import {Choice, scheduleDelOrHide} from "src/redux/slices/schedule";
 import {store} from "src/redux/store";
 import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";
 import {getStr} from "src/utils/i18n";
@@ -100,7 +99,7 @@ export const ScheduleDetailScreen = ({
 				onPress={() => {
 					setDelPopupShow(false);
 					store.dispatch(
-						scheduleDelOrHideAction([
+						scheduleDelOrHide([
 							props.name,
 							{
 								activeWeeks: [props.week],

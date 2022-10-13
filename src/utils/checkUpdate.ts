@@ -2,7 +2,7 @@ import {getBroadcastData, getUpdateInfo} from "../network/update";
 import {currState, store} from "../redux/store";
 import {Alert, Linking, Platform} from "react-native";
 import {getStr} from "./i18n";
-import {configSet} from "../redux/actions/config";
+import {configSet} from "../redux/slices/config";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 import {gte, lt} from "semver";
@@ -29,7 +29,10 @@ export const checkUpdate = (force: boolean = false) => {
 							text: getStr("ignoreThisVersion"),
 							onPress: () =>
 								store.dispatch(
-									configSet("doNotRemindSemver", r[0].versionName),
+									configSet({
+										key: "doNotRemindSemver",
+										value: r[0].versionName,
+									}),
 								),
 						},
 						{text: getStr("dismiss")},
@@ -73,7 +76,9 @@ export const checkBroadcast = () => {
 					{
 						text: getStr("confirm"),
 						onPress: () =>
-							store.dispatch(configSet("lastBroadcast", r[0].createdAt)),
+							store.dispatch(
+								configSet({key: "lastBroadcast", value: r[0].createdAt}),
+							),
 					},
 				],
 				{cancelable: true},

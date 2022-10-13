@@ -30,7 +30,7 @@ import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
-import {top5UpdateAction} from "../../redux/actions/top5";
+import {top5Update} from "../../redux/slices/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
 	Schedule,
@@ -41,15 +41,15 @@ import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
 import {LibraryReservationCard} from "./library";
 import {
-	setActiveLibBookRecordAction,
-	setActiveSportsReservationRecordAction,
-} from "../../redux/actions/reservation";
+	setActiveLibBookRecord,
+	setActiveSportsReservationRecord,
+} from "../../redux/slices/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
 import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
@@ -737,10 +737,10 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		(state: State) => state.config.homeFunctionDisabled,
 	);
 	if (!disabledList) {
-		dispatch(configSet("homeFunctionDisabled", []));
+		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
 	}
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
-		dispatch(top5UpdateAction(func)),
+		dispatch(top5Update(func)),
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
@@ -784,10 +784,8 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	React.useEffect(() => {
 		helper.appStartUp().then(({bookingRecords, sportsReservationRecords}) => {
-			dispatch(setActiveLibBookRecordAction(bookingRecords));
-			dispatch(
-				setActiveSportsReservationRecordAction(sportsReservationRecords),
-			);
+			dispatch(setActiveLibBookRecord(bookingRecords));
+			dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

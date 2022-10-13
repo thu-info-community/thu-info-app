@@ -17,7 +17,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {LibBookRecord, Library} from "thu-info-lib/dist/models/home/library";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
-import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 import dayjs from "dayjs";
 import {connect} from "react-redux";
 
@@ -97,7 +97,7 @@ export const LibraryReservationCard = ({
 															})
 															.then(helper.getBookingRecords)
 															.then((r) => {
-																store.dispatch(setActiveLibBookRecordAction(r));
+																store.dispatch(setActiveLibBookRecord(r));
 															});
 													},
 												},

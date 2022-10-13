@@ -17,7 +17,7 @@ import IconPerson from "../../assets/icons/IconPerson";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
-import {doLoginAction} from "../../redux/actions/auth";
+import {login} from "../../redux/slices/auth";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -36,7 +36,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		helper
 			.login({userId, password})
 			.then(() => {
-				dispatch(doLoginAction({userId, password}));
+				dispatch(login({userId, password}));
 				navigation.pop();
 			})
 			.then(() => helper.switchLang(getStr("mark") === "CH" ? "zh" : "en"))

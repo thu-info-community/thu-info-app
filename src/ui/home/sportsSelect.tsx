@@ -21,7 +21,7 @@ import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
-import {setActiveSportsReservationRecordAction} from "../../redux/actions/reservation";
+import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
 import {uFetch} from "thu-info-lib/dist/utils/network";
 import {useDispatch, useSelector} from "react-redux";
 
@@ -379,9 +379,7 @@ export const SportsSelectScreen = ({
 									});
 									helper
 										.getSportsReservationRecords()
-										.then((r) =>
-											dispatch(setActiveSportsReservationRecordAction(r)),
-										);
+										.then((r) => dispatch(setActiveSportsReservationRecord(r)));
 								})
 								.catch((e) => {
 									Snackbar.show({

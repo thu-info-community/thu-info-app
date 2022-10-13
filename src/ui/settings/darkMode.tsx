@@ -6,7 +6,7 @@ import {RoundedView} from "../../components/views";
 import {connect} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 
 export const DarkModeUI = ({
 	darkMode,
@@ -48,6 +48,7 @@ export const DarkModeScreen = connect(
 		...state.config,
 	}),
 	(dispatch) => ({
-		setDarkMode: (v: boolean) => dispatch(configSet("darkMode", v)),
+		setDarkMode: (value: boolean) =>
+			dispatch(configSet({key: "darkMode", value})),
 	}),
 )(DarkModeUI);

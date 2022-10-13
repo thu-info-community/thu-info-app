@@ -15,12 +15,12 @@ import {
 	ScheduleType,
 	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {
-	scheduleDelOrHideAction,
-	scheduleRemoveHiddenRuleAction,
-} from "../../redux/actions/schedule";
 import {getStr} from "../../utils/i18n";
-import {Choice} from "src/redux/reducers/schedule";
+import {
+	Choice,
+	scheduleDelOrHide,
+	scheduleRemoveHiddenRule,
+} from "src/redux/slices/schedule";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
@@ -218,9 +218,9 @@ export const ScheduleHiddenScreen = connect(
 	}),
 	(dispatch) => ({
 		removeRule: (name: string, rule: TimeSlice) =>
-			dispatch(scheduleRemoveHiddenRuleAction([name, rule])),
+			dispatch(scheduleRemoveHiddenRule([name, rule])),
 		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
-			dispatch(scheduleDelOrHideAction([title, block, choice]));
+			dispatch(scheduleDelOrHide([title, block, choice]));
 		},
 	}),
 )(ScheduleHiddenUI);

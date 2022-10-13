@@ -4,7 +4,7 @@ import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {connect} from "react-redux";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
 
@@ -62,6 +62,6 @@ export const AppSecretSelectLockTimeScreen = connect(
 	}),
 	(dispatch) => ({
 		setLockTime: (numMinutes: number) =>
-			dispatch(configSet("appSecretLockMinutes", numMinutes)),
+			dispatch(configSet({key: "appSecretLockMinutes", value: numMinutes})),
 	}),
 )(AppSecretSelectLockTimeUI);

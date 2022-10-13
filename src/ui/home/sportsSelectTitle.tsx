@@ -7,7 +7,7 @@ import {VALID_RECEIPT_TITLES} from "thu-info-lib/dist/lib/sports";
 import {getStr} from "../../utils/i18n";
 import {useDispatch, useSelector} from "react-redux";
 import {State} from "../../redux/store";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 
 export const SportsSelectTitleScreen = ({
 	route: {params},
@@ -31,7 +31,7 @@ export const SportsSelectTitleScreen = ({
 						<TouchableOpacity
 							style={style.touchable}
 							onPress={() => {
-								dispatch(configSet("receiptTitle", title));
+								dispatch(configSet({key: "receiptTitle", value: title}));
 								navigation.navigate("SportsSelect", {
 									...params,
 									receiptTitle: title,

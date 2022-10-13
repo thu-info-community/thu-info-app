@@ -2,7 +2,7 @@ import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {ScheduleSyncReceiving, ScheduleSyncSending} from "../../utils/webApi";
 import {currState, store} from "../../redux/store";
 import React, {useRef, useState} from "react";
-import {scheduleSyncAction} from "../../redux/actions/schedule";
+import {scheduleSync} from "../../redux/slices/schedule";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themedStyles from "../../utils/themedStyles";
 import {getStr} from "../../utils/i18n";
@@ -297,9 +297,7 @@ export function ScheduleSyncScreen(props: any) {
 													case "receive":
 														await currentClient.confirmAndReceive(
 															(json: string) => {
-																store.dispatch(
-																	scheduleSyncAction(JSON.parse(json)),
-																);
+																store.dispatch(scheduleSync(JSON.parse(json)));
 																setState({state: "done"});
 															},
 														);

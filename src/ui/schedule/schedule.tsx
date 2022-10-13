@@ -16,7 +16,7 @@ import {
 } from "thu-info-lib/dist/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";
-import {scheduleFetchAction} from "../../redux/actions/schedule";
+import {scheduleFetch} from "../../redux/slices/schedule";
 import {ScheduleBlock} from "src/components/schedule/schedule";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
@@ -29,7 +29,7 @@ import IconMinus from "../../assets/icons/IconMinus";
 import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
 import Snackbar from "react-native-snackbar";
-import {setCalendarConfigAction} from "../../redux/actions/config";
+import {setCalendarConfig} from "../../redux/slices/config";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -59,10 +59,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		helper
 			.getSchedule()
 			.then(({schedule, calendar}) => {
-				dispatch(setCalendarConfigAction(calendar));
-				dispatch(
-					scheduleFetchAction({schedule, semesterId: calendar.semesterId}),
-				);
+				dispatch(setCalendarConfig(calendar));
+				dispatch(scheduleFetch({schedule, semesterId: calendar.semesterId}));
 			})
 			.catch((e) => {
 				Snackbar.show({

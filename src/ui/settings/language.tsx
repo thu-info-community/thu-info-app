@@ -7,7 +7,7 @@ import {connect} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import Snackbar from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 
@@ -25,7 +25,7 @@ export const LanguageUI = (props: {language: string; navigation: RootNav}) => {
 					style={{paddingHorizontal: 16, margin: 4}}
 					onPress={() => {
 						props.navigation.pop();
-						store.dispatch(configSet("language", language));
+						store.dispatch(configSet({key: "language", value: language}));
 						Snackbar.show({
 							text: getStr("restartToApply"),
 							duration: Snackbar.LENGTH_SHORT,

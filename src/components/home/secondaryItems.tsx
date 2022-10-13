@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, {ReactElement} from "react";
 import {store} from "../../redux/store";
-import {top5UpdateAction} from "../../redux/actions/top5";
+import {top5Update} from "../../redux/slices/top5";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../views";
@@ -33,7 +33,7 @@ export const SecondaryItem = ({
 			style={style.SecondaryItemButton}
 			onPress={() => {
 				onPress();
-				store.dispatch(top5UpdateAction(destKey));
+				store.dispatch(top5Update(destKey));
 			}}>
 			<RoundedView
 				style={[style.SecondaryItemView, {width: viewSize, height: viewSize}]}>

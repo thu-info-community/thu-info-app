@@ -1,6 +1,6 @@
 import {TextInput, View, Text, TouchableOpacity} from "react-native";
 import React from "react";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
@@ -8,28 +8,23 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import IconLock from "../../assets/icons/IconLock";
 import IconPerson from "../../assets/icons/IconPerson";
-import {setDormPasswordAction} from "../../redux/actions/credentials";
+import {setDormPassword} from "../../redux/slices/credentials";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
 import {DormAuthError} from "thu-info-lib/dist/utils/error";
 import {RoundedView} from "../../components/views";
 
-const MyhomeLoginUI = ({
-	userId,
-	navigation,
-	setDormPassword,
-}: {
-	userId: string;
-	navigation: RootNav;
-	setDormPassword: (password: string) => any;
-}) => {
+export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const [password, setPassword] = React.useState("");
 	const [processing, setProcessing] = React.useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
+
+	const userId = useSelector((s: State) => s.auth.userId);
+	const dispatch = useDispatch();
 
 	return (
 		<View style={style.container}>
@@ -67,7 +62,7 @@ const MyhomeLoginUI = ({
 						.getDormScore(password)
 						.then(() => {
 							navigation.pop();
-							setDormPassword(password);
+							dispatch(setDormPassword(password));
 						})
 						.catch((e) => {
 							if (e instanceof DormAuthError) {
@@ -149,11 +144,3 @@ export const styles = themedStyles((theme) => {
 		},
 	};
 });
-
-export const MyhomeLoginScreen = connect(
-	(state: State) => state.auth,
-	(dispatch) => ({
-		setDormPassword: (password: string) =>
-			dispatch(setDormPasswordAction(password)),
-	}),
-)(MyhomeLoginUI);

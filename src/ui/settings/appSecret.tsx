@@ -8,47 +8,35 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
 import {RootNav} from "../../components/Root";
-import {setAppSecretAction} from "../../redux/actions/credentials";
+import {setAppSecret} from "../../redux/slices/credentials";
 import IconRight from "../../assets/icons/IconRight";
-import {clearAppSecretAction, configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import ReactNativeBiometrics from "react-native-biometrics";
 import Snackbar from "react-native-snackbar";
+import {clearAppSecret} from "../../redux/slices/config";
 
 const rnBiometrics = new ReactNativeBiometrics();
 
-const AppSecretUI = ({
-	navigation,
-	appSecret,
-	clearAppSecret,
-	appSecretLockMinutes,
-	verifyPasswordBeforeEnterApp,
-	verifyPasswordBeforeEnterReport,
-	verifyPasswordBeforeEnterFinance,
-	verifyPasswordBeforeEnterPhysicalExam,
-	useBiometrics,
-	setUseBiometrics,
-	enableVerificationBeforeEnterApp,
-}: {
-	navigation: RootNav;
-	appSecret: string | undefined;
-	clearAppSecret: () => void;
-	appSecretLockMinutes: number | undefined;
-	verifyPasswordBeforeEnterApp: boolean | undefined;
-	verifyPasswordBeforeEnterReport: boolean | undefined;
-	verifyPasswordBeforeEnterFinance: boolean | undefined;
-	verifyPasswordBeforeEnterPhysicalExam: boolean | undefined;
-	useBiometrics: boolean | undefined;
-	setUseBiometrics: (value: boolean) => void;
-	enableVerificationBeforeEnterApp: (value: boolean) => void;
-}) => {
+export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const {colors} = themes(themeName);
+
+	const appSecret = useSelector((s: State) => s.credentials.appSecret);
+	const {
+		appSecretLockMinutes,
+		verifyPasswordBeforeEnterApp,
+		verifyPasswordBeforeEnterReport,
+		verifyPasswordBeforeEnterFinance,
+		verifyPasswordBeforeEnterPhysicalExam,
+		useBiometrics,
+	} = useSelector((s: State) => s.config);
+	const dispatch = useDispatch();
 
 	const protectedStrings = [];
 	if (verifyPasswordBeforeEnterReport) {
@@ -92,7 +80,13 @@ const AppSecretUI = ({
 								getStr("confirmDisableAppSecretMessage"),
 								[
 									{text: getStr("cancel")},
-									{text: getStr("confirm"), onPress: clearAppSecret},
+									{
+										text: getStr("confirm"),
+										onPress: () => {
+											dispatch(setAppSecret(undefined));
+											dispatch(clearAppSecret());
+										},
+									},
 								],
 								{cancelable: true},
 							);
@@ -136,7 +130,29 @@ const AppSecretUI = ({
 								trackColor={{true: colors.themePurple}}
 								value={verifyPasswordBeforeEnterApp === true}
 								onValueChange={(value) => {
-									enableVerificationBeforeEnterApp(value);
+									dispatch(
+										configSet({key: "verifyPasswordBeforeEnterApp", value}),
+									);
+									if (value) {
+										dispatch(
+											configSet({
+												key: "verifyPasswordBeforeEnterReport",
+												value: false,
+											}),
+										);
+										dispatch(
+											configSet({
+												key: "verifyPasswordBeforeEnterPhysicalExam",
+												value: false,
+											}),
+										);
+										dispatch(
+											configSet({
+												key: "verifyPasswordBeforeEnterFinance",
+												value: false,
+											}),
+										);
+									}
 								}}
 							/>
 						</View>
@@ -175,7 +191,9 @@ const AppSecretUI = ({
 											.simplePrompt({promptMessage: getStr("useBiometrics")})
 											.then(({success}) => {
 												if (success) {
-													setUseBiometrics(true);
+													dispatch(
+														configSet({key: "useBiometrics", value: true}),
+													);
 												}
 											})
 											.catch((e) => {
@@ -185,7 +203,7 @@ const AppSecretUI = ({
 												});
 											});
 									} else {
-										setUseBiometrics(false);
+										dispatch(configSet({key: "useBiometrics", value: false}));
 									}
 								}}
 							/>
@@ -196,24 +214,3 @@ const AppSecretUI = ({
 		</View>
 	);
 };
-
-export const AppSecretScreen = connect(
-	(state: State) => ({
-		...state.credentials,
-		...state.config,
-	}),
-	(dispatch) => ({
-		clearAppSecret: () => {
-			dispatch(setAppSecretAction(undefined));
-			dispatch(clearAppSecretAction());
-		},
-		setUseBiometrics: (value: boolean) =>
-			dispatch(configSet("useBiometrics", value)),
-		enableVerificationBeforeEnterApp: (value: boolean) => {
-			dispatch(configSet("verifyPasswordBeforeEnterApp", value));
-			if (value) {
-				dispatch(configSet("verifyPasswordBeforeEnterReport", false));
-			}
-		},
-	}),
-)(AppSecretUI);

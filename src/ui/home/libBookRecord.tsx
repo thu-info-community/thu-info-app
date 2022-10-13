@@ -4,12 +4,12 @@ import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshL
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper, store} from "../../redux/store";
-import {setActiveLibBookRecordAction} from "../../redux/actions/reservation";
+import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 
 export const LibBookRecordScreen = roundedRefreshListScreen(
 	() =>
 		helper.getBookingRecords().then((r) => {
-			store.dispatch(setActiveLibBookRecordAction(r));
+			store.dispatch(setActiveLibBookRecord(r));
 			return r;
 		}),
 	({pos, time, status, delId}, refresh, _, {colors}, index, total) => {

@@ -1,7 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit";
-import {Auth} from "./states/auth";
 import {combineReducers} from "redux";
-import {auth} from "./reducers/auth";
+import {authReducer, AuthState} from "./slices/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	persistStore,
@@ -13,28 +12,26 @@ import {
 	REGISTER,
 	REHYDRATE,
 } from "redux-persist";
-import {Schedules} from "./states/schedule";
-import {schedule} from "./reducers/schedule";
-import {Config} from "./states/config";
-import {config} from "./reducers/config";
+import {scheduleReducer, ScheduleState} from "./slices/schedule";
 import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
-import {credentials} from "./reducers/credentials";
-import {Credentials} from "./states/credentials";
+import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "thu-info-lib";
 import CookieManager from "@react-native-cookies/cookies";
 import {
 	Schedule,
 	scheduleTimeAdd,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {defaultTop5, Top5} from "./states/top5";
-import {top5} from "./reducers/top5";
-import {reservation} from "./reducers/reservation";
+import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
+import {
+	defaultReservation,
+	reservationReducer,
+	ReservationState,
+} from "./slices/reservation";
 import Snackbar from "react-native-snackbar";
-import {defaultReservation, Reservation} from "./states/reservation";
 import {AppState} from "react-native";
-import {configSet} from "./actions/config";
 import {createNavigationContainerRef} from "@react-navigation/native";
+import {configSet, configReducer, ConfigState} from "./slices/config";
 
 export const helper = new InfoHelper();
 
@@ -52,23 +49,23 @@ AppState.addEventListener("change", (state) => {
 			s.config.verifyPasswordBeforeEnterApp &&
 			numMinutes > (s.config.appSecretLockMinutes ?? 0)
 		) {
-			store.dispatch(configSet("appLocked", true));
+			store.dispatch(configSet({key: "appLocked", value: true}));
 		}
-		store.dispatch(configSet("subFunctionUnlocked", false));
+		store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 	} else {
-		store.dispatch(configSet("exitTimestamp", Date.now()));
+		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));
 	}
 });
 
 const KeychainStorage = createKeychainStorage();
 
 export interface State {
-	auth: Auth;
-	schedule: Schedules;
-	config: Config;
-	credentials: Credentials;
-	top5: Top5;
-	reservation: Reservation;
+	auth: AuthState;
+	schedule: ScheduleState;
+	config: ConfigState;
+	credentials: CredentialsState;
+	top5: Top5State;
+	reservation: ReservationState;
 }
 
 const rootReducer = combineReducers({
@@ -78,25 +75,25 @@ const rootReducer = combineReducers({
 			storage: KeychainStorage,
 			key: "auth",
 		},
-		auth,
+		authReducer,
 	),
-	schedule,
-	config,
+	schedule: scheduleReducer,
+	config: configReducer,
 	credentials: persistReducer(
 		{
 			keyPrefix: "com.unidy2002.thuinfo.persist.credentials.",
 			storage: KeychainStorage,
 			key: "credentials",
 		},
-		credentials,
+		credentialsReducer,
 	),
-	top5,
-	reservation,
+	top5: top5Reducer,
+	reservation: reservationReducer,
 });
 
 const authTransform = createTransform(
 	undefined,
-	(a: Auth) => {
+	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
 		return a;
@@ -107,7 +104,7 @@ const authTransform = createTransform(
 );
 
 const configTransform = createTransform(
-	(c: Config) => ({
+	(c: ConfigState) => ({
 		...c,
 		appLocked: c.verifyPasswordBeforeEnterApp,
 	}),

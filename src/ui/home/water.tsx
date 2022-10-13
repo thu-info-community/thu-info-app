@@ -19,7 +19,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
 import {connect} from "react-redux";
 import {helper, State} from "../../redux/store";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {
@@ -388,7 +388,8 @@ export const WaterScreen = connect(
 		waterBrand: state.config.waterBrand ?? "6",
 	}),
 	(dispatch) => ({
-		setWaterId: (id: string) => dispatch(configSet("waterId", id)),
+		setWaterId: (id: string) =>
+			dispatch(configSet({key: "waterId", value: id})),
 	}),
 )(WaterUI);
 
@@ -437,7 +438,8 @@ export const WaterSelectBrandScreen = connect(
 		waterBrand: state.config.waterBrand ?? "6",
 	}),
 	(dispatch) => ({
-		setWaterBrand: (brand: string) => dispatch(configSet("waterBrand", brand)),
+		setWaterBrand: (brand: string) =>
+			dispatch(configSet({key: "waterBrand", value: brand})),
 	}),
 )(WaterSelectBrandUI);
 

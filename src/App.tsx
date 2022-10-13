@@ -7,7 +7,7 @@ import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
 import {Alert, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
-import {configSet} from "./redux/actions/config";
+import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 
@@ -30,7 +30,8 @@ const RootComponent = () => {
 				[
 					{
 						text: "确定",
-						onPress: () => store.dispatch(configSet("beta3Notified", true)),
+						onPress: () =>
+							store.dispatch(configSet({key: "beta3Notified", value: true})),
 					},
 				],
 				{cancelable: false},

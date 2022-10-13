@@ -19,14 +19,14 @@ import {
 	ScheduleType,
 	TimeSlice,
 } from "thu-info-lib/dist/models/schedule/schedule";
-import {
-	scheduleAddCustomAction,
-	scheduleDelOrHideAction,
-	scheduleUpdateAliasAction,
-	scheduleUpdateLocationAction,
-} from "../../redux/actions/schedule";
 import {currState, State, store} from "../../redux/store";
-import {Choice} from "src/redux/reducers/schedule";
+import {
+	Choice,
+	scheduleAddCustom,
+	scheduleDelOrHide,
+	scheduleUpdateAlias,
+	scheduleUpdateLocation,
+} from "src/redux/slices/schedule";
 import {useColorScheme} from "react-native";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
@@ -120,19 +120,15 @@ const ScheduleAddUI = ({
 						if (params !== undefined) {
 							// 代表是在修改现有计划
 							if (title.length === 0) {
-								store.dispatch(
-									scheduleUpdateAliasAction([params.name, undefined]),
-								);
+								store.dispatch(scheduleUpdateAlias([params.name, undefined]));
 							} else {
 								const res: string =
 									(params.type === ScheduleType.CUSTOM
 										? params.name.substring(0, 6)
 										: "") + title;
-								store.dispatch(scheduleUpdateAliasAction([params.name, res]));
+								store.dispatch(scheduleUpdateAlias([params.name, res]));
 							}
-							store.dispatch(
-								scheduleUpdateLocationAction([params.name, locale]),
-							);
+							store.dispatch(scheduleUpdateLocation([params.name, locale]));
 							// TODO: 要允许修改计划的时间
 							navigation.pop();
 							return;
@@ -584,10 +580,9 @@ export const ScheduleAddScreen = connect(
 		customCnt: state.schedule.customCnt,
 	}),
 	(dispatch) => ({
-		addCustom: (payload: Schedule) =>
-			dispatch(scheduleAddCustomAction(payload)),
+		addCustom: (payload: Schedule) => dispatch(scheduleAddCustom(payload)),
 		delOrHide: (title: string, block: TimeSlice, choice: Choice) => {
-			dispatch(scheduleDelOrHideAction([title, block, choice]));
+			dispatch(scheduleDelOrHide([title, block, choice]));
 		},
 	}),
 )(ScheduleAddUI);

@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 
 const AppSecretCustomizeUI = ({
 	verifyPasswordBeforeEnterReport,
@@ -32,7 +32,7 @@ const AppSecretCustomizeUI = ({
 						value={verifyPasswordBeforeEnterReport === true}
 						onValueChange={(value) => {
 							store.dispatch(
-								configSet("verifyPasswordBeforeEnterReport", value),
+								configSet({key: "verifyPasswordBeforeEnterReport", value}),
 							);
 						}}
 					/>
@@ -46,7 +46,7 @@ const AppSecretCustomizeUI = ({
 						value={verifyPasswordBeforeEnterFinance === true}
 						onValueChange={(value) => {
 							store.dispatch(
-								configSet("verifyPasswordBeforeEnterFinance", value),
+								configSet({key: "verifyPasswordBeforeEnterFinance", value}),
 							);
 						}}
 					/>
@@ -60,7 +60,10 @@ const AppSecretCustomizeUI = ({
 						value={verifyPasswordBeforeEnterPhysicalExam === true}
 						onValueChange={(value) => {
 							store.dispatch(
-								configSet("verifyPasswordBeforeEnterPhysicalExam", value),
+								configSet({
+									key: "verifyPasswordBeforeEnterPhysicalExam",
+									value,
+								}),
 							);
 						}}
 					/>

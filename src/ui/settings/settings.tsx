@@ -11,10 +11,9 @@ import {
 	ScrollView,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
-import {setDormPasswordAction} from "../../redux/actions/credentials";
-import {scheduleClearAction} from "../../redux/actions/schedule";
-import {configSet} from "../../redux/actions/config";
-import {doLogoutAction} from "../../redux/actions/auth";
+import {setDormPassword} from "../../redux/slices/credentials";
+import {scheduleClear} from "../../redux/slices/schedule";
+import {logout} from "../../redux/slices/auth";
 import {RoundedView} from "../../components/views";
 import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
@@ -22,9 +21,9 @@ import VersionNumber from "react-native-version-number";
 import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";
 import {
-	setActiveLibBookRecordAction,
-	setActiveSportsReservationRecordAction,
-} from "../../redux/actions/reservation";
+	setActiveLibBookRecord,
+	setActiveSportsReservationRecord,
+} from "../../redux/slices/reservation";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -135,7 +134,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										helper
 											.logout()
 											.then(() => console.log("Successfully logged out."));
-										dispatch(doLogoutAction());
+										dispatch(logout());
 									},
 								},
 								{
@@ -146,12 +145,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										helper
 											.logout()
 											.then(() => console.log("Successfully logged out."));
-										dispatch(doLogoutAction());
-										dispatch(setDormPasswordAction(""));
-										dispatch(scheduleClearAction());
-										dispatch(configSet("emailName", ""));
-										dispatch(setActiveLibBookRecordAction([]));
-										dispatch(setActiveSportsReservationRecordAction([]));
+										dispatch(logout());
+										dispatch(setDormPassword(""));
+										dispatch(scheduleClear());
+										dispatch(setActiveLibBookRecord([]));
+										dispatch(setActiveSportsReservationRecord([]));
 									},
 								},
 							]);

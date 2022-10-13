@@ -10,24 +10,20 @@ import {
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import {State, store} from "../../redux/store";
-import {setAppSecretAction} from "../../redux/actions/credentials";
-import {connect} from "react-redux";
+import {setAppSecret} from "../../redux/slices/credentials";
+import {useSelector} from "react-redux";
 import ReactNativeBiometrics from "react-native-biometrics";
-import {configSet, setupAppSecretAction} from "../../redux/actions/config";
+import {configSet, setupAppSecret} from "../../redux/slices/config";
 
 const PASSWORD_LENGTH = 4;
 
 const rnBiometrics = new ReactNativeBiometrics();
 
-const DigitalPasswordUI = ({
+export const DigitalPasswordScreen = ({
 	navigation,
-	appSecret,
-	useBiometrics,
 	route: {params},
 }: {
 	navigation: RootNav | undefined; // undefined indicates that this screen is invoked directly from AuthFlow
-	appSecret: string | undefined;
-	useBiometrics: boolean | undefined;
 	route: DigitalPasswordRouteProp;
 }) => {
 	const themeName = useColorScheme();
@@ -37,6 +33,9 @@ const DigitalPasswordUI = ({
 		value,
 		setValue,
 	});
+
+	const appSecret = useSelector((s: State) => s.credentials.appSecret);
+	const useBiometrics = useSelector((s: State) => s.config.useBiometrics);
 
 	const title = getStr(
 		params.action === "new"
@@ -63,9 +62,11 @@ const DigitalPasswordUI = ({
 					if (success) {
 						if (navigation) {
 							navigation.replace(params.target);
-							store.dispatch(configSet("subFunctionUnlocked", true));
+							store.dispatch(
+								configSet({key: "subFunctionUnlocked", value: true}),
+							);
 						} else {
-							store.dispatch(configSet("appLocked", false));
+							store.dispatch(configSet({key: "appLocked", value: false}));
 						}
 					}
 				});
@@ -101,18 +102,20 @@ const DigitalPasswordUI = ({
 									} else if (params.action === "confirm") {
 										if (v === params.payload) {
 											navigation.pop();
-											store.dispatch(setAppSecretAction(v));
-											store.dispatch(setupAppSecretAction());
+											store.dispatch(setAppSecret(v));
+											store.dispatch(setupAppSecret());
 										}
 									} else if (params.action === "verify") {
 										if (appSecret === v) {
 											navigation.replace(params.target);
-											store.dispatch(configSet("subFunctionUnlocked", true));
+											store.dispatch(
+												configSet({key: "subFunctionUnlocked", value: true}),
+											);
 										}
 									}
 								} else {
 									if (appSecret === v) {
-										store.dispatch(configSet("appLocked", false));
+										store.dispatch(configSet({key: "appLocked", value: false}));
 									}
 								}
 							}
@@ -176,8 +179,3 @@ const DigitalPasswordUI = ({
 		</View>
 	);
 };
-
-export const DigitalPasswordScreen = connect((state: State) => ({
-	...state.credentials,
-	...state.config,
-}))(DigitalPasswordUI);

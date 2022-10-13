@@ -4,11 +4,11 @@ import {currState, State, store} from "../../redux/store";
 import {ScrollView, Switch, Text, useColorScheme, View} from "react-native";
 import {connect} from "react-redux";
 import themes from "../../assets/themes/themes";
-import {configSet} from "../../redux/actions/config";
+import {configSet} from "../../redux/slices/config";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
 import {HomeFunction} from "../home/home";
-import {top5SetAction} from "../../redux/actions/top5";
+import {top5Set} from "../../redux/slices/top5";
 
 const functions: HomeFunction[] = [
 	"physicalExam",
@@ -74,17 +74,21 @@ const FunctionManagementUI = ({
 			if (disabledFuncList.includes(f)) {
 				const payload = disabledFuncList.filter((i) => i !== f);
 				setDisabledFuncList(payload);
-				store.dispatch(configSet("homeFunctionDisabled", payload));
+				store.dispatch(
+					configSet({key: "homeFunctionDisabled", value: payload}),
+				);
 			}
 		} else {
 			// add to disabled list
 			if (!disabledFuncList.includes(f)) {
 				const payload = disabledFuncList.concat([f]);
 				setDisabledFuncList(payload);
-				store.dispatch(configSet("homeFunctionDisabled", payload));
+				store.dispatch(
+					configSet({key: "homeFunctionDisabled", value: payload}),
+				);
 				const top5 = currState().top5.top5Functions;
 				if (top5.includes(f)) {
-					store.dispatch(top5SetAction(top5.filter((i) => i !== f))); // remove from top5
+					store.dispatch(top5Set(top5.filter((i) => i !== f))); // remove from top5
 				}
 			}
 		}
