@@ -132,6 +132,23 @@ export class InfoHelper {
 
     public logout = async (): Promise<void> => logout(this);
 
+    /**
+     * THIS METHOD IS INTENDED FOR APP USE ONLY.
+     *
+     * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
+     */
+    public appStartUp = async () => {
+        if (this.userId === "") {
+            return {
+                bookingRecords: [],
+                sportsReservationRecords: [],
+            };
+        }
+        const bookingRecords = await getBookingRecords(this);
+        const sportsReservationRecords = await getSportsReservationRecords(this);
+        return {bookingRecords, sportsReservationRecords};
+    };
+
     public switchLang = async (lang: "zh" | "en"): Promise<void> => switchLang(this, lang);
 
     public getUserInfo = async () => getUserInfo(this);
