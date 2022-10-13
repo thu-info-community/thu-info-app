@@ -1,5 +1,0 @@
-fix: fix abuse of a deprecated regex syntax which causes a bug in uFetch
-fix: enhance parsing policy of news detail
-fix: clear userId and password upon logout
-breaking: modify return type of `getSchedule`
-fix: mock data of dorm score
