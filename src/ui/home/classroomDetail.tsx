@@ -1,7 +1,7 @@
 import {
 	Dimensions,
+	FlatList,
 	RefreshControl,
-	ScrollView,
 	Text,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
@@ -148,6 +148,7 @@ export const ClassroomDetailScreen = ({
 					marginTop: 12,
 				}}>
 				<TouchableOpacity
+					style={{padding: 2}}
 					onPress={() =>
 						setData(([week, day, table]) =>
 							day > 1
@@ -172,6 +173,7 @@ export const ClassroomDetailScreen = ({
 						getStr("dayOfWeek")[data[1]]}
 				</Text>
 				<TouchableOpacity
+					style={{padding: 2}}
 					onPress={() =>
 						setData(([week, day, table]) =>
 							day < 7
@@ -185,7 +187,7 @@ export const ClassroomDetailScreen = ({
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 			</View>
-			<ScrollView
+			<FlatList
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -196,198 +198,202 @@ export const ClassroomDetailScreen = ({
 				style={{
 					marginHorizontal: 16,
 					marginTop: 27,
-				}}>
-				<View
-					style={{
-						flexDirection: "row",
-						marginBottom: 8,
-					}}>
-					<Text
+				}}
+				ListHeaderComponent={
+					<View
 						style={{
-							flex: 3,
-							fontSize: 14,
-							color: theme.colors.fontB2,
+							flexDirection: "row",
+							marginBottom: 8,
 						}}>
-						{getStr("classroomName")}
-					</Text>
-					<View style={{flex: 1, marginRight: 41}}>
 						<Text
 							style={{
-								textAlign: "center",
+								flex: 3,
 								fontSize: 14,
 								color: theme.colors.fontB2,
 							}}>
-							{getStr("classroomCapacity")}
+							{getStr("classroomName")}
 						</Text>
-						<Text
-							style={{
-								textAlign: "center",
-								fontSize: 11,
-								marginTop: 4,
-								color: theme.colors.fontB3,
-							}}>
-							（人）
-						</Text>
-					</View>
-					<View style={{flex: 5}}>
-						<Text
-							style={{
-								textAlign: "center",
-								fontSize: 14,
-								marginBottom: 4,
-								color: theme.colors.fontB2,
-							}}>
-							{getStr("classroomCondition")}
-						</Text>
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-							}}>
-							{[1, 2, 3, 4, 5, 6].map((val) => (
-								<Text
-									key={val}
-									style={{
-										flex: 1,
-										textAlign: "center",
-										fontSize: 11,
-										color:
-											val >= currentPeriod
-												? theme.colors.fontB1
-												: theme.colors.fontB3,
-									}}>
-									{val}
-								</Text>
-							))}
-						</View>
-					</View>
-				</View>
-				<View>
-					{data[2].map(([name, states], classroomIndex) => (
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-							}}
-							key={name}>
+						<View style={{flex: 1, marginRight: 41}}>
 							<Text
 								style={{
-									flex: 3,
-									fontSize: 16,
-									color: theme.colors.text,
+									textAlign: "center",
+									fontSize: 14,
+									color: theme.colors.fontB2,
 								}}>
-								{name.split(":")[0]}
+								{getStr("classroomCapacity")}
 							</Text>
 							<Text
 								style={{
-									flex: 1,
-									marginRight: 41,
 									textAlign: "center",
-									fontSize: 16,
-									color: theme.colors.text,
+									fontSize: 11,
+									marginTop: 4,
+									color: theme.colors.fontB3,
 								}}>
-								{name.split(":")[1].replace("(人)", "")}
+								（人）
+							</Text>
+						</View>
+						<View style={{flex: 5}}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 14,
+									marginBottom: 4,
+									color: theme.colors.fontB2,
+								}}>
+								{getStr("classroomCondition")}
 							</Text>
 							<View
-								style={{flex: 5, flexDirection: "row"}}
-								onLayout={(e) => {
-									if (classroomIndex === 0) {
-										setStatesLayoutX(e.nativeEvent.layout.x);
-									}
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
 								}}>
-								{Array.from(new Array(6)).map((_, index) => (
-									<TouchableWithoutFeedback
-										onPress={() => {
-											if (statesLayoutX !== undefined) {
-												if (
-													tipItem.row !== classroomIndex ||
-													tipItem.col !== index
-												) {
-													const totalWidth =
-														Dimensions.get("window").width - 32 - statesLayoutX;
-													const elementWidth = totalWidth / 6;
-													const top = classroomIndex * 30;
-													const left =
-														statesLayoutX + elementWidth * (index + 0.5);
-													setTipPosition({top, left});
-													setTipItem({row: classroomIndex, col: index});
-													setTipState(states[(data[1] - 1) * 6 + index]);
-												} else {
-													setTipPosition(undefined);
-													setTipItem({row: -1, col: -1});
-												}
-											}
-										}}
-										key={index}>
-										<View
-											style={{
-												backgroundColor:
-													states[(data[1] - 1) * 6 + index] === 5
-														? index + 1 >= currentPeriod
-															? theme.colors.themePurple
-															: theme.colors.themeTransparentPurple
-														: index + 1 >= currentPeriod
-														? theme.colors.themeDarkGrey
-														: theme.colors.themeGrey,
-												flex: 1,
-												height: 26,
-												margin: 2,
-											}}
-										/>
-									</TouchableWithoutFeedback>
+								{[1, 2, 3, 4, 5, 6].map((val) => (
+									<Text
+										key={val}
+										style={{
+											flex: 1,
+											textAlign: "center",
+											fontSize: 11,
+											color:
+												val >= currentPeriod
+													? theme.colors.fontB1
+													: theme.colors.fontB3,
+										}}>
+										{val}
+									</Text>
 								))}
 							</View>
 						</View>
-					))}
-					{tipPosition !== undefined && (
-						<View
+					</View>
+				}
+				data={data[2]}
+				initialNumToRender={30}
+				renderItem={({item: [name, states], index: classroomIndex}) => (
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+						}}
+						key={name}>
+						<Text
 							style={{
-								position: "absolute",
-								left: tipPosition.left - tipWidth / 2,
-								top: tipPosition.top - 14,
-								alignItems: "center",
+								flex: 3,
+								fontSize: 16,
+								color: theme.colors.text,
 							}}>
-							<Text
-								onLayout={(e) => {
-									const {width} = e.nativeEvent.layout;
-									setTipWidth((oldWidth) => {
-										if (Math.abs(width - oldWidth) < 2) {
-											return oldWidth;
-										} else {
-											return width;
+							{name.split(":")[0]}
+						</Text>
+						<Text
+							style={{
+								flex: 1,
+								marginRight: 41,
+								textAlign: "center",
+								fontSize: 16,
+								color: theme.colors.text,
+							}}>
+							{name.split(":")[1].replace("(人)", "")}
+						</Text>
+						<View
+							style={{flex: 5, flexDirection: "row"}}
+							onLayout={(e) => {
+								if (classroomIndex === 0) {
+									setStatesLayoutX(e.nativeEvent.layout.x);
+								}
+							}}>
+							{Array.from(new Array(6)).map((_, index) => (
+								<TouchableWithoutFeedback
+									onPress={() => {
+										if (statesLayoutX !== undefined) {
+											if (
+												tipItem.row !== classroomIndex ||
+												tipItem.col !== index
+											) {
+												const totalWidth =
+													Dimensions.get("window").width - 32 - statesLayoutX;
+												const elementWidth = totalWidth / 6;
+												const top = classroomIndex * 30;
+												const left =
+													index === 5
+														? elementWidth * 6 - tipWidth - 2
+														: elementWidth * (index + 0.5) - tipWidth / 2;
+												setTipPosition({top, left});
+												setTipItem({row: classroomIndex, col: index});
+												setTipState(states[(data[1] - 1) * 6 + index]);
+											} else {
+												setTipPosition(undefined);
+												setTipItem({row: -1, col: -1});
+											}
 										}
-									});
-								}}
-								style={{
-									minWidth: 26,
-									height: 14,
-									textAlign: "center",
-									color: theme.colors.contentBackground,
-									backgroundColor: theme.colors.fontB1,
-									fontSize: 9,
-									padding: 1,
-								}}>
-								{getStr("classroomStatus")[tipState]}
-							</Text>
-							<View
-								style={{
-									position: "absolute",
-									top: 13,
-									width: 0,
-									height: 0,
-									borderLeftWidth: 4,
-									borderRightWidth: 4,
-									borderTopWidth: 4,
-									borderTopColor: theme.colors.fontB1,
-									borderLeftColor: "transparent",
-									borderRightColor: "transparent",
-									borderBottomColor: "transparent",
-								}}
-							/>
+									}}
+									key={index}>
+									<View
+										style={{
+											backgroundColor:
+												states[(data[1] - 1) * 6 + index] === 5
+													? index + 1 >= currentPeriod
+														? theme.colors.themePurple
+														: theme.colors.themeTransparentPurple
+													: index + 1 >= currentPeriod
+													? theme.colors.themeDarkGrey
+													: theme.colors.themeGrey,
+											flex: 1,
+											height: 26,
+											margin: 2,
+										}}
+									/>
+								</TouchableWithoutFeedback>
+							))}
+							{tipPosition !== undefined && classroomIndex === tipItem.row && (
+								<View
+									style={{
+										position: "absolute",
+										left: tipPosition.left,
+										bottom: 30,
+										alignItems: "center",
+									}}>
+									<Text
+										onLayout={(e) => {
+											const {width} = e.nativeEvent.layout;
+											setTipWidth((oldWidth) => {
+												if (Math.abs(width - oldWidth) < 2) {
+													return oldWidth;
+												} else {
+													return width;
+												}
+											});
+										}}
+										style={{
+											minWidth: 26,
+											height: 14,
+											textAlign: "center",
+											color: theme.colors.contentBackground,
+											backgroundColor: theme.colors.fontB1,
+											fontSize: 9,
+											padding: 1,
+										}}>
+										{getStr("classroomStatus")[tipState]}
+									</Text>
+									<View
+										style={{
+											position: "absolute",
+											top: 13,
+											width: 0,
+											height: 0,
+											borderLeftWidth: 4,
+											borderRightWidth: 4,
+											borderTopWidth: 4,
+											borderTopColor: theme.colors.fontB1,
+											borderLeftColor: "transparent",
+											borderRightColor: "transparent",
+											borderBottomColor: "transparent",
+										}}
+									/>
+								</View>
+							)}
 						</View>
-					)}
-				</View>
-			</ScrollView>
+					</View>
+				)}
+			/>
 		</View>
 	);
 };
