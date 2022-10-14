@@ -10,7 +10,6 @@ import {NetworkRetry} from "../components/easySnackbars";
 import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
 
 export const checkUpdate = (force: boolean = false) => {
-	console.log("Current version: " + VersionNumber.appVersion);
 	getUpdateInfo()
 		.then((r) =>
 			r.filter((it) => gte(it.versionName, VersionNumber.appVersion)),
