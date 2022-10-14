@@ -61,7 +61,7 @@
         "@typescript-eslint/parser": "5.40.0",
         "eslint": "8.25.0",
         "esm": "3.2.25",
-        "jest": "29.1.2",
+        "jest": "29.2.0",
         "node-polyfill-webpack-plugin": "2.0.1",
         "pre-commit": "1.2.2",
         "readline-sync": "1.4.10",
