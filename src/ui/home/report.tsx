@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {
 	FlatList,
 	Modal,
@@ -36,6 +36,7 @@ import {
 	GradeP,
 	GradeW,
 } from "../../assets/icons/IconGrades";
+import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-status-bar-height";
 
 export const semesterWeight = (semester: string): number => {
@@ -232,8 +233,7 @@ export const ReportScreen = () => {
 	const [bx, setBx] = useState(false);
 	const [mode, setMode] = useState<"split" | "gather">("split");
 
-	const [dropdownTop, setDropdownTop] = useState(0);
-	const DropdownContainer = useRef<View>();
+	const headerHeight = useHeaderHeight();
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -257,15 +257,6 @@ export const ReportScreen = () => {
 
 	useEffect(fetchData, [bx, flag]);
 
-	useEffect(() => {
-		DropdownContainer.current?.measure((_x, y, _w, h) => {
-			const newValue = y + h + getStatusBarHeight();
-			if (!isNaN(newValue)) {
-				setDropdownTop(newValue);
-			}
-		});
-	}, [open]);
-
 	const {gpa, sections, allCredits, totalCredits, totalPoints} =
 		prepareData(report);
 
@@ -282,8 +273,6 @@ export const ReportScreen = () => {
 	return (
 		<View style={{flex: 1}}>
 			<View
-				// @ts-ignore
-				ref={DropdownContainer}
 				style={{
 					flexDirection: "row",
 					height: 32,
@@ -335,7 +324,7 @@ export const ReportScreen = () => {
 					style={{marginRight: 36, padding: 4, alignItems: "center", flex: 0}}>
 					<IconExchange height={18} width={18} />
 				</TouchableOpacity>
-				<Modal visible={open !== undefined && dropdownTop > 0} transparent>
+				<Modal visible={open !== undefined} transparent>
 					<TouchableOpacity
 						style={{
 							width: "100%",
@@ -348,7 +337,7 @@ export const ReportScreen = () => {
 								backgroundColor: colors.text,
 								opacity: 0.3,
 								width: "100%",
-								top: dropdownTop,
+								top: headerHeight - getStatusBarHeight() + 32,
 								bottom: 0,
 							}}
 						/>
@@ -357,7 +346,7 @@ export const ReportScreen = () => {
 								position: "absolute",
 								backgroundColor: colors.contentBackground,
 								width: "100%",
-								top: dropdownTop,
+								top: headerHeight - getStatusBarHeight() + 32,
 								borderBottomStartRadius: 12,
 								borderBottomEndRadius: 12,
 							}}>
