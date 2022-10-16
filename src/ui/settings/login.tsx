@@ -37,7 +37,6 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.login({userId, password})
 			.then(() => {
 				dispatch(login({userId, password}));
-				navigation.pop();
 			})
 			.then(() => helper.switchLang(getStr("mark") === "CH" ? "zh" : "en"))
 			.catch(() => {
@@ -45,6 +44,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			})
 			.then(() => {
 				setProcessing(false);
+				navigation.pop();
 			});
 	};
 
