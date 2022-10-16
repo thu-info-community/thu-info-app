@@ -133,7 +133,7 @@ import {Classroom} from "thu-info-lib/dist/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
-import {LoginScreen} from "../ui/login/login";
+import {LoginScreen} from "../ui/settings/login";
 
 type RootTabParamList = {
 	HomeTab: undefined;
