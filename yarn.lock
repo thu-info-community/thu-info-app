@@ -4139,6 +4139,11 @@ domutils@^3.0.1:
     domelementtype "^2.3.0"
     domhandler "^5.0.1"
 
+editor@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/editor/-/editor-1.0.0.tgz#60c7f87bd62bcc6a894fa8ccd6afb7823a24f742"
+  integrity sha512-SoRmbGStwNYHgKfjOrX2L0mUvp9bUVv0uPppZSOMAntEbcFtoC3MKF5b3T6HQPXKIV+QGY3xPO3JK5it5lVkuw==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
@@ -4301,7 +4306,7 @@ eslint-plugin-eslint-comments@^3.2.0:
     escape-string-regexp "^1.0.5"
     ignore "^5.0.5"
 
-eslint-plugin-ft-flow@^2.0.1:
+eslint-plugin-ft-flow@2.0.1, eslint-plugin-ft-flow@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-ft-flow/-/eslint-plugin-ft-flow-2.0.1.tgz#57d9a12ef02b7af8f9bd6ccd6bd8fa4034809716"
   integrity sha512-dGBnCo+ok6H9p6Vw2oPFEM4vA9IEclRXQQAA/Zws51/L5zr3FDl9FxQiWGfaw0WaTIX5biiAxp/q1W5bGXjlVA==
