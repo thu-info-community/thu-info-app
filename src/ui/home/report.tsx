@@ -36,6 +36,7 @@ import {
 	GradeP,
 	GradeW,
 } from "../../assets/icons/IconGrades";
+import {getStatusBarHeight} from "react-native-status-bar-height";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -257,10 +258,10 @@ export const ReportScreen = () => {
 	useEffect(fetchData, [bx, flag]);
 
 	useEffect(() => {
-		DropdownContainer.current?.measure((_fx, _fy, _w, h, _px, py) => {
-			const newValue = py + h;
+		DropdownContainer.current?.measure((_x, y, _w, h) => {
+			const newValue = y + h + getStatusBarHeight();
 			if (!isNaN(newValue)) {
-				setDropdownTop(py + h);
+				setDropdownTop(newValue);
 			}
 		});
 	}, [open]);

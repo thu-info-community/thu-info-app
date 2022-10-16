@@ -1,5 +1,4 @@
 import {
-	Platform,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -53,6 +52,7 @@ import {configSet} from "../../redux/slices/config";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const iconSize = 40;
 
@@ -784,30 +784,31 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	}, []);
 
 	return (
-		<ScrollView
-			style={{
-				backgroundColor: theme.colors.themeBackground,
-				marginTop: Platform.OS === "ios" ? 40 : 40,
-			}}
-			key={String(darkModeHook)}>
-			<HomeFunctionSection title="recentlyUsedFunction">
-				{top5Filtered.length === 0 ? (
-					<View style={{flex: 1, marginTop: 32, alignItems: "center"}}>
-						<Text style={{color: theme.colors.text}}>
-							{getStr("recentUseHint")}
-						</Text>
-					</View>
-				) : (
-					top5Filtered
-				)}
-			</HomeFunctionSection>
-			<HomeReservationSection />
-			<HomeScheduleSection />
-			<HomeFunctionSection title="allFunction">
-				{needToShowFunctions}
-			</HomeFunctionSection>
-			<View style={{height: 12}} />
-		</ScrollView>
+		<SafeAreaView style={{flex: 1}}>
+			<ScrollView
+				style={{
+					backgroundColor: theme.colors.themeBackground,
+				}}
+				key={String(darkModeHook)}>
+				<HomeFunctionSection title="recentlyUsedFunction">
+					{top5Filtered.length === 0 ? (
+						<View style={{flex: 1, marginTop: 32, alignItems: "center"}}>
+							<Text style={{color: theme.colors.text}}>
+								{getStr("recentUseHint")}
+							</Text>
+						</View>
+					) : (
+						top5Filtered
+					)}
+				</HomeFunctionSection>
+				<HomeReservationSection />
+				<HomeScheduleSection />
+				<HomeFunctionSection title="allFunction">
+					{needToShowFunctions}
+				</HomeFunctionSection>
+				<View style={{height: 12}} />
+			</ScrollView>
+		</SafeAreaView>
 	);
 };
 

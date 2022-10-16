@@ -5,7 +5,6 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	RefreshControl,
-	Platform,
 	Alert,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
@@ -30,6 +29,7 @@ import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
 import Snackbar from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -196,13 +196,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	return (
-		<>
+		<SafeAreaView style={{flex: 1}}>
 			<View
 				style={{
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: Platform.OS === "ios" ? 60 : 60,
 				}}
 				key={String(darkModeHook)}>
 				<View
@@ -480,6 +479,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</View>
 			</ScrollView>
-		</>
+		</SafeAreaView>
 	);
 };

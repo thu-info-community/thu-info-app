@@ -7,7 +7,6 @@ import {
 	TextInput,
 	FlatList,
 	TouchableOpacity,
-	Platform,
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
@@ -27,6 +26,7 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 type Category =
 	| "catSubscribed"
@@ -317,9 +317,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<View
-			style={{flex: 1, marginTop: Platform.OS === "ios" ? 40 : 40}}
-			key={darkModeHook}>
+		<SafeAreaView style={{flex: 1}} key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView
 					showsHorizontalScrollIndicator={false}
@@ -576,6 +574,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>
-		</View>
+		</SafeAreaView>
 	);
 };
