@@ -1,5 +1,4 @@
 import Svg, {Path, Rect} from "react-native-svg";
-import React from "react";
 import {useColorScheme} from "react-native";
 import themes from "../themes/themes";
 

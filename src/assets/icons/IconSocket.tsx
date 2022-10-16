@@ -1,7 +1,6 @@
 import {useColorScheme} from "react-native";
 import themes from "../themes/themes";
 import Svg, {Path} from "react-native-svg";
-import React from "react";
 
 export default ({size, color}: {size: number; color: string}) => {
 	const themeName = useColorScheme();

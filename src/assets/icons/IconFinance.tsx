@@ -1,10 +1,8 @@
 import Svg, {Path} from "react-native-svg";
-import React from "react";
-import {svgGenerator} from "../../utils/svgGenerator";
 import {useColorScheme} from "react-native";
 import themes from "../themes/themes";
 
-export default svgGenerator((width, height) => {
+export default ({width, height}: {width: number; height: number}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	return (
@@ -25,4 +23,4 @@ export default svgGenerator((width, height) => {
 			/>
 		</Svg>
 	);
-});
+};

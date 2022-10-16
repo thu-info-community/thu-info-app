@@ -1,8 +1,6 @@
 import Svg, {Path} from "react-native-svg";
-import React from "react";
-import {svgGenerator} from "../../utils/svgGenerator";
 
-export default svgGenerator((width, height) => {
+export default ({width, height}: {width: number; height: number}) => {
 	return (
 		<Svg viewBox="0 0 48 48" width={width} height={height}>
 			<Path
@@ -14,4 +12,4 @@ export default svgGenerator((width, height) => {
 			/>
 		</Svg>
 	);
-});
+};
