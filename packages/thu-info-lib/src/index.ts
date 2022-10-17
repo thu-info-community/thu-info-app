@@ -86,6 +86,8 @@ import {
     searchCoursePriorityMeta,
     getCrCurrentStage,
     getQueueInfo,
+    cancelCoursePF,
+    setCoursePF,
 } from "./lib/cr";
 import { SearchCoursePriorityQuery, SearchParams } from "./models/cr/cr";
 import { BankPaymentByMonth } from "./models/home/bank";
@@ -353,6 +355,10 @@ export class InfoHelper {
     ) => searchCoursePriorityInformation(this, semesterId, query);
 
     public getQueueInfo = async (semesterId: string) => getQueueInfo(this, semesterId);
+
+    public cancelCoursePF = async (semesterId: string, courseId: string) => cancelCoursePF(this, semesterId, courseId);
+
+    public setCoursePF = async (semesterId: string, courseId: string) => setCoursePF(this, semesterId, courseId);
 
     public getSportsResources = async (
         gymId: string,

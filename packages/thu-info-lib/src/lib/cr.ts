@@ -529,3 +529,83 @@ export const getQueueInfo = async (
     },
     MOCK_QUEUE_INFO,
 );
+
+export const cancelCoursePF = async (
+    helper: InfoHelper,
+    semesterId: string,
+    courseId: string,
+): Promise<void> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        await crFetch(`${CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
+        const pfHtml = await crFetch(`${CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const $ = cheerio.load(pfHtml);
+        const token = $("input[name=token]").attr().value;
+        const availableCourses = $(".xinXi2 > #content_1 .table1 tr");
+        for (const course of availableCourses) {
+            const items = cheerio(course).children("td");
+            if (getCheerioText(items[1], 0) === courseId) {
+                const post: {[key: string]: string} = {};
+                $("form[name=frm] input[type=hidden]").each((_, e) => {
+                    if (e.type === "tag") {
+                        post[e.attribs.name] = e.attribs.value;
+                    }
+                });
+                post.token = token;
+                post.m = "editpfcancle";
+                const result = await crFetch(CR_SELECT_URL, post);
+                if (!result.includes("showMsg(\"任选课取消置为P/F成功\");")) {
+                    throw new CrError(`Failed to cancel PF for course #${courseId}`);
+                }
+                return;
+            }
+        }
+        throw new CrError(`Cannot find course with ID ${courseId}`);
+    },
+    undefined,
+);
+
+
+export const setCoursePF = async (
+    helper: InfoHelper,
+    semesterId: string,
+    courseId: string,
+): Promise<void> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        await crFetch(`${CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
+        const pfHtml = await crFetch(`${CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const $ = cheerio.load(pfHtml);
+        const token = $("input[name=token]").attr().value;
+        const availableCourses = $(".tabdiv #content_1 .table1 tr");
+        for (const course of availableCourses) {
+            const items = cheerio(course).children("td");
+            if (getCheerioText(items[2], 0) === courseId) {
+                const pfRadio = cheerio(items[0]).children("input[type=radio]");
+                if (pfRadio.length === 0) {
+                    throw new CrError(`Course #${courseId} cannot be set PF`);
+                }
+                const post: {[key: string]: string} = {};
+                $("form[name=frm] input[type=hidden]").each((_, e) => {
+                    if (e.type === "tag") {
+                        post[e.attribs.name] = e.attribs.value;
+                    }
+                });
+                post.p_pf_id = pfRadio.first().attr().value;
+                post.token = token;
+                post.m = "editpfyes";
+                const result = await crFetch(CR_SELECT_URL, post);
+                if (!result.includes("showMsg(\"任选课置为P/F成功\")")) {
+                    throw new CrError(`Failed to set PF for course #${courseId}`);
+                }
+                return;
+            }
+        }
+        throw new CrError(`Cannot find course with ID ${courseId}`);
+    },
+    undefined,
+);
