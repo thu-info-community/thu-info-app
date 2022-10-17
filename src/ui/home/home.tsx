@@ -316,7 +316,7 @@ export const HomeScheduleSection = () => {
 							});
 						} else {
 							a.push({
-								name: shortenMap[s.name]?.slice(6) ?? s.name,
+								name: shortenMap[s.name] ?? s.name,
 								location: s.location,
 								from: ss.begin,
 								to: ss.end,
