@@ -1,22 +1,21 @@
 import {
     CONFIRM_LOGIN_URL,
     DO_LOGIN_URL,
-    LIBRARY_ROOM_BOOKING_LOGIN_URL,
-    LOGOUT_URL,
-    USER_DATA_URL,
     GET_COOKIE_URL,
-    ID_LOGIN_URL,
-    ID_BASE_URL,
-    ROAMING_URL,
-    GITLAB_LOGIN_URL,
     GITLAB_AUTH_URL,
+    GITLAB_LOGIN_URL,
+    ID_BASE_URL,
+    ID_LOGIN_URL,
     INVOICE_LOGIN_URL,
+    LIBRARY_ROOM_BOOKING_LOGIN_URL,
     LOGIN_URL,
+    LOGOUT_URL,
+    ROAMING_URL,
+    USER_DATA_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
-import {clearCookies} from "../utils/network";
-import {uFetch} from "../utils/network";
+import {clearCookies, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "cab" | "gitlab";
@@ -57,6 +56,8 @@ export const getCsrfToken = async () => {
     return q[1];
 };
 
+let outstandingLoginPromise: Promise<void> | undefined = undefined;
+
 export const login = async (
     helper: InfoHelper,
     userId: string,
@@ -72,35 +73,42 @@ export const login = async (
     if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
-        const $ = cheerio.load(await uFetch(LOGIN_URL));
-        const loginResponse = await uFetch(DO_LOGIN_URL, {
-            auth_type: "local",
-            username: userId,
-            sms_code: "",
-            password: password,
-            captcha: "",
-            needCaptcha: false,
-            captcha_id: $("input[name=captcha_id]").attr().value,
-        }).then(JSON.parse);
-        if (!loginResponse.success) {
-            switch (loginResponse.error) {
-            case "NEED_CONFIRM":
-                await uFetch(CONFIRM_LOGIN_URL, {});
-                break;
-            default: {
-                const e = new LoginError(loginResponse.message);
-                helper.loginErrorHook && helper.loginErrorHook(e);
-                throw e;
-            }
-            }
+        if (outstandingLoginPromise === undefined) {
+            outstandingLoginPromise = new Promise<void>((resolve, reject) => {
+                setTimeout(() => {
+                    reject(new LoginError("Login timeout."));
+                }, 30000);
+                (async () => {
+                    const $ = cheerio.load(await uFetch(LOGIN_URL));
+                    const loginResponse = await uFetch(DO_LOGIN_URL, {
+                        auth_type: "local",
+                        username: userId,
+                        sms_code: "",
+                        password: password,
+                        captcha: "",
+                        needCaptcha: false,
+                        captcha_id: $("input[name=captcha_id]").attr().value,
+                    }).then(JSON.parse);
+                    if (!loginResponse.success) {
+                        switch (loginResponse.error) {
+                        case "NEED_CONFIRM":
+                            await uFetch(CONFIRM_LOGIN_URL, {});
+                            break;
+                        default:
+                            throw new LoginError(loginResponse.message);
+                        }
+                    }
+                    await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
+                    outstandingLoginPromise = undefined;
+                })().then(resolve, (e: any) => {
+                    const loginError = new LoginError(e?.message);
+                    helper.loginErrorHook && helper.loginErrorHook(loginError);
+                    outstandingLoginPromise = undefined;
+                    reject(loginError);
+                });
+            });
         }
-        try {
-            await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
-        } catch (e: any) {
-            const loginError = new LoginError(e?.message);
-            helper.loginErrorHook && helper.loginErrorHook(loginError);
-            throw loginError;
-        }
+        await outstandingLoginPromise;
     }
 };
 
@@ -183,6 +191,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
 };
 
 const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
+    if (outstandingLoginPromise) {
+        await outstandingLoginPromise;
+        return true;
+    }
     try {
         const {object} = await uFetch(`${USER_DATA_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
         if (object.ryh === helper.userId) {
