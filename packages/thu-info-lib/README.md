@@ -13,7 +13,29 @@ yarn add thu-info-lib
 
 ## Usage
 
-See [wiki](https://github.com/thu-info-community/thu-info-lib/wiki).
+We support a wide range of APIs:
+- `getUserInfo`
+- `getReport`
+- Teaching evaluation (`getAssessmentList`, `getAssessmentForm`, `postAssessmentForm`)
+- `getPhysicalExamResult`
+- `getExpenditures`
+- Classroom (`getClassroomList`, `getClassroomState`)
+- Invoice (`getInvoiceList`, `getInvoicePDF`)
+- `loseCard`
+- `getBankPayment`
+- `getCalendar`
+- `getDormScore`
+- Electricity (`getEleRechargePayCode`, `getElePayRecord`, `getEleRemainder`)
+- `resetDormPassword`
+- Library (`getLibraryList`, `getLibrarySectionList`, `getLibraryFloorList`, `getLibrarySeatList`, `bookLibrarySeat`, `getBookingRecords`, `cancelBooking`)
+- Library room(`getLibraryRoomBookingCaptchaUrl`, `loginLibraryRoomBooking`, `getLibraryRoomBookingResourceList`, `fuzzySearchLibraryId`, `bookLibraryRoom`, `getLibraryRoomBookingRecord`, `cancelLibraryRoomBooking`)
+- News (`getNewsList`, `searchNewsList`, `getNewsSubscriptionList`, `getNewsSourceList`, `getNewsChannelList`, `addNewsSubscription`, `removeNewsSubscription`, `getNewsListBySubscription`, `getNewsDetail`, `addNewsToFavor`, `removeNewsFromFavor`, `getFavorNewsList`)
+- `getSchedule`
+- Course Registration (`getCrCaptchaUrl`, `loginCr`, `getCrAvailableSemesters`, `getCrCoursePlan`, `searchCrRemaining`, `searchCrPrimaryOpen`, `searchCrCourses`, `selectCourse`, `deleteCourse`, `getSelectedCourses`, `changeCourseWill`, `getCrCurrentStage`, `searchCoursePriorityMeta`, `searchCoursePriorityInformation`, `getQueueInfo`, `cancelCoursePF`, `setCoursePF`)
+- Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `unsubscribeSportsReservation`)
+- Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)
+
+Usages are documented in `dist/index` and also between the codes.
 
 ## Quick demo
 
