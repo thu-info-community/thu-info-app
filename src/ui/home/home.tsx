@@ -188,19 +188,9 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 					}}
 				/>
 				<View style={{marginLeft: 8, flex: 1, flexDirection: "column"}}>
-					<View style={{flex: 1, flexDirection: "row"}}>
+					<View style={{flex: 1, flexDirection: "row-reverse"}}>
 						<Text
 							style={{
-								alignSelf: "center",
-								fontWeight: "bold",
-								fontSize: 16,
-								color: theme.colors.fontB0,
-							}}>
-							{schedule.name}
-						</Text>
-						<Text
-							style={{
-								flex: 1,
 								alignSelf: "center",
 								textAlign: "right",
 								color: theme.colors.fontB0,
@@ -210,19 +200,25 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 								? beginTimeZh[schedule.from]
 								: beginTimeEn[schedule.from]}
 						</Text>
+						<View style={{flex: 1}}>
+							<Text
+								style={{
+									position: "absolute",
+									alignSelf: "center",
+									left: 0,
+									right: 0,
+									fontWeight: "bold",
+									fontSize: 16,
+									color: theme.colors.fontB0,
+								}}
+								numberOfLines={1}>
+								{schedule.name}
+							</Text>
+						</View>
 					</View>
-					<View style={{flex: 1, flexDirection: "row"}}>
+					<View style={{flex: 1, flexDirection: "row-reverse"}}>
 						<Text
 							style={{
-								alignSelf: "center",
-								fontWeight: "bold",
-								color: theme.colors.fontB2,
-							}}>
-							{schedule.location}
-						</Text>
-						<Text
-							style={{
-								flex: 1,
 								alignSelf: "center",
 								textAlign: "right",
 								color: theme.colors.fontB2,
@@ -232,6 +228,20 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 								? endTimeZh[schedule.to]
 								: endTimeEn[schedule.to]}
 						</Text>
+						<View style={{flex: 1}}>
+							<Text
+								style={{
+									position: "absolute",
+									alignSelf: "center",
+									left: 0,
+									right: 0,
+									fontWeight: "bold",
+									color: theme.colors.fontB2,
+								}}
+								numberOfLines={1}>
+								{schedule.location}
+							</Text>
+						</View>
 					</View>
 				</View>
 			</View>
