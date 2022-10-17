@@ -173,6 +173,9 @@ export class InfoHelper {
         },
     ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password);
 
+    /**
+     * Log out and clear fields `userId` and `password` of this `InfoHelper` instance
+     */
     public logout = async (): Promise<void> => logout(this);
 
     /**
@@ -776,14 +779,15 @@ export class InfoHelper {
      * You can also call `genAlipayUrl(payCode)` in `dist/utils/alipay` to get
      * the Alipay url.
      *
-     * @param totalCost
-     * @param phone
-     * @param receiptTitle
-     * @param gymId
-     * @param itemId
-     * @param date          yyyy-MM-dd
-     * @param captcha
-     * @param fieldId
+     * @param totalCost     a number indicating the total cost of the reservation
+     * @param phone         a string representing the user's phone number
+     * @param receiptTitle  a string representing the title of the receipt, or `undefined` if a receipt is not needed
+     * @param gymId         a string representing the ID of the gym
+     * @param itemId        a string representing the ID of the item
+     * @param date          a string in the format of `yyyy-MM-dd`
+     * @param captcha       a string representing the captcha
+     * @param fieldId       a string representing the ID of the field
+     * @return  Returns a string representing the alipay payment code if payment is required, or `undefined` if no payment is needed.
      */
     public makeSportsReservation = async (
         totalCost: number,
@@ -803,7 +807,7 @@ export class InfoHelper {
 
     /**
      * Cancel a sports reservation <b>if payment has not been made</b>
-     * @param bookId
+     * @param bookId  a string representing the ID of the reservation
      */
     public unsubscribeSportsReservation = async (bookId: string) => unsubscribeSportsReservation(this, bookId);
 
