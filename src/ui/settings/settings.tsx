@@ -31,6 +31,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+	const {userId, password} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
@@ -101,7 +102,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								try {
 									await helper.logout();
 								} catch (e) {}
-								await helper.login({});
+								await helper.login({userId, password});
 								Snackbar.show({
 									text: getStr("success"),
 									duration: Snackbar.LENGTH_SHORT,
@@ -129,8 +130,6 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								{
 									text: getStr("no"),
 									onPress: () => {
-										helper.userId = "";
-										helper.password = "";
 										helper
 											.logout()
 											.then(() => console.log("Successfully logged out."));
