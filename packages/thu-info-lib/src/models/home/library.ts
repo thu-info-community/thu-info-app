@@ -12,22 +12,22 @@ export type Library = LibraryBase;
 export type LibraryFloor = LibraryBase;
 
 export interface LibraryDate {
-    day: string;
-    startTime: string;
-    endTime: string;
+    day: string;         // yyyy-MM-dd
+    startTime: string;   // HH:mm
+    endTime: string;     // HH:mm
     segmentId: number;
     today: boolean;
 }
 
 export interface LibrarySection extends Library {
-    total: number;
-    available: number;
-    posX: number;
-    posY: number;
+    total: number;      // the total number of seats in the section
+    available: number;  // the number of seats available in the section
+    posX: number;       // the X coordinate of the section on the section map
+    posY: number;       // the Y coordinate of the section on the section map
 }
 
 export interface LibrarySeat extends Library {
-    type: number;
+    type: number;  // the meaning of type is currently unknown, and is supposed to be only for internal use
 }
 
 export const weightedValidityAndId = (lib: LibraryBase) =>

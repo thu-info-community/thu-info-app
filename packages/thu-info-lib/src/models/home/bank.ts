@@ -13,6 +13,6 @@ export interface BankPayment {
 }
 
 export interface BankPaymentByMonth {
-    month: string;
+    month: string;          // yyyy年MM月
     payment: BankPayment[];
 }
