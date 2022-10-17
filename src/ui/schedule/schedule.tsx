@@ -202,7 +202,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: getStatusBarHeight() + 20,
+					paddingTop: getStatusBarHeight(),
 				}}
 				key={String(darkModeHook)}>
 				<View
