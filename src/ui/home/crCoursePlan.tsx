@@ -115,7 +115,7 @@ export const CrCoursePlanScreen = ({
 							[{property}] {name}
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
-							{id} ({credit} pts)
+							{id} ({credit} cr)
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>{group}</Text>
 					</View>

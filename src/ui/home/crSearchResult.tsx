@@ -106,7 +106,7 @@ export const CrSearchResultScreen = ({
 							{teacher}
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
-							{id}-{seq} ({credits} pts)
+							{id}-{seq} ({credits} cr)
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
 							{getStr("courseTime")} {time}
