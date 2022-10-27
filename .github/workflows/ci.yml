@@ -102,6 +102,7 @@ jobs:
         with:
           path: |
             node_modules
+            ios/DerivedData
             ios/Pods
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
@@ -128,7 +129,7 @@ jobs:
       - name: Build ios app
         run: |
           export APP_VERSION="$(node -e "console.log(require('./package.json').version)")"
-          cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Release -archivePath $PWD/Archives/thu_info.xcarchive IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO MARKETING_VERSION="${APP_VERSION}" CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" && cd ..
+          cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Release -derivedDataPath ./DerivedData -archivePath $PWD/Archives/thu_info.xcarchive IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO MARKETING_VERSION="${APP_VERSION}" CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" && cd ..
       - name: Generate distribution ipa
         if: endsWith(github.ref, 'master')
         run: |
