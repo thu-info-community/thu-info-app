@@ -130,3 +130,24 @@ jobs:
         run: |
           export APP_VERSION="$(node -e "console.log(require('./package.json').version)")"
           cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Release -derivedDataPath ./DerivedData -archivePath $PWD/Archives/thu_info.xcarchive IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO MARKETING_VERSION="${APP_VERSION}" CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" && cd ..
+      - name: Generate distribution ipa
+        if: endsWith(github.ref, 'master')
+        run: |
+          cd ios && xcrun xcodebuild -exportArchive -archivePath $PWD/Archives/thu_info.xcarchive -exportPath $PWD/Artifacts/thu_info.ipa -exportOptionsPlist $PWD/ExportOptions.app-store.plist && cd ..
+      - uses: Apple-Actions/upload-testflight-build@v1
+        if: endsWith(github.ref, 'master')
+        with:
+          app-path: ios/Artifacts/thu_info.ipa/THUInfo.ipa
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      - name: Generate ad-hoc artifact
+        if: endsWith(github.ref, 'master')
+        run: |
+          cd ios && xcrun xcodebuild -exportArchive -archivePath $PWD/Archives/thu_info.xcarchive -exportPath $PWD/Artifacts-ad-hoc/thu_info.ipa -exportOptionsPlist $PWD/ExportOptions.ad-hoc.plist && cd ..
+      - name: Upload artifact
+        if: endsWith(github.ref, 'master')
+        uses: actions/upload-artifact@v3
+        with:
+          name: THUInfo.ipa
+          path: ios/Artifacts-ad-hoc/thu_info.ipa/THUInfo.ipa
