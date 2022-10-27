@@ -83,7 +83,7 @@
 		"@types/react-native": "0.70.6",
 		"@types/react-native-modal-dropdown": "1.0.0",
 		"@types/react-test-renderer": "18.0.0",
-		"@types/semver": "7.3.12",
+		"@types/semver": "7.3.13",
 		"babel-jest": "29.2.2",
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"editor": "1.0.0",
