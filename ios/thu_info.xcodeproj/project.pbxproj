@@ -323,7 +323,7 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = F3D2L9HSSK;
 						LastSwiftMigration = 1120;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -659,7 +659,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thu_info.app/thu_info";
 			};
 			name = Release;
@@ -670,10 +670,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
-				DEVELOPMENT_TEAM = F3D2L9HSSK;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -689,7 +689,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = thu_info;
-				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -702,10 +702,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
-				DEVELOPMENT_TEAM = F3D2L9HSSK;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = thu_info/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -718,7 +718,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = thu_info;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -775,7 +775,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu_info-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
@@ -831,7 +831,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu_info-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
+				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thu_info-tvOS.app/thu_info-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
