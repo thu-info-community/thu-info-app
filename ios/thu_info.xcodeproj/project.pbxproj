@@ -659,7 +659,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thu_info.app/thu_info";
 			};
 			name = Release;
@@ -775,7 +775,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu_info-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
@@ -831,7 +831,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu_info-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "1aeb85da-879d-4b43-9daf-b83d5db5a41c";
-				PROVISIONING_PROFILE_SPECIFIER = "org.reactjs.native.example.thu-info AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "THUInfo App Store";
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/thu_info-tvOS.app/thu_info-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
