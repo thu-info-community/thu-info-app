@@ -72,7 +72,7 @@ export const SportsDetailScreen = ({
 						timeSession,
 						locked,
 						userType,
-						resId,
+						resHash,
 						fieldName,
 						cost,
 					} of data) {
@@ -86,7 +86,7 @@ export const SportsDetailScreen = ({
 						++result[timeSession].total;
 						if (locked !== true && userType === undefined) {
 							result[timeSession].availableFields.push({
-								id: resId,
+								id: resHash,
 								name: fieldName,
 								cost: cost ?? 0,
 							});
