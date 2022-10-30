@@ -30,6 +30,7 @@ const HOST_MAP: { [key: string]: string } = {
     "166.111.14.8": "77726476706e69737468656265737421a1a117d27661391e2f5cc7f4",
     "fa-online": "77726476706e69737468656265737421f6f60c93293c615e7b469dbf915b243daf0f96e17deaf447b4",
     "dzpj": "77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51",
+    "jjhyhdf": "77726476706e69737468656265737421fafd49852f346e1e6a1b80a29f5d36342bb9c40cf69277",
 };
 
 const parseUrl = (urlIn: string) => {
@@ -38,13 +39,14 @@ const parseUrl = (urlIn: string) => {
         return `https://webvpn.tsinghua.edu.cn/http-${rawRes[2]}/${HOST_MAP[rawRes[1]]}/${rawRes[3]}`;
     }
     const protocol = urlIn.substring(0, urlIn.indexOf(":"));
-    const regRes = /:\/\/(.+?).tsinghua.edu.cn\/(.+)/.exec(urlIn);
-    if (regRes === null || regRes[1] === undefined || regRes[2] === undefined) {
+    const regRes = /:\/\/(.+?).tsinghua.edu.cn(:(\d+))?\/(.+)/.exec(urlIn);
+    if (regRes === null || regRes[1] === undefined || regRes[4] === undefined) {
         throw new UrlError();
     }
     const host = regRes[1];
-    const path = regRes[2];
-    return `https://webvpn.tsinghua.edu.cn/${protocol}/${HOST_MAP[host]}/${path}`;
+    const protocolFull = regRes[3] === undefined ? protocol : `${protocol}-${regRes[3]}`;
+    const path = regRes[4];
+    return `https://webvpn.tsinghua.edu.cn/${protocolFull}/${HOST_MAP[host]}/${path}`;
 };
 
 export const getCsrfToken = async () => {

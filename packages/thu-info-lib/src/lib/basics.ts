@@ -13,6 +13,7 @@ import {
     COUNT_DOWN_URL,
     EMAIL_BASE_URL,
     EXPENDITURE_URL,
+    FOUNDATION_BANK_PAYMENT_SEARCH_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
     INVOICE_CONTENT_URL,
@@ -538,19 +539,23 @@ export const loseCard = (helper: InfoHelper): Promise<number> =>
     );
 
 export const getBankPayment = async (
-    helper: InfoHelper
+    helper: InfoHelper,
+    foundation: boolean,
 ): Promise<BankPaymentByMonth[]> =>
     roamingWrapperWithMocks(
         helper,
         "default",
-        "2A5182CB3F36E80395FC2091001BDEA6",
+        foundation ? "C1ADD6B60D050B64E0C7B8F195CE89EC" : "2A5182CB3F36E80395FC2091001BDEA6",
         async (s) => {
             if (s === undefined) {
                 throw new LibError();
             }
             const options = cheerio("option", s).map((_, e) => (e as TagElement).attribs.value).get();
+            if (options.length === 0) {
+                return [];
+            }
             const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
-            const result = await uFetch(BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
+            const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
             const $ = cheerio.load(result);
             const titles = $("div strong")
                 .map((_, e) => {

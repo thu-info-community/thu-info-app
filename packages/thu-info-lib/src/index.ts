@@ -348,8 +348,9 @@ export class InfoHelper {
 
     /**
      * Get the bank payment records of the user.
+     * @param foundation  whether to get bank payment result by 基金会 or not
      */
-    public getBankPayment = async (): Promise<BankPaymentByMonth[]> => getBankPayment(this);
+    public getBankPayment = async (foundation = false): Promise<BankPaymentByMonth[]> => getBankPayment(this, foundation);
 
     /**
      * Get the school calendar data.
