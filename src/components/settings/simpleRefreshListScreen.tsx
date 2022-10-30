@@ -11,6 +11,7 @@ import {FlatList, RefreshControl} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {RoundedListView} from "../views";
+import {LibError} from "thu-info-lib/dist/utils/error";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: (props: PropsWithChildren<any>) => Promise<T[]>,
@@ -99,12 +100,19 @@ export function roundedRefreshListScreen<T>(
 			setRefreshing(true);
 			dataSource(props)
 				.then(setData)
-				.catch((e) =>
-					Snackbar.show({
-						text: getStr("networkRetry") + e?.message,
-						duration: Snackbar.LENGTH_SHORT,
-					}),
-				)
+				.catch((e) => {
+					if (e instanceof LibError && e.message) {
+						Snackbar.show({
+							text: e.message,
+							duration: Snackbar.LENGTH_SHORT,
+						});
+					} else {
+						Snackbar.show({
+							text: getStr("networkRetry") + e?.message,
+							duration: Snackbar.LENGTH_SHORT,
+						});
+					}
+				})
 				.then(() => setRefreshing(false));
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
