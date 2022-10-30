@@ -787,7 +787,7 @@ export class InfoHelper {
      * @param itemId        a string representing the ID of the item
      * @param date          a string in the format of `yyyy-MM-dd`
      * @param captcha       a string representing the captcha
-     * @param fieldId       a string representing the ID of the field
+     * @param resHashId     a string representing the hash of the resource
      * @return  Returns a string representing the alipay payment code if payment is required, or `undefined` if no payment is needed.
      */
     public makeSportsReservation = async (
@@ -798,8 +798,8 @@ export class InfoHelper {
         itemId: string,
         date: string,  // yyyy-MM-dd
         captcha: string,
-        fieldId: string,
-    ) => makeSportsReservation(this, totalCost, phone, receiptTitle, gymId, itemId, date, captcha, fieldId);
+        resHashId: string,
+    ) => makeSportsReservation(this, totalCost, phone, receiptTitle, gymId, itemId, date, captcha, resHashId);
 
     /**
      * Gets all active sports reservation records.

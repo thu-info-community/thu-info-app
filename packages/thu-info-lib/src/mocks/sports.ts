@@ -7,6 +7,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
     data: [
         {
             resId: "14567229",
+            resHash: "14567229",
             timeSession: "20:00-21:00",
             fieldName: "台1",
             overlaySize: 2,
@@ -15,6 +16,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567231",
+            resHash: "14567231",
             timeSession: "19:00-20:00",
             fieldName: "台1",
             overlaySize: 2,
@@ -27,6 +29,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567233",
+            resHash: "14567233",
             timeSession: "18:00-19:00",
             fieldName: "台1",
             overlaySize: 2,
@@ -39,6 +42,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567235",
+            resHash: "14567235",
             timeSession: "17:00-18:00",
             fieldName: "台1",
             overlaySize: 2,
@@ -47,6 +51,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567279",
+            resHash: "14567279",
             timeSession: "20:00-21:00",
             fieldName: "台2",
             overlaySize: 2,
@@ -55,6 +60,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567281",
+            resHash: "14567281",
             timeSession: "19:00-20:00",
             fieldName: "台2",
             overlaySize: 2,
@@ -63,6 +69,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567283",
+            resHash: "14567283",
             timeSession: "18:00-19:00",
             fieldName: "台2",
             overlaySize: 2,
@@ -71,6 +78,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567285",
+            resHash: "14567285",
             timeSession: "17:00-18:00",
             fieldName: "台2",
             overlaySize: 2,
@@ -79,6 +87,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567329",
+            resHash: "14567329",
             timeSession: "20:00-21:00",
             fieldName: "台3",
             overlaySize: 2,
@@ -87,6 +96,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567331",
+            resHash: "14567331",
             timeSession: "19:00-20:00",
             fieldName: "台3",
             overlaySize: 2,
@@ -95,6 +105,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567333",
+            resHash: "14567333",
             timeSession: "18:00-19:00",
             fieldName: "台3",
             overlaySize: 2,
@@ -103,6 +114,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567335",
+            resHash: "14567335",
             timeSession: "17:00-18:00",
             fieldName: "台3",
             overlaySize: 2,
@@ -111,6 +123,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567379",
+            resHash: "14567379",
             timeSession: "20:00-21:00",
             fieldName: "台4",
             overlaySize: 2,
@@ -119,6 +132,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567381",
+            resHash: "14567381",
             timeSession: "19:00-20:00",
             fieldName: "台4",
             overlaySize: 2,
@@ -131,6 +145,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567383",
+            resHash: "14567383",
             timeSession: "18:00-19:00",
             fieldName: "台4",
             overlaySize: 2,
@@ -139,6 +154,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567385",
+            resHash: "14567385",
             timeSession: "17:00-18:00",
             fieldName: "台4",
             overlaySize: 2,
@@ -147,6 +163,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567429",
+            resHash: "14567429",
             timeSession: "20:00-21:00",
             fieldName: "台5",
             overlaySize: 2,
@@ -155,6 +172,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567431",
+            resHash: "14567431",
             timeSession: "19:00-20:00",
             fieldName: "台5",
             overlaySize: 2,
@@ -163,6 +181,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567433",
+            resHash: "14567433",
             timeSession: "18:00-19:00",
             fieldName: "台5",
             overlaySize: 2,
@@ -171,6 +190,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567435",
+            resHash: "14567435",
             timeSession: "17:00-18:00",
             fieldName: "台5",
             overlaySize: 2,
@@ -179,6 +199,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567479",
+            resHash: "14567479",
             timeSession: "20:00-21:00",
             fieldName: "台6",
             overlaySize: 2,
@@ -187,6 +208,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567481",
+            resHash: "14567481",
             timeSession: "19:00-20:00",
             fieldName: "台6",
             overlaySize: 2,
@@ -195,6 +217,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567483",
+            resHash: "14567483",
             timeSession: "18:00-19:00",
             fieldName: "台6",
             overlaySize: 2,
@@ -203,6 +226,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567485",
+            resHash: "14567485",
             timeSession: "17:00-18:00",
             fieldName: "台6",
             overlaySize: 2,
@@ -211,6 +235,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567529",
+            resHash: "14567529",
             timeSession: "20:00-21:00",
             fieldName: "台7",
             overlaySize: 2,
@@ -219,6 +244,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567531",
+            resHash: "14567531",
             timeSession: "19:00-20:00",
             fieldName: "台7",
             overlaySize: 2,
@@ -227,6 +253,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567533",
+            resHash: "14567533",
             timeSession: "18:00-19:00",
             fieldName: "台7",
             overlaySize: 2,
@@ -235,6 +262,7 @@ export const MOCK_RESOURCES: SportsResourcesInfo = {
         },
         {
             resId: "14567535",
+            resHash: "14567535",
             timeSession: "17:00-18:00",
             fieldName: "台7",
             overlaySize: 2,

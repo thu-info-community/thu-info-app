@@ -1,5 +1,6 @@
 export interface SportsResource {
     resId: string;            // a string representing the ID of the field
+    resHash: string;          // a string representing the hash of the resource
     bookId?: string;          // a string representing the ID of the order related to the resource, or `undefined` if no order related to the resource has been made
     timeSession: string;      // a string representing the time session, e.g. 5:00-6:00
     fieldName: string;        // a string representing the name of the field

@@ -50,15 +50,18 @@ const getSportsResourceData = async (
     const result: { [key: string]: SportsResource } = {};
 
     // Step one: get total resources
-    const p1 = /resourceArray.push\({id:'(.*?)',time_session:'(.*?)',field_name:'(.*?)',overlaySize:'(.*?)',can_net_book:'(.*?)'}\);/g;
+    const p1 = /resourceArray\.push\({id:'(.*?)',time_session:'(.*?)',field_name:'(.*?)',overlaySize:'(.*?)',can_net_book:'(.*?)'}\);[\s\S]+?resourcesm\.put\('(.*?)', '(.*?)'\)/gm;
     for (let r1 = p1.exec(rawHtml); r1 != null; r1 = p1.exec(rawHtml)) {
-        result[r1[1]] = {
-            resId: r1[1],
-            timeSession: r1[2],
-            fieldName: r1[3],
-            overlaySize: Number(r1[4]),
-            canNetBook: r1[5] === "1",
-        } as SportsResource;
+        if (r1[1] === r1[6]) {
+            result[r1[1]] = {
+                resId: r1[1],
+                resHash: r1[7],
+                timeSession: r1[2],
+                fieldName: r1[3],
+                overlaySize: Number(r1[4]),
+                canNetBook: r1[5] === "1",
+            } as SportsResource;
+        }
     }
 
     // Step two: update cost
@@ -142,7 +145,7 @@ export const makeSportsReservation = async (
     itemId: string,
     date: string,  // yyyy-MM-dd
     captcha: string,
-    fieldId: string,
+    resHashId: string,
 ): Promise<string | undefined> => {
     if (helper.mocked()) {
         return undefined;
@@ -153,13 +156,14 @@ export const makeSportsReservation = async (
         "bookData.book_person_name": "",
         "bookData.book_person_phone": phone,
         "bookData.book_mode": "from-phone",
+        "gymnasium_idForCache": gymId,
         "item_idForCache": itemId,
         "time_dateForCache": date,
         "userTypeNumForCache": 1,
         "putongRes": "putongRes",
         "code": captcha,
         "selectedPayWay": 1,
-        "allFieldTime": `${fieldId}#${date}`,
+        "allFieldTime": `${resHashId}#${date}`,
     }).then(JSON.parse);
     if (orderResult.msg !== "预定成功") {
         throw new SportsError(orderResult.msg);
@@ -172,7 +176,7 @@ export const makeSportsReservation = async (
         item_idForCache: itemId,
         time_dateForCache: date,
         userTypeNumForCache: 1,
-        allFieldTime: `${fieldId}#${date}`,
+        allFieldTime: `${resHashId}#${date}`,
     }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
     const paymentApiHtml = await uFetch(
         paymentResultForm.attr().action,
