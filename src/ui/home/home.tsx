@@ -298,7 +298,7 @@ export const HomeScheduleSection = () => {
 					if (ss.dayOfWeek === dayOfWeek) {
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
-								name: shortenMap[s.name]?.slice(6) ?? s.name.slice(6),
+								name: shortenMap[s.name] ?? s.name.slice(6),
 								location: s.location,
 								from: ss.begin,
 								to: ss.end,

@@ -117,15 +117,15 @@ export const ScheduleAddScreen = ({
 							if (title.length === 0) {
 								dispatch(scheduleUpdateAlias([params.name, undefined]));
 							} else {
-								const res: string =
-									(params.type === ScheduleType.CUSTOM
-										? params.name.substring(0, 6)
-										: "") + title;
-								dispatch(scheduleUpdateAlias([params.name, res]));
+								dispatch(scheduleUpdateAlias([params.name, title]));
 							}
 							dispatch(scheduleUpdateLocation([params.name, locale]));
 							// TODO: 要允许修改计划的时间
-							navigation.pop();
+							navigation.navigate("ScheduleDetail", {
+								...params,
+								alias: title,
+								location: locale,
+							});
 							return;
 						}
 

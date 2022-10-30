@@ -425,7 +425,7 @@ export default {
 	till: "till ",
 	periodNumPrefix: "S. ",
 	periodNumSuffix: "",
-	originalName: "Original\nname",
+	originalName: "Original name",
 	locationUnset: "[Unknown location]",
 	set: "Set ",
 	delOrModify: "Delete or modify ",

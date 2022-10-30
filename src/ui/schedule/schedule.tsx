@@ -126,9 +126,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									dayOfWeek={slice.dayOfWeek}
 									begin={slice.begin}
 									end={slice.end}
-									name={(shortenMap[val.name] ?? val.name).substring(
-										val.type === ScheduleType.CUSTOM ? 6 : 0,
-									)}
+									name={
+										shortenMap[val.name] ??
+										val.name.substring(val.type === ScheduleType.CUSTOM ? 6 : 0)
+									}
 									location={val.location}
 									gridHeight={unitHeight}
 									gridWidth={unitWidth}
@@ -163,9 +164,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								dayOfWeek={slice.dayOfWeek}
 								begin={examBeginMap[slice.begin]}
 								end={examEndMap[slice.end]}
-								name={(shortenMap[val.name] ?? val.name).substring(
-									val.type === ScheduleType.CUSTOM ? 6 : 0,
-								)}
+								name={
+									shortenMap[val.name] ??
+									val.name.substring(val.type === ScheduleType.CUSTOM ? 6 : 0)
+								}
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
