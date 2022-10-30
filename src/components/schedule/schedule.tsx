@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 import {Text, TouchableOpacity} from "react-native";
 
 interface ScheduleBlockProps {
@@ -39,6 +39,14 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 		([2, 5, 7, 9, 11].indexOf(props.end) === -1 ? 0 : 1) - // Border Width
 		blockInterval; // Block Interval
 
+	const [titleHeight, setTitleHeight] = useState(0);
+	const [localeHeight, setLocaleHeight] = useState(0);
+	const [overflow, setOverflow] = useState(false);
+
+	if (titleHeight + localeHeight > blockBottomPos - blockTopPos && !overflow) {
+		setOverflow(true);
+	}
+
 	return (
 		<TouchableOpacity
 			style={{
@@ -54,7 +62,13 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			}}
 			onPress={props.onPress}>
 			<Text
+				onLayout={({nativeEvent}) => {
+					setTitleHeight(nativeEvent.layout.height);
+				}}
 				style={{
+					maxHeight: overflow
+						? blockBottomPos - blockTopPos - localeHeight - 5
+						: blockBottomPos - blockTopPos,
 					textAlign: "left",
 					color: "white",
 					lineHeight: 18,
@@ -65,6 +79,10 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			</Text>
 			{props.location.length ? (
 				<Text
+					onLayout={({nativeEvent}) => {
+						setLocaleHeight(nativeEvent.layout.height);
+					}}
+					numberOfLines={3}
 					style={{
 						textAlign: "left",
 						color: "white",
