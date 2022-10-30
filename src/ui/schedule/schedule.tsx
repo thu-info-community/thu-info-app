@@ -248,8 +248,16 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												style={{
 													fontSize: 18,
 													lineHeight: 40,
+													fontWeight:
+														week !== weekButton && weekNumber === weekButton
+															? "600"
+															: "normal",
 													color:
-														week === weekButton ? "white" : theme.colors.fontB1,
+														week === weekButton
+															? "white"
+															: weekNumber === weekButton
+															? theme.colors.themePurple
+															: theme.colors.fontB1,
 												}}>
 												{weekButton}
 											</Text>
