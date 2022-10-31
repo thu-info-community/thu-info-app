@@ -95,7 +95,7 @@
 		"metro-react-native-babel-preset": "0.73.3",
 		"pre-commit": "1.2.2",
 		"prettier": "2.7.1",
-		"react-native-codegen": "0.71.0",
+		"react-native-codegen": "0.71.1",
 		"react-test-renderer": "18.2.0",
 		"typescript": "4.8.4"
 	},
