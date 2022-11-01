@@ -1,6 +1,5 @@
-import React from "react";
-import {Text, useColorScheme, View} from "react-native";
-import {SportsSuccessProp} from "../../components/Root";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {RootNav, SportsSuccessProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
 import {RoundedView} from "../../components/views";
@@ -24,7 +23,13 @@ const Row = ({left, right}: {left: string; right: string}) => {
 	);
 };
 
-export const SportsSuccessScreen = ({route}: {route: SportsSuccessProp}) => {
+export const SportsSuccessScreen = ({
+	navigation,
+	route,
+}: {
+	navigation: RootNav;
+	route: SportsSuccessProp;
+}) => {
 	const {
 		info: {name},
 		date,
@@ -32,7 +37,6 @@ export const SportsSuccessScreen = ({route}: {route: SportsSuccessProp}) => {
 		period,
 		availableFields,
 		selectedFieldIndex,
-		receiptTitle,
 	} = route.params;
 
 	const themeName = useColorScheme();
@@ -63,15 +67,35 @@ export const SportsSuccessScreen = ({route}: {route: SportsSuccessProp}) => {
 				)}
 				<View style={{height: 12}} />
 				<Row left={getStr("phoneNumber")} right={phone} />
-				{receiptTitle !== undefined && (
-					<Row left={getStr("receiptTitle")} right={receiptTitle} />
-				)}
 				{selectedFieldIndex !== undefined && (
 					<Row
 						left={getStr("paid")}
 						right={`￥${availableFields[selectedFieldIndex].cost}`}
 					/>
 				)}
+				<View style={{height: 12}} />
+				<TouchableOpacity
+					style={{
+						padding: 8,
+						justifyContent: "center",
+						alignItems: "center",
+						borderRadius: 4,
+						alignSelf: "flex-end",
+						backgroundColor: colors.themePurple,
+					}}
+					onPress={() => {
+						navigation.replace("SportsRecord");
+					}}>
+					<Text
+						style={{
+							color: "white",
+							fontWeight: "400",
+							fontSize: 16,
+							lineHeight: 20,
+						}}>
+						{getStr("pay")}
+					</Text>
+				</TouchableOpacity>
 			</View>
 		</RoundedView>
 	);

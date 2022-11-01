@@ -76,6 +76,7 @@ export default {
 	reservation: "预约",
 	alreadyReserved: "已有预约",
 	libBookRecord: "图书馆预约记录",
+	pay: "支付",
 	cancelBooking: "取消预约",
 	confirmCancelBooking: "确认要取消预约吗？",
 	cancelSucceeded: "取消成功",

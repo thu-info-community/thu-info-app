@@ -14,6 +14,7 @@ import IconRight from "../../assets/icons/IconRight";
 import {getStr} from "../../utils/i18n";
 import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
+import {useNavigation} from "@react-navigation/native";
 
 export const SportsReservationCard = () => {
 	const themeName = useColorScheme();
@@ -24,6 +25,8 @@ export const SportsReservationCard = () => {
 		[];
 
 	const firstRecord = activeSportsReservationRecords[0];
+
+	const navigation = useNavigation<RootNav>();
 
 	return (
 		<RoundedView
@@ -56,6 +59,19 @@ export const SportsReservationCard = () => {
 					<Text style={{textAlign: "center", color: colors.text}}>
 						{firstRecord.time}
 					</Text>
+					{firstRecord.payId && (
+						<TouchableOpacity
+							onPress={() =>
+								firstRecord.payId &&
+								navigation.navigate("SportsSelectTitle", {
+									payId: firstRecord.payId,
+								})
+							}>
+							<Text style={{textAlign: "center", color: colors.statusWarning}}>
+								{getStr("pay")}
+							</Text>
+						</TouchableOpacity>
+					)}
 				</>
 			)}
 		</RoundedView>

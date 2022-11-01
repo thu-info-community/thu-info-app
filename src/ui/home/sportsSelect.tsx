@@ -14,16 +14,14 @@ import {
 import {RootNav, SportsSelectProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "src/utils/i18n";
-import {helper, State} from "../../redux/store";
+import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import {doAlipay} from "../../utils/alipay";
-import {ValidReceiptTypes} from "thu-info-lib/dist/lib/sports";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
 import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
 import {uFetch} from "thu-info-lib/dist/utils/network";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 
 export interface SportsSelectParams {
 	info: SportsIdInfo;
@@ -32,7 +30,6 @@ export interface SportsSelectParams {
 	period: string;
 	availableFields: {id: string; name: string; cost: number}[];
 	selectedFieldIndex?: number;
-	receiptTitle?: ValidReceiptTypes;
 }
 
 export const SportsSelectScreen = ({
@@ -51,7 +48,6 @@ export const SportsSelectScreen = ({
 		selectedFieldIndex,
 	} = params;
 
-	const title = useSelector((s: State) => s.config.receiptTitle);
 	const dispatch = useDispatch();
 
 	const themeName = useColorScheme();
@@ -201,35 +197,6 @@ export const SportsSelectScreen = ({
 					</TouchableOpacity>
 				</RoundedView>
 				<RoundedView style={{marginHorizontal: 12, marginTop: 16, padding: 16}}>
-					<TouchableOpacity
-						onPress={() => navigation.navigate("SportsSelectTitle", params)}
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-						}}>
-						<Text
-							style={{
-								color: colors.text,
-								fontSize: 16,
-								lineHeight: 24,
-							}}>
-							{getStr("receiptTitle")}
-						</Text>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
-							<Text
-								style={{
-									color: colors.fontB3,
-									fontSize: 16,
-									lineHeight: 24,
-								}}>
-								{title ?? getStr("noReceiptTitle")}
-							</Text>
-							<IconRight height={24} width={24} />
-						</View>
-					</TouchableOpacity>
-				</RoundedView>
-				<RoundedView style={{marginHorizontal: 12, marginTop: 16, padding: 16}}>
 					<View
 						style={{
 							flexDirection: "row",
@@ -353,29 +320,18 @@ export const SportsSelectScreen = ({
 								.makeSportsReservation(
 									field.cost,
 									phoneNumber,
-									title,
+									undefined,
 									gymId,
 									itemId,
 									date,
 									captcha,
 									field.id,
+									true,
 								)
-								.then((paycode) => {
-									if (paycode === undefined) {
-										Snackbar.show({
-											text: getStr("success"),
-											duration: Snackbar.LENGTH_SHORT,
-										});
-										return Promise.resolve();
-									} else {
-										return doAlipay(paycode);
-									}
-								})
 								.then(() => {
 									navigation.replace("SportsSuccess", {
 										...params,
 										phone: phoneNumber,
-										receiptTitle: title,
 									});
 									helper
 										.getSportsReservationRecords()
@@ -404,7 +360,7 @@ export const SportsSelectScreen = ({
 							fontSize: 20,
 							lineHeight: 24,
 						}}>
-						{getStr("submitAndPay")}
+						{getStr("submitOrder")}
 					</Text>
 				</TouchableOpacity>
 			</ScrollView>

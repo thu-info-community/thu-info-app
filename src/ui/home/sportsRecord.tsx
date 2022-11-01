@@ -5,6 +5,7 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper, store} from "../../redux/store";
 import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
+import {RootNav} from "../../components/Root";
 
 export const SportsRecordScreen = roundedRefreshListScreen(
 	() =>
@@ -12,7 +13,14 @@ export const SportsRecordScreen = roundedRefreshListScreen(
 			store.dispatch(setActiveSportsReservationRecord(r));
 			return r;
 		}),
-	({name, field, price, time, bookId}, refresh, _, {colors}, index, total) => {
+	(
+		{name, field, price, time, bookId, payId},
+		refresh,
+		{navigation},
+		{colors},
+		index,
+		total,
+	) => {
 		return (
 			<View
 				style={{
@@ -30,6 +38,15 @@ export const SportsRecordScreen = roundedRefreshListScreen(
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 16, color: colors.text}}>{price}</Text>
+					{payId && (
+						<TouchableOpacity
+							style={{padding: 3}}
+							onPress={() => {
+								(navigation as RootNav).navigate("SportsSelectTitle", {payId});
+							}}>
+							<Text style={{color: colors.themePurple}}>{getStr("pay")}</Text>
+						</TouchableOpacity>
+					)}
 					{bookId && (
 						<TouchableOpacity
 							style={{padding: 3}}
@@ -66,7 +83,9 @@ export const SportsRecordScreen = roundedRefreshListScreen(
 									{cancelable: true},
 								)
 							}>
-							<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+							<Text style={{color: colors.statusWarning}}>
+								{getStr("cancelBooking")}
+							</Text>
 						</TouchableOpacity>
 					)}
 				</View>

@@ -79,6 +79,7 @@ export default {
 	reservation: "Reservation",
 	alreadyReserved: "Reservation",
 	libBookRecord: "Library Booking Records",
+	pay: "Pay",
 	cancelBooking: "Cancel",
 	confirmCancelBooking: "Sure to cancel?",
 	cancelSucceeded: "Successfully cancelled.",

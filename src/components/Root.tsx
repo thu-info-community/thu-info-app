@@ -238,7 +238,7 @@ type HomeStackParamList = {
 	SportsDetail: {info: SportsIdInfo};
 	SportsSelect: SportsSelectParams;
 	SportsSelectField: SportsSelectParams;
-	SportsSelectTitle: SportsSelectParams;
+	SportsSelectTitle: {payId: string};
 	SportsSuccess: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
