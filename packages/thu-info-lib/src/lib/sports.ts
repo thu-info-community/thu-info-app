@@ -6,10 +6,13 @@ import {
     SPORTS_CAPTCHA_BASE_URL,
     SPORTS_DETAIL_URL,
     SPORTS_MAKE_ORDER_URL,
+    SPORTS_MAKE_PAYMENT_LATER_URL,
     SPORTS_MAKE_PAYMENT_URL,
+    SPORTS_PAID_URL,
     SPORTS_PAYMENT_ACTION_URL,
     SPORTS_PAYMENT_CHECK_URL,
     SPORTS_QUERY_PHONE_URL,
+    SPORTS_UNPAID_URL,
     SPORTS_UNSUBSCRIBE_URL,
     SPORTS_UPDATE_PHONE_URL,
 } from "../constants/strings";
@@ -19,7 +22,6 @@ import cheerio from "cheerio";
 import TagElement = cheerio.TagElement;
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
-import Element = cheerio.Element;
 import {LibError, SportsError} from "../utils/error";
 
 export const VALID_RECEIPT_TITLES = ["清华大学", "清华大学工会", "清华大学教育基金会"] as const;
@@ -146,6 +148,7 @@ export const makeSportsReservation = async (
     date: string,  // yyyy-MM-dd
     captcha: string,
     resHashId: string,
+    skipPayment: boolean,
 ): Promise<string | undefined> => {
     if (helper.mocked()) {
         return undefined;
@@ -169,6 +172,7 @@ export const makeSportsReservation = async (
         throw new SportsError(orderResult.msg);
     }
     if (totalCost === 0) return undefined;
+    if (skipPayment) return undefined;
     const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_URL, {
         is_jsd: receiptTitle === undefined ? "0" : "1",
         xm: receiptTitle ?? "清华大学",
@@ -206,6 +210,24 @@ export const makeSportsReservation = async (
     return await generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, postForm));
 };
 
+const getSportsReservationPaidRecords = async (): Promise<SportsReservationRecord[]> => {
+    const $ = await uFetch(SPORTS_PAID_URL).then(cheerio.load);
+    return $("tr[style='display:none']").toArray().map((e) => {
+        const contentRow = cheerio(e).find("tbody tr").first();
+        const items = contentRow.find("td");
+        return {
+            name: getCheerioText(items[2]),
+            field: getCheerioText(items[3]),
+            time: getCheerioText(items[4]),
+            price: getCheerioText(items[5]),
+            method: "已支付",
+            bookTimestamp: undefined,
+            bookId: undefined,
+            payId: undefined,
+        };
+    });
+};
+
 export const getSportsReservationRecords = async (
     helper: InfoHelper,
 ) => roamingWrapperWithMocks(
@@ -213,37 +235,93 @@ export const getSportsReservationRecords = async (
     "default",
     "5539ECF8CD815C7D3F5A8EE0A2D72441",
     async () => {
-        const $ = await uFetch(SPORTS_BASE_URL + "&gymnasium_id=4836273").then(cheerio.load);
+        const $ = await uFetch(SPORTS_UNPAID_URL).then(cheerio.load);
         const tables = $("table");
         if (tables.length === 0) {
             throw new SportsError();
         }
-        const rows = cheerio(tables.toArray()[tables.length - 1]).find("tbody tr");
-        const getId = (e: Element) => {
-            try {
-                const s0 = ((((e as TagElement).children[9] as TagElement).children[1] as TagElement).attribs.onclick);
-                const res0 = /unsubscribe\('(.+?)'/.exec(s0);
-                if (res0 === null) {
-                    const s1 = (((((e as TagElement).children[9] as TagElement).children[4] as TagElement).children[3] as TagElement).attribs.onclick);
-                    const res1 = /unsubscribeOnline\('(.+?)'/.exec(s1);
-                    if (res1 === null) return undefined;
-                    return res1[1];
+        return $("tbody tr").toArray().map((e) => {
+            const name = getCheerioText(e, 1);
+            const field = getCheerioText(e, 3);
+            const time = getCheerioText(e, 5);
+            const price = getCheerioText(e, 7);
+            const method = getCheerioText(e, 9);
+            const bookTimestampString = cheerio((e as TagElement).children[11]).find("span[time]").attr("time");
+            const bookTimestamp = bookTimestampString === undefined ? undefined : Number(bookTimestampString);
+            let payId: string | undefined;
+            let bookId: string | undefined;
+            if (method === "网上支付") {
+                const payAction = (((((e as TagElement).children[11] as TagElement).children[5] as TagElement).children[1] as TagElement).attribs.onclick);
+                const payRes = /payNow\('(.+?)'/.exec(payAction);
+                if (payRes !== null) {
+                    payId = payRes[1];
                 }
-                return res0[1];
-            } catch {
-                return undefined;
+                const unsubscribeAction = (((((e as TagElement).children[11] as TagElement).children[5] as TagElement).children[3] as TagElement).attribs.onclick);
+                const unsubscribeRes = /unsubscribeOnline\('(.+?)'/.exec(unsubscribeAction);
+                if (unsubscribeRes !== null) {
+                    bookId = unsubscribeRes[1];
+                }
+            } else if (method === "现场支付") {
+                const unsubscribeAction = ((((e as TagElement).children[11] as TagElement).children[1] as TagElement).attribs.onclick);
+                const unsubscribeRes = /unsubscribe\('(.+?)'/.exec(unsubscribeAction);
+                if (unsubscribeRes !== null) {
+                    bookId = unsubscribeRes[1];
+                }
             }
-        };
-        return rows.toArray().map((e) => ({
-            name: getCheerioText(e, 1),
-            field: getCheerioText(e, 3),
-            time: getCheerioText(e, 5),
-            price: getCheerioText(e, 7),
-            bookId: getId(e),
-        } as SportsReservationRecord));
+            return {
+                name,
+                field,
+                time,
+                price,
+                method,
+                bookTimestamp,
+                bookId,
+                payId,
+            } as SportsReservationRecord;
+        }).concat(await getSportsReservationPaidRecords());
     },
     MOCK_RECORDS,
 );
+
+export const paySportsReservation = async (
+    helper: InfoHelper,
+    payId: string,
+    receiptTitle: ValidReceiptTypes | undefined,
+): Promise<string> => {
+    if (helper.mocked()) {
+        return "";
+    }
+    const paymentResultForm = await uFetch(SPORTS_MAKE_PAYMENT_LATER_URL, {
+        book_ids: payId,
+        xm: receiptTitle ?? "清华大学",
+    }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
+    const paymentApiHtml = await uFetch(
+        paymentResultForm.attr().action,
+        paymentResultForm.serialize() as never as object,
+        60000,
+        "UTF-8",
+        true,
+    );
+    const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
+    if (searchResult === null) {
+        throw new SportsError("id and token not found.");
+    }
+    const paymentCheckResult = await uFetch(SPORTS_PAYMENT_CHECK_URL, {
+        id: searchResult[1],
+        token: searchResult[2],
+    }).then(JSON.parse);
+    if (paymentCheckResult.code !== "0") {
+        throw new SportsError("Payment check failed: " + paymentCheckResult.message);
+    }
+    const inputs = cheerio.load(paymentApiHtml)("#payForm input");
+    const postForm: { [key: string]: string } = {};
+    inputs.each((_, element) => {
+        const {attribs} = element as TagElement;
+        postForm[attribs.name] = attribs.value;
+    });
+    postForm.channelId = "0101";
+    return await generalGetPayCode(await uFetch(SPORTS_PAYMENT_ACTION_URL, postForm));
+};
 
 export const unsubscribeSportsReservation = async (
     helper: InfoHelper,

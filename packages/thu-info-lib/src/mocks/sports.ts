@@ -278,20 +278,29 @@ export const MOCK_RECORDS: SportsReservationRecord[] = [
         field: "西体台球 (台7)",
         time: "2021-10-06  20:00-21:00",
         price: "15.0",
-        bookId: undefined
+        method: "网上支付",
+        bookTimestamp: 1667269469000,
+        bookId: undefined,
+        payId: undefined,
     },
     {
         name: "西体育馆",
         field: "西体羽毛球场 (羽4)",
         time: "2021-10-07  7:00-8:00",
         price: "0.0",
-        bookId: undefined
+        method: "",
+        bookTimestamp: undefined,
+        bookId: undefined,
+        payId: undefined,
     },
     {
         name: "西体育馆",
         field: "西体羽毛球场 (羽8)",
         time: "2021-10-08  7:00-8:00",
         price: "0.0",
-        bookId: undefined
+        method: "",
+        bookTimestamp: undefined,
+        bookId: undefined,
+        payId: undefined,
     }
 ];

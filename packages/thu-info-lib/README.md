@@ -32,7 +32,7 @@ We support a wide range of APIs:
 - News (`getNewsList`, `searchNewsList`, `getNewsSubscriptionList`, `getNewsSourceList`, `getNewsChannelList`, `addNewsSubscription`, `removeNewsSubscription`, `getNewsListBySubscription`, `getNewsDetail`, `addNewsToFavor`, `removeNewsFromFavor`, `getFavorNewsList`)
 - `getSchedule`
 - Course Registration (`getCrCaptchaUrl`, `loginCr`, `getCrAvailableSemesters`, `getCrCoursePlan`, `searchCrRemaining`, `searchCrPrimaryOpen`, `searchCrCourses`, `selectCourse`, `deleteCourse`, `getSelectedCourses`, `changeCourseWill`, `getCrCurrentStage`, `searchCoursePriorityMeta`, `searchCoursePriorityInformation`, `getQueueInfo`, `cancelCoursePF`, `setCoursePF`)
-- Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `unsubscribeSportsReservation`)
+- Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `paySportsReservation`, `unsubscribeSportsReservation`)
 - Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)
 
 Usages are documented in `dist/index` and also between the codes.

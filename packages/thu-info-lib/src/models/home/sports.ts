@@ -26,9 +26,12 @@ export interface SportsIdInfo {
 }
 
 export interface SportsReservationRecord {
-    name: string;                // a string representing the name of the gym
-    field: string;               // a string representing the name of the reserved field
-    time: string;                // a string representing the time period of the reservation
-    price: string;               // a string representing the price of the reservation
-    bookId: string | undefined;  // a string representing the ID of the booking, useful for cancelling, or undefined if the reservation is not cancellable
+    name: string;                        // a string representing the name of the gym
+    field: string;                       // a string representing the name of the reserved field
+    time: string;                        // a string representing the time period of the reservation
+    price: string;                       // a string representing the price of the reservation
+    method: string;                      // a string representing the method of payment
+    bookTimestamp: number | undefined;   // a number representing the booking timestamp of the reservation
+    bookId: string | undefined;          // a string representing the ID of the booking, useful for cancelling, or undefined if the reservation is not cancellable
+    payId: string | undefined;           // a string representing the ID of the payment, useful for paying, or undefined if the reservation is not cancellable
 }

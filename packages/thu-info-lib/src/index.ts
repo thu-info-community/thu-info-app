@@ -65,6 +65,7 @@ import {
     getSportsReservationRecords,
     getSportsResources,
     makeSportsReservation,
+    paySportsReservation,
     unsubscribeSportsReservation,
     updateSportsPhoneNumber,
     ValidReceiptTypes,
@@ -788,6 +789,7 @@ export class InfoHelper {
      * @param date          a string in the format of `yyyy-MM-dd`
      * @param captcha       a string representing the captcha
      * @param resHashId     a string representing the hash of the resource
+     * @param skipPayment   whether to skip payment (and pay later)
      * @return  Returns a string representing the alipay payment code if payment is required, or `undefined` if no payment is needed.
      */
     public makeSportsReservation = async (
@@ -799,12 +801,21 @@ export class InfoHelper {
         date: string,  // yyyy-MM-dd
         captcha: string,
         resHashId: string,
-    ) => makeSportsReservation(this, totalCost, phone, receiptTitle, gymId, itemId, date, captcha, resHashId);
+        skipPayment = false,
+    ) => makeSportsReservation(this, totalCost, phone, receiptTitle, gymId, itemId, date, captcha, resHashId, skipPayment);
 
     /**
      * Gets all active sports reservation records.
      */
     public getSportsReservationRecords = async () => getSportsReservationRecords(this);
+
+    /**
+     * Make sports reservation payment with a payId.
+     */
+    public paySportsReservation = async (
+        payId: string,
+        receiptTitle: ValidReceiptTypes | undefined,
+    ): Promise<string> => paySportsReservation(this, payId, receiptTitle);
 
     /**
      * Cancel a sports reservation <b>if payment has not been made</b>
