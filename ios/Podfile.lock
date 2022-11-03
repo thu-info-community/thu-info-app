@@ -246,7 +246,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-view-shot (3.4.0):
+  - react-native-view-shot (3.5.0):
     - React-Core
   - react-native-webview (11.23.1):
     - React-Core
@@ -330,7 +330,7 @@ PODS:
     - React-Core
   - RNPermissions (3.6.1):
     - React-Core
-  - RNReanimated (3.0.0-rc.3):
+  - RNReanimated (3.0.0-rc.4):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -362,7 +362,7 @@ PODS:
     - React-RCTImage
   - RNSnackbar (2.4.0):
     - React-Core
-  - RNSVG (13.4.0):
+  - RNSVG (13.5.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -575,7 +575,7 @@ SPEC CHECKSUMS:
   react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-view-shot: a60a98a18c72bcaaaf2138f9aab960ae9b0d96c7
+  react-native-view-shot: 792829857bbb23a9c8acdad9a640554bdee397a3
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
   React-perflogger: 5e41b01b35d97cc1b0ea177181eb33b5c77623b6
   React-RCTActionSheet: 48949f30b24200c82f3dd27847513be34e06a3ae
@@ -596,10 +596,10 @@ SPEC CHECKSUMS:
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 0df7970cfc60389f00eb62fd7c097dc75af3fb4f
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
-  RNReanimated: 6aa6f7d6e74996a677f505bcd5a77f0e26719bf3
+  RNReanimated: 9d50cc094df0b3846db3a7954208b466d342ca7d
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd
-  RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
+  RNSVG: 38ca962c970dbce1ca38991a5aebf26d163f9efb
   Yoga: 1f02ef4ce4469aefc36167138441b27d988282b1
 
 PODFILE CHECKSUM: c1206eedf86132848bc5f2d12c87a37edfc6a9d3
