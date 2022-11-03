@@ -121,11 +121,14 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
           p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
       - uses: Apple-Actions/download-provisioning-profiles@v1
+        name: provisioning
         with:
           bundle-id: org.reactjs.native.example.thu-info
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+      - name: Output provisioning files
+        run: echo ${{ steps.provisioning.outputs.profiles }}
       - name: Build ios app
         run: |
           export APP_VERSION="$(node -e "console.log(require('./package.json').version)")"
