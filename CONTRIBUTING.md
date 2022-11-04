@@ -1,8 +1,8 @@
-# Contributing to THUInfo
+# Contributing to thu-info-app
 
 :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
-The following is a set of guidelines for contributing to [THUInfo](https://github.com/UNIDY2002/THUInfo), which is hosted on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to [thu-info-app](https://github.com/thu-info-community/thu-info-app), which is hosted on GitHub. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 **NOTICE: Contributions to this repository are limited to students at Tsinghua University.**
 
@@ -17,14 +17,14 @@ This project and everyone participating in it is governed by our [Code of Conduc
 - In-application feedback system (submit feedbacks with your contact attached for faster responses)
 - Email to [i@thuinfo.net](mailto:i@thuinfo.net)
 
-- [Github Discussions](https://github.com/UNIDY2002/THUInfo/discussions)
+- [Github Discussions](https://github.com/thu-info-community/thu-info-app/discussions)
 
 ## What should I know before I get started?
 
 Code of THUInfo APP is separated into two repositories:
 
-- **[UNIDY2002/THUInfo](https://github.com/UNIDY2002/THUInfo)** contains code for the mobile application, mostly regarding the UI part, which is written using react native.
-- **[thu-info-community/thu-info-lib](https://github.com/thu-info-community/thu-info-lib)** contains code that handles interaction with the official websites and parsing of HTTP responses, and is written in TypeScript.
+- **[thu-info-app](https://github.com/thu-info-community/thu-info-app)** contains code for the mobile application, mostly regarding the UI part, which is written using react native.
+- **[thu-info-lib](https://github.com/thu-info-community/thu-info-lib)** contains code that handles interaction with the official websites and parsing of HTTP responses, and is written in TypeScript.
 
 Before you contribute, make sure you have chosen the correct repository.
 
@@ -49,7 +49,7 @@ Provide more context by answering these questions:
 
 * **What is the version of the application you are using?**
 * **Did the problem start happening recently** (e.g. after updating to a new version of THUInfo) or was this always a problem?
-* If the problem started happening recently, **can you reproduce the problem in an older version of THUInfo?** What's the most recent version (or most recent date) in which the problem doesn't happen? You can download older versions of THUInfo from [the releases page](https://github.com/UNIDY2002/THUInfo/releases).
+* If the problem started happening recently, **can you reproduce the problem in an older version of THUInfo?** What's the most recent version (or most recent date) in which the problem doesn't happen? You can download older versions of THUInfo from [the releases page](https://github.com/thu-info-community/thu-info-app/releases).
 * **Can you reliably reproduce the issue?** If not, provide details about how often the problem happens and under which conditions it normally happens.
 
 Include details about your device and environment:

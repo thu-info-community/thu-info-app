@@ -12,9 +12,8 @@ import {getStr} from "../../utils/i18n";
 import {
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
-	GITHUB_REPO_URL,
+	GITHUB_ORG_URL,
 	Johnny_URL,
-	LIB_URL,
 	UNIDY2002_URL,
 	VZHAO_21_URL,
 	WERKEYTOM_URL,
@@ -112,22 +111,13 @@ export const AboutScreen = () => {
 				style={[styles.textStyle, {color: theme.colors.text, fontSize: 14}]}>
 				{getStr("sourceText")}
 			</Text>
-			<TouchableOpacity onPress={() => makeLinking(GITHUB_REPO_URL)}>
+			<TouchableOpacity onPress={() => makeLinking(GITHUB_ORG_URL)}>
 				<Text
 					style={[
 						styles.textStyle,
 						{color: theme.colors.primaryLight, fontSize: 14},
 					]}>
-					UNIDY2002 / THUInfo @ GitHub
-				</Text>
-			</TouchableOpacity>
-			<TouchableOpacity onPress={() => makeLinking(LIB_URL)}>
-				<Text
-					style={[
-						styles.textStyle,
-						{color: theme.colors.primaryLight, fontSize: 14},
-					]}>
-					thu-info-community / thu-info-lib @ GitHub
+					thu-info-community @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<View style={{flex: 1}} />
