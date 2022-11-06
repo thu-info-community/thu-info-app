@@ -59,7 +59,7 @@
         "@typescript-eslint/eslint-plugin": "5.42.0",
         "@typescript-eslint/parser": "5.42.0",
         "editor": "1.0.0",
-        "eslint": "8.26.0",
+        "eslint": "8.27.0",
         "esm": "3.2.25",
         "jest": "29.2.2",
         "node-polyfill-webpack-plugin": "2.0.1",
