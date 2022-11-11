@@ -51,7 +51,6 @@ jobs:
           arguments: assembleRelease
           build-root-directory: android
       - name: Upload artifact
-        if: endsWith(github.ref, 'master')
         uses: actions/upload-artifact@v3
         with:
           name: app-release.apk
