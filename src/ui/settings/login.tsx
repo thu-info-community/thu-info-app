@@ -18,6 +18,7 @@ import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
 import {login} from "../../redux/slices/auth";
+import Snackbar from "react-native-snackbar";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -38,12 +39,21 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(() => {
 				dispatch(login({userId, password}));
 			})
-			.then(() => helper.switchLang(getStr("mark") === "CH" ? "zh" : "en"))
+			.then(() =>
+				helper
+					.switchLang(getStr("mark") === "CH" ? "zh" : "en")
+					.catch(() => {}),
+			)
 			.then(() => {
 				setProcessing(false);
 				navigation.pop();
 			})
-			.catch(() => {
+			.catch((e) => {
+				Snackbar.show({
+					text:
+						typeof e.message === "string" ? e.message : getStr("networkRetry"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
 				setProcessing(false);
 			});
 	};

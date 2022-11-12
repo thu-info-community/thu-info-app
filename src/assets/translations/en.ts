@@ -10,8 +10,6 @@ export default {
 	login: "Login",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",
-	loginFailure:
-		"Login failed, please check the network connection and make sure your password is correct before re-login.",
 	forceLogin: "Force login",
 	logout: "Logout",
 	confirmLogout: "Remove all data?",
