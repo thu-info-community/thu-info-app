@@ -59,6 +59,7 @@ export const SportsSelectScreen = ({
 	const [imageUrl, setImageUrl] = useState(helper.getSportsCaptchaUrl());
 	const [imageBase64, setImageBase64] = useState("");
 	const [captcha, setCaptcha] = useState("");
+	const [processing, setProcessing] = useState(false);
 
 	useEffect(() => {
 		if (selectedFieldIndex !== undefined) {
@@ -316,6 +317,7 @@ export const SportsSelectScreen = ({
 								text: getStr("processing"),
 								duration: Snackbar.LENGTH_SHORT,
 							});
+							setProcessing(true);
 							helper
 								.makeSportsReservation(
 									field.cost,
@@ -345,11 +347,13 @@ export const SportsSelectScreen = ({
 												: getStr("networkRetry"),
 										duration: Snackbar.LENGTH_LONG,
 									});
-								});
+								})
+								.then(() => setProcessing(false));
 						}
 					}}
 					disabled={
 						field === undefined ||
+						processing ||
 						(!helper.mocked() &&
 							(captcha.trim().length === 0 || phoneNumber.trim().length === 0))
 					}>
