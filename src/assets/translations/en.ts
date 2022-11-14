@@ -65,6 +65,7 @@ export default {
 	helpAndFeedback: "Help and Support",
 	feishuFeedback: "Questionnaire",
 	countdown: "Countdown",
+	noCountdown: "Empty",
 	askBox: "Tape",
 	more: "More",
 	wechatPrompt: "Scan the QR code to join our wechat group!",

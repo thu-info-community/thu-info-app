@@ -32,6 +32,11 @@ import Snackbar from "react-native-snackbar";
 import {AppState} from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState} from "./slices/config";
+import {
+	defaultTimetable,
+	timetableReducer,
+	TimetableState,
+} from "./slices/timetable";
 
 export const helper = new InfoHelper();
 
@@ -68,6 +73,7 @@ export interface State {
 	credentials: CredentialsState;
 	top5: Top5State;
 	reservation: ReservationState;
+	timetable: TimetableState;
 }
 
 const rootReducer = combineReducers({
@@ -91,6 +97,7 @@ const rootReducer = combineReducers({
 	),
 	top5: top5Reducer,
 	reservation: reservationReducer,
+	timetable: timetableReducer,
 });
 
 const authTransform = createTransform(
@@ -176,6 +183,7 @@ const persistConfig = {
 						},
 						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
+						timetable: state.timetable ?? defaultTimetable,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),

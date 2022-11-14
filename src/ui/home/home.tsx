@@ -53,6 +53,7 @@ import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {setCrTimetable} from "../../redux/slices/timetable";
 
 const iconSize = 40;
 
@@ -155,10 +156,10 @@ const endTimeEn = [
 interface ScheduleViewModel {
 	name: string;
 	location: string;
-	from: number;
-	to: number;
+	from: string;
+	to: string;
 	color: string;
-	navProps: ScheduleDetailProps;
+	navProps?: ScheduleDetailProps;
 }
 
 const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
@@ -167,8 +168,10 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 	const navigation = useNavigation<RootNav>();
 	return (
 		<TouchableOpacity
+			disabled={schedule.navProps === undefined}
 			onPress={() => {
-				navigation.navigate("ScheduleDetail", schedule.navProps);
+				schedule.navProps &&
+					navigation.navigate("ScheduleDetail", schedule.navProps);
 			}}>
 			<View
 				style={{
@@ -196,9 +199,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 								color: theme.colors.fontB0,
 								fontFamily: getLocale() === zh ? "monospace" : "",
 							}}>
-							{getLocale() === zh
-								? beginTimeZh[schedule.from]
-								: beginTimeEn[schedule.from]}
+							{schedule.from}
 						</Text>
 						<View style={{flex: 1}}>
 							<Text
@@ -224,9 +225,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 								color: theme.colors.fontB2,
 								fontFamily: getLocale() === zh ? "monospace" : "",
 							}}>
-							{getLocale() === zh
-								? endTimeZh[schedule.to]
-								: endTimeEn[schedule.to]}
+							{schedule.to}
 						</Text>
 						<View style={{flex: 1}}>
 							<Text
@@ -266,6 +265,7 @@ export const HomeScheduleSection = () => {
 	const firstDay = useSelector((s: State) => s.config.firstDay);
 	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
 	const shortenMap = useSelector((s: State) => s.schedule.shortenMap);
+	const crTimetable = useSelector((s: State) => s.timetable.crTimetable);
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
@@ -291,17 +291,26 @@ export const HomeScheduleSection = () => {
 			_week += 1;
 			dayOfWeek = 1;
 		}
-		const a: ScheduleViewModel[] = [];
+		const a: (ScheduleViewModel & {begin: number; end: number})[] = [];
 		for (const s of schedules) {
 			for (const ss of s.activeTime.base) {
 				if (ss.activeWeeks.includes(_week)) {
 					if (ss.dayOfWeek === dayOfWeek) {
+						const from =
+							getStr("mark") === "CH"
+								? beginTimeZh[ss.begin]
+								: beginTimeEn[ss.begin];
+						const to =
+							getStr("mark") === "CH" ? endTimeZh[ss.end] : endTimeEn[ss.end];
+
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
 								name: shortenMap[s.name] ?? s.name.slice(6),
 								location: s.location,
-								from: ss.begin,
-								to: ss.end,
+								from,
+								to,
+								begin: ss.begin,
+								end: ss.end,
 								color: getColor(s.name),
 								navProps: {
 									name: s.name,
@@ -318,8 +327,10 @@ export const HomeScheduleSection = () => {
 							a.push({
 								name: shortenMap[s.name] ?? s.name,
 								location: s.location,
-								from: ss.begin,
-								to: ss.end,
+								from,
+								to,
+								begin: ss.begin,
+								end: ss.end,
 								color: getColor(s.name),
 								navProps: {
 									name: s.name,
@@ -337,7 +348,7 @@ export const HomeScheduleSection = () => {
 				}
 			}
 		}
-		a.sort((x, y) => x.from - y.from);
+		a.sort((x, y) => x.begin - y.begin);
 		return a;
 	};
 	const todaySchedules = selectSchedule(baseSchedule, today);
@@ -360,49 +371,23 @@ export const HomeScheduleSection = () => {
 
 	const dayEn = ["", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
 
-	const [countdown] = React.useState<string[]>([]);
+	const activeTimetables = crTimetable.filter(
+		(timetable) =>
+			(helper.graduate() && timetable.graduate) ||
+			(!helper.graduate() && timetable.undergraduate),
+	);
+	const activeEvents = activeTimetables
+		.flatMap(({events}) => events)
+		.filter((event) => {
+			const begin = dayjs(event.begin);
+			const end = dayjs(event.end);
+			return now.isBefore(end) && now.isAfter(begin.add(-14, "day"));
+		});
 
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("schedulePreview")}</Text>
 			<View style={style.SectionContentContainer}>
-				{countdown.length > 0 && (
-					<>
-						<Text style={style.scheduleSectionContentPrimaryTitle}>
-							{getStr("countdown")}
-						</Text>
-						{countdown.map((item) => {
-							if (
-								(item.slice(-2) === "结束" || item.slice(-2) === "开始") &&
-								item.indexOf("于") !== -1
-							) {
-								const [event, time] = item.slice(0, -2).split("于");
-								return (
-									<Text style={{marginTop: 8}} key={item}>
-										<Text style={{color: theme.colors.text}}>
-											{event.trim()}
-										</Text>
-										<Text style={{color: theme.colors.fontB3}}>{" 于 "}</Text>
-										<Text style={{color: theme.colors.text}}>
-											{time.trim()}
-										</Text>
-										<Text style={{color: theme.colors.fontB3}}>
-											{" " + item.slice(-2)}
-										</Text>
-									</Text>
-								);
-							} else {
-								return (
-									<Text
-										style={{marginTop: 8, color: theme.colors.text}}
-										key={item}>
-										{item}
-									</Text>
-								);
-							}
-						})}
-					</>
-				)}
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
 					{getLocale() === zh
 						? `${now.month() + 1}月${now.date()}日 ${dayZh[today]}`
@@ -423,6 +408,27 @@ export const HomeScheduleSection = () => {
 				{tomorrowSchedules.map((x) => (
 					<HomeSchedule key={x.name} schedule={x} />
 				))}
+				<Text style={style.scheduleSectionContentPrimaryTitle}>
+					{getStr("countdown")}
+				</Text>
+				{activeEvents.length > 0 ? (
+					activeEvents.map((e) => (
+						<HomeSchedule
+							schedule={{
+								name: e.stage,
+								location: "",
+								from: e.begin,
+								to: e.end,
+								color: getColor(e.stage),
+							}}
+							key={e.stage + e.begin + e.end}
+						/>
+					))
+				) : (
+					<Text style={{color: theme.colors.text, marginTop: 8}}>
+						{getStr("noCountdown")}
+					</Text>
+				)}
 			</View>
 		</View>
 	);
@@ -786,10 +792,13 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	React.useEffect(() => {
-		helper.appStartUp().then(({bookingRecords, sportsReservationRecords}) => {
-			dispatch(setActiveLibBookRecord(bookingRecords));
-			dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
-		});
+		helper
+			.appStartUp()
+			.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {
+				dispatch(setActiveLibBookRecord(bookingRecords));
+				dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
+				dispatch(setCrTimetable(crTimetable));
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
