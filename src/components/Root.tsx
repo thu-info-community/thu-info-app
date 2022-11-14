@@ -401,16 +401,7 @@ export const Root = () => {
 	const theme = themes(themeName);
 
 	return (
-		<Stack.Navigator
-			screenOptions={
-				Platform.OS === "ios"
-					? {
-							headerBackTitleStyle: {color: theme.colors.themePurple},
-							headerTintColor: theme.colors.themePurple,
-							// eslint-disable-next-line no-mixed-spaces-and-tabs
-					  }
-					: undefined
-			}>
+		<Stack.Navigator>
 			{/* Root Tabs */}
 			<Stack.Screen
 				name="RootTabs"

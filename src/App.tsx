@@ -54,6 +54,7 @@ const RootComponent = () => {
 					...DefaultTheme,
 					colors: {
 						...DefaultTheme.colors,
+						primary: theme.colors.themePurple,
 						text: theme.colors.text,
 						background: theme.colors.themeBackground,
 						card: theme.colors.contentBackground,
