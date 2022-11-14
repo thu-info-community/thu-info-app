@@ -39,7 +39,7 @@ const BottomButton = ({
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: theme.colors.themeBackground,
+				backgroundColor: theme.colors.themePurple,
 				flex: 1,
 				margin: 4,
 				borderRadius: 4,
@@ -47,7 +47,11 @@ const BottomButton = ({
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
 			<Text
-				style={{textAlign: "center", padding: 10, color: theme.colors.text}}>
+				style={{
+					textAlign: "center",
+					padding: 10,
+					color: theme.colors.contentBackground,
+				}}>
 				{getStr(text)}
 			</Text>
 		</TouchableOpacity>
