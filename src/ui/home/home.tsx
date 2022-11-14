@@ -271,16 +271,13 @@ export const HomeScheduleSection = () => {
 	const tomorrow = today + 1;
 	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
 	const colorList: string[] = [
-		"#16A085",
-		"#27AE60",
-		"#2980B9",
-		"#8E44AD",
-		"#2C3E50",
-		"#F39C12",
-		"#D35400",
-		"#C0392B",
-		"#BDC3C7",
-		"#7F8C8D",
+		"#4DD28D",
+		"#55E4C6",
+		"#E8CE4F",
+		"#E48555",
+		"#8B55E4",
+		"#5599E4",
+		"#BC4C55",
 	];
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
