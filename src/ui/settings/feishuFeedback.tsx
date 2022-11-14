@@ -52,6 +52,7 @@ function inject_retry() {
     }
 }
 
+localStorage.clear();
 inject_retry();
 true;
 			`}
