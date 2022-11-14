@@ -134,6 +134,7 @@ import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockT
 import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
+import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -372,6 +373,7 @@ type SettingsStackParamList = {
 	General: undefined;
 	Language: undefined;
 	DarkMode: undefined;
+	ScheduleSettings: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
 	FeishuFeedback: undefined;
@@ -1036,6 +1038,11 @@ export const Root = () => {
 				name="DarkMode"
 				component={DarkModeScreen}
 				options={{title: getStr("darkMode")}}
+			/>
+			<Stack.Screen
+				name="ScheduleSettings"
+				component={ScheduleSettingsScreen}
+				options={{title: getStr("scheduleSettings")}}
 			/>
 			<Stack.Screen
 				name="Privacy"

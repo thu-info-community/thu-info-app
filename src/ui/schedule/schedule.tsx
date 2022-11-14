@@ -5,7 +5,6 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	RefreshControl,
-	Alert,
 } from "react-native";
 import React, {ReactElement, useState, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -24,7 +23,6 @@ import {useColorScheme} from "react-native";
 import md5 from "md5";
 import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
-import IconMinus from "../../assets/icons/IconMinus";
 import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "src/components/views";
 import Snackbar from "react-native-snackbar";
@@ -300,41 +298,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						</Text>
 					</BottomPopupTriggerView>
 					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
-						<TouchableOpacity
-							onPress={() => {
-								Alert.alert(
-									"Sync Custom Schedule",
-									"Select send or receive please",
-									[
-										{
-											text: "Cancel",
-										},
-										{
-											text: "Send",
-											onPress: () => {
-												navigation.navigate("ScheduleSync", {
-													isSending: true,
-												});
-											},
-										},
-										{
-											text: "Receive",
-											onPress: () => {
-												navigation.navigate("ScheduleSync", {
-													isSending: false,
-												});
-											},
-										},
-									],
-								);
-							}}>
-							<Text>Sync</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => navigation.navigate("ScheduleHidden")}>
-							<IconMinus width={24} height={24} />
-						</TouchableOpacity>
-						<View style={{width: 8}} />
 						<TouchableOpacity
 							onPress={() => navigation.navigate("ScheduleAdd")}>
 							<IconAdd width={24} height={24} />

@@ -493,6 +493,9 @@ export default {
 	submitFeedbackWithMobileData:
 		"Please submit feedback using your mobile data!",
 	scheduleSync: "Schedule Synchronization",
+	scheduleSyncTip: "[BETA] Synchronize your schedule between devices",
+	syncSender: "I am sender",
+	syncReceiver: "I am receiver",
 	sendSchedule: "Send Your Schedule",
 	receiveSchedule: "Receive Your Schedule",
 	matching: "Matching...",

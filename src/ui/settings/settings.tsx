@@ -64,6 +64,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
+						onPress={() => navigation.navigate("ScheduleSettings")}>
+						<Text style={style.text}>{getStr("schedule")}</Text>
+						<IconRight height={20} width={20} />
+					</TouchableOpacity>
+				</RoundedView>
+				<RoundedView style={style.rounded}>
+					<TouchableOpacity
+						style={style.touchable}
 						onPress={() => navigation.navigate("Privacy")}>
 						<Text style={style.text}>{getStr("privacy")}</Text>
 						<IconRight height={20} width={20} />
