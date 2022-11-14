@@ -154,6 +154,8 @@ export const CANCEL_BOOKING_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/profile/books/";
 export const PHYSICAL_EXAM_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/tyjx.tyjx_tc_xscjb.do?m=jsonCj";
+export const CR_TIMETABLE_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f94f93323e6b55300b80afd641303c054d0551650ca167136885bf/sites/default/files/%E9%80%89%E8%AF%BE%E6%97%B6%E9%97%B4%E5%AE%89%E6%8E%92.htm";
 export const CR_CAPTCHA_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/login-jcaptcah.jpg?vpn-1&captchaflag=login1";
 export const CR_LOGIN_HOME_URL =

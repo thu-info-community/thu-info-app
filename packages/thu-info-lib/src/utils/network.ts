@@ -1,4 +1,4 @@
-import { CONTENT_TYPE_FORM, USER_AGENT } from "../constants/strings";
+import {CONTENT_TYPE_FORM, CR_TIMETABLE_URL, USER_AGENT} from "../constants/strings";
 import iconv from "iconv-lite";
 import fetch from "cross-fetch";
 import AbortController from "abort-controller";
@@ -122,6 +122,10 @@ export const uFetch = async (
                     charset = regRes[1];
                 }
             }
+        }
+
+        if (url === CR_TIMETABLE_URL) {
+            charset = "gb2312";
         }
 
         if (global.FileReader) {

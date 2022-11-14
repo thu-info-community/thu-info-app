@@ -1,3 +1,17 @@
+export interface CrTimetableEvent {
+    stage: string;      // 阶段
+    begin: string;      // 开始时间 yyyy-MM-dd HH:mm
+    end: string;        // 结束时间 yyyy-MM-dd HH:mm
+    messages: string[]; // 特别提示
+}
+
+export interface CrTimetable {
+    semester: string;           // 学年学期
+    undergraduate: boolean;     // 适用于本科生
+    graduate: boolean;          // 适用于研究生
+    events: CrTimetableEvent[]; // 选课事件
+}
+
 export interface CoursePlan {
     id: string;        // 课程号
     name: string;      // 课程名
@@ -12,7 +26,7 @@ export interface CrSemester {
 }
 
 export interface SearchParams {
-    semester: string    // 学年学期
+    semester: string;   // 学年学期
     id?: string;        // 课程号
     name?: string;      // 课程名
     dayOfWeek?: number; // 上课星期（1~7）

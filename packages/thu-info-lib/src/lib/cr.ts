@@ -7,6 +7,7 @@ import {
     CR_MAIN_URL,
     CR_SEARCH_URL,
     CR_SELECT_URL,
+    CR_TIMETABLE_URL,
     CR_TREE_URL,
     CR_ZYTJB_URL,
 } from "../constants/strings";
@@ -20,6 +21,8 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    CrTimetable,
+    CrTimetableEvent,
     QueueInfo,
     SearchCoursePriorityQuery,
     SearchCoursePriorityResult,
@@ -36,6 +39,7 @@ import {
     MOCK_CR_PRIMARY_OPEN_SEARCH_RESULT,
     MOCK_CR_REMAINING_SEARCH_RESULT,
     MOCK_CR_SEARCH_RESULT,
+    MOCK_CR_TIMETABLE,
     MOCK_QUEUE_INFO,
     MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
     MOCK_SEARCH_COURSE_PRIORITY_META,
@@ -44,6 +48,75 @@ import {
 import TagElement = cheerio.TagElement;
 import Element = cheerio.Element;
 import TextElement = cheerio.TextElement;
+
+const parseCrTimetableTime = (semester: string, timeText: string): string => {
+    const timeSearch = /(\d+)月(\d+)日.+?(\d+):(\d+)/.exec(timeText);
+    if (timeSearch === null) {
+        throw new LibError("Failed to parse cr timetable time");
+    }
+    const [month, day, hour, minute] = timeSearch.slice(1);
+    let year: string;
+    const beginYear = semester.substring(0, 4);
+    const endYear = semester.substring(5, 9);
+    const semesterType = semester[10];
+    if (semesterType === "1") {
+        year = Number(month) < 3 ? endYear : beginYear;
+    } else if (semesterType === "2") {
+        year = Number(month) > 8 ? beginYear : endYear;
+    } else {
+        year = endYear;
+    }
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+};
+
+export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const html = await uFetch(CR_TIMETABLE_URL);
+        if (!html.includes("时间安排")) {
+            throw new LibError();
+        }
+        const $ = cheerio.load(html);
+        const result: CrTimetable[] = [];
+        $("td > .MsoNormalTable").each((_, e) => {
+            const table = cheerio(e);
+            const rows = table.find("tr");
+            const title = cheerio(rows[0]).text().trim();
+            const [semesterText, flagText] = title.split("季学期 ");
+            const semester = semesterText
+                .replace("秋", "-1")
+                .replace("春", "-2")
+                .replace("夏", "-3");
+            const undergraduate = flagText.includes("本");
+            const graduate = flagText.includes("研");
+            const events: CrTimetableEvent[] = [];
+            let begin = "";
+            let end = "";
+            rows.slice(2).each((__, e2) => {
+                const tds = cheerio(e2).children();
+                const stage = tds.first().text().trim();
+                const messages = tds.last().children().map((___, e3) => cheerio(e3).text()).get();
+                if (tds.length === 3) {
+                    const duration = cheerio(tds[1]).children().first().text();
+                    const [beginText, endText] = duration.split("～");
+                    begin = parseCrTimetableTime(semester, beginText);
+                    end = parseCrTimetableTime(semester, endText);
+                }
+                events.push({stage, begin, end, messages});
+            });
+            result.push({
+                semester,
+                undergraduate,
+                graduate,
+                events,
+            });
+        });
+        return result;
+    },
+    MOCK_CR_TIMETABLE,
+);
 
 export const getCrCaptchaUrl = (helper: InfoHelper) => roamingWrapperWithMocks(
     helper,

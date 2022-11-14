@@ -27,6 +27,7 @@ it("should login successfully.", async () => {
     const {firstDay, weekCount} = await helper.getCalendar();
     expect(weekCount % 3).toEqual(0);
     expect(dayjs(firstDay).day()).toEqual(1);
+    await helper.getCrTimetable();
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
 }, 60000);

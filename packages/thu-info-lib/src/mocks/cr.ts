@@ -4,10 +4,179 @@ import {
     CrRemainingSearchResult,
     CrSearchResult,
     CrSemester,
+    CrTimetable,
     QueueInfo,
     SearchCoursePriorityResult,
     SelectedCourse,
 } from "../models/cr/cr";
+
+export const MOCK_CR_TIMETABLE: CrTimetable[] = [
+    {
+        semester: "2022-2023-1",
+        undergraduate: true,
+        graduate: false,
+        events: [
+            {
+                stage: "预选",
+                begin: "2022-5-23 13:00",
+                end: "2022-5-26 16:00",
+                messages: []
+            },
+            {
+                stage: "正选",
+                begin: "2022-6-1 13:00",
+                end: "2022-6-6 16:00",
+                messages: []
+            },
+            {
+                stage: "重补修体育课分项I",
+                begin: "2022-6-7 13:00",
+                end: "2022-6-10 16:00",
+                messages: []
+            },
+            {
+                stage: "二级选课 I",
+                begin: "2022-6-10 13:00",
+                end: "2022-6-16 16:00",
+                messages: []
+            },
+            {
+                stage: "北大、北外课程选课",
+                begin: "2022-8-22 13:00",
+                end: "2022-8-25 16:00",
+                messages: []
+            },
+            {
+                stage: "2022级新生预选",
+                begin: "2022-9-2 8:00",
+                end: "2022-9-8 15:00",
+                messages: []
+            },
+            {
+                stage: "补退选 (第一阶段)",
+                begin: "2022-9-13 13:00",
+                end: "2022-9-19 8:00",
+                messages: []
+            },
+            {
+                stage: "二级选课 II",
+                begin: "2022-9-13 13:00",
+                end: "2022-9-19 8:00",
+                messages: []
+            },
+            {
+                stage: "重补修体育课分项II",
+                begin: "2022-9-19 13:00",
+                end: "2022-9-22 16:00",
+                messages: []
+            },
+            {
+                stage: "补退选 (第二阶段)",
+                begin: "2022-9-19 13:00",
+                end: "2022-9-23 16:00",
+                messages: []
+            },
+            {
+                stage: "申请特殊原因补选",
+                begin: "2022-9-19 13:00",
+                end: "2022-9-23 17:00",
+                messages: []
+            },
+            {
+                stage: "选择课程以P/F记载",
+                begin: "2022-10-17 8:00",
+                end: "2022-10-21 16:00",
+                messages: []
+            },
+            {
+                stage: "退课 (第一阶段)",
+                begin: "2022-10-17 8:00",
+                end: "2022-10-21 16:00",
+                messages: []
+            },
+            {
+                stage: "退课 (第二阶段)",
+                begin: "2022-11-14 8:00",
+                end: "2022-11-25 16:00",
+                messages: []
+            }
+        ]
+    },
+    {
+        semester: "2022-2023-1",
+        undergraduate: false,
+        graduate: true,
+        events: [
+            {
+                stage: "预选",
+                begin: "2022-8-31 13:00",
+                end: "2022-9-6 10:00",
+                messages: []
+            },
+            {
+                stage: "正选",
+                begin: "2022-9-6 13:00",
+                end: "2022-9-7 16:00",
+                messages: []
+            },
+            {
+                stage: "补退选 (第一阶段)",
+                begin: "2022-9-13 13:00",
+                end: "2022-9-19 8:00",
+                messages: []
+            },
+            {
+                stage: "补退选 (第二阶段)",
+                begin: "2022-9-19 13:00",
+                end: "2022-9-23 16:00",
+                messages: []
+            },
+            {
+                stage: "申请特殊原因补选",
+                begin: "2022-9-19 13:00",
+                end: "2022-9-23 17:00",
+                messages: []
+            },
+            {
+                stage: "退课 (第一阶段)",
+                begin: "2022-10-17 8:00",
+                end: "2022-10-21 16:00",
+                messages: []
+            },
+            {
+                stage: "退课 (第二阶段)",
+                begin: "2022-11-14 8:00",
+                end: "2022-11-25 16:00",
+                messages: []
+            }
+        ]
+    },
+    {
+        semester: "2021-2022-3",
+        undergraduate: true,
+        graduate: true,
+        events: [
+            {
+                stage: "夏季学期选课",
+                begin: "2022-5-31 13:00",
+                end: "2022-6-10 16:00",
+                messages: []
+            },
+            {
+                stage: "申请特殊原因补选",
+                begin: "2022-6-11 13:00",
+                end: "2022-8-30 16:00",
+                messages: []
+            },
+            {
+                stage: "夏季学期网上退课",
+                begin: "2022-8-22 8:00",
+                end: "2022-8-31 16:00",
+                messages: []
+            }
+        ]
+    },
+];
 
 export const MOCK_AVAILABLE_SEMESTERS: CrSemester[] = [
     {id: "2022-2023-1", name: "2022-2023学年-秋"},

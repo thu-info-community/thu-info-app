@@ -71,6 +71,7 @@ import {
     ValidReceiptTypes,
 } from "./lib/sports";
 import {
+    getCrTimetable,
     getCrCaptchaUrl,
     getCoursePlan,
     loginCr,
@@ -189,11 +190,17 @@ export class InfoHelper {
             return {
                 bookingRecords: [],
                 sportsReservationRecords: [],
+                crTimetable: [],
             };
         }
         const bookingRecords = await getBookingRecords(this);
         const sportsReservationRecords = await getSportsReservationRecords(this);
-        return {bookingRecords, sportsReservationRecords};
+        try {
+            const crTimetable = await getCrTimetable(this);
+            return {bookingRecords, sportsReservationRecords, crTimetable};
+        } catch {
+            return {bookingRecords, sportsReservationRecords, crTimetable: []};
+        }
     };
 
     /**
@@ -613,6 +620,11 @@ export class InfoHelper {
      *          exams) of the user.
      */
     public getSchedule = async () => getSchedule(this);
+
+    /**
+     * Gets the timetable for course registration.
+     */
+    public getCrTimetable = async () => getCrTimetable(this);
 
     /**
      * Gets the login captcha url for the course registration system.
