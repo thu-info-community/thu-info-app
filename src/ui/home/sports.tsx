@@ -86,7 +86,7 @@ export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 		<ScrollView style={{flex: 1}}>
 			<RoundedView
 				style={{marginHorizontal: 12, marginVertical: 24, padding: 16}}>
-				{sportsIdInfoList.map((info, index) => (
+				{([] as typeof sportsIdInfoList).map((info, index) => (
 					<View key={info.name}>
 						{index > 0 && (
 							<View
