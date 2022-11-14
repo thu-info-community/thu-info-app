@@ -634,5 +634,8 @@ export const countdown = async (helper: InfoHelper): Promise<string[]> =>
     );
 
 export const switchLang = async (helper: InfoHelper, lang: "zh" | "en"): Promise<void> => {
+    if (helper.mocked()) {
+        return;
+    }
     await uFetch(`${SWITCH_LANG_URL}${lang === "zh" ? "awefawef" : "en_US"}&_csrf=${await getCsrfToken()}`);
 };
