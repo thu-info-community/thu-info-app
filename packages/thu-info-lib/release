@@ -1,3 +1,1 @@
-feat: improve sports reservation API
-
-Contributors: @t4rf9
+fix: error in parsing week number when getting classroom list

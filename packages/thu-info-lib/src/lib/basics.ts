@@ -413,7 +413,7 @@ export const getClassroomList = (
                 if (e.type === "tag") {
                     const name = getCheerioText(e);
                     const href = e.attribs.href;
-                    const match = /classroom=(.+?)&weeknumber=(\d+?)/g.exec(href);
+                    const match = /classroom=(.+?)&weeknumber=(\d+)/g.exec(href);
                     if (match !== null) {
                         const searchName = match[1];
                         const weekNumber = Number(match[2]);
