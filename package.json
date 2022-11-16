@@ -48,7 +48,7 @@
 		"react-native-permissions": "3.6.1",
 		"react-native-polyfill-globals": "3.1.0",
 		"react-native-qrcode-svg": "6.1.2",
-		"react-native-reanimated": "3.0.0-rc.5",
+		"react-native-reanimated": "3.0.0-rc.6",
 		"react-native-safe-area-context": "4.4.1",
 		"react-native-screens": "3.18.2",
 		"react-native-snackbar": "2.4.0",

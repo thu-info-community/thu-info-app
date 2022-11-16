@@ -7549,10 +7549,10 @@ react-native-qrcode-svg@6.1.2:
     prop-types "^15.7.2"
     qrcode "^1.5.0"
 
-react-native-reanimated@3.0.0-rc.5:
-  version "3.0.0-rc.5"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.5.tgz#16946153d7fc48947190b36eb58d04dd6c4399bb"
-  integrity sha512-QxjliwSv6Bn5QO1fV6sqLHVAXguMbc2yTGyYxPv/mgEe+6a+wIQPPXxLLPL6K5C4/u21m6PqjEPqNUHLT3vx4A==
+react-native-reanimated@3.0.0-rc.6:
+  version "3.0.0-rc.6"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.6.tgz#260a3f84d77bce3bed30a2d0da778b62c6a8e0f6"
+  integrity sha512-XdJP4yESxU5kyxZtExwa4uEBF3fUJ7jQTzptMg/KBANZazKnNUW+UwgpW6MQ0xyLSqcHY/essYcGadCU6wHu3A==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
