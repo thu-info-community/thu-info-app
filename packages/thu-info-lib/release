@@ -1,3 +1,1 @@
-fix: error in parsing week number when getting classroom list
-fix: error in `switchLang` for mock accounts
-feat: implement `getCrTimetable`
+Internal changes.
