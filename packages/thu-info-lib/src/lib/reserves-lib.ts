@@ -2,36 +2,14 @@
 import {jsPDF} from 'jspdf';
 import imageSize from "../utils/image-size";
 import {roamingWrapperWithMocks} from "./core";
-import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL, ID_BASE_URL, ID_LOGIN_URL} from "../constants/strings";
+import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL} from "../constants/strings";
 import {SearchResultItem, SearchResult, BookChapter, BookDetail} from "../models/home/reserves-lib";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import fetch from "cross-fetch";
 import {MOCK_RESERVES_LIB_SEARCH} from "../mocks/reserves-lib";
-import {IdAuthError} from '../utils/error';
-
-const reservesLibLogin = async (helper: InfoHelper) => {
-    await uFetch(ID_BASE_URL + "5bf6e5a699d63ff1cdb082836ebd50f9");
-    let response = await uFetch(ID_LOGIN_URL, {
-        i_user: helper.userId,
-        i_pass: helper.password,
-        i_captcha: "",
-    });
-    if (!response.includes("登录成功。正在重定向到")) {
-        await uFetch(ID_BASE_URL + "5bf6e5a699d63ff1cdb082836ebd50f9");
-        response = await uFetch(ID_LOGIN_URL, {
-            i_user: helper.userId,
-            i_pass: helper.password,
-            i_captcha: "",
-        });
-        if (!response.includes("登录成功。正在重定向到")) {
-            throw new IdAuthError();
-        }
-    }
-    const redirectUrl = cheerio("a", response).attr().href;
-    return await uFetch(redirectUrl);
-};
+import {LibError} from '../utils/error';
 
 const encodeBookName = (bookName: string): string => {
     let result = '';
@@ -45,7 +23,7 @@ const encodeBookName = (bookName: string): string => {
 export const searchReservesLib = (helper: InfoHelper, bookName: string, page?: number): Promise<SearchResult> =>
     roamingWrapperWithMocks(
         helper,
-        undefined,
+        "id",
         "5bf6e5a699d63ff1cdb082836ebd50f9",
         () => uFetch(`${RESERVES_LIB_SEARCH}?bookName=${encodeBookName(bookName)}${page ? '&page=' + page : ''}`).then(response => {
             const $ = cheerio.load(response);
@@ -80,12 +58,11 @@ export const searchReservesLib = (helper: InfoHelper, bookName: string, page?: n
 export const bookDetail = (helper: InfoHelper, bookId: string): Promise<BookDetail | undefined> =>
     roamingWrapperWithMocks<BookDetail | undefined>(
         helper,
-        undefined,
+        "id",
         "5bf6e5a699d63ff1cdb082836ebd50f9",
         () => uFetch(`${RESERVES_LIB_DETAIL}?bookId=${bookId}`).then(async (response) => {
             if (response.includes('请您登录个人INFO账户查看教参全文')) {
-                await reservesLibLogin(helper);
-                response = await uFetch(`${RESERVES_LIB_DETAIL}?bookId=${bookId}`);
+                throw new LibError();
             }
             const $ = cheerio.load(response);
             const tr = $('tbody').find('tr');
