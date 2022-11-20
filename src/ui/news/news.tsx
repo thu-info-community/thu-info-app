@@ -561,7 +561,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 									margin: 5,
 									color: theme.colors.text,
 								}}>
-								{getStr("waitForLoading")}
+								{getStr(loading ? "waitForLoading" : "emptyList")}
 							</Text>
 						</View>
 					)

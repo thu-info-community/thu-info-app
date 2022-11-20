@@ -121,7 +121,7 @@ export default {
 	scheduleUnitHeight: "课表单元高度",
 	secondarySchedule: "二级课表",
 	sendErrReport: "发送错误报告",
-	emptyList: "列表空空如也，请刷新重试",
+	emptyList: "列表空空如也",
 	passwordManagement: "密码管理",
 	infoPassword: "INFO 密码",
 	homePassword: "家园网密码",
