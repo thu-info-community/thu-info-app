@@ -12,6 +12,7 @@ import {
     NEWS_REMOVE_FAVOR_URL, NEWS_REMOVE_SUBSCRIPTION_URL_FORMAT, NEWS_SOURCE_LIST_URL, NEWS_SUBSCRIPTION_LIST_URL,
     PDF_NEWS_PREFIX,
     SEARCH_NEWS_LIST_URL,
+    SYSC_PDF_NEWS_PREFIX,
 } from "../constants/strings";
 import { newsHtml } from "../mocks/news";
 import cheerio from "cheerio";
@@ -346,6 +347,10 @@ const getNewsDetailOld = async (
             r.html() ?? "",
             r.text().replace(/\s/g, ""),
         ];
+    } else if (url.includes("77726476706e69737468656265737421e3f5468534367f1e6d119aafd641303ceb8f9190006d6afc78336870/#/publish")) {
+        const id = url.substring(url.lastIndexOf("/") + 1);
+        const result = await uFetch(SYSC_PDF_NEWS_PREFIX + id).then(JSON.parse);
+        return ["PdF", result.content, "PdF"];
     } else {
         return ["", html, ""];
     }
