@@ -8,10 +8,21 @@ import {
 	HubConnectionState,
 } from "@microsoft/signalr";
 
-const rootUrl = "https://thuinfo.net";
+let rootUrl = "https://thuinfo.net";
+let rootUrlInited = false;
+const getRootUrl = async () => {
+	if (!rootUrlInited) {
+		const req = await fetch("https://stu.cs.tsinghua.edu.cn/thuinfo/url");
+		const resp: {url: string} = await req.json();
+		rootUrl = resp.url;
+		rootUrlInited = true;
+		console.log(rootUrl);
+	}
+	return rootUrl;
+};
 
 export const getLatestAnnounces = async () => {
-	let url = `${rootUrl}/api/announce?page=1`;
+	let url = `${await getRootUrl()}/api/announce?page=1`;
 	let resp = await fetch(url);
 	let json: {id: number; content: string; createdTime: string}[] =
 		await resp.json();
@@ -23,7 +34,7 @@ export const getLatestAnnounces = async () => {
 };
 
 export const getLatestVersion = async (isIos: boolean) => {
-	let url = `${rootUrl}/api/version/${isIos ? "ios" : "android"}`;
+	let url = `${await getRootUrl()}/api/version/${isIos ? "ios" : "android"}`;
 	let resp = await fetch(url);
 	let json: {
 		versionName: string;
@@ -59,7 +70,7 @@ export const submitFeedback = async (
 		contact,
 		phonemodel: model,
 	};
-	let resp = await fetch(`${rootUrl}/api/feedback`, {
+	let resp = await fetch(`${await getRootUrl()}/api/feedback`, {
 		method: "POST",
 		body: JSON.stringify(dto),
 		headers: {"content-type": "application/json"},
@@ -70,7 +81,7 @@ export const submitFeedback = async (
 };
 
 export const getFeedbackReplies = async () => {
-	let resp = await fetch(`${rootUrl}/api/repliedfeedback`);
+	let resp = await fetch(`${await getRootUrl()}/api/repliedfeedback`);
 	let json: {
 		content: string;
 		reply: string;
@@ -81,7 +92,7 @@ export const getFeedbackReplies = async () => {
 };
 
 export const getWeChatGroupQRCodeContent = async () => {
-	return await (await fetch(`${rootUrl}/api/qrcode`)).text();
+	return await (await fetch(`${await getRootUrl()}/api/qrcode`)).text();
 };
 
 export type SocketStatus = "available" | "unavailable" | "unknown";
@@ -90,7 +101,7 @@ export const getSocketsStatusBySectionId = async (
 	sectionId: number,
 ): Promise<{seatId: number; status: SocketStatus}[]> => {
 	return await (
-		await fetch(`${rootUrl}/api/socket?sectionid=${sectionId}`)
+		await fetch(`${await getRootUrl()}/api/socket?sectionid=${sectionId}`)
 	).json();
 };
 
@@ -103,7 +114,7 @@ export const toggleSocketState = async (
 		isavailable: target === "available",
 	};
 	let json = JSON.stringify(dto);
-	let resp = await fetch(`${rootUrl}/api/socket`, {
+	let resp = await fetch(`${await getRootUrl()}/api/socket`, {
 		method: "POST",
 		headers: {"content-type": "application/json"},
 		body: json,
@@ -130,12 +141,12 @@ export enum FunctionType {
 	Electricity,
 }
 
-export const addUsageStat = (func: FunctionType) => {
-	fetch(`${rootUrl}/stat/usage/${func.valueOf()}`);
+export const addUsageStat = async (func: FunctionType) => {
+	fetch(`${await getRootUrl()}/stat/usage/${func.valueOf()}`);
 };
 
-export const addStartupStat = () => {
-	fetch(`${rootUrl}/stat/startup`);
+export const addStartupStat = async () => {
+	fetch(`${await getRootUrl()}/stat/startup`);
 };
 
 export interface ScheduleSyncSending {
