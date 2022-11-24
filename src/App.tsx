@@ -10,7 +10,7 @@ import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
-import { addStartupStat } from "./utils/webApi";
+import {addStartupStat} from "./utils/webApi";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
