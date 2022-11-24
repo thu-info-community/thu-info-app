@@ -10,6 +10,7 @@ import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
+import { addStartupStat } from "./utils/webApi";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
@@ -24,6 +25,7 @@ const RootComponent = () => {
 	useEffect(() => {
 		checkUpdate();
 		checkBroadcast();
+		addStartupStat();
 		if (beta3Notified !== true) {
 			Alert.alert(
 				"公测提示",
