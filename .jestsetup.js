@@ -128,4 +128,5 @@ jest.mock("src/utils/webApi", () => ({
 	}]),
 	FunctionType: {},
 	addUsageStat: () => {},
+	addStartupStat: ()=> {},
 }));
