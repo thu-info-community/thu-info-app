@@ -52,8 +52,8 @@ import {configSet} from "../../redux/slices/config";
 import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
-import {SafeAreaView} from "react-native-safe-area-context";
 import {setCrTimetable} from "../../redux/slices/timetable";
+import {getStatusBarHeight} from "react-native-status-bar-height";
 
 const iconSize = 40;
 
@@ -800,7 +800,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	}, []);
 
 	return (
-		<SafeAreaView style={{flex: 1}}>
+		<View style={{flex: 1, paddingTop: getStatusBarHeight()}}>
 			<ScrollView
 				style={{
 					backgroundColor: theme.colors.themeBackground,
@@ -824,7 +824,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				</HomeFunctionSection>
 				<View style={{height: 12}} />
 			</ScrollView>
-		</SafeAreaView>
+		</View>
 	);
 };
 

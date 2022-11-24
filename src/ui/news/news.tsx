@@ -26,7 +26,7 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
-import {SafeAreaView} from "react-native-safe-area-context";
+import {getStatusBarHeight} from "react-native-status-bar-height";
 
 type Category =
 	| "catSubscribed"
@@ -317,7 +317,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	let screenHeight = Dimensions.get("window");
 
 	return (
-		<SafeAreaView style={{flex: 1}} key={darkModeHook}>
+		<View
+			style={{flex: 1, paddingTop: getStatusBarHeight()}}
+			key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView
 					showsHorizontalScrollIndicator={false}
@@ -574,6 +576,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>
-		</SafeAreaView>
+		</View>
 	);
 };
