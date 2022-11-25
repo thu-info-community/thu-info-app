@@ -1,5 +1,7 @@
 import {
 	GestureResponderEvent,
+	KeyboardAvoidingView,
+	Platform,
 	ScrollView,
 	Text,
 	TextInput,
@@ -83,66 +85,48 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	}, []);
 
 	return (
-		<ScrollView style={{flex: 1, marginHorizontal: 12}}>
-			<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
-				{getStr("askBox")}
-			</Text>
-			{feedbackData.slice(0, 5).map(({question}) => (
-				<SettingsItem
-					key={question}
-					text={question}
+		<KeyboardAvoidingView
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			style={{flex: 1}}>
+			<ScrollView style={{marginHorizontal: 12}}>
+				<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
+					{getStr("askBox")}
+				</Text>
+				{feedbackData.slice(0, 5).map(({question}) => (
+					<SettingsItem
+						key={question}
+						text={question}
+						onPress={() => navigation.navigate("Popi")}
+						icon={undefined}
+						normalText={true}
+					/>
+				))}
+				<SettingsMiddleText
+					text={getStr("more")}
 					onPress={() => navigation.navigate("Popi")}
-					icon={undefined}
-					normalText={true}
 				/>
-			))}
-			<SettingsMiddleText
-				text={getStr("more")}
-				onPress={() => navigation.navigate("Popi")}
-			/>
-			<SettingsSeparator />
-			<View
-				style={{backgroundColor: colors.themeBackground, alignItems: "center"}}>
-				{qrcodeContent !== undefined && (
-					<>
-						<QRCode value={qrcodeContent} size={80} />
-						<Text style={{marginTop: 6, color: "grey"}}>
-							{getStr("wechatPrompt")}
-						</Text>
-					</>
-				)}
-			</View>
-			<TextInput
-				value={text}
-				onChangeText={setText}
-				style={{
-					textAlignVertical: "top",
-					fontSize: 15,
-					marginTop: 12,
-					padding: 12,
-					backgroundColor: colors.themeBackground,
-					color: colors.text,
-					borderColor: colors.inputBorder,
-					borderWidth: 1,
-					borderRadius: 5,
-				}}
-				placeholder={getStr("feedbackHint")}
-				placeholderTextColor={colors.fontB3}
-				multiline={true}
-			/>
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-				}}>
-				<TextInput
-					value={contact}
-					onChangeText={setContact}
+				<SettingsSeparator />
+				<View
 					style={{
-						flex: 3,
+						backgroundColor: colors.themeBackground,
+						alignItems: "center",
+					}}>
+					{qrcodeContent !== undefined && (
+						<>
+							<QRCode value={qrcodeContent} size={80} />
+							<Text style={{marginTop: 6, color: "grey"}}>
+								{getStr("wechatPrompt")}
+							</Text>
+						</>
+					)}
+				</View>
+				<TextInput
+					value={text}
+					onChangeText={setText}
+					style={{
 						textAlignVertical: "top",
 						fontSize: 15,
-						marginVertical: 8,
+						marginTop: 12,
 						padding: 12,
 						backgroundColor: colors.themeBackground,
 						color: colors.text,
@@ -150,39 +134,64 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						borderWidth: 1,
 						borderRadius: 5,
 					}}
-					placeholder={getStr("contact")}
+					placeholder={getStr("feedbackHint")}
 					placeholderTextColor={colors.fontB3}
+					multiline={true}
 				/>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+					}}>
+					<TextInput
+						value={contact}
+						onChangeText={setContact}
+						style={{
+							flex: 3,
+							textAlignVertical: "top",
+							fontSize: 15,
+							marginVertical: 8,
+							padding: 12,
+							backgroundColor: colors.themeBackground,
+							color: colors.text,
+							borderColor: colors.inputBorder,
+							borderWidth: 1,
+							borderRadius: 5,
+						}}
+						placeholder={getStr("contact")}
+						placeholderTextColor={colors.fontB3}
+					/>
+					<BottomButton
+						text="submit"
+						onPress={() => {
+							setProcessing(true);
+							submitFeedback(text, contact)
+								.then(() =>
+									Snackbar.show({
+										text: getStr("feedbackSuccess"),
+										duration: Snackbar.LENGTH_SHORT,
+									}),
+								)
+								.then(() => setText(""))
+								.catch(() =>
+									Snackbar.show({
+										text: getStr("networkRetry"),
+										duration: Snackbar.LENGTH_SHORT,
+									}),
+								)
+								.then(() => setProcessing(false));
+						}}
+						disabled={text.length === 0 || processing}
+					/>
+				</View>
 				<BottomButton
-					text="submit"
+					text="feishuFeedback"
 					onPress={() => {
-						setProcessing(true);
-						submitFeedback(text, contact)
-							.then(() =>
-								Snackbar.show({
-									text: getStr("feedbackSuccess"),
-									duration: Snackbar.LENGTH_SHORT,
-								}),
-							)
-							.then(() => setText(""))
-							.catch(() =>
-								Snackbar.show({
-									text: getStr("networkRetry"),
-									duration: Snackbar.LENGTH_SHORT,
-								}),
-							)
-							.then(() => setProcessing(false));
+						navigation.navigate("FeishuFeedback");
 					}}
-					disabled={text.length === 0 || processing}
+					disabled={false}
 				/>
-			</View>
-			<BottomButton
-				text="feishuFeedback"
-				onPress={() => {
-					navigation.navigate("FeishuFeedback");
-				}}
-				disabled={false}
-			/>
-		</ScrollView>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 };
