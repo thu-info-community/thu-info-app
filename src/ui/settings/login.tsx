@@ -18,6 +18,11 @@ import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
 import {login} from "../../redux/slices/auth";
+import {
+	setActiveLibBookRecord,
+	setActiveSportsReservationRecord,
+} from "../../redux/slices/reservation";
+import {setCrTimetable} from "../../redux/slices/timetable";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -44,6 +49,15 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					.catch(() => {}),
 			)
 			.then(() => {
+				helper
+					.appStartUp()
+					.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {
+						dispatch(setActiveLibBookRecord(bookingRecords));
+						dispatch(
+							setActiveSportsReservationRecord(sportsReservationRecords),
+						);
+						dispatch(setCrTimetable(crTimetable));
+					});
 				setProcessing(false);
 				navigation.pop();
 			})
