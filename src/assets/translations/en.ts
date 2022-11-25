@@ -492,8 +492,6 @@ export default {
 	seasonalFeatures: "Seasonal Features",
 	noScheduleToday: "No schedule today.",
 	noFavNews: "You have no favourite news now.",
-	submitFeedbackWithMobileData:
-		"Please submit feedback using your mobile data!",
 	scheduleSync: "Schedule Synchronization",
 	scheduleSyncTip: "[BETA] Synchronize your schedule between devices",
 	syncSender: "I am sender",

@@ -463,7 +463,6 @@ export default {
 	seasonalFeatures: "时令功能",
 	noScheduleToday: "今日暂无计划",
 	noFavNews: "您目前还未收藏新闻",
-	submitFeedbackWithMobileData: "请用流量提交反馈！",
 	scheduleSync: "计划同步",
 	scheduleSyncTip: "[BETA] 在设备之间同步您的课表",
 	syncSender: "我是发送方",

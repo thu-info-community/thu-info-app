@@ -111,15 +111,6 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					</>
 				)}
 			</View>
-			<Text
-				style={{
-					textAlign: "center",
-					fontSize: 20,
-					fontWeight: "bold",
-					color: colors.fontB1,
-				}}>
-				{getStr("submitFeedbackWithMobileData")}
-			</Text>
 			<TextInput
 				value={text}
 				onChangeText={setText}
