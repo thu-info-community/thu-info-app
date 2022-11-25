@@ -413,7 +413,9 @@ export const HomeScheduleSection = () => {
 						<HomeSchedule
 							schedule={{
 								name: e.stage,
-								location: "",
+								location: getStr(
+									now.isBefore(dayjs(e.begin)) ? "pending" : "ongoing",
+								),
 								from: e.begin,
 								to: e.end,
 								color: getColor(e.stage),

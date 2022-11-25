@@ -64,6 +64,8 @@ export default {
 	feishuFeedback: "反馈问卷",
 	countdown: "倒计时提醒",
 	noCountdown: "暂无倒计时事件",
+	pending: "未开始",
+	ongoing: "进行中",
 	askBox: "提问箱",
 	more: "查看更多",
 	wechatPrompt: "欢迎加入 THU Info 微信交流群\n了解版本更新情况和反馈问题",

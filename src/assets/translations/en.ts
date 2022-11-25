@@ -66,6 +66,8 @@ export default {
 	feishuFeedback: "Questionnaire",
 	countdown: "Countdown",
 	noCountdown: "Empty",
+	pending: "Pending",
+	ongoing: "Ongoing",
 	askBox: "Tape",
 	more: "More",
 	wechatPrompt: "Scan the QR code to join our wechat group!",
