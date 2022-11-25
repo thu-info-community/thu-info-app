@@ -73,6 +73,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const [feedbackData, setFeedbackData] = useState<
 		AsyncReturnType<typeof getFeedbackReplies>
 	>([]);
+	const [processing, setProcessing] = useState(false);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -155,6 +156,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 				<BottomButton
 					text="submit"
 					onPress={() => {
+						setProcessing(true);
 						submitFeedback(text, contact)
 							.then(() =>
 								Snackbar.show({
@@ -162,14 +164,16 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 									duration: Snackbar.LENGTH_SHORT,
 								}),
 							)
+							.then(() => setText(""))
 							.catch(() =>
 								Snackbar.show({
 									text: getStr("networkRetry"),
 									duration: Snackbar.LENGTH_SHORT,
 								}),
-							);
+							)
+							.then(() => setProcessing(false));
 					}}
-					disabled={text.length === 0}
+					disabled={text.length === 0 || processing}
 				/>
 			</View>
 			<BottomButton
