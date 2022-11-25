@@ -126,7 +126,7 @@ await helper.login({userId: "", password: ""});
 
 ### React Native
 
-See [THUInfo APP](https://github.com/UNIDY2002/THUInfo) for an example.
+See [thu-info-app](https://github.com/thu-info-community/thu-info-app) for an example.
 
 ## Testing
 
