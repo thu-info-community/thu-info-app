@@ -44,7 +44,29 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchHtml, []);
 
-	const adaptedHtml = `<head><meta name="viewport" content="width=100, initial-scale=1"></head>
+	const adaptedHtml = `<head>
+		<meta name="viewport" content="width=100, initial-scale=1">
+		<style>
+			html {
+				background-color: ${theme.colors.themeBackground};
+				color: ${theme.colors.text};
+			}
+			
+			p,span,b,div,font {
+				background: ${theme.colors.themeBackground} !important;
+				color: ${theme.colors.text} !important;
+			}
+			
+			h2,h3,h4,h5,h6 {
+				color: ${theme.colors.primary} !important;
+				text-align: center;
+			}
+			
+			a {
+				color: ${theme.colors.themePurple} !important;
+			}
+		</style>
+	</head>
 	<body>${html}</body>`;
 
 	return (
