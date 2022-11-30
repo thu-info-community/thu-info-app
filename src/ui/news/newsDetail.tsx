@@ -47,17 +47,12 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const adaptedHtml = `<head>
 		<meta name="viewport" content="width=100, initial-scale=1">
 		<style>
-			html {
-				background-color: ${theme.colors.themeBackground};
-				color: ${theme.colors.text};
-			}
-			
-			p,span,b,div,font {
-				background: ${theme.colors.themeBackground} !important;
+			* {
+				background-color: ${theme.colors.themeBackground} !important;
 				color: ${theme.colors.text} !important;
 			}
 			
-			h2,h3,h4,h5,h6 {
+			h1,h2,h3,h4,h5,h6 {
 				color: ${theme.colors.primary} !important;
 				text-align: center;
 			}
@@ -82,6 +77,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 						userAgent={USER_AGENT}
 						setSupportMultipleWindows={false}
 						forceDarkOn={themeName === "dark"}
+						style={`* { background-color: ${theme.colors.themeBackground}}`}
 					/>
 				) : (
 					<Pdf
