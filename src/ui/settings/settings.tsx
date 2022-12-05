@@ -90,7 +90,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
 						<View style={{flexDirection: "row", alignItems: "center"}}>
 							<Text style={style.version}>
-								{getStr("version")} {VersionNumber.appVersion}-beta.2
+								{getStr("version")} {VersionNumber.appVersion}-beta.3
 							</Text>
 							<IconRight height={20} width={20} />
 						</View>
