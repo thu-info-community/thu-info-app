@@ -99,7 +99,10 @@ export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => r
                 const stage = tds.first().text().trim();
                 const messages = tds.last().children().map((___, e3) => cheerio(e3).text()).get();
                 if (tds.length === 3) {
-                    const duration = cheerio(tds[1]).children().first().text();
+                    const duration = cheerio(tds[1]).children().last().text();
+                    if (duration === "待定") {
+                        return;
+                    }
                     const [beginText, endText] = duration.split("～");
                     begin = parseCrTimetableTime(semester, beginText);
                     end = parseCrTimetableTime(semester, endText);

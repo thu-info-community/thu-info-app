@@ -1,2 +1,1 @@
-fix: pdf fetching of 招标公告
-fix: update calendar mock
+fix: fix `getCrTimetable` (handle "待定" properly)
