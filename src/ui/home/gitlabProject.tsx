@@ -3,11 +3,12 @@ import {GitLabProjectProp, RootNav} from "../../components/Root";
 import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {SettingsItem} from "../../components/settings/items";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {Branch, File} from "thu-info-lib/dist/models/gitlab/gitlab";
 import AutoheightWebView from "../../components/AutoheightWebView";
 import {getStr} from "src/utils/i18n";
 import {BranchItem} from "../../components/home/gitlab";
+import {useSelector} from "react-redux";
 
 export const GitlabProjectScreen = ({
 	navigation,
@@ -28,6 +29,7 @@ export const GitlabProjectScreen = ({
 	const [readmeFileContent, setReadmeFileContent] = useState<
 		string | undefined
 	>(undefined);
+	const dark = useSelector((s: State) => s.config.darkMode);
 
 	useEffect(() => {
 		setReadmeFile(undefined);
@@ -172,7 +174,7 @@ export const GitlabProjectScreen = ({
 					<AutoheightWebView
 						source={{html: adaptedHtml}}
 						style={{margin: 6}}
-						forceDarkOn={themeName === "dark"}
+						forceDarkOn={dark || themeName === "dark"}
 					/>
 				</>
 			)}

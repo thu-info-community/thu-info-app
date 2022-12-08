@@ -8,13 +8,15 @@ import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "thu-info-lib/dist/constants/strings";
 import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import Pdf from "react-native-pdf";
+import {useSelector} from "react-redux";
 
 export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const [html, setHtml] = useState<string>("");
 	const [pdf, setPdf] = useState<string>("");
 	const [refreshing, setRefreshing] = useState(true);
+	const dark = useSelector((s: State) => s.config.darkMode);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -76,8 +78,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 						containerStyle={style.webContainer}
 						userAgent={USER_AGENT}
 						setSupportMultipleWindows={false}
-						forceDarkOn={themeName === "dark"}
-						style={`* { background-color: ${theme.colors.themeBackground}}`}
+						forceDarkOn={dark || themeName === "dark"}
 					/>
 				) : (
 					<Pdf

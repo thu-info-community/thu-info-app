@@ -5,9 +5,10 @@ import {
 	RootNav,
 } from "../../components/Root";
 import {useColorScheme} from "react-native";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import WebView from "react-native-webview";
 import {encode} from "he";
+import {useSelector} from "react-redux";
 
 export const GitlabCodeScreen = ({
 	route: {
@@ -20,6 +21,7 @@ export const GitlabCodeScreen = ({
 	const themeName = useColorScheme();
 
 	const [content, setContent] = useState<string>();
+	const dark = useSelector((s: State) => s.config.darkMode);
 
 	useEffect(() => {
 		helper.getGitProjectFileBlob(project.id, file.id).then(setContent);
@@ -38,7 +40,7 @@ export const GitlabCodeScreen = ({
 		<WebView
 			source={{html: adaptedHtml}}
 			style={{margin: 6}}
-			forceDarkOn={themeName === "dark"}
+			forceDarkOn={dark || themeName === "dark"}
 		/>
 	);
 };
@@ -54,6 +56,7 @@ export const GitlabMarkdownScreen = ({
 	const themeName = useColorScheme();
 
 	const [content, setContent] = useState<string>();
+	const dark = useSelector((s: State) => s.config.darkMode);
 
 	useEffect(() => {
 		helper
@@ -69,7 +72,7 @@ export const GitlabMarkdownScreen = ({
 		<WebView
 			source={{html: adaptedHtml}}
 			style={{margin: 6}}
-			forceDarkOn={themeName === "dark"}
+			forceDarkOn={dark || themeName === "dark"}
 		/>
 	);
 };
