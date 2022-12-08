@@ -6782,10 +6782,10 @@ redux-persist-keychain-storage@0.1.1:
   resolved "https://registry.yarnpkg.com/redux-persist-keychain-storage/-/redux-persist-keychain-storage-0.1.1.tgz#48c22e3f24dfe474d051a09935b53287aeba30f4"
   integrity sha512-wK59EGUs77w3MegkCB4LiuS7MVmQBnqA3FUec2yovpPFefixuD9qUYL8eztMACA9rUoLJf9FjDyLm0X72BRi/A==
 
-redux-persist-transform-filter@0.0.21:
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/redux-persist-transform-filter/-/redux-persist-transform-filter-0.0.21.tgz#67adf664508966e1651bb802b67726a79af3cf06"
-  integrity sha512-otXc2aXaHyyKaQZVI5nd6LY86beG9BWjLD8kiJDnuolc/VCR0PTsPeYyGhh5H38MbMXmkiZFBL7uoLh4B/JXYg==
+redux-persist-transform-filter@0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/redux-persist-transform-filter/-/redux-persist-transform-filter-0.0.22.tgz#181480570a43b5061389991fc43ca52c6d114318"
+  integrity sha512-XtGN7UQ8w7b3qaxQfdYY1UmuYULqIIemD47IWxIyM8AOF48I6C74m9XxA7gQoC2nIi+rz4URi9Mye4fIbHhZPQ==
   dependencies:
     lodash "^4.17.21"
 
