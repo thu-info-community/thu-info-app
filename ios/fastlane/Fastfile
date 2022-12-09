@@ -1,0 +1,42 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+# git_url("git@github.com:Ashitemaru/THUInfo-certificates.git")
+
+platform :ios do
+  desc "Push a new release build to the App Store"
+  lane :release do
+
+  end
+
+  lane :beta do
+    increment_build_number
+    
+    setup_ci
+    sync_code_signing
+    match(type: "appstore", git_basic_authorization: ENV["MATCH_GIT_BASIC_AUTHORIZATION"])
+    build_app
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APPSTORE_API_PRIVATE_KEY_ID"]
+      issuer_id: ENV["APPSTORE_ISSUER_ID"],
+      key_content: ENV["APPSTORE_API_PRIVATE_KEY"],
+      duration: 1200,
+      in_house: false
+    )
+    upload_to_testflight(api_key: api_key, skip_waiting_for_build_processing: true)
+  end
+end

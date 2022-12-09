@@ -96,39 +96,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ios/DerivedData
-            ios/Pods
-          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
-          restore-keys: |
-            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
-          cd ios && pod install && cd ..
-          echo '### Summary of command `pod-install`' >> $GITHUB_STEP_SUMMARY
-          echo 'Content of `Podfile.lock`:' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat ios/Podfile.lock >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-      - uses: Apple-Actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
-          p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
-      - uses: Apple-Actions/download-provisioning-profiles@v1
-        name: provisioning
-        with:
-          bundle-id: org.reactjs.native.example.thu-info
-          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.APPSTORE_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_PRIVATE_KEY }}
-      - name: Output provisioning files
-        run: echo ${{ steps.provisioning.outputs.profiles }}
-      - name: Build ios app
+          cd ios && pod install && bundle install && cd ..
+      - name: SSH setting up
         run: |
-          export APP_VERSION="$(node -e "console.log(require('./package.json').version)")"
-          cd ios && xcodebuild archive -workspace thu_info.xcworkspace -scheme thu_info -configuration Release -derivedDataPath ./DerivedData -archivePath $PWD/Archives/thu_info.xcarchive IPHONEOS_DEPLOYMENT_TARGET=11.0 CODE_SIGNING_ALLOWED=NO MARKETING_VERSION="${APP_VERSION}" CURRENT_PROJECT_VERSION="${GITHUB_RUN_NUMBER}" && cd ..
+          echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
+      - name: Update beta
+        run: cd ios && fastlane beta
+        env:
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
