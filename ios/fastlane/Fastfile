@@ -23,7 +23,10 @@ platform :ios do
   end
 
   lane :beta do
-    increment_build_number(xcodeproj: "thu_info.xcodeproj")
+    increment_build_number(
+      build_number: ENV["GITHUB_RUN_NUMBER"],
+      xcodeproj: "thu_info.xcodeproj"
+    )
     
     setup_ci
     sync_code_signing
