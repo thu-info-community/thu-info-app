@@ -24,7 +24,7 @@ platform :ios do
 
   lane :beta do
     increment_build_number(
-      build_number: 3600, # ENV["GITHUB_RUN_NUMBER"],
+      build_number: ENV["GITHUB_RUN_NUMBER"],
       xcodeproj: "thu_info.xcodeproj"
     )
     
