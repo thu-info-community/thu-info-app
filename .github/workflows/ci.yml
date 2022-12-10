@@ -108,3 +108,5 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
