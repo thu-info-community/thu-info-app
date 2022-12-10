@@ -44,14 +44,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use Face ID for biometric authentication.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
-	<key>NSFaceIDUsageDescription</key>
-    <string>Use Face ID for biometric authentication.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
