@@ -96,6 +96,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ios/Pods
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
