@@ -27,10 +27,6 @@ jest.mock("react-native-localize", () => ({
 	removeEventListener: jest.fn(),
 }));
 
-jest.mock('scheduler', () => ({
-	unstable_now: () => new Date().getTime(),
-}));
-
 global.console = {
 	log: console.log,
 	error: jest.fn((message) => {
