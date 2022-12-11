@@ -5,13 +5,15 @@ import {getStr} from "./i18n";
 import {configSet} from "../redux/slices/config";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
-import {gt, lt} from "semver";
+import {gte, lt} from "semver";
 import {NetworkRetry} from "../components/easySnackbars";
 import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
 
 export const checkUpdate = (force: boolean = false) => {
 	getUpdateInfo()
-		.then((r) => r.filter((it) => gt(it.versionName, VersionNumber.appVersion)))
+		.then((r) =>
+			r.filter((it) => gte(it.versionName, VersionNumber.appVersion)),
+		)
 		.then((r) => {
 			if (
 				r.length &&
