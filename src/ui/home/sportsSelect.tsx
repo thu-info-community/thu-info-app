@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import {RootNav, SportsSelectProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {RoundedView} from "../../components/views";

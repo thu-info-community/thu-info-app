@@ -1,10 +1,10 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import React, {useState} from "react";
-import {Choice, scheduleDelOrHide} from "src/redux/slices/schedule";
+import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import {useDispatch} from "react-redux";
 import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";

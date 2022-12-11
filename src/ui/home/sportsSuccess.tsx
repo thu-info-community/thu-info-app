@@ -1,7 +1,7 @@
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RootNav, SportsSuccessProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../../components/views";
 import IconSuccess from "../../assets/icons/IconSuccess";
 

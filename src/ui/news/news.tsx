@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";

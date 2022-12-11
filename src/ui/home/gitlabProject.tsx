@@ -6,7 +6,7 @@ import {SettingsItem} from "../../components/settings/items";
 import {helper, State} from "../../redux/store";
 import {Branch, File} from "thu-info-lib/dist/models/gitlab/gitlab";
 import AutoheightWebView from "../../components/AutoheightWebView";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import {BranchItem} from "../../components/home/gitlab";
 import {useSelector} from "react-redux";
 

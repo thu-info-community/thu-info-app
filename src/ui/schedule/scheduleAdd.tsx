@@ -26,7 +26,7 @@ import {
 	scheduleDelOrHide,
 	scheduleUpdateAlias,
 	scheduleUpdateLocation,
-} from "src/redux/slices/schedule";
+} from "../../redux/slices/schedule";
 import {useColorScheme} from "react-native";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";

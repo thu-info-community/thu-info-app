@@ -15,7 +15,7 @@ import {
 import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
-import {ScheduleBlock} from "src/components/schedule/schedule";
+import {ScheduleBlock} from "../../components/schedule/schedule";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -24,7 +24,7 @@ import md5 from "md5";
 import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconDown from "../../assets/icons/IconDown";
-import {BottomPopupTriggerView} from "src/components/views";
+import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-status-bar-height";

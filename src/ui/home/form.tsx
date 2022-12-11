@@ -8,8 +8,8 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
-import {getStr} from "src/utils/i18n";
-import {StarRating} from "src/components/home/form";
+import {getStr} from "../../utils/i18n";
+import {StarRating} from "../../components/home/form";
 import themes from "../../assets/themes/themes";
 import {FormRouteProp, RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";

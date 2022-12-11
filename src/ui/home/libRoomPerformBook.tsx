@@ -20,7 +20,7 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
-import {PickerModalWrapper} from "src/components/home/PickerModalWrapper";
+import {PickerModalWrapper} from "../../components/home/PickerModalWrapper";
 import {CabTimeoutError} from "thu-info-lib/dist/utils/error";
 
 interface Segment {

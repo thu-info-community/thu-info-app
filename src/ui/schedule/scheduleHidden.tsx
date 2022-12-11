@@ -18,7 +18,7 @@ import {
 	Choice,
 	scheduleDelOrHide,
 	scheduleRemoveHiddenRule,
-} from "src/redux/slices/schedule";
+} from "../../redux/slices/schedule";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 

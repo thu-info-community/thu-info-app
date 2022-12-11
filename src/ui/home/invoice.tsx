@@ -3,7 +3,7 @@ import {Text, TouchableOpacity, View} from "react-native";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {RootNav} from "../../components/Root";
-import {getStr} from "src/utils/i18n";
+import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 
 export const InvoiceScreen = paginatedRefreshListScreen(
