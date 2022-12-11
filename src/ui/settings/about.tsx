@@ -17,6 +17,7 @@ import {
 	UNIDY2002_URL,
 	VZHAO_21_URL,
 	WERKEYTOM_URL,
+	YONGQI_URL,
 } from "../../constants/strings";
 import VersionNumber from "react-native-version-number";
 import {useColorScheme} from "react-native";
@@ -86,6 +87,15 @@ export const AboutScreen = () => {
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
 					EveElseIf @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(YONGQI_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					SauceCode @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(Johnny_URL)}>
