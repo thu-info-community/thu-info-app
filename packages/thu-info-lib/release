@@ -1,1 +1,1 @@
-fix: fix `getCrTimetable` (handle "待定" properly)
+fix: fix `getCrTimetable` (handle "待定" and "（已结束）" properly)
