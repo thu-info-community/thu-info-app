@@ -133,7 +133,7 @@ export const AboutScreen = () => {
 			<View style={{flex: 1}} />
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
-				© 2022 | thu-info-community
+				© 2023 | thu-info-community
 			</Text>
 		</ScrollView>
 	);
