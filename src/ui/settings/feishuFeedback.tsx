@@ -12,6 +12,8 @@ export const FeishuFeedbackScreen = () => {
 	const {colors} = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 
+	const osVersion = `${Platform.OS} ${Platform.Version}`;
+
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -37,7 +39,7 @@ function inject_autoFill() {
     e = document.querySelector("#field-item-fldKYBkoZ4 div[contenteditable=true]");
     if (e === null) return false;
     e.focus();
-    document.execCommand("insertText", false, "${Platform.OS}");
+    document.execCommand("insertText", false, "${osVersion}");
     e.contentEditable = false;
 
     e = document.querySelector("#field-item-fldUfa9jMZ div[contenteditable=true]");
