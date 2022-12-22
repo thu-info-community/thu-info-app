@@ -6709,13 +6709,14 @@ react-native-qrcode-svg@6.1.2:
     prop-types "^15.7.2"
     qrcode "^1.5.0"
 
-react-native-reanimated@3.0.0-rc.8:
-  version "3.0.0-rc.8"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.8.tgz#99ef62960f8670185f958d3a8e2692d10349e9b3"
-  integrity sha512-OE9HUSfKqYfKeTlDExd2ltZXXeL4cvPcTzKGeDLxlmm2kCgbwV8bX1gNanDZ1FlURGD2lhGvDyHAA2pQvJ0wVg==
+react-native-reanimated@3.0.0-rc.9:
+  version "3.0.0-rc.9"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.0.0-rc.9.tgz#d5761da4f4262b33eab5d9ec400e15235cebfcd7"
+  integrity sha512-n0xlETpPQF5duyjneGkgA2YwbN3Bshldg1mH9wB+zqKOlYItq1w1Q2dqn6rVXoC2Gh/c+d2xhbabI/dipocB7g==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"
+    convert-source-map "^1.7.0"
     invariant "^2.2.4"
     lodash.isequal "^4.5.0"
     setimmediate "^1.0.5"
