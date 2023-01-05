@@ -10,7 +10,7 @@ static def getNpmVersion() {
 
 buildscript {
     ext {
-        kotlin_version = "1.6.10"
+        kotlinVersion = "1.6.20"
         buildToolsVersion = "33.0.0"
         minSdkVersion = 21
         compileSdkVersion = 33
@@ -21,8 +21,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:7.2.0')
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath('com.android.tools.build:gradle:7.3.1')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:5.0.1")
 
