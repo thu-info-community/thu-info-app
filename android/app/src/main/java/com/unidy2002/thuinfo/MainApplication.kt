@@ -4,28 +4,31 @@ import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
-import com.facebook.react.config.ReactFeatureFlags
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
+import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.unidy2002.thuinfo.newarchitecture.MainApplicationReactNativeHost
 
 class MainApplication : Application(), ReactApplication {
-    private val mReactNativeHost = object : ReactNativeHost(this) {
+    private val mReactNativeHost = object : DefaultReactNativeHost(this) {
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
 
         override fun getPackages() = PackageList(this).packages
 
         override fun getJSMainModuleName() = "index"
+
+        // override fun isNewArchEnabled() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+
+        // override fun isHermesEnabled() = BuildConfig.IS_HERMES_ENABLED
     }
 
-    private val mNewArchitectureNativeHost: ReactNativeHost = MainApplicationReactNativeHost(this)
-
-    override fun getReactNativeHost() =
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) mNewArchitectureNativeHost else mReactNativeHost
+    override fun getReactNativeHost() = mReactNativeHost
 
     override fun onCreate() {
         super.onCreate()
-        // If you opted-in for the New Architecture, we enable the TurboModule system
-        ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
         SoLoader.init(this, false)
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // If you opted-in for the New Architecture, we load the native entry point for this app.
+            DefaultNewArchitectureEntryPoint.load()
+        }
     }
 }
