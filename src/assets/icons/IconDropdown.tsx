@@ -10,7 +10,7 @@ export default ({
 	color: string;
 }) => {
 	return (
-		<Svg viewBox="0 0 6 4" width={width} height={height}>
+		<Svg viewBox="0 0 6 4" width={width} height={height} fill="none">
 			<Path
 				strokeLinejoin="round"
 				strokeWidth={0.625}

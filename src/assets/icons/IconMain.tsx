@@ -6,7 +6,7 @@ export default ({width, height}: {width: number; height: number}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	return (
-		<Svg viewBox="0 0 40 40" width={width} height={height}>
+		<Svg viewBox="0 0 40 40" width={width} height={height} fill="none">
 			<Rect width={40} height={40} fill="#A652CB" />
 			<Circle cx={20} cy={20} r={16.6667} fill="#A652CB" />
 			<Path

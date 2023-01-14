@@ -6,7 +6,7 @@ export default ({width, height}: {width?: number; height?: number}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	return (
-		<Svg viewBox="0 0 48 48" height={height} width={width}>
+		<Svg viewBox="0 0 48 48" height={height} width={width} fill="none">
 			<Path
 				strokeWidth="3"
 				stroke={theme.colors.fontB1}

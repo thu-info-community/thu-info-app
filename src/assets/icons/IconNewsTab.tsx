@@ -7,7 +7,7 @@ export default ({size, active}: {size: number; active: boolean}) => {
 	const theme = themes(themeName);
 	const color = active ? theme.colors.mainTheme : "#0000";
 	return (
-		<Svg viewBox="0 0 48 48" width={size} height={size}>
+		<Svg viewBox="0 0 48 48" width={size} height={size} fill="none">
 			<Path
 				strokeLinecap="round"
 				strokeLinejoin="round"

@@ -6,7 +6,7 @@ export default ({full}: {full: boolean}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	return (
-		<Svg viewBox="0 0 28 28">
+		<Svg viewBox="0 0 28 28" fill="none">
 			<Path
 				strokeWidth={1.4}
 				strokeLinejoin="round"
