@@ -16,9 +16,9 @@ class MainApplication : Application(), ReactApplication {
 
         override fun getJSMainModuleName() = "index"
 
-        // override fun isNewArchEnabled() = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+        override val isNewArchEnabled = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
 
-        // override fun isHermesEnabled() = BuildConfig.IS_HERMES_ENABLED
+        override val isHermesEnabled = BuildConfig.IS_HERMES_ENABLED
     }
 
     override fun getReactNativeHost() = mReactNativeHost
