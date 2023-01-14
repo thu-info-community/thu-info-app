@@ -16,7 +16,7 @@ jobs:
             cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
-          yarn
+          exit 1
       - name: Run tests
         run: |
           yarn lint
