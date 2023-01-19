@@ -81,7 +81,7 @@
 		"@types/he": "1.1.2",
 		"@types/jest": "29.2.6",
 		"@types/md5": "2.3.2",
-		"@types/react": "18.0.26",
+		"@types/react": "18.0.27",
 		"@types/react-native-modal-dropdown": "1.0.1",
 		"@types/react-test-renderer": "18.0.0",
 		"@types/semver": "7.3.13",
