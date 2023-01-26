@@ -61,7 +61,7 @@
         "editor": "1.0.0",
         "eslint": "8.32.0",
         "esm": "3.2.25",
-        "jest": "29.4.0",
+        "jest": "29.4.1",
         "node-polyfill-webpack-plugin": "2.0.1",
         "pre-commit": "1.2.2",
         "readline-sync": "1.4.10",
