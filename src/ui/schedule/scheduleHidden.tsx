@@ -40,8 +40,12 @@ export const ScheduleHiddenScreen = () => {
 		baseSchedule
 			.filter((val) => val.delOrHideTime.base.length !== 0)
 			.forEach((val) => {
-				val.delOrHideTime.base.forEach((slice) => {
+				val.delOrHideTime.base.forEach((e) => {
 					const rangeList: [number, number][] = [];
+					const slice: TimeSlice = {
+						...e,
+						activeWeeks: [...e.activeWeeks],
+					};
 					slice.activeWeeks.sort((a, b) => a - b);
 					rangeList.push([slice.activeWeeks[0], -1]);
 					slice.activeWeeks.forEach((week, ind) => {
