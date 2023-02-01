@@ -247,14 +247,18 @@ export const ScheduleDetailScreen = ({
 							}}
 						/>
 						{delButton(Choice.ONCE)}
-						<View
-							style={{
-								height: 1,
-								backgroundColor: "#00000033",
-								marginVertical: 15,
-							}}
-						/>
-						{delButton(Choice.REPEAT)}
+						{props.type !== ScheduleType.CUSTOM && (
+							<>
+								<View
+									style={{
+										height: 1,
+										backgroundColor: "#00000033",
+										marginVertical: 15,
+									}}
+								/>
+								{delButton(Choice.REPEAT)}
+							</>
+						)}
 						<View
 							style={{
 								height: 1,
