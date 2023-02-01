@@ -10,12 +10,14 @@ import {
 } from "thu-info-lib/dist/models/schedule/schedule";
 
 export interface ScheduleState {
+	semesterId: string | undefined;
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
 	customCnt: number;
 }
 
 const initialState: ScheduleState = {
+	semesterId: undefined,
 	baseSchedule: [],
 	shortenMap: {},
 	customCnt: 1,
@@ -44,11 +46,16 @@ export const scheduleSlice = createSlice({
 			let newScheduleList: Schedule[] = [];
 
 			// 备份所有自定义计划
-			state.baseSchedule.forEach((val) => {
-				if (val.type === ScheduleType.CUSTOM) {
-					customList.push(val);
-				}
-			});
+			if (
+				state.semesterId === undefined ||
+				state.semesterId === payload.semesterId
+			) {
+				state.baseSchedule.forEach((val) => {
+					if (val.type === ScheduleType.CUSTOM) {
+						customList.push(val);
+					}
+				});
+			}
 
 			// 以新获取到的课表为基准
 			payload.schedule.forEach((val) => {
@@ -69,6 +76,7 @@ export const scheduleSlice = createSlice({
 				newScheduleList.push(val);
 			});
 
+			state.semesterId = payload.semesterId;
 			state.baseSchedule = customList.concat(newScheduleList);
 		},
 		scheduleUpdateAlias: (
