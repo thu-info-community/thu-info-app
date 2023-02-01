@@ -13,10 +13,13 @@ let rootUrlInited = false;
 const getRootUrl = async () => {
 	if (!rootUrlInited) {
 		const req = await fetch("https://stu.cs.tsinghua.edu.cn/thuinfo/url");
-		const resp: {url: string} = await req.json();
-		rootUrl = resp.url;
+		try {
+			const resp: {url: string} = await req.json();
+			rootUrl = resp.url;
+		} catch {
+			// no-op
+		}
 		rootUrlInited = true;
-		console.log(rootUrl);
 	}
 	return rootUrl;
 };
