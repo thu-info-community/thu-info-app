@@ -1,5 +1,5 @@
 import {TextInput, View, Text, TouchableOpacity} from "react-native";
-import React from "react";
+import {useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -16,9 +16,9 @@ export const ResetDormPasswordScreen = ({
 }: {
 	navigation: RootNav;
 }) => {
-	const [password, setPassword] = React.useState("");
-	const [confirm, setConfirm] = React.useState("");
-	const [processing, setProcessing] = React.useState(false);
+	const [password, setPassword] = useState("");
+	const [confirm, setConfirm] = useState("");
+	const [processing, setProcessing] = useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);

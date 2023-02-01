@@ -1,4 +1,3 @@
-import React from "react";
 import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";

@@ -1,4 +1,3 @@
-import React from "react";
 import {RootStackParamList} from "../../components/Root";
 import {Dimensions, useColorScheme, View} from "react-native";
 import Pdf from "react-native-pdf";

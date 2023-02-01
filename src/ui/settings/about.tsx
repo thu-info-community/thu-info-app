@@ -6,7 +6,6 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {

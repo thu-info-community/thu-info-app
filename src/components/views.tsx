@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {createElement, ReactElement, useState} from "react";
 import {
 	Modal,
 	RefreshControl,
@@ -16,7 +16,7 @@ import {getStr} from "../utils/i18n";
 export const RoundedView = (props: ViewProps) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	return React.createElement(View, {
+	return createElement(View, {
 		...props,
 		style: [
 			{
@@ -31,11 +31,7 @@ export const RoundedView = (props: ViewProps) => {
 
 interface ListProps<T> {
 	data: T[];
-	renderItem: (
-		item: T,
-		colors: ColorTheme,
-		index: number,
-	) => React.ReactElement;
+	renderItem: (item: T, colors: ColorTheme, index: number) => ReactElement;
 	keyExtractor?: (item: T, index: number) => string;
 	refreshing?: boolean;
 	onRefresh?: () => void;

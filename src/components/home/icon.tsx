@@ -1,4 +1,4 @@
-import React, {ReactElement} from "react";
+import {ReactElement} from "react";
 import {GestureResponderEvent, Text, TouchableOpacity} from "react-native";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";

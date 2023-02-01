@@ -7,7 +7,6 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import React from "react";
 import themes from "../../assets/themes/themes";
 import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
 import {getStr} from "../../utils/i18n";

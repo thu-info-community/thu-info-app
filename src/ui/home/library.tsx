@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import {RootNav} from "../../components/Root";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import IconRight from "../../assets/icons/IconRight";
 import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";

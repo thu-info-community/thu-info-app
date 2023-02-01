@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";

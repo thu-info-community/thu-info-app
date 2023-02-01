@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from "react";
+import {useLayoutEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {helper, State} from "../../redux/store";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";

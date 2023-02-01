@@ -1,5 +1,4 @@
 import Svg, {Path} from "react-native-svg";
-import React from "react";
 
 export default ({size}: {size: number}) => {
 	return (

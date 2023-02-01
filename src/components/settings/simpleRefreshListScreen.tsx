@@ -1,10 +1,4 @@
-import React, {
-	FC,
-	PropsWithChildren,
-	ReactElement,
-	useEffect,
-	useState,
-} from "react";
+import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";

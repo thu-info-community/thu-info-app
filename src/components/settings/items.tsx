@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React, {cloneElement, ReactElement} from "react";
+import {cloneElement, ReactElement} from "react";
 import IconRight from "../../assets/icons/IconRight";
 import {useColorScheme} from "react-native";
 import themes, {ColorTheme} from "../../assets/themes/themes";

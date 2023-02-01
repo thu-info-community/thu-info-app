@@ -1,4 +1,3 @@
-import React from "react";
 import {Text, useColorScheme, View, Dimensions} from "react-native";
 import ModalDropdown from "react-native-modal-dropdown";
 import themes from "../../assets/themes/themes";

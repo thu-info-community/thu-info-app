@@ -8,7 +8,7 @@ import {
 	FlatList,
 	TouchableOpacity,
 } from "react-native";
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";

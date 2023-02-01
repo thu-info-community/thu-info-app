@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	Platform,
 } from "react-native";
-import React, {useState} from "react";
+import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
@@ -22,11 +22,11 @@ import IconCr from "../../assets/icons/IconCr";
 import {uFetch} from "thu-info-lib/dist/utils/network";
 
 export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
-	const [captcha, setCaptcha] = React.useState("");
-	const [processing, setProcessing] = React.useState(false);
+	const [captcha, setCaptcha] = useState("");
+	const [processing, setProcessing] = useState(false);
 	const [imageBase64, setImageBase64] = useState<string>();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		helper.getCrCaptchaUrl().then(uFetch).then(setImageBase64);
 	}, []);
 

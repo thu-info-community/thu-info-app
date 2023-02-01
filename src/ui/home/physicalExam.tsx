@@ -1,5 +1,4 @@
 import {Text, View} from "react-native";
-import React from "react";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
 

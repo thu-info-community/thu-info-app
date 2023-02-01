@@ -1,7 +1,6 @@
 import {TouchableOpacity} from "react-native";
 import IconStarActive from "../../assets/icons/IconStarActive";
 import IconStar from "../../assets/icons/IconStar";
-import React from "react";
 
 export const IconStarButton = ({
 	active,

@@ -6,7 +6,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";

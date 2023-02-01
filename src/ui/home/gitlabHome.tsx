@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from "react";
+import {PropsWithChildren} from "react";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {ProjectItem} from "../../components/home/gitlab";

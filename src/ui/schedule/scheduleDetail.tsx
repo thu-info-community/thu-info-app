@@ -1,6 +1,6 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import {View, Text, TouchableOpacity, Modal} from "react-native";
-import React, {useState} from "react";
+import {useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import {useDispatch} from "react-redux";
 import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";

@@ -1,5 +1,4 @@
 import {getStr} from "../../utils/i18n";
-import React from "react";
 import {
 	Alert,
 	Text,

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {RootNav, SportsDetailProp} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {

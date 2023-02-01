@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";

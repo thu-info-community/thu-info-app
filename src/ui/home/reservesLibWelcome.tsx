@@ -12,7 +12,7 @@ import {
 	Linking,
 } from "react-native";
 import themes from "../../assets/themes/themes";
-import React, {PropsWithChildren, useEffect, useState} from "react";
+import {PropsWithChildren, useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {getStr} from "../../utils/i18n";

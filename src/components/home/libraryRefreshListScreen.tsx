@@ -1,10 +1,4 @@
-import React, {
-	FC,
-	PropsWithChildren,
-	ReactElement,
-	useEffect,
-	useState,
-} from "react";
+import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {RootNav, RootStackParamList} from "../Root";

@@ -1,7 +1,7 @@
 import {NewsSlice} from "thu-info-lib/dist/models/news/news";
 import {Theme} from "../../assets/themes/themes";
 import {RootNav} from "../Root";
-import React, {useState} from "react";
+import {useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";

@@ -5,7 +5,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import React, {ReactElement} from "react";
+import {ReactElement, useEffect} from "react";
 import {RootNav} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
@@ -790,7 +790,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		homeFunctions.find((y) => y.key === x),
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		helper
 			.appStartUp()
 			.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {

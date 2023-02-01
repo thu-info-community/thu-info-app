@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import themes from "../assets/themes/themes";

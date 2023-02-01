@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {RootNav, ReservesLibPDFProp} from "../../components/Root";
 import {
 	Alert,

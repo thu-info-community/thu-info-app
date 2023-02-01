@@ -1,7 +1,7 @@
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {ScheduleSyncReceiving, ScheduleSyncSending} from "../../utils/webApi";
 import {currState, store} from "../../redux/store";
-import React, {useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {scheduleSync} from "../../redux/slices/schedule";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themedStyles from "../../utils/themedStyles";

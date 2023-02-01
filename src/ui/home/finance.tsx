@@ -1,4 +1,3 @@
-import React from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme, View} from "react-native";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";

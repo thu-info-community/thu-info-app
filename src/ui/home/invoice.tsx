@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from "react";
+import {PropsWithChildren} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";

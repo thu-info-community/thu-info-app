@@ -1,5 +1,4 @@
 import {Alert, Text, TouchableOpacity, View} from "react-native";
-import React from "react";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";

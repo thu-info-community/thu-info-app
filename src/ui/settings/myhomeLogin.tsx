@@ -1,5 +1,5 @@
 import {TextInput, View, Text, TouchableOpacity} from "react-native";
-import React from "react";
+import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -16,8 +16,8 @@ import {DormAuthError} from "thu-info-lib/dist/utils/error";
 import {RoundedView} from "../../components/views";
 
 export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
-	const [password, setPassword] = React.useState("");
-	const [processing, setProcessing] = React.useState(false);
+	const [password, setPassword] = useState("");
+	const [processing, setProcessing] = useState(false);
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);

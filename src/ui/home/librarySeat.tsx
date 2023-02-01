@@ -4,7 +4,6 @@ import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {helper, store} from "../../redux/store";
-import React from "react";
 import {Text, View} from "react-native";
 import {getSocketsStatusBySectionId} from "../../utils/webApi";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";

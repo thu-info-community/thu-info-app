@@ -1,4 +1,3 @@
-import React from "react";
 import {useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 

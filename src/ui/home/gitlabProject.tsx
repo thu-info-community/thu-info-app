@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {GitLabProjectProp, RootNav} from "../../components/Root";
 import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";

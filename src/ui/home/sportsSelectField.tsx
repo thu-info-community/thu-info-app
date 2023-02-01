@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconCheck from "../../assets/icons/IconCheck";

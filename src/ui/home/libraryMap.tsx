@@ -3,7 +3,7 @@ import {
 	LibrarySeatMapRouteProp,
 } from "../../components/Root";
 import {Dimensions, Image, Text, View} from "react-native";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveRemoteImg} from "../../utils/saveImg";

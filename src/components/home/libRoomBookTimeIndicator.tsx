@@ -1,6 +1,5 @@
 import {LibRoomRes} from "thu-info-lib/dist/models/home/library";
 import {Text, useColorScheme, View} from "react-native";
-import React from "react";
 import themes from "../../assets/themes/themes";
 
 export const timeDiff = (start: string, end: string): number => {

@@ -1,4 +1,3 @@
-import React from "react";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {State} from "../../redux/store";
