@@ -17,6 +17,9 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
+import {BottomPopupTriggerView} from "../../components/views";
+import {explainWeekAndDay} from "../../utils/calendar";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 export const ClassroomDetailScreen = ({
 	route: {
@@ -39,6 +42,9 @@ export const ClassroomDetailScreen = ({
 	const currWeek = data[0];
 	const currDay = data[1];
 	const [refreshing, setRefreshing] = useState(false);
+
+	const [popupWeek, setPopupWeek] = useState(Math.max(weekNumber, 1));
+	const [popupDayOfWeek, setPopupDayOfWeek] = useState(dayOfWeek);
 
 	const [statesLayoutX, setStatesLayoutX] = useState<number | undefined>();
 	const [tipPosition, setTipPosition] = useState<
@@ -161,17 +167,75 @@ export const ClassroomDetailScreen = ({
 					disabled={data[0] === 1 && data[1] === 1}>
 					<IconLeft height={24} width={24} />
 				</TouchableOpacity>
-				<Text
-					style={{
-						fontSize: 16,
-						marginHorizontal: 11,
-						color: theme.colors.text,
-					}}>
-					{getStr("classroomHeaderPrefix") +
-						data[0] +
-						getStr("classroomHeaderMiddle") +
-						getStr("dayOfWeek")[data[1]]}
-				</Text>
+				<BottomPopupTriggerView
+					popupTitle={explainWeekAndDay(popupWeek, popupDayOfWeek)}
+					popupContent={
+						<View style={{flexDirection: "row"}}>
+							<ScrollPicker
+								dataSource={Array.from(
+									new Array(weekCount),
+									(_, k) =>
+										getStr("weekNumPrefix") + (k + 1) + getStr("weekNumSuffix"),
+								)}
+								selectedIndex={popupWeek - 1}
+								renderItem={(text) => (
+									<Text
+										style={{color: theme.colors.fontB1, fontSize: 20}}
+										key={text}>
+										{text}
+									</Text>
+								)}
+								onValueChange={(_, selectedIndex) => {
+									setPopupWeek(selectedIndex + 1);
+								}}
+								wrapperHeight={200}
+								wrapperColor={theme.colors.contentBackground}
+								itemHeight={48}
+								highlightColor={theme.colors.themeGrey}
+								highlightBorderWidth={1}
+							/>
+							<ScrollPicker
+								dataSource={Array.from(
+									new Array(7),
+									(_, k) => getStr("dayOfWeek")[k + 1],
+								)}
+								selectedIndex={popupDayOfWeek - 1}
+								renderItem={(text) => (
+									<Text
+										style={{color: theme.colors.fontB1, fontSize: 20}}
+										key={text}>
+										{text}
+									</Text>
+								)}
+								onValueChange={(_, selectedIndex) => {
+									setPopupDayOfWeek(selectedIndex + 1);
+								}}
+								wrapperHeight={200}
+								wrapperColor={theme.colors.contentBackground}
+								itemHeight={48}
+								highlightColor={theme.colors.themeGrey}
+								highlightBorderWidth={1}
+							/>
+						</View>
+					}
+					popupCanFulfill={true}
+					popupOnFulfilled={() => {
+						setData(([_week, _day, table]) => [
+							popupWeek,
+							popupDayOfWeek,
+							table,
+						]);
+					}}
+					popupOnCancelled={() => {}}>
+					<Text
+						style={{
+							fontSize: 16,
+							marginHorizontal: 11,
+							color: theme.colors.text,
+						}}>
+						{explainWeekAndDay(data[0], data[1])}
+					</Text>
+				</BottomPopupTriggerView>
 				<TouchableOpacity
 					style={{padding: 2}}
 					onPress={() =>

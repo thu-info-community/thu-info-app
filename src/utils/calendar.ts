@@ -70,3 +70,12 @@ export const explainPeriod = (
 		getStr("periodNumSuffix")
 	);
 };
+
+export const explainWeekAndDay = (week: number, dayOfWeek: number) => {
+	return (
+		getStr("classroomHeaderPrefix") +
+		week +
+		getStr("classroomHeaderMiddle") +
+		getStr("dayOfWeek")[dayOfWeek]
+	);
+};
