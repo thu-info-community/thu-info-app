@@ -121,6 +121,8 @@ jest.mock("react-native-version-number", () => ({
 	bundleIdentifier: "0",
 }));
 
+jest.mock('react-native-webview', () => jest.fn())
+
 jest.mock("./src/utils/webApi", () => ({
 	getLatestAnnounces: () => Promise.resolve([]),
 	getLatestVersion: () => Promise.resolve([{
