@@ -96,11 +96,6 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion System.getenv('NDK_VERSION')
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-
     namespace "com.unidy2002.thuinfo"
     defaultConfig {
         applicationId "com.unidy2002.thuinfo"
