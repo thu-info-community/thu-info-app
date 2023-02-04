@@ -125,3 +125,8 @@ jobs:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: thu_info.ipa
+          path: ios/thu_info.ipa
