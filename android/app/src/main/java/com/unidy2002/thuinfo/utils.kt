@@ -25,6 +25,24 @@ fun Application.verifySignature() {
     }
 }
 
+fun preventEmulator() {
+    if (!BuildConfig.DEBUG) {
+        listOf(
+            "/system/lib/libc_malloc_debug_qemu.so",
+            "/sys/qemu_trace",
+            "/system/bin/qemu-props",
+        ).forEach { filename ->
+            try {
+                if (File(filename).exists()) {
+                    exitProcess(2)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+}
+
 fun preventRoot() {
     listOf(
         "/system/bin/",
