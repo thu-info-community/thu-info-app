@@ -32,6 +32,7 @@ export interface ConfigState {
 	subFunctionUnlocked: boolean | undefined;
 	homeFunctionDisabled: HomeFunction[];
 	beta3Notified: boolean | undefined;
+	disableBackgroundSecurityWarning: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -62,6 +63,7 @@ const initialState: ConfigState = {
 	subFunctionUnlocked: false,
 	homeFunctionDisabled: [],
 	beta3Notified: false,
+	disableBackgroundSecurityWarning: false,
 };
 
 // Reference: https://stackoverflow.com/questions/51691235/typescript-map-union-type-to-another-union-type

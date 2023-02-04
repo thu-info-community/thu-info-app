@@ -518,4 +518,5 @@ export default {
 	start: "Start",
 	sync: "Synchronize",
 	return: "Return",
+	backgroundSecurityWarning: "Warn when APP enters background",
 };

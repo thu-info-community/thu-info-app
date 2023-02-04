@@ -29,7 +29,7 @@ import {
 	ReservationState,
 } from "./slices/reservation";
 import Snackbar from "react-native-snackbar";
-import {AppState} from "react-native";
+import {AppState, Platform, ToastAndroid} from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState} from "./slices/config";
 import {
@@ -61,6 +61,16 @@ AppState.addEventListener("change", (state) => {
 		}
 	} else {
 		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));
+		const s = currState();
+		if (
+			!s.config.disableBackgroundSecurityWarning &&
+			Platform.OS === "android"
+		) {
+			ToastAndroid.show(
+				"THU Info 已切换至后台运行。可在设置→帐号与安全中关闭该提示。",
+				ToastAndroid.SHORT,
+			);
+		}
 	}
 });
 

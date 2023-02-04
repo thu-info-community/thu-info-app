@@ -483,4 +483,5 @@ export default {
 	start: "开始",
 	sync: "同步",
 	return: "返回",
+	backgroundSecurityWarning: "应用切换后台提醒",
 };
