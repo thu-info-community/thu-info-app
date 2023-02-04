@@ -92,6 +92,8 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+def signatureDigest = System.getenv('SIGNATURE_DIGEST')
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion System.getenv('NDK_VERSION')
@@ -128,9 +130,11 @@ android {
     }
     buildTypes {
         debug {
+            buildConfigField "String", "SIGNATURE_DIGEST", "\"$signatureDigest\""
             signingConfig signingConfigs.debug
         }
         release {
+            buildConfigField "String", "SIGNATURE_DIGEST", "\"$signatureDigest\""
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
