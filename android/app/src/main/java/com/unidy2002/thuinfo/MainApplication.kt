@@ -30,6 +30,7 @@ class MainApplication : Application(), ReactApplication {
             DefaultNewArchitectureEntryPoint.load()
         }
         preventEmulator()
+        preventRoot()
         verifySignature()
     }
 }

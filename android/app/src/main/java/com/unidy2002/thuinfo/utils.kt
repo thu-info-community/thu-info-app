@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.PackageManager
 import android.os.Build.*
+import java.io.File
 import java.security.MessageDigest
 import java.util.Formatter
 import kotlin.system.exitProcess
@@ -36,6 +37,24 @@ fun preventEmulator() {
             HARDWARE == "goldfish"
         ) {
             exitProcess(2)
+        }
+    }
+}
+
+fun preventRoot() {
+    listOf(
+        "/system/bin/",
+        "/system/xbin/",
+        "/system/sbin/",
+        "/sbin/",
+        "/vendor/bin/"
+    ).forEach { path ->
+        try {
+            if (File("${path}su").exists()) {
+                exitProcess(3)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
