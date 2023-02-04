@@ -576,8 +576,8 @@ export const MOCK_BANK_PAYMENT = [{
 }] as BankPaymentByMonth[];
 
 export const MOCK_CALENDAR_DATA: CalendarData = {
-    firstDay: "2022-09-12",
-    semesterId: "2022-2023-1",
+    firstDay: "2023-02-20",
+    semesterId: "2022-2023-2",
     weekCount: 18,
 };
 
