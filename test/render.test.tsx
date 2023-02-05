@@ -1,3 +1,4 @@
+import {expect, it, jest} from "@jest/globals";
 import "react-native";
 import React from "react";
 import {App} from "../src/App";

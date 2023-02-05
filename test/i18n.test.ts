@@ -1,3 +1,4 @@
+import {expect, test} from "@jest/globals";
 import zh from "../src/assets/translations/zh";
 import en from "../src/assets/translations/en";
 
