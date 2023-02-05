@@ -1,3 +1,4 @@
+import {expect, it} from "@jest/globals";
 import {InfoHelper} from "../src";
 import {uFetch} from "../src/utils/network";
 import fs from "fs";

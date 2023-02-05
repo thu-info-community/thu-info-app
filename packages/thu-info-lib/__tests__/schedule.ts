@@ -1,3 +1,4 @@
+import {expect, it} from "@jest/globals";
 import {ScheduleTime, scheduleTimeAdd} from "../src/models/schedule/schedule";
 
 it("Test schedule time add", () => {
