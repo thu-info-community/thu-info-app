@@ -1,3 +1,5 @@
+import "react-native-gesture-handler/jestSetup"
+
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock'
