@@ -105,7 +105,7 @@ jobs:
             ios/Pods
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-disabled-
       - name: Install dependencies
         run: |
           yarn
