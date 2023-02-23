@@ -4,6 +4,7 @@ import {
 	Text,
 	ActivityIndicator,
 	TouchableOpacity,
+	Linking,
 } from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -106,21 +107,18 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
 				</TouchableOpacity>
-				<Text
-					style={{
-						color: theme.colors.primaryDark,
-						fontSize: 21,
-						marginTop: 70,
-					}}>
-					{getStr("slogan")}
-				</Text>
-				<TouchableOpacity
-					onPress={() => navigation.navigate("HelpAndFeedback")}>
-					<Text style={style.feedbackTextStyle}>{getStr("feedback")}</Text>
-				</TouchableOpacity>
 				<Text style={style.credentialNoteStyle}>
 					{getStr("credentialNote")}
 				</Text>
+				<TouchableOpacity onPress={() => navigation.navigate("FeishuFeedback")}>
+					<Text style={style.feedbackTextStyle}>
+						{getStr("feishuFeedback")}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => Linking.openURL("http://app.cs.tsinghua.edu.cn")}>
+					<Text style={style.websiteTextStyle}>app.cs.tsinghua.edu.cn</Text>
+				</TouchableOpacity>
 			</View>
 			{processing ? (
 				<View style={style.absoluteContainer}>
@@ -180,8 +178,8 @@ const styles = themedStyles((theme) => {
 		loginButtonStyle: {
 			height: 35,
 			width: 100,
-			backgroundColor: theme.colors.accent,
-			marginTop: 30,
+			backgroundColor: theme.colors.themePurple,
+			marginTop: 20,
 			marginBottom: 20,
 			justifyContent: "center",
 			alignItems: "center",
@@ -195,13 +193,17 @@ const styles = themedStyles((theme) => {
 
 		feedbackTextStyle: {
 			color: theme.colors.primary,
-			marginTop: 60,
+			marginTop: 80,
+		},
+
+		websiteTextStyle: {
+			color: theme.colors.primary,
+			marginTop: 20,
 		},
 
 		credentialNoteStyle: {
-			color: theme.colors.primaryDark,
+			color: theme.colors.primary,
 			marginHorizontal: 40,
-			marginTop: 20,
 		},
 
 		loggingInCaptionStyle: {
