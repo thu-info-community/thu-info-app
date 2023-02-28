@@ -61,7 +61,7 @@ import {
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
-import {Classroom} from "../models/home/classroom";
+import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -431,20 +431,34 @@ export const getClassroomList = (
 
 export const getClassroomState = (
     helper: InfoHelper,
-    name: string,
+    building: string,
     week: number,
-): Promise<[string, number[]][]> =>
+): Promise<ClassroomStateResult> =>
     roamingWrapperWithMocks(
         helper,
         "default",
         "40470BB47E0849E9EF717983490BC964",
-        () => uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(name, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
-            const result = cheerio("#scrollContent>table>tbody", s)
+        () => uFetch(CLASSROOM_STATE_PREFIX + arbitraryEncode(building, "gb2312") + CLASSROOM_STATE_MIDDLE + week).then((s) => {
+            const $ = cheerio.load(s);
+            const validWeekNumbers = $("#weeknumber option").map((_, element) => Number((element as TagElement).attribs.value)).get();
+            const datesOfCurrentWeek = $("[colspan=6]").map((i, element) => {
+                if (i >= 7) return "";
+                const text = cheerio(element).text();
+                const r = /\((.+?)\)/g.exec(text);
+                if (r === null || r[1] === undefined) {
+                    throw new ClassroomStateError("r === null || r[1] === undefined");
+                }
+                return r[1];
+            }).get() as [string, string, string, string, string, string, string];
+            if (datesOfCurrentWeek.length < 7) {
+                throw new ClassroomStateError("datesOfCurrentWeek.length < 7");
+            }
+            const classroomStates = $("#scrollContent>table>tbody")
                 .map((_, element) =>
                     (element as TagElement).children
                         .filter((it) => it.type === "tag" && it.tagName === "tr")
                         .map((tr) => {
-                            const id =
+                            const name =
                                 ((tr as TagElement).children[1] as TagElement).children[2].data?.trim() ??
                                 "";
                             const status = (tr as TagElement).children
@@ -454,29 +468,29 @@ export const getClassroomState = (
                                     const classNames =
                                         (td as TagElement).attribs.class?.split(" ")?.filter((it) => it !== "colBound") ?? [];
                                     if (classNames.length > 1) {
-                                        return 0;
+                                        throw new ClassroomStateError("classNames.length > 1");
                                     } else {
                                         switch (classNames[0]) {
                                         case "onteaching":
-                                            return 0;
+                                            return ClassroomStatus.TEACHING;
                                         case "onexam":
-                                            return 1;
+                                            return ClassroomStatus.EXAM;
                                         case "onborrowed":
-                                            return 2;
+                                            return ClassroomStatus.BORROWED;
                                         case "ondisabled":
-                                            return 3;
+                                            return ClassroomStatus.DISABLED;
                                         case undefined:
-                                            return 5;
+                                            return ClassroomStatus.AVAILABLE;
                                         default:
-                                            return 4;
+                                            throw new ClassroomStateError(`classNames[0] === "${classNames[0]}"`);
                                         }
                                     }
                                 });
-                            return [id, status];
+                            return {name, status};
                         }),
                 )
-                .get();
-            if (result.length === 0 && s.indexOf("scrollContent") === -1) {
+                .get() as ClassroomState[];
+            if (classroomStates.length === 0 && s.indexOf("scrollContent") === -1) {
                 if (s.includes(systemMessage)) {
                     throw new ClassroomStateError(systemMessage);
                 } else if (s.includes(webVPNTitle)) {
@@ -485,7 +499,12 @@ export const getClassroomState = (
                     throw new ClassroomStateError("thu-info-lib 未处理的异常");
                 }
             }
-            return result as [string, number[]][];
+            return {
+                validWeekNumbers,
+                currentWeekNumber: week,
+                datesOfCurrentWeek,
+                classroomStates,
+            };
         }),
         MOCK_CLASSROOM_STATE,
     );

@@ -3,6 +3,7 @@ import {Record} from "../models/home/expenditure";
 import {BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
+import {ClassroomStateResult} from "../models/home/classroom";
 
 export const MOCK_REPORT = [
     {
@@ -452,19 +453,22 @@ const generateWeek = () =>
         .concat(basePatterns[rand()])
         .concat(basePatterns[rand()]);
 
-const generatedPattern = [
-    ["101:240", generateWeek()],
-    ["102:40", generateWeek()],
-    ["103:40", generateWeek()],
-    ["104:240", generateWeek()],
-    ["201:150", generateWeek()],
-    ["202:40", generateWeek()],
-    ["203:40", generateWeek()],
-    ["204:40", generateWeek()],
-    ["205:150", generateWeek()],
-];
-
-export const MOCK_CLASSROOM_STATE = generatedPattern as [string, number[]][];
+export const MOCK_CLASSROOM_STATE: ClassroomStateResult = {
+    validWeekNumbers: [1, 2, 3, 4, 5, 6],
+    currentWeekNumber: 1,
+    datesOfCurrentWeek: ["02.20", "02.21", "02.22", "02.23", "02.24", "02.25", "02.26"],
+    classroomStates: [
+        {name: "101:240", status: generateWeek()},
+        {name: "102:40", status: generateWeek()},
+        {name: "103:40", status: generateWeek()},
+        {name: "104:240", status: generateWeek()},
+        {name: "201:150", status: generateWeek()},
+        {name: "202:40", status: generateWeek()},
+        {name: "203:40", status: generateWeek()},
+        {name: "204:40", status: generateWeek()},
+        {name: "205:150", status: generateWeek()},
+    ],
+};
 
 export const MOCK_LOSE_CARD_CODE = 2;
 

@@ -111,7 +111,7 @@ import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
 import { getDegreeProgramCompletion, getFullDegreeProgram } from "./lib/program";
-import {Classroom} from "./models/home/classroom";
+import {Classroom, ClassroomStateResult} from "./models/home/classroom";
 
 export class InfoHelper {
     public userId = "";
@@ -292,32 +292,13 @@ export class InfoHelper {
 
     /**
      * Get the classroom state of specific classroom building and week number.
-     * @param name  a string representing the queried building
-     * @param week  a number representing the queried week number
-     *
-     * @return  Returns `[string, number[]][]`, where the string represents the
-     *          classroom name and the number[] is an array of 42(=7*6) numbers
-     *          representing the classroom status of the queried week (starting
-     *          from Monday).
-     *
-     *          The status number ranges from 0 to 5:
-     *
-     *          0 for Teaching
-     *
-     *          1 for Exam
-     *
-     *          2 for Borrowed
-     *
-     *          3 for Disabled
-     *
-     *          4 for Unknown (Usually indicates an error in this lib)
-     *
-     *          5 for Available
+     * @param building  a string representing the queried building
+     * @param week      a number representing the queried week number
      */
     public getClassroomState = (
-        name: string,
+        building: string,
         week: number,
-    ): Promise<[string, number[]][]> => getClassroomState(this, name, week);
+    ): Promise<ClassroomStateResult> => getClassroomState(this, building, week);
 
     /**
      * Get the list of invoices.
