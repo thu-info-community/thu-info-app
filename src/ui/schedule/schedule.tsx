@@ -1,12 +1,5 @@
-import {
-	ScrollView,
-	View,
-	Text,
-	Dimensions,
-	TouchableOpacity,
-	RefreshControl,
-} from "react-native";
-import {ReactElement, useState, useEffect} from "react";
+import {View, Text, Dimensions, TouchableOpacity, Animated} from "react-native";
+import {ReactElement, useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
 	activeWeek,
@@ -28,6 +21,11 @@ import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-status-bar-height";
+import {
+	RefreshControl,
+	ScrollView,
+	Swipeable,
+} from "react-native-gesture-handler";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -194,6 +192,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 			});
 		return components;
 	};
+
+	const swipeableRef = useRef<Swipeable>(null);
 
 	return (
 		<>
@@ -369,89 +369,103 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						colors={[theme.colors.accent]}
 					/>
 				}>
-				<View style={{flexDirection: "row"}}>
-					<View style={{width: 32}}>
-						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
+				<Swipeable
+					ref={swipeableRef}
+					overshootFriction={10}
+					renderLeftActions={() => <Animated.View style={{width: 100}} />}
+					renderRightActions={() => <Animated.View style={{width: 100}} />}
+					onSwipeableOpen={(direction) => {
+						if (direction === "left") {
+							setWeek((w) => w - 1);
+						} else {
+							setWeek((w) => w + 1);
+						}
+						swipeableRef.current?.close();
+					}}>
+					<View style={{flexDirection: "row"}}>
+						<View style={{width: 32}}>
+							{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
+								<View
+									style={{
+										alignItems: "center",
+										justifyContent: "center",
+										height: unitHeight,
+									}}
+									key={`${session}-0`}>
+									<Text
+										style={{
+											textAlign: "center",
+											color: theme.colors.fontB1,
+											fontSize: 12,
+										}}>
+										{session}
+									</Text>
+									<Text
+										style={{
+											textAlign: "center",
+											color: theme.colors.fontB2,
+											fontSize: 8,
+											marginTop: 4,
+										}}>
+										{beginTime[session]}
+									</Text>
+									<Text
+										style={{
+											textAlign: "center",
+											color: theme.colors.fontB2,
+											fontSize: 8,
+											marginTop: 1,
+										}}>
+										{endTime[session]}
+									</Text>
+								</View>
+							))}
+						</View>
+						<View style={{flex: 1}}>
 							<View
 								style={{
-									alignItems: "center",
-									justifyContent: "center",
-									height: unitHeight,
+									backgroundColor: theme.colors.themeGrey,
+									height: 1,
+									position: "absolute",
+									left: 0,
+									right: 0,
+									top: 300,
 								}}
-								key={`${session}-0`}>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB1,
-										fontSize: 12,
-									}}>
-									{session}
-								</Text>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB2,
-										fontSize: 8,
-										marginTop: 4,
-									}}>
-									{beginTime[session]}
-								</Text>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB2,
-										fontSize: 8,
-										marginTop: 1,
-									}}>
-									{endTime[session]}
-								</Text>
-							</View>
-						))}
+							/>
+							<View
+								style={{
+									backgroundColor: theme.colors.themeGrey,
+									height: 1,
+									position: "absolute",
+									left: 0,
+									right: 0,
+									top: 660,
+								}}
+							/>
+							<Text
+								style={{
+									position: "absolute",
+									right: 12,
+									top: 302,
+									fontSize: 12,
+									color: theme.colors.fontB3,
+								}}>
+								{getStr("lunch")}
+							</Text>
+							<Text
+								style={{
+									position: "absolute",
+									right: 12,
+									top: 662,
+									fontSize: 12,
+									color: theme.colors.fontB3,
+								}}>
+								{getStr("supper")}
+							</Text>
+							{allSchedule()}
+						</View>
 					</View>
-					<View style={{flex: 1}}>
-						<View
-							style={{
-								backgroundColor: theme.colors.themeGrey,
-								height: 1,
-								position: "absolute",
-								left: 0,
-								right: 0,
-								top: 300,
-							}}
-						/>
-						<View
-							style={{
-								backgroundColor: theme.colors.themeGrey,
-								height: 1,
-								position: "absolute",
-								left: 0,
-								right: 0,
-								top: 660,
-							}}
-						/>
-						<Text
-							style={{
-								position: "absolute",
-								right: 12,
-								top: 302,
-								fontSize: 12,
-								color: theme.colors.fontB3,
-							}}>
-							{getStr("lunch")}
-						</Text>
-						<Text
-							style={{
-								position: "absolute",
-								right: 12,
-								top: 662,
-								fontSize: 12,
-								color: theme.colors.fontB3,
-							}}>
-							{getStr("supper")}
-						</Text>
-						{allSchedule()}
-					</View>
-				</View>
+				</Swipeable>
 			</ScrollView>
 		</>
 	);
