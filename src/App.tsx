@@ -24,8 +24,6 @@ const RootComponent = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		checkUpdate();
-		checkBroadcast();
 		addStartupStat();
 		if (studentNotified !== true) {
 			Alert.alert(
@@ -41,6 +39,9 @@ const RootComponent = () => {
 				],
 				{cancelable: false},
 			);
+		} else {
+			checkUpdate();
+			checkBroadcast();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
