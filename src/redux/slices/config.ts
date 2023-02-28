@@ -32,6 +32,7 @@ export interface ConfigState {
 	subFunctionUnlocked: boolean | undefined;
 	homeFunctionDisabled: HomeFunction[];
 	beta3Notified: boolean | undefined;
+	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 }
 
@@ -63,6 +64,7 @@ const initialState: ConfigState = {
 	subFunctionUnlocked: false,
 	homeFunctionDisabled: [],
 	beta3Notified: false,
+	studentNotified: false,
 	disableBackgroundSecurityWarning: false,
 };
 

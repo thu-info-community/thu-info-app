@@ -11,6 +11,7 @@ import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 import {addStartupStat} from "./utils/webApi";
+import {getStr} from "./utils/i18n";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
@@ -19,22 +20,23 @@ const RootComponent = () => {
 	const darkModeHook = dark || themeName === "dark";
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
-	const beta3Notified = useSelector((s: State) => s.config.beta3Notified);
+	const studentNotified = useSelector((s: State) => s.config.studentNotified);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		checkUpdate();
 		checkBroadcast();
 		addStartupStat();
-		if (beta3Notified !== true) {
+		if (studentNotified !== true) {
 			Alert.alert(
-				"公测提示",
-				"公测版虽已排除大部分问题，但并非稳定版。\n参与公测即表示您自愿接受软件错误导致的潜在风险。\n如有问题请及时反馈。",
+				"有问题？Help!",
+				"该应用由学生自主开发，难免有设计不周之处。应用内提供了反馈问题的渠道，如有建议或意见，请畅所欲言！\n\n" +
+					"This APP is developed by a team of students. If you have any questions, do not hesitate to ask us in the feedback section of this APP. We shall be quick to respond!",
 				[
 					{
-						text: "确定",
+						text: getStr("ok"),
 						onPress: () =>
-							dispatch(configSet({key: "beta3Notified", value: true})),
+							dispatch(configSet({key: "studentNotified", value: true})),
 					},
 				],
 				{cancelable: false},
