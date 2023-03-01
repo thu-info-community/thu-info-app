@@ -85,7 +85,7 @@
 		"@types/semver": "7.3.13",
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"editor": "1.0.0",
-		"eslint": "8.34.0",
+		"eslint": "8.35.0",
 		"jest": "29.4.3",
 		"metro-react-native-babel-preset": "0.75.1",
 		"pre-commit": "1.2.2",
