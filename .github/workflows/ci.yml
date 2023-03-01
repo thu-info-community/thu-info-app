@@ -64,14 +64,6 @@ jobs:
           export tag=${ref:10}
           echo "::set-output name=tag::$tag"
           mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/THUInfo_release_$tag.apk
-      - name: Deploy to App Center
-        if: startsWith(github.ref, 'refs/tags')
-        uses: wzieba/AppCenter-Github-Action@v1
-        with:
-          appName: UNIDY/THUInfo
-          token: ${{ secrets.APP_CENTER_TOKEN }}
-          group: CD
-          file: android/app/build/outputs/apk/release/THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags')
         id: create_release
