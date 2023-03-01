@@ -6601,10 +6601,10 @@ react-native-keychain@4.0.5:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-4.0.5.tgz#6d3aef8f2789fc0dfa8149b8400d82ff77be361a"
   integrity sha512-TbiO8AO055EPjaxIuKxrCEOB4r81uQCVDFbtcs+e4pEOHxf6z3JgDC0UU0poJElKfCh37b+TFRxQhg6DbsYJBA==
 
-react-native-localize@2.2.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-2.2.4.tgz#3bc46ade48499ab9df61bf17a9b66633a5ba9bb9"
-  integrity sha512-gVmbyAEQQnBQ8vKlAQchFfIISeId3qT6Lc7LHmKF39nsYWX9KN4PHuG6Hk+7gduMI6IHKeZGKcLsOdh6wvN6cg==
+react-native-localize@2.2.5:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-2.2.5.tgz#5f59c9482f2264a16d2f08e2b9a79071349a70dc"
+  integrity sha512-w0bBZ4X/lkErNXb5T+cQfUKgEv2+28o7jZhK/vPesf91D4yQKUCtS7Uz0s1AnRXYKOyTm3TCUgFuRVqKzuWlMQ==
 
 react-native-modal-dropdown@1.0.2:
   version "1.0.2"
