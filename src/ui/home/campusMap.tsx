@@ -1,9 +1,6 @@
-import {useColorScheme, View} from "react-native";
+import {Animated, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
-import Animated, {
-	useAnimatedStyle,
-	useSharedValue,
-} from "react-native-reanimated";
+import {useAnimatedStyle, useSharedValue} from "react-native-reanimated";
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
 import {LazyImage} from "../../components/LazyImage";
 
