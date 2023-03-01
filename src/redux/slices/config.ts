@@ -39,9 +39,9 @@ export interface ConfigState {
 const initialState: ConfigState = {
 	doNotRemindSemver: "0.0.0",
 	lastSelfVersion: 0,
-	firstDay: "2022-09-12",
+	firstDay: "2023-02-20",
 	weekCount: 18,
-	semesterId: "2022-2023-1",
+	semesterId: "2022-2023-2",
 	language: "auto",
 	darkMode: false,
 	newGPA: true,
