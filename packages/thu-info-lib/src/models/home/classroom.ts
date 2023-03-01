@@ -9,6 +9,7 @@ export enum ClassroomStatus {
     EXAM,
     BORROWED,
     DISABLED,
+    RESERVED_FOR_COMPAT,
     AVAILABLE,
 }
 
