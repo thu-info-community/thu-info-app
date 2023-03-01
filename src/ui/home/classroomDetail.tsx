@@ -20,6 +20,10 @@ import dayjs from "dayjs";
 import {BottomPopupTriggerView} from "../../components/views";
 import {explainWeekAndDay} from "../../utils/calendar";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {
+	ClassroomState,
+	ClassroomStatus,
+} from "thu-info-lib/dist/models/home/classroom";
 
 export const ClassroomDetailScreen = ({
 	route: {
@@ -28,17 +32,18 @@ export const ClassroomDetailScreen = ({
 }: {
 	route: ClassroomDetailRouteProp;
 }) => {
-	const weekCount = 18;
 	const current = dayjs();
 	const dayOfWeek = current.day() === 0 ? 7 : current.day();
 
-	const [data, setData] = useState<[number, number, [string, number[]][]]>([
+	const [validWeeks, setValidWeeks] = useState<number[]>([weekNumber]);
+	const [dates, setDates] = useState<string[]>([]);
+	const [data, setData] = useState<[number, number, ClassroomState[]]>([
 		Math.max(weekNumber, 1),
 		dayOfWeek,
 		[],
 	]);
-	const prev = useRef<[number, [string, number[]][]]>();
-	const next = useRef<[number, [string, number[]][]]>();
+	const prev = useRef<[number, ClassroomState[], string[]]>();
+	const next = useRef<[number, ClassroomState[], string[]]>();
 	const currWeek = data[0];
 	const currDay = data[1];
 	const [refreshing, setRefreshing] = useState(false);
@@ -88,18 +93,21 @@ export const ClassroomDetailScreen = ({
 
 	const refresh = () => {
 		setRefreshing(true);
+		setDates([]);
 		helper
 			.getClassroomState(searchName, currWeek)
-			.then((res) =>
+			.then(({validWeekNumbers, datesOfCurrentWeek, classroomStates}) => {
 				setData((o) => {
 					if (o[0] === data[0]) {
 						setRefreshing(false);
-						return [o[0], o[1], res];
+						return [o[0], o[1], classroomStates];
 					} else {
 						return o;
 					}
-				}),
-			)
+				});
+				setValidWeeks(validWeekNumbers);
+				setDates(datesOfCurrentWeek);
+			})
 			.catch(() =>
 				Snackbar.show({
 					text: getStr("networkRetry"),
@@ -110,12 +118,14 @@ export const ClassroomDetailScreen = ({
 
 	useEffect(() => {
 		if (prev.current && data[0] === prev.current[0]) {
-			next.current = [data[0] + 1, data[2]];
+			next.current = [data[0] + 1, data[2], dates];
 			setData([data[0], data[1], prev.current[1]]);
+			setDates(prev.current[2]);
 			prev.current = undefined;
 		} else if (next.current && data[0] === next.current[0]) {
-			prev.current = [data[0] - 1, data[2]];
+			prev.current = [data[0] - 1, data[2], dates];
 			setData([data[0], data[1], next.current[1]]);
+			setDates(next.current[2]);
 			next.current = undefined;
 		} else {
 			refresh();
@@ -126,15 +136,18 @@ export const ClassroomDetailScreen = ({
 		) {
 			helper
 				.getClassroomState(searchName, data[0] - 1)
-				.then((res) => (prev.current = [data[0] - 1, res]));
+				.then(
+					({datesOfCurrentWeek, classroomStates}) =>
+						(prev.current = [data[0] - 1, classroomStates, datesOfCurrentWeek]),
+				);
 		}
-		if (
-			data[0] < weekCount &&
-			(next.current === undefined || next.current[0] !== data[0] + 1)
-		) {
+		if (next.current === undefined || next.current[0] !== data[0] + 1) {
 			helper
 				.getClassroomState(searchName, data[0] + 1)
-				.then((res) => (next.current = [data[0] + 1, res]));
+				.then(
+					({datesOfCurrentWeek, classroomStates}) =>
+						(next.current = [data[0] + 1, classroomStates, datesOfCurrentWeek]),
+				);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currWeek]);
@@ -172,10 +185,9 @@ export const ClassroomDetailScreen = ({
 					popupContent={
 						<View style={{flexDirection: "row"}}>
 							<ScrollPicker
-								dataSource={Array.from(
-									new Array(weekCount),
-									(_, k) =>
-										getStr("weekNumPrefix") + (k + 1) + getStr("weekNumSuffix"),
+								dataSource={validWeeks.map(
+									(week) =>
+										getStr("weekNumPrefix") + week + getStr("weekNumSuffix"),
 								)}
 								selectedIndex={popupWeek - 1}
 								renderItem={(text) => (
@@ -233,21 +245,16 @@ export const ClassroomDetailScreen = ({
 							marginHorizontal: 11,
 							color: theme.colors.text,
 						}}>
-						{explainWeekAndDay(data[0], data[1])}
+						{explainWeekAndDay(data[0], data[1])} {dates[data[1] - 1]}
 					</Text>
 				</BottomPopupTriggerView>
 				<TouchableOpacity
 					style={{padding: 2}}
 					onPress={() =>
 						setData(([week, day, table]) =>
-							day < 7
-								? [week, day + 1, table]
-								: week < weekCount
-								? [week + 1, 1, table]
-								: [week, day, table],
+							day < 7 ? [week, day + 1, table] : [week + 1, 1, table],
 						)
-					}
-					disabled={data[0] === weekCount && data[1] === 7}>
+					}>
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
 			</View>
@@ -332,7 +339,7 @@ export const ClassroomDetailScreen = ({
 				}
 				data={data[2]}
 				initialNumToRender={30}
-				renderItem={({item: [name, states], index: classroomIndex}) => (
+				renderItem={({item: {name, status}, index: classroomIndex}) => (
 					<View
 						style={{
 							flexDirection: "row",
@@ -382,7 +389,7 @@ export const ClassroomDetailScreen = ({
 														: elementWidth * (index + 0.5) - tipWidth / 2;
 												setTipPosition({top, left});
 												setTipItem({row: classroomIndex, col: index});
-												setTipState(states[(data[1] - 1) * 6 + index]);
+												setTipState(status[(data[1] - 1) * 6 + index]);
 											} else {
 												setTipPosition(undefined);
 												setTipItem({row: -1, col: -1});
@@ -393,7 +400,8 @@ export const ClassroomDetailScreen = ({
 									<View
 										style={{
 											backgroundColor:
-												states[(data[1] - 1) * 6 + index] === 5
+												status[(data[1] - 1) * 6 + index] ===
+												ClassroomStatus.AVAILABLE
 													? index + 1 >= currentPeriod
 														? theme.colors.themeDarkGrey
 														: theme.colors.themeGrey
