@@ -138,7 +138,12 @@ export const uFetch = async (
                     if (typeof reader.result === "string") {
                         if (base64) {
                             // Simply return the string data with the MIME header removed
-                            resolve(reader.result.substr("data:application/octet-stream;base64,".length));
+                            const r = /data:.+?;base64,(.+)/g.exec(reader.result);
+                            if (r !== null && r[1] !== undefined) {
+                                resolve(r[1]);
+                            } else {
+                                reject(new Error("Failed to parse MIME result in uFetch."));
+                            }
                         } else {
                             // The value stored in `reader.result` has already been parsed with the correct encoding
                             resolve(reader.result);

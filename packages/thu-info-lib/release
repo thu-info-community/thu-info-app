@@ -1,1 +1,1 @@
-breaking: modify return structure of `getClassroomState`
+fix(ios, uFetch): parse base64 results (e.g. jpeg results) correctly
