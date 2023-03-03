@@ -189,6 +189,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 		request: boolean = true,
 		searchMode: boolean | undefined = undefined,
 	) => {
+		if (refreshing && !request) {
+			return;
+		}
 		setRefreshing(true);
 		setLoading(true);
 
