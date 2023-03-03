@@ -256,11 +256,7 @@ export const SportsSelectScreen = ({
 								alignItems: "center",
 							}}>
 							<Image
-								source={{
-									uri: `data:image/jpg;base64,${
-										Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""
-									}${imageBase64}`,
-								}}
+								source={{uri: `data:image/jpg;base64,${imageBase64}`}}
 								style={{height: 50, width: 200}}
 							/>
 							<TouchableOpacity

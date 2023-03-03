@@ -1,4 +1,4 @@
-import {Platform, View} from "react-native";
+import {View} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
@@ -29,13 +29,7 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 		<View style={{flex: 1}}>
 			{base64 && (
 				<ImageViewer
-					imageUrls={[
-						{
-							url: `data:image/png;base64,${
-								Platform.OS === "ios" ? "/9j/4AAQSkZJRg" : ""
-							}${base64}`,
-						},
-					]}
+					imageUrls={[{url: `data:image/png;base64,${base64}`}]}
 					onSave={saveRemoteImg}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),
