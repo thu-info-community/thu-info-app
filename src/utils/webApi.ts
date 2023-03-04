@@ -3,22 +3,14 @@ import {
 	HubConnectionBuilder,
 	HubConnectionState,
 } from "@microsoft/signalr";
+import {helper} from "../redux/store";
 
 let rootUrl = "https://thuinfo.net";
-let rootUrlInited = false;
-const getRootUrl = async () => {
-	if (!rootUrlInited) {
-		const req = await fetch("https://stu.cs.tsinghua.edu.cn/thuinfo/url");
-		try {
-			const resp: {url: string} = await req.json();
-			rootUrl = resp.url;
-		} catch {
-			// no-op
-		}
-		rootUrlInited = true;
-	}
-	return rootUrl;
-};
+fetch("https://stu.cs.tsinghua.edu.cn/thuinfo/url")
+	.then((r) => r.json())
+	.then(({url}) => {
+		rootUrl = url;
+	});
 
 export enum FunctionType {
 	PhysicalExam,
@@ -38,7 +30,7 @@ export enum FunctionType {
 }
 
 export const addUsageStat = async (func: FunctionType) => {
-	fetch(`${await getRootUrl()}/stat/usage/${func.valueOf()}`);
+	helper.appUsageStat(func.valueOf()).catch(() => {});
 };
 
 export interface ScheduleSyncSending {
