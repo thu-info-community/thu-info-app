@@ -1,1 +1,1 @@
-breaking: include socket status in result of `getLibrarySeatList`
+feat: include socket status in result of `getLibrarySeatList`
