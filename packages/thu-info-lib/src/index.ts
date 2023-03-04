@@ -123,7 +123,8 @@ import {
     submitFeedback,
 } from "./lib/app";
 import {MOCK_LATEST_VERSION} from "./mocks/app";
-import {APP_STARTUP_STAT_URL} from "./constants/strings";
+import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
+import {uFetch} from "./utils/network";
 
 export class InfoHelper {
     public userId = "";
@@ -207,7 +208,7 @@ export class InfoHelper {
                 latestVersion: MOCK_LATEST_VERSION,
             };
         }
-        fetch(APP_STARTUP_STAT_URL).catch(() => {});
+        uFetch(APP_STARTUP_STAT_URL).catch(() => {});
         const bookingRecords = await getBookingRecords(this);
         const sportsReservationRecords = await getSportsReservationRecords(this);
         const latestAnnounces = await getLatestAnnounces(this);
@@ -218,6 +219,10 @@ export class InfoHelper {
         } catch {
             return {bookingRecords, sportsReservationRecords, crTimetable: [], latestAnnounces, latestVersion};
         }
+    };
+
+    public appUsageStat = async (usage: string) => {
+        await uFetch(`${APP_USAGE_STAT_URL}/${usage}`);
     };
 
     public getLatestAnnounces = async () => getLatestAnnounces(this);
