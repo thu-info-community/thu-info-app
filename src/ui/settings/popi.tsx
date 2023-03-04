@@ -1,13 +1,11 @@
 import {Text, View} from "react-native";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
-import {getFeedbackReplies} from "../../utils/webApi";
+import {helper} from "../../redux/store";
+import {Feedback} from "thu-info-lib/dist/models/app/feedback";
 
-export const PopiScreen = simpleRefreshListScreen<{
-	question: string;
-	answer: string;
-}>(
-	async () => await getFeedbackReplies(),
-	({question, answer}, _, __, {colors}) => (
+export const PopiScreen = simpleRefreshListScreen<Feedback>(
+	async () => await helper.getFeedbackReplies(),
+	({content, reply}, _, __, {colors}) => (
 		<View style={{padding: 15, marginVertical: 5}}>
 			<Text
 				style={{
@@ -17,13 +15,13 @@ export const PopiScreen = simpleRefreshListScreen<{
 					lineHeight: 18,
 					color: colors.text,
 				}}>
-				{"Q: " + question}
+				{"Q: " + content}
 			</Text>
 			<View style={{backgroundColor: "grey", height: 1}} />
 			<Text style={{marginTop: 10, lineHeight: 17, color: colors.text}}>
-				{"A: " + answer}
+				{"A: " + reply}
 			</Text>
 		</View>
 	),
-	({question}) => question,
+	({content}) => content,
 );

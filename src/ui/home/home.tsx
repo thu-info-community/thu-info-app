@@ -1,4 +1,5 @@
 import {
+	Platform,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -791,8 +792,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	useEffect(() => {
+		if (Platform.OS !== "ios" && Platform.OS !== "android") {
+			return;
+		}
 		helper
-			.appStartUp()
+			.appStartUp(Platform.OS)
 			.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {
 				dispatch(setActiveLibBookRecord(bookingRecords));
 				dispatch(setActiveSportsReservationRecord(sportsReservationRecords));

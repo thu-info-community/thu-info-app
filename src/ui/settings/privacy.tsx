@@ -3,7 +3,7 @@ import {View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {useSelector} from "react-redux";
-import {State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 
 export const PrivacyScreen = () => {
 	const themeName = useColorScheme();
@@ -18,9 +18,7 @@ export const PrivacyScreen = () => {
 					padding: 15,
 				}}>
 				<WebView
-					source={{
-						uri: "https://thuinfo.net/privacy",
-					}}
+					source={{uri: helper.getPrivacyUrl()}}
 					containerStyle={{
 						backgroundColor: theme.colors.themeBackground,
 						color: theme.colors.text,

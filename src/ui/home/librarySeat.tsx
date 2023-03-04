@@ -5,20 +5,11 @@ import Snackbar from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {helper, store} from "../../redux/store";
 import {Text, View} from "react-native";
-import {getSocketsStatusBySectionId} from "../../utils/webApi";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 
 export const LibrarySeatScreen = libraryRefreshListScreen(
 	({route}: {route: LibrarySeatRouteProp}, dateChoice) =>
-		Promise.all([
-			helper.getLibrarySeatList(route.params.section, dateChoice),
-			getSocketsStatusBySectionId(route.params.section.id).catch(() => []),
-		]).then(([r, s]) =>
-			r.map((seat) => ({
-				...seat,
-				status: s.find((i) => i.seatId === seat.id)?.status,
-			})),
-		),
+		helper.getLibrarySeatList(route.params.section, dateChoice),
 	(props, item, choice, refresh) => () => {
 		if (!helper.mocked()) {
 			Alert.alert(

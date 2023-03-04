@@ -15,17 +15,16 @@ import {RootNav} from "../../components/Root";
 import Snackbar from "react-native-snackbar";
 import {useColorScheme} from "react-native";
 import {
-	getFeedbackReplies,
-	getWeChatGroupQRCodeContent,
-	submitFeedback,
-} from "../../utils/webApi";
-import {
 	SettingsItem,
 	SettingsMiddleText,
 	SettingsSeparator,
 } from "../../components/settings/items";
 import QRCode from "react-native-qrcode-svg";
 import themes from "../../assets/themes/themes";
+import {helper} from "../../redux/store";
+import VersionNumber from "react-native-version-number";
+import {getModel} from "react-native-device-info";
+import {Feedback} from "thu-info-lib/dist/models/app/feedback";
 
 const BottomButton = ({
 	text,
@@ -60,28 +59,18 @@ const BottomButton = ({
 	);
 };
 
-type AsyncReturnType<T extends (...args: any) => any> = T extends (
-	...args: any
-) => Promise<infer U>
-	? U
-	: T extends (...args: any) => infer U
-	? U
-	: any;
-
 export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const [text, setText] = useState("");
 	const [contact, setContact] = useState("");
 	const [qrcodeContent, setQrcodeContent] = useState<string>();
-	const [feedbackData, setFeedbackData] = useState<
-		AsyncReturnType<typeof getFeedbackReplies>
-	>([]);
+	const [feedbackData, setFeedbackData] = useState<Feedback[]>([]);
 	const [processing, setProcessing] = useState(false);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	useEffect(() => {
-		getFeedbackReplies().then(setFeedbackData);
-		getWeChatGroupQRCodeContent().then(setQrcodeContent);
+		helper.getFeedbackReplies().then(setFeedbackData);
+		helper.getWeChatGroupQRCodeContent().then(setQrcodeContent);
 	}, []);
 
 	return (
@@ -92,10 +81,10 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 				<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
 					{getStr("askBox")}
 				</Text>
-				{feedbackData.slice(0, 5).map(({question}) => (
+				{feedbackData.slice(0, 5).map(({content}) => (
 					<SettingsItem
-						key={question}
-						text={question}
+						key={content}
+						text={content}
 						onPress={() => navigation.navigate("Popi")}
 						icon={undefined}
 						normalText={true}
@@ -165,7 +154,15 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						text="submit"
 						onPress={() => {
 							setProcessing(true);
-							submitFeedback(text, contact)
+							helper
+								.submitFeedback(
+									text,
+									String(VersionNumber.buildVersion),
+									`${Platform.OS} ${Platform.Version}`,
+									"",
+									contact,
+									getModel(),
+								)
 								.then(() =>
 									Snackbar.show({
 										text: getStr("feedbackSuccess"),

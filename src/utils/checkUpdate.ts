@@ -1,5 +1,4 @@
-import {getBroadcastData, getUpdateInfo} from "../network/update";
-import {currState, store} from "../redux/store";
+import {currState, helper, store} from "../redux/store";
 import {Alert, Linking, Platform} from "react-native";
 import {getStr} from "./i18n";
 import {configSet} from "../redux/slices/config";
@@ -10,67 +9,63 @@ import {NetworkRetry} from "../components/easySnackbars";
 import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
 
 export const checkUpdate = (force: boolean = false) => {
-	getUpdateInfo()
-		.then((r) =>
-			r.filter((it) => gte(it.versionName, VersionNumber.appVersion)),
-		)
-		.then((r) => {
-			if (
-				r.length &&
-				(force ||
-					lt(currState().config.doNotRemindSemver ?? "0.0.0", r[0].versionName))
-			) {
-				Alert.alert(
-					getStr("newVersionAvailable"),
-					r[0].versionName + "\n" + r[0].description,
-					[
-						{
-							text: getStr("ignoreThisVersion"),
-							onPress: () =>
-								store.dispatch(
-									configSet({
-										key: "doNotRemindSemver",
-										value: r[0].versionName,
-									}),
-								),
+	if (Platform.OS !== "ios" && Platform.OS !== "android") {
+		return;
+	}
+	helper.getLatestVersion(Platform.OS).then((r) => {
+		if (
+			gte(r.versionName, VersionNumber.appVersion) &&
+			(force ||
+				lt(currState().config.doNotRemindSemver ?? "0.0.0", r.versionName))
+		) {
+			Alert.alert(
+				getStr("newVersionAvailable"),
+				r.versionName + "\n" + r.releaseNote,
+				[
+					{
+						text: getStr("ignoreThisVersion"),
+						onPress: () =>
+							store.dispatch(
+								configSet({
+									key: "doNotRemindSemver",
+									value: r.versionName,
+								}),
+							),
+					},
+					{text: getStr("dismiss")},
+					{
+						text: getStr("download"),
+						onPress: async () => {
+							try {
+								const {status} = await fetch(TUNA_BASE_URL + r.versionName);
+								await Linking.openURL(
+									Platform.OS === "ios" || status === 404
+										? r.downloadUrl
+										: TUNA_LATEST_URL,
+								);
+							} catch (e) {
+								NetworkRetry();
+							}
 						},
-						{text: getStr("dismiss")},
-						{
-							text: getStr("download"),
-							onPress: async () => {
-								try {
-									const {status} = await fetch(
-										TUNA_BASE_URL + r[0].versionName,
-									);
-									await Linking.openURL(
-										Platform.OS === "ios" || status === 404
-											? r[0].url
-											: TUNA_LATEST_URL,
-									);
-								} catch (e) {
-									NetworkRetry();
-								}
-							},
-						},
-					],
-					{cancelable: true},
-				);
-			}
-			if (force && r.length === 0) {
-				Snackbar.show({
-					text: getStr("alreadyLatest"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-			}
-		});
+					},
+				],
+				{cancelable: true},
+			);
+		} else if (force) {
+			Snackbar.show({
+				text: getStr("alreadyLatest"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
+	});
 };
 
 export const checkBroadcast = () => {
-	getBroadcastData().then((r) => {
+	helper.getLatestAnnounces().then((r) => {
 		if (r.length > 0) {
 			Alert.alert(
 				getStr("broadcast"),
-				r.map((it) => it.message).join("\n"),
+				r.map((it) => it.content).join("\n"),
 				[
 					{
 						text: getStr("confirm"),

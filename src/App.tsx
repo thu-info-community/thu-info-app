@@ -10,7 +10,6 @@ import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
-import {addStartupStat} from "./utils/webApi";
 import {getStr} from "./utils/i18n";
 
 const RootComponent = () => {
@@ -24,7 +23,6 @@ const RootComponent = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		addStartupStat();
 		if (studentNotified !== true) {
 			Alert.alert(
 				"有问题？Help!",
