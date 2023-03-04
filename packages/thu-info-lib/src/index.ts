@@ -123,6 +123,7 @@ import {
     submitFeedback,
 } from "./lib/app";
 import {MOCK_LATEST_VERSION} from "./mocks/app";
+import {APP_STARTUP_STAT_URL} from "./constants/strings";
 
 export class InfoHelper {
     public userId = "";
@@ -206,6 +207,7 @@ export class InfoHelper {
                 latestVersion: MOCK_LATEST_VERSION,
             };
         }
+        fetch(APP_STARTUP_STAT_URL).catch(() => {});
         const bookingRecords = await getBookingRecords(this);
         const sportsReservationRecords = await getSportsReservationRecords(this);
         const latestAnnounces = await getLatestAnnounces(this);

@@ -226,6 +226,8 @@ export const APP_ANNOUNCEMENT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/announce?page=1";
 export const APP_LATEST_VERSION_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/version";
+export const APP_STARTUP_STAT_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/stat/startup";
 export const APP_SUBMIT_FEEDBACK_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/feedback";
 export const APP_FEEDBACKS_URL =
