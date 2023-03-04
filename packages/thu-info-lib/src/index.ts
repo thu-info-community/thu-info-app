@@ -29,6 +29,7 @@ import {
     LibrarySection,
     LibRoomBookRecord,
     LibRoomRes,
+    SocketStatus,
 } from "./models/home/library";
 import {
     bookLibraryRoom,
@@ -45,6 +46,7 @@ import {
     getLibrarySeatList,
     getLibrarySectionList,
     loginLibraryRoomBooking,
+    toggleSocketState,
 } from "./lib/library";
 import {
     addNewsSubscription,
@@ -112,6 +114,15 @@ import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
 import { getDegreeProgramCompletion, getFullDegreeProgram } from "./lib/program";
 import {Classroom, ClassroomStateResult} from "./models/home/classroom";
+import {
+    getFeedbackReplies,
+    getLatestAnnounces,
+    getLatestVersion,
+    getPrivacyUrl,
+    getWeChatGroupQRCodeContent,
+    submitFeedback,
+} from "./lib/app";
+import {MOCK_LATEST_VERSION} from "./mocks/app";
 
 export class InfoHelper {
     public userId = "";
@@ -185,23 +196,46 @@ export class InfoHelper {
      *
      * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
      */
-    public appStartUp = async () => {
+    public appStartUp = async (platform: "ios" | "android") => {
         if (this.userId === "") {
             return {
                 bookingRecords: [],
                 sportsReservationRecords: [],
                 crTimetable: [],
+                latestAnnounces: [],
+                latestVersion: MOCK_LATEST_VERSION,
             };
         }
         const bookingRecords = await getBookingRecords(this);
         const sportsReservationRecords = await getSportsReservationRecords(this);
+        const latestAnnounces = await getLatestAnnounces(this);
+        const latestVersion = await getLatestVersion(this, platform);
         try {
             const crTimetable = await getCrTimetable(this);
-            return {bookingRecords, sportsReservationRecords, crTimetable};
+            return {bookingRecords, sportsReservationRecords, crTimetable, latestAnnounces, latestVersion};
         } catch {
-            return {bookingRecords, sportsReservationRecords, crTimetable: []};
+            return {bookingRecords, sportsReservationRecords, crTimetable: [], latestAnnounces, latestVersion};
         }
     };
+
+    public getLatestAnnounces = async () => getLatestAnnounces(this);
+
+    public getLatestVersion = async (platform: "ios" | "android") => getLatestVersion(this, platform);
+
+    public submitFeedback = async (
+        content: string,
+        appversion: string,
+        os: string,
+        nickname: string,
+        contact: string,
+        phonemodel: string,
+    ) => submitFeedback(this, content, appversion, os, nickname, contact, phonemodel);
+
+    public getFeedbackReplies = async () => getFeedbackReplies(this);
+
+    public getWeChatGroupQRCodeContent = async () => getWeChatGroupQRCodeContent(this);
+
+    public getPrivacyUrl = () => getPrivacyUrl(this);
 
     /**
      * Switch the language.
@@ -419,6 +453,11 @@ export class InfoHelper {
         librarySection: LibrarySection,
         dateChoice: 0 | 1,  // 0 for today and 1 for tomorrow
     ): Promise<LibrarySeat[]> => getLibrarySeatList(this, librarySection, dateChoice);
+
+    public toggleSocketState = async (
+        seatId: number,
+        target: SocketStatus,
+    ): Promise<void> => toggleSocketState(this, seatId, target);
 
     /**
      * Use this API to book library seats.

@@ -222,3 +222,17 @@ export const PROGRAM_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfabBs.do?m=grPyfabks&theRole=&theModule=pyfa&pathContent=%E4%B8%AA%E4%BA%BA%E5%9F%B9%E5%85%BB%E6%96%B9%E6%A1%88";
 export const FULL_PROGRAM_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfakcbBs.do?m=index2&theModule=pyfa&p_fajhh=";
+export const APP_ANNOUNCEMENT_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/announce?page=1";
+export const APP_LATEST_VERSION_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/version";
+export const APP_SUBMIT_FEEDBACK_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/feedback";
+export const APP_FEEDBACKS_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/repliedfeedback";
+export const APP_QRCODE_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/qrcode";
+export const APP_SOCKET_STATUS_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/socket";
+export const APP_PRIVACY_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/privacy";

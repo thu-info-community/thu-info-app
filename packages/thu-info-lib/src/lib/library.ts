@@ -1,6 +1,7 @@
 /* eslint-disable quotes */
 import {roamingWrapperWithMocks} from "./core";
 import {
+    APP_SOCKET_STATUS_URL,
     CANCEL_BOOKING_URL,
     LIBRARY_AREAS_URL,
     LIBRARY_BOOK_RECORD_URL,
@@ -33,6 +34,7 @@ import {
     LibRoomBookRecord,
     LibRoomRes,
     LibRoomUsage,
+    SocketStatus,
     weightedValidityAndId,
 } from "../models/home/library";
 import cheerio from "cheerio";
@@ -208,32 +210,55 @@ export const getLibrarySeatList = (
     dateChoice: 0 | 1,
 ): Promise<LibrarySeat[]> =>
     roamingWrapperWithMocks(helper, undefined, "ef84f6d6784f6b834e5214f432d6173f", () =>
-        getLibraryDay(id, dateChoice).then(
-            ({day, startTime, endTime, segmentId, today}) =>
+        Promise.all([
+            getLibraryDay(id, dateChoice).then(({day, startTime, endTime, segmentId, today}) =>
                 fetchJson(LIBRARY_SEATS_URL + "?" + stringify({
                     area: id,
                     segment: segmentId,
                     day,
                     startTime: today ? currentTime(startTime) : startTime,
                     endTime,
-                }))
-                    .then((r) =>
-                        r
-                            .map((node: any) => ({
-                                id: node.id,
-                                zhName: node.name,
-                                zhNameTrace: zhNameTrace + " - " + node.name,
-                                enName: node.name,
-                                enNameTrace: enNameTrace + " - " + node.name,
-                                valid: node.status === 1,
-                                type: node.area_type,
-                            }))
-                            .sort(
-                                (a: LibrarySeat, b: LibrarySeat) =>
-                                    weightedValidityAndId(a) - weightedValidityAndId(b),
-                            ),
-                    ),
-        ), []);
+                }))),
+            uFetch(`${APP_SOCKET_STATUS_URL}?sectionid=${id}`).then(JSON.parse).catch(() => []),
+        ])
+            .then(([r, sockets]) =>
+                r
+                    .map((node: any) => ({
+                        id: node.id,
+                        zhName: node.name,
+                        zhNameTrace: zhNameTrace + " - " + node.name,
+                        enName: node.name,
+                        enNameTrace: enNameTrace + " - " + node.name,
+                        valid: node.status === 1,
+                        type: node.area_type,
+                        status: sockets.find((socket: any) => socket.seatId === node.id)?.status,
+                    }))
+                    .sort((a: LibrarySeat, b: LibrarySeat) => weightedValidityAndId(a) - weightedValidityAndId(b)),
+            )
+    , []);
+
+export const toggleSocketState = async (
+    helper: InfoHelper,
+    seatId: number,
+    target: SocketStatus,
+): Promise<void> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    () => uFetch(
+        APP_SOCKET_STATUS_URL,
+        JSON.stringify({
+            seatId,
+            isavailable: target === "available",
+        }) as never as object,
+        60000,
+        "UTF-8",
+        true,
+        "application/json",
+    ).then(() => {
+    }),
+    undefined,
+);
 
 const getAccessToken = (helper: InfoHelper): Promise<string> =>
     roamingWrapperWithMocks(

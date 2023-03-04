@@ -26,8 +26,11 @@ export interface LibrarySection extends Library {
     posY: number;       // the Y coordinate of the section on the section map
 }
 
+export type SocketStatus = "available" | "unavailable" | "unknown";
+
 export interface LibrarySeat extends Library {
     type: number;  // the meaning of type is currently unknown, and is supposed to be only for internal use
+    status: SocketStatus | undefined;  // the status of the socket
 }
 
 export const weightedValidityAndId = (lib: LibraryBase) =>
