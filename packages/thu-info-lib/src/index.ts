@@ -221,7 +221,7 @@ export class InfoHelper {
         }
     };
 
-    public appUsageStat = async (usage: string) => {
+    public appUsageStat = async (usage: number) => {
         await uFetch(`${APP_USAGE_STAT_URL}/${usage}`);
     };
 
