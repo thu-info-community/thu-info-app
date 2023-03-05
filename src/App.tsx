@@ -6,7 +6,7 @@ import {useEffect} from "react";
 import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
 import {Alert, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
-import {checkBroadcast, checkUpdate} from "./utils/checkUpdate";
+import {checkBroadcast} from "./utils/checkUpdate";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
@@ -38,7 +38,6 @@ const RootComponent = () => {
 				{cancelable: false},
 			);
 		} else {
-			checkUpdate();
 			checkBroadcast();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

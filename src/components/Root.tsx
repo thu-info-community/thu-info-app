@@ -121,7 +121,7 @@ import {SportsSuccessScreen} from "../ui/home/sportsSuccess";
 import {LibRoomSelectScreen} from "../ui/home/libRoomSelect";
 import {NewsFavScreen} from "../ui/news/newsFav";
 import {IconStarButton} from "./news/IconStarButton";
-import {helper} from "../redux/store";
+import {helper, State} from "../redux/store";
 import {NetworkRetry} from "./easySnackbars";
 import {
 	NewsSubChannelSelectScreen,
@@ -135,6 +135,9 @@ import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
 import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
+import {useSelector} from "react-redux";
+import {gt, gte} from "semver";
+import VersionNumber from "react-native-version-number";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -148,6 +151,14 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const RootTabs = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+
+	const doNotRemindSemver =
+		useSelector((s: State) => s.config.latestVersion) ?? "0.0.0";
+	const latestVersion =
+		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const shouldShowBadge =
+		gte(latestVersion, VersionNumber.appVersion) &&
+		gt(latestVersion, doNotRemindSemver);
 
 	return (
 		<Tab.Navigator
@@ -192,7 +203,13 @@ const RootTabs = () => {
 			<Tab.Screen
 				name="SettingsTab"
 				component={SettingsScreen}
-				options={{title: getStr("settings")}}
+				options={{
+					title: getStr("settings"),
+					tabBarBadge: shouldShowBadge ? "" : undefined,
+					tabBarBadgeStyle: {
+						transform: [{scale: 0.5}],
+					},
+				}}
 			/>
 		</Tab.Navigator>
 	);

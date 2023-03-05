@@ -5,7 +5,8 @@ import {HomeFunction} from "../../ui/home/home";
 import {CalendarData} from "thu-info-lib/dist/models/schedule/calendar";
 
 export interface ConfigState {
-	doNotRemindSemver: string;
+	doNotRemindSemver: string | undefined;
+	latestVersion: string | undefined;
 	lastSelfVersion: number;
 	firstDay: string;
 	weekCount: number;
@@ -38,6 +39,7 @@ export interface ConfigState {
 
 const initialState: ConfigState = {
 	doNotRemindSemver: "0.0.0",
+	latestVersion: "3.0.0",
 	lastSelfVersion: 0,
 	firstDay: "2023-02-20",
 	weekCount: 18,

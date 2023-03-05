@@ -797,11 +797,21 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		}
 		helper
 			.appStartUp(Platform.OS)
-			.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {
-				dispatch(setActiveLibBookRecord(bookingRecords));
-				dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
-				dispatch(setCrTimetable(crTimetable));
-			});
+			.then(
+				({
+					bookingRecords,
+					sportsReservationRecords,
+					crTimetable,
+					latestVersion,
+				}) => {
+					dispatch(setActiveLibBookRecord(bookingRecords));
+					dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
+					dispatch(setCrTimetable(crTimetable));
+					dispatch(
+						configSet({key: "latestVersion", value: latestVersion.versionName}),
+					);
+				},
+			);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

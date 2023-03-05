@@ -24,6 +24,7 @@ import {
 	setActiveLibBookRecord,
 	setActiveSportsReservationRecord,
 } from "../../redux/slices/reservation";
+import {gt, gte} from "semver";
 
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -33,6 +34,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const darkModeHook = dark || themeName === "dark";
 	const {userId, password} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
+
+	const doNotRemindSemver =
+		useSelector((s: State) => s.config.latestVersion) ?? "0.0.0";
+	const latestVersion =
+		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const newVersionAvailable =
+		gte(latestVersion, VersionNumber.appVersion) &&
+		gt(latestVersion, doNotRemindSemver);
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
@@ -90,7 +99,10 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
 						<View style={{flexDirection: "row", alignItems: "center"}}>
 							<Text style={style.version}>
-								{getStr("version")} {VersionNumber.appVersion}-beta.5
+								{getStr("version")}{" "}
+								{newVersionAvailable
+									? getStr("newVersionAvailable")
+									: VersionNumber.appVersion + "-beta.5"}
 							</Text>
 							<IconRight height={20} width={20} />
 						</View>
