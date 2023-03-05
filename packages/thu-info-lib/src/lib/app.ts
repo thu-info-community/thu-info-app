@@ -27,6 +27,7 @@ export const getLatestAnnounces = async (helper: InfoHelper): Promise<Announceme
         "",
         () => uFetch(APP_ANNOUNCEMENT_URL).then(JSON.parse).then((r: any[]) => r.map((e) => ({
             id: e.id,
+            title: e.title,
             content: e.content,
             createdAt: Date.parse(e.createdTime),
         }))),
