@@ -4,12 +4,17 @@ import {
 	HubConnectionState,
 } from "@microsoft/signalr";
 import {helper} from "../redux/store";
+import {getRedirectUrl} from "thu-info-lib/dist/utils/network";
 
-let rootUrl = "https://thuinfo.net";
-fetch("https://stu.cs.tsinghua.edu.cn/thuinfo/url")
-	.then((r) => r.json())
-	.then(({url}) => {
-		rootUrl = url;
+let rootUrl = "http://app.cs.tsinghua.edu.cn";
+getRedirectUrl("https://info.tsinghua.edu.cn")
+	.then((url) => {
+		if (url.includes("deny.tsinghua.edu.cn")) {
+			rootUrl = "https://thuinfo.net";
+		}
+	})
+	.catch(() => {
+		rootUrl = "https://thuinfo.net";
 	});
 
 export enum FunctionType {
