@@ -20,7 +20,7 @@ export function paginatedRefreshListScreen<T, R>(
 	header?: (theme: Theme, refresh: () => void) => ReactElement,
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
-): FC<R> {
+): FC<PropsWithChildren<R>> {
 	return (props: PropsWithChildren<R>) => {
 		const [data, setData] = useState<T[]>([]);
 		const [page, setPage] = useState<number>(1);
