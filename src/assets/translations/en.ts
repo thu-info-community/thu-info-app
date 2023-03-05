@@ -77,6 +77,7 @@ export default {
 	eleRemainder: "Ele-remainder",
 	eleRemainderUpdateTime: "Updated at: ",
 	enterEleRechargeValue: "How much do you want to recharge?",
+	announcements: "Announcements",
 	reservation: "Reservation",
 	alreadyReserved: "Reservation",
 	libBookRecord: "Library Booking Records",

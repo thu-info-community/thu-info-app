@@ -75,6 +75,7 @@ export default {
 	eleRemainder: "电表余额",
 	eleRemainderUpdateTime: "抄表时间：",
 	enterEleRechargeValue: "请输入购电金额",
+	announcements: "公告",
 	reservation: "预约",
 	alreadyReserved: "已有预约",
 	libBookRecord: "图书馆预约记录",

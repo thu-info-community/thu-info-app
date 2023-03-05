@@ -55,6 +55,10 @@ import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
 import {getStatusBarHeight} from "react-native-status-bar-height";
+import {
+	toggleReadStatus,
+	updateAnnouncements,
+} from "../../redux/slices/announcement";
 
 const iconSize = 40;
 
@@ -246,6 +250,34 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 				</View>
 			</View>
 		</TouchableOpacity>
+	);
+};
+
+export const AnnouncementSection = () => {
+	const themeName = useColorScheme();
+	const style = styles(themeName);
+	const dispatch = useDispatch();
+	const announcements = useSelector((s: State) => s.announcement.announcements);
+	if (announcements.length === 0) {
+		return null;
+	}
+	return (
+		<View style={style.SectionContainer}>
+			<Text style={style.SectionTitle}>{getStr("announcements")}</Text>
+			<View style={style.SectionContentContainer}>
+				{announcements.map(({id, read, title, content}) => (
+					<TouchableOpacity
+						onPress={() => dispatch(toggleReadStatus(id))}
+						style={{marginVertical: 4, marginHorizontal: 12}}
+						key={id}>
+						<Text style={{fontWeight: "bold"}}>
+							{title} {read ? "(已读)" : ""}
+						</Text>
+						{!read && <Text>{content}</Text>}
+					</TouchableOpacity>
+				))}
+			</View>
+		</View>
 	);
 };
 
@@ -803,6 +835,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					sportsReservationRecords,
 					crTimetable,
 					latestVersion,
+					latestAnnounces,
 				}) => {
 					dispatch(setActiveLibBookRecord(bookingRecords));
 					dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
@@ -810,6 +843,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					dispatch(
 						configSet({key: "latestVersion", value: latestVersion.versionName}),
 					);
+					dispatch(updateAnnouncements(latestAnnounces));
 				},
 			);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -833,6 +867,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 						top5Filtered
 					)}
 				</HomeFunctionSection>
+				<AnnouncementSection />
 				<HomeReservationSection />
 				<HomeScheduleSection />
 				<HomeFunctionSection title="allFunction">

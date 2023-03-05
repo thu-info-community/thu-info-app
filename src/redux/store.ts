@@ -37,6 +37,11 @@ import {
 	timetableReducer,
 	TimetableState,
 } from "./slices/timetable";
+import {
+	announcementReducer,
+	AnnouncementState,
+	defaultAnnouncement,
+} from "./slices/announcement";
 
 export const helper = new InfoHelper();
 
@@ -84,6 +89,7 @@ export interface State {
 	top5: Top5State;
 	reservation: ReservationState;
 	timetable: TimetableState;
+	announcement: AnnouncementState;
 }
 
 const rootReducer = combineReducers({
@@ -108,6 +114,7 @@ const rootReducer = combineReducers({
 	top5: top5Reducer,
 	reservation: reservationReducer,
 	timetable: timetableReducer,
+	announcement: announcementReducer,
 });
 
 const authTransform = createTransform(
@@ -194,6 +201,7 @@ const persistConfig = {
 						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
 						timetable: state.timetable ?? defaultTimetable,
+						announcement: state.announcement ?? defaultAnnouncement,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),

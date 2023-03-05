@@ -59,24 +59,3 @@ export const checkUpdate = (force: boolean = false) => {
 		}
 	});
 };
-
-export const checkBroadcast = () => {
-	helper.getLatestAnnounces().then((r) => {
-		if (r.length > 0) {
-			Alert.alert(
-				getStr("broadcast"),
-				r.map((it) => it.content).join("\n"),
-				[
-					{
-						text: getStr("confirm"),
-						onPress: () =>
-							store.dispatch(
-								configSet({key: "lastBroadcast", value: r[0].createdAt}),
-							),
-					},
-				],
-				{cancelable: true},
-			);
-		}
-	});
-};
