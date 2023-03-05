@@ -5,6 +5,7 @@ import {
 	ActivityIndicator,
 	TouchableOpacity,
 	Linking,
+	Platform,
 } from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -24,6 +25,8 @@ import {
 	setActiveSportsReservationRecord,
 } from "../../redux/slices/reservation";
 import {setCrTimetable} from "../../redux/slices/timetable";
+import {configSet} from "../../redux/slices/config";
+import {updateAnnouncements} from "../../redux/slices/announcement";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -50,15 +53,32 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					.catch(() => {}),
 			)
 			.then(() => {
-				helper
-					.appStartUp()
-					.then(({bookingRecords, sportsReservationRecords, crTimetable}) => {
-						dispatch(setActiveLibBookRecord(bookingRecords));
-						dispatch(
-							setActiveSportsReservationRecord(sportsReservationRecords),
+				if (Platform.OS === "ios" || Platform.OS === "android") {
+					helper
+						.appStartUp(Platform.OS)
+						.then(
+							({
+								bookingRecords,
+								sportsReservationRecords,
+								crTimetable,
+								latestVersion,
+								latestAnnounces,
+							}) => {
+								dispatch(setActiveLibBookRecord(bookingRecords));
+								dispatch(
+									setActiveSportsReservationRecord(sportsReservationRecords),
+								);
+								dispatch(setCrTimetable(crTimetable));
+								dispatch(
+									configSet({
+										key: "latestVersion",
+										value: latestVersion.versionName,
+									}),
+								);
+								dispatch(updateAnnouncements(latestAnnounces));
+							},
 						);
-						dispatch(setCrTimetable(crTimetable));
-					});
+				}
 				setProcessing(false);
 				navigation.pop();
 			})

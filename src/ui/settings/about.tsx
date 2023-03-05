@@ -129,6 +129,16 @@ export const AboutScreen = () => {
 					thu-info-community @ GitHub
 				</Text>
 			</TouchableOpacity>
+			<TouchableOpacity
+				onPress={() => Linking.openURL("http://app.cs.tsinghua.edu.cn")}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 14},
+					]}>
+					app.cs.tsinghua.edu.cn
+				</Text>
+			</TouchableOpacity>
 			<View style={{flex: 1}} />
 			<Text
 				style={[styles.textStyle, {fontSize: 15, color: theme.colors.text}]}>
