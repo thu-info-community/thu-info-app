@@ -4,6 +4,7 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
+import {MOCK_APP_PRIVACY_URL} from "thu-info-lib/dist/mocks/app";
 
 export const PrivacyScreen = () => {
 	const themeName = useColorScheme();
@@ -18,7 +19,12 @@ export const PrivacyScreen = () => {
 					padding: 15,
 				}}>
 				<WebView
-					source={{uri: helper.getPrivacyUrl()}}
+					source={{
+						uri:
+							helper.userId.length === 0
+								? MOCK_APP_PRIVACY_URL
+								: helper.getPrivacyUrl(),
+					}}
 					containerStyle={{
 						backgroundColor: theme.colors.themeBackground,
 						color: theme.colors.text,
