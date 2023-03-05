@@ -59,6 +59,7 @@ import {
 	toggleReadStatus,
 	updateAnnouncements,
 } from "../../redux/slices/announcement";
+import {EasterEggSchedule} from "../../utils/easterEgg";
 
 const iconSize = 40;
 
@@ -296,7 +297,9 @@ export const HomeReservationSection = () => {
 
 export const HomeScheduleSection = () => {
 	const firstDay = useSelector((s: State) => s.config.firstDay);
-	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
+	const baseSchedule = useSelector(
+		(s: State) => s.schedule.baseSchedule,
+	).concat([EasterEggSchedule]);
 	const shortenMap = useSelector((s: State) => s.schedule.shortenMap);
 	const crTimetable = useSelector((s: State) => s.timetable.crTimetable);
 	const now = dayjs();
