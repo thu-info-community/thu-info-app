@@ -44,7 +44,7 @@ import {
     MOCK_CLASSROOM_STATE,
     MOCK_COUNTDOWN_DATA,
     MOCK_EXPENDITURES,
-    MOCK_INVOICE_LIST,
+    MOCK_INVOICE_DATA,
     MOCK_LOSE_CARD_CODE,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
@@ -522,7 +522,7 @@ export const getInvoiceList = (helper: InfoHelper, page: number): Promise<{data:
                 sort: "desc",
             }).then(JSON.parse);
         },
-        MOCK_INVOICE_LIST,
+        MOCK_INVOICE_DATA,
     );
 
 export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<string> =>

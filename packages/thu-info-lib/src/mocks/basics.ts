@@ -535,6 +535,11 @@ export const MOCK_INVOICE_LIST = [{
     tax_amount: 0
 }] as Invoice[];
 
+export const MOCK_INVOICE_DATA = {
+    data: MOCK_INVOICE_LIST,
+    count: MOCK_INVOICE_LIST.length,
+};
+
 export const MOCK_BANK_PAYMENT = [{
     month: "2021年12月",
     payment: [{
