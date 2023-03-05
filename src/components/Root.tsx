@@ -136,7 +136,7 @@ import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
 import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {useSelector} from "react-redux";
-import {gt, gte} from "semver";
+import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 
 type RootTabParamList = {
@@ -157,7 +157,7 @@ const RootTabs = () => {
 	const latestVersion =
 		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
 	const shouldShowBadge =
-		gte(latestVersion, VersionNumber.appVersion) &&
+		gt(latestVersion, VersionNumber.appVersion) &&
 		gt(latestVersion, doNotRemindSemver);
 
 	return (

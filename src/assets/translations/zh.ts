@@ -465,7 +465,7 @@ export default {
 	noScheduleToday: "今日暂无计划",
 	noFavNews: "您目前还未收藏新闻",
 	scheduleSync: "计划同步",
-	scheduleSyncTip: "[BETA] 在设备之间同步您的课表",
+	scheduleSyncTip: "在设备之间同步您的课表",
 	syncSender: "我是发送方",
 	syncReceiver: "我是接收方",
 	sendSchedule: "发送您的计划",

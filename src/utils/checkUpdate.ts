@@ -4,7 +4,7 @@ import {getStr} from "./i18n";
 import {configSet} from "../redux/slices/config";
 import Snackbar from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
-import {gte, lt} from "semver";
+import {gt, lt} from "semver";
 import {NetworkRetry} from "../components/easySnackbars";
 import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
 
@@ -14,7 +14,7 @@ export const checkUpdate = (force: boolean = false) => {
 	}
 	helper.getLatestVersion(Platform.OS).then((r) => {
 		if (
-			gte(r.versionName, VersionNumber.appVersion) &&
+			gt(r.versionName, VersionNumber.appVersion) &&
 			(force ||
 				lt(currState().config.doNotRemindSemver ?? "0.0.0", r.versionName))
 		) {

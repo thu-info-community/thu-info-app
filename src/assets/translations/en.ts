@@ -494,7 +494,7 @@ export default {
 	noScheduleToday: "No schedule today.",
 	noFavNews: "You have no favourite news now.",
 	scheduleSync: "Schedule Synchronization",
-	scheduleSyncTip: "[BETA] Synchronize your schedule between devices",
+	scheduleSyncTip: "Synchronize your schedule between devices",
 	syncSender: "I am sender",
 	syncReceiver: "I am receiver",
 	sendSchedule: "Send Your Schedule",
