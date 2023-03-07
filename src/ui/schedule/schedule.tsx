@@ -95,6 +95,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const unitHeight = 60;
 	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
+	const scheduleBodyWidth = windowWidth - 32;
 
 	const colorList: string[] = [
 		"#4DD28D",
@@ -109,14 +110,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(getSchedule, []);
 
-	const allSchedule = () => {
+	const allSchedule = (renderWeek: number) => {
 		let components: ReactElement[] = [];
 		baseSchedule
-			.filter((val) => activeWeek(val.activeTime, week))
+			.filter((val) => activeWeek(val.activeTime, renderWeek))
 			.forEach((val) => {
 				val.activeTime.base.forEach((slice) => {
 					slice.activeWeeks.forEach((num) => {
-						if (num === week) {
+						if (num === renderWeek) {
 							components.push(
 								<ScheduleBlock
 									dayOfWeek={slice.dayOfWeek}
@@ -140,7 +141,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 										navigation.navigate("ScheduleDetail", {
 											name: val.name,
 											location: val.location,
-											week: week,
+											week: renderWeek,
 											dayOfWeek: slice.dayOfWeek,
 											begin: slice.begin,
 											end: slice.end,
@@ -154,7 +155,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					});
 				});
 				val.activeTime.exams?.forEach((slice) => {
-					if (slice.weekNumber === week) {
+					if (slice.weekNumber === renderWeek) {
 						components.push(
 							<ScheduleBlock
 								dayOfWeek={slice.dayOfWeek}
@@ -167,7 +168,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								location={val.location}
 								gridHeight={unitHeight}
 								gridWidth={unitWidth}
-								key={`${val.name}-${week}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
+								key={`${val.name}-${renderWeek}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
 								blockColor={
 									colorList[
 										parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
@@ -177,7 +178,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									navigation.navigate("ScheduleDetail", {
 										name: val.name,
 										location: val.location,
-										week: week,
+										week: renderWeek,
 										dayOfWeek: slice.dayOfWeek,
 										begin: slice.begin,
 										end: slice.end,
@@ -369,103 +370,133 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						colors={[theme.colors.accent]}
 					/>
 				}>
-				<Swipeable
-					ref={swipeableRef}
-					overshootFriction={10}
-					renderLeftActions={() => <Animated.View style={{width: 100}} />}
-					renderRightActions={() => <Animated.View style={{width: 100}} />}
-					onSwipeableOpen={(direction) => {
-						if (direction === "left") {
-							setWeek((w) => w - 1);
-						} else {
-							setWeek((w) => w + 1);
-						}
-						swipeableRef.current?.close();
-					}}>
-					<View style={{flexDirection: "row"}}>
-						<View style={{width: 32}}>
-							{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
-								<View
+				<View style={{flexDirection: "row"}}>
+					<View style={{width: 32}}>
+						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
+							<View
+								style={{
+									alignItems: "center",
+									justifyContent: "center",
+									height: unitHeight,
+								}}
+								key={`${session}-0`}>
+								<Text
 									style={{
-										alignItems: "center",
-										justifyContent: "center",
-										height: unitHeight,
-									}}
-									key={`${session}-0`}>
-									<Text
-										style={{
-											textAlign: "center",
-											color: theme.colors.fontB1,
-											fontSize: 12,
-										}}>
-										{session}
-									</Text>
-									<Text
-										style={{
-											textAlign: "center",
-											color: theme.colors.fontB2,
-											fontSize: 8,
-											marginTop: 4,
-										}}>
-										{beginTime[session]}
-									</Text>
-									<Text
-										style={{
-											textAlign: "center",
-											color: theme.colors.fontB2,
-											fontSize: 8,
-											marginTop: 1,
-										}}>
-										{endTime[session]}
-									</Text>
-								</View>
-							))}
-						</View>
-						<View style={{flex: 1}}>
-							<View
-								style={{
-									backgroundColor: theme.colors.themeGrey,
-									height: 1,
-									position: "absolute",
-									left: 0,
-									right: 0,
-									top: 300,
-								}}
-							/>
-							<View
-								style={{
-									backgroundColor: theme.colors.themeGrey,
-									height: 1,
-									position: "absolute",
-									left: 0,
-									right: 0,
-									top: 660,
-								}}
-							/>
-							<Text
-								style={{
-									position: "absolute",
-									right: 12,
-									top: 302,
-									fontSize: 12,
-									color: theme.colors.fontB3,
-								}}>
-								{getStr("lunch")}
-							</Text>
-							<Text
-								style={{
-									position: "absolute",
-									right: 12,
-									top: 662,
-									fontSize: 12,
-									color: theme.colors.fontB3,
-								}}>
-								{getStr("supper")}
-							</Text>
-							{allSchedule()}
-						</View>
+										textAlign: "center",
+										color: theme.colors.fontB1,
+										fontSize: 12,
+									}}>
+									{session}
+								</Text>
+								<Text
+									style={{
+										textAlign: "center",
+										color: theme.colors.fontB2,
+										fontSize: 8,
+										marginTop: 4,
+									}}>
+									{beginTime[session]}
+								</Text>
+								<Text
+									style={{
+										textAlign: "center",
+										color: theme.colors.fontB2,
+										fontSize: 8,
+										marginTop: 1,
+									}}>
+									{endTime[session]}
+								</Text>
+							</View>
+						))}
 					</View>
-				</Swipeable>
+					<View style={{flex: 1}}>
+						<View
+							style={{
+								backgroundColor: theme.colors.themeGrey,
+								height: 1,
+								position: "absolute",
+								left: 0,
+								right: 0,
+								top: 300,
+							}}
+						/>
+						<View
+							style={{
+								backgroundColor: theme.colors.themeGrey,
+								height: 1,
+								position: "absolute",
+								left: 0,
+								right: 0,
+								top: 660,
+							}}
+						/>
+						<Text
+							style={{
+								position: "absolute",
+								right: 12,
+								top: 302,
+								fontSize: 12,
+								color: theme.colors.fontB3,
+							}}>
+							{getStr("lunch")}
+						</Text>
+						<Text
+							style={{
+								position: "absolute",
+								right: 12,
+								top: 662,
+								fontSize: 12,
+								color: theme.colors.fontB3,
+							}}>
+							{getStr("supper")}
+						</Text>
+						<Swipeable
+							ref={swipeableRef}
+							overshootFriction={10}
+							renderLeftActions={(_, dragX) => {
+								const translateX = dragX.interpolate({
+									inputRange: [0, scheduleBodyWidth],
+									outputRange: [-scheduleBodyWidth, 0],
+									extrapolate: "clamp",
+								});
+								return (
+									<Animated.View
+										style={{
+											width: scheduleBodyWidth,
+											transform: [{translateX}],
+										}}>
+										{allSchedule(week - 1)}
+									</Animated.View>
+								);
+							}}
+							renderRightActions={(_, dragX) => {
+								const translateX = dragX.interpolate({
+									inputRange: [-scheduleBodyWidth, 0],
+									outputRange: [0, scheduleBodyWidth],
+									extrapolate: "clamp",
+								});
+								return (
+									<Animated.View
+										style={{
+											width: scheduleBodyWidth,
+											transform: [{translateX}],
+										}}>
+										{allSchedule(week + 1)}
+									</Animated.View>
+								);
+							}}
+							onSwipeableOpen={(direction) => {
+								if (direction === "left") {
+									setWeek((w) => w - 1);
+								} else {
+									setWeek((w) => w + 1);
+								}
+								swipeableRef.current?.reset();
+							}}>
+							<View style={{height: 14 * unitHeight}}>{allSchedule(week)}</View>
+						</Swipeable>
+					</View>
+				</View>
 			</ScrollView>
 		</>
 	);

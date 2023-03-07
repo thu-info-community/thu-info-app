@@ -1,0 +1,30 @@
+diff --git a/node_modules/react-native-gesture-handler/lib/typescript/components/Swipeable.d.ts b/node_modules/react-native-gesture-handler/lib/typescript/components/Swipeable.d.ts
+index 4f2413d..16e915a 100644
+--- a/node_modules/react-native-gesture-handler/lib/typescript/components/Swipeable.d.ts
++++ b/node_modules/react-native-gesture-handler/lib/typescript/components/Swipeable.d.ts
+@@ -152,6 +152,7 @@ export default class Swipeable extends Component<SwipeableProps, SwipeableState>
+     private onRowLayout;
+     private currentOffset;
+     close: () => void;
++    reset: () => void;
+     openLeft: () => void;
+     openRight: () => void;
+     render(): JSX.Element;
+diff --git a/node_modules/react-native-gesture-handler/src/components/Swipeable.tsx b/node_modules/react-native-gesture-handler/src/components/Swipeable.tsx
+index d171e61..a1abfcd 100644
+--- a/node_modules/react-native-gesture-handler/src/components/Swipeable.tsx
++++ b/node_modules/react-native-gesture-handler/src/components/Swipeable.tsx
+@@ -442,6 +442,13 @@ export default class Swipeable extends Component<
+     this.animateRow(this.currentOffset(), -rightWidth);
+   };
+ 
++  reset = () => {
++    const { dragX, rowTranslation } = this.state;
++    dragX.setValue(0);
++    rowTranslation.setValue(0);
++    this.setState({ rowState: 0 });
++  };
++
+   render() {
+     const { rowState } = this.state;
+     const { children, renderLeftActions, renderRightActions } = this.props;
