@@ -1,4 +1,4 @@
-import {View, Text, Dimensions, TouchableOpacity, Animated} from "react-native";
+import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
 import {ReactElement, useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
@@ -21,11 +21,7 @@ import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-status-bar-height";
-import {
-	RefreshControl,
-	ScrollView,
-	Swipeable,
-} from "react-native-gesture-handler";
+import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -194,7 +190,13 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		return components;
 	};
 
-	const swipeableRef = useRef<Swipeable>(null);
+	const flatListRef = useRef<FlatList>(null);
+
+	const scheduleData = [];
+
+	for (let i = 0; i < weekCount; ++i) {
+		scheduleData.push({key: i, data: allSchedule(i + 1)});
+	}
 
 	return (
 		<>
@@ -240,6 +242,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 											}}
 											onPress={() => {
 												setWeek(weekButton);
+												flatListRef.current?.scrollToIndex({
+													index: weekButton - 1,
+												});
 												done();
 											}}
 											key={weekButton}>
@@ -450,51 +455,25 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							}}>
 							{getStr("supper")}
 						</Text>
-						<Swipeable
-							ref={swipeableRef}
-							overshootFriction={10}
-							renderLeftActions={(_, dragX) => {
-								const translateX = dragX.interpolate({
-									inputRange: [0, scheduleBodyWidth],
-									outputRange: [-scheduleBodyWidth, 0],
-									extrapolate: "clamp",
-								});
-								return (
-									<Animated.View
-										style={{
-											width: scheduleBodyWidth,
-											transform: [{translateX}],
-										}}>
-										{allSchedule(week - 1)}
-									</Animated.View>
+						<FlatList
+							ref={flatListRef}
+							horizontal={true}
+							data={scheduleData}
+							renderItem={({item}) => (
+								<View
+									style={{height: 14 * unitHeight, width: scheduleBodyWidth}}>
+									{item.data}
+								</View>
+							)}
+							initialScrollIndex={week - 1}
+							onMomentumScrollEnd={({nativeEvent}) => {
+								const index = Math.round(
+									nativeEvent.contentOffset.x / scheduleBodyWidth,
 								);
+								flatListRef.current!.scrollToIndex({index: index});
+								setWeek((_) => index + 1);
 							}}
-							renderRightActions={(_, dragX) => {
-								const translateX = dragX.interpolate({
-									inputRange: [-scheduleBodyWidth, 0],
-									outputRange: [0, scheduleBodyWidth],
-									extrapolate: "clamp",
-								});
-								return (
-									<Animated.View
-										style={{
-											width: scheduleBodyWidth,
-											transform: [{translateX}],
-										}}>
-										{allSchedule(week + 1)}
-									</Animated.View>
-								);
-							}}
-							onSwipeableOpen={(direction) => {
-								if (direction === "left") {
-									setWeek((w) => w - 1);
-								} else {
-									setWeek((w) => w + 1);
-								}
-								swipeableRef.current?.reset();
-							}}>
-							<View style={{height: 14 * unitHeight}}>{allSchedule(week)}</View>
-						</Swipeable>
+						/>
 					</View>
 				</View>
 			</ScrollView>
