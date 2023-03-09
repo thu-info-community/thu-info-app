@@ -187,7 +187,58 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					}
 				});
 			});
-		return components;
+		return (
+			<>
+				<View
+					style={{
+						height: 40,
+						flexDirection: "row",
+						backgroundColor: theme.colors.contentBackground,
+					}}>
+					{Array.from(new Array(7)).map((_, index) => (
+						<View
+							style={{
+								flex: 1,
+								padding: 4,
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+							key={`0-${index + 1}`}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 12,
+									color: theme.colors.fontB1,
+								}}>
+								{getStr("dayOfWeek")[index + 1]}
+							</Text>
+							<View
+								style={{
+									width: 18,
+									height: 2,
+									borderRadius: 1,
+									backgroundColor:
+										renderWeek === nowWeek && today === index + 1
+											? theme.colors.themePurple
+											: undefined,
+								}}
+							/>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 9,
+									color: theme.colors.fontB1,
+								}}>
+								{dayjs(firstDay)
+									.add((renderWeek - 1) * 7 + index, "day")
+									.format("MM/DD")}
+							</Text>
+						</View>
+					))}
+				</View>
+				<View>{components}</View>
+			</>
+		);
 	};
 
 	const flatListRef = useRef<FlatList>(null);
@@ -324,46 +375,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 						key="0-0"
 					/>
-					{Array.from(new Array(7)).map((_, index) => (
-						<View
-							style={{
-								flex: 1,
-								padding: 4,
-								alignItems: "center",
-								justifyContent: "center",
-							}}
-							key={`0-${index + 1}`}>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 12,
-									color: theme.colors.fontB1,
-								}}>
-								{getStr("dayOfWeek")[index + 1]}
-							</Text>
-							<View
-								style={{
-									width: 18,
-									height: 2,
-									borderRadius: 1,
-									backgroundColor:
-										week === nowWeek && today === index + 1
-											? theme.colors.themePurple
-											: undefined,
-								}}
-							/>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 9,
-									color: theme.colors.fontB1,
-								}}>
-								{dayjs(firstDay)
-									.add((week - 1) * 7 + index, "day")
-									.format("MM/DD")}
-							</Text>
-						</View>
-					))}
 				</View>
 			</View>
 			<ScrollView
@@ -377,6 +388,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				}>
 				<View style={{flexDirection: "row"}}>
 					<View style={{width: 32}}>
+						<View
+							style={{
+								height: 40,
+								backgroundColor: theme.colors.contentBackground,
+							}}
+						/>
 						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
 							<View
 								style={{
@@ -467,7 +484,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							data={scheduleData}
 							renderItem={({item}) => (
 								<View
-									style={{height: 14 * unitHeight, width: scheduleBodyWidth}}>
+									style={{
+										height: 14 * unitHeight + 40,
+										width: scheduleBodyWidth,
+									}}>
 									{item.data}
 								</View>
 							)}
