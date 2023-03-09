@@ -193,7 +193,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					style={{
 						height: 40,
 						flexDirection: "row",
-						backgroundColor: theme.colors.contentBackground,
 					}}>
 					{Array.from(new Array(7)).map((_, index) => (
 						<View
@@ -377,6 +376,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				</View>
 			</View>
+
 			<ScrollView
 				style={{flex: 1, flexDirection: "column"}}
 				refreshControl={
@@ -387,13 +387,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				}>
 				<View style={{flexDirection: "row"}}>
-					<View style={{width: 32}}>
-						<View
-							style={{
-								height: 40,
-								backgroundColor: theme.colors.contentBackground,
-							}}
-						/>
+					{/* Timetable on the left */}
+					<View style={{width: 32, top: 40}}>
 						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
 							<View
 								style={{
@@ -431,7 +426,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							</View>
 						))}
 					</View>
+
+					{/* Main content */}
 					<View style={{flex: 1}}>
+						{/* Lunch and Supper mark */}
 						<View
 							style={{
 								backgroundColor: theme.colors.themeGrey,
@@ -472,6 +470,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							}}>
 							{getStr("supper")}
 						</Text>
+
+						{/* Schedule content */}
 						<FlatList
 							ref={flatListRef}
 							horizontal={true}
@@ -485,7 +485,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							renderItem={({item}) => (
 								<View
 									style={{
-										height: 14 * unitHeight + 40,
+										height: 14 * unitHeight + 40, // Header has a height of 40
 										width: scheduleBodyWidth,
 									}}>
 									{item.data}
