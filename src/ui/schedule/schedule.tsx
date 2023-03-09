@@ -458,6 +458,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						<FlatList
 							ref={flatListRef}
 							horizontal={true}
+							showsHorizontalScrollIndicator={false}
+							getItemLayout={(_, index) => ({
+								length: scheduleBodyWidth,
+								offset: scheduleBodyWidth * index,
+								index: index,
+							})}
 							data={scheduleData}
 							renderItem={({item}) => (
 								<View
