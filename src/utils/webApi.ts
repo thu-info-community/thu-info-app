@@ -4,18 +4,10 @@ import {
 	HubConnectionState,
 } from "@microsoft/signalr";
 import {helper} from "../redux/store";
-import {getRedirectUrl} from "thu-info-lib/dist/utils/network";
+import {HttpTransportType} from "@microsoft/signalr";
 
-let rootUrl = "http://app.cs.tsinghua.edu.cn";
-getRedirectUrl("https://info.tsinghua.edu.cn")
-	.then((url) => {
-		if (url.includes("deny.tsinghua.edu.cn")) {
-			rootUrl = "https://thuinfo.net";
-		}
-	})
-	.catch(() => {
-		rootUrl = "https://thuinfo.net";
-	});
+const rootUrl =
+	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2";
 
 export enum FunctionType {
 	PhysicalExam,
@@ -59,7 +51,7 @@ export class ScheduleSyncSending {
 			ScheduleSyncSending._conn.stop();
 		}
 		ScheduleSyncSending._conn = new HubConnectionBuilder()
-			.withUrl(`${rootUrl}/schedulesynchub`)
+			.withUrl(`${rootUrl}/schedulesynchub`, HttpTransportType.LongPolling)
 			.build();
 	}
 
@@ -117,7 +109,7 @@ export class ScheduleSyncReceiving {
 			ScheduleSyncReceiving._conn.stop();
 		}
 		ScheduleSyncReceiving._conn = new HubConnectionBuilder()
-			.withUrl(`${rootUrl}/schedulesynchub`)
+			.withUrl(`${rootUrl}/schedulesynchub`, HttpTransportType.LongPolling)
 			.build();
 	}
 
