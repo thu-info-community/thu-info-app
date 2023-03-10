@@ -1,7 +1,12 @@
 import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
-import {ReactElement, useState, useEffect, useRef} from "react";
+import {useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {ScheduleType} from "thu-info-lib/dist/models/schedule/schedule";
+import {
+	ExamTimeSlice,
+	Schedule,
+	ScheduleType,
+	TimeSlice,
+} from "thu-info-lib/dist/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
@@ -37,6 +42,21 @@ const examEndMap: {[key: string]: number} = {
 	"9:00": 13,
 	"21:00": 13,
 };
+
+interface NormalSliceRenderData {
+	type: "normal";
+	slice: TimeSlice;
+	schedule: Schedule;
+	week: number;
+}
+
+interface ExamSliceRenderData {
+	type: "exam";
+	slice: ExamTimeSlice;
+	schedule: Schedule;
+}
+
+type SliceRenderData = NormalSliceRenderData | ExamSliceRenderData;
 
 export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
@@ -113,7 +133,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	useEffect(getSchedule, []);
 
 	const allSchedule = () => {
-		const weekSchedule: ReactElement[][] = new Array<ReactElement[]>(weekCount);
+		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
+			weekCount,
+		);
 
 		for (let w = 0; w < weekCount; ++w) {
 			weekSchedule[w] = [];
@@ -122,136 +144,25 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		baseSchedule.forEach((val) => {
 			val.activeTime.base.forEach((slice) => {
 				slice.activeWeeks.forEach((num) => {
-					weekSchedule[num - 1].push(
-						<ScheduleBlock
-							dayOfWeek={slice.dayOfWeek}
-							begin={slice.begin}
-							end={slice.end}
-							name={
-								shortenMap[val.name] ??
-								val.name.substring(val.type === ScheduleType.CUSTOM ? 6 : 0)
-							}
-							location={val.location}
-							gridHeight={unitHeight}
-							gridWidth={unitWidth}
-							key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
-							blockColor={
-								colorList[
-									parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
-								]
-							}
-							onPress={() => {
-								navigation.navigate("ScheduleDetail", {
-									name: val.name,
-									location: val.location,
-									week: num,
-									dayOfWeek: slice.dayOfWeek,
-									begin: slice.begin,
-									end: slice.end,
-									alias: shortenMap[val.name] ?? "",
-									type: val.type,
-								});
-							}}
-						/>,
-					);
+					weekSchedule[num - 1].push({
+						type: "normal",
+						slice,
+						schedule: val,
+						week: num,
+					});
 				});
 			});
 
 			val.activeTime.exams?.forEach((slice) => {
-				weekSchedule[slice.weekNumber - 1].push(
-					<ScheduleBlock
-						dayOfWeek={slice.dayOfWeek}
-						begin={examBeginMap[slice.begin]}
-						end={examEndMap[slice.end]}
-						name={
-							shortenMap[val.name] ??
-							val.name.substring(val.type === ScheduleType.CUSTOM ? 6 : 0)
-						}
-						location={val.location}
-						gridHeight={unitHeight}
-						gridWidth={unitWidth}
-						key={`${val.name}-${slice.weekNumber}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
-						blockColor={
-							colorList[
-								parseInt(md5(val.name).substr(0, 6), 16) % colorList.length
-							]
-						}
-						onPress={() => {
-							navigation.navigate("ScheduleDetail", {
-								name: val.name,
-								location: val.location,
-								week: slice.weekNumber,
-								dayOfWeek: slice.dayOfWeek,
-								begin: slice.begin,
-								end: slice.end,
-								alias: shortenMap[val.name] ?? "",
-								type: val.type,
-							});
-						}}
-					/>,
-				);
+				weekSchedule[slice.weekNumber - 1].push({
+					type: "exam",
+					slice,
+					schedule: val,
+				});
 			});
 		});
 
-		const list = [];
-		for (let w = 0; w < weekCount; ++w) {
-			list.push({
-				data: (
-					<>
-						<View
-							style={{
-								height: 40,
-								flexDirection: "row",
-							}}>
-							{Array.from(new Array(7)).map((_, index) => (
-								<View
-									style={{
-										flex: 1,
-										padding: 4,
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-									key={`0-${index + 1}`}>
-									<Text
-										style={{
-											textAlign: "center",
-											fontSize: 12,
-											color: theme.colors.fontB1,
-										}}>
-										{getStr("dayOfWeek")[index + 1]}
-									</Text>
-									<View
-										style={{
-											width: 18,
-											height: 2,
-											borderRadius: 1,
-											backgroundColor:
-												w === nowWeek - 1 && today === index + 1
-													? theme.colors.themePurple
-													: undefined,
-										}}
-									/>
-									<Text
-										style={{
-											textAlign: "center",
-											fontSize: 9,
-											color: theme.colors.fontB1,
-										}}>
-										{dayjs(firstDay)
-											.add(w * 7 + index, "day")
-											.format("MM/DD")}
-									</Text>
-								</View>
-							))}
-						</View>
-						<View>{weekSchedule[w]}</View>
-					</>
-				),
-				index: w,
-			});
-		}
-
-		return list;
+		return weekSchedule;
 	};
 
 	const flatListRef = useRef<FlatList>(null);
@@ -484,13 +395,140 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									index: index,
 								})}
 								data={allSchedule()}
-								renderItem={({item}) => (
+								renderItem={({item, index: w}) => (
 									<View
 										style={{
 											height: 14 * unitHeight + 40, // Header has a height of 40
 											width: scheduleBodyWidth,
 										}}>
-										{item.data}
+										<View
+											style={{
+												height: 40,
+												flexDirection: "row",
+											}}>
+											{Array.from(new Array(7)).map((_, index) => (
+												<View
+													style={{
+														flex: 1,
+														padding: 4,
+														alignItems: "center",
+														justifyContent: "center",
+													}}
+													key={`0-${index + 1}`}>
+													<Text
+														style={{
+															textAlign: "center",
+															fontSize: 12,
+															color: theme.colors.fontB1,
+														}}>
+														{getStr("dayOfWeek")[index + 1]}
+													</Text>
+													<View
+														style={{
+															width: 18,
+															height: 2,
+															borderRadius: 1,
+															backgroundColor:
+																w === nowWeek - 1 && today === index + 1
+																	? theme.colors.themePurple
+																	: undefined,
+														}}
+													/>
+													<Text
+														style={{
+															textAlign: "center",
+															fontSize: 9,
+															color: theme.colors.fontB1,
+														}}>
+														{dayjs(firstDay)
+															.add(w * 7 + index, "day")
+															.format("MM/DD")}
+													</Text>
+												</View>
+											))}
+										</View>
+										<View>
+											{(item as SliceRenderData[]).map((data) => {
+												if (data.type === "normal") {
+													const slice = data.slice;
+													const val = data.schedule;
+													const num = data.week;
+													return (
+														<ScheduleBlock
+															dayOfWeek={slice.dayOfWeek}
+															begin={slice.begin}
+															end={slice.end}
+															name={
+																shortenMap[val.name] ??
+																val.name.substring(
+																	val.type === ScheduleType.CUSTOM ? 6 : 0,
+																)
+															}
+															location={val.location}
+															gridHeight={unitHeight}
+															gridWidth={unitWidth}
+															key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
+															blockColor={
+																colorList[
+																	parseInt(md5(val.name).substr(0, 6), 16) %
+																		colorList.length
+																]
+															}
+															onPress={() => {
+																navigation.navigate("ScheduleDetail", {
+																	name: val.name,
+																	location: val.location,
+																	week: num,
+																	dayOfWeek: slice.dayOfWeek,
+																	begin: slice.begin,
+																	end: slice.end,
+																	alias: shortenMap[val.name] ?? "",
+																	type: val.type,
+																});
+															}}
+														/>
+													);
+												} else if (data.type === "exam") {
+													const slice = data.slice;
+													const val = data.schedule;
+													return (
+														<ScheduleBlock
+															dayOfWeek={slice.dayOfWeek}
+															begin={examBeginMap[slice.begin]}
+															end={examEndMap[slice.end]}
+															name={
+																shortenMap[val.name] ??
+																val.name.substring(
+																	val.type === ScheduleType.CUSTOM ? 6 : 0,
+																)
+															}
+															location={val.location}
+															gridHeight={unitHeight}
+															gridWidth={unitWidth}
+															key={`${val.name}-${slice.weekNumber}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
+															blockColor={
+																colorList[
+																	parseInt(md5(val.name).substr(0, 6), 16) %
+																		colorList.length
+																]
+															}
+															onPress={() => {
+																navigation.navigate("ScheduleDetail", {
+																	name: val.name,
+																	location: val.location,
+																	week: slice.weekNumber,
+																	dayOfWeek: slice.dayOfWeek,
+																	begin: slice.begin,
+																	end: slice.end,
+																	alias: shortenMap[val.name] ?? "",
+																	type: val.type,
+																});
+															}}
+														/>
+													);
+												}
+											})}
+										</View>
 									</View>
 								)}
 								initialScrollIndex={week - 1}
