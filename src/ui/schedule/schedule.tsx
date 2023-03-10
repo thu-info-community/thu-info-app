@@ -89,7 +89,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 	const exactUnitHeight = (windowHeight - getStatusBarHeight() - 80) / 14;
-	const heightMode = useSelector((s: State) => s.config.scheduleHeightMode);
+	const heightMode =
+		useSelector((s: State) => s.config.scheduleHeightMode) ?? 2;
 	const unitHeight =
 		exactUnitHeight * (heightMode === 1 ? 1 : heightMode === 2 ? 1.12 : 1.28);
 	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
