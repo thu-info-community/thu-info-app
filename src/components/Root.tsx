@@ -93,7 +93,7 @@ import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
 import {SearchParams} from "thu-info-lib/dist/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
-import IconDownload from "../assets/icons/IconDownload";
+import IconShare from "../assets/icons/IconShare";
 import IconHistory from "../assets/icons/IconHistory";
 import IconLocal from "../assets/icons/IconLocal";
 import IconStar from "../assets/icons/IconStar";
@@ -639,7 +639,7 @@ export const Root = () => {
 										filename,
 									});
 								}}>
-								<IconDownload height={24} width={24} />
+								<IconShare height={24} width={24} />
 							</TouchableOpacity>
 						</View>
 					),
