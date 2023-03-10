@@ -17,7 +17,7 @@ import IconDown from "../../assets/icons/IconDown";
 import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
-import {getStatusBarHeight} from "react-native-status-bar-height";
+import {getStatusBarHeight} from "react-native-safearea-height";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 
 const examBeginMap: {[key: string]: number} = {

@@ -37,7 +37,7 @@ import {
 	GradeW,
 } from "../../assets/icons/IconGrades";
 import {useHeaderHeight} from "@react-navigation/elements";
-import {getStatusBarHeight} from "react-native-status-bar-height";
+import {getStatusBarHeight} from "react-native-safearea-height";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));

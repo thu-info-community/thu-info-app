@@ -26,7 +26,7 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
-import {getStatusBarHeight} from "react-native-status-bar-height";
+import {getStatusBarHeight} from "react-native-safearea-height";
 
 type Category =
 	| "catSubscribed"

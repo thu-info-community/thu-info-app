@@ -54,7 +54,7 @@ import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
-import {getStatusBarHeight} from "react-native-status-bar-height";
+import {getStatusBarHeight} from "react-native-safearea-height";
 import {
 	toggleReadStatus,
 	updateAnnouncements,
