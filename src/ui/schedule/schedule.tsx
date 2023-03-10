@@ -13,10 +13,12 @@ import {useColorScheme} from "react-native";
 import md5 from "md5";
 import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
+import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
+import Slider from "@react-native-community/slider";
 import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
-import {setCalendarConfig} from "../../redux/slices/config";
+import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 
@@ -85,10 +87,16 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const darkModeHook = dark || themeName === "dark";
 
 	const windowWidth = Dimensions.get("window").width;
-	const unitHeight = 60;
+	const windowHeight = Dimensions.get("window").height;
+	const exactUnitHeight = (windowHeight - getStatusBarHeight() - 80) / 14;
+	const heightMode = useSelector((s: State) => s.config.scheduleHeightMode);
+	const unitHeight =
+		exactUnitHeight * (heightMode === 1 ? 1 : heightMode === 2 ? 1.12 : 1.28);
 	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 	const scheduleBodyWidth = windowWidth - 32;
+
+	const [heightSetup, setHeightSetup] = useState(false);
 
 	const colorList: string[] = [
 		"#4DD28D",
@@ -352,6 +360,11 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							)}
 						</Text>
 					</BottomPopupTriggerView>
+					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
+						<TouchableOpacity onPress={() => setHeightSetup((v) => !v)}>
+							<IconConfig width={24} height={24} />
+						</TouchableOpacity>
+					</View>
 					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
 						<TouchableOpacity
 							onPress={() => navigation.navigate("ScheduleAdd")}>
@@ -359,149 +372,168 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						</TouchableOpacity>
 					</View>
 				</View>
-				<View
-					style={{
-						flexDirection: "row",
-						paddingVertical: 2,
-						alignItems: "center",
-					}}
-					key="0">
-					<View
-						style={{
-							flex: 0,
-							width: 32,
-						}}
-						key="0-0"
-					/>
-				</View>
 			</View>
 
-			<ScrollView
-				style={{flex: 1, flexDirection: "column"}}
-				refreshControl={
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={getSchedule}
-						colors={[theme.colors.accent]}
-					/>
-				}>
-				<View style={{flexDirection: "row"}}>
-					{/* Timetable on the left */}
-					<View style={{width: 32, top: 40}}>
-						{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
-							<View
-								style={{
-									alignItems: "center",
-									justifyContent: "center",
-									height: unitHeight,
-								}}
-								key={`${session}-0`}>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB1,
-										fontSize: 12,
-									}}>
-									{session}
-								</Text>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB2,
-										fontSize: 8,
-										marginTop: 4,
-									}}>
-									{beginTime[session]}
-								</Text>
-								<Text
-									style={{
-										textAlign: "center",
-										color: theme.colors.fontB2,
-										fontSize: 8,
-										marginTop: 1,
-									}}>
-									{endTime[session]}
-								</Text>
-							</View>
-						))}
-					</View>
-
-					{/* Main content */}
-					<View style={{flex: 1}}>
-						{/* Lunch and Supper mark */}
-						<View
-							style={{
-								backgroundColor: theme.colors.themeGrey,
-								height: 1,
-								position: "absolute",
-								left: 0,
-								right: 0,
-								top: 340,
-							}}
+			<View style={{flex: 1}}>
+				<ScrollView
+					refreshControl={
+						<RefreshControl
+							refreshing={refreshing}
+							onRefresh={getSchedule}
+							colors={[theme.colors.accent]}
 						/>
-						<View
-							style={{
-								backgroundColor: theme.colors.themeGrey,
-								height: 1,
-								position: "absolute",
-								left: 0,
-								right: 0,
-								top: 700,
-							}}
-						/>
-						<Text
-							style={{
-								position: "absolute",
-								right: 12,
-								top: 342,
-								fontSize: 12,
-								color: theme.colors.fontB3,
-							}}>
-							{getStr("lunch")}
-						</Text>
-						<Text
-							style={{
-								position: "absolute",
-								right: 12,
-								top: 702,
-								fontSize: 12,
-								color: theme.colors.fontB3,
-							}}>
-							{getStr("supper")}
-						</Text>
-
-						{/* Schedule content */}
-						<FlatList
-							ref={flatListRef}
-							horizontal={true}
-							showsHorizontalScrollIndicator={false}
-							getItemLayout={(_, index) => ({
-								length: scheduleBodyWidth,
-								offset: scheduleBodyWidth * index,
-								index: index,
-							})}
-							data={allSchedule()}
-							renderItem={({item}) => (
+					}>
+					<View style={{flexDirection: "row"}}>
+						{/* Timetable on the left */}
+						<View style={{width: 32, top: 40}}>
+							{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
 								<View
 									style={{
-										height: 14 * unitHeight + 40, // Header has a height of 40
-										width: scheduleBodyWidth,
-									}}>
-									{item.data}
+										alignItems: "center",
+										justifyContent: "center",
+										height: unitHeight,
+									}}
+									key={`${session}-0`}>
+									<Text
+										style={{
+											textAlign: "center",
+											color: theme.colors.fontB1,
+											fontSize: 12,
+										}}>
+										{session}
+									</Text>
+									{heightMode > 1 && (
+										<>
+											<Text
+												style={{
+													textAlign: "center",
+													color: theme.colors.fontB2,
+													fontSize: 8,
+													marginTop: 4,
+												}}>
+												{beginTime[session]}
+											</Text>
+											<Text
+												style={{
+													textAlign: "center",
+													color: theme.colors.fontB2,
+													fontSize: 8,
+													marginTop: 1,
+												}}>
+												{endTime[session]}
+											</Text>
+										</>
+									)}
 								</View>
-							)}
-							initialScrollIndex={week - 1}
-							onMomentumScrollEnd={({nativeEvent}) => {
-								const index = Math.round(
-									nativeEvent.contentOffset.x / scheduleBodyWidth,
-								);
-								flatListRef.current!.scrollToIndex({index: index});
-								setWeek((_) => index + 1);
-							}}
-						/>
+							))}
+						</View>
+
+						{/* Main content */}
+						<View style={{flex: 1}}>
+							{/* Lunch and Supper mark */}
+							<View
+								style={{
+									backgroundColor: theme.colors.themeGrey,
+									height: 1,
+									position: "absolute",
+									left: 0,
+									right: 0,
+									top: 5 * unitHeight + 40,
+								}}
+							/>
+							<View
+								style={{
+									backgroundColor: theme.colors.themeGrey,
+									height: 1,
+									position: "absolute",
+									left: 0,
+									right: 0,
+									top: 11 * unitHeight + 40,
+								}}
+							/>
+							<Text
+								style={{
+									position: "absolute",
+									right: 12,
+									top: 5 * unitHeight + 42,
+									fontSize: 12,
+									color: theme.colors.fontB3,
+								}}>
+								{getStr("lunch")}
+							</Text>
+							<Text
+								style={{
+									position: "absolute",
+									right: 12,
+									top: 11 * unitHeight + 42,
+									fontSize: 12,
+									color: theme.colors.fontB3,
+								}}>
+								{getStr("supper")}
+							</Text>
+
+							{/* Schedule content */}
+							<FlatList
+								ref={flatListRef}
+								horizontal={true}
+								showsHorizontalScrollIndicator={false}
+								getItemLayout={(_, index) => ({
+									length: scheduleBodyWidth,
+									offset: scheduleBodyWidth * index,
+									index: index,
+								})}
+								data={allSchedule()}
+								renderItem={({item}) => (
+									<View
+										style={{
+											height: 14 * unitHeight + 40, // Header has a height of 40
+											width: scheduleBodyWidth,
+										}}>
+										{item.data}
+									</View>
+								)}
+								initialScrollIndex={week - 1}
+								onMomentumScrollEnd={({nativeEvent}) => {
+									const index = Math.round(
+										nativeEvent.contentOffset.x / scheduleBodyWidth,
+									);
+									flatListRef.current!.scrollToIndex({index: index});
+									setWeek((_) => index + 1);
+								}}
+							/>
+						</View>
 					</View>
-				</View>
-			</ScrollView>
+				</ScrollView>
+				{heightSetup && (
+					<View
+						style={{
+							position: "absolute",
+							height: "100%",
+							width: "100%",
+							backgroundColor: "#00000055",
+						}}>
+						<View style={{backgroundColor: theme.colors.contentBackground}}>
+							<Slider
+								style={{height: 40, width: "100%"}}
+								minimumValue={1}
+								maximumValue={3}
+								step={1}
+								minimumTrackTintColor={theme.colors.themePurple}
+								thumbTintColor={theme.colors.primary}
+								value={heightMode}
+								onValueChange={(value) => {
+									dispatch(
+										configSet({
+											key: "scheduleHeightMode",
+											value: value as 1 | 2 | 3,
+										}),
+									);
+								}}
+							/>
+						</View>
+					</View>
+				)}
+			</View>
 		</>
 	);
 };

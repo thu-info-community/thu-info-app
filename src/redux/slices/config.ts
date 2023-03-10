@@ -17,6 +17,7 @@ export interface ConfigState {
 	bx: boolean;
 	reportHidden: string[];
 	scheduleHeight: number;
+	scheduleHeightMode: 1 | 2 | 3;
 	lastBroadcast: number;
 	emailUnseen: number;
 	receiptTitle: ValidReceiptTypes | undefined;
@@ -51,6 +52,7 @@ const initialState: ConfigState = {
 	bx: false,
 	reportHidden: [],
 	scheduleHeight: 65,
+	scheduleHeightMode: 2,
 	lastBroadcast: 0,
 	emailUnseen: 0,
 	receiptTitle: undefined,
