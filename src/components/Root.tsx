@@ -2,13 +2,7 @@ import {useState} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import themes from "../assets/themes/themes";
-import {
-	Platform,
-	Text,
-	TouchableOpacity,
-	useColorScheme,
-	View,
-} from "react-native";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {NewsSlice} from "thu-info-lib/dist/models/news/news";
@@ -51,9 +45,6 @@ import {LibRoomBookRecordScreen} from "../ui/home/libRoomBookRecord";
 import {DormScoreScreen} from "../ui/home/dormScore";
 import {InvoiceScreen} from "../ui/home/invoice";
 import {InvoicePDFScreen} from "../ui/home/invoicePDF";
-import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
-import RNFS from "react-native-fs";
-import Snackbar from "react-native-snackbar";
 import {ReservesLibWelcomeScreen} from "../ui/home/reservesLibWelcome";
 import {ReservesLibPDFScreen} from "../ui/home/reservesLibPDF";
 import {SportsScreen} from "../ui/home/sports";
@@ -138,6 +129,7 @@ import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {useSelector} from "react-redux";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
+import Share from "react-native-share";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -245,7 +237,7 @@ type HomeStackParamList = {
 	Dorm: undefined;
 	DormScore: undefined;
 	Invoice: undefined;
-	InvoicePDF: {base64: string; id: string};
+	InvoicePDF: {base64: string; filename: string};
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
 	Qzyq: QzyqSelectParams;
@@ -633,7 +625,7 @@ export const Root = () => {
 				component={InvoicePDFScreen}
 				options={({
 					route: {
-						params: {base64, id},
+						params: {base64, filename},
 					},
 				}) => ({
 					title: getStr("invoice"),
@@ -641,39 +633,10 @@ export const Root = () => {
 						<View style={{flexDirection: "row"}}>
 							<TouchableOpacity
 								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={async () => {
-									if (Platform.OS === "android") {
-										const checkResult = await check(
-											PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-										);
-										switch (checkResult) {
-											case RESULTS.DENIED: {
-												const requestResult = await request(
-													PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-												);
-												if (requestResult !== RESULTS.GRANTED) {
-													return;
-												}
-												break;
-											}
-											case RESULTS.GRANTED: {
-												break;
-											}
-											default:
-												return;
-										}
-									}
-									const filename = `${id}.pdf`;
-									const path =
-										(Platform.OS === "android"
-											? RNFS.DownloadDirectoryPath
-											: RNFS.DocumentDirectoryPath) +
-										"/" +
-										filename;
-									await RNFS.writeFile(path, base64, "base64");
-									Snackbar.show({
-										text: getStr("success"),
-										duration: Snackbar.LENGTH_SHORT,
+								onPress={() => {
+									Share.open({
+										url: `data:application/pdf;base64,${base64}`,
+										filename,
 									});
 								}}>
 								<IconDownload height={24} width={24} />

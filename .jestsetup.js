@@ -89,6 +89,9 @@ jest.mock("react-native-snackbar", () => ({LENGTH_LONG: 0, LENGTH_SHORT: 0, show
 jest.mock("@react-native-cookies/cookies", () => ({
 	clearAll: jest.fn().mockResolvedValue(),
 }));
+jest.mock('react-native-share', () => ({
+	default: jest.fn(),
+}));
 
 jest.mock('redux-persist/lib/integration/react', () => ({
 	PersistGate: ({children}) => children

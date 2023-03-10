@@ -29,7 +29,7 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 					helper.getInvoicePDF(invoice.bus_no).then((pdf) => {
 						navigation.navigate("InvoicePDF", {
 							base64: pdf,
-							id: invoice.inv_no,
+							filename: `${invoice.financial_item_name}-${invoice.inv_no}`,
 						});
 					});
 				}}>
