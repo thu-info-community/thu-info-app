@@ -92,6 +92,9 @@ jest.mock("@react-native-cookies/cookies", () => ({
 jest.mock('react-native-share', () => ({
 	default: jest.fn(),
 }));
+jest.mock('react-native-device-time-format', () => ({
+	is24HourFormat: () => false,
+}));
 
 jest.mock('redux-persist/lib/integration/react', () => ({
 	PersistGate: ({children}) => children

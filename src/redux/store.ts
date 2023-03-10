@@ -18,6 +18,7 @@ import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "thu-info-lib";
 import CookieManager from "@react-native-cookies/cookies";
+import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
 	scheduleTimeAdd,
@@ -64,6 +65,9 @@ AppState.addEventListener("change", (state) => {
 			}
 			store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 		}
+		is24HourFormat().then((result) => {
+			store.dispatch(configSet({key: "is24Hour", value: result}));
+		});
 	} else {
 		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));
 		const s = currState();

@@ -159,6 +159,42 @@ const endTimeEn = [
 	"9:45 PM",
 ];
 
+const beginTime24 = [
+	"",
+	" 8:00",
+	" 8:50",
+	" 9:50",
+	"10:40",
+	"11:30",
+	"13:30",
+	"14:20",
+	"15:20",
+	"16:10",
+	"17:05",
+	"17:55",
+	"19:20",
+	"20:10",
+	"21:00",
+];
+
+const endTime24 = [
+	"",
+	" 8:45",
+	" 9:35",
+	"10:35",
+	"11:25",
+	"12:15",
+	"14:15",
+	"15:05",
+	"16:05",
+	"16:55",
+	"17:50",
+	"18:40",
+	"20:05",
+	"20:55",
+	"21:45",
+];
+
 interface ScheduleViewModel {
 	name: string;
 	location: string;
@@ -306,6 +342,7 @@ export const HomeScheduleSection = () => {
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
 	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
+	const is24Hour = useSelector((s: State) => s.config.is24Hour) ?? false;
 	const colorList: string[] = [
 		"#4DD28D",
 		"#55E4C6",
@@ -329,12 +366,16 @@ export const HomeScheduleSection = () => {
 			for (const ss of s.activeTime.base) {
 				if (ss.activeWeeks.includes(_week)) {
 					if (ss.dayOfWeek === dayOfWeek) {
-						const from =
-							getStr("mark") === "CH"
-								? beginTimeZh[ss.begin]
-								: beginTimeEn[ss.begin];
-						const to =
-							getStr("mark") === "CH" ? endTimeZh[ss.end] : endTimeEn[ss.end];
+						const from = is24Hour
+							? beginTime24[ss.begin]
+							: getStr("mark") === "CH"
+							? beginTimeZh[ss.begin]
+							: beginTimeEn[ss.begin];
+						const to = is24Hour
+							? endTime24[ss.end]
+							: getStr("mark") === "CH"
+							? endTimeZh[ss.end]
+							: endTimeEn[ss.end];
 
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
