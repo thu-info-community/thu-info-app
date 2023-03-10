@@ -208,11 +208,11 @@ export class InfoHelper {
                 latestVersion: MOCK_LATEST_VERSION,
             };
         }
-        uFetch(APP_STARTUP_STAT_URL).catch(() => {});
         const bookingRecords = await getBookingRecords(this);
         const sportsReservationRecords = await getSportsReservationRecords(this);
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
+        uFetch(APP_STARTUP_STAT_URL).catch(() => {});
         try {
             const crTimetable = await getCrTimetable(this);
             return {bookingRecords, sportsReservationRecords, crTimetable, latestAnnounces, latestVersion};
