@@ -104,6 +104,14 @@ jobs:
         run: |
           yarn
           cd ios && pod install && bundle install && cd ..
+      - name: Output Podfile.lock
+        if: startsWith(github.ref, 'refs/tags') == false
+        run: |
+          echo '### Summary of command `pod install`' >> $GITHUB_STEP_SUMMARY
+          echo 'Content of `Podfile.lock`:' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat ios/Podfile.lock >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
