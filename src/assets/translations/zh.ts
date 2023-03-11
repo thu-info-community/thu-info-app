@@ -473,8 +473,10 @@ export default {
 	matching: "配对中...",
 	confirmSync: "确认同步",
 	syncing: "同步中...",
-	syncSendInitialCaption: "即将把计划发送到您的其他设备。",
-	syncReceiveInitialCaption: "即将从您的其他设备接收计划。",
+	syncSendInitialCaption:
+		"即将把计划发送到您的其他设备。\n请确保设备在同一网络环境内。",
+	syncReceiveInitialCaption:
+		"即将从您的其他设备接收计划。\n请确保设备在同一网络环境内。",
 	syncSendWaitOtherCaption: "正在等待其他设备接收计划...",
 	syncReceiveWaitOtherCaption: "正在等待其他设备发送计划...",
 	syncToConfirmCaption: "配对的令牌是 {0} ，请确保另一设备上显示相同的令牌。",

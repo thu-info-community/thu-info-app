@@ -503,9 +503,9 @@ export default {
 	confirmSync: "Confirm Synchronization",
 	syncing: "Synchronizing...",
 	syncSendInitialCaption:
-		"You are going to send schedule data to other device.",
+		"You are going to send schedule data to other device.\nPlease ensure your devices are in the same network.",
 	syncReceiveInitialCaption:
-		"You are going to receive schedule data from other device.",
+		"You are going to receive schedule data from other device.\nPlease ensure your devices are in the same network.",
 	syncSendWaitOtherCaption:
 		"Waiting for your other device to receive schedule data...",
 	syncReceiveWaitOtherCaption:
