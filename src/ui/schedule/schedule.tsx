@@ -542,9 +542,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
-									flatListRef.current!.scrollToIndex({index: index});
-									setWeek((_) => index + 1);
+									if (week !== index + 1) {
+										setWeek(index + 1);
+									}
 								}}
+								snapToInterval={scheduleBodyWidth}
+								decelerationRate="fast"
 							/>
 						</View>
 					</View>
