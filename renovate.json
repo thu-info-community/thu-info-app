@@ -3,10 +3,7 @@
 		"config:base"
 	],
 	"ignorePaths": [
-		"android",
-		"ios",
-		"gradle",
-		"src"
+		"android"
 	],
 	"packageRules": [
 		{
