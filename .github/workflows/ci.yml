@@ -103,7 +103,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn
-          cd ios && pod install && bundle install && cd ..
+          cd ios && pod update hermes-engine --no-repo-update && pod install && bundle install && cd ..
       - name: Output Podfile.lock
         if: startsWith(github.ref, 'refs/tags') == false
         run: |
