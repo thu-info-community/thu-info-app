@@ -1,4 +1,4 @@
-name: Static check for pull requests
+name: Check and build for pull requests
 
 on: pull_request
 
@@ -21,3 +21,33 @@ jobs:
         run: |
           yarn lint
           yarn test
+  build-android:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup caching
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            cache-${{ runner.OS }}-
+      - name: Install dependencies
+        run: |
+          yarn
+      - name: Prepare for building
+        run: |
+          sed -i "s/signingConfigs\.release/signingConfigs\.debug/g" android/app/build.gradle
+      - name: Build android release
+        uses: gradle/gradle-build-action@v2
+        env:
+          SIGNATURE_DIGEST: ""
+        with:
+          arguments: assembleRelease
+          build-root-directory: android
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
