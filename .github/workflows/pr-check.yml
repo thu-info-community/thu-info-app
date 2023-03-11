@@ -39,6 +39,9 @@ jobs:
       - name: Prepare for building
         run: |
           sed -i "s/signingConfigs\.release/signingConfigs\.debug/g" android/app/build.gradle
+          sed -i "/preventRoot/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
+          sed -i "/preventEmulator/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
+          sed -i "/verifySignature/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Build android release
         uses: gradle/gradle-build-action@v2
         env:
