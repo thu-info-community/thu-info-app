@@ -11,9 +11,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.71.4)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - hermes-engine (0.71.3):
-    - hermes-engine/Pre-built (= 0.71.3)
-  - hermes-engine/Pre-built (0.71.3)
+  - hermes-engine (0.71.4):
+    - hermes-engine/Pre-built (= 0.71.4)
+  - hermes-engine/Pre-built (0.71.4)
   - libevent (2.1.12)
   - Permission-PhotoLibrary (3.7.3):
     - RNPermissions
@@ -637,7 +637,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 241709e132e3bf1526c1c4f00bc5384dd39dfba9
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  hermes-engine: 38bfe887e456b33b697187570a08de33969f5db7
+  hermes-engine: a1f157c49ea579c28b0296bda8530e980c45bdb3
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   Permission-PhotoLibrary: f5a999c06d7b904322d38790e3d7d8fa25b372fe
   Permission-PhotoLibraryAddOnly: 7fccbec4964f46ec2ce6bcc91145883a37177e52
@@ -697,4 +697,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 8819e4bc13066d0d591747f36bbd478c60e1b764
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.11.3
