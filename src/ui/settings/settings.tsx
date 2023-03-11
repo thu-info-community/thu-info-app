@@ -36,7 +36,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 
 	const doNotRemindSemver =
-		useSelector((s: State) => s.config.latestVersion) ?? "0.0.0";
+		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
 	const latestVersion =
 		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
 	const newVersionAvailable =
