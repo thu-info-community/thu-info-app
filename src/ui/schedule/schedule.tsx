@@ -538,7 +538,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									</View>
 								)}
 								initialScrollIndex={week - 1}
-								onMomentumScrollEnd={({nativeEvent}) => {
+								onScroll={({nativeEvent}) => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
