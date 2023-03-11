@@ -27,11 +27,11 @@ platform :ios do
       build_number: ENV["GITHUB_RUN_NUMBER"],
       xcodeproj: "thu_info.xcodeproj"
     )
-    
+
     setup_ci
     sync_code_signing
     match(type: "appstore", git_basic_authorization: ENV["MATCH_PASSWORD"])
-    build_app
+    build_app(derived_data_path: "./DerivedData")
 
     api_key = app_store_connect_api_key(
       key_id: ENV["APPSTORE_API_PRIVATE_KEY_ID"],
