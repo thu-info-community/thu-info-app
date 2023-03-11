@@ -108,7 +108,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
-	const exactUnitHeight = (windowHeight - getStatusBarHeight() - 80) / 14;
+	const [tableHeight, setTableHeight] = useState(
+		windowHeight - getStatusBarHeight() - 40,
+	);
+	const exactUnitHeight = (tableHeight - 40) / 14;
 	const heightMode =
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 2;
 	const unitHeight =
@@ -288,6 +291,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 
 			<View style={{flex: 1}}>
 				<ScrollView
+					onLayout={({nativeEvent}) => {
+						setTableHeight(nativeEvent.layout.height);
+					}}
 					refreshControl={
 						<RefreshControl
 							refreshing={refreshing}
@@ -544,7 +550,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</ScrollView>
 				{heightSetup && (
-					<View
+					<TouchableOpacity
+						onPress={() => setHeightSetup(false)}
 						style={{
 							position: "absolute",
 							height: "100%",
@@ -570,7 +577,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 							/>
 						</View>
-					</View>
+					</TouchableOpacity>
 				)}
 			</View>
 		</>
