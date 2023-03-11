@@ -132,7 +132,6 @@ jobs:
             node_modules
             ios/Pods
             vendor/bundle
-            ios/DerivedData
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-${{ runner.OS }}-
