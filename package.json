@@ -75,7 +75,7 @@
 		"web-streams-polyfill": "3.2.1"
 	},
 	"devDependencies": {
-		"@babel/core": "7.21.0",
+		"@babel/core": "7.21.3",
 		"@babel/preset-env": "7.20.2",
 		"@babel/runtime": "7.21.0",
 		"@react-native/eslint-config": "0.72.1",
