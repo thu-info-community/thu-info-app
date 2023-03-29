@@ -72,9 +72,8 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 						text: getStr("processing"),
 						duration: Snackbar.LENGTH_SHORT,
 					});
-					setCaptcha((c) => c.toUpperCase().trim());
 					helper
-						.loginLibraryRoomBooking(captcha)
+						.loginLibraryRoomBooking(captcha.toUpperCase().trim())
 						.then(() => navigation.pop())
 						.catch((e) => {
 							if (e instanceof CabError) {
