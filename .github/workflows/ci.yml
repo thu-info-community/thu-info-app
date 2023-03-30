@@ -139,7 +139,7 @@ jobs:
         run: |
           yarn
           bundle install
-          cd ios && pod install && cd ..
+          cd ios && pod update hermes-engine --no-repo-update && pod install && cd ..
       - name: Output Podfile.lock
         run: |
           echo '### Summary of command `pod install`' >> $GITHUB_STEP_SUMMARY
