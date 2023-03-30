@@ -48,8 +48,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 					placeholder={getStr("captcha")}
 					placeholderTextColor={theme.colors.primary}
 					selectionColor={theme.colors.accent}
-					value={captcha}
-					onChangeText={(text) => setCaptcha(text.toUpperCase())}
+					onChangeText={(text) => setCaptcha(text)}
 				/>
 			</View>
 			<TouchableOpacity
@@ -74,7 +73,7 @@ export const LibRoomCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 						duration: Snackbar.LENGTH_SHORT,
 					});
 					helper
-						.loginLibraryRoomBooking(captcha)
+						.loginLibraryRoomBooking(captcha.toUpperCase().trim())
 						.then(() => navigation.pop())
 						.catch((e) => {
 							if (e instanceof CabError) {
