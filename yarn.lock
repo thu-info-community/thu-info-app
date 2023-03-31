@@ -1821,14 +1821,14 @@
   resolved "https://registry.yarnpkg.com/@react-native/assets/-/assets-1.0.0.tgz#c6f9bf63d274bafc8e970628de24986b30a55c8e"
   integrity sha512-KrwSpS1tKI70wuKl68DwJZYEvXktDHdZMG0k2AXD/rJVSlB23/X2CB2cutVR0HwNMJIal9HOUOBB2rVfa6UGtQ==
 
-"@react-native/eslint-config@0.72.1":
-  version "0.72.1"
-  resolved "https://registry.yarnpkg.com/@react-native/eslint-config/-/eslint-config-0.72.1.tgz#5e8ab45505d5cd73d8f6c7811a8dd3b799de516f"
-  integrity sha512-fxnU+LPgFEdvYAIwyxXx2hXEjUGxP0dzZ0uDc0eu13uONjo7M50OKplF8zVgJMrCky3khM0s7RP5YKOFVidnwg==
+"@react-native/eslint-config@0.73.0":
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/@react-native/eslint-config/-/eslint-config-0.73.0.tgz#a0b85fa462bfe375de1c0ec413d4cd7e8bf6dbe9"
+  integrity sha512-z8ZU2osfsFjerad2pqRU6YUHOIzoXj5346JbDNUHHM41EKGx1LXAjdykqAR6YzwB8jwNoD5BpF/0fj7LpmaHuQ==
   dependencies:
     "@babel/core" "^7.20.0"
     "@babel/eslint-parser" "^7.19.0"
-    "@react-native/eslint-plugin" "^0.72.0"
+    "@react-native/eslint-plugin" "^0.73.0"
     "@typescript-eslint/eslint-plugin" "^5.30.5"
     "@typescript-eslint/parser" "^5.30.5"
     eslint-config-prettier "^8.5.0"
@@ -1840,10 +1840,10 @@
     eslint-plugin-react-hooks "^4.6.0"
     eslint-plugin-react-native "^4.0.0"
 
-"@react-native/eslint-plugin@^0.72.0":
-  version "0.72.0"
-  resolved "https://registry.yarnpkg.com/@react-native/eslint-plugin/-/eslint-plugin-0.72.0.tgz#7ec4c6a73dfde4bd6b4a4d3c462cfdc2637bf91d"
-  integrity sha512-xWQthnyKd+H22TBqeJUTFebsyWAAwzUb7EQCT8F/WMZsS1sv5UG+2cM/cU9/2HEbVZgxHYuLIi915WznjKPvlg==
+"@react-native/eslint-plugin@^0.73.0":
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/@react-native/eslint-plugin/-/eslint-plugin-0.73.0.tgz#103f2e65c0bc0e145bf510ed75bf1d9b9022c13c"
+  integrity sha512-xqEDfJ/3sWXzH8vTZt7OC0aBAV8y8fbX/uDTr8sbsoktiTW5yUY2dVCVVe+pBiPZMqnvDc6AJ+owie9Rl90pOA==
 
 "@react-native/normalize-color@*":
   version "2.0.0"
