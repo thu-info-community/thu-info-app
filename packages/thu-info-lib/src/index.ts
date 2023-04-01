@@ -17,9 +17,9 @@ import {
     switchLang,
     naiveSendMail,
 } from "./lib/basics";
-import { login, logout } from "./lib/core";
+import {login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
-import { getUserInformation, getUserInformationAndStore, postWaterSubmission } from "./lib/water";
+import {getUserInformation, getUserInformationAndStore, postWaterSubmission} from "./lib/water";
 import {
     LibBookRecord,
     LibFuzzySearchResult,
@@ -57,10 +57,10 @@ import {
     removeNewsFromFavor, removeNewsSubscription,
     searchNewsList,
 } from "./lib/news";
-import { getSchedule } from "./lib/schedule";
-import { Course } from "./models/home/report";
-import { Form } from "./models/home/assessment";
-import { Record } from "./models/home/expenditure";
+import {getSchedule} from "./lib/schedule";
+import {Course} from "./models/home/report";
+import {Form} from "./models/home/assessment";
+import {Record} from "./models/home/expenditure";
 import {NewsSlice, NewsSubscription, ChannelTag} from "./models/news/news";
 import {
     getSportsCaptchaUrlMethod,
@@ -93,8 +93,8 @@ import {
     cancelCoursePF,
     setCoursePF,
 } from "./lib/cr";
-import { SearchCoursePriorityQuery, SearchParams } from "./models/cr/cr";
-import { BankPaymentByMonth } from "./models/home/bank";
+import {SearchCoursePriorityQuery, SearchParams} from "./models/cr/cr";
+import {BankPaymentByMonth} from "./models/home/bank";
 import {
     getNamespaces,
     getPersonalProjects,
@@ -107,12 +107,12 @@ import {
     renderMarkdown,
     searchProjects,
 } from "./lib/gitlab";
-import { CalendarData } from "./models/schedule/calendar";
+import {CalendarData} from "./models/schedule/calendar";
 import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-lib";
 import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
-import { getDegreeProgramCompletion, getFullDegreeProgram } from "./lib/program";
+import {getDegreeProgramCompletion, getFullDegreeProgram} from "./lib/program";
 import {Classroom, ClassroomStateResult} from "./models/home/classroom";
 import {
     getFeedbackReplies,
@@ -125,6 +125,7 @@ import {
 import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
 import {uFetch} from "./utils/network";
+import {getNetworkDetail} from "./lib/network";
 
 export class InfoHelper {
     public userId = "";
@@ -212,7 +213,8 @@ export class InfoHelper {
         const sportsReservationRecords = await getSportsReservationRecords(this);
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
-        uFetch(APP_STARTUP_STAT_URL).catch(() => {});
+        uFetch(APP_STARTUP_STAT_URL).catch(() => {
+        });
         try {
             const crTimetable = await getCrTimetable(this);
             return {bookingRecords, sportsReservationRecords, crTimetable, latestAnnounces, latestVersion};
@@ -348,7 +350,10 @@ export class InfoHelper {
      *
      * @param page  page number, starting from 1
      */
-    public getInvoiceList = async (page: number): Promise<{data: Invoice[]; count: number}> => getInvoiceList(this, page);
+    public getInvoiceList = async (page: number): Promise<{
+        data: Invoice[];
+        count: number
+    }> => getInvoiceList(this, page);
 
     /**
      * Get the invoice PDF in base64 format.
@@ -430,7 +435,7 @@ export class InfoHelper {
      * @return Returns a number. The return value can be NaN when the remainder
      *         info cannot be parsed.
      */
-    public getEleRemainder = async (): Promise<{remainder: number; updateTime: string}> => getEleRemainder(this);
+    public getEleRemainder = async (): Promise<{ remainder: number; updateTime: string }> => getEleRemainder(this);
 
     /**
      * Reset dorm password.
@@ -551,7 +556,10 @@ export class InfoHelper {
      * Cancels a specific library booking record.
      * @param id  `rsvId` of `LibRoomBookRecord`
      */
-    public cancelLibraryRoomBooking = async (id: string): Promise<{ success: boolean, msg: string }> => cancelLibraryRoomBooking(this, id);
+    public cancelLibraryRoomBooking = async (id: string): Promise<{
+        success: boolean,
+        msg: string
+    }> => cancelLibraryRoomBooking(this, id);
 
     /**
      * Get the news list of all channels or a specific channel.
@@ -589,7 +597,10 @@ export class InfoHelper {
      * Get all available news channels for subscription.
      * @param needEnglish
      */
-    public getNewsChannelList = async (needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => getNewsChannelList(this, needEnglish);
+    public getNewsChannelList = async (needEnglish: boolean): Promise<{
+        id: ChannelTag,
+        title: string
+    }[]> => getNewsChannelList(this, needEnglish);
 
     /**
      * if channelId and sourceId is null or undefined at the same time, this function will terminate and return false.
@@ -896,6 +907,8 @@ export class InfoHelper {
     public getDegreeProgramCompletion = async () => getDegreeProgramCompletion(this);
 
     public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
+
+    public getNetworkDetail = async (year: number, month: number) => getNetworkDetail(this, year, month);
 }
 
 export class Water {
