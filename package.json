@@ -82,7 +82,7 @@
 		"@tsconfig/react-native": "2.0.3",
 		"@types/he": "1.2.0",
 		"@types/md5": "2.3.2",
-		"@types/react": "18.0.31",
+		"@types/react": "18.0.32",
 		"@types/react-native-modal-dropdown": "1.0.1",
 		"@types/react-test-renderer": "18.0.0",
 		"@types/semver": "7.3.13",
