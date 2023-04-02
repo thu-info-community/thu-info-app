@@ -116,9 +116,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 2;
 	const unitHeight =
 		exactUnitHeight * (heightMode === 1 ? 1 : heightMode === 2 ? 1.12 : 1.28);
-	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 	const scheduleBodyWidth = windowWidth - 32;
+	const unitWidth = scheduleBodyWidth / 7 - 1;
 
 	const [heightSetup, setHeightSetup] = useState(false);
 
