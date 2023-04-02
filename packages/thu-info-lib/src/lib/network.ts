@@ -68,7 +68,7 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
     "default",
     "66D157166A3E5EEB3C558B66803B2929",
     async () => {
-        let ret: Device[] = [];
+        const ret: Device[] = [];
         const resp1 = await uFetch(NETWORK_IMPORT_USER);
         if (resp1 === "请登录先")
             throw new LibError();
@@ -113,24 +113,24 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
     },
     [
         {
-            ip4: '183.123.123.123',
-            ip6: '::',
-            loggedAt: '2023-04-02 04:42:15',
-            in: '203.81M',
-            out: '3.18G',
-            nasIp: '172.123.123.123',
-            mac: 'abcd-abcd-abcd',
-            authType: 'import'
+            ip4: "183.123.123.123",
+            ip6: "::",
+            loggedAt: "2023-04-02 04:42:15",
+            in: "203.81M",
+            out: "3.18G",
+            nasIp: "172.123.123.123",
+            mac: "abcd-abcd-abcd",
+            authType: "import"
         },
         {
-            ip4: '183.123.123.123',
-            ip6: '2402:f000:3:7801::0',
-            loggedAt: '2023-04-02 09:50:21',
-            in: '309.41M',
-            out: '26.90M',
-            nasIp: '172.123.123.123',
-            mac: 'AB-CD-EF-GH-IJ-KL',
-            authType: '802.1x'
+            ip4: "183.123.123.123",
+            ip6: "2402:f000:3:7801::0",
+            loggedAt: "2023-04-02 09:50:21",
+            in: "309.41M",
+            out: "26.90M",
+            nasIp: "172.123.123.123",
+            mac: "AB-CD-EF-GH-IJ-KL",
+            authType: "802.1x"
         },
     ]
 );
