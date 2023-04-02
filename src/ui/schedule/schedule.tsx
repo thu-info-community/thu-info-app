@@ -113,9 +113,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 	const exactUnitHeight = (tableHeight - 40) / 14;
 	const heightMode =
-		useSelector((s: State) => s.config.scheduleHeightMode) ?? 2;
-	const unitHeight =
-		exactUnitHeight * (heightMode === 1 ? 1 : heightMode === 2 ? 1.12 : 1.28);
+		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
+	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
 	const unitWidth = (windowWidth - 8) / (7 + 1 / 2);
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 	const scheduleBodyWidth = windowWidth - 32;
@@ -564,8 +563,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						<View style={{backgroundColor: theme.colors.contentBackground}}>
 							<Slider
 								style={{height: 40, width: "100%"}}
-								minimumValue={1}
-								maximumValue={3}
+								minimumValue={0}
+								maximumValue={20}
 								step={1}
 								minimumTrackTintColor={theme.colors.themePurple}
 								thumbTintColor={theme.colors.primary}
@@ -574,7 +573,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									dispatch(
 										configSet({
 											key: "scheduleHeightMode",
-											value: value as 1 | 2 | 3,
+											value: value as number,
 										}),
 									);
 								}}
