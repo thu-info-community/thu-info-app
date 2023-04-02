@@ -125,7 +125,7 @@ import {
 import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
 import {uFetch} from "./utils/network";
-import {getNetworkDetail} from "./lib/network";
+import {getNetworkDetail, getOnlineDevices} from "./lib/network";
 
 export class InfoHelper {
     public userId = "";
@@ -909,6 +909,8 @@ export class InfoHelper {
     public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
 
     public getNetworkDetail = async (year: number, month: number) => getNetworkDetail(this, year, month);
+
+    public getOnlineDevices = async () => getOnlineDevices(this);
 }
 
 export class Water {
