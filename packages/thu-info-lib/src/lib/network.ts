@@ -150,11 +150,11 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
             return {
                 "accountBalance": balances.eq(1).text().trim(),
                 "availableBalance": balances.eq(3).text().trim()
-            }
+            };
         },
         {
             "accountBalance": "1.14(元)",
             "availableBalance": "5.14元"
         }
-    )
+    );
 
