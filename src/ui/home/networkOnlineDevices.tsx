@@ -78,7 +78,6 @@ const DeviceCard = ({device}: {device: Device}) => {
 };
 
 export const NetworkOnlineDevicesScreen = () => {
-	// TODO
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
