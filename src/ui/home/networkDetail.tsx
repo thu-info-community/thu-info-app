@@ -9,6 +9,7 @@ import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import IconDown from "../../assets/icons/IconDown";
+import dayjs from "dayjs";
 
 const DetailCard = ({detail}: {detail: Detial}) => {
 	const themeName = useColorScheme();
@@ -24,7 +25,7 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 				}}>
 				<View
 					style={{
-						flex: 2,
+						flex: 1,
 						alignItems: "flex-start",
 					}}>
 					<Text
@@ -36,7 +37,7 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 				</View>
 				<View
 					style={{
-						flex: 1,
+						flex: 2,
 						alignItems: "flex-end",
 					}}>
 					<Text
@@ -53,35 +54,45 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 	return (
 		<View style={{marginHorizontal: 16}}>
 			<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-				Wired
+				{getStr("wired")}
 			</Text>
-			<Item left={"in"} right={detail.wiredUsage.in} />
-			<Item left={"out"} right={detail.wiredUsage.out} />
-			<Item left={"total"} right={detail.wiredUsage.total} />
-			<Item left={"online time"} right={detail.wiredUsage.onlineTime} />
-			<Item left={"login count"} right={detail.wiredUsage.loginCount} />
-			<Item left={"current cost"} right={detail.wiredUsage.currentCost} />
+			<Item left={getStr("in")} right={detail.wiredUsage.in} />
+			<Item left={getStr("out")} right={detail.wiredUsage.out} />
+			<Item left={getStr("total")} right={detail.wiredUsage.total} />
+			<Item left={getStr("onlineTime")} right={detail.wiredUsage.onlineTime} />
+			<Item left={getStr("loginCount")} right={detail.wiredUsage.loginCount} />
+			<Item
+				left={getStr("currentCost")}
+				right={detail.wiredUsage.currentCost}
+			/>
 			<View
 				style={{
 					borderWidth: 0.4,
-					marginHorizontal: 16,
 					marginVertical: 12,
 					borderColor: colors.themeGrey,
 				}}
 			/>
 			<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-				Wireless
+				{getStr("wireless")}
 			</Text>
-			<Item left={"in"} right={detail.wirelessUsage.in} />
-			<Item left={"out"} right={detail.wirelessUsage.out} />
-			<Item left={"total"} right={detail.wirelessUsage.total} />
-			<Item left={"online time"} right={detail.wirelessUsage.onlineTime} />
-			<Item left={"login count"} right={detail.wirelessUsage.loginCount} />
-			<Item left={"current cost"} right={detail.wirelessUsage.currentCost} />
+			<Item left={getStr("in")} right={detail.wirelessUsage.in} />
+			<Item left={getStr("out")} right={detail.wirelessUsage.out} />
+			<Item left={getStr("total")} right={detail.wirelessUsage.total} />
+			<Item
+				left={getStr("onlineTime")}
+				right={detail.wirelessUsage.onlineTime}
+			/>
+			<Item
+				left={getStr("loginCount")}
+				right={detail.wirelessUsage.loginCount}
+			/>
+			<Item
+				left={getStr("currentCost")}
+				right={detail.wirelessUsage.currentCost}
+			/>
 			<View
 				style={{
 					borderWidth: 0.4,
-					marginHorizontal: 16,
 					marginVertical: 12,
 					borderColor: colors.themeGrey,
 				}}
@@ -93,7 +104,7 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 				}}>
 				<View style={{flex: 2, alignItems: "flex-start"}}>
 					<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-						Cost
+						{getStr("totalCost")}
 					</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
@@ -107,8 +118,10 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 };
 
 export const NetworkDetailScreen = () => {
-	const [m, setM] = useState(4);
-	const [y, setY] = useState(2023);
+	const now = dayjs();
+
+	const [m, setM] = useState(now.month() + 1);
+	const [y, setY] = useState(now.year());
 	const [detail, setDetail] = useState<Detial>();
 	const [popupYear, setPopupYear] = useState<number>(y);
 	const [popupMonth, setPopupMonth] = useState<number>(m);
@@ -118,8 +131,10 @@ export const NetworkDetailScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	// TODO
-	const yearsSorted = [2018, 2019, 2020, 2021, 2022, 2023];
+	const yearsSorted: number[] = [];
+	for (let i = 2018; i <= now.year(); i++) {
+		yearsSorted.push(i);
+	}
 	const monthsSorted = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 	const refresh = () => {
@@ -223,19 +238,18 @@ export const NetworkDetailScreen = () => {
 						}}
 						popupOnCancelled={() => {}}>
 						<Text style={{color: colors.text, fontSize: 16}}>
-							{/* TODO */}
 							{y} 年 {m} 月
 						</Text>
 						<IconDown height={18} width={18} />
 					</BottomPopupTriggerView>
 				</View>
-				<RoundedView style={{marginTop: 8}}>
-					{detail && (
+				{detail && (
+					<RoundedView style={{marginTop: 8}}>
 						<View>
-							<DetailCard detail={detail!} />
+							<DetailCard detail={detail} />
 						</View>
-					)}
-				</RoundedView>
+					</RoundedView>
+				)}
 			</View>
 		</ScrollView>
 	);
