@@ -108,7 +108,7 @@ export const NetworkOnlineDevicesScreen = () => {
 				/>
 			}>
 			{devices.map((d) => (
-				<DeviceCard device={d} />
+				<DeviceCard device={d} key={d.ip4} />
 			))}
 		</ScrollView>
 	);

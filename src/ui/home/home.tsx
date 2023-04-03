@@ -60,6 +60,9 @@ import {
 	updateAnnouncements,
 } from "../../redux/slices/announcement";
 import {EasterEggSchedule} from "../../utils/easterEgg";
+import IconNetwork from "../../assets/icons/IconNetwork";
+import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
+import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
 
 const iconSize = 40;
 
@@ -817,8 +820,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			navigation.navigate("Network");
 		}}>
-		{/* TODO: Network Icon */}
-		<IconDorm width={iconSize} height={iconSize} />
+		<IconNetwork width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="networkDetail"
@@ -828,8 +830,7 @@ const getHomeFunctions = (
 			updateTop5("networkDetail");
 			navigation.navigate("NetworkDetail");
 		}}>
-		{/* TODO: Network Icon */}
-		<IconDorm width={iconSize} height={iconSize} />
+		<IconNetworkDetail width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="onlineDevices"
@@ -839,8 +840,7 @@ const getHomeFunctions = (
 			updateTop5("onlineDevices");
 			navigation.navigate("OnlineDevices");
 		}}>
-		{/* TODO: Network Icon */}
-		<IconDorm width={iconSize} height={iconSize} />
+		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
 ];
 

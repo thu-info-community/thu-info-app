@@ -3,7 +3,8 @@ import {RootNav} from "../../components/Root";
 import {currState} from "../../redux/store";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
-import IconWasher from "../../assets/icons/IconWasher";
+import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
+import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
 
 export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -16,8 +17,7 @@ export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 					<SecondaryItem
 						title="networkDetail"
 						destKey="networkDetail"
-						// TODO: New Icon
-						icon={<IconWasher />}
+						icon={<IconNetworkDetail />}
 						onPress={() => {
 							addUsageStat(FunctionType.NetworkDetail);
 							navigation.navigate("NetworkDetail");
@@ -28,8 +28,7 @@ export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 					<SecondaryItem
 						title="onlineDevices"
 						destKey="onlineDevices"
-						// TODO: New Icon
-						icon={<IconWasher />}
+						icon={<IconNetworkOnlineDevices />}
 						onPress={() => {
 							addUsageStat(FunctionType.OnlineDevices);
 							navigation.navigate("OnlineDevices");
