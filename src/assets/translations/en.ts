@@ -520,4 +520,7 @@ export default {
 	sync: "Synchronize",
 	return: "Return",
 	backgroundSecurityWarning: "Warn when APP enters background",
+	network: "Network",
+	networkDetail: "Network Detail",
+	onlineDevices: "Online Devices",
 };

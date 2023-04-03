@@ -25,6 +25,8 @@ const functions: HomeFunction[] = [
 	"qzyq",
 	"dormScore",
 	"electricity",
+	"networkDetail",
+	"onlineDevices",
 ];
 
 const FunctionItem = ({
@@ -163,6 +165,22 @@ export const FunctionManagementScreen = () => {
 			</Text>
 			<RoundedView style={[style.rounded, {marginTop: 12}]}>
 				{functions.slice(10, 14).map((f, index) => (
+					<FunctionItem
+						key={f}
+						func={f}
+						needSeparator={index !== 0}
+						value={!disabledFuncList.includes(f)}
+						onValueChange={(value) => {
+							handleValueChange(f, value);
+						}}
+					/>
+				))}
+			</RoundedView>
+			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
+				{getStr("network")}
+			</Text>
+			<RoundedView style={[style.rounded, {marginTop: 12}]}>
+				{functions.slice(14, 16).map((f, index) => (
 					<FunctionItem
 						key={f}
 						func={f}

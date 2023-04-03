@@ -531,7 +531,10 @@ export type HomeFunction =
 	| "washer"
 	| "electricity"
 	| "dormitory"
-	| "dormScore";
+	| "dormScore"
+	| "network"
+	| "networkDetail"
+	| "onlineDevices";
 
 const subFunctionLocked = () => {
 	const s = currState();
@@ -808,6 +811,37 @@ const getHomeFunctions = (
 		}}>
 		<IconDorm width={iconSize} height={iconSize} />
 	</HomeIcon>,
+	<HomeIcon
+		key="network"
+		title="network"
+		onPress={() => {
+			navigation.navigate("Network");
+		}}>
+		{/* TODO: Network Icon */}
+		<IconDorm width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="networkDetail"
+		title="networkDetail"
+		onPress={() => {
+			addUsageStat(FunctionType.NetworkDetail);
+			updateTop5("networkDetail");
+			navigation.navigate("NetworkDetail");
+		}}>
+		{/* TODO: Network Icon */}
+		<IconDorm width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="onlineDevices"
+		title="onlineDevices"
+		onPress={() => {
+			addUsageStat(FunctionType.OnlineDevices);
+			updateTop5("onlineDevices");
+			navigation.navigate("OnlineDevices");
+		}}>
+		{/* TODO: Network Icon */}
+		<IconDorm width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -857,6 +891,14 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		)
 	) {
 		needToShowFunctionNames.push("dormitory");
+	}
+
+	if (
+		!["networkDetail", "onlineDevices"].every((i) =>
+			(disabledList ?? []).includes(i as HomeFunction),
+		)
+	) {
+		needToShowFunctionNames.push("network");
 	}
 
 	const top5Filtered = top5.filter(

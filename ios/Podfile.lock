@@ -296,7 +296,7 @@ PODS:
     - React
   - react-native-view-shot (3.6.0):
     - React-Core
-  - react-native-webview (12.0.0-rc.2):
+  - react-native-webview (12.0.0):
     - React-Core
   - React-perflogger (0.71.5)
   - React-RCTActionSheet (0.71.5):
@@ -432,7 +432,7 @@ PODS:
     - React-Core
   - RNSnackbar (2.4.0):
     - React-Core
-  - RNSVG (13.8.0):
+  - RNSVG (13.9.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -666,7 +666,7 @@ SPEC CHECKSUMS:
   react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 705f999ac2a24e4e6c909c0ca65c732ed33ca2ff
-  react-native-webview: 2f7e47e1273ed81b98bb2ce7ad8c3c1a872cf073
+  react-native-webview: 5f77c6612654fa517a4ae8252717a65871a7134e
   React-perflogger: 883a55a9a899535eaf06d0029108ef9ef22cce92
   React-RCTActionSheet: 1a3b8416688a3d291367be645022886f71d6842a
   React-RCTAnimation: e5560cb72d91ba35151d51e2eb0d467b42763f43
@@ -692,7 +692,7 @@ SPEC CHECKSUMS:
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNShare: eaee3dd5a06dad397c7d3b14762007035c5de405
   RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd
-  RNSVG: c1e76b81c76cdcd34b4e1188852892dc280eb902
+  RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   Yoga: cd7d7f509dbfac14ee7f31a6c750acb957cd5022
 
 PODFILE CHECKSUM: 8819e4bc13066d0d591747f36bbd478c60e1b764

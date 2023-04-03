@@ -130,6 +130,9 @@ import {useSelector} from "react-redux";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Share from "react-native-share";
+import {NetworkScreen} from "../ui/home/network";
+import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
+import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -268,6 +271,9 @@ type HomeStackParamList = {
 	EleRecord: undefined;
 	ECard: undefined;
 	ScheduleDetail: ScheduleDetailProps;
+	Network: undefined;
+	NetworkDetail: undefined;
+	OnlineDevices: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -847,6 +853,21 @@ export const Root = () => {
 				name="LoseCard"
 				component={ECardScreen}
 				options={{title: getStr("loseCard")}}
+			/>
+			<Stack.Screen
+				name="Network"
+				component={NetworkScreen}
+				options={{title: getStr("network")}}
+			/>
+			<Stack.Screen
+				name="NetworkDetail"
+				component={NetworkDetailScreen}
+				options={{title: getStr("networkDetail")}}
+			/>
+			<Stack.Screen
+				name="OnlineDevices"
+				component={NetworkOnlineDevicesScreen}
+				options={{title: getStr("onlineDevices")}}
 			/>
 			{/* News */}
 			<Stack.Screen
