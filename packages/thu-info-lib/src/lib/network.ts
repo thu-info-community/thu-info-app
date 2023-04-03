@@ -1,11 +1,12 @@
 import {InfoHelper} from "../index";
-import {getCsrfToken, roamingWrapperWithMocks} from "./core";
-import {getRedirectUrl, uFetch} from "../utils/network";
+import {roamingWrapperWithMocks} from "./core";
+import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
 import {Detial} from "../models/network/detial";
 import {LibError} from "../utils/error";
-import {NETWORK_DETAIL_URL, NETWORK_IMPORT_USER, NETWORK_X1_USER} from "../constants/strings";
+import {NETWORK_DETAIL_URL, NETWORK_IMPORT_USER, NETWORK_USER_INFO, NETWORK_X1_USER} from "../constants/strings";
 import {Device} from "../models/network/device";
+import {Balance} from "../models/network/balance";
 
 export const getNetworkDetail = async (helper: InfoHelper, year: number, month: number): Promise<Detial> =>
     roamingWrapperWithMocks(
@@ -134,3 +135,26 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
         },
     ]
 );
+
+export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "66D157166A3E5EEB3C558B66803B2929",
+        async () => {
+            const resp = await uFetch(NETWORK_USER_INFO);
+            if (resp === "请登录先")
+                throw new LibError();
+            const $ = cheerio.load(resp);
+            const balances = $("table.maintab tr:eq(2) td:eq(1) table tr:eq(9)").children();
+            return {
+                "accountBalance": balances.eq(1).text().trim(),
+                "availableBalance": balances.eq(3).text().trim()
+            }
+        },
+        {
+            "accountBalance": "1.14(元)",
+            "availableBalance": "5.14元"
+        }
+    )
+

@@ -246,3 +246,6 @@ export const NETWORK_IMPORT_USER =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/import_online_user.php";
 export const NETWORK_X1_USER =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/1x_online_user.php";
+
+export const NETWORK_USER_INFO =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/user_info.php";
