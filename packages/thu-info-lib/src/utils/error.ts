@@ -72,6 +72,10 @@ export class CabTimeoutError extends CabError {
 
 }
 
+export class CabNotActivatedError extends CabError {
+
+}
+
 export class UserInfoError extends LibError {
 
 }

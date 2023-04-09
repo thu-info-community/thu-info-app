@@ -51,7 +51,14 @@ import {
     MOCK_LIBRARY_FLOOR_LIST,
     MOCK_LIBRARY_LIST,
 } from "../mocks/library";
-import {CabError, CabTimeoutError, LibError, LibraryError, ResponseStatusError} from "../utils/error";
+import {
+    CabError,
+    CabNotActivatedError,
+    CabTimeoutError,
+    LibError,
+    LibraryError,
+    ResponseStatusError,
+} from "../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -390,6 +397,8 @@ export const loginLibraryRoomBooking = async (helper: InfoHelper, captcha: strin
         }).then(JSON.parse);
         if (loginResult.ret === 0) {
             throw new CabError(loginResult.msg);
+        } else if (loginResult.ret === 2) {
+            throw new CabNotActivatedError(loginResult.msg + "\n请登录 https://cab.lib.tsinghua.edu.cn 完成激活");
         }
     },
     undefined,
