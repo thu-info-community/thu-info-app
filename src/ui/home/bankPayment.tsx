@@ -1,5 +1,13 @@
 import {useEffect, useState} from "react";
-import {RefreshControl, ScrollView, Text, View} from "react-native";
+import {
+	FlatList,
+	Modal,
+	RefreshControl,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -7,10 +15,18 @@ import {helper} from "../../redux/store";
 import {useColorScheme} from "react-native";
 import {BankPaymentByMonth} from "thu-info-lib/dist/models/home/bank";
 import {RoundedView} from "../../components/views";
+import IconDropdown from "../../assets/icons/IconDropdown";
+import {getStatusBarHeight} from "react-native-safearea-height";
+import IconCheck from "../../assets/icons/IconCheck";
+import {useHeaderHeight} from "@react-navigation/elements";
 
 export const BankPaymentScreen = () => {
 	const [data, setData] = useState<BankPaymentByMonth[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
+	const [foundation, setFoundation] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
+
+	const headerHeight = useHeaderHeight();
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -18,7 +34,7 @@ export const BankPaymentScreen = () => {
 	const fetchData = () => {
 		setRefreshing(true);
 		helper
-			.getBankPayment()
+			.getBankPayment(foundation)
 			.then((r) => {
 				setData(r);
 				setRefreshing(false);
@@ -32,10 +48,92 @@ export const BankPaymentScreen = () => {
 			});
 	};
 
-	useEffect(fetchData, []);
+	useEffect(fetchData, [foundation]);
 
 	return (
-		<>
+		<View style={{flex: 1}}>
+			<View
+				style={{
+					flexDirection: "row",
+					height: 32,
+					alignItems: "center",
+					backgroundColor: colors.contentBackground,
+				}}>
+				<TouchableOpacity
+					onPress={() => setModalOpen((v) => !v)}
+					style={{
+						marginLeft: 36,
+						flexDirection: "row",
+						alignItems: "center",
+						flex: 0,
+					}}>
+					<Text style={{color: modalOpen ? colors.primary : colors.fontB2}}>
+						{getStr(foundation ? "bankPaymentFoundation" : "bankPayment")}
+					</Text>
+					<View style={{marginLeft: 6}}>
+						<IconDropdown
+							width={6}
+							height={4}
+							color={modalOpen ? colors.primary : colors.fontB2}
+						/>
+					</View>
+				</TouchableOpacity>
+				<Modal visible={modalOpen} transparent>
+					<TouchableOpacity
+						style={{
+							width: "100%",
+							height: "100%",
+						}}
+						onPress={() => setModalOpen(false)}>
+						<View
+							style={{
+								position: "absolute",
+								backgroundColor: colors.text,
+								opacity: 0.3,
+								width: "100%",
+								top: headerHeight - getStatusBarHeight() + 32,
+								bottom: 0,
+							}}
+						/>
+						<View
+							style={{
+								position: "absolute",
+								backgroundColor: colors.contentBackground,
+								width: "100%",
+								top: headerHeight - getStatusBarHeight() + 32,
+								borderBottomStartRadius: 12,
+								borderBottomEndRadius: 12,
+							}}>
+							<FlatList
+								data={[getStr("bankPayment"), getStr("bankPaymentFoundation")]}
+								renderItem={({item, index}) => {
+									const showTick =
+										(foundation && index === 1) || (!foundation && index === 0);
+									return (
+										<TouchableOpacity
+											onPress={() => {
+												setFoundation(index === 1);
+												setModalOpen(false);
+											}}
+											style={{
+												paddingHorizontal: 16,
+												marginVertical: 8,
+												flexDirection: "row",
+												justifyContent: "space-between",
+											}}>
+											<Text style={{color: colors.text, fontSize: 14}}>
+												{item}
+											</Text>
+											{showTick ? <IconCheck height={18} width={18} /> : null}
+										</TouchableOpacity>
+									);
+								}}
+								keyExtractor={(item) => item}
+							/>
+						</View>
+					</TouchableOpacity>
+				</Modal>
+			</View>
 			<ScrollView
 				style={{flex: 1, margin: 12, marginTop: 4}}
 				refreshControl={
@@ -151,6 +249,6 @@ export const BankPaymentScreen = () => {
 					))}
 				</View>
 			</ScrollView>
-		</>
+		</View>
 	);
 };
