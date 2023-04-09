@@ -398,7 +398,7 @@ export const loginLibraryRoomBooking = async (helper: InfoHelper, captcha: strin
         if (loginResult.ret === 0) {
             throw new CabError(loginResult.msg);
         } else if (loginResult.ret === 2) {
-            throw new CabNotActivatedError(loginResult.msg + "\n请登录 https://cab.lib.tsinghua.edu.cn 完成激活");
+            throw new CabNotActivatedError(loginResult.msg + " 请登录 https://cab.lib.tsinghua.edu.cn 完成激活");
         }
     },
     undefined,
