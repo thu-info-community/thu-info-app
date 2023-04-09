@@ -34,6 +34,7 @@ import {explainPeriod, explainWeekList} from "../../utils/calendar";
 import IconSelected from "../../assets/icons/IconSelected";
 import IconNotSelected from "../../assets/icons/IconNotSelected";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {beginTime, endTime} from "./scheduleDetail";
 
 export const numberToCode = (num: number): string => {
 	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
@@ -467,7 +468,9 @@ export const ScheduleAddScreen = ({
 				/>
 				<BottomPopupTriggerView
 					disabled={params !== undefined}
-					popupTitle={explainPeriod(popupDay, popupPeriodBegin, popupPeriodEnd)}
+					popupTitle={`${getStr("dayOfWeek")[popupDay]} ${
+						beginTime[popupPeriodBegin]
+					} - ${endTime[popupPeriodEnd]}`}
 					popupContent={
 						<View style={{flexDirection: "row"}}>
 							<ScrollPicker
@@ -497,10 +500,7 @@ export const ScheduleAddScreen = ({
 								style={{flex: 1}}
 								dataSource={Array.from(
 									new Array(14),
-									(_, k) =>
-										getStr("periodNumPrefix") +
-										(k + 1) +
-										getStr("periodNumSuffix"),
+									(_, k) => beginTime[k + 1],
 								)}
 								selectedIndex={popupPeriodBegin - 1}
 								renderItem={(data) => (
@@ -523,11 +523,7 @@ export const ScheduleAddScreen = ({
 								style={{flex: 1}}
 								dataSource={Array.from(
 									new Array(15 - popupPeriodBegin),
-									(_, k) =>
-										getStr("till") +
-										getStr("periodNumPrefix") +
-										(k + popupPeriodBegin) +
-										getStr("periodNumSuffix"),
+									(_, k) => endTime[k + popupPeriodBegin],
 								)}
 								selectedIndex={popupPeriodEnd - popupPeriodBegin}
 								renderItem={(data) => (
