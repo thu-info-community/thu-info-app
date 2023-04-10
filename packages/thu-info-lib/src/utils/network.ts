@@ -94,7 +94,21 @@ export const uFetch = async (
         const response = await fetch(url, init);
 
         if (response.status !== 200 && response.status !== 201) {
-            throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
+            let path = url;
+            try {
+                const queryBegin = path.lastIndexOf("?");
+                if (queryBegin !== -1) {
+                    path = path.substring(0, queryBegin);
+                }
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length - 1);
+                }
+                const nameBegin = path.lastIndexOf("/");
+                path = path.substring(nameBegin + 1);
+            } catch {
+                throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
+            }
+            throw new ResponseStatusError(`Unexpected response status code: ${response.status} (${path})`);
         }
 
         // Manage cookies
