@@ -8,6 +8,8 @@ import {NETWORK_DETAIL_URL, NETWORK_IMPORT_USER, NETWORK_USER_INFO, NETWORK_X1_U
 import {Device} from "../models/network/device";
 import {Balance} from "../models/network/balance";
 
+export const webVPNTitle = "<title>清华大学WebVPN</title>";
+
 export const getNetworkDetail = async (helper: InfoHelper, year: number, month: number): Promise<Detial> =>
     roamingWrapperWithMocks(
         helper,
@@ -15,7 +17,7 @@ export const getNetworkDetail = async (helper: InfoHelper, year: number, month: 
         "66D157166A3E5EEB3C558B66803B2929",
         async () => {
             const resp = await uFetch(NETWORK_DETAIL_URL + `&year=${year}&month=${month}`);
-            if (resp === "请登录先")
+            if (resp === "请登录先" || resp.includes(webVPNTitle))
                 throw new LibError();
             const $ = cheerio.load(resp);
             const tr = $(".maintab table:eq(2) tbody tr:eq(1)").children();
@@ -71,7 +73,7 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
     async () => {
         const ret: Device[] = [];
         const resp1 = await uFetch(NETWORK_IMPORT_USER);
-        if (resp1 === "请登录先")
+        if (resp1 === "请登录先" || resp1.includes(webVPNTitle))
             throw new LibError();
         const $1 = cheerio.load(resp1);
         const importDevices = $1(".maintab tr td table:eq(1) tr");
@@ -143,7 +145,7 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
         "66D157166A3E5EEB3C558B66803B2929",
         async () => {
             const resp = await uFetch(NETWORK_USER_INFO);
-            if (resp === "请登录先")
+            if (resp === "请登录先" || resp.includes(webVPNTitle))
                 throw new LibError();
             const $ = cheerio.load(resp);
             const balances = $("table.maintab tr:eq(2) td:eq(1) table tr:eq(9)").children();
