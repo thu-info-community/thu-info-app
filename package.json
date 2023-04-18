@@ -72,6 +72,7 @@
 		"stream": "0.0.2",
 		"text-encoding": "0.7.0",
 		"thu-info-lib": "6.2.2",
+		"util": "0.12.5",
 		"web-streams-polyfill": "3.2.1"
 	},
 	"devDependencies": {
