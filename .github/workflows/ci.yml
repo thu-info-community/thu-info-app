@@ -121,7 +121,7 @@ jobs:
           asset_content_type: 'application/vnd.android.package-archive'
   build-ios:
     needs: install-and-test
-    runs-on: macos-latest-xl
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup caching
