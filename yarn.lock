@@ -1765,10 +1765,10 @@
   resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.4.0.tgz#f9dfb2fb37f6f88b70801e727282dd9157bf62be"
   integrity sha512-SMEhc+2hQWubwzxR6Zac0CmrJ2rdoHHBo0ibG2iNMsxR0dnU5AdRGnYF/tyK9i20/i7ZNxn+qsEJ69shpkd6gg==
 
-"@react-native-community/blur@4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/blur/-/blur-4.3.1.tgz#817a9b9762f738e578a2cd5306902f4510a6df34"
-  integrity sha512-XVjTKs+nSXG7DCmxIr7HSjeAB276OO9KZ7XUVCdjK+RGTlvlCRZIPV0ygi+WN87zsdvfWsQOTZv3k0/BI86gsA==
+"@react-native-community/blur@4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/blur/-/blur-4.3.2.tgz#185a2c7dd03ba168cc95069bc4742e9505fd6c6c"
+  integrity sha512-0ID+pyZKdC4RdgC7HePxUQ6JmsbNrgz03u+6SgqYpmBoK/rE+7JffqIw7IEsfoKitLEcRNLGekIBsfwCqiEkew==
 
 "@react-native-community/cli-clean@^10.1.1":
   version "10.1.1"
