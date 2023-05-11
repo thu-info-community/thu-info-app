@@ -2086,10 +2086,10 @@
   dependencies:
     "@sinonjs/commons" "^2.0.0"
 
-"@tsconfig/react-native@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@tsconfig/react-native/-/react-native-3.0.0.tgz#5dcca97129ab113a5c3eb2d7a653e491fbdc76ea"
-  integrity sha512-4NapbL5hywv83w0K7psaQnD15f7vOwrUkKZUxKYExqmkSPOg56+LkVbpCBuHYHJFoX3wyuau/tFxo1XFYogeUw==
+"@tsconfig/react-native@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@tsconfig/react-native/-/react-native-3.0.1.tgz#56967588bb607bd10e9bb0828a60766944035c81"
+  integrity sha512-7C4WVvuKjATN8DU4+l9nuauakWFwNks4ZDNzM00asa3SBdywzqpVrXbN5nwlneivs3Y+98Nk//HNRlIzSMWEBw==
 
 "@types/babel__core@^7.1.14":
   version "7.20.0"
