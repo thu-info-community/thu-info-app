@@ -114,9 +114,9 @@ export const INVOICE_LOGIN_URL =
 export const LOSE_CARD_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/RambleConsumeLog.do?losscard=true";
 export const BANK_PAYMENT_SEARCH_URL =
-    "https://webvpn.tsinghua.edu.cn/http-8080/77726476706e69737468656265737421a1a117d27661391e2f5cc7f4/info/search.do";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9ff459a69247b59700f81b9991b26317dbd36ae/yhdfcx/search.do";
 export const FOUNDATION_BANK_PAYMENT_SEARCH_URL =
-    "https://webvpn.tsinghua.edu.cn/http-8080/77726476706e69737468656265737421fafd49852f346e1e6a1b80a29f5d36342bb9c40cf69277/yhdfcx/search.do";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9ff459a69247b59700f81b9991b26317dbd36ae/yhdfcx_jjh/search.do";
 export const LIBRARY_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/home/web/f_second";
 export const LIBRARY_LIST_URL =
