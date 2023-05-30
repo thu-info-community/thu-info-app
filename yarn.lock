@@ -3177,12 +3177,12 @@ crc-32@~1.2.0, crc-32@~1.2.1:
   resolved "https://registry.yarnpkg.com/crc-32/-/crc-32-1.2.2.tgz#3cad35a934b8bf71f25ca524b6da51fb7eace2ff"
   integrity sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==
 
-cross-fetch@3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
-  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
+cross-fetch@3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.6.tgz#bae05aa31a4da760969756318feeee6e70f15d6c"
+  integrity sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==
   dependencies:
-    node-fetch "2.6.7"
+    node-fetch "^2.6.11"
 
 cross-spawn@^5.0.1:
   version "5.1.0"
@@ -6136,10 +6136,17 @@ node-dir@^0.1.17:
   dependencies:
     minimatch "^3.0.2"
 
-node-fetch@2.6.7, node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.7:
+node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+  dependencies:
+    whatwg-url "^5.0.0"
+
+node-fetch@^2.6.11:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.11.tgz#cde7fc71deef3131ef80a738919f999e6edfff25"
+  integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -7862,14 +7869,14 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@6.2.3:
-  version "6.2.3"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.2.3.tgz#9fd8077880fa7fc05a0e2ef455487bca287e8268"
-  integrity sha512-Vc6I1K7EUq9TInQyoJvMNrPY9im2vWx6oDVjql35cmyMrxkIoP80oMjdlLVVUlZQ1HX7RigPX56IVWjeEJsmbA==
+thu-info-lib@6.2.4:
+  version "6.2.4"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.2.4.tgz#6b066a78eeff67a4f1d975ab64ccfec519070fc7"
+  integrity sha512-C/hOHU2IgRS1SGnI9g2tpIeF1p7N0erNvR/qDC5o/Nf6BPs4fmfa7/Ps79kPpz3gbgmBk3O1HduZAVadm+NC9Q==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
-    cross-fetch "3.1.5"
+    cross-fetch "3.1.6"
     dayjs "1.11.7"
     he "^1.2.0"
     iconv-lite "0.6.3"
