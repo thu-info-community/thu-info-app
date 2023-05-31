@@ -1662,10 +1662,10 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@react-native-camera-roll/camera-roll@5.5.0":
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.5.0.tgz#3f7cc64e90e923eea8d956b09dd9a15ad0303670"
-  integrity sha512-oKj4J01auootXOAjh3CBJ+wYWxy536Ys1Ej0WzRmn/EbeDHiMQ3kAcAGvy0zsQkO4VeFXNISwCGfTQe3fTBh1w==
+"@react-native-camera-roll/camera-roll@5.6.0":
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.6.0.tgz#385082d57d694f3fd5ae386f8b8ce24b0969c5f9"
+  integrity sha512-a/GYwnBTxj1yKWB9m/qy8GzjowSocML8NbLT81wdMh0JzZYXCLze51BR2cb8JNDgRPzA9xe7KpD3j9qQOSOjag==
 
 "@react-native-community/blur@4.3.2":
   version "4.3.2"
