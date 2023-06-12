@@ -6954,10 +6954,10 @@ react-native-view-shot@3.6.0:
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.6.0.tgz#2c5febd03cb1effb9923372b29aed227c680d9fd"
   integrity sha512-QUYGaIaAxQwOTydUzqGMooBwrg455cuOQgTloZ+gPO1QCUuLRdncCqrEMwKW5eUnN5U8JGMKeFRll2m6egOxtA==
 
-react-native-webview@13.2.0:
-  version "13.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.2.0.tgz#28ecc89bb890c910e9eebab4a91fc6d34e65eef8"
-  integrity sha512-NROPtlFCIy78notmQGtmMITwDRn9DRDc+y+yHvCxgrUY0t60Tb76Ngy+VFjYZBHkr8Loiz8Reaoct2mcTjWsig==
+react-native-webview@13.2.1:
+  version "13.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.2.1.tgz#e2974339adc76450a2be686cdea1042fd025c2f0"
+  integrity sha512-2U5XEBg8nUlGBsFkG1QgLUVN+CJJxNvZfprXlgPUFsU2UhYiVs7GM1sJez1YcnZ2TWKMCd6nVrLRsPNiLhjqVg==
   dependencies:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
