@@ -6861,10 +6861,10 @@ react-native-modal-dropdown@1.0.2:
   dependencies:
     prop-types "^15.6.0"
 
-react-native-pdf@6.6.2:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.6.2.tgz#a119aa3fd908c2c0a92102a78562530a35b9154b"
-  integrity sha512-gqxNPSzL0lNN1dGYAz9ObSLb0shUTB8x1u69qKLMSmwuxFTpGui5PNNgpH8q/nlpL9zBzMVVc/AXEuDCwRyxEQ==
+react-native-pdf@6.7.1:
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.1.tgz#198b8ec3e8f1025ceb43ddfc6bc5b422521c4411"
+  integrity sha512-zszQygtNBYoUfEtP/fV7zhzGeohDlUksh2p3OzshLrxdY9mw7Tm5VXAxYq4d8HsomRJUbFlJ7rHaTU9AQL800g==
   dependencies:
     crypto-js "^3.2.0"
     deprecated-react-native-prop-types "^2.3.0"
