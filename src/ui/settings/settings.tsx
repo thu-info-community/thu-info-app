@@ -26,6 +26,23 @@ import {
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
 
+const performLogout = () => {
+	helper
+		.logout()
+		.then(() =>
+			Snackbar.show({
+				text: getStr("logoutSuccessful"),
+				duration: Snackbar.LENGTH_SHORT,
+			}),
+		)
+		.catch(() =>
+			Snackbar.show({
+				text: getStr("logoutFailed"),
+				duration: Snackbar.LENGTH_SHORT,
+			}),
+		);
+};
+
 export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
@@ -150,9 +167,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								{
 									text: getStr("no"),
 									onPress: () => {
-										helper
-											.logout()
-											.then(() => console.log("Successfully logged out."));
+										performLogout();
 										dispatch(logout());
 									},
 								},
@@ -161,9 +176,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									onPress: () => {
 										helper.userId = "";
 										helper.password = "";
-										helper
-											.logout()
-											.then(() => console.log("Successfully logged out."));
+										performLogout();
 										dispatch(logout());
 										dispatch(setDormPassword(""));
 										dispatch(scheduleClear());

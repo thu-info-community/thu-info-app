@@ -15,6 +15,8 @@ export default {
 	confirmLogout: "Remove all data?",
 	yes: "Yes",
 	no: "No",
+	logoutSuccessful: "Successfully logged out",
+	logoutFailed: "Failed to logout",
 	newVersionAvailable: "New version available.",
 	ignoreThisVersion: "Forget",
 	dismiss: "Dismiss",

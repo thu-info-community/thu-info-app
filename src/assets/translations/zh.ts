@@ -15,6 +15,8 @@ export default {
 	confirmLogout: "清除所有数据？",
 	yes: "是",
 	no: "否",
+	logoutSuccessful: "成功退出",
+	logoutFailed: "退出失败",
 	newVersionAvailable: "有新版本可用",
 	ignoreThisVersion: "忽略该版本",
 	dismiss: "下次一定",
