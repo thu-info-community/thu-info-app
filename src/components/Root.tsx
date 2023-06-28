@@ -133,6 +133,8 @@ import Share from "react-native-share";
 import {NetworkScreen} from "../ui/home/network";
 import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
+import IconPeek from "../assets/icons/IconPeek";
+import {PeekScoreScreen} from "../ui/home/peekScore";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -212,6 +214,7 @@ const RootTabs = () => {
 
 type HomeStackParamList = {
 	Report: undefined;
+	PeekScore: undefined;
 	Evaluation: undefined;
 	Form: {name: string; url: string};
 	PhysicalExam: undefined;
@@ -427,7 +430,21 @@ export const Root = () => {
 			<Stack.Screen
 				name="Report"
 				component={ReportScreen}
-				options={{title: getStr("report")}}
+				options={({navigation}) => ({
+					title: getStr("report"),
+					headerRight: () => (
+						<TouchableOpacity
+							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+							onPress={() => navigation.navigate("PeekScore")}>
+							<IconPeek width={24} height={24} />
+						</TouchableOpacity>
+					),
+				})}
+			/>
+			<Stack.Screen
+				name="PeekScore"
+				component={PeekScoreScreen}
+				options={{title: getStr("peekScore")}}
 			/>
 			<Stack.Screen
 				name="Evaluation"
