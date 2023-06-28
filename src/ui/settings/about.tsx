@@ -9,6 +9,7 @@ import {
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
+	_84634E1A607A_URL,
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
 	GITHUB_ORG_URL,
@@ -95,6 +96,15 @@ export const AboutScreen = () => {
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
 					SauceCode @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity onPress={() => makeLinking(_84634E1A607A_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					84634E1A607A @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(Johnny_URL)}>
