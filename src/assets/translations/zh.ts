@@ -212,6 +212,7 @@ export default {
 	campusFinance: "校园财务",
 	expenditure: "校园卡消费",
 	query: "查询",
+	querying: "查询中",
 	income: "收入",
 	outgo: "支出",
 	remainder: "当前余额",

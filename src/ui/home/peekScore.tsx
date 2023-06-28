@@ -10,6 +10,7 @@ import {helper} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useState} from "react";
+import Snackbar from "react-native-snackbar";
 
 export const PeekScoreScreen = () => {
 	const themeName = useColorScheme();
@@ -17,6 +18,7 @@ export const PeekScoreScreen = () => {
 	const [courseId, setCourseId] = useState("");
 	const [courseName, setCourseName] = useState("");
 	const [courseGrade, setCourseGrade] = useState("");
+	const [querying, setQuerying] = useState(false);
 	return (
 		<View
 			style={{
@@ -71,11 +73,22 @@ export const PeekScoreScreen = () => {
 			</Text>
 			<TouchableOpacity
 				style={{marginTop: 32}}
+				disabled={querying}
 				onPress={() => {
-					helper.getScoreByCourseId(courseId).then(({name, grade}) => {
-						setCourseName(name);
-						setCourseGrade(grade);
-					});
+					setQuerying(true);
+					helper
+						.getScoreByCourseId(courseId)
+						.then(({name, grade}) => {
+							setCourseName(name);
+							setCourseGrade(grade);
+						})
+						.catch(() =>
+							Snackbar.show({
+								text: getStr("failure"),
+								duration: Snackbar.LENGTH_SHORT,
+							}),
+						)
+						.then(() => setQuerying(false));
 				}}>
 				<RoundedView
 					style={{
@@ -84,7 +97,9 @@ export const PeekScoreScreen = () => {
 						paddingHorizontal: 32,
 						borderRadius: 4,
 					}}>
-					<Text style={{color: "white", fontSize: 16}}>{getStr("query")}</Text>
+					<Text style={{color: "white", fontSize: 16}}>
+						{getStr(querying ? "querying" : "query")}
+					</Text>
 				</RoundedView>
 			</TouchableOpacity>
 		</View>

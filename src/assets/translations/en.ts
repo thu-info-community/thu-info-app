@@ -222,6 +222,7 @@ export default {
 	campusFinance: "Finance",
 	expenditure: "Expenditures",
 	query: "Query",
+	querying: "Querying",
 	income: "Income",
 	outgo: "Expenditure",
 	remainder: "Remainder",
