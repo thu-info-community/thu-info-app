@@ -51,10 +51,6 @@ jobs:
           export ref='${{ github.ref }}'
           export tag=${ref:11}
           echo "::set-output name=tag::$tag"
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '12.x'
-          registry-url: 'https://registry.npmjs.org'
       - name: Publish to NPM
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
