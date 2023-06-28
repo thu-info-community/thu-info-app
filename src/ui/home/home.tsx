@@ -295,6 +295,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 
 export const AnnouncementSection = () => {
 	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
 	const style = styles(themeName);
 	const dispatch = useDispatch();
 	const announcements = useSelector((s: State) => s.announcement.announcements);
@@ -310,10 +311,10 @@ export const AnnouncementSection = () => {
 						onPress={() => dispatch(toggleReadStatus(id))}
 						style={{marginVertical: 4, marginHorizontal: 12}}
 						key={id}>
-						<Text style={{fontWeight: "bold"}}>
+						<Text style={{fontWeight: "bold", color: colors.text}}>
 							{title} {read ? "(已读)" : ""}
 						</Text>
-						{!read && <Text>{content}</Text>}
+						{!read && <Text style={{color: colors.text}}>{content}</Text>}
 					</TouchableOpacity>
 				))}
 			</View>
