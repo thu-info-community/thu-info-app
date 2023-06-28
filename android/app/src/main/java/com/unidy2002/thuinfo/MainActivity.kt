@@ -31,8 +31,6 @@ class MainActivity : ReactActivity() {
         this,
         mainComponentName,
         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
-        DefaultNewArchitectureEntryPoint.fabricEnabled, // fabricEnabled
-        // If you opted-in for the New Architecture, we enable Concurrent React (i.e. React 18).
-        DefaultNewArchitectureEntryPoint.concurrentReactEnabled // concurrentRootEnabled
+        DefaultNewArchitectureEntryPoint.fabricEnabled
     )
 }
