@@ -146,7 +146,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		baseSchedule.forEach((val) => {
 			val.activeTime.base.forEach((slice) => {
 				slice.activeWeeks.forEach((num) => {
-					weekSchedule[num - 1].push({
+					// 由于状态异步更新的时间差，在学期切换时，可能存在某个时刻，
+					// baseSchedule 的最大周数超过了 weekCount，需要小心
+					weekSchedule[num - 1]?.push({
 						type: "normal",
 						slice,
 						schedule: val,
@@ -156,7 +158,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 			});
 
 			val.activeTime.exams?.forEach((slice) => {
-				weekSchedule[slice.weekNumber - 1].push({
+				weekSchedule[slice.weekNumber - 1]?.push({
 					type: "exam",
 					slice,
 					schedule: val,
