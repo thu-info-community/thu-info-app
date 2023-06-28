@@ -627,7 +627,7 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
         "",
         async () => {
             const {object} = await uFetch(`${CALENDAR_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
-            const firstDay = object.jyzdyt === "2022-09-13" ? "2022-09-12" : object.jyzdyt;  // 难得一遇的周二开学
+            const firstDay = object.jyzdyt === "2023-06-27" ? "2023-06-26" : object.jyzdyt;  // 难得两遇的周二开学
             const semesterId = object.xnxq;
             const semesterCode = semesterId[semesterId.length - 1];
             const weekCount = semesterCode === "3" ? 12 : 18;
