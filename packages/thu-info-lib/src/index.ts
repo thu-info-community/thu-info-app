@@ -126,6 +126,7 @@ import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
 import {uFetch} from "./utils/network";
 import {getNetworkBalance, getNetworkDetail, getOnlineDevices} from "./lib/network";
+import {getScoreByCourseId} from "./lib/thos";
 
 export class InfoHelper {
     public userId = "";
@@ -913,6 +914,8 @@ export class InfoHelper {
     public getOnlineDevices = async () => getOnlineDevices(this);
 
     public getNetworkBalance = async () => getNetworkBalance(this);
+
+    public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
 }
 
 export class Water {

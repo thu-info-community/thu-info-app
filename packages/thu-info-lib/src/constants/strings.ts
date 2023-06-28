@@ -249,3 +249,5 @@ export const NETWORK_X1_USER =
 
 export const NETWORK_USER_INFO =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/user_info.php";
+
+export const THOS_SELECT_ONE_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4/fp/fp/Uniformcommon/selectOnePresetData";

@@ -1,1 +1,2 @@
 fix: 2023 summer semester firstDay
+feat: implement `getScoreByCourseId`
