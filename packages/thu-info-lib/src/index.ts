@@ -16,6 +16,7 @@ import {
     getInvoicePDF,
     switchLang,
     naiveSendMail,
+    getCalendarImageUrl,
 } from "./lib/basics";
 import {login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -392,6 +393,12 @@ export class InfoHelper {
      * Get the school calendar data.
      */
     public getCalendar = async (): Promise<CalendarData> => getCalendar(this);
+
+    /**
+     * Get the school calendar image url
+     */
+    public getCalendarImageUrl = async (year: number, semester: "spring" | "autumn", lang: "zh" | "en") =>
+        getCalendarImageUrl(this, year, semester, lang);
 
     /**
      * Get the current countdown notifications from INFO.

@@ -22,6 +22,7 @@ import {
     PHYSICAL_EXAM_URL,
     SWITCH_LANG_URL,
     YJS_REPORT_BXR_URL,
+    CALENDAR_IMAGE_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -62,6 +63,7 @@ import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
+import {imageType} from "image-size/dist/types";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];
@@ -634,6 +636,17 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
             return {firstDay, semesterId, weekCount};
         },
         MOCK_CALENDAR_DATA,
+    );
+
+export const getCalendarImageUrl = async (helper: InfoHelper, year: number, semester: "spring" | "autumn", lang: "zh" | "en"): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        async () => {
+            return `${CALENDAR_IMAGE_URL}${year-1}-${year}-${semester === "spring" ? 2 : 1}-${lang === "zh" ? "cn" : "en"}.jpg`;
+        },
+        "",
     );
 
 export const countdown = async (helper: InfoHelper): Promise<string[]> =>
