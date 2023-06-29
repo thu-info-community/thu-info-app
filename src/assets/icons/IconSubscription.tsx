@@ -7,7 +7,6 @@ export default ({width, height}: {width: number; height: number}) => {
 	const {colors} = themes(themeName);
 	return (
 		<Svg width={width} height={height} viewBox="0 0 18 18" fill="none">
-			<Path d="M18 0H0V18H18V0Z" fill="white" fillOpacity="0.01" />
 			<Path
 				d="M15.5625 3.75H13.3125"
 				stroke={colors.fontB1}
