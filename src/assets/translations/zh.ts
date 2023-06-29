@@ -514,4 +514,8 @@ export default {
 	authType: "认证类型",
 	_8021x: "Tsinghua-Secure",
 	import: "准入",
+	schoolCalendar: "校历",
+	calendarYearOutOfRange: "年份超出范围",
+	calendarYear: "niandu: ",
+	calendarSemester: "xueqi: ",
 };

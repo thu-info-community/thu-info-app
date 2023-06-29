@@ -538,7 +538,8 @@ export type HomeFunction =
 	| "dormScore"
 	| "network"
 	| "networkDetail"
-	| "onlineDevices";
+	| "onlineDevices"
+	| "schoolCalendar";
 
 const subFunctionLocked = () => {
 	const s = currState();
@@ -843,6 +844,16 @@ const getHomeFunctions = (
 		}}>
 		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
+	<HomeIcon
+		key="schoolCalendar"
+		title="schoolCalendar"
+		onPress={() => {
+			addUsageStat(FunctionType.SchoolCalendar);
+			updateTop5("schoolCalendar");
+			navigation.navigate("SchoolCalendar");
+		}}>
+		<IconBook width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -864,13 +875,17 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
-	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
-		(i) => {
-			if (!(disabledList ?? []).includes(i as HomeFunction)) {
-				needToShowFunctionNames.push(i as HomeFunction);
-			}
-		},
-	);
+	[
+		"physicalExam",
+		"teachingEvaluation",
+		"report",
+		"classroomState",
+		"schoolCalendar",
+	].forEach((i) => {
+		if (!(disabledList ?? []).includes(i as HomeFunction)) {
+			needToShowFunctionNames.push(i as HomeFunction);
+		}
+	});
 	if (
 		!["library", "sportsBook", "libRoomBook"].every((i) =>
 			(disabledList ?? []).includes(i as HomeFunction),
