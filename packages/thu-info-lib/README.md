@@ -20,6 +20,7 @@ We support a wide range of APIs:
 - `getPhysicalExamResult`
 - `getExpenditures`
 - Classroom (`getClassroomList`, `getClassroomState`)
+- `getCalendarImageUrl`
 - Invoice (`getInvoiceList`, `getInvoicePDF`)
 - `loseCard`
 - `getBankPayment`
@@ -35,6 +36,7 @@ We support a wide range of APIs:
 - Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `paySportsReservation`, `unsubscribeSportsReservation`)
 - Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)
 - Network (`getNetworkDetail`, `getOnlineDevices`, `getNetworkBalance`)
+- THOS (`getScoreByCourseId`)
 
 Usages are documented in `dist/index` and also between the codes.
 

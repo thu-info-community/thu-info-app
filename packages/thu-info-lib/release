@@ -1,2 +1,1 @@
-fix: 2023 summer semester firstDay
-feat: implement `getScoreByCourseId`
+feat: added academic calendar url generator
