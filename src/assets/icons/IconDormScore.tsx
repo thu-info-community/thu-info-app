@@ -7,7 +7,6 @@ export default ({width, height}: {width?: number; height?: number}) => {
 	const theme = themes(themeName);
 	return (
 		<Svg viewBox="0 0 48 48" height={height} width={width} fill="none">
-			<Path fillOpacity=".01" fill="#fff" d="M0 0h48v48H0z" />
 			<Path
 				strokeLinecap="round"
 				strokeLinejoin="round"

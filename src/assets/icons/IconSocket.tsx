@@ -1,17 +1,8 @@
-import {useColorScheme} from "react-native";
-import themes from "../themes/themes";
 import Svg, {Path} from "react-native-svg";
 
 export default ({size, color}: {size: number; color: string}) => {
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
 	return (
 		<Svg viewBox="0 0 24 24" width={size} height={size} fill="none">
-			<Path
-				fillOpacity=".01"
-				fill={theme.colors.contentBackground}
-				d="M24 0H0V24H24V0Z"
-			/>
 			<Path d="M9 18v24h30V18L24 6 9 18Z" />
 			<Path
 				strokeLinejoin="round"
