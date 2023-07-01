@@ -7,35 +7,65 @@ import {getStr} from "../../utils/i18n";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import Snackbar from "react-native-snackbar";
 
 export const SchoolCalendar = () => {
-	const thisYear = new Date().getFullYear();
+	const date = new Date();
+	const month = date.getMonth();
+	const [semester, setSemester] = useState(
+		(month > 8 ? "autumn" : "spring") as "autumn" | "spring",
+	);
+
+	const currentYear = date.getFullYear() + (month >= 8 ? 1 : 0);
 	const [src, setSrc] = useState("");
-	const [year, setYear] = useState(thisYear);
-	const [yearSelection, setYearSelection] = useState(thisYear);
-	const [semester, setSemester] = useState("autumn" as "autumn" | "spring");
+	const [year, setYear] = useState(currentYear);
+	const [yearSelection, setYearSelection] = useState(currentYear);
 	const [semesterSelection, setSemesterSelection] = useState(0);
 	const semesterOptions = [getStr("autumn"), getStr("spring")];
-	const lang = getStr("mark") === "CH" ? "zh" : "en";
+	const appLang = getStr("mark") === "CH" ? "zh" : "en";
+	const [lang, setLang] = useState(appLang as "zh" | "en");
+	const [error, setError] = useState(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	helper
-		.getCalendarImageUrl(year, semester, lang)
-		.then((r) => {
+	if (!error) {
+		helper.getCalendarImageUrl(year, semester, lang).then((r) => {
 			setSrc(r);
-		})
-		.catch(NetworkRetry);
+		});
+	}
 
 	return (
 		<View style={{flex: 1, padding: 16, justifyContent: "space-between"}}>
 			<RoundedView style={{padding: 8, marginTop: 32, height: "60%"}}>
-				{src !== "" && (
+				{src !== "" && !error && (
 					<Image
 						source={{uri: src}}
 						style={{width: "100%", height: "100%", borderRadius: 8}}
 						resizeMode="contain"
+						onError={(e) => {
+							setError(true);
+							const errStr = e.nativeEvent?.error;
+							if (errStr && errStr.search("code=404") !== -1) {
+								if (lang === appLang) {
+									Snackbar.show({
+										text: getStr("calendarNoCurrentLang"),
+										duration: Snackbar.LENGTH_SHORT,
+									});
+
+									// Try the other language
+									setLang(appLang === "zh" ? "en" : "zh");
+									setError(false);
+								} else {
+									Snackbar.show({
+										text: getStr("calendarNotFound"),
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								}
+							} else {
+								NetworkRetry();
+							}
+						}}
 					/>
 				)}
 			</RoundedView>
@@ -47,7 +77,7 @@ export const SchoolCalendar = () => {
 						<View style={{flexDirection: "row"}}>
 							<ScrollPicker
 								dataSource={Array.from(
-									new Array(thisYear - 2000 + 1),
+									new Array(currentYear - 2000 + 1),
 									(_, k) => k + 2000,
 								)}
 								selectedIndex={year - 2000}
@@ -90,6 +120,8 @@ export const SchoolCalendar = () => {
 					popupOnFulfilled={() => {
 						setYear(yearSelection);
 						setSemester(semesterSelection === 0 ? "autumn" : "spring");
+						setError(false);
+						setLang(appLang);
 					}}
 					popupOnCancelled={() => {}}>
 					<View style={{flexDirection: "row", alignItems: "center"}}>

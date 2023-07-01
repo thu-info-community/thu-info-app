@@ -549,4 +549,6 @@ export default {
 	import: "Import",
 	schoolCalendar: "Academic Calendar",
 	selectSemester: "Select Semester",
+	calendarNoCurrentLang: "No calendar for current language",
+	calendarNotFound: "Calendar not found",
 };
