@@ -10,6 +10,8 @@ import ScrollPicker from "react-native-wheel-scrollview-picker";
 import Snackbar from "react-native-snackbar";
 
 export const SchoolCalendar = () => {
+	const firstYear = 2019;
+
 	const date = new Date();
 	const month = date.getMonth();
 	const [semester, setSemester] = useState(
@@ -77,17 +79,17 @@ export const SchoolCalendar = () => {
 						<View style={{flexDirection: "row"}}>
 							<ScrollPicker
 								dataSource={Array.from(
-									new Array(currentYear - 2000 + 1),
-									(_, k) => k + 2000,
+									new Array(currentYear - firstYear + 1),
+									(_, k) => k + firstYear,
 								)}
-								selectedIndex={year - 2000}
+								selectedIndex={year - firstYear}
 								renderItem={(data) => (
 									<Text style={{color: colors.fontB1, fontSize: 20}} key={data}>
 										{data}
 									</Text>
 								)}
 								onValueChange={(_, index) => {
-									setYearSelection(index + 2000);
+									setYearSelection(index + firstYear);
 								}}
 								wrapperHeight={200}
 								wrapperColor={colors.contentBackground}
