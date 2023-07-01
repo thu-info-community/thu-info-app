@@ -1,18 +1,20 @@
-import {Image, Text, TextInput, useColorScheme, View} from "react-native";
+import {Image, Text, useColorScheme, View} from "react-native";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {useState} from "react";
 import themes from "../../assets/themes/themes";
-import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import ModalDropdown from "react-native-modal-dropdown";
+import {BottomPopupTriggerView, RoundedView} from "../../components/views";
+import IconRight from "../../assets/icons/IconRight";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 export const SchoolCalendar = () => {
 	const thisYear = new Date().getFullYear();
 	const [src, setSrc] = useState("");
 	const [year, setYear] = useState(thisYear);
-	const [yearText, setYearText] = useState(thisYear.toString());
+	const [yearSelection, setYearSelection] = useState(thisYear);
 	const [semester, setSemester] = useState("autumn" as "autumn" | "spring");
+	const [semesterSelection, setSemesterSelection] = useState(0);
 	const semesterOptions = [getStr("autumn"), getStr("spring")];
 	const lang = getStr("mark") === "CH" ? "zh" : "en";
 
@@ -27,97 +29,83 @@ export const SchoolCalendar = () => {
 		.catch(NetworkRetry);
 
 	return (
-		<View style={{flex: 1}}>
-			<View
-				style={{
-					flexDirection: "row",
-					height: "20%",
-				}}>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "row",
-						width: "50%",
-						alignItems: "center",
-						justifyContent: "center",
-					}}>
-					<Text style={{color: colors.text}}>{getStr("calendarYear")}</Text>
-					<TextInput
-						keyboardType="numeric"
-						style={{
-							paddingHorizontal: 8,
-							paddingVertical: 4,
-							borderWidth: 1,
-							borderRadius: 4,
-							borderColor: "gray",
-							color: colors.primary,
-						}}
-						onChangeText={setYearText}
-						onSubmitEditing={() => {
-							const y = parseInt(yearText, 10);
-							if (y > 2000 && y <= thisYear) {
-								setYear(y);
-							} else {
-								Snackbar.show({
-									text: getStr("calendarYearOutOfRange"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-							}
-						}}
-						defaultValue={thisYear.toString()}
-					/>
-				</View>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "row",
-						width: "50%",
-						alignItems: "center",
-						justifyContent: "center",
-					}}>
-					<Text style={{color: colors.text}}>{getStr("calendarSemester")}</Text>
-					<ModalDropdown
-						options={semesterOptions}
-						defaultIndex={0}
-						defaultValue={getStr("autumn")}
-						style={{
-							padding: 8,
-							borderWidth: 1,
-							borderRadius: 4,
-							borderColor: "gray",
-							minWidth: 80,
-						}}
-						textStyle={{
-							fontSize: 14,
-							color: colors.text,
-						}}
-						dropdownStyle={{
-							paddingHorizontal: 10,
-							borderRadius: 4,
-						}}
-						showsVerticalScrollIndicator={false}
-						adjustFrame={(val) => {
-							return {
-								...val,
-								height: 2 * 35 + 5,
-							};
-						}}
-						onSelect={(index, _) => {
-							setSemester(index === "0" ? "autumn" : "spring");
-						}}
-					/>
-				</View>
-			</View>
-
-			<View style={{height: "80%"}}>
+		<View style={{flex: 1, padding: 16, justifyContent: "space-between"}}>
+			<RoundedView style={{padding: 8, marginTop: 32, height: "60%"}}>
 				{src !== "" && (
 					<Image
 						source={{uri: src}}
-						style={{width: "100%", height: "100%"}}
+						style={{width: "100%", height: "100%", borderRadius: 8}}
 						resizeMode="contain"
 					/>
 				)}
-			</View>
+			</RoundedView>
+
+			<RoundedView style={{padding: 8, marginBottom: 32}}>
+				<BottomPopupTriggerView
+					popupTitle={getStr("selectSemester")}
+					popupContent={
+						<View style={{flexDirection: "row"}}>
+							<ScrollPicker
+								dataSource={Array.from(
+									new Array(thisYear - 2000 + 1),
+									(_, k) => k + 2000,
+								)}
+								selectedIndex={year - 2000}
+								renderItem={(data) => (
+									<Text style={{color: colors.fontB1, fontSize: 20}} key={data}>
+										{data}
+									</Text>
+								)}
+								onValueChange={(_, index) => {
+									setYearSelection(index + 2000);
+								}}
+								wrapperHeight={200}
+								wrapperColor={colors.contentBackground}
+								itemHeight={48}
+								highlightColor={colors.themeGrey}
+								highlightBorderWidth={1}
+							/>
+							<ScrollPicker
+								dataSource={semesterOptions}
+								selectedIndex={semesterSelection}
+								renderItem={(_, index) => (
+									<Text
+										style={{color: colors.fontB1, fontSize: 20}}
+										key={index}>
+										{semesterOptions[index]}
+									</Text>
+								)}
+								onValueChange={(_, index) => {
+									setSemesterSelection(index);
+								}}
+								wrapperHeight={200}
+								wrapperColor={colors.contentBackground}
+								itemHeight={48}
+								highlightColor={colors.themeGrey}
+								highlightBorderWidth={1}
+							/>
+						</View>
+					}
+					popupCanFulfill={true}
+					popupOnFulfilled={() => {
+						setYear(yearSelection);
+						setSemester(semesterSelection === 0 ? "autumn" : "spring");
+					}}
+					popupOnCancelled={() => {}}>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text style={{color: colors.fontB1, fontSize: 16, flex: 0}}>
+							{getStr("selectSemester")}
+						</Text>
+						<View style={{flex: 1}} />
+						<Text
+							style={{color: colors.fontB3, fontSize: 16, flex: 0}}
+							numberOfLines={1}>
+							{year} {getStr(semester)}
+						</Text>
+						<IconRight height={24} width={24} />
+					</View>
+				</BottomPopupTriggerView>
+			</RoundedView>
 		</View>
 	);
 };
