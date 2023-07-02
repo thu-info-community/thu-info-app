@@ -1,4 +1,4 @@
-import {Image, Text, useColorScheme, View} from "react-native";
+import {Text, useColorScheme, View} from "react-native";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {useState} from "react";
@@ -8,6 +8,8 @@ import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import Snackbar from "react-native-snackbar";
+import ImageViewer from "react-native-image-zoom-viewer";
+import {saveRemoteImg} from "../../utils/saveImg";
 
 export const SchoolCalendar = () => {
 	const firstYear = 2019;
@@ -38,41 +40,54 @@ export const SchoolCalendar = () => {
 	}
 
 	return (
-		<View style={{flex: 1, padding: 16, justifyContent: "space-between"}}>
-			<RoundedView style={{padding: 8, marginTop: 32, height: "60%"}}>
+		<View style={{flex: 1, padding: 16}}>
+			<RoundedView style={{marginVertical: 16, flex: 1}}>
 				{src !== "" && !error && (
-					<Image
-						source={{uri: src}}
-						style={{width: "100%", height: "100%", borderRadius: 8}}
-						resizeMode="contain"
-						onError={(e) => {
-							setError(true);
-							const errStr = e.nativeEvent?.error;
-							if (errStr && errStr.search("code=404") !== -1) {
-								if (lang === appLang) {
-									Snackbar.show({
-										text: getStr("calendarNoCurrentLang"),
-										duration: Snackbar.LENGTH_SHORT,
-									});
+					<ImageViewer
+						imageUrls={[
+							{
+								url: src,
+								props: {
+									//@ts-ignore once TS7006, onError is a valid, used prop "Image.onError" and e is error event
+									onError: (e) => {
+										setError(true);
+										const errStr = e.nativeEvent?.error;
+										if (errStr && errStr.search("code=404") !== -1) {
+											if (lang === appLang) {
+												Snackbar.show({
+													text: getStr("calendarNoCurrentLang"),
+													duration: Snackbar.LENGTH_SHORT,
+												});
 
-									// Try the other language
-									setLang(appLang === "zh" ? "en" : "zh");
-									setError(false);
-								} else {
-									Snackbar.show({
-										text: getStr("calendarNotFound"),
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								}
-							} else {
-								NetworkRetry();
-							}
+												// Try the other language
+												setLang(appLang === "zh" ? "en" : "zh");
+												setError(false);
+											} else {
+												Snackbar.show({
+													text: getStr("calendarNotFound"),
+													duration: Snackbar.LENGTH_SHORT,
+												});
+											}
+										} else {
+											NetworkRetry();
+										}
+									},
+								},
+							},
+						]}
+						style={{marginHorizontal: 10, borderRadius: 8}}
+						backgroundColor={colors.contentBackground}
+						onSave={saveRemoteImg}
+						menuContext={{
+							saveToLocal: getStr("saveImage"),
+							cancel: getStr("cancel"),
 						}}
+						renderIndicator={() => <View />}
 					/>
 				)}
 			</RoundedView>
 
-			<RoundedView style={{padding: 8, marginBottom: 32}}>
+			<RoundedView style={{padding: 16, marginVertical: 16}}>
 				<BottomPopupTriggerView
 					popupTitle={getStr("selectSemester")}
 					popupContent={
