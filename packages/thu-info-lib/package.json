@@ -44,7 +44,7 @@
     "dependencies": {
         "abort-controller": "3.0.0",
         "cheerio": "1.0.0-rc.12",
-        "cross-fetch": "3.1.7",
+        "cross-fetch": "3.1.8",
         "dayjs": "1.11.9",
         "he": "^1.2.0",
         "iconv-lite": "0.6.3",
