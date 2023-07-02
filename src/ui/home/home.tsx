@@ -63,6 +63,7 @@ import {EasterEggSchedule} from "../../utils/easterEgg";
 import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
+import IconCalendar from "../../assets/icons/IconCalendar";
 
 const iconSize = 40;
 
@@ -852,7 +853,7 @@ const getHomeFunctions = (
 			updateTop5("schoolCalendar");
 			navigation.navigate("SchoolCalendar");
 		}}>
-		<IconBook width={iconSize} height={iconSize} />
+		<IconCalendar width={iconSize} height={iconSize} />
 	</HomeIcon>,
 ];
 
