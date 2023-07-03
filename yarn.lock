@@ -6944,10 +6944,10 @@ react-native-pdf@6.7.1:
     crypto-js "^3.2.0"
     deprecated-react-native-prop-types "^2.3.0"
 
-react-native-permissions@3.8.1:
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.8.1.tgz#8d38578686e77caf6e7faf7568411da98ab12d89"
-  integrity sha512-5e5y4RyyWAD3UCrPO70x0a8opk70RYzU3GI6xPjq/7LuIbFprSzWbOvM9lLD8SSzf/8ofCwDm29evvPYllGS+g==
+react-native-permissions@3.8.3:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-3.8.3.tgz#4d75db347c834ce10927f5f0631ad6026d3eb4ad"
+  integrity sha512-KJtCM6JP2IBvcWpapBO0WEMzlwej7rT5N3fvcZI7eCGs7VOuiCRqmq77mfY+R3RAvbcXQZZorTyOqRESDuff5A==
   dependencies:
     picocolors "^1.0.0"
     pkg-dir "^5.0.0"
