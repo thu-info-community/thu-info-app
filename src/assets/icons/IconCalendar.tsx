@@ -32,6 +32,7 @@ export default ({width, height}: {width: number; height: number}) => {
 					j = k % 3;
 				return (
 					<Path
+						key={k}
 						d={`M${i}2 ${22 + 7 * j}H${i}6`}
 						stroke={colors.fontB1}
 						strokeWidth="3"
