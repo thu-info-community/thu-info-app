@@ -22,6 +22,7 @@ export const GitlabImageScreen = ({
 					},
 				]}
 				onSave={saveRemoteImg}
+				renderIndicator={() => <View />}
 				menuContext={{
 					saveToLocal: getStr("saveImage"),
 					cancel: getStr("cancel"),
