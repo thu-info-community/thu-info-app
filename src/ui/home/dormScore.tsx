@@ -31,6 +31,7 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 				<ImageViewer
 					imageUrls={[{url: `data:image/png;base64,${base64}`}]}
 					onSave={saveRemoteImg}
+					renderIndicator={() => <View />}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),
 						cancel: getStr("cancel"),

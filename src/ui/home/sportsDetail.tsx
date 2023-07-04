@@ -88,7 +88,7 @@ export const SportsDetailScreen = ({
 							result[timeSession].availableFields.push({
 								id: resHash,
 								name: fieldName,
-								totalCost: cost ?? 0,
+								cost: cost ?? 0,
 							});
 						}
 					}
