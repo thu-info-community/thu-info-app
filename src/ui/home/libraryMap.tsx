@@ -65,6 +65,7 @@ export const LibrarySeatMapScreen = ({
 						},
 					]}
 					onSave={saveRemoteImg}
+					renderIndicator={() => <View />}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),
 						cancel: getStr("cancel"),
