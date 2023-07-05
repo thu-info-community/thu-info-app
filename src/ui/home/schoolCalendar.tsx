@@ -1,4 +1,11 @@
-import {Text, useColorScheme, View} from "react-native";
+import {
+	Image,
+	ImageErrorEventData,
+	NativeSyntheticEvent,
+	Text,
+	useColorScheme,
+	View,
+} from "react-native";
 import {helper, State} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {useState} from "react";
@@ -55,8 +62,7 @@ export const SchoolCalendar = () => {
 							{
 								url: src,
 								props: {
-									//@ts-ignore once TS7006, onError is a valid, used prop "Image.onError" and e is error event
-									onError: (e) => {
+									onError: (e: NativeSyntheticEvent<ImageErrorEventData>) => {
 										setError(true);
 										const errStr = e.nativeEvent?.error;
 										if (errStr && errStr.search("code=404") !== -1) {
@@ -90,6 +96,9 @@ export const SchoolCalendar = () => {
 							cancel: getStr("cancel"),
 						}}
 						renderIndicator={() => <View />}
+						renderImage={(props) => (
+							<Image {...props} onError={props.onError} />
+						)}
 					/>
 				)}
 			</RoundedView>
