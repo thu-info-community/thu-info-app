@@ -26,7 +26,7 @@ export const SchoolCalendar = () => {
 		(s: State) => s.config.semesterId,
 	).split("-");
 
-	const currentYear = parseInt(semesterDescription[0], 10);
+	const currentYear = parseInt(semesterDescription[1], 10);
 	const [semester, setSemester] = useState(
 		(semesterDescription[2] === "1" || semesterDescription[2] === "W"
 			? "autumn"
@@ -111,7 +111,7 @@ export const SchoolCalendar = () => {
 							<ScrollPicker
 								dataSource={Array.from(
 									new Array(currentYear - firstYear + 1),
-									(_, k) => k + firstYear,
+									(_, k) => `${k + firstYear - 1}-${k + firstYear}`,
 								)}
 								selectedIndex={year - firstYear}
 								renderItem={(data) => (
@@ -153,8 +153,9 @@ export const SchoolCalendar = () => {
 					popupOnFulfilled={() => {
 						setYear(yearSelection);
 						setSemester(semesterSelection === 0 ? "autumn" : "spring");
-						setError(false);
 						setLang(appLang);
+						setSrc("");
+						setError(false);
 					}}
 					popupOnCancelled={() => {}}>
 					<View style={{flexDirection: "row", alignItems: "center"}}>
