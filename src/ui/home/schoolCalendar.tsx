@@ -1,5 +1,5 @@
 import {Text, useColorScheme, View} from "react-native";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {useState} from "react";
 import themes from "../../assets/themes/themes";
@@ -10,21 +10,28 @@ import ScrollPicker from "react-native-wheel-scrollview-picker";
 import Snackbar from "react-native-snackbar";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveRemoteImg} from "../../utils/saveImg";
+import {useSelector} from "react-redux";
 
 export const SchoolCalendar = () => {
 	const firstYear = 2019;
 
-	const date = new Date();
-	const month = date.getMonth();
+	const semesterDescription = useSelector(
+		(s: State) => s.config.semesterId,
+	).split("-");
+
+	const currentYear = parseInt(semesterDescription[0], 10);
 	const [semester, setSemester] = useState(
-		(month > 8 ? "autumn" : "spring") as "autumn" | "spring",
+		(semesterDescription[2] === "1" || semesterDescription[2] === "W"
+			? "autumn"
+			: "spring") as "autumn" | "spring",
 	);
 
-	const currentYear = date.getFullYear() + (month >= 8 ? 1 : 0);
 	const [src, setSrc] = useState("");
 	const [year, setYear] = useState(currentYear);
 	const [yearSelection, setYearSelection] = useState(currentYear);
-	const [semesterSelection, setSemesterSelection] = useState(0);
+	const [semesterSelection, setSemesterSelection] = useState(
+		semester === "autumn" ? 0 : 1,
+	);
 	const semesterOptions = [getStr("autumn"), getStr("spring")];
 	const appLang = getStr("mark") === "CH" ? "zh" : "en";
 	const [lang, setLang] = useState(appLang as "zh" | "en");
