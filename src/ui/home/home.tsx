@@ -876,17 +876,13 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
-	[
-		"physicalExam",
-		"teachingEvaluation",
-		"report",
-		"classroomState",
-		"schoolCalendar",
-	].forEach((i) => {
-		if (!(disabledList ?? []).includes(i as HomeFunction)) {
-			needToShowFunctionNames.push(i as HomeFunction);
-		}
-	});
+	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
+		(i) => {
+			if (!(disabledList ?? []).includes(i as HomeFunction)) {
+				needToShowFunctionNames.push(i as HomeFunction);
+			}
+		},
+	);
 	if (
 		!["library", "sportsBook", "libRoomBook"].every((i) =>
 			(disabledList ?? []).includes(i as HomeFunction),
@@ -916,6 +912,10 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		)
 	) {
 		needToShowFunctionNames.push("network");
+	}
+
+	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
+		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
 	}
 
 	const top5Filtered = top5.filter(
