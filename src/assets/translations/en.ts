@@ -547,4 +547,8 @@ export default {
 	authType: "Auth Type",
 	_8021x: "Tsinghua-Secure",
 	import: "Import",
+	schoolCalendar: "Academic Calendar",
+	selectSemester: "Select Semester",
+	calendarNoCurrentLang: "No calendar for current language",
+	calendarNotFound: "Calendar not found",
 };

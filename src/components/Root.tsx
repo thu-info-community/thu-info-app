@@ -134,6 +134,7 @@ import {NetworkScreen} from "../ui/home/network";
 import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
+import {SchoolCalendar} from "../ui/home/schoolCalendar";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -276,6 +277,7 @@ type HomeStackParamList = {
 	Network: undefined;
 	NetworkDetail: undefined;
 	OnlineDevices: undefined;
+	SchoolCalendar: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -875,6 +877,11 @@ export const Root = () => {
 				name="OnlineDevices"
 				component={NetworkOnlineDevicesScreen}
 				options={{title: getStr("onlineDevices")}}
+			/>
+			<Stack.Screen
+				name="SchoolCalendar"
+				component={SchoolCalendar}
+				options={{title: getStr("schoolCalendar")}}
 			/>
 			{/* News */}
 			<Stack.Screen

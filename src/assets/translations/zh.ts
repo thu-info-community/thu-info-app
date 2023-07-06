@@ -514,4 +514,8 @@ export default {
 	authType: "认证类型",
 	_8021x: "Tsinghua-Secure",
 	import: "准入",
+	schoolCalendar: "校历",
+	selectSemester: "选择学期",
+	calendarNoCurrentLang: "暂无当前语言的校历",
+	calendarNotFound: "未找到校历",
 };

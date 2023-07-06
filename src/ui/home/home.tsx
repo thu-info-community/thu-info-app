@@ -63,6 +63,7 @@ import {EasterEggSchedule} from "../../utils/easterEgg";
 import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
+import IconCalendar from "../../assets/icons/IconCalendar";
 
 const iconSize = 40;
 
@@ -538,7 +539,8 @@ export type HomeFunction =
 	| "dormScore"
 	| "network"
 	| "networkDetail"
-	| "onlineDevices";
+	| "onlineDevices"
+	| "schoolCalendar";
 
 const subFunctionLocked = () => {
 	const s = currState();
@@ -843,6 +845,16 @@ const getHomeFunctions = (
 		}}>
 		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
+	<HomeIcon
+		key="schoolCalendar"
+		title="schoolCalendar"
+		onPress={() => {
+			addUsageStat(FunctionType.SchoolCalendar);
+			updateTop5("schoolCalendar");
+			navigation.navigate("SchoolCalendar");
+		}}>
+		<IconCalendar width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -900,6 +912,10 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		)
 	) {
 		needToShowFunctionNames.push("network");
+	}
+
+	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
+		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
 	}
 
 	const top5Filtered = top5.filter(
