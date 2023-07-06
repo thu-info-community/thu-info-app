@@ -644,6 +644,11 @@ export const getCalendarImageUrl = async (helper: InfoHelper, year: number, seme
         undefined,
         "",
         async () => {
+            // It seems that the calendar image is named differently here
+            if (lang == "en" && year < 2023) {
+                return `${CALENDAR_IMAGE_URL}${year-1}-${year}_${semester === "spring" ? 2 : 1}_en.jpg`;
+            }
+
             return `${CALENDAR_IMAGE_URL}${year-1}-${year}-${semester === "spring" ? 2 : 1}-${lang === "zh" ? "cn" : "en"}.jpg`;
         },
         "",
