@@ -1,20 +1,11 @@
-import {
-	Image,
-	ImageErrorEventData,
-	NativeSyntheticEvent,
-	Text,
-	useColorScheme,
-	View,
-} from "react-native";
+import {Text, useColorScheme, View} from "react-native";
 import {helper, State} from "../../redux/store";
-import {NetworkRetry} from "../../components/easySnackbars";
 import {useState} from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
-import Snackbar from "react-native-snackbar";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {saveRemoteImg} from "../../utils/saveImg";
 import {useSelector} from "react-redux";
@@ -58,36 +49,7 @@ export const SchoolCalendar = () => {
 			<RoundedView style={{marginVertical: 16, flex: 1}}>
 				{src !== "" && !error && (
 					<ImageViewer
-						imageUrls={[
-							{
-								url: src,
-								props: {
-									onError: (e: NativeSyntheticEvent<ImageErrorEventData>) => {
-										setError(true);
-										const errStr = e.nativeEvent?.error;
-										if (errStr && errStr.search("code=404") !== -1) {
-											if (lang === appLang) {
-												Snackbar.show({
-													text: getStr("calendarNoCurrentLang"),
-													duration: Snackbar.LENGTH_SHORT,
-												});
-
-												// Try the other language
-												setLang(appLang === "zh" ? "en" : "zh");
-												setError(false);
-											} else {
-												Snackbar.show({
-													text: getStr("calendarNotFound"),
-													duration: Snackbar.LENGTH_SHORT,
-												});
-											}
-										} else {
-											NetworkRetry();
-										}
-									},
-								},
-							},
-						]}
+						imageUrls={[{url: src}]}
 						style={{marginHorizontal: 10, borderRadius: 8}}
 						backgroundColor={colors.contentBackground}
 						onSave={saveRemoteImg}
@@ -96,9 +58,6 @@ export const SchoolCalendar = () => {
 							cancel: getStr("cancel"),
 						}}
 						renderIndicator={() => <View />}
-						renderImage={(props) => (
-							<Image {...props} onError={props.onError} />
-						)}
 					/>
 				)}
 			</RoundedView>
