@@ -133,7 +133,6 @@ import Share from "react-native-share";
 import {NetworkScreen} from "../ui/home/network";
 import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
-import IconPeek from "../assets/icons/IconPeek";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
 
@@ -432,16 +431,7 @@ export const Root = () => {
 			<Stack.Screen
 				name="Report"
 				component={ReportScreen}
-				options={({navigation}) => ({
-					title: getStr("report"),
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
-							onPress={() => navigation.navigate("PeekScore")}>
-							<IconPeek width={24} height={24} />
-						</TouchableOpacity>
-					),
-				})}
+				options={{title: getStr("report")}}
 			/>
 			<Stack.Screen
 				name="PeekScore"
