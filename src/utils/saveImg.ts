@@ -51,6 +51,11 @@ export const saveImg = async (uri: string) => {
 
 export const saveRemoteImg = async (url: string) => {
 	try {
+		if (url.startsWith("data:")) {
+			await saveDataImg(url);
+			return;
+		}
+
 		const fileName = `${RNFS.DocumentDirectoryPath}/${md5(url)}.jpeg`;
 		const cookies = await CookieManager.get(url);
 		const Cookie = Object.keys(cookies)
@@ -65,4 +70,30 @@ export const saveRemoteImg = async (url: string) => {
 	} catch (e) {
 		NetworkRetry();
 	}
+};
+
+export const saveDataImg = async (data: string) => {
+	if (!data.startsWith("data:")) {
+		throw new Error("data is not of data format");
+	}
+
+	const mime = data.split(",")[0].split(";")[0].split(":")[1];
+	const type = mime.split("/")[0];
+	const ext = mime.split("/")[1];
+	const base64 = data.split(",")[1];
+
+	if (type !== "image") {
+		throw new Error("data is not of image format");
+	}
+
+	const path = RNFS.DocumentDirectoryPath + "/tempBase64Image." + ext;
+
+	RNFS.writeFile(path, base64, "base64")
+		.then(() => saveImg("file://" + path))
+		.catch(() =>
+			Snackbar.show({
+				text: getStr("saveFailRetry"),
+				duration: Snackbar.LENGTH_SHORT,
+			}),
+		);
 };
