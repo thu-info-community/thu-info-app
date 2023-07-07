@@ -3155,12 +3155,12 @@ crc-32@~1.2.0, crc-32@~1.2.1:
   resolved "https://registry.yarnpkg.com/crc-32/-/crc-32-1.2.2.tgz#3cad35a934b8bf71f25ca524b6da51fb7eace2ff"
   integrity sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==
 
-cross-fetch@3.1.6:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.6.tgz#bae05aa31a4da760969756318feeee6e70f15d6c"
-  integrity sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==
+cross-fetch@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-4.0.0.tgz#f037aef1580bb3a1a35164ea2a848ba81b445983"
+  integrity sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==
   dependencies:
-    node-fetch "^2.6.11"
+    node-fetch "^2.6.12"
 
 cross-spawn@^5.0.1:
   version "5.1.0"
@@ -3225,11 +3225,6 @@ csstype@^3.0.2:
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.11.tgz#d66700c5eacfac1940deb4e3ee5642792d85cd33"
   integrity sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==
-
-dayjs@1.11.8:
-  version "1.11.8"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.8.tgz#4282f139c8c19dd6d0c7bd571e30c2d0ba7698ea"
-  integrity sha512-LcgxzFoWMEPO7ggRv1Y2N31hUf2R0Vj7fuy/m+Bg1K8rr+KAs1AEy4y9jd5DXe8pbHgX+srkHNS7TH6Q6ZhYeQ==
 
 dayjs@1.11.9:
   version "1.11.9"
@@ -6371,10 +6366,10 @@ node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^2.6.11:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.11.tgz#cde7fc71deef3131ef80a738919f999e6edfff25"
-  integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
+node-fetch@^2.6.12:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.12.tgz#02eb8e22074018e3d5a83016649d04df0e348fba"
+  integrity sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -7938,15 +7933,15 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.4.0.tgz#99b0ad62531053a87d4b31b3c5fafdf820a15676"
-  integrity sha512-N1O9A+0/aMk8A6FiYtTESWZqkkTBLRwOh9REwh4DAika8h+For+uEg3ENdwzElq+hXaoz6/tEhp1rHYMBfejgQ==
+thu-info-lib@6.4.1:
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.4.1.tgz#ce9560bdd7afc99139385302fc1492efda7eb34d"
+  integrity sha512-YR5EfLLAONh/XDYbjgEKDbmYoLHGFeTCK+HKCQLrlrMCSbh65HjqEUoDWUcYVuCPvSyhuRXEwz93YbgK70dSjg==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
-    cross-fetch "3.1.6"
-    dayjs "1.11.8"
+    cross-fetch "4.0.0"
+    dayjs "1.11.9"
     he "^1.2.0"
     iconv-lite "0.6.3"
     image-size "^1.0.1"
