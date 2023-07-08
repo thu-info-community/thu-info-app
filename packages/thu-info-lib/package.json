@@ -64,7 +64,7 @@
         "node-polyfill-webpack-plugin": "2.0.1",
         "pre-commit": "1.2.2",
         "readline-sync": "1.4.10",
-        "semver": "7.5.3",
+        "semver": "7.5.4",
         "ts-jest": "29.1.1",
         "ts-loader": "9.4.4",
         "typescript": "5.1.6",
