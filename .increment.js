@@ -30,4 +30,4 @@ for (const rawCommitMsg of rawCommitLog) {
 commitLog.push("Updated dependencies");
 
 console.log("------------\n" + commitLog.join("\n"));
-fs.writeFileSync("./release", commitLog.join("\n"));
+fs.writeFileSync("./commit-log.txt", commitLog.join("\n"));
