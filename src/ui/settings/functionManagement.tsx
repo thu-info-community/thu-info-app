@@ -10,24 +10,23 @@ import {styles} from "./settings";
 import {HomeFunction} from "../home/home";
 import {top5Set} from "../../redux/slices/top5";
 
-const functions: HomeFunction[] = [
-	"physicalExam",
-	"teachingEvaluation",
-	"report",
-	"classroomState",
-	"library",
-	"sportsBook",
-	"libRoomBook",
-	"expenditure",
-	"bankPayment",
-	"invoice",
-	"washer",
-	"qzyq",
-	"dormScore",
-	"electricity",
-	"networkDetail",
-	"onlineDevices",
-];
+// Function group names are also used as i18n keys
+type functionGroups =
+	| "functionManagementTip"
+	| "seasonalFeatures"
+	| "reservation"
+	| "campusFinance"
+	| "dorm"
+	| "network";
+
+const functions: {[key in functionGroups]: HomeFunction[]} = {
+	functionManagementTip: ["report", "classroomState", "schoolCalendar"],
+	seasonalFeatures: ["physicalExam", "teachingEvaluation"],
+	reservation: ["library", "sportsBook", "libRoomBook"],
+	campusFinance: ["expenditure", "bankPayment", "invoice"],
+	dorm: ["washer", "qzyq", "dormScore", "electricity"],
+	network: ["networkDetail", "onlineDevices"],
+};
 
 const FunctionItem = ({
 	func,
@@ -94,104 +93,34 @@ export const FunctionManagementScreen = () => {
 		}
 	};
 
+	const FunctionGroup = (name: functionGroups) => {
+		return (
+			<View key={name}>
+				<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
+					{getStr(name)}
+				</Text>
+				<RoundedView style={[style.rounded, {marginTop: 12}]}>
+					{functions[name].map((f, index) => (
+						<FunctionItem
+							key={f}
+							func={f}
+							needSeparator={index !== 0}
+							value={!disabledFuncList.includes(f)}
+							onValueChange={(value) => {
+								handleValueChange(f, value);
+							}}
+						/>
+					))}
+				</RoundedView>
+			</View>
+		);
+	};
+
 	return (
 		<ScrollView style={{flex: 1, padding: 12}}>
-			<Text style={{marginLeft: 8, color: colors.fontB2}}>
-				{getStr("functionManagementTip")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(2, 4).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("seasonalFeatures")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(0, 2).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("reservation")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(4, 7).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("campusFinance")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(7, 10).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("dorm")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(10, 14).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("network")}
-			</Text>
-			<RoundedView style={[style.rounded, {marginTop: 12}]}>
-				{functions.slice(14, 16).map((f, index) => (
-					<FunctionItem
-						key={f}
-						func={f}
-						needSeparator={index !== 0}
-						value={!disabledFuncList.includes(f)}
-						onValueChange={(value) => {
-							handleValueChange(f, value);
-						}}
-					/>
-				))}
-			</RoundedView>
+			{Object.keys(functions).map((name) =>
+				FunctionGroup(name as functionGroups),
+			)}
 			<View style={{marginBottom: 16}} />
 		</ScrollView>
 	);
