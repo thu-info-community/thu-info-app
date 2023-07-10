@@ -323,6 +323,7 @@ export default {
 	newsSub: "Subscription Management",
 	newsSource: "Source",
 	newsChannel: "Channel",
+	newsKeyword: "Input news keyword here",
 	newsSubSourceSelect: "Select Source",
 	newsSubChannelSelect: "Select Channel",
 	newsSubTip: "You must select at least one of the source and channel",

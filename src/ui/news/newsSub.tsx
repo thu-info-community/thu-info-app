@@ -1,6 +1,7 @@
 import {
 	ScrollView,
 	Text,
+	TextInput,
 	TouchableOpacity,
 	useColorScheme,
 	View,
@@ -95,6 +96,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 	const [sourceSelected, setSourceSelected] = useState(emptySource);
 	const emptyChannel = {id: "", title: getStr("notSelected")};
 	const [channelSelected, setChannelSelected] = useState(emptyChannel);
+	const [keyword, setKeyword] = useState("");
 
 	const fetchSubscriptionList = () => {
 		helper.getNewsSubscriptionList().then(setSubList).catch(NetworkRetry);
@@ -185,6 +187,22 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 							<IconRight height={24} width={24} />
 						</View>
 					</TouchableOpacity>
+					<View
+						style={{
+							height: 1,
+							backgroundColor: theme.colors.themeGrey,
+							marginVertical: 12,
+						}}
+					/>
+					<TextInput
+						style={{
+							color: theme.colors.text,
+							padding: 0,
+							fontSize: 16,
+						}}
+						placeholder={getStr("newsKeyword")}
+						onChangeText={setKeyword}
+					/>
 				</RoundedView>
 				<Text
 					style={{
@@ -221,6 +239,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 									// @ts-ignore
 									channelSelected.id,
 									sourceSelected.sourceId,
+									keyword,
 								)
 								.then((res) => {
 									if (res) {

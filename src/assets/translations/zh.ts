@@ -300,6 +300,7 @@ export default {
 	newsSub: "订阅管理",
 	newsSource: "发布单位",
 	newsChannel: "栏目",
+	newsKeyword: "在此输入新闻关键词",
 	newsSubSourceSelect: "选择发布单位",
 	newsSubChannelSelect: "选择栏目",
 	newsSubTip: "您必须至少选择发布单位和栏目中的任意一个",
