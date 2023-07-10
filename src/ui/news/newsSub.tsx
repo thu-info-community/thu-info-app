@@ -28,15 +28,18 @@ const NewsSubItem = ({
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const makeStr = () => {
-		if (newsSub.source && newsSub.channel) {
-			return `${newsSub.title}: ${newsSub.source} | ${newsSub.channel}`;
-		}
+		let components: string[] = [];
 		if (newsSub.source) {
-			return `${newsSub.title}: ${newsSub.source}`;
+			components.push(newsSub.source);
 		}
 		if (newsSub.channel) {
-			return `${newsSub.title}: ${newsSub.channel}`;
+			components.push(newsSub.channel);
 		}
+		if (newsSub.keyword) {
+			components.push(newsSub.keyword);
+		}
+
+		return newsSub.title + ": " + components.join(" | ");
 	};
 	return (
 		<View
