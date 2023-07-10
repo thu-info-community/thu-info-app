@@ -93,7 +93,7 @@ export const NEWS_FAVOR_LIST_URL =
 export const NEWS_SUBSCRIPTION_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeConditionNameList/XXFB";
 export const NEWS_SOURCE_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeUnitList";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeInformationUnitList";
 export const NEWS_CHANNEL_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/xxfb_fg/teacher/lm/subscribe/getlmListByDwh";
 export const NEWS_ADD_SUBSCRIPTION_URL =

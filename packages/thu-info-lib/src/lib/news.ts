@@ -128,7 +128,7 @@ export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSu
 };
 
 export const getNewsSourceList = async (helper: InfoHelper): Promise<{ sourceId: string, sourceName: string }[]> => {
-    const json = await uFetch(`${NEWS_SOURCE_LIST_URL}?_csrf=${await getCsrfToken()}`);
+    const json = await uFetch(`${NEWS_SOURCE_LIST_URL}?lmid=&_csrf=${await getCsrfToken()}`);
     const data: { object: { id: string, text: string }[] } = JSON.parse(json);
     return data.object.map(i => {
         return {
