@@ -1,1 +1,3 @@
-fix: english academic calendar before 2021
+fix: Fix news subscription url (#91)
+feat: Added news keyword (title) filter (#92)
+chore: Updated dependencies
