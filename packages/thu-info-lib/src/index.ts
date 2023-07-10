@@ -614,9 +614,11 @@ export class InfoHelper {
      * if channelId and sourceId is null or undefined at the same time, this function will terminate and return false.
      * @param channelId channel id
      * @param sourceId source id
+     * @param keyword news keyword
      * @returns
      */
-    public addNewsSubscription = async (channelId?: ChannelTag, sourceId?: string): Promise<boolean> => addNewsSubscription(this, channelId, sourceId);
+    public addNewsSubscription = async (channelId?: ChannelTag, sourceId?: string, keyword?: string): Promise<boolean> =>
+        addNewsSubscription(this, channelId, sourceId, keyword);
 
     /**
      * Remove a news subscription.

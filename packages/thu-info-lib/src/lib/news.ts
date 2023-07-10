@@ -115,11 +115,12 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
 export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSubscription[]> => {
     const json = await uFetch(`${NEWS_SUBSCRIPTION_LIST_URL}?_csrf=${await getCsrfToken()}`);
     // I think the pxz is the order of subscriptions
-    const data: { object: { id: string, fbdwmcList: string[], lmmcList: string[], pxz: number, titile: string }[] } = JSON.parse(json);
+    const data: { object: { id: string, fbdwmcList: string[], lmmcList: string[], pxz: number, titile: string, bt: string | null }[] } = JSON.parse(json);
     return data.object.map((i) => {
         return {
             channel: i.lmmcList?.[0],
             source: i.fbdwmcList?.[0],
+            keyword: i.bt ?? "",
             id: i.id,
             title: i.titile,
             order: i.pxz,
@@ -149,12 +150,12 @@ export const getNewsChannelList = async (h: InfoHelper, needEnglish: boolean): P
     });
 };
 
-export const addNewsSubscription = async (h: InfoHelper, channelId?: ChannelTag, sourceId?: string): Promise<boolean> => {
+export const addNewsSubscription = async (h: InfoHelper, channelId?: ChannelTag, sourceId?: string, keyword?: string): Promise<boolean> => {
     if (!channelId && !sourceId)
         return false;
     const json = await uFetch(`${NEWS_ADD_SUBSCRIPTION_URL}?_csrf=${await getCsrfToken()}`,
         {
-            dygz: JSON.stringify({lmid: !channelId ? undefined : channelId, fbdwnm: !sourceId ? undefined : sourceId, bt: ""}),
+            dygz: JSON.stringify({lmid: !channelId ? undefined : channelId, fbdwnm: !sourceId ? undefined : sourceId, bt: keyword ?? ""}),
             mkid: "XXFB",
         });
     const data: { result: string } = JSON.parse(json);

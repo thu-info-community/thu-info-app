@@ -16,6 +16,7 @@ export interface NewsSlice {
 export interface NewsSubscription {
     readonly channel?: string;
     readonly source?: string;
+    readonly keyword?: string;
     readonly id: string;
     readonly title: string;
     readonly order: number;
