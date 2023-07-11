@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@formidable-webview/webshell": "2.6.0",
-		"@microsoft/signalr": "7.0.7",
+		"@microsoft/signalr": "7.0.9",
 		"@react-native-async-storage/async-storage": "1.19.0",
 		"@react-native-camera-roll/camera-roll": "5.7.2",
 		"@react-native-community/blur": "4.3.2",
