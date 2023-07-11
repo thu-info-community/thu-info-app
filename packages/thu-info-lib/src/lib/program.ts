@@ -10,7 +10,6 @@ import {
     CourseType,
     ProgramCompletion,
     ProgramFull,
-    ProgramUncompletion
 } from "../models/program/program";
 import {getTrimmedData} from "../utils/cheerio";
 import {ProgramError} from "../utils/error";
@@ -158,7 +157,7 @@ export const getDegreeProgramCompletion = async (helper: InfoHelper) =>
                     if (element.type === "tag") {
                         if (element.children.length === 25) { // 每个课程属性部分的第一个课程
                             courseTypeNow += 1; // 递增课程属性
-                            
+
                             const courseSet = parseCourseSet(element, 1);
                             const course = parseCourse(element, 2);
                             if (course !== undefined) {
@@ -173,7 +172,7 @@ export const getDegreeProgramCompletion = async (helper: InfoHelper) =>
                                 courseSet.course.push(course);
                             }
                             program.courseSet.push(courseSet);
-                            
+
                         } else if (element.children.length === 11) { // 其余课程
                             const course = parseCourse(element, 0);
                             if (course !== undefined) {
@@ -277,7 +276,7 @@ export const getFullDegreeProgram = async (
                             } else {
                                 skippedFlag = false;
                                 courseSetName = name;
-                            
+
                                 const setTypeMap: Record<string, CourseType> = {
                                     "必修": CourseType.COMPULSORY,
                                     "限选": CourseType.RESTRICTED,

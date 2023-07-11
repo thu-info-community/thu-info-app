@@ -67,7 +67,7 @@ export const getEleRechargePayCode = async (
         banktype: "alipay",
     }, 60000, "GBK").then((s) => cheerio("#banksubmit", s));
 
-    return await generalGetPayCode(await uFetch(redirect.attr().action, redirect.serialize() as never as object, 60000, "UTF-8", true), "GBK");
+    return await generalGetPayCode(await uFetch(redirect.attr().action, redirect.serialize() as never as object, 60000, "UTF-8", true));
 };
 
 export const getElePayRecord = async (

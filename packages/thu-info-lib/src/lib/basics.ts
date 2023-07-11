@@ -63,7 +63,6 @@ import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
-import {imageType} from "image-size/dist/types";
 
 type Cheerio = ReturnType<typeof cheerio>;
 type Element = Cheerio[number];

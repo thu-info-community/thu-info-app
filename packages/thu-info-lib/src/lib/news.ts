@@ -112,32 +112,44 @@ export const searchNewsList = async (helper: InfoHelper, page: number, key: stri
     channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
 );
 
-export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSubscription[]> => {
-    const json = await uFetch(`${NEWS_SUBSCRIPTION_LIST_URL}?_csrf=${await getCsrfToken()}`);
-    // I think the pxz is the order of subscriptions
-    const data: { object: { id: string, fbdwmcList: string[], lmmcList: string[], pxz: number, titile: string, bt: string | null }[] } = JSON.parse(json);
-    return data.object.map((i) => {
-        return {
-            channel: i.lmmcList?.[0],
-            source: i.fbdwmcList?.[0],
-            keyword: i.bt ?? "",
-            id: i.id,
-            title: i.titile,
-            order: i.pxz,
-        };
-    });
-};
+export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSubscription[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const json = await uFetch(`${NEWS_SUBSCRIPTION_LIST_URL}?_csrf=${await getCsrfToken()}`);
+        // I think the pxz is the order of subscriptions
+        const data: { object: { id: string, fbdwmcList: string[], lmmcList: string[], pxz: number, titile: string, bt: string | null }[] } = JSON.parse(json);
+        return data.object.map((i) => {
+            return {
+                channel: i.lmmcList?.[0],
+                source: i.fbdwmcList?.[0],
+                keyword: i.bt ?? "",
+                id: i.id,
+                title: i.titile,
+                order: i.pxz,
+            };
+        });
+    },
+    [],
+);
 
-export const getNewsSourceList = async (helper: InfoHelper): Promise<{ sourceId: string, sourceName: string }[]> => {
-    const json = await uFetch(`${NEWS_SOURCE_LIST_URL}?lmid=&_csrf=${await getCsrfToken()}`);
-    const data: { object: { id: string, text: string }[] } = JSON.parse(json);
-    return data.object.map(i => {
-        return {
-            sourceId: i.id,
-            sourceName: i.text,
-        };
-    });
-};
+export const getNewsSourceList = async (helper: InfoHelper): Promise<{ sourceId: string, sourceName: string }[]> => roamingWrapperWithMocks(
+    helper,
+    undefined,
+    "",
+    async () => {
+        const json = await uFetch(`${NEWS_SOURCE_LIST_URL}?lmid=&_csrf=${await getCsrfToken()}`);
+        const data: { object: { id: string, text: string }[] } = JSON.parse(json);
+        return data.object.map(i => {
+            return {
+                sourceId: i.id,
+                sourceName: i.text,
+            };
+        });
+    },
+    [],
+);
 
 export const getNewsChannelList = async (h: InfoHelper, needEnglish: boolean): Promise<{ id: ChannelTag, title: string }[]> => {
     const json = await uFetch(`${NEWS_CHANNEL_LIST_URL}?_csrf=${await getCsrfToken()}`);
