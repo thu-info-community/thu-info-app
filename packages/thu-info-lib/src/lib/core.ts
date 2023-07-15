@@ -17,7 +17,7 @@ import {InfoHelper} from "../index";
 import {clearCookies, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "gitlab";
+type RoamingPolicy = "default" | "id" | "card" | "gitlab";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -147,6 +147,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         }
         return await uFetch(url);
     }
+    case "card":
     case "id": {
         await uFetch(ID_BASE_URL + payload);
         let response = await uFetch(ID_LOGIN_URL, {
@@ -166,6 +167,11 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             }
         }
         const redirectUrl = cheerio("a", response).attr().href;
+
+        if (policy === "card") {
+            return redirectUrl;
+        }
+
         return await uFetch(redirectUrl);
     }
     case "gitlab": {

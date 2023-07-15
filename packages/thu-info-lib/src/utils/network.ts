@@ -14,6 +14,14 @@ export const clearCookies = () => {
 };
 
 /**
+ * Manually set a cookie.
+ */
+export const setCookie = (key: string, value: string) => {
+    cookies[key] = value;
+
+};
+
+/**
  * An enhanced implementation of `encodeURIComponent`, which supports
  * arbitrary charset.
  */

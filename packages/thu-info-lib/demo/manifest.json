@@ -16,7 +16,8 @@
     "permissions" : [
         "storage",
         "tabs",
-        "https://webvpn.tsinghua.edu.cn/*"
+        "https://webvpn.tsinghua.edu.cn/*",
+        "https://card.tsinghua.edu.cn/*"
     ],
     "browser_action": {
         "default_title": "thu-info-lib tester"

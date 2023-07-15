@@ -9,3 +9,4 @@ secrets.json
 demo.zip
 *.jpg
 .DS_Store
+/demo

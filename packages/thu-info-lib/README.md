@@ -37,6 +37,7 @@ We support a wide range of APIs:
 - Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)
 - Network (`getNetworkDetail`, `getOnlineDevices`, `getNetworkBalance`)
 - THOS (`getScoreByCourseId`)
+- New Campus Card (`loginCampusCard`, `getCampusCardInfo`, `getCampusCardPhotoUrl`, `getCampusCardTransactions`, `changeCampusCardPassword`, `modifyCampusCardMaxTransactionAmount`, `reportCampusCardLoss`, `cancelCampusCardLoss`, `rechargeCampusCard`)
 
 Usages are documented in `dist/index` and also between the codes.
 

@@ -128,6 +128,17 @@ import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
 import {uFetch} from "./utils/network";
 import {getNetworkBalance, getNetworkDetail, getOnlineDevices} from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
+import {
+    cardCancelLoss, cardChangeTransactionPassword,
+    cardGetInfo,
+    cardGetPhotoUrl,
+    cardGetTransactions,
+    cardLogin, cardModifyMaxTransactionAmount,
+    cardRechargeFromBank, cardRechargeFromWechatAlipay,
+    cardReportLoss,
+} from "./lib/card";
+import {CardTransactionType} from "./models/card/transaction";
+import {CardRechargeType} from "./models/card/recharge";
 
 export class InfoHelper {
     public userId = "";
@@ -925,6 +936,44 @@ export class InfoHelper {
     public getNetworkBalance = async () => getNetworkBalance(this);
 
     public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
+
+    public loginCampusCard = async () => cardLogin(this);
+
+    public getCampusCardInfo = async () => cardGetInfo(this);
+
+    public getCampusCardPhotoUrl = async () => cardGetPhotoUrl();
+
+    /**
+     * Get the campus card transactions.
+     * @param start
+     * @param end
+     * @param type -1 for all (1-3), 1 for consumption, 2 for recharge, 3 for subsidy, 0 for ALL (?)
+     */
+    public getCampusCardTransactions = async (start: Date, end: Date, type: CardTransactionType) =>
+        cardGetTransactions(this, start, end, type);
+
+    public changeCampusCardPassword = async (oldPassword: string, newPassword: string) => cardChangeTransactionPassword(this, oldPassword, newPassword);
+
+    public modifyCampusCardMaxTransactionAmount = async (transactionPassword: string, maxDailyAmount: number, maxOneTimeAmount: number) =>
+        cardModifyMaxTransactionAmount(this, transactionPassword, maxDailyAmount, maxOneTimeAmount);
+
+    public reportCampusCardLoss = async (transactionPassword: string) => cardReportLoss(this, transactionPassword);
+
+    public cancelCampusCardLoss = async (transactionPassword: string) => cardCancelLoss(this, transactionPassword);
+
+    /**
+     * Recharge the campus card.
+     * @param amount in yuan
+     * @param transactionPassword
+     * @param type 0 for Bank Card, 1 for Alipay, 2 for Wechat Pay
+     */
+    public rechargeCampusCard = async (amount: number, transactionPassword: string, type: CardRechargeType) => {
+        if (type === CardRechargeType.Bank) {
+            return cardRechargeFromBank(this, transactionPassword, amount);
+        }
+
+        return cardRechargeFromWechatAlipay(this, amount, type === CardRechargeType.Alipay);
+    };
 }
 
 export class Water {
