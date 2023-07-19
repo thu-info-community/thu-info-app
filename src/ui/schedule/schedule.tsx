@@ -1,5 +1,5 @@
 import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
-import {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
 	ExamTimeSlice,
@@ -96,8 +96,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	})();
 	const today = current.day() === 0 ? 7 : current.day();
 
-	const [week, setWeek] = useState(nowWeek);
-
 	const semesterType = Number(semesterId[semesterId.length - 1]);
 
 	const themeName = useColorScheme();
@@ -169,10 +167,13 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		return weekSchedule;
 	};
 
-	const flatListRef = useRef<FlatList>(null);
+	let setWeekRef: React.Dispatch<React.SetStateAction<number>> | null = null;
 
-	return (
-		<>
+	const Header = () => {
+		const [week, setWeek] = useState(nowWeek);
+		setWeekRef = setWeek;
+
+		return (
 			<View
 				style={{
 					paddingVertical: 4,
@@ -214,7 +215,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												borderRadius: 8,
 											}}
 											onPress={() => {
-												setWeek(weekButton);
 												flatListRef.current?.scrollToIndex({
 													index: weekButton - 1,
 												});
@@ -289,7 +289,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</View>
 			</View>
+		);
+	};
 
+	const flatListRef = useRef<FlatList>(null);
+
+	return (
+		<>
+			<Header />
 			<View style={{flex: 1}}>
 				<ScrollView
 					onLayout={({nativeEvent}) => {
@@ -396,6 +403,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								ref={flatListRef}
 								horizontal={true}
 								showsHorizontalScrollIndicator={false}
+								initialNumToRender={3}
 								getItemLayout={(_, index) => ({
 									length: scheduleBodyWidth,
 									offset: scheduleBodyWidth * index,
@@ -538,14 +546,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 										</View>
 									</View>
 								)}
-								initialScrollIndex={week - 1}
+								initialScrollIndex={nowWeek - 1}
 								onScroll={({nativeEvent}) => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
-									if (week !== index + 1) {
-										setWeek(index + 1);
-									}
+									setWeekRef && setWeekRef(index + 1);
 								}}
 								snapToInterval={scheduleBodyWidth}
 								decelerationRate="fast"
