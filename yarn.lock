@@ -6851,10 +6851,10 @@ react-native-webview@13.2.3:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native-wheel-scrollview-picker@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-wheel-scrollview-picker/-/react-native-wheel-scrollview-picker-2.0.1.tgz#130fb9c4c6080376d4166d53e626c67d65193931"
-  integrity sha512-jNhOU/gsw9TDumMev4vMaIfR9Coicc4Pgo3kizdam0UC0NQga1gpLWnXuZoYIwEIDElwbHXAEGINOoiF1MM5Hw==
+react-native-wheel-scrollview-picker@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-wheel-scrollview-picker/-/react-native-wheel-scrollview-picker-2.0.3.tgz#310ec58f061e2065e6709b03aa38fffc605fac30"
+  integrity sha512-Wdihuy61BrDZKS4oYEOxh8O5A7hZ8PFSkZWW+UHG7sZtNmwoyqa8tGYiNIpuieNuxRf5hyEn2KS+5EuTuXr0eQ==
 
 react-native@0.72.3:
   version "0.72.3"
