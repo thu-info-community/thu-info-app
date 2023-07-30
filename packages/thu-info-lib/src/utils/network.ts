@@ -122,10 +122,17 @@ export const uFetch = async (
         // Manage cookies
         response.headers.forEach((value, key) => {
             if (key === "set-cookie") {
-                for (const v of value.split(",")) {
-                    const segment = v.split(";")[0];
+                // TODO: check relevant specifications and rewrite this
+                if (value.includes("Expires")) {
+                    const segment = value.split(";")[0];
                     const [item, val] = segment.split("=");
                     cookies[item.trim()] = val.trim();
+                } else {
+                    for (const v of value.split(",")) {
+                        const segment = v.split(";")[0];
+                        const [item, val] = segment.split("=");
+                        cookies[item.trim()] = val.trim();
+                    }
                 }
             }
         });

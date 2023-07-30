@@ -1,6 +1,4 @@
 import {
-    CONFIRM_LOGIN_URL,
-    DO_LOGIN_URL,
     GET_COOKIE_URL,
     GITLAB_AUTH_URL,
     GITLAB_LOGIN_URL,
@@ -11,6 +9,8 @@ import {
     LOGOUT_URL,
     ROAMING_URL,
     USER_DATA_URL,
+    WEB_VPN_ID_LOGIN_URL,
+    WEB_VPN_OAUTH_LOGIN_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
@@ -83,25 +83,20 @@ export const login = async (
                     reject(new LoginError("Login timeout."));
                 }, 30000);
                 (async () => {
-                    const $ = cheerio.load(await uFetch(LOGIN_URL));
-                    const loginResponse = await uFetch(DO_LOGIN_URL, {
-                        auth_type: "local",
-                        username: userId,
-                        sms_code: "",
-                        password: password,
-                        captcha: "",
-                        needCaptcha: false,
-                        captcha_id: $("input[name=captcha_id]").attr().value,
-                    }).then(JSON.parse);
-                    if (!loginResponse.success) {
-                        switch (loginResponse.error) {
-                        case "NEED_CONFIRM":
-                            await uFetch(CONFIRM_LOGIN_URL, {});
-                            break;
-                        default:
-                            throw new LoginError(loginResponse.message);
-                        }
+                    await uFetch(LOGIN_URL);
+                    await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
+                    const response = await uFetch(WEB_VPN_ID_LOGIN_URL, {
+                        i_user: helper.userId,
+                        i_pass: helper.password,
+                        i_captcha: "",
+                    });
+                    if (!response.includes("登录成功。正在重定向到")) {
+                        const $ = cheerio.load(response);
+                        const message = $("#msg_note").text().trim();
+                        throw new LoginError(message);
                     }
+                    const redirectUrl = cheerio("a", response).attr().href;
+                    await uFetch(redirectUrl);
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
                 })().then(resolve, (e: any) => {
