@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "build": "tsc",
-        "test": "jest",
+        "test": "OPENSSL_CONF=${PWD}/openssl.cnf jest",
         "play": "node -r esm --experimental-repl-await",
         "demo": "node -r esm demo.js",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",

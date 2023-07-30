@@ -14,7 +14,7 @@ import {
 } from "../constants/strings";
 import cheerio from "cheerio";
 import {InfoHelper} from "../index";
-import {clearCookies, uFetch} from "../utils/network";
+import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
 type RoamingPolicy = "default" | "id" | "card" | "gitlab";
@@ -96,7 +96,10 @@ export const login = async (
                         throw new LoginError(message);
                     }
                     const redirectUrl = cheerio("a", response).attr().href;
-                    await uFetch(redirectUrl);
+                    await getRedirectUrl(redirectUrl);
+                    if (redirectUrl === LOGIN_URL) {
+                        throw new LoginError("登录失败，请稍后重试。");
+                    }
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
                 })().then(resolve, (e: any) => {
