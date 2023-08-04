@@ -600,7 +600,7 @@ export class InfoHelper {
         page: number,
         key: string,
         channel?: ChannelTag
-    ): Promise<NewsSlice[]> => searchNewsList(this, page, key, channel);
+    ): Promise<NewsSlice[]> => searchNewsList(this, page, key, channel, true);
 
     /**
      * Get all news subscription items.

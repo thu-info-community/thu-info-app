@@ -77,40 +77,43 @@ const channelToLmmc = (channel: ChannelTag): string => {
  * @param page
  * @param key
  * @param channel
+ * @param exactMatch
  */
-export const searchNewsList = async (helper: InfoHelper, page: number, key: string, channel?: ChannelTag): Promise<NewsSlice[]> => roamingWrapperWithMocks(
-    helper,
-    undefined,
-    "",
-    async () => {
-        const newsList: NewsSlice[] = [];
-        const json = await uFetch(
-            `${SEARCH_NEWS_LIST_URL}?_csrf=${await getCsrfToken()}`,
-            {esParamClass: JSON.stringify({
-                params: { bt: key, tag: key, xxfl: key },
-                filterParams: channel === undefined ? {} : { lmmcgroup: channelToLmmc(channel) },
-                orderMap: { sort: "time" },
-                matchExact: "否",
-                currentPage: page,
-            })},
+export const searchNewsList =
+    async (helper: InfoHelper, page: number, key: string, channel?: ChannelTag, exactMatch?: boolean): Promise<NewsSlice[]> =>
+        roamingWrapperWithMocks(
+            helper,
+            undefined,
+            "",
+            async () => {
+                const newsList: NewsSlice[] = [];
+                const json = await uFetch(
+                    `${SEARCH_NEWS_LIST_URL}?_csrf=${await getCsrfToken()}`,
+                    {esParamClass: JSON.stringify({
+                        params: { bt: key, tag: key, xxfl: key },
+                        filterParams: channel === undefined ? {} : { lmmcgroup: channelToLmmc(channel) },
+                        orderMap: { sort: "time" },
+                        matchExact: exactMatch === true ? "是" : "否",
+                        currentPage: page,
+                    })},
+                );
+                const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
+                data.object.resultsList.forEach(element => {
+                    newsList.push({
+                        name: cheerio.load(decode(element.bt)).root().text(),
+                        xxid: (element.xxid),
+                        url: decode(element.url),
+                        date: element.time,
+                        source: element.dwmc_show,
+                        topped: false,
+                        channel: element.lmid,
+                        inFav: element.sfsc,
+                    });
+                });
+                return newsList;
+            },
+            channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
         );
-        const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
-        data.object.resultsList.forEach(element => {
-            newsList.push({
-                name: cheerio.load(decode(element.bt)).root().text(),
-                xxid: (element.xxid),
-                url: decode(element.url),
-                date: element.time,
-                source: element.dwmc_show,
-                topped: false,
-                channel: element.lmid,
-                inFav: element.sfsc,
-            });
-        });
-        return newsList;
-    },
-    channel ? MOCK_NEWS_LIST(channel) : MOCK_NEWS_LIST("LM_JWGG").concat(MOCK_NEWS_LIST("LM_BGTG").concat(MOCK_NEWS_LIST("LM_HB"))),
-);
 
 export const getNewsSubscriptionList = async (helper: InfoHelper):Promise<NewsSubscription[]> => roamingWrapperWithMocks(
     helper,
