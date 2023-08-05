@@ -5,7 +5,7 @@ import themes from "../themes/themes";
 export default ({size, active}: {size: number; active: boolean}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const color = active ? theme.colors.mainTheme : "#0000";
+	const color = active ? theme.colors.mainTheme : theme.colors.transparent;
 	return (
 		<Svg viewBox="0 0 48 48" width={size} height={size} fill="none">
 			<Path fill={color} d="M9 18v24h30V18L24 6 9 18Z" />

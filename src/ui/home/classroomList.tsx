@@ -41,7 +41,10 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 					onRefresh={refresh}
 					colors={[colors.accent]}
 				/>
-			}>
+			}
+			style={{
+				paddingHorizontal: 10,
+			}}>
 			<View
 				style={{
 					flexWrap: "wrap",
@@ -53,21 +56,14 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 						key={classroom.name}
 						style={{
 							backgroundColor: colors.themeBackground,
-							padding: 7,
-							marginHorizontal: 5,
+							padding: 5,
+							marginHorizontal: 10,
 							marginTop: 10,
-							width: 120,
-							height: 40,
+							width: 100,
+							height: 50,
 							justifyContent: "center",
-							borderRadius: 3,
-							shadowColor: "grey",
-							shadowOffset: {
-								width: 2,
-								height: 2,
-							},
-							shadowOpacity: 0.8,
-							shadowRadius: 2,
-							borderColor: "#aaa",
+							borderRadius: 8,
+							borderColor: colors.themeGrey,
 							borderWidth: 2,
 						}}
 						onPress={() => navigation.navigate("ClassroomDetail", classroom)}>

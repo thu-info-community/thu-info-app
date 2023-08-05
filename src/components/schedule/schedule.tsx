@@ -1,5 +1,6 @@
 import {useState} from "react";
-import {Text, TouchableOpacity} from "react-native";
+import {Text, TouchableOpacity, useColorScheme} from "react-native";
+import themes from "../../assets/themes/themes";
 
 interface ScheduleBlockProps {
 	dayOfWeek: number;
@@ -15,12 +16,15 @@ interface ScheduleBlockProps {
 }
 
 export const ScheduleBlock = (props: ScheduleBlockProps) => {
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
+
 	// TODO: maybe some special judge?
 	const gridHalfWidth = props.gridWidth / 2;
 	const gridHalfHeight = props.gridHeight / 2;
 
 	const blockInterval = props.blockInterval || 1;
-	const blockColor = props.blockColor || "#1f1e33";
+	const blockColor = props.blockColor || colors.themePurple;
 
 	const blockLeftPos =
 		(props.dayOfWeek * 2 - 2) * gridHalfWidth + // Block Width

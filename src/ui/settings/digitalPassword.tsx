@@ -135,7 +135,7 @@ export const DigitalPasswordScreen = ({
 								paddingHorizontal: 12,
 								paddingVertical: 8,
 								borderWidth: 2,
-								borderColor: isFocused ? colors.mainTheme : "#DDDDDD",
+								borderColor: isFocused ? colors.mainTheme : colors.themeGrey,
 								borderRadius: 12,
 								justifyContent: "center",
 								marginLeft: index === 0 ? 0 : 12,

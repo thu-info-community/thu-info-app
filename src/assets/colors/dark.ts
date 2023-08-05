@@ -9,6 +9,7 @@ export const colorDark: ColorTheme = {
 	contentBackground: "#222222",
 	themeBackground: "#000000",
 	inputBorder: "#333333",
+	transparent: "#00000000",
 
 	// to be decided
 	mainTheme: "#672AD7",
@@ -30,4 +31,14 @@ export const colorDark: ColorTheme = {
 	themeDarkGrey: "#B5B5B5",
 	themeGrey: "#D6D3DB",
 	themeLightGrey: "#E9E9E9",
+	themeGold: "#FFCC00",
+	courseItemColorList: [
+		"#4DD28D",
+		"#55E4C6",
+		"#E8CE4F",
+		"#E48555",
+		"#8B55E4",
+		"#5599E4",
+		"#BC4C55",
+	],
 };
