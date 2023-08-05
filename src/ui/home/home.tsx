@@ -221,7 +221,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 			}}>
 			<View
 				style={{
-					backgroundColor: "#EAEAEA",
+					backgroundColor: theme.colors.themeGrey,
 					height: 1,
 					marginVertical: 4,
 					marginLeft: 12,
@@ -337,6 +337,9 @@ export const HomeReservationSection = () => {
 };
 
 export const HomeScheduleSection = () => {
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+
 	const firstDay = useSelector((s: State) => s.config.firstDay);
 	const baseSchedule = useSelector(
 		(s: State) => s.schedule.baseSchedule,
@@ -348,15 +351,7 @@ export const HomeScheduleSection = () => {
 	const tomorrow = today + 1;
 	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
 	const is24Hour = useSelector((s: State) => s.config.is24Hour) ?? false;
-	const colorList: string[] = [
-		"#4DD28D",
-		"#55E4C6",
-		"#E8CE4F",
-		"#E48555",
-		"#8B55E4",
-		"#5599E4",
-		"#BC4C55",
-	];
+	const colorList: string[] = theme.colors.courseItemColorList;
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
 	const selectSchedule = (schedules: Schedule[], dayOfWeek: number) => {
@@ -432,9 +427,6 @@ export const HomeScheduleSection = () => {
 	};
 	const todaySchedules = selectSchedule(baseSchedule, today);
 	const tomorrowSchedules = selectSchedule(baseSchedule, tomorrow);
-
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const dayZh = [
@@ -1010,7 +1002,7 @@ const styles = themedStyles((theme) => ({
 		justifyContent: "flex-start",
 	},
 	scheduleSectionContentPrimaryTitle: {
-		color: "#5C179F",
+		color: theme.colors.themeDarkPurple,
 		fontWeight: "bold",
 		paddingTop: 8,
 	},

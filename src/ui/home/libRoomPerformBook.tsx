@@ -300,8 +300,7 @@ export const LibRoomPerformBookScreen = ({
 								{[
 									<TouchableOpacity
 										style={{
-											backgroundColor:
-												colors.text === "#000000" ? "white" : "black",
+											backgroundColor: colors.contentBackground,
 											borderColor: "gray",
 											borderRadius: 5,
 											borderWidth: 1,
@@ -350,8 +349,7 @@ export const LibRoomPerformBookScreen = ({
 											}
 											key={id}
 											style={{
-												backgroundColor:
-													colors.text === "#000000" ? "white" : "black",
+												backgroundColor: colors.contentBackground,
 												borderColor: "gray",
 												borderRadius: 5,
 												borderWidth: 1,
@@ -401,8 +399,7 @@ export const LibRoomPerformBookScreen = ({
 								}
 								key={id}
 								style={{
-									backgroundColor:
-										colors.text === "#000000" ? "white" : "black",
+									backgroundColor: colors.contentBackground,
 									borderColor: "gray",
 									borderRadius: 5,
 									borderWidth: 1,

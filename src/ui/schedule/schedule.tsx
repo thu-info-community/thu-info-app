@@ -119,15 +119,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const [heightSetup, setHeightSetup] = useState(false);
 
-	const colorList: string[] = [
-		"#4DD28D",
-		"#55E4C6",
-		"#E8CE4F",
-		"#E48555",
-		"#8B55E4",
-		"#5599E4",
-		"#BC4C55",
-	];
+	const colorList: string[] = theme.colors.courseItemColorList;
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(getSchedule, []);

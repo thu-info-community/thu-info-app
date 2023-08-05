@@ -11,6 +11,7 @@ export interface ColorTheme {
 	contentBackground: string;
 	themeBackground: string;
 	inputBorder: string;
+	transparent: string;
 
 	mainTheme: string;
 	fontB0: string;
@@ -31,6 +32,8 @@ export interface ColorTheme {
 	themeDarkGrey: string;
 	themeGrey: string;
 	themeLightGrey: string;
+	themeGold: string;
+	courseItemColorList: string[];
 }
 
 export interface Theme {
