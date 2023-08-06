@@ -1,1 +1,2 @@
-fix: update WebVPN login implementation
+fix(news): set exact match to true when searching (#96)
+fix(card): broken card APIs
