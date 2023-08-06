@@ -12,6 +12,7 @@ import {
 } from "../constants/strings";
 import {CardInfo} from "../models/card/info";
 import {CardTransaction, CardTransactionType} from "../models/card/transaction";
+import {MOCK_CARD_INFO} from "../mocks/card";
 
 const accountBaseInfo = {
     user: "",
@@ -45,11 +46,17 @@ const assureLoginValid = async (helper: InfoHelper) => {
 };
 
 export const cardLogin = async (helper: InfoHelper): Promise<void> => {
+    if (helper.mocked()) {
+        return;
+    }
     await roam(helper, "card", "eea30cbedcaf97c69d28b2d92f22a259/0?/userindex");
     accountBaseInfo.user = (await fetchWithParse(CARD_USER_BY_TOKEN_URL)).loginuser;
 };
 
 export const cardGetInfo = async (helper: InfoHelper): Promise<CardInfo> => {
+    if (helper.mocked()) {
+        return MOCK_CARD_INFO;
+    }
     await assureLoginValid(helper);
 
     const rawInfoStruct = await fetchWithParse(CARD_INFO_BY_USER_URL, {idserial: accountBaseInfo.user});
@@ -86,6 +93,9 @@ export const cardGetTransactions = async (
     end: Date,
     type: CardTransactionType = CardTransactionType.Any)
     : Promise<CardTransaction[]> => {
+    if (helper.mocked()) {
+        return [];
+    }
     await assureLoginValid(helper);
 
     const rawTransactionsData = await fetchWithParse(CARD_TRANSACTION_URL,
@@ -107,6 +117,9 @@ export const cardGetTransactions = async (
 };
 
 export const cardChangeTransactionPassword = async (helper: InfoHelper, oldPassword: string, newPassword: string) => {
+    if (helper.mocked()) {
+        return;
+    }
     await assureLoginValid(helper);
 
     await fetchWithParse(CARD_CHANGE_PWD_URL,
@@ -123,6 +136,9 @@ export const cardModifyMaxTransactionAmount = async (
     transactionPassword: string,
     maxDailyTranscationAmount: number,
     maxOneTimeTranscationAmount: number) => {
+    if (helper.mocked()) {
+        return;
+    }
     await assureLoginValid(helper);
 
     if (accountBaseInfo.cardId === "") {
@@ -138,6 +154,9 @@ export const cardModifyMaxTransactionAmount = async (
 };
 
 export const cardReportLoss = async (helper: InfoHelper, transactionPassword: string) => {
+    if (helper.mocked()) {
+        return;
+    }
     await assureLoginValid(helper);
 
     await fetchWithParse(CARD_REPORT_LOSS_URL,
@@ -148,6 +167,9 @@ export const cardReportLoss = async (helper: InfoHelper, transactionPassword: st
 };
 
 export const cardCancelLoss = async (helper: InfoHelper, transactionPassword: string) => {
+    if (helper.mocked()) {
+        return;
+    }
     await assureLoginValid(helper);
 
     await fetchWithParse(CARD_CANCEL_LOSS_URL,
@@ -158,6 +180,9 @@ export const cardCancelLoss = async (helper: InfoHelper, transactionPassword: st
 };
 
 export const cardRechargeFromBank = async (helper: InfoHelper, transactionPassword: string, amount: number) => {
+    if (helper.mocked()) {
+        return;
+    }
     await assureLoginValid(helper);
 
     await fetchWithParse(CARD_RECHARGE_FROM_BANK_URL,
@@ -174,6 +199,9 @@ const enum CardRechargeType {
 
 export const cardRechargeFromWechatAlipay = async (helper: InfoHelper, amount: number, alipay: boolean)
     : Promise<string> => {
+    if (helper.mocked()) {
+        return "";
+    }
     await assureLoginValid(helper);
 
     const rawResponse = await fetchWithParse(CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL,
