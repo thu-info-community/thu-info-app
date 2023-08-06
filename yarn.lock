@@ -3177,6 +3177,11 @@ crypt@0.0.2:
   resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
   integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
 
+crypto-js@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
+
 crypto-js@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
@@ -7681,14 +7686,15 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@6.6.1:
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.6.1.tgz#9d5d760add833352f8223c800b81cb31f74982ae"
-  integrity sha512-NRdAfSO/B4PP4pdnXaDghWRntBs7IkAkIiDQ+RFIQcwrstZvPw+zPz7s708VEPZ2pm8MFrJYalBUu4d8S14IcQ==
+thu-info-lib@6.6.3:
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-6.6.3.tgz#d1a53bee9e2db478a6afcf15c451b2291063e7e3"
+  integrity sha512-wixexOCRGG+iLPZ7vHRUNkgihkKQHRd1T7KQdUudlU8zlXGMG/fZeyjybC33+lXyVmuxgUfdp4QjuMo45DILhg==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
     cross-fetch "4.0.0"
+    crypto-js "4.1.1"
     dayjs "1.11.9"
     he "^1.2.0"
     iconv-lite "0.6.3"
