@@ -45,6 +45,7 @@
         "abort-controller": "3.0.0",
         "cheerio": "1.0.0-rc.12",
         "cross-fetch": "4.0.0",
+        "crypto-js": "4.1.1",
         "dayjs": "1.11.9",
         "he": "^1.2.0",
         "iconv-lite": "0.6.3",
@@ -54,6 +55,7 @@
     },
     "devDependencies": {
         "@types/cheerio": "0.22.31",
+        "@types/crypto-js": "4.1.1",
         "@types/he": "1.2.0",
         "@typescript-eslint/eslint-plugin": "6.2.1",
         "@typescript-eslint/parser": "6.2.1",

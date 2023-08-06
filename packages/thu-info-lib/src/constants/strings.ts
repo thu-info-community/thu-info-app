@@ -7,10 +7,11 @@ export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn";
 export const LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/login";
 export const WEB_VPN_OAUTH_LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login?oauth_login=true";
-export const WEB_VPN_ID_LOGIN_URL = "https://id.tsinghua.edu.cn/do/off/ui/auth/login/check";
-export const ID_BASE_URL =
+export const ID_BASE_URL = "https://id.tsinghua.edu.cn/do/off/ui/auth/login/form/";
+export const ID_LOGIN_URL = "https://id.tsinghua.edu.cn/do/off/ui/auth/login/check";
+export const WEB_VPN_ID_BASE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/form/";
-export const ID_LOGIN_URL =
+export const WEB_VPN_ID_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/check";
 export const GET_COOKIE_URL =
     "https://webvpn.tsinghua.edu.cn/wengine-vpn/cookie?method=get&host=info2021.tsinghua.edu.cn&scheme=https&path=/f/info/gxfw_fg/common/index";
@@ -253,7 +254,6 @@ export const NETWORK_USER_INFO =
 
 export const THOS_SELECT_ONE_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4/fp/fp/Uniformcommon/selectOnePresetData";
 
-export const CARD_LOGIN_URL = "https://card.tsinghua.edu.cn/login/ticketValidation";
 export const CARD_USER_BY_TOKEN_URL = "https://card.tsinghua.edu.cn/login/getUserInfoFromToken";
 export const CARD_INFO_BY_USER_URL = "https://card.tsinghua.edu.cn/business/getCardUserinfo";
 export const CARD_PHOTO_URL = "https://card.tsinghua.edu.cn/myaccount/showDbImage?idserial=";

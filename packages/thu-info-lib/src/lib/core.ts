@@ -9,6 +9,7 @@ import {
     LOGOUT_URL,
     ROAMING_URL,
     USER_DATA_URL,
+    WEB_VPN_ID_BASE_URL,
     WEB_VPN_ID_LOGIN_URL,
     WEB_VPN_OAUTH_LOGIN_URL,
 } from "../constants/strings";
@@ -85,7 +86,7 @@ export const login = async (
                 (async () => {
                     await uFetch(LOGIN_URL);
                     await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
-                    const response = await uFetch(WEB_VPN_ID_LOGIN_URL, {
+                    const response = await uFetch(ID_LOGIN_URL, {
                         i_user: helper.userId,
                         i_pass: helper.password,
                         i_captcha: "",
@@ -147,15 +148,17 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
     case "card":
     case "id": {
-        await uFetch(ID_BASE_URL + payload);
-        let response = await uFetch(ID_LOGIN_URL, {
+        const idBaseUrl = policy === "card" ? ID_BASE_URL : WEB_VPN_ID_BASE_URL;
+        const idLoginUrl = policy === "card" ? ID_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
+        await uFetch(idBaseUrl + payload);
+        let response = await uFetch(idLoginUrl, {
             i_user: helper.userId,
             i_pass: helper.password,
             i_captcha: "",
         });
         if (!response.includes("登录成功。正在重定向到")) {
-            await uFetch(ID_BASE_URL + payload);
-            response = await uFetch(ID_LOGIN_URL, {
+            await uFetch(idBaseUrl + payload);
+            response = await uFetch(idLoginUrl, {
                 i_user: helper.userId,
                 i_pass: helper.password,
                 i_captcha: "",
@@ -165,10 +168,6 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             }
         }
         const redirectUrl = cheerio("a", response).attr().href;
-
-        if (policy === "card") {
-            return redirectUrl;
-        }
 
         return await uFetch(redirectUrl);
     }

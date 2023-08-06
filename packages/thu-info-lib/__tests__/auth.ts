@@ -29,6 +29,7 @@ it("should login successfully.", async () => {
     expect(weekCount % 3).toEqual(0);
     expect(dayjs(firstDay).day()).toEqual(1);
     await helper.getCrTimetable();
+    expect((await helper.getCampusCardInfo()).balance).toBeGreaterThanOrEqual(0);
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
 }, 60000);

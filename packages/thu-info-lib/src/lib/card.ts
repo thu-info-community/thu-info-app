@@ -1,10 +1,11 @@
+import {AES, enc, mode, pad} from "crypto-js";
 import {roam} from "./core";
 import {InfoHelper} from "../index";
-import {setCookie, uFetch} from "../utils/network";
+import {uFetch} from "../utils/network";
 import {
     CARD_CANCEL_LOSS_URL, CARD_CHANGE_PWD_URL,
     CARD_INFO_BY_USER_URL,
-    CARD_LOGIN_URL, CARD_MOD_MAX_CONSUME_URL,
+    CARD_MOD_MAX_CONSUME_URL,
     CARD_PHOTO_URL, CARD_RECHARGE_FROM_BANK_URL, CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL, CARD_REPORT_LOSS_URL,
     CARD_TRANSACTION_URL, CARD_USER_BY_TOKEN_URL,
     CONTENT_TYPE_JSON,
@@ -19,12 +20,17 @@ const accountBaseInfo = {
 
 const fetchWithParse = async (url: string, jsonStruct: any = {}) => {
     const response = await uFetch(url, JSON.stringify(jsonStruct) as any, undefined, undefined, true, CONTENT_TYPE_JSON);
-    const data = JSON.parse(response);
-    if (data.success !== true) {
-        throw new Error(data.message);
+    const {data, success, resultData} = JSON.parse(response);
+    if (success) {
+        return resultData;
     }
-
-    return data.resultData;
+    const decrypt = AES.decrypt(data.substring(16), enc.Utf8.parse(data.substring(0, 16)), {mode: mode.ECB, padding: pad.Pkcs7});
+    const decString = enc.Utf8.stringify(decrypt).toString();
+    const result = JSON.parse(decString);
+    if (result.success !== true) {
+        throw new Error(result.message);
+    }
+    return result.resultData;
 };
 
 const assureLoginValid = async (helper: InfoHelper) => {
@@ -38,13 +44,9 @@ const assureLoginValid = async (helper: InfoHelper) => {
     }
 };
 
-export const cardLogin = async (helper: InfoHelper): Promise<string> => {
-    const redirectUrl = await roam(helper, "card", "eea30cbedcaf97c69d28b2d92f22a259");
-    const ticket = new RegExp(/ticket=(\w*?)$/).exec(redirectUrl)![1];
-    const token = (await fetchWithParse(CARD_LOGIN_URL, {ticket: ticket})).token;
-    setCookie("token", token);
+export const cardLogin = async (helper: InfoHelper): Promise<void> => {
+    await roam(helper, "card", "eea30cbedcaf97c69d28b2d92f22a259/0?/userindex");
     accountBaseInfo.user = (await fetchWithParse(CARD_USER_BY_TOKEN_URL)).loginuser;
-    return token;
 };
 
 export const cardGetInfo = async (helper: InfoHelper): Promise<CardInfo> => {
