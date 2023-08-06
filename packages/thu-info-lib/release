@@ -1,2 +1,1 @@
-fix(news): set exact match to true when searching (#96)
-fix(card): broken card APIs
+fix: broken news content parsing for library news
