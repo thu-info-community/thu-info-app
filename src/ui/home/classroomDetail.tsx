@@ -201,7 +201,7 @@ export const ClassroomDetailScreen = ({
 									setPopupWeek(selectedIndex + 1);
 								}}
 								wrapperHeight={200}
-								wrapperColor={theme.colors.contentBackground}
+								wrapperBackground={theme.colors.contentBackground}
 								itemHeight={48}
 								highlightColor={theme.colors.themeGrey}
 								highlightBorderWidth={1}
@@ -223,7 +223,7 @@ export const ClassroomDetailScreen = ({
 									setPopupDayOfWeek(selectedIndex + 1);
 								}}
 								wrapperHeight={200}
-								wrapperColor={theme.colors.contentBackground}
+								wrapperBackground={theme.colors.contentBackground}
 								itemHeight={48}
 								highlightColor={theme.colors.themeGrey}
 								highlightBorderWidth={1}

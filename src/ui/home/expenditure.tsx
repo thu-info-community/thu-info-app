@@ -193,7 +193,7 @@ export const ExpenditureScreen = () => {
 												setPopupYear(yearsSorted[selectedIndex]);
 											}}
 											wrapperHeight={200}
-											wrapperColor={colors.contentBackground}
+											wrapperBackground={colors.contentBackground}
 											itemHeight={48}
 											highlightColor={colors.themeGrey}
 											highlightBorderWidth={1}
@@ -213,7 +213,7 @@ export const ExpenditureScreen = () => {
 												setPopupMonth(monthsSorted[selectedIndex]);
 											}}
 											wrapperHeight={200}
-											wrapperColor={colors.contentBackground}
+											wrapperBackground={colors.contentBackground}
 											itemHeight={48}
 											highlightColor={colors.themeGrey}
 											highlightBorderWidth={1}

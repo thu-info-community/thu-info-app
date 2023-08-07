@@ -491,7 +491,7 @@ export const ScheduleAddScreen = ({
 									setPopupDay(selectedIndex + 1);
 								}}
 								wrapperHeight={200}
-								wrapperColor={theme.colors.contentBackground}
+								wrapperBackground={theme.colors.contentBackground}
 								itemHeight={48}
 								highlightColor={theme.colors.themeGrey}
 								highlightBorderWidth={1}
@@ -514,7 +514,7 @@ export const ScheduleAddScreen = ({
 									setPopupPeriodBegin(selectedIndex + 1);
 								}}
 								wrapperHeight={200}
-								wrapperColor={theme.colors.contentBackground}
+								wrapperBackground={theme.colors.contentBackground}
 								itemHeight={48}
 								highlightColor={theme.colors.themeGrey}
 								highlightBorderWidth={1}
@@ -537,7 +537,7 @@ export const ScheduleAddScreen = ({
 									setPopupPeriodEnd(selectedIndex + popupPeriodBegin);
 								}}
 								wrapperHeight={200}
-								wrapperColor={theme.colors.contentBackground}
+								wrapperBackground={theme.colors.contentBackground}
 								itemHeight={48}
 								highlightColor={theme.colors.themeGrey}
 								highlightBorderWidth={1}

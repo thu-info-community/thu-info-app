@@ -82,7 +82,7 @@ export const SchoolCalendar = () => {
 									setYearSelection(index + firstYear);
 								}}
 								wrapperHeight={200}
-								wrapperColor={colors.contentBackground}
+								wrapperBackground={colors.contentBackground}
 								itemHeight={48}
 								highlightColor={colors.themeGrey}
 								highlightBorderWidth={1}
@@ -101,7 +101,7 @@ export const SchoolCalendar = () => {
 									setSemesterSelection(index);
 								}}
 								wrapperHeight={200}
-								wrapperColor={colors.contentBackground}
+								wrapperBackground={colors.contentBackground}
 								itemHeight={48}
 								highlightColor={colors.themeGrey}
 								highlightBorderWidth={1}
