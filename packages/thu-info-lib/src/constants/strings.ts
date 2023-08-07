@@ -254,7 +254,6 @@ export const NETWORK_USER_INFO =
 
 export const THOS_SELECT_ONE_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4/fp/fp/Uniformcommon/selectOnePresetData";
 
-export const CARD_USER_BY_TOKEN_URL = "https://card.tsinghua.edu.cn/login/getUserInfoFromToken";
 export const CARD_INFO_BY_USER_URL = "https://card.tsinghua.edu.cn/business/getCardUserinfo";
 export const CARD_PHOTO_URL = "https://card.tsinghua.edu.cn/myaccount/showDbImage?idserial=";
 export const CARD_TRANSACTION_URL = "https://card.tsinghua.edu.cn/business/querySelfTradeList";

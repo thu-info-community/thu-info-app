@@ -7,7 +7,7 @@ import {
     CARD_INFO_BY_USER_URL,
     CARD_MOD_MAX_CONSUME_URL,
     CARD_PHOTO_URL, CARD_RECHARGE_FROM_BANK_URL, CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL, CARD_REPORT_LOSS_URL,
-    CARD_TRANSACTION_URL, CARD_USER_BY_TOKEN_URL,
+    CARD_TRANSACTION_URL,
     CONTENT_TYPE_JSON,
 } from "../constants/strings";
 import {CardInfo} from "../models/card/info";
@@ -42,7 +42,7 @@ const assureLoginValid = async (helper: InfoHelper) => {
         throw e;
     }
     try {
-        if ((await fetchWithParse(CARD_USER_BY_TOKEN_URL)).loginuser !== accountBaseInfo.user) {
+        if ((await fetchWithParse(CARD_INFO_BY_USER_URL)).idserial !== accountBaseInfo.user) {
             await cardLogin(helper);
         }
     }
@@ -56,7 +56,7 @@ export const cardLogin = async (helper: InfoHelper): Promise<void> => {
         return;
     }
     await roam(helper, "card", "eea30cbedcaf97c69d28b2d92f22a259/0?/userindex");
-    accountBaseInfo.user = (await fetchWithParse(CARD_USER_BY_TOKEN_URL)).loginuser;
+    accountBaseInfo.user = helper.userId;
 };
 
 export const cardGetInfo = async (helper: InfoHelper): Promise<CardInfo> => {
