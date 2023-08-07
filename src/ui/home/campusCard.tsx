@@ -11,17 +11,21 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper, State} from "../../redux/store";
-import {RoundedView} from "../../components/views";
+import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import {useDispatch, useSelector} from "react-redux";
-import {setBalance} from "../../redux/slices/campusCard";
+import {setBalance, setPaymentMethod} from "../../redux/slices/campusCard";
 import IconRefresh from "../../assets/icons/IconRefresh";
 import dayjs from "dayjs";
 import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
 import {CardRechargeType} from "thu-info-lib/dist/models/card/recharge";
+import IconDown from "../../assets/icons/IconDown";
+import {doAlipay} from "../../utils/alipay";
 
 export const CampusCardScreen = () => {
 	const dispatch = useDispatch();
-	const {balance, updatedAt} = useSelector((s: State) => s.campusCard);
+	const {balance, updatedAt, paymentMethod} = useSelector(
+		(s: State) => s.campusCard,
+	);
 
 	const [refreshing, setRefreshing] = useState(false);
 
@@ -36,7 +40,11 @@ export const CampusCardScreen = () => {
 
 	const regRes = /\d+/.exec(money);
 	const valid =
-		regRes && regRes.length > 0 && regRes[0] === money && Number(money) <= 200;
+		regRes &&
+		regRes.length > 0 &&
+		regRes[0] === money &&
+		Number(money) <= 200 &&
+		Number(money) >= 10;
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -144,7 +152,7 @@ export const CampusCardScreen = () => {
 					</Text>
 				</View>
 			</RoundedView>
-			{false && (
+			{!helper.mocked() && (
 				<View
 					style={{
 						justifyContent: "center",
@@ -225,7 +233,62 @@ export const CampusCardScreen = () => {
 								marginVertical: 12,
 							}}
 						/>
-						<View style={{flexDirection: "row", justifyContent: "center"}}>
+						<View
+							style={{flexDirection: "row", justifyContent: "space-between"}}>
+							<Text style={{color: colors.fontB2}}>
+								{getStr("paymentMethod")}
+							</Text>
+							<BottomPopupTriggerView
+								popupTitle={getStr("selectPaymentMethod")}
+								popupContent={(done) => (
+									<View>
+										<TouchableOpacity
+											onPress={() => {
+												dispatch(setPaymentMethod("bank"));
+												done();
+											}}>
+											<Text
+												style={{color: colors.text, padding: 16, fontSize: 16}}>
+												{getStr("bankTransfer")}
+											</Text>
+										</TouchableOpacity>
+										<View
+											style={{height: 1, backgroundColor: colors.themeGrey}}
+										/>
+										<TouchableOpacity
+											onPress={() => {
+												dispatch(setPaymentMethod("alipay"));
+												done();
+											}}>
+											<Text
+												style={{color: colors.text, padding: 16, fontSize: 16}}>
+												{getStr("payViaAlipay")}
+											</Text>
+										</TouchableOpacity>
+										<View style={{height: 16}} />
+									</View>
+								)}
+								popupCanFulfill={true}
+								popupOnFulfilled={() => {}}
+								popupOnCancelled={() => {}}>
+								<View style={{flexDirection: "row", alignItems: "center"}}>
+									<Text style={{color: colors.fontB2}}>
+										{getStr(
+											paymentMethod === "alipay"
+												? "payViaAlipay"
+												: "bankTransfer",
+										)}
+									</Text>
+									<IconDown height={18} width={18} />
+								</View>
+							</BottomPopupTriggerView>
+						</View>
+						<View
+							style={{
+								flexDirection: "row",
+								justifyContent: "center",
+								marginVertical: 24,
+							}}>
 							<TouchableOpacity
 								style={{
 									backgroundColor: valid
@@ -245,12 +308,18 @@ export const CampusCardScreen = () => {
 											.rechargeCampusCard(
 												Number(money),
 												"",
-												CardRechargeType.Bank,
+												paymentMethod === "alipay"
+													? CardRechargeType.Alipay
+													: CardRechargeType.Bank,
 											)
-											.then(() => {
+											.then((r) => {
 												setProcessing(false);
 												setMoney("");
 												refresh();
+												if (typeof r === "string") {
+													const payCode = r.substring(r.lastIndexOf("/") + 1);
+													return doAlipay(payCode);
+												}
 											})
 											.catch(() => {
 												Snackbar.show({

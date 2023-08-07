@@ -27,6 +27,7 @@ import {
 import {setCrTimetable} from "../../redux/slices/timetable";
 import {configSet} from "../../redux/slices/config";
 import {updateAnnouncements} from "../../redux/slices/announcement";
+import {setBalance} from "../../redux/slices/campusCard";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -61,6 +62,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 								bookingRecords,
 								sportsReservationRecords,
 								crTimetable,
+								balance,
 								latestVersion,
 								latestAnnounces,
 							}) => {
@@ -76,6 +78,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 									}),
 								);
 								dispatch(updateAnnouncements(latestAnnounces));
+								dispatch(setBalance(balance));
 							},
 						);
 				}

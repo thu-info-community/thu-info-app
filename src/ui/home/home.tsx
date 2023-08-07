@@ -64,6 +64,7 @@ import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
 import IconCalendar from "../../assets/icons/IconCalendar";
+import {setBalance} from "../../redux/slices/campusCard";
 
 const iconSize = 40;
 
@@ -950,6 +951,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					bookingRecords,
 					sportsReservationRecords,
 					crTimetable,
+					balance,
 					latestVersion,
 					latestAnnounces,
 				}) => {
@@ -960,6 +962,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 						configSet({key: "latestVersion", value: latestVersion.versionName}),
 					);
 					dispatch(updateAnnouncements(latestAnnounces));
+					dispatch(setBalance(balance));
 				},
 			);
 		// eslint-disable-next-line react-hooks/exhaustive-deps

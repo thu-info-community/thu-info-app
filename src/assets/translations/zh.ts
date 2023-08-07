@@ -223,6 +223,10 @@ export default {
 	deposit: "充值",
 	depositHint:
 		"如遇充值失败，请尽快发送邮件至 i@thuinfo.net，我们将积极寻求解决办法。",
+	paymentMethod: "支付方式",
+	selectPaymentMethod: "选择支付方式",
+	bankTransfer: "银行卡圈存",
+	payViaAlipay: "支付宝支付",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知", "空闲"],
 	classroomHeaderPrefix: "第",
