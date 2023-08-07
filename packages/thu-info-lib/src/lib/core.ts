@@ -75,6 +75,11 @@ export const login = async (
         helper.loginErrorHook && helper.loginErrorHook(e);
         throw e;
     }
+    if (!helper.userId.match(/^\d+$/)) {
+        const e = new LoginError("请输入学号。");
+        helper.loginErrorHook && helper.loginErrorHook(e);
+        throw e;
+    }
     if (!helper.mocked()) {
         clearCookies();
         await helper.clearCookieHandler();
