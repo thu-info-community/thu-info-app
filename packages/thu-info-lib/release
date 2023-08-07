@@ -1,2 +1,2 @@
-fix: broken news content parsing for library news
-fix: add mock data for card APIs
+feat: update implementation of `appStartUp`
+feat(card): prompt login when fields `userId` and `password` are empty
