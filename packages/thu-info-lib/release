@@ -1,2 +1,5 @@
-feat: update implementation of `appStartUp`
-feat(card): prompt login when fields `userId` and `password` are empty
+chore: fix command `yarn demo`
+chore: fix command `yarn play`
+fix: prevent users from logging-in with network account
+fix(card): failure of alipay recharge
+fix(card): internal fix
