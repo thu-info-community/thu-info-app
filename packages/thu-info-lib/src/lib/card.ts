@@ -36,7 +36,7 @@ const fetchWithParse = async (url: string, jsonStruct: any = {}) => {
 };
 
 const assureLoginValid = async (helper: InfoHelper) => {
-    if (helper.userId === "" || helper.password === "") {
+    if (helper.userId === "") {
         const e = new LoginError("Please login.");
         helper.loginErrorHook && helper.loginErrorHook(e);
         throw e;
