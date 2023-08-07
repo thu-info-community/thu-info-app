@@ -94,7 +94,7 @@ import {
     cancelCoursePF,
     setCoursePF,
 } from "./lib/cr";
-import {SearchCoursePriorityQuery, SearchParams} from "./models/cr/cr";
+import {CrTimetable, SearchCoursePriorityQuery, SearchParams} from "./models/cr/cr";
 import {BankPaymentByMonth} from "./models/home/bank";
 import {
     getNamespaces,
@@ -218,22 +218,30 @@ export class InfoHelper {
                 bookingRecords: [],
                 sportsReservationRecords: [],
                 crTimetable: [],
+                balance: 0,
                 latestAnnounces: [],
                 latestVersion: MOCK_LATEST_VERSION,
             };
         }
-        const bookingRecords = await getBookingRecords(this);
-        const sportsReservationRecords = await getSportsReservationRecords(this);
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
+        const bookingRecords = await getBookingRecords(this);
+        const sportsReservationRecords = await getSportsReservationRecords(this);
+        let balance: number = 0;
+        try {
+            balance = (await cardGetInfo(this)).balance;
+        } catch {
+            // no-op
+        }
         uFetch(APP_STARTUP_STAT_URL).catch(() => {
         });
+        let crTimetable: CrTimetable[] = [];
         try {
-            const crTimetable = await getCrTimetable(this);
-            return {bookingRecords, sportsReservationRecords, crTimetable, latestAnnounces, latestVersion};
+            crTimetable = await getCrTimetable(this);
         } catch {
-            return {bookingRecords, sportsReservationRecords, crTimetable: [], latestAnnounces, latestVersion};
+            // no-op
         }
+        return {bookingRecords, sportsReservationRecords, crTimetable, balance, latestAnnounces, latestVersion};
     };
 
     public appUsageStat = async (usage: number) => {
