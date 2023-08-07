@@ -13,6 +13,7 @@ import {
 import {CardInfo} from "../models/card/info";
 import {CardTransaction, CardTransactionType} from "../models/card/transaction";
 import {MOCK_CARD_INFO} from "../mocks/card";
+import {LoginError} from "../utils/error";
 
 const accountBaseInfo = {
     user: "",
@@ -35,6 +36,11 @@ const fetchWithParse = async (url: string, jsonStruct: any = {}) => {
 };
 
 const assureLoginValid = async (helper: InfoHelper) => {
+    if (helper.userId === "" || helper.password === "") {
+        const e = new LoginError("Please login.");
+        helper.loginErrorHook && helper.loginErrorHook(e);
+        throw e;
+    }
     try {
         if ((await fetchWithParse(CARD_USER_BY_TOKEN_URL)).loginuser !== accountBaseInfo.user) {
             await cardLogin(helper);
