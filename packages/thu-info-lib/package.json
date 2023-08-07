@@ -11,7 +11,7 @@
         "build": "tsc",
         "test": "OPENSSL_CONF=${PWD}/openssl.cnf jest",
         "play": "node -r esm --experimental-repl-await",
-        "demo": "node -r esm demo.js",
+        "demo": "OPENSSL_CONF=${PWD}/openssl.cnf node -r esm demo.js",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
         "preversion": "git pull --rebase && node -e \"require('editor')('release')\" && git add release && yarn lint && yarn test",
