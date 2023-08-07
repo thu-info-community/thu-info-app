@@ -135,6 +135,7 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
+import {CampusCardScreen} from "../ui/home/campusCard";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -220,6 +221,7 @@ type HomeStackParamList = {
 	PhysicalExam: undefined;
 	Finance: undefined;
 	Expenditure: undefined;
+	CampusCard: undefined;
 	LoseCard: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: Classroom;
@@ -457,6 +459,11 @@ export const Root = () => {
 				name="Finance"
 				component={FinanceScreen}
 				options={{title: getStr("campusFinance")}}
+			/>
+			<Stack.Screen
+				name="CampusCard"
+				component={CampusCardScreen}
+				options={{title: getStr("campusCard")}}
 			/>
 			<Stack.Screen
 				name="Expenditure"

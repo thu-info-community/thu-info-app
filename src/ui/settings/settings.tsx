@@ -25,6 +25,7 @@ import {
 	setActiveSportsReservationRecord,
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
+import {setBalance} from "../../redux/slices/campusCard";
 
 const performLogout = () => {
 	helper
@@ -182,6 +183,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										dispatch(scheduleClear());
 										dispatch(setActiveLibBookRecord([]));
 										dispatch(setActiveSportsReservationRecord([]));
+										dispatch(setBalance(0));
 									},
 								},
 							]);

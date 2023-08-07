@@ -14,14 +14,14 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<View style={style.SecondaryRootView}>
 			<View style={style.SecondaryContentView}>
-				{!disabledFunction.includes("expenditure") && (
+				{!disabledFunction.includes("campusCard") && (
 					<SecondaryItem
-						title="expenditure"
-						destKey="expenditure"
+						title="campusCard"
+						destKey="campusCard"
 						icon={<IconExpenditure />}
 						onPress={() => {
-							addUsageStat(FunctionType.Expenditures);
-							navigation.navigate("Expenditure");
+							addUsageStat(FunctionType.CampusCard);
+							navigation.navigate("CampusCard");
 						}}
 					/>
 				)}
@@ -44,6 +44,17 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 						onPress={() => {
 							addUsageStat(FunctionType.Invoice);
 							navigation.navigate("Invoice");
+						}}
+					/>
+				)}
+				{!disabledFunction.includes("expenditure") && (
+					<SecondaryItem
+						title="expenditure"
+						destKey="expenditure"
+						icon={<IconExpenditure />}
+						onPress={() => {
+							addUsageStat(FunctionType.Expenditures);
+							navigation.navigate("Expenditure");
 						}}
 					/>
 				)}

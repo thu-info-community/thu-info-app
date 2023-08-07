@@ -43,6 +43,11 @@ import {
 	AnnouncementState,
 	defaultAnnouncement,
 } from "./slices/announcement";
+import {
+	campusCardReducer,
+	CampusCardState,
+	defaultCampusCard,
+} from "./slices/campusCard";
 
 export const helper = new InfoHelper();
 
@@ -92,6 +97,7 @@ export interface State {
 	credentials: CredentialsState;
 	top5: Top5State;
 	reservation: ReservationState;
+	campusCard: CampusCardState;
 	timetable: TimetableState;
 	announcement: AnnouncementState;
 }
@@ -117,6 +123,7 @@ const rootReducer = combineReducers({
 	),
 	top5: top5Reducer,
 	reservation: reservationReducer,
+	campusCard: campusCardReducer,
 	timetable: timetableReducer,
 	announcement: announcementReducer,
 });
@@ -204,6 +211,7 @@ const persistConfig = {
 						},
 						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
+						campusCard: state.campusCard ?? defaultCampusCard,
 						timetable: state.timetable ?? defaultTimetable,
 						announcement: state.announcement ?? defaultAnnouncement,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs

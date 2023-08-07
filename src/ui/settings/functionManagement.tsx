@@ -23,7 +23,7 @@ const functions: {[key in functionGroups]: HomeFunction[]} = {
 	functionManagementTip: ["report", "classroomState", "schoolCalendar"],
 	seasonalFeatures: ["physicalExam", "teachingEvaluation"],
 	reservation: ["library", "sportsBook", "libRoomBook"],
-	campusFinance: ["expenditure", "bankPayment", "invoice"],
+	campusFinance: ["campusCard", "bankPayment", "invoice", "expenditure"],
 	dorm: ["washer", "qzyq", "dormScore", "electricity"],
 	network: ["networkDetail", "onlineDevices"],
 };

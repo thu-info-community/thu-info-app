@@ -520,6 +520,7 @@ export type HomeFunction =
 	| "reservesLib"
 	| "expenditure"
 	| "finance"
+	| "campusCard"
 	| "sportsBook"
 	| "bankPayment"
 	| "invoice"
@@ -663,6 +664,26 @@ const getHomeFunctions = (
 			navigation.navigate("ReservesLibWelcome");
 		}}>
 		<IconBook width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="campusCard"
+		title="campusCard"
+		onPress={() => {
+			addUsageStat(FunctionType.CampusCard);
+			updateTop5("campusCard");
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "CampusCard",
+				});
+			} else {
+				navigation.navigate("CampusCard");
+			}
+		}}>
+		<IconExpenditure width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="expenditure"
@@ -884,7 +905,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("reserve");
 	}
 	if (
-		!["expenditure", "bankPayment", "invoice"].every((i) =>
+		!["campusCard", "bankPayment", "invoice", "expenditure"].every((i) =>
 			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
