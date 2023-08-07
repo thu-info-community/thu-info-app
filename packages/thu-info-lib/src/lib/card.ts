@@ -219,7 +219,6 @@ export const cardRechargeFromWechatAlipay = async (helper: InfoHelper, amount: n
             productdesc: alipay ? CardRechargeType.Alipay : CardRechargeType.Wechat,
             method: "trade.pay.qrcode",
             tradetype: alipay ? "alipay.qrcode" : "weixin.qrcode",
-            orgid: 2,
         });
 
     if (rawResponse.success !== true) {
