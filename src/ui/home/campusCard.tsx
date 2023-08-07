@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setBalance} from "../../redux/slices/campusCard";
 import IconRefresh from "../../assets/icons/IconRefresh";
 import dayjs from "dayjs";
-import {CardTransactionType} from "thu-info-lib/src/models/card/transaction";
+import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
 import {CardRechargeType} from "thu-info-lib/dist/models/card/recharge";
 
 export const CampusCardScreen = () => {
