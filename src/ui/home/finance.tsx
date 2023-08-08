@@ -47,17 +47,6 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{!disabledFunction.includes("expenditure") && (
-					<SecondaryItem
-						title="expenditure"
-						destKey="expenditure"
-						icon={<IconExpenditure />}
-						onPress={() => {
-							addUsageStat(FunctionType.Expenditures);
-							navigation.navigate("Expenditure");
-						}}
-					/>
-				)}
 			</View>
 		</View>
 	);

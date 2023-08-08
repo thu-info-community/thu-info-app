@@ -882,8 +882,16 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const disabledList: HomeFunction[] | undefined = useSelector(
 		(state: State) => state.config.homeFunctionDisabled,
 	);
+	const sunsetFunctions: HomeFunction[] = ["expenditure"];
 	if (!disabledList) {
 		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
+	} else if (sunsetFunctions.some((f) => !disabledList.includes(f))) {
+		dispatch(
+			configSet({
+				key: "homeFunctionDisabled",
+				value: disabledList.concat(sunsetFunctions),
+			}),
+		);
 	}
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5Update(func)),
@@ -906,7 +914,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("reserve");
 	}
 	if (
-		!["campusCard", "bankPayment", "invoice", "expenditure"].every((i) =>
+		!["campusCard", "bankPayment", "invoice"].every((i) =>
 			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
