@@ -211,7 +211,7 @@ export const CampusCardScreen = () => {
 							<Text style={{color: colors.text, fontSize: 20}}>￥</Text>
 							<TextInput
 								keyboardType="numeric"
-								placeholder={getStr("enterEleRechargeValue")}
+								placeholder={getStr("enterDepositValue")}
 								placeholderTextColor={colors.fontB3}
 								value={money}
 								onChangeText={(v) => {

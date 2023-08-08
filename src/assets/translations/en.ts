@@ -230,6 +230,7 @@ export default {
 	updateTime: "Updated at ",
 	todayExpenditure: "Today\nexpenditure",
 	yesterdayExpenditure: "Yesterday\nexpenditure",
+	enterDepositValue: "How much do you want to deposit?",
 	deposit: "Deposit",
 	depositHint: "In case of deposit failure, please contact i@thuinfo.net ASAP.",
 	paymentMethod: "Payment method",

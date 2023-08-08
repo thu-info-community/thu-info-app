@@ -220,6 +220,7 @@ export default {
 	updateTime: "更新时间：",
 	todayExpenditure: "今日消费",
 	yesterdayExpenditure: "昨日消费",
+	enterDepositValue: "请输入充值金额",
 	deposit: "充值",
 	depositHint:
 		"如遇充值失败，请尽快发送邮件至 i@thuinfo.net，我们将积极寻求解决办法。",
