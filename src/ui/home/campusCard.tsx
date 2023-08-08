@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {
+	Linking,
 	ScrollView,
 	Text,
 	TextInput,
@@ -19,7 +20,6 @@ import dayjs from "dayjs";
 import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
 import {CardRechargeType} from "thu-info-lib/dist/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
-import {doAlipay} from "../../utils/alipay";
 
 export const CampusCardScreen = () => {
 	const dispatch = useDispatch();
@@ -266,6 +266,19 @@ export const CampusCardScreen = () => {
 												{getStr("payViaAlipay")}
 											</Text>
 										</TouchableOpacity>
+										<View
+											style={{height: 1, backgroundColor: colors.themeGrey}}
+										/>
+										<TouchableOpacity
+											onPress={() => {
+												dispatch(setPaymentMethod("wechat"));
+												done();
+											}}>
+											<Text
+												style={{color: colors.text, padding: 16, fontSize: 16}}>
+												{getStr("payViaWechat")}
+											</Text>
+										</TouchableOpacity>
 										<View style={{height: 16}} />
 									</View>
 								)}
@@ -277,6 +290,8 @@ export const CampusCardScreen = () => {
 										{getStr(
 											paymentMethod === "alipay"
 												? "payViaAlipay"
+												: paymentMethod === "wechat"
+												? "payViaWechat"
 												: "bankTransfer",
 										)}
 									</Text>
@@ -311,6 +326,8 @@ export const CampusCardScreen = () => {
 												"",
 												paymentMethod === "alipay"
 													? CardRechargeType.Alipay
+													: paymentMethod === "wechat"
+													? CardRechargeType.Wechat
 													: CardRechargeType.Bank,
 											)
 											.then((r) => {
@@ -318,8 +335,7 @@ export const CampusCardScreen = () => {
 												setMoney("");
 												refresh();
 												if (typeof r === "string") {
-													const payCode = r.substring(r.lastIndexOf("/") + 1);
-													return doAlipay(payCode);
+													Linking.openURL(r);
 												}
 											})
 											.catch(() => {
