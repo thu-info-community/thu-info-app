@@ -95,8 +95,8 @@ export const cardGetPhotoUrl = () => CARD_PHOTO_URL + accountBaseInfo.cardId;
 
 export const cardGetTransactions = async (
     helper: InfoHelper,
-    start: Date,
-    end: Date,
+    start: string,  // YYYY-MM-DD
+    end: string,    // YYYY-MM-DD
     type: CardTransactionType = CardTransactionType.Any)
     : Promise<CardTransaction[]> => {
     if (helper.mocked()) {
@@ -107,8 +107,8 @@ export const cardGetTransactions = async (
     const rawTransactionsData = await fetchWithParse(CARD_TRANSACTION_URL,
         {
             idserial: accountBaseInfo.user,
-            starttime: start.toISOString().slice(0, 10),
-            endtime: end.toISOString().slice(0, 10),
+            starttime: start,
+            endtime: end,
             tradetype: type,
             pageSize: 10000,
             pageNumber: 0,

@@ -953,11 +953,11 @@ export class InfoHelper {
 
     /**
      * Get the campus card transactions.
-     * @param start
-     * @param end
+     * @param start YYYY-MM-DD
+     * @param end YYYY-MM-DD
      * @param type -1 for all (1-3), 1 for consumption, 2 for recharge, 3 for subsidy, 0 for ALL (?)
      */
-    public getCampusCardTransactions = async (start: Date, end: Date, type: CardTransactionType) =>
+    public getCampusCardTransactions = async (start: string, end: string, type: CardTransactionType) =>
         cardGetTransactions(this, start, end, type);
 
     public changeCampusCardPassword = async (oldPassword: string, newPassword: string) => cardChangeTransactionPassword(this, oldPassword, newPassword);
