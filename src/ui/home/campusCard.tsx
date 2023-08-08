@@ -63,8 +63,9 @@ export const CampusCardScreen = () => {
 				});
 			})
 			.then(() => {
-				const yesterday = dayjs().add(-1, "day").toDate();
-				const today = new Date();
+				const todayDate = dayjs();
+				const today = todayDate.format("YYYY-MM-DD");
+				const yesterday = todayDate.add(-1, "day").format("YYYY-MM-DD");
 				return Promise.all([
 					helper.getCampusCardTransactions(
 						yesterday,
