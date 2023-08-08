@@ -1,1 +1,1 @@
-breaking: sunset old campus card APIs
+fix(card): Fixed wechat payment and changed return value of card charge (#97)
