@@ -228,6 +228,7 @@ export default {
 	selectPaymentMethod: "选择支付方式",
 	bankTransfer: "银行卡圈存",
 	payViaAlipay: "支付宝支付",
+	payViaWechat: "微信支付",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知", "空闲"],
 	classroomHeaderPrefix: "第",

@@ -237,6 +237,7 @@ export default {
 	selectPaymentMethod: "Select method",
 	bankTransfer: "Bank transfer",
 	payViaAlipay: "Pay via Alipay",
+	payViaWechat: "Pay via Wechat",
 	classroomState: "Classrooms",
 	classroomStatus: [
 		"Teaching",
