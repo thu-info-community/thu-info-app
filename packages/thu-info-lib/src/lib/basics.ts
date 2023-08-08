@@ -12,13 +12,11 @@ import {
     CLASSROOM_STATE_PREFIX,
     COUNT_DOWN_URL,
     EMAIL_BASE_URL,
-    EXPENDITURE_URL,
     FOUNDATION_BANK_PAYMENT_SEARCH_URL,
     GET_BKS_REPORT_URL,
     GET_YJS_REPORT_URL,
     INVOICE_CONTENT_URL,
     INVOICE_LIST_URL,
-    LOSE_CARD_URL,
     PHYSICAL_EXAM_URL,
     SWITCH_LANG_URL,
     YJS_REPORT_BXR_URL,
@@ -26,14 +24,12 @@ import {
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
-import {Record} from "../models/home/expenditure";
 import {
     Form,
     InputTag,
     Overall,
     toPersons,
 } from "../models/home/assessment";
-import XLSX from "xlsx";
 import {InfoHelper} from "../index";
 import {arbitraryEncode, uFetch} from "../utils/network";
 import {
@@ -44,9 +40,7 @@ import {
     MOCK_CLASSROOM_LIST,
     MOCK_CLASSROOM_STATE,
     MOCK_COUNTDOWN_DATA,
-    MOCK_EXPENDITURES,
     MOCK_INVOICE_DATA,
-    MOCK_LOSE_CARD_CODE,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
     SAMPLE_INVOICE_BASE64,
@@ -55,7 +49,6 @@ import {
     AssessmentError,
     ClassroomStateError,
     LibError,
-    LoseCardError,
     ReportError,
     UserInfoError,
 } from "../utils/error";
@@ -364,38 +357,6 @@ export const getPhysicalExamResult = (
         MOCK_PHYSICAL_EXAM_RESULT,
     );
 
-export const getExpenditures = (
-    helper: InfoHelper,
-): Promise<Record[]> =>
-    roamingWrapperWithMocks(
-        helper,
-        "default",
-        helper.graduate() ? "048DD1B6BBBDFA7A6310D8F3CA53E290": "2B56CC9B3BFFA26932C4110E0C5FB35A",
-        () => uFetch(EXPENDITURE_URL).then(
-            (data) => {
-                const workbook = XLSX.read(data, {sheetStubs: true, cellDates: true});
-                const sheet = XLSX.utils.sheet_to_json(
-                    workbook.Sheets.Sheet1, {header: ["index", "locale", "category", "terminal", "date", "value"]}
-                ) as any[];
-                const result = sheet.slice(1, sheet.length - 1);
-                result.forEach(
-                    (record: {value: string | number; category: string}) => {
-                        record.value = Number(record.value);
-                        if (
-                            record.category.match(
-                                /^(消费|自助缴费.*|取消充值|领取旧卡余额)$/,
-                            )
-                        ) {
-                            record.value *= -1;
-                        }
-                    },
-                );
-                return result;
-            },
-        ),
-        MOCK_EXPENDITURES,
-    );
-
 export const getClassroomList = (
     helper: InfoHelper,
 ): Promise<Classroom[]> =>
@@ -533,29 +494,6 @@ export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<st
         "625B81A7A9D148B01DA59185CC4074E1",
         () => uFetch(INVOICE_CONTENT_URL + busNumber),
         SAMPLE_INVOICE_BASE64,
-    );
-
-export const loseCard = (helper: InfoHelper): Promise<number> =>
-    roamingWrapperWithMocks(
-        helper,
-        "default",
-        "2B56CC9B3BFFA26932C4110E0C5FB35A",
-        () => uFetch(LOSE_CARD_URL).then((s) => {
-            const index = s.indexOf("var result");
-            const left = s.indexOf("=", index) + 1;
-            const right = s.indexOf("\n", left);
-            const value = s.substring(left, right).trim();
-            if (value === "null") {
-                throw new LoseCardError();
-            } else {
-                const code = Number(value);
-                if (isNaN(code)) {
-                    throw new LoseCardError();
-                }
-                return code;
-            }
-        }),
-        MOCK_LOSE_CARD_CODE,
     );
 
 export const getBankPayment = async (

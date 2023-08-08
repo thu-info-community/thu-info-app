@@ -36,10 +36,6 @@ export class ClassroomStateError extends LibError {
 
 }
 
-export class LoseCardError extends LibError {
-
-}
-
 export class EleError extends LibError {
 
 }

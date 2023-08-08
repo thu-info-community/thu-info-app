@@ -5,10 +5,8 @@ import {
     getClassroomList,
     getClassroomState,
     getUserInfo,
-    getExpenditures,
     getPhysicalExamResult,
     getReport,
-    loseCard,
     postAssessmentForm,
     getBankPayment,
     getCalendar,
@@ -61,7 +59,6 @@ import {
 import {getSchedule} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
-import {Record} from "./models/home/expenditure";
 import {NewsSlice, NewsSubscription, ChannelTag} from "./models/news/news";
 import {
     getSportsCaptchaUrlMethod,
@@ -342,11 +339,6 @@ export class InfoHelper {
         getPhysicalExamResult(this);
 
     /**
-     * Get the expenditure records of the user.
-     */
-    public getExpenditures = (): Promise<Record[]> => getExpenditures(this);
-
-    /**
      * Get all classroom buildings available for querying for classroom status.
      *
      * Note that you should use `searchName` from the returned struct for
@@ -380,27 +372,6 @@ export class InfoHelper {
      * Get the invoice PDF in base64 format.
      */
     public getInvoicePDF = async (busNumber: string): Promise<string> => getInvoicePDF(this, busNumber);
-
-    /**
-     * Report to the school that the user's card is lost.
-     *
-     * @return  Returns a status code:
-     *
-     *          2 - Successful.
-     *
-     *          4 - Already reported, do not request again.
-     *
-     *          5 - Invalid card.
-     *
-     *          -1 - No card information.
-     *
-     *          -2 - Card expired.
-     *
-     *          -100 - School database error.
-     *
-     *          7 - School server error.
-     */
-    public loseCard = async (): Promise<number> => loseCard(this);
 
     /**
      * Get the bank payment records of the user.
