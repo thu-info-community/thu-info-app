@@ -3,11 +3,16 @@ import {roam} from "./core";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {
-    CARD_CANCEL_LOSS_URL, CARD_CHANGE_PWD_URL,
+    CARD_CANCEL_LOSS_URL,
+    CARD_CHANGE_PWD_URL,
     CARD_INFO_BY_USER_URL,
     CARD_MOD_MAX_CONSUME_URL,
-    CARD_PHOTO_URL, CARD_RECHARGE_FROM_BANK_URL, CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL, CARD_REPORT_LOSS_URL,
-    CARD_TRANSACTION_URL, CARD_USER_BY_TOKEN_URL,
+    CARD_PHOTO_URL, CARD_RECHARGE_FROM_ALIPAY_URL,
+    CARD_RECHARGE_FROM_BANK_URL,
+    CARD_RECHARGE_FROM_WECHAT_URL,
+    CARD_REPORT_LOSS_URL,
+    CARD_TRANSACTION_URL,
+    CARD_USER_BY_TOKEN_URL,
     CONTENT_TYPE_JSON,
 } from "../constants/strings";
 import {CardInfo} from "../models/card/info";
@@ -210,20 +215,86 @@ export const cardRechargeFromWechatAlipay = async (helper: InfoHelper, amount: n
     }
     await assureLoginValid(helper);
 
-    const rawResponse = await fetchWithParse(CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL,
-        {
-            idserial: accountBaseInfo.user,
-            transamt: amount,
-            paytype: alipay ? 3 : 2,
-            txcode: alipay ? "2493" : "1824",
-            productdesc: alipay ? CardRechargeType.Alipay : CardRechargeType.Wechat,
-            method: "trade.pay.qrcode",
-            tradetype: alipay ? "alipay.qrcode" : "weixin.qrcode",
-        });
+    if (alipay) {
+        const rawResponse = await fetchWithParse(CARD_RECHARGE_FROM_ALIPAY_URL,
+            {
+                idserial: accountBaseInfo.user,
+                transamt: amount,
+                paytype: 3,
+                txcode: "2493",
+                productdesc: CardRechargeType.Alipay,
+                method: "trade.pay.qrcode",
+                tradetype: "alipay.qrcode",
+            });
 
-    if (rawResponse.success !== true) {
-        throw new Error(rawResponse.message);
+        if (rawResponse.success !== true) {
+            throw new Error(rawResponse.message);
+        }
+
+        const paymentUrl = JSON.parse(rawResponse.response).bizContent.webUrl;
+
+        const payCode = paymentUrl.substring(paymentUrl.lastIndexOf("/") + 1);
+
+        return "alipayqr://platformapi/startapp?saId=10000007&qrcode=https%3A%2F%2Fqr.alipay.com%2F" + payCode;
     }
 
-    return JSON.parse(rawResponse.response).bizContent.webUrl;
+    else {
+        const data = await fetchWithParse(CARD_RECHARGE_FROM_WECHAT_URL,
+            {
+                idserial: accountBaseInfo.user,
+                transamt: amount,
+                paytype: 2,
+                txcode: "1824",
+                productdesc: CardRechargeType.Wechat,
+                method: "trade.pay.wap",
+                tradetype: "weixin.wap",
+            });
+
+        const paymentApiHtml = data.rechargeHtml3;
+
+        const searchResult = /var id = '(.*)?';\s*?var token = '(.*)?';/.exec(paymentApiHtml);
+        if (searchResult === null) {
+            throw new Error("API id and token not found");
+        }
+
+        const check = JSON.parse(await uFetch("https://fa-online.tsinghua.edu.cn/zjjsfw/zjjs/check.do", {
+            id: searchResult[1],
+            token: searchResult[2],
+        }));
+
+        if (check.code !== "0") {
+            throw new Error(check.message);
+        }
+
+        const paymentRedirectHtml = await uFetch("https://fa-online.tsinghua.edu.cn/zjjsfw/zjjs/phonePay.do", {
+            channelId: alipay ? "0102" : "0202",
+            id: searchResult[1],
+        });
+
+        const paymentRedirectUrl = /window.location.href='(.*)?';/.exec(paymentRedirectHtml);
+
+        if (paymentRedirectUrl === null) {
+            throw new Error("Payment redirect url not found");
+        }
+
+        const paymentResponse = await fetch(paymentRedirectUrl[1], {
+            headers: {
+                Referer: "https://fa-online.tsinghua.edu.cn/",
+            }
+        });
+
+        if (paymentResponse.status != 200) {
+            throw new Error("Payment check failed");
+        }
+
+        const paymentResponseText = await paymentResponse.text();
+
+        const wechatPaymentUri = /"weixin:\/\/(.*)?"/.exec(paymentResponseText);
+
+        if (wechatPaymentUri === null) {
+            throw new Error("Wechat payment uri not found");
+        }
+
+        return "weixin://" + wechatPaymentUri[1];
+    }
 };

@@ -945,6 +945,7 @@ export class InfoHelper {
      * @param amount in yuan
      * @param transactionPassword
      * @param type 0 for Bank Card, 1 for Alipay, 2 for Wechat Pay
+     * @return Uri to request to complete the payment process, undefined for Bank
      */
     public rechargeCampusCard = async (amount: number, transactionPassword: string, type: CardRechargeType) => {
         if (type === CardRechargeType.Bank) {

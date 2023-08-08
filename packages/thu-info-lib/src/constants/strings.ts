@@ -263,4 +263,5 @@ export const CARD_MOD_MAX_CONSUME_URL = "https://card.tsinghua.edu.cn/business/m
 export const CARD_REPORT_LOSS_URL = "https://card.tsinghua.edu.cn/business/cardReportLoss";
 export const CARD_CANCEL_LOSS_URL = "https://card.tsinghua.edu.cn/business/solutionHang";
 export const CARD_RECHARGE_FROM_BANK_URL = "https://card.tsinghua.edu.cn/business/moblieRecharge";
-export const CARD_RECHARGE_FROM_WECHAT_ALIPAY_URL = "https://card.tsinghua.edu.cn/wx/rechard/qrcode";
+export const CARD_RECHARGE_FROM_WECHAT_URL = "https://card.tsinghua.edu.cn/wx/rechard/getRechargeHtml";
+export const CARD_RECHARGE_FROM_ALIPAY_URL = "https://card.tsinghua.edu.cn/wx/rechard/qrcode";
