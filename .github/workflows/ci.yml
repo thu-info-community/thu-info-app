@@ -52,6 +52,7 @@ jobs:
         with:
           arguments: assembleRelease
           build-root-directory: android
+          cache-disabled: true
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
