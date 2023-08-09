@@ -238,6 +238,7 @@ export default {
 	bankTransfer: "Bank transfer",
 	payViaAlipay: "Pay via Alipay",
 	payViaWechat: "Pay via Wechat",
+	enterCardPin: "Enter Card PIN",
 	classroomState: "Classrooms",
 	classroomStatus: [
 		"Teaching",
@@ -253,6 +254,7 @@ export default {
 		"The following functionalities are experimental. Take care when using them and do report any problems to us, thank you!",
 	loseCard: "Report lost card",
 	loseCardButton: "REPORT",
+	cancelLossReport: "Cancel Loss Report",
 	loseCardHint:
 		"Click to report the loss of your card, in case any financial loss occurs.",
 	confirmLoseCard: "REPORT",

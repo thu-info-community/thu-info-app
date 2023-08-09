@@ -68,7 +68,7 @@ import {
 import {WasherWebScreen} from "../ui/home/washerWeb";
 import {ElectricityScreen} from "../ui/home/electricity";
 import {EleRecordScreen} from "../ui/home/eleRecord";
-import {ECardScreen} from "../ui/home/ecard";
+import {LoseCardScreen} from "../ui/home/loseCard";
 import {NewsDetailScreen} from "../ui/news/newsDetail";
 import {ScheduleAddScreen} from "../ui/schedule/scheduleAdd";
 import {ScheduleHiddenScreen} from "../ui/schedule/scheduleHidden";
@@ -463,13 +463,8 @@ export const Root = () => {
 			<Stack.Screen
 				name="CampusCard"
 				component={CampusCardScreen}
-				options={{title: getStr("campusCard")}}
-			/>
-			<Stack.Screen
-				name="Expenditure"
-				component={ExpenditureScreen}
 				options={({navigation}) => ({
-					title: getStr("expenditure"),
+					title: getStr("campusCard"),
 					headerRight: () => (
 						<View style={{flexDirection: "row"}}>
 							<TouchableOpacity
@@ -480,6 +475,11 @@ export const Root = () => {
 						</View>
 					),
 				})}
+			/>
+			<Stack.Screen
+				name="Expenditure"
+				component={ExpenditureScreen}
+				options={{title: getStr("expenditure")}}
 			/>
 			<Stack.Screen
 				name="ClassroomList"
@@ -867,7 +867,7 @@ export const Root = () => {
 			/>
 			<Stack.Screen
 				name="LoseCard"
-				component={ECardScreen}
+				component={LoseCardScreen}
 				options={{title: getStr("loseCard")}}
 			/>
 			<Stack.Screen

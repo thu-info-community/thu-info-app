@@ -229,6 +229,7 @@ export default {
 	bankTransfer: "银行卡圈存",
 	payViaAlipay: "支付宝支付",
 	payViaWechat: "微信支付",
+	enterCardPin: "输入卡密码",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知", "空闲"],
 	classroomHeaderPrefix: "第",
@@ -237,6 +238,7 @@ export default {
 		"以下功能属于试验性功能，请谨慎使用，如有问题请及时向我们反馈~",
 	loseCard: "校园卡挂失",
 	loseCardButton: "挂失校园卡",
+	cancelLossReport: "解挂",
 	loseCardHint: "当校园卡确认丢失时请立即挂失以防盗刷造成经济损失或其他后果。",
 	confirmLoseCard: "挂失",
 	loseCardCannotBeUndone:
