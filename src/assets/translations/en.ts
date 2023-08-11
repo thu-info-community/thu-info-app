@@ -221,7 +221,7 @@ export default {
 	autoScoreSuccess: "You have successfully given full grade to this course.",
 	campusFinance: "Finance",
 	campusCard: "Campus Card",
-	expenditure: "Expenditures (legacy)",
+	expenditure: "Expenditures",
 	query: "Query",
 	querying: "Querying",
 	income: "Income",

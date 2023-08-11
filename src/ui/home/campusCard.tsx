@@ -20,8 +20,9 @@ import dayjs from "dayjs";
 import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
 import {CardRechargeType} from "thu-info-lib/dist/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
+import {RootNav} from "../../components/Root";
 
-export const CampusCardScreen = () => {
+export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 	const {balance, updatedAt, paymentMethod} = useSelector(
 		(s: State) => s.campusCard,
@@ -112,7 +113,10 @@ export const CampusCardScreen = () => {
 						<IconRefresh width={16} height={16} />
 					</TouchableOpacity>
 				</View>
-				<View
+				<TouchableOpacity
+					onPress={() => {
+						navigation.navigate("Expenditure");
+					}}
 					style={{
 						marginVertical: 12,
 						flexDirection: "row",
@@ -145,7 +149,7 @@ export const CampusCardScreen = () => {
 							￥{todayExpenditure.toFixed(2)}
 						</Text>
 					</View>
-				</View>
+				</TouchableOpacity>
 				<View style={{alignItems: "center", justifyContent: "center"}}>
 					<Text style={{color: colors.fontB3, fontSize: 11}}>
 						{getStr("updateTime")}

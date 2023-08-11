@@ -211,7 +211,7 @@ export default {
 	autoScoreSuccess: "您已经成功为该课程打满分。",
 	campusFinance: "校园财务",
 	campusCard: "新版校园卡",
-	expenditure: "校园卡消费（旧）",
+	expenditure: "校园卡消费",
 	query: "查询",
 	querying: "查询中",
 	income: "收入",
