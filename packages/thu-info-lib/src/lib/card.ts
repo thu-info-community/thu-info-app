@@ -123,11 +123,14 @@ export const cardGetTransactions = async (
         });
 
     return rawTransactionsData.rows.map((rawTransaction: any) => ({
+        id: rawTransaction.id,
         summary: rawTransaction.summary,
         timestamp: new Date(rawTransaction.txdate),
         balance: rawTransaction.balance / 100,
         amount: rawTransaction.txamt / 100,
-    }));
+        address: rawTransaction.meraddr,
+        name: rawTransaction.mername,
+    } as CardTransaction));
 };
 
 export const cardChangeTransactionPassword = async (helper: InfoHelper, oldPassword: string, newPassword: string) => {

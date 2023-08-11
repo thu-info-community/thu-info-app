@@ -1,1 +1,2 @@
-fix(card): Fixed wechat payment and changed return value of card charge (#97)
+fix: add controller flag for whether card recharging is supported
+fix: add missing fields `id`, `address`, `name` for interface `CardTransaction`

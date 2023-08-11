@@ -1,8 +1,11 @@
 export interface CardTransaction {
+    id: string;
     summary: string;
     timestamp: Date;
     balance: number;
     amount: number;
+    address: string;
+    name: string;
 }
 
 export enum CardTransactionType {
