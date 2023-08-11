@@ -5,12 +5,16 @@ export interface CampusCardState {
 	balance: number;
 	updatedAt: number;
 	paymentMethod: string;
+	todayRechargeAmount: number;
+	lastRechargeDate: string;
 }
 
 const initialState: CampusCardState = {
 	balance: 0,
 	updatedAt: 0,
 	paymentMethod: "bank",
+	todayRechargeAmount: 0,
+	lastRechargeDate: "",
 };
 
 export const defaultCampusCard = initialState;
@@ -26,9 +30,21 @@ export const campusCardSlice = createSlice({
 		setPaymentMethod: (state, {payload}: PayloadAction<string>) => {
 			state.paymentMethod = payload;
 		},
+		updateRechargeAmount: (
+			state,
+			{payload}: PayloadAction<{amount: number; date: string}>,
+		) => {
+			if (state.lastRechargeDate === payload.date) {
+				state.todayRechargeAmount += payload.amount;
+			} else {
+				state.todayRechargeAmount = payload.amount;
+				state.lastRechargeDate = payload.date;
+			}
+		},
 	},
 });
 
-export const {setBalance, setPaymentMethod} = campusCardSlice.actions;
+export const {setBalance, setPaymentMethod, updateRechargeAmount} =
+	campusCardSlice.actions;
 
 export const campusCardReducer = campusCardSlice.reducer;

@@ -223,7 +223,11 @@ export default {
 	enterDepositValue: "请输入充值金额",
 	deposit: "充值",
 	depositHint:
-		"如遇充值失败，请尽快发送邮件至 i@thuinfo.net，我们将积极寻求解决办法。",
+		"如遇充值失败，请在一个小时内发送邮件至 i@thuinfo.net，并附上校园卡消费记录和支付记录。我们将给出未到账金额等量的现金赔偿（不超过 400 元）。",
+	depositExceedLimit:
+		"当日充值金额已超过 400 元。如需充值更多金额，请使用“清华校园卡”小程序。",
+	depositRepeatedWarning:
+		"当日已有一笔充值，请刷新并仔细确认是否仍需充值。如充值金额未到账，请尽快与我们联系！",
 	paymentMethod: "支付方式",
 	selectPaymentMethod: "选择支付方式",
 	bankTransfer: "银行卡圈存",

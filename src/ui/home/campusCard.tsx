@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {
+	Alert,
 	Linking,
 	ScrollView,
 	Text,
@@ -14,7 +15,11 @@ import themes from "../../assets/themes/themes";
 import {helper, State} from "../../redux/store";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import {useDispatch, useSelector} from "react-redux";
-import {setBalance, setPaymentMethod} from "../../redux/slices/campusCard";
+import {
+	setBalance,
+	setPaymentMethod,
+	updateRechargeAmount,
+} from "../../redux/slices/campusCard";
 import IconRefresh from "../../assets/icons/IconRefresh";
 import dayjs from "dayjs";
 import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
@@ -24,9 +29,13 @@ import {RootNav} from "../../components/Root";
 
 export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
-	const {balance, updatedAt, paymentMethod} = useSelector(
-		(s: State) => s.campusCard,
-	);
+	const {
+		balance,
+		updatedAt,
+		paymentMethod,
+		lastRechargeDate,
+		todayRechargeAmount,
+	} = useSelector((s: State) => s.campusCard);
 
 	const [refreshing, setRefreshing] = useState(false);
 
@@ -92,6 +101,38 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	useEffect(refresh, [dispatch]);
+
+	const performRecharge = () => {
+		if (valid && !processing) {
+			setProcessing(true);
+			helper
+				.rechargeCampusCard(
+					Number(money),
+					"",
+					paymentMethod === "alipay"
+						? CardRechargeType.Alipay
+						: paymentMethod === "wechat"
+						? CardRechargeType.Wechat
+						: CardRechargeType.Bank,
+				)
+				.then((r) => {
+					setProcessing(false);
+					setMoney("");
+					refresh();
+					if (typeof r === "string") {
+						Linking.openURL(r);
+					}
+				})
+				.catch(() => {
+					Snackbar.show({
+						text: getStr("payFailure"),
+						duration: Snackbar.LENGTH_INDEFINITE,
+						action: {text: getStr("ok")},
+					});
+					setProcessing(false);
+				});
+		}
+	};
 
 	return (
 		<ScrollView style={{paddingHorizontal: 12, paddingVertical: 16, flex: 1}}>
@@ -322,34 +363,42 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 								disabled={!valid || processing}
 								onPress={() => {
-									if (valid && !processing) {
-										setProcessing(true);
-										helper
-											.rechargeCampusCard(
-												Number(money),
-												"",
-												paymentMethod === "alipay"
-													? CardRechargeType.Alipay
-													: paymentMethod === "wechat"
-													? CardRechargeType.Wechat
-													: CardRechargeType.Bank,
-											)
-											.then((r) => {
-												setProcessing(false);
-												setMoney("");
-												refresh();
-												if (typeof r === "string") {
-													Linking.openURL(r);
-												}
-											})
-											.catch(() => {
-												Snackbar.show({
-													text: getStr("payFailure"),
-													duration: Snackbar.LENGTH_INDEFINITE,
-													action: {text: getStr("ok")},
-												});
-												setProcessing(false);
-											});
+									const today = dayjs().format("YYYY-MM-DD");
+									if (today !== lastRechargeDate) {
+										dispatch(
+											updateRechargeAmount({
+												amount: Number(money),
+												date: today,
+											}),
+										);
+										performRecharge();
+									} else {
+										if (todayRechargeAmount >= 400) {
+											Alert.alert(
+												getStr("warning"),
+												getStr("depositExceedLimit"),
+											);
+										} else {
+											Alert.alert(
+												getStr("warning"),
+												getStr("depositRepeatedWarning"),
+												[
+													{
+														text: getStr("ok"),
+														onPress: () => {
+															dispatch(
+																updateRechargeAmount({
+																	amount: Number(money),
+																	date: today,
+																}),
+															);
+															performRecharge();
+														},
+													},
+													{text: getStr("cancel")},
+												],
+											);
+										}
 									}
 								}}>
 								<Text

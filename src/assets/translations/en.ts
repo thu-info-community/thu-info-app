@@ -232,7 +232,12 @@ export default {
 	yesterdayExpenditure: "Yesterday\nexpenditure",
 	enterDepositValue: "How much do you want to deposit?",
 	deposit: "Deposit",
-	depositHint: "In case of deposit failure, please contact i@thuinfo.net ASAP.",
+	depositHint:
+		"In case of deposit failure, please contact i@thuinfo.net within 1 hour, and attach your payment record and campus card expenditure record. 我们将给出充值未到账金额等量的现金赔偿（不超过 400 元）。",
+	depositExceedLimit:
+		"Total amount of deposit today has exceeded 400 yuan. Switch to 清华校园卡 mini-app to proceed.",
+	depositRepeatedWarning:
+		"You have already made a deposit. Please refresh and confirm whether you need another deposit. In case of deposit failure, please contact us ASAP",
 	paymentMethod: "Payment method",
 	selectPaymentMethod: "Select method",
 	bankTransfer: "Bank transfer",
