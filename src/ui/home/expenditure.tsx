@@ -23,6 +23,8 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	const sign = tx.amount > 0 ? "+" : "";
+
 	return (
 		<View
 			style={{
@@ -32,15 +34,16 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 			}}>
 			<View style={{flex: 2, alignItems: "flex-start"}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-					{tx.summary}
+					{tx.name}
 				</Text>
 				<Text style={{color: "grey", marginVertical: 2}}>
-					{tx.timestamp.toISOString()}
+					{dayjs(tx.timestamp).format("YYYY-MM-DD HH:mm")}
 				</Text>
 			</View>
 			<View style={{flex: 1, alignItems: "flex-end"}}>
 				<Text style={{fontSize: 20, color: colors.text}}>
-					{tx.amount.toFixed(2)}
+					{sign}
+					{Math.abs(tx.amount).toFixed(2)}
 				</Text>
 			</View>
 		</View>
@@ -50,6 +53,8 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 interface TxByMonth {
 	year: number;
 	month: number;
+	income: number;
+	expenditure: number;
 	data: CardTransaction[];
 }
 
@@ -58,14 +63,14 @@ export const ExpenditureScreen = () => {
 	const today = dayjs();
 	const [ym, setYm] = useState({
 		year: today.year(),
-		month: today.month(),
+		month: today.month() + 1,
 		clear: false,
 	});
 
 	const [refreshing, setRefreshing] = useState(false);
 
 	const [popupYear, setPopupYear] = useState<number>(today.year());
-	const [popupMonth, setPopupMonth] = useState<number>(today.month());
+	const [popupMonth, setPopupMonth] = useState<number>(today.month() + 1);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -88,11 +93,25 @@ export const ExpenditureScreen = () => {
 				lastDay.format("YYYY-MM-DD"),
 				CardTransactionType.Any,
 			)
-			.then((data) =>
+			.then((transactions) => {
+				let expenditure = 0;
+				let income = 0;
+				for (const tx of transactions) {
+					tx.name = tx.name === "-" ? tx.txName : tx.name.replace(/_/g, "/");
+					if (tx.name.includes("充值") || tx.name.includes("圈存")) {
+						income += tx.amount;
+					} else {
+						expenditure += tx.amount;
+						tx.amount *= -1;
+					}
+				}
+				const data = transactions;
 				setTxList((prev) =>
-					clear ? [{year, month, data}] : [...prev, {year, month, data}],
-				),
-			)
+					clear
+						? [{year, month, income, expenditure, data}]
+						: [...prev, {year, month, income, expenditure, data}],
+				);
+			})
 			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
@@ -105,7 +124,9 @@ export const ExpenditureScreen = () => {
 			refreshControl={
 				<RefreshControl
 					refreshing={refreshing}
-					onRefresh={refresh}
+					onRefresh={() => {
+						setYm({year: today.year(), month: today.month() + 1, clear: true});
+					}}
 					colors={[colors.accent]}
 				/>
 			}
@@ -122,15 +143,14 @@ export const ExpenditureScreen = () => {
 			renderSectionHeader={({section}) => (
 				<View
 					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						marginLeft: 8,
+						padding: 8,
+						backgroundColor: colors.contentBackground,
 					}}>
 					<BottomPopupTriggerView
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
-							justifyContent: "center",
+							marginLeft: 8,
 						}}
 						popupTitle={`${popupYear} 年 ${popupMonth} 月`}
 						popupOnTriggered={() => {
@@ -192,14 +212,14 @@ export const ExpenditureScreen = () => {
 						<IconDown height={18} width={18} />
 					</BottomPopupTriggerView>
 					<Text style={{color: colors.fontB2, fontSize: 14, marginLeft: 8}}>
-						{getStr("outgo")} ￥ {(0).toFixed(2)}
+						{getStr("outgo")} ￥ {section.expenditure.toFixed(2)}
 						{"  "}
-						{getStr("income")} ￥ {(0).toFixed(2)}
+						{getStr("income")} ￥ {section.income.toFixed(2)}
 					</Text>
 				</View>
 			)}
 			renderItem={({item, index}) => (
-				<View key={String(item.timestamp)}>
+				<View key={item.id}>
 					{index > 0 && (
 						<View
 							style={{
