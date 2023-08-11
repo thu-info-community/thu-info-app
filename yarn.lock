@@ -7651,10 +7651,10 @@ through2@^2.0.1:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-thu-info-lib@7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-7.0.1.tgz#33e72b7ddfd7a9a92a451ec27f12e6811438a277"
-  integrity sha512-4YQ9zrZrWtBcet8oC4V7nHqW4s4UPcanim4bh0NI9PX+NvARIfttIwsAx0fznWjhLGDaMSdhVtTiiltSmLgHHQ==
+thu-info-lib@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-7.0.2.tgz#3319b7f1d5da2a1874577fe5a53b3ec99d2f2e16"
+  integrity sha512-qH+KVVFrsNkRG6JyUK2LC+cFB43+qIfvgxaiWwf0rrGrQupaY8lSJIKyn7nHQv8SlS0BOe2kYeQq2mv53mLM/w==
   dependencies:
     abort-controller "3.0.0"
     cheerio "1.0.0-rc.12"
