@@ -80,7 +80,7 @@ export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => r
         }
         const $ = cheerio.load(html);
         const result: CrTimetable[] = [];
-        $("td > .MsoNormalTable").each((_, e) => {
+        $("table").each((_, e) => {
             const table = cheerio(e);
             const rows = table.find("tr");
             const title = cheerio(rows[0]).text().trim();
@@ -99,11 +99,10 @@ export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => r
                 const stage = tds.first().text().trim();
                 const messages = tds.last().children().map((___, e3) => cheerio(e3).text()).get();
                 if (tds.length === 3) {
-                    const duration = (cheerio(tds[1]).children().map((____, e4) => cheerio(e4).text() ).get() as string[]).find((text) => text.includes("～"));
-                    if (duration === undefined) {
+                    const [beginText, endText] = (cheerio(tds[1]).children().map((____, e4) => cheerio(e4).text() ).get() as string[]);
+                    if (beginText === undefined || endText === undefined) {
                         return;
                     }
-                    const [beginText, endText] = duration.split("～");
                     begin = parseCrTimetableTime(semester, beginText);
                     end = parseCrTimetableTime(semester, endText);
                 }
