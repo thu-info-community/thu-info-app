@@ -1,2 +1,1 @@
-fix: add controller flag for whether card recharging is supported
-fix: add missing fields `id`, `address`, `name` for interface `CardTransaction`
+fix: add missing field `txName` for interface `CardTransaction`

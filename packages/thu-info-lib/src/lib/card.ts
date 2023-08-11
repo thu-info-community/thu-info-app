@@ -130,6 +130,7 @@ export const cardGetTransactions = async (
         amount: rawTransaction.txamt / 100,
         address: rawTransaction.meraddr,
         name: rawTransaction.mername,
+        txName: rawTransaction.txname,
     } as CardTransaction));
 };
 

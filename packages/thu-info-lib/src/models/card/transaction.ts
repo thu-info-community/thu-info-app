@@ -6,6 +6,7 @@ export interface CardTransaction {
     amount: number;
     address: string;
     name: string;
+    txName: string;
 }
 
 export enum CardTransactionType {
