@@ -126,6 +126,7 @@ import {uFetch} from "./utils/network";
 import {getNetworkBalance, getNetworkDetail, getOnlineDevices} from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {
+    canRechargeCampusCard,
     cardCancelLoss, cardChangeTransactionPassword,
     cardGetInfo,
     cardGetPhotoUrl,
@@ -948,6 +949,9 @@ export class InfoHelper {
      * @return Uri to request to complete the payment process, undefined for Bank
      */
     public rechargeCampusCard = async (amount: number, transactionPassword: string, type: CardRechargeType) => {
+        if (!await canRechargeCampusCard(this)) {
+            throw new Error("暂不支持校园卡充值，请升级应用程序。");
+        }
         if (type === CardRechargeType.Bank) {
             return cardRechargeFromBank(this, transactionPassword, amount);
         }

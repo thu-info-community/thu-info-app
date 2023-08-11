@@ -1,10 +1,11 @@
 import {AES, enc, mode, pad} from "crypto-js";
-import {roam} from "./core";
+import {roam, roamingWrapperWithMocks} from "./core";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {
     CARD_CANCEL_LOSS_URL,
     CARD_CHANGE_PWD_URL,
+    CARD_I_VERSION_URL,
     CARD_INFO_BY_USER_URL,
     CARD_MOD_MAX_CONSUME_URL,
     CARD_PHOTO_URL, CARD_RECHARGE_FROM_ALIPAY_URL,
@@ -19,6 +20,8 @@ import {CardInfo} from "../models/card/info";
 import {CardTransaction, CardTransactionType} from "../models/card/transaction";
 import {MOCK_CARD_INFO} from "../mocks/card";
 import {LoginError} from "../utils/error";
+
+const CARD_API_VERSION = 1;
 
 const accountBaseInfo = {
     user: "",
@@ -189,6 +192,22 @@ export const cardCancelLoss = async (helper: InfoHelper, transactionPassword: st
             txpasswd: transactionPassword,
         });
 };
+
+export const canRechargeCampusCard = async (helper: InfoHelper) =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        async () => {
+            try {
+                const {version} = await uFetch(CARD_I_VERSION_URL).then(JSON.parse);
+                return version <= CARD_API_VERSION;
+            } catch {
+                throw new Error("Failed to query card API version.");
+            }
+        },
+        false,
+    );
 
 export const cardRechargeFromBank = async (helper: InfoHelper, transactionPassword: string, amount: number) => {
     if (helper.mocked()) {
