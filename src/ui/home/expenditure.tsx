@@ -165,15 +165,17 @@ export const ExpenditureScreen = () => {
 					colors={[colors.accent]}
 				/>
 			}
-			onEndReached={() =>
-				setYm((prev) => {
-					if (prev.month <= 1) {
-						return {year: prev.year - 1, month: 12, clear: false};
-					} else {
-						return {year: prev.year, month: prev.month - 1, clear: false};
-					}
-				})
-			}
+			onEndReached={() => {
+				if (!refreshing) {
+					setYm((prev) => {
+						if (prev.month <= 1) {
+							return {year: prev.year - 1, month: 12, clear: false};
+						} else {
+							return {year: prev.year, month: prev.month - 1, clear: false};
+						}
+					});
+				}
+			}}
 			stickySectionHeadersEnabled={true}
 			renderSectionHeader={({section}) => (
 				<View

@@ -123,9 +123,9 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 						Linking.openURL(r);
 					}
 				})
-				.catch(() => {
+				.catch((e) => {
 					Snackbar.show({
-						text: getStr("payFailure"),
+						text: getStr("network") + String(e),
 						duration: Snackbar.LENGTH_INDEFINITE,
 						action: {text: getStr("ok")},
 					});
@@ -384,6 +384,10 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												getStr("depositRepeatedWarning"),
 												[
 													{
+														text: getStr("cancel"),
+														style: "cancel",
+													},
+													{
 														text: getStr("ok"),
 														onPress: () => {
 															dispatch(
@@ -395,7 +399,6 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 															performRecharge();
 														},
 													},
-													{text: getStr("cancel")},
 												],
 											);
 										}
