@@ -18,12 +18,44 @@ import IconDown from "../../assets/icons/IconDown";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
+import IconRice from "../../assets/icons/IconRice";
+import IconWechat from "../../assets/icons/IconWechat";
+import IconAlipay from "../../assets/icons/IconAlipay";
+import IconBankCard from "../../assets/icons/IconBankCard";
+import IconShower from "../../assets/icons/IconShower";
+import IconPot from "../../assets/icons/IconPot";
+import IconDrink from "../../assets/icons/IconDrink";
+import IconHamburger from "../../assets/icons/IconHamburger";
+import IconNoodles from "../../assets/icons/IconNoodles";
 
 const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const sign = tx.amount > 0 ? "+" : "";
+
+	let icon;
+	const iconSize = 32;
+
+	if (tx.name.includes("微信")) {
+		icon = <IconWechat height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("支付宝")) {
+		icon = <IconAlipay height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("中行")) {
+		icon = <IconBankCard height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("淋浴")) {
+		icon = <IconShower height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("香锅")) {
+		icon = <IconPot height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("饮")) {
+		icon = <IconDrink height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("快餐")) {
+		icon = <IconHamburger height={iconSize} width={iconSize} />;
+	} else if (tx.name.includes("牛拉")) {
+		icon = <IconNoodles height={iconSize} width={iconSize} />;
+	} else {
+		icon = <IconRice height={iconSize} width={iconSize} />;
+	}
 
 	return (
 		<View
@@ -32,6 +64,9 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
+			<View style={{padding: 4, marginRight: 4, alignSelf: "center"}}>
+				{icon}
+			</View>
 			<View style={{flex: 2, alignItems: "flex-start"}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{tx.name}
