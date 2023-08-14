@@ -13,7 +13,6 @@ import {
 	StackNavigationProp,
 } from "@react-navigation/stack";
 import {
-	LibName,
 	Library,
 	LibraryFloor,
 	LibrarySection,
@@ -239,7 +238,7 @@ type HomeStackParamList = {
 	LibBookRecord: undefined;
 	LibRoomCaptcha: undefined;
 	LibRoomSelect: undefined;
-	LibRoomBook: {dateOffset: number; libName: LibName};
+	LibRoomBook: {dateOffset: number; kindId: number; kindName: string};
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
 	LibRoomBookRecord: undefined;
 	Dorm: undefined;
@@ -615,12 +614,12 @@ export const Root = () => {
 			<Stack.Screen
 				name="LibRoomBook"
 				component={LibRoomBookScreen}
-				options={{title: getStr("libRoomBook")}}
+				options={({route}) => ({title: route.params.kindName})}
 			/>
 			<Stack.Screen
 				name="LibRoomPerformBook"
 				component={LibRoomPerformBookScreen}
-				options={{title: getStr("libRoomBook")}}
+				options={({route}) => ({title: route.params.res.devName})}
 			/>
 			<Stack.Screen
 				name="LibRoomBookRecord"

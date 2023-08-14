@@ -7,27 +7,13 @@ import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshL
 export const LibRoomBookScreen = roundedRefreshListScreen(
 	({
 		route: {
-			params: {dateOffset, libName},
+			params: {dateOffset, kindId},
 		},
 	}) =>
-		helper
-			.getLibraryRoomBookingResourceList(
-				dayjs().add(dateOffset, "day").format("YYYYMMDD"),
-			)
-			.then((rooms) =>
-				rooms
-					.filter((val) => val.loc === libName)
-					.sort((a, b) => {
-						const [av, bv] = [a, b].map(
-							(val) => val.kindName.indexOf("暂未开放") !== -1,
-						);
-						if ((av && bv) || (!av && !bv)) {
-							return a.roomName.localeCompare(b.roomName, "zh-CN");
-						} else {
-							return av ? 1 : -1;
-						}
-					}),
-			),
+		helper.getLibraryRoomBookingResourceList(
+			dayjs().add(dateOffset, "day").format("YYYYMMDD"),
+			kindId,
+		),
 	(
 		item,
 		_,
@@ -78,5 +64,5 @@ export const LibRoomBookScreen = roundedRefreshListScreen(
 			</View>
 		</TouchableOpacity>
 	),
-	({id}) => id,
+	({devId}) => String(devId),
 );

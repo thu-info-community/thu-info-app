@@ -1,6 +1,7 @@
 import {LibRoomRes} from "thu-info-lib/dist/models/home/library";
 import {Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
+import dayjs from "dayjs";
 
 export const timeDiff = (start: string, end: string): number => {
 	const startH = Number(start.substring(0, 2));
@@ -22,15 +23,13 @@ export const convertUsageToSegments = (
 		const result: [string, number, boolean][] = [];
 		let lastTime = res.openStart;
 		for (let i = 0; i < sorted.length; i++) {
-			if (sorted[i].start > lastTime) {
-				result.push([lastTime, timeDiff(lastTime, sorted[i].start), false]);
+			const beginTime = dayjs(sorted[i].start).format("HH:mm");
+			const endTime = dayjs(sorted[i].end).format("HH:mm");
+			if (beginTime > lastTime) {
+				result.push([lastTime, timeDiff(lastTime, beginTime), false]);
 			}
-			result.push([
-				sorted[i].start,
-				timeDiff(sorted[i].start, sorted[i].end),
-				true,
-			]);
-			lastTime = sorted[i].end;
+			result.push([beginTime, timeDiff(beginTime, endTime), true]);
+			lastTime = endTime;
 		}
 		if (res.openEnd > lastTime) {
 			result.push([lastTime, timeDiff(lastTime, res.openEnd), false]);
