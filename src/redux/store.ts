@@ -81,7 +81,7 @@ AppState.addEventListener("change", (state) => {
 			Platform.OS === "android"
 		) {
 			ToastAndroid.show(
-				"THU Info 已切换至后台运行。可在设置→帐号与安全中关闭该提示。",
+				"THU Info 已切换至后台运行。可在设置→账号与安全中关闭该提示。",
 				ToastAndroid.SHORT,
 			);
 		}
