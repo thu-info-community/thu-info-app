@@ -18,7 +18,7 @@ import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 
-type RoamingPolicy = "default" | "id" | "card" | "gitlab";
+type RoamingPolicy = "default" | "id" | "card" | "cab" | "gitlab";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -152,6 +152,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         return await uFetch(url);
     }
     case "card":
+    case "cab":
     case "id": {
         const idBaseUrl = policy === "card" ? ID_BASE_URL : WEB_VPN_ID_BASE_URL;
         const idLoginUrl = policy === "card" ? ID_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
