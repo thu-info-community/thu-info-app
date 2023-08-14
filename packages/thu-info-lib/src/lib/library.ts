@@ -476,7 +476,7 @@ export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string):
     await assureLoginValid(helper);
     const data = await cabFetch(LIBRARY_FUZZY_SEARCH_ID_URL + encodeURIComponent(keyword));
     return data.map((r: any) => ({
-        id: r.accNo,
+        id: String(r.accNo),
         label: r.logonName,
         department: r.deptName,
     } as LibFuzzySearchResult));

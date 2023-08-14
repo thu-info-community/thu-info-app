@@ -1,3 +1,1 @@
-fix: fix APIs for cab.lib.tsinghua.edu.cn
-
-This might break some applications, but I tried my best to maintain compatability, so I am not making a major semver release.
+fix: return value type of `fuzzySearchLibraryId`
