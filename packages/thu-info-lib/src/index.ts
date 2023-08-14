@@ -39,12 +39,12 @@ import {
     getBookingRecords,
     getLibraryFloorList,
     getLibraryList,
-    getLibraryRoomBookingCaptchaUrl,
+    getLibraryRoomBookingInfoList,
     getLibraryRoomBookingRecord,
     getLibraryRoomBookingResourceList,
     getLibrarySeatList,
     getLibrarySectionList,
-    loginLibraryRoomBooking,
+    cabLogin,
     toggleSocketState,
 } from "./lib/library";
 import {
@@ -494,36 +494,37 @@ export class InfoHelper {
         cancelBooking(this, id);
 
     /**
-     * Captcha verification is required for lib-room reservation now.
-     *
-     * Use this API to get the url of the captcha.
+     * DEPRECATED.
      */
-    public getLibraryRoomBookingCaptchaUrl = () => getLibraryRoomBookingCaptchaUrl(this);
+    public getLibraryRoomBookingCaptchaUrl = () => Promise.resolve("");
 
     /**
-     * Captcha verification is required for lib-room reservation now.
-     *
-     * Use this API to log in with the captcha.
+     * Login cab.hs.lib.tsinghua.edu.cn
      */
-    public loginLibraryRoomBooking = async (captcha: string) => loginLibraryRoomBooking(this, captcha);
+    public loginLibraryRoomBooking = async () => cabLogin(this);
+
+    /**
+     * Gets all available room information
+     */
+    public getLibraryRoomBookingInfoList = async () => getLibraryRoomBookingInfoList(this);
 
     /**
      * Gets all available room resources
      * @param date  yyyyMMdd
+     * @param kindId
      * @return  Returns a list of all available room resources of a specific
      *          date, along with when and for whom each room is reserved.
      */
     public getLibraryRoomBookingResourceList = async (
         date: string, // yyyyMMdd
-    ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date);
+        kindId: number,
+    ): Promise<LibRoomRes[]> => getLibraryRoomBookingResourceList(this, date, kindId);
 
     /**
      * Passes a student's name as keyword and returns the student's ID.
      *
-     * Fuzzy search is supported.
-     *
-     * This method is supposed to be used only during group registration for
-     * lib rooms.
+     * FUZZY SEARCH IS NO LONGER SUPPORTED. Method name remains unchanged only
+     * for compatability reasons.
      *
      * @param keyword  a string that serves as the search keyword
      */
@@ -535,16 +536,16 @@ export class InfoHelper {
      * Performs a booking request of a library room.
      *
      * @param roomRes     a `LibRoomRes` object referring to the room that is requested for booking
-     * @param start       the beginning time of booking, <b>in format `yyyy-MM-dd HH:mm` where `mm` should be a multiple of 5</b>
-     * @param end         the ending time of booking, <b>in format `yyyy-MM-dd HH:mm` where `mm` should be a multiple of 5</b>
-     * @param memberList  a list of strings, <b>which should be empty if the room is used by one person, and should contain the ID's of all members (including the owner's) if the room is used by more than one person</b>
+     * @param start       the beginning time of booking, <b>in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`</b>
+     * @param end         the ending time of booking, <b>in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`</b>
+     * @param memberList  a list of strings
      */
     public bookLibraryRoom = async (
         roomRes: LibRoomRes,
         start: string,  // yyyy-MM-dd HH:mm
         end: string,  // yyyy-MM-dd HH:mm
         memberList: string[],  // student id's, empty for single user
-    ): Promise<{ success: boolean, msg: string }> => bookLibraryRoom(this, roomRes, start, end, memberList);
+    ) => bookLibraryRoom(this, roomRes, start, end, memberList);
 
     /**
      * Returns all active booking records.
@@ -553,12 +554,9 @@ export class InfoHelper {
 
     /**
      * Cancels a specific library booking record.
-     * @param id  `rsvId` of `LibRoomBookRecord`
+     * @param uuid  `uuid` of `LibRoomBookRecord`
      */
-    public cancelLibraryRoomBooking = async (id: string): Promise<{
-        success: boolean,
-        msg: string
-    }> => cancelLibraryRoomBooking(this, id);
+    public cancelLibraryRoomBooking = async (uuid: string) => cancelLibraryRoomBooking(this, uuid);
 
     /**
      * Get the news list of all channels or a specific channel.

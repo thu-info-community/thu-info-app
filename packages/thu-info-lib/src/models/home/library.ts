@@ -47,38 +47,36 @@ export interface LibBookRecord {
     delId: string | undefined;
 }
 
-export const validLibName = [
-    "NORTH", "WEST", "LAW", "SOCIAL"
-] as const;
+export interface LibRoom {
+    devId: number;
+    devName: string;
+    minReserveTime: number;
+}
 
-export type LibName = typeof validLibName[number];
+export interface LibRoomInfo {
+    kindId: number;
+    kindName: string;
+    rooms: LibRoom[];
+}
 
 export interface LibRoomUsage {
-    start: string;  // HH:mm
-    end: string;  // HH:mm
-    state: "doing" | "undo";
+    id: number;
+    start: Date;
+    end: Date;
     title: string;
-    // owner: string;  // hidden due to security reason
-    // accno: string;  // hidden due to security reason
-    occupy: boolean;
+    owner: string;
+    ownerId: string;
 }
 
 export interface LibRoomRes {
-    id: string;
-    name: string;
-    loc: LibName;
     devId: number;
     devName: string;
     kindId: number;
     kindName: string;
-    classId: number;
-    className: string;
     labId: number;
     labName: string;
     roomId: number;
     roomName: string;
-    buildingId: number;
-    buildingName: string;
     limit: number;
     maxMinute: number;
     minMinute: number;
@@ -93,18 +91,18 @@ export interface LibRoomRes {
 export interface LibFuzzySearchResult {
     id: string;
     label: string;
+    department: string;
 }
 
 export interface LibRoomBookRecord {
-    regDate: string;  // yyyy-MM-dd HH:mm
-    over: boolean;
-    status: string;
-    name: string;
-    category: string;
+    uuid: string;
+    rsvId: number;
     owner: string;
-    members: string;
-    begin: string;  // MM-dd HH:mm
-    end: string;  // MM-dd HH:mm
-    description: string;
-    rsvId: string | undefined;
+    ownerId: string;
+    date: string;  // yyyyMMdd
+    begin: Date;
+    end: Date;
+    devName: string;
+    kindName: string;
+    members: {name: string; userId: string}[];
 }

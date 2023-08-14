@@ -195,7 +195,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
 };
 
-const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
+export const verifyAndReLogin = async (helper: InfoHelper): Promise<boolean> => {
     if (outstandingLoginPromise) {
         await outstandingLoginPromise;
         return true;

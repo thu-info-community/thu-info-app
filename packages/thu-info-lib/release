@@ -1,1 +1,3 @@
-fix: fix broken `getCrTimetable()` API
+fix: fix APIs for cab.lib.tsinghua.edu.cn
+
+This might break some applications, but I tried my best to maintain compatability, so I am not making a major semver release.

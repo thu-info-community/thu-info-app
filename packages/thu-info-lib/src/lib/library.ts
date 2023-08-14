@@ -1,8 +1,9 @@
 /* eslint-disable quotes */
-import {roamingWrapperWithMocks} from "./core";
+import {roam, roamingWrapperWithMocks, verifyAndReLogin} from "./core";
 import {
     APP_SOCKET_STATUS_URL,
     CANCEL_BOOKING_URL,
+    CONTENT_TYPE_JSON,
     LIBRARY_AREAS_URL,
     LIBRARY_BOOK_RECORD_URL,
     LIBRARY_BOOK_URL_PREFIX,
@@ -13,25 +14,25 @@ import {
     LIBRARY_HOME_URL,
     LIBRARY_LIST_URL,
     LIBRARY_ROOM_BOOKING_ACTION_URL,
-    LIBRARY_ROOM_BOOKING_CAPTCHA_URL,
-    LIBRARY_ROOM_BOOKING_HOME_URL,
-    LIBRARY_ROOM_BOOKING_LOGIN_URL,
+    LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL,
     LIBRARY_ROOM_BOOKING_RECORD_URL,
-    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX,
-    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX,
+    LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL,
+    LIBRARY_ROOM_BOOKING_ROOM_INFO_URL,
+    LIBRARY_ROOM_BOOKING_USER_INFO_URL,
     LIBRARY_SEATS_URL,
 } from "../constants/strings";
 import {
     byId,
     LibBookRecord,
     LibFuzzySearchResult,
-    LibName,
     Library,
     LibraryDate,
     LibraryFloor,
     LibrarySeat,
     LibrarySection,
+    LibRoom,
     LibRoomBookRecord,
+    LibRoomInfo,
     LibRoomRes,
     LibRoomUsage,
     SocketStatus,
@@ -41,10 +42,9 @@ import cheerio from "cheerio";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
-import {uFetch, stringify} from "../utils/network";
+import {uFetch, stringify, getRedirectUrl} from "../utils/network";
 import {
-    MOCK_LIB_ROOM_RECORD,
-    MOCK_LIB_ROOM_RES_LIST, MOCK_LIB_SEARCH_RES,
+    MOCK_LIB_ROOM_RECORD, MOCK_LIB_SEARCH_RES,
     MOCK_LIBRARY_ACCESS_TOKEN,
     MOCK_LIBRARY_BOOK_SEAT_RESPONSE,
     MOCK_LIBRARY_BOOKING_RECORDS,
@@ -52,12 +52,8 @@ import {
     MOCK_LIBRARY_LIST,
 } from "../mocks/library";
 import {
-    CabError,
-    CabNotActivatedError,
-    CabTimeoutError,
-    LibError,
     LibraryError,
-    ResponseStatusError,
+    LoginError,
 } from "../utils/error";
 
 type Cheerio = ReturnType<typeof cheerio>;
@@ -70,19 +66,6 @@ const fetchJson = (
     post?: object,
 ): Promise<any> =>
     uFetch(url, post).then((s) => JSON.parse(s).data.list);
-
-// This function needs to be updated periodically to avoid bugs
-const getLibName = (name: string, kindName: string): LibName => {
-    if (name.indexOf("北馆") !== -1 || kindName.indexOf("北馆") !== -1) {
-        return "NORTH";
-    } else if (name.indexOf("西馆") !== -1 || kindName.indexOf("西馆") !== -1) {
-        return "WEST";
-    } else if (name.indexOf("文科馆") !== -1 || kindName.indexOf("文科馆") !== -1) {
-        return "SOCIAL";
-    } else {
-        return "LAW";
-    }
-};
 
 export const getLibraryList = (helper: InfoHelper): Promise<Library[]> =>
     roamingWrapperWithMocks(
@@ -371,123 +354,133 @@ export const cancelBooking = async (
         undefined,
     );
 
-export const getLibraryRoomBookingCaptchaUrl = async (helper: InfoHelper) => roamingWrapperWithMocks(
-    helper,
-    undefined,
-    "",
-    async () => {
-        if ((await uFetch(LIBRARY_ROOM_BOOKING_HOME_URL)).includes("needCaptcha")) {
-            throw new LibError();
-        }
-        return LIBRARY_ROOM_BOOKING_CAPTCHA_URL;
-    },
-    LIBRARY_ROOM_BOOKING_CAPTCHA_URL,
-);
-
-export const loginLibraryRoomBooking = async (helper: InfoHelper, captcha: string) => roamingWrapperWithMocks(
-    helper,
-    undefined,
-    "",
-    async () => {
-        const loginResult = await uFetch(LIBRARY_ROOM_BOOKING_LOGIN_URL, {
-            id: helper.userId,
-            pwd: helper.password,
-            act: "login",
-            number: captcha,
-        }).then(JSON.parse);
-        if (loginResult.ret === 0) {
-            throw new CabError(loginResult.msg);
-        } else if (loginResult.ret === 2) {
-            throw new CabNotActivatedError(loginResult.msg + " 请登录 https://cab.lib.tsinghua.edu.cn 完成激活");
-        }
-    },
-    undefined,
-);
-
 const cabFetch = async (
     url: string,
-    post?: object,
-): Promise<{
-    ret: number;
-    act: string;
-    msg: string;
-    data: any | null | undefined;
-    ext: any | null | undefined;
-}> => {
-    let result: string;
+    jsonStruct?: any,
+): Promise<any> => {
+    let result: any;
     try {
-        result = await uFetch(url, post);
-    } catch (e) {
-        if (e instanceof ResponseStatusError) {
-            throw new CabTimeoutError("未登录或登录超时");
+        if (jsonStruct === undefined) {
+            result = JSON.parse(await uFetch(url));
         } else {
-            throw e;
+            result = JSON.parse(await uFetch(url, JSON.stringify(jsonStruct) as any, undefined, undefined, true, CONTENT_TYPE_JSON));
+        }
+    } catch (e) {
+        throw new Error("Failed to parse cabFetch result");
+    }
+    if (result.code !== 0) {
+        throw new Error(result.message);
+    }
+    return result.data;
+};
+
+const assureLoginValid = async (helper: InfoHelper) => {
+    if (helper.userId === "") {
+        const e = new LoginError("Please login.");
+        helper.loginErrorHook && helper.loginErrorHook(e);
+        throw e;
+    }
+    try {
+        if ((await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL)).pid !== helper.userId) {
+            await cabLogin(helper);
         }
     }
-    if (result.includes("needCaptcha")) {
-        throw new LibError();
+    catch {
+        try {
+            await cabLogin(helper);
+        } catch (e) {
+            if (await verifyAndReLogin(helper)) {
+                await cabLogin(helper);
+            } else {
+                throw e;
+            }
+        }
     }
-    const parsedResult = JSON.parse(result);
-    if (parsedResult.ret === -1 && parsedResult.msg.includes("未登录或登录超时")) {
-        throw new CabTimeoutError("未登录或登录超时");
+};
+
+export const cabLogin = async (helper: InfoHelper): Promise<void> => {
+    if (helper.mocked()) {
+        return;
     }
-    return parsedResult;
+    const loginUrl = await getRedirectUrl(await cabFetch(LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL));
+    const payload = /\/login\/form\/(.+)$/.exec(loginUrl)?.[1];
+    if (payload === undefined) {
+        throw new Error("Failed to get payload in cabLogin. Retry later.");
+    }
+    await roam(helper, "id", payload);
+    const {pid} = await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL);
+    if (pid !== helper.userId) {
+        throw new Error("Failed to get pid in cabLogin. Retry later.");
+    }
+};
+
+export const getLibraryRoomBookingInfoList = async (helper: InfoHelper): Promise<LibRoomInfo[]> => {
+    if (helper.mocked()) {
+        return [];
+    }
+    await assureLoginValid(helper);
+    const data = await cabFetch(LIBRARY_ROOM_BOOKING_ROOM_INFO_URL);
+    return data.map((item: any) => ({
+        kindId: item.kindId,
+        kindName: item.kindName,
+        rooms: item.roomInfos.map((info: any) => ({
+            devId: info.devId,
+            devName: info.devName,
+            minReserveTime: info.minResvTime,
+        } as LibRoom)),
+    }) as LibRoomInfo);
 };
 
 export const getLibraryRoomBookingResourceList = async (
     helper: InfoHelper,
     date: string, // yyyyMMdd
-): Promise<LibRoomRes[]> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        async (): Promise<LibRoomRes[]> => {
-            const result = await cabFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_PREFIX}${date}${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL_SUFFIX}`);
-            return result.data.map((item: any) => ({
-                id: item.id,
-                name: item.name,
-                loc: getLibName(item.name, item.kindName),
-                devId: Number(item.devId),
-                devName: item.devName,
-                kindId: Number(item.kindId),
-                kindName: item.kindName,
-                classId: Number(item.classId),
-                className: item.className,
-                labId: Number(item.labId),
-                labName: item.labName,
-                roomId: Number(item.roomId),
-                roomName: item.roomName,
-                buildingId: Number(item.buildingId),
-                buildingName: item.buildingName,
-                limit: item.limit,
-                maxMinute: item.max,
-                minMinute: item.min,
-                cancelMinute: item.cancel,
-                maxUser: item.maxUser,
-                minUser: item.minUser,
-                openStart: item.openStart,
-                openEnd: item.openEnd,
-                usage: item.ts.map((ts: any) => ({
-                    start: ts.start.substring(11),
-                    end: ts.end.substring(11),
-                    state: ts.state,
-                    title: ts.title,
-                    occupy: ts.occupy,
-                } as LibRoomUsage)),
-            } as LibRoomRes));
-        },
-        MOCK_LIB_ROOM_RES_LIST,
-    );
+    kindId: number,
+): Promise<LibRoomRes[]> => {
+    if (helper.mocked()) {
+        return [];
+    }
+    await assureLoginValid(helper);
+    const data = await cabFetch(`${LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL}&resvDates=${date}&kindIds=${kindId}`);
+    return data.map((item: any) => ({
+        devId: item.devId,
+        devName: item.devName,
+        kindId: item.kindId,
+        kindName: item.kindName,
+        labId: item.labId,
+        labName: item.labName,
+        roomId: item.roomId,
+        roomName: item.roomName,
+        limit: item.resvRule.limit,
+        maxMinute: item.resvRule.maxResvTime,
+        minMinute: item.resvRule.minResvTime,
+        cancelMinute: item.resvRule.cancelTime,
+        maxUser: item.maxUser,
+        minUser: item.minUser,
+        openStart: item.openStart,
+        openEnd: item.openEnd,
+        usage: item.resvInfo.map((info: any) => ({
+            id: info.resvId,
+            start: new Date(info.startTime),
+            end: new Date(info.endTime),
+            title: info.title,
+            owner: info.trueName,
+            ownerId: info.logonName,
+        } as LibRoomUsage)),
+    } as LibRoomRes));
+};
 
-export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string): Promise<LibFuzzySearchResult[]> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        async (): Promise<LibFuzzySearchResult[]> => uFetch(LIBRARY_FUZZY_SEARCH_ID_URL + encodeURIComponent(keyword)).then(JSON.parse),
-        MOCK_LIB_SEARCH_RES(keyword),
-    );
+export const fuzzySearchLibraryId = async (helper: InfoHelper, keyword: string): Promise<LibFuzzySearchResult[]> => {
+    if (helper.mocked()) {
+        return MOCK_LIB_SEARCH_RES(keyword);
+    }
+    await assureLoginValid(helper);
+    const data = await cabFetch(LIBRARY_FUZZY_SEARCH_ID_URL + encodeURIComponent(keyword));
+    return data.map((r: any) => ({
+        id: r.accNo,
+        label: r.logonName,
+        department: r.deptName,
+    } as LibFuzzySearchResult));
+};
 
 export const bookLibraryRoom = async (
     helper: InfoHelper,
@@ -495,70 +488,60 @@ export const bookLibraryRoom = async (
     start: string,  // yyyy-MM-dd HH:mm
     end: string,  // yyyy-MM-dd HH:mm
     memberList: string[],  // student id's
-): Promise<{success: boolean, msg: string}> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        async (): Promise<{success: boolean, msg: string}> => {
-            const middle = memberList.length === 0 ? "" : `&min_user=${roomRes.minUser}&max_user=${roomRes.maxUser}&mb_list=$${memberList.join(',')}`;
-            const result = await cabFetch(`${LIBRARY_ROOM_BOOKING_ACTION_URL}?dialogid=&dev_id=${roomRes.devId}&lab_id=${roomRes.labId}&kind_id=${roomRes.kindId}&room_id=${roomRes.roomId}&type=dev&prop=&test_id=&term=&Vnumber=&classkind=&test_name=${middle}&start=${start}&end=${end}&start_time=${start.substring(11, 13)}${start.substring(14, 16)}&end_time=${end.substring(11, 13)}${end.substring(14, 16)}&up_file=&memo=&act=set_resv`);
-            if (result.ret === -1) {
-                throw new CabError(result.msg);
-            }
-            return {success: result.ret === 1, msg: result.msg};
-        },
-        {success: true, msg: "操作成功！"}
-    );
+): Promise<void> => {
+    if (helper.mocked()) {
+        return;
+    }
+    await assureLoginValid(helper);
+    await cabFetch(LIBRARY_ROOM_BOOKING_ACTION_URL, {
+        sysKind: 1,
+        appAccNo: helper.userId,
+        memberKind: 1,
+        resvBeginTime: start,
+        resvEndTime: end,
+        testName: "",
+        resvKind: 2,
+        resvProperty: 0,
+        appUrl: "",
+        resvMember: memberList,
+        resvDev: [roomRes.devId],
+        memo: "",
+        captcha: "",
+        addServices: [],
+    });
+};
 
 export const getLibraryRoomBookingRecord = async (
     helper: InfoHelper
-): Promise<LibRoomBookRecord[]> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        async() :Promise<LibRoomBookRecord[]> => {
-            const result = (await cabFetch(LIBRARY_ROOM_BOOKING_RECORD_URL)).msg;
-            if (result.includes("没有数据")) return [];
-            const tables = cheerio("tbody", result);
-            return tables.map((_, table) => {
-                const tableElement = cheerio(table);
-                const tableAttr = tableElement.attr();
-                const tableRow = cheerio(tableElement.find("tr").get()[1]).children("td");
-                const textPrimary = cheerio(tableRow[3]).find(".text-primary").get();
-                return {
-                    regDate: tableAttr.date,
-                    over: tableAttr.over === "true",
-                    status: ((tableElement.find(".orange")[0] ?? tableElement.find(".green")[0]) as TagElement).children[0].data,
-                    name: cheerio(tableRow[0]).find(".box > a").text(),
-                    category: cheerio(tableRow[0]).find(".grey").text(),
-                    owner: (tableRow[1] as TagElement).children[0].data,
-                    members: cheerio(tableRow[2]).text(),
-                    begin: cheerio(textPrimary[0]).text(),
-                    end: cheerio(textPrimary[1]).text(),
-                    description: cheerio(tableRow[4]).text(),
-                    rsvId: cheerio(tableRow[5]).find("[rsvId]").attr()?.rsvid,
-                } as LibRoomBookRecord;
-            }).get();
-        },
-        MOCK_LIB_ROOM_RECORD,
-    );
+): Promise<LibRoomBookRecord[]> => {
+    if (helper.mocked()) {
+        return MOCK_LIB_ROOM_RECORD;
+    }
+    await assureLoginValid(helper);
+    const begin = dayjs();
+    const end = begin.add(6, "day");
+    const data = await cabFetch(`${LIBRARY_ROOM_BOOKING_RECORD_URL}&beginDate=${begin.format("YYYY-MM-DD")}&endDate=${end.format("YYYY-MM-DD")}`);
+    return data.map((item: any) => ({
+        uuid: item.uuid,
+        rsvId: item.resvId,
+        owner: item.resvName,
+        ownerId: item.logonName,
+        date: String(item.resvDate),
+        begin: new Date(item.resvBeginTime),
+        end: new Date(item.resvEndTime),
+        devName: item.resvDevInfoList[0].devName,
+        kindName: item.resvDevInfoList[0].kindName,
+        members: item.resvMemberInfoList.map((member: any) => ({name: member.trueName, userId: member.logonName})),
+    } as LibRoomBookRecord));
+};
 
 export const cancelLibraryRoomBooking = async (
     helper: InfoHelper,
-    id: string,
-): Promise<{success: boolean, msg: string}> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        async () : Promise<{success: boolean, msg: string}> => {
-            const result = await cabFetch(LIBRARY_CANCEL_BOOKING_URL + id);
-            if (result.ret === -1) {
-                throw new CabError(result.msg);
-            }
-            return {success: result.ret === 1, msg: result.msg};
-        },
-        {success: true, msg: "操作成功！"},
-    );
+    uuid: string,
+): Promise<void> => {
+    if (helper.mocked()) {
+        return;
+    }
+    await assureLoginValid(helper);
+    await cabFetch(LIBRARY_CANCEL_BOOKING_URL, {uuid});
+};
