@@ -86,7 +86,6 @@ import IconLoseCard from "../assets/icons/IconLoseCard";
 import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 import {AccountScreen} from "../ui/settings/account";
 import {ReserveScreen} from "../ui/home/reserve";
-import {LibRoomCaptchaScreen} from "../ui/home/libRoomCaptcha";
 import {CrHomeScreen} from "../ui/home/crHome";
 import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
@@ -236,7 +235,6 @@ type HomeStackParamList = {
 	LibraryMap: {floor: LibraryFloor; dateChoice: 0 | 1};
 	LibrarySeatMap: {section: LibrarySection};
 	LibBookRecord: undefined;
-	LibRoomCaptcha: undefined;
 	LibRoomSelect: undefined;
 	LibRoomBook: {dateOffset: number; kindId: number; kindName: string};
 	LibRoomPerformBook: {date: string; res: LibRoomRes}; // date: yyyy-MM-dd
@@ -591,11 +589,6 @@ export const Root = () => {
 				name="LibBookRecord"
 				component={LibBookRecordScreen}
 				options={{title: getStr("libBookRecord")}}
-			/>
-			<Stack.Screen
-				name="LibRoomCaptcha"
-				component={LibRoomCaptchaScreen}
-				options={{title: getStr("libRoomBook")}}
 			/>
 			<Stack.Screen
 				name="LibRoomSelect"
