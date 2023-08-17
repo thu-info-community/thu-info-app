@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {ElementRef, useRef, useState} from "react";
 import {RootNav, LibRoomPerformBookProp} from "../../components/Root";
 import {
 	convertUsageToSegments,
@@ -98,7 +98,7 @@ export const LibRoomPerformBookScreen = ({
 		validEnds.length > 0 ? validEnds[0].start ?? null : null,
 	);
 
-	const rightScrollRef = useRef<any>();
+	const rightScrollRef = useRef<ElementRef<typeof ScrollPicker>>(null);
 
 	const [members, setMembers] = useState<string[]>([helper.userId]);
 	const [userKeyword, setUserKeyword] = useState<string>("");
@@ -216,8 +216,8 @@ export const LibRoomPerformBookScreen = ({
 											</Text>
 										)}
 										onValueChange={(value) => {
-											setBegValue(value as string);
-											const newValidEnds = genValidEnds(value as string);
+											setBegValue(value);
+											const newValidEnds = genValidEnds(value);
 											setEndValue(newValidEnds[0].start ?? null);
 											rightScrollRef.current?.scrollToTargetIndex(0);
 										}}
@@ -237,7 +237,7 @@ export const LibRoomPerformBookScreen = ({
 											</Text>
 										)}
 										onValueChange={(value) => {
-											setEndValue(value as string);
+											setEndValue(value);
 										}}
 									/>
 								</View>
