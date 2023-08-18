@@ -59,7 +59,6 @@ import {
 	toggleReadStatus,
 	updateAnnouncements,
 } from "../../redux/slices/announcement";
-import {EasterEggSchedule} from "../../utils/easterEgg";
 import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
@@ -342,9 +341,7 @@ export const HomeScheduleSection = () => {
 	const theme = themes(themeName);
 
 	const firstDay = useSelector((s: State) => s.config.firstDay);
-	const baseSchedule = useSelector(
-		(s: State) => s.schedule.baseSchedule,
-	).concat([EasterEggSchedule]);
+	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
 	const shortenMap = useSelector((s: State) => s.schedule.shortenMap);
 	const crTimetable = useSelector((s: State) => s.timetable.crTimetable);
 	const now = dayjs();
