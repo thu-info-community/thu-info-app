@@ -1,0 +1,43 @@
+import {ColorTheme} from "../themes/themes";
+
+export const colorPkuLight: ColorTheme = {
+	primaryLight: "#8B0016",
+	primary: "#8B0012",
+	primaryDark: "#700005",
+	accent: "#008B78",
+	text: "#000000",
+	contentBackground: "#FFFFFF",
+	themeBackground: "#F6F6F6",
+	inputBorder: "#CCCCCC",
+	transparent: "#00000000",
+
+	mainTheme: "#BB0000",
+	fontB0: "#000000",
+	fontB1: "#333333",
+	fontB2: "#666666",
+	fontB3: "#999999",
+	statusNormal: "", //TODO
+	statusDisabled: {rgb: "#999999", alpha: 0.3},
+	statusWarning: "#FF3B30",
+	statusWarningOpacity: "#FF3B3019",
+	statusError: "#DF1515",
+	themeGreen: "#34C759",
+	themeBlue: "#007AFF",
+	themeTransparentPurple: "#9B00006A",
+	themePurple: "#9B0000",
+	themeDarkPurple: "#9B0000",
+	themeLightPurple: "#BB0000",
+	themeDarkGrey: "#B5B5B5",
+	themeGrey: "#D6D3DB",
+	themeLightGrey: "#E9E9E9",
+	themeGold: "#FFCC00",
+	courseItemColorList: [
+		"#4DD28D",
+		"#55E4C6",
+		"#E8CE4F",
+		"#E48555",
+		"#8B55E4",
+		"#5599E4",
+		"#BC4C55",
+	],
+};
