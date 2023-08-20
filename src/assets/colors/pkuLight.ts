@@ -11,7 +11,7 @@ export const colorPkuLight: ColorTheme = {
 	inputBorder: "#CCCCCC",
 	transparent: "#00000000",
 
-	mainTheme: "#BB0000",
+	mainTheme: "#C26064",
 	fontB0: "#000000",
 	fontB1: "#333333",
 	fontB2: "#666666",
