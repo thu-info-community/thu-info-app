@@ -6709,10 +6709,10 @@ react-native-screens@3.24.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-share@9.2.4:
-  version "9.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-9.2.4.tgz#984b5b7f1b51f61904cf5e11743a4813d7f678a2"
-  integrity sha512-5EdEFqMEzeZtSHd8rOyt1YgqghWm22fOXP8NabQC/766ivpHOvysxaPd5bisW48UCjv7Cjk1XqBlnYbaK8WrTA==
+react-native-share@9.3.0:
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-9.3.0.tgz#3d9418f2e5263dc7755b15ea1108613b7be05851"
+  integrity sha512-ESUTZBBftxJuxbbXxg/IEuur8royhdl2V1TO+KRhzppt8EA/+4dcRawqKB7gAZxUYIG88xOAG7QALxyvSRd/Kg==
 
 react-native-snackbar@2.6.2:
   version "2.6.2"
