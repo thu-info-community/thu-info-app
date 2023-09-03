@@ -387,7 +387,7 @@ const assureLoginValid = async (helper: InfoHelper) => {
         throw e;
     }
     try {
-        if ((await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL)).pid !== helper.userId) {
+        if (accountBaseInfo.accNo === -1 || (await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL)).pid !== helper.userId) {
             await cabLogin(helper);
         }
     }
