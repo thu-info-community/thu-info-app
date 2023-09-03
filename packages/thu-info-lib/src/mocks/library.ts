@@ -325,7 +325,7 @@ export const MOCK_LIBRARY_BOOKING_RECORDS = [
     },
 ] as LibBookRecord[];
 
-export const MOCK_LIB_SEARCH_RES = (keyword: string) => [{id: keyword, label: `张三(${keyword})`, department: "计算机系"}] as LibFuzzySearchResult[];
+export const MOCK_LIB_SEARCH_RES = (keyword: string) => [{id: Number(keyword), label: `张三(${keyword})`, department: "计算机系"}] as LibFuzzySearchResult[];
 
 export const MOCK_LIB_ROOM_RECORD = [
     {

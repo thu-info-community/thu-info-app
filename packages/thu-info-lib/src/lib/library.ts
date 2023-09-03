@@ -493,7 +493,7 @@ export const bookLibraryRoom = async (
     roomRes: LibRoomRes,
     start: string,  // yyyy-MM-dd HH:mm
     end: string,  // yyyy-MM-dd HH:mm
-    memberList: string[],  // student id's
+    memberList: number[],  // student id's
 ): Promise<void> => {
     if (helper.mocked()) {
         return;

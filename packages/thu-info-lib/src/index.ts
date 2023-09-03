@@ -552,7 +552,7 @@ export class InfoHelper {
         roomRes: LibRoomRes,
         start: string,  // yyyy-MM-dd HH:mm
         end: string,  // yyyy-MM-dd HH:mm
-        memberList: string[],  // student id's, empty for single user
+        memberList: number[],  // student id's, empty for single user
     ) => bookLibraryRoom(this, roomRes, start, end, memberList);
 
     /**

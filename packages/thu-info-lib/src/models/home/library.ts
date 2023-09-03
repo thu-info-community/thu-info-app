@@ -89,7 +89,7 @@ export interface LibRoomRes {
 }
 
 export interface LibFuzzySearchResult {
-    id: string;
+    id: number;
     label: string;
     department: string;
 }
