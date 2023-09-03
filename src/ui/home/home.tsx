@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Platform,
 	ScrollView,
 	Text,
@@ -482,18 +483,21 @@ export const HomeScheduleSection = () => {
 				</Text>
 				{activeEvents.length > 0 ? (
 					activeEvents.map((e) => (
-						<HomeSchedule
-							schedule={{
-								name: e.stage,
-								location: getStr(
-									now.isBefore(dayjs(e.begin)) ? "pending" : "ongoing",
-								),
-								from: e.begin,
-								to: e.end,
-								color: getColor(e.stage),
-							}}
-							key={e.stage + e.begin + e.end}
-						/>
+						<TouchableOpacity
+							onPress={() => Alert.alert(e.stage, e.messages.join("\n"))}
+							key={e.stage + e.begin + e.end}>
+							<HomeSchedule
+								schedule={{
+									name: e.stage,
+									location: getStr(
+										now.isBefore(dayjs(e.begin)) ? "pending" : "ongoing",
+									),
+									from: e.begin,
+									to: e.end,
+									color: getColor(e.stage),
+								}}
+							/>
+						</TouchableOpacity>
 					))
 				) : (
 					<Text style={{color: theme.colors.text, marginTop: 8}}>
