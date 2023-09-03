@@ -414,10 +414,11 @@ export const cabLogin = async (helper: InfoHelper): Promise<void> => {
         throw new Error("Failed to get payload in cabLogin. Retry later.");
     }
     await roam(helper, "cab", payload);
-    const {pid} = await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL);
+    const {pid, accNo} = await cabFetch(LIBRARY_ROOM_BOOKING_USER_INFO_URL);
     if (pid !== helper.userId) {
         throw new Error("Failed to get pid in cabLogin. Retry later.");
     }
+    accountBaseInfo.accNo = accNo;
 };
 
 export const getLibraryRoomBookingInfoList = async (helper: InfoHelper): Promise<LibRoomInfo[]> => {
