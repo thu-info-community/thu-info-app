@@ -354,6 +354,12 @@ export const cancelBooking = async (
         undefined,
     );
 
+const accountBaseInfo = {
+    accNo: -1,
+};
+
+export const getAccNo = () => accountBaseInfo.accNo;
+
 const cabFetch = async (
     url: string,
     jsonStruct?: any,
@@ -495,7 +501,7 @@ export const bookLibraryRoom = async (
     await assureLoginValid(helper);
     await cabFetch(LIBRARY_ROOM_BOOKING_ACTION_URL, {
         sysKind: 1,
-        appAccNo: helper.userId,
+        appAccNo: accountBaseInfo.accNo,
         memberKind: 1,
         resvBeginTime: start,
         resvEndTime: end,

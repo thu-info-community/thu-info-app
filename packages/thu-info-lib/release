@@ -1,2 +1,3 @@
 fix: return value type of `fuzzySearchLibraryId`
 internal: introduce a new `RoamingPolicy` (`"cab"`) for cab.lib.tsinghua.edu.cn login to make code-scan happy
+feat: add an API to get accNo of cab.lib.tsinghua.edu.cn

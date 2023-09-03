@@ -44,6 +44,7 @@ import {
     getLibraryRoomBookingResourceList,
     getLibrarySeatList,
     getLibrarySectionList,
+    getAccNo,
     cabLogin,
     toggleSocketState,
 } from "./lib/library";
@@ -497,6 +498,13 @@ export class InfoHelper {
      * DEPRECATED.
      */
     public getLibraryRoomBookingCaptchaUrl = () => Promise.resolve("");
+
+    /**
+     * Use this API to get the account number of current user.
+     *
+     * The account number is used to book rooms.
+     */
+    public getLibraryRoomAccNo = () => getAccNo();
 
     /**
      * Login cab.hs.lib.tsinghua.edu.cn
