@@ -100,7 +100,9 @@ export const LibRoomPerformBookScreen = ({
 
 	const rightScrollRef = useRef<ElementRef<typeof ScrollPicker>>(null);
 
-	const [members, setMembers] = useState<string[]>([helper.userId]);
+	const [members, setMembers] = useState<LibFuzzySearchResult[]>([
+		{id: helper.getLibraryRoomAccNo(), label: "自己", department: ""},
+	]);
 	const [userKeyword, setUserKeyword] = useState<string>("");
 	const [userItems, setUserItems] = useState<LibFuzzySearchResult[]>([]);
 
@@ -320,16 +322,16 @@ export const LibRoomPerformBookScreen = ({
 												setUserItems([]);
 												setUserKeyword("");
 											} else if (r.length === 1) {
-												const id = String(r[0].id);
+												const id = r[0].id;
 												setMembers((prev) => {
 													if (id === undefined) {
 														Alert.alert("用户不合法");
 														return prev;
-													} else if (prev.includes(id)) {
+													} else if (prev.some((e) => e.id === id)) {
 														Alert.alert("用户已经成为使用者");
 														return prev;
 													} else {
-														return prev.concat(id);
+														return prev.concat(r[0]);
 													}
 												});
 												setUserItems([]);
@@ -372,13 +374,13 @@ export const LibRoomPerformBookScreen = ({
 												</View>
 											</TouchableOpacity>,
 										].concat(
-											userItems.map(({id, label}) => (
+											userItems.map((item) => (
 												<TouchableOpacity
 													onPress={() =>
 														Alert.alert(
-															`${getStr("choose")} ${label} ${getStr(
-																"questionMark",
-															)}`,
+															`${getStr("choose")} ${item.label} ${
+																item.department
+															} ${getStr("questionMark")}`,
 															undefined,
 															[
 																{text: getStr("cancel")},
@@ -386,14 +388,16 @@ export const LibRoomPerformBookScreen = ({
 																	text: getStr("confirm"),
 																	onPress: () => {
 																		setMembers((prev) => {
-																			if (id === undefined) {
+																			if (item.id === undefined) {
 																				Alert.alert("用户不合法");
 																				return prev;
-																			} else if (prev.includes(id)) {
+																			} else if (
+																				prev.some((e) => e.id === item.id)
+																			) {
 																				Alert.alert("用户已经成为使用者");
 																				return prev;
 																			} else {
-																				return prev.concat(id);
+																				return prev.concat(item);
 																			}
 																		});
 																		setUserItems([]);
@@ -404,7 +408,7 @@ export const LibRoomPerformBookScreen = ({
 															{cancelable: true},
 														)
 													}
-													key={id}
+													key={item.id}
 													style={{
 														backgroundColor: colors.contentBackground,
 														borderColor: "gray",
@@ -416,7 +420,9 @@ export const LibRoomPerformBookScreen = ({
 													}}>
 													<View
 														style={{flexDirection: "row", paddingVertical: 8}}>
-														<Text style={{color: "gray"}}>{label}</Text>
+														<Text style={{color: "gray"}}>
+															{item.label} {item.department}
+														</Text>
 													</View>
 												</TouchableOpacity>
 											)),
@@ -435,12 +441,14 @@ export const LibRoomPerformBookScreen = ({
 									flexDirection: "row",
 									marginBottom: 4,
 								}}>
-								{members.map((id) => (
+								{members.map((member) => (
 									<TouchableOpacity
-										disabled={id === helper.userId}
+										disabled={member.id === helper.getLibraryRoomAccNo()}
 										onPress={() =>
 											Alert.alert(
-												`${getStr("delete")} ${id}？`,
+												`${getStr("delete")} ${member.label} ${
+													member.department
+												}？`,
 												undefined,
 												[
 													{text: getStr("cancel")},
@@ -448,14 +456,14 @@ export const LibRoomPerformBookScreen = ({
 														text: getStr("confirm"),
 														onPress: () =>
 															setMembers((prev) =>
-																prev.filter((it) => it !== id),
+																prev.filter((it) => it.id !== member.id),
 															),
 													},
 												],
 												{cancelable: true},
 											)
 										}
-										key={id}
+										key={member.id}
 										style={{
 											backgroundColor: colors.contentBackground,
 											borderColor: "gray",
@@ -466,7 +474,7 @@ export const LibRoomPerformBookScreen = ({
 											justifyContent: "center",
 										}}>
 										<View style={{flexDirection: "row", paddingVertical: 8}}>
-											<Text style={{color: "gray"}}>{id}</Text>
+											<Text style={{color: "gray"}}>{member.label}</Text>
 										</View>
 									</TouchableOpacity>
 								))}
@@ -502,7 +510,7 @@ export const LibRoomPerformBookScreen = ({
 										res,
 										`${date} ${begValue}:00`,
 										`${date} ${endValue}:00`,
-										members,
+										members.map((member) => member.id),
 									)
 									.then(() => {
 										Snackbar.show({
