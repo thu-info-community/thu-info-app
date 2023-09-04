@@ -6,7 +6,7 @@ jobs:
   install-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup caching
         uses: actions/cache@v3
         with:
@@ -25,7 +25,7 @@ jobs:
     needs: install-and-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v3
@@ -123,7 +123,7 @@ jobs:
     needs: install-and-test
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v3
