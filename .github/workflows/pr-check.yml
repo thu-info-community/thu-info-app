@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: node_modules
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
