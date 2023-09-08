@@ -1,15 +1,21 @@
 import {InfoHelper} from "../index";
 import {
     COURSE_PLAN_URL_PREFIX,
+    COURSE_PLAN_YJS_URL,
     CR_CAPTCHA_URL,
     CR_LOGIN_HOME_URL,
     CR_LOGIN_SUBMIT_URL,
     CR_MAIN_URL,
+    CR_MAIN_YJS_URL,
     CR_SEARCH_URL,
+    CR_SEARCH_YJS_URL,
     CR_SELECT_URL,
+    CR_SELECT_YJS_URL,
     CR_TIMETABLE_URL,
     CR_TREE_URL,
+    CR_TREE_YJS_URL,
     CR_ZYTJB_URL,
+    CR_ZYTJB_YJS_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
@@ -184,12 +190,12 @@ export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSem
     undefined,
     "",
     async () => {
-        const root = await crFetch(CR_MAIN_URL);
+        const root = await crFetch(helper.graduate() ? CR_MAIN_YJS_URL : CR_MAIN_URL);
         const baseSemIdRes = /m=showTree&p_xnxq=(\d\d\d\d-\d\d\d\d-\d)/.exec(root);
         if (baseSemIdRes === null) {
             throw new CrError();
         }
-        const $ = await crFetch(CR_TREE_URL + baseSemIdRes[1]).then(cheerio.load);
+        const $ = await crFetch((helper.graduate() ? CR_TREE_YJS_URL : CR_TREE_URL) + baseSemIdRes[1]).then(cheerio.load);
         return $("option").toArray().map((e) => ({
             id: (e as TagElement).attribs.value,
             name: ((e as TagElement).children[0] as TextElement).data?.trim(),
@@ -203,20 +209,30 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => roa
     undefined,
     "",
     async () => {
-        const data = await crFetch(COURSE_PLAN_URL_PREFIX + semester);
+        const data = await crFetch(helper.graduate() ? COURSE_PLAN_YJS_URL : COURSE_PLAN_URL_PREFIX + semester);
         const courses = cheerio(".trr2", data);
         const result: CoursePlan[] = [];
         courses.each((_, element) => {
             if (element.type === "tag") {
                 const rawItems = cheerio(element).children();
                 const items = rawItems.length === 7 ? rawItems.slice(2) : rawItems;
-                result.push({
-                    id: getCheerioText(items[0], 1),
-                    name: cheerio(cheerio(cheerio(cheerio(items[1]).children()[0]).children()[0]).children()[0]).text().trim(),
-                    property: getCheerioText(items[2], 1),
-                    credit: Number(getCheerioText(items[3], 1)),
-                    group: getCheerioText(items[4], 1),
-                });
+                if (helper.graduate()) {
+                    result.push({
+                        id: getCheerioText(items[1], 0),
+                        name: (items[2] as TagElement).attribs.title,
+                        property: getCheerioText(items[5], 0),
+                        credit: Number(getCheerioText(items[3], 0)),
+                        group: getCheerioText(items[6], 0),
+                    });
+                } else {
+                    result.push({
+                        id: getCheerioText(items[0], 1),
+                        name: cheerio(cheerio(cheerio(cheerio(items[1]).children()[0]).children()[0]).children()[0]).text().trim(),
+                        property: getCheerioText(items[2], 1),
+                        credit: Number(getCheerioText(items[3], 1)),
+                        group: getCheerioText(items[4], 1),
+                    });
+                }
             }
         });
         return result;
@@ -242,7 +258,7 @@ export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id,
     undefined,
     "",
     async () => {
-        const $ = await crFetch(CR_SEARCH_URL, {
+        const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
             m: "kylSearch",
             page: page ?? -1,
             "p_sort.p1": "",
@@ -286,7 +302,7 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {page, semester, i
     undefined,
     "",
     async () => {
-        const $ = await crFetch(CR_SEARCH_URL, {
+        const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
             m: "kkxxSearch",
             page: page ?? -1,
             "p_sort.p1": "",
@@ -361,14 +377,14 @@ export const searchCrCourses = async (helper: InfoHelper, params: SearchParams):
     MOCK_CR_SEARCH_RESULT,
 );
 
-export type Priority = "bx" | "xx" | "rx" | "ty" | "cx"
+export type Priority = "bx" | "xx" | "rx" | "ty" | "xwk" | "fxwk" | "tyk" | "cx"; // 必修|限选|任选|体育（本）|学位课|非学位课|体育课（研）|重修（本研）
 
 export const selectCourse = async (helper: InfoHelper, semesterId: string, priority: Priority, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
     async () => {
-        const mainHtml = await crFetch(`${CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
+        const mainHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
         const $ = cheerio.load(mainHtml);
         const m = `save${priority[0].toUpperCase()}${priority[1]}Kc`;
         const token = $("input[name=token]").attr().value;
@@ -381,7 +397,7 @@ export const selectCourse = async (helper: InfoHelper, semesterId: string, prior
         const fieldKey = priority === "rx" ? "rx" : priority === "ty" ? "rxTy" : priority + "k";
         post[`p_${fieldKey}_id`] = `${semesterId};${courseId};${courseSeq};`;
         post[`p_${fieldKey}_xkzy`] = will;
-        const responseHtml = await crFetch(CR_SELECT_URL, post);
+        const responseHtml = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, post);
         const responseMsg = /showMsg\("(.+?)"\);/g.exec(responseHtml);
         if (responseMsg === null) {
             throw new CrError("Failed to match regex");
@@ -396,7 +412,7 @@ export const deleteCourse = async (helper: InfoHelper, semesterId: string, cours
     undefined,
     "",
     async () => {
-        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
         const post: {[key: string]: string | number} = {
             m: "deleteYxk",
@@ -405,7 +421,7 @@ export const deleteCourse = async (helper: InfoHelper, semesterId: string, cours
             tokenPriFlag: "yx",
         };
         post["p_del_id"] = `${semesterId};${courseId};${courseSeq};`;
-        const responseHtml = await crFetch(CR_SELECT_URL, post);
+        const responseHtml = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, post);
         const responseMsg = /showMsg\("(.+?)"\);/g.exec(responseHtml);
         if (responseMsg === null) {
             throw new CrError("Failed to match regex");
@@ -428,7 +444,7 @@ export const getSelectedCourses = async (helper: InfoHelper, semesterId: string)
     undefined,
     "",
     async () => {
-        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
         return $(".trr2").map((_, e) => {
             const tds = cheerio(e).find(".tdd2");
@@ -453,9 +469,9 @@ export const changeCourseWill = async (helper: InfoHelper, semesterId: string, c
     undefined,
     "",
     async () => {
-        const yxHtml = await crFetch(`${CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
-        const responseHtml = await crFetch(CR_SELECT_URL, {
+        const responseHtml = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, {
             m: "changeZY",
             token: $("input[name=token]").attr().value,
             p_xnxq: semesterId,
@@ -485,7 +501,7 @@ export const getCrCurrentStage = async (
     undefined,
     "",
     async () => {
-        const html = await crFetch(`${CR_SELECT_URL}?m=selectKc&p_xnxq=${semesterId}&pathContent=%D2%BB%BC%B6%D1%A1%BF%CE`);
+        const html = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=selectKc&p_xnxq=${semesterId}&pathContent=%D2%BB%BC%B6%D1%A1%BF%CE`);
         const stageRes = /"当前选课阶段：(.+?)&nbsp;&nbsp;"/.exec(html);
         const beginRes = /"(.+?)开始&nbsp;&nbsp;"/.exec(html);
         const endRes = /"(.+?)结束"/.exec(html);
@@ -509,7 +525,7 @@ export const searchCoursePriorityMeta = async (
     undefined,
     "",
     async () => {
-        const $ = cheerio.load(await crFetch(`${CR_SELECT_URL}?m=xkqkSearch&p_xnxq=${semesterId}`));
+        const $ = cheerio.load(await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=xkqkSearch&p_xnxq=${semesterId}`));
         const pad = $(".pad");
         return {
             curr: pad.find("font").text(),
@@ -531,11 +547,11 @@ export const searchCoursePriorityInformation = async (
         const responseHtml = await (async () => {
             const tag = query.isSports ? "Ty" : "BR";
             if (query.selected) {
-                return await crFetch(`${CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}&type=GR`);
+                return await crFetch(`${helper.graduate() ? CR_ZYTJB_YJS_URL : CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}&type=GR`);
             } else {
-                const xkHtml = await crFetch(`${CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}`);
+                const xkHtml = await crFetch(`${helper.graduate() ? CR_ZYTJB_YJS_URL : CR_ZYTJB_URL}?m=tbzySearch${tag}&p_xnxq=${semesterId}`);
                 const $ = cheerio.load(xkHtml);
-                return await crFetch(CR_ZYTJB_URL, {
+                return await crFetch(helper.graduate() ? CR_ZYTJB_YJS_URL : CR_ZYTJB_URL, {
                     m: `tbzySearch${tag}`,
                     page: query.page ?? -1,
                     token: $("input[name=token]").attr().value,
@@ -583,7 +599,7 @@ export const getQueueInfo = async (
     undefined,
     "",
     async () => {
-        const data = await crFetch(`${CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
+        const data = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
         const courses = cheerio(".trr2", data);
         const result: QueueInfo[] = [];
         courses.each((_, e) => {
@@ -614,8 +630,8 @@ export const cancelCoursePF = async (
     undefined,
     "",
     async () => {
-        await crFetch(`${CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
-        const pfHtml = await crFetch(`${CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
+        const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(pfHtml);
         const token = $("input[name=token]").attr().value;
         const availableCourses = $(".xinXi2 > #content_1 .table1 tr");
@@ -630,7 +646,7 @@ export const cancelCoursePF = async (
                 });
                 post.token = token;
                 post.m = "editpfcancle";
-                const result = await crFetch(CR_SELECT_URL, post);
+                const result = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, post);
                 if (!result.includes("showMsg(\"任选课取消置为P/F成功\");")) {
                     throw new CrError(`Failed to cancel PF for course #${courseId}`);
                 }
@@ -652,8 +668,8 @@ export const setCoursePF = async (
     undefined,
     "",
     async () => {
-        await crFetch(`${CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
-        const pfHtml = await crFetch(`${CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
+        await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
+        const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(pfHtml);
         const token = $("input[name=token]").attr().value;
         const availableCourses = $(".tabdiv #content_1 .table1 tr");
@@ -673,7 +689,7 @@ export const setCoursePF = async (
                 post.p_pf_id = pfRadio.first().attr().value;
                 post.token = token;
                 post.m = "editpfyes";
-                const result = await crFetch(CR_SELECT_URL, post);
+                const result = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, post);
                 if (!result.includes("showMsg(\"任选课置为P/F成功\")")) {
                     throw new CrError(`Failed to set PF for course #${courseId}`);
                 }
