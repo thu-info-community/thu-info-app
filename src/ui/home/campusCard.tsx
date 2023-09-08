@@ -54,7 +54,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 		regRes.length > 0 &&
 		regRes[0] === money &&
 		Number(money) <= 200 &&
-		Number(money) >= 10;
+		Number(money) > 10;
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -217,7 +217,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 					</Text>
 					<RoundedView style={{marginTop: 8, width: "100%", padding: 16}}>
 						<View style={{flexDirection: "row"}}>
-							{[10, 50, 100].map((price, index) => (
+							{[15, 50, 100].map((price, index) => (
 								<TouchableOpacity
 									style={{
 										borderRadius: 4,
