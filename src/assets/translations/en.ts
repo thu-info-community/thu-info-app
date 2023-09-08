@@ -123,6 +123,7 @@ export default {
 	oldGPA: "Old GPA Policy",
 	allGPA: "GPA : ",
 	bx: "Required & restricted",
+	xwk: "Degree courses",
 	bxr: "All courses",
 	manageHidden: "Hidden Subjects",
 	reportHiddenWarning: "Do not abuse this functionality.",

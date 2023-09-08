@@ -118,6 +118,7 @@ export default {
 	oldGPA: "旧绩点",
 	allGPA: "总 GPA ：",
 	bx: "仅必修限选",
+	xwk: "学位课",
 	bxr: "全部课程",
 	manageHidden: "隐藏的科目",
 	reportHiddenWarning:

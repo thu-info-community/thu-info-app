@@ -268,7 +268,7 @@ export const ReportScreen = () => {
 			? []
 			: open === "flag"
 			? [getStr("reportFlag1"), getStr("reportFlag2"), getStr("reportFlag3")]
-			: [getStr("bxr"), getStr("bx")];
+			: [getStr("bxr"), getStr(helper.graduate() ? "xwk" : "bx")];
 
 	return (
 		<View style={{flex: 1}}>
@@ -279,26 +279,28 @@ export const ReportScreen = () => {
 					alignItems: "center",
 					backgroundColor: colors.contentBackground,
 				}}>
-				<TouchableOpacity
-					onPress={() => setOpen((v) => (v === "flag" ? undefined : "flag"))}
-					style={{
-						marginLeft: 36,
-						flexDirection: "row",
-						alignItems: "center",
-						flex: 0,
-					}}>
-					<Text
-						style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
-						{getStr(`reportFlag${flag}`)}
-					</Text>
-					<View style={{marginLeft: 6}}>
-						<IconDropdown
-							width={6}
-							height={4}
-							color={open === "flag" ? colors.primary : colors.fontB2}
-						/>
-					</View>
-				</TouchableOpacity>
+				{!helper.graduate() && (
+					<TouchableOpacity
+						onPress={() => setOpen((v) => (v === "flag" ? undefined : "flag"))}
+						style={{
+							marginLeft: 36,
+							flexDirection: "row",
+							alignItems: "center",
+							flex: 0,
+						}}>
+						<Text
+							style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
+							{getStr(`reportFlag${flag}`)}
+						</Text>
+						<View style={{marginLeft: 6}}>
+							<IconDropdown
+								width={6}
+								height={4}
+								color={open === "flag" ? colors.primary : colors.fontB2}
+							/>
+						</View>
+					</TouchableOpacity>
+				)}
 				<TouchableOpacity
 					onPress={() => setOpen((v) => (v === "bx" ? undefined : "bx"))}
 					style={{
@@ -308,7 +310,7 @@ export const ReportScreen = () => {
 						flex: 0,
 					}}>
 					<Text style={{color: open === "bx" ? colors.primary : colors.fontB2}}>
-						{getStr(bx ? "bx" : "bxr")}
+						{getStr(bx ? (helper.graduate() ? "xwk" : "bx") : "bxr")}
 					</Text>
 					<View style={{marginLeft: 6}}>
 						<IconDropdown
