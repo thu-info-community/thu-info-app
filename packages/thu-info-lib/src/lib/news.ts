@@ -329,7 +329,8 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
     const resp = await uFetch(`${NEWS_DETAIL_URL}?xxid=${xxid}&preview=&_csrf=${csrf}`);
     const data: { object: { xxDto: { bt: string, nr: string, fjs_template?: { wjid: string, wjmc: string }[] } } } = JSON.parse(resp);
     const title = decode(data.object.xxDto.bt);
-    let content = "<div>" + decode(data.object.xxDto.nr);
+    const textContent = decode(data.object.xxDto.nr).replace(/src="\/b\/ckeditor\/downloadFiles/g, "src=\"/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/ckeditor/downloadFiles");
+    let content = "<div>" + textContent;
     if (data.object.xxDto.fjs_template) {
         data.object.xxDto.fjs_template.forEach(file => {
             content += `<a href="${FILE_DOWNLOAD_URL + file.wjid}?_csrf=${csrf}">${file.wjmc}</a>`;
