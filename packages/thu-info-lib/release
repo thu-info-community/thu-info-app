@@ -1,3 +1,4 @@
 fix(cab): bug in handling accNo
 fix: course registration APIs for graduate students
 fix: do not get secondary courses for graduate students
+fix(report): filter graduate courses by 是否学位课 correctly

@@ -19,7 +19,6 @@ import {
     INVOICE_LIST_URL,
     PHYSICAL_EXAM_URL,
     SWITCH_LANG_URL,
-    YJS_REPORT_BXR_URL,
     CALENDAR_IMAGE_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
@@ -156,9 +155,7 @@ export const getReport = (
         helper.graduate() ? "E35232808C08C8C5F199F13BF6B7F5D0": "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`)),
-            bx && flag === 1
-                ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL)
-                : undefined,
+            bx && flag === 1 && !helper.graduate() ? uFetch(BKS_REPORT_BXR_URL) : undefined,
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
             if (bxStr) {
@@ -188,17 +185,23 @@ export const getReport = (
                     if (!newGPA) {
                         point = gradeToOldGPA.get(grade) ?? point;
                     }
-                    return bxStr === undefined ||
-                    bxSet.has(getCheerioText(element, 1))
-                        ? {
+                    let filter: boolean;
+                    if (graduate) {
+                        filter = !bx || getCheerioText(element, 7) === "是";
+                    } else {
+                        filter = bxStr === undefined || bxSet.has(getCheerioText(element, 1));
+                    }
+                    if (filter) {
+                        return {
                             name: getCheerioText(element, 3),
                             credit: Number(getCheerioText(element, 5)),
                             grade,
                             point,
                             semester: getCheerioText(element, graduate ? 13 : 11),
-                            // eslint-disable-next-line no-mixed-spaces-and-tabs
-                        }
-                        : undefined;
+                        };
+                    } else {
+                        return undefined;
+                    }
                 })
                 .get();
             if (result.length === 0 && str.indexOf("table1") === -1) {
