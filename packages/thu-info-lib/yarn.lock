@@ -1017,10 +1017,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/he@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@types/he/-/he-1.2.0.tgz#3845193e597d943bab4e61ca5d7f3d8fc3d572a3"
-  integrity sha512-uH2smqTN4uGReAiKedIVzoLUAXIYLBTbSofhx3hbNqj74Ua6KqFsLYszduTrLCMEAEAozF73DbGi/SC1bzQq4g==
+"@types/he@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/he/-/he-1.2.1.tgz#a4f6e7e379757705225abc561b86a64df02af39a"
+  integrity sha512-CdNmJMcSqX1BiP3iSsWt+VgixndRIDGzWyaGpBnW3i5heATSk5bJu2j3buutsoBQNjyryqxaNpr8M7fRsGL15w==
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.3"
