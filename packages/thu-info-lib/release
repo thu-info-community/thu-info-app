@@ -1,1 +1,1 @@
-fix(news): fixed a bug where images in some news cannot render correctly
+fix: do not merge schedules with the same name but different locations

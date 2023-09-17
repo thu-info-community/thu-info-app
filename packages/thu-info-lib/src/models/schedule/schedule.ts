@@ -384,7 +384,7 @@ export const removeDelOrHide = (schedule: Schedule, elem: TimeSlice): number[] =
 };
 
 /**
- * 合并计划列表中相同的计划，名称相同的计划认为是同一个计划
+ * 合并计划列表中相同的计划，名称和地点相同的计划认为是同一个计划
  * @param base 需要去重的计划列表
  * @returns 返回去重后的计划列表
  */
@@ -392,9 +392,10 @@ export const mergeSchedules = (base: Schedule[]) => {
     const existName: string[] = [];
     const processedScheduleList: Schedule[] = [];
     base.forEach((schedule) => {
-        const index = existName.indexOf(schedule.name);
+        const nameLocation = `${schedule.name}.${schedule.location}`;
+        const index = existName.indexOf(nameLocation);
         if (index === -1) {
-            existName.push(schedule.name);
+            existName.push(nameLocation);
             processedScheduleList.push(schedule);
         } else {
             schedule.activeTime.base.forEach((time) => {
@@ -443,7 +444,7 @@ export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
             switch (o.fl) {
             case "上课":
             case "实验": {
-                const lessonList = scheduleList.filter((val) => val.name === o.nr);
+                const lessonList = scheduleList.filter((val) => val.name === o.nr && val.location === (o.dd || ""));
                 let lesson: Schedule;
                 if (lessonList.length) {
                     lesson = lessonList[0];
