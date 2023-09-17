@@ -60,7 +60,7 @@ export const scheduleSlice = createSlice({
 			// 以新获取到的课表为基准
 			payload.schedule.forEach((val) => {
 				let selectedScheduleList = state.baseSchedule.filter(
-					(item) => item.name === val.name,
+					(item) => item.name === val.name && item.location === val.location,
 				);
 
 				if (selectedScheduleList.length === 0) {
