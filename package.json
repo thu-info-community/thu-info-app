@@ -1,7 +1,7 @@
 {
 	"name": "thu_info",
-	"version": "3.4.2",
-	"build": 83,
+	"version": "3.4.3",
+	"build": 84,
 	"private": true,
 	"scripts": {
 		"android": "react-native run-android",
