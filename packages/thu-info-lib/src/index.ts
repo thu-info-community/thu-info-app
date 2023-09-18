@@ -679,7 +679,7 @@ export class InfoHelper {
     /**
      * Log in to the course registration system with the captcha.
      */
-    public loginCr = async (captcha: string) => loginCr(this, captcha);
+    public loginCr = async () => loginCr(this);
 
     /**
      * Get all semesters available for course registration.

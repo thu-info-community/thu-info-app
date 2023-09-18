@@ -1,10 +1,10 @@
 import {InfoHelper} from "../index";
 import {
+    ACADEMIC_LOGIN_URL, ACADEMIC_ROOT_URL,
     COURSE_PLAN_URL_PREFIX,
     COURSE_PLAN_YJS_URL,
     CR_CAPTCHA_URL,
     CR_LOGIN_HOME_URL,
-    CR_LOGIN_SUBMIT_URL,
     CR_MAIN_URL,
     CR_MAIN_YJS_URL,
     CR_SEARCH_URL,
@@ -37,7 +37,7 @@ import {
 } from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
 import {roamingWrapperWithMocks} from "./core";
-import {CrCaptchaError, CrError, CrTimeoutError, LibError} from "../utils/error";
+import {CrError, CrTimeoutError, LibError, LoginError} from "../utils/error";
 import {
     MOCK_AVAILABLE_SEMESTERS,
     MOCK_COURSE_PLAN,
@@ -75,7 +75,7 @@ const parseCrTimetableTime = (semester: string, timeText: string): string => {
     return `${year}-${month}-${day} ${hour}:${minute}`;
 };
 
-export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => roamingWrapperWithMocks(
+export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
@@ -105,7 +105,7 @@ export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]>  => r
                 const stage = tds.first().text().trim();
                 const messages = tds.last().children().map((___, e3) => cheerio(e3).text()).get();
                 if (tds.length === 3) {
-                    const [beginText, endText] = (cheerio(tds[1]).children().map((____, e4) => cheerio(e4).text() ).get() as string[]);
+                    const [beginText, endText] = (cheerio(tds[1]).children().map((____, e4) => cheerio(e4).text()).get() as string[]);
                     if (beginText === undefined || endText === undefined) {
                         return;
                     }
@@ -140,22 +140,20 @@ export const getCrCaptchaUrl = (helper: InfoHelper) => roamingWrapperWithMocks(
     CR_CAPTCHA_URL,
 );
 
-export const loginCr = async (helper: InfoHelper, captcha: string) => roamingWrapperWithMocks(
+export const loginCr = async (helper: InfoHelper) => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
     async () => {
-        const res = await uFetch(CR_LOGIN_SUBMIT_URL, {
-            j_username: helper.userId,
-            j_password: helper.password,
-            captchaflag: "login1",
-            _login_image_: captcha.toUpperCase(),
+        await uFetch(ACADEMIC_LOGIN_URL, {
+            userName: helper.userId,
+            password: helper.password,
         });
-        if (res.includes("登录失败：验证码不正确！")) {
-            throw new CrCaptchaError("登录失败：验证码不正确！");
-        } else if (!res.includes("本科生选课") && !res.includes("研究生选课")) {
-            throw new LibError();
-        }
+
+        const academic_root_html = await uFetch(ACADEMIC_ROOT_URL);
+        const cr_roam_url = /src="(https:\/\/webvpn.tsinghua.edu.cn\/http\/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290\/.*?)"/g.exec(academic_root_html)![1].replace(/&amp;/g, "&");
+        if ((await uFetch(cr_roam_url)).search("jsp.timeout.bodyMessage"))
+            throw new LoginError("Failed to login to course registration page");
     },
     undefined,
 );
@@ -253,7 +251,14 @@ const parseFooter = ($: cheerio.Root) => {
     return regResult.slice(1, 4).map(s => Number(s));
 };
 
-export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id, name, dayOfWeek, period}: SearchParams): Promise<CrRemainingSearchResult> => roamingWrapperWithMocks(
+export const searchCrRemaining = async (helper: InfoHelper, {
+    page,
+    semester,
+    id,
+    name,
+    dayOfWeek,
+    period
+}: SearchParams): Promise<CrRemainingSearchResult> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
@@ -297,7 +302,14 @@ export const searchCrRemaining = async (helper: InfoHelper, {page, semester, id,
     MOCK_CR_REMAINING_SEARCH_RESULT,
 );
 
-export const searchCrPrimaryOpen = async (helper: InfoHelper, {page, semester, id, name, dayOfWeek, period}: SearchParams): Promise<CrPrimaryOpenSearchResult> => roamingWrapperWithMocks(
+export const searchCrPrimaryOpen = async (helper: InfoHelper, {
+    page,
+    semester,
+    id,
+    name,
+    dayOfWeek,
+    period
+}: SearchParams): Promise<CrPrimaryOpenSearchResult> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
@@ -388,7 +400,7 @@ export const selectCourse = async (helper: InfoHelper, semesterId: string, prior
         const $ = cheerio.load(mainHtml);
         const m = `save${priority[0].toUpperCase()}${priority[1]}Kc`;
         const token = $("input[name=token]").attr().value;
-        const post: {[key: string]: string | number} = {
+        const post: { [key: string]: string | number } = {
             m,
             token,
             p_xnxq: semesterId,
@@ -414,7 +426,7 @@ export const deleteCourse = async (helper: InfoHelper, semesterId: string, cours
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
-        const post: {[key: string]: string | number} = {
+        const post: { [key: string]: string | number } = {
             m: "deleteYxk",
             token: $("input[name=token]").attr().value,
             p_xnxq: semesterId,
@@ -433,9 +445,12 @@ export const deleteCourse = async (helper: InfoHelper, semesterId: string, cours
 
 const willStringToNumber = (will: string): 1 | 2 | 3 => {
     switch (will) {
-    case "第一志愿": return 1;
-    case "第二志愿": return 2;
-    default: return 3;
+    case "第一志愿":
+        return 1;
+    case "第二志愿":
+        return 2;
+    default:
+        return 3;
     }
 };
 
@@ -638,7 +653,7 @@ export const cancelCoursePF = async (
         for (const course of availableCourses) {
             const items = cheerio(course).children("td");
             if (getCheerioText(items[1], 0) === courseId) {
-                const post: {[key: string]: string} = {};
+                const post: { [key: string]: string } = {};
                 $("form[name=frm] input[type=hidden]").each((_, e) => {
                     if (e.type === "tag") {
                         post[e.attribs.name] = e.attribs.value;
@@ -680,7 +695,7 @@ export const setCoursePF = async (
                 if (pfRadio.length === 0) {
                     throw new CrError(`Course #${courseId} cannot be set PF`);
                 }
-                const post: {[key: string]: string} = {};
+                const post: { [key: string]: string } = {};
                 $("form[name=frm] input[type=hidden]").each((_, e) => {
                     if (e.type === "tag") {
                         post[e.attribs.name] = e.attribs.value;
