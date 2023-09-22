@@ -5,7 +5,7 @@ export interface CardTransaction {
     balance: number;
     amount: number;
     address: string;
-    name: string;
+    name: string | undefined;
     txName: string;
 }
 
