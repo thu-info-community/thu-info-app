@@ -37,21 +37,21 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	let icon;
 	const iconSize = 32;
 
-	if (tx.name.includes("微信")) {
+	if (tx.name?.includes("微信")) {
 		icon = <IconWechat height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("支付宝")) {
+	} else if (tx.name?.includes("支付宝")) {
 		icon = <IconAlipay height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("中行")) {
+	} else if (tx.name?.includes("中行")) {
 		icon = <IconBankCard height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("淋浴")) {
+	} else if (tx.name?.includes("淋浴")) {
 		icon = <IconShower height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("香锅")) {
+	} else if (tx.name?.includes("香锅")) {
 		icon = <IconPot height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("饮")) {
+	} else if (tx.name?.includes("饮")) {
 		icon = <IconDrink height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("快餐")) {
+	} else if (tx.name?.includes("快餐")) {
 		icon = <IconHamburger height={iconSize} width={iconSize} />;
-	} else if (tx.name.includes("牛拉")) {
+	} else if (tx.name?.includes("牛拉")) {
 		icon = <IconNoodles height={iconSize} width={iconSize} />;
 	} else {
 		icon = <IconRice height={iconSize} width={iconSize} />;
@@ -132,7 +132,7 @@ export const ExpenditureScreen = () => {
 				let expenditure = 0;
 				let income = 0;
 				for (const tx of transactions) {
-					tx.name = tx.name === "-" ? tx.txName : tx.name.replace(/_/g, "/");
+					tx.name = tx.name?.replace(/_/g, "/") ?? tx.txName;
 					if (tx.name.includes("充值") || tx.name.includes("圈存")) {
 						income += tx.amount;
 					} else {
