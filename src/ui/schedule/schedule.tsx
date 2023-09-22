@@ -159,12 +159,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		return weekSchedule;
 	};
 
-	let setWeekRef: React.Dispatch<React.SetStateAction<number>> | null = null;
+	const [week, setWeek] = useState(nowWeek);
 
-	const Header = () => {
-		const [week, setWeek] = useState(nowWeek);
-		setWeekRef = setWeek;
-
+	const Header = ({headerWeek}: {headerWeek: number}) => {
 		return (
 			<View
 				style={{
@@ -181,7 +178,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						justifyContent: "center",
 					}}>
 					<BottomPopupTriggerView
-						popupTitle={`${getStr("weekNumPrefix")}${week}${getStr(
+						popupTitle={`${getStr("weekNumPrefix")}${headerWeek}${getStr(
 							"weekNumSuffix",
 						)}`}
 						popupContent={(done) => (
@@ -201,7 +198,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												marginVertical: 4,
 												alignItems: "center",
 												backgroundColor:
-													week === weekButton
+													headerWeek === weekButton
 														? theme.colors.themePurple
 														: undefined,
 												borderRadius: 8,
@@ -218,11 +215,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 													fontSize: 18,
 													lineHeight: 40,
 													fontWeight:
-														week !== weekButton && weekNumber === weekButton
+														headerWeek !== weekButton &&
+														weekNumber === weekButton
 															? "600"
 															: "normal",
 													color:
-														week === weekButton
+														headerWeek === weekButton
 															? "white"
 															: weekNumber === weekButton
 															? theme.colors.themePurple
@@ -247,7 +245,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									color: theme.colors.fontB1,
 								}}>
 								{getStr("weekNumPrefix")}
-								{week}
+								{headerWeek}
 								{getStr("weekNumSuffix")}
 							</Text>
 							<IconDown width={16} height={16} />
@@ -288,7 +286,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<>
-			<Header />
+			<Header headerWeek={week} />
 			<View style={{flex: 1}}>
 				<ScrollView
 					onLayout={({nativeEvent}) => {
@@ -543,7 +541,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
-									setWeekRef && setWeekRef(index + 1);
+									setWeek(index + 1);
 								}}
 								snapToInterval={scheduleBodyWidth}
 								decelerationRate="fast"
