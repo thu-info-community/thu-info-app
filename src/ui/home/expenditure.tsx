@@ -27,6 +27,7 @@ import IconPot from "../../assets/icons/IconPot";
 import IconDrink from "../../assets/icons/IconDrink";
 import IconHamburger from "../../assets/icons/IconHamburger";
 import IconNoodles from "../../assets/icons/IconNoodles";
+import IconSwim from "../../assets/icons/IconSwim";
 
 const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	const themeName = useColorScheme();
@@ -53,6 +54,8 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 		icon = <IconHamburger height={iconSize} width={iconSize} />;
 	} else if (tx.name?.includes("牛拉")) {
 		icon = <IconNoodles height={iconSize} width={iconSize} />;
+	} else if (tx.name?.includes("游泳")) {
+		icon = <IconSwim height={iconSize} width={iconSize} />;
 	} else {
 		icon = <IconRice height={iconSize} width={iconSize} />;
 	}
