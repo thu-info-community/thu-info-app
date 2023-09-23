@@ -36,7 +36,7 @@ target 'thu_info' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  permissions_path = '../node_modules/react-native-permissions/ios'
+  permissions_path = '../../../node_modules/react-native-permissions/ios'
 
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
   pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
