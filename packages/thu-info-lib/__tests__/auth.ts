@@ -25,7 +25,8 @@ it("should enter mocked account", async () => {
 it("should login successfully.", async () => {
     const helper = new InfoHelper();
     await helper.login({userId, password});
-    const {firstDay} = await helper.getCalendar();
+    const {firstDay, weekCount} = await helper.getCalendar();
+    expect(weekCount % 3).toEqual(0);
     expect(dayjs(firstDay).day()).toEqual(1);
     expect((await helper.getCrTimetable()).length).toBeGreaterThan(0);
     expect((await helper.getCampusCardInfo()).balance).toBeGreaterThanOrEqual(0);

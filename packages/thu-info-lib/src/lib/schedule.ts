@@ -23,28 +23,36 @@ import {ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
 import dayjs from "dayjs";
 
+const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `weekCount`.
+
 const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
     roamingWrapperWithMocks(
         helper,
         "default",
         helper.graduate() ? "BEABB32641DC4EC3510B048BAF42471A": "287C0C6D90ABB364CD5FDF1495199962",
-        () => uFetch(
-            (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
-                dayjs(firstDay).format("YYYYMMDD") +
-                JXRL_MIDDLE +
-                dayjs(firstDay).add(weekCount * 7 - 1, "day").format("YYYYMMDD") +
-                JXRL_SUFFIX,
+        () => Promise.all(
+            Array.from(new Array(weekCount / GROUP_SIZE), (_, id) =>
+                uFetch(
+                    (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
+                    dayjs(firstDay).add((id * GROUP_SIZE) * 7, "day").format("YYYYMMDD") +
+                    JXRL_MIDDLE +
+                    dayjs(firstDay).add(((id + 1) * GROUP_SIZE - 1) * 7 + 6, "day").format("YYYYMMDD") +
+                    JXRL_SUFFIX,
+                ),
+            ),
         )
-            .then((s) => {
-                if (s[0] !== "m") {
-                    throw new ScheduleError("Failed to get calendar data");
-                }
-                const str = s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
-                if (str.trim().length === 0) {
-                    throw new ScheduleError("Empty calendar data");
-                }
-                return parseJSON(JSON.parse(`[${str}]`), firstDay);
-            }),
+            .then((results) =>
+                results
+                    .map((s) => {
+                        if (s[0] !== "m") {
+                            throw new ScheduleError();
+                        }
+                        return s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
+                    })
+                    .filter((s) => s.trim().length > 0)
+                    .join(","),
+            )
+            .then((str) => parseJSON(JSON.parse(`[${str}]`), firstDay)),
         MOCK_PRIMARY_SCHEDULE,
     );
 

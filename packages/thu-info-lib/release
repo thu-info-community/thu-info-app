@@ -1,1 +1,1 @@
-fix: do not split schedule querying into multiple requests
+fix: (revert) do not split schedule querying into multiple requests
