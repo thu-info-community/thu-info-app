@@ -4,6 +4,7 @@
 	"private": true,
 	"workspaces": ["apps/*", "packages/*"],
 	"scripts": {
-		"postinstall": "yarn workspace @thu-info/lib build"
+		"build": "yarn workspace @thu-info/lib build",
+		"postinstall": "yarn build"
 	}
 }
