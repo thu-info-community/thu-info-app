@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import {RoundedView} from "../../components/views";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {LibRoomInfo} from "thu-info-lib/dist/models/home/library";
+import {LibRoomInfo} from "@thu-info/lib/dist/models/home/library";
 
 export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 	const [libraries, setLibraries] = useState<LibRoomInfo[]>([]);

@@ -24,7 +24,7 @@ import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import VersionNumber from "react-native-version-number";
 import {getModel} from "react-native-device-info";
-import {Feedback} from "thu-info-lib/dist/models/app/feedback";
+import {Feedback} from "@thu-info/lib/dist/models/app/feedback";
 
 const BottomButton = ({
 	text,

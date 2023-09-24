@@ -1,7 +1,7 @@
 import {GitLabPDFProp, RootNav} from "../../components/Root";
 import {Dimensions, StyleSheet, View} from "react-native";
 import Pdf from "react-native-pdf";
-import {GITLAB_API_BASE_URL} from "thu-info-lib/dist/constants/strings";
+import {GITLAB_API_BASE_URL} from "@thu-info/lib/dist/constants/strings";
 
 export const GitlabPDFScreen = ({
 	route: {

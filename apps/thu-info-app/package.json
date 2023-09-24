@@ -24,6 +24,7 @@
 		"@react-navigation/native": "6.1.7",
 		"@react-navigation/stack": "6.3.17",
 		"@reduxjs/toolkit": "1.9.5",
+		"@thu-info/lib": "*",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
 		"dayjs": "1.11.10",
@@ -70,7 +71,6 @@
 		"semver": "7.5.4",
 		"stream": "0.0.2",
 		"text-encoding": "0.7.0",
-		"thu-info-lib": "7.1.5",
 		"util": "0.12.5",
 		"web-streams-polyfill": "3.2.1"
 	},
@@ -81,6 +81,7 @@
 		"@react-native/eslint-config": "0.73.0",
 		"@react-native/metro-config": "0.72.11",
 		"@tsconfig/react-native": "3.0.2",
+		"@types/connect": "3.4.36",
 		"@types/he": "1.2.1",
 		"@types/md5": "2.3.2",
 		"@types/metro-config": "0.76.3",

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {TouchableWithoutFeedback, View} from "react-native";
 import IconFormStar from "../../assets/icons/IconFormStar";
-import {InputTag} from "thu-info-lib/dist/models/home/assessment";
+import {InputTag} from "@thu-info/lib/dist/models/home/assessment";
 
 interface starRatingProps {
 	starTotal?: number;

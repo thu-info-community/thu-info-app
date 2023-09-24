@@ -20,7 +20,7 @@ import {
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
-import {LibFuzzySearchResult} from "thu-info-lib/dist/models/home/library";
+import {LibFuzzySearchResult} from "@thu-info/lib/dist/models/home/library";
 import themes from "../../assets/themes/themes";
 import {BottomPopupTriggerView} from "../../components/views";
 import ScrollPicker from "react-native-wheel-scrollview-picker";

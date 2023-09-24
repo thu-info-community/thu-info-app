@@ -16,13 +16,13 @@ import {scheduleReducer, ScheduleState} from "./slices/schedule";
 import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
-import {InfoHelper} from "thu-info-lib";
+import {InfoHelper} from "@thu-info/lib";
 import CookieManager from "@react-native-cookies/cookies";
 import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
 	scheduleTimeAdd,
-} from "thu-info-lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/dist/models/schedule/schedule";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,

@@ -5,7 +5,7 @@ import {FlatList, RefreshControl} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {RoundedListView} from "../views";
-import {LibError} from "thu-info-lib/dist/utils/error";
+import {LibError} from "@thu-info/lib/dist/utils/error";
 
 export function simpleRefreshListScreen<T>(
 	dataSource: (props: PropsWithChildren<any>) => Promise<T[]>,

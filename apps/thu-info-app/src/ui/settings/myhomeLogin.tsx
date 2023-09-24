@@ -12,7 +12,7 @@ import {setDormPassword} from "../../redux/slices/credentials";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
-import {DormAuthError} from "thu-info-lib/dist/utils/error";
+import {DormAuthError} from "@thu-info/lib/dist/utils/error";
 import {RoundedView} from "../../components/views";
 
 export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {

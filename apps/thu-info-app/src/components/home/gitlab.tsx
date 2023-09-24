@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import themes from "../../assets/themes/themes";
-import {File, Project} from "thu-info-lib/dist/models/gitlab/gitlab";
+import {File, Project} from "@thu-info/lib/dist/models/gitlab/gitlab";
 import {getStr} from "../../utils/i18n";
 import TimeAgo from "react-native-timeago";
 

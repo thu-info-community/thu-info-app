@@ -13,7 +13,7 @@ import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import {useColorScheme} from "react-native";
-import {BankPaymentByMonth} from "thu-info-lib/dist/models/home/bank";
+import {BankPaymentByMonth} from "@thu-info/lib/dist/models/home/bank";
 import {RoundedView} from "../../components/views";
 import IconDropdown from "../../assets/icons/IconDropdown";
 import {getStatusBarHeight} from "react-native-safearea-height";

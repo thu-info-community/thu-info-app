@@ -12,8 +12,8 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {CrSearchResultRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrTimeoutError} from "thu-info-lib/dist/utils/error";
-import {CrSearchResultInfo} from "thu-info-lib/dist/models/cr/cr";
+import {CrTimeoutError} from "@thu-info/lib/dist/utils/error";
+import {CrSearchResultInfo} from "@thu-info/lib/dist/models/cr/cr";
 import {CourseTimeQuickGlance} from "../../components/home/cr";
 
 export const CrSearchResultScreen = ({
