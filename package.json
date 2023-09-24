@@ -2,5 +2,8 @@
 	"name": "thu-info",
 	"version": "3.4.4",
 	"private": true,
-	"workspaces": ["apps/*", "packages/*"]
+	"workspaces": ["apps/*", "packages/*"],
+	"scripts": {
+		"postinstall": "yarn workspace @thu-info/lib build"
+	}
 }
