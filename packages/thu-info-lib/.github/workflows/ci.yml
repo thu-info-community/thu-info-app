@@ -1,0 +1,84 @@
+name: Test and Publish
+
+on: push
+
+jobs:
+  unit-test-and-style-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup caching
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-cache-
+      - name: Install dependencies
+        run: |
+          yarn
+      - name: Run tests
+        env:
+          INFO_USER_ID: ${{ secrets.INFO_USER_ID }}
+          INFO_PASSWORD: ${{ secrets.INFO_PASSWORD }}
+          INFO_EMAIL_NAME: ${{ secrets.INFO_EMAIL_NAME }}
+        run: |
+          yarn lint
+          yarn test
+  build-and-publish:
+    needs: unit-test-and-style-check
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup caching
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-cache-
+      - name: Install dependencies
+        run: |
+          yarn
+      - name: Build library
+        run: |
+          yarn build
+      - name: Prepare for publishing
+        id: prepare_publish
+        run: |
+          export ref='${{ github.ref }}'
+          export tag=${ref:11}
+          echo "::set-output name=tag::$tag"
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TAG: ${{ steps.prepare_publish.outputs.tag }}
+        run: |
+          yarn publish --new-version $TAG
+      - name: Build demo
+        run: |
+          yarn build-dist
+          zip -r demo.zip ./demo/*
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: ./release
+      - name: Upload demo
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: demo.zip
+          asset_name: demo.zip
+          asset_content_type: application/zip
