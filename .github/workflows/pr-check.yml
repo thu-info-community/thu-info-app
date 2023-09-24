@@ -10,7 +10,9 @@ jobs:
       - name: Setup caching
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            */*/node_modules
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-${{ runner.OS }}-
@@ -19,8 +21,8 @@ jobs:
           yarn
       - name: Run tests
         run: |
-          yarn lint
-          yarn test
+          yarn workspace @thu-info/app lint
+          yarn workspace @thu-info/app test
   build-android:
     needs: install-and-test
     runs-on: ubuntu-latest
@@ -29,7 +31,9 @@ jobs:
       - name: Setup caching
         uses: actions/cache@v3
         with:
-          path: node_modules
+          path: |
+            node_modules
+            */*/node_modules
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-${{ runner.OS }}-
@@ -38,19 +42,19 @@ jobs:
           yarn
       - name: Prepare for building
         run: |
-          sed -i "s/signingConfigs\.release/signingConfigs\.debug/g" android/app/build.gradle
-          sed -i "/preventRoot/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
-          sed -i "/preventEmulator/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
-          sed -i "/verifySignature/d" android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
+          sed -i "s/signingConfigs\.release/signingConfigs\.debug/g" apps/thu-info-app/android/app/build.gradle
+          sed -i "/preventRoot/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
+          sed -i "/preventEmulator/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
+          sed -i "/verifySignature/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Build android release
         uses: gradle/gradle-build-action@v2
         env:
           SIGNATURE_DIGEST: ""
         with:
           arguments: assembleRelease
-          build-root-directory: android
+          build-root-directory: apps/thu-info-app/android
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
