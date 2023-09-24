@@ -10,10 +10,12 @@ jobs:
       - name: Setup caching
         uses: actions/cache@v3
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            node_modules
+            */*/node_modules
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-cache-
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
@@ -21,29 +23,31 @@ jobs:
         env:
           INFO_USER_ID: ${{ secrets.INFO_USER_ID }}
           INFO_PASSWORD: ${{ secrets.INFO_PASSWORD }}
-          INFO_EMAIL_NAME: ${{ secrets.INFO_EMAIL_NAME }}
         run: |
-          yarn lint
-          yarn test
+          yarn workspace @thu-info/lib lint
+          yarn workspace @thu-info/lib test
   build-and-publish:
     needs: unit-test-and-style-check
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags')
+    # if: startsWith(github.ref, 'refs/tags')
+    if: false
     steps:
       - uses: actions/checkout@v4
       - name: Setup caching
         uses: actions/cache@v3
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-cache-${{ hashFiles('**/yarn.lock') }}
+          path: |
+            node_modules
+            */*/node_modules
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-cache-
+            cache-${{ runner.OS }}-
       - name: Install dependencies
         run: |
           yarn
       - name: Build library
         run: |
-          yarn build
+          yarn workspace @thu-info/lib build
       - name: Prepare for publishing
         id: prepare_publish
         run: |
@@ -59,11 +63,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
-          yarn publish --new-version $TAG
+          yarn workspace @thu-info/lib publish --new-version $TAG
       - name: Build demo
         run: |
-          yarn build-dist
-          zip -r demo.zip ./demo/*
+          yarn workspace @thu-info/lib build-dist
+          zip -r demo.zip ./packages/thu-info-lib/demo/*
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -72,7 +76,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body_path: ./release
+          body_path: ./packages/thu-info-lib/release
       - name: Upload demo
         uses: actions/upload-release-asset@v1
         env:
