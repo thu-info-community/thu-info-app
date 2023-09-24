@@ -10,9 +10,9 @@ import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import Snackbar from "react-native-snackbar";
-import {CrError} from "thu-info-lib/dist/utils/error";
+import {CrError} from "@thu-info/lib/dist/utils/error";
 import IconCr from "../../assets/icons/IconCr";
-import {uFetch} from "thu-info-lib/dist/utils/network";
+import {uFetch} from "@thu-info/lib/dist/utils/network";
 
 export const CrCaptchaScreen = ({navigation}: {navigation: RootNav}) => {
 	const [captcha, setCaptcha] = useState("");

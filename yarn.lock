@@ -3554,11 +3554,6 @@ dayjs@1.11.10, dayjs@^1.8.15:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.10.tgz#68acea85317a6e164457d6d6947564029a6a16a0"
   integrity sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==
 
-dayjs@1.11.9:
-  version "1.11.9"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
-  integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
-
 debug@2.6.9, debug@^2.2.0:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -8533,21 +8528,6 @@ through2@^2.0.1:
   dependencies:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
-
-thu-info-lib@*:
-  version "7.1.5"
-  resolved "https://registry.yarnpkg.com/thu-info-lib/-/thu-info-lib-7.1.5.tgz#2dc719c4e35a1cc4f0eaaf2e1c18eb845fff674b"
-  integrity sha512-DJGYSVzZgxZXrYtfg9vjMI9/N+55hQ9LrPQRWjfdXdi2xgOovYq8/w4G4vQrowAPqs/vpCgK/JK2eaTbk3HIrg==
-  dependencies:
-    abort-controller "3.0.0"
-    cheerio "1.0.0-rc.12"
-    cross-fetch "4.0.0"
-    crypto-js "4.1.1"
-    dayjs "1.11.9"
-    he "^1.2.0"
-    iconv-lite "0.6.3"
-    image-size "^1.0.1"
-    jspdf "^2.5.1"
 
 timers-browserify@^2.0.12:
   version "2.0.12"

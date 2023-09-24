@@ -18,9 +18,9 @@ import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
-import {SportsIdInfo} from "thu-info-lib/dist/models/home/sports";
+import {SportsIdInfo} from "@thu-info/lib/dist/models/home/sports";
 import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
-import {uFetch} from "thu-info-lib/dist/utils/network";
+import {uFetch} from "@thu-info/lib/dist/utils/network";
 import {useDispatch} from "react-redux";
 
 export interface SportsSelectParams {

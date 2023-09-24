@@ -13,8 +13,8 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {CrCoursePlanRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrTimeoutError} from "thu-info-lib/dist/utils/error";
-import {CoursePlan} from "thu-info-lib/dist/models/cr/cr";
+import {CrTimeoutError} from "@thu-info/lib/dist/utils/error";
+import {CoursePlan} from "@thu-info/lib/dist/models/cr/cr";
 import {SettingsLargeButton} from "../../components/settings/items";
 
 export const CrCoursePlanScreen = ({

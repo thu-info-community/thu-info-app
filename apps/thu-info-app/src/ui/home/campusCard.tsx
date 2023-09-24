@@ -22,8 +22,8 @@ import {
 } from "../../redux/slices/campusCard";
 import IconRefresh from "../../assets/icons/IconRefresh";
 import dayjs from "dayjs";
-import {CardTransactionType} from "thu-info-lib/dist/models/card/transaction";
-import {CardRechargeType} from "thu-info-lib/dist/models/card/recharge";
+import {CardTransactionType} from "@thu-info/lib/dist/models/card/transaction";
+import {CardRechargeType} from "@thu-info/lib/dist/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
 import {RootNav} from "../../components/Root";
 

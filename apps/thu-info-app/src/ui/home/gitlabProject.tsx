@@ -4,7 +4,7 @@ import {Modal, ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {SettingsItem} from "../../components/settings/items";
 import {helper, State} from "../../redux/store";
-import {Branch, File} from "thu-info-lib/dist/models/gitlab/gitlab";
+import {Branch, File} from "@thu-info/lib/dist/models/gitlab/gitlab";
 import AutoheightWebView from "../../components/AutoheightWebView";
 import {getStr} from "../../utils/i18n";
 import {BranchItem} from "../../components/home/gitlab";

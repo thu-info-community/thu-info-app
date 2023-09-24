@@ -6,7 +6,7 @@ import {
 	Schedule,
 	ScheduleType,
 	TimeSlice,
-} from "thu-info-lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/dist/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";

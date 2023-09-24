@@ -12,7 +12,7 @@ import {
 	getOverlappedBlock,
 	ScheduleType,
 	TimeSlice,
-} from "thu-info-lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/dist/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {
 	Choice,

@@ -1,7 +1,7 @@
 import {Text, View} from "react-native";
 import {simpleRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {helper} from "../../redux/store";
-import {Feedback} from "thu-info-lib/dist/models/app/feedback";
+import {Feedback} from "@thu-info/lib/dist/models/app/feedback";
 
 export const PopiScreen = simpleRefreshListScreen<Feedback>(
 	async () => await helper.getFeedbackReplies(),

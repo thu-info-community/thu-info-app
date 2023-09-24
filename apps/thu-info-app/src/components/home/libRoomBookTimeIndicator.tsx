@@ -1,4 +1,4 @@
-import {LibRoomRes} from "thu-info-lib/dist/models/home/library";
+import {LibRoomRes} from "@thu-info/lib/dist/models/home/library";
 import {Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import dayjs from "dayjs";

@@ -3,7 +3,7 @@ import {RoundedView} from "../../components/views";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav, SportsSelectTitleProp} from "../../components/Root";
 import {styles} from "../settings/settings";
-import {VALID_RECEIPT_TITLES} from "thu-info-lib/dist/lib/sports";
+import {VALID_RECEIPT_TITLES} from "@thu-info/lib/dist/lib/sports";
 import {getStr} from "../../utils/i18n";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";

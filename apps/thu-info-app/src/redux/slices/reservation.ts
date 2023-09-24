@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import {LibBookRecord} from "thu-info-lib/dist/models/home/library";
-import {SportsReservationRecord} from "thu-info-lib/dist/models/home/sports";
+import {LibBookRecord} from "@thu-info/lib/dist/models/home/library";
+import {SportsReservationRecord} from "@thu-info/lib/dist/models/home/sports";
 
 export interface ReservationState {
 	activeLibBookRecords: LibBookRecord[];

@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import {Announcement} from "thu-info-lib/dist/models/app/announcement";
+import {Announcement} from "@thu-info/lib/dist/models/app/announcement";
 
 export interface AppAnnouncement extends Announcement {
 	read: boolean;

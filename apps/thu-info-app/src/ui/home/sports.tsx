@@ -5,7 +5,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {sportsIdInfoList} from "thu-info-lib/dist/lib/sports";
+import {sportsIdInfoList} from "@thu-info/lib/dist/lib/sports";
 import themes from "../../assets/themes/themes";
 import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";

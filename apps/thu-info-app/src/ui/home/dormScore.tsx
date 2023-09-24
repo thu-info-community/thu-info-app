@@ -5,7 +5,7 @@ import {getStr} from "../../utils/i18n";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {helper, State} from "../../redux/store";
 import {saveRemoteImg} from "../../utils/saveImg";
-import {DormAuthError} from "thu-info-lib/dist/utils/error";
+import {DormAuthError} from "@thu-info/lib/dist/utils/error";
 import {RootNav} from "../../components/Root";
 import {useSelector} from "react-redux";
 

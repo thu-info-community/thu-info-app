@@ -17,7 +17,7 @@ import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {getStr} from "../../utils/i18n";
 import IconSearch from "../../assets/icons/IconSearch";
-import {SearchResultItem} from "thu-info-lib/dist/models/home/reserves-lib";
+import {SearchResultItem} from "@thu-info/lib/dist/models/home/reserves-lib";
 import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
 
 const BookItem = ({

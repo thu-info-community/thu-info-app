@@ -11,7 +11,7 @@ import {getStr} from "../../utils/i18n";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {helper} from "../../redux/store";
 import {useEffect, useState} from "react";
-import {ChannelTag, NewsSubscription} from "thu-info-lib/dist/models/news/news";
+import {ChannelTag, NewsSubscription} from "@thu-info/lib/dist/models/news/news";
 import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";

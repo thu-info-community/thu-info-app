@@ -14,7 +14,7 @@ import themes from "../../assets/themes/themes";
 import {FormRouteProp, RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
-import {Form, Person} from "thu-info-lib/dist/models/home/assessment";
+import {Form, Person} from "@thu-info/lib/dist/models/home/assessment";
 import themedStyles from "../../utils/themedStyles";
 import {RoundedView} from "../../components/views";
 

@@ -36,7 +36,7 @@ import IconDormScore from "../../assets/icons/IconDormScore";
 import {
 	Schedule,
 	ScheduleType,
-} from "thu-info-lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/dist/models/schedule/schedule";
 import dayjs from "dayjs";
 import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
