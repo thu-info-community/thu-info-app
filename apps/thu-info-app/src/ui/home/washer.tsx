@@ -127,7 +127,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 
 		buildingGroups = [
 			{
-				name: "收藏",
+				name: getStr("favourites"),
 				buildings: [...favouriteBuildings.values()].map((f): building => {
 					const [name, id] = f.split("-");
 					return {name, id};
@@ -204,11 +204,28 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 		</View>
 	);
 
+	const renderCredit = () => (
+		<View style={{margin: 16}}>
+			<Text
+				style={{
+					color: theme.colors.primary,
+					fontSize: 16,
+					marginVertical: 32,
+				}}>
+				{getStr("washerCredit")}
+			</Text>
+		</View>
+	);
+
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<FlatList
-				data={buildingGroups}
-				renderItem={({item}) => renderBuildingGroup(item.name, item.buildings)}
+				data={[...buildingGroups, {name: "CREDIT", buildings: []}]}
+				renderItem={({item}) =>
+					item.name === "CREDIT"
+						? renderCredit()
+						: renderBuildingGroup(item.name, item.buildings)
+				}
 				keyExtractor={(item) => item.name}
 			/>
 		</View>
@@ -462,10 +479,10 @@ export const WasherDetailScreen = ({
 									marginVertical: 8,
 								}}>
 								{item.status === "idle"
-									? "空闲"
+									? getStr("washerIdle")
 									: item.status === "working"
-									? item.eta + " 分钟"
-									: "故障"}
+									? item.eta + " " + getStr("minutesAbbr")
+									: getStr("washerError")}
 							</Text>
 							<Text
 								style={{
@@ -473,7 +490,9 @@ export const WasherDetailScreen = ({
 									fontSize: 16,
 									textAlign: "center",
 								}}>
-								{item.updateTime.toTimeString().split(" ")[0]} 更新
+								{getStr("updateTime") +
+									" " +
+									item.updateTime.toTimeString().split(" ")[0]}
 							</Text>
 						</View>
 					))}
