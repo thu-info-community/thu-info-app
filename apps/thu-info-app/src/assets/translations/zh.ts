@@ -163,7 +163,6 @@ export default {
 	qzyq: "清紫源泉",
 	submitOrder: "提交订单",
 	washer: "洗衣机查询",
-	washerDetail: "洗衣机详情",
 	sensitive: "敏感功能",
 	electricity: "宿舍电费",
 	report: "成绩单",
