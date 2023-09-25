@@ -464,7 +464,9 @@ export const HomeScheduleSection = () => {
 						: `${dayEn[today]} ${now.month() + 1}/${now.date()}`}
 				</Text>
 				{todaySchedules.length > 0 ? (
-					todaySchedules.map((x) => <HomeSchedule key={x.name} schedule={x} />)
+					todaySchedules.map((x) => (
+						<HomeSchedule key={x.name + x.from + x.to} schedule={x} />
+					))
 				) : (
 					<Text style={{color: theme.colors.text, marginTop: 8}}>
 						{getStr("noScheduleToday")}
@@ -476,7 +478,7 @@ export const HomeScheduleSection = () => {
 					</Text>
 				)}
 				{tomorrowSchedules.map((x) => (
-					<HomeSchedule key={x.name} schedule={x} />
+					<HomeSchedule key={x.name + x.from + x.to} schedule={x} />
 				))}
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
 					{getStr("countdown")}
