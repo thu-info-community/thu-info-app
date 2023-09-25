@@ -210,7 +210,6 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 				style={{
 					color: theme.colors.primary,
 					fontSize: 16,
-					marginVertical: 32,
 				}}>
 				{getStr("washerCredit")}
 			</Text>
@@ -220,12 +219,9 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<FlatList
-				data={[...buildingGroups, {name: "CREDIT", buildings: []}]}
-				renderItem={({item}) =>
-					item.name === "CREDIT"
-						? renderCredit()
-						: renderBuildingGroup(item.name, item.buildings)
-				}
+				ListFooterComponent={renderCredit()}
+				data={buildingGroups}
+				renderItem={({item}) => renderBuildingGroup(item.name, item.buildings)}
 				keyExtractor={(item) => item.name}
 			/>
 		</View>
