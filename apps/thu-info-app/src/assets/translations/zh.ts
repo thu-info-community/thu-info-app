@@ -163,6 +163,7 @@ export default {
 	qzyq: "清紫源泉",
 	submitOrder: "提交订单",
 	washer: "洗衣机查询",
+	washerDetail: "洗衣机详情",
 	sensitive: "敏感功能",
 	electricity: "宿舍电费",
 	report: "成绩单",
@@ -540,4 +541,8 @@ export default {
 	selectSemester: "选择学期",
 	calendarNoCurrentLang: "暂无当前语言的校历",
 	calendarNotFound: "未找到校历",
+	ziJingDorm: "紫荆公寓",
+	nanQuDorm: "南区宿舍",
+	shuangQingDorm: "双清公寓",
+	otherDorm: "其他位置",
 };
