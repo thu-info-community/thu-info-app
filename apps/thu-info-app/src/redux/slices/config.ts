@@ -37,7 +37,7 @@ export interface ConfigState {
 	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
-	washerFavourites: string[];
+	washerFavourites: string[] | undefined;
 }
 
 const initialState: ConfigState = {

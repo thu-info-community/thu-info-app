@@ -30,7 +30,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 
 	const currentFavourites = useSelector(
-		(s: State) => s.config.washerFavourites,
+		(s: State) => s.config.washerFavourites ?? [],
 	);
 
 	const [buildingGroups, setBuildingGroups] = useState<buildingGroup[]>([]);
@@ -244,18 +244,17 @@ export const WasherDetailScreen = ({
 
 	const dispatch = useDispatch();
 	const currentFavourites = useSelector(
-		(s: State) => s.config.washerFavourites,
+		(s: State) => s.config.washerFavourites ?? [],
 	);
 
 	useEffect(() => {
-		const buildingId = route.params.id;
 		fetch("https://api.cleverschool.cn/washapi4/device/status", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				towerKey: buildingId,
+				towerKey: route.params.id,
 			}),
 		})
 			.then((res) => res.json())
@@ -393,7 +392,6 @@ export const WasherDetailScreen = ({
 						<IconStarButton
 							active={favourite}
 							onPress={() => {
-								console.log(currentFavourites);
 								const favouriteId = building + "-" + name;
 								const updatedFavourites = favourite
 									? []
