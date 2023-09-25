@@ -10,9 +10,10 @@ import {useEffect, useState} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
-import {it} from "@jest/globals";
-import {stat} from "react-native-fs";
 import {IconStarButton} from "../../components/news/IconStarButton";
+import {useDispatch, useSelector} from "react-redux";
+import {configSet} from "../../redux/slices/config";
+import {State} from "../../redux/store";
 
 interface building {
 	name: string;
@@ -27,6 +28,10 @@ interface buildingGroup {
 export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+
+	const currentFavourites = useSelector(
+		(s: State) => s.config.washerFavourites,
+	);
 
 	const [buildingGroups, setBuildingGroups] = useState<buildingGroup[]>([]);
 
@@ -47,7 +52,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 					});
 				}
 
-				const buildingGroups: buildingGroup[] = [
+				let buildingGroups: buildingGroup[] = [
 					{name: getStr("ziJingDorm"), buildings: []},
 					{name: getStr("nanQuDorm"), buildings: []},
 					{name: getStr("shuangQingDorm"), buildings: []},
@@ -108,9 +113,27 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 					});
 				}
 
+				if (currentFavourites.length > 0) {
+					// Get distinct favourite buildings
+					const favouriteBuildings = new Set(
+						currentFavourites.map((f) => f.match(/(.*?)-([^-]*)/g)![0]),
+					);
+
+					buildingGroups = [
+						{
+							name: "收藏",
+							buildings: [...favouriteBuildings.values()].map((f): building => {
+								const [name, id] = f.split("-");
+								return {name, id};
+							}),
+						},
+						...buildingGroups,
+					];
+				}
+
 				setBuildingGroups(buildingGroups);
 			});
-	}, []);
+	}, [currentFavourites]);
 
 	const renderBuildingGroup = (name: string, buildings: building[]) => (
 		<View style={{flexDirection: "column", marginBottom: 32}}>
@@ -219,6 +242,11 @@ export const WasherDetailScreen = ({
 
 	const [floors, setFloors] = useState<Floor[]>([]);
 
+	const dispatch = useDispatch();
+	const currentFavourites = useSelector(
+		(s: State) => s.config.washerFavourites,
+	);
+
 	useEffect(() => {
 		const buildingId = route.params.id;
 		fetch("https://api.cleverschool.cn/washapi4/device/status", {
@@ -283,7 +311,42 @@ export const WasherDetailScreen = ({
 				}
 
 				const floors: Floor[] = [];
+
+				// First push favourites
 				for (const floorName in data) {
+					if (
+						!currentFavourites.includes(
+							route.params.name + "-" + route.params.id + "-" + floorName,
+						)
+					) {
+						continue;
+					}
+
+					floors.push({
+						name: floorName,
+						washers: data[floorName].sort((a, b) => {
+							if (a.name < b.name) {
+								return -1;
+							} else if (a.name > b.name) {
+								return 1;
+							}
+
+							return 0;
+						}),
+						favourite: true,
+					});
+				}
+
+				// Then those not in favourites
+				for (const floorName in data) {
+					if (
+						currentFavourites.includes(
+							route.params.name + "-" + route.params.id + "-" + floorName,
+						)
+					) {
+						continue;
+					}
+
 					floors.push({
 						name: floorName,
 						washers: data[floorName].sort((a, b) => {
@@ -301,9 +364,14 @@ export const WasherDetailScreen = ({
 
 				setFloors(floors);
 			});
-	}, [route.params.id]);
+	}, [route.params.id, route.params.name]);
 
-	const renderFloor = (name: string, washers: Washer[], favourite: boolean) => {
+	const RenderFloor = (
+		building: string, // Building name-id
+		name: string,
+		washers: Washer[],
+		favourite: boolean,
+	) => {
 		return (
 			<View key={name} style={{flexDirection: "column", marginBottom: 32}}>
 				<View style={{flexDirection: "row", margin: 16}}>
@@ -322,7 +390,41 @@ export const WasherDetailScreen = ({
 							marginRight: 8,
 							marginBottom: 5,
 						}}>
-						<IconStarButton active={favourite} onPress={() => {}} size={24} />
+						<IconStarButton
+							active={favourite}
+							onPress={() => {
+								console.log(currentFavourites);
+								const favouriteId = building + "-" + name;
+								const updatedFavourites = favourite
+									? []
+									: [...currentFavourites, favouriteId];
+								if (favourite) {
+									for (const f of currentFavourites) {
+										if (f !== favouriteId) {
+											updatedFavourites.push(f);
+										}
+									}
+								}
+
+								dispatch(
+									configSet({
+										key: "washerFavourites",
+										value: updatedFavourites,
+									}),
+								);
+
+								setFloors((fs) => {
+									for (const f of fs) {
+										if (f.name === name) {
+											f.favourite = !favourite;
+										}
+									}
+
+									return fs;
+								});
+							}}
+							size={24}
+						/>
 					</View>
 					<Text
 						style={{
@@ -403,7 +505,12 @@ export const WasherDetailScreen = ({
 			<FlatList
 				data={floors}
 				renderItem={({item}) =>
-					renderFloor(item.name, item.washers, item.favourite)
+					RenderFloor(
+						route.params.name + "-" + route.params.id,
+						item.name,
+						item.washers,
+						item.favourite,
+					)
 				}
 			/>
 		</View>
