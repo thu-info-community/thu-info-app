@@ -52,7 +52,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 					});
 				}
 
-				let buildingGroups: buildingGroup[] = [
+				let groups: buildingGroup[] = [
 					{name: getStr("ziJingDorm"), buildings: []},
 					{name: getStr("nanQuDorm"), buildings: []},
 					{name: getStr("shuangQingDorm"), buildings: []},
@@ -65,29 +65,29 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 					}
 
 					if (b.text.search("紫荆") !== -1) {
-						buildingGroups[0].buildings.push({
+						groups[0].buildings.push({
 							name: b.text,
 							id: b.value,
 						});
 					} else if (b.text.search("南区") !== -1) {
-						buildingGroups[1].buildings.push({
+						groups[1].buildings.push({
 							name: b.text,
 							id: b.value,
 						});
 					} else if (b.text.search("双清") !== -1) {
-						buildingGroups[2].buildings.push({
+						groups[2].buildings.push({
 							name: b.text,
 							id: b.value,
 						});
 					} else {
-						buildingGroups[3].buildings.push({
+						groups[3].buildings.push({
 							name: b.text,
 							id: b.value,
 						});
 					}
 				}
 
-				for (const g of buildingGroups) {
+				for (const g of groups) {
 					g.buildings.sort((a, b) => {
 						// First by the number
 						const aNumArr = a.name.match(/\d+/g);
@@ -119,7 +119,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 						currentFavourites.map((f) => f.match(/(.*?)-([^-]*)/g)![0]),
 					);
 
-					buildingGroups = [
+					groups = [
 						{
 							name: "收藏",
 							buildings: [...favouriteBuildings.values()].map((f): building => {
@@ -127,11 +127,11 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 								return {name, id};
 							}),
 						},
-						...buildingGroups,
+						...groups,
 					];
 				}
 
-				setBuildingGroups(buildingGroups);
+				setBuildingGroups(groups);
 			});
 	}, [currentFavourites]);
 
@@ -310,7 +310,7 @@ export const WasherDetailScreen = ({
 					});
 				}
 
-				const floors: Floor[] = [];
+				const updatedFloors: Floor[] = [];
 
 				// First push favourites
 				for (const floorName in data) {
@@ -322,7 +322,7 @@ export const WasherDetailScreen = ({
 						continue;
 					}
 
-					floors.push({
+					updatedFloors.push({
 						name: floorName,
 						washers: data[floorName].sort((a, b) => {
 							if (a.name < b.name) {
@@ -347,7 +347,7 @@ export const WasherDetailScreen = ({
 						continue;
 					}
 
-					floors.push({
+					updatedFloors.push({
 						name: floorName,
 						washers: data[floorName].sort((a, b) => {
 							if (a.name < b.name) {
@@ -362,9 +362,9 @@ export const WasherDetailScreen = ({
 					});
 				}
 
-				setFloors(floors);
+				setFloors(updatedFloors);
 			});
-	}, [route.params.id, route.params.name]);
+	}, [route.params.id, route.params.name, currentFavourites]);
 
 	const RenderFloor = (
 		building: string, // Building name-id

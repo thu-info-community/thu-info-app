@@ -64,7 +64,11 @@ import {
 	WaterSelectBrandScreen,
 	WaterSelectTicketNumberScreen,
 } from "../ui/home/water";
-import { WasherDetailProps, WasherDetailScreen, WasherScreen } from "../ui/home/washer";
+import {
+	WasherDetailProps,
+	WasherDetailScreen,
+	WasherScreen,
+} from "../ui/home/washer";
 import {ElectricityScreen} from "../ui/home/electricity";
 import {EleRecordScreen} from "../ui/home/eleRecord";
 import {LoseCardScreen} from "../ui/home/loseCard";
