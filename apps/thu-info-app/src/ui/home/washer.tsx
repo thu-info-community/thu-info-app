@@ -485,7 +485,7 @@ export const WasherDetailScreen = ({
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground}}>
 			<FlatList
-				data={fetchedFloors}
+				data={floors}
 				renderItem={({item}) =>
 					RenderFloor(
 						route.params.name + "-" + route.params.id,
