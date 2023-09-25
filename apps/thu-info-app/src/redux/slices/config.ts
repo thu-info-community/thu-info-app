@@ -37,6 +37,7 @@ export interface ConfigState {
 	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
+	washerFavourites: string[] | undefined;
 }
 
 const initialState: ConfigState = {
@@ -72,6 +73,7 @@ const initialState: ConfigState = {
 	studentNotified: false,
 	disableBackgroundSecurityWarning: false,
 	is24Hour: false,
+	washerFavourites: [],
 };
 
 // Reference: https://stackoverflow.com/questions/51691235/typescript-map-union-type-to-another-union-type

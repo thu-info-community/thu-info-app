@@ -64,7 +64,11 @@ import {
 	WaterSelectBrandScreen,
 	WaterSelectTicketNumberScreen,
 } from "../ui/home/water";
-import {WasherWebScreen} from "../ui/home/washerWeb";
+import {
+	WasherDetailProps,
+	WasherDetailScreen,
+	WasherScreen,
+} from "../ui/home/washer";
 import {ElectricityScreen} from "../ui/home/electricity";
 import {EleRecordScreen} from "../ui/home/eleRecord";
 import {LoseCardScreen} from "../ui/home/loseCard";
@@ -248,7 +252,8 @@ type HomeStackParamList = {
 	Qzyq: QzyqSelectParams;
 	WaterSelectBrand: undefined;
 	WaterSelectTicketNumber: QzyqSelectParams;
-	WasherWeb: undefined;
+	Washer: undefined;
+	WasherDetail: WasherDetailProps;
 	Sports: undefined;
 	SportsDetail: {info: SportsIdInfo};
 	SportsSelect: SportsSelectParams;
@@ -824,9 +829,14 @@ export const Root = () => {
 				options={{title: getStr("qzyq")}}
 			/>
 			<Stack.Screen
-				name="WasherWeb"
-				component={WasherWebScreen}
+				name="Washer"
+				component={WasherScreen}
 				options={{title: getStr("washer")}}
+			/>
+			<Stack.Screen
+				name={"WasherDetail"}
+				component={WasherDetailScreen}
+				options={({route}) => ({title: route.params.name})}
 			/>
 			<Stack.Screen
 				name="MyhomeLogin"

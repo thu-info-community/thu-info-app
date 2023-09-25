@@ -800,7 +800,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.WasherInfo);
 			updateTop5("washer");
-			navigation.navigate("WasherWeb");
+			navigation.navigate("Washer");
 		}}>
 		<IconWasher width={iconSize} height={iconSize} />
 	</HomeIcon>,

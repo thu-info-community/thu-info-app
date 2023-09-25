@@ -22,7 +22,7 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 						icon={<IconWasher />}
 						onPress={() => {
 							addUsageStat(FunctionType.WasherInfo);
-							navigation.navigate("WasherWeb");
+							navigation.navigate("Washer");
 						}}
 					/>
 				)}

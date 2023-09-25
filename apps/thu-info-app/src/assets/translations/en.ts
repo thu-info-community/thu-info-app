@@ -573,4 +573,14 @@ export default {
 	selectSemester: "Select Semester",
 	calendarNoCurrentLang: "No calendar for current language",
 	calendarNotFound: "Calendar not found",
+	ziJingDorm: "Zijing Building",
+	nanQuDorm: "Building",
+	shuangQingDorm: "Shuangqing Apartment",
+	otherDorm: "Other Locations",
+	favourites: "Favourites",
+	washerIdle: "Idle",
+	minutesAbbr: "mins",
+	washerError: "Error",
+	washerCredit:
+		"Special thanks to washer.sdevs.top for our old washer web UI; special thanks to gtxzsxxk@github for the inspiration of the current UI.",
 };

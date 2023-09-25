@@ -540,4 +540,14 @@ export default {
 	selectSemester: "选择学期",
 	calendarNoCurrentLang: "暂无当前语言的校历",
 	calendarNotFound: "未找到校历",
+	ziJingDorm: "紫荆公寓",
+	nanQuDorm: "南区宿舍",
+	shuangQingDorm: "双清公寓",
+	otherDorm: "其他位置",
+	favourites: "收藏",
+	washerIdle: "空闲",
+	minutesAbbr: "分钟",
+	washerError: "故障",
+	washerCredit:
+		"感谢 washer.sdevs.top 为我们提供了旧版的 Web UI；感谢 gtxzsxxk@github 同学提供的 UI 灵感",
 };
