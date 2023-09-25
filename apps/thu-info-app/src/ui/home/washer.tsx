@@ -33,7 +33,9 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 		(s: State) => s.config.washerFavourites ?? [],
 	);
 
-	const [buildingGroups, setBuildingGroups] = useState<buildingGroup[]>([]);
+	const [fetchedBuildingGroups, setFetchedBuildingGroups] = useState<
+		buildingGroup[]
+	>([]);
 
 	useEffect(() => {
 		fetch("https://api.cleverschool.cn/washapi4/device/tower", {
@@ -112,28 +114,28 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 						}
 					});
 				}
-
-				if (currentFavourites.length > 0) {
-					// Get distinct favourite buildings
-					const favouriteBuildings = new Set(
-						currentFavourites.map((f) => f.match(/(.*?)-([^-]*)/g)![0]),
-					);
-
-					groups = [
-						{
-							name: "收藏",
-							buildings: [...favouriteBuildings.values()].map((f): building => {
-								const [name, id] = f.split("-");
-								return {name, id};
-							}),
-						},
-						...groups,
-					];
-				}
-
-				setBuildingGroups(groups);
+				setFetchedBuildingGroups(groups);
 			});
-	}, [currentFavourites]);
+	}, []);
+
+	let buildingGroups = fetchedBuildingGroups;
+	if (currentFavourites.length > 0) {
+		// Get distinct favourite buildings
+		const favouriteBuildings = new Set(
+			currentFavourites.map((f) => f.match(/(.*?)-([^-]*)/g)![0]),
+		);
+
+		buildingGroups = [
+			{
+				name: "收藏",
+				buildings: [...favouriteBuildings.values()].map((f): building => {
+					const [name, id] = f.split("-");
+					return {name, id};
+				}),
+			},
+			...buildingGroups,
+		];
+	}
 
 	const renderBuildingGroup = (name: string, buildings: building[]) => (
 		<View style={{flexDirection: "column", marginBottom: 32}}>
@@ -240,7 +242,7 @@ export const WasherDetailScreen = ({
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const [floors, setFloors] = useState<Floor[]>([]);
+	const [fetchedFloors, setFetchedFloors] = useState<Floor[]>([]);
 
 	const dispatch = useDispatch();
 	const currentFavourites = useSelector(
@@ -313,39 +315,6 @@ export const WasherDetailScreen = ({
 
 				// First push favourites
 				for (const floorName in data) {
-					if (
-						!currentFavourites.includes(
-							route.params.name + "-" + route.params.id + "-" + floorName,
-						)
-					) {
-						continue;
-					}
-
-					updatedFloors.push({
-						name: floorName,
-						washers: data[floorName].sort((a, b) => {
-							if (a.name < b.name) {
-								return -1;
-							} else if (a.name > b.name) {
-								return 1;
-							}
-
-							return 0;
-						}),
-						favourite: true,
-					});
-				}
-
-				// Then those not in favourites
-				for (const floorName in data) {
-					if (
-						currentFavourites.includes(
-							route.params.name + "-" + route.params.id + "-" + floorName,
-						)
-					) {
-						continue;
-					}
-
 					updatedFloors.push({
 						name: floorName,
 						washers: data[floorName].sort((a, b) => {
@@ -361,9 +330,33 @@ export const WasherDetailScreen = ({
 					});
 				}
 
-				setFloors(updatedFloors);
+				setFetchedFloors(updatedFloors);
 			});
-	}, [route.params.id, route.params.name, currentFavourites]);
+	}, [route.params.id, route.params.name]);
+
+	const floors = [];
+
+	for (const floor of fetchedFloors) {
+		floor.favourite = currentFavourites.includes(
+			route.params.name + "-" + route.params.id + "-" + floor.name,
+		);
+	}
+
+	for (const floor of fetchedFloors) {
+		if (!floor.favourite) {
+			continue;
+		}
+
+		floors.push(floor);
+	}
+
+	for (const floor of fetchedFloors) {
+		if (floor.favourite) {
+			continue;
+		}
+
+		floors.push(floor);
+	}
 
 	const RenderFloor = (
 		building: string, // Building name-id
@@ -396,6 +389,7 @@ export const WasherDetailScreen = ({
 								const updatedFavourites = favourite
 									? []
 									: [...currentFavourites, favouriteId];
+
 								if (favourite) {
 									for (const f of currentFavourites) {
 										if (f !== favouriteId) {
@@ -410,16 +404,6 @@ export const WasherDetailScreen = ({
 										value: updatedFavourites,
 									}),
 								);
-
-								setFloors((fs) => {
-									for (const f of fs) {
-										if (f.name === name) {
-											f.favourite = !favourite;
-										}
-									}
-
-									return fs;
-								});
 							}}
 							size={24}
 						/>
@@ -501,7 +485,7 @@ export const WasherDetailScreen = ({
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground}}>
 			<FlatList
-				data={floors}
+				data={fetchedFloors}
 				renderItem={({item}) =>
 					RenderFloor(
 						route.params.name + "-" + route.params.id,
