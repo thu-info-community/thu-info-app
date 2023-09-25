@@ -2,9 +2,19 @@
 	"name": "thu-info",
 	"version": "3.4.4",
 	"private": true,
-	"workspaces": ["apps/*", "packages/*"],
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"scripts": {
 		"build": "yarn workspace @thu-info/lib build",
+		"lint": "yarn workspace @thu-info/app lint && yarn workspace @thu-info/lib lint",
 		"postinstall": "yarn build"
-	}
+	},
+	"dependencies": {
+		"pre-commit": "1.2.2"
+	},
+	"pre-commit": [
+		"lint"
+	]
 }
