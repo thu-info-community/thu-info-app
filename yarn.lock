@@ -2152,10 +2152,10 @@
   resolved "https://registry.yarnpkg.com/@types/raf/-/raf-3.4.0.tgz#2b72cbd55405e071f1c4d29992638e022b20acc2"
   integrity sha512-taW5/WYqo36N7V39oYyHP9Ipfd5pNFvGTIQsNGj86xV88YQ7GnI30/yMfKDF7Zgin0m3e+ikX88FvImnK4RjGw==
 
-"@types/react-test-renderer@18.0.2":
-  version "18.0.2"
-  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-18.0.2.tgz#44243977eec18ab8cda88d8977437f47a0d3fdbe"
-  integrity sha512-tJzMn+9GHDrdrLe0O4rwJELDfTrmdJbCn/UdYyzjlnPiXYXDl5FBNzdw4PVk2R3hJvSHKFjZcRgvZc12lV0p5Q==
+"@types/react-test-renderer@18.0.3":
+  version "18.0.3"
+  resolved "https://registry.yarnpkg.com/@types/react-test-renderer/-/react-test-renderer-18.0.3.tgz#67922bf5e5f0096581b1efd67dcdeabdd400cfea"
+  integrity sha512-4wcNLnY6nIT+L6g94CpzL4CXX2P18JvKPU9CDlaHr3DnbP3GiaQLhDotJqjWlVqOcE4UhLRjp0MtxqwuNKONnA==
   dependencies:
     "@types/react" "*"
 
