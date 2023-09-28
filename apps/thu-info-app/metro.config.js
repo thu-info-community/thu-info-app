@@ -26,7 +26,7 @@ const config = {
 			return (req, res, next) => {
 				// When an asset is imported outside the project root, it has wrong path on Android
 				// So we fix the path to correct one
-				if (/\/assets\/.+\.png\?.+$/.test(req.url)) {
+				if (/\/assets\/.+\.png\?platform=android.+$/.test(req.url)) {
 					req.url = `/assets/../..${req.url}`;
 				}
 
