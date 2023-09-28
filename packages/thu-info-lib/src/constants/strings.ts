@@ -166,6 +166,10 @@ export const ACADEMIC_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/Login";
 export const ACADEMIC_ROOT_URL =
     "https://webvpn.tsinghua.edu.cn/http-80/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/render.userLayoutRootNode.uP";
+export const KCXX_BKS_URL =
+  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/info/gxfw_fg/common/cardRoaming/KCXX_BKS";
+export const KCXX_YJS_URL =
+  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/info/gxfw_fg/common/cardRoaming/KCXX_YJS";
 export const CR_LOGIN_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xklogin.do";
 export const CR_LOGIN_SUBMIT_URL =

@@ -1,6 +1,5 @@
 import {InfoHelper} from "../index";
 import {
-    ACADEMIC_LOGIN_URL, ACADEMIC_ROOT_URL,
     COURSE_PLAN_URL_PREFIX,
     COURSE_PLAN_YJS_URL,
     CR_CAPTCHA_URL,
@@ -16,6 +15,8 @@ import {
     CR_TREE_YJS_URL,
     CR_ZYTJB_URL,
     CR_ZYTJB_YJS_URL,
+    KCXX_BKS_URL,
+    KCXX_YJS_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
@@ -37,7 +38,7 @@ import {
 } from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
 import {roamingWrapperWithMocks} from "./core";
-import {CrError, CrTimeoutError, LibError, LoginError} from "../utils/error";
+import {CrError, CrTimeoutError, LibError} from "../utils/error";
 import {
     MOCK_AVAILABLE_SEMESTERS,
     MOCK_COURSE_PLAN,
@@ -145,15 +146,18 @@ export const loginCr = async (helper: InfoHelper) => roamingWrapperWithMocks(
     undefined,
     "",
     async () => {
-        await uFetch(ACADEMIC_LOGIN_URL, {
-            userName: helper.userId,
-            password: helper.password,
-        });
-
-        const academic_root_html = await uFetch(ACADEMIC_ROOT_URL);
-        const cr_roam_url = /src="(https:\/\/webvpn.tsinghua.edu.cn\/http\/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290\/.*?)"/g.exec(academic_root_html)![1].replace(/&amp;/g, "&");
-        if ((await uFetch(cr_roam_url)).search("jsp.timeout.bodyMessage"))
-            throw new LoginError("Failed to login to course registration page");
+        let ok = false;
+        for (let i = 0; i < 3; i++) {
+            const r = await uFetch(helper.graduate() ? KCXX_YJS_URL : KCXX_BKS_URL);
+            if (!r.includes("jsp.timeout.bodyMessage")) {
+                ok = true;
+                break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+        if (!ok) {
+            throw new Error("time out用户登陆超时或访问内容不存在。请重试，如访问仍然失败，请与系统管理员联系。");
+        }
     },
     undefined,
 );
