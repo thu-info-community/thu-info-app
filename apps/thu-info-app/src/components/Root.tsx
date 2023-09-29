@@ -91,7 +91,6 @@ import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 import {AccountScreen} from "../ui/settings/account";
 import {ReserveScreen} from "../ui/home/reserve";
 import {CrHomeScreen} from "../ui/home/crHome";
-import {CrCaptchaScreen} from "../ui/home/crCaptcha";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
 import {SearchParams} from "@thu-info/lib/dist/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
@@ -227,7 +226,6 @@ type HomeStackParamList = {
 	LoseCard: undefined;
 	ClassroomList: undefined;
 	ClassroomDetail: Classroom;
-	CrCaptcha: undefined;
 	CrHome: undefined;
 	CrCoursePlan: {semesterId: string};
 	CrSearchResult: {searchParams: SearchParams};
@@ -492,11 +490,6 @@ export const Root = () => {
 				name="ClassroomDetail"
 				component={ClassroomDetailScreen}
 				options={({route}) => ({title: route.params.name})}
-			/>
-			<Stack.Screen
-				name="CrCaptcha"
-				component={CrCaptchaScreen}
-				options={{title: getStr("courseRegistration")}}
 			/>
 			<Stack.Screen
 				name="CrHome"
