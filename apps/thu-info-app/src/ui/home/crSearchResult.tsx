@@ -12,13 +12,12 @@ import Snackbar from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {CrSearchResultRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrTimeoutError} from "@thu-info/lib/dist/utils/error";
+import {NetworkRetry} from "../../components/easySnackbars";
 import {CrSearchResultInfo} from "@thu-info/lib/dist/models/cr/cr";
 import {CourseTimeQuickGlance} from "../../components/home/cr";
 
 export const CrSearchResultScreen = ({
 	route,
-	navigation,
 }: {
 	route: CrSearchResultRouteProp;
 	navigation: RootNav;
@@ -46,16 +45,7 @@ export const CrSearchResultScreen = ({
 				setTotalPage(r.totalPage);
 				setPage(r.currPage);
 			})
-			.catch((e) => {
-				if (e instanceof CrTimeoutError) {
-					navigation.navigate("CrCaptcha");
-				} else {
-					Snackbar.show({
-						text: getStr("networkRetry") + e?.message,
-						duration: Snackbar.LENGTH_SHORT,
-					});
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -17,8 +17,9 @@ import cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
+import {loginCr} from "./cr";
 
-type RoamingPolicy = "default" | "id" | "card" | "cab" | "gitlab";
+type RoamingPolicy = "default" | "id" | "card" | "cab" | "gitlab" | "cr";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -192,6 +193,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         }
         const redirectUrl = cheerio("a", response).attr().href;
         return await uFetch(redirectUrl);
+    }
+    case "cr": {
+        await loginCr(helper);
+        return "";
     }
     }
 };

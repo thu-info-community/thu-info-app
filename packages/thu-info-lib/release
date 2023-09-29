@@ -1,1 +1,1 @@
-fix: (revert) do not split schedule querying into multiple requests
+feat: enable course registration login without captcha verification

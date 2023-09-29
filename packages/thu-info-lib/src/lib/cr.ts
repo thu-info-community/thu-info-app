@@ -156,7 +156,7 @@ export const loginCr = async (helper: InfoHelper) => roamingWrapperWithMocks(
             await new Promise((resolve) => setTimeout(resolve, 300));
         }
         if (!ok) {
-            throw new Error("time out用户登陆超时或访问内容不存在。请重试，如访问仍然失败，请与系统管理员联系。");
+            throw new LibError("time out用户登陆超时或访问内容不存在。请重试，如访问仍然失败，请与系统管理员联系。");
         }
     },
     undefined,
@@ -189,7 +189,7 @@ const crFetch = async (
 
 export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSemester[]> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const root = await crFetch(helper.graduate() ? CR_MAIN_YJS_URL : CR_MAIN_URL);
@@ -208,7 +208,7 @@ export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSem
 
 export const getCoursePlan = async (helper: InfoHelper, semester: string) => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const data = await crFetch(helper.graduate() ? COURSE_PLAN_YJS_URL : COURSE_PLAN_URL_PREFIX + semester);
@@ -264,7 +264,7 @@ export const searchCrRemaining = async (helper: InfoHelper, {
     period
 }: SearchParams): Promise<CrRemainingSearchResult> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
@@ -315,7 +315,7 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
     period
 }: SearchParams): Promise<CrPrimaryOpenSearchResult> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
@@ -374,7 +374,7 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
 
 export const searchCrCourses = async (helper: InfoHelper, params: SearchParams): Promise<CrSearchResult> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const [remaining, primaryOpen] = await Promise.all([searchCrRemaining(helper, params), searchCrPrimaryOpen(helper, params)]);
@@ -397,7 +397,7 @@ export type Priority = "bx" | "xx" | "rx" | "ty" | "xwk" | "fxwk" | "tyk" | "cx"
 
 export const selectCourse = async (helper: InfoHelper, semesterId: string, priority: Priority, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const mainHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
@@ -425,7 +425,7 @@ export const selectCourse = async (helper: InfoHelper, semesterId: string, prior
 
 export const deleteCourse = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string) => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
@@ -460,7 +460,7 @@ const willStringToNumber = (will: string): 1 | 2 | 3 => {
 
 export const getSelectedCourses = async (helper: InfoHelper, semesterId: string): Promise<SelectedCourse[]> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
@@ -485,7 +485,7 @@ export const getSelectedCourses = async (helper: InfoHelper, semesterId: string)
 
 export const changeCourseWill = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
@@ -517,7 +517,7 @@ export const getCrCurrentStage = async (
     endTime: string;
 }> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const html = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=selectKc&p_xnxq=${semesterId}&pathContent=%D2%BB%BC%B6%D1%A1%BF%CE`);
@@ -541,7 +541,7 @@ export const searchCoursePriorityMeta = async (
     semesterId: string,
 ): Promise<{ curr: string, next: string }> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const $ = cheerio.load(await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=xkqkSearch&p_xnxq=${semesterId}`));
@@ -560,7 +560,7 @@ export const searchCoursePriorityInformation = async (
     query: SearchCoursePriorityQuery,
 ): Promise<SearchCoursePriorityResult[]> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const responseHtml = await (async () => {
@@ -615,7 +615,7 @@ export const getQueueInfo = async (
     semesterId: string,
 ): Promise<QueueInfo[]> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         const data = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
@@ -646,7 +646,7 @@ export const cancelCoursePF = async (
     courseId: string,
 ): Promise<void> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
@@ -684,7 +684,7 @@ export const setCoursePF = async (
     courseId: string,
 ): Promise<void> => roamingWrapperWithMocks(
     helper,
-    undefined,
+    "cr",
     "",
     async () => {
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);

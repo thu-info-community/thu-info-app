@@ -7,12 +7,10 @@ import {
 	View,
 } from "react-native";
 import {useEffect, useState} from "react";
-import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {NetworkRetry} from "../../components/easySnackbars";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrTimeoutError} from "@thu-info/lib/dist/utils/error";
 import {CrSemester} from "@thu-info/lib/dist/models/cr/cr";
 
 export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -27,19 +25,9 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 		helper
 			.getCrAvailableSemesters()
 			.then(setSemesters)
-			.catch((e) => {
-				if (e instanceof CrTimeoutError) {
-					navigation.navigate("CrCaptcha");
-				} else {
-					Snackbar.show({
-						text: getStr("networkRetry") + e?.message,
-						duration: Snackbar.LENGTH_SHORT,
-					});
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(refresh, []);
 
 	return (
