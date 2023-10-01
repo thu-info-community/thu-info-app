@@ -545,8 +545,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									);
 									setWeekRef && setWeekRef(index + 1);
 								}}
-								snapToInterval={scheduleBodyWidth}
-								decelerationRate="fast"
+								pagingEnabled={true}
 							/>
 						</View>
 					</View>
