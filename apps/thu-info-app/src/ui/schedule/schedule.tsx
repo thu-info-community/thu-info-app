@@ -1,5 +1,11 @@
 import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
-import React, {useState, useEffect, useRef, useImperativeHandle} from "react";
+import React, {
+	useState,
+	useEffect,
+	useRef,
+	useImperativeHandle,
+	ElementRef,
+} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
 	ExamTimeSlice,
@@ -69,7 +75,7 @@ const Header = React.forwardRef(
 			navigation: RootNav;
 			onSetWeek: Function;
 		},
-		ref,
+		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
 		const themeName = useColorScheme();
 		const theme = themes(themeName);
@@ -324,7 +330,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	const flatListRef = useRef<FlatList>(null);
-	const headerRef = useRef<typeof Header>(null);
+	const headerRef = useRef<ElementRef<typeof Header>>(null);
 
 	return (
 		<>
