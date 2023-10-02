@@ -13,6 +13,7 @@ export interface ConfigState {
 	semesterId: string;
 	language: string;
 	darkMode: boolean | undefined;
+	tabletMode: boolean | undefined;
 	newGPA: boolean;
 	bx: boolean;
 	reportHidden: string[];
@@ -49,6 +50,7 @@ const initialState: ConfigState = {
 	semesterId: "2023-2024-2",
 	language: "auto",
 	darkMode: false,
+	tabletMode: false,
 	newGPA: true,
 	bx: false,
 	reportHidden: [],

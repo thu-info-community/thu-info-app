@@ -127,6 +127,7 @@ import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/ho
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
 import {CampusCardScreen} from "../ui/home/campusCard";
+import {EmptyScreen} from "../ui/home/empty";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -347,6 +348,7 @@ export type ScheduleDetailRouteProp = RouteProp<
 >;
 
 type SettingsStackParamList = {
+	Empty: undefined;
 	Login: undefined;
 	Account: undefined;
 	DigitalPassword:
@@ -383,18 +385,28 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
-export const Root = () => {
+export const Root = ({showRootTabs}: {showRootTabs: boolean}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
 	return (
 		<Stack.Navigator>
 			{/* Root Tabs */}
-			<Stack.Screen
-				name="RootTabs"
-				component={RootTabs}
-				options={{title: "", headerShown: false}}
-			/>
+			{showRootTabs && (
+				<Stack.Screen
+					name="RootTabs"
+					component={RootTabs}
+					options={{title: "", headerShown: false}}
+				/>
+			)}
+			{/* Empty */}
+			{!showRootTabs && (
+				<Stack.Screen
+					name="Empty"
+					component={EmptyScreen}
+					options={{title: "", headerShown: false}}
+				/>
+			)}
 			{/* Home */}
 			<Stack.Screen
 				name="Report"

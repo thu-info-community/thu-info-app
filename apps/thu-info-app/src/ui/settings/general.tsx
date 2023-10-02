@@ -1,18 +1,29 @@
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {State} from "../../redux/store";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	Switch,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {styles} from "./settings";
+import themes from "../../assets/themes/themes.ts";
+import {configSet} from "../../redux/slices/config.ts";
 
 export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
 	const style = styles(themeName);
 
 	const darkMode = useSelector((s: State) => s.config.darkMode);
 	const language = useSelector((s: State) => s.config.language);
+	const tabletMode = useSelector((s: State) => s.config.tabletMode);
+	const dispatch = useDispatch();
 
 	const colorString = getStr(darkMode === true ? "enable" : "autoFollow");
 
@@ -46,6 +57,19 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 						<IconRight height={20} width={20} />
 					</View>
 				</TouchableOpacity>
+			</RoundedView>
+			<RoundedView style={style.rounded}>
+				<View style={style.touchable}>
+					<Text style={style.text}>{getStr("tabletMode")}</Text>
+					<Switch
+						thumbColor={colors.contentBackground}
+						trackColor={{true: colors.themePurple}}
+						value={tabletMode}
+						onValueChange={(value) => {
+							dispatch(configSet({key: "tabletMode", value}));
+						}}
+					/>
+				</View>
 			</RoundedView>
 		</View>
 	);

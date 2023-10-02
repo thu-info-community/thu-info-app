@@ -63,6 +63,7 @@ export default {
 	language: "Language",
 	autoFollow: "Auto",
 	restartToApply: "Restart APP to apply changes.",
+	tabletMode: "Tablet Mode (experimental)",
 	privacy: "Privacy",
 	helpAndFeedback: "Help and Support",
 	feishuFeedback: "Questionnaire",

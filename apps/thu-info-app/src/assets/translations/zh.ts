@@ -61,6 +61,7 @@ export default {
 	language: "显示语言",
 	autoFollow: "跟随系统",
 	restartToApply: "重启应用后生效。",
+	tabletMode: "平板模式（实验中）",
 	privacy: "隐私",
 	helpAndFeedback: "帮助与反馈",
 	feishuFeedback: "反馈问卷",

@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {RootNav} from "../../components/Root";
+import {RootNav, RootStackParamList} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {
 	Alert,
@@ -26,6 +26,8 @@ import {
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
+import useDetailNavigator from "../../utils/useDetailNavigator";
+import {StackActions} from "@react-navigation/native";
 
 const performLogout = () => {
 	helper
@@ -52,6 +54,19 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const darkModeHook = dark || themeName === "dark";
 	const {userId, password} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
+	const detailNavigator = useDetailNavigator();
+
+	const handleNavigate = (name: keyof RootStackParamList) => {
+		if (detailNavigator) {
+			detailNavigator.dispatch(
+				StackActions.replace(name, {
+					disableAnimation: true,
+				}),
+			);
+		} else {
+			navigation.navigate(name);
+		}
+	};
 
 	const doNotRemindSemver =
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
@@ -68,7 +83,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("Account")}>
+						onPress={() => handleNavigate("Account")}>
 						<Text style={style.text}>{getStr("accountAndSecurity")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
@@ -76,14 +91,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("FunctionManagement")}>
+						onPress={() => handleNavigate("FunctionManagement")}>
 						<Text style={style.text}>{getStr("functionManagement")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("General")}>
+						onPress={() => handleNavigate("General")}>
 						<Text style={style.text}>{getStr("general")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
@@ -91,7 +106,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("ScheduleSettings")}>
+						onPress={() => handleNavigate("ScheduleSettings")}>
 						<Text style={style.text}>{getStr("schedule")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
@@ -99,21 +114,21 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("Privacy")}>
+						onPress={() => handleNavigate("Privacy")}>
 						<Text style={style.text}>{getStr("privacy")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("HelpAndFeedback")}>
+						onPress={() => handleNavigate("HelpAndFeedback")}>
 						<Text style={style.text}>{getStr("helpAndFeedback")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("About")}>
+						onPress={() => handleNavigate("About")}>
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
 						<View style={{flexDirection: "row", alignItems: "center"}}>
 							<Text style={style.version}>

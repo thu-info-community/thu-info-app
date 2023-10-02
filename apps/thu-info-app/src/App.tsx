@@ -2,14 +2,20 @@ import "./utils/extensions";
 import {Provider, useDispatch, useSelector} from "react-redux";
 import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
-import {useEffect} from "react";
-import {DefaultTheme, NavigationContainer} from "@react-navigation/native";
-import {Alert, StatusBar, useColorScheme} from "react-native";
+import {useEffect, useRef} from "react";
+import {
+	DefaultTheme,
+	NavigationContainer,
+	NavigationContainerRef,
+} from "@react-navigation/native";
+import {Alert, Dimensions, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 import {getStr} from "./utils/i18n";
+import {SplitViewProvider} from "./components/SplitView";
+import DeviceInfo from "react-native-device-info";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
@@ -19,7 +25,12 @@ const RootComponent = () => {
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const studentNotified = useSelector((s: State) => s.config.studentNotified);
+	const tabletMode = useSelector((s: State) => s.config.tabletMode);
 	const dispatch = useDispatch();
+
+	const detailNavigationContainerRef = useRef<NavigationContainerRef<{}>>(null);
+
+	const windowWidth = Dimensions.get("window").width;
 
 	useEffect(() => {
 		if (studentNotified !== true) {
@@ -39,6 +50,8 @@ const RootComponent = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const showDetail = windowWidth >= 750;
 
 	return (
 		<>
@@ -60,15 +73,38 @@ const RootComponent = () => {
 						border: darkModeHook ? "white" : DefaultTheme.colors.border,
 					},
 				}}>
-				{appLocked === true ? (
-					<DigitalPasswordScreen
-						navigation={undefined}
-						// @ts-ignore
-						route={{params: {action: "verify"}}}
-					/>
-				) : (
-					<Root />
-				)}
+				<SplitViewProvider
+					splitEnabled={(tabletMode ?? false) && DeviceInfo.isTablet()}
+					detailNavigationContainerRef={
+						showDetail ? detailNavigationContainerRef : null
+					}
+					showDetail={showDetail}>
+					{appLocked === true ? (
+						<DigitalPasswordScreen
+							navigation={undefined}
+							// @ts-ignore
+							route={{params: {action: "verify"}}}
+						/>
+					) : (
+						<Root showRootTabs={true} />
+					)}
+					<NavigationContainer
+						independent
+						ref={detailNavigationContainerRef}
+						theme={{
+							...DefaultTheme,
+							colors: {
+								...DefaultTheme.colors,
+								primary: theme.colors.themePurple,
+								text: theme.colors.text,
+								background: theme.colors.themeBackground,
+								card: theme.colors.contentBackground,
+								border: darkModeHook ? "white" : DefaultTheme.colors.border,
+							},
+						}}>
+						<Root showRootTabs={false} />
+					</NavigationContainer>
+				</SplitViewProvider>
 			</NavigationContainer>
 		</>
 	);
