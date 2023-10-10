@@ -20,7 +20,6 @@ import {
 } from "@thu-info/lib/dist/models/home/library";
 import {SearchResultItem} from "@thu-info/lib/dist/models/home/reserves-lib";
 import {SportsIdInfo} from "@thu-info/lib/dist/models/home/sports";
-import {File, Project} from "@thu-info/lib/dist/models/gitlab/gitlab";
 import {
 	ScheduleDetailProps,
 	ScheduleDetailScreen,
@@ -51,13 +50,6 @@ import {SportsDetailScreen} from "../ui/home/sportsDetail";
 import {SportsSelectParams, SportsSelectScreen} from "../ui/home/sportsSelect";
 import {SportsRecordScreen} from "../ui/home/sportsRecord";
 import {BankPaymentScreen} from "../ui/home/bankPayment";
-import {GitlabHomeScreen, GitlabStarredScreen} from "../ui/home/gitlabHome";
-import {GitlabSearchScreen} from "../ui/home/gitlabSearch";
-import {GitlabProjectScreen} from "../ui/home/gitlabProject";
-import {GitlabTreeScreen} from "../ui/home/gitlabTree";
-import {GitlabCodeScreen, GitlabMarkdownScreen} from "../ui/home/gitlabCode";
-import {GitlabPDFScreen} from "../ui/home/gitlabPDF";
-import {GitlabImageScreen} from "../ui/home/gitlabImage";
 import {
 	QzyqSelectParams,
 	WaterScreen,
@@ -97,8 +89,6 @@ import {CrSearchResultScreen} from "../ui/home/crSearchResult";
 import IconShare from "../assets/icons/IconShare";
 import IconHistory from "../assets/icons/IconHistory";
 import IconLocal from "../assets/icons/IconLocal";
-import IconStar from "../assets/icons/IconStar";
-import IconSearch from "../assets/icons/IconSearch";
 import {PrivacyScreen} from "../ui/settings/privacy";
 import {GeneralScreen} from "../ui/settings/general";
 import {LanguageScreen} from "../ui/settings/language";
@@ -261,15 +251,6 @@ type HomeStackParamList = {
 	SportsRecord: undefined;
 	BankPayment: undefined;
 	CampusMap: undefined;
-	GitLabHome: undefined;
-	GitLabStar: undefined;
-	GitLabSearch: undefined;
-	GitLabProject: {project: Project};
-	GitLabTree: {project: Project; path: string; ref: string};
-	GitLabCode: {project: Project; file: File};
-	GitLabMarkdown: {project: Project; file: File};
-	GitLabPDF: {project: Project; file: File; cookie: string};
-	GitLabImage: {project: Project; file: File};
 	MyhomeLogin: undefined;
 	ResetDormPassword: undefined;
 	Electricity: undefined;
@@ -329,21 +310,6 @@ export type WaterSelectTicketNumberProp = RouteProp<
 	HomeStackParamList,
 	"WaterSelectTicketNumber"
 >;
-
-export type GitLabProjectProp = RouteProp<HomeStackParamList, "GitLabProject">;
-
-export type GitLabTreeProp = RouteProp<HomeStackParamList, "GitLabTree">;
-
-export type GitLabCodeProp = RouteProp<HomeStackParamList, "GitLabCode">;
-
-export type GitLabMarkdownProp = RouteProp<
-	HomeStackParamList,
-	"GitLabMarkdown"
->;
-
-export type GitLabPDFProp = RouteProp<HomeStackParamList, "GitLabPDF">;
-
-export type GitLabImageProp = RouteProp<HomeStackParamList, "GitLabImage">;
 
 type NewsStackParamList = {
 	NewsDetail: {
@@ -722,89 +688,6 @@ export const Root = () => {
 				name="CampusMap"
 				component={CampusMapScreen}
 				options={{title: getStr("campusMap")}}
-			/>
-			<Stack.Screen
-				name="GitLabHome"
-				component={GitlabHomeScreen}
-				options={({navigation}) => ({
-					title: getStr("gitLab"),
-					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("GitLabStar")}>
-								<IconStar width={24} height={24} />
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{paddingRight: 16, paddingLeft: 8, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("GitLabSearch")}>
-								<IconSearch width={24} height={24} />
-							</TouchableOpacity>
-						</View>
-					),
-				})}
-			/>
-			<Stack.Screen
-				name="GitLabStar"
-				component={GitlabStarredScreen}
-				options={{title: getStr("gitLabStar")}}
-			/>
-			<Stack.Screen
-				name="GitLabSearch"
-				component={GitlabSearchScreen}
-				options={{title: getStr("gitLab")}}
-			/>
-			<Stack.Screen
-				name="GitLabProject"
-				component={GitlabProjectScreen}
-				options={({route}) => ({title: route.params.project.name})}
-			/>
-			<Stack.Screen
-				name="GitLabTree"
-				component={GitlabTreeScreen}
-				options={({route}) => ({
-					title: route.params.path
-						? route.params.path
-						: getStr("gitlabViewCode"),
-				})}
-			/>
-			<Stack.Screen
-				name="GitLabCode"
-				component={GitlabCodeScreen}
-				options={({route}) => ({title: route.params.file.name})}
-			/>
-			<Stack.Screen
-				name="GitLabMarkdown"
-				component={GitlabMarkdownScreen}
-				options={({
-					route: {
-						params: {project, file},
-					},
-					navigation,
-				}) => ({
-					title: file.name,
-					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() =>
-									navigation.navigate("GitLabCode", {project, file})
-								}>
-								<IconLocal width={24} height={24} />
-							</TouchableOpacity>
-						</View>
-					),
-				})}
-			/>
-			<Stack.Screen
-				name="GitLabPDF"
-				component={GitlabPDFScreen}
-				options={({route}) => ({title: route.params.file.name})}
-			/>
-			<Stack.Screen
-				name="GitLabImage"
-				component={GitlabImageScreen}
-				options={({route}) => ({title: route.params.file.name})}
 			/>
 			<Stack.Screen
 				name="Qzyq"
