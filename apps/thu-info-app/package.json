@@ -45,7 +45,7 @@
 		"react-native-keychain": "4.0.5",
 		"react-native-localize": "3.0.2",
 		"react-native-pdf": "6.7.1",
-		"react-native-permissions": "3.9.3",
+		"react-native-permissions": "3.10.0",
 		"react-native-polyfill-globals": "3.1.0",
 		"react-native-qrcode-svg": "6.2.0",
 		"react-native-reanimated": "3.5.4",
