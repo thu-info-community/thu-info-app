@@ -145,20 +145,20 @@ jobs:
           yarn
           bundle install
           cd apps/thu-info-app/ios && pod update hermes-engine --no-repo-update && pod install && cd ../../..
-      - name: Output Podfile.lock
+      - name: Commit lockfile changes
+        if: endsWith(github.ref, 'master') == true
+        continue-on-error: true
         run: |
-          echo '### Summary of command `pod install`' >> $GITHUB_STEP_SUMMARY
-          echo 'Content of `Podfile.lock`:' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat apps/thu-info-app/ios/Podfile.lock >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-      - name: Output Gemfile.lock
-        run: |
-          echo '### Summary of command `bundle install`' >> $GITHUB_STEP_SUMMARY
-          echo 'Content of `Gemfile.lock`:' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat Gemfile.lock >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Gemfile.lock apps/thu-info-app/ios/Podfile.lock
+          git commit -m "chore: lockfile maintenance"
+      - name: Push lockfile changes
+        if: endsWith(github.ref, 'master') == true
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.ref }}
+        continue-on-error: true
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
