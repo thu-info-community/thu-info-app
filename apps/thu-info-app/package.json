@@ -83,7 +83,7 @@
 		"@types/metro-config": "0.76.3",
 		"@types/react": "18.2.29",
 		"@types/react-test-renderer": "18.0.3",
-		"@types/semver": "7.5.3",
+		"@types/semver": "7.5.4",
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"editor": "1.0.0",
 		"eslint": "8.51.0",
