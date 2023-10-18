@@ -2119,10 +2119,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.13.tgz#02c24f4363176d2d18fc8b70b9f3c54aba178a85"
   integrity sha512-RbSSoHliUbnXj3ny0CNFOoxrIDV6SUGyStHsvDqosw6CkdPV8TtWGlfecuK4ToyMEAql6pzNxgCFKanovUzlgQ==
 
-"@types/md5@2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.3.3.tgz#1f03ce6a9b1462981a1283777b30aaa30e319e22"
-  integrity sha512-4K40FjTW0tiIx9NfV+/DHJ56ih3fcdkDqBYz5CffKwJVWYho1FxzjkddGcgEEIs+fP2DqmQ3lujC5c4bUOESTQ==
+"@types/md5@2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.3.4.tgz#48f2372f0aed1341c196ebc75eb1e13a00f16fd7"
+  integrity sha512-e/L4hvpCK8GavKXmP02QlNilZOj8lpmZGGA9QGMMPZjCUoKgi1B4BvhXcbruIi6r+PqzpcjLfda/tocpHFKqDA==
 
 "@types/metro-config@0.76.3":
   version "0.76.3"

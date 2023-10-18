@@ -79,7 +79,7 @@
 		"@react-native/metro-config": "0.74.0",
 		"@tsconfig/react-native": "3.0.2",
 		"@types/connect": "3.4.37",
-		"@types/md5": "2.3.3",
+		"@types/md5": "2.3.4",
 		"@types/metro-config": "0.76.3",
 		"@types/react": "18.2.28",
 		"@types/react-test-renderer": "18.0.3",
