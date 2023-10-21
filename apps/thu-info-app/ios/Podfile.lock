@@ -325,7 +325,7 @@ PODS:
     - React-Core
   - react-native-blur (4.3.2):
     - React-Core
-  - react-native-cameraroll (5.10.0):
+  - react-native-cameraroll (6.0.0):
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
@@ -751,7 +751,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-blob-util: c74e4ce87c76d244761c68623df78bf0d1638271
   react-native-blur: cfdad7b3c01d725ab62a8a729f42ea463998afa2
-  react-native-cameraroll: 4701ae7c3dbcd3f5e9e150ca17f250a276154b35
+  react-native-cameraroll: 121cab3d7fe2972d9a26ef40558d78d4053356a8
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-pdf: 7c0e91ada997bac8bac3bb5bea5b6b81f5a3caae
