@@ -15,9 +15,9 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.6)
   - hermes-engine/Pre-built (0.72.6)
   - libevent (2.1.12)
-  - Permission-PhotoLibrary (3.10.0):
+  - Permission-PhotoLibrary (3.10.1):
     - RNPermissions
-  - Permission-PhotoLibraryAddOnly (3.10.0):
+  - Permission-PhotoLibraryAddOnly (3.10.1):
     - RNPermissions
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -468,7 +468,7 @@ PODS:
     - React
   - RNLocalize (3.0.2):
     - React-Core
-  - RNPermissions (3.10.0):
+  - RNPermissions (3.10.1):
     - React-Core
   - RNReanimated (3.5.4):
     - DoubleConversion
@@ -731,8 +731,8 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  Permission-PhotoLibrary: 93fee1c579d7b001e6760fc4de252334932b6cb4
-  Permission-PhotoLibraryAddOnly: 2a857820ec402430c35dda93c7039139653bfc32
+  Permission-PhotoLibrary: 03c52ed95dadfb0f2ba4c7663786cce0c4e0c978
+  Permission-PhotoLibraryAddOnly: c4fbf91806bbdc3ed877049bc09fbe58ad9a7c97
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
@@ -784,7 +784,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 6e46dde1f87e5f018a54fe5d40cd0e0b942b49ee
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: dbea38dcb344bf80ff18a1757b1becf11f70cae4
-  RNPermissions: 3acba750d9146af1c33a79c013e02f8b48067acc
+  RNPermissions: 4e3714e18afe7141d000beae3755e5b5fb2f5e05
   RNReanimated: 9633f8c2e214b721e35e371b473fbf3a1522948d
   RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
   RNShare: 32e97adc8d8c97d4a26bcdd3c45516882184f8b6
@@ -795,4 +795,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7651823ca0e893b3928008df1ba6a5c1c49af53b
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0
