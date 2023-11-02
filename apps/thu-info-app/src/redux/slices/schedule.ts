@@ -59,8 +59,8 @@ export const scheduleSlice = createSlice({
 
 			// 以新获取到的课表为基准
 			payload.schedule.forEach((val) => {
-				let selectedScheduleList = state.baseSchedule.filter(
-					(item) => item.name === val.name && item.location === val.location,
+				const selectedScheduleList = state.baseSchedule.filter(
+					(item) => item.hash === val.hash,
 				);
 
 				if (selectedScheduleList.length === 0) {
@@ -69,11 +69,17 @@ export const scheduleSlice = createSlice({
 				}
 
 				let selectedSchedule = selectedScheduleList[0];
-				selectedSchedule.delOrHideTime.base.forEach((slice) => {
-					delOrHide(val, slice);
-				});
-				val.location = selectedSchedule.location;
-				newScheduleList.push(val);
+
+				let mergedSchedule: Schedule = {
+					name: selectedSchedule.name,
+					location: selectedSchedule.location,
+					type: val.type,
+					hash: val.hash,
+					activeTime: val.activeTime,
+					delOrHideTime: selectedSchedule.delOrHideTime,
+				};
+
+				newScheduleList.push(mergedSchedule);
 			});
 
 			state.semesterId = payload.semesterId;

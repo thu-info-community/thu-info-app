@@ -215,7 +215,7 @@ export const scheduleTimeAdd = (time: ScheduleTime, elem: TimeSlice): boolean =>
             .forEach((val) => {
                 const weeks: number[] = adjacentWeeks(val, elem);
                 if (!weeks.length || weeks.indexOf(week) === -1) return;
-                    
+
                 // 取出这些时间片中与 elem 在这一周相邻的并将其合并
                 mergeRecord[i] = [
                     val.begin < mergeRecord[i][0] ? val.begin : mergeRecord[i][0],
@@ -247,7 +247,7 @@ export const scheduleTimeAdd = (time: ScheduleTime, elem: TimeSlice): boolean =>
         if (index === newTimeSlice.length && val[0] > 0 && val[1] > 0) {
             newTimeSlice.push({
                 dayOfWeek: elem.dayOfWeek,
-                begin: val[0], 
+                begin: val[0],
                 end: val[1],
                 activeWeeks:[week]
             });
@@ -305,6 +305,7 @@ export const scheduleTimeRemove = (time: ScheduleTime, elem: TimeSlice): number[
 export interface Schedule {
     name: string,
     location: string,
+    hash: string,
     type: ScheduleType,
     activeTime: ScheduleTime,
     delOrHideTime: ScheduleTime,
@@ -321,6 +322,7 @@ export const scheduleDeepCopy = (schedule: Schedule): Schedule => {
     const res: Schedule = {
         name: schedule.name,
         location: schedule.location,
+        hash: schedule.hash,
         type: schedule.type,
         activeTime: {base: []},
         delOrHideTime: {base: []},
@@ -452,6 +454,7 @@ export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
                     scheduleList.push({
                         name: o.nr,
                         location: o.dd || "",
+                        hash: o.nr + "@" +o.dd,
                         type: ScheduleType.PRIMARY,
                         activeTime: {base: []},
                         delOrHideTime: {base: []}
@@ -470,6 +473,7 @@ export const parseJSON = (json: any[], firstDay: string): Schedule[] => {
                 scheduleList.push({
                     name: "[考试]" + o.nr,
                     location: o.dd || "",
+                    hash: o.nr + "@" +o.dd,
                     type: ScheduleType.EXAM,
                     activeTime: {base: []},
                     delOrHideTime: {base: []}
@@ -557,6 +561,7 @@ export const parseScript = (
                 result.push({
                     name: title,
                     location,
+                    hash: title + "@" + location,
                     type: ScheduleType.SECONDARY,
                     activeTime: {base: []},
                     delOrHideTime: {base: []}
