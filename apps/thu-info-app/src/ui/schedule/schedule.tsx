@@ -275,7 +275,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const windowWidth = Dimensions.get("window").width;
+	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
 	const [tableHeight, setTableHeight] = useState(
 		windowHeight - getStatusBarHeight() - 40,
@@ -285,7 +285,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
 	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
 	const scheduleBodyWidth = windowWidth - 32;
-	const unitWidth = scheduleBodyWidth / 7 - 1;
+	const unitWidth = scheduleBodyWidth / 7;
 
 	const [heightSetup, setHeightSetup] = useState(false);
 
@@ -413,7 +413,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									position: "absolute",
 									left: 0,
 									right: 0,
-									top: 5 * unitHeight + 40,
+									top: 5 * unitHeight + 39.5,
 								}}
 							/>
 							<View
@@ -423,14 +423,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									position: "absolute",
 									left: 0,
 									right: 0,
-									top: 11 * unitHeight + 40,
+									top: 11 * unitHeight + 39.5,
 								}}
 							/>
 							<Text
 								style={{
 									position: "absolute",
 									right: 12,
-									top: 5 * unitHeight + 42,
+									top: 5 * unitHeight + 40,
 									fontSize: 12,
 									color: theme.colors.fontB3,
 								}}>
@@ -440,7 +440,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									position: "absolute",
 									right: 12,
-									top: 11 * unitHeight + 42,
+									top: 11 * unitHeight + 40,
 									fontSize: 12,
 									color: theme.colors.fontB3,
 								}}>
@@ -452,6 +452,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								ref={flatListRef}
 								horizontal={true}
 								showsHorizontalScrollIndicator={false}
+								style={{width: scheduleBodyWidth}}
 								initialNumToRender={3}
 								getItemLayout={(_, index) => ({
 									length: scheduleBodyWidth,
