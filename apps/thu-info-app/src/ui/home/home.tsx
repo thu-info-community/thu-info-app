@@ -22,7 +22,6 @@ import themedStyles from "../../utils/themedStyles";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
-import IconGitLab from "../../assets/icons/IconGitLab";
 import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
@@ -515,7 +514,6 @@ export type HomeFunction =
 	| "report"
 	| "physicalExam"
 	| "teachingEvaluation"
-	| "gitLab"
 	| "classroomState"
 	| "reserve"
 	| "cr"
@@ -603,15 +601,6 @@ const getHomeFunctions = (
 			navigation.navigate("Evaluation");
 		}}>
 		<IconEvaluation width={iconSize} height={iconSize} />
-	</HomeIcon>,
-	<HomeIcon
-		key="gitLab"
-		title="gitLab"
-		onPress={() => {
-			updateTop5("gitLab");
-			navigation.navigate("GitLabHome");
-		}}>
-		<IconGitLab width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="classroomState"

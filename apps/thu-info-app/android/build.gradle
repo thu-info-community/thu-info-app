@@ -10,7 +10,7 @@ static def getNpmVersion() {
 
 buildscript {
     ext {
-        kotlinVersion = "1.6.20"
+        kotlinVersion = "1.8.0"
         buildToolsVersion = "33.0.0"
         minSdkVersion = 21
         compileSdkVersion = 33

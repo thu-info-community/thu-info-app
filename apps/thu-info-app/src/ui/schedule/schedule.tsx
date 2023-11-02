@@ -1,5 +1,11 @@
 import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
-import React, {useState, useEffect, useRef} from "react";
+import React, {
+	useState,
+	useEffect,
+	useRef,
+	useImperativeHandle,
+	ElementRef,
+} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
 	ExamTimeSlice,
@@ -58,112 +64,57 @@ interface ExamSliceRenderData {
 
 type SliceRenderData = NormalSliceRenderData | ExamSliceRenderData;
 
-export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
-	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
-	const {firstDay, weekCount, semesterId} = useSelector((s: State) => s.config);
-	const dispatch = useDispatch();
+const Header = React.forwardRef(
+	(
+		{
+			onChangeSetHeightSetup,
+			onSetWeek,
+			navigation,
+		}: {
+			onChangeSetHeightSetup: Function;
+			navigation: RootNav;
+			onSetWeek: Function;
+		},
+		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
+	) => {
+		const themeName = useColorScheme();
+		const theme = themes(themeName);
+		const dark = useSelector((s: State) => s.config.darkMode);
+		const darkModeHook = dark || themeName === "dark";
 
-	const [refreshing, setRefreshing] = useState(false);
+		const {firstDay, weekCount, semesterId} = useSelector(
+			(s: State) => s.config,
+		);
+		const semesterType = Number(semesterId[semesterId.length - 1]);
 
-	const getSchedule = () => {
-		setRefreshing(true);
-		helper
-			.getSchedule()
-			.then(({schedule, calendar}) => {
-				dispatch(setCalendarConfig(calendar));
-				dispatch(scheduleFetch({schedule, semesterId: calendar.semesterId}));
-			})
-			.catch((e) => {
-				Snackbar.show({
-					text:
-						typeof e.message === "string" ? e.message : getStr("networkRetry"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-			})
-			.then(() => setRefreshing(false));
-	};
+		const current = dayjs();
+		const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+		const nowWeek = (() => {
+			if (weekNumber > weekCount) {
+				return weekCount;
+			} else if (weekNumber < 1) {
+				return 1;
+			} else {
+				return weekNumber;
+			}
+		})();
 
-	const current = dayjs();
-	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
-	const nowWeek = (() => {
-		if (weekNumber > weekCount) {
-			return weekCount;
-		} else if (weekNumber < 1) {
-			return 1;
-		} else {
-			return weekNumber;
-		}
-	})();
-	const today = current.day() === 0 ? 7 : current.day();
+		const [week, setWeek] = useState(nowWeek);
 
-	const semesterType = Number(semesterId[semesterId.length - 1]);
-
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
-
-	const dark = useSelector((s: State) => s.config.darkMode);
-	const darkModeHook = dark || themeName === "dark";
-
-	const windowWidth = Dimensions.get("window").width;
-	const windowHeight = Dimensions.get("window").height;
-	const [tableHeight, setTableHeight] = useState(
-		windowHeight - getStatusBarHeight() - 40,
-	);
-	const exactUnitHeight = (tableHeight - 40) / 14;
-	const heightMode =
-		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
-	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
-	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
-	const scheduleBodyWidth = windowWidth - 32;
-	const unitWidth = scheduleBodyWidth / 7 - 1;
-
-	const [heightSetup, setHeightSetup] = useState(false);
-
-	const colorList: string[] = theme.colors.courseItemColorList;
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(getSchedule, []);
-
-	const allSchedule = () => {
-		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
-			weekCount,
+		useImperativeHandle(
+			ref,
+			() => {
+				return {
+					setWeekNumber: (w: number) => {
+						setWeek(w);
+					},
+				};
+			},
+			[setWeek],
 		);
 
-		for (let w = 0; w < weekCount; ++w) {
-			weekSchedule[w] = [];
-		}
-
-		baseSchedule.forEach((val) => {
-			val.activeTime.base.forEach((slice) => {
-				slice.activeWeeks.forEach((num) => {
-					// 由于状态异步更新的时间差，在学期切换时，可能存在某个时刻，
-					// baseSchedule 的最大周数超过了 weekCount，需要小心
-					weekSchedule[num - 1]?.push({
-						type: "normal",
-						slice,
-						schedule: val,
-						week: num,
-					});
-				});
-			});
-
-			val.activeTime.exams?.forEach((slice) => {
-				weekSchedule[slice.weekNumber - 1]?.push({
-					type: "exam",
-					slice,
-					schedule: val,
-				});
-			});
-		});
-
-		return weekSchedule;
-	};
-
-	let setWeekRef: React.Dispatch<React.SetStateAction<number>> | null = null;
-
-	const Header = () => {
-		const [week, setWeek] = useState(nowWeek);
-		setWeekRef = setWeek;
+		const windowWidth = Dimensions.get("window").width;
+		const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 
 		return (
 			<View
@@ -207,9 +158,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												borderRadius: 8,
 											}}
 											onPress={() => {
-												flatListRef.current?.scrollToIndex({
-													index: weekButton - 1,
-												});
+												onSetWeek(weekButton);
 												done();
 											}}
 											key={weekButton}>
@@ -269,7 +218,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						</Text>
 					</BottomPopupTriggerView>
 					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
-						<TouchableOpacity onPress={() => setHeightSetup((v) => !v)}>
+						<TouchableOpacity onPress={() => onChangeSetHeightSetup()}>
 							<IconConfig width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -282,13 +231,121 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				</View>
 			</View>
 		);
+	},
+);
+
+export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
+	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
+	const {firstDay, weekCount} = useSelector((s: State) => s.config);
+	const dispatch = useDispatch();
+
+	const [refreshing, setRefreshing] = useState(false);
+
+	const getSchedule = () => {
+		setRefreshing(true);
+		helper
+			.getSchedule()
+			.then(({schedule, calendar}) => {
+				dispatch(setCalendarConfig(calendar));
+				dispatch(scheduleFetch({schedule, semesterId: calendar.semesterId}));
+			})
+			.catch((e) => {
+				Snackbar.show({
+					text:
+						typeof e.message === "string" ? e.message : getStr("networkRetry"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+			})
+			.then(() => setRefreshing(false));
+	};
+
+	const current = dayjs();
+	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+	const nowWeek = (() => {
+		if (weekNumber > weekCount) {
+			return weekCount;
+		} else if (weekNumber < 1) {
+			return 1;
+		} else {
+			return weekNumber;
+		}
+	})();
+	const today = current.day() === 0 ? 7 : current.day();
+
+	const themeName = useColorScheme();
+	const theme = themes(themeName);
+
+	const windowWidth = Dimensions.get("window").width;
+	const windowHeight = Dimensions.get("window").height;
+	const [tableHeight, setTableHeight] = useState(
+		windowHeight - getStatusBarHeight() - 40,
+	);
+	const exactUnitHeight = (tableHeight - 40) / 14;
+	const heightMode =
+		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
+	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
+	const scheduleBodyWidth = windowWidth - 32;
+	const unitWidth = scheduleBodyWidth / 7 - 1;
+
+	const [heightSetup, setHeightSetup] = useState(false);
+
+	const colorList: string[] = theme.colors.courseItemColorList;
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	useEffect(getSchedule, []);
+
+	const allSchedule = () => {
+		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
+			weekCount,
+		);
+
+		for (let w = 0; w < weekCount; ++w) {
+			weekSchedule[w] = [];
+		}
+
+		baseSchedule.forEach((val) => {
+			val.activeTime.base.forEach((slice) => {
+				slice.activeWeeks.forEach((num) => {
+					// 由于状态异步更新的时间差，在学期切换时，可能存在某个时刻，
+					// baseSchedule 的最大周数超过了 weekCount，需要小心
+					weekSchedule[num - 1]?.push({
+						type: "normal",
+						slice,
+						schedule: val,
+						week: num,
+					});
+				});
+			});
+
+			val.activeTime.exams?.forEach((slice) => {
+				weekSchedule[slice.weekNumber - 1]?.push({
+					type: "exam",
+					slice,
+					schedule: val,
+				});
+			});
+		});
+
+		return weekSchedule;
 	};
 
 	const flatListRef = useRef<FlatList>(null);
+	const headerRef = useRef<ElementRef<typeof Header>>(null);
 
 	return (
 		<>
-			<Header />
+			<Header
+				ref={headerRef}
+				onSetWeek={(w: number) => {
+					flatListRef.current?.scrollToIndex({
+						index: w - 1,
+					});
+				}}
+				onChangeSetHeightSetup={() => {
+					setHeightSetup((v) => !v);
+				}}
+				navigation={navigation}
+			/>
 			<View style={{flex: 1}}>
 				<ScrollView
 					onLayout={({nativeEvent}) => {
@@ -543,7 +600,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
-									setWeekRef && setWeekRef(index + 1);
+									headerRef.current?.setWeekNumber(index + 1);
 								}}
 								pagingEnabled={true}
 							/>

@@ -131,7 +131,9 @@ export const uFetch = async (
                     for (const v of value.split(",")) {
                         const segment = v.split(";")[0];
                         const [item, val] = segment.split("=");
-                        cookies[item.trim()] = val.trim();
+                        if (val) {
+                            cookies[item.trim()] = val.trim();
+                        }
                     }
                 }
             }
