@@ -74,9 +74,16 @@ export const scheduleSlice = createSlice({
 					delOrHide(val, slice);
 				});
 
-				val.name = selectedSchedule.name;
-				val.location = selectedSchedule.location;
-				newScheduleList.push(val);
+				let mergedSchedule: Schedule = {
+					name: selectedSchedule.name,
+					location: selectedSchedule.location,
+					type: val.type,
+					hash: val.hash,
+					activeTime: val.activeTime,
+					delOrHideTime: val.delOrHideTime,
+				};
+
+				newScheduleList.push(mergedSchedule);
 			});
 
 			state.semesterId = payload.semesterId;
