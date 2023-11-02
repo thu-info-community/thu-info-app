@@ -70,17 +70,13 @@ export const scheduleSlice = createSlice({
 
 				let selectedSchedule = selectedScheduleList[0];
 
-				selectedSchedule.delOrHideTime.base.forEach((slice) => {
-					delOrHide(val, slice);
-				});
-
 				let mergedSchedule: Schedule = {
 					name: selectedSchedule.name,
 					location: selectedSchedule.location,
 					type: val.type,
 					hash: val.hash,
 					activeTime: val.activeTime,
-					delOrHideTime: val.delOrHideTime,
+					delOrHideTime: selectedSchedule.delOrHideTime,
 				};
 
 				newScheduleList.push(mergedSchedule);
