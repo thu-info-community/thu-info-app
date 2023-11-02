@@ -12,6 +12,7 @@
 		"postinstall": "yarn build"
 	},
 	"dependencies": {
+		"lerna": "7.4.2",
 		"pre-commit": "1.2.2",
 		"yarn-deduplicate": "6.0.2"
 	},
