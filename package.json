@@ -9,7 +9,8 @@
 	"scripts": {
 		"build": "yarn workspace @thu-info/lib build",
 		"lint": "yarn workspace @thu-info/app lint && yarn workspace @thu-info/lib lint",
-		"postinstall": "yarn build"
+		"postinstall": "yarn build",
+		"preversion": "git pull --rebase"
 	},
 	"dependencies": {
 		"lerna": "7.4.2",
