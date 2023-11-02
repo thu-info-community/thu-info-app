@@ -12,36 +12,20 @@ interface ScheduleBlockProps {
 	gridWidth: number;
 	onPress: () => void;
 	blockColor?: string;
-	blockInterval?: number;
+	blockMargin?: number;
 }
 
 export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	// TODO: maybe some special judge?
-	const gridHalfWidth = props.gridWidth / 2;
-	const gridHalfHeight = props.gridHeight / 2;
-
-	const blockInterval = props.blockInterval || 1;
+	const blockMargin = props.blockMargin || 2;
 	const blockColor = props.blockColor || colors.themePurple;
 
-	const blockLeftPos =
-		(props.dayOfWeek * 2 - 2) * gridHalfWidth + // Block Width
-		(props.dayOfWeek + 1) + // Border Width
-		blockInterval; // Block Interval
-	const blockTopPos =
-		(props.begin * 2 - 2) * gridHalfHeight + // Block Width
-		1 + // Border Width
-		blockInterval; // Block Interval
-	const blockRightPos =
-		props.dayOfWeek * 2 * gridHalfWidth + // Block Width
-		(props.dayOfWeek + 1) - // Border Width
-		blockInterval; // Block Interval
-	const blockBottomPos =
-		props.end * 2 * gridHalfHeight - // Block Width
-		([2, 5, 7, 9, 11].indexOf(props.end) === -1 ? 0 : 1) - // Border Width
-		blockInterval; // Block Interval
+	const blockLeftPos = (props.dayOfWeek - 1) * props.gridWidth + blockMargin;
+	const blockTopPos = (props.begin - 1) * props.gridHeight + blockMargin;
+	const blockRightPos = props.dayOfWeek * props.gridWidth - blockMargin;
+	const blockBottomPos = props.end * props.gridHeight - blockMargin;
 
 	const [titleHeight, setTitleHeight] = useState(0);
 	const [localeHeight, setLocaleHeight] = useState(0);
