@@ -27,6 +27,7 @@ import IconPot from "../../assets/icons/IconPot";
 import IconDrink from "../../assets/icons/IconDrink";
 import IconHamburger from "../../assets/icons/IconHamburger";
 import IconNoodles from "../../assets/icons/IconNoodles";
+import IconShopping from "../../assets/icons/IconShopping";
 import IconSwim from "../../assets/icons/IconSwim";
 
 const TransactionItem = ({tx}: {tx: CardTransaction}) => {
@@ -44,6 +45,8 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 		icon = <IconAlipay height={iconSize} width={iconSize} />;
 	} else if (tx.name?.includes("中行")) {
 		icon = <IconBankCard height={iconSize} width={iconSize} />;
+	} else if (tx.name?.includes("天猫")) {
+		icon = <IconShopping height={iconSize} width={iconSize} />;
 	} else if (tx.name?.includes("淋浴")) {
 		icon = <IconShower height={iconSize} width={iconSize} />;
 	} else if (tx.name?.includes("香锅")) {
