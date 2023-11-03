@@ -2,7 +2,7 @@
     "name": "@thu-info/lib",
     "version": "3.4.4",
     "description": "The JavaScript library that provides a program-friendly interface to Tsinghua web portal",
-    "main": "dist/index.js",
+    "main": "src/index.ts",
     "files": [
         "dist/**/*",
         "src/**/*"
@@ -15,6 +15,7 @@
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
         "preversion": "yarn lint && yarn test",
+        "prepare:ci": "sed -i 's/\"main\": \"src\\/index.ts\"/\"main\": \"dist\\/index.js\"/g' package.json",
         "build-dist": "webpack --config webpack.config.js",
         "watch-dist": "webpack -w --config webpack.config.js"
     },

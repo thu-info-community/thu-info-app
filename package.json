@@ -11,7 +11,6 @@
 		"test": "yarn workspaces run test",
 		"lint": "yarn workspaces run lint",
 		"fix": "yarn workspaces run fix",
-		"postinstall": "yarn build",
 		"preversion": "git pull --rebase && node -e \"require('editor')('release-notes.md')\" && git add release-notes.md"
 	},
 	"dependencies": {

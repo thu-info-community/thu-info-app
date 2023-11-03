@@ -70,4 +70,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
         run: |
+          yarn workspace @thu-info/lib prepare:ci
           yarn workspace @thu-info/lib publish --new-version $TAG
