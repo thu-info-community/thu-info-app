@@ -1,6 +1,8 @@
 ## @thu-info/app
-- 修复了消费记录无法查询的问题
-- 消费记录中为游泳馆设置正确的图标
+- 优化课程表使用体验
+- 优化洗衣机用户界面
 
 ## @thu-info/lib
 - feat: enable course registration login without captcha verification
+
+NOTE: `thu-info-lib` has been migrated to `@thu-info/lib`
