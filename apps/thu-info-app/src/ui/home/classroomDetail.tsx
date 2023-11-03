@@ -23,7 +23,7 @@ import ScrollPicker from "react-native-wheel-scrollview-picker";
 import {
 	ClassroomState,
 	ClassroomStatus,
-} from "@thu-info/lib/dist/models/home/classroom";
+} from "@thu-info/lib/src/models/home/classroom";
 
 export const ClassroomDetailScreen = ({
 	route: {

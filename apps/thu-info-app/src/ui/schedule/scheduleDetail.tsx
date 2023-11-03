@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Modal} from "react-native";
 import {useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import {useDispatch} from "react-redux";
-import {ScheduleType} from "@thu-info/lib/dist/models/schedule/schedule";
+import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";

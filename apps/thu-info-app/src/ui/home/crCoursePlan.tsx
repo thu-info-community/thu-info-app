@@ -13,7 +13,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {helper} from "../../redux/store";
 import {CrCoursePlanRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CoursePlan} from "@thu-info/lib/dist/models/cr/cr";
+import {CoursePlan} from "@thu-info/lib/src/models/cr/cr";
 import {SettingsLargeButton} from "../../components/settings/items";
 
 export const CrCoursePlanScreen = ({

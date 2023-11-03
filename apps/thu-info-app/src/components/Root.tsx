@@ -5,7 +5,7 @@ import themes from "../assets/themes/themes";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
-import {NewsSlice} from "@thu-info/lib/dist/models/news/news";
+import {NewsSlice} from "@thu-info/lib/src/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
@@ -17,9 +17,9 @@ import {
 	LibraryFloor,
 	LibrarySection,
 	LibRoomRes,
-} from "@thu-info/lib/dist/models/home/library";
-import {SearchResultItem} from "@thu-info/lib/dist/models/home/reserves-lib";
-import {SportsIdInfo} from "@thu-info/lib/dist/models/home/sports";
+} from "@thu-info/lib/src/models/home/library";
+import {SearchResultItem} from "@thu-info/lib/src/models/home/reserves-lib";
+import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
 import {
 	ScheduleDetailProps,
 	ScheduleDetailScreen,
@@ -84,7 +84,7 @@ import {AccountScreen} from "../ui/settings/account";
 import {ReserveScreen} from "../ui/home/reserve";
 import {CrHomeScreen} from "../ui/home/crHome";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
-import {SearchParams} from "@thu-info/lib/dist/models/cr/cr";
+import {SearchParams} from "@thu-info/lib/src/models/cr/cr";
 import {CrSearchResultScreen} from "../ui/home/crSearchResult";
 import IconShare from "../assets/icons/IconShare";
 import IconHistory from "../assets/icons/IconHistory";
@@ -111,7 +111,7 @@ import {
 	NewsSubSourceSelectScreen,
 } from "../ui/news/newsSub";
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
-import {Classroom} from "@thu-info/lib/dist/models/home/classroom";
+import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";

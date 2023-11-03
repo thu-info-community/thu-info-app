@@ -2,8 +2,8 @@
  * Original author: THUzxj
  */
 import {WATER_SUB_URL, WATER_USER_URL} from "../constants/strings";
-import {stringify} from "@thu-info/lib/dist/utils/network";
-import {CONTENT_TYPE_FORM} from "@thu-info/lib/dist/constants/strings";
+import {stringify} from "@thu-info/lib/src/utils/network";
+import {CONTENT_TYPE_FORM} from "@thu-info/lib/src/constants/strings";
 
 export interface WaterUserInformation {
 	name: string;

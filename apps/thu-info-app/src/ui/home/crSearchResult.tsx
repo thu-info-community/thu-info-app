@@ -13,7 +13,7 @@ import {helper} from "../../redux/store";
 import {CrSearchResultRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {CrSearchResultInfo} from "@thu-info/lib/dist/models/cr/cr";
+import {CrSearchResultInfo} from "@thu-info/lib/src/models/cr/cr";
 import {CourseTimeQuickGlance} from "../../components/home/cr";
 
 export const CrSearchResultScreen = ({

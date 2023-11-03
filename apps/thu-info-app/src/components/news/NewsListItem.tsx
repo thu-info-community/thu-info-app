@@ -1,4 +1,4 @@
-import {NewsSlice} from "@thu-info/lib/dist/models/news/news";
+import {NewsSlice} from "@thu-info/lib/src/models/news/news";
 import {Theme} from "../../assets/themes/themes";
 import {RootNav} from "../Root";
 import {useState} from "react";

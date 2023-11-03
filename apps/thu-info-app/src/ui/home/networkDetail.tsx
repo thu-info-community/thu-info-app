@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {Text, View, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
-import {Detial} from "@thu-info/lib/dist/models/network/detial";
+import {Detial} from "@thu-info/lib/src/models/network/detial";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";

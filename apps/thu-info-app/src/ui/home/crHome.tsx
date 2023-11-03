@@ -11,7 +11,7 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {CrSemester} from "@thu-info/lib/dist/models/cr/cr";
+import {CrSemester} from "@thu-info/lib/src/models/cr/cr";
 
 export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const [semesters, setSemesters] = useState<CrSemester[]>([]);

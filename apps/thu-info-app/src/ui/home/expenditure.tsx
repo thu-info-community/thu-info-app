@@ -12,7 +12,7 @@ import {helper} from "../../redux/store";
 import {
 	CardTransaction,
 	CardTransactionType,
-} from "@thu-info/lib/dist/models/card/transaction";
+} from "@thu-info/lib/src/models/card/transaction";
 import {BottomPopupTriggerView} from "../../components/views";
 import IconDown from "../../assets/icons/IconDown";
 import ScrollPicker from "react-native-wheel-scrollview-picker";

@@ -22,7 +22,7 @@ import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
 	scheduleTimeAdd,
-} from "@thu-info/lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/src/models/schedule/schedule";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,

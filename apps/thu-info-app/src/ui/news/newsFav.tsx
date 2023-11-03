@@ -11,7 +11,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {NewsListItem} from "../../components/news/NewsListItem";
 import {useState} from "react";
-import {NewsSlice} from "@thu-info/lib/dist/models/news/news";
+import {NewsSlice} from "@thu-info/lib/src/models/news/news";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 

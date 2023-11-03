@@ -4,7 +4,7 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
-import {MOCK_APP_PRIVACY_URL} from "@thu-info/lib/dist/mocks/app";
+import {MOCK_APP_PRIVACY_URL} from "@thu-info/lib/src/mocks/app";
 
 export const PrivacyScreen = () => {
 	const themeName = useColorScheme();

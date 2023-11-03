@@ -7,7 +7,7 @@ import {
 	Schedule,
 	TimeSlice,
 	ScheduleType,
-} from "@thu-info/lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/src/models/schedule/schedule";
 
 export interface ScheduleState {
 	semesterId: string | undefined;

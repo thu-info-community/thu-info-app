@@ -9,7 +9,7 @@ import {useEffect, useState} from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
-import {Classroom} from "@thu-info/lib/dist/models/home/classroom";
+import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 

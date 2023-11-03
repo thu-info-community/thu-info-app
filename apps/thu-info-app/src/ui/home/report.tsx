@@ -12,7 +12,7 @@ import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
-import {Course} from "@thu-info/lib/dist/models/home/report";
+import {Course} from "@thu-info/lib/src/models/home/report";
 import {useColorScheme} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconDropdown from "../../assets/icons/IconDropdown";

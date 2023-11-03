@@ -6,7 +6,7 @@ import {RouteProp} from "@react-navigation/native";
 import IconRight from "../../assets/icons/IconRight";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import {LibraryBase} from "@thu-info/lib/dist/models/home/library";
+import {LibraryBase} from "@thu-info/lib/src/models/home/library";
 import {useColorScheme} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {RoundedListView} from "../views";

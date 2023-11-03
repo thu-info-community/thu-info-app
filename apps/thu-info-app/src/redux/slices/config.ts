@@ -1,8 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import {ValidReceiptTypes} from "@thu-info/lib/dist/lib/sports";
+import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
-import {CalendarData} from "@thu-info/lib/dist/models/schedule/calendar";
+import {CalendarData} from "@thu-info/lib/src/models/schedule/calendar";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;

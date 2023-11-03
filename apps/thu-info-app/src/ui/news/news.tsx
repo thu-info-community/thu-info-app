@@ -18,7 +18,7 @@ import {
 	NewsSlice,
 	ChannelTag,
 	NewsSubscription,
-} from "@thu-info/lib/dist/models/news/news";
+} from "@thu-info/lib/src/models/news/news";
 import {useColorScheme} from "react-native";
 import IconSearch from "../../assets/icons/IconSearch";
 import IconSubscriptionLogo from "../../assets/icons/IconSubscriptionLogo";

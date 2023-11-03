@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Device} from "@thu-info/lib/dist/models/network/device";
+import {Device} from "@thu-info/lib/src/models/network/device";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";

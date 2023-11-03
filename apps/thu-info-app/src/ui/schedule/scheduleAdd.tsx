@@ -18,7 +18,7 @@ import {
 	scheduleTimeAdd,
 	ScheduleType,
 	TimeSlice,
-} from "@thu-info/lib/dist/models/schedule/schedule";
+} from "@thu-info/lib/src/models/schedule/schedule";
 import {State} from "../../redux/store";
 import {
 	Choice,

@@ -5,7 +5,7 @@ import {WebView} from "react-native-webview";
 import {View, ActivityIndicator, Dimensions} from "react-native";
 import {NewsDetailRouteProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
-import {USER_AGENT} from "@thu-info/lib/dist/constants/strings";
+import {USER_AGENT} from "@thu-info/lib/src/constants/strings";
 import {useColorScheme} from "react-native";
 import themedStyles from "../../utils/themedStyles";
 import {helper, State} from "../../redux/store";

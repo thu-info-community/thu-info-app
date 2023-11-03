@@ -14,7 +14,7 @@ import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {Library} from "@thu-info/lib/dist/models/home/library";
+import {Library} from "@thu-info/lib/src/models/home/library";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";

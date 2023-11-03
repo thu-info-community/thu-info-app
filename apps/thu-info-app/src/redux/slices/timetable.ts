@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import {CrTimetable} from "@thu-info/lib/dist/models/cr/cr";
+import {CrTimetable} from "@thu-info/lib/src/models/cr/cr";
 
 export interface TimetableState {
 	crTimetable: CrTimetable[];

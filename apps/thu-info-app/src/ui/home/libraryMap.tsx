@@ -9,8 +9,8 @@ import ImageViewer from "react-native-image-zoom-viewer";
 import {saveRemoteImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
-import {LibrarySection} from "@thu-info/lib/dist/models/home/library";
-import {LIBRARY_IMAGE_BASE} from "@thu-info/lib/dist/constants/strings";
+import {LibrarySection} from "@thu-info/lib/src/models/home/library";
+import {LIBRARY_IMAGE_BASE} from "@thu-info/lib/src/constants/strings";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);
