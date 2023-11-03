@@ -235,7 +235,7 @@ const policyList: [string, [string, string]][] = [
     ],
     [
         "77726476706e69737468656265737421e8ef439b69336153301c9aa596522b20e1a870705b76e399",
-        ["", ".td4"],
+        [".TD1", ".td111"],
     ],
     ["rscbg", ["[height=40]", "[width='95%'] > tbody > tr:nth(3)"]],
     [
