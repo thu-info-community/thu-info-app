@@ -8,14 +8,16 @@
 	],
 	"scripts": {
 		"build": "yarn workspace @thu-info/lib build",
-		"lint": "yarn workspace @thu-info/app lint && yarn workspace @thu-info/lib lint",
+		"test": "yarn workspaces run test",
+		"lint": "yarn workspaces run lint",
+		"fix": "yarn workspaces run fix",
 		"postinstall": "yarn build",
 		"preversion": "git pull --rebase && node -e \"require('editor')('release-notes.md')\" && git add release-notes.md"
 	},
 	"dependencies": {
+		"editor": "1.0.0",
 		"lerna": "7.4.2",
-		"pre-commit": "1.2.2",
-		"yarn-deduplicate": "6.0.2"
+		"pre-commit": "1.2.2"
 	},
 	"pre-commit": [
 		"lint"
