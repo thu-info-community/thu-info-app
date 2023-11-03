@@ -10,7 +10,7 @@
 		"build": "yarn workspace @thu-info/lib build",
 		"lint": "yarn workspace @thu-info/app lint && yarn workspace @thu-info/lib lint",
 		"postinstall": "yarn build",
-		"preversion": "git pull --rebase"
+		"preversion": "git pull --rebase && node -e \"require('editor')('release-notes.md')\" && git add release-notes.md"
 	},
 	"dependencies": {
 		"lerna": "7.4.2",
