@@ -78,7 +78,7 @@
 		"@babel/runtime": "7.23.2",
 		"@react-native/eslint-config": "0.74.0",
 		"@react-native/metro-config": "0.74.0",
-		"@tsconfig/react-native": "3.0.2",
+		"@react-native/typescript-config": "0.73.1",
 		"@types/connect": "3.4.37",
 		"@types/md5": "2.3.4",
 		"@types/metro-config": "0.76.3",
@@ -94,6 +94,6 @@
 		"typescript": "5.2.2"
 	},
 	"engines": {
-		"node": ">=16"
+		"node": ">=18"
 	}
 }

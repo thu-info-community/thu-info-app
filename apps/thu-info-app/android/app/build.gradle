@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
 
+apply plugin: "org.jetbrains.kotlin.android"
+
 apply plugin: "com.facebook.react"
 
 apply plugin: 'kotlin-android'
@@ -77,6 +79,7 @@ def signatureDigest = System.getenv('SIGNATURE_DIGEST')
 android {
     ndkVersion rootProject.ext.ndkVersion
 
+    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.unidy2002.thuinfo"
@@ -86,6 +89,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode npmVersionCode
         versionName npmVersionName
+    }
+    buildFeatures {
+        buildConfig true
     }
     signingConfigs {
         debug {
