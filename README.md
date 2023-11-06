@@ -26,10 +26,10 @@ If you are a developer...
 
 #### Android
 
-- [Node.js](https://nodejs.org/) >= 14
+- [Node.js](https://nodejs.org/) >= 18
 - [Yarn](https://classic.yarnpkg.com/lang/en/) Classic
-- [JDK](https://adoptium.net/temurin/releases) >= 11
-- [Android Studio](https://developer.android.com/studio/index.html) or [Intellij IDEA](https://www.jetbrains.com/idea/) with `Android SDK Platform 33` and `Android SDK Build-Tools 33.0.0` installed.
+- [JDK](https://adoptium.net/temurin/releases) >= 17
+- [Android Studio](https://developer.android.com/studio/index.html) or [Intellij IDEA](https://www.jetbrains.com/idea/) with `Android SDK Platform 34` and `Android SDK Build-Tools 34.0.0` installed.
 
 #### iOS
 

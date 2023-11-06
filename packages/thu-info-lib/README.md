@@ -1,14 +1,14 @@
-# thu-info-lib
+# @thu-info/lib
 
-[![Build Status](https://github.com/thu-info-community/thu-info-lib/workflows/Test%20and%20Publish/badge.svg)](https://github.com/thu-info-community/thu-info-lib/actions?query=workflow%3A%22Test+and+Publish%22)
-[![NPM Version](https://img.shields.io/npm/v/thu-info-lib)](https://www.npmjs.com/package/thu-info-lib)
+[![Build Status](https://github.com/thu-info-community/thu-info-app/workflows/Test%20and%20Publish/badge.svg)](https://github.com/thu-info-community/thu-info-app/actions?query=workflow%3A%22Test+and+Publish%22)
+[![NPM Version](https://img.shields.io/npm/v/@thu-info/lib)](https://www.npmjs.com/package/@thu-info/lib)
 
 This is a JavaScript library aimed to provide a program-friendly interface to Tsinghua web portal, and is licensed under MIT License.
 
 ## Installation
 
 ```shell
-yarn add thu-info-lib
+yarn add @thu-info/lib
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ Usages are documented in `dist/index` and also between the codes.
 
 ## Quick demo
 
-Download `demo.zip` from [the latest release](https://github.com/thu-info-community/thu-info-lib/releases/latest), and unzip it.
+Download `demo.zip` from [the latest release](https://github.com/thu-info-community/thu-info-app/releases/latest), and unzip it.
 
 After that, install the unpacked directory `demo/` as an unpacked extension in Chrome.
 
