@@ -25,6 +25,7 @@ import {helper} from "../../redux/store";
 import VersionNumber from "react-native-version-number";
 import {getModel} from "react-native-device-info";
 import {Feedback} from "@thu-info/lib/src/models/app/feedback";
+import {NetworkRetry} from "../../components/easySnackbars.ts";
 
 const BottomButton = ({
 	text,
@@ -69,8 +70,11 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const {colors} = themes(themeName);
 
 	useEffect(() => {
-		helper.getFeedbackReplies().then(setFeedbackData);
-		helper.getWeChatGroupQRCodeContent().then(setQrcodeContent);
+		helper.getFeedbackReplies().then(setFeedbackData).catch(NetworkRetry);
+		helper
+			.getWeChatGroupQRCodeContent()
+			.then(setQrcodeContent)
+			.catch(NetworkRetry);
 	}, []);
 
 	return (
@@ -102,7 +106,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					}}>
 					{qrcodeContent !== undefined && (
 						<>
-							<QRCode value={qrcodeContent} size={80} />
+							<QRCode value={qrcodeContent} size={80} onError={console.error} />
 							<Text style={{marginTop: 6, color: "grey"}}>
 								{getStr("wechatPrompt")}
 							</Text>
