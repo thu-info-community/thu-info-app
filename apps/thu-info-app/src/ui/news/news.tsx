@@ -154,6 +154,11 @@ const ChannelTagButton = ({
 
 type NewsSubscriptionId = string;
 
+const newsDedupeAndAdd = (prev: NewsSlice[], next: NewsSlice[]) => {
+	const prevUrlSet = new Set(prev.map((news) => news.url));
+	return prev.concat(next.filter((news) => !prevUrlSet.has(news.url)));
+};
+
 export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
@@ -218,7 +223,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					if (res.length === 0) {
 						setFetchedAll(true);
 					} else {
-						setNewsList((o) => o.concat(res));
+						setNewsList((o) => newsDedupeAndAdd(o, res));
 					}
 				})
 				.catch(() => {
@@ -272,7 +277,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				if (res.length === 0) {
 					setFetchedAll(true);
 				} else {
-					setNewsList((o) => o.concat(res));
+					setNewsList((o) => newsDedupeAndAdd(o, res));
 				}
 			})
 			.catch(() => {
