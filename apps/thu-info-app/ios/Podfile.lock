@@ -453,7 +453,7 @@ PODS:
     - React-jsi (= 0.72.6)
     - React-logger (= 0.72.6)
     - React-perflogger (= 0.72.6)
-  - RNCAsyncStorage (1.19.4):
+  - RNCAsyncStorage (1.19.5):
     - React-Core
   - RNDeviceInfo (10.11.0):
     - React-Core
@@ -777,7 +777,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: f23e337008403341177fc52ee4ca94e442c17ede
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
-  RNCAsyncStorage: 3a8f7145d17cdd9f88e7b77666c94a09e4f759c8
+  RNCAsyncStorage: f2974eca860c16a3e56eea5771fda8d12e2d2057
   RNDeviceInfo: bf8a32acbcb875f568217285d1793b0e8588c974
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
@@ -795,4 +795,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7651823ca0e893b3928008df1ba6a5c1c49af53b
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.12.1
