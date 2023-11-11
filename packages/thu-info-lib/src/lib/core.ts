@@ -102,8 +102,7 @@ export const login = async (
                         const message = $("#msg_note").text().trim();
                         throw new LoginError(message);
                     }
-                    const redirectUrl = cheerio("a", response).attr().href;
-                    await getRedirectUrl(redirectUrl);
+                    const redirectUrl = await getRedirectUrl(cheerio("a", response).attr().href);
                     if (redirectUrl === LOGIN_URL) {
                         throw new LoginError("登录失败，请稍后重试。");
                     }
