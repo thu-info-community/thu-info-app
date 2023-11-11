@@ -230,10 +230,6 @@ export const GITLAB_AUTH_URL =
     "https://git.tsinghua.edu.cn/users/auth/thuid";
 export const GITLAB_API_BASE_URL =
     "https://git.tsinghua.edu.cn/api/v4";
-export const WATER_USER_URL =
-    "http://dingshui.bjqzhd.com/auser/getuser.html";
-export const WATER_SUB_URL =
-    "http://dingshui.bjqzhd.com/buy/subs.html";
 export const RESERVES_LIB_SEARCH =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e2f2529935266d43300480aed641303c455d43259619a3eaf6eebb99/Search/ResBooks";
 export const RESERVES_LIB_DETAIL =
