@@ -75,14 +75,15 @@ export const getUserInfo = async (helper: InfoHelper): Promise<{
             if (param === undefined) {
                 throw new LibError();
             } else {
-                const $ = cheerio.load(param);
-                const fullName = $(".account").text();
-                const email = $(".email").text();
-                const emailRes = /<(.+?)@mails.tsinghua.edu.cn>/g.exec(email);
+                const nameRes = /'name':'(.+?)'/g.exec(param);
+                if (nameRes === null || nameRes[1] === undefined) {
+                    throw new UserInfoError();
+                }
+                const emailRes = /'addr':'(.+?)@mails.tsinghua.edu.cn'/g.exec(param);
                 if (emailRes === null || emailRes[1] === undefined) {
                     throw new UserInfoError();
                 }
-                return {fullName, emailName: emailRes[1]};
+                return {fullName: nameRes[1], emailName: emailRes[1]};
             }
         },
         {
