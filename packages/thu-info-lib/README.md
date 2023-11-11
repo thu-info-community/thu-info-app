@@ -29,7 +29,7 @@ We support a wide range of APIs:
 - Electricity (`getEleRechargePayCode`, `getElePayRecord`, `getEleRemainder`)
 - `resetDormPassword`
 - Library (`getLibraryList`, `getLibrarySectionList`, `getLibraryFloorList`, `getLibrarySeatList`, `bookLibrarySeat`, `getBookingRecords`, `cancelBooking`)
-- Library room(`getLibraryRoomAccNo`, `loginLibraryRoomBooking`, `getLibraryRoomBookingResourceList`, `fuzzySearchLibraryId`, `bookLibraryRoom`, `getLibraryRoomBookingRecord`, `cancelLibraryRoomBooking`)
+- Library room(`getLibraryRoomAccNo`, `loginLibraryRoomBooking`, `getLibraryRoomBookingResourceList`, `fuzzySearchLibraryId`, `bookLibraryRoom`, `getLibraryRoomBookingRecord`, `cancelLibraryRoomBooking`, `updateLibraryRoomEmail`)
 - News (`getNewsList`, `searchNewsList`, `getNewsSubscriptionList`, `getNewsSourceList`, `getNewsChannelList`, `addNewsSubscription`, `removeNewsSubscription`, `getNewsListBySubscription`, `getNewsDetail`, `addNewsToFavor`, `removeNewsFromFavor`, `getFavorNewsList`)
 - `getSchedule`
 - Course Registration (`getCrTimetable`, `getCrCaptchaUrl`, `loginCr`, `getCrAvailableSemesters`, `getCrCoursePlan`, `searchCrRemaining`, `searchCrPrimaryOpen`, `searchCrCourses`, `selectCourse`, `deleteCourse`, `getSelectedCourses`, `changeCourseWill`, `getCrCurrentStage`, `searchCoursePriorityMeta`, `searchCoursePriorityInformation`, `getQueueInfo`, `cancelCoursePF`, `setCoursePF`)

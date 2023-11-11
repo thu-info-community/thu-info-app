@@ -19,6 +19,7 @@ import {
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL,
     LIBRARY_ROOM_BOOKING_ROOM_INFO_URL,
     LIBRARY_ROOM_BOOKING_USER_INFO_URL,
+    LIBRARY_ROOM_UPDATE_EMAIL_URL,
     LIBRARY_SEATS_URL,
 } from "../constants/strings";
 import {
@@ -551,4 +552,15 @@ export const cancelLibraryRoomBooking = async (
     }
     await assureLoginValid(helper);
     await cabFetch(LIBRARY_CANCEL_BOOKING_URL, {uuid});
+};
+
+export const updateLibraryRoomEmail = async (
+    helper: InfoHelper,
+    email: string,
+): Promise<void> => {
+    if (helper.mocked()) {
+        return;
+    }
+    await assureLoginValid(helper);
+    await cabFetch(LIBRARY_ROOM_UPDATE_EMAIL_URL, {email});
 };

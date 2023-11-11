@@ -149,6 +149,7 @@ export const LIBRARY_ROOM_BOOKING_RECORD_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/resvInfo?needStatus=8454&orderKey=gmt_create&orderModel=desc";
 export const LIBRARY_CANCEL_BOOKING_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/delete";
+export const LIBRARY_ROOM_UPDATE_EMAIL_URL = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/account/update";
 export const LIBRARY_BOOK_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/spaces/";
 export const LIBRARY_BOOK_URL_SUFFIX = "/book";

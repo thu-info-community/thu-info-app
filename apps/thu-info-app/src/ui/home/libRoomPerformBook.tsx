@@ -115,6 +115,59 @@ export const LibRoomPerformBookScreen = ({
 		members.length >= res.minUser &&
 		!processing;
 
+	const performBook = () => {
+		Snackbar.show({
+			text: getStr("processing"),
+			duration: Snackbar.LENGTH_SHORT,
+		});
+		setProcessing(true);
+		helper
+			.bookLibraryRoom(
+				res,
+				`${date} ${begValue}:00`,
+				`${date} ${endValue}:00`,
+				members.map((member) => member.id),
+			)
+			.then(() => {
+				Snackbar.show({
+					text: getStr("success"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
+				Alert.alert(getStr("warning"), getStr("libRoomFirstTime"));
+				navigation.pop();
+			})
+			.catch((e) => {
+				if (String(e).includes("填写邮箱地址")) {
+					helper
+						.getUserInfo()
+						.then(({emailName}) => {
+							const email = `${emailName}@mails.tsinghua.edu.cn`;
+							Alert.alert(getStr("warning"), `您的邮箱地址为 ${email}？`, [
+								{
+									text: getStr("cancel"),
+									style: "cancel",
+								},
+								{
+									text: getStr("ok"),
+									onPress: () => {
+										helper
+											.updateLibraryRoomEmail(email)
+											.then(() => {
+												performBook();
+											})
+											.catch(NetworkRetry);
+									},
+								},
+							]);
+						})
+						.catch(NetworkRetry);
+				} else {
+					NetworkRetry(e);
+				}
+			})
+			.then(() => setProcessing(false));
+	};
+
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -286,7 +339,9 @@ export const LibRoomPerformBookScreen = ({
 									({res.minUser}~{res.maxUser})
 								</Text>
 							</View>
-							<Text style={{margin: 8}}>{getStr("findUser")}</Text>
+							<Text style={{margin: 8, color: colors.text}}>
+								{getStr("findUser")}
+							</Text>
 							<View
 								style={{
 									flexDirection: "row",
@@ -345,7 +400,12 @@ export const LibRoomPerformBookScreen = ({
 							</View>
 							{userItems.length === 0 ? null : (
 								<View>
-									<Text style={{marginLeft: 4, marginBottom: 4}}>
+									<Text
+										style={{
+											marginLeft: 4,
+											marginBottom: 4,
+											color: colors.text,
+										}}>
 										有多名用户符合要求，点按以选择用户
 									</Text>
 									<View
@@ -370,7 +430,9 @@ export const LibRoomPerformBookScreen = ({
 												onPress={() => setUserItems([])}>
 												<View
 													style={{flexDirection: "row", paddingVertical: 8}}>
-													<Text style={{color: "red"}}>取消搜索</Text>
+													<Text style={{color: colors.statusWarning}}>
+														取消搜索
+													</Text>
 												</View>
 											</TouchableOpacity>,
 										].concat(
@@ -411,7 +473,7 @@ export const LibRoomPerformBookScreen = ({
 													key={item.id}
 													style={{
 														backgroundColor: colors.contentBackground,
-														borderColor: "gray",
+														borderColor: colors.fontB2,
 														borderRadius: 5,
 														borderWidth: 1,
 														paddingHorizontal: 4,
@@ -420,7 +482,7 @@ export const LibRoomPerformBookScreen = ({
 													}}>
 													<View
 														style={{flexDirection: "row", paddingVertical: 8}}>
-														<Text style={{color: "gray"}}>
+														<Text style={{color: colors.fontB2}}>
 															{item.label} {item.department}
 														</Text>
 													</View>
@@ -430,7 +492,8 @@ export const LibRoomPerformBookScreen = ({
 									</View>
 								</View>
 							)}
-							<Text style={{marginLeft: 4, marginBottom: 4}}>
+							<Text
+								style={{marginLeft: 4, marginBottom: 4, color: colors.text}}>
 								已有研读间使用者（点按可删除）
 							</Text>
 							<View
@@ -474,7 +537,7 @@ export const LibRoomPerformBookScreen = ({
 											justifyContent: "center",
 										}}>
 										<View style={{flexDirection: "row", paddingVertical: 8}}>
-											<Text style={{color: "gray"}}>{member.label}</Text>
+											<Text style={{color: colors.fontB2}}>{member.label}</Text>
 										</View>
 									</TouchableOpacity>
 								))}
@@ -499,30 +562,7 @@ export const LibRoomPerformBookScreen = ({
 								borderRadius: 4,
 							}}
 							disabled={!canSubmit}
-							onPress={() => {
-								Snackbar.show({
-									text: getStr("processing"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-								setProcessing(true);
-								helper
-									.bookLibraryRoom(
-										res,
-										`${date} ${begValue}:00`,
-										`${date} ${endValue}:00`,
-										members.map((member) => member.id),
-									)
-									.then(() => {
-										Snackbar.show({
-											text: getStr("success"),
-											duration: Snackbar.LENGTH_SHORT,
-										});
-										Alert.alert(getStr("warning"), getStr("libRoomFirstTime"));
-										navigation.pop();
-									})
-									.catch(NetworkRetry)
-									.then(() => setProcessing(false));
-							}}>
+							onPress={performBook}>
 							<Text
 								style={{
 									color: canSubmit

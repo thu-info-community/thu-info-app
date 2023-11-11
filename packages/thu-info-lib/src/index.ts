@@ -46,6 +46,7 @@ import {
     getAccNo,
     cabLogin,
     toggleSocketState,
+    updateLibraryRoomEmail,
 } from "./lib/library";
 import {
     addNewsSubscription,
@@ -564,6 +565,12 @@ export class InfoHelper {
      * @param uuid  `uuid` of `LibRoomBookRecord`
      */
     public cancelLibraryRoomBooking = async (uuid: string) => cancelLibraryRoomBooking(this, uuid);
+
+    /**
+     * Updates email for library room booking system.
+     * @param email  email
+     */
+    public updateLibraryRoomEmail = async (email: string) => updateLibraryRoomEmail(this, email);
 
     /**
      * Get the news list of all channels or a specific channel.
