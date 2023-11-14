@@ -1620,10 +1620,10 @@
     yargs "16.2.0"
     yargs-parser "20.2.4"
 
-"@microsoft/signalr@7.0.12":
-  version "7.0.12"
-  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-7.0.12.tgz#855ce6d677c809d5fb08da2af5c2bec42228a0f9"
-  integrity sha512-k1Xu+a73PsWgHwHDm6ctHwHTBnlqCzq7L33cbxdWhj90AGDFpxDSzaGCkZDoJFNHveUetix65zIWiazMvmMg3w==
+"@microsoft/signalr@7.0.14":
+  version "7.0.14"
+  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-7.0.14.tgz#97551d68f09bb0ae063ffec738f7398f29d297ff"
+  integrity sha512-dnS7gSJF5LxByZwJaj82+F1K755ya7ttPT+JnSeCBef3sL8p8FBkHePXphK8NSuOquIb7vsphXWa28A+L2SPpw==
   dependencies:
     abort-controller "^3.0.0"
     eventsource "^2.0.2"
