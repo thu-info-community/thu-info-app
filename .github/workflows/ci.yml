@@ -131,6 +131,7 @@ jobs:
             node_modules
             */*/node_modules
             apps/thu-info-app/ios/Pods
+            apps/thu-info-app/ios/DerivedData
             vendor/bundle
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
@@ -157,6 +158,10 @@ jobs:
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
+      - name: Restore git timestamps
+        uses: chetan/git-restore-mtime-action@v2
+      - name: Set IgnoreFileSystemDeviceInodeChanges flag
+        run: defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
       - name: Update beta
         run: cd apps/thu-info-app/ios && fastlane beta
         env:
@@ -164,6 +169,9 @@ jobs:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+      - name: Check
+        run: |
+          ls -alsh apps/thu-info-app/ios
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
