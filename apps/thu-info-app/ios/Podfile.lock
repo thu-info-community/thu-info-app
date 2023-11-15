@@ -502,11 +502,11 @@ PODS:
   - RNScreens (3.27.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNShare (9.4.1):
+  - RNShare (10.0.1):
     - React-Core
   - RNSnackbar (2.6.2):
     - React-Core
-  - RNSVG (13.14.0):
+  - RNSVG (14.0.0):
     - React-Core
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
@@ -787,12 +787,12 @@ SPEC CHECKSUMS:
   RNPermissions: 4e3714e18afe7141d000beae3755e5b5fb2f5e05
   RNReanimated: 9633f8c2e214b721e35e371b473fbf3a1522948d
   RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
-  RNShare: 32e97adc8d8c97d4a26bcdd3c45516882184f8b6
+  RNShare: bed7c4fbe615f3d977f22feb0902af9a790c1660
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
-  RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
+  RNSVG: 255767813dac22db1ec2062c8b7e7b856d4e5ae6
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 4c3aa327e4a6a23eeacd71f61c81df1bcdf677d5
 
 PODFILE CHECKSUM: 7651823ca0e893b3928008df1ba6a5c1c49af53b
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.2
