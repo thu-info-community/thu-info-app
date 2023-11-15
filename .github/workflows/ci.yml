@@ -169,9 +169,6 @@ jobs:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-      - name: Check
-        run: |
-          ls -alsh apps/thu-info-app/ios
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
