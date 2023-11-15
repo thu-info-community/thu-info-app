@@ -159,7 +159,7 @@ jobs:
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
       - name: Restore git timestamps
-        uses: chetan/git-restore-mtime-action@v2
+        run: python3 git-restore-mtime.py --force
       - name: Set IgnoreFileSystemDeviceInodeChanges flag
         run: defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
       - name: Update beta
