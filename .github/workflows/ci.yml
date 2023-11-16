@@ -136,9 +136,15 @@ jobs:
           restore-keys: |
             cache-${{ runner.OS }}-
       - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1.1
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
+          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            cache-${{ runner.OS }}-
           max-size: 10G
+          append-timestamp: false
+      - name: Config ccache
+        run: ccache --set-config=compiler_check=content
       - name: Install dependencies
         run: |
           yarn
@@ -169,21 +175,6 @@ jobs:
           export CCACHE_INODECACHE=true
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           cd apps/thu-info-app/ios && fastlane beta
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-      - name: Update beta again
-        run: |
-          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
-          export CCACHE_FILECLONE=true
-          export CCACHE_DEPEND=true
-          export CCACHE_INODECACHE=true
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          ccache --zero-stats
-          cd apps/thu-info-app/ios && fastlane beta
-          ccache -s
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
