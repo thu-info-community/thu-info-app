@@ -138,6 +138,8 @@ jobs:
             cache-${{ runner.OS }}-
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.1
+        with:
+          max-size: 5G
       - name: Setup cpp toolchains
         run: |
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
@@ -147,6 +149,7 @@ jobs:
           ln -s $(which ccache) /usr/local/bin/c++
           ln -s $(which ccache) /usr/local/bin/clang
           ln -s $(which ccache) /usr/local/bin/clang++
+          which clang
       - name: Install dependencies
         run: |
           yarn
@@ -174,7 +177,12 @@ jobs:
       - name: Set IgnoreFileSystemDeviceInodeChanges flag
         run: defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
       - name: Update beta
-        run: export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH" && cd apps/thu-info-app/ios && fastlane beta
+        run: |
+          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+          export CCACHE_FILECLONE=true
+          export CCACHE_DEPEND=true
+          export CCACHE_INODECACHE=true
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH" && cd apps/thu-info-app/ios && fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
