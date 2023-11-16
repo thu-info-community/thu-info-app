@@ -28,6 +28,13 @@ platform :ios do
       xcodeproj: "thu_info.xcodeproj"
     )
 
+    environment_variable(
+      CLANG: "clang",
+      CLANGPLUSPLUS: "clang++",
+      LD: "clang",
+      LDPLUSPLUS: "clang++"
+    }
+
     setup_ci
     sync_code_signing
     match(type: "appstore", git_basic_authorization: ENV["MATCH_PASSWORD"])
