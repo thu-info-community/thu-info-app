@@ -131,7 +131,6 @@ jobs:
             node_modules
             */*/node_modules
             apps/thu-info-app/ios/Pods
-            apps/thu-info-app/ios/DerivedData
             vendor/bundle
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
@@ -139,17 +138,7 @@ jobs:
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.1
         with:
-          max-size: 5G
-      - name: Setup cpp toolchains
-        run: |
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          ln -s $(which ccache) /usr/local/bin/gcc
-          ln -s $(which ccache) /usr/local/bin/g++
-          ln -s $(which ccache) /usr/local/bin/cc
-          ln -s $(which ccache) /usr/local/bin/c++
-          ln -s $(which ccache) /usr/local/bin/clang
-          ln -s $(which ccache) /usr/local/bin/clang++
-          which clang
+          max-size: 10G
       - name: Install dependencies
         run: |
           yarn
@@ -172,44 +161,34 @@ jobs:
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
-      - name: Restore git timestamps
-        run: python3 git-restore-mtime.py --force
-      - name: Set IgnoreFileSystemDeviceInodeChanges flag
-        run: defaults write com.apple.dt.XCBuild IgnoreFileSystemDeviceInodeChanges -bool YES
       - name: Update beta
         run: |
           export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
           export CCACHE_FILECLONE=true
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH" && cd apps/thu-info-app/ios && fastlane beta
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          cd apps/thu-info-app/ios && fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-          IgnoreFileSystemDeviceInodeChanges: 1
-          CLANG: clang
-          CLANGPLUSPLUS: clang++
-          LD: clang
-          LDPLUSPLUS: clang++
       - name: Update beta again
         run: |
           export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
           export CCACHE_FILECLONE=true
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH" && ccache --zero-stats && cd apps/thu-info-app/ios && xcodebuild -workspace ./thu_info.xcworkspace -scheme thu_info -derivedDataPath ./DerivedData -destination 'generic/platform=iOS' -archivePath /Users/runner/Library/Developer/Xcode/Archives/2023-11-16/thu_info\ 2023-11-16\ 02.44.13.xcarchive archive | tee /Users/runner/Library/Logs/gym/thu_info-thu_info.log | xcpretty
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          ccache --zero-stats
+          cd apps/thu-info-app/ios && fastlane beta
           ccache -s
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-          CLANG: clang
-          CLANGPLUSPLUS: clang++
-          LD: clang
-          LDPLUSPLUS: clang++
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
