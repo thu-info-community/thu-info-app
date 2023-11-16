@@ -168,7 +168,6 @@ jobs:
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
       - name: Update beta
         run: |
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           cd apps/thu-info-app/ios && fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
