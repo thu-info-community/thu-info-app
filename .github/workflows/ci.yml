@@ -174,12 +174,23 @@ jobs:
           export CCACHE_DEPEND=true
           export CCACHE_INODECACHE=true
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          ln -s $(which ccache) /usr/local/bin/gcc
+          ln -s $(which ccache) /usr/local/bin/g++
+          ln -s $(which ccache) /usr/local/bin/cc
+          ln -s $(which ccache) /usr/local/bin/c++
+          ln -s $(which ccache) /usr/local/bin/clang
+          ln -s $(which ccache) /usr/local/bin/clang++
+          which clang
           cd apps/thu-info-app/ios && fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          CLANG: clang
+          CLANGPLUSPLUS: clang++
+          LD: clang
+          LDPLUSPLUS: clang++
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
