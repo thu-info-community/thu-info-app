@@ -141,7 +141,6 @@ jobs:
           key: ccache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             ccache-${{ runner.OS }}-
-          max-size: 5G
           append-timestamp: false
       - name: Config ccache
         run: ccache --set-config=compiler_check=content
@@ -169,14 +168,6 @@ jobs:
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
       - name: Update beta
         run: |
-          export CCACHE_SLOPPINESS=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
-          export CCACHE_FILECLONE=true
-          export CCACHE_DEPEND=true
-          export CCACHE_INODECACHE=true
-          export CLANG=clang
-          export CLANGPLUSPLUS=clang++
-          export LD=clang
-          export LDPLUSPLUS=clang++
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           cd apps/thu-info-app/ios && fastlane beta
         env:
@@ -184,6 +175,10 @@ jobs:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          CCACHE_SLOPPINESS: "clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros"
+          CCACHE_FILECLONE: "true"
+          CCACHE_DEPEND: "true"
+          CCACHE_INODECACHE: "true"
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
