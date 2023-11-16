@@ -33,7 +33,7 @@ platform :ios do
       CLANGPLUSPLUS: "clang++",
       LD: "clang",
       LDPLUSPLUS: "clang++"
-    }
+    )
 
     setup_ci
     sync_code_signing
