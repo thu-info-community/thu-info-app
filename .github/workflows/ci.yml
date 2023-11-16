@@ -138,7 +138,10 @@ jobs:
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          max-size: 10G
+          key: ccache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            ccache-${{ runner.OS }}-
+          max-size: 5G
           append-timestamp: false
       - name: Config ccache
         run: ccache --set-config=compiler_check=content
