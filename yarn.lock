@@ -4359,11 +4359,6 @@ crypto-js@4.2.0:
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
   integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
-crypto-js@^3.2.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
-  integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==
-
 css-line-break@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/css-line-break/-/css-line-break-2.1.0.tgz#bfef660dfa6f5397ea54116bb3cb4873edbc4fa0"
@@ -9507,12 +9502,12 @@ react-native-localize@3.0.3:
   resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.0.3.tgz#31c880162bb9bb7e3768da2fd02dd55608dea60e"
   integrity sha512-wlVIyg9lQac/Mg23aVKQAcnRkJgROjTUxZHFO4oqKpXkMa1XkvZ4DhhFc6TPnZX0O8YKvrTUsN3x8xMzVpAosg==
 
-react-native-pdf@6.7.1:
-  version "6.7.1"
-  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.1.tgz#198b8ec3e8f1025ceb43ddfc6bc5b422521c4411"
-  integrity sha512-zszQygtNBYoUfEtP/fV7zhzGeohDlUksh2p3OzshLrxdY9mw7Tm5VXAxYq4d8HsomRJUbFlJ7rHaTU9AQL800g==
+react-native-pdf@6.7.3:
+  version "6.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.3.tgz#810ace573029de686624629ad77814cb147bab50"
+  integrity sha512-bK1fVkj18kBA5YlRFNJ3/vJ1bEX3FDHyAPY6ArtIdVs+vv0HzcK5WH9LSd2bxUsEMIyY9CSjP4j8BcxNXTiQkQ==
   dependencies:
-    crypto-js "^3.2.0"
+    crypto-js "4.2.0"
     deprecated-react-native-prop-types "^2.3.0"
 
 react-native-permissions@3.10.1:
