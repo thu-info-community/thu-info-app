@@ -137,7 +137,7 @@ jobs:
             cache-${{ runner.OS }}-
       - name: Setup ccache
         if: startsWith(github.ref, 'refs/tags') == false
-        uses: hendrikmuhs/ccache-action@v1
+        uses: hendrikmuhs/ccache-action@main
       - name: Config ccache
         if: startsWith(github.ref, 'refs/tags') == false
         run: |
