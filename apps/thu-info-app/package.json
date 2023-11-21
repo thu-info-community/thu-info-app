@@ -82,7 +82,7 @@
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.5",
 		"@types/metro-config": "0.76.3",
-		"@types/react": "18.2.37",
+		"@types/react": "18.2.38",
 		"@types/react-test-renderer": "18.0.6",
 		"@types/semver": "7.5.5",
 		"babel-plugin-transform-remove-console": "6.9.4",
