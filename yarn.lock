@@ -1934,10 +1934,10 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@react-native-async-storage/async-storage@1.19.5":
-  version "1.19.5"
-  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.19.5.tgz#d59dd493b2b25346412085dd48896cabca011eed"
-  integrity sha512-zLT7oNPXpW8BxJyHyq8AJbXtlHE/eonFWuJt44y0WeCGnp4KOJ8mfqD8mtAIKLyrYHHE1uadFe/s4C+diYAi8g==
+"@react-native-async-storage/async-storage@1.19.6":
+  version "1.19.6"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.19.6.tgz#0f91666eb209b1f719ea245a33b88920c1fd6791"
+  integrity sha512-Qjd1HlEusQQtPyDTM7zpO2P3G2mYY+z5at/aqsVJLJpzytZ+8QT+jgDQmt6BVgZcwk/74jSrhDIdu2j3YCmoEg==
   dependencies:
     merge-options "^3.0.4"
 
