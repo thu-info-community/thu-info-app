@@ -54,7 +54,7 @@
         "jspdf": "^2.5.1"
     },
     "devDependencies": {
-        "@types/cheerio": "0.22.34",
+        "@types/cheerio": "0.22.35",
         "@types/crypto-js": "4.2.1",
         "@types/he": "1.2.3",
         "@typescript-eslint/eslint-plugin": "6.11.0",
