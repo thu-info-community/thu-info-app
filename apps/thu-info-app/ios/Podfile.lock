@@ -341,7 +341,7 @@ PODS:
     - React
   - react-native-view-shot (3.8.0):
     - React-Core
-  - react-native-webview (13.6.2):
+  - react-native-webview (13.6.3):
     - React-Core
   - React-NativeModulesApple (0.72.7):
     - hermes-engine
@@ -759,7 +759,7 @@ SPEC CHECKSUMS:
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
-  react-native-webview: 8fc09f66a1a5b16bbe37c3878fda27d5982bb776
+  react-native-webview: 88293a0f23eca8465c0433c023ec632930e644d0
   React-NativeModulesApple: b6868ee904013a7923128892ee4a032498a1024a
   React-perflogger: 31ea61077185eb1428baf60c0db6e2886f141a5a
   React-RCTActionSheet: 392090a3abc8992eb269ef0eaa561750588fc39d
