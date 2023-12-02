@@ -477,7 +477,7 @@ PODS:
   - RNScreens (3.27.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNShare (10.0.1):
+  - RNShare (10.0.2):
     - React-Core
   - RNSnackbar (2.6.2):
     - React-Core
@@ -762,7 +762,7 @@ SPEC CHECKSUMS:
   RNPermissions: 4e3714e18afe7141d000beae3755e5b5fb2f5e05
   RNReanimated: c114c031ecae76049ad03aeb0f94a2243498a88d
   RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
-  RNShare: bed7c4fbe615f3d977f22feb0902af9a790c1660
+  RNShare: 859ff710211285676b0bcedd156c12437ea1d564
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   RNSVG: 255767813dac22db1ec2062c8b7e7b856d4e5ae6
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
