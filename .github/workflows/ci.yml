@@ -151,7 +151,7 @@ jobs:
         run: |
           yarn
           bundle install
-          cd apps/thu-info-app/ios && pod update hermes-engine --no-repo-update && pod install && cd ../../..
+          cd apps/thu-info-app/ios && pod update hermes-engine boost RCT-Folly --no-repo-update && pod install && cd ../../..
       - name: Commit lockfile changes
         if: endsWith(github.ref, 'master') == true
         continue-on-error: true
