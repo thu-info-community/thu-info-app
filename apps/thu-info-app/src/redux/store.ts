@@ -165,6 +165,7 @@ const migrateSchedule = (old: any): Schedule => {
 	const res: Schedule = {
 		location: old.location || "[数据迁移错误]",
 		name: old.name || "[数据迁移错误]",
+		hash: old.hash || "[数据迁移错误]",
 		type: old.type,
 		activeTime: {base: []},
 		delOrHideTime: {base: []},
