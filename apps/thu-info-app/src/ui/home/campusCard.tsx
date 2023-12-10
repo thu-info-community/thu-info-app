@@ -50,13 +50,11 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 		number | undefined
 	>();
 
-	const regRes = /\d+/.exec(money);
+	// https://card.tsinghua.edu.cn/js/common/common.js
 	const valid =
-		regRes &&
-		regRes.length > 0 &&
-		regRes[0] === money &&
+		/^(([1-9]+\d*)|0)(\.\d{0,2})?$/.test(money) &&
 		Number(money) <= 200 &&
-		Number(money) > 10;
+		Number(money) >= 10;
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -230,7 +228,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 						</Text>
 						<RoundedView style={{marginTop: 8, width: "100%", padding: 16}}>
 							<View style={{flexDirection: "row"}}>
-								{[15, 50, 100].map((price, index) => (
+								{[10, 50, 100].map((price, index) => (
 									<TouchableOpacity
 										style={{
 											borderRadius: 4,
