@@ -70,7 +70,7 @@ jobs:
           arguments: assembleRelease
           build-root-directory: apps/thu-info-app/android
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
@@ -96,7 +96,7 @@ jobs:
           arguments: assembleRelease
           build-root-directory: apps/thu-info-app/android
       - name: Upload artifact (allow rooted)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release-allow-rooted.apk
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
@@ -181,7 +181,7 @@ jobs:
           CCACHE_DEPEND: "true"
           CCACHE_INODECACHE: "true"
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: thu_info.ipa
           path: apps/thu-info-app/ios/thu_info.ipa
