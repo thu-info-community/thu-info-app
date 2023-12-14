@@ -30,8 +30,8 @@ it("should login successfully.", async () => {
     expect(dayjs(firstDay).day()).toEqual(1);
     expect((await helper.getCrTimetable()).length).toBeGreaterThan(0);
     expect((await helper.getCampusCardInfo()).balance).toBeGreaterThanOrEqual(0);
-    const semester = (await helper.getCrAvailableSemesters())[0].id;
-    console.log(await helper.getCrCoursePlan(semester));
+    // const semester = (await helper.getCrAvailableSemesters())[0].id;
+    // console.log(await helper.getCrCoursePlan(semester));
     await helper.logout();
     expect(helper.mocked()).toEqual(false);
 }, 60000);
