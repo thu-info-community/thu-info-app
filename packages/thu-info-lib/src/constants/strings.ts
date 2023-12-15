@@ -131,6 +131,7 @@ export const LIBRARY_DAYS_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/areadays/";
 export const LIBRARY_IMAGE_BASE =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/Public/home/images/web/area/";
+export const LIBRARY_ROOM_BOOKING_ROOT_URL = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1";
 export const LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/address?finalAddress=https:%2F%2Fcab.lib.tsinghua.edu.cn&errPageUrl=https:%2F%2Fcab.lib.tsinghua.edu.cn%2F%23%2Ferror&manager=false&consoleType=16";
 export const LIBRARY_ROOM_BOOKING_LOGIN_URL =

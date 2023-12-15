@@ -18,6 +18,7 @@ import {
     LIBRARY_ROOM_BOOKING_RECORD_URL,
     LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL,
     LIBRARY_ROOM_BOOKING_ROOM_INFO_URL,
+    LIBRARY_ROOM_BOOKING_ROOT_URL,
     LIBRARY_ROOM_BOOKING_USER_INFO_URL,
     LIBRARY_ROOM_UPDATE_EMAIL_URL,
     LIBRARY_SEATS_URL,
@@ -409,7 +410,8 @@ export const cabLogin = async (helper: InfoHelper): Promise<void> => {
     if (helper.mocked()) {
         return;
     }
-    const loginUrl = await getRedirectUrl(await cabFetch(LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL));
+    const authAddress: string = await cabFetch(LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL);
+    const loginUrl = await getRedirectUrl(authAddress.replace("http://cab.lib.tsinghua.edu.cn", LIBRARY_ROOM_BOOKING_ROOT_URL));
     const payload = /\/login\/form\/(.+)$/.exec(loginUrl)?.[1];
     if (payload === undefined) {
         throw new Error("Failed to get payload in cabLogin. Retry later.");
