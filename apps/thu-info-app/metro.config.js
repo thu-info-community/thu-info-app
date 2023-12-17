@@ -19,7 +19,6 @@ const config = {
 			path.resolve(projectRoot, "node_modules"),
 			path.resolve(workspaceRoot, "node_modules"),
 		],
-		disableHierarchicalLookup: true,
 	},
 	server: {
 		enhanceMiddleware: (middleware) => {
