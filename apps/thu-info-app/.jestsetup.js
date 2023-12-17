@@ -129,7 +129,18 @@ jest.mock("react-native-version-number", () => ({
 	bundleIdentifier: "0",
 }));
 
-jest.mock('react-native-webview', () => jest.fn())
+jest.mock('react-native-webview', () => {
+	const React = require('react');
+	const { View } = require('react-native');
+
+	const WebView = props => <View {...props} />;
+
+	return {
+		WebView,
+		default: WebView,
+		__esModule: true,
+	};
+});
 
 jest.mock('@react-native-camera-roll/camera-roll', () => jest.fn())
 
