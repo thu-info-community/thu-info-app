@@ -137,16 +137,9 @@ jobs:
             cache-${{ runner.OS }}-
       - name: Setup ccache
         if: startsWith(github.ref, 'refs/tags') == false
-        uses: hendrikmuhs/ccache-action@main
-      - name: Config ccache
-        if: startsWith(github.ref, 'refs/tags') == false
-        run: |
-          ln -s $(which ccache) /usr/local/bin/gcc
-          ln -s $(which ccache) /usr/local/bin/g++
-          ln -s $(which ccache) /usr/local/bin/cc
-          ln -s $(which ccache) /usr/local/bin/c++
-          ln -s $(which ccache) /usr/local/bin/clang
-          ln -s $(which ccache) /usr/local/bin/clang++
+        uses: thu-info-community/ccache-action@main
+        with:
+          create-symlink: true
       - name: Install dependencies
         run: |
           yarn
