@@ -137,7 +137,7 @@ jobs:
             cache-${{ runner.OS }}-
       - name: Setup ccache
         if: startsWith(github.ref, 'refs/tags') == false
-        uses: thu-info-community/ccache-action@main
+        uses: hendrikmuhs/ccache-action@main
         with:
           create-symlink: true
       - name: Install dependencies
