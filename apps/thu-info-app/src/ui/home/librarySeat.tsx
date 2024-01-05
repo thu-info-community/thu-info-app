@@ -29,13 +29,18 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 							helper
 								.bookLibrarySeat(item, props.route.params.section, choice)
 								.then(({status, msg}) => {
-									Snackbar.show({
-										text:
-											status === 1
-												? getStr("bookSuccess")
-												: getStr("bookFailureColon") + msg,
-										duration: Snackbar.LENGTH_SHORT,
-									});
+									if (status === 1) {
+										Snackbar.show({
+											text: getStr("bookSuccess"),
+											duration: Snackbar.LENGTH_SHORT,
+										});
+									} else {
+										Snackbar.show({
+											text: getStr("bookFailureColon") + msg,
+											duration: Snackbar.LENGTH_INDEFINITE,
+											action: {text: getStr("ok")},
+										});
+									}
 									refresh();
 									helper.getBookingRecords().then((r) => {
 										store.dispatch(setActiveLibBookRecord(r));
