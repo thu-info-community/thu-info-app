@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"editor": "1.0.0",
-		"lerna": "8.0.1",
+		"lerna": "8.0.2",
 		"pre-commit": "1.2.2"
 	},
 	"pre-commit": [
