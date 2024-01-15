@@ -1,5 +1,7 @@
 inhibit_all_warnings!
 
+require_relative '../../../node_modules/react-native-permissions/scripts/setup'
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -9,6 +11,11 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+setup_permissions([
+  'PhotoLibrary',
+  'PhotoLibraryAddOnly',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -29,11 +36,6 @@ target 'thu_info' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
-  permissions_path = '../../../node_modules/react-native-permissions/ios'
-
-  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
-  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
 
   target 'thu_infoTests' do
     inherit! :complete
