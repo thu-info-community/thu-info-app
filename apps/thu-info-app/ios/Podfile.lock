@@ -1103,7 +1103,7 @@ PODS:
     - React-Core
   - RNPermissions (3.10.1):
     - React-Core
-  - RNReanimated (3.6.1):
+  - RNReanimated (3.6.2):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1424,7 +1424,7 @@ SPEC CHECKSUMS:
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 4222a3756cdbe2dc9a5bdf445765a4d2572107cb
   RNPermissions: 8abf4207d96aee6535c3b692527ea0246296f1a5
-  RNReanimated: 18faeee6e1d8eb9a60f1a62488bb357354569051
+  RNReanimated: f3fba771d22558875411f702aaf520de2268d24b
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
   RNShare: 859ff710211285676b0bcedd156c12437ea1d564
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
