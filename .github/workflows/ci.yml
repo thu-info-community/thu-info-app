@@ -60,7 +60,7 @@ jobs:
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in apps/thu-info-app/android/app/THUInfo.jks.enc -out apps/thu-info-app/android/app/THUInfo.jks -d
       - name: Build android release
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
@@ -86,7 +86,7 @@ jobs:
         run: |
           sed -i "/preventRoot/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Build android release (allow rooted)
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
