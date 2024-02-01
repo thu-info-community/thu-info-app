@@ -914,7 +914,7 @@ PODS:
     - React
   - react-native-view-shot (3.8.0):
     - React-Core
-  - react-native-webview (13.6.4):
+  - react-native-webview (13.7.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1395,7 +1395,7 @@ SPEC CHECKSUMS:
   react-native-slider: 7d387c7e8dd0b4c12bf49c975c8666435f082a33
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
-  react-native-webview: f95eb7d4d6a7ca45d04d861d99f628241b2aff83
+  react-native-webview: f109b7da3efc6ea7a6d61a3cff3907edb6237b6a
   React-nativeconfig: d753fbbc8cecc8ae413d615599ac378bbf6999bb
   React-NativeModulesApple: 964f4eeab1b4325e8b6a799cf4444c3fd4eb0a9c
   React-perflogger: 29efe63b7ef5fbaaa50ef6eaa92482f98a24b97e
