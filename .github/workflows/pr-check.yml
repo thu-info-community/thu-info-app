@@ -60,7 +60,7 @@ jobs:
           sed -i "/preventEmulator/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
           sed -i "/verifySignature/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Build android release
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         env:
           SIGNATURE_DIGEST: ""
         with:
