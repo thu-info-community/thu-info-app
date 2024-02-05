@@ -204,8 +204,49 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 		</View>
 	);
 
+	const renderNotice = () => (
+		<View style={{flexDirection: "column", marginBottom: 32}}>
+			<View style={{flexDirection: "row", marginHorizontal: 16}}>
+				<View
+					style={{
+						flex: 1,
+						height: 1,
+						backgroundColor: theme.colors.primaryLight,
+						alignSelf: "center",
+					}}
+				/>
+				<Text
+					style={{
+						color: theme.colors.primary,
+						fontSize: 20,
+						margin: 16,
+					}}>
+					{getStr("washerNoticeTitle")}
+				</Text>
+				<View
+					style={{
+						flex: 1,
+						height: 1,
+						backgroundColor: theme.colors.primaryLight,
+						alignSelf: "center",
+					}}
+				/>
+			</View>
+			<View style={{marginHorizontal: 24}}>
+				<Text
+					style={{
+						color: theme.colors.text,
+						fontWeight: "bold",
+						fontSize: 16,
+					}}>
+					{getStr("washerNotice")}
+				</Text>
+			</View>
+		</View>
+	);
+
 	const renderCredit = () => (
-		<View style={{margin: 16}}>
+		<View style={{marginHorizontal: 24, marginBottom: 32}}>
 			<Text
 				style={{
 					color: theme.colors.primary,
@@ -219,6 +260,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<FlatList
+				ListHeaderComponent={renderNotice()}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
 				renderItem={({item}) => renderBuildingGroup(item.name, item.buildings)}
@@ -378,7 +420,7 @@ export const WasherDetailScreen = ({
 		favourite: boolean,
 	) => {
 		return (
-			<View key={name} style={{flexDirection: "column", marginBottom: 32}}>
+			<View key={name} style={{flexDirection: "column", marginBottom: 16}}>
 				<View style={{flexDirection: "row", margin: 16}}>
 					<View
 						style={{
@@ -449,15 +491,15 @@ export const WasherDetailScreen = ({
 							key={item.name}
 							style={{
 								backgroundColor: theme.colors.contentBackground,
-								borderRadius: 24,
-								padding: 24,
+								borderRadius: 16,
+								padding: 16,
 								margin: 8,
 								width: 170,
 							}}>
 							<Text
 								style={{
 									color: theme.colors.text,
-									fontSize: 16,
+									fontSize: 14,
 									textAlign: "center",
 								}}>
 								{item.name}
@@ -470,9 +512,9 @@ export const WasherDetailScreen = ({
 											: item.status === "working"
 											? theme.colors.fontB2
 											: theme.colors.statusError,
-									fontSize: 24,
+									fontSize: 20,
 									textAlign: "center",
-									marginVertical: 8,
+									marginVertical: 6,
 								}}>
 								{item.status === "idle"
 									? getStr("washerIdle")
@@ -483,7 +525,8 @@ export const WasherDetailScreen = ({
 							<Text
 								style={{
 									color: theme.colors.fontB2,
-									fontSize: 16,
+									fontSize: 12,
+									marginTop: 2,
 									textAlign: "center",
 								}}>
 								{getStr("updateTime") +
