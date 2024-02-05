@@ -1,12 +1,20 @@
-import {InfoHelper} from "../index";
-import {roamingWrapperWithMocks} from "./core";
-import {uFetch} from "../utils/network";
+import { InfoHelper } from "../index";
+import { roamingWrapperWithMocks } from "./core";
+import { uFetch } from "../utils/network";
 import cheerio from "cheerio";
-import {Detial} from "../models/network/detial";
-import {LibError} from "../utils/error";
-import {NETWORK_DETAIL_URL, NETWORK_IMPORT_USER, NETWORK_USER_INFO, NETWORK_X1_USER} from "../constants/strings";
-import {Device} from "../models/network/device";
-import {Balance} from "../models/network/balance";
+import { Detial } from "../models/network/detial";
+import { LibError } from "../utils/error";
+import {
+    NETWORK_DETAIL_URL, NETWORK_IMPORT_CHALLENGE,
+    NETWORK_IMPORT_IP, NETWORK_IMPORT_LOGIN,
+    NETWORK_IMPORT_USER,
+    NETWORK_USER_INFO,
+    NETWORK_X1_USER
+} from "../constants/strings";
+import { Device } from "../models/network/device";
+import { Balance } from "../models/network/balance";
+import { xEncode, Base64 } from "../utils/srunCrypto";
+import CryptoJS from "crypto-js/core";
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
 
@@ -30,7 +38,7 @@ export const getNetworkDetail = async (helper: InfoHelper, year: number, month: 
                     total: tr.eq(3).text(),
                     onlineTime: tr.eq(4).text(),
                     loginCount: tr.eq(5).text(),
-                    currentCost: tr.eq(6).text(),
+                    currentCost: tr.eq(6).text()
                 },
                 wirelessUsage: {
                     in: tr.eq(7).text(),
@@ -38,7 +46,7 @@ export const getNetworkDetail = async (helper: InfoHelper, year: number, month: 
                     total: tr.eq(9).text(),
                     onlineTime: tr.eq(10).text(),
                     loginCount: tr.eq(11).text(),
-                    currentCost: tr.eq(12).text(),
+                    currentCost: tr.eq(12).text()
                 },
                 monthlyCost: tr.eq(13).text()
             };
@@ -134,7 +142,7 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
             nasIp: "172.123.123.123",
             mac: "AB-CD-EF-GH-IJ-KL",
             authType: "802.1x"
-        },
+        }
     ]
 );
 
@@ -160,3 +168,67 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
         }
     );
 
+export const logoutNetwork = async (device: Device): Promise<void> => {
+    await uFetch(NETWORK_IMPORT_USER, {
+        action: "drop",
+        user_ip: device.ip4
+    });
+};
+
+export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<void> => {
+    let nas_id = await uFetch(NETWORK_IMPORT_IP, {
+        actionType: "searchNasId",
+        ip: ip
+    });
+
+    if (nas_id === "fail") {
+        nas_id = "1";
+    }
+
+    let username = (await helper.getUserInfo()).emailName;
+    if (!internet) {
+        username = username + "@tsinghua";
+    }
+
+    const challenge_jsonp = await uFetch(NETWORK_IMPORT_CHALLENGE
+        .replace("{username}", username)
+        .replace("{ip}", ip));
+
+    const challenge_json = JSON.parse(challenge_jsonp.slice(2, -1));
+
+    if (challenge_json.res != "ok") {
+        throw new LibError(challenge_json.error);
+    }
+
+    const token: string = challenge_json.challenge;
+    const password = helper.password;
+
+    // @ts-ignore
+    const info = "{SRBX1}" + new Base64().encode(xEncode(JSON.stringify({
+        username: username,
+        password: password,
+        ip: ip,
+        acid: nas_id,
+        enc_ver: "srun_bx1"
+    }), token));
+
+    // There seems to be a bug in srun protocol.
+    const hmd5 = CryptoJS.HmacMD5(token, "").toString();
+
+    const checksum = CryptoJS.SHA1(token + username + token + hmd5 + token + nas_id + token + ip + token + "200" + token + "1" + token + info);
+
+    const auth = NETWORK_IMPORT_LOGIN
+        .replace("{username}", encodeURIComponent(username))
+        .replace("{pass_md5}", hmd5)
+        .replace("{nas_id}", nas_id)
+        .replace("{ip}", ip)
+        .replace("{info}", encodeURIComponent(info))
+        .replace("{checksum}", checksum.toString());
+
+    const result_jsonp = await uFetch(auth);
+    const result_json = JSON.parse(result_jsonp.slice(2, -1));
+
+    if (result_json.res !== "ok") {
+        throw new LibError(result_json.error);
+    }
+};
