@@ -4,11 +4,11 @@ import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
-import {Text, useColorScheme, View} from "react-native";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 
-const DeviceCard = ({device}: {device: Device}) => {
+const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
@@ -72,6 +72,37 @@ const DeviceCard = ({device}: {device: Device}) => {
 					left={getStr("authType")}
 					right={getStr(device.authType === "802.1x" ? "_8021x" : "import")}
 				/>
+				<RoundedView
+					style={{
+						backgroundColor: colors.primary,
+						marginTop: 8,
+						paddingVertical: 4,
+						paddingBottom: 8,
+					}}>
+					<TouchableOpacity
+						onPress={() => {
+							helper
+								.logoutNetworkDevice(device)
+								.catch((e) => {
+									Snackbar.show({
+										text: getStr("networkRetry") + e?.message,
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								})
+								.then(() => {
+									refresh();
+								});
+						}}>
+						<Text
+							style={{
+								textAlign: "center",
+								fontSize: 16,
+								color: colors.text,
+							}}>
+							{getStr("logoutNetworkDevice")}
+						</Text>
+					</TouchableOpacity>
+				</RoundedView>
 			</View>
 		</RoundedView>
 	);
@@ -107,9 +138,20 @@ export const NetworkOnlineDevicesScreen = () => {
 					colors={[colors.accent]}
 				/>
 			}>
-			{devices.map((d) => (
-				<DeviceCard device={d} key={d.ip4} />
-			))}
+			{devices.length > 0 ? (
+				devices.map((d) => (
+					<DeviceCard refresh={refresh} device={d} key={d.ip4} />
+				))
+			) : (
+				<Text
+					style={{
+						textAlign: "center",
+						marginTop: 24,
+						color: colors.text,
+					}}>
+					{getStr("noOnlineDevice")}
+				</Text>
+			)}
 		</ScrollView>
 	);
 };

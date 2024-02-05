@@ -565,6 +565,8 @@ export default {
 	authType: "Auth Type",
 	_8021x: "Tsinghua-Secure",
 	import: "Import",
+	logoutNetworkDevice: "Logout",
+	noOnlineDevice: "No online device",
 	schoolCalendar: "Academic Calendar",
 	selectSemester: "Select Semester",
 	calendarNoCurrentLang: "No calendar for current language",
