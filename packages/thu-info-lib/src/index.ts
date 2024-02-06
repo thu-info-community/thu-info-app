@@ -124,7 +124,7 @@ import {
 import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
 import {uFetch} from "./utils/network";
-import {getNetworkBalance, getNetworkDetail, getOnlineDevices} from "./lib/network";
+import { getNetworkBalance, getNetworkDetail, getOnlineDevices, loginNetwork, logoutNetwork } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {
     canRechargeCampusCard,
@@ -138,6 +138,7 @@ import {
 } from "./lib/card";
 import {CardTransactionType} from "./models/card/transaction";
 import {CardRechargeType} from "./models/card/recharge";
+import { Device } from "./models/network/device";
 
 export class InfoHelper {
     public userId = "";
@@ -926,6 +927,10 @@ export class InfoHelper {
     public getOnlineDevices = async () => getOnlineDevices(this);
 
     public getNetworkBalance = async () => getNetworkBalance(this);
+
+    public logoutNetworkDevice = async (device: Device) => logoutNetwork(device);
+
+    public loginNetworkDevice = async (ip: string, internet: boolean) => loginNetwork(this, ip, internet);
 
     public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
 
