@@ -1093,7 +1093,7 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.14.1):
+  - RNGestureHandler (2.15.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1101,7 +1101,7 @@ PODS:
     - React
   - RNLocalize (3.0.6):
     - React-Core
-  - RNPermissions (3.10.1):
+  - RNPermissions (4.1.1):
     - React-Core
   - RNReanimated (3.6.2):
     - glog
@@ -1420,10 +1420,10 @@ SPEC CHECKSUMS:
   RNDeviceInfo: db5c64a060e66e5db3102d041ebe3ef307a85120
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 25b969a1ffc806b9f9ad2e170d4a3b049c6af85e
+  RNGestureHandler: deda62b8339496ba721a45e0f3e2d7a319932cee
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 4222a3756cdbe2dc9a5bdf445765a4d2572107cb
-  RNPermissions: 8abf4207d96aee6535c3b692527ea0246296f1a5
+  RNPermissions: 7ac4e4b0767b14fb5e44df5d3c5220c8330f077f
   RNReanimated: f3fba771d22558875411f702aaf520de2268d24b
   RNScreens: b582cb834dc4133307562e930e8fa914b8c04ef2
   RNShare: 859ff710211285676b0bcedd156c12437ea1d564
