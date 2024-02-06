@@ -229,19 +229,25 @@ export const NetworkOnlineDevicesScreen = () => {
 
 							helper
 								.loginNetworkDevice(importIp, internetAccess)
+								.then((s) => {
+									Snackbar.show({
+										text: getStr("importSuccess") + " " + s,
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								})
+								.then(refresh)
 								.catch((e) => {
+									let message = e?.message;
+
+									if (!/E\d+:/g.test(message)) {
+										message = getStr("networkRetry") + message;
+									}
+
 									Snackbar.show({
-										text: getStr("networkRetry") + e?.message,
+										text: message,
 										duration: Snackbar.LENGTH_SHORT,
 									});
-								})
-								.then(() => {
-									Snackbar.show({
-										text: getStr("importSuccess"),
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								})
-								.then(refresh);
+								});
 						}}>
 						<Text style={{color: colors.text, fontSize: 14, marginBottom: 4}}>
 							{getStr("proxyImport")}

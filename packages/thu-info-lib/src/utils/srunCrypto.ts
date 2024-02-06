@@ -1,3 +1,6 @@
+/// This file contains non-standard crypto functions used by srun.
+/// xEncode is a custom encryption algorithm, and Base64 is a custom Base64 implementation (char replacement).
+/// Style check is disabled because the original code is written in JavaScript.
 // @ts-nocheck
 /* eslint-disable */
 export const xEncode = function(str: string, key: string) {

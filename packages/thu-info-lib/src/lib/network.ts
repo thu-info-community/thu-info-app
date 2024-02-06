@@ -175,12 +175,14 @@ export const logoutNetwork = async (device: Device): Promise<void> => {
     });
 };
 
-export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<void> => {
+export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<string> => {
+    // Get nas_id. Nas ID identifies the access controller for the device.
     let nas_id = await uFetch(NETWORK_IMPORT_IP, {
         actionType: "searchNasId",
         ip: ip
     });
 
+    // If the device is not found, use the default nas_id. Although it indicates that the login process is to fail.
     if (nas_id === "fail") {
         nas_id = "1";
     }
@@ -190,6 +192,7 @@ export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boo
         username = username + "@tsinghua";
     }
 
+    // Get challenge
     const challenge_jsonp = await uFetch(NETWORK_IMPORT_CHALLENGE
         .replace("{username}", username)
         .replace("{ip}", ip));
@@ -197,13 +200,14 @@ export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boo
     const challenge_json = JSON.parse(challenge_jsonp.slice(2, -1));
 
     if (challenge_json.res != "ok") {
-        throw new LibError(challenge_json.error);
+        throw new LibError(challenge_json.error_msg);
     }
 
     const token: string = challenge_json.challenge;
     const password = helper.password;
 
     // @ts-ignore
+    // Use srun_bx1 to encrypt the info. Base64 is a non-standard implementation and xEncode too.
     const info = "{SRBX1}" + new Base64().encode(xEncode(JSON.stringify({
         username: username,
         password: password,
@@ -212,23 +216,26 @@ export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boo
         enc_ver: "srun_bx1"
     }), token));
 
-    // There seems to be a bug in srun protocol.
-    const hmd5 = CryptoJS.HmacMD5(token, "").toString();
+    // There seems to be a bug in srun protocol by passing `undefined` to password,
+    // so it seems that hmd5 is not used to authenticate the user.
+    const hmd5 = CryptoJS.HmacMD5(token, password).toString();
 
-    const checksum = CryptoJS.SHA1(token + username + token + hmd5 + token + nas_id + token + ip + token + "200" + token + "1" + token + info);
+    const checksum = CryptoJS.SHA1(token + username + token + hmd5 + token + nas_id + token + ip + token + "200" + token + "1" + token + info).toString();
 
     const auth = NETWORK_IMPORT_LOGIN
         .replace("{username}", encodeURIComponent(username))
         .replace("{pass_md5}", hmd5)
         .replace("{nas_id}", nas_id)
-        .replace("{ip}", ip)
+        .replace("{ip}", encodeURIComponent(ip))
         .replace("{info}", encodeURIComponent(info))
-        .replace("{checksum}", checksum.toString());
+        .replace("{checksum}", checksum);
 
     const result_jsonp = await uFetch(auth);
     const result_json = JSON.parse(result_jsonp.slice(2, -1));
 
     if (result_json.res !== "ok") {
-        throw new LibError(result_json.error);
+        throw new LibError(result_json.error_msg);
     }
+
+    return result_json.suc_msg;
 };
