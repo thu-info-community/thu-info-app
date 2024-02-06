@@ -567,7 +567,7 @@ export default {
 	import: "Import",
 	logoutNetworkDevice: "Logout",
 	ipAddr: "IP Address: ",
-	idAddrEmpty: "ID Address is empty.",
+	ipAddrEmpty: "IP Address is empty.",
 	internetAccess: "Internet",
 	proxyImport: "Proxy Import",
 	importSuccess: "Import succeeded.",
