@@ -35,7 +35,7 @@ We support a wide range of APIs:
 - Course Registration (`getCrTimetable`, `getCrCaptchaUrl`, `loginCr`, `getCrAvailableSemesters`, `getCrCoursePlan`, `searchCrRemaining`, `searchCrPrimaryOpen`, `searchCrCourses`, `selectCourse`, `deleteCourse`, `getSelectedCourses`, `changeCourseWill`, `getCrCurrentStage`, `searchCoursePriorityMeta`, `searchCoursePriorityInformation`, `getQueueInfo`, `cancelCoursePF`, `setCoursePF`)
 - Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `paySportsReservation`, `unsubscribeSportsReservation`)
 - Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)
-- Network (`getNetworkDetail`, `getOnlineDevices`, `getNetworkBalance`)
+- Network (`getNetworkDetail`, `getOnlineDevices`, `getNetworkBalance`, `loginNetworkDevice`, `logoutNetworkDevice`)
 - THOS (`getScoreByCourseId`)
 - New Campus Card (`loginCampusCard`, `getCampusCardInfo`, `getCampusCardPhotoUrl`, `getCampusCardTransactions`, `changeCampusCardPassword`, `modifyCampusCardMaxTransactionAmount`, `reportCampusCardLoss`, `cancelCampusCardLoss`, `rechargeCampusCard`)
 
