@@ -70,7 +70,7 @@
 		"stream": "0.0.2",
 		"text-encoding": "0.7.0",
 		"util": "0.12.5",
-		"web-streams-polyfill": "3.3.2"
+		"web-streams-polyfill": "3.3.3"
 	},
 	"devDependencies": {
 		"@babel/core": "7.23.9",
