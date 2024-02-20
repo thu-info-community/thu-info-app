@@ -72,7 +72,7 @@ export default {
 	ongoing: "Ongoing",
 	askBox: "Tape",
 	more: "More",
-	wechatPrompt: "Scan the QR code to join our wechat group!",
+	wechatPrompt: "Scan the QR code\nto join our wechat group!",
 	popi: "Check Tape",
 	eleRecord: "Ele-recharge Record",
 	eleRecordRestriction: "Currently only the latest 25 records are available.",

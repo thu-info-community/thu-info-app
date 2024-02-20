@@ -99,20 +99,27 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					onPress={() => navigation.navigate("Popi")}
 				/>
 				<SettingsSeparator />
-				<View
-					style={{
-						backgroundColor: colors.themeBackground,
-						alignItems: "center",
-					}}>
-					{qrcodeContent !== undefined && (
-						<>
-							<QRCode value={qrcodeContent} size={80} onError={console.error} />
-							<Text style={{marginTop: 6, color: "grey"}}>
-								{getStr("wechatPrompt")}
-							</Text>
-						</>
-					)}
-				</View>
+				{qrcodeContent !== undefined && (
+					<View
+						style={{
+							backgroundColor: colors.themeBackground,
+							alignItems: "center",
+							flexDirection: "row",
+						}}>
+						<View style={{flex: 1}} />
+						<QRCode
+							value={qrcodeContent}
+							size={100}
+							onError={console.error}
+							backgroundColor={colors.themeBackground}
+							color={colors.text}
+						/>
+						<Text style={{margin: 12, color: colors.text}}>
+							{getStr("wechatPrompt")}
+						</Text>
+						<View style={{flex: 1}} />
+					</View>
+				)}
 				<TextInput
 					value={text}
 					onChangeText={setText}
