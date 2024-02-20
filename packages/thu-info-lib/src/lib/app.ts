@@ -90,7 +90,7 @@ export const getWeChatGroupQRCodeContent = async (helper: InfoHelper): Promise<s
         "",
         async () => {
             const url = await uFetch(APP_QRCODE_URL);
-            if (!url.startsWith("https://weixin.qq.com")) {
+            if (!url.match(/https?:\/\/weixin.qq.com/)) {
                 throw new Error("Failed to get Wechat Group QR Code.");
             }
             return url;
