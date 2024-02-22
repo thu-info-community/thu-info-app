@@ -77,7 +77,7 @@
 		"@babel/preset-env": "7.23.9",
 		"@babel/runtime": "7.23.9",
 		"@react-native/babel-preset": "0.74.1",
-		"@react-native/eslint-config": "0.74.0",
+		"@react-native/eslint-config": "0.74.1",
 		"@react-native/metro-config": "0.74.1",
 		"@react-native/typescript-config": "0.74.0",
 		"@types/connect": "3.4.38",
