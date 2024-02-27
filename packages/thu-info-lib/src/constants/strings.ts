@@ -24,6 +24,8 @@ export const SWITCH_LANG_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/lang/change?websiteShowLanguage=";
 export const CALENDAR_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/xl";
+export const DEADLINE_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/deadline/list";
 export const CALENDAR_PAGE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/html/lmntw/file/xiaoli";
 export const CALENDAR_IMAGE_URL =

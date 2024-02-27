@@ -10,11 +10,11 @@ import {
     CR_SEARCH_YJS_URL,
     CR_SELECT_URL,
     CR_SELECT_YJS_URL,
-    CR_TIMETABLE_URL,
     CR_TREE_URL,
     CR_TREE_YJS_URL,
     CR_ZYTJB_URL,
     CR_ZYTJB_YJS_URL,
+    DEADLINE_URL,
     KCXX_BKS_URL,
     KCXX_YJS_URL,
 } from "../constants/strings";
@@ -37,7 +37,7 @@ import {
     SelectedCourse,
 } from "../models/cr/cr";
 import {getCheerioText} from "../utils/cheerio";
-import {roamingWrapperWithMocks} from "./core";
+import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import {CrError, CrTimeoutError, LibError} from "../utils/error";
 import {
     MOCK_AVAILABLE_SEMESTERS,
@@ -55,74 +55,26 @@ import {
 import TagElement = cheerio.TagElement;
 import Element = cheerio.Element;
 import TextElement = cheerio.TextElement;
-
-const parseCrTimetableTime = (semester: string, timeText: string): string => {
-    const timeSearch = /(\d+)月(\d+)日.+?(\d+):(\d+)/.exec(timeText);
-    if (timeSearch === null) {
-        throw new LibError("Failed to parse cr timetable time");
-    }
-    const [month, day, hour, minute] = timeSearch.slice(1);
-    let year: string;
-    const beginYear = semester.substring(0, 4);
-    const endYear = semester.substring(5, 9);
-    const semesterType = semester[10];
-    if (semesterType === "1") {
-        year = Number(month) < 3 ? endYear : beginYear;
-    } else if (semesterType === "2") {
-        year = Number(month) > 8 ? beginYear : endYear;
-    } else {
-        year = endYear;
-    }
-    return `${year}-${month}-${day} ${hour}:${minute}`;
-};
+import dayjs from "dayjs";
 
 export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]> => roamingWrapperWithMocks(
     helper,
     undefined,
     "",
     async () => {
-        const html = await uFetch(CR_TIMETABLE_URL);
-        if (!html.includes("时间安排")) {
-            throw new LibError();
-        }
-        const $ = cheerio.load(html);
-        const result: CrTimetable[] = [];
-        $("table").each((_, e) => {
-            const table = cheerio(e);
-            const rows = table.find("tr");
-            const title = cheerio(rows[0]).text().trim();
-            const [semesterText, flagText] = title.split("季学期 ");
-            const semester = semesterText
-                .replace("秋", "-1")
-                .replace("春", "-2")
-                .replace("夏", "-3");
-            const undergraduate = flagText.includes("本");
-            const graduate = flagText.includes("研");
-            const events: CrTimetableEvent[] = [];
-            let begin = "";
-            let end = "";
-            rows.slice(2).each((__, e2) => {
-                const tds = cheerio(e2).children();
-                const stage = tds.first().text().trim();
-                const messages = tds.last().children().map((___, e3) => cheerio(e3).text()).get();
-                if (tds.length === 3) {
-                    const [beginText, endText] = (cheerio(tds[1]).children().map((____, e4) => cheerio(e4).text()).get() as string[]);
-                    if (beginText === undefined || endText === undefined) {
-                        return;
-                    }
-                    begin = parseCrTimetableTime(semester, beginText);
-                    end = parseCrTimetableTime(semester, endText);
-                }
-                events.push({stage, begin, end, messages});
-            });
-            result.push({
-                semester,
-                undergraduate,
-                graduate,
-                events,
-            });
-        });
-        return result;
+        const {object} = await uFetch(`${DEADLINE_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
+        const events: CrTimetableEvent[] = object.map((event: {djsbt: string, djskssj: number, djsjzsj: number, djsurl: string}) => ({
+            stage: event.djsbt,
+            begin: dayjs(event.djskssj).format("YYYY-MM-DD HH:mm"),
+            end: dayjs(event.djsjzsj).format("YYYY-MM-DD HH:mm"),
+            messages: [event.djsurl],
+        }));
+        return [{
+            semester: "",
+            undergraduate: true,
+            graduate: true,
+            events,
+        }];
     },
     MOCK_CR_TIMETABLE,
 );

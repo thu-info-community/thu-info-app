@@ -5,3 +5,4 @@
 ## @thu-info/lib
 - fix: handle `cabLogin` correctly
 - feat: implement `loginNetworkDevice` and `logoutNetworkDevice`
+- fix: outdated implementation of `getCrTimetable`
