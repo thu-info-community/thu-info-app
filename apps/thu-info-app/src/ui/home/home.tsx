@@ -1,5 +1,5 @@
 import {
-	Alert,
+	Linking,
 	Platform,
 	ScrollView,
 	Text,
@@ -485,7 +485,7 @@ export const HomeScheduleSection = () => {
 				{activeEvents.length > 0 ? (
 					activeEvents.map((e) => (
 						<TouchableOpacity
-							onPress={() => Alert.alert(e.stage, e.messages.join("\n"))}
+							onPress={() => Linking.openURL(e.messages[0])}
 							key={e.stage + e.begin + e.end}>
 							<HomeSchedule
 								schedule={{
