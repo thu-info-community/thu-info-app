@@ -9,7 +9,7 @@ import {
     NETWORK_IMPORT_IP, NETWORK_IMPORT_LOGIN,
     NETWORK_IMPORT_USER,
     NETWORK_USER_INFO,
-    NETWORK_X1_USER
+    NETWORK_1X_USER,
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
@@ -99,7 +99,7 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
                 authType: "import"
             });
         }
-        const resp2 = await uFetch(NETWORK_X1_USER);
+        const resp2 = await uFetch(NETWORK_1X_USER);
         if (resp2 === "请登录先")
             throw new LibError();
         const $2 = cheerio.load(resp2);
@@ -169,7 +169,7 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
     );
 
 export const logoutNetwork = async (device: Device): Promise<void> => {
-    await uFetch(NETWORK_IMPORT_USER, {
+    await uFetch(device.authType == "import" ? NETWORK_IMPORT_USER : NETWORK_1X_USER, {
         action: "drop",
         user_ip: device.ip4
     });
