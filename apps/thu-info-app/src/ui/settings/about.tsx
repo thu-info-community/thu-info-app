@@ -13,6 +13,7 @@ import {
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
 	GITHUB_ORG_URL,
+	ICP_URL,
 	Johnny_URL,
 	UNIDY2002_URL,
 	VZHAO_21_URL,
@@ -44,6 +45,15 @@ export const AboutScreen = () => {
 			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
 				{`${getStr("currentVersion")}V${VersionNumber.appVersion}`}
 			</Text>
+			<TouchableOpacity onPress={() => makeLinking(ICP_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					京ICP备2021021102号-3A
+				</Text>
+			</TouchableOpacity>
 			<TouchableOpacity onPress={() => checkUpdate(true)}>
 				<Text style={[styles.textStyle, {color: theme.colors.primaryLight}]}>
 					{getStr("checkUpdate")}
