@@ -894,7 +894,7 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-cameraroll (7.4.2):
+  - react-native-cameraroll (7.4.3):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1387,7 +1387,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-blob-util: 26f1fb0c91f2b437380d4f3875769a7c3e06080e
   react-native-blur: 799045500f56146afc46245148080e7b7623cb75
-  react-native-cameraroll: 83a5e02da8f348b987adfdaec87aebb2f8b2322f
+  react-native-cameraroll: 29127a09ae0b1d23ff5ab0a344e1f3597bde5432
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-pdf: 79aa75e39a80c1d45ffe58aa500f3cf08f267a2e
