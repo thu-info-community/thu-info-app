@@ -27,7 +27,7 @@ it("renders correctly", async () => {
 	expect(top5All.children.length).toBeGreaterThan(0);
 
 	// Press a home page function
-	root.findByProps({title: "report"}).props.onPress();
+	root.findByProps({title: "classroomState"}).props.onPress();
 	await sleep(10000);
 
 	// Perform login
