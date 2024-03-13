@@ -43,7 +43,17 @@ target 'thu_info' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      :ccache_enabled => true
+      # :ccache_enabled => true
     )
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.name == "Release"
+          config.build_settings["CC"] = "clang"
+          config.build_settings["LD"] = "clang"
+          config.build_settings["CXX"] = "clang++"
+          config.build_settings["LDPLUSPLUS"] = "clang++"
+        end
+      end
+    end
   end
 end
