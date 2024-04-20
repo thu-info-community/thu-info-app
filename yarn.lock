@@ -9331,10 +9331,10 @@ react-native-localize@3.1.0:
   resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.1.0.tgz#1b322c05af21fd3d78d44e9b747d872ab5155b10"
   integrity sha512-A7Rrxl8vuAr5FAqtMFrM5ELLdmszohK6FoHL6qlgxx4HScyOnadoZksbvKHbn+zV5nE8kud2Z4kJM10cN120Zg==
 
-react-native-pdf@6.7.4:
-  version "6.7.4"
-  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.4.tgz#f350af350074ee0a93fff578caefec16867781b4"
-  integrity sha512-sBeNcsrTRnLjmiU9Wx7Uk0K2kPSQtKIIG+FECdrEG16TOdtmQ3iqqEwt0dmy0pJegpg07uES5BXqiKsKkRUIFw==
+react-native-pdf@6.7.5:
+  version "6.7.5"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.5.tgz#1bc5479f2161189f938912b4080ea9eef8a9d84d"
+  integrity sha512-d1S76p2Vwax2iG+kTnjINiUMvpjtJJvtMiYwHRbgGczT8GJjtXH49YCWOd+HfnUAU29cB+knzsKGYoZBMQM8Ow==
   dependencies:
     crypto-js "4.2.0"
     deprecated-react-native-prop-types "^2.3.0"
