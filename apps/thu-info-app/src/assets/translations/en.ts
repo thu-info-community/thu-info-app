@@ -585,7 +585,7 @@ export default {
 	minutesAbbr: "mins",
 	washerError: "Error",
 	washerCredit:
-		"Special thanks to stevenlele (washer.sdevs.top) for our old washer web UI; special thanks to gtxzsxxk@github.com for the inspiration of the current UI.",
+		"Special thanks to washer.sdevs.top for our old washer web UI; special thanks to gtxzsxxk@github.com for the inspiration of the current UI.",
 	washerNoticeTitle: "Notice",
 	washerNotice:
 		// eslint-disable-next-line prettier/prettier
