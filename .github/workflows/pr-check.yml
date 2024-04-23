@@ -59,13 +59,15 @@ jobs:
           sed -i "/preventRoot/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
           sed -i "/preventEmulator/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
           sed -i "/verifySignature/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
-      - name: Build android release
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          build-root-directory: apps/thu-info-app/android
+      - name: Build android release
         env:
           SIGNATURE_DIGEST: ""
-        with:
-          arguments: assembleRelease
-          build-root-directory: apps/thu-info-app/android
+        run: |
+          cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

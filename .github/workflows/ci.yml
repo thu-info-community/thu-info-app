@@ -59,16 +59,18 @@ jobs:
           SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in apps/thu-info-app/android/app/THUInfo.jks.enc -out apps/thu-info-app/android/app/THUInfo.jks -d
-      - name: Build android release
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          build-root-directory: apps/thu-info-app/android
+      - name: Build android release
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           SIGNATURE_DIGEST: ${{ secrets.SIGNATURE_DIGEST }}
-        with:
-          arguments: assembleRelease
-          build-root-directory: apps/thu-info-app/android
+        run: |
+          cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -86,15 +88,13 @@ jobs:
         run: |
           sed -i "/preventRoot/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Build android release (allow rooted)
-        uses: gradle/actions/setup-gradle@v3
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           SIGNATURE_DIGEST: ${{ secrets.SIGNATURE_DIGEST }}
-        with:
-          arguments: assembleRelease
-          build-root-directory: apps/thu-info-app/android
+        run: |
+          cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
       - name: Upload artifact (allow rooted)
         uses: actions/upload-artifact@v4
         with:
@@ -138,8 +138,6 @@ jobs:
       - name: Setup ccache
         if: startsWith(github.ref, 'refs/tags') == false
         uses: hendrikmuhs/ccache-action@main
-        with:
-          create-symlink: true
       - name: Install dependencies
         run: |
           yarn
