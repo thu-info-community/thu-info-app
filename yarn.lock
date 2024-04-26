@@ -9279,10 +9279,10 @@ react-native-qrcode-svg@6.3.0:
     prop-types "^15.8.0"
     qrcode "^1.5.1"
 
-react-native-reanimated@3.9.0-rc.1:
-  version "3.9.0-rc.1"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.9.0-rc.1.tgz#af50c901ae5500b3a1d811f7ffd676af2907782b"
-  integrity sha512-/u1reKR6dIlirf4CXBTtjOLCT7XybPLIPB2xRgZyswptoDLRLX2BiBJS4ec0IZkT2gBv8QwSPqoDru1J8Z8lUQ==
+react-native-reanimated@3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.9.0.tgz#e5c5f303415a2aadd7db786005159b26c21ae495"
+  integrity sha512-OMZV2BVmxZvm8UhlXBrESO0y/ODGTRpQRQUO7U9QXysOF9RaR8FbO6KS0x99MH19zfFTV8cLGN/vYW1dFia9Rw==
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.0.0-0"
     "@babel/plugin-transform-nullish-coalescing-operator" "^7.0.0-0"
