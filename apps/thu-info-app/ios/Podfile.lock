@@ -1014,7 +1014,7 @@ PODS:
     - React
   - react-native-view-shot (3.8.0):
     - React-Core
-  - react-native-webview (13.10.0):
+  - react-native-webview (13.10.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1640,7 +1640,7 @@ SPEC CHECKSUMS:
   react-native-slider: ce295d2bf830a7990af05b0bd70ab28c133e230c
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
-  react-native-webview: 0345dbe3f8801fb68de48560facb773ed730b2e8
+  react-native-webview: 2905d1455be11bcbd909ef33472d8fcdf7abcc41
   React-nativeconfig: 951ec32f632e81cbd7d40aebb3211313251c092e
   React-NativeModulesApple: 0b3a42ca90069119ef79d8b2327d01441d71abd4
   React-perflogger: 271f1111779fef70f9502d1d38da5132e5585230
