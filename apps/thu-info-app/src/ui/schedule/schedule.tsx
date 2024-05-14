@@ -37,8 +37,8 @@ const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
 	"2:30": 7.5,
 	"14:30": 7.5,
-	"7:00": 6.5,
-	"19:00": 6.5,
+	"7:00": 12,
+	"19:00": 12,
 };
 
 const examEndMap: {[key: string]: number} = {
