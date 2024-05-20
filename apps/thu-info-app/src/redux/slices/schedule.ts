@@ -68,9 +68,9 @@ export const scheduleSlice = createSlice({
 					return;
 				}
 
-				let selectedSchedule = selectedScheduleList[0];
+				const selectedSchedule = selectedScheduleList[0];
 
-				let mergedSchedule: Schedule = {
+				const mergedSchedule: Schedule = {
 					name: selectedSchedule.name,
 					location: selectedSchedule.location,
 					type: val.type,
@@ -78,6 +78,19 @@ export const scheduleSlice = createSlice({
 					activeTime: val.activeTime,
 					delOrHideTime: selectedSchedule.delOrHideTime,
 				};
+
+				// 合并之后需要手动删除隐藏的时间片
+				selectedSchedule.delOrHideTime.base.forEach((slice) => {
+					delOrHide(val, slice);
+				});
+
+				if (val.name === "高等线性代数选讲") {
+					console.log(val, selectedSchedule, mergedSchedule);
+					console.warn(JSON.stringify(val.activeTime.base));
+					console.warn(JSON.stringify(selectedSchedule.activeTime.base));
+					console.warn(JSON.stringify(selectedSchedule.delOrHideTime.base));
+					console.warn(JSON.stringify(mergedSchedule.delOrHideTime.base));
+				}
 
 				newScheduleList.push(mergedSchedule);
 			});
