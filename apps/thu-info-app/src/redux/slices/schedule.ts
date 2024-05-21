@@ -84,14 +84,6 @@ export const scheduleSlice = createSlice({
 					delOrHide(val, slice);
 				});
 
-				if (val.name === "高等线性代数选讲") {
-					console.log(val, selectedSchedule, mergedSchedule);
-					console.warn(JSON.stringify(val.activeTime.base));
-					console.warn(JSON.stringify(selectedSchedule.activeTime.base));
-					console.warn(JSON.stringify(selectedSchedule.delOrHideTime.base));
-					console.warn(JSON.stringify(mergedSchedule.delOrHideTime.base));
-				}
-
 				newScheduleList.push(mergedSchedule);
 			});
 
