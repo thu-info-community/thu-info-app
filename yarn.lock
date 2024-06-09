@@ -9258,10 +9258,10 @@ react-native-keychain@4.0.5:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-4.0.5.tgz#6d3aef8f2789fc0dfa8149b8400d82ff77be361a"
   integrity sha512-TbiO8AO055EPjaxIuKxrCEOB4r81uQCVDFbtcs+e4pEOHxf6z3JgDC0UU0poJElKfCh37b+TFRxQhg6DbsYJBA==
 
-react-native-localize@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.1.0.tgz#1b322c05af21fd3d78d44e9b747d872ab5155b10"
-  integrity sha512-A7Rrxl8vuAr5FAqtMFrM5ELLdmszohK6FoHL6qlgxx4HScyOnadoZksbvKHbn+zV5nE8kud2Z4kJM10cN120Zg==
+react-native-localize@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.2.0.tgz#7d9beb38c9d08b2aa87ffd9d165a66f66531b3ae"
+  integrity sha512-Wi486WdDoBcDKUNxzr2/8f64ZwkWExlIvn0lcfFhsRNP2CVXGkjLyXhr3h6jf3Utkv5EmoFKiNqcmZn9kjYDxQ==
 
 react-native-pdf@6.7.5:
   version "6.7.5"
