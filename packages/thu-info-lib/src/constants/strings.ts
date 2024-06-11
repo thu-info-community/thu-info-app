@@ -245,23 +245,23 @@ export const PROGRAM_LIST_URL =
 export const FULL_PROGRAM_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfakcbBs.do?m=index2&theModule=pyfa&p_fajhh=";
 export const APP_ANNOUNCEMENT_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/announce?page=1";
+    "https://app.cs.tsinghua.edu.cn/api/announce?page=1";
 export const APP_LATEST_VERSION_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/version";
+    "https://app.cs.tsinghua.edu.cn/api/version";
 export const APP_STARTUP_STAT_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/stat/startup";
+    "https://app.cs.tsinghua.edu.cn/stat/startup";
 export const APP_USAGE_STAT_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/stat/usage";
+    "https://app.cs.tsinghua.edu.cn/stat/usage";
 export const APP_SUBMIT_FEEDBACK_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/feedback";
+    "https://app.cs.tsinghua.edu.cn/api/feedback";
 export const APP_FEEDBACKS_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/repliedfeedback";
+    "https://app.cs.tsinghua.edu.cn/api/repliedfeedback";
 export const APP_QRCODE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/qrcode";
+    "https://app.cs.tsinghua.edu.cn/api/qrcode";
 export const APP_SOCKET_STATUS_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/socket";
+    "https://app.cs.tsinghua.edu.cn/api/socket";
 export const APP_PRIVACY_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/privacy";
+    "https://app.cs.tsinghua.edu.cn/privacy";
 export const NETWORK_DETAIL_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/user_detail_statistics.php?action=query";
 export const NETWORK_IMPORT_USER =
@@ -280,7 +280,7 @@ export const NETWORK_USER_INFO =
 
 export const THOS_SELECT_ONE_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4/fp/fp/Uniformcommon/selectOnePresetData";
 
-export const CARD_I_VERSION_URL = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2/api/CardIVersion";
+export const CARD_I_VERSION_URL = "https://app.cs.tsinghua.edu.cn/api/CardIVersion";
 export const CARD_USER_BY_TOKEN_URL = "https://card.tsinghua.edu.cn/login/getUserInfoFromToken";
 export const CARD_INFO_BY_USER_URL = "https://card.tsinghua.edu.cn/business/getCardUserinfo";
 export const CARD_PHOTO_URL = "https://card.tsinghua.edu.cn/myaccount/showDbImage?idserial=";

@@ -142,7 +142,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					onPress={() => Linking.openURL("http://app.cs.tsinghua.edu.cn")}>
+					onPress={() => Linking.openURL("https://app.cs.tsinghua.edu.cn")}>
 					<Text style={style.websiteTextStyle}>app.cs.tsinghua.edu.cn</Text>
 				</TouchableOpacity>
 			</View>

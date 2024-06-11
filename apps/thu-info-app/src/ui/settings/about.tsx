@@ -150,7 +150,7 @@ export const AboutScreen = () => {
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
-				onPress={() => Linking.openURL("http://app.cs.tsinghua.edu.cn")}>
+				onPress={() => Linking.openURL("https://app.cs.tsinghua.edu.cn")}>
 				<Text
 					style={[
 						styles.textStyle,

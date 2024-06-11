@@ -6,8 +6,7 @@ import {
 import {helper} from "../redux/store";
 import {HttpTransportType} from "@microsoft/signalr";
 
-const rootUrl =
-	"https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f1e751d2242326446d0187ab9040227b239c069338e2";
+const rootUrl = "https://app.cs.tsinghua.edu.cn";
 
 export enum FunctionType {
 	PhysicalExam,
