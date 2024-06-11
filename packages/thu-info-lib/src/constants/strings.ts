@@ -27,9 +27,9 @@ export const CALENDAR_URL =
 export const DEADLINE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/deadline/list";
 export const CALENDAR_PAGE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/html/lmntw/file/xiaoli";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fffb45952936671e6a1b80a29f5d3634e5cdcd7ed98227/html/lmntw/file/xiaoli";
 export const CALENDAR_IMAGE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/html/lmntw/img/";
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fffb45952936671e6a1b80a29f5d3634e5cdcd7ed98227/html/lmntw/img/";
 export const EMAIL_BASE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40/coremail/XT3/";
 export const COUNT_DOWN_URL =
