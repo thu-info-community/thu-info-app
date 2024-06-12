@@ -4,7 +4,7 @@
 
 An APP aimed at integrating various sources of campus information.
 
-**[Checkout our official website!](https://thuinfo.net/)**
+**[Checkout our official website!](https://app.cs.tsinghua.edu.cn/)**
 
 ## Release
 
