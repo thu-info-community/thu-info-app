@@ -14,18 +14,18 @@ export const WEB_VPN_ID_BASE_URL =
 export const WEB_VPN_ID_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f30f8834396657761d88e29d51367bcfe7/do/off/ui/auth/login/check";
 export const GET_COOKIE_URL =
-    "https://webvpn.tsinghua.edu.cn/wengine-vpn/cookie?method=get&host=info2021.tsinghua.edu.cn&scheme=https&path=/f/info/gxfw_fg/common/index";
+    "https://webvpn.tsinghua.edu.cn/wengine-vpn/cookie?method=get&host=info.tsinghua.edu.cn&scheme=https&path=/f/info/gxfw_fg/common/index";
 export const USER_DATA_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/grjbxx";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/grjbxx";
 export const ROAMING_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/yyfw/vyyfwxx/info/portal_fg/common/onlineAppRedirect";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/yyfw/vyyfwxx/info/portal_fg/common/onlineAppRedirect";
 export const LOGOUT_URL = "https://webvpn.tsinghua.edu.cn/logout";
 export const SWITCH_LANG_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/lang/change?websiteShowLanguage=";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/f/lang/change?websiteShowLanguage=";
 export const CALENDAR_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/xl";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/xl";
 export const DEADLINE_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/deadline/list";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/deadline/list";
 export const CALENDAR_PAGE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fffb45952936671e6a1b80a29f5d3634e5cdcd7ed98227/html/lmntw/file/xiaoli";
 export const CALENDAR_IMAGE_URL =
@@ -73,37 +73,37 @@ export const JXRL_SUFFIX = "&jsoncallback=m";
 export const SECONDARY_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?m=bks_ejkbSearch";
 export const PDF_NEWS_PREFIX =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/wj/downloadPdfStream/";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/wj/downloadPdfStream/";
 export const SYSC_PDF_NEWS_PREFIX =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e3f5468534367f1e6d119aafd641303ceb8f9190006d6afc78336870/tsinghua.war/yct.www.api/publish/";
 export const NEWS_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/xxfb_fg/xnzx/template/more?oType=xs&lydw=";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/xxfb_fg/xnzx/template/more?oType=xs&lydw=";
 export const SEARCH_NEWS_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/xnzx/search/info/xxfb_fg/teacher/getMobilePageList";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/xnzx/search/info/xxfb_fg/teacher/getMobilePageList";
 export const NEWS_REDIRECT_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de";
 export const NEWS_DETAIL_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/xxfb_fg/xnzx/template/detail";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/xxfb_fg/xnzx/template/detail";
 export const NEWS_ADD_FAVOR_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/addFavorite/XXFB/";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/addFavorite/XXFB/";
 export const NEWS_REMOVE_FAVOR_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/delFavorite/XXFB/";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/delFavorite/XXFB/";
 export const NEWS_FAVOR_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/queryFavoriteXxfbPageList";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/queryFavoriteXxfbPageList";
 export const NEWS_SUBSCRIPTION_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeConditionNameList/XXFB";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/querySubscribeConditionNameList/XXFB";
 export const NEWS_SOURCE_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeInformationUnitList";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/querySubscribeInformationUnitList";
 export const NEWS_CHANNEL_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/xxfb_fg/teacher/lm/subscribe/getlmListByDwh";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/xxfb_fg/teacher/lm/subscribe/getlmListByDwh";
 export const NEWS_ADD_SUBSCRIPTION_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/addSubscribeCondition";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/addSubscribeCondition";
 export const NEWS_REMOVE_SUBSCRIPTION_URL_FORMAT =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/deleteSubscribeCondition/{id}/XXFB?_csrf={csrf}";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/deleteSubscribeCondition/{id}/XXFB?_csrf={csrf}";
 export const NEWS_LIST_BY_SUBSCRIPTION_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/gxfw_fg/common/querySubscribeInfomationPageList";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/querySubscribeInfomationPageList";
 export const FILE_DOWNLOAD_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/b/info/wj/download/";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/wj/download/";
 export const CLASSROOM_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/portal3rd.do?url=/portal3rd.do&m=jasJy_Xs_Js_index";
 export const CLASSROOM_STATE_PREFIX =
@@ -171,9 +171,9 @@ export const ACADEMIC_LOGIN_URL =
 export const ACADEMIC_ROOT_URL =
     "https://webvpn.tsinghua.edu.cn/http-80/77726476706e69737468656265737421f1f44098223d6153301c9aa596522b2027124ec39c5debe6/render.userLayoutRootNode.uP";
 export const KCXX_BKS_URL =
-  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/info/gxfw_fg/common/cardRoaming/KCXX_BKS";
+  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/f/info/gxfw_fg/common/cardRoaming/KCXX_BKS";
 export const KCXX_YJS_URL =
-  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479375603a01301c9aa596522b208e9cd9c9e383ff3f/f/info/gxfw_fg/common/cardRoaming/KCXX_YJS";
+  "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/f/info/gxfw_fg/common/cardRoaming/KCXX_YJS";
 export const CR_LOGIN_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b3f3b2653770bc7b88b5c2d320506b1aec738590a49ba/xklogin.do";
 export const CR_LOGIN_SUBMIT_URL =
