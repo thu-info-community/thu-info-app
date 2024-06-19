@@ -2631,13 +2631,6 @@
   resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.3.5.tgz#481cef0a896e3a5dcbfc5a8a8b02c05958af48a5"
   integrity sha512-/i42wjYNgE6wf0j2bcTX6kuowmdL/6PE4IVitMpm2eYKBUuYCprdcWVK+xEF0gcV6ufMCRhtxmReGfc6hIK7Jw==
 
-"@types/metro-config@0.76.3":
-  version "0.76.3"
-  resolved "https://registry.yarnpkg.com/@types/metro-config/-/metro-config-0.76.3.tgz#39dad5a615eb72cc46f8f2f3520cdea8ca6f9eec"
-  integrity sha512-tq9IyKm1JzNRpM7V7LALxXiAyTlV5eZwoqntpnRIbnqDsIyNlnPkWQEoX77f40pzcUuAH4CiHRDxW5VskPlgtQ==
-  dependencies:
-    metro-config "*"
-
 "@types/minimatch@^3.0.3":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
@@ -7612,7 +7605,7 @@ metro-cache@0.80.3:
     metro-core "0.80.3"
     rimraf "^3.0.2"
 
-metro-config@*, metro-config@0.80.3, metro-config@^0.80.3:
+metro-config@0.80.3, metro-config@^0.80.3:
   version "0.80.3"
   resolved "https://registry.yarnpkg.com/metro-config/-/metro-config-0.80.3.tgz#30fbbbd443690c333668243c4f264dfe7537a380"
   integrity sha512-cE7KPT1Usdrd2nLEVpzukKWmeBU1PufHPkuD9BjjtoABbzdj35gMLDnK+mhjSq9km2vF2QEPtE0M+WKvq9pXfQ==
