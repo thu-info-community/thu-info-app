@@ -13,7 +13,7 @@ import {
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
-import { xEncode, Base64 } from "../utils/srunCrypto";
+import { xEncode, xEncodeBase64 } from "../utils/srunCrypto";
 import CryptoJS from "crypto-js/core";
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
@@ -208,7 +208,7 @@ export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boo
 
     // @ts-ignore
     // Use srun_bx1 to encrypt the info. Base64 is a non-standard implementation and xEncode too.
-    const info = "{SRBX1}" + new Base64().encode(xEncode(JSON.stringify({
+    const info = "{SRBX1}" + xEncodeBase64(xEncode(JSON.stringify({
         username: username,
         password: password,
         ip: ip,
