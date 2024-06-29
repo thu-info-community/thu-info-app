@@ -245,7 +245,9 @@ export const NetworkOnlineDevicesScreen = () => {
 									.catch((e) => {
 										let message = e?.message;
 
-										if (!/E\d+:/g.test(message)) {
+										if (message === "ip_already_online_error") {
+											message = getStr("importAlreadyOnline");
+										} else if (!/E\d+:/g.test(message)) {
 											message = getStr("networkRetry") + message;
 										}
 
