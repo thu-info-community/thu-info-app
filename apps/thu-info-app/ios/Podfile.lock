@@ -1299,7 +1299,7 @@ PODS:
     - React-Core
   - RNPermissions (4.1.5):
     - React-Core
-  - RNReanimated (3.12.1):
+  - RNReanimated (3.13.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1673,7 +1673,7 @@ SPEC CHECKSUMS:
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: b77875884750cb6a58cd6865863fe2ba2729b72b
   RNPermissions: 952f63a8bf2a40d0398cbb5957707396f8d8ad21
-  RNReanimated: 1c95f2e34ce5c5ddf841c8113d54d821c4f9a980
+  RNReanimated: 2dc7ea53b8d8bf73664103a6da2de824a7798730
   RNScreens: 5aeecbb09aa7285379b6e9f3c8a3c859bb16401c
   RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
