@@ -571,6 +571,7 @@ export default {
 	internetAccess: "Internet",
 	proxyImport: "Proxy Import",
 	importSuccess: "Import succeeded.",
+	importAlreadyOnline: "IP address is already online.",
 	noOnlineDevice: "No online device",
 	schoolCalendar: "Academic Calendar",
 	selectSemester: "Select Semester",

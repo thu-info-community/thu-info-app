@@ -538,6 +538,7 @@ export default {
 	internetAccess: "准出",
 	proxyImport: "准入代认证",
 	importSuccess: "登录成功",
+	importAlreadyOnline: "设备 IP 已在线",
 	noOnlineDevice: "当前无在线设备",
 	schoolCalendar: "校历",
 	selectSemester: "选择学期",
