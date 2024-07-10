@@ -114,6 +114,8 @@ import {LoginError} from "./utils/error";
 import {getDegreeProgramCompletion, getFullDegreeProgram} from "./lib/program";
 import {Classroom, ClassroomStateResult} from "./models/home/classroom";
 import {
+    appStartupStat,
+    appUsageStat,
     getFeedbackReplies,
     getLatestAnnounces,
     getLatestVersion,
@@ -122,8 +124,6 @@ import {
     submitFeedback,
 } from "./lib/app";
 import {MOCK_LATEST_VERSION} from "./mocks/app";
-import {APP_STARTUP_STAT_URL, APP_USAGE_STAT_URL} from "./constants/strings";
-import {uFetch} from "./utils/network";
 import { getNetworkBalance, getNetworkDetail, getOnlineDevices, loginNetwork, logoutNetwork } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {
@@ -249,36 +249,24 @@ export class InfoHelper {
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
         let bookingRecords: LibBookRecord[] = [];
-        try {
-            bookingRecords = await getBookingRecords(this);
-        } catch {
-            // no-op
-        }
         let sportsReservationRecords: SportsReservationRecord[] = [];
-        try {
-            sportsReservationRecords = await getSportsReservationRecords(this);
-        } catch {
-            // no-op
-        }
         let balance: number = 0;
-        try {
-            balance = (await cardGetInfo(this)).balance;
-        } catch {
-            // no-op
-        }
-        uFetch(APP_STARTUP_STAT_URL).catch(() => {
-        });
         let crTimetable: CrTimetable[] = [];
         try {
+            bookingRecords = await getBookingRecords(this);
+            sportsReservationRecords = await getSportsReservationRecords(this);
+            balance = (await cardGetInfo(this)).balance;
             crTimetable = await getCrTimetable(this);
         } catch {
             // no-op
         }
+        appStartupStat(this).catch(() => {
+        });
         return {bookingRecords, sportsReservationRecords, crTimetable, balance, latestAnnounces, latestVersion};
     };
 
     public appUsageStat = async (usage: number) => {
-        await uFetch(`${APP_USAGE_STAT_URL}/${usage}`);
+        await appUsageStat(this, usage);
     };
 
     public getLatestAnnounces = async () => getLatestAnnounces(this);

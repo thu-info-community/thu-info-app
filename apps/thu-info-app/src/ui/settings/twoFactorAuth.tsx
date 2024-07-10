@@ -103,7 +103,6 @@ export const TwoFactorAuthScreen = ({
 						}}
 						cellCount={6}
 						autoFocus={false}
-						rootStyle={{margin: 16}}
 						keyboardType="number-pad"
 						textContentType="oneTimeCode"
 						secureTextEntry={false}

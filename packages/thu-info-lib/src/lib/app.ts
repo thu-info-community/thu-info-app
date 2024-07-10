@@ -7,7 +7,9 @@ import {
     APP_LATEST_VERSION_URL,
     APP_PRIVACY_URL,
     APP_QRCODE_URL,
+    APP_STARTUP_STAT_URL,
     APP_SUBMIT_FEEDBACK_URL,
+    APP_USAGE_STAT_URL,
 } from "../constants/strings";
 import {Announcement} from "../models/app/announcement";
 import {Version} from "../models/app/version";
@@ -19,6 +21,24 @@ import {
     MOCK_QRCODE_URL,
 } from "../mocks/app";
 import {Feedback} from "../models/app/feedback";
+
+export const appStartupStat = async (helper: InfoHelper): Promise<undefined> =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        () => uFetch(APP_STARTUP_STAT_URL),
+        undefined,
+    );
+
+export const appUsageStat = async (helper: InfoHelper, usage: number): Promise<undefined> =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        () => uFetch(`${APP_USAGE_STAT_URL}/${usage}`),
+        undefined,
+    );
 
 export const getLatestAnnounces = async (helper: InfoHelper): Promise<Announcement[]> =>
     roamingWrapperWithMocks(
