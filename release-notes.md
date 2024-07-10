@@ -1,2 +1,5 @@
 ## @thu-info/app
-- 修复了部分页面无法访问的问题
+- 新增双因素认证支持
+
+## @thu-info/lib
+- feat: support 2FA for WebVPN
