@@ -27,7 +27,9 @@ export const appStartupStat = async (helper: InfoHelper): Promise<undefined> =>
         helper,
         undefined,
         "",
-        () => uFetch(APP_STARTUP_STAT_URL),
+        async () => {
+            await uFetch(APP_STARTUP_STAT_URL);
+        },
         undefined,
     );
 
@@ -36,7 +38,9 @@ export const appUsageStat = async (helper: InfoHelper, usage: number): Promise<u
         helper,
         undefined,
         "",
-        () => uFetch(`${APP_USAGE_STAT_URL}/${usage}`),
+        async () => {
+            await uFetch(`${APP_USAGE_STAT_URL}/${usage}`);
+        },
         undefined,
     );
 
