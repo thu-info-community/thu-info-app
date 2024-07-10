@@ -127,6 +127,7 @@ import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/ho
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
 import {CampusCardScreen} from "../ui/home/campusCard";
+import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -348,6 +349,7 @@ export type ScheduleDetailRouteProp = RouteProp<
 
 type SettingsStackParamList = {
 	Login: undefined;
+	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null};
 	Account: undefined;
 	DigitalPassword:
 		| {action: "new"}
@@ -368,6 +370,11 @@ type SettingsStackParamList = {
 	Popi: undefined;
 	About: undefined;
 };
+
+export type TwoFactorAuthRouteProp = RouteProp<
+	SettingsStackParamList,
+	"TwoFactorAuth"
+>;
 
 export type DigitalPasswordRouteProp = RouteProp<
 	SettingsStackParamList,
@@ -884,6 +891,11 @@ export const Root = () => {
 				name="Login"
 				component={LoginScreen}
 				options={{title: getStr("login")}}
+			/>
+			<Stack.Screen
+				name="TwoFactorAuth"
+				component={TwoFactorAuthScreen}
+				options={{title: getStr("twoFactorAuth")}}
 			/>
 			<Stack.Screen
 				name="Account"

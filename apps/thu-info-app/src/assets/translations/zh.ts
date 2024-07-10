@@ -8,6 +8,12 @@ export default {
 	resetPassword: "重置密码",
 	resetDormPasswordHint: "已使用 INFO 账号智能完成身份认证",
 	login: "登录",
+	twoFactorAuth: "二次认证",
+	twoFactorPrompt:
+		"为保障您的账号安全，本次登录需要进行二次验证。请选择以下方式之一获取验证码：",
+	twoFactorWechat: "清华大学信息服务（企业微信）",
+	twoFactorMobile: "短信验证（{0}）",
+	twoFactorTrust: "是否将本设备标记为信任设备？",
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",
 	forceLogin: "刷新 Web VPN 状态",

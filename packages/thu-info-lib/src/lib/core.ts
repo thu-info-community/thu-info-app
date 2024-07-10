@@ -4,6 +4,7 @@ import {
     GITLAB_AUTH_URL,
     GITLAB_LOGIN_URL,
     ID_BASE_URL,
+    ID_HOST_URL,
     ID_LOGIN_URL,
     INVOICE_LOGIN_URL,
     LOGIN_URL,
@@ -90,7 +91,7 @@ export const login = async (
             outstandingLoginPromise = new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     reject(new LoginError("Login timeout."));
-                }, 30000);
+                }, 3 * 60 * 1000);
                 (async () => {
                     await uFetch(LOGIN_URL);
                     await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
@@ -112,6 +113,9 @@ export const login = async (
                             throw new LoginError("Required to select 2FA method");
                         }
                         const method = await helper.twoFactorMethodHook(hasWeChatBool, phone);
+                        if (method === undefined) {
+                            throw new LoginError("2FA required");
+                        }
                         const { result: r2, msg: m2 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
                             action: "SEND_CODE",
                             type: method,
@@ -136,17 +140,17 @@ export const login = async (
                         if (helper.trustFingerprintHook) {
                             const trustFingerprint = await helper.trustFingerprintHook();
                             if (trustFingerprint) {
-                                const { result: r4, msg: m4 } = await uFetch(SAVE_FINGER_URL, {
+                                const { result: r4, msg: m4 } = JSON.parse(await uFetch(SAVE_FINGER_URL, {
                                     fingerprint: helper.fingerprint,
                                     deviceName: "THU Info APP",
                                     radioVal: "是",
-                                });
+                                }));
                                 if (r4 != "success") {
                                     throw new LoginError(m4);
                                 }
                             }
                         }
-                        response = await uFetch(redirectUrl);
+                        response = await uFetch(ID_HOST_URL + redirectUrl);
                     }
                     if (!response.includes("登录成功。正在重定向到")) {
                         const $ = cheerio.load(response);

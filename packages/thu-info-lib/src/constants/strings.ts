@@ -7,6 +7,7 @@ export const WEB_VPN_ROOT_URL = "https://webvpn.tsinghua.edu.cn";
 export const LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/login";
 export const WEB_VPN_OAUTH_LOGIN_URL = "https://webvpn.tsinghua.edu.cn/login?oauth_login=true";
+export const ID_HOST_URL = "https://id.tsinghua.edu.cn";
 export const ID_BASE_URL = "https://id.tsinghua.edu.cn/do/off/ui/auth/login/form/";
 export const ID_LOGIN_URL = "https://id.tsinghua.edu.cn/do/off/ui/auth/login/check";
 export const DOUBLE_AUTH_URL = "https://id.tsinghua.edu.cn/b/doubleAuth/login";

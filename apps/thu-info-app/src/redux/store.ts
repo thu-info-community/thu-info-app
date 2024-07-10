@@ -31,7 +31,7 @@ import {
 	ReservationState,
 } from "./slices/reservation";
 import Snackbar from "react-native-snackbar";
-import {AppState, Platform, ToastAndroid} from "react-native";
+import {Alert, AppState, Platform, ToastAndroid} from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState} from "./slices/config";
 import {
@@ -49,6 +49,7 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
+import {getStr} from "../utils/i18n.ts";
 
 export const helper = new InfoHelper();
 
@@ -236,7 +237,10 @@ export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
 
-export const navigationRef = createNavigationContainerRef<{Login: undefined}>();
+export const navigationRef = createNavigationContainerRef<{
+	Login: undefined;
+	TwoFactorAuth: undefined;
+}>();
 
 helper.loginErrorHook = (e) => {
 	if (navigationRef.isReady()) {
@@ -252,10 +256,46 @@ helper.loginErrorHook = (e) => {
 	);
 };
 
-helper.twoFactorMethodHook = async () => {
-	return "wechat";
+export const futures = {
+	twoFactorMethodFuture: undefined as
+		| ((value: "wechat" | "mobile" | undefined) => void)
+		| undefined,
+	twoFactorAuthFuture: undefined as
+		| ((value: string | undefined) => void)
+		| undefined,
 };
 
-helper.trustFingerprintHook = async () => {
-	return false;
+helper.twoFactorMethodHook = (hasWeChatBool: boolean, phone: string | null) => {
+	return new Promise<"wechat" | "mobile" | undefined>((resolve) => {
+		futures.twoFactorMethodFuture = resolve;
+		if (navigationRef.isReady()) {
+			navigationRef.navigate("TwoFactorAuth", {
+				hasWeChatBool,
+				phone,
+			});
+		}
+	});
+};
+
+helper.twoFactorAuthHook = () => {
+	return new Promise<string | undefined>((resolve) => {
+		futures.twoFactorAuthFuture = resolve;
+	});
+};
+
+helper.trustFingerprintHook = () => {
+	return new Promise<boolean>((resolve) => {
+		Alert.alert(
+			getStr("twoFactorAuth"),
+			getStr("twoFactorTrust"),
+			[
+				{text: getStr("no"), style: "cancel", onPress: () => resolve(false)},
+				{
+					text: getStr("yes"),
+					onPress: () => resolve(true),
+				},
+			],
+			{cancelable: true},
+		);
+	});
 };
