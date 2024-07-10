@@ -49,7 +49,6 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
-import {getStr} from "../utils/i18n.ts";
 
 export const helper = new InfoHelper();
 
@@ -286,16 +285,17 @@ helper.twoFactorAuthHook = () => {
 helper.trustFingerprintHook = () => {
 	return new Promise<boolean>((resolve) => {
 		Alert.alert(
-			getStr("twoFactorAuth"),
-			getStr("twoFactorTrust"),
+			"二次认证（2FA）",
+			"是否将本设备标记为信任设备？\n" +
+				"Do you want to mark this device as a trusted device?",
 			[
-				{text: getStr("no"), style: "cancel", onPress: () => resolve(false)},
+				{text: "No", style: "cancel", onPress: () => resolve(false)},
 				{
-					text: getStr("yes"),
+					text: "Yes",
 					onPress: () => resolve(true),
 				},
 			],
-			{cancelable: true},
+			{cancelable: false},
 		);
 	});
 };
