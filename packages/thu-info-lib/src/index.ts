@@ -139,6 +139,7 @@ import {
 import {CardTransactionType} from "./models/card/transaction";
 import {CardRechargeType} from "./models/card/recharge";
 import { Device } from "./models/network/device";
+import { SportsReservationRecord } from "./models/home/sports";
 
 export class InfoHelper {
     public userId = "";
@@ -247,8 +248,18 @@ export class InfoHelper {
         }
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
-        const bookingRecords = await getBookingRecords(this);
-        const sportsReservationRecords = await getSportsReservationRecords(this);
+        let bookingRecords: LibBookRecord[] = [];
+        try {
+            bookingRecords = await getBookingRecords(this);
+        } catch {
+            // no-op
+        }
+        let sportsReservationRecords: SportsReservationRecord[] = [];
+        try {
+            sportsReservationRecords = await getSportsReservationRecords(this);
+        } catch {
+            // no-op
+        }
         let balance: number = 0;
         try {
             balance = (await cardGetInfo(this)).balance;
