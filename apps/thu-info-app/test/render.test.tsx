@@ -1,5 +1,6 @@
 import {expect, it, jest} from "@jest/globals";
 import "react-native";
+import "react-native-get-random-values";
 import React from "react";
 import {App} from "../src/App";
 import renderer from "react-test-renderer";
