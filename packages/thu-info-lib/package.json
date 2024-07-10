@@ -37,7 +37,7 @@
             "email": "qhd19@mails.tsinghua.edu.cn"
         }
     ],
-    "license": "MIT",
+    "license": "BSL",
     "repository": {
         "type": "git",
         "url": "https://github.com/thu-info-community/thu-info-app.git"

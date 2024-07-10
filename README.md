@@ -57,6 +57,10 @@ npx pod-install && yarn ios   # For iOS
 
 Please follow the [Contributing guidelines](CONTRIBUTING.md).
 
+## Commercial Use
+
+The source code is licenced under Business Source License 1.1, and is not allowed for commercial use unless explicitly granted by UNIDY2002 or after the Change Date arrives.
+
 ## Acknowledgement
 
 Great thanks to the [learnX](https://github.com/robertying/learnX) project, without referring to whose code the migration to React Native would never be as smooth.

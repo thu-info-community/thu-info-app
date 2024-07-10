@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/thu-info-community/thu-info-app/workflows/Test%20and%20Publish/badge.svg)](https://github.com/thu-info-community/thu-info-app/actions?query=workflow%3A%22Test+and+Publish%22)
 [![NPM Version](https://img.shields.io/npm/v/@thu-info/lib)](https://www.npmjs.com/package/@thu-info/lib)
 
-This is a JavaScript library aimed to provide a program-friendly interface to Tsinghua web portal, and is licensed under MIT License.
+This is a JavaScript library aimed to provide a program-friendly interface to Tsinghua web portal, and is licensed under Business Source License 1.1.
 
 ## Installation
 
