@@ -143,6 +143,7 @@ import { Device } from "./models/network/device";
 export class InfoHelper {
     public userId = "";
     public password = "";
+    public fingerprint = "";
 
     /**
      * Mock account and password.
@@ -191,6 +192,27 @@ export class InfoHelper {
      * Override this value to customize.
      */
     public loginErrorHook: ((e: LoginError) => any) | undefined = undefined;
+
+    /**
+     * Invoked when 2FA method selection is required.
+     *
+     * Override this value to customize.
+     */
+    public twoFactorMethodHook: ((hasWeChatBool: boolean, phone: string | null) => Promise<"wechat" | "mobile">) | undefined = undefined;
+
+    /**
+     * Invoked when 2FA is required.
+     *
+     * Override this value to customize.
+     */
+    public twoFactorAuthHook: (() => Promise<string | undefined>) | undefined = undefined;
+
+    /**
+     * Invoked when it has to be decided whether to trust the current fingerprint.
+     *
+     * Override this value to customize.
+     */
+    public trustFingerprintHook: (() => Promise<boolean>) | undefined = undefined;
 
     /**
      * Login with userId and password.

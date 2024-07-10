@@ -23,6 +23,7 @@ import {
 	Schedule,
 	scheduleTimeAdd,
 } from "@thu-info/lib/src/models/schedule/schedule";
+import {v4 as uuidv4} from "uuid";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,
@@ -133,6 +134,7 @@ const authTransform = createTransform(
 	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
+		helper.fingerprint = a.fingerprint ?? uuidv4().replace(/-/g, "");
 		return a;
 	},
 	{
@@ -248,4 +250,12 @@ helper.loginErrorHook = (e) => {
 			}),
 		100,
 	);
+};
+
+helper.twoFactorMethodHook = async () => {
+	return "wechat";
+};
+
+helper.trustFingerprintHook = async () => {
+	return false;
 };
