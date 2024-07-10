@@ -68,7 +68,7 @@ export const getCsrfToken = async () => {
 let outstandingLoginPromise: Promise<void> | undefined = undefined;
 
 const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
-    const { result: r1, msg: m1, object: { hasWeChatBool, phone } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
+    const { result: r1, msg: m1, object: o1 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
         action: "FIND_APPROACHES",
     }));
     if (r1 != "success") {
@@ -77,7 +77,7 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     if (!helper.twoFactorMethodHook) {
         throw new LoginError("Required to select 2FA method");
     }
-    const method = await helper.twoFactorMethodHook(hasWeChatBool, phone);
+    const method = await helper.twoFactorMethodHook(o1.hasWeChatBool, o1.phone);
     if (method === undefined) {
         throw new LoginError("2FA required");
     }
@@ -95,7 +95,7 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     if (code === undefined) {
         throw new LoginError("2FA required");
     }
-    const { result: r3, msg: m3, object: { redirectUrl } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
+    const { result: r3, msg: m3, object: o3 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
         action: "VERITY_CODE",
         vericode: code,
     }));
@@ -115,7 +115,7 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
             }
         }
     }
-    return await uFetch(ID_HOST_URL + redirectUrl);
+    return await uFetch(ID_HOST_URL + o3.redirectUrl);
 };
 
 export const login = async (
