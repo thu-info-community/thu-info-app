@@ -67,6 +67,57 @@ export const getCsrfToken = async () => {
 
 let outstandingLoginPromise: Promise<void> | undefined = undefined;
 
+const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
+    const { result: r1, msg: m1, object: { hasWeChatBool, phone } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
+        action: "FIND_APPROACHES",
+    }));
+    if (r1 != "success") {
+        throw new LoginError(m1);
+    }
+    if (!helper.twoFactorMethodHook) {
+        throw new LoginError("Required to select 2FA method");
+    }
+    const method = await helper.twoFactorMethodHook(hasWeChatBool, phone);
+    if (method === undefined) {
+        throw new LoginError("2FA required");
+    }
+    const { result: r2, msg: m2 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
+        action: "SEND_CODE",
+        type: method,
+    }));
+    if (r2 != "success") {
+        throw new LoginError(m2);
+    }
+    if (!helper.twoFactorAuthHook) {
+        throw new LoginError("2FA required");
+    }
+    const code = await helper.twoFactorAuthHook();
+    if (code === undefined) {
+        throw new LoginError("2FA required");
+    }
+    const { result: r3, msg: m3, object: { redirectUrl } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
+        action: "VERITY_CODE",
+        vericode: code,
+    }));
+    if (r3 != "success") {
+        throw new LoginError(m3);
+    }
+    if (helper.trustFingerprintHook) {
+        const trustFingerprint = await helper.trustFingerprintHook();
+        if (trustFingerprint) {
+            const { result: r4, msg: m4 } = JSON.parse(await uFetch(SAVE_FINGER_URL, {
+                fingerprint: helper.fingerprint,
+                deviceName: "THU Info APP",
+                radioVal: "是",
+            }));
+            if (r4 != "success") {
+                throw new LoginError(m4);
+            }
+        }
+    }
+    return await uFetch(ID_HOST_URL + redirectUrl);
+};
+
 export const login = async (
     helper: InfoHelper,
     userId: string,
@@ -103,54 +154,7 @@ export const login = async (
                         i_captcha: "",
                     });
                     if (response.includes("二次认证")) {
-                        const { result: r1, msg: m1, object: { hasWeChatBool, phone } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
-                            action: "FIND_APPROACHES",
-                        }));
-                        if (r1 != "success") {
-                            throw new LoginError(m1);
-                        }
-                        if (!helper.twoFactorMethodHook) {
-                            throw new LoginError("Required to select 2FA method");
-                        }
-                        const method = await helper.twoFactorMethodHook(hasWeChatBool, phone);
-                        if (method === undefined) {
-                            throw new LoginError("2FA required");
-                        }
-                        const { result: r2, msg: m2 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
-                            action: "SEND_CODE",
-                            type: method,
-                        }));
-                        if (r2 != "success") {
-                            throw new LoginError(m2);
-                        }
-                        if (!helper.twoFactorAuthHook) {
-                            throw new LoginError("2FA required");
-                        }
-                        const code = await helper.twoFactorAuthHook();
-                        if (code === undefined) {
-                            throw new LoginError("2FA required");
-                        }
-                        const { result: r3, msg: m3, object: { redirectUrl } } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
-                            action: "VERITY_CODE",
-                            vericode: code,
-                        }));
-                        if (r3 != "success") {
-                            throw new LoginError(m3);
-                        }
-                        if (helper.trustFingerprintHook) {
-                            const trustFingerprint = await helper.trustFingerprintHook();
-                            if (trustFingerprint) {
-                                const { result: r4, msg: m4 } = JSON.parse(await uFetch(SAVE_FINGER_URL, {
-                                    fingerprint: helper.fingerprint,
-                                    deviceName: "THU Info APP",
-                                    radioVal: "是",
-                                }));
-                                if (r4 != "success") {
-                                    throw new LoginError(m4);
-                                }
-                            }
-                        }
-                        response = await uFetch(ID_HOST_URL + redirectUrl);
+                        response = await twoFactorAuth(helper);
                     }
                     if (!response.includes("登录成功。正在重定向到")) {
                         const $ = cheerio.load(response);
@@ -211,22 +215,25 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     case "id": {
         const idBaseUrl = policy === "card" ? ID_BASE_URL : WEB_VPN_ID_BASE_URL;
         const idLoginUrl = policy === "card" ? ID_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
-        await uFetch(idBaseUrl + payload);
-        let response = await uFetch(idLoginUrl, {
-            i_user: helper.userId,
-            i_pass: helper.password,
-            i_captcha: "",
-        });
-        if (!response.includes("登录成功。正在重定向到")) {
+        let response = "";
+        for (let i = 0; i < 2; i++) {
             await uFetch(idBaseUrl + payload);
             response = await uFetch(idLoginUrl, {
                 i_user: helper.userId,
                 i_pass: helper.password,
+                fingerPrint: helper.fingerprint,
+                fingerGenPrint: "",
                 i_captcha: "",
             });
-            if (!response.includes("登录成功。正在重定向到")) {
-                throw new IdAuthError();
+            if (response.includes("二次认证")) {
+                response = await twoFactorAuth(helper);
             }
+            if (response.includes("登录成功。正在重定向到")) {
+                break;
+            }
+        }
+        if (!response.includes("登录成功。正在重定向到")) {
+            throw new IdAuthError();
         }
         const redirectUrl = cheerio("a", response).attr().href;
 
@@ -237,11 +244,16 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (data.includes("sign_out")) return data;
         const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr().value;
         await uFetch(GITLAB_AUTH_URL, {authenticity_token});
-        const response = await uFetch(ID_LOGIN_URL, {
+        let response = await uFetch(ID_LOGIN_URL, {
             i_user: helper.userId,
             i_pass: helper.password,
+            fingerPrint: helper.fingerprint,
+            fingerGenPrint: "",
             i_captcha: "",
         });
+        if (response.includes("二次认证")) {
+            response = await twoFactorAuth(helper);
+        }
         if (!response.includes("登录成功。正在重定向到")) {
             throw new IdAuthError();
         }
