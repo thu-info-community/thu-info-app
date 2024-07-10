@@ -22,7 +22,7 @@ import {
 } from "../mocks/app";
 import {Feedback} from "../models/app/feedback";
 
-export const appStartupStat = async (helper: InfoHelper): Promise<undefined> =>
+export const appStartupStat = async (helper: InfoHelper): Promise<void> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
@@ -33,7 +33,7 @@ export const appStartupStat = async (helper: InfoHelper): Promise<undefined> =>
         undefined,
     );
 
-export const appUsageStat = async (helper: InfoHelper, usage: number): Promise<undefined> =>
+export const appUsageStat = async (helper: InfoHelper, usage: number): Promise<void> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
