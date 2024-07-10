@@ -13,7 +13,7 @@ import {
 import Snackbar from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
 import {scheduleClear} from "../../redux/slices/schedule";
-import {logout} from "../../redux/slices/auth";
+import {login, logout} from "../../redux/slices/auth";
 import {RoundedView} from "../../components/views";
 import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
@@ -140,6 +140,9 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								try {
 									await helper.logout();
 								} catch (e) {}
+								dispatch(
+									login({fingerprint: helper.fingerprint, userId, password}),
+								);
 								await helper.login({userId, password});
 								Snackbar.show({
 									text: getStr("success"),
