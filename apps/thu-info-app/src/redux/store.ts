@@ -217,6 +217,10 @@ const persistConfig = {
 						campusCard: state.campusCard ?? defaultCampusCard,
 						timetable: state.timetable ?? defaultTimetable,
 						announcement: state.announcement ?? defaultAnnouncement,
+						auth: {
+							...state.auth,
+							fingerprint: state.auth.fingerprint ?? uuidv4().replace(/-/g, ""),
+						},
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),
