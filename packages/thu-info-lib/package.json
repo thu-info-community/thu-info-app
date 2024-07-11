@@ -58,6 +58,7 @@
         "@types/cheerio": "0.22.35",
         "@types/crypto-js": "4.2.2",
         "@types/he": "1.2.3",
+        "@types/sm-crypto": "^0.3.4",
         "@typescript-eslint/eslint-plugin": "*",
         "@typescript-eslint/parser": "*",
         "eslint": "8.57.0",
