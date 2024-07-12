@@ -85,7 +85,7 @@ export const TwoFactorAuthScreen = ({
 						marginVertical: 16,
 						borderRadius: 20,
 					}}>
-					<Text style={{color: colors.text, margin: 16, fontSize: 20}}>
+					<Text style={{color: colors.text, marginBottom: 20, fontSize: 20}}>
 						{getStr("captcha")}
 					</Text>
 					<CodeField
@@ -110,10 +110,10 @@ export const TwoFactorAuthScreen = ({
 							<View
 								key={index}
 								style={{
-									width: 55,
-									height: 73,
-									paddingHorizontal: 12,
-									paddingVertical: 8,
+									width: "12.5%",
+									aspectRatio: 0.67,
+									paddingHorizontal: "auto",
+									paddingVertical: "auto",
 									borderWidth: 2,
 									borderColor: isFocused ? colors.mainTheme : colors.themeGrey,
 									borderRadius: 12,
