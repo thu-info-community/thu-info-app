@@ -24,6 +24,7 @@ export default {
 	logoutSuccessful: "Successfully logged out",
 	logoutFailed: "Failed to logout",
 	newVersionAvailable: "New version available.",
+	newVersionAvailableClick: "New version available, click to download!",
 	ignoreThisVersion: "Forget",
 	dismiss: "Dismiss",
 	download: "Download",

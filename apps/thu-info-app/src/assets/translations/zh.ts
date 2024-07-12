@@ -24,6 +24,7 @@ export default {
 	logoutSuccessful: "成功退出",
 	logoutFailed: "退出失败",
 	newVersionAvailable: "有新版本可用",
+	newVersionAvailableClick: "有新版本可用，点击更新！",
 	ignoreThisVersion: "忽略该版本",
 	dismiss: "下次一定",
 	download: "下载",

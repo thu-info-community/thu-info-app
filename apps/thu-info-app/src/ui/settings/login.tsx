@@ -29,6 +29,8 @@ import {setCrTimetable} from "../../redux/slices/timetable";
 import {configSet} from "../../redux/slices/config";
 import {updateAnnouncements} from "../../redux/slices/announcement";
 import {setBalance} from "../../redux/slices/campusCard";
+import {gt} from "semver";
+import VersionNumber from "react-native-version-number";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -41,6 +43,14 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
+
+	const doNotRemindSemver =
+		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
+	const latestVersion =
+		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const haveNewerVersion =
+		gt(latestVersion, VersionNumber.appVersion) &&
+		gt(latestVersion, doNotRemindSemver);
 
 	const performLogin = () => {
 		setProcessing(true);
@@ -145,7 +155,14 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() => Linking.openURL("https://app.cs.tsinghua.edu.cn")}>
-					<Text style={style.websiteTextStyle}>app.cs.tsinghua.edu.cn</Text>
+					<Text
+						style={
+							haveNewerVersion ? style.newVersionStyle : style.websiteTextStyle
+						}>
+						{haveNewerVersion
+							? getStr("newVersionAvailableClick")
+							: "app.cs.tsinghua.edu.cn"}
+					</Text>
 				</TouchableOpacity>
 			</View>
 			{processing ? (
@@ -226,6 +243,11 @@ const styles = themedStyles((theme) => {
 
 		websiteTextStyle: {
 			color: theme.colors.primary,
+			marginTop: 20,
+		},
+
+		newVersionStyle: {
+			color: theme.colors.accent,
 			marginTop: 20,
 		},
 
