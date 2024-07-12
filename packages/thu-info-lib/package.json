@@ -51,12 +51,14 @@
         "he": "^1.2.0",
         "iconv-lite": "0.6.3",
         "image-size": "^1.0.1",
-        "jspdf": "^2.5.1"
+        "jspdf": "^2.5.1",
+        "sm-crypto": "^0.3.13"
     },
     "devDependencies": {
         "@types/cheerio": "0.22.35",
         "@types/crypto-js": "4.2.2",
         "@types/he": "1.2.3",
+        "@types/sm-crypto": "^0.3.4",
         "@typescript-eslint/eslint-plugin": "*",
         "@typescript-eslint/parser": "*",
         "eslint": "8.57.0",
