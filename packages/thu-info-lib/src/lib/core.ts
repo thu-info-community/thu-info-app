@@ -41,6 +41,8 @@ const HOST_MAP: { [key: string]: string } = {
     "thos": "77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4",
 };
 
+const SM2_MAGIC_NUMBER = "04";
+
 const parseUrl = (urlIn: string) => {
     const rawRes = /http:\/\/(\d+.\d+.\d+.\d+):(\d+)\/(.+)/g.exec(urlIn);
     if (rawRes !== null && rawRes[1] !== undefined && rawRes[2] !== undefined && rawRes[3] !== undefined) {
@@ -147,12 +149,12 @@ export const login = async (
                 (async () => {
                     await uFetch(LOGIN_URL);
                     const sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
-                    if (sm2PublicKey === undefined) {
+                    if (sm2PublicKey === "") {
                         throw new LoginError("Failed to get public key.");
                     }
                     let response = await uFetch(ID_LOGIN_URL, {
                         i_user: helper.userId,
-                        i_pass: sm2.doEncrypt(helper.password, sm2PublicKey),
+                        i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
                         fingerPrint: helper.fingerprint,
                         fingerGenPrint: "",
                         i_captcha: "",
@@ -222,12 +224,12 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let response = "";
         for (let i = 0; i < 2; i++) {
             const sm2PublicKey = cheerio.load(await uFetch(idBaseUrl + payload))("#sm2publicKey").text();
-            if (sm2PublicKey === undefined) {
+            if (sm2PublicKey === "") {
                 throw new LoginError("Failed to get public key.");
             }
             response = await uFetch(idLoginUrl, {
                 i_user: helper.userId,
-                i_pass:  sm2.doEncrypt(helper.password, sm2PublicKey),
+                i_pass:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
                 fingerPrint: helper.fingerprint,
                 fingerGenPrint: "",
                 i_captcha: "",
@@ -251,12 +253,12 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (data.includes("sign_out")) return data;
         const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr().value;
         const sm2PublicKey = cheerio.load(await uFetch(GITLAB_AUTH_URL, {authenticity_token}))("#sm2publicKey").text();
-        if (sm2PublicKey === undefined) {
+        if (sm2PublicKey === "") {
             throw new LoginError("Failed to get public key.");
         }
         let response = await uFetch(ID_LOGIN_URL, {
             i_user: helper.userId,
-            i_pass: sm2.doEncrypt(helper.password, sm2PublicKey),
+            i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
             fingerPrint: helper.fingerprint,
             fingerGenPrint: "",
             i_captcha: "",
