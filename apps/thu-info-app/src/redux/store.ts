@@ -1,6 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {combineReducers} from "redux";
-import {authReducer, AuthState} from "./slices/auth";
+import {authReducer, AuthState, defaultAuth} from "./slices/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	persistStore,
@@ -23,7 +23,6 @@ import {
 	Schedule,
 	scheduleTimeAdd,
 } from "@thu-info/lib/src/models/schedule/schedule";
-import {v4 as uuidv4} from "uuid";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,
@@ -51,6 +50,8 @@ import {
 } from "./slices/campusCard";
 
 export const helper = new InfoHelper();
+
+helper.fingerprint = defaultAuth.fingerprint;
 
 helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
@@ -134,7 +135,7 @@ const authTransform = createTransform(
 	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
-		helper.fingerprint = a.fingerprint ?? uuidv4().replace(/-/g, "");
+		helper.fingerprint = a.fingerprint;
 		return a;
 	},
 	{
@@ -219,7 +220,9 @@ const persistConfig = {
 						announcement: state.announcement ?? defaultAnnouncement,
 						auth: {
 							...state.auth,
-							fingerprint: state.auth.fingerprint ?? uuidv4().replace(/-/g, ""),
+							fingerprint: state.auth.fingerprint
+								? state.auth.fingerprint
+								: defaultAuth.fingerprint,
 						},
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },

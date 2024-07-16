@@ -140,9 +140,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								try {
 									await helper.logout();
 								} catch (e) {}
-								dispatch(
-									login({fingerprint: helper.fingerprint, userId, password}),
-								);
+								dispatch(login({userId, password}));
 								await helper.login({userId, password});
 								Snackbar.show({
 									text: getStr("success"),

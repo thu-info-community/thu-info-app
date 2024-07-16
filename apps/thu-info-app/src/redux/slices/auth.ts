@@ -1,31 +1,40 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
+import {v4 as uuidv4} from "uuid";
 
 export interface AuthState {
 	userId: string;
 	password: string;
-	fingerprint: string | undefined;
+	fingerprint: string;
 }
 
 const initialState: AuthState = {
 	userId: "",
 	password: "",
-	fingerprint: undefined,
+	fingerprint: uuidv4().replace(/-/g, ""),
 };
+
+export const defaultAuth = initialState;
 
 export const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		login: (state, {payload}: PayloadAction<AuthState>) => {
+		login: (
+			state,
+			{
+				payload,
+			}: PayloadAction<{
+				userId: string;
+				password: string;
+			}>,
+		) => {
 			state.userId = payload.userId;
 			state.password = payload.password;
-			state.fingerprint = payload.fingerprint;
 		},
 		logout: (state) => {
 			state.userId = "";
 			state.password = "";
-			state.fingerprint = undefined;
 		},
 	},
 });

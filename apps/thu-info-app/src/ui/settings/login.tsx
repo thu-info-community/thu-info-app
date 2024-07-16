@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {v4 as uuidv4} from "uuid";
 import {helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import {BlurView} from "@react-native-community/blur";
@@ -54,11 +53,10 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const performLogin = () => {
 		setProcessing(true);
-		helper.fingerprint = auth.fingerprint ?? uuidv4().replace(/-/g, "");
 		helper
 			.login({userId, password})
 			.then(() => {
-				dispatch(login({fingerprint: helper.fingerprint, userId, password}));
+				dispatch(login({userId, password}));
 			})
 			.then(() =>
 				helper
