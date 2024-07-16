@@ -13,6 +13,8 @@ export default {
 		"To ensure account security, a second verification is required. Please choose one of the following ways to get a verification code:",
 	twoFactorWechat: "WeChat Enterprise Account",
 	twoFactorMobile: "SMS ({0})",
+	twoFactorTroubleshooting:
+		"Having trouble? Visit https://id.tsinghua.edu.cn/ to bind your 2FA devices.",
 	twoFactorTrust: "Do you want to mark this device as a trusted device?",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",

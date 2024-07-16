@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from "react-native";
+import {View, Text, TouchableOpacity, Linking} from "react-native";
 import {useEffect, useState} from "react";
 import {futures} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -77,6 +77,17 @@ export const TwoFactorAuthScreen = ({
 					</TouchableOpacity>
 				)}
 			</RoundedView>
+			<TouchableOpacity
+				onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
+				<Text
+					style={{
+						color: theme.colors.primary,
+						fontSize: 16,
+						margin: 16,
+					}}>
+					{getStr("twoFactorTroubleshooting")}
+				</Text>
+			</TouchableOpacity>
 			{method !== undefined && (
 				<RoundedView
 					style={{
