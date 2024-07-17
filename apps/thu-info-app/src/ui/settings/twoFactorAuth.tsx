@@ -46,7 +46,7 @@ export const TwoFactorAuthScreen = ({
 			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
 				{getStr("twoFactorPrompt")}
 			</Text>
-			{params.hasWeChatBool || params.phone !== null ? (
+			{(params.hasWeChatBool || params.phone !== null) && (
 				<RoundedView style={style.rounded}>
 					{params.hasWeChatBool && (
 						<TouchableOpacity
@@ -82,19 +82,24 @@ export const TwoFactorAuthScreen = ({
 						</TouchableOpacity>
 					)}
 				</RoundedView>
-			) : (
-				<TouchableOpacity
-					onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
-					<Text
-						style={{
-							color: theme.colors.primary,
-							fontSize: 16,
-							margin: 16,
-						}}>
-						{getStr("twoFactorTroubleshooting")}
-					</Text>
-				</TouchableOpacity>
 			)}
+
+			{method === undefined &&
+				(!params.hasWeChatBool || params.phone === null) && (
+					<TouchableOpacity
+						onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
+						<Text
+							style={{
+								color: theme.colors.primary,
+								fontSize: 16,
+								margin: 16,
+							}}>
+							{!params.hasWeChatBool && params.phone === null
+								? getStr("noTwoFactorMethod")
+								: getStr("missingTwoFactorMethod")}
+						</Text>
+					</TouchableOpacity>
+				)}
 
 			{method !== undefined && (
 				<RoundedView
