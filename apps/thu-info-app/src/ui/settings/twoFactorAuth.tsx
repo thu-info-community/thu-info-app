@@ -46,48 +46,61 @@ export const TwoFactorAuthScreen = ({
 			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
 				{getStr("twoFactorPrompt")}
 			</Text>
-			<RoundedView style={style.rounded}>
-				{params.hasWeChatBool && (
+			{(params.hasWeChatBool || params.phone !== null) && (
+				<RoundedView style={style.rounded}>
+					{params.hasWeChatBool && (
+						<TouchableOpacity
+							style={style.touchable}
+							disabled={method !== undefined}
+							onPress={() => {
+								setMethod("wechat");
+								futures.twoFactorMethodFuture?.("wechat");
+								futures.twoFactorMethodFuture = undefined;
+							}}>
+							<Text style={style.text}>{getStr("twoFactorWechat")}</Text>
+							{method === "wechat" && <IconCheck width={18} height={18} />}
+						</TouchableOpacity>
+					)}
+
+					{params.hasWeChatBool && params.phone !== null && (
+						<View style={style.separator} />
+					)}
+
+					{params.phone !== null && (
+						<TouchableOpacity
+							style={style.touchable}
+							disabled={method !== undefined}
+							onPress={() => {
+								setMethod("mobile");
+								futures.twoFactorMethodFuture?.("mobile");
+								futures.twoFactorMethodFuture = undefined;
+							}}>
+							<Text style={style.text}>
+								{getStr("twoFactorMobile").format(params.phone.toString())}
+							</Text>
+							{method === "mobile" && <IconCheck width={18} height={18} />}
+						</TouchableOpacity>
+					)}
+				</RoundedView>
+			)}
+
+			{method === undefined &&
+				(!params.hasWeChatBool || params.phone === null) && (
 					<TouchableOpacity
-						style={style.touchable}
-						disabled={method !== undefined}
-						onPress={() => {
-							setMethod("wechat");
-							futures.twoFactorMethodFuture?.("wechat");
-							futures.twoFactorMethodFuture = undefined;
-						}}>
-						<Text style={style.text}>{getStr("twoFactorWechat")}</Text>
-						{method === "wechat" && <IconCheck width={18} height={18} />}
-					</TouchableOpacity>
-				)}
-				<View style={style.separator} />
-				{params.phone !== null && (
-					<TouchableOpacity
-						style={style.touchable}
-						disabled={method !== undefined}
-						onPress={() => {
-							setMethod("mobile");
-							futures.twoFactorMethodFuture?.("mobile");
-							futures.twoFactorMethodFuture = undefined;
-						}}>
-						<Text style={style.text}>
-							{getStr("twoFactorMobile").format(params.phone.toString())}
+						onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
+						<Text
+							style={{
+								color: theme.colors.primary,
+								fontSize: 16,
+								margin: 16,
+							}}>
+							{!params.hasWeChatBool && params.phone === null
+								? getStr("noTwoFactorMethod")
+								: getStr("missingTwoFactorMethod")}
 						</Text>
-						{method === "mobile" && <IconCheck width={18} height={18} />}
 					</TouchableOpacity>
 				)}
-			</RoundedView>
-			<TouchableOpacity
-				onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
-				<Text
-					style={{
-						color: theme.colors.primary,
-						fontSize: 16,
-						margin: 16,
-					}}>
-					{getStr("twoFactorTroubleshooting")}
-				</Text>
-			</TouchableOpacity>
+
 			{method !== undefined && (
 				<RoundedView
 					style={{

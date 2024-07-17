@@ -13,8 +13,10 @@ export default {
 		"为保障您的账号安全，本次登录需要进行二次验证。请选择以下方式之一获取验证码：",
 	twoFactorWechat: "清华大学信息服务（企业微信）",
 	twoFactorMobile: "短信验证（{0}）",
-	twoFactorTroubleshooting:
-		"无法接收验证码？请前往 https://id.tsinghua.edu.cn/ 绑定二次认证设备。",
+	noTwoFactorMethod:
+		"当前无可用二次认证设备。请前往 https://id.tsinghua.edu.cn/ 绑定二次认证设备。",
+	missingTwoFactorMethod:
+		"找不到想要的二次认证方式？前往https://id.tsinghua.edu.cn/ 绑定。",
 	twoFactorTrust: "是否将本设备标记为信任设备？",
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",
