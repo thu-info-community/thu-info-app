@@ -157,7 +157,11 @@ export const NetworkOnlineDevicesScreen = () => {
 					}>
 					{devices.length > 0 ? (
 						devices.map((d) => (
-							<DeviceCard refresh={refresh} device={d} key={d.ip4} />
+							<DeviceCard
+								refresh={refresh}
+								device={d}
+								key={d.ip4 + "@" + d.nasIp}
+							/>
 						))
 					) : (
 						<Text
