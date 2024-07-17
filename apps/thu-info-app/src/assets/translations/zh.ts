@@ -14,7 +14,7 @@ export default {
 	twoFactorWechat: "清华大学信息服务（企业微信）",
 	twoFactorMobile: "短信验证（{0}）",
 	twoFactorTroubleshooting:
-		"无法接收验证码？请前往 https://id.tsinghua.edu.cn/ 绑定二次认证设备。",
+		"当前无可用二次认证设备。请前往 https://id.tsinghua.edu.cn/ 绑定二次认证设备。",
 	twoFactorTrust: "是否将本设备标记为信任设备？",
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",

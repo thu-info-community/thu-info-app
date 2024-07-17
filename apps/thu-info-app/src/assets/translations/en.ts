@@ -14,7 +14,7 @@ export default {
 	twoFactorWechat: "WeChat Enterprise Account",
 	twoFactorMobile: "SMS ({0})",
 	twoFactorTroubleshooting:
-		"Having trouble? Visit https://id.tsinghua.edu.cn/ to bind your 2FA devices.",
+		"No available 2FA method. Please visit https://id.tsinghua.edu.cn/ to bind your 2FA devices.",
 	twoFactorTrust: "Do you want to mark this device as a trusted device?",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",
