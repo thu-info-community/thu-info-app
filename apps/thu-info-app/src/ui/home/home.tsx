@@ -315,6 +315,8 @@ export const AnnouncementSection = () => {
 				{announcements.map(
 					({id, read, title, content, visibleNotAfter, visibleExact}) => {
 						if (
+							visibleNotAfter === undefined ||
+							visibleExact === undefined ||
 							!gt(version, visibleNotAfter) ||
 							visibleExact.split(",").includes(version)
 						) {
