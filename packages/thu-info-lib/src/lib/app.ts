@@ -54,6 +54,8 @@ export const getLatestAnnounces = async (helper: InfoHelper): Promise<Announceme
             title: e.title,
             content: e.content,
             createdAt: Date.parse(e.createdTime),
+            visibleNotAfter: e.visibleNotAfter,
+            visibleExact: e.visibleExact
         }))),
         MOCK_LATEST_ANNOUNCEMENTS,
     );
