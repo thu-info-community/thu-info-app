@@ -64,6 +64,8 @@ import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
 import IconCalendar from "../../assets/icons/IconCalendar";
 import {setBalance} from "../../redux/slices/campusCard";
+import {gt} from "semver";
+import VersionNumber from "react-native-version-number";
 
 const iconSize = 40;
 
@@ -303,21 +305,35 @@ export const AnnouncementSection = () => {
 	if (announcements.length === 0) {
 		return null;
 	}
+
+	const version = VersionNumber.appVersion;
+
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("announcements")}</Text>
 			<View style={style.SectionContentContainer}>
-				{announcements.map(({id, read, title, content}) => (
-					<TouchableOpacity
-						onPress={() => dispatch(toggleReadStatus(id))}
-						style={{marginVertical: 4, marginHorizontal: 12}}
-						key={id}>
-						<Text style={{fontWeight: "bold", color: colors.text}}>
-							{title} {read ? "(已读)" : ""}
-						</Text>
-						{!read && <Text style={{color: colors.text}}>{content}</Text>}
-					</TouchableOpacity>
-				))}
+				{announcements.map(
+					({id, read, title, content, visibleNotAfter, visibleExact}) => {
+						if (
+							!gt(version, visibleNotAfter) ||
+							visibleExact.split(",").includes(version)
+						) {
+							return (
+								<TouchableOpacity
+									onPress={() => dispatch(toggleReadStatus(id))}
+									style={{marginVertical: 4, marginHorizontal: 12}}
+									key={id}>
+									<Text style={{fontWeight: "bold", color: colors.text}}>
+										{title} {read ? "(已读)" : ""}
+									</Text>
+									{!read && <Text style={{color: colors.text}}>{content}</Text>}
+								</TouchableOpacity>
+							);
+						} else {
+							return null;
+						}
+					},
+				)}
 			</View>
 		</View>
 	);

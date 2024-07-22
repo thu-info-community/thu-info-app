@@ -3,4 +3,6 @@ export interface Announcement {
     title: string,
     content: string,
     createdAt: number,
+    visibleNotAfter: string,
+    visibleExact: string,
 }
