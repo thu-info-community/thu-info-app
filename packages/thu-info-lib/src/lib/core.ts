@@ -174,10 +174,11 @@ export const login = async (
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
                 })().then(resolve, (e: any) => {
-                    const loginError = new LoginError(e?.message);
-                    helper.loginErrorHook && helper.loginErrorHook(loginError);
+                    if (e instanceof LoginError) {
+                        helper.loginErrorHook && helper.loginErrorHook(e);
+                    }
                     outstandingLoginPromise = undefined;
-                    reject(loginError);
+                    reject(e);
                 });
             });
         }
