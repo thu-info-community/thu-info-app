@@ -2452,6 +2452,11 @@
   resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.74.85.tgz#1abfeeaec5ff24b6a1b3e2296e760359fce47739"
   integrity sha512-gp4Rg9le3lVZeW7Cie6qLfekvRKZuhJ3LKgi1SFB4N154z1wIclypAJXVXgWBsy8JKJfTwRI+sffC4qZDlvzrg==
 
+"@react-native/js-polyfills@0.74.86":
+  version "0.74.86"
+  resolved "https://registry.yarnpkg.com/@react-native/js-polyfills/-/js-polyfills-0.74.86.tgz#5c89c2febfb72930fee68d3eb04ba690f82a8403"
+  integrity sha512-Yrsj4a1rTkk618LUJJxOWFnyAZR3sHmXJwcj4qupkJs+ou3aDkixfXgVVrvQP39iBptaQvCpo7PSqs+LjSNYbA==
+
 "@react-native/metro-babel-transformer@0.74.85":
   version "0.74.85"
   resolved "https://registry.yarnpkg.com/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.74.85.tgz#d530d9a6bd319ece226a2d6aaa00b464a1928089"
@@ -2462,13 +2467,23 @@
     hermes-parser "0.19.1"
     nullthrows "^1.1.1"
 
-"@react-native/metro-config@0.74.85":
-  version "0.74.85"
-  resolved "https://registry.yarnpkg.com/@react-native/metro-config/-/metro-config-0.74.85.tgz#41d14320dc78f62c03eb32cf3091f78bb619012a"
-  integrity sha512-NQso5jKTdpwn0Ty0qzWb2ia9oc/w6NSno1SEiWer7ThUOu905rdHub0vRFOGFOmqvjwNIhp5GVqZ3Oi3QuGZ5w==
+"@react-native/metro-babel-transformer@0.74.86":
+  version "0.74.86"
+  resolved "https://registry.yarnpkg.com/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.74.86.tgz#d67d3bf1699fcf834a70155635b30ae9f667b6dd"
+  integrity sha512-/9qN5zcnTHGDkC4jWibnoGmRnzDXiurl5wmkvspgnsdrJINN6eGpK8sdIn6nrHFOuPlp3Metqw3HkxbuAfNUXw==
   dependencies:
-    "@react-native/js-polyfills" "0.74.85"
-    "@react-native/metro-babel-transformer" "0.74.85"
+    "@babel/core" "^7.20.0"
+    "@react-native/babel-preset" "0.74.86"
+    hermes-parser "0.19.1"
+    nullthrows "^1.1.1"
+
+"@react-native/metro-config@0.74.86":
+  version "0.74.86"
+  resolved "https://registry.yarnpkg.com/@react-native/metro-config/-/metro-config-0.74.86.tgz#9d5b9873c07c16f1a968a506fac5065b0418a6c2"
+  integrity sha512-s/VEkdwZZmxBYbWSJJ9ymL78kvyBaeoT5l+/kh8D9nUg+YGaTUmnUJ3BiHh5O9o89dks3kpmCPL2Vb9gNBnMHg==
+  dependencies:
+    "@react-native/js-polyfills" "0.74.86"
+    "@react-native/metro-babel-transformer" "0.74.86"
     metro-config "^0.80.3"
     metro-runtime "^0.80.3"
 
