@@ -60,7 +60,7 @@ jobs:
           sed -i "/preventEmulator/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
           sed -i "/verifySignature/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           build-root-directory: apps/thu-info-app/android
       - name: Build android release

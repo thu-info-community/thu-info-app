@@ -60,7 +60,7 @@ jobs:
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in apps/thu-info-app/android/app/THUInfo.jks.enc -out apps/thu-info-app/android/app/THUInfo.jks -d
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           build-root-directory: apps/thu-info-app/android
       - name: Build android release
