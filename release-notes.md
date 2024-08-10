@@ -3,4 +3,3 @@
 
 ## @thu-info/lib
 - fix: fixed a case where non-`LoginError`s trigger `loginErrorHook` unexpectedly
-- fix: removed a deprecated dependency `@types/cheerio`
