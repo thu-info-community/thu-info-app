@@ -183,7 +183,7 @@ export const makeSportsReservation = async (
         allFieldTime: `${resHashId}#${date}`,
     }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
     const paymentApiHtml = await uFetch(
-        paymentResultForm.attr().action, // TODO found a bug here: attr() returns undefined
+        paymentResultForm.attr("action")!,
         paymentResultForm.serialize() as never as object,
         60000,
         "UTF-8",
@@ -296,7 +296,7 @@ export const paySportsReservation = async (
         xm: receiptTitle ?? "清华大学",
     }, 60000, "GBK").then((s) => cheerio.load(s)("form"));
     const paymentApiHtml = await uFetch(
-        paymentResultForm.attr().action,
+        paymentResultForm.attr("action")!,
         paymentResultForm.serialize() as never as object,
         60000,
         "UTF-8",
