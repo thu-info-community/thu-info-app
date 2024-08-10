@@ -167,7 +167,7 @@ export const login = async (
                         const message = $("#msg_note").text().trim();
                         throw new LoginError(message);
                     }
-                    const redirectUrl = await getRedirectUrl(cheerio("a", response).attr().href);
+                    const redirectUrl = await getRedirectUrl(cheerio("a", response).attr("href")!);
                     if (redirectUrl === LOGIN_URL) {
                         throw new LoginError("登录失败，请稍后重试。");
                     }
@@ -245,14 +245,14 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (!response.includes("登录成功。正在重定向到")) {
             throw new IdAuthError();
         }
-        const redirectUrl = cheerio("a", response).attr().href;
+        const redirectUrl = cheerio("a", response).attr("href")!;
 
         return await uFetch(redirectUrl);
     }
     case "gitlab": {
         const data = await uFetch(GITLAB_LOGIN_URL);
         if (data.includes("sign_out")) return data;
-        const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr().value;
+        const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr("value")!;
         const sm2PublicKey = cheerio.load(await uFetch(GITLAB_AUTH_URL, {authenticity_token}))("#sm2publicKey").text();
         if (sm2PublicKey === "") {
             throw new LoginError("Failed to get public key.");
@@ -270,7 +270,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (!response.includes("登录成功。正在重定向到")) {
             throw new IdAuthError();
         }
-        const redirectUrl = cheerio("a", response).attr().href;
+        const redirectUrl = cheerio("a", response).attr("href")!;
         return await uFetch(redirectUrl);
     }
     case "cr": {

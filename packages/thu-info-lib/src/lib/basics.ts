@@ -101,7 +101,7 @@ export const naiveSendMail = async (helper: InfoHelper, subject: string, content
             if (param === undefined) {
                 throw new LibError();
             } else {
-                const composeUrl = EMAIL_BASE_URL + cheerio.load(param)(".compose").attr().href;
+                const composeUrl = EMAIL_BASE_URL + cheerio.load(param)(".compose").attr("href")!;
                 const composeHtml = await uFetch(composeUrl);
                 const $ = cheerio.load(composeHtml);
                 const form: {[key: string]: string} = {};
@@ -123,7 +123,7 @@ export const naiveSendMail = async (helper: InfoHelper, subject: string, content
                 form.btnAddAttach = "0";
                 form.btnCreateImg = "0";
                 form.signSet = "-1";
-                const result = await uFetch(EMAIL_BASE_URL + "compose/" + $("#sendmail").attr().action + "&action=deliver&needAudit=undefined&smsAddrs=", form);
+                const result = await uFetch(EMAIL_BASE_URL + "compose/" + $("#sendmail").attr("action")! + "&action=deliver&needAudit=undefined&smsAddrs=", form);
                 if (!result.includes("savercpt.jsp")) {
                     throw new LibError();
                 }
