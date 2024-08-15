@@ -600,6 +600,5 @@ export default {
 		"Special thanks to gtxzsxxk@github.com for the inspiration of the current UI.",
 	washerNoticeTitle: "Notice",
 	washerNotice:
-		// eslint-disable-next-line prettier/prettier
 		"Service provider has stopped maintaining status for new washers, so any feedback about missing washing machines will not be accepted. Data in this page comes solely from \"华清捷利\" mini program, thus any feedback about extending the page's functionality will not be accepted.",
 };
