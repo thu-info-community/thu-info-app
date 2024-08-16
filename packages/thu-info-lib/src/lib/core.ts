@@ -205,15 +205,11 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
         if (url.includes(HOST_MAP["dzpj"])) {
             const roamHtml = await uFetch(url);
-            const username = /\("username"\).value = '(.+?)';/.exec(roamHtml);
-            if (username === null || username[1] === undefined) {
-                throw new LibError("Failed to get username when roaming to fa-online");
+            const ticket = /\("ticket"\).value = '(.+?)';/.exec(roamHtml);
+            if (ticket === null || ticket[1] === undefined) {
+                throw new LibError("Failed to get ticket when roaming to fa-online");
             }
-            const password = /\("password"\).value = '(.+?)';/.exec(roamHtml);
-            if (password === null || password[1] === undefined) {
-                throw new LibError("Failed to get password when roaming to fa-online");
-            }
-            return await uFetch(INVOICE_LOGIN_URL, {username: username[1], password: password[1]});
+            return await uFetch(INVOICE_LOGIN_URL, {ticket: ticket[1]});
         }
         return await uFetch(url);
     }
