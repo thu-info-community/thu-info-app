@@ -9,7 +9,7 @@ import {
     DORM_LOGIN_URL_PREFIX,
     CHANGE_HOME_PASSWORD_URL,
 } from "../constants/strings";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {Element} from "domhandler";
 import {generalGetPayCode} from "../utils/alipay";
@@ -35,7 +35,7 @@ export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<
                 weixin_user_authenticateCtrl1$btnLogin: "登录",
             });
             const response = await uFetch(DORM_SCORE_URL);
-            const chart = cheerio("#weixin_health_linechartCtrl1_Chart1", response);
+            const chart = cheerio.load(response)("#weixin_health_linechartCtrl1_Chart1");
             if (chart.length !== 1) {
                 throw new DormAuthError();
             }
@@ -65,7 +65,7 @@ export const getEleRechargePayCode = async (
         room: $("input[name=room]").attr("value")!,
         student_id: $("input[name=student_id]").attr("value")!,
         banktype: "alipay",
-    }, 60000, "GBK").then((s) => cheerio("#banksubmit", s));
+    }, 60000, "GBK").then((s) => cheerio.load(s)("#banksubmit"));
 
     return await generalGetPayCode(await uFetch(redirect.attr("action")!, redirect.serialize() as never as object, 60000, "UTF-8", true));
 };

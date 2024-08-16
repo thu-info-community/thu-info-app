@@ -4,7 +4,7 @@ import imageSize from "../utils/image-size";
 import {roamingWrapperWithMocks} from "./core";
 import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL} from "../constants/strings";
 import {SearchResultItem, SearchResult, BookChapter, BookDetail} from "../models/home/reserves-lib";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import fetch from "cross-fetch";

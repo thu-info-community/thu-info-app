@@ -16,7 +16,7 @@ import {
     WEB_VPN_ID_LOGIN_URL,
     WEB_VPN_OAUTH_LOGIN_URL,
 } from "../constants/strings";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
@@ -167,7 +167,7 @@ export const login = async (
                         const message = $("#msg_note").text().trim();
                         throw new LoginError(message);
                     }
-                    const redirectUrl = await getRedirectUrl(cheerio("a", response).attr("href")!);
+                    const redirectUrl = await getRedirectUrl(cheerio.load(response)("a").attr("href")!);
                     if (redirectUrl === LOGIN_URL) {
                         throw new LoginError("登录失败，请稍后重试。");
                     }
@@ -245,7 +245,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (!response.includes("登录成功。正在重定向到")) {
             throw new IdAuthError();
         }
-        const redirectUrl = cheerio("a", response).attr("href")!;
+        const redirectUrl = cheerio.load(response)("a").attr("href")!;
 
         return await uFetch(redirectUrl);
     }
@@ -270,7 +270,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (!response.includes("登录成功。正在重定向到")) {
             throw new IdAuthError();
         }
-        const redirectUrl = cheerio("a", response).attr("href")!;
+        const redirectUrl = cheerio.load(response)("a").attr("href")!;
         return await uFetch(redirectUrl);
     }
     case "cr": {
