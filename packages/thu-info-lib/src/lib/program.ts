@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import {FULL_PROGRAM_URL_PREFIX, PROGRAM_LIST_URL, PROGRAM_URL} from "../constants/strings";
 import {InfoHelper} from "../index";
 import {MOCK_PROGRAM} from "../mocks/program";
@@ -151,7 +151,7 @@ export const getDegreeProgramCompletion = async (helper: InfoHelper) =>
             let courseTypeNow = -1;
             let illegalCourseLevelFlag = false;
 
-            cheerio(".table-striped tr", str)
+            cheerio.load(str)(".table-striped tr")
                 .slice(1) // 跳过表头
                 .each((index, element) => {
                     if (element.type === "tag") {
@@ -265,7 +265,7 @@ export const getFullDegreeProgram = async (
             const program: ProgramFull = {
                 courseSet: [],
             };
-            cheerio("#content_1 table tbody tr.trr2", str)
+            cheerio.load(str)("#content_1 table tbody tr.trr2")
                 .each((index, element) => {
                     if (element.type === "tag") {
                         if (element.children.length === 11) {

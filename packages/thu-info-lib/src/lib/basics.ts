@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {DataNode, Element} from "domhandler";
 import {getCsrfToken, roamingWrapperWithMocks} from "./core";
@@ -160,11 +160,11 @@ export const getReport = (
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
             if (bxStr) {
-                const childrenOriginal = cheerio(".table-striped tr", bxStr);
+                const childrenOriginal = cheerio.load(bxStr)(".table-striped tr");
                 const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
                 children.each((index, element) => {
                     if (element.type === "tag" && element.children.length === 25) {
-                        const transformedElement = cheerio(element);
+                        const transformedElement = cheerio.load(element).root();
                         const type = getCheerioText(
                             transformedElement.children()[8],
                             0,
@@ -178,7 +178,7 @@ export const getReport = (
                 });
             }
             const graduate = helper.graduate();
-            const result = cheerio("[cellspacing=1] tr", str)
+            const result = cheerio.load(str)("[cellspacing=1] tr")
                 .slice(1)
                 .map((_, element) => {
                     const grade = getCheerioText(element, graduate ? 9 : 7);
@@ -230,7 +230,7 @@ export const getAssessmentList = (
             if (str.includes("对不起，现在不是填写问卷时间")) {
                 throw new AssessmentError("对不起，现在不是填写问卷时间");
             }
-            const result = cheerio("tbody", str)
+            const result = cheerio.load(str)("tbody")
                 .children()
                 .map((index, element) => {
                     const onclick = (((element as TagElement)
@@ -409,7 +409,7 @@ export const getClassroomState = (
             const validWeekNumbers = $("#weeknumber option").map((_, element) => Number((element as TagElement).attribs.value)).get();
             const datesOfCurrentWeek = $("[colspan=6]").map((i, element) => {
                 if (i >= 7) return "";
-                const text = cheerio(element).text();
+                const text = cheerio.load(element).root().text();
                 const r = /\((.+?)\)/g.exec(text);
                 if (r === null || r[1] === undefined) {
                     throw new ClassroomStateError("r === null || r[1] === undefined");
@@ -512,7 +512,7 @@ export const getBankPayment = async (
             if (s === undefined) {
                 throw new LibError();
             }
-            const options = cheerio("option", s).map((_, e) => (e as TagElement).attribs.value).get();
+            const options = cheerio.load(s)("option").map((_, e) => (e as TagElement).attribs.value).get();
             if (options.length === 0) {
                 return [];
             }
@@ -536,12 +536,12 @@ export const getBankPayment = async (
             return $("div table tbody")
                 .filter(index => index < titles.length)
                 .map((index, e) => {
-                    const rows = cheerio(e).children();
+                    const rows = cheerio.load(e).root().children();
                     const data = rows.slice(1, rows.length - 1);
                     return {
                         month: titles[index],
                         payment: data.map((_, row) => {
-                            const columns = cheerio(row).children();
+                            const columns = cheerio.load(row).root().children();
                             return {
                                 department: getCheerioText(columns[1], 0),
                                 project: getCheerioText(columns[2], 0),
@@ -606,7 +606,7 @@ export const countdown = async (helper: InfoHelper): Promise<string[]> =>
             if (data.html() === null) {
                 throw new LibError();
             }
-            return data.map((_, e) => cheerio(e).text()).get();
+            return data.map((_, e) => cheerio.load(e).root().text()).get();
         },
         MOCK_COUNTDOWN_DATA
     );

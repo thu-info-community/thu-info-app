@@ -1,7 +1,7 @@
 import { InfoHelper } from "../index";
 import { roamingWrapperWithMocks } from "./core";
 import { uFetch } from "../utils/network";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import { Detial } from "../models/network/detial";
 import { LibError } from "../utils/error";
 import {

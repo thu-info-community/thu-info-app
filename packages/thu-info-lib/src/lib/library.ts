@@ -40,7 +40,7 @@ import {
     SocketStatus,
     weightedValidityAndId,
 } from "../models/home/library";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {Element} from "domhandler";
 import {getCheerioText} from "../utils/cheerio";
@@ -306,7 +306,7 @@ export const getBookingRecords = async (
         async (): Promise<LibBookRecord[]> => {
             await getAccessToken(helper);
             const html = await uFetch(LIBRARY_BOOK_RECORD_URL);
-            const result = cheerio("tbody", html)
+            const result = cheerio.load(html)("tbody")
                 .children()
                 .map((index, element) => {
                     const delOnclick = (((element as TagElement).children[15] as TagElement)

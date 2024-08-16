@@ -19,7 +19,7 @@ import {
     KCXX_YJS_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {DataNode, Element} from "domhandler";
 import {
@@ -165,11 +165,11 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => roa
     "",
     async () => {
         const data = await crFetch(helper.graduate() ? COURSE_PLAN_YJS_URL : COURSE_PLAN_URL_PREFIX + semester);
-        const courses = cheerio(".trr2", data);
+        const courses = cheerio.load(data)(".trr2");
         const result: CoursePlan[] = [];
         courses.each((_, element) => {
             if (element.type === "tag") {
-                const rawItems = cheerio(element).children();
+                const rawItems = cheerio.load(element).root().children();
                 const items = rawItems.length === 7 ? rawItems.slice(2) : rawItems;
                 if (helper.graduate()) {
                     result.push({
@@ -182,7 +182,7 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => roa
                 } else {
                     result.push({
                         id: getCheerioText(items[0], 1),
-                        name: cheerio(cheerio(cheerio(cheerio(items[1]).children()[0]).children()[0]).children()[0]).text().trim(),
+                        name: cheerio.load(cheerio.load(cheerio.load(cheerio.load(items[1]).root().children()[0]).root().children()[0]).root().children()[0]).root().text().trim(),
                         property: getCheerioText(items[2], 1),
                         credit: Number(getCheerioText(items[3], 1)),
                         group: getCheerioText(items[4], 1),
@@ -196,7 +196,7 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => roa
 );
 
 const getText = (e: Element, index: number) => {
-    return cheerio((e as TagElement).children[index]).text().trim();
+    return cheerio.load((e as TagElement).children[index]).root().text().trim();
 };
 
 const parseFooter = ($: CheerioAPI) => {
@@ -419,17 +419,17 @@ export const getSelectedCourses = async (helper: InfoHelper, semesterId: string)
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
         return $(".trr2").map((_, e) => {
-            const tds = cheerio(e).find(".tdd2");
+            const tds = cheerio.load(e).root().find(".tdd2");
             return {
-                type: cheerio(tds[1]).text(),
-                will: willStringToNumber(cheerio(tds[2]).text()),
-                id: cheerio(tds[3]).text(),
-                seq: cheerio(tds[5]).text(),
-                name: cheerio(tds[4]).text().trim(),
-                time: cheerio(tds[6]).text(),
-                teacher: cheerio(tds[7]).text(),
-                credit: Number(cheerio(tds[8]).text()),
-                secondary: cheerio(tds[9]).text() === "是",
+                type: cheerio.load(tds[1]).root().text(),
+                will: willStringToNumber(cheerio.load(tds[2]).root().text()),
+                id: cheerio.load(tds[3]).root().text(),
+                seq: cheerio.load(tds[5]).root().text(),
+                name: cheerio.load(tds[4]).root().text().trim(),
+                time: cheerio.load(tds[6]).root().text(),
+                teacher: cheerio.load(tds[7]).root().text(),
+                credit: Number(cheerio.load(tds[8]).root().text()),
+                secondary: cheerio.load(tds[9]).root().text() === "是",
             } as SelectedCourse;
         }).get();
     },
@@ -547,16 +547,16 @@ export const searchCoursePriorityInformation = async (
             return [pri, Number(data[1]), Number(data[2]), Number(data[3])];
         };
         return $("#content_1 tr").map((_, e) => {
-            const tds = cheerio(e).find("td");
+            const tds = cheerio.load(e).root().find("td");
             return {
-                courseId: cheerio(tds[0]).text(),
-                courseSeq: cheerio(tds[1]).text(),
-                courseName: cheerio(tds[2]).text(),
-                departmentName: query.isSports ? "" : cheerio(tds[3]).text(),
-                capacity: Number(cheerio(tds[query.isSports ? 3 : 4]).text()),
-                bxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio(tds[6]).text()),
-                xxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio(tds[7]).text()),
-                rxSelected: parseSelectedCount(cheerio(tds[query.isSports ? 5 : 8]).text()),
+                courseId: cheerio.load(tds[0]).root().text(),
+                courseSeq: cheerio.load(tds[1]).root().text(),
+                courseName: cheerio.load(tds[2]).root().text(),
+                departmentName: query.isSports ? "" : cheerio.load(tds[3]).root().text(),
+                capacity: Number(cheerio.load(tds[query.isSports ? 3 : 4]).root().text()),
+                bxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio.load(tds[6]).root().text()),
+                xxSelected: query.isSports ? [0, 0, 0, 0] : parseSelectedCount(cheerio.load(tds[7]).root().text()),
+                rxSelected: parseSelectedCount(cheerio.load(tds[query.isSports ? 5 : 8]).root().text()),
             } as SearchCoursePriorityResult;
         }).get();
     },
@@ -572,20 +572,20 @@ export const getQueueInfo = async (
     "",
     async () => {
         const data = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
-        const courses = cheerio(".trr2", data);
+        const courses = cheerio.load(data)(".trr2");
         const result: QueueInfo[] = [];
         courses.each((_, e) => {
-            const tds = cheerio(e).find("td");
+            const tds = cheerio.load(e).root().find("td");
             result.push({
-                property: cheerio(tds[0]).text().trim(),
-                will: willStringToNumber(cheerio(tds[1]).text()),
-                courseId: cheerio(tds[2]).text(),
-                courseSeq: cheerio(tds[4]).text(),
-                courseName: cheerio(tds[3]).text().trim(),
-                inQueue: Number(cheerio(tds[5]).text()),
-                position: Number(cheerio(tds[6]).text()),
-                time: cheerio(tds[7]).text(),
-                teacher: cheerio(tds[8]).text(),
+                property: cheerio.load(tds[0]).root().text().trim(),
+                will: willStringToNumber(cheerio.load(tds[1]).root().text()),
+                courseId: cheerio.load(tds[2]).root().text(),
+                courseSeq: cheerio.load(tds[4]).root().text(),
+                courseName: cheerio.load(tds[3]).root().text().trim(),
+                inQueue: Number(cheerio.load(tds[5]).root().text()),
+                position: Number(cheerio.load(tds[6]).root().text()),
+                time: cheerio.load(tds[7]).root().text(),
+                teacher: cheerio.load(tds[8]).root().text(),
             });
         });
         return result;
@@ -608,7 +608,7 @@ export const cancelCoursePF = async (
         const token = $("input[name=token]").attr("value")!;
         const availableCourses = $(".xinXi2 > #content_1 .table1 tr");
         for (const course of availableCourses) {
-            const items = cheerio(course).children("td");
+            const items = cheerio.load(course).root().children("td");
             if (getCheerioText(items[1], 0) === courseId) {
                 const post: { [key: string]: string } = {};
                 $("form[name=frm] input[type=hidden]").each((_, e) => {
@@ -646,9 +646,9 @@ export const setCoursePF = async (
         const token = $("input[name=token]").attr("value")!;
         const availableCourses = $(".tabdiv #content_1 .table1 tr");
         for (const course of availableCourses) {
-            const items = cheerio(course).children("td");
+            const items = cheerio.load(course).root().children("td");
             if (getCheerioText(items[2], 0) === courseId) {
-                const pfRadio = cheerio(items[0]).children("input[type=radio]");
+                const pfRadio = cheerio.load(items[0]).root().children("input[type=radio]");
                 if (pfRadio.length === 0) {
                     throw new CrError(`Course #${courseId} cannot be set PF`);
                 }

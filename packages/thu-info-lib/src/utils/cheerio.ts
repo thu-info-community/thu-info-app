@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {DataNode, Element, Node} from "domhandler";
 type Tag = Element & {type: ElementType.Tag};
@@ -10,7 +10,7 @@ export const getCheerioText = (element: Node, index?: number) =>
         : (((element as Tag).children[index] as Tag).firstChild as DataNode)?.data?.trim() ?? "";
 
 export const getTrimmedData = (element: Element, indexChain: number[]) => {
-    const tElement = cheerio(element);
+    const tElement = cheerio.load(element).root();
     try {
         let res = tElement.children()[indexChain[0]];
         indexChain

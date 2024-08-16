@@ -18,7 +18,7 @@ import {
 } from "../constants/strings";
 import {SportsIdInfo, SportsReservationRecord, SportsResource, SportsResourcesInfo} from "../models/home/sports";
 import {MOCK_RECORDS, MOCK_RESOURCES} from "../mocks/sports";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
 import type {Element} from "domhandler";
 type TagElement = Element & {type: ElementType.Tag};
@@ -215,7 +215,7 @@ export const makeSportsReservation = async (
 const getSportsReservationPaidRecords = async (): Promise<SportsReservationRecord[]> => {
     const $ = await uFetch(SPORTS_PAID_URL).then(cheerio.load);
     return $("tr[style='display:none']").toArray().map((e) => {
-        const contentRow = cheerio(e).find("tbody tr").first();
+        const contentRow = cheerio.load(e).root().find("tbody tr").first();
         const items = contentRow.find("td");
         return {
             name: getCheerioText(items[2]),
@@ -248,7 +248,7 @@ export const getSportsReservationRecords = async (
             const time = getCheerioText(e, 5);
             const price = getCheerioText(e, 7);
             const method = getCheerioText(e, 9);
-            const bookTimestampString = cheerio((e as TagElement).children[11]).find("span[time]").attr("time");
+            const bookTimestampString = cheerio.load((e as TagElement).children[11]).root().find("span[time]").attr("time");
             const bookTimestamp = bookTimestampString === undefined ? undefined : Number(bookTimestampString);
             let payId: string | undefined;
             let bookId: string | undefined;

@@ -15,7 +15,7 @@ import {
     SYSC_PDF_NEWS_PREFIX,
 } from "../constants/strings";
 import { newsHtml } from "../mocks/news";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import { decode } from "he";
 import {MOCK_NEWS_LIST} from "../mocks/news";
 
@@ -358,9 +358,9 @@ const getNewsDetailOld = async (
     const [title, content] = getNewsDetailPolicy(url);
     const html = mocked ? newsHtml[url] ?? "" : await uFetch(url);
     if (title !== undefined && content && !mocked) {
-        const r = cheerio(content, html);
+        const r = cheerio.load(html)(content);
         return [
-            cheerio(title, html).text(),
+            cheerio.load(html)(title).text(),
             r.html() ?? "",
             r.text().replace(/\s/g, ""),
         ];
