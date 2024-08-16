@@ -20,6 +20,8 @@ import {
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import cheerio from "cheerio";
+import type {ElementType} from "domelementtype";
+import type {DataNode, Element} from "domhandler";
 import {
     CoursePlan,
     CrPrimaryOpenInfo,
@@ -52,10 +54,9 @@ import {
     MOCK_SEARCH_COURSE_PRIORITY_META,
     MOCK_SELECTED_COURSES,
 } from "../mocks/cr";
-import TagElement = cheerio.TagElement;
-import Element = cheerio.Element;
-import TextElement = cheerio.TextElement;
+type TagElement = Element & {type: ElementType.Tag};
 import dayjs from "dayjs";
+import {CheerioAPI} from "cheerio";
 
 export const getCrTimetable = (helper: InfoHelper): Promise<CrTimetable[]> => roamingWrapperWithMocks(
     helper,
@@ -152,7 +153,7 @@ export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSem
         const $ = await crFetch((helper.graduate() ? CR_TREE_YJS_URL : CR_TREE_URL) + baseSemIdRes[1]).then(cheerio.load);
         return $("option").toArray().map((e) => ({
             id: (e as TagElement).attribs.value,
-            name: ((e as TagElement).children[0] as TextElement).data?.trim(),
+            name: ((e as TagElement).children[0] as DataNode).data?.trim(),
         } as CrSemester));
     },
     MOCK_AVAILABLE_SEMESTERS,
@@ -198,8 +199,8 @@ const getText = (e: Element, index: number) => {
     return cheerio((e as TagElement).children[index]).text().trim();
 };
 
-const parseFooter = ($: cheerio.Root) => {
-    const footerText = (($("p.yeM").toArray()[0] as TagElement).children[5].data as string).trim().replace(/,/g, "");
+const parseFooter = ($: CheerioAPI) => {
+    const footerText = ((($("p.yeM").toArray()[0] as TagElement).children[5] as DataNode).data as string).trim().replace(/,/g, "");
     const regResult = /第 (\d+) ?页 \/ 共 (\d+) 页（共 (\d+) 条记录）/.exec(footerText);
     if (regResult === null || regResult.length !== 4) {
         throw new CrError("cannot parse cr remaining footer data");
@@ -500,7 +501,7 @@ export const searchCoursePriorityMeta = async (
         const pad = $(".pad");
         return {
             curr: pad.find("font").text(),
-            next: (pad[0] as TagElement).children[5].data?.trim() ?? "",
+            next: ((pad[0] as TagElement).children[5] as DataNode).data?.trim() ?? "",
         };
     },
     MOCK_SEARCH_COURSE_PRIORITY_META,

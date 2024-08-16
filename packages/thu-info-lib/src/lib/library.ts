@@ -41,6 +41,8 @@ import {
     weightedValidityAndId,
 } from "../models/home/library";
 import cheerio from "cheerio";
+import type {ElementType} from "domelementtype";
+import type {Element} from "domhandler";
 import {getCheerioText} from "../utils/cheerio";
 import dayjs from "dayjs";
 import {InfoHelper} from "../index";
@@ -58,9 +60,7 @@ import {
     LoginError,
 } from "../utils/error";
 
-type Cheerio = ReturnType<typeof cheerio>;
-type Element = Cheerio[number];
-type TagElement = Element & {type: "tag"};
+type TagElement = Element & {type: ElementType.Tag};
 
 const fetchJson = (
     url: string,
