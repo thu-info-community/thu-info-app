@@ -1,9 +1,9 @@
-import cheerio from "cheerio";
+import type {Cheerio} from "cheerio";
+import type {ElementType} from "domelementtype";
+import type {Element} from "domhandler";
 import {AssessmentError} from "../../utils/error";
 
-type Cheerio = ReturnType<typeof cheerio>;
-type Element = Cheerio[number];
-type TagElement = Element & {type: "tag"};
+type TagElement = Element & {type: ElementType.Tag};
 
 const flatMap = <T, R>(arr: T[], transform: (item: T, index: number) => R[]) =>
     arr.reduce(
@@ -160,7 +160,7 @@ const assert = (exp: boolean) => {
 /**
  * Read persons data from their corresponding html tables.
  */
-export const toPersons = (tables: Cheerio) => {
+export const toPersons = (tables: Cheerio<Element>) => {
     const persons: Person[] = [];
     let table = tables.children("table").first();
     while (table.children().length > 0) {

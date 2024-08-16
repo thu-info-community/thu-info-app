@@ -19,7 +19,9 @@ import {
 import {SportsIdInfo, SportsReservationRecord, SportsResource, SportsResourcesInfo} from "../models/home/sports";
 import {MOCK_RECORDS, MOCK_RESOURCES} from "../mocks/sports";
 import cheerio from "cheerio";
-import TagElement = cheerio.TagElement;
+import type {ElementType} from "domelementtype";
+import type {Element} from "domhandler";
+type TagElement = Element & {type: ElementType.Tag};
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import {LibError, SportsError} from "../utils/error";

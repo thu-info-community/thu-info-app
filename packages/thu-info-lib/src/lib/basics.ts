@@ -1,4 +1,6 @@
 import cheerio from "cheerio";
+import type {ElementType} from "domelementtype";
+import type {DataNode, Element} from "domhandler";
 import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
@@ -56,9 +58,7 @@ import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
 
-type Cheerio = ReturnType<typeof cheerio>;
-type Element = Cheerio[number];
-type TagElement = Element & {type: "tag"};
+type TagElement = Element & {type: ElementType.Tag};
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
 export const systemMessage = "time out用户登陆超时或访问内容不存在。请重试";
@@ -244,7 +244,7 @@ export const getAssessmentList = (
                             getCheerioText(element, 5),
                             getCheerioText(element, 9) === "是",
                             href,
-                        ],
+                        ] as [string, boolean, string],
                     ];
                 })
                 .get();
@@ -425,7 +425,7 @@ export const getClassroomState = (
                         .filter((it) => it.type === "tag" && it.tagName === "tr")
                         .map((tr) => {
                             const name =
-                                ((tr as TagElement).children[1] as TagElement).children[2].data?.trim() ??
+                                (((tr as TagElement).children[1] as TagElement).children[2] as DataNode).data?.trim() ??
                                 "";
                             const status = (tr as TagElement).children
                                 .slice(3)
@@ -521,7 +521,7 @@ export const getBankPayment = async (
             const $ = cheerio.load(result);
             const titles = $("div strong")
                 .map((_, e) => {
-                    const text = (e as TagElement).children[0].data?.trim();
+                    const text = ((e as TagElement).children[0] as DataNode).data?.trim();
                     if (text === undefined) {
                         return undefined;
                     }

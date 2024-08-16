@@ -10,15 +10,15 @@ import {
     CHANGE_HOME_PASSWORD_URL,
 } from "../constants/strings";
 import cheerio from "cheerio";
+import type {ElementType} from "domelementtype";
+import type {Element} from "domhandler";
 import {generalGetPayCode} from "../utils/alipay";
 import {getCheerioText} from "../utils/cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {MOCK_DORM_SCORE_BASE64, MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from "../mocks/dorm";
 import {DormAuthError, EleError} from "../utils/error";
-type Cheerio = ReturnType<typeof cheerio>;
-type Element = Cheerio[number];
-type TagElement = Element & {type: "tag"};
+type TagElement = Element & {type: ElementType.Tag};
 
 export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<string> =>
     roamingWrapperWithMocks(
@@ -85,7 +85,7 @@ export const getElePayRecord = async (
                 .map((index, element) => [
                     (element as TagElement).children
                         .filter((it) => it.type === "tag" && it.tagName === "td")
-                        .map((it) => getCheerioText(it, 1)),
+                        .map((it) => getCheerioText(it, 1)) as [string, string, string, string, string, string],
                 ])
                 .get();
         },

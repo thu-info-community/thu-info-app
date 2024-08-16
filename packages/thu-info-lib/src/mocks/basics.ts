@@ -84,7 +84,7 @@ export const MOCK_REPORT = [
     },
 ];
 
-export const MOCK_ASSESSMENT_LIST = [
+export const MOCK_ASSESSMENT_LIST: [string, boolean, string][] = [
     ["微积分A(2)", true, "Mr. Z"],
     ["高等线性代数选讲", true, "Mr. L"],
     ["大学物理B(1)", true, "Mr. L"],
