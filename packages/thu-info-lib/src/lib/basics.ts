@@ -536,12 +536,12 @@ export const getBankPayment = async (
             return $("div table tbody")
                 .filter(index => index < titles.length)
                 .map((index, e) => {
-                    const rows = cheerio.load(e).root().children();
+                    const rows = cheerio.load(e)("tr");
                     const data = rows.slice(1, rows.length - 1);
                     return {
                         month: titles[index],
                         payment: data.map((_, row) => {
-                            const columns = cheerio.load(row).root().children();
+                            const columns = cheerio.load(row)("td");
                             return {
                                 department: getCheerioText(columns[1], 0),
                                 project: getCheerioText(columns[2], 0),
