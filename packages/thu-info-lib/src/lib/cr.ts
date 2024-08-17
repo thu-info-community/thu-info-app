@@ -356,7 +356,7 @@ export const selectCourse = async (helper: InfoHelper, semesterId: string, prior
         const mainHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
         const $ = cheerio.load(mainHtml);
         const m = `save${priority[0].toUpperCase()}${priority[1]}Kc`;
-        const token = $("input[name=token]").attr("value")!;
+        const token = $("input[name=token]").attr().value;
         const post: { [key: string]: string | number } = {
             m,
             token,
@@ -385,7 +385,7 @@ export const deleteCourse = async (helper: InfoHelper, semesterId: string, cours
         const $ = cheerio.load(yxHtml);
         const post: { [key: string]: string | number } = {
             m: "deleteYxk",
-            token: $("input[name=token]").attr("value")!,
+            token: $("input[name=token]").attr().value,
             p_xnxq: semesterId,
             tokenPriFlag: "yx",
         };
@@ -445,7 +445,7 @@ export const changeCourseWill = async (helper: InfoHelper, semesterId: string, c
         const $ = cheerio.load(yxHtml);
         const responseHtml = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, {
             m: "changeZY",
-            token: $("input[name=token]").attr("value")!,
+            token: $("input[name=token]").attr().value,
             p_xnxq: semesterId,
             tokenPriFlag: "yx",
             jhzy_kch: courseId,
@@ -526,7 +526,7 @@ export const searchCoursePriorityInformation = async (
                 return await crFetch(helper.graduate() ? CR_ZYTJB_YJS_URL : CR_ZYTJB_URL, {
                     m: `tbzySearch${tag}`,
                     page: query.page ?? -1,
-                    token: $("input[name=token]").attr("value")!,
+                    token: $("input[name=token]").attr().value,
                     p_xnxq: semesterId,
                     tokenPriFlag: query.isSports ? undefined : "yx",
                     p_kch: query.courseId ?? "",
@@ -605,7 +605,7 @@ export const cancelCoursePF = async (
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
         const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(pfHtml);
-        const token = $("input[name=token]").attr("value")!;
+        const token = $("input[name=token]").attr().value;
         const availableCourses = $(".xinXi2 > #content_1 .table1 tr");
         for (const course of availableCourses) {
             const items = cheerio.load(course).root().children("td");
@@ -643,7 +643,7 @@ export const setCoursePF = async (
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
         const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(pfHtml);
-        const token = $("input[name=token]").attr("value")!;
+        const token = $("input[name=token]").attr().value;
         const availableCourses = $(".tabdiv #content_1 .table1 tr");
         for (const course of availableCourses) {
             const items = cheerio.load(course).root().children("td");
@@ -658,7 +658,7 @@ export const setCoursePF = async (
                         post[e.attribs.name] = e.attribs.value;
                     }
                 });
-                post.p_pf_id = pfRadio.first().attr("value")!;
+                post.p_pf_id = pfRadio.first().attr().value;
                 post.token = token;
                 post.m = "editpfyes";
                 const result = await crFetch(helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL, post);
