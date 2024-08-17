@@ -39,7 +39,7 @@ export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<
             if (chart.length !== 1) {
                 throw new DormAuthError();
             }
-            const url = WEB_VPN_ROOT_URL + chart.attr().src;
+            const url = WEB_VPN_ROOT_URL + chart.attr()!.src;
             return await uFetch(url);
         },
         MOCK_DORM_SCORE_BASE64,
@@ -56,18 +56,18 @@ export const getEleRechargePayCode = async (
     const redirect = await uFetch(RECHARGE_PAY_ELE_URL, {
         __EVENTTARGET: "",
         __EVENTARGUMENT: "",
-        __VIEWSTATE: $("#__VIEWSTATE").attr().value,
-        __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr().value,
+        __VIEWSTATE: $("#__VIEWSTATE").attr()!.value,
+        __VIEWSTATEGENERATOR: $("#__VIEWSTATEGENERATOR").attr()!.value,
         recharge_eleCtrl1$RadioButtonList1: "支付宝支付",
         write_money: money,
-        username: $("input[name=username]").attr().value,
-        louhao: $("input[name=louhao]").attr().value,
-        room: $("input[name=room]").attr().value,
-        student_id: $("input[name=student_id]").attr().value,
+        username: $("input[name=username]").attr()!.value,
+        louhao: $("input[name=louhao]").attr()!.value,
+        room: $("input[name=room]").attr()!.value,
+        student_id: $("input[name=student_id]").attr()!.value,
         banktype: "alipay",
     }, 60000, "GBK").then((s) => cheerio.load(s)("#banksubmit"));
 
-    return await generalGetPayCode(await uFetch(redirect.attr().action, redirect.serialize() as never as object, 60000, "UTF-8", true));
+    return await generalGetPayCode(await uFetch(redirect.attr()!.action, redirect.serialize() as never as object, 60000, "UTF-8", true));
 };
 
 export const getElePayRecord = async (
