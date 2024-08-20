@@ -2404,14 +2404,14 @@
     serve-static "^1.13.1"
     ws "^6.2.2"
 
-"@react-native/eslint-config@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.yarnpkg.com/@react-native/eslint-config/-/eslint-config-0.75.1.tgz#f68b99b09c4fb65481efc038834d6ff0834b259c"
-  integrity sha512-f69WsbWJFwYLpZfQy4HDIteN0Fozf8rscD6IfI7ICUqMmAKAMJx+e568Z3ikktu15do2ovNgeJzrFA/dLb5wQA==
+"@react-native/eslint-config@0.75.2":
+  version "0.75.2"
+  resolved "https://registry.yarnpkg.com/@react-native/eslint-config/-/eslint-config-0.75.2.tgz#845951e094f34e82ca3fc911ff8013923a81e055"
+  integrity sha512-lelWQ/mjwCLONrZ0mrCjWYPZWYckjuVCjdADOSMuEe7/tjwUZYW/e/iQdOvy1USqFwGHLLkTjE722EmQ6P+O7A==
   dependencies:
     "@babel/core" "^7.20.0"
     "@babel/eslint-parser" "^7.20.0"
-    "@react-native/eslint-plugin" "0.75.1"
+    "@react-native/eslint-plugin" "0.75.2"
     "@typescript-eslint/eslint-plugin" "^7.1.1"
     "@typescript-eslint/parser" "^7.1.1"
     eslint-config-prettier "^8.5.0"
@@ -2422,10 +2422,10 @@
     eslint-plugin-react-hooks "^4.6.0"
     eslint-plugin-react-native "^4.0.0"
 
-"@react-native/eslint-plugin@0.75.1":
-  version "0.75.1"
-  resolved "https://registry.yarnpkg.com/@react-native/eslint-plugin/-/eslint-plugin-0.75.1.tgz#c5e1f929d09da4da69fd87f1f1ee8681c9115bc1"
-  integrity sha512-RmUTmsUxWWr1FwRPA95rtsix7Ppoey+MejWT/G0MJoRtBN5UM2qmI03Y8+ZDM43MKeNHcmFLCSXXFPwS/z35ew==
+"@react-native/eslint-plugin@0.75.2":
+  version "0.75.2"
+  resolved "https://registry.yarnpkg.com/@react-native/eslint-plugin/-/eslint-plugin-0.75.2.tgz#c206c9f869d4435386024855d9d193219a50a5cf"
+  integrity sha512-cxvSn+io32l+mbyDcpGGGoDXMwFxsVvb1JHSdfbzxi6+94gdD+ce0gqFJY4FCPg/ebJ2gCvQ8j0lt1NoAizUuQ==
 
 "@react-native/gradle-plugin@0.75.1":
   version "0.75.1"
