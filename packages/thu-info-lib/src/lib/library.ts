@@ -290,6 +290,7 @@ export const bookLibrarySeat = async (
                     userid: helper.userId,
                     segment: segmentId,
                     type,
+                    operateChannel: 2,
                 }),
             ),
         ),
@@ -346,6 +347,7 @@ export const cancelBooking = async (
                 id,
                 userid: helper.userId,
                 access_token: token,
+                operateChannel: 2,
             }))
             .then(JSON.parse)
             .then((data: any) => {
