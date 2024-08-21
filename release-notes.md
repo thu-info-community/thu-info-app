@@ -1,5 +1,5 @@
 ## @thu-info/app
-- 修复了重要的缺陷
+- 修复了图书馆座位预约失败的问题
 
 ## @thu-info/lib
-- fix: fixed a regression introduced when changing cheerio API usage
+- fix: urls for library seat booking site
