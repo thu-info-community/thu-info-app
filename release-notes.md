@@ -1,5 +1,5 @@
 ## @thu-info/app
-- 修复了图书馆座位预约失败的问题
+- 支持紫 17、红杉公寓的洗衣机查询
 
 ## @thu-info/lib
-- fix: urls for library seat booking site
+- feat(washer): Haile Life washers
