@@ -1,23 +1,19 @@
-import {
-	FlatList,
-	useColorScheme,
-	View,
-	Text,
-	TouchableOpacity,
-} from "react-native";
+import { FlatList, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import themes from "../../assets/themes/themes";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Snackbar from "react-native-snackbar";
-import {getStr} from "../../utils/i18n";
-import {RootNav} from "../../components/Root";
-import {IconStarButton} from "../../components/news/IconStarButton";
-import {useDispatch, useSelector} from "react-redux";
-import {configSet} from "../../redux/slices/config";
-import {State} from "../../redux/store";
+import { getStr } from "../../utils/i18n";
+import { RootNav } from "../../components/Root";
+import { IconStarButton } from "../../components/news/IconStarButton";
+import { useDispatch, useSelector } from "react-redux";
+import { configSet } from "../../redux/slices/config";
+import { State } from "../../redux/store";
+import { NetworkRetry } from "../../components/easySnackbars.ts";
 
 interface building {
 	name: string;
 	id: string;
+	hlsh: boolean;
 }
 
 interface buildingGroup {
@@ -25,7 +21,7 @@ interface buildingGroup {
 	buildings: building[];
 }
 
-export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
+export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
@@ -38,6 +34,8 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	>([]);
 
 	useEffect(() => {
+		setFetchedBuildingGroups(() => []);
+
 		fetch("https://api.cleverschool.cn/washapi4/device/tower", {
 			method: "POST",
 			headers: {
@@ -55,10 +53,10 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 
 				let groups: buildingGroup[] = [
-					{name: getStr("ziJingDorm"), buildings: []},
-					{name: getStr("nanQuDorm"), buildings: []},
-					{name: getStr("shuangQingDorm"), buildings: []},
-					{name: getStr("otherDorm"), buildings: []},
+					{ name: getStr("ziJingDorm"), buildings: [] },
+					{ name: getStr("nanQuDorm"), buildings: [] },
+					{ name: getStr("shuangQingDorm"), buildings: [] },
+					{ name: getStr("otherDorm"), buildings: [] },
 				];
 
 				for (const b of res.data) {
@@ -70,21 +68,25 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 						groups[0].buildings.push({
 							name: b.text,
 							id: b.value,
+							hlsh: false,
 						});
 					} else if (b.text.search("南区") !== -1) {
 						groups[1].buildings.push({
 							name: b.text,
 							id: b.value,
+							hlsh: false,
 						});
 					} else if (b.text.search("双清") !== -1) {
 						groups[2].buildings.push({
 							name: b.text,
 							id: b.value,
+							hlsh: false,
 						});
 					} else {
 						groups[3].buildings.push({
 							name: b.text,
 							id: b.value,
+							hlsh: false,
 						});
 					}
 				}
@@ -114,7 +116,45 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 						}
 					});
 				}
-				setFetchedBuildingGroups(groups);
+				setFetchedBuildingGroups((g) => [...groups, ...g]);
+			});
+
+		// Fetch HaiLeShengHuo buildings
+		fetch("https://yshz-user.haier-ioc.com/position/nearPosition", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: "{\"lng\":116.32697,\"lat\":40.00281,\"page\":1,\"pageSize\":30}",
+		}).then((res) => res.json())
+			.then((res) => {
+				if (res.code !== 0) {
+					return;
+				}
+
+				let group: buildingGroup = { name: getStr("haiLeShengHuo"), buildings: [] };
+
+				for (const b of res.data.items) {
+					if (b.name.search("清华") !== -1) {
+						group.buildings.push({
+							name: b.name,
+							id: b.id,
+							hlsh: true,
+						});
+					}
+				}
+
+				group.buildings.sort((a, b) => {
+					if (a.name < b.name) {
+						return -1;
+					} else if (a.name > b.name) {
+						return 1;
+					} else {
+						return 0;
+					}
+				});
+
+				setFetchedBuildingGroups((g) => [...g, group]);
 			});
 	}, []);
 
@@ -122,15 +162,16 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	if (currentFavourites.length > 0) {
 		// Get distinct favourite buildings
 		const favouriteBuildings = new Set(
-			currentFavourites.map((f) => f.match(/(.*?)-([^-]*)/g)![0]),
+			currentFavourites.map((f) => f.endsWith("海乐生活") ?
+				f : f.match(/(.*?)-([^-]*)/g)![0]),
 		);
 
 		buildingGroups = [
 			{
 				name: getStr("favourites"),
 				buildings: [...favouriteBuildings.values()].map((f): building => {
-					const [name, id] = f.split("-");
-					return {name, id};
+					const [name, id, hlsh] = f.split("-");
+					return { name, id, hlsh: hlsh === "海乐生活" };
 				}),
 			},
 			...buildingGroups,
@@ -138,8 +179,8 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	}
 
 	const renderBuildingGroup = (name: string, buildings: building[]) => (
-		<View style={{flexDirection: "column", marginBottom: 32}}>
-			<View style={{flexDirection: "row", marginHorizontal: 16}}>
+		<View style={{ flexDirection: "column", marginBottom: 32 }}>
+			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
 				<View
 					style={{
 						flex: 1,
@@ -173,11 +214,12 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 				}}>
 				{buildings.map((item) => (
 					<TouchableOpacity
-						key={item.name}
+						key={item.name + item.id}
 						onPress={() => {
 							navigation.navigate("WasherDetail", {
 								name: item.name,
 								id: item.id,
+								hlsh: item.hlsh,
 							});
 						}}>
 						<View
@@ -205,8 +247,8 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	const renderNotice = () => (
-		<View style={{flexDirection: "column", marginBottom: 32}}>
-			<View style={{flexDirection: "row", marginHorizontal: 16}}>
+		<View style={{ flexDirection: "column", marginBottom: 32 }}>
+			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
 				<View
 					style={{
 						flex: 1,
@@ -232,7 +274,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 					}}
 				/>
 			</View>
-			<View style={{marginHorizontal: 24}}>
+			<View style={{ marginHorizontal: 24 }}>
 				<Text
 					style={{
 						color: theme.colors.text,
@@ -246,7 +288,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	const renderCredit = () => (
-		<View style={{marginHorizontal: 24, marginBottom: 32}}>
+		<View style={{ marginHorizontal: 24, marginBottom: 32 }}>
 			<Text
 				style={{
 					color: theme.colors.primary,
@@ -258,12 +300,12 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	return (
-		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
+		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
 			<FlatList
 				ListHeaderComponent={renderNotice()}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
-				renderItem={({item}) => renderBuildingGroup(item.name, item.buildings)}
+				renderItem={({ item }) => renderBuildingGroup(item.name, item.buildings)}
 				keyExtractor={(item) => item.name}
 			/>
 		</View>
@@ -273,6 +315,7 @@ export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 export interface WasherDetailProps {
 	name: string;
 	id: string;
+	hlsh: boolean;
 }
 
 interface Washer {
@@ -289,10 +332,8 @@ interface Floor {
 	favourite: boolean;
 }
 
-export const WasherDetailScreen = ({
-	route,
-}: {
-	route: {params: WasherDetailProps};
+export const WasherDetailScreen = ({ route }: {
+	route: { params: WasherDetailProps };
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -304,7 +345,12 @@ export const WasherDetailScreen = ({
 		(s: State) => s.config.washerFavourites ?? [],
 	);
 
+	// Jieli Logic
 	useEffect(() => {
+		if (route.params.hlsh) {
+			return;
+		}
+
 		fetch("https://api.cleverschool.cn/washapi4/device/status", {
 			method: "POST",
 			headers: {
@@ -323,7 +369,7 @@ export const WasherDetailScreen = ({
 					});
 				}
 
-				const data: {[key: string]: Washer[]} = {};
+				const data: { [key: string]: Washer[] } = {};
 
 				for (const item of res.data) {
 					if (data[item.floorName] === undefined) {
@@ -387,7 +433,82 @@ export const WasherDetailScreen = ({
 
 				setFetchedFloors(updatedFloors);
 			});
-	}, [route.params.id, route.params.name]);
+	}, [route.params.id, route.params.name, route.params.hlsh]);
+
+	// Haile Logic
+	useEffect(() => {
+		if (!route.params.hlsh) {
+			return;
+		}
+
+		const fetchData = async () => {
+			const floor: Floor = {
+				name: "海乐生活",
+				washers: [],
+				favourite: false,
+			};
+
+			const type = {
+				"00": "洗衣机",
+				"01": "洗鞋机",
+				"02": "烘干机",
+			};
+
+			const status = {
+				1: "idle",
+				2: "working",
+				3: "error",
+			};
+
+			for (const catCode of ["00", "01", "02"]) {
+				const rawDetailRes = await fetch("https://yshz-user.haier-ioc.com/position/deviceDetailPage", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						"positionId": route.params.id,
+						"categoryCode": catCode,
+						"page": 1,
+						"floorCode": "",
+						"pageSize": 100,
+					}),
+				});
+
+				const detail = await rawDetailRes.json();
+
+				if (detail.code !== 0) {
+					continue;
+				}
+
+				for (const w of detail.data.items) {
+					floor.washers.push({
+						name: w.name + " " + type[catCode as "00" | "01" | "02"],
+						floor: floor.name,
+						status: status[w.state as 1 | 2 | 3] as "idle" | "working" | "error",
+						eta: -1,
+						updateTime: new Date(),
+					});
+				}
+			}
+
+			floor.washers.sort((a, b) => {
+				if (a.name < b.name) {
+					return -1;
+				} else if (a.name > b.name) {
+					return 1;
+				}
+				return 0;
+			});
+
+			setFetchedFloors([floor]);
+		};
+
+		fetchData().catch((e) => {
+			NetworkRetry(e);
+		});
+
+	}, [route.params.id, route.params.name, route.params.hlsh]);
 
 	const floors = [];
 
@@ -418,10 +539,11 @@ export const WasherDetailScreen = ({
 		name: string,
 		washers: Washer[],
 		favourite: boolean,
+		hlsh: boolean,
 	) => {
 		return (
-			<View key={name} style={{flexDirection: "column", marginBottom: 16}}>
-				<View style={{flexDirection: "row", margin: 16}}>
+			<View key={name} style={{ flexDirection: "column", marginBottom: 16 }}>
+				<View style={{ flexDirection: "row", margin: 16 }}>
 					<View
 						style={{
 							flex: 1,
@@ -510,8 +632,8 @@ export const WasherDetailScreen = ({
 										item.status === "idle"
 											? theme.colors.themeGreen
 											: item.status === "working"
-											? theme.colors.fontB2
-											: theme.colors.statusError,
+												? theme.colors.fontB2
+												: theme.colors.statusError,
 									fontSize: 20,
 									textAlign: "center",
 									marginVertical: 6,
@@ -519,20 +641,22 @@ export const WasherDetailScreen = ({
 								{item.status === "idle"
 									? getStr("washerIdle")
 									: item.status === "working"
-									? item.eta + " " + getStr("minutesAbbr")
-									: getStr("washerError")}
+										? (hlsh ? getStr("washerWorking") : item.eta + " " + getStr("minutesAbbr"))
+										: getStr("washerError")}
 							</Text>
-							<Text
-								style={{
-									color: theme.colors.fontB2,
-									fontSize: 12,
-									marginTop: 2,
-									textAlign: "center",
-								}}>
-								{getStr("updateTime") +
-									" " +
-									item.updateTime.toTimeString().split(" ")[0]}
-							</Text>
+							{!hlsh && (
+								<Text
+									style={{
+										color: theme.colors.fontB2,
+										fontSize: 12,
+										marginTop: 2,
+										textAlign: "center",
+									}}>
+									{getStr("updateTime") +
+										" " +
+										item.updateTime.toTimeString().split(" ")[0]}
+								</Text>
+							)}
 						</View>
 					))}
 				</View>
@@ -541,15 +665,16 @@ export const WasherDetailScreen = ({
 	};
 
 	return (
-		<View style={{backgroundColor: theme.colors.themeBackground}}>
+		<View style={{ backgroundColor: theme.colors.themeBackground }}>
 			<FlatList
 				data={floors}
-				renderItem={({item}) =>
+				renderItem={({ item }) =>
 					RenderFloor(
 						route.params.name + "-" + route.params.id,
 						item.name,
 						item.washers,
 						item.favourite,
+						route.params.hlsh,
 					)
 				}
 			/>

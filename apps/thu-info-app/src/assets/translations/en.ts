@@ -592,8 +592,10 @@ export default {
 	nanQuDorm: "Building",
 	shuangQingDorm: "Shuangqing Apartment",
 	otherDorm: "Other Locations",
+	haiLeShengHuo: "HaiLe Life",
 	favourites: "Favourites",
 	washerIdle: "Idle",
+	washerWorking: "Working",
 	minutesAbbr: "mins",
 	washerError: "Error",
 	washerCredit:
