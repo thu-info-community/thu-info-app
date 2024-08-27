@@ -168,7 +168,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 							helper
 								.submitFeedback(
 									text,
-									String(VersionNumber.buildVersion),
+									`${VersionNumber.appVersion} (${VersionNumber.buildVersion})`,
 									`${Platform.OS} ${Platform.Version}`,
 									"",
 									contact,
