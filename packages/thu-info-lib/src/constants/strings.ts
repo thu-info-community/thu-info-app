@@ -136,26 +136,26 @@ export const LIBRARY_DAYS_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/areadays/";
 export const LIBRARY_IMAGE_BASE =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/Public/home/images/web/area/";
-export const LIBRARY_ROOM_BOOKING_ROOT_URL = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1";
+export const LIBRARY_ROOM_BOOKING_ROOT_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1";
 export const LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/address?finalAddress=https:%2F%2Fcab.lib.tsinghua.edu.cn&errPageUrl=https:%2F%2Fcab.lib.tsinghua.edu.cn%2F%23%2Ferror&manager=false&consoleType=16";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/address?finalAddress=https:%2F%2Fcab.lib.tsinghua.edu.cn&errPageUrl=https:%2F%2Fcab.lib.tsinghua.edu.cn%2F%23%2Ferror&manager=false&consoleType=16";
 export const LIBRARY_ROOM_BOOKING_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/authcenter/toLoginPage?redirectUrl=http%3A%2F%2Fcab.lib.tsinghua.edu.cn%2Fic-web%2F%2Fauth%2Ftoken%3F%26uuid%3D";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/authcenter/toLoginPage?redirectUrl=http%3A%2F%2Fcab.lib.tsinghua.edu.cn%2Fic-web%2F%2Fauth%2Ftoken%3F%26uuid%3D";
 export const LIBRARY_ROOM_BOOKING_USER_INFO_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/userInfo";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/userInfo";
 export const LIBRARY_ROOM_BOOKING_ROOM_INFO_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/roomDevice/roomInfos";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/roomDevice/roomInfos";
 export const LIBRARY_ROOM_BOOKING_RESOURCE_LIST_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve?sysKind=1";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve?sysKind=1";
 export const LIBRARY_FUZZY_SEARCH_ID_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/account/getMembers?page=1&pageNum=10&key=";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/account/getMembers?page=1&pageNum=10&key=";
 export const LIBRARY_ROOM_BOOKING_ACTION_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve";
 export const LIBRARY_ROOM_BOOKING_RECORD_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/resvInfo?needStatus=8454&orderKey=gmt_create&orderModel=desc";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/resvInfo?needStatus=8454&orderKey=gmt_create&orderModel=desc";
 export const LIBRARY_CANCEL_BOOKING_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/delete";
-export const LIBRARY_ROOM_UPDATE_EMAIL_URL = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/account/update";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/reserve/delete";
+export const LIBRARY_ROOM_UPDATE_EMAIL_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/account/update";
 export const LIBRARY_BOOK_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/api.php/spaces/";
 export const LIBRARY_BOOK_URL_SUFFIX = "/book";
