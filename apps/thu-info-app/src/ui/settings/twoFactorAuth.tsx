@@ -1,6 +1,6 @@
 import {View, Text, TouchableOpacity, Linking} from "react-native";
 import {useEffect, useState} from "react";
-import {futures} from "../../redux/store";
+import {futures, helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import {styles} from "./settings";
 import themes from "../../assets/themes/themes";
@@ -83,6 +83,15 @@ export const TwoFactorAuthScreen = ({
 					)}
 				</RoundedView>
 			)}
+
+			<Text
+				style={{
+					color: theme.colors.fontB2,
+					fontSize: 16,
+					margin: 16,
+				}}>
+				Fingerprint: {helper.fingerprint.substring(0, 3)}***{helper.fingerprint.substring(helper.fingerprint.length - 3)}
+			</Text>
 
 			{method === undefined &&
 				(!params.hasWeChatBool || params.phone === null) && (
