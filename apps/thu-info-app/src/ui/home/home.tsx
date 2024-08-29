@@ -301,40 +301,34 @@ export const AnnouncementSection = () => {
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
 	const dispatch = useDispatch();
-	const announcements = useSelector((s: State) => s.announcement.announcements);
+	const announcements = useSelector((s: State) => s.announcement.announcements).filter(
+		({visibleNotAfter, visibleExact}) => (
+			visibleNotAfter === undefined ||
+			visibleExact === undefined ||
+			!gt(VersionNumber.appVersion, visibleNotAfter) ||
+			visibleExact.split(",").includes(VersionNumber.appVersion)
+		)
+	);
 	if (announcements.length === 0) {
 		return null;
 	}
-
-	const version = VersionNumber.appVersion;
 
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("announcements")}</Text>
 			<View style={style.SectionContentContainer}>
 				{announcements.map(
-					({id, read, title, content, visibleNotAfter, visibleExact}) => {
-						if (
-							visibleNotAfter === undefined ||
-							visibleExact === undefined ||
-							!gt(version, visibleNotAfter) ||
-							visibleExact.split(",").includes(version)
-						) {
-							return (
-								<TouchableOpacity
-									onPress={() => dispatch(toggleReadStatus(id))}
-									style={{marginVertical: 4, marginHorizontal: 12}}
-									key={id}>
-									<Text style={{fontWeight: "bold", color: colors.text}}>
-										{title} {read ? "(已读)" : ""}
-									</Text>
-									{!read && <Text style={{color: colors.text}}>{content}</Text>}
-								</TouchableOpacity>
-							);
-						} else {
-							return null;
-						}
-					},
+					({id, read, title, content}) => (
+						<TouchableOpacity
+							onPress={() => dispatch(toggleReadStatus(id))}
+							style={{marginVertical: 4, marginHorizontal: 12}}
+							key={id}>
+							<Text style={{fontWeight: "bold", color: colors.text}}>
+								{title} {read ? "(已读)" : ""}
+							</Text>
+							{!read && <Text style={{color: colors.text}}>{content}</Text>}
+						</TouchableOpacity>
+					)
 				)}
 			</View>
 		</View>
