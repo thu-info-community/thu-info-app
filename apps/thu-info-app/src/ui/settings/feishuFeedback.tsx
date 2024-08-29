@@ -61,6 +61,7 @@ localStorage.clear();
 inject_retry();
 true;
 			`}
+				onMessage={() => {}}
 			/>
 		</KeyboardAvoidingView>
 	);
