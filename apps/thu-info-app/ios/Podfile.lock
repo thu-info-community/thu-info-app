@@ -1241,7 +1241,7 @@ PODS:
     - React-Core
   - react-native-blob-util (0.19.11):
     - React-Core
-  - react-native-blur (4.4.0):
+  - react-native-blur (4.4.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2038,7 +2038,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 87b8de96f937faefece8afd2cb3a518321b2ef99
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-blob-util: 39a20f2ef11556d958dc4beb0aa07d1ef2690745
-  react-native-blur: 42522e76bf44daf9a16d341408caeb900b5f9424
+  react-native-blur: a1bf334589f44658a58a859b1f3defe28e367fcf
   react-native-cameraroll: b3395629565d1663b4f340c7314e7c04e88c9b3c
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
