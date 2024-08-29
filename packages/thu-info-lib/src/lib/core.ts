@@ -99,7 +99,7 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
         throw new LoginError("2FA required");
     }
     const { result: r3, msg: m3, object: o3 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
-        action: "VERITY_CODE",
+        action: method === "totp" ? "VERITY_TOTP_CODE" : "VERITY_CODE",
         vericode: code,
     }));
     if (r3 != "success") {
