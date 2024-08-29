@@ -264,20 +264,21 @@ helper.loginErrorHook = (e) => {
 
 export const futures = {
 	twoFactorMethodFuture: undefined as
-		| ((value: "wechat" | "mobile" | undefined) => void)
+		| ((value: "wechat" | "mobile" | "totp" | undefined) => void)
 		| undefined,
 	twoFactorAuthFuture: undefined as
 		| ((value: string | undefined) => void)
 		| undefined,
 };
 
-helper.twoFactorMethodHook = (hasWeChatBool: boolean, phone: string | null) => {
-	return new Promise<"wechat" | "mobile" | undefined>((resolve) => {
+helper.twoFactorMethodHook = (hasWeChatBool: boolean, phone: string | null, hasTotp: boolean) => {
+	return new Promise<"wechat" | "mobile" | "totp" | undefined>((resolve) => {
 		futures.twoFactorMethodFuture = resolve;
 		if (navigationRef.isReady()) {
 			navigationRef.navigate("TwoFactorAuth", {
 				hasWeChatBool,
 				phone,
+				hasTotp,
 			});
 		}
 	});

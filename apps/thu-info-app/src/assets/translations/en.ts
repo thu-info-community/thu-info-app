@@ -13,6 +13,7 @@ export default {
 		"To ensure account security, a second verification is required. Please choose one of the following ways to get a verification code:",
 	twoFactorWechat: "WeChat Enterprise Account",
 	twoFactorMobile: "SMS ({0})",
+	twoFactorTotp: "TOTP verification",
 	noTwoFactorMethod:
 		"No available 2FA method. Please visit https://id.tsinghua.edu.cn/ to bind your 2FA devices.",
 	missingTwoFactorMethod:

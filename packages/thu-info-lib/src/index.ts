@@ -199,7 +199,7 @@ export class InfoHelper {
      *
      * Override this value to customize.
      */
-    public twoFactorMethodHook: ((hasWeChatBool: boolean, phone: string | null) => Promise<"wechat" | "mobile" | undefined>) | undefined = undefined;
+    public twoFactorMethodHook: ((hasWeChatBool: boolean, phone: string | null, hasTotp: boolean) => Promise<"wechat" | "mobile" | "totp" | undefined>) | undefined = undefined;
 
     /**
      * Invoked when 2FA is required.

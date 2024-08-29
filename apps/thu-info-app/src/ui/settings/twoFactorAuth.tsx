@@ -21,7 +21,7 @@ export const TwoFactorAuthScreen = ({
 	navigation: RootNav;
 	route: TwoFactorAuthRouteProp;
 }) => {
-	const [method, setMethod] = useState<"wechat" | "mobile" | undefined>(
+	const [method, setMethod] = useState<"wechat" | "mobile" | "totp" | undefined>(
 		undefined,
 	);
 	const [captcha, setCaptcha] = useState("");
@@ -46,7 +46,7 @@ export const TwoFactorAuthScreen = ({
 			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
 				{getStr("twoFactorPrompt")}
 			</Text>
-			{(params.hasWeChatBool || params.phone !== null) && (
+			{(params.hasWeChatBool || params.phone !== null || params.hasTotp) && (
 				<RoundedView style={style.rounded}>
 					{params.hasWeChatBool && (
 						<TouchableOpacity
@@ -81,6 +81,24 @@ export const TwoFactorAuthScreen = ({
 							{method === "mobile" && <IconCheck width={18} height={18} />}
 						</TouchableOpacity>
 					)}
+
+					{params.phone !== null && params.hasTotp && (
+						<View style={style.separator} />
+					)}
+
+					{params.hasTotp && (
+						<TouchableOpacity
+							style={style.touchable}
+							disabled={method !== undefined}
+							onPress={() => {
+								setMethod("totp");
+								futures.twoFactorMethodFuture?.("totp");
+								futures.twoFactorMethodFuture = undefined;
+							}}>
+							<Text style={style.text}>{getStr("twoFactorTotp")}</Text>
+							{method === "totp" && <IconCheck width={18} height={18} />}
+						</TouchableOpacity>
+					)}
 				</RoundedView>
 			)}
 
@@ -94,7 +112,7 @@ export const TwoFactorAuthScreen = ({
 			</Text>
 
 			{method === undefined &&
-				(!params.hasWeChatBool || params.phone === null) && (
+				(!params.hasWeChatBool || params.phone === null || !params.hasTotp) && (
 					<TouchableOpacity
 						onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
 						<Text
@@ -103,7 +121,7 @@ export const TwoFactorAuthScreen = ({
 								fontSize: 16,
 								margin: 16,
 							}}>
-							{!params.hasWeChatBool && params.phone === null
+							{!params.hasWeChatBool && params.phone === null && !params.hasTotp
 								? getStr("noTwoFactorMethod")
 								: getStr("missingTwoFactorMethod")}
 						</Text>

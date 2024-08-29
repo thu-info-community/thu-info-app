@@ -349,7 +349,7 @@ export type ScheduleDetailRouteProp = RouteProp<
 
 type SettingsStackParamList = {
 	Login: undefined;
-	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null};
+	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
 	Account: undefined;
 	DigitalPassword:
 		| {action: "new"}

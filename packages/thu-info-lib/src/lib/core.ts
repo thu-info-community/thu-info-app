@@ -80,7 +80,7 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     if (!helper.twoFactorMethodHook) {
         throw new LoginError("Required to select 2FA method");
     }
-    const method = await helper.twoFactorMethodHook(o1.hasWeChatBool, o1.phone);
+    const method = await helper.twoFactorMethodHook(o1.hasWeChatBool, o1.phone, o1.hasTotp);
     if (method === undefined) {
         throw new LoginError("2FA required");
     }
