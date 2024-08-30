@@ -396,7 +396,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 								placeholder={getStr("searchNewsPrompt")}
 								placeholderTextColor={theme.colors.fontB3}
-								onEndEditing={() => {
+								onSubmitEditing={() => {
 									if (!refreshing && !loading) {
 										fetchNewsList(true, searchKey !== "");
 									}

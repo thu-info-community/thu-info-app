@@ -100,7 +100,7 @@ export const WaterScreen = ({
 						onChangeText={(value) =>
 							dispatch(configSet({key: "waterId", value}))
 						}
-						onEndEditing={load}
+						onSubmitEditing={load}
 						placeholder="请输入"
 						placeholderTextColor={colors.fontB3}
 					/>

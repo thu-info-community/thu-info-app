@@ -129,7 +129,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 						value={password}
 						testID="loginPassword"
 						onChangeText={setPassword}
-						onEndEditing={() => {
+						onSubmitEditing={() => {
 							performLogin();
 						}}
 						secureTextEntry
