@@ -73,7 +73,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 								sportsReservationRecords,
 								crTimetable,
 								balance,
-								latestVersion,
+								latestVersion: {versionName},
 								latestAnnounces,
 							}) => {
 								dispatch(setActiveLibBookRecord(bookingRecords));
@@ -84,7 +84,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 								dispatch(
 									configSet({
 										key: "latestVersion",
-										value: latestVersion.versionName,
+										value: versionName,
 									}),
 								);
 								dispatch(updateAnnouncements(latestAnnounces));
