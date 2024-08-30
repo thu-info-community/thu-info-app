@@ -245,7 +245,7 @@ export const currState = () => store.getState() as State;
 
 export const navigationRef = createNavigationContainerRef<{
 	Login: undefined;
-	TwoFactorAuth: undefined;
+	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
 }>();
 
 helper.loginErrorHook = (e) => {
