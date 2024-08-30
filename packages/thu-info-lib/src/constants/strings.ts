@@ -139,8 +139,6 @@ export const LIBRARY_IMAGE_BASE =
 export const LIBRARY_ROOM_BOOKING_ROOT_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1";
 export const LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/address?finalAddress=https:%2F%2Fcab.lib.tsinghua.edu.cn&errPageUrl=https:%2F%2Fcab.lib.tsinghua.edu.cn%2F%23%2Ferror&manager=false&consoleType=16";
-export const LIBRARY_ROOM_BOOKING_LOGIN_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/authcenter/toLoginPage?redirectUrl=http%3A%2F%2Fcab.lib.tsinghua.edu.cn%2Fic-web%2F%2Fauth%2Ftoken%3F%26uuid%3D";
 export const LIBRARY_ROOM_BOOKING_USER_INFO_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f3f643d22b396a1e6a1b80a29f5d363409e413829737d1/ic-web/auth/userInfo";
 export const LIBRARY_ROOM_BOOKING_ROOM_INFO_URL =

@@ -413,7 +413,7 @@ export const cabLogin = async (helper: InfoHelper): Promise<void> => {
         return;
     }
     const authAddress: string = await cabFetch(LIBRARY_ROOM_BOOKING_QUERY_AUTH_ADDRESS_URL);
-    const loginUrl = await getRedirectUrl(authAddress.replace("http://cab.lib.tsinghua.edu.cn", LIBRARY_ROOM_BOOKING_ROOT_URL));
+    const loginUrl = await getRedirectUrl(authAddress.replace("https://cab.lib.tsinghua.edu.cn", LIBRARY_ROOM_BOOKING_ROOT_URL));
     const payload = /\/login\/form\/(.+)$/.exec(loginUrl)?.[1];
     if (payload === undefined) {
         throw new Error("Failed to get payload in cabLogin. Retry later.");
