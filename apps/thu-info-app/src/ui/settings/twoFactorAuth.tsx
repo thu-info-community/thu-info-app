@@ -82,7 +82,7 @@ export const TwoFactorAuthScreen = ({
 						</TouchableOpacity>
 					)}
 
-					{params.phone !== null && params.hasTotp && (
+					{(params.hasWeChatBool || params.phone !== null) && params.hasTotp && (
 						<View style={style.separator} />
 					)}
 
