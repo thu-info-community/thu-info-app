@@ -1,9 +1,5 @@
 ## @thu-info/app
-- 修复了研读间/研讨间无法预约的问题
-- 修复了空公告栏的问题
-- 修复了某些情况下二次认证出现未知异常的问题
-- 新增 TOTP 作为二次认证方式
+- 修复了查看卫生成绩登录失败的问题
 
 ## @thu-info/lib
-- fix: urls for library cab booking site
-- feat: support TOTP verification for 2FA
+- fix: urls for myhome mobile
