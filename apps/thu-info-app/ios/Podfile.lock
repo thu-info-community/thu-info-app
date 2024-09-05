@@ -1719,8 +1719,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNShare (11.0.1):
+  - RNShare (11.0.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNSnackbar (2.6.2):
     - React-Core
   - RNSVG (15.6.0):
@@ -2084,7 +2103,7 @@ SPEC CHECKSUMS:
   RNPermissions: 952f63a8bf2a40d0398cbb5957707396f8d8ad21
   RNReanimated: 190c12cb20dfa828353e99775beaa1bdf36e7ed9
   RNScreens: ce8ccfbf3d14f4fc23e205d5e315622d7962af75
-  RNShare: 1331fb1a1f4ce5b55e922bcaeb7f3c70b90141d1
+  RNShare: 6bc9f3e30364688bc85529526e060361f55687bb
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
