@@ -73,10 +73,7 @@ const getSecondary = (helper: InfoHelper) =>
 
 export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number | undefined) => {
     const calendarData = await getCalendar(helper);
-    if (nextSemesterIndex !== undefined && nextSemesterIndex >= calendarData.nextSemesterList.length) {
-        throw new LibError("nextSemesterIndex overflow.");
-    }
-    const scheduleList: Schedule[] = (await getPrimary(helper, nextSemesterIndex === undefined ? calendarData : calendarData.nextSemesterList[nextSemesterIndex])).concat(helper.graduate() ? [] : await getSecondary(helper));
+    const scheduleList: Schedule[] = (await getPrimary(helper, nextSemesterIndex === undefined || nextSemesterIndex >= calendarData.nextSemesterList.length ? calendarData : calendarData.nextSemesterList[nextSemesterIndex])).concat(helper.graduate() ? [] : await getSecondary(helper));
     return {
         schedule: mergeSchedules(scheduleList),
         calendar: calendarData,
