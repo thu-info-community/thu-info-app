@@ -117,6 +117,7 @@ export const ScheduleHiddenScreen = () => {
 										activeTime: {base: [item.time]},
 										delOrHideTime: {base: []},
 										type: ScheduleType.PRIMARY,
+										hash: "",
 									},
 									baseSchedule,
 								);

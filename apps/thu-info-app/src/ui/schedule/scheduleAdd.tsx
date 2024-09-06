@@ -137,6 +137,7 @@ export const ScheduleAddScreen = ({
 							activeTime: {base: []},
 							delOrHideTime: {base: []},
 							type: ScheduleType.CUSTOM,
+							hash: "",
 						};
 
 						weeks.forEach((week) => {
