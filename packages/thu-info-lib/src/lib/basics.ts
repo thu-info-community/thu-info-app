@@ -564,10 +564,11 @@ export const getBankPayment = async (
         MOCK_BANK_PAYMENT,
     );
 
-const parseCalendarData = ({kssj, jssj, id}: {kssj: string; jssj: string; id: string}): Semester => {
+const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: string; jssj: string; id: string}): Semester => {
     return {
         firstDay: dayjs(kssj).add(2, "day").format("YYYY-MM-DD"),
         semesterId: id,
+        semesterName: xnxqmc,
         weekCount: dayjs(jssj).diff(kssj, "week") + 1,
     };
 };

@@ -32,6 +32,7 @@ import Snackbar from "react-native-snackbar";
 import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -67,10 +68,14 @@ type SliceRenderData = NormalSliceRenderData | ExamSliceRenderData;
 const Header = React.forwardRef(
 	(
 		{
+			calendar,
+			setCalendar,
 			onChangeSetHeightSetup,
 			onSetWeek,
 			navigation,
 		}: {
+			calendar: CalendarData | undefined;
+			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
 			onChangeSetHeightSetup: Function;
 			navigation: RootNav;
 			onSetWeek: Function;
@@ -136,6 +141,29 @@ const Header = React.forwardRef(
 							"weekNumSuffix",
 						)}`}
 						popupContent={(done) => (
+							<>
+							{calendar && <View style={{marginHorizontal: 12}}>
+								<TouchableOpacity style={{padding: 6}} onPress={() => {
+									if (calendar) {
+										setCalendar({ ...calendar, nextSemesterIndex: undefined });
+									}
+								}}>
+									<Text style={{color: theme.colors.text, fontSize: 15}}>
+										{calendar.semesterName}
+									</Text>
+								</TouchableOpacity>
+								{calendar.nextSemesterList.map((semester, id) => (
+									<TouchableOpacity style={{padding: 6}} key={semester.semesterId} onPress={() => {
+										if (calendar) {
+											setCalendar({ ...calendar.nextSemesterList[id], nextSemesterIndex: id });
+										}
+									}}>
+										<Text style={{color: theme.colors.text, fontSize: 15}}>
+											{semester.semesterName}
+										</Text>
+									</TouchableOpacity>
+								))}
+							</View>}
 							<View
 								style={{
 									margin: 12,
@@ -183,6 +211,7 @@ const Header = React.forwardRef(
 									),
 								)}
 							</View>
+							</>
 						)}
 						popupCanFulfill={true}
 						popupCancelable={true}
@@ -236,18 +265,21 @@ const Header = React.forwardRef(
 
 export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
-	const {firstDay, weekCount} = useSelector((s: State) => s.config);
+	const {firstDay, weekCount, nextSemesterIndex} = useSelector((s: State) => s.config);
 	const dispatch = useDispatch();
 
 	const [refreshing, setRefreshing] = useState(false);
+	const [calendar, setCalendar] = useState<CalendarData | undefined>();
 
 	const getSchedule = () => {
 		setRefreshing(true);
 		helper
-			.getSchedule()
-			.then(({schedule, calendar}) => {
-				dispatch(setCalendarConfig(calendar));
-				dispatch(scheduleFetch({schedule, semesterId: calendar.semesterId}));
+			.getSchedule(nextSemesterIndex)
+			.then((result) => {
+				setCalendar(result.calendar);
+				const semester = nextSemesterIndex === undefined ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
+				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
+				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
 			})
 			.catch((e) => {
 				Snackbar.show({
@@ -292,7 +324,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const colorList: string[] = theme.colors.courseItemColorList;
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(getSchedule, []);
+	useEffect(getSchedule, [nextSemesterIndex]);
 
 	const allSchedule = () => {
 		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
@@ -336,6 +368,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		<>
 			<Header
 				ref={headerRef}
+				calendar={calendar}
+				setCalendar={(payload) => dispatch(setCalendarConfig(payload))}
 				onSetWeek={(w: number) => {
 					flatListRef.current?.scrollToIndex({
 						index: w - 1,

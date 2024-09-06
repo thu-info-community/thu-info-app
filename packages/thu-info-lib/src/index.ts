@@ -689,10 +689,11 @@ export class InfoHelper {
 
     /**
      * Get the schedules of the user.
+     * @param nextSemesterIndex if provided, specifies a semester from the `nextSemesterList`
      * @return  Returns `Schedule[]`, containing all the schedules(including
      *          exams) of the user.
      */
-    public getSchedule = async () => getSchedule(this);
+    public getSchedule = async (nextSemesterIndex?: number) => getSchedule(this, nextSemesterIndex);
 
     /**
      * Gets the timetable for course registration.

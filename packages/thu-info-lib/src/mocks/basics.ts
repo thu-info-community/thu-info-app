@@ -340,11 +340,13 @@ export const MOCK_BANK_PAYMENT = [{
 
 export const MOCK_CALENDAR_DATA: CalendarData = {
     firstDay: "2023-07-01",
-    semesterId: "2022-2023-2",
+    semesterId: "2023-2024-3",
+    semesterName: "2023-2024夏季学期",
     weekCount: 10,
     nextSemesterList: [{
         firstDay: "2024-09-09",
         semesterId: "2024-2025-1",
+        semesterName: "2024-2025秋季学期",
         weekCount: 23,
     }],
 };

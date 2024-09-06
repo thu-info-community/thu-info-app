@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
 import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
-import {CalendarData} from "@thu-info/lib/src/models/schedule/calendar";
+import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
@@ -11,6 +11,7 @@ export interface ConfigState {
 	firstDay: string;
 	weekCount: number;
 	semesterId: string;
+	nextSemesterIndex: number | undefined;
 	language: string;
 	darkMode: boolean | undefined;
 	newGPA: boolean;
@@ -47,6 +48,7 @@ const initialState: ConfigState = {
 	firstDay: "2024-09-09",
 	weekCount: 18,
 	semesterId: "2024-2025-1",
+	nextSemesterIndex: undefined,
 	language: "auto",
 	darkMode: false,
 	newGPA: true,
@@ -87,10 +89,11 @@ export const configSlice = createSlice({
 	name: "config",
 	initialState,
 	reducers: {
-		setCalendarConfig: (state, {payload}: PayloadAction<CalendarData>) => {
+		setCalendarConfig: (state, {payload}: PayloadAction<Semester & {nextSemesterIndex: number | undefined}>) => {
 			state.firstDay = payload.firstDay;
 			state.weekCount = payload.weekCount;
 			state.semesterId = payload.semesterId;
+			state.nextSemesterIndex = payload.nextSemesterIndex;
 		},
 		setupAppSecret: (state) => {
 			state.appSecretLockMinutes = 0;

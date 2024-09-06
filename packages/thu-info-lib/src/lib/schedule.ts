@@ -12,20 +12,20 @@ import {
     parseJSON,
     parseScript,
 } from "../models/schedule/schedule";
-import {CalendarData} from "../models/schedule/calendar";
+import {Semester} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {
     MOCK_PRIMARY_SCHEDULE,
     MOCK_SECONDARY_SCHEDULE,
 } from "../mocks/schedule";
-import {ScheduleError} from "../utils/error";
+import {LibError, ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
 import dayjs from "dayjs";
 
 const GROUP_SIZE = 3;
 
-const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
+const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: Semester) =>
     roamingWrapperWithMocks(
         helper,
         "default",
@@ -71,9 +71,12 @@ const getSecondary = (helper: InfoHelper) =>
         MOCK_SECONDARY_SCHEDULE,
     );
 
-export const getSchedule = async (helper: InfoHelper) => {
+export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number | undefined) => {
     const calendarData = await getCalendar(helper);
-    const scheduleList: Schedule[] = (await getPrimary(helper, calendarData)).concat(helper.graduate() ? [] : await getSecondary(helper));
+    if (nextSemesterIndex !== undefined && nextSemesterIndex >= calendarData.nextSemesterList.length) {
+        throw new LibError("nextSemesterIndex overflow.");
+    }
+    const scheduleList: Schedule[] = (await getPrimary(helper, nextSemesterIndex === undefined ? calendarData : calendarData.nextSemesterList[nextSemesterIndex])).concat(helper.graduate() ? [] : await getSecondary(helper));
     return {
         schedule: mergeSchedules(scheduleList),
         calendar: calendarData,
