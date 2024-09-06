@@ -22,6 +22,7 @@ import {
     PHYSICAL_EXAM_URL,
     SWITCH_LANG_URL,
     CALENDAR_IMAGE_URL,
+    LEARN_HOME_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -578,10 +579,8 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
         helper,
         "default",
         "3E401364BDD7AEA7EBF1EDE3F15ED4B7",
-        async (str) => {
-            if (str === undefined) {
-                throw new LibError();
-            }
+        async (param) => {
+            const str = param ?? await uFetch(LEARN_HOME_URL);
             const q = /_csrf=([\w-]+)/.exec(str);
             if (q === null || q[1] === undefined) {
                 throw new Error("Failed to get csrf token.");
