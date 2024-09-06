@@ -8,7 +8,7 @@ import {
     ASSESSMENT_SUBMIT_URL,
     BANK_PAYMENT_SEARCH_URL,
     BKS_REPORT_BXR_URL,
-    CALENDAR_URL,
+    SEMESTER_LIST_URL,
     CLASSROOM_LIST_URL,
     CLASSROOM_STATE_MIDDLE,
     CLASSROOM_STATE_PREFIX,
@@ -54,9 +54,10 @@ import {
     UserInfoError,
 } from "../utils/error";
 import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
-import {CalendarData} from "../models/schedule/calendar";
+import {CalendarData, Semester} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
+import dayjs from "dayjs";
 
 type TagElement = Element & {type: ElementType.Tag};
 
@@ -563,18 +564,37 @@ export const getBankPayment = async (
         MOCK_BANK_PAYMENT,
     );
 
+const parseCalendarData = ({kssj, jssj, id}: {kssj: string; jssj: string; id: string}): Semester => {
+    return {
+        firstDay: dayjs(kssj).add(2, "day").format("YYYY-MM-DD"),
+        semesterId: id,
+        weekCount: dayjs(jssj).diff(kssj, "week") + 1,
+    };
+};
+
 export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
     roamingWrapperWithMocks(
         helper,
-        undefined,
-        "",
-        async () => {
-            const {object} = await uFetch(`${CALENDAR_URL}?_csrf=${await getCsrfToken()}`).then(JSON.parse);
-            const firstDay = object.jyzdyt === "2023-06-27" ? "2023-06-26" : object.jyzdyt;  // 难得两遇的周二开学
-            const semesterId = object.xnxq;
-            const semesterCode = semesterId[semesterId.length - 1];
-            const weekCount = semesterCode === "3" ? 12 : 18;
-            return {firstDay, semesterId, weekCount};
+        "default",
+        "3E401364BDD7AEA7EBF1EDE3F15ED4B7",
+        async (str) => {
+            if (str === undefined) {
+                throw new LibError();
+            }
+            const q = /_csrf=([\w-]+)/.exec(str);
+            if (q === null || q[1] === undefined) {
+                throw new Error("Failed to get csrf token.");
+            }
+            const {message, result, resultList} = await uFetch(SEMESTER_LIST_URL + q[1]).then(JSON.parse);
+            if (message !== "success") {
+                throw new LibError();
+            }
+            const currentSemester = parseCalendarData(result);
+            const nextSemesterList = resultList.map((o: any) => parseCalendarData(o));
+            return {
+                ...currentSemester,
+                nextSemesterList,
+            };
         },
         MOCK_CALENDAR_DATA,
     );

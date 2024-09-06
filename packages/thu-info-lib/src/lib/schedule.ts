@@ -23,7 +23,7 @@ import {ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
 import dayjs from "dayjs";
 
-const GROUP_SIZE = 3; // Make sure that `GROUP_SIZE` is a divisor of `weekCount`.
+const GROUP_SIZE = 3;
 
 const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
     roamingWrapperWithMocks(
@@ -31,7 +31,7 @@ const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: CalendarData) =>
         "default",
         helper.graduate() ? "BEABB32641DC4EC3510B048BAF42471A": "287C0C6D90ABB364CD5FDF1495199962",
         () => Promise.all(
-            Array.from(new Array(weekCount / GROUP_SIZE), (_, id) =>
+            Array.from(new Array(Math.ceil(weekCount / GROUP_SIZE)), (_, id) =>
                 uFetch(
                     (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
                     dayjs(firstDay).add((id * GROUP_SIZE) * 7, "day").format("YYYYMMDD") +

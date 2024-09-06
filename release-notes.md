@@ -3,3 +3,4 @@
 
 ## @thu-info/lib
 - fix: urls for myhome mobile
+- fix: switch to the API of learn.tsinghua.edu.cn to get calendar data
