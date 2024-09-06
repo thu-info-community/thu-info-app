@@ -19,7 +19,7 @@ import {
     MOCK_PRIMARY_SCHEDULE,
     MOCK_SECONDARY_SCHEDULE,
 } from "../mocks/schedule";
-import {LibError, ScheduleError} from "../utils/error";
+import {ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
 import dayjs from "dayjs";
 
