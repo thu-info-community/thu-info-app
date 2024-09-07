@@ -32,7 +32,7 @@ import {
 import Snackbar from "react-native-snackbar";
 import {Alert, AppState, Platform, ToastAndroid} from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
-import {configSet, configReducer, ConfigState} from "./slices/config";
+import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";
 import {
 	defaultTimetable,
 	timetableReducer,
@@ -206,6 +206,12 @@ const persistConfig = {
 				? undefined
 				: {
 						...state,
+						config: {
+							...state.config,
+							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
+							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
+							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
+						},
 						schedule: {
 							...state.schedule,
 							baseSchedule:

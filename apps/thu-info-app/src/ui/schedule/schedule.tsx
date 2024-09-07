@@ -277,7 +277,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 			.getSchedule(nextSemesterIndex)
 			.then((result) => {
 				setCalendar(result.calendar);
-				const semester = nextSemesterIndex === undefined ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
+				const semester = nextSemesterIndex === undefined || nextSemesterIndex >= result.calendar.nextSemesterList.length ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
 				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
 				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
 			})

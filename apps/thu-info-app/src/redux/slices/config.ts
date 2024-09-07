@@ -78,6 +78,8 @@ const initialState: ConfigState = {
 	washerFavourites: [],
 };
 
+export const defaultConfig = initialState;
+
 // Reference: https://stackoverflow.com/questions/51691235/typescript-map-union-type-to-another-union-type
 type PayloadMap<K> = K extends keyof ConfigState
 	? {key: K; value: ConfigState[K]}
