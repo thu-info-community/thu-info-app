@@ -135,9 +135,10 @@ const authTransform = createTransform(
 	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
-		if (a.fingerprint) {
-			helper.fingerprint = a.fingerprint;
+		if (!a.fingerprint) {
+			a.fingerprint = defaultAuth.fingerprint;
 		}
+		helper.fingerprint = a.fingerprint;
 		return a;
 	},
 	{
@@ -226,12 +227,6 @@ const persistConfig = {
 						campusCard: state.campusCard ?? defaultCampusCard,
 						timetable: state.timetable ?? defaultTimetable,
 						announcement: state.announcement ?? defaultAnnouncement,
-						auth: {
-							...state.auth,
-							fingerprint: state.auth.fingerprint
-								? state.auth.fingerprint
-								: defaultAuth.fingerprint,
-						},
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),
