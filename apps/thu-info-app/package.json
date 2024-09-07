@@ -1,7 +1,7 @@
 {
 	"name": "@thu-info/app",
-	"version": "3.11.1",
-	"build": 105,
+	"version": "3.11.2",
+	"build": 106,
 	"private": true,
 	"scripts": {
 		"android": "react-native run-android",
