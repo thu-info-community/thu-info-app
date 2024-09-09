@@ -9208,10 +9208,10 @@ react-native-view-shot@3.8.0:
   dependencies:
     html2canvas "^1.4.1"
 
-react-native-webview@13.12.1:
-  version "13.12.1"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.12.1.tgz#6a6724ea95cd623ebd0a311488fede9a4721eece"
-  integrity sha512-S/14tuAFFPMiWUYX8Fh3aChGA2iemOs9y80byqAzHdHeOVKXc0Lzn43GnFRSQlcMXG5HOK4C1wO/Mb23s6H8VA==
+react-native-webview@13.12.2:
+  version "13.12.2"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.12.2.tgz#b379b28c725632efabb42a2cf8387bd03cf34f33"
+  integrity sha512-OpRcEhf1IEushREax6rrKTeqGrHZ9OmryhZLBLQQU4PwjqVsq55iC8OdYSD61/F628f9rURn9THyxEZjrknpQQ==
   dependencies:
     escape-string-regexp "^4.0.0"
     invariant "2.2.4"
