@@ -39,6 +39,7 @@ export interface ConfigState {
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
 	washerFavourites: string[] | undefined;
+	fingerprintSecure: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -76,6 +77,7 @@ const initialState: ConfigState = {
 	disableBackgroundSecurityWarning: false,
 	is24Hour: false,
 	washerFavourites: [],
+	fingerprintSecure: false,
 };
 
 export const defaultConfig = initialState;
