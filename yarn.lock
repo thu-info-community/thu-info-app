@@ -2459,10 +2459,10 @@
   resolved "https://registry.yarnpkg.com/@react-native/normalize-colors/-/normalize-colors-0.75.2.tgz#de095f4b985580748ffa239a70ae63fbaa93724e"
   integrity sha512-nPwWJFtsqNFS/qSG9yDOiSJ64mjG7RCP4X/HXFfyWzCM1jq49h/DYBdr+c3e7AvTKGIdy0gGT3vgaRUHZFVdUQ==
 
-"@react-native/typescript-config@0.75.2":
-  version "0.75.2"
-  resolved "https://registry.yarnpkg.com/@react-native/typescript-config/-/typescript-config-0.75.2.tgz#ab76a041eb6a019fb10d00f4c266343069757027"
-  integrity sha512-guqu6REcuDmfjlM/B6YNqTfv4kK35gn6ungzZQdU8zznyWiXlyxR7uSSyNcy1QgEztsvO7B3HU073PBHV8RxXQ==
+"@react-native/typescript-config@0.75.3":
+  version "0.75.3"
+  resolved "https://registry.yarnpkg.com/@react-native/typescript-config/-/typescript-config-0.75.3.tgz#59d637530c826d76172b8668b9b3f028cc287d6d"
+  integrity sha512-yekwhjG9lDvib+3jYwagEXcyTJ4mEryDLCoQINWCwy+7GtMx2BrKweHc4Phcc1dqmK1U/XMzVUXF3X3hc+FVPA==
 
 "@react-native/virtualized-lists@0.75.2":
   version "0.75.2"
