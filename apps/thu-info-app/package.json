@@ -60,7 +60,7 @@
 		"react-native-version-number": "0.3.6",
 		"react-native-view-shot": "3.8.0",
 		"react-native-webview": "13.12.2",
-		"react-native-wheel-scrollview-picker": "2.0.5",
+		"react-native-wheel-scrollview-picker": "2.0.6",
 		"react-redux": "9.1.2",
 		"redux-persist": "6.0.0",
 		"redux-persist-keychain-storage": "0.1.1",
