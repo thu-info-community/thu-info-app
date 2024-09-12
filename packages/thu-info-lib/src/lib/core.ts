@@ -1,11 +1,16 @@
 import {
+    CHECK_CURRENT_DEVICE_URL,
+    DELETE_DEVICE_URL,
     DOUBLE_AUTH_URL,
     GET_COOKIE_URL,
+    GET_DEVICE_LIST_URL,
     GITLAB_AUTH_URL,
     GITLAB_LOGIN_URL,
     ID_BASE_URL,
     ID_HOST_URL,
     ID_LOGIN_URL,
+    ID_WEBSITE_BASE_URL,
+    ID_WEBSITE_LOGIN_URL,
     INVOICE_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
@@ -23,7 +28,7 @@ import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
 
-type RoamingPolicy = "default" | "id" | "card" | "cab" | "gitlab" | "cr";
+type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab" | "cr";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -215,31 +220,46 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
     case "card":
     case "cab":
+    case "id_website":
     case "id": {
-        const idBaseUrl = policy === "card" ? ID_BASE_URL : WEB_VPN_ID_BASE_URL;
-        const idLoginUrl = policy === "card" ? ID_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
+        const idBaseUrl = policy === "card" ? ID_BASE_URL : policy === "id_website" ? ID_WEBSITE_BASE_URL : WEB_VPN_ID_BASE_URL;
+        const idLoginUrl = policy === "card" ? ID_LOGIN_URL : policy === "id_website" ? ID_WEBSITE_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
         let response = "";
+        const target = policy === "id_website" ? "账号设置" : "登录成功。正在重定向到";
         for (let i = 0; i < 2; i++) {
             const sm2PublicKey = cheerio.load(await uFetch(idBaseUrl + payload))("#sm2publicKey").text();
             if (sm2PublicKey === "") {
                 throw new LoginError("Failed to get public key.");
             }
-            response = await uFetch(idLoginUrl, {
-                i_user: helper.userId,
-                i_pass:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                fingerPrint: helper.fingerprint,
-                fingerGenPrint: "",
-                i_captcha: "",
-            });
+            if (policy === "id_website") {
+                response = await uFetch(idLoginUrl, {
+                    username: helper.userId,
+                    password:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
+                    fingerPrint: helper.fingerprint,
+                    fingerGenPrint: "",
+                    i_captcha: "",
+                });
+            } else {
+                response = await uFetch(idLoginUrl, {
+                    i_user: helper.userId,
+                    i_pass:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
+                    fingerPrint: helper.fingerprint,
+                    fingerGenPrint: "",
+                    i_captcha: "",
+                });
+            }
             if (response.includes("二次认证")) {
                 response = await twoFactorAuth(helper);
             }
-            if (response.includes("登录成功。正在重定向到")) {
+            if (response.includes(target)) {
                 break;
             }
         }
-        if (!response.includes("登录成功。正在重定向到")) {
+        if (!response.includes(target)) {
             throw new IdAuthError();
+        }
+        if (policy === "id_website") {
+            return response;
         }
         const redirectUrl = cheerio.load(response)("a").attr()!.href;
 
@@ -345,3 +365,29 @@ export const roamingWrapperWithMocks = async <R>(
     helper.mocked()
         ? Promise.resolve(fallback)
         : roamingWrapper(helper, policy, payload, operation);
+
+export const forgetDevice = async (helper: InfoHelper): Promise<void> => {
+    await roam(helper, "id_website", "");
+    for (let i = 0; i < 10; i++) {
+        const {result: r1, msg: m1, object: o1} = JSON.parse(await uFetch(CHECK_CURRENT_DEVICE_URL.replace("{fingerprint}", helper.fingerprint), {}));
+        if (r1 != "success") {
+            throw new LibError(m1);
+        }
+        if (o1 === false) {
+            break;
+        }
+        const {result: r2, msg: m2, object: o2} = JSON.parse(await uFetch(GET_DEVICE_LIST_URL, {}));
+        if (r2 != "success") {
+            throw new LibError(m2);
+        }
+        const ourDeviceList = o2.filter(({name}: any) => name.startsWith("THU Info APP"));
+        if (ourDeviceList.length > 0) {
+            const {result: r3, msg: m3} = JSON.parse(await uFetch(DELETE_DEVICE_URL, {uuid: ourDeviceList[ourDeviceList.length - 1].id}));
+            if (r3 != "success") {
+                throw new LibError(m3);
+            }
+        } else {
+            throw new LibError("No matching device.");
+        }
+    }
+};

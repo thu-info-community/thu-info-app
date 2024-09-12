@@ -16,7 +16,7 @@ import {
     naiveSendMail,
     getCalendarImageUrl,
 } from "./lib/basics";
-import {login, logout} from "./lib/core";
+import {forgetDevice, login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
 import {
     LibBookRecord,
@@ -229,6 +229,11 @@ export class InfoHelper {
      * Log out and clear fields `userId` and `password` of this `InfoHelper` instance
      */
     public logout = async (): Promise<void> => logout(this);
+
+    /**
+     * THIS METHOD IS INTENDED FOR APP USE ONLY.
+     */
+    public forgetDevice = async (): Promise<void> => forgetDevice(this);
 
     /**
      * THIS METHOD IS INTENDED FOR APP USE ONLY.
