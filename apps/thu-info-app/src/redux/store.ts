@@ -131,7 +131,13 @@ const rootReducer = combineReducers({
 });
 
 const authTransform = createTransform(
-	undefined,
+	(a: AuthState) => {
+		const out = {...a};
+		if (!out.fingerprint) {
+			out.fingerprint = defaultAuth.fingerprint;
+		}
+		return out;
+	},
 	(a: AuthState) => {
 		helper.userId = a.userId;
 		helper.password = a.password;
