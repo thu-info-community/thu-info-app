@@ -62,7 +62,7 @@ import {
 import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
-import IconCalendar from "../../assets/icons/IconCalendar";
+// import IconCalendar from "../../assets/icons/IconCalendar";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
@@ -864,16 +864,16 @@ const getHomeFunctions = (
 		}}>
 		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
-	<HomeIcon
-		key="schoolCalendar"
-		title="schoolCalendar"
-		onPress={() => {
-			addUsageStat(FunctionType.SchoolCalendar);
-			updateTop5("schoolCalendar");
-			navigation.navigate("SchoolCalendar");
-		}}>
-		<IconCalendar width={iconSize} height={iconSize} />
-	</HomeIcon>,
+	// <HomeIcon
+	// 	key="schoolCalendar"
+	// 	title="schoolCalendar"
+	// 	onPress={() => {
+	// 		addUsageStat(FunctionType.SchoolCalendar);
+	// 		updateTop5("schoolCalendar");
+	// 		navigation.navigate("SchoolCalendar");
+	// 	}}>
+	// 	<IconCalendar width={iconSize} height={iconSize} />
+	// </HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -887,21 +887,12 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const disabledList: HomeFunction[] | undefined = useSelector(
 		(state: State) => state.config.homeFunctionDisabled,
 	);
-	const sunsetFunctions: HomeFunction[] = ["expenditure"];
-	if (!disabledList) {
-		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
-	} else if (sunsetFunctions.some((f) => !disabledList.includes(f))) {
-		dispatch(
-			configSet({
-				key: "homeFunctionDisabled",
-				value: disabledList.concat(sunsetFunctions),
-			}),
-		);
-	}
+	const sunsetFunctions: HomeFunction[] = ["expenditure", "schoolCalendar"];
+
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5Update(func)),
 	);
-	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
+	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x && !sunsetFunctions.includes(x as HomeFunction)));
 	let needToShowFunctionNames: HomeFunction[] = [];
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
@@ -968,7 +959,8 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		invalidHelper.twoFactorMethodHook = async () => {
 			dispatch(configSet({key: "fingerprintSecure", value: true}));
 			return undefined;
-		}
+		};
+
 		helper
 			.appStartUp(Platform.OS)
 			.then(
