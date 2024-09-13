@@ -887,12 +887,17 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const disabledList: HomeFunction[] | undefined = useSelector(
 		(state: State) => state.config.homeFunctionDisabled,
 	);
+
+	if (!disabledList) {
+		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
+	}
+
 	const sunsetFunctions: HomeFunction[] = ["expenditure", "schoolCalendar"];
 
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5Update(func)),
 	);
-	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x && !sunsetFunctions.includes(x as HomeFunction)));
+	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
@@ -932,12 +937,12 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("network");
 	}
 
-	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
-		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
-	}
+	// if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
+	// 	needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
+	// }
 
 	const top5Filtered = top5.filter(
-		(f) => !(disabledList ?? []).includes((f as any).key),
+		(f) => !(disabledList ?? []).includes((f as any).key) && !sunsetFunctions.includes((f as any).key),
 	);
 
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
