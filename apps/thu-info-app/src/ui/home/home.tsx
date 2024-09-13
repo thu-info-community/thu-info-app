@@ -25,7 +25,7 @@ import IconSports from "../../assets/icons/IconSports";
 import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
-import IconEleRecharge from "../../assets/icons/IconEleRecharge";
+// import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";
@@ -808,16 +808,16 @@ const getHomeFunctions = (
 		}}>
 		<IconWasher width={iconSize} height={iconSize} />
 	</HomeIcon>,
-	<HomeIcon
-		key="electricity"
-		title="electricity"
-		onPress={() => {
-			addUsageStat(FunctionType.Electricity);
-			updateTop5("electricity");
-			navigation.navigate("Electricity");
-		}}>
-		<IconEleRecharge width={iconSize} height={iconSize} />
-	</HomeIcon>,
+	// <HomeIcon
+	// 	key="electricity"
+	// 	title="electricity"
+	// 	onPress={() => {
+	// 		addUsageStat(FunctionType.Electricity);
+	// 		updateTop5("electricity");
+	// 		navigation.navigate("Electricity");
+	// 	}}>
+	// 	<IconEleRecharge width={iconSize} height={iconSize} />
+	// </HomeIcon>,
 	<HomeIcon
 		key="dormScore"
 		title="dormScore"
@@ -892,7 +892,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
 	}
 
-	const sunsetFunctions: HomeFunction[] = ["expenditure", "schoolCalendar"];
+	const sunsetFunctions: HomeFunction[] = ["expenditure", "schoolCalendar", "electricity"];
 
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5Update(func)),
@@ -922,7 +922,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("finance");
 	}
 	if (
-		!["washer", "qzyq", "dormScore", "electricity"].every((i) =>
+		!["washer", "qzyq", "dormScore"/*, "electricity"*/].every((i) =>
 			(disabledList ?? []).includes(i as HomeFunction),
 		)
 	) {
@@ -942,7 +942,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	// }
 
 	const top5Filtered = top5.filter(
-		(f) => !(disabledList ?? []).includes((f as any).key) && !sunsetFunctions.includes((f as any).key),
+		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),
 	);
 
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
