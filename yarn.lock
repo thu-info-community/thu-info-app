@@ -9136,10 +9136,10 @@ react-native-snackbar@2.6.2:
   resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.6.2.tgz#7c0d0d93bfb5822fb1f41f00d29383f522c02185"
   integrity sha512-edAubZJiBowwQUXJV5oXbMqitQ9vw7JzWUCczeTPVo6lRa+FzsUjiCQBHdWBbCw/N8/Q7jgKg4juNXU/bXZdXg==
 
-react-native-svg@15.6.0:
-  version "15.6.0"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.6.0.tgz#13b2af53b1701597df301122b869b61918e1e9a5"
-  integrity sha512-TUtR+h+yi1ODsd8FHdom1TpjfWOmnaK5pri5rnSBXnMqpzq8o2zZfonHTjPX+nS3wb/Pu2XsoARgYaHNjVWXhQ==
+react-native-svg@15.7.1:
+  version "15.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.7.1.tgz#299bf5ff21fb355a0f4bedd4cb8f9f520725c4fe"
+  integrity sha512-Xc11L4t6/DtmUwrQqHR7S45Qy3cIWpcfGlmEatVeZ9c1N8eAK79heJmGRgCOVrXESrrLEHfP/AYGf0BGyrvV6A==
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"
