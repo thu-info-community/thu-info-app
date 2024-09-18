@@ -1599,7 +1599,7 @@ PODS:
     - React-utils (= 0.75.3)
   - RNCAsyncStorage (2.0.0):
     - React-Core
-  - RNDeviceInfo (11.1.0):
+  - RNDeviceInfo (13.0.0):
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
@@ -2094,7 +2094,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 87ea8b1e4877eb4639b47f69d221a05f92934cb8
   ReactCommon: 289214026502e6a93484f4a46bcc0efa4f3f2864
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
-  RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
+  RNDeviceInfo: 55264dd7cc939dad6e9c231a7621311f5277f1dc
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 3b6fa2bfa341c413d3d08444b838515b58e48ee7
