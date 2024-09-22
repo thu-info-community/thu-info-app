@@ -159,23 +159,23 @@ export const getReport = (
         helper.graduate() ? "E35232808C08C8C5F199F13BF6B7F5D0": "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`)),
-            bx && flag === 1 && !helper.graduate() ? uFetch(BKS_REPORT_BXR_URL) : uFetch(YJS_REPORT_BXR_URL),
+            bx && flag === 1 ? uFetch(helper.graduate() ? YJS_REPORT_BXR_URL : BKS_REPORT_BXR_URL) : undefined,
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
             if (bxStr) {
-                const childrenOriginal = cheerio.load(bxStr)(".table-striped tr");
-                const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
-                children.each((index, element) => {
-                    if (element.type === "tag" && element.children.length === 25) {
+                cheerio.load(bxStr)(".table-striped tr").each((index, element) => {
+                    if (element.type === "tag") {
                         const transformedElement = cheerio.load(element)("td");
-                        const type = getCheerioText(
-                            transformedElement[8],
-                            0,
-                        );
-                        if (type === "必修" || type === "限选" || type === "是") {
-                            bxSet.add(
-                                getCheerioText(transformedElement[0], 0),
+                        if (transformedElement.length > 8) {
+                            const type = getCheerioText(
+                                transformedElement[8],
+                                0,
                             );
+                            if (type === "必修" || type === "限选" || type === "是") {
+                                bxSet.add(
+                                    getCheerioText(transformedElement[0], 0),
+                                );
+                            }
                         }
                     }
                 });
@@ -189,13 +189,7 @@ export const getReport = (
                     if (!newGPA) {
                         point = gradeToOldGPA.get(grade) ?? point;
                     }
-                    let filter: boolean;
-                    if (graduate) {
-                        filter = !bx || getCheerioText(element, 7) === "是";
-                    } else {
-                        filter = bxStr === undefined || bxSet.has(getCheerioText(element, 1));
-                    }
-                    if (filter) {
+                    if (bxStr === undefined || bxSet.has(getCheerioText(element, 1))) {
                         return {
                             name: getCheerioText(element, 3),
                             credit: Number(getCheerioText(element, 5)),

@@ -246,9 +246,9 @@ export const ReportScreen = () => {
 				setReport(res);
 				setRefreshing(false);
 			})
-			.catch(() => {
+			.catch((e) => {
 				Snackbar.show({
-					text: getStr("networkRetry"),
+					text: getStr("networkRetry") + e?.message,
 					duration: Snackbar.LENGTH_SHORT,
 				});
 				setRefreshing(false);
