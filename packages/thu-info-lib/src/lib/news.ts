@@ -323,6 +323,10 @@ const handleNewApiNews = async (url: string): Promise<[string, string, string]> 
             const fileId = redirectUrl.substring(fileIdPos + 7);
             return await handlePdfNews(fileId);
         } else {
+            const redirectUrl = await getRedirectUrl(url);
+            if (redirectUrl.endsWith(".pdf")) {
+                return ["PdF", html, "PdF"];
+            }
             return await getNewsDetailOld(await getRedirectUrl(url), false);
         }
     }
