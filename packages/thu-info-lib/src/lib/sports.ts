@@ -215,7 +215,7 @@ export const makeSportsReservation = async (
 const getSportsReservationPaidRecords = async (): Promise<SportsReservationRecord[]> => {
     const $ = await uFetch(SPORTS_PAID_URL).then(cheerio.load);
     return $("tr[style='display:none']").toArray().map((e) => {
-        const contentRow = cheerio.load(e).root().find("tbody tr").first();
+        const contentRow = cheerio.load(e)("tbody tr").first();
         const items = contentRow.find("td");
         return {
             name: getCheerioText(items[2]),
@@ -248,7 +248,7 @@ export const getSportsReservationRecords = async (
             const time = getCheerioText(e, 5);
             const price = getCheerioText(e, 7);
             const method = getCheerioText(e, 9);
-            const bookTimestampString = cheerio.load((e as TagElement).children[11]).root().find("span[time]").attr("time");
+            const bookTimestampString = cheerio.load((e as TagElement).children[11])("span[time]").attr("time");
             const bookTimestamp = bookTimestampString === undefined ? undefined : Number(bookTimestampString);
             let payId: string | undefined;
             let bookId: string | undefined;

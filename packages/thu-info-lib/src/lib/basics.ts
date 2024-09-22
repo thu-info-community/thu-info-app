@@ -167,14 +167,14 @@ export const getReport = (
                 const children = childrenOriginal.slice(1, childrenOriginal.length - 1);
                 children.each((index, element) => {
                     if (element.type === "tag" && element.children.length === 25) {
-                        const transformedElement = cheerio.load(element).root();
+                        const transformedElement = cheerio.load(element)("td");
                         const type = getCheerioText(
-                            transformedElement.children()[8],
+                            transformedElement[8],
                             0,
                         );
                         if (type === "必修" || type === "限选" || type === "是") {
                             bxSet.add(
-                                getCheerioText(transformedElement.children()[0], 0),
+                                getCheerioText(transformedElement[0], 0),
                             );
                         }
                     }
@@ -412,7 +412,7 @@ export const getClassroomState = (
             const validWeekNumbers = $("#weeknumber option").map((_, element) => Number((element as TagElement).attribs.value)).get();
             const datesOfCurrentWeek = $("[colspan=6]").map((i, element) => {
                 if (i >= 7) return "";
-                const text = cheerio.load(element).root().text();
+                const text = cheerio.load(element).text();
                 const r = /\((.+?)\)/g.exec(text);
                 if (r === null || r[1] === undefined) {
                     throw new ClassroomStateError("r === null || r[1] === undefined");
@@ -627,7 +627,7 @@ export const countdown = async (helper: InfoHelper): Promise<string[]> =>
             if (data.html() === null) {
                 throw new LibError();
             }
-            return data.map((_, e) => cheerio.load(e).root().text()).get();
+            return data.map((_, e) => cheerio.load(e).text()).get();
         },
         MOCK_COUNTDOWN_DATA
     );

@@ -10,11 +10,11 @@ export const getCheerioText = (element: Node, index?: number) =>
         : (((element as Tag).children[index] as Tag).firstChild as DataNode)?.data?.trim() ?? "";
 
 export const getTrimmedData = (element: Element, indexChain: number[]) => {
-    const tElement = cheerio.load(element).root();
+    const tElement = cheerio.load(element)("td");
     try {
-        let res = tElement.children()[indexChain[0]];
+        let res = tElement[indexChain[0]];
         indexChain
-            .slice(1)    
+            .slice(1)
             .forEach((val) => {
                 res = (res as Tag).children[val] as Element;
             });

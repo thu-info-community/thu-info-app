@@ -100,7 +100,7 @@ export const searchNewsList =
                 const data: { object: { resultsList: { bt: string, url: string, xxid: string, time: string, dwmc_show: string, yxzd: null, lmid: ChannelTag, sfsc: boolean }[] } } = JSON.parse(json);
                 data.object.resultsList.forEach(element => {
                     newsList.push({
-                        name: cheerio.load(decode(element.bt)).root().text(),
+                        name: cheerio.load(decode(element.bt)).text(),
                         xxid: (element.xxid),
                         url: decode(element.url),
                         date: element.time,

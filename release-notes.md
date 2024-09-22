@@ -3,3 +3,4 @@
 - 
 ## @thu-info/lib
 - fix: fixed filtering graduate course report with 学位课
+- fix: fixed some incorrect usages of cheerio
