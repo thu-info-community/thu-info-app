@@ -23,6 +23,7 @@ import {
     SWITCH_LANG_URL,
     CALENDAR_IMAGE_URL,
     LEARN_HOME_URL,
+    YJS_REPORT_BXR_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -158,7 +159,7 @@ export const getReport = (
         helper.graduate() ? "E35232808C08C8C5F199F13BF6B7F5D0": "B7EF0ADF9406335AD7905B30CD7B49B1",
         () => Promise.all([
             uFetch(helper.graduate() ? GET_YJS_REPORT_URL : (`${GET_BKS_REPORT_URL}&flag=di${flag}`)),
-            bx && flag === 1 && !helper.graduate() ? uFetch(BKS_REPORT_BXR_URL) : undefined,
+            bx && flag === 1 && !helper.graduate() ? uFetch(BKS_REPORT_BXR_URL) : uFetch(YJS_REPORT_BXR_URL),
         ]).then(([str, bxStr]: [string, string | undefined]) => {
             const bxSet = new Set<string>();
             if (bxStr) {
@@ -171,7 +172,7 @@ export const getReport = (
                             transformedElement.children()[8],
                             0,
                         );
-                        if (type === "必修" || type === "限选") {
+                        if (type === "必修" || type === "限选" || type === "是") {
                             bxSet.add(
                                 getCheerioText(transformedElement.children()[0], 0),
                             );
