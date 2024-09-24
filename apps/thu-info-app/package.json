@@ -83,7 +83,7 @@
 		"@react-native/typescript-config": "0.75.3",
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.5",
-		"@types/react": "18.3.8",
+		"@types/react": "18.3.9",
 		"@types/react-test-renderer": "18.3.0",
 		"@types/semver": "7.5.8",
 		"@types/uuid": "10.0.0",
