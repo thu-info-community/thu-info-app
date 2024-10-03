@@ -43,7 +43,7 @@
 		"react-native-gesture-handler": "2.20.0",
 		"react-native-get-random-values": "1.11.0",
 		"react-native-image-zoom-viewer": "3.0.1",
-		"react-native-keychain": "4.0.5",
+		"react-native-keychain": "9.0.0",
 		"react-native-localize": "3.2.1",
 		"react-native-pdf": "6.7.5",
 		"react-native-permissions": "4.1.5",
