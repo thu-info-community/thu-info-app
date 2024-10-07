@@ -14,7 +14,7 @@ import {
     getInvoicePDF,
     switchLang,
     naiveSendMail,
-    getCalendarImageUrl,
+    getCalendarImageUrl, getSchoolCalendarYear,
 } from "./lib/basics";
 import {forgetDevice, login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -412,6 +412,11 @@ export class InfoHelper {
      * Get the school calendar data.
      */
     public getCalendar = async (): Promise<CalendarData> => getCalendar(this);
+
+    /**
+     * Get the latest school calendar year (from THUInfo backend)
+     */
+    public getCalendarYear = async (): Promise<number> => getSchoolCalendarYear();
 
     /**
      * Get the school calendar image url

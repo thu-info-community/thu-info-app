@@ -1,6 +1,6 @@
 import {Text, useColorScheme, View} from "react-native";
 import {helper, State} from "../../redux/store";
-import {useState} from "react";
+import { useEffect, useState } from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
@@ -11,8 +11,6 @@ import {saveRemoteImg} from "../../utils/saveImg";
 import {useSelector} from "react-redux";
 
 export const SchoolCalendar = () => {
-	const firstYear = 2019;
-
 	const semesterDescription = useSelector(
 		(s: State) => s.config.semesterId,
 	).split("-");
@@ -26,6 +24,8 @@ export const SchoolCalendar = () => {
 
 	const [src, setSrc] = useState("");
 	const [year, setYear] = useState(currentYear);
+	const [lastYear, setLastYear] = useState(currentYear);
+	const firstYear = lastYear - 2;
 	const [yearSelection, setYearSelection] = useState(currentYear);
 	const [semesterSelection, setSemesterSelection] = useState(
 		semester === "autumn" ? 0 : 1,
@@ -38,8 +38,14 @@ export const SchoolCalendar = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	useEffect(() => {
+		helper.getCalendarYear().then((r) => {
+			setLastYear(r);
+		});
+	}, []);
+
 	if (!error) {
-		helper.getCalendarImageUrl(year, semester, lang).then((r) => {
+		helper.getCalendarImageUrl(year - 1, semester, lang).then((r) => {
 			setSrc(r);
 		});
 	}
@@ -125,7 +131,7 @@ export const SchoolCalendar = () => {
 						<Text
 							style={{color: colors.fontB3, fontSize: 16, flex: 0}}
 							numberOfLines={1}>
-							{year} {getStr(semester)}
+							{year - 1} - {year} {getStr(semester)}
 						</Text>
 						<IconRight height={24} width={24} />
 					</View>

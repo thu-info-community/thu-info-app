@@ -62,7 +62,7 @@ import {
 import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
-// import IconCalendar from "../../assets/icons/IconCalendar";
+import IconCalendar from "../../assets/icons/IconCalendar";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
@@ -864,16 +864,16 @@ const getHomeFunctions = (
 		}}>
 		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
-	// <HomeIcon
-	// 	key="schoolCalendar"
-	// 	title="schoolCalendar"
-	// 	onPress={() => {
-	// 		addUsageStat(FunctionType.SchoolCalendar);
-	// 		updateTop5("schoolCalendar");
-	// 		navigation.navigate("SchoolCalendar");
-	// 	}}>
-	// 	<IconCalendar width={iconSize} height={iconSize} />
-	// </HomeIcon>,
+	<HomeIcon
+		key="schoolCalendar"
+		title="schoolCalendar"
+		onPress={() => {
+			addUsageStat(FunctionType.SchoolCalendar);
+			updateTop5("schoolCalendar");
+			navigation.navigate("SchoolCalendar");
+		}}>
+		<IconCalendar width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -892,7 +892,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
 	}
 
-	const sunsetFunctions: HomeFunction[] = ["expenditure", "schoolCalendar", "electricity"];
+	const sunsetFunctions: HomeFunction[] = ["expenditure", "electricity"];
 
 	const homeFunctions = getHomeFunctions(navigation, (func) =>
 		dispatch(top5Update(func)),
@@ -937,9 +937,9 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("network");
 	}
 
-	// if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
-	// 	needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
-	// }
+	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
+		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
+	}
 
 	const top5Filtered = top5.filter(
 		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),
