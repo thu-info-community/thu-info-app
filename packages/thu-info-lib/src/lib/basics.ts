@@ -22,6 +22,7 @@ import {
     PHYSICAL_EXAM_URL,
     SWITCH_LANG_URL,
     CALENDAR_IMAGE_URL,
+    CALENDAR_YEAR_URL,
     LEARN_HOME_URL,
     YJS_REPORT_BXR_URL,
 } from "../constants/strings";
@@ -594,18 +595,17 @@ export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
         MOCK_CALENDAR_DATA,
     );
 
+export const getSchoolCalendarYear = async (): Promise<number> => {
+    return (await uFetch(CALENDAR_YEAR_URL).then(JSON.parse))["year"];
+};
+
 export const getCalendarImageUrl = async (helper: InfoHelper, year: number, semester: "spring" | "autumn", lang: "zh" | "en"): Promise<string> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
         "",
         async () => {
-            // It seems that the calendar image is named differently here
-            if (lang == "en" && year < 2023) {
-                return `${CALENDAR_IMAGE_URL}${year-1}-${year}_${semester === "spring" ? 2 : 1}_en.jpg`;
-            }
-
-            return `${CALENDAR_IMAGE_URL}${year-1}-${year}-${semester === "spring" ? 2 : 1}-${lang === "zh" ? "cn" : "en"}.jpg`;
+            return `${CALENDAR_IMAGE_URL}/${lang}/${year}-${semester === "spring" ? 2 : 1}.jpg`;
         },
         "",
     );

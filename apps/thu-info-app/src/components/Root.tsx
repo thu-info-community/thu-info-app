@@ -125,7 +125,7 @@ import {NetworkScreen} from "../ui/home/network";
 import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
-// import {SchoolCalendar} from "../ui/home/schoolCalendar";
+import {SchoolCalendar} from "../ui/home/schoolCalendar";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 
@@ -770,11 +770,11 @@ export const Root = () => {
 				component={NetworkOnlineDevicesScreen}
 				options={{title: getStr("onlineDevices")}}
 			/>
-			{/*<Stack.Screen*/}
-			{/*	name="SchoolCalendar"*/}
-			{/*	component={SchoolCalendar}*/}
-			{/*	options={{title: getStr("schoolCalendar")}}*/}
-			{/*/>*/}
+			<Stack.Screen
+				name="SchoolCalendar"
+				component={SchoolCalendar}
+				options={{title: getStr("schoolCalendar")}}
+			/>
 			{/* News */}
 			<Stack.Screen
 				name="NewsDetail"

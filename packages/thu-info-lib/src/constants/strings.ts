@@ -34,10 +34,8 @@ export const CALENDAR_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/xl";
 export const DEADLINE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/b/info/gxfw_fg/common/deadline/list";
-export const CALENDAR_PAGE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fffb45952936671e6a1b80a29f5d3634e5cdcd7ed98227/html/lmntw/file/xiaoli";
-export const CALENDAR_IMAGE_URL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421fffb45952936671e6a1b80a29f5d3634e5cdcd7ed98227/html/lmntw/img/";
+export const CALENDAR_IMAGE_URL = "https://app.cs.tsinghua.edu.cn/xiaoli";
+export const CALENDAR_YEAR_URL = "https://app.cs.tsinghua.edu.cn/Api/SchoolCalendarYear";
 export const LEARN_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc/f/wlxt/index/course/student/index";
 export const SEMESTER_LIST_URL =
