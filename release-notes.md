@@ -6,3 +6,4 @@
 - fix: fixed filtering graduate course report with 学位课
 - fix: fixed some incorrect usages of cheerio
 - fix: fixed some cases where PDF news is tagged incorrectly
+- feat: implement `getGraduateIncome`

@@ -16,3 +16,16 @@ export interface BankPaymentByMonth {
     month: string;          // yyyy年MM月
     payment: BankPayment[];
 }
+
+export interface GraduateIncome {
+    id: string;
+    year: string;
+    month: string;
+    date: string;
+    ym: string;
+    name: string;
+    department: string;
+    beforeTax: number;
+    afterTax: number;
+    tax: number;
+}

@@ -1,5 +1,5 @@
 import {Form, InputTag, Overall, Person} from "../models/home/assessment";
-import {BankPaymentByMonth} from "../models/home/bank";
+import {BankPaymentByMonth, GraduateIncome} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {ClassroomStateResult} from "../models/home/classroom";
@@ -337,6 +337,9 @@ export const MOCK_BANK_PAYMENT = [{
         cash: "0.00",
     }],
 }] as BankPaymentByMonth[];
+
+export const MOCK_GRADUATE_INCOME = [
+] as GraduateIncome[];
 
 export const MOCK_CALENDAR_DATA: CalendarData = {
     firstDay: "2023-07-01",

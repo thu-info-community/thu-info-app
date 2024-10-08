@@ -15,6 +15,7 @@ import {
     switchLang,
     naiveSendMail,
     getCalendarImageUrl, getSchoolCalendarYear,
+    getGraduateIncome,
 } from "./lib/basics";
 import {forgetDevice, login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -93,7 +94,7 @@ import {
     setCoursePF,
 } from "./lib/cr";
 import {CrTimetable, SearchCoursePriorityQuery, SearchParams} from "./models/cr/cr";
-import {BankPaymentByMonth} from "./models/home/bank";
+import {BankPaymentByMonth, GraduateIncome} from "./models/home/bank";
 import {
     getNamespaces,
     getPersonalProjects,
@@ -407,6 +408,16 @@ export class InfoHelper {
      * @param foundation  whether to get bank payment result by 基金会 or not
      */
     public getBankPayment = async (foundation = false): Promise<BankPaymentByMonth[]> => getBankPayment(this, foundation);
+
+    /**
+     * Get the graduate income records of the user according to the date range
+     * @param begin  YYYYMMDD
+     * @param end    YYYYMMDD
+     */
+    public getGraduateIncome = async (
+        begin: string,  // YYYYMMDD
+        end: string,    // YYYYMMDD
+    ): Promise<GraduateIncome[]> => getGraduateIncome(this, begin, end);
 
     /**
      * Get the school calendar data.

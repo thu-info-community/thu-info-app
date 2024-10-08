@@ -131,6 +131,8 @@ export const BANK_PAYMENT_SEARCH_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9ff459a69247b59700f81b9991b26317dbd36ae/yhdfcx/search.do";
 export const FOUNDATION_BANK_PAYMENT_SEARCH_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e9ff459a69247b59700f81b9991b26317dbd36ae/yhdfcx_jjh/search.do";
+export const GRADUATE_INCOME_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaed4b9069377a517a1d88b89d1b37269c624d2b1c6925f37faea82b8d/b/yjsjzxt/v_yjszzjl_yjscwdfmx_cx/pageList";
 export const LIBRARY_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e3f24088693c6152301c9aa596522b204c02212b859d0a19/home/web/f_second";
 export const LIBRARY_LIST_URL =

@@ -25,6 +25,7 @@ import {
     CALENDAR_YEAR_URL,
     LEARN_HOME_URL,
     YJS_REPORT_BXR_URL,
+    GRADUATE_INCOME_URL,
 } from "../constants/strings";
 import {getCheerioText} from "../utils/cheerio";
 import {Course} from "../models/home/report";
@@ -44,6 +45,7 @@ import {
     MOCK_CLASSROOM_LIST,
     MOCK_CLASSROOM_STATE,
     MOCK_COUNTDOWN_DATA,
+    MOCK_GRADUATE_INCOME,
     MOCK_INVOICE_DATA,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
@@ -56,7 +58,7 @@ import {
     ReportError,
     UserInfoError,
 } from "../utils/error";
-import {BankPayment, BankPaymentByMonth} from "../models/home/bank";
+import {BankPayment, BankPaymentByMonth, GraduateIncome} from "../models/home/bank";
 import {CalendarData, Semester} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
@@ -559,6 +561,42 @@ export const getBankPayment = async (
                 .get() as BankPaymentByMonth[];
         },
         MOCK_BANK_PAYMENT,
+    );
+
+export const getGraduateIncome = async (
+    helper: InfoHelper,
+    begin: string,  // YYYYMMDD
+    end: string,    // YYYYMMDD
+): Promise<GraduateIncome[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "default",
+        "C0AE458CEACD0912982A09DDF0C136DA",
+        () => uFetch(GRADUATE_INCOME_URL, {
+            ffkssj: begin,
+            ffjssj: end,
+            _search: false,
+            nd: Date.now(),
+            rows: 1000,
+            page: 1,
+            sidx: "id",
+            sord: "asc",
+        }).then((r) => {
+            const {object: {rows}} = JSON.parse(r);
+            return rows.map((row: any) => ({
+                id: row.id,
+                year: row.ffnf,
+                month: row.ffyf,
+                date: row.ffrq,
+                ym: row.ffrqChs,
+                name: row.dfytmc,
+                department: row.xmssbmmc,
+                beforeTax: row.yfje,
+                afterTax: row.sfje,
+                tax: row.ksje,
+            }));
+        }),
+        MOCK_GRADUATE_INCOME,
     );
 
 const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: string; jssj: string; id: string}): Semester => {
