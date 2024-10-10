@@ -521,8 +521,12 @@ export const getBankPayment = async (
             const $ = cheerio.load(result);
             const titles = $("div strong")
                 .map((_, e) => {
-                    const text = ((e as TagElement).children[0] as DataNode).data?.trim();
+                    const titleElement = e as TagElement;
+                    const text = (titleElement.children[0] as DataNode).data?.trim();
                     if (text === undefined) {
+                        return undefined;
+                    }
+                    if (((titleElement.parentNode?.next as TagElement).firstChild as TagElement).name !== "table") {
                         return undefined;
                     }
                     const res = /(\d+年\d+月)银行代发结果/g.exec(text);
