@@ -128,6 +128,7 @@ import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
+import { IncomeScreen } from "../ui/home/income.tsx";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -236,6 +237,7 @@ type HomeStackParamList = {
 	DormScore: undefined;
 	Invoice: undefined;
 	InvoicePDF: {base64: string; filename: string};
+	Income: undefined;
 	ReservesLibWelcome: undefined;
 	ReservesLibPDF: {book: SearchResultItem};
 	Qzyq: QzyqSelectParams;
@@ -629,6 +631,11 @@ export const Root = () => {
 						</View>
 					),
 				})}
+			/>
+			<Stack.Screen
+				name="Income"
+				component={IncomeScreen}
+				options={{title: getStr("graduateIncome")}}
 			/>
 			<Stack.Screen
 				name="ReservesLibWelcome"

@@ -169,6 +169,7 @@ export default {
 	resources: "Resources",
 	reservesLib: "Course Reserve",
 	invoice: "Fapiao",
+	graduateIncome: "Graduate Income",
 	eCard: "E-Card",
 	bankPayment: "Bank Payment",
 	bankPaymentFoundation: "Bank Payment (Foundation)",
