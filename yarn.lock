@@ -8940,10 +8940,10 @@ react-native-confirmation-code-field@7.4.0:
   resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-7.4.0.tgz#58cc2d5adad59882d1805bf164cd6099d432d21e"
   integrity sha512-Kw7rD0RXi6vZnt0Y67nkSW2wYmZFdnxJ23yxkKm3jqwvSxAvaA1NP3h3MHSPmJd25l0WK/+fjXOeCliDqWZ9rw==
 
-react-native-device-info@13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-13.0.0.tgz#6c272ffe805f74b2aaa22c81ae989286448c83b4"
-  integrity sha512-TKCq4XKl8lzB04RdEbADxkbzDJwOfWcxZxNcf1LweT+A+KRAUv1no7bch7RM0WLyMVKMTa2hbusESnzxB5QQRA==
+react-native-device-info@13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-13.1.0.tgz#e5076088e7f1eddba5cf5693ab46210946382e3f"
+  integrity sha512-tje+yRDG4ue2K7uC862IhxX7wFoufwozSdqLuzLKA8X1b4zgfF6iXId0Da8c2qS6FtaMr+vTsBFrY7Gxo1wTew==
 
 react-native-device-time-format@2.4.0:
   version "2.4.0"
