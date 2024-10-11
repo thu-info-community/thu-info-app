@@ -526,7 +526,7 @@ export const getBankPayment = async (
                     if (text === undefined) {
                         return undefined;
                     }
-                    if (((titleElement.parentNode?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
+                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "TABLE") {
                         return undefined;
                     }
                     const res = /(\d+年\d+月)银行代发结果/g.exec(text);
