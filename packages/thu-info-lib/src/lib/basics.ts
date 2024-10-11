@@ -526,11 +526,11 @@ export const getBankPayment = async (
                     if (text === undefined) {
                         return undefined;
                     }
-                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "TABLE") {
-                        return undefined;
-                    }
                     const res = /(\d+年\d+月)银行代发结果/g.exec(text);
                     if (res === null || res[1] === undefined) {
+                        return undefined;
+                    }
+                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "TABLE") {
                         return undefined;
                     }
                     return res[1];
