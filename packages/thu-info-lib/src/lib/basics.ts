@@ -530,7 +530,7 @@ export const getBankPayment = async (
                     if (res === null || res[1] === undefined) {
                         return undefined;
                     }
-                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "TABLE") {
+                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
                         return undefined;
                     }
                     return res[1];
@@ -559,7 +559,7 @@ export const getBankPayment = async (
                                 deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
                                 cash: getCheerioText((columns[11] as TagElement).children[0], 0),
                             } as BankPayment;
-                        }).get(),
+                        }).get().reverse(),
                     };
                 })
                 .get() as BankPaymentByMonth[];

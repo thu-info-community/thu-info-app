@@ -570,4 +570,5 @@ export default {
 	washerNoticeTitle: "重要公告",
 	washerNotice:
 		"厂家已停止对新洗衣机的维护，因此我们不接受对缺少洗衣机的反馈。此外，本系统数据完全来源于“华清捷利”小程序，因此我们不接受有关扩展功能的反馈。",
+	noMoreData: "没有更多数据了~",
 };

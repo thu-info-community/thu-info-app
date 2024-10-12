@@ -248,6 +248,17 @@ export const BankPaymentScreen = () => {
 						</View>
 					))}
 				</View>
+				<View>
+					<Text
+						style={{
+							color: colors.fontB2,
+							fontSize: 12,
+							textAlign: "center",
+							marginVertical: 12,
+						}}>
+						{getStr("noMoreData")}
+					</Text>
+				</View>
 			</ScrollView>
 		</View>
 	);
