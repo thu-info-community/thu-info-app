@@ -9012,10 +9012,10 @@ react-native-pdf@6.7.5:
     crypto-js "4.2.0"
     deprecated-react-native-prop-types "^2.3.0"
 
-react-native-permissions@4.1.5:
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-4.1.5.tgz#db4d1ddbf076570043f4fd4168f54bb6020aec92"
-  integrity sha512-r6VMRacASmtRHS+GZ+5HQCp9p9kiE+UU9magHOZCXZLTJitdTuVHWZRrb4v4oqZGU+zAp3mZhTQftuMMv+WLUg==
+react-native-permissions@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.0.0.tgz#fd7271ff6163341976882a5f331b710c97e84df1"
+  integrity sha512-H+njXissetO7DpWDqJ4J6AQBnmn4a9WQGGcn0Znm2wtb2IHEJkQooZH7yjYKqrgO6N4FkhuPiI7ZCuEDGLsPxQ==
 
 react-native-polyfill-globals@3.1.0:
   version "3.1.0"
@@ -9031,10 +9031,10 @@ react-native-qrcode-svg@6.3.2:
     qrcode "^1.5.1"
     text-encoding "^0.7.0"
 
-react-native-reanimated@3.15.4:
-  version "3.15.4"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.15.4.tgz#0d4aa65b53f9c845fe8c33aa8a3ad3d06a23f063"
-  integrity sha512-jcpHE+MnsvSbClhHgAFoken7SnaHrUJ5gVA8BUw8S1j6rkrw2VzRpht6cxn14NlqYx5ytjfG9IXJDOzq8tFvfw==
+react-native-reanimated@3.15.5:
+  version "3.15.5"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.15.5.tgz#c92085f054ddfc37b2b5489b7eadfc74da33e1f7"
+  integrity sha512-admqeZ0w235vQqYPy+IUgmHu5gwKi9+b7AQRV1yIK3MbAMLYx+RY+tTUtx1CNE5X+rNZ6eSQssW5z77yTwIusg==
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.0.0-0"
     "@babel/plugin-transform-class-properties" "^7.0.0-0"
