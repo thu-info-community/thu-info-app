@@ -247,6 +247,8 @@ export default {
 	payViaAlipay: "支付宝支付",
 	payViaWechat: "微信支付",
 	enterCardPin: "输入卡密码",
+	afterTax: "实发",
+	tax: "扣税",
 	classroomState: "教室资源",
 	classroomStatus: ["有课", "考试", "借用", "屏蔽", "未知", "空闲"],
 	classroomHeaderPrefix: "第",

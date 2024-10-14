@@ -257,6 +257,8 @@ export default {
 	payViaAlipay: "Pay via Alipay",
 	payViaWechat: "Pay via Wechat",
 	enterCardPin: "Enter Card PIN",
+	afterTax: "After tax",
+	tax: "Tax",
 	classroomState: "Classrooms",
 	classroomStatus: [
 		"Teaching",
