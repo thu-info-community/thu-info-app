@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	FlatList,
 	Modal,
@@ -31,11 +31,24 @@ export const BankPaymentScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
+	const cancelLastFetch = useRef<() => void | null>();
+
 	const fetchData = () => {
 		setRefreshing(true);
+
+		if (cancelLastFetch.current) {
+			cancelLastFetch.current();
+		}
+
+		let cancelled = false;
+
 		helper
 			.getBankPayment(foundation)
 			.then((r) => {
+				if (cancelled) {
+					return;
+				}
+
 				setData(r);
 				setRefreshing(false);
 			})
@@ -46,6 +59,10 @@ export const BankPaymentScreen = () => {
 				});
 				setRefreshing(false);
 			});
+
+		cancelLastFetch.current = () => {
+			cancelled = true;
+		};
 	};
 
 	useEffect(fetchData, [foundation]);
@@ -247,6 +264,17 @@ export const BankPaymentScreen = () => {
 							</RoundedView>
 						</View>
 					))}
+				</View>
+				<View>
+					<Text
+						style={{
+							color: colors.fontB2,
+							fontSize: 12,
+							textAlign: "center",
+							marginVertical: 12,
+						}}>
+						{getStr("noMoreData")}
+					</Text>
 				</View>
 			</ScrollView>
 		</View>
