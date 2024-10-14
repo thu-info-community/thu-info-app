@@ -106,9 +106,9 @@ export const IncomeScreen = () => {
 	const today = dayjs();
 
 	const [beginYear, setBeginYear] = useState(today.year());
-	const [beginMonth, setBeginMonth] = useState(today.month());
+	const [beginMonth, setBeginMonth] = useState(today.month() + 1);
 	const [endYear, setEndYear] = useState(today.year());
-	const [endMonth, setEndMonth] = useState(today.month());
+	const [endMonth, setEndMonth] = useState(today.month() + 1);
 
 	const [data, setData] = useState<GraduateIncome[]>([]);
 
