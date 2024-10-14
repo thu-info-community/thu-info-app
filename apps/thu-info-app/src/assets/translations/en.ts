@@ -169,6 +169,7 @@ export default {
 	resources: "Resources",
 	reservesLib: "Course Reserve",
 	invoice: "Fapiao",
+	graduateIncome: "Graduate Income",
 	eCard: "E-Card",
 	bankPayment: "Bank Payment",
 	bankPaymentFoundation: "Bank Payment (Foundation)",
@@ -257,6 +258,8 @@ export default {
 	payViaAlipay: "Pay via Alipay",
 	payViaWechat: "Pay via Wechat",
 	enterCardPin: "Enter Card PIN",
+	afterTax: "After tax",
+	tax: "Tax",
 	classroomState: "Classrooms",
 	classroomStatus: [
 		"Teaching",

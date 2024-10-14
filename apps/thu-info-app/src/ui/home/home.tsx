@@ -539,6 +539,7 @@ export type HomeFunction =
 	| "sportsBook"
 	| "bankPayment"
 	| "invoice"
+	| "income"
 	| "campusMap"
 	| "qzyq"
 	| "washer"
@@ -775,6 +776,26 @@ const getHomeFunctions = (
 				});
 			} else {
 				navigation.navigate("Invoice");
+			}
+		}}>
+		<IconInvoice width={iconSize} height={iconSize} />
+	</HomeIcon>,
+	<HomeIcon
+		key="income"
+		title="graduateIncome"
+		onPress={() => {
+			addUsageStat(FunctionType.Income);
+			updateTop5("income");
+			if (
+				currState().config.verifyPasswordBeforeEnterFinance &&
+				subFunctionLocked()
+			) {
+				navigation.navigate("DigitalPassword", {
+					action: "verify",
+					target: "Income",
+				});
+			} else {
+				navigation.navigate("Income");
 			}
 		}}>
 		<IconInvoice width={iconSize} height={iconSize} />

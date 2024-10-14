@@ -134,7 +134,7 @@ const authTransform = createTransform(
 	(a: AuthState) => {
 		const out = {...a};
 		if (!out.fingerprint) {
-			out.fingerprint = defaultAuth.fingerprint;
+			out.fingerprint = helper.fingerprint;
 		}
 		return out;
 	},

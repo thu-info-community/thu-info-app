@@ -3,6 +3,7 @@ import {useColorScheme, View} from "react-native";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
+import IconIncome from "../../assets/icons/IconIncome.tsx";
 import IconInvoice from "../../assets/icons/IconInvoice";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {currState} from "../../redux/store";
@@ -44,6 +45,17 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 						onPress={() => {
 							addUsageStat(FunctionType.Invoice);
 							navigation.navigate("Invoice");
+						}}
+					/>
+				)}
+				{!disabledFunction.includes("income") && (
+					<SecondaryItem
+						title="graduateIncome"
+						destKey="income"
+						icon={<IconIncome />}
+						onPress={() => {
+							addUsageStat(FunctionType.Income);
+							navigation.navigate("Income");
 						}}
 					/>
 				)}

@@ -27,6 +27,7 @@ export enum FunctionType {
 	OnlineDevices,
 	SchoolCalendar,
 	CampusCard,
+	Income,
 }
 
 export const addUsageStat = async (func: FunctionType) => {
