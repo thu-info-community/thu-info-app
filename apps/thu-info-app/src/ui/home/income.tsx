@@ -223,6 +223,9 @@ export const IncomeScreen = () => {
 					);
 				}}
 				keyExtractor={(item) => item.id}
+				contentContainerStyle={{
+					paddingBottom: 32,
+				}}
 			/>
 		</View>
 	);
