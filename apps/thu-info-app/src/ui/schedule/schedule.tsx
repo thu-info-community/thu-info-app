@@ -1,4 +1,4 @@
-import {View, Text, Dimensions, TouchableOpacity, FlatList} from "react-native";
+import {View, Text, Dimensions, TouchableOpacity, FlatList, Switch} from "react-native";
 import React, {
 	useState,
 	useEffect,
@@ -70,13 +70,13 @@ const Header = React.forwardRef(
 		{
 			calendar,
 			setCalendar,
-			onChangeSetHeightSetup,
+			onChangeSetOpenConfig,
 			onSetWeek,
 			navigation,
 		}: {
 			calendar: CalendarData | undefined;
 			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
-			onChangeSetHeightSetup: Function;
+			onChangeSetOpenConfig: Function;
 			navigation: RootNav;
 			onSetWeek: Function;
 		},
@@ -247,7 +247,7 @@ const Header = React.forwardRef(
 						</Text>
 					</BottomPopupTriggerView>
 					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
-						<TouchableOpacity onPress={() => onChangeSetHeightSetup()}>
+						<TouchableOpacity onPress={() => onChangeSetOpenConfig()}>
 							<IconConfig width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -315,11 +315,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const exactUnitHeight = (tableHeight - 40) / 14;
 	const heightMode =
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
+	const hideWeekend = useSelector((s: State) => s.config.hideWeekend);
 	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
 	const scheduleBodyWidth = windowWidth - 32;
 	const unitWidth = scheduleBodyWidth / 7;
 
-	const [heightSetup, setHeightSetup] = useState(false);
+	const [openConfig, setOpenConfig] = useState(false);
 
 	const colorList: string[] = theme.colors.courseItemColorList;
 
@@ -375,8 +376,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						index: w - 1,
 					});
 				}}
-				onChangeSetHeightSetup={() => {
-					setHeightSetup((v) => !v);
+				onChangeSetOpenConfig={() => {
+					setOpenConfig((v) => !v);
 				}}
 				navigation={navigation}
 			/>
@@ -505,7 +506,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												height: 40,
 												flexDirection: "row",
 											}}>
-											{Array.from(new Array(7)).map((_, index) => (
+											{Array.from(new Array(hideWeekend ? 5 : 7 )).map((_, index) => (
 												<View
 													style={{
 														flex: 1,
@@ -642,9 +643,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						</View>
 					</View>
 				</ScrollView>
-				{heightSetup && (
+				{openConfig && (
 					<TouchableOpacity
-						onPress={() => setHeightSetup(false)}
+						onPress={() => setOpenConfig(false)}
 						style={{
 							position: "absolute",
 							height: "100%",
@@ -667,6 +668,25 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 											value: value as number,
 										}),
 									);
+								}}
+							/>
+						</View>
+						<View style={{ backgroundColor: theme.colors.contentBackground }}>
+							<Text
+								style={{
+									margin: 8,
+									color: theme.colors.fontB1,
+									fontSize: 16,
+								}}>{getStr("hideWeekend")}</Text>
+							<Switch
+								thumbColor={theme.colors.contentBackground}
+								trackColor={{ true: theme.colors.themePurple }}
+								value={hideWeekend}
+								onValueChange={(value: boolean) => {
+									dispatch(configSet({
+										key: "hideWeekend",
+										value: value,
+									}));
 								}}
 							/>
 						</View>
