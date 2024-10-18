@@ -25,6 +25,7 @@ import IconSports from "../../assets/icons/IconSports";
 import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
+import IconIncome from "../../assets/icons/IconIncome";
 // import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import IconLibRoom from "../../assets/icons/IconLibRoom";
 import themes from "../../assets/themes/themes";
@@ -798,7 +799,7 @@ const getHomeFunctions = (
 				navigation.navigate("Income");
 			}
 		}}>
-		<IconInvoice width={iconSize} height={iconSize} />
+		<IconIncome width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="campusMap"
