@@ -2088,10 +2088,10 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-community/slider@4.5.3":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.5.3.tgz#84821ae17e746d90f73553bb58386e9db4db124c"
-  integrity sha512-0mOdnIL3xPWYGkP7levDH3bBsjdMOiR5mQIzFrSkZznZdIfX9MvGnelNZxsWuibmkc3hczHybo7RRb6mE96H2g==
+"@react-native-community/slider@4.5.4":
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-4.5.4.tgz#bcc3d4e52848eeb5d97915050d8aff6f97e79f0f"
+  integrity sha512-TFhwnrp0LTFG90yat8mqEOBLLMJylpnchO5F0KusH8dI0VzViIVIXOzhnx0mUVqLvRwRPbqBB0tvhxd739UhmA==
 
 "@react-native-cookies/cookies@6.2.1":
   version "6.2.1"
@@ -2345,10 +2345,10 @@
     color "^4.2.3"
     warn-once "^0.1.0"
 
-"@reduxjs/toolkit@2.2.8":
-  version "2.2.8"
-  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.2.8.tgz#69e6473dd5a395860d387abdd53fe5a2add378c8"
-  integrity sha512-eK/ieXftPRQfaBSmzsamXEyDwkntMTY0e9SG5ETsEOv5JIPKhu3mj992t6B8FJjlnSrZBAAqdT8oMkPe4j+P9g==
+"@reduxjs/toolkit@2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.3.0.tgz#d00134634d6c1678e8563ac50026e429e3b64420"
+  integrity sha512-WC7Yd6cNGfHx8zf+iu+Q1UPTfEcXhQ+ATi7CV1hlrSAaQBdlPzg7Ww/wJHNQem7qG9rxmWoFCDCPubSvFObGzA==
   dependencies:
     immer "^10.0.3"
     redux "^5.0.1"
@@ -9022,19 +9022,19 @@ react-native-polyfill-globals@3.1.0:
   resolved "https://registry.yarnpkg.com/react-native-polyfill-globals/-/react-native-polyfill-globals-3.1.0.tgz#da7f6c695cd2360096b9a233c4e711d91f1542f8"
   integrity sha512-6ACmV1SjXvZP2LN6J2yK58yNACKddcvoiKLrSQdISx32IdYStfdmGXrbAfpd+TANrTlIaZ2SLoFXohNwhnqm/w==
 
-react-native-qrcode-svg@6.3.2:
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.3.2.tgz#84b2bb37201589cff1ab58e7f7c884c5133fe47f"
-  integrity sha512-IJ0UoKd33ATm08K569SOAQx0tP/MTmSjwhIPfEfgbCUGQuU6JTfgDT7sm1TVgAwPbTuA10wwJJYgWXnnFBQ4FQ==
+react-native-qrcode-svg@6.3.12:
+  version "6.3.12"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.3.12.tgz#ee2c34c836c0c58f0a7f2d79304bcf12b9e151a9"
+  integrity sha512-7Bx23ZdFNJJdVXyW9BJmFWdI5kccjnpotzmL3exkV0irUKTmj51jesxpn5sqtgVdYFE4IUVoGzdS+8qg6Ua9BA==
   dependencies:
     prop-types "^15.8.0"
     qrcode "^1.5.1"
     text-encoding "^0.7.0"
 
-react-native-reanimated@3.15.5:
-  version "3.15.5"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.15.5.tgz#c92085f054ddfc37b2b5489b7eadfc74da33e1f7"
-  integrity sha512-admqeZ0w235vQqYPy+IUgmHu5gwKi9+b7AQRV1yIK3MbAMLYx+RY+tTUtx1CNE5X+rNZ6eSQssW5z77yTwIusg==
+react-native-reanimated@3.16.0:
+  version "3.16.0"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.16.0.tgz#c1174540158181e022ec076695a0e2f9cf2f8e9a"
+  integrity sha512-DDyp5/sFeDTsb7lf/iYVwyRmbfzO/+vsUjGV4YHeI9RbelG9GpZRJoxyv5CN0PXsEjQiXk4XJ8rxYDopCg9bsg==
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.0.0-0"
     "@babel/plugin-transform-class-properties" "^7.0.0-0"
@@ -9048,10 +9048,10 @@ react-native-reanimated@3.15.5:
     convert-source-map "^2.0.0"
     invariant "^2.2.4"
 
-react-native-safe-area-context@4.11.0:
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.11.0.tgz#d45271363672dc1923ddb0ce5a6ad588e210c85d"
-  integrity sha512-Bg7bozxEB+ZS+H3tVYs5yY1cvxNXgR6nRQwpSMkYR9IN5CbxohLnSprrOPG/ostTCd4F6iCk0c51pExEhifSKQ==
+react-native-safe-area-context@4.11.1:
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.11.1.tgz#dae959f4512ca125f087a44c16b2c23de10b0e29"
+  integrity sha512-urF1m4nFiZFaWjsv2zj8J/hKvo4b2tJW+6CYU1mY4lKv1RwhG2eV8J/EHKuNlLhATZx3+6j7szrpHrQW2ZcAaQ==
 
 react-native-safearea-height@1.0.7:
   version "1.0.7"
@@ -9066,20 +9066,20 @@ react-native-screens@3.35.0-rc.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-share@11.0.3:
-  version "11.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-11.0.3.tgz#63f1f3a53fb0eb673eece6ab53bec683258786f8"
-  integrity sha512-nE9+2KY4E/Sj79NvZk25coy+YJcvw/xwPoSZsAPKLowmzfaq2IAIVeaO/LAhkVj1dSP1IjVrrbONpKQX0MyqeA==
+react-native-share@11.0.4:
+  version "11.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-11.0.4.tgz#9d7ed7b15e68aa739fc0cbb67738b650f878ed80"
+  integrity sha512-i91n1Pcdaxxr39uxR5KduXjqi5FSEXuEO6rmeHl8OPs5rqo4No36qJXUU6du4TZUI6tFSENdxnzZMh3OsMF+ug==
 
 react-native-snackbar@2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.8.0.tgz#1c90c10e5c375890be7655856bc33e180dbacfd4"
   integrity sha512-IU+vPnIYF9IMi76yb4ZVeYQHkm0k4SauAxNPGHgRfdHY1xoVCScrxCSYZDH/o9tBf4ECjK5UkDCQLa0B8YEQ9g==
 
-react-native-svg@15.7.1:
-  version "15.7.1"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.7.1.tgz#299bf5ff21fb355a0f4bedd4cb8f9f520725c4fe"
-  integrity sha512-Xc11L4t6/DtmUwrQqHR7S45Qy3cIWpcfGlmEatVeZ9c1N8eAK79heJmGRgCOVrXESrrLEHfP/AYGf0BGyrvV6A==
+react-native-svg@15.8.0:
+  version "15.8.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.8.0.tgz#9b5fd4f5cf5675197b3f4cbfcc77c215de2b9502"
+  integrity sha512-KHJzKpgOjwj1qeZzsBjxNdoIgv2zNCO9fVcoq2TEhTRsVV5DGTZ9JzUZwybd7q4giT/H3RdtqC3u44dWdO0Ffw==
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"
