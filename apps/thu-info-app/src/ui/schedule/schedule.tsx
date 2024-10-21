@@ -572,11 +572,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 															gridWidth={unitWidth}
 															key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
 															blockColor={
-																colorList[
+																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
 																		colorList.length
-																]
+															]}66`
 															}
+															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
 															onPress={() => {
 																navigation.navigate("ScheduleDetail", {
 																	name: val.name,
@@ -610,11 +611,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 															gridWidth={unitWidth}
 															key={`${val.name}-${slice.weekNumber}-${slice.dayOfWeek}-${slice.begin}-${val.location}`}
 															blockColor={
-																colorList[
-																	parseInt(md5(val.name).substr(0, 6), 16) %
-																		colorList.length
-																]
+																`${colorList[
+																parseInt(md5(val.name).substr(0, 6), 16) %
+																colorList.length
+																]}66`
 															}
+															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
 															onPress={() => {
 																navigation.navigate("ScheduleDetail", {
 																	name: val.name,
@@ -653,9 +655,11 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							position: "absolute",
 							height: "100%",
 							width: "100%",
+							top: 0,
+							left: 0,
 							backgroundColor: "#00000055",
 						}}>
-						<View>
+						<>
 							<View style={{backgroundColor: theme.colors.contentBackground}}>
 								<Slider
 									style={{height: 40, width: "100%"}}
@@ -675,31 +679,32 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									}}
 								/>
 							</View>
-              <View
-                style={{ 
-                  backgroundColor: theme.colors.contentBackground,
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }}>
-                <Text
-                  style={{
-                    margin: 8,
-                    color: theme.colors.fontB1,
-                    fontSize: 16,
-                  }}>{getStr("hideWeekend")}</Text>
-                <Switch
-                  thumbColor={theme.colors.contentBackground}
-                  trackColor={{ true: theme.colors.themePurple }}
-                  value={hideWeekend}
-                  onValueChange={(value: boolean) => {
-                    dispatch(configSet({
-                      key: "hideWeekend",
-                      value: value,
-                    }));
-                  }}
-                />
-              </View>
-						</View>
+							<View
+								style={{
+									backgroundColor: theme.colors.contentBackground,
+									flexDirection: "row",
+									justifyContent: "space-between",
+									marginHorizontal: 16,
+								}}>
+								<Text
+								style={{
+									margin: 8,
+									color: theme.colors.fontB1,
+									fontSize: 16,
+								}}>{getStr("hideWeekend")}</Text>
+								<Switch
+								thumbColor={theme.colors.contentBackground}
+								trackColor={{ true: theme.colors.themePurple }}
+								value={hideWeekend}
+								onValueChange={(value: boolean) => {
+									dispatch(configSet({
+									key: "hideWeekend",
+									value: value,
+									}));
+								}}
+								/>
+							</View>
+						</>
 					</TouchableWithoutFeedback>
 				)}
 			</View>
