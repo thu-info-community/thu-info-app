@@ -675,24 +675,30 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									}}
 								/>
 							</View>
-							<View style={{ backgroundColor: theme.colors.contentBackground }}>
-								<Text
-									style={{
-										color: theme.colors.fontB1,
-										fontSize: 16,
-									}}>{getStr("hideWeekend")}</Text>
-								<Switch
-									thumbColor={theme.colors.contentBackground}
-									trackColor={{ true: theme.colors.themePurple }}
-									value={hideWeekend}
-									onValueChange={(value: boolean) => {
-										dispatch(configSet({
-											key: "hideWeekend",
-											value: value,
-										}));
-									}}
-								/>
-							</View>
+              <View
+                style={{ 
+                  backgroundColor: theme.colors.contentBackground,
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }}>
+                <Text
+                  style={{
+                    margin: 8,
+                    color: theme.colors.fontB1,
+                    fontSize: 16,
+                  }}>{getStr("hideWeekend")}</Text>
+                <Switch
+                  thumbColor={theme.colors.contentBackground}
+                  trackColor={{ true: theme.colors.themePurple }}
+                  value={hideWeekend}
+                  onValueChange={(value: boolean) => {
+                    dispatch(configSet({
+                      key: "hideWeekend",
+                      value: value,
+                    }));
+                  }}
+                />
+              </View>
 						</View>
 					</TouchableWithoutFeedback>
 				)}
