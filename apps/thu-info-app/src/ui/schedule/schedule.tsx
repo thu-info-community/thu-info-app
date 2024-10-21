@@ -1,4 +1,4 @@
-import {View, Text, Dimensions, TouchableOpacity, FlatList, Switch, TouchableWithoutFeedback} from "react-native";
+import {View, Text, Dimensions, TouchableOpacity, FlatList, Switch} from "react-native";
 import React, {
 	useState,
 	useEffect,
@@ -466,7 +466,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									position: "absolute",
 									right: 12,
 									top: 5 * unitHeight + 40,
-									fontSize: 12,
+									fontSize: 10,
 									color: theme.colors.fontB3,
 								}}>
 								{getStr("lunch")}
@@ -476,7 +476,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									position: "absolute",
 									right: 12,
 									top: 11 * unitHeight + 40,
-									fontSize: 12,
+									fontSize: 10,
 									color: theme.colors.fontB3,
 								}}>
 								{getStr("supper")}
@@ -575,7 +575,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
 																		colorList.length
-															]}66`
+															]}33`
 															}
 															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
 															onPress={() => {
@@ -614,7 +614,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																`${colorList[
 																parseInt(md5(val.name).substr(0, 6), 16) %
 																colorList.length
-																]}66`
+																]}33`
 															}
 															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
 															onPress={() => {
@@ -649,63 +649,59 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</ScrollView>
 				{openConfig && (
-					<TouchableWithoutFeedback
+					<TouchableOpacity
 						onPress={() => setOpenConfig(false)}
 						style={{
 							position: "absolute",
 							height: "100%",
 							width: "100%",
-							top: 0,
-							left: 0,
 							backgroundColor: "#00000055",
 						}}>
-						<>
-							<View style={{backgroundColor: theme.colors.contentBackground}}>
-								<Slider
-									style={{height: 40, width: "100%"}}
-									minimumValue={0}
-									maximumValue={20}
-									step={1}
-									minimumTrackTintColor={theme.colors.themePurple}
-									thumbTintColor={theme.colors.primary}
-									value={heightMode}
-									onValueChange={(value) => {
-										dispatch(
-											configSet({
-												key: "scheduleHeightMode",
-												value: value as number,
-											}),
-										);
-									}}
-								/>
-							</View>
-							<View
-								style={{
-									backgroundColor: theme.colors.contentBackground,
-									flexDirection: "row",
-									justifyContent: "space-between",
-									marginHorizontal: 16,
-								}}>
-								<Text
-								style={{
-									margin: 8,
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>{getStr("hideWeekend")}</Text>
-								<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{ true: theme.colors.themePurple }}
-								value={hideWeekend}
-								onValueChange={(value: boolean) => {
-									dispatch(configSet({
-									key: "hideWeekend",
-									value: value,
-									}));
+						<View style={{backgroundColor: theme.colors.contentBackground}}>
+							<Slider
+								style={{height: 40, width: "100%"}}
+								minimumValue={0}
+								maximumValue={20}
+								step={1}
+								minimumTrackTintColor={theme.colors.themePurple}
+								thumbTintColor={theme.colors.primary}
+								value={heightMode}
+								onValueChange={(value) => {
+									dispatch(
+										configSet({
+											key: "scheduleHeightMode",
+											value: value as number,
+										}),
+									);
 								}}
-								/>
-							</View>
-						</>
-					</TouchableWithoutFeedback>
+							/>
+						</View>
+						<View
+							style={{
+								backgroundColor: theme.colors.contentBackground,
+								flexDirection: "row",
+								justifyContent: "space-between",
+								paddingHorizontal: 16,
+								paddingVertical: 8,
+							}}>
+							<Text
+							style={{
+								color: theme.colors.fontB1,
+								fontSize: 16,
+							}}>{getStr("hideWeekend")}</Text>
+							<Switch
+							thumbColor={theme.colors.contentBackground}
+							trackColor={{ true: theme.colors.themePurple }}
+							value={hideWeekend}
+							onValueChange={(value: boolean) => {
+								dispatch(configSet({
+								key: "hideWeekend",
+								value: value,
+								}));
+							}}
+							/>
+						</View>
+					</TouchableOpacity>
 				)}
 			</View>
 		</>

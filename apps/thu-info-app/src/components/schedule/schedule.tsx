@@ -48,7 +48,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				height: blockBottomPos - blockTopPos,
 				backgroundColor: blockColor,
 				borderRadius: 4,
-				paddingVertical: 4,
+				paddingVertical: 6,
 				paddingHorizontal: 2,
 			}}
 			onPress={props.onPress}>
