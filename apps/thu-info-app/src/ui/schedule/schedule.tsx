@@ -671,7 +671,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 							/>
 						</View>
-						<View style={{ backgroundColor: theme.colors.contentBackground }}>
+						<View style={{ backgroundColor: theme.colors.contentBackground, flexDirection: "row", justifyContent: "space-between" }}>
 							<Text
 								style={{
 									margin: 8,
