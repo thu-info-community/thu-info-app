@@ -318,7 +318,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const hideWeekend = useSelector((s: State) => s.config.hideWeekend);
 	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
 	const scheduleBodyWidth = windowWidth - 32;
-	const unitWidth = scheduleBodyWidth / 7;
+	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 
 	const [openConfig, setOpenConfig] = useState(false);
 
@@ -549,6 +549,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 										</View>
 										<View>
 											{(item as SliceRenderData[]).map((data) => {
+												if (hideWeekend && data.slice.dayOfWeek > 5) {
+													return null;
+												}
 												if (data.type === "normal") {
 													const slice = data.slice;
 													const val = data.schedule;
@@ -674,7 +677,6 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						<View style={{ backgroundColor: theme.colors.contentBackground }}>
 							<Text
 								style={{
-									margin: 8,
 									color: theme.colors.fontB1,
 									fontSize: 16,
 								}}>{getStr("hideWeekend")}</Text>
