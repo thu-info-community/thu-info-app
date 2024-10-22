@@ -9031,10 +9031,10 @@ react-native-qrcode-svg@6.3.12:
     qrcode "^1.5.1"
     text-encoding "^0.7.0"
 
-react-native-reanimated@3.16.0:
-  version "3.16.0"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.16.0.tgz#c1174540158181e022ec076695a0e2f9cf2f8e9a"
-  integrity sha512-DDyp5/sFeDTsb7lf/iYVwyRmbfzO/+vsUjGV4YHeI9RbelG9GpZRJoxyv5CN0PXsEjQiXk4XJ8rxYDopCg9bsg==
+react-native-reanimated@3.16.1:
+  version "3.16.1"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.16.1.tgz#7c3cb256adb8fb436f57911d0e8e7cae68e28a67"
+  integrity sha512-Wnbo7toHZ6kPLAD8JWKoKCTfNoqYOMW5vUEP76Rr4RBmJCrdXj6oauYP0aZnZq8NCbiP5bwwu7+RECcWtoetnQ==
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.0.0-0"
     "@babel/plugin-transform-class-properties" "^7.0.0-0"
