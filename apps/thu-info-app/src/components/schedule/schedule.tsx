@@ -11,13 +11,16 @@ interface ScheduleBlockProps {
 	gridHeight: number;
 	gridWidth: number;
 	onPress: () => void;
+	textColor?: string;
 	blockColor?: string;
 	blockMargin?: number;
 }
 
 export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
+	const { colors } = themes(themeName);
+
+	const textColor = props.textColor || "white";
 
 	const blockMargin = props.blockMargin || 2;
 	const blockColor = props.blockColor || colors.themePurple;
@@ -45,7 +48,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				height: blockBottomPos - blockTopPos,
 				backgroundColor: blockColor,
 				borderRadius: 4,
-				paddingVertical: 4,
+				paddingVertical: 6,
 				paddingHorizontal: 2,
 			}}
 			onPress={props.onPress}>
@@ -58,7 +61,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 						? blockBottomPos - blockTopPos - localeHeight - 5
 						: blockBottomPos - blockTopPos,
 					textAlign: "left",
-					color: "white",
+					color: textColor,
 					lineHeight: 18,
 					fontWeight: "bold",
 					fontSize: 13,
@@ -73,7 +76,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 					numberOfLines={3}
 					style={{
 						textAlign: "left",
-						color: "white",
+						color: textColor,
 						fontSize: 8,
 					}}>
 					{"@" + props.location}
