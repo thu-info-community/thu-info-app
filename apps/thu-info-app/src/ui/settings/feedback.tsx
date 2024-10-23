@@ -41,9 +41,10 @@ const BottomButton = ({
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: disabled ? colors.themeTransparentPurple : colors.themePurple,
+				backgroundColor: colors.themePurple,
 				flex: 1,
 				borderRadius: 5,
+				opacity: disabled ? 0.5 : 1,
 			}}
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
@@ -86,7 +87,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					style={{
 						fontSize: 20,
 						marginTop: 12,
-						marginLeft: 12,
+						marginLeft: 10,
 						fontWeight: "bold",
 						color: colors.text,
 					}}>
@@ -159,7 +160,10 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 							fontSize: 15,
 							marginVertical: 8,
 							marginEnd: 8,
-							padding: 12,
+							padding: 0,
+							paddingVertical: 0,
+							paddingTop: 12,
+							paddingBottom: 12,
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							borderColor: colors.inputBorder,
