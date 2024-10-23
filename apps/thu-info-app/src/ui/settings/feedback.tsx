@@ -50,8 +50,9 @@ const BottomButton = ({
 			<Text
 				style={{
 					textAlign: "center",
-					padding: 10,
-					color: colors.contentBackground,
+					padding: 12,
+					color: "white",
+					fontSize: 15,
 				}}>
 				{getStr(text)}
 			</Text>
@@ -85,6 +86,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					style={{
 						fontSize: 20,
 						marginTop: 12,
+						marginLeft: 12,
 						fontWeight: "bold",
 						color: colors.text,
 					}}>
@@ -153,7 +155,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						onChangeText={setContact}
 						style={{
 							flex: 3,
-							textAlignVertical: "top",
+							textAlignVertical: "center",
 							fontSize: 15,
 							marginVertical: 8,
 							marginEnd: 8,
