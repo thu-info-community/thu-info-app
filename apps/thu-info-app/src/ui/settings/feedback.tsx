@@ -87,7 +87,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					style={{
 						fontSize: 20,
 						marginTop: 12,
-						marginLeft: 10,
+						marginLeft: 8,
 						fontWeight: "bold",
 						color: colors.text,
 					}}>
@@ -160,10 +160,8 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 							fontSize: 15,
 							marginVertical: 8,
 							marginEnd: 8,
-							padding: 0,
-							paddingVertical: 0,
-							paddingTop: 12,
-							paddingBottom: 12,
+							paddingHorizontal: 12,
+							paddingVertical: Platform.OS === "android" ? 7 : 12,
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							borderColor: colors.inputBorder,
