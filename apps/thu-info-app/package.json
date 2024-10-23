@@ -79,7 +79,7 @@
 		"@babel/runtime": "7.25.9",
 		"@react-native/babel-preset": "0.76.0",
 		"@react-native/eslint-config": "0.76.0",
-		"@react-native/metro-config": "0.75.4",
+		"@react-native/metro-config": "0.76.0",
 		"@react-native/typescript-config": "0.75.4",
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.5",
