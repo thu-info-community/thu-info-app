@@ -273,7 +273,7 @@ export const BankPaymentScreen = () => {
 							textAlign: "center",
 							marginVertical: 12,
 						}}>
-						{getStr("noMoreData")}
+						{refreshing ? getStr("loading") : getStr("noMoreData")}
 					</Text>
 				</View>
 			</ScrollView>
