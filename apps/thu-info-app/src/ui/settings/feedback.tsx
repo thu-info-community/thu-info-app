@@ -37,14 +37,13 @@ const BottomButton = ({
 	disabled: boolean;
 }) => {
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: theme.colors.themePurple,
+				backgroundColor: disabled ? colors.themeTransparentPurple : colors.themePurple,
 				flex: 1,
-				margin: 4,
-				borderRadius: 4,
+				borderRadius: 5,
 			}}
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
@@ -52,7 +51,7 @@ const BottomButton = ({
 				style={{
 					textAlign: "center",
 					padding: 10,
-					color: theme.colors.contentBackground,
+					color: colors.contentBackground,
 				}}>
 				{getStr(text)}
 			</Text>
@@ -82,7 +81,13 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			style={{flex: 1}}>
 			<ScrollView style={{marginHorizontal: 12}}>
-				<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
+				<Text
+					style={{
+						fontSize: 20,
+						marginTop: 12,
+						fontWeight: "bold",
+						color: colors.text,
+					}}>
 					{getStr("askBox")}
 				</Text>
 				{feedbackData.slice(0, 5).map(({content}) => (
@@ -151,6 +156,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 							textAlignVertical: "top",
 							fontSize: 15,
 							marginVertical: 8,
+							marginEnd: 8,
 							padding: 12,
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
