@@ -9464,10 +9464,10 @@ react-native-pdf@6.7.5:
     crypto-js "4.2.0"
     deprecated-react-native-prop-types "^2.3.0"
 
-react-native-permissions@5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.0.1.tgz#131fa11e10e54a82ef2a7ebac2ba91afede65c11"
-  integrity sha512-bNeLSlfyHoAh1SHAvg8U88Dz96hkZ/vHXkhkGuHluTrvITTZ1EQ2gULZqU2R3YAfF7CudkL9LdbHf7HjHPAMsg==
+react-native-permissions@5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.0.2.tgz#1d6127287fba740ee61225391aed90514ea77956"
+  integrity sha512-CsL0jSGTJZET/Mq5l14ZcemQtPSj1Ru6LLO/J/T5RUQKwu9PavJqun7LX2te6yQ0tUoi+lA/etRHpggRVW+o0A==
 
 react-native-polyfill-globals@3.1.0:
   version "3.1.0"
