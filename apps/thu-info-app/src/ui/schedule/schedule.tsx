@@ -217,7 +217,12 @@ const Header = React.forwardRef(
 						popupCancelable={true}
 						popupOnFulfilled={() => {}}
 						popupOnCancelled={() => {}}>
-						<View style={{flexDirection: "row", alignItems: "flex-end"}}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "center",
+							}}>
 							<Text
 								style={{
 									fontSize: 18,
