@@ -37,22 +37,23 @@ const BottomButton = ({
 	disabled: boolean;
 }) => {
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
 	return (
 		<TouchableOpacity
 			style={{
-				backgroundColor: theme.colors.themePurple,
+				backgroundColor: colors.themePurple,
 				flex: 1,
-				margin: 4,
-				borderRadius: 4,
+				borderRadius: 5,
+				opacity: disabled ? 0.5 : 1,
 			}}
 			disabled={disabled}
 			onPress={(e) => !disabled && onPress(e)}>
 			<Text
 				style={{
 					textAlign: "center",
-					padding: 10,
-					color: theme.colors.contentBackground,
+					padding: 12,
+					color: "white",
+					fontSize: 15,
 				}}>
 				{getStr(text)}
 			</Text>
@@ -82,7 +83,14 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			style={{flex: 1}}>
 			<ScrollView style={{marginHorizontal: 12}}>
-				<Text style={{fontSize: 20, marginLeft: 30, fontWeight: "bold"}}>
+				<Text
+					style={{
+						fontSize: 20,
+						marginTop: 12,
+						marginLeft: 8,
+						fontWeight: "bold",
+						color: colors.text,
+					}}>
 					{getStr("askBox")}
 				</Text>
 				{feedbackData.slice(0, 5).map(({content}) => (
@@ -148,10 +156,12 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						onChangeText={setContact}
 						style={{
 							flex: 3,
-							textAlignVertical: "top",
+							textAlignVertical: "center",
 							fontSize: 15,
 							marginVertical: 8,
-							padding: 12,
+							marginEnd: 8,
+							paddingHorizontal: 12,
+							paddingVertical: Platform.OS === "android" ? 7 : 12,
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							borderColor: colors.inputBorder,
