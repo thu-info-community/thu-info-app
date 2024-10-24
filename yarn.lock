@@ -9509,10 +9509,10 @@ react-native-safearea-height@1.0.7:
   resolved "https://registry.yarnpkg.com/react-native-safearea-height/-/react-native-safearea-height-1.0.7.tgz#244885abde94f4b01de30e806241b83858737a17"
   integrity sha512-yAqk8z9/jWTLI2pchU42FO4uP7ih79SV1SQD3kHLlRZIoV45YAHoWvC7uDviwU4VcsE9fTxmSxR0d0lzjweiRg==
 
-react-native-screens@3.35.0-rc.1:
-  version "3.35.0-rc.1"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.35.0-rc.1.tgz#92b65c2d014d63078568e5f7046af0facf375b07"
-  integrity sha512-JI1pOjzoxOImgM+c8t5vj932/UxUy1MpoL8Lq2aYBHElUudxbETL9ZuHhOQ7jssHaNeO7Vl6IYXE+YLqi5Y89w==
+react-native-screens@4.0.0-beta.14:
+  version "4.0.0-beta.14"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.0.0-beta.14.tgz#67702d0785df8746220a9d7314bdd31ebedc459c"
+  integrity sha512-O81GMV/ptGiOie+jpI2qdXZP4tktR0vdIw05m8eaAWJshMTC1cRxhmyF4puVKRFh8USN2b/awfA0ikLaTkeipQ==
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
