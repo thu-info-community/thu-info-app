@@ -444,7 +444,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							{/* Lunch and Supper mark */}
 							<View
 								style={{
-									backgroundColor: theme.colors.fontB3,
+									backgroundColor: theme.colors.inputBorder,
 									height: 1,
 									position: "absolute",
 									left: 0,
@@ -454,7 +454,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							/>
 							<View
 								style={{
-									backgroundColor: theme.colors.fontB3,
+									backgroundColor: theme.colors.inputBorder,
 									height: 1,
 									position: "absolute",
 									left: 0,
