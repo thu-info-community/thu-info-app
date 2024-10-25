@@ -85,4 +85,5 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 			{getStr("noInvoice")}
 		</Text>
 	),
-);
+	undefined,
+	{ borderRadius: 12 });

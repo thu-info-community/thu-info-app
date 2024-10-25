@@ -1,7 +1,7 @@
 import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {FlatList, RefreshControl} from "react-native";
+import {FlatList, RefreshControl, StyleProp, ViewStyle} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
@@ -20,6 +20,7 @@ export function paginatedRefreshListScreen<T, R>(
 	header?: (theme: Theme, refresh: () => void) => ReactElement,
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
+	styles?: StyleProp<ViewStyle>,
 ): FC<PropsWithChildren<R>> {
 	return (props: PropsWithChildren<R>) => {
 		const [data, setData] = useState<T[]>([]);
@@ -62,7 +63,7 @@ export function paginatedRefreshListScreen<T, R>(
 
 		return (
 			<FlatList
-				style={{flex: 1, margin: 12}}
+				style={{flex: 1, margin: 12, ...(styles as object)}}
 				data={data}
 				contentContainerStyle={{
 					backgroundColor: theme.colors.contentBackground,
