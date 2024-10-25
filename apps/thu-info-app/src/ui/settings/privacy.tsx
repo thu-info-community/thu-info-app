@@ -41,6 +41,7 @@ export const PrivacyScreen = () => {
 					setSupportMultipleWindows={false}
 					forceDarkOn={dark || themeName === "dark"}
 					injectedJavaScript={FORCE_DARK_JS}
+					onMessage={() => { }}
 				/>
 			</View>
 		</>
