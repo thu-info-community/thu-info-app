@@ -217,7 +217,12 @@ const Header = React.forwardRef(
 						popupCancelable={true}
 						popupOnFulfilled={() => {}}
 						popupOnCancelled={() => {}}>
-						<View style={{flexDirection: "row", alignItems: "flex-end"}}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "center",
+							}}>
 							<Text
 								style={{
 									fontSize: 18,
@@ -234,6 +239,7 @@ const Header = React.forwardRef(
 							style={{
 								fontSize: 12,
 								color: theme.colors.fontB2,
+								textAlign: "center",
 							}}>
 							{getStr(
 								semesterType === 1
@@ -443,7 +449,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							{/* Lunch and Supper mark */}
 							<View
 								style={{
-									backgroundColor: theme.colors.themeGrey,
+									backgroundColor: theme.colors.inputBorder,
 									height: 1,
 									position: "absolute",
 									left: 0,
@@ -453,7 +459,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							/>
 							<View
 								style={{
-									backgroundColor: theme.colors.themeGrey,
+									backgroundColor: theme.colors.inputBorder,
 									height: 1,
 									position: "absolute",
 									left: 0,
@@ -464,7 +470,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							<Text
 								style={{
 									position: "absolute",
-									right: 12,
+									right: 8,
 									top: 5 * unitHeight + 40,
 									fontSize: 10,
 									color: theme.colors.fontB3,
@@ -474,7 +480,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							<Text
 								style={{
 									position: "absolute",
-									right: 12,
+									right: 8,
 									top: 11 * unitHeight + 40,
 									fontSize: 10,
 									color: theme.colors.fontB3,
