@@ -13,10 +13,20 @@ export const PrivacyScreen = () => {
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const FORCE_DARK_JS = `
 		(function() {
-			document.body.style.backgroundColor = "${theme.colors.themeBackground}";
-			document.body.style.color = "${theme.colors.text}";
-			document.body.getElementsByTagName("nav")[0].style.display = "none";
-			document.body.getElementsByTagName("footer")[0].style.display = "none";
+			const style = document.createElement("style");
+			style.innerHTML = \`
+				body {
+					background-color: ${theme.colors.themeBackground} !important;
+					color: ${theme.colors.text} !important;
+				}
+				nav {
+					display: none !important;
+				}
+				footer {
+					display: none !important;
+				}
+			\`;
+			document.head.appendChild(style);
 		}
 	)();`;
 	return (
