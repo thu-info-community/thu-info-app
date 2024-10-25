@@ -15,14 +15,8 @@ export const PrivacyScreen = () => {
 		(function() {
 			document.body.style.backgroundColor = "${theme.colors.themeBackground}";
 			document.body.style.color = "${theme.colors.text}";
-			document.body.getElementsByTagName("nav").forEach((e) => {
-				// remove nav bar
-				e.remove();
-			});
-			document.body.getElementsByTagName("footer").forEach((e) => {
-				// remove footer
-				e.remove();
-			});
+			document.body.getElementsByTagName("nav")[0].style.display = "none";
+			document.body.getElementsByTagName("footer")[0].style.display = "none";
 		}
 	)();`;
 	return (
