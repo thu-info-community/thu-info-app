@@ -49,7 +49,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				backgroundColor: blockColor,
 				borderRadius: 4,
 				paddingVertical: 6,
-				paddingHorizontal: 2,
+				paddingHorizontal: 4,
 			}}
 			onPress={props.onPress}>
 			<Text
@@ -58,7 +58,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				}}
 				style={{
 					maxHeight: overflow
-						? blockBottomPos - blockTopPos - localeHeight - 5
+						? blockBottomPos - blockTopPos - localeHeight - 8
 						: blockBottomPos - blockTopPos,
 					textAlign: "left",
 					color: textColor,

@@ -40,7 +40,8 @@ export const colorPkuDark: ColorTheme = {
 		"#7d7aea",
 		"#bf73e5",
 		"#ff9900",
-		"#f8c800",
+		"#eebe00",
 		"#5b8eff",
+		"#139161",
 	],
 };
