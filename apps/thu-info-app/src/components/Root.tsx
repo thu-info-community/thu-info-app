@@ -174,6 +174,7 @@ const RootTabs = () => {
 				},
 				tabBarActiveTintColor: theme.colors.themeDarkPurple,
 				tabBarInactiveTintColor: theme.colors.text,
+				tabBarLabelStyle: {marginBottom: 4},
 			})}
 			backBehavior="initialRoute">
 			<Tab.Screen
