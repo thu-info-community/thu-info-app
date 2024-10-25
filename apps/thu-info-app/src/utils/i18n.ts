@@ -17,6 +17,8 @@ export const getLocale = () => {
 
 const translations = getLocale() as typeof zh;
 
+export const langCode = translations === zh ? "zh" : "en";
+
 export function getStr<K extends keyof typeof zh>(key: K): string {
 	// @ts-ignore
 	return translations[key];
