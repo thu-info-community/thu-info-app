@@ -58,7 +58,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	};
 
 	return (
-		<RoundedView style={{margin: 12}}>
+		<RoundedView style={{margin: 12, borderRadius: 24}}>
 			<View style={{marginHorizontal: 16}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{device.ip4}
@@ -86,6 +86,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 						marginTop: 8,
 						paddingVertical: 4,
 						paddingBottom: 8,
+						borderRadius: 8,
 					}}>
 					<TouchableOpacity
 						onPress={() => {
@@ -146,7 +147,7 @@ export const NetworkOnlineDevicesScreen = () => {
 			style={{flex: 1}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			keyboardVerticalOffset={104}>
-			<View style={{flex: 1, flexDirection: "column"}}>
+			<View style={{flex: 1, flexDirection: "column", justifyContent: "space-between"}}>
 				<ScrollView
 					refreshControl={
 						<RefreshControl
