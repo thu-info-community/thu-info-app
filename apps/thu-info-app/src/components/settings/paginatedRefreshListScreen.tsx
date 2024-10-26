@@ -20,7 +20,7 @@ export function paginatedRefreshListScreen<T, R>(
 	header?: (theme: Theme, refresh: () => void) => ReactElement,
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
-	styles?: StyleProp<ViewStyle>,
+	containerStyles?: StyleProp<ViewStyle>,
 ): FC<PropsWithChildren<R>> {
 	return (props: PropsWithChildren<R>) => {
 		const [data, setData] = useState<T[]>([]);
@@ -63,11 +63,12 @@ export function paginatedRefreshListScreen<T, R>(
 
 		return (
 			<FlatList
-				style={{flex: 1, margin: 12, ...(styles as object)}}
+				style={{flex: 1, margin: 12}}
 				data={data}
 				contentContainerStyle={{
 					backgroundColor: theme.colors.contentBackground,
 					padding: 16,
+					...(containerStyles as object),
 				}}
 				refreshControl={
 					<RefreshControl
