@@ -146,8 +146,8 @@ export const NetworkOnlineDevicesScreen = () => {
 		<KeyboardAvoidingView
 			style={{flex: 1}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={104}>
-			<View style={{flex: 1, flexDirection: "column", justifyContent: "space-between"}}>
+			keyboardVerticalOffset={85}>
+			<View style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
 						<RefreshControl
