@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
+import {useHeaderHeight} from "@react-navigation/elements";
 
 const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
@@ -129,6 +130,8 @@ export const NetworkOnlineDevicesScreen = () => {
 
 	const [importIp, setImportIp] = useState("");
 
+	const headerHeight = useHeaderHeight() || 104;
+
 	const refresh = () => {
 		helper
 			.getOnlineDevices()
@@ -146,7 +149,7 @@ export const NetworkOnlineDevicesScreen = () => {
 		<KeyboardAvoidingView
 			style={{flex: 1}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={85}>
+			keyboardVerticalOffset={headerHeight}>
 			<View style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
