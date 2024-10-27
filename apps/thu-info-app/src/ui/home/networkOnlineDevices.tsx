@@ -17,6 +17,7 @@ import {
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useHeaderHeight} from "@react-navigation/elements";
+import {getStatusBarHeight} from "react-native-safearea-height";
 
 const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
@@ -59,7 +60,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	};
 
 	return (
-		<RoundedView style={{margin: 12, borderRadius: 24}}>
+		<RoundedView style={{margin: 8, borderRadius: 24}}>
 			<View style={{marginHorizontal: 16}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{device.ip4}
@@ -85,8 +86,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 					style={{
 						backgroundColor: colors.themePurple,
 						marginTop: 8,
-						paddingVertical: 4,
-						paddingBottom: 8,
+						paddingVertical: 8,
 						borderRadius: 8,
 					}}>
 					<TouchableOpacity
@@ -107,7 +107,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 							style={{
 								textAlign: "center",
 								fontSize: 16,
-								color: colors.text,
+								color: "white",
 							}}>
 							{getStr("logoutNetworkDevice")}
 						</Text>
@@ -132,6 +132,8 @@ export const NetworkOnlineDevicesScreen = () => {
 
 	const headerHeight = useHeaderHeight() || 104;
 
+	const statusBarHeight = getStatusBarHeight();
+
 	const refresh = () => {
 		helper
 			.getOnlineDevices()
@@ -149,7 +151,7 @@ export const NetworkOnlineDevicesScreen = () => {
 		<KeyboardAvoidingView
 			style={{flex: 1}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={headerHeight}>
+			keyboardVerticalOffset={headerHeight + statusBarHeight}>
 			<View style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
@@ -158,7 +160,9 @@ export const NetworkOnlineDevicesScreen = () => {
 							onRefresh={refresh}
 							colors={[colors.accent]}
 						/>
-					}>
+					}
+					style={{ paddingVertical: 8 }}
+				>
 					{devices.length > 0 ? (
 						devices.map((d) => (
 							<DeviceCard
@@ -201,7 +205,8 @@ export const NetworkOnlineDevicesScreen = () => {
 								paddingHorizontal: 16,
 							}}
 							onChangeText={setImportIp}
-							placeholder={"1.2.3.4"}
+							// placeholder={"1.2.3.4"}
+							placeholder={(headerHeight + statusBarHeight).toString()}
 							placeholderTextColor={colors.fontB2}
 						/>
 					</View>
@@ -265,7 +270,7 @@ export const NetworkOnlineDevicesScreen = () => {
 										});
 									});
 							}}>
-							<Text style={{color: colors.text, fontSize: 14, marginBottom: 4}}>
+							<Text style={{color: "white", fontSize: 14, marginBottom: 4}}>
 								{getStr("proxyImport")}
 							</Text>
 						</TouchableOpacity>
