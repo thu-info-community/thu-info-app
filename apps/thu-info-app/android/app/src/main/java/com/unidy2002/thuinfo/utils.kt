@@ -12,10 +12,14 @@ import kotlin.system.exitProcess
 @SuppressLint("PackageManagerGetSignatures")
 @Suppress("DEPRECATION")
 fun Application.verifySignature() {
-    val signature = packageManager.getPackageInfo(
+    val signatures = packageManager.getPackageInfo(
         applicationContext.packageName,
         PackageManager.GET_SIGNATURES,
-    ).signatures[0]
+    ).signatures
+    if (signatures == null) {
+        return
+    }
+    val signature = signatures[0]
     val formatter = Formatter()
     MessageDigest
         .getInstance("SHA-1")
