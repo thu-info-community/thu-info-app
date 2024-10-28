@@ -70,7 +70,7 @@
 		"stream": "0.0.3",
 		"text-encoding": "0.7.0",
 		"util": "0.12.5",
-		"uuid": "10.0.0",
+		"uuid": "11.0.1",
 		"web-streams-polyfill": "3.3.3"
 	},
 	"devDependencies": {
