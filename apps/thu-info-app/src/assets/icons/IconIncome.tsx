@@ -25,6 +25,13 @@ export default ({width, height}: {width?: number; height?: number}) => {
 				strokeLinejoin="round"
 				strokeLinecap="round"
 				strokeWidth={3}
+				stroke={theme.colors.mainTheme}
+				d="M35 7V17H31V7H33V17"
+			/>
+			<Path
+				strokeLinejoin="round"
+				strokeLinecap="round"
+				strokeWidth={3}
 				stroke={theme.colors.fontB1}
 				d="M43 22V9C43 7.89543 42.1046 7 41 7H7C5.89543 7 5 7.89543 5 9V39C5 40.1046 5.89543 41 7 41H28.4706"
 			/>
