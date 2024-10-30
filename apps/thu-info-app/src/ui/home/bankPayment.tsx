@@ -283,7 +283,7 @@ export const BankPaymentScreen = () => {
 									textAlign: "center",
 									marginVertical: 12,
 								}}>
-							{getStr("noData")}
+							{refreshing ? " " : getStr("noData")}
 							</Text>
 						</RoundedView>
 					)}
