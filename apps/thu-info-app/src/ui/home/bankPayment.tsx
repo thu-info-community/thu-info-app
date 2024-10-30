@@ -7,6 +7,7 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	StyleSheet,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
@@ -163,7 +164,7 @@ export const BankPaymentScreen = () => {
 					/>
 				}>
 				<View>
-					<Text style={{ fontSize: 12, color: colors.fontB2, margin: 8 }}>
+					<Text style={{ fontSize: 12, color: colors.fontB2, marginTop: 8 }}>
 						{loadPartial ? getStr("recentThreeMonths") : getStr("all")}
 					</Text>
 					{data.length ? data.map(({month, payment}) => (
@@ -202,8 +203,8 @@ export const BankPaymentScreen = () => {
 										{index > 0 && (
 											<View
 												style={{
-													borderWidth: 0.4,
-													borderColor: colors.themeGrey,
+													borderWidth: StyleSheet.hairlineWidth,
+													borderBottomColor: colors.themeGrey,
 													margin: 12,
 												}}
 											/>

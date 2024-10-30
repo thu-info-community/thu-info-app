@@ -519,52 +519,8 @@ export const getBankPayment = async (
             }
             const form = (loadPartial ? options.slice(0, 3) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
-            return parseAndFiltBankPayment(result);
-            // const $ = cheerio.load(result);
-            // const titles = $("div strong")
-            //     .map((_, e) => {
-            //         const titleElement = e as TagElement;
-            //         const text = (titleElement.children[0] as DataNode).data?.trim();
-            //         if (text === undefined) {
-            //             return undefined;
-            //         }
-            //         const res = /(\d+年\d+月)银行代发结果/g.exec(text);
-            //         if (res === null || res[1] === undefined) {
-            //             return undefined;
-            //         }
-            //         if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
-            //             return undefined;
-            //         }
-            //         return res[1];
-            //     })
-            //     .get()
-            //     .filter((text) => text !== undefined) as string[];
-            // return $("div table tbody")
-            //     .filter(index => index < titles.length)
-            //     .map((index, e) => {
-            //         const rows = cheerio.load(e)("tr");
-            //         const data = rows.slice(1, rows.length - 1);
-            //         return {
-            //             month: titles[index],
-            //             payment: data.map((_, row) => {
-            //                 const columns = cheerio.load(row)("td");
-            //                 return {
-            //                     department: getCheerioText(columns[1], 0),
-            //                     project: getCheerioText(columns[2], 0),
-            //                     usage: getCheerioText(columns[3], 0),
-            //                     description: getCheerioText(columns[4], 0),
-            //                     bank: getCheerioText(columns[5], 0),
-            //                     time: getCheerioText(columns[6], 0),
-            //                     total: getCheerioText((columns[7] as TagElement).children[0], 0),
-            //                     deduction: getCheerioText((columns[8] as TagElement).children[0], 0),
-            //                     actual: getCheerioText((columns[9] as TagElement).children[0], 0),
-            //                     deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
-            //                     cash: getCheerioText((columns[11] as TagElement).children[0], 0),
-            //                 } as BankPayment;
-            //             }).get().reverse(),
-            //         };
-            //     })
-            //     .get() as BankPaymentByMonth[];
+            
+            return parseAndFilterBankPayment(result);
         },
         MOCK_BANK_PAYMENT,
     );
@@ -605,7 +561,7 @@ export const getBankPaymentParellize = async (
             });
             const results = await Promise.all(requests);
             const parsedResults = results.map((result) => {
-                return parseAndFiltBankPayment(result);
+                return parseAndFilterBankPayment(result);
             }).flatMap((it) => it);
             return parsedResults;
         },
@@ -613,7 +569,7 @@ export const getBankPaymentParellize = async (
     );
 };
 
-const parseAndFiltBankPayment = (html: string) => {
+const parseAndFilterBankPayment = (html: string) => {
     const $ = cheerio.load(html);
     const titleElements = $("div strong");
     return titleElements.map((_, e) => {
@@ -629,8 +585,8 @@ const parseAndFiltBankPayment = (html: string) => {
         if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
             return undefined;
         }
-        const data = cheerio.load((titleElement.parent?.next?.next as TagElement)?.firstChild as cheerio.AnyNode)("tr").slice(1, -1);
-        const payment = data.map((_, row) => {
+        const data = cheerio.load((titleElement.parent?.next?.next as TagElement)?.firstChild as cheerio.AnyNode)("tbody tr").slice(1, -1);
+        const payment = data.map((__, row) => {
             const columns = cheerio.load(row)("td");
             return {
                 department: getCheerioText(columns[1], 0),

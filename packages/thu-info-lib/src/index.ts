@@ -8,7 +8,7 @@ import {
     getPhysicalExamResult,
     getReport,
     postAssessmentForm,
-    getBankPayment,
+    // getBankPayment,
     getCalendar,
     getInvoiceList,
     getInvoicePDF,
@@ -16,7 +16,7 @@ import {
     naiveSendMail,
     getCalendarImageUrl, getSchoolCalendarYear,
     getGraduateIncome,
-    // getBankPaymentParellize,
+    getBankPaymentParellize,
 } from "./lib/basics";
 import {forgetDevice, login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -408,7 +408,7 @@ export class InfoHelper {
      * Get the bank payment records of the user.
      * @param foundation  whether to get bank payment result by 基金会 or not
      */
-    public getBankPayment = async (foundation = false, loadPartial = false): Promise<BankPaymentByMonth[]> => getBankPayment(this, foundation, loadPartial);
+    public getBankPayment = async (foundation = false, loadPartial = false): Promise<BankPaymentByMonth[]> => getBankPaymentParellize(this, foundation, loadPartial);
 
     /**
      * Get the graduate income records of the user according to the date range
