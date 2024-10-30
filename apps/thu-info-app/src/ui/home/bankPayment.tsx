@@ -26,6 +26,8 @@ export const BankPaymentScreen = () => {
 	const [foundation, setFoundation] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 
+	const [loadPartial, setLoadPartial] = useState(true);
+
 	const headerHeight = useHeaderHeight();
 
 	const themeName = useColorScheme();
@@ -43,7 +45,7 @@ export const BankPaymentScreen = () => {
 		let cancelled = false;
 
 		helper
-			.getBankPayment(foundation)
+			.getBankPayment(foundation, loadPartial)
 			.then((r) => {
 				if (cancelled) {
 					return;
@@ -65,7 +67,7 @@ export const BankPaymentScreen = () => {
 		};
 	};
 
-	useEffect(fetchData, [foundation]);
+	useEffect(fetchData, [foundation, loadPartial]);
 
 	return (
 		<View style={{flex: 1}}>
@@ -268,12 +270,14 @@ export const BankPaymentScreen = () => {
 				<View>
 					<Text
 						style={{
-							color: colors.fontB2,
+							color: loadPartial ? colors.themeLightPurple : colors.fontB2,
 							fontSize: 12,
 							textAlign: "center",
 							marginVertical: 12,
-						}}>
-						{refreshing ? getStr("loading") : getStr("noMoreData")}
+						}}
+						onPress={() => loadPartial && setLoadPartial(false)}
+					>
+						{refreshing ? getStr("loading") : loadPartial ? getStr("loadAllData") : getStr("noMoreData")}
 					</Text>
 				</View>
 			</ScrollView>
