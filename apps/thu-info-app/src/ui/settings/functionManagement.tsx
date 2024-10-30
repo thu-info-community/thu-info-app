@@ -117,10 +117,11 @@ export const FunctionManagementScreen = () => {
 	};
 
 	return (
-		<ScrollView style={{flex: 1, padding: 12, paddingBottom: 16}}>
+		<ScrollView style={{flex: 1, padding: 12}}>
 			{Object.keys(functions).map((name) =>
 				FunctionGroup(name as functionGroups),
 			)}
+			<View style={{height: 16}} />
 		</ScrollView>
 	);
 };
