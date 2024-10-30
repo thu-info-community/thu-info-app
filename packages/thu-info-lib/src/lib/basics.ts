@@ -517,9 +517,10 @@ export const getBankPayment = async (
             if (options.length === 0) {
                 return [];
             }
-            const form = (loadPartial ? options.slice(0, 3) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
+            loadPartial ? options.splice(3) : options;
+            const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
-            
+
             return parseAndFilterBankPayment(result);
         },
         MOCK_BANK_PAYMENT,

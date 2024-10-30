@@ -164,7 +164,7 @@ export const BankPaymentScreen = () => {
 					/>
 				}>
 				<View>
-					<Text style={{ fontSize: 12, color: colors.fontB2, marginTop: 8 }}>
+					<Text style={{ fontSize: 12, color: colors.fontB2, marginTop: 8, marginStart: 8 }}>
 						{loadPartial ? getStr("recentThreeMonths") : getStr("all")}
 					</Text>
 					{data.length ? data.map(({month, payment}) => (
@@ -203,8 +203,8 @@ export const BankPaymentScreen = () => {
 										{index > 0 && (
 											<View
 												style={{
-													borderWidth: StyleSheet.hairlineWidth,
 													borderBottomColor: colors.themeGrey,
+													borderBottomWidth: StyleSheet.hairlineWidth,
 													margin: 12,
 												}}
 											/>
