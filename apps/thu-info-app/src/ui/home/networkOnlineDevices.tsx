@@ -6,7 +6,7 @@ import {getStr} from "../../utils/i18n";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
-	Platform,
+	// Platform,
 	Switch,
 	Text,
 	TextInput,
@@ -17,7 +17,6 @@ import {
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useHeaderHeight} from "@react-navigation/elements";
-import { getStatusBarHeight } from "react-native-safearea-height";
 import { styles } from "../settings/settings";
 
 const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
@@ -132,8 +131,6 @@ export const NetworkOnlineDevicesScreen = () => {
 
 	const headerHeight = useHeaderHeight() || 104;
 
-	const statusBarHeight = getStatusBarHeight();
-
 	const refresh = () => {
 		helper
 			.getOnlineDevices()
@@ -150,8 +147,9 @@ export const NetworkOnlineDevicesScreen = () => {
 	return (
 		<KeyboardAvoidingView
 			style={{flex: 1}}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={headerHeight + statusBarHeight}>
+			// behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior="padding"
+			keyboardVerticalOffset={headerHeight}>
 			<View style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
@@ -184,11 +182,9 @@ export const NetworkOnlineDevicesScreen = () => {
 				</ScrollView>
 				<View
 					style={{
-						position: "absolute",
 						flexDirection: "row",
 						backgroundColor: colors.contentBackground,
 						columnGap: 16,
-						bottom: 0,
 					}}>
 					<View style={{ flex: 1, flexDirection: "row", paddingLeft: 16 }}>
 						<Text
