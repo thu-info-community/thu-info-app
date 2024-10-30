@@ -9,6 +9,7 @@ import {
 	useColorScheme,
 	View,
 	ScrollView,
+	StyleSheet,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
@@ -227,8 +228,8 @@ export const styles = themedStyles(({colors}) => ({
 		fontSize: 16,
 	},
 	separator: {
-		borderWidth: 0.4,
-		borderColor: colors.themeGrey,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderBottomColor: colors.themeGrey,
 		marginVertical: 12,
 		marginHorizontal: 16,
 	},
