@@ -163,7 +163,10 @@ export const BankPaymentScreen = () => {
 					/>
 				}>
 				<View>
-					{data.map(({month, payment}) => (
+					<Text style={{ fontSize: 12, color: colors.fontB2, margin: 8 }}>
+						{loadPartial ? getStr("recentThreeMonths") : getStr("all")}
+					</Text>
+					{data.length ? data.map(({month, payment}) => (
 						<View key={month} style={{marginTop: 12}}>
 							<View
 								style={{
@@ -265,12 +268,29 @@ export const BankPaymentScreen = () => {
 								))}
 							</RoundedView>
 						</View>
-					))}
+					)) : (
+						<RoundedView
+							style={{
+								marginTop: 12,
+								padding: 12,
+								alignItems: "center",
+						}}>
+							<Text
+								style={{
+									color: colors.fontB2,
+									fontSize: 14,
+									textAlign: "center",
+									marginVertical: 12,
+								}}>
+							{getStr("noData")}
+							</Text>
+						</RoundedView>
+					)}
 				</View>
 				<View>
 					<Text
 						style={{
-							color: (refreshing || loadPartial) ? colors.fontB2 : colors.themeLightPurple,
+							color: (refreshing || !loadPartial) ? colors.fontB2 : colors.themeLightPurple,
 							fontSize: 12,
 							textAlign: "center",
 							marginVertical: 12,

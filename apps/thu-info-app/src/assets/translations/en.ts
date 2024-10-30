@@ -610,4 +610,6 @@ export default {
 	noMoreData: "No more data",
 	hideWeekend: "Hide Weekend",
 	loadAllData: "Load all data",
+	recentThreeMonths: "Recent 3 months",
+	noData: "No data",
 };

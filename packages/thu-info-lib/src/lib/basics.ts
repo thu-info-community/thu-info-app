@@ -519,51 +519,52 @@ export const getBankPayment = async (
             }
             const form = (loadPartial ? options.slice(0, 3) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
-            const $ = cheerio.load(result);
-            const titles = $("div strong")
-                .map((_, e) => {
-                    const titleElement = e as TagElement;
-                    const text = (titleElement.children[0] as DataNode).data?.trim();
-                    if (text === undefined) {
-                        return undefined;
-                    }
-                    const res = /(\d+年\d+月)银行代发结果/g.exec(text);
-                    if (res === null || res[1] === undefined) {
-                        return undefined;
-                    }
-                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
-                        return undefined;
-                    }
-                    return res[1];
-                })
-                .get()
-                .filter((text) => text !== undefined) as string[];
-            return $("div table tbody")
-                .filter(index => index < titles.length)
-                .map((index, e) => {
-                    const rows = cheerio.load(e)("tr");
-                    const data = rows.slice(1, rows.length - 1);
-                    return {
-                        month: titles[index],
-                        payment: data.map((_, row) => {
-                            const columns = cheerio.load(row)("td");
-                            return {
-                                department: getCheerioText(columns[1], 0),
-                                project: getCheerioText(columns[2], 0),
-                                usage: getCheerioText(columns[3], 0),
-                                description: getCheerioText(columns[4], 0),
-                                bank: getCheerioText(columns[5], 0),
-                                time: getCheerioText(columns[6], 0),
-                                total: getCheerioText((columns[7] as TagElement).children[0], 0),
-                                deduction: getCheerioText((columns[8] as TagElement).children[0], 0),
-                                actual: getCheerioText((columns[9] as TagElement).children[0], 0),
-                                deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
-                                cash: getCheerioText((columns[11] as TagElement).children[0], 0),
-                            } as BankPayment;
-                        }).get().reverse(),
-                    };
-                })
-                .get() as BankPaymentByMonth[];
+            return parseAndFiltBankPayment(result);
+            // const $ = cheerio.load(result);
+            // const titles = $("div strong")
+            //     .map((_, e) => {
+            //         const titleElement = e as TagElement;
+            //         const text = (titleElement.children[0] as DataNode).data?.trim();
+            //         if (text === undefined) {
+            //             return undefined;
+            //         }
+            //         const res = /(\d+年\d+月)银行代发结果/g.exec(text);
+            //         if (res === null || res[1] === undefined) {
+            //             return undefined;
+            //         }
+            //         if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
+            //             return undefined;
+            //         }
+            //         return res[1];
+            //     })
+            //     .get()
+            //     .filter((text) => text !== undefined) as string[];
+            // return $("div table tbody")
+            //     .filter(index => index < titles.length)
+            //     .map((index, e) => {
+            //         const rows = cheerio.load(e)("tr");
+            //         const data = rows.slice(1, rows.length - 1);
+            //         return {
+            //             month: titles[index],
+            //             payment: data.map((_, row) => {
+            //                 const columns = cheerio.load(row)("td");
+            //                 return {
+            //                     department: getCheerioText(columns[1], 0),
+            //                     project: getCheerioText(columns[2], 0),
+            //                     usage: getCheerioText(columns[3], 0),
+            //                     description: getCheerioText(columns[4], 0),
+            //                     bank: getCheerioText(columns[5], 0),
+            //                     time: getCheerioText(columns[6], 0),
+            //                     total: getCheerioText((columns[7] as TagElement).children[0], 0),
+            //                     deduction: getCheerioText((columns[8] as TagElement).children[0], 0),
+            //                     actual: getCheerioText((columns[9] as TagElement).children[0], 0),
+            //                     deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
+            //                     cash: getCheerioText((columns[11] as TagElement).children[0], 0),
+            //                 } as BankPayment;
+            //             }).get().reverse(),
+            //         };
+            //     })
+            //     .get() as BankPaymentByMonth[];
         },
         MOCK_BANK_PAYMENT,
     );
@@ -585,7 +586,7 @@ export const getBankPaymentParellize = async (
             if (options.length === 0) {
                 return [];
             }
-            const loadOptions = (loadPartial ? options.slice(0, 3) : options.map(o => `year=${encodeURIComponent(o)}`));
+            const loadOptions = (loadPartial ? options.slice(0, 3) : options).map(o => `year=${encodeURIComponent(o)}`);
             const jointOptions = [
                 loadOptions.slice(0, Math.ceil(options.length / 3)).join("&"),
                 loadOptions
@@ -599,8 +600,8 @@ export const getBankPaymentParellize = async (
                     .join("&"),
             ];
             const requests = jointOptions.map((o) => {
-                const form = `${encodeURIComponent(o)}`;
-                return uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
+                // const form = `${encodeURIComponent(o)}`;
+                return uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, o as never as object, 60000, "UTF-8", true);
             });
             const results = await Promise.all(requests);
             const parsedResults = results.map((result) => {
