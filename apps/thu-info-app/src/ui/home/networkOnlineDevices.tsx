@@ -182,100 +182,100 @@ export const NetworkOnlineDevicesScreen = () => {
 						</Text>
 					)}
 				</ScrollView>
-			</View>
-			<View
-				style={{
-					position: "absolute",
-					flexDirection: "row",
-					backgroundColor: colors.contentBackground,
-					columnGap: 16,
-					bottom: 0,
-				}}>
-				<View style={{flex: 1, flexDirection: "row", paddingLeft: 16}}>
-					<Text
-						style={{
-							verticalAlign: "middle",
-							color: colors.text,
-							paddingBottom: 3,
-						}}>
-						{getStr("ipAddr")}
-					</Text>
-					<TextInput
-						style={{
-							flex: 1,
-							color: colors.text,
-							fontSize: 14,
-							paddingHorizontal: 16,
-						}}
-						onChangeText={setImportIp}
-						placeholder={"1.2.3.4"}
-						placeholderTextColor={colors.fontB2}
-					/>
-				</View>
-				<View style={{flexDirection: "row"}}>
-					<Text
-						style={{
-							verticalAlign: "middle",
-							color: colors.text,
-							paddingBottom: 2,
-						}}>
-						{getStr("internetAccess")}
-					</Text>
-					<Switch
-						value={internetAccess}
-						onValueChange={setInternetAccess}
-						thumbColor={colors.themeDarkPurple}
-						trackColor={{true: colors.themePurple}}
-					/>
-				</View>
 				<View
 					style={{
+						position: "absolute",
 						flexDirection: "row",
-						alignItems: "center",
-						padding: 4,
-						backgroundColor: colors.themePurple,
+						backgroundColor: colors.contentBackground,
+						columnGap: 16,
+						bottom: 0,
 					}}>
-					<TouchableOpacity
-						style={{
-							padding: 8,
-						}}
-						onPress={() => {
-							if (importIp === "") {
-								Snackbar.show({
-									text: getStr("ipAddrEmpty"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-								return;
-							}
-
-							helper
-								.loginNetworkDevice(importIp, internetAccess)
-								.then((s) => {
-									Snackbar.show({
-										text: getStr("importSuccess") + " " + s,
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								})
-								.then(refresh)
-								.catch((e) => {
-									let message = e?.message;
-
-									if (message === "ip_already_online_error") {
-										message = getStr("importAlreadyOnline");
-									} else if (!/E\d+:/g.test(message)) {
-										message = getStr("networkRetry") + message;
-									}
-
-									Snackbar.show({
-										text: message,
-										duration: Snackbar.LENGTH_SHORT,
-									});
-								});
-						}}>
-						<Text style={{color: "white", fontSize: 14, marginBottom: 4}}>
-							{getStr("proxyImport")}
+					<View style={{ flex: 1, flexDirection: "row", paddingLeft: 16 }}>
+						<Text
+							style={{
+								verticalAlign: "middle",
+								color: colors.text,
+								paddingBottom: 3,
+							}}>
+							{getStr("ipAddr")}
 						</Text>
-					</TouchableOpacity>
+						<TextInput
+							style={{
+								flex: 1,
+								color: colors.text,
+								fontSize: 14,
+								paddingHorizontal: 16,
+							}}
+							onChangeText={setImportIp}
+							placeholder={"1.2.3.4"}
+							placeholderTextColor={colors.fontB2}
+						/>
+					</View>
+					<View style={{ flexDirection: "row" }}>
+						<Text
+							style={{
+								verticalAlign: "middle",
+								color: colors.text,
+								paddingBottom: 2,
+							}}>
+							{getStr("internetAccess")}
+						</Text>
+						<Switch
+							value={internetAccess}
+							onValueChange={setInternetAccess}
+							thumbColor={colors.themeDarkPurple}
+							trackColor={{ true: colors.themePurple }}
+						/>
+					</View>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							padding: 4,
+							backgroundColor: colors.themePurple,
+						}}>
+						<TouchableOpacity
+							style={{
+								padding: 8,
+							}}
+							onPress={() => {
+								if (importIp === "") {
+									Snackbar.show({
+										text: getStr("ipAddrEmpty"),
+										duration: Snackbar.LENGTH_SHORT,
+									});
+									return;
+								}
+
+								helper
+									.loginNetworkDevice(importIp, internetAccess)
+									.then((s) => {
+										Snackbar.show({
+											text: getStr("importSuccess") + " " + s,
+											duration: Snackbar.LENGTH_SHORT,
+										});
+									})
+									.then(refresh)
+									.catch((e) => {
+										let message = e?.message;
+
+										if (message === "ip_already_online_error") {
+											message = getStr("importAlreadyOnline");
+										} else if (!/E\d+:/g.test(message)) {
+											message = getStr("networkRetry") + message;
+										}
+
+										Snackbar.show({
+											text: message,
+											duration: Snackbar.LENGTH_SHORT,
+										});
+									});
+							}}>
+							<Text style={{ color: "white", fontSize: 14, marginBottom: 4 }}>
+								{getStr("proxyImport")}
+							</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</View>
 		</KeyboardAvoidingView>
