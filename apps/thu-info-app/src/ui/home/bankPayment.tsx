@@ -270,7 +270,7 @@ export const BankPaymentScreen = () => {
 				<View>
 					<Text
 						style={{
-							color: loadPartial ? colors.themeLightPurple : colors.fontB2,
+							color: (refreshing || loadPartial) ? colors.fontB2 : colors.themeLightPurple,
 							fontSize: 12,
 							textAlign: "center",
 							marginVertical: 12,

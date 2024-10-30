@@ -503,6 +503,7 @@ export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<st
 export const getBankPayment = async (
     helper: InfoHelper,
     foundation: boolean,
+    loadPartial: boolean = false,
 ): Promise<BankPaymentByMonth[]> =>
     roamingWrapperWithMocks(
         helper,
@@ -516,7 +517,7 @@ export const getBankPayment = async (
             if (options.length === 0) {
                 return [];
             }
-            const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
+            const form = (loadPartial ? options.slice(0, 3) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
             const $ = cheerio.load(result);
             const titles = $("div strong")
