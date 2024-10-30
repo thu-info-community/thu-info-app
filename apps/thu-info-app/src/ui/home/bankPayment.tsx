@@ -7,6 +7,7 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	StyleSheet,
 } from "react-native";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
@@ -26,6 +27,8 @@ export const BankPaymentScreen = () => {
 	const [foundation, setFoundation] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 
+	const [loadPartial, setLoadPartial] = useState(true);
+
 	const headerHeight = useHeaderHeight();
 
 	const themeName = useColorScheme();
@@ -43,7 +46,7 @@ export const BankPaymentScreen = () => {
 		let cancelled = false;
 
 		helper
-			.getBankPayment(foundation)
+			.getBankPayment(foundation, loadPartial)
 			.then((r) => {
 				if (cancelled) {
 					return;
@@ -65,7 +68,7 @@ export const BankPaymentScreen = () => {
 		};
 	};
 
-	useEffect(fetchData, [foundation]);
+	useEffect(fetchData, [foundation, loadPartial]);
 
 	return (
 		<View style={{flex: 1}}>
@@ -161,7 +164,10 @@ export const BankPaymentScreen = () => {
 					/>
 				}>
 				<View>
-					{data.map(({month, payment}) => (
+					<Text style={{ fontSize: 12, color: colors.fontB2, marginTop: 8, marginStart: 8 }}>
+						{loadPartial ? getStr("recentThreeMonths") : getStr("all")}
+					</Text>
+					{data.length ? data.map(({month, payment}) => (
 						<View key={month} style={{marginTop: 12}}>
 							<View
 								style={{
@@ -197,8 +203,8 @@ export const BankPaymentScreen = () => {
 										{index > 0 && (
 											<View
 												style={{
-													borderWidth: 0.4,
-													borderColor: colors.themeGrey,
+													borderBottomColor: colors.themeGrey,
+													borderBottomWidth: StyleSheet.hairlineWidth,
 													margin: 12,
 												}}
 											/>
@@ -263,17 +269,36 @@ export const BankPaymentScreen = () => {
 								))}
 							</RoundedView>
 						</View>
-					))}
+					)) : (
+						<RoundedView
+							style={{
+								marginTop: 12,
+								padding: 12,
+								alignItems: "center",
+						}}>
+							<Text
+								style={{
+									color: colors.fontB2,
+									fontSize: 14,
+									textAlign: "center",
+									marginVertical: 12,
+								}}>
+							{refreshing ? " " : getStr("noData")}
+							</Text>
+						</RoundedView>
+					)}
 				</View>
 				<View>
 					<Text
 						style={{
-							color: colors.fontB2,
+							color: (refreshing || !loadPartial) ? colors.fontB2 : colors.themeLightPurple,
 							fontSize: 12,
 							textAlign: "center",
 							marginVertical: 12,
-						}}>
-						{refreshing ? getStr("loading") : getStr("noMoreData")}
+						}}
+						onPress={() => loadPartial && setLoadPartial(false)}
+					>
+						{refreshing ? getStr("loading") : loadPartial ? getStr("loadAllData") : getStr("noMoreData")}
 					</Text>
 				</View>
 			</ScrollView>

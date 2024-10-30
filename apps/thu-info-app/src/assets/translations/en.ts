@@ -609,4 +609,7 @@ export default {
 		"Service provider has stopped maintaining status for new washers, so any feedback about missing washing machines will not be accepted. Data in this page comes solely from \"华清捷利\" mini program, thus any feedback about extending the page's functionality will not be accepted.",
 	noMoreData: "No more data",
 	hideWeekend: "Hide Weekend",
+	loadAllData: "Load all data",
+	recentThreeMonths: "Recent 3 months",
+	noData: "No data",
 };

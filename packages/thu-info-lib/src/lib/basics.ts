@@ -503,6 +503,7 @@ export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<st
 export const getBankPayment = async (
     helper: InfoHelper,
     foundation: boolean,
+    loadPartial: boolean = false,
 ): Promise<BankPaymentByMonth[]> =>
     roamingWrapperWithMocks(
         helper,
@@ -516,56 +517,92 @@ export const getBankPayment = async (
             if (options.length === 0) {
                 return [];
             }
-            const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
+            const form = (loadPartial ? options.slice(0, Math.min(3, options.length)) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
-            const $ = cheerio.load(result);
-            const titles = $("div strong")
-                .map((_, e) => {
-                    const titleElement = e as TagElement;
-                    const text = (titleElement.children[0] as DataNode).data?.trim();
-                    if (text === undefined) {
-                        return undefined;
-                    }
-                    const res = /(\d+年\d+月)银行代发结果/g.exec(text);
-                    if (res === null || res[1] === undefined) {
-                        return undefined;
-                    }
-                    if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
-                        return undefined;
-                    }
-                    return res[1];
-                })
-                .get()
-                .filter((text) => text !== undefined) as string[];
-            return $("div table tbody")
-                .filter(index => index < titles.length)
-                .map((index, e) => {
-                    const rows = cheerio.load(e)("tr");
-                    const data = rows.slice(1, rows.length - 1);
-                    return {
-                        month: titles[index],
-                        payment: data.map((_, row) => {
-                            const columns = cheerio.load(row)("td");
-                            return {
-                                department: getCheerioText(columns[1], 0),
-                                project: getCheerioText(columns[2], 0),
-                                usage: getCheerioText(columns[3], 0),
-                                description: getCheerioText(columns[4], 0),
-                                bank: getCheerioText(columns[5], 0),
-                                time: getCheerioText(columns[6], 0),
-                                total: getCheerioText((columns[7] as TagElement).children[0], 0),
-                                deduction: getCheerioText((columns[8] as TagElement).children[0], 0),
-                                actual: getCheerioText((columns[9] as TagElement).children[0], 0),
-                                deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
-                                cash: getCheerioText((columns[11] as TagElement).children[0], 0),
-                            } as BankPayment;
-                        }).get().reverse(),
-                    };
-                })
-                .get() as BankPaymentByMonth[];
+
+            return parseAndFilterBankPayment(result);
         },
         MOCK_BANK_PAYMENT,
     );
+
+export const getBankPaymentParellize = async (
+    helper: InfoHelper,
+    foundation: boolean,
+    loadPartial: boolean = false,
+): Promise<BankPaymentByMonth[]> => {
+    const PARTIAL_NUM = 3;
+    const MAX_PARALLEL_TASKS = 3;
+    return roamingWrapperWithMocks(
+        helper,
+        "default",
+        foundation ? "C1ADD6B60D050B64E0C7B8F195CE89EC" : "2A5182CB3F36E80395FC2091001BDEA6",
+        async (s) => {
+            if (s === undefined) {
+                throw new LibError();
+            }
+            const options = cheerio.load(s)("option").map((_, e) => (e as TagElement).attribs.value).get();
+            if (options.length === 0) {
+                return [];
+            }
+
+            const loadOptions = (loadPartial ? options.slice(0, PARTIAL_NUM) : options).map(o => `year=${encodeURIComponent(o)}`);
+            const jointOptions = [];
+            for (let i = 0; i < MAX_PARALLEL_TASKS; i++) {
+                jointOptions.push(loadOptions.slice(i * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS), (i + 1) * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS)).join("&"));
+            }
+
+            const requests = jointOptions.filter(it => it !== "").map((o) => {
+                return uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, o as never as object, 60000, "UTF-8", true);
+            });
+            const results = await Promise.all(requests);
+            const parsedResults = results.map((result) => {
+                return parseAndFilterBankPayment(result);
+            }).flatMap((it) => it);
+            return parsedResults;
+        },
+        MOCK_BANK_PAYMENT,
+    );
+};
+
+const parseAndFilterBankPayment = (html: string) => {
+    const $ = cheerio.load(html);
+    const titleElements = $("div strong");
+    return titleElements.map((_, e) => {
+        const titleElement = e as TagElement;
+        const text = (titleElement.children[0] as DataNode).data?.trim();
+        if (text === undefined) {
+            return undefined;
+        }
+        const res = /(\d+年\d+月)银行代发结果/g.exec(text);
+        if (res === null || res[1] === undefined) {
+            return undefined;
+        }
+        if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
+            return undefined;
+        }
+        const data = cheerio.load((titleElement.parent?.next?.next as TagElement)?.firstChild as cheerio.AnyNode)("tbody tr").slice(1, -1);
+        const payment = data.map((__, row) => {
+            const columns = cheerio.load(row)("td");
+            return {
+                department: getCheerioText(columns[1], 0),
+                project: getCheerioText(columns[2], 0),
+                usage: getCheerioText(columns[3], 0),
+                description: getCheerioText(columns[4], 0),
+                bank: getCheerioText(columns[5], 0),
+                time: getCheerioText(columns[6], 0),
+                total: getCheerioText((columns[7] as TagElement).children[0], 0),
+                deduction: getCheerioText((columns[8] as TagElement).children[0], 0),
+                actual: getCheerioText((columns[9] as TagElement).children[0], 0),
+                deposit: getCheerioText((columns[10] as TagElement).children[0], 0),
+                cash: getCheerioText((columns[11] as TagElement).children[0], 0),
+            } as BankPayment;
+        }).get().reverse();
+        return {
+            month: res[1],
+            payment,
+        };
+    }).get().filter((it) => it !== undefined) as BankPaymentByMonth[];
+};
 
 export const getGraduateIncome = async (
     helper: InfoHelper,
