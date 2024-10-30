@@ -17,7 +17,8 @@ import {
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useHeaderHeight} from "@react-navigation/elements";
-import {getStatusBarHeight} from "react-native-safearea-height";
+import { getStatusBarHeight } from "react-native-safearea-height";
+import { styles } from "../settings/settings";
 
 const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
@@ -67,9 +68,8 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 				</Text>
 				<View
 					style={{
-						borderWidth: 0.4,
+						...styles(themeName).separator,
 						marginVertical: 12,
-						borderColor: colors.themeGrey,
 					}}
 				/>
 				<Item left={getStr("ip6")} right={device.ip6} />
