@@ -36,7 +36,7 @@ export const SettingsItem = ({
 		<View
 			style={{
 				padding: 8,
-				paddingRight: normalText ? 8 : 16,
+				paddingRight: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
