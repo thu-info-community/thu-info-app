@@ -1,13 +1,13 @@
 {
 	"extends": [
-		"config:base"
+		"config:recommended"
 	],
 	"ignorePaths": [
 		"android"
 	],
 	"packageRules": [
 		{
-			"updateTypes": [
+			"matchUpdateTypes": [
 				"minor",
 				"patch",
 				"pin",
@@ -17,7 +17,7 @@
 			"automergeType": "branch"
 		},
 		{
-			"depTypeList": [
+			"matchDepTypes": [
 				"devDependencies"
 			],
 			"automerge": true,
