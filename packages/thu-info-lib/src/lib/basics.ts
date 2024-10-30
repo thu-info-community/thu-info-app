@@ -517,8 +517,7 @@ export const getBankPayment = async (
             if (options.length === 0) {
                 return [];
             }
-            loadPartial ? options.splice(3) : options;
-            const form = options.map((o) => `year=${encodeURIComponent(o)}`).join("&");
+            const form = (loadPartial ? options.slice(0, Math.min(3, options.length)) : options).map((o) => `year=${encodeURIComponent(o)}`).join("&");
             const result = await uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, form as never as object, 60000, "UTF-8", true);
 
             return parseAndFilterBankPayment(result);
@@ -531,6 +530,8 @@ export const getBankPaymentParellize = async (
     foundation: boolean,
     loadPartial: boolean = false,
 ): Promise<BankPaymentByMonth[]> => {
+    const PARTIAL_NUM = 3;
+    const PARELLIZE_NUM = 3;
     return roamingWrapperWithMocks(
         helper,
         "default",
@@ -543,21 +544,14 @@ export const getBankPaymentParellize = async (
             if (options.length === 0) {
                 return [];
             }
-            const loadOptions = (loadPartial ? options.slice(0, 3) : options).map(o => `year=${encodeURIComponent(o)}`);
-            const jointOptions = [
-                loadOptions.slice(0, Math.ceil(options.length / 3)).join("&"),
-                loadOptions
-                    .slice(
-                        Math.floor(options.length / 3),
-                        Math.ceil((2 * options.length) / 3)
-                    )
-                    .join("&"),
-                loadOptions
-                    .slice(Math.floor((2 * options.length) / 3))
-                    .join("&"),
-            ];
-            const requests = jointOptions.map((o) => {
-                // const form = `${encodeURIComponent(o)}`;
+
+            const loadOptions = (loadPartial ? options.slice(0, PARTIAL_NUM) : options).map(o => `year=${encodeURIComponent(o)}`);
+            const jointOptions = [];
+            for (let i = 0; i < PARELLIZE_NUM; i++) {
+                jointOptions.push(loadOptions.slice(i * Math.ceil(loadOptions.length / PARELLIZE_NUM), (i + 1) * Math.ceil(loadOptions.length / PARELLIZE_NUM)).join("&"));
+            }
+
+            const requests = jointOptions.filter(it => it !== "").map((o) => {
                 return uFetch(foundation ? FOUNDATION_BANK_PAYMENT_SEARCH_URL : BANK_PAYMENT_SEARCH_URL, o as never as object, 60000, "UTF-8", true);
             });
             const results = await Promise.all(requests);
