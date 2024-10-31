@@ -17,7 +17,7 @@ import {
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useHeaderHeight} from "@react-navigation/elements";
-import { styles } from "../settings/settings";
+import {styles} from "../settings/settings";
 
 const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
@@ -159,7 +159,7 @@ export const NetworkOnlineDevicesScreen = () => {
 							colors={[colors.accent]}
 						/>
 					}
-					style={{ padding: 8 }}
+					style={{ padding: 8, flex: 1 }}
 				>
 					{devices.length > 0 ? (
 						devices.map((d) => (
@@ -186,7 +186,7 @@ export const NetworkOnlineDevicesScreen = () => {
 						backgroundColor: colors.contentBackground,
 						columnGap: 16,
 					}}>
-					<View style={{ flex: 1, flexDirection: "row", paddingLeft: 16 }}>
+					<View style={{flex: 1, flexDirection: "row", paddingStart: 16}}>
 						<Text
 							style={{
 								verticalAlign: "middle",
@@ -207,7 +207,7 @@ export const NetworkOnlineDevicesScreen = () => {
 							placeholderTextColor={colors.fontB2}
 						/>
 					</View>
-					<View style={{ flexDirection: "row" }}>
+					<View style={{flexDirection: "row"}}>
 						<Text
 							style={{
 								verticalAlign: "middle",
@@ -219,8 +219,8 @@ export const NetworkOnlineDevicesScreen = () => {
 						<Switch
 							value={internetAccess}
 							onValueChange={setInternetAccess}
-							thumbColor={colors.themeDarkPurple}
-							trackColor={{ true: colors.themePurple }}
+							thumbColor={internetAccess ? colors.themeDarkPurple : colors.themeDarkGrey}
+							trackColor={{true: colors.themePurple}}
 						/>
 					</View>
 					<View
@@ -267,7 +267,7 @@ export const NetworkOnlineDevicesScreen = () => {
 										});
 									});
 							}}>
-							<Text style={{ color: "white", fontSize: 14, marginBottom: 4 }}>
+							<Text style={{color: "white", fontSize: 14, marginBottom: 4}}>
 								{getStr("proxyImport")}
 							</Text>
 						</TouchableOpacity>
