@@ -149,7 +149,7 @@ export const NetworkOnlineDevicesScreen = () => {
 			style={{ flex: 1 }}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			keyboardVerticalOffset={headerHeight}>
-			<View style={{ flex: 1, flexDirection: "column" }}>
+			{/* <View style={{ flex: 1, flexDirection: "column" }}> */}
 				<ScrollView
 					refreshControl={
 						<RefreshControl
@@ -272,7 +272,7 @@ export const NetworkOnlineDevicesScreen = () => {
 						</TouchableOpacity>
 					</View>
 				</View>
-			</View>
+			{/* </View> */}
 		</KeyboardAvoidingView>
 	);
 };
