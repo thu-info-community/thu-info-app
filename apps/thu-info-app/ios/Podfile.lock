@@ -1294,7 +1294,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.7.5):
     - React-Core
-  - react-native-safe-area-context (4.12.0):
+  - react-native-safe-area-context (4.13.1):
     - React-Core
   - react-native-slider (4.5.5):
     - DoubleConversion
@@ -2099,7 +2099,7 @@ SPEC CHECKSUMS:
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-pdf: 103940c90d62adfd259f63cca99c7c0c306b514c
-  react-native-safe-area-context: 142fade490cbebbe428640b8cbdb09daf17e8191
+  react-native-safe-area-context: 004fe00b8c5aae5d57de1c27ff728cf6d3918b03
   react-native-slider: 4a0f3386a38fc3d2d955efc515aef7096f7d1ee4
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
