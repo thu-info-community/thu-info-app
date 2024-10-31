@@ -129,7 +129,7 @@ export const NetworkOnlineDevicesScreen = () => {
 
 	const [importIp, setImportIp] = useState("");
 
-	const headerHeight = useHeaderHeight() || 104;
+	const headerHeight = useHeaderHeight();
 
 	const refresh = () => {
 		helper
@@ -149,7 +149,7 @@ export const NetworkOnlineDevicesScreen = () => {
 			style={{ flex: 1 }}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			keyboardVerticalOffset={headerHeight}>
-			<View style={{ flex: 1, flexDirection: "column", alignContent: "flex-end" }}>
+			<View style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView
 					refreshControl={
 						<RefreshControl
