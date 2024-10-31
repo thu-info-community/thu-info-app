@@ -161,7 +161,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 							marginVertical: 8,
 							marginEnd: 8,
 							paddingHorizontal: 12,
-							paddingVertical: Platform.OS === "android" ? 7 : 12,
+							paddingVertical: 12 - 1, // minus border width
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							borderColor: colors.inputBorder,

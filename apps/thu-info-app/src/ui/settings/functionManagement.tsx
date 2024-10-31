@@ -99,7 +99,7 @@ export const FunctionManagementScreen = () => {
 				<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
 					{getStr(name)}
 				</Text>
-				<RoundedView style={[style.rounded, {marginTop: 12}]}>
+				<RoundedView style={[style.rounded, {marginTop: 8}]}>
 					{functions[name].map((f, index) => (
 						<FunctionItem
 							key={f}
@@ -121,7 +121,7 @@ export const FunctionManagementScreen = () => {
 			{Object.keys(functions).map((name) =>
 				FunctionGroup(name as functionGroups),
 			)}
-			<View style={{marginBottom: 16}} />
+			<View style={{height: 32}} />
 		</ScrollView>
 	);
 };

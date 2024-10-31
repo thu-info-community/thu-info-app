@@ -35,6 +35,7 @@ export const PrivacyScreen = () => {
 				style={{
 					backgroundColor: theme.colors.themeBackground,
 					flex: 1,
+					padding: 12,
 				}}>
 				<WebView
 					source={{
