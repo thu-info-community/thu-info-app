@@ -325,6 +325,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
 	const scheduleBodyWidth = windowWidth - 32;
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
+	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 
 	const [openConfig, setOpenConfig] = useState(false);
 
@@ -620,9 +621,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																`${colorList[
 																parseInt(md5(val.name).substr(0, 6), 16) %
 																colorList.length
-																]}33`
+																]}${enableNewUI ? "33" : ""}`
 															}
-															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
+															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
 																navigation.navigate("ScheduleDetail", {
 																	name: val.name,

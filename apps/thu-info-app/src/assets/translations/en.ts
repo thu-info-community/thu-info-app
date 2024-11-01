@@ -612,4 +612,6 @@ export default {
 	loadAllData: "Load all data",
 	recentThreeMonths: "Recent 3 months",
 	noData: "No data",
+	enableNewUI: "Enable new UI",
+	scheduleNewUINotice: "With transparency background, which may affect readability",
 };
