@@ -87,7 +87,7 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 						onValueChange={(value: boolean) => {
 							dispatch(configSet({
 								key: "scheduleEnableNewUI",
-								value: !value,
+								value: value,
 							}));
 						}}
 					/>
