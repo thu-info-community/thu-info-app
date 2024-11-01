@@ -129,11 +129,12 @@ export const ScheduleDetailScreen = ({
 		);
 	};
 
-	const separatorView = (
+	const separatorView = (thick: boolean = false) => (
 		<View
 			style={[
 				styles(themeName).separator,
-				{marginHorizontal: 0},
+				{ marginHorizontal: 0 },
+				thick ? { borderBottomWidth: 1 } : {},
 			]}
 		/>
 	);
@@ -248,13 +249,15 @@ export const ScheduleDetailScreen = ({
 							}}>
 							{getStr("hideScheduleConfirmationText")}
 						</Text>
-						{separatorView}
+						{separatorView(true)}
 						{delButton(Choice.ONCE)}
 						{props.type !== ScheduleType.CUSTOM && (
 							<>
+								{separatorView()}
 								{delButton(Choice.REPEAT)}
 							</>
 						)}
+						{separatorView()}
 						{delButton(Choice.ALL)}
 					</RoundedView>
 					<TouchableOpacity
