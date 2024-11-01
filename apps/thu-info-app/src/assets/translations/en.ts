@@ -488,7 +488,7 @@ export default {
 	delSchedule: "Delete ",
 	hideSchedule: "Hide ",
 	hideScheduleText: "Hide Schedule",
-	hideScheduleConfirmationText: "Are you sure to delete the schedule?",
+	hideScheduleConfirmationText: "Are you sure to hide the schedule?",
 	allTime: "the schedule(All time)",
 	repeatly: "the schedule(Weekly)",
 	once: "'s schedule(Once)",

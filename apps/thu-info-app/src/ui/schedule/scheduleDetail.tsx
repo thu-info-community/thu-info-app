@@ -12,6 +12,7 @@ import {RootNav, ScheduleDetailRouteProp} from "../../components/Root";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
+import {styles} from "../settings/settings";
 
 export const beginTime = [
 	"",
@@ -120,13 +121,22 @@ export const ScheduleDetailScreen = ({
 					style={{
 						textAlign: "center",
 						fontSize: 20,
-						color: colors.text,
+						color: colors.statusWarning,
 					}}>
 					{buttonText}
 				</Text>
 			</TouchableOpacity>
 		);
 	};
+
+	const separatorView = (
+		<View
+			style={[
+				styles(themeName).separator,
+				{marginHorizontal: 0},
+			]}
+		/>
+	);
 
 	return (
 		<RoundedView
@@ -235,37 +245,16 @@ export const ScheduleDetailScreen = ({
 								fontWeight: "600",
 								fontSize: 14,
 								textAlign: "center",
-								// marginTop: 13,
 							}}>
 							{getStr("hideScheduleConfirmationText")}
 						</Text>
-						<View
-							style={{
-								height: 1,
-								backgroundColor: colors.contentBackground,
-								marginVertical: 15,
-							}}
-						/>
+						{separatorView}
 						{delButton(Choice.ONCE)}
 						{props.type !== ScheduleType.CUSTOM && (
 							<>
-								<View
-									style={{
-										height: 1,
-										backgroundColor: colors.contentBackground,
-										marginVertical: 15,
-									}}
-								/>
 								{delButton(Choice.REPEAT)}
 							</>
 						)}
-						<View
-							style={{
-								height: 1,
-								backgroundColor: colors.contentBackground,
-								marginVertical: 15,
-							}}
-						/>
 						{delButton(Choice.ALL)}
 					</RoundedView>
 					<TouchableOpacity
