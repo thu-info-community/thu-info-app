@@ -1060,7 +1060,7 @@ const styles = themedStyles((theme) => ({
 		paddingHorizontal: 12,
 		paddingTop: 8,
 		paddingBottom: 16,
-		minHeight: 92, // this value is produced by trying many times...
+		// minHeight: 92, // this value is produced by trying many times...
 	},
 	SectionTitle: {
 		textAlign: "left",
