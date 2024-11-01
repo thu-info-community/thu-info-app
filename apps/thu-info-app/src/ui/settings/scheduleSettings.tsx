@@ -24,7 +24,7 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 	const dispatch = useDispatch();
 
 	return (
-		<View style={{ flex: 1, padding: 12 }}>
+		<View style={{ flex: 1, padding: 12, paddingTop: 0 }}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
@@ -66,16 +66,16 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 						<IconRight height={20} width={20} />
 					</View>
 				</TouchableOpacity>
+				<Text
+					style={{
+						marginHorizontal: 16,
+						marginTop: 8,
+						color: colors.fontB3,
+						fontSize: 12,
+					}}>
+					{getStr("scheduleSyncTip")}
+				</Text>
 			</RoundedView>
-			<Text
-				style={{
-					marginHorizontal: 12,
-					marginVertical: 4,
-					color: colors.fontB2,
-					fontSize: 12,
-				}}>
-				{getStr("scheduleSyncTip")}
-			</Text>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("enableNewUI")}</Text>
@@ -88,22 +88,22 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 								type: "configSet",
 								payload: {
 									key: "scheduleEnableNewUI",
-									value: value,
+									value: !value,
 								},
 							});
 						}}
 					/>
 				</View>
+				<Text
+					style={{
+						marginHorizontal: 16,
+						marginTop: 8,
+						color: colors.fontB3,
+						fontSize: 12,
+					}}>
+					{getStr("scheduleNewUINotice")}
+				</Text>
 			</RoundedView>
-			<Text
-				style={{
-					marginHorizontal: 12,
-					marginVertical: 4,
-					color: colors.fontB2,
-					fontSize: 12,
-				}}>
-				{getStr("scheduleNewUINotice")}
-			</Text>
 		</View>
 	);
 };
