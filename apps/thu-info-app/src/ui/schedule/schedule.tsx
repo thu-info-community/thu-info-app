@@ -582,9 +582,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
 																		colorList.length
-															]}33`
+																]}${enableNewUI ? "33" : ""}`
 															}
-															textColor={colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length]}
+															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
 																navigation.navigate("ScheduleDetail", {
 																	name: val.name,
