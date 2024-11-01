@@ -547,8 +547,12 @@ export const getBankPaymentParellize = async (
 
             const loadOptions = (loadPartial ? options.slice(0, PARTIAL_NUM) : options).map(o => `year=${encodeURIComponent(o)}`);
             const jointOptions = [];
-            for (let i = 0; i < MAX_PARALLEL_TASKS; i++) {
-                jointOptions.push(loadOptions.slice(i * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS), (i + 1) * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS)).join("&"));
+            if (loadPartial) {
+                jointOptions.push(loadOptions.join("&"));
+            } else {
+                for (let i = 0; i < MAX_PARALLEL_TASKS; i++) {
+                    jointOptions.push(loadOptions.slice(i * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS), (i + 1) * Math.ceil(loadOptions.length / MAX_PARALLEL_TASKS)).join("&"));
+                }
             }
 
             const requests = jointOptions.filter(it => it !== "").map((o) => {
