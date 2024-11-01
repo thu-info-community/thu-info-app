@@ -407,6 +407,7 @@ export class InfoHelper {
     /**
      * Get the bank payment records of the user.
      * @param foundation  whether to get bank payment result by 基金会 or not
+     * @param loadPartial whether to load only the recent three months
      */
     public getBankPayment = async (foundation = false, loadPartial = false): Promise<BankPaymentByMonth[]> => getBankPaymentParellize(this, foundation, loadPartial);
 
