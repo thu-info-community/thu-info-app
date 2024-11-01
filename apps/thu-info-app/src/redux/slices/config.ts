@@ -41,6 +41,7 @@ export interface ConfigState {
 	is24Hour: boolean | undefined;
 	washerFavourites: string[] | undefined;
 	fingerprintSecure: boolean | undefined;
+	scheduleEnableNewUI: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -80,6 +81,7 @@ const initialState: ConfigState = {
 	is24Hour: false,
 	washerFavourites: [],
 	fingerprintSecure: false,
+	scheduleEnableNewUI: true,
 };
 
 export const defaultConfig = initialState;

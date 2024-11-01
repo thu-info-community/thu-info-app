@@ -578,4 +578,6 @@ export default {
 	loadAllData: "加载全部",
 	recentThreeMonths: "最近三个月",
 	noData: "暂无数据",
+	enableNewUI: "使用新版 UI",
+	scheduleNewUINotice: "采用透明背景，可能导致冲突课程的文字重叠",
 };
