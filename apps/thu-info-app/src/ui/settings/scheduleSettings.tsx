@@ -14,13 +14,14 @@ import { styles } from "./settings";
 import themes from "../../assets/themes/themes";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../redux/store";
+import { configSet } from "../../redux/slices/config";
 
 export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const { colors } = themes(themeName);
 
-	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
+	const scheduleEnableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 	const dispatch = useDispatch();
 
 	return (
@@ -82,15 +83,12 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 					<Switch
 						thumbColor={colors.contentBackground}
 						trackColor={{ true: colors.themePurple }}
-						value={enableNewUI}
-						onValueChange={(value) => {
-							dispatch({
-								type: "configSet",
-								payload: {
-									key: "scheduleEnableNewUI",
-									value: !value,
-								},
-							});
+						value={scheduleEnableNewUI}
+						onValueChange={(value: boolean) => {
+							dispatch(configSet({
+								key: "scheduleEnableNewUI",
+								value: !value,
+							}));
 						}}
 					/>
 				</View>
