@@ -95,7 +95,7 @@ export const ScheduleDetailScreen = ({
 				? verbText + getStr("allTime")
 				: choice === Choice.REPEAT
 				? verbText + getStr("repeatly")
-				: verbText + getStr("once");
+				: verbText + getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix") + getStr("once");
 		return (
 			<TouchableOpacity
 				onPress={() => {
@@ -156,7 +156,7 @@ export const ScheduleDetailScreen = ({
 						  " ~ " +
 						  props.end +
 						  (getStr("mark") === "CH" ? "）" : ")")
-						: getStr("periodNumPrefix") +
+						: " " + getStr("periodNumPrefix") +
 						  props.begin +
 						  (props.begin === props.end ? "" : " ~ " + props.end) +
 						  getStr("periodNumSuffix") +
@@ -228,21 +228,21 @@ export const ScheduleDetailScreen = ({
 						}}
 					/>
 					<RoundedView
-						style={{marginHorizontal: 7, backgroundColor: "#FFFFFF55"}}>
+						style={{marginHorizontal: 7, backgroundColor: colors.contentBackground}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontWeight: "600",
-								fontSize: 13,
+								fontSize: 14,
 								textAlign: "center",
-								marginTop: 13,
+								// marginTop: 13,
 							}}>
 							{getStr("hideScheduleConfirmationText")}
 						</Text>
 						<View
 							style={{
 								height: 1,
-								backgroundColor: "#00000033",
+								backgroundColor: colors.contentBackground,
 								marginVertical: 15,
 							}}
 						/>
@@ -252,7 +252,7 @@ export const ScheduleDetailScreen = ({
 								<View
 									style={{
 										height: 1,
-										backgroundColor: "#00000033",
+										backgroundColor: colors.contentBackground,
 										marginVertical: 15,
 									}}
 								/>
@@ -262,7 +262,7 @@ export const ScheduleDetailScreen = ({
 						<View
 							style={{
 								height: 1,
-								backgroundColor: "#00000033",
+								backgroundColor: colors.contentBackground,
 								marginVertical: 15,
 							}}
 						/>
@@ -270,11 +270,11 @@ export const ScheduleDetailScreen = ({
 					</RoundedView>
 					<TouchableOpacity
 						onPress={() => setDelPopupShow(false)}
-						style={{margin: 7}}>
+						style={{margin: 8}}>
 						<RoundedView style={{padding: 16, alignItems: "center"}}>
 							<Text
 								style={{
-									color: colors.statusWarning,
+									color: colors.text,
 									fontWeight: "bold",
 									fontSize: 20,
 								}}>

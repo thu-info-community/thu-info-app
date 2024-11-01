@@ -491,7 +491,7 @@ export default {
 	hideScheduleConfirmationText: "Are you sure to delete the schedule?",
 	allTime: "the schedule(All time)",
 	repeatly: "the schedule(Weekly)",
-	once: "the schedule(Once)",
+	once: "'s schedule(Once)",
 	delLocation: "Delete Location",
 	illegalLocation: "Illegal Location",
 	locationCannotBeNull: "Can not set the location null string.",
