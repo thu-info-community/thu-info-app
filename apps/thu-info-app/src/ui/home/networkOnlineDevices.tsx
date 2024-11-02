@@ -62,7 +62,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 	return (
 		<RoundedView style={{ margin: 8, borderRadius: 16 + 12 }}>
 			<View style={{ marginHorizontal: 16 }}>
-				<Text style={{ fontSize: 16, marginVertical: 2, color: colors.text }}>
+				<Text style={{ fontSize: 16, marginVertical: 2, color: colors.text, fontWeight: "bold" }}>
 					{device.ip4}
 				</Text>
 				<View
@@ -83,7 +83,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 				/>
 				<RoundedView
 					style={{
-						backgroundColor: colors.themePurple,
+						backgroundColor: colors.statusWarningOpacity,
 						marginTop: 12,
 						paddingVertical: 8,
 						borderRadius: 12,
@@ -106,7 +106,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 							style={{
 								textAlign: "center",
 								fontSize: 16,
-								color: "white",
+								color: colors.statusError,
 							}}>
 							{getStr("logoutNetworkDevice")}
 						</Text>
@@ -266,7 +266,7 @@ export const NetworkOnlineDevicesScreen = () => {
 										});
 									});
 							}}>
-							<Text style={{ color: "white", fontSize: 14, marginBottom: 4 }}>
+							<Text style={{ color: "white", fontSize: 14 }}>
 								{getStr("proxyImport")}
 							</Text>
 						</TouchableOpacity>
