@@ -158,7 +158,7 @@ export const NetworkOnlineDevicesScreen = () => {
 							colors={[colors.accent]}
 						/>
 					}
-					style={{ padding: 8, paddingBottom: 16 }}
+					contentContainerStyle={{ padding: 8 }}
 				>
 					{devices.length > 0 ? (
 						devices.map((d) => (
