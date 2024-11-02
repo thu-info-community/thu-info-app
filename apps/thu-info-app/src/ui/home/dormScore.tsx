@@ -1,4 +1,4 @@
-import {ActivityIndicator, View, useColorScheme} from "react-native";
+import {View, useColorScheme} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
@@ -30,16 +30,18 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 	}, [dormPassword]);
 	return (
 		<View style={{flex: 1}}>
-			<ImageViewer
-				imageUrls={[{ url: `data:image/png;base64,${base64}` }]}
-				backgroundColor={colors.themeBackground}
-				onSave={saveRemoteImg}
-				renderIndicator={() => <ActivityIndicator />}
-				menuContext={{
-					saveToLocal: getStr("saveImage"),
-					cancel: getStr("cancel"),
-				}}
-			/>
+			{base64 && (
+				<ImageViewer
+					imageUrls={[{ url: `data:image/png;base64,${base64}` }]}
+					backgroundColor={colors.themeBackground}
+					onSave={saveRemoteImg}
+					renderIndicator={() => <View />}
+					menuContext={{
+						saveToLocal: getStr("saveImage"),
+						cancel: getStr("cancel"),
+					}}
+				/>
+			)}
 		</View>
 	);
 };
