@@ -6,7 +6,7 @@ import { getStr } from "../../utils/i18n";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
-	Platform,
+	// Platform,
 	Switch,
 	Text,
 	TextInput,
@@ -147,7 +147,8 @@ export const NetworkOnlineDevicesScreen = () => {
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			// behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior="padding"
 			keyboardVerticalOffset={headerHeight}>
 			<View style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView
@@ -190,7 +191,6 @@ export const NetworkOnlineDevicesScreen = () => {
 							style={{
 								verticalAlign: "middle",
 								color: colors.text,
-								paddingBottom: 3,
 							}}>
 							{getStr("ipAddr")}
 						</Text>
@@ -211,7 +211,6 @@ export const NetworkOnlineDevicesScreen = () => {
 							style={{
 								verticalAlign: "middle",
 								color: colors.text,
-								paddingBottom: 2,
 							}}>
 							{getStr("internetAccess")}
 						</Text>
