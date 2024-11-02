@@ -27,7 +27,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 		return (
 			<View
 				style={{
-					marginTop: 2,
+					marginTop: 4,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>
@@ -60,7 +60,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 	};
 
 	return (
-		<RoundedView style={{ margin: 8, borderRadius: 24 }}>
+		<RoundedView style={{ margin: 8, borderRadius: 16 + 12 }}>
 			<View style={{ marginHorizontal: 16 }}>
 				<Text style={{ fontSize: 16, marginVertical: 2, color: colors.text }}>
 					{device.ip4}
@@ -68,7 +68,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 				<View
 					style={{
 						...styles(themeName).separator,
-						marginVertical: 12,
+						marginHorizontal: 0,
 					}}
 				/>
 				<Item left={getStr("ip6")} right={device.ip6} />
@@ -84,9 +84,9 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 				<RoundedView
 					style={{
 						backgroundColor: colors.themePurple,
-						marginTop: 8,
+						marginTop: 12,
 						paddingVertical: 8,
-						borderRadius: 8,
+						borderRadius: 12,
 					}}>
 					<TouchableOpacity
 						onPress={() => {
