@@ -1,4 +1,4 @@
-import {View} from "react-native";
+import {View, useColorScheme} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
@@ -8,10 +8,13 @@ import {saveRemoteImg} from "../../utils/saveImg";
 import {DormAuthError} from "@thu-info/lib/src/utils/error";
 import {RootNav} from "../../components/Root";
 import {useSelector} from "react-redux";
+import themes from "../../assets/themes/themes";
 
 export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 	const [base64, setBase64] = useState<string>();
 	const dormPassword = useSelector((s: State) => s.credentials.dormPassword);
+	const themeName = useColorScheme();
+	const {colors} = themes(themeName);
 	useEffect(() => {
 		helper
 			.getDormScore(dormPassword)
@@ -29,7 +32,8 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 		<View style={{flex: 1}}>
 			{base64 && (
 				<ImageViewer
-					imageUrls={[{url: `data:image/png;base64,${base64}`}]}
+					imageUrls={[{ url: `data:image/png;base64,${base64}` }]}
+					backgroundColor={colors.themeBackground}
 					onSave={saveRemoteImg}
 					renderIndicator={() => <View />}
 					menuContext={{
