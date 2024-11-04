@@ -12,6 +12,7 @@ import {RootNav, ScheduleDetailRouteProp} from "../../components/Root";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
+import {styles} from "../settings/settings";
 
 export const beginTime = [
 	"",
@@ -95,7 +96,7 @@ export const ScheduleDetailScreen = ({
 				? verbText + getStr("allTime")
 				: choice === Choice.REPEAT
 				? verbText + getStr("repeatly")
-				: verbText + getStr("once");
+				: verbText + getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix") + getStr("once");
 		return (
 			<TouchableOpacity
 				onPress={() => {
@@ -120,13 +121,23 @@ export const ScheduleDetailScreen = ({
 					style={{
 						textAlign: "center",
 						fontSize: 20,
-						color: colors.text,
+						color: colors.statusWarning,
 					}}>
 					{buttonText}
 				</Text>
 			</TouchableOpacity>
 		);
 	};
+
+	const separatorView = (thick: boolean = false) => (
+		<View
+			style={[
+				styles(themeName).separator,
+				{ marginHorizontal: 0 },
+				thick ? { borderBottomWidth: 1 } : {},
+			]}
+		/>
+	);
 
 	return (
 		<RoundedView
@@ -156,7 +167,7 @@ export const ScheduleDetailScreen = ({
 						  " ~ " +
 						  props.end +
 						  (getStr("mark") === "CH" ? "）" : ")")
-						: getStr("periodNumPrefix") +
+						: " " + getStr("periodNumPrefix") +
 						  props.begin +
 						  (props.begin === props.end ? "" : " ~ " + props.end) +
 						  getStr("periodNumSuffix") +
@@ -228,53 +239,34 @@ export const ScheduleDetailScreen = ({
 						}}
 					/>
 					<RoundedView
-						style={{marginHorizontal: 7, backgroundColor: "#FFFFFF55"}}>
+						style={{marginHorizontal: 7, backgroundColor: colors.contentBackground}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontWeight: "600",
-								fontSize: 13,
+								fontSize: 14,
 								textAlign: "center",
-								marginTop: 13,
 							}}>
 							{getStr("hideScheduleConfirmationText")}
 						</Text>
-						<View
-							style={{
-								height: 1,
-								backgroundColor: "#00000033",
-								marginVertical: 15,
-							}}
-						/>
+						{separatorView(true)}
 						{delButton(Choice.ONCE)}
 						{props.type !== ScheduleType.CUSTOM && (
 							<>
-								<View
-									style={{
-										height: 1,
-										backgroundColor: "#00000033",
-										marginVertical: 15,
-									}}
-								/>
+								{separatorView()}
 								{delButton(Choice.REPEAT)}
 							</>
 						)}
-						<View
-							style={{
-								height: 1,
-								backgroundColor: "#00000033",
-								marginVertical: 15,
-							}}
-						/>
+						{separatorView()}
 						{delButton(Choice.ALL)}
 					</RoundedView>
 					<TouchableOpacity
 						onPress={() => setDelPopupShow(false)}
-						style={{margin: 7}}>
+						style={{margin: 8}}>
 						<RoundedView style={{padding: 16, alignItems: "center"}}>
 							<Text
 								style={{
-									color: colors.statusWarning,
+									color: colors.text,
 									fontWeight: "bold",
 									fontSize: 20,
 								}}>
