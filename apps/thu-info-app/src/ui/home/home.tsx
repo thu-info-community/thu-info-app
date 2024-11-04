@@ -323,12 +323,12 @@ export const AnnouncementSection = () => {
 					({id, read, title, content}) => (
 						<TouchableOpacity
 							onPress={() => dispatch(toggleReadStatus(id))}
-							style={{marginVertical: 4, marginHorizontal: 12}}
+							style={{marginTop: 8, marginHorizontal: 8}}
 							key={id}>
 							<Text style={{fontWeight: "bold", color: colors.text}}>
 								{title} {read ? "(已读)" : ""}
 							</Text>
-							{!read && <Text style={{color: colors.text}}>{content}</Text>}
+							{!read && <Text style={{color: colors.fontB2}}>{content}</Text>}
 						</TouchableOpacity>
 					)
 				)}
@@ -470,7 +470,10 @@ export const HomeScheduleSection = () => {
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("schedulePreview")}</Text>
-			<View style={style.SectionContentContainer}>
+			<View style={[
+					style.SectionContentContainer,
+					{ paddingHorizontal: 20 },
+				]}>
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
 					{getLocale() === zh
 						? `${now.month() + 1}月${now.date()}日 ${dayZh[today]}`
@@ -1060,7 +1063,7 @@ const styles = themedStyles((theme) => ({
 		paddingHorizontal: 12,
 		paddingTop: 8,
 		paddingBottom: 16,
-		minHeight: 92, // this value is produced by trying many times...
+		// minHeight: 92, // this value is produced by trying many times...
 	},
 	SectionTitle: {
 		textAlign: "left",
