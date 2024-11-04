@@ -48,6 +48,7 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
+import { LoginError } from "@thu-info/lib/src/utils/error";
 
 export const helper = new InfoHelper();
 
@@ -258,7 +259,7 @@ export const navigationRef = createNavigationContainerRef<{
 }>();
 
 helper.loginErrorHook = (e) => {
-	if (navigationRef.isReady()) {
+	if (e instanceof LoginError && navigationRef.isReady()) {
 		navigationRef.navigate("Login");
 	}
 	setTimeout(

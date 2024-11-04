@@ -180,9 +180,7 @@ export const login = async (
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
                 })().then(resolve, (e: any) => {
-                    if (e instanceof LoginError) {
-                        helper.loginErrorHook && helper.loginErrorHook(e);
-                    }
+                    helper.loginErrorHook && helper.loginErrorHook(e);
                     outstandingLoginPromise = undefined;
                     reject(e);
                 });
