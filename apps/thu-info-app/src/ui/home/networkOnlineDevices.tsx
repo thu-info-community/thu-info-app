@@ -1,12 +1,12 @@
-import {useEffect, useState} from "react";
-import {Device} from "@thu-info/lib/src/models/network/device";
-import {helper} from "../../redux/store";
+import { useEffect, useState } from "react";
+import { Device } from "@thu-info/lib/src/models/network/device";
+import { helper } from "../../redux/store";
 import Snackbar from "react-native-snackbar";
-import {getStr} from "../../utils/i18n";
-import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import { getStr } from "../../utils/i18n";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
-	Platform,
+	// Platform,
 	Switch,
 	Text,
 	TextInput,
@@ -15,17 +15,19 @@ import {
 	View,
 } from "react-native";
 import themes from "../../assets/themes/themes";
-import {RoundedView} from "../../components/views";
+import { RoundedView } from "../../components/views";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { styles } from "../settings/settings";
 
-const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
+const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) => {
 	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
+	const { colors } = themes(themeName);
 
-	const Item = ({left, right}: {left: string; right: string}) => {
+	const Item = ({ left, right }: { left: string; right: string }) => {
 		return (
 			<View
 				style={{
-					marginTop: 2,
+					marginTop: 4,
 					flexDirection: "row",
 					justifyContent: "space-between",
 				}}>
@@ -58,16 +60,15 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	};
 
 	return (
-		<RoundedView style={{margin: 12}}>
-			<View style={{marginHorizontal: 16}}>
-				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+		<RoundedView style={{ margin: 8, borderRadius: 16 + 12 }}>
+			<View style={{ marginHorizontal: 16 }}>
+				<Text style={{ fontSize: 16, marginVertical: 2, color: colors.text, fontWeight: "bold" }}>
 					{device.ip4}
 				</Text>
 				<View
 					style={{
-						borderWidth: 0.4,
-						marginVertical: 12,
-						borderColor: colors.themeGrey,
+						...styles(themeName).separator,
+						marginHorizontal: 0,
 					}}
 				/>
 				<Item left={getStr("ip6")} right={device.ip6} />
@@ -82,10 +83,10 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 				/>
 				<RoundedView
 					style={{
-						backgroundColor: colors.themePurple,
-						marginTop: 8,
-						paddingVertical: 4,
-						paddingBottom: 8,
+						backgroundColor: colors.statusWarningOpacity,
+						marginTop: 12,
+						paddingVertical: 8,
+						borderRadius: 12,
 					}}>
 					<TouchableOpacity
 						onPress={() => {
@@ -105,7 +106,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 							style={{
 								textAlign: "center",
 								fontSize: 16,
-								color: colors.text,
+								color: colors.statusError,
 							}}>
 							{getStr("logoutNetworkDevice")}
 						</Text>
@@ -118,7 +119,7 @@ const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 
 export const NetworkOnlineDevicesScreen = () => {
 	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
+	const { colors } = themes(themeName);
 
 	const [devices, setDevices] = useState<Device[]>([]);
 
@@ -127,6 +128,8 @@ export const NetworkOnlineDevicesScreen = () => {
 	const [internetAccess, setInternetAccess] = useState(true);
 
 	const [importIp, setImportIp] = useState("");
+
+	const headerHeight = useHeaderHeight();
 
 	const refresh = () => {
 		helper
@@ -143,10 +146,11 @@ export const NetworkOnlineDevicesScreen = () => {
 	useEffect(refresh, []);
 	return (
 		<KeyboardAvoidingView
-			style={{flex: 1}}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={104}>
-			<View style={{flex: 1, flexDirection: "column"}}>
+			style={{ flex: 1 }}
+			// behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior="padding"
+			keyboardVerticalOffset={headerHeight}>
+			<View style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView
 					refreshControl={
 						<RefreshControl
@@ -154,7 +158,9 @@ export const NetworkOnlineDevicesScreen = () => {
 							onRefresh={refresh}
 							colors={[colors.accent]}
 						/>
-					}>
+					}
+					contentContainerStyle={{ padding: 8 }}
+				>
 					{devices.length > 0 ? (
 						devices.map((d) => (
 							<DeviceCard
@@ -180,12 +186,11 @@ export const NetworkOnlineDevicesScreen = () => {
 						backgroundColor: colors.contentBackground,
 						columnGap: 16,
 					}}>
-					<View style={{flex: 1, flexDirection: "row", paddingLeft: 16}}>
+					<View style={{ flex: 1, flexDirection: "row", paddingStart: 16 }}>
 						<Text
 							style={{
 								verticalAlign: "middle",
 								color: colors.text,
-								paddingBottom: 3,
 							}}>
 							{getStr("ipAddr")}
 						</Text>
@@ -201,20 +206,19 @@ export const NetworkOnlineDevicesScreen = () => {
 							placeholderTextColor={colors.fontB2}
 						/>
 					</View>
-					<View style={{flexDirection: "row"}}>
+					<View style={{ flexDirection: "row" }}>
 						<Text
 							style={{
 								verticalAlign: "middle",
 								color: colors.text,
-								paddingBottom: 2,
 							}}>
 							{getStr("internetAccess")}
 						</Text>
 						<Switch
 							value={internetAccess}
 							onValueChange={setInternetAccess}
-							thumbColor={colors.themeDarkPurple}
-							trackColor={{true: colors.themePurple}}
+							thumbColor={internetAccess ? colors.themeDarkPurple : colors.themeDarkGrey}
+							trackColor={{ true: colors.themePurple }}
 						/>
 					</View>
 					<View
@@ -261,7 +265,7 @@ export const NetworkOnlineDevicesScreen = () => {
 										});
 									});
 							}}>
-							<Text style={{color: colors.text, fontSize: 14, marginBottom: 4}}>
+							<Text style={{ color: "white", fontSize: 14 }}>
 								{getStr("proxyImport")}
 							</Text>
 						</TouchableOpacity>
