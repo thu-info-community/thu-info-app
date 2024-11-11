@@ -39,6 +39,7 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 					refreshing={refreshing}
 					onRefresh={refresh}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({item: {id, name}}) => (

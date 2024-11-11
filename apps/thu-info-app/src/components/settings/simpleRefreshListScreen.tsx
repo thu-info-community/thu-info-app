@@ -54,6 +54,7 @@ export function simpleRefreshListScreen<T>(
 						refreshing={refreshing}
 						onRefresh={refresh}
 						colors={[theme.colors.accent]}
+						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				renderItem={({item, index}) =>

@@ -157,6 +157,7 @@ export const NetworkOnlineDevicesScreen = () => {
 							refreshing={refreshing}
 							onRefresh={refresh}
 							colors={[colors.accent]}
+							progressBackgroundColor={colors.contentBackground}
 						/>
 					}
 					contentContainerStyle={{ padding: 8 }}

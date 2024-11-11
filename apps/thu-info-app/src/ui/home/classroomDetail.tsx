@@ -264,6 +264,7 @@ export const ClassroomDetailScreen = ({
 						refreshing={refreshing}
 						onRefresh={refresh}
 						colors={[theme.colors.accent]}
+						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				style={{

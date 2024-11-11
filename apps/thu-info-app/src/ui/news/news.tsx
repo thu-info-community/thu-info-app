@@ -504,6 +504,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
 						colors={[theme.colors.accent]}
+						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				ListEmptyComponent={

@@ -56,6 +56,7 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 						refreshing={props.refreshing}
 						onRefresh={props.onRefresh}
 						colors={[colors.accent]}
+						progressBackgroundColor={colors.contentBackground}
 					/>
 				) : undefined
 			}

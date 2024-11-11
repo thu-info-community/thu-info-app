@@ -75,6 +75,7 @@ export function paginatedRefreshListScreen<T, R>(
 						refreshing={refreshing}
 						onRefresh={() => refresh(true)}
 						colors={[theme.colors.accent]}
+						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				renderItem={({item, index}) =>

@@ -189,7 +189,11 @@ export const FormScreen = ({
 			style={style.container}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
-				<RefreshControl refreshing={refreshing} colors={[colors.accent]} />
+				<RefreshControl
+					refreshing={refreshing}
+					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
+				/>
 			}>
 			<View style={[style.titleContainer, {marginTop: 16}]}>
 				<View

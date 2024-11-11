@@ -114,6 +114,7 @@ export const SportsDetailScreen = ({
 					refreshing={refreshing}
 					onRefresh={refresh}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<RoundedView

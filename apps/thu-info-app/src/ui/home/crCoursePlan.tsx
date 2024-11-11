@@ -84,6 +84,7 @@ export const CrCoursePlanScreen = ({
 					refreshing={refreshing}
 					onRefresh={refresh}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({item: {id, name, property, credit, group}}) => (

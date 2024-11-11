@@ -40,6 +40,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 					refreshing={refreshing}
 					onRefresh={refresh}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			style={{
