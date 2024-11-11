@@ -398,6 +398,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							refreshing={refreshing}
 							onRefresh={getSchedule}
 							colors={[theme.colors.accent]}
+							progressBackgroundColor={theme.colors.contentBackground}
 						/>
 					}>
 					<View style={{flexDirection: "row"}}>

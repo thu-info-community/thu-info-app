@@ -408,6 +408,7 @@ export const ReportScreen = () => {
 						refreshing={refreshing}
 						onRefresh={fetchData}
 						colors={[colors.accent]}
+						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<View>

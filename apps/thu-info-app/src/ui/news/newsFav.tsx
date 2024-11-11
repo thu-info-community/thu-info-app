@@ -86,6 +86,7 @@ export const NewsFavScreen = ({
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
 						colors={[theme.colors.accent]}
+						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				ListEmptyComponent={

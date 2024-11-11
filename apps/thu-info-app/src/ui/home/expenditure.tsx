@@ -169,6 +169,7 @@ export const ExpenditureScreen = () => {
 						setYm({year: today.year(), month: today.month() + 1, clear: true});
 					}}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			onEndReached={() => {

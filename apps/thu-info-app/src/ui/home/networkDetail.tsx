@@ -171,6 +171,7 @@ export const NetworkDetailScreen = () => {
 					refreshing={refreshing}
 					onRefresh={refresh}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<RoundedView style={{margin: 12}}>

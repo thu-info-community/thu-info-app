@@ -161,6 +161,7 @@ export const BankPaymentScreen = () => {
 						refreshing={refreshing}
 						onRefresh={fetchData}
 						colors={[colors.accent]}
+						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<View>

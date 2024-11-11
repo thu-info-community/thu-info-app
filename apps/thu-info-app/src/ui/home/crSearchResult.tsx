@@ -60,6 +60,7 @@ export const CrSearchResultScreen = ({
 					refreshing={refreshing}
 					onRefresh={() => refresh(true)}
 					colors={[colors.accent]}
+					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({
