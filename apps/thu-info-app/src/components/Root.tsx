@@ -113,7 +113,6 @@ import {
 import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
-import {CampusMapScreen} from "../ui/home/campusMap";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
 import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
@@ -698,11 +697,6 @@ export const Root = () => {
 				name="BankPayment"
 				component={BankPaymentScreen}
 				options={{title: getStr("bankPayment")}}
-			/>
-			<Stack.Screen
-				name="CampusMap"
-				component={CampusMapScreen}
-				options={{title: getStr("campusMap")}}
 			/>
 			<Stack.Screen
 				name="Qzyq"
