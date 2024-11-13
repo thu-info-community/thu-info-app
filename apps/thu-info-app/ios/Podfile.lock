@@ -1689,7 +1689,7 @@ PODS:
     - Yoga
   - RNSnackbar (2.8.0):
     - React-Core
-  - RNSVG (15.8.0):
+  - RNSVG (15.9.0):
     - React-Core
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
@@ -2052,7 +2052,7 @@ SPEC CHECKSUMS:
   RNScreens: de948b09c9a30f3ea52f9840dd6f8ce92b4e33d3
   RNShare: eaeb5e7dc1618d19db6234da1af91fc60dd6bc0f
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
-  RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
+  RNSVG: 3d2bdcaef51c8071880a9c0072fe324f4423a3ba
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: db69236006b8b1c6d55ab453390c882306cbf219
 
