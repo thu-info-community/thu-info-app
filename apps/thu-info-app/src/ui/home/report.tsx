@@ -11,6 +11,7 @@ import {
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {helper} from "../../redux/store";
 import {Course} from "@thu-info/lib/src/models/home/report";
 import {useColorScheme} from "react-native";
@@ -237,6 +238,7 @@ export const ReportScreen = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const fetchData = () => {
 		setRefreshing(true);
@@ -479,11 +481,12 @@ export const ReportScreen = () => {
 								<View key={course.name}>
 									{index > 0 && (
 										<View
-											style={{
-												borderWidth: 0.4,
-												marginHorizontal: 16,
-												borderColor: colors.themeGrey,
-											}}
+											style={[
+												style.separator,
+												{
+													marginVertical: 0,
+												},
+											]}
 										/>
 									)}
 									<View
@@ -525,11 +528,12 @@ export const ReportScreen = () => {
 								<View key={course.name + course.semester}>
 									{index > 0 && (
 										<View
-											style={{
-												borderWidth: 0.4,
-												marginHorizontal: 16,
-												borderColor: colors.themeGrey,
-											}}
+											style={[
+												style.separator,
+												{
+													marginVertical: 0,
+												},
+											]}
 										/>
 									)}
 									<View

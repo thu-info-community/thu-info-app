@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {Text, View, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {Detial} from "@thu-info/lib/src/models/network/detial";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
@@ -14,6 +15,7 @@ import dayjs from "dayjs";
 const DetailCard = ({detail}: {detail: Detial}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const Item = ({left, right}: {left: string; right: string}) => {
 		return (
@@ -66,11 +68,12 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 				right={detail.wiredUsage.currentCost}
 			/>
 			<View
-				style={{
-					borderWidth: 0.4,
-					marginVertical: 12,
-					borderColor: colors.themeGrey,
-				}}
+				style={[
+					style.separator,
+					{
+						marginHorizontal: 0,
+					},
+				]}
 			/>
 			<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 				{getStr("wireless")}
@@ -91,11 +94,12 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 				right={detail.wirelessUsage.currentCost}
 			/>
 			<View
-				style={{
-					borderWidth: 0.4,
-					marginVertical: 12,
-					borderColor: colors.themeGrey,
-				}}
+				style={[
+					style.separator,
+					{
+						marginHorizontal: 0,
+					},
+				]}
 			/>
 			<View
 				style={{

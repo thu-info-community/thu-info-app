@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import themes, {ColorTheme} from "../assets/themes/themes";
 import {getStr} from "../utils/i18n";
+import {styles} from "../ui/settings/settings";
 
 export const RoundedView = (props: ViewProps) => {
 	const themeName = useColorScheme();
@@ -40,6 +41,7 @@ interface ListProps<T> {
 export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 	const viewProps = {
 		...props,
 		data: undefined,
@@ -67,7 +69,13 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 						<View key={props.keyExtractor?.(item, index)}>
 							{index > 0 && (
 								<View
-									style={{borderWidth: 0.4, borderColor: colors.themeGrey}}
+									style={[
+										style.separator,
+										{
+											marginHorizontal: 0,
+											marginVertical: 0,
+										},
+									]}
 								/>
 							)}
 							{props.renderItem(item, colors, index)}

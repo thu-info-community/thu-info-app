@@ -44,6 +44,7 @@ export const WaterScreen = ({
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const {colors} = theme;
+	const style = styles(themeName);
 
 	const waterId = useSelector((s: State) => s.config.waterId);
 	const waterBrand = useSelector((s: State) => s.config.waterBrand) ?? "6";
@@ -106,11 +107,12 @@ export const WaterScreen = ({
 					/>
 				</View>
 				<View
-					style={{
-						borderWidth: 0.4,
-						borderColor: colors.themeGrey,
-						marginVertical: 12,
-					}}
+					style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 				/>
 				<View
 					style={{
@@ -136,11 +138,12 @@ export const WaterScreen = ({
 					</Text>
 				</View>
 				<View
-					style={{
-						borderWidth: 0.4,
-						borderColor: colors.themeGrey,
-						marginVertical: 12,
-					}}
+					style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 				/>
 				<View
 					style={{
@@ -232,11 +235,12 @@ export const WaterScreen = ({
 					</View>
 				</View>
 				<View
-					style={{
-						borderWidth: 0.4,
-						borderColor: colors.themeGrey,
-						marginVertical: 12,
-					}}
+					style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 				/>
 				<TouchableOpacity
 					onPress={() => navigation.navigate("WaterSelectBrand")}
@@ -266,11 +270,12 @@ export const WaterScreen = ({
 					</View>
 				</TouchableOpacity>
 				<View
-					style={{
-						borderWidth: 0.4,
-						borderColor: colors.themeGrey,
-						marginVertical: 12,
-					}}
+					style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 				/>
 				<TouchableOpacity
 					onPress={() => navigation.navigate("WaterSelectTicketNumber", params)}

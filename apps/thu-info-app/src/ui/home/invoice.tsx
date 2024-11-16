@@ -1,10 +1,11 @@
 import {PropsWithChildren} from "react";
-import {Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {RootNav} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
 import Snackbar from "react-native-snackbar";
+import {styles} from "../../ui/settings/settings";
 
 export const InvoiceScreen = paginatedRefreshListScreen(
 	(_: PropsWithChildren<{navigation: RootNav}>, page) =>
@@ -13,11 +14,12 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 		<>
 			{index > 0 && (
 				<View
-					style={{
-						borderWidth: 0.4,
-						borderColor: colors.themeGrey,
-						marginVertical: 12,
-					}}
+					style={[
+						styles(useColorScheme()).separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 				/>
 			)}
 			<TouchableOpacity
@@ -86,4 +88,5 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 		</Text>
 	),
 	undefined,
-	{ borderRadius: 12 });
+	{ borderRadius: 12 }
+);

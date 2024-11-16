@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import {RootNav, SportsSelectProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
@@ -52,6 +53,8 @@ export const SportsSelectScreen = ({
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
+
 	const [field, setField] = useState<
 		{id: string; name: string; cost: number} | undefined
 	>(undefined);
@@ -101,11 +104,12 @@ export const SportsSelectScreen = ({
 						</Text>
 					</View>
 					<View
-						style={{
-							borderWidth: 0.4,
-							borderColor: colors.themeGrey,
-							marginVertical: 12,
-						}}
+						style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 					/>
 					<View
 						style={{
@@ -131,11 +135,12 @@ export const SportsSelectScreen = ({
 						</Text>
 					</View>
 					<View
-						style={{
-							borderWidth: 0.4,
-							borderColor: colors.themeGrey,
-							marginVertical: 12,
-						}}
+						style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 					/>
 					<View
 						style={{
@@ -161,11 +166,12 @@ export const SportsSelectScreen = ({
 						</Text>
 					</View>
 					<View
-						style={{
-							borderWidth: 0.4,
-							borderColor: colors.themeGrey,
-							marginVertical: 12,
-						}}
+						style={[
+						style.separator,
+						{
+							marginHorizontal: 0,
+						},
+					]}
 					/>
 					<TouchableOpacity
 						onPress={() => navigation.navigate("SportsSelectField", params)}
@@ -243,11 +249,12 @@ export const SportsSelectScreen = ({
 							placeholderTextColor={colors.fontB3}
 						/>
 						<View
-							style={{
-								borderWidth: 0.4,
-								borderColor: colors.themeGrey,
-								marginVertical: 12,
-							}}
+							style={[
+								style.separator,
+								{
+									marginHorizontal: 0,
+								},
+							]}
 						/>
 						<View
 							style={{

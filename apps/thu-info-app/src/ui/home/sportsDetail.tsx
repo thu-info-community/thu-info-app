@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 import {RoundedView} from "../../components/views";
@@ -39,6 +40,7 @@ export const SportsDetailScreen = ({
 	const today = dayjs();
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const validDateNum = 4;
 	const format = "YYYY-MM-DD";
@@ -124,11 +126,12 @@ export const SportsDetailScreen = ({
 						<View key={date.format(format)}>
 							{index > 0 && (
 								<View
-									style={{
-										borderWidth: 0.4,
-										borderColor: colors.themeGrey,
-										marginVertical: 12,
-									}}
+									style={[
+										style.separator,
+										{
+											marginHorizontal: 0,
+										},
+									]}
 								/>
 							)}
 							<TouchableOpacity
@@ -150,11 +153,12 @@ export const SportsDetailScreen = ({
 								resources.map((item) => (
 									<View key={`${date.format(format)}-r-${item.description}`}>
 										<View
-											style={{
-												borderWidth: 0.4,
-												borderColor: colors.themeGrey,
-												marginVertical: 12,
-											}}
+											style={[
+												style.separator,
+												{
+													marginHorizontal: 0,
+												},
+											]}
 										/>
 										<TouchableOpacity
 											onPress={() =>

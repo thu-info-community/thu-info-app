@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import {sportsIdInfoList} from "@thu-info/lib/src/lib/sports";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
@@ -80,6 +81,7 @@ export const SportsReservationCard = () => {
 export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	return (
 		<ScrollView style={{flex: 1}}>
@@ -89,11 +91,12 @@ export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 					<View key={info.name}>
 						{index > 0 && (
 							<View
-								style={{
-									borderWidth: 0.4,
-									borderColor: colors.themeGrey,
-									marginVertical: 12,
-								}}
+								style={[
+									style.separator,
+									{
+										marginHorizontal: 0,
+									},
+								]}
 							/>
 						)}
 						<TouchableOpacity

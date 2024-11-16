@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {helper} from "../../redux/store";
 import {BottomPopupTriggerView} from "../../components/views";
 import dayjs from "dayjs";
@@ -114,6 +115,7 @@ export const IncomeScreen = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const valid = beginYear < endYear || beginYear === endYear && beginMonth <= endMonth;
 
@@ -167,11 +169,7 @@ export const IncomeScreen = () => {
 						<View>
 							{index > 0 && (
 								<View
-									style={{
-										borderWidth: 0.4,
-										borderColor: colors.themeGrey,
-										margin: 12,
-									}}
+									style={style.separator}
 								/>
 							)}
 							<View style={{flexDirection: "row", marginHorizontal: 16}}>

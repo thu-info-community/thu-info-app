@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import dayjs from "dayjs";
 import {RoundedView} from "../../components/views";
 import {helper} from "../../redux/store";
@@ -24,6 +25,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 	const today = dayjs();
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const validDateNum = 5;
 	const format = "YYYY-MM-DD";
@@ -56,11 +58,12 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 					<View key={lib.kindName + lib.kindId}>
 						{index > 0 && (
 							<View
-								style={{
-									borderWidth: 0.4,
-									borderColor: colors.themeGrey,
-									marginVertical: 12,
-								}}
+								style={[
+									style.separator,
+									{
+										marginHorizontal: 0,
+									},
+								]}
 							/>
 						)}
 						<TouchableOpacity
@@ -84,11 +87,12 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 							).map((date, dateOffset) => (
 								<View key={`${lib.kindName}-r-${date.date()}`}>
 									<View
-										style={{
-											borderWidth: 0.4,
-											borderColor: colors.themeGrey,
-											marginVertical: 12,
-										}}
+										style={[
+											style.separator,
+											{
+												marginHorizontal: 0,
+											},
+										]}
 									/>
 									<TouchableOpacity
 										onPress={() =>
