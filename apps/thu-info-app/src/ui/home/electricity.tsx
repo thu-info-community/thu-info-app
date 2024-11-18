@@ -160,8 +160,8 @@ export const ElectricityScreen = () => {
 						</View>
 						<View
 							style={{
-								borderWidth: 1,
-								borderColor: colors.themeLightGrey,
+								borderBottomWidth: 1,
+								borderBottomColor: colors.themeLightGrey,
 								marginVertical: 12,
 							}}
 						/>

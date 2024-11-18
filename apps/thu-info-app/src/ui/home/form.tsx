@@ -17,6 +17,7 @@ import {helper} from "../../redux/store";
 import {Form, Person} from "@thu-info/lib/src/models/home/assessment";
 import themedStyles from "../../utils/themedStyles";
 import {RoundedView} from "../../components/views";
+import { styles as settingsStyle } from "../../ui/settings/settings";
 
 export const FormScreen = ({
 	route,
@@ -30,6 +31,7 @@ export const FormScreen = ({
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
+	const separatorStyle = settingsStyle(themeName).separator;
 
 	const [refreshing, setRefreshing] = useState(true);
 	const [evaluationForm, setEvaluationForm] = useState<Form>();
@@ -91,12 +93,7 @@ export const FormScreen = ({
 						<View key={`Person${i}Question${index}`}>
 							{index > 0 && (
 								<View
-									style={{
-										borderWidth: 0.4,
-										marginHorizontal: 16,
-										marginVertical: 12,
-										borderColor: colors.themeGrey,
-									}}
+									style={separatorStyle}
 								/>
 							)}
 							<View style={{marginHorizontal: 12}}>

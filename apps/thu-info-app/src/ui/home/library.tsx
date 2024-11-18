@@ -12,6 +12,7 @@ import {useEffect, useState} from "react";
 import IconRight from "../../assets/icons/IconRight";
 import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {RoundedView} from "../../components/views";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {Library} from "@thu-info/lib/src/models/home/library";
@@ -132,6 +133,7 @@ export const LibraryReservationCard = () => {
 export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const [refreshing, setRefreshing] = useState(false);
 	const [libraryList, setLibraryList] = useState<Library[]>([]);
@@ -167,11 +169,12 @@ export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 							<View key={library.id}>
 								{index > 0 && (
 									<View
-										style={{
-											borderWidth: 0.4,
-											marginHorizontal: 16,
-											borderColor: colors.themeGrey,
-										}}
+										style={[
+											style.separator,
+											{
+												marginVertical: 0,
+											},
+										]}
 									/>
 								)}
 								<TouchableOpacity

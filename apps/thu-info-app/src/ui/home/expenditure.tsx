@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
+import {styles} from "../../ui/settings/settings";
 import {helper} from "../../redux/store";
 import {
 	CardTransaction,
@@ -115,6 +116,7 @@ export const ExpenditureScreen = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const years = Array.from(
 		new Array(today.year() - 2023 + 1),
@@ -266,12 +268,7 @@ export const ExpenditureScreen = () => {
 				<View key={item.id}>
 					{index > 0 && (
 						<View
-							style={{
-								borderWidth: 0.4,
-								marginHorizontal: 16,
-								marginVertical: 12,
-								borderColor: colors.themeGrey,
-							}}
+							style={style.separator}
 						/>
 					)}
 					<TransactionItem tx={item} />
