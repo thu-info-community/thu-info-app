@@ -1,10 +1,11 @@
-const {getDefaultConfig, mergeConfig} = require("@react-native/metro-config");
+const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
+const {createHarmonyMetroConfig} = require('@react-native-oh/react-native-harmony/metro.config');
 const path = require("path");
 
 // Find the project and workspace directories
 const projectRoot = __dirname;
-// This can be replaced with `find-yarn-workspace-root`
-const workspaceRoot = path.resolve(projectRoot, "../..");
+// // This can be replaced with `find-yarn-workspace-root`
+// const workspaceRoot = path.resolve(projectRoot, "../..");
 
 /**
  * Metro configuration
@@ -13,11 +14,10 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
  * @type {import('metro-config').MetroConfig}
  */
 const config = {
-	watchFolders: [workspaceRoot],
+	watchFolders: [projectRoot],
 	resolver: {
 		nodeModulesPaths: [
 			path.resolve(projectRoot, "node_modules"),
-			path.resolve(workspaceRoot, "node_modules"),
 		],
 	},
 	server: {
@@ -33,6 +33,16 @@ const config = {
 			};
 		},
 	},
+	transformer: {
+		getTransformOptions: async () => ({
+			transform: {
+				experimentalImportSupport: false,
+				inlineRequires: true,
+			},
+		}),
+	},
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
+	reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
+}), config);

@@ -18,7 +18,7 @@ import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "@thu-info/lib";
 import CookieManager from "@react-native-cookies/cookies";
-import {is24HourFormat} from "react-native-device-time-format";
+// import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
 	scheduleTimeAdd,
@@ -57,6 +57,11 @@ helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
 
+const is24HourFormat = async () => {
+	console.log(Platform)
+	return true
+}
+
 AppState.addEventListener("change", (state) => {
 	if (state === "active") {
 		if (!persistor.getState().bootstrapped) {
@@ -90,7 +95,7 @@ AppState.addEventListener("change", (state) => {
 	}
 });
 
-const KeychainStorage = createKeychainStorage();
+// const KeychainStorage = createKeychainStorage();
 
 export interface State {
 	auth: AuthState;
@@ -108,7 +113,7 @@ const rootReducer = combineReducers({
 	auth: persistReducer(
 		{
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
-			storage: KeychainStorage,
+			storage: AsyncStorage, // KeychainStorage,
 			key: "auth",
 		},
 		authReducer,
@@ -118,7 +123,7 @@ const rootReducer = combineReducers({
 	credentials: persistReducer(
 		{
 			keyPrefix: "com.unidy2002.thuinfo.persist.credentials.",
-			storage: KeychainStorage,
+			storage: AsyncStorage, // KeychainStorage,
 			key: "credentials",
 		},
 		credentialsReducer,
