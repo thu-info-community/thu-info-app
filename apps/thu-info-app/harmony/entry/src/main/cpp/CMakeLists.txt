@@ -5,6 +5,8 @@ set(CMAKE_SKIP_BUILD_RPATH TRUE)
 set(OH_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/../../../oh_modules")
 set(RNOH_APP_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
+set(RNOH_C_API_ARCH, 1)
+
 set(RNOH_CPP_DIR "${OH_MODULES}/@rnoh/react-native-openharmony/src/main/cpp")
 set(RNOH_GENERATED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
 set(CMAKE_ASM_FLAGS "-Wno-error=unused-command-line-argument -Qunused-arguments")
@@ -22,7 +24,7 @@ add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/react-native-svg/src/main/c
 add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/react-native-safe-area-context/src/main/cpp" ./safe-area)
 
 file(GLOB GENERATED_CPP_FILES "./generated/*.cpp")
-# message("a")
+message("a")
 
 add_library(rnoh_app SHARED
     ${GENERATED_CPP_FILES}
