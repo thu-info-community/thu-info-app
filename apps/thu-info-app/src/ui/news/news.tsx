@@ -326,9 +326,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View
-			style={{flex: 1, paddingTop: getStatusBarHeight()}}
+			style={{flex: 1, paddingTop: 40}}
 			key={darkModeHook}>
-			<View style={{flex: 0}}>
+			{!helper.mocked() && <View style={{flex: 0}}>
 				<ScrollView
 					showsHorizontalScrollIndicator={false}
 					horizontal={true}
@@ -367,8 +367,8 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						/>
 					))}
 				</ScrollView>
-			</View>
-			{(() => {
+			</View>}
+			{!helper.mocked() && (() => {
 				if (categorySelected === undefined) {
 					return (
 						<View

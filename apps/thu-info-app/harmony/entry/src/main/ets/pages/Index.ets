@@ -12,11 +12,19 @@ import {
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
 import { createRNPackages } from '../RNPackagesFactory';
+import { RNCSlider, SLIDER_TYPE } from "@react-native-oh-tpl/slider"
+import { window } from '@kit.ArkUI';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
   if (ctx.componentName === WEB_VIEW) {
     WebView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag,
+    })
+  }
+  if (ctx.componentName === SLIDER_TYPE) {
+    RNCSlider({
       ctx: ctx.rnComponentContext,
       tag: ctx.tag,
     })
@@ -48,6 +56,18 @@ struct Index {
     return true
   }
 
+  /* onPageShow(): void {
+    window.getLastWindow(getContext(this)).then((windowStage) => {
+      windowStage.setWindowPrivacyMode(true);
+    })
+  }
+
+  onPageHide(): void {
+    window.getLastWindow(getContext(this)).then((windowStage) => {
+      windowStage.setWindowPrivacyMode(false);
+    })
+  } */
+
   build() {
     Column() {
       if (this.rnohCoreContext && this.shouldShow) {
@@ -62,6 +82,7 @@ struct Index {
             enableCAPIArchitecture: true, // 该项必须为true，用于开启CAPI
             arkTsComponentNames: [
               WEB_VIEW,
+              SLIDER_TYPE,
             ],
             enableDebugger: true,
           },

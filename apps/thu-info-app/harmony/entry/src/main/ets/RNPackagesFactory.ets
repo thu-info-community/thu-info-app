@@ -12,7 +12,9 @@ import { RNVersionNumberPackage } from '@react-native-oh-tpl/react-native-versio
 import { SvgPackage } from '@react-native-oh-tpl/react-native-svg/ts';
 import { SafeAreaViewPackage } from '@react-native-oh-tpl/react-native-safe-area-context/ts';
 import { WebViewPackage } from '@react-native-oh-tpl/react-native-webview/ts';
-
+import { RNDeviceInfoPackage } from '@react-native-oh-tpl/react-native-device-info/ts';
+import { CameraRollPackage } from '@react-native-oh-tpl/camera-roll/ts';
+import { GeneratedPackage } from './GeneratedPackage';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
   return [
@@ -29,5 +31,8 @@ export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
     new SvgPackage(ctx),
     new SafeAreaViewPackage(ctx),
     new WebViewPackage(ctx),
+    new RNDeviceInfoPackage(ctx),
+    new CameraRollPackage(ctx),
+    new GeneratedPackage(ctx),
   ];
 }

@@ -127,7 +127,7 @@ const Header = React.forwardRef(
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: getStatusBarHeight(),
+					paddingTop: 40,
 				}}
 				key={String(darkModeHook)}>
 				<View
@@ -310,7 +310,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
 	const [tableHeight, setTableHeight] = useState(
-		windowHeight - getStatusBarHeight() - 40,
+		windowHeight,
 	);
 	const exactUnitHeight = (tableHeight - 40) / 14;
 	const heightMode =

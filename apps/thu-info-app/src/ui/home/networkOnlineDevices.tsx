@@ -3,7 +3,7 @@ import {Device} from "@thu-info/lib/src/models/network/device";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
 	Platform,
@@ -146,7 +146,7 @@ export const NetworkOnlineDevicesScreen = () => {
 			style={{flex: 1}}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			keyboardVerticalOffset={104}>
-			<View style={{flex: 1, flexDirection: "column"}}>
+			<GestureHandlerRootView style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
 						<RefreshControl
@@ -267,7 +267,7 @@ export const NetworkOnlineDevicesScreen = () => {
 						</TouchableOpacity>
 					</View>
 				</View>
-			</View>
+			</GestureHandlerRootView>
 		</KeyboardAvoidingView>
 	);
 };

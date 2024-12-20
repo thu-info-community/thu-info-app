@@ -1,0 +1,39 @@
+{
+  "name": "rtn-network-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "harmony": {
+    "alias": "rtn-network-utils",
+    "codegenConfig": [
+      {
+        "version": 1,
+        "specPaths": [
+          "./src/specs/v1"
+        ]
+      },
+      {
+        "version": 2,
+        "specPaths": [
+          "./src/specs/v2"
+        ]
+      }
+    ]
+  },
+  "files": [
+    "index.ts",
+    "src/*",
+    "harmony.tar.gz"
+  ],
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.11",
+    "react": "18.3.1",
+    "react-native": "0.72.5"
+  },
+  "dependencies": {},
+  "private": true
+}

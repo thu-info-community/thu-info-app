@@ -16,7 +16,6 @@ import {useColorScheme} from "react-native";
 import {BankPaymentByMonth} from "@thu-info/lib/src/models/home/bank";
 import {RoundedView} from "../../components/views";
 import IconDropdown from "../../assets/icons/IconDropdown";
-import {getStatusBarHeight} from "react-native-safearea-height";
 import IconCheck from "../../assets/icons/IconCheck";
 import {useHeaderHeight} from "@react-navigation/elements";
 
@@ -108,7 +107,7 @@ export const BankPaymentScreen = () => {
 								backgroundColor: colors.text,
 								opacity: 0.3,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight + 32,
 								bottom: 0,
 							}}
 						/>
@@ -117,7 +116,7 @@ export const BankPaymentScreen = () => {
 								position: "absolute",
 								backgroundColor: colors.contentBackground,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight + 32,
 								borderBottomStartRadius: 12,
 								borderBottomEndRadius: 12,
 							}}>

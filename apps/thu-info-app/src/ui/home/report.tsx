@@ -233,7 +233,7 @@ export const ReportScreen = () => {
 	const [bx, setBx] = useState(false);
 	const [mode, setMode] = useState<"split" | "gather">("split");
 
-	const headerHeight = useHeaderHeight();
+	const headerHeight = useHeaderHeight() + 32;
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
@@ -272,7 +272,7 @@ export const ReportScreen = () => {
 
 	return (
 		<View style={{flex: 1}}>
-			<View
+			{!helper.mocked() && <View
 				style={{
 					flexDirection: "row",
 					height: 32,
@@ -339,7 +339,7 @@ export const ReportScreen = () => {
 								backgroundColor: colors.text,
 								opacity: 0.3,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight,
 								bottom: 0,
 							}}
 						/>
@@ -348,7 +348,7 @@ export const ReportScreen = () => {
 								position: "absolute",
 								backgroundColor: colors.contentBackground,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight,
 								borderBottomStartRadius: 12,
 								borderBottomEndRadius: 12,
 							}}>
@@ -400,7 +400,7 @@ export const ReportScreen = () => {
 						</View>
 					</TouchableOpacity>
 				</Modal>
-			</View>
+			</View>}
 			<ScrollView
 				style={{marginHorizontal: 12}}
 				refreshControl={

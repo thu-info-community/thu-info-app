@@ -37,28 +37,6 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{!disabledFunction.includes("invoice") && (
-					<SecondaryItem
-						title="invoice"
-						destKey="invoice"
-						icon={<IconInvoice />}
-						onPress={() => {
-							addUsageStat(FunctionType.Invoice);
-							navigation.navigate("Invoice");
-						}}
-					/>
-				)}
-				{!disabledFunction.includes("income") && (
-					<SecondaryItem
-						title="graduateIncome"
-						destKey="income"
-						icon={<IconIncome />}
-						onPress={() => {
-							addUsageStat(FunctionType.Income);
-							navigation.navigate("Income");
-						}}
-					/>
-				)}
 			</View>
 		</View>
 	);

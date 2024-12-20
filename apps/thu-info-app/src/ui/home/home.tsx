@@ -1,4 +1,6 @@
 import {
+	Alert,
+	BackHandler,
 	Linking,
 	Platform,
 	ScrollView,
@@ -343,8 +345,6 @@ export const HomeReservationSection = () => {
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
 			<LibraryReservationCard />
-			<View style={{height: 8}} />
-			<SportsReservationCard />
 		</View>
 	);
 };
@@ -958,10 +958,6 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("network");
 	}
 
-	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
-		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
-	}
-
 	const top5Filtered = top5.filter(
 		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),
 	);
@@ -974,9 +970,28 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		(state: State) => state.config.fingerprintSecure,
 	);
 
+	const privacy312 = useSelector((s: State) => s.config.privacy312);
+
 	useEffect(() => {
-		if (Platform.OS !== "ios" && Platform.OS !== "android") {
+		if (Platform.OS !== "ios" && Platform.OS !== "android" && Platform.OS !== "harmony") {
 			return;
+		}
+		if (privacy312 !== true) {
+			Alert.alert(
+				getStr("privacyPolicy"),
+				getStr("privacyPolicyPrompt"),
+				[
+					{
+						text: getStr("view"),
+						onPress: () => navigation.navigate("Privacy"),
+					},
+					{
+						text: getStr("decline"),
+						onPress: () => BackHandler.exitApp(),
+					},
+				],
+				{cancelable: false},
+			);
 		}
 		const invalidHelper = new InfoHelper();
 		invalidHelper.userId = helper.userId;
@@ -1019,7 +1034,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	}, []);
 
 	return (
-		<View style={{flex: 1, paddingTop: getStatusBarHeight()}}>
+		<View style={{flex: 1, paddingTop: 40}}>
 			<ScrollView
 				style={{
 					backgroundColor: theme.colors.themeBackground,

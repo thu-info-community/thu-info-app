@@ -40,6 +40,7 @@ export interface ConfigState {
 	is24Hour: boolean | undefined;
 	washerFavourites: string[] | undefined;
 	fingerprintSecure: boolean | undefined;
+	privacy312: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -78,6 +79,7 @@ const initialState: ConfigState = {
 	is24Hour: false,
 	washerFavourites: [],
 	fingerprintSecure: false,
+	privacy312: false,
 };
 
 export const defaultConfig = initialState;

@@ -31,45 +31,6 @@ export const ScheduleSettingsScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableOpacity>
 			</RoundedView>
-			<RoundedView style={style.rounded}>
-				<TouchableOpacity
-					style={style.touchable}
-					onPress={() => {
-						Alert.alert(getStr("scheduleSync"), getStr("scheduleSyncTip"), [
-							{text: getStr("cancel")},
-							{
-								text: getStr("syncSender"),
-								onPress: () => {
-									navigation.navigate("ScheduleSync", {
-										isSending: true,
-									});
-								},
-							},
-							{
-								text: getStr("syncReceiver"),
-								onPress: () => {
-									navigation.navigate("ScheduleSync", {
-										isSending: false,
-									});
-								},
-							},
-						]);
-					}}>
-					<Text style={style.text}>{getStr("scheduleSync")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
-						<IconRight height={20} width={20} />
-					</View>
-				</TouchableOpacity>
-			</RoundedView>
-			<Text
-				style={{
-					marginHorizontal: 12,
-					marginVertical: 4,
-					color: colors.fontB2,
-					fontSize: 12,
-				}}>
-				{getStr("scheduleSyncTip")}
-			</Text>
 		</View>
 	);
 };

@@ -25,28 +25,6 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{!disabledFunction.includes("sportsBook") && (
-					<SecondaryItem
-						title="sportsBook"
-						destKey="sportsBook"
-						icon={<IconSports />}
-						onPress={() => {
-							addUsageStat(FunctionType.GymnasiumReg);
-							navigation.navigate("Sports");
-						}}
-					/>
-				)}
-				{!disabledFunction.includes("libRoomBook") && (
-					<SecondaryItem
-						title="libRoomBook"
-						destKey="libRoomBook"
-						icon={<IconLibRoom />}
-						onPress={() => {
-							addUsageStat(FunctionType.PrivateRooms);
-							navigation.navigate("LibRoomSelect");
-						}}
-					/>
-				)}
 			</View>
 		</View>
 	);

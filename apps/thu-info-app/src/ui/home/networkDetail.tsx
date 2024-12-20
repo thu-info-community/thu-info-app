@@ -5,7 +5,7 @@ import themes from "../../assets/themes/themes";
 import {Detial} from "@thu-info/lib/src/models/network/detial";
 import Snackbar from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import IconDown from "../../assets/icons/IconDown";
@@ -165,6 +165,7 @@ export const NetworkDetailScreen = () => {
 
 	useEffect(refresh, [y, m]);
 	return (
+		<GestureHandlerRootView>
 		<ScrollView
 			refreshControl={
 				<RefreshControl
@@ -263,5 +264,6 @@ export const NetworkDetailScreen = () => {
 				)}
 			</View>
 		</ScrollView>
+		</GestureHandlerRootView>
 	);
 };

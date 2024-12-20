@@ -26,39 +26,6 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{!disabledFunction.includes("qzyq") && (
-					<SecondaryItem
-						title="qzyq"
-						destKey="qzyq"
-						icon={<IconWater />}
-						onPress={() => {
-							addUsageStat(FunctionType.QZYQ);
-							navigation.navigate("Qzyq", {ticketNumber: 0});
-						}}
-					/>
-				)}
-				{!disabledFunction.includes("dormScore") && (
-					<SecondaryItem
-						title="dormScore"
-						destKey="dormScore"
-						icon={<IconDormScore />}
-						onPress={() => {
-							addUsageStat(FunctionType.DormScore);
-							navigation.navigate("DormScore");
-						}}
-					/>
-				)}
-				{/*{!disabledFunction.includes("electricity") && (*/}
-				{/*	<SecondaryItem*/}
-				{/*		title="electricity"*/}
-				{/*		destKey="electricity"*/}
-				{/*		icon={<IconEleRecharge />}*/}
-				{/*		onPress={() => {*/}
-				{/*			addUsageStat(FunctionType.Electricity);*/}
-				{/*			navigation.navigate("Electricity");*/}
-				{/*		}}*/}
-				{/*	/>*/}
-				{/*)}*/}
 			</View>
 		</View>
 	);

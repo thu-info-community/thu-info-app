@@ -11,7 +11,10 @@
 
 #include "RNOH/Package.h"
 #include "RNOH/ArkTSTurboModule.h"
+#include "generated/RNCCameraRoll.h"
+#include "generated/RNCCameraRollPermission.h"
 #include "generated/ReactNativeBlobUtil.h"
+#include "generated/RNDeviceInfo.h"
 #include "generated/GetRandomValuesNativeModule.h"
 #include "generated/RNLocalize.h"
 #include "generated/RNShare.h"
@@ -25,8 +28,17 @@ namespace rnoh {
 class RNOHGeneratedPackageTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
   public:
     SharedTurboModule createTurboModule(Context ctx, const std::string &name) const override {
+        if (name == "RNCCameraRoll") {
+            return std::make_shared<RNCCameraRoll>(ctx, name);
+        }
+        if (name == "RNCCameraRollPermission") {
+            return std::make_shared<RNCCameraRollPermission>(ctx, name);
+        }
         if (name == "ReactNativeBlobUtil") {
             return std::make_shared<ReactNativeBlobUtil>(ctx, name);
+        }
+        if (name == "RNDeviceInfo") {
+            return std::make_shared<RNDeviceInfo>(ctx, name);
         }
         if (name == "GetRandomValuesNativeModule") {
             return std::make_shared<GetRandomValuesNativeModule>(ctx, name);

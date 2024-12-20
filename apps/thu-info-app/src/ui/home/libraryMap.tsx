@@ -64,7 +64,6 @@ export const LibrarySeatMapScreen = ({
 							url: `${LIBRARY_IMAGE_BASE}${route.params.section.id}/seat-free.jpg`,
 						},
 					]}
-					onSave={saveRemoteImg}
 					renderIndicator={() => <View />}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),

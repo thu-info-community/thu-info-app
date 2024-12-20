@@ -1,0 +1,115 @@
+diff --git a/node_modules/@thu-info/lib/dist/index.js b/node_modules/@thu-info/lib/dist/index.js
+index d88bfdf..e8ad307 100644
+--- a/node_modules/@thu-info/lib/dist/index.js
++++ b/node_modules/@thu-info/lib/dist/index.js
+@@ -120,7 +120,6 @@ class InfoHelper {
+             let crTimetable = [];
+             try {
+                 bookingRecords = await (0, library_1.getBookingRecords)(this);
+-                sportsReservationRecords = await (0, sports_1.getSportsReservationRecords)(this);
+                 balance = (await (0, card_1.cardGetInfo)(this)).balance;
+                 crTimetable = await (0, cr_1.getCrTimetable)(this);
+             }
+diff --git a/node_modules/@thu-info/lib/dist/lib/core.js b/node_modules/@thu-info/lib/dist/lib/core.js
+index 6b1d2cf..33327a4 100644
+--- a/node_modules/@thu-info/lib/dist/lib/core.js
++++ b/node_modules/@thu-info/lib/dist/lib/core.js
+@@ -30,6 +30,7 @@ const network_1 = require("../utils/network");
+ const error_1 = require("../utils/error");
+ const cr_1 = require("./cr");
+ const sm_crypto_1 = require("sm-crypto");
++const {RTNNetworkUtils} = require("rtn-network-utils");
+ const HOST_MAP = {
+     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
+     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
+@@ -144,8 +145,11 @@ const login = async (helper, userId, password) => {
+                     reject(new error_1.LoginError("Login timeout."));
+                 }, 3 * 60 * 1000);
+                 (async () => {
+-                    await (0, network_1.uFetch)(strings_1.LOGIN_URL);
+-                    const sm2PublicKey = cheerio.load(await (0, network_1.uFetch)(strings_1.WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
++                    await (0, network_1.uFetch)(strings_1.WEB_VPN_OAUTH_LOGIN_URL);
++                    const oauthUrl = await RTNNetworkUtils.getRedirectLocation(strings_1.WEB_VPN_OAUTH_LOGIN_URL);
++                    await (0, network_1.uFetch)(oauthUrl);
++                    const idUrl = await RTNNetworkUtils.getRedirectLocation(oauthUrl);
++                    const sm2PublicKey = cheerio.load(await (0, network_1.uFetch)(idUrl))("#sm2publicKey").text();
+                     if (sm2PublicKey === "") {
+                         throw new error_1.LoginError("Failed to get public key.");
+                     }
+@@ -164,10 +168,12 @@ const login = async (helper, userId, password) => {
+                         const message = $("#msg_note").text().trim();
+                         throw new error_1.LoginError(message);
+                     }
+-                    const redirectUrl = await (0, network_1.getRedirectUrl)(cheerio.load(response)("a").attr().href);
++                    const callbackUrl = cheerio.load(response)("a").attr().href;
++                    const redirectUrl = await RTNNetworkUtils.getRedirectLocation(callbackUrl);
+                     if (redirectUrl === strings_1.LOGIN_URL) {
+                         throw new error_1.LoginError("登录失败，请稍后重试。");
+                     }
++                    await (0, network_1.uFetch)(redirectUrl);
+                     await (0, exports.roam)(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
+                     outstandingLoginPromise = undefined;
+                 })().then(resolve, (e) => {
+@@ -199,7 +205,7 @@ const roam = async (helper, policy, payload) => {
+     switch (policy) {
+         case "default": {
+             const csrf = await (0, exports.getCsrfToken)();
+-            const { object } = await (0, network_1.uFetch)(`${strings_1.ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, {}).then(JSON.parse);
++            const { object } = await (0, network_1.uFetch)(`${strings_1.ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`).then(JSON.parse);
+             const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
+             if (url.includes(HOST_MAP["dzpj"])) {
+                 const roamHtml = await (0, network_1.uFetch)(url);
+diff --git a/node_modules/@thu-info/lib/dist/mocks/news.js b/node_modules/@thu-info/lib/dist/mocks/news.js
+index aa0472d..cb5a357 100644
+--- a/node_modules/@thu-info/lib/dist/mocks/news.js
++++ b/node_modules/@thu-info/lib/dist/mocks/news.js
+@@ -13,16 +13,7 @@ const url8 = "https://webvpn.tsinghua.edu.cn/http/77726476706e697374686562657374
+ const url9 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279661";
+ exports.newsHtml = {};
+ const sampleHtml = `
+-<!DOCTYPE html>
+-<html lang="en">
+-  <head>
+-    <meta charset="utf-8">
+-    <title>Latest News</title>
+-  </head>
+-  <body>
+-    This is a sample news file.
+-  </body>
+-</html>
++<h1>Test accounts are not allowed to view news of Tsinghua University.</h1>
+ `;
+ exports.newsHtml[url0] = sampleHtml;
+ exports.newsHtml[url1] = sampleHtml;
+diff --git a/node_modules/@thu-info/lib/dist/utils/network.js b/node_modules/@thu-info/lib/dist/utils/network.js
+index 078c152..b2ba550 100644
+--- a/node_modules/@thu-info/lib/dist/utils/network.js
++++ b/node_modules/@thu-info/lib/dist/utils/network.js
+@@ -62,11 +62,11 @@ const uFetch = async (url, post, timeout = 60000, paramEncoding = "UTF-8", seria
+         "Content-Type": requestContentType,
+         "User-Agent": strings_1.USER_AGENT,
+     };
+-    const headers = global.FileReader === undefined ? {
++    const headers = {
+         ...defaultHeaders,
+         // Cookie should be manually set in Node.js
+         Cookie: Object.keys(exports.cookies).map((key) => `${key}=${exports.cookies[key]}`).join(";"),
+-    } : defaultHeaders;
++    };
+     // Handle timeout abortion
+     const controller = new abort_controller_1.default();
+     const timeoutEvent = setTimeout(() => {
+@@ -217,11 +217,11 @@ const getRedirectUrl = async (url, timeout = 60000) => {
+         "Content-Type": strings_1.CONTENT_TYPE_FORM,
+         "User-Agent": strings_1.USER_AGENT,
+     };
+-    const headers = global.FileReader === undefined ? {
++    const headers = {
+         ...defaultHeaders,
+         // Cookie should be manually set in Node.js
+         Cookie: Object.keys(exports.cookies).map((key) => `${key}=${exports.cookies[key]}`).join(";"),
+-    } : defaultHeaders;
++    };
+     // Handle timeout abortion
+     const controller = new abort_controller_1.default();
+     const timeoutEvent = setTimeout(() => {

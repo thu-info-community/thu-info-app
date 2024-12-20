@@ -24,7 +24,7 @@ export const HomeIcon = ({
 				alignItems: "center",
 				flexGrow: 0,
 				flexShrink: 0,
-				flexBasis: "20%",
+				flexBasis: "18%",
 			}}
 			onPress={onPress}>
 			{children}

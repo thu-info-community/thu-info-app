@@ -69,7 +69,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	return (
 		<>
 			<View style={style.container}>
-				{pdf === "" ? (
+				{pdf === "" ? html === "" ? <></> : (
 					<WebView
 						source={{
 							html: adaptedHtml,

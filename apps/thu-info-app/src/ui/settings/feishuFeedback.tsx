@@ -3,7 +3,7 @@ import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import {WebView} from "react-native-webview";
 import VersionNumber from "react-native-version-number";
-import {getModel} from "react-native-device-info";
+import DeviceInfo from "react-native-device-info";
 import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
 
@@ -12,7 +12,7 @@ export const FeishuFeedbackScreen = () => {
 	const {colors} = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 
-	const osVersion = `${Platform.OS} ${Platform.Version}`;
+	const osVersion = Platform.OS;
 
 	return (
 		<KeyboardAvoidingView
@@ -45,7 +45,7 @@ function inject_autoFill() {
     e = document.querySelector("#field-item-fldUfa9jMZ div[contenteditable=true]");
     if (e === null) return false;
     e.focus();
-    document.execCommand("insertText", false, \`${getModel()}\`);
+    document.execCommand("insertText", false, \`${DeviceInfo.getModel()}\`);
     e.contentEditable = false;
 
     return true;

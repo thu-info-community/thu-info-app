@@ -23,7 +23,6 @@ import QRCode from "react-native-qrcode-svg";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import VersionNumber from "react-native-version-number";
-import {getModel} from "react-native-device-info";
 import {Feedback} from "@thu-info/lib/src/models/app/feedback";
 import {NetworkRetry} from "../../components/easySnackbars.ts";
 
@@ -99,7 +98,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					onPress={() => navigation.navigate("Popi")}
 				/>
 				<SettingsSeparator />
-				{qrcodeContent !== undefined && (
+				{qrcodeContent !== undefined && !helper.mocked() && (
 					<View
 						style={{
 							backgroundColor: colors.themeBackground,
@@ -120,78 +119,6 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						<View style={{flex: 1}} />
 					</View>
 				)}
-				<TextInput
-					value={text}
-					onChangeText={setText}
-					style={{
-						textAlignVertical: "top",
-						fontSize: 15,
-						marginTop: 12,
-						padding: 12,
-						backgroundColor: colors.themeBackground,
-						color: colors.text,
-						borderColor: colors.inputBorder,
-						borderWidth: 1,
-						borderRadius: 5,
-					}}
-					placeholder={getStr("feedbackHint")}
-					placeholderTextColor={colors.fontB3}
-					multiline={true}
-				/>
-				<View
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-					}}>
-					<TextInput
-						value={contact}
-						onChangeText={setContact}
-						style={{
-							flex: 3,
-							textAlignVertical: "top",
-							fontSize: 15,
-							marginVertical: 8,
-							padding: 12,
-							backgroundColor: colors.themeBackground,
-							color: colors.text,
-							borderColor: colors.inputBorder,
-							borderWidth: 1,
-							borderRadius: 5,
-						}}
-						placeholder={getStr("contact")}
-						placeholderTextColor={colors.fontB3}
-					/>
-					<BottomButton
-						text="submit"
-						onPress={() => {
-							setProcessing(true);
-							helper
-								.submitFeedback(
-									text,
-									`${VersionNumber.appVersion} (${VersionNumber.buildVersion})`,
-									`${Platform.OS} ${Platform.Version}`,
-									"",
-									contact,
-									getModel(),
-								)
-								.then(() =>
-									Snackbar.show({
-										text: getStr("feedbackSuccess"),
-										duration: Snackbar.LENGTH_SHORT,
-									}),
-								)
-								.then(() => setText(""))
-								.catch(() =>
-									Snackbar.show({
-										text: getStr("networkRetry"),
-										duration: Snackbar.LENGTH_SHORT,
-									}),
-								)
-								.then(() => setProcessing(false));
-						}}
-						disabled={text.length === 0 || processing}
-					/>
-				</View>
 				<BottomButton
 					text="feishuFeedback"
 					onPress={() => {

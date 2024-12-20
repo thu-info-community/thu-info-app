@@ -44,6 +44,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 			}
 			style={{
 				paddingHorizontal: 10,
+				marginBottom: 30,
 			}}>
 			<View
 				style={{
@@ -60,7 +61,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 							marginHorizontal: 10,
 							marginTop: 10,
 							width: 100,
-							height: 50,
+							height: 60,
 							justifyContent: "center",
 							borderRadius: 8,
 							borderColor: colors.themeGrey,

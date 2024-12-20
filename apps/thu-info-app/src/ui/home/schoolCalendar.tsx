@@ -58,7 +58,6 @@ export const SchoolCalendar = () => {
 						imageUrls={[{url: src}]}
 						style={{marginHorizontal: 10, borderRadius: 8}}
 						backgroundColor={colors.contentBackground}
-						onSave={saveRemoteImg}
 						menuContext={{
 							saveToLocal: getStr("saveImage"),
 							cancel: getStr("cancel"),

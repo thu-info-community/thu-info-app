@@ -68,14 +68,6 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => navigation.navigate("Account")}>
-						<Text style={style.text}>{getStr("accountAndSecurity")}</Text>
-						<IconRight height={20} width={20} />
-					</TouchableOpacity>
-				</RoundedView>
-				<RoundedView style={style.rounded}>
-					<TouchableOpacity
-						style={style.touchable}
 						onPress={() => navigation.navigate("FunctionManagement")}>
 						<Text style={style.text}>{getStr("functionManagement")}</Text>
 						<IconRight height={20} width={20} />
@@ -156,23 +148,16 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 						disabled={forceLoginDisabled}>
 						<Text style={[style.text, {textAlign: "center", flex: 1}]}>
-							{getStr("forceLogin")}
+							{getStr(helper.userId === "" ? "login" : "forceLogin")}
 						</Text>
 					</TouchableOpacity>
 				</RoundedView>
-				<RoundedView style={style.rounded}>
+				{helper.userId !== "" && <RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
 						onPress={() => {
 							Alert.alert(getStr("logout"), getStr("confirmLogout"), [
 								{text: getStr("cancel")},
-								{
-									text: getStr("no"),
-									onPress: () => {
-										performLogout();
-										dispatch(logout());
-									},
-								},
 								{
 									text: getStr("yes"),
 									onPress: () => {
@@ -201,7 +186,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("logout")}
 						</Text>
 					</TouchableOpacity>
-				</RoundedView>
+				</RoundedView>}
 				<View style={{height: 80}} />
 			</View>
 		</ScrollView>

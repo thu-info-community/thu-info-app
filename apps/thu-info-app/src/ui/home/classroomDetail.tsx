@@ -159,7 +159,7 @@ export const ClassroomDetailScreen = ({
 
 	return (
 		<View style={{backgroundColor: theme.colors.contentBackground, flex: 1}}>
-			<View
+			{!helper.mocked() && <View
 				style={{
 					justifyContent: "center",
 					alignItems: "center",
@@ -257,7 +257,7 @@ export const ClassroomDetailScreen = ({
 					}>
 					<IconRight height={24} width={24} />
 				</TouchableOpacity>
-			</View>
+			</View>}
 			<FlatList
 				refreshControl={
 					<RefreshControl

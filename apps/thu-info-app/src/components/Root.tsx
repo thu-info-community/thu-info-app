@@ -440,15 +440,6 @@ export const Root = () => {
 				component={CampusCardScreen}
 				options={({navigation}) => ({
 					title: getStr("campusCard"),
-					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("LoseCard")}>
-								<IconLoseCard width={24} height={24} />
-							</TouchableOpacity>
-						</View>
-					),
 				})}
 			/>
 			<Stack.Screen

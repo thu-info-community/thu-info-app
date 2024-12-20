@@ -20,6 +20,9 @@
     "@react-native-oh-tpl/react-native-svg": "file:../../node_modules/@react-native-oh-tpl/react-native-svg/harmony/svg.har",
     "@react-native-oh-tpl/react-native-safe-area-context": "file:../../node_modules/@react-native-oh-tpl/react-native-safe-area-context/harmony/safe_area.har",
     "@react-native-oh-tpl/react-native-webview": "file:../../node_modules/@react-native-oh-tpl/react-native-webview/harmony/rn_webview.har",
+    "@react-native-oh-tpl/react-native-device-info": "file:../../node_modules/@react-native-oh-tpl/react-native-device-info/harmony/device_info.har",
+    "@react-native-oh-tpl/slider": "file:../../node_modules/@react-native-oh-tpl/slider/harmony/slider.har",
+    "@react-native-oh-tpl/camera-roll": "file:../../node_modules/@react-native-oh-tpl/camera-roll/harmony/camera_roll.har"
   },
   "devDependencies": {},
   "dynamicDependencies": {}

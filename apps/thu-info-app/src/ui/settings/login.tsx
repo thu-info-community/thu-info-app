@@ -47,6 +47,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
 	const latestVersion =
 		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const privacy312 = useSelector((s: State) => s.config.privacy312);
 	const haveNewerVersion =
 		gt(latestVersion, VersionNumber.appVersion) &&
 		gt(latestVersion, doNotRemindSemver);
@@ -103,7 +104,6 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<View style={style.container}>
 			<View style={style.absoluteContainer}>
-				<View style={{height: 80}} />
 				<IconMain width={108} height={108} />
 				<View style={{height: 20}} />
 				<View style={{flexDirection: "row", alignItems: "center"}}>
@@ -135,14 +135,22 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 						secureTextEntry
 					/>
 				</View>
-				<TouchableOpacity
+				{privacy312 === true ? <TouchableOpacity
 					style={style.loginButtonStyle}
 					testID="loginButton"
 					onPress={() => {
 						performLogin();
 					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-				</TouchableOpacity>
+				</TouchableOpacity> : <TouchableOpacity
+					style={style.loginButtonStyle}
+					testID="loginButton"
+					onPress={() => {
+						navigation.navigate("Privacy");
+					}}>
+					<Text style={style.loginButtonTextStyle}>{getStr("privacyPolicy")}</Text>
+				</TouchableOpacity>}
+				<View style={{height: 80}} />
 				<Text style={style.credentialNoteStyle}>
 					{getStr("credentialNote")}
 				</Text>
