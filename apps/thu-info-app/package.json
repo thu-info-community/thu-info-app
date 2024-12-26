@@ -57,7 +57,7 @@
 		"react-native-svg": "15.9.0",
 		"react-native-url-polyfill": "2.0.0",
 		"react-native-version-number": "0.3.6",
-		"react-native-view-shot": "3.8.0",
+		"react-native-view-shot": "4.0.3",
 		"react-native-webview": "13.12.5",
 		"react-native-wheel-scrollview-picker": "2.0.6",
 		"react-redux": "9.1.2",
