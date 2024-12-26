@@ -81,7 +81,7 @@
 		"@react-native/codegen": "0.76.5",
 		"@react-native/eslint-config": "0.76.5",
 		"@react-native/metro-config": "0.76.5",
-		"@react-native/typescript-config": "0.76.1",
+		"@react-native/typescript-config": "0.76.5",
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.5",
 		"@types/react": "18.3.12",
