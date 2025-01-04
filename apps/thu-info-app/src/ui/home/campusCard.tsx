@@ -128,6 +128,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 						duration: Snackbar.LENGTH_SHORT,
 					});
 					setMoney("");
+					setMoneyQuickSelected(undefined);
 					refresh();
 					if (typeof r === "string") {
 						Linking.openURL(r);
@@ -282,7 +283,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 									value={money}
 									onChangeText={(v) => {
 										setMoney(v);
-										setMoneyQuickSelected(undefined);
+										setMoneyQuickSelected(Number(v));
 									}}
 									editable={!processing}
 									style={{
