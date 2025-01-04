@@ -614,4 +614,5 @@ export default {
 	noData: "No data",
 	enableNewUI: "Enable new UI",
 	scheduleNewUINotice: "With transparency background, which may affect readability",
+	rechargeSuccess: "Recharge succeeded.",
 };

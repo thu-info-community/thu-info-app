@@ -117,6 +117,16 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 				)
 				.then((r) => {
 					setProcessing(false);
+					dispatch(
+						updateRechargeAmount({
+							amount: Number(money),
+							date: dayjs().format("YYYY-MM-DD"),
+						}),
+					);
+					Snackbar.show({
+						text: getStr("rechargeSuccess"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
 					setMoney("");
 					refresh();
 					if (typeof r === "string") {
@@ -388,12 +398,6 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 									onPress={() => {
 										const today = dayjs().format("YYYY-MM-DD");
 										if (today !== lastRechargeDate) {
-											dispatch(
-												updateRechargeAmount({
-													amount: Number(money),
-													date: today,
-												}),
-											);
 											performRecharge();
 										} else {
 											if (todayRechargeAmount >= 400) {
@@ -412,15 +416,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 														},
 														{
 															text: getStr("ok"),
-															onPress: () => {
-																dispatch(
-																	updateRechargeAmount({
-																		amount: Number(money),
-																		date: today,
-																	}),
-																);
-																performRecharge();
-															},
+															onPress: performRecharge,
 														},
 													],
 												);
