@@ -1,25 +1,27 @@
 {
     "name" : "thu-info-lib-test",
-    "version":"0.0.1",
-    "minimum_chrome_version" : "72",
-    "manifest_version" : 2,
     "description":"THUInfo网页版测试",
+    "version":"0.0.1",
+    "manifest_version" : 3,
+
     "content_scripts":[
+        {
+            "matches": [
+                "https://webvpn.tsinghua.edu.cn/*",
+                "https://card.tsinghua.edu.cn/*",
+                "https://oauth.tsinghua.edu.cn/*",
+                "https://id.tsinghua.edu.cn/*"
+            ],
+            "js": [
+                "index.js",
+                "browser-polyfill.min.js"
+            ]
+        }
     ],
-    "background" : {
-        "scripts": [
-            "browser-polyfill.min.js",
-            "index.js"
-        ],
-        "persistent": true
+    "action": {
+        "default_popup": "index.html"
     },
     "permissions" : [
-        "storage",
-        "tabs",
-        "https://webvpn.tsinghua.edu.cn/*",
-        "https://card.tsinghua.edu.cn/*"
-    ],
-    "browser_action": {
-        "default_title": "thu-info-lib tester"
-    }
+        "storage"
+    ]
 }

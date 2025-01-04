@@ -7,6 +7,60 @@
         <title>thu-info-lib Test Page</title>
     </head>
     <body>
-        <div class="main"></div>
+        <div class="main">
+            <h2>thu-info-lib Test Page</h2>
+            <p>Follow the instructions to test the library.</p>
+            <ol>
+                <li>Turn to webpage of <a href="https://id.tsinghua.edu.cn">Tsinghua OAuth</a>.</li>
+                <li>Right click on this page and select "Inspect".</li>
+                <li>The helper is now exposed as <code>window.InfoHelper</code>.</li>
+                <li>Have fun!</li>
+            </ol>
+        </div>
     </body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 240px;
+        }
+
+        .main {
+            margin: 20px;
+            text-align: justify;
+        }
+
+        ol {
+            padding-inline-start: 20px;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        code {
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            font-family: monospace;
+            padding: 2px;
+        }
+
+        a {
+            color: #0077cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:visited {
+            color: #4b0082;
+        }
+
+        a:visited:hover {
+            text-decoration: underline;
+        }
+    </style>
 </html>
