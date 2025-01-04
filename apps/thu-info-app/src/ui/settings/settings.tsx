@@ -157,11 +157,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 						disabled={forceLoginDisabled}>
 						<Text style={[style.text, {textAlign: "center", flex: 1}]}>
-							{getStr("forceLogin")}
+							{helper.userId ? getStr("forceLogin") : getStr("login")}
 						</Text>
 					</TouchableOpacity>
 				</RoundedView>
-				<RoundedView style={style.rounded}>
+				{ helper.userId && <RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
 						onPress={() => {
@@ -202,7 +202,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("logout")}
 						</Text>
 					</TouchableOpacity>
-				</RoundedView>
+				</RoundedView> }
 				<View style={{height: 80}} />
 			</View>
 		</ScrollView>
