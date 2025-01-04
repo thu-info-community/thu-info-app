@@ -1031,7 +1031,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				key={String(darkModeHook)}>
 				<HomeFunctionSection title="recentlyUsedFunction">
 					{top5Filtered.length === 0 ? (
-						<View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+						<View style={{flex: 1, marginTop: 16 - 8, alignItems: "center", justifyContent: "center"}}>
 							<Text style={{color: theme.colors.text}}>
 								{getStr("recentUseHint")}
 							</Text>
