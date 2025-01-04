@@ -274,7 +274,7 @@ export const scheduleTimeRemove = (time: ScheduleTime, elem: TimeSlice): number[
     let index = 0;
     for (; index < time.base.length; ++index) {
         const slice: TimeSlice = time.base[index];
-        if (slice.begin === elem.begin && slice.end === elem.end) {
+        if (slice.dayOfWeek === elem.dayOfWeek && slice.begin === elem.begin && slice.end === elem.end) {
             break;
         }
     }
