@@ -28,6 +28,7 @@ import {CardTransactionType} from "@thu-info/lib/src/models/card/transaction";
 import {CardRechargeType} from "@thu-info/lib/src/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
 import {RootNav} from "../../components/Root";
+import { styles } from "../settings/settings";
 
 export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
@@ -58,6 +59,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const refresh = () => {
 		setRefreshing(true);
@@ -237,7 +239,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							}}>
 							{getStr("deposit")}
 						</Text>
-						<RoundedView style={{marginTop: 8, width: "100%", padding: 16}}>
+						<RoundedView style={{marginTop: 8, marginHorizontal: 12, width: "100%", padding: 16}}>
 							<View style={{flexDirection: "row"}}>
 								{[10, 50, 100].map((price, index) => (
 									<TouchableOpacity
@@ -248,8 +250,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											backgroundColor:
 												moneyQuickSelected === price
 													? colors.themePurple
-													: colors.themeLightGrey,
-											marginLeft: index === 0 ? 0 : 8,
+													: colors.inputBorder,
+											marginLeft: index === 0 ? 0 : 16,
 										}}
 										onPress={() => {
 											setMoneyQuickSelected(price);
@@ -261,8 +263,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											style={{
 												color:
 													moneyQuickSelected === price
-														? colors.contentBackground
-														: colors.fontB3,
+														? colors.themeLightGrey
+														: colors.fontB1,
 											}}>
 											{price} 元
 										</Text>
@@ -297,7 +299,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							<View
 								style={{
 									borderBottomWidth: 1,
-									borderBottomColor: colors.themeLightGrey,
+									borderBottomColor: colors.themeGrey,
 									marginVertical: 12,
 								}}
 							/>
@@ -325,7 +327,13 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												</Text>
 											</TouchableOpacity>
 											<View
-												style={{height: 1, backgroundColor: colors.themeGrey}}
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+														marginHorizontal: 0,
+													},
+												]}
 											/>
 											<TouchableOpacity
 												onPress={() => {
@@ -342,7 +350,13 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												</Text>
 											</TouchableOpacity>
 											<View
-												style={{height: 1, backgroundColor: colors.themeGrey}}
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+														marginHorizontal: 0,
+													},
+												]}
 											/>
 											<TouchableOpacity
 												onPress={() => {
@@ -382,13 +396,14 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									flexDirection: "row",
 									justifyContent: "center",
-									marginVertical: 24,
+									marginTop: 24,
+									marginBottom: 8,
 								}}>
 								<TouchableOpacity
 									style={{
 										backgroundColor: valid
-											? colors.primaryLight
-											: colors.mainTheme,
+											? colors.themePurple
+											: colors.themeTransparentPurple,
 										alignItems: "center",
 										justifyContent: "center",
 										paddingVertical: 8,
@@ -428,7 +443,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											color:
 												valid && !processing
-													? colors.contentBackground
+													? colors.themeLightGrey
 													: colors.themeGrey,
 											fontSize: 16,
 										}}>
