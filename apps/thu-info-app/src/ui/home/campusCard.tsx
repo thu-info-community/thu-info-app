@@ -228,6 +228,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							justifyContent: "center",
 							alignItems: "center",
 							marginTop: 24,
+							marginHorizontal: 12,
 						}}>
 						<Text
 							style={{
@@ -235,11 +236,11 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								fontWeight: "600",
 								color: colors.text,
 								alignSelf: "flex-start",
-								marginLeft: 12,
+								marginStart: 4,
 							}}>
 							{getStr("deposit")}
 						</Text>
-						<RoundedView style={{marginTop: 8, marginHorizontal: 12, width: "100%", padding: 16}}>
+						<RoundedView style={{marginTop: 8, width: "100%", padding: 16}}>
 							<View style={{flexDirection: "row"}}>
 								{[10, 50, 100].map((price, index) => (
 									<TouchableOpacity
@@ -263,8 +264,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											style={{
 												color:
 													moneyQuickSelected === price
-														? colors.themeLightGrey
-														: colors.fontB1,
+														? "#FFFFFF"
+														: colors.fontB2,
 											}}>
 											{price} 元
 										</Text>
@@ -443,8 +444,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											color:
 												valid && !processing
-													? colors.themeLightGrey
-													: colors.themeGrey,
+													? "#FFFFFF"
+													: colors.themeLightGrey,
 											fontSize: 16,
 										}}>
 										{getStr(processing ? "processing" : "deposit")}
@@ -457,7 +458,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								textAlign: "left",
 								fontSize: 14,
 								color: colors.statusWarning,
-								marginHorizontal: 16,
+								marginHorizontal: 4,
 								marginTop: 32,
 							}}>
 							{getStr("depositHint")}
