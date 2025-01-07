@@ -1294,7 +1294,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.7.6):
     - React-Core
-  - react-native-safe-area-context (4.14.1):
+  - react-native-safe-area-context (5.0.0):
     - React-Core
   - react-native-slider (4.5.5):
     - DoubleConversion
@@ -1685,7 +1685,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNShare (11.1.0):
+  - RNShare (12.0.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2028,7 +2028,7 @@ SPEC CHECKSUMS:
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-pdf: 70ec85fc764070ce9324f5aea504795e889e6ba0
-  react-native-safe-area-context: 141eca0fd4e4191288dfc8b96a7c7e1c2983447a
+  react-native-safe-area-context: ab7beb734b0f9f79f55ae144a6c946a6422f55d6
   react-native-slider: 4a0f3386a38fc3d2d955efc515aef7096f7d1ee4
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 8c2a4beffea24492167dc347fa29664d0f41fddf
@@ -2069,7 +2069,7 @@ SPEC CHECKSUMS:
   RNLocalize: 298e85ce16540a11de40c1a588ead39fc5e9a072
   RNPermissions: 8325b1172d062a254d49aaeab82c9fed343abed5
   RNScreens: e52d2e7e5fa29266d6f8f68e8229452e5b2f4236
-  RNShare: d4f2ec7039556f046a5e9552be8a307a5ff1b567
+  RNShare: a1d82e8fbd7a788c824d0cff61d58fe80e941604
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   RNSVG: 7ff26379b2d1871b8571e6f9bc9630de6baf9bdf
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
