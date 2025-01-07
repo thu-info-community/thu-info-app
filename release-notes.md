@@ -9,6 +9,7 @@
 - 优化发票查询样式 @SunnyCloudYang
 - 优化首頁样式 @SunnyCloudYang
 - 优化设置页登录按钮逻辑 @SunnyCloudYang
+- 修复了隐藏计划时总是隐藏本周第一个时间段而不是选定那一个的问题 @SunnyCloudYang
 
 ## @thu-info/lib
 - fix: fix browser extension (#673) @SunnyCloudYang
