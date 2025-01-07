@@ -7,6 +7,8 @@
 - 优化底部栏样式 @SunnyCloudYang
 - 优化研究生收入查询图标 @SunnyCloudYang
 - 优化发票查询样式 @SunnyCloudYang
+- 优化首頁样式 @SunnyCloudYang
+- 优化设置页登录按钮逻辑 @SunnyCloudYang
 
 ## @thu-info/lib
 - TBA
