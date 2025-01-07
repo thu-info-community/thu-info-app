@@ -239,7 +239,7 @@ const Header = React.forwardRef(
 							style={{
 								fontSize: 12,
 								color: theme.colors.fontB2,
-								textAlign: "center",
+								paddingStart: 2,
 							}}>
 							{getStr(
 								semesterType === 1
