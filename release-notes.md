@@ -11,4 +11,4 @@
 - 优化设置页登录按钮逻辑 @SunnyCloudYang
 
 ## @thu-info/lib
-- TBA
+- fix: fix browser extension (#673) @SunnyCloudYang
