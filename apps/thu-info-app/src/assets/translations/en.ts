@@ -21,7 +21,7 @@ export default {
 	twoFactorTrust: "Do you want to mark this device as a trusted device?",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",
-	forceLogin: "Reset WebVPN Session",
+	forceLogin: "Refresh WebVPN Session",
 	logout: "Logout",
 	confirmLogout: "Remove all data?",
 	yes: "Yes",
