@@ -26,3 +26,5 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          react-native@0.72.17
 yarn codegen-harmony
 yarn bundle-harmony
+cd harmony
+ohpm install

@@ -189,6 +189,8 @@ jobs:
           key: cache-harmony-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-harmony-
-      - name: Setup Harmony
+      - name: Setup OpenHarmony environment
+        uses: Snapp-Mobile/oh-action@v0.1
+      - name: Install dependencies
         run: |
           ./setup-harmony.sh
