@@ -205,7 +205,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     switch (policy) {
     case "default": {
         const csrf = await getCsrfToken();
-        const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`, {}).then(JSON.parse);
+        const {object} = await uFetch(`${ROAMING_URL}?yyfwid=${payload}&_csrf=${csrf}&machine=p`).then(JSON.parse);
         const url = parseUrl(object.roamingurl.replace(/&amp;/g, "&"));
         if (url.includes(HOST_MAP["dzpj"])) {
             const roamHtml = await uFetch(url);
