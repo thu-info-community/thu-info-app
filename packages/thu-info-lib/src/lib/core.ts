@@ -27,6 +27,16 @@ import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
+import type {RTNNetworkUtils} from "rtn-network-utils";
+
+let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
+try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const rtn_network_utils: typeof RTNNetworkUtils = require("rtn-network-utils").RTNNetworkUtils;
+    if (rtn_network_utils) {
+        getRedirectLocation = rtn_network_utils.getRedirectLocation;
+    }
+} catch { /* empty */ }
 
 type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab" | "cr";
 
@@ -153,8 +163,23 @@ export const login = async (
                     reject(new LoginError("Login timeout."));
                 }, 3 * 60 * 1000);
                 (async () => {
-                    await uFetch(LOGIN_URL);
-                    const sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
+                    await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
+                    let sm2PublicKey = "";
+                    if (getRedirectLocation) {
+                        // Patch for OpenHarmony
+                        const oauthUrl = await getRedirectLocation(WEB_VPN_OAUTH_LOGIN_URL);
+                        if (!oauthUrl) {
+                            throw new LoginError("Failed to get oauth url.");
+                        }
+                        await uFetch(oauthUrl);
+                        const idUrl = await getRedirectLocation(oauthUrl);
+                        if (!idUrl) {
+                            throw new LoginError("Failed to get id url.");
+                        }
+                        sm2PublicKey = cheerio.load(await uFetch(idUrl))("#sm2publicKey").text();
+                    } else {
+                        sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
+                    }
                     if (sm2PublicKey === "") {
                         throw new LoginError("Failed to get public key.");
                     }
@@ -173,9 +198,13 @@ export const login = async (
                         const message = $("#msg_note").text().trim();
                         throw new LoginError(message);
                     }
-                    const redirectUrl = await getRedirectUrl(cheerio.load(response)("a").attr()!.href);
-                    if (redirectUrl === LOGIN_URL) {
+                    const callbackUrl = cheerio.load(response)("a").attr()!.href;
+                    const redirectUrl = await (getRedirectLocation ?? getRedirectUrl)(callbackUrl);
+                    if (redirectUrl === LOGIN_URL || redirectUrl == null) {
                         throw new LoginError("登录失败，请稍后重试。");
+                    }
+                    if (getRedirectLocation) {
+                        await uFetch(redirectUrl);
                     }
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
