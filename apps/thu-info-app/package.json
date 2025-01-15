@@ -10,6 +10,8 @@
 		"test": "jest",
 		"lint": "eslint src --ext .js,.jsx,.ts,.tsx",
 		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+		"codegen-harmony": "react-native codegen-harmony --cpp-output-path ./harmony/entry/src/main/cpp/generated --rnoh-module-path ./harmony/entry/oh_modules/@rnoh/react-native-openharmony",
+		"bundle-harmony": "react-native bundle-harmony --dev false",
 		"preversion": "yarn lint && yarn test",
 		"version": "node .increment.js"
 	},
