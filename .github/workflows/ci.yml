@@ -171,3 +171,24 @@ jobs:
           CCACHE_FILECLONE: "true"
           CCACHE_DEPEND: "true"
           CCACHE_INODECACHE: "true"
+  build-harmony:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Setup caching
+        if: startsWith(github.ref, 'refs/tags') == false
+        uses: actions/cache@v4
+        with:
+          path: |
+            apps/thu-info-app/node_modules
+          key: cache-harmony-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            cache-harmony-
+      - name: Setup Harmony
+        run: |
+          ./setup-harmony.sh
