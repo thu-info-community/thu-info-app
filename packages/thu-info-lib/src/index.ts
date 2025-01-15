@@ -256,12 +256,11 @@ export class InfoHelper {
         const latestAnnounces = await getLatestAnnounces(this);
         const latestVersion = await getLatestVersion(this, platform);
         let bookingRecords: LibBookRecord[] = [];
-        let sportsReservationRecords: SportsReservationRecord[] = [];
+        const sportsReservationRecords: SportsReservationRecord[] = [];
         let balance: number = 0;
         let crTimetable: CrTimetable[] = [];
         try {
             bookingRecords = await getBookingRecords(this);
-            sportsReservationRecords = await getSportsReservationRecords(this);
             balance = (await cardGetInfo(this)).balance;
             crTimetable = await getCrTimetable(this);
         } catch {
