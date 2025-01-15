@@ -12,18 +12,7 @@ const url8 = "https://webvpn.tsinghua.edu.cn/http/77726476706e697374686562657374
 const url9 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279661";
 export const newsHtml = {} as {[key: string]: string};
 
-const sampleHtml = `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Latest News</title>
-  </head>
-  <body>
-    This is a sample news file.
-  </body>
-</html>
-`;
+const sampleHtml = "<h1>Test accounts are not allowed to view news of Tsinghua University.</h1>";
 
 newsHtml[url0] = sampleHtml;
 newsHtml[url1] = sampleHtml;
