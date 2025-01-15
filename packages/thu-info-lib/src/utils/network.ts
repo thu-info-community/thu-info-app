@@ -120,7 +120,7 @@ export const uFetch = async (
         }
 
         // Manage cookies
-        response.headers.forEach((value, key) => {
+        response.headers.forEach((value: string, key: string) => {
             if (key === "set-cookie") {
                 // TODO: check relevant specifications and rewrite this
                 if (value.includes("Expires")) {
