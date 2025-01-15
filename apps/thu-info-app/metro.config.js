@@ -1,4 +1,5 @@
 const {getDefaultConfig, mergeConfig} = require("@react-native/metro-config");
+const {createHarmonyMetroConfig} = require("@react-native-oh/react-native-harmony/metro.config");
 const path = require("path");
 
 // Find the project and workspace directories
@@ -35,4 +36,6 @@ const config = {
 	},
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
+	reactNativeHarmonyPackageName: "@react-native-oh/react-native-harmony",
+}), config);
