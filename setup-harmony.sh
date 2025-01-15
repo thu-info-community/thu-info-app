@@ -27,4 +27,5 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
 yarn codegen-harmony
 yarn bundle-harmony
 cd harmony
+ohpm config set registry https://ohpm.openharmony.cn/ohpm/
 ohpm install

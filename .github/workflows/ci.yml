@@ -191,6 +191,9 @@ jobs:
             cache-harmony-
       - name: Setup OpenHarmony environment
         uses: Snapp-Mobile/oh-action@v0.1
+        with:
+          working-directory: apps/thu-info-app/harmony
+          install-dependencies: false
       - name: Install dependencies
         run: |
           ./setup-harmony.sh
