@@ -31,7 +31,7 @@ import {BottomPopupTriggerView} from "../../components/views";
 import Snackbar from "react-native-snackbar";
 import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
-import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 
 const examBeginMap: {[key: string]: number} = {
@@ -388,7 +388,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				}}
 				navigation={navigation}
 			/>
-			<View style={{flex: 1}}>
+			<GestureHandlerRootView style={{flex: 1}}>
 				<ScrollView
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
@@ -711,7 +711,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						</View>
 					</TouchableOpacity>
 				)}
-			</View>
+			</GestureHandlerRootView>
 		</>
 	);
 };
