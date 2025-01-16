@@ -24,8 +24,3 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @thu-info/lib@../../packages/thu-info-lib \
          rtn-network-utils@../../packages/RTNNetworkUtils \
          react-native@0.72.17
-yarn codegen-harmony
-yarn bundle-harmony
-cd harmony
-ohpm config set registry https://ohpm.openharmony.cn/ohpm/
-ohpm install

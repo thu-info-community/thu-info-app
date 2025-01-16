@@ -186,6 +186,7 @@ jobs:
         with:
           path: |
             apps/thu-info-app/node_modules
+            apps/thu-info-app/harmony/entry/oh_modules
           key: cache-harmony-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-harmony-
@@ -197,3 +198,12 @@ jobs:
       - name: Install dependencies
         run: |
           ./setup-harmony.sh
+      - name: Bundle project
+        working-directory: apps/thu-info-app
+        run: |
+          yarn codegen-harmony
+          yarn bundle-harmony
+      - name: Build project
+        working-directory: apps/thu-info-app/harmony
+        run: |
+          ohpm install
