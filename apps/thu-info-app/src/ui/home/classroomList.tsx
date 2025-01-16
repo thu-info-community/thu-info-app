@@ -45,6 +45,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 			}
 			style={{
 				paddingHorizontal: 10,
+				marginBottom: 20,
 			}}>
 			<View
 				style={{
