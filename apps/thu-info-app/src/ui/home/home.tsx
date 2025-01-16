@@ -979,7 +979,8 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 
 	useEffect(() => {
-		if (Platform.OS !== "ios" && Platform.OS !== "android") {
+		// @ts-ignore
+		if (Platform.OS !== "ios" && Platform.OS !== "android" && Platform.OS !== "harmony") {
 			return;
 		}
 		const invalidHelper = new InfoHelper();
