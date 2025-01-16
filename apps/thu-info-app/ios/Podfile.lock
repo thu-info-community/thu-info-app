@@ -1294,7 +1294,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.7.6):
     - React-Core
-  - react-native-safe-area-context (5.0.0):
+  - react-native-safe-area-context (5.1.0):
     - React-Core
   - react-native-slider (4.5.5):
     - DoubleConversion
@@ -1659,7 +1659,7 @@ PODS:
     - Yoga
   - RNKeychain (4.0.5):
     - React
-  - RNLocalize (3.3.0):
+  - RNLocalize (3.4.1):
     - React-Core
   - RNPermissions (5.2.3):
     - React-Core
@@ -2028,7 +2028,7 @@ SPEC CHECKSUMS:
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-pdf: 70ec85fc764070ce9324f5aea504795e889e6ba0
-  react-native-safe-area-context: ab7beb734b0f9f79f55ae144a6c946a6422f55d6
+  react-native-safe-area-context: 04803a01f39f31cc6605a5531280b477b48f8a88
   react-native-slider: 4a0f3386a38fc3d2d955efc515aef7096f7d1ee4
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 8c2a4beffea24492167dc347fa29664d0f41fddf
@@ -2066,7 +2066,7 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 9decfddf99dcf2397b50c9adae0188fc84c74231
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
-  RNLocalize: 298e85ce16540a11de40c1a588ead39fc5e9a072
+  RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNPermissions: 128f4e3f5427baf38188a135bfe18369af798d4b
   RNScreens: e52d2e7e5fa29266d6f8f68e8229452e5b2f4236
   RNShare: a1d82e8fbd7a788c824d0cff61d58fe80e941604
