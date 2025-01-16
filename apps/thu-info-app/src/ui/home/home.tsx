@@ -51,7 +51,6 @@ import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/slices/config";
-import {SportsReservationCard} from "./sports";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
@@ -344,8 +343,6 @@ export const HomeReservationSection = () => {
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("reservation")}</Text>
 			<LibraryReservationCard />
-			<View style={{height: 8}} />
-			<SportsReservationCard />
 		</View>
 	);
 };
