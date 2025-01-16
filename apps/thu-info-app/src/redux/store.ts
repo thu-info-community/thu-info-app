@@ -73,9 +73,11 @@ AppState.addEventListener("change", (state) => {
 			}
 			store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 		}
-		is24HourFormat().then((result) => {
-			store.dispatch(configSet({key: "is24Hour", value: result}));
-		});
+		if (Platform.OS === "android" || Platform.OS === "ios") {
+			is24HourFormat().then((result) => {
+				store.dispatch(configSet({key: "is24Hour", value: result}));
+			});
+		}
 	} else {
 		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));
 		const s = currState();
@@ -91,7 +93,7 @@ AppState.addEventListener("change", (state) => {
 	}
 });
 
-const KeychainStorage = createKeychainStorage();
+const KeychainStorage = Platform.OS === "android" || Platform.OS === "ios" ? createKeychainStorage() : AsyncStorage;
 
 export interface State {
 	auth: AuthState;
