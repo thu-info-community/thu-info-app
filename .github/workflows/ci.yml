@@ -206,4 +206,6 @@ jobs:
       - name: Build project
         working-directory: apps/thu-info-app/harmony
         run: |
-          ohpm install
+          ohpm install --all
+          hvigorw --version --accept-license
+          # hvigorw assembleHap --mode module -p product=default --stacktrace --no-parallel --no-daemon
