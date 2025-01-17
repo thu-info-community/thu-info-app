@@ -14,7 +14,7 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @react-native-oh-tpl/react-native-gesture-handler@2.14.1-2.14.15 \
          @react-native-oh-tpl/react-native-get-random-values@1.11.0-0.0.1 \
          @react-native-oh-tpl/react-native-localize@3.1.0-0.0.1 \
-         @react-native-oh-tpl/react-native-safe-area-context@4.7.4-0.1.6 \
+         @react-native-oh-tpl/react-native-safe-area-context@4.7.4-0.2.0 \
          @react-native-oh-tpl/react-native-share@10.2.1-0.0.2 \
          @react-native-oh-tpl/react-native-snackbar@2.7.1-0.0.2 \
          @react-native-oh-tpl/react-native-svg@15.0.0-0.5.9 \
