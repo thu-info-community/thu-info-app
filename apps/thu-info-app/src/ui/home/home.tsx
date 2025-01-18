@@ -1,4 +1,6 @@
 import {
+	Alert,
+	BackHandler,
 	Linking,
 	Platform,
 	ScrollView,
@@ -975,10 +977,29 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		(state: State) => state.config.fingerprintSecure,
 	);
 
+	const privacy312 = useSelector((s: State) => s.config.privacy312);
+
 	useEffect(() => {
 		// @ts-ignore
 		if (Platform.OS !== "ios" && Platform.OS !== "android" && Platform.OS !== "harmony") {
 			return;
+		}
+		if (!(Platform.OS === "android" || Platform.OS === "ios") && privacy312 !== true) {
+			Alert.alert(
+				getStr("privacyPolicy"),
+				getStr("privacyPolicyPrompt"),
+				[
+					{
+						text: getStr("view"),
+						onPress: () => navigation.navigate("Privacy"),
+					},
+					{
+						text: getStr("decline"),
+						onPress: () => BackHandler.exitApp(),
+					},
+				],
+				{cancelable: false},
+			);
 		}
 		const invalidHelper = new InfoHelper();
 		invalidHelper.userId = helper.userId;

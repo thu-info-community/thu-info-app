@@ -76,6 +76,8 @@ export default {
 	autoFollow: "Auto",
 	restartToApply: "Restart APP to apply changes.",
 	privacy: "Privacy",
+	privacyPolicy: "Privacy Policy",
+	privacyPolicyPrompt: "Please read and accept the privacy policy, or you will not be allowed to log in with the APP.",
 	helpAndFeedback: "Help and Support",
 	feishuFeedback: "Questionnaire",
 	countdown: "Countdown",
@@ -202,6 +204,8 @@ export default {
 		"Login failed. Please go to Settings->Password Management to setup MyHome password, or try again later.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
+	credentialNoteHarmony:
+		"Your credentials will only be stored locally.",
 	myhomeLogin: "Login myhome",
 	myhomeLoginNote: "Login myhome to access dorm score and ele recharge.",
 	wrongPassword: "Wrong password.",
@@ -298,6 +302,9 @@ export default {
 	confirm: "OK",
 	cancel: "Cancel",
 	ok: "OK",
+	view: "View",
+	accept: "Accept",
+	decline: "Decline",
 	configureDorm: "Login to myhome.tsinghua.edu.cn",
 	configureDormHint:
 		"This password was probably set even before you entered the school...",

@@ -47,6 +47,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
 	const latestVersion =
 		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const privacy312 = useSelector((s: State) => s.config.privacy312);
 	const haveNewerVersion =
 		gt(latestVersion, VersionNumber.appVersion) &&
 		gt(latestVersion, doNotRemindSemver);
@@ -135,16 +136,23 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 						secureTextEntry
 					/>
 				</View>
-				<TouchableOpacity
+				{(privacy312 === true || Platform.OS === "android" || Platform.OS === "ios") ? <TouchableOpacity
 					style={style.loginButtonStyle}
 					testID="loginButton"
 					onPress={() => {
 						performLogin();
 					}}>
 					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-				</TouchableOpacity>
+				</TouchableOpacity> : <TouchableOpacity
+					style={style.loginButtonStyle}
+					testID="loginButton"
+					onPress={() => {
+						navigation.navigate("Privacy");
+					}}>
+					<Text style={style.loginButtonTextStyle}>{getStr("privacyPolicy")}</Text>
+				</TouchableOpacity>}
 				<Text style={style.credentialNoteStyle}>
-					{getStr("credentialNote")}
+					{getStr(Platform.OS === "android" || Platform.OS === "ios" ? "credentialNote" : "credentialNoteHarmony")}
 				</Text>
 				<TouchableOpacity onPress={() => navigation.navigate("FeishuFeedback")}>
 					<Text style={style.feedbackTextStyle}>

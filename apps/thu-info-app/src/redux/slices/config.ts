@@ -42,6 +42,7 @@ export interface ConfigState {
 	washerFavourites: string[] | undefined;
 	fingerprintSecure: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
+	privacy312: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -82,6 +83,7 @@ const initialState: ConfigState = {
 	washerFavourites: [],
 	fingerprintSecure: false,
 	scheduleEnableNewUI: true,
+	privacy312: false,
 };
 
 export const defaultConfig = initialState;
