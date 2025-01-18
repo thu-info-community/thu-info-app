@@ -23,7 +23,7 @@ import QRCode from "react-native-qrcode-svg";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
 import VersionNumber from "react-native-version-number";
-import {getModel} from "react-native-device-info";
+import DeviceInfo from "react-native-device-info";
 import {Feedback} from "@thu-info/lib/src/models/app/feedback";
 import {NetworkRetry} from "../../components/easySnackbars.ts";
 
@@ -182,7 +182,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 									`${Platform.OS} ${Platform.Version}`,
 									"",
 									contact,
-									getModel(),
+									DeviceInfo.getModel(),
 								)
 								.then(() =>
 									Snackbar.show({
