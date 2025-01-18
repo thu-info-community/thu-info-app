@@ -2,6 +2,7 @@ import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
 import {
 	Alert,
+	Platform,
 	Switch,
 	Text,
 	TouchableOpacity,
@@ -178,7 +179,7 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 							</View>
 						</TouchableOpacity>
 					</RoundedView>
-					<RoundedView style={style.rounded}>
+					{(Platform.OS === "android" || Platform.OS === "ios") && <RoundedView style={style.rounded}>
 						<View style={style.touchable}>
 							<Text style={style.text}>{getStr("useBiometrics")}</Text>
 							<Switch
@@ -208,7 +209,7 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 							/>
 						</View>
-					</RoundedView>
+					</RoundedView>}
 				</>
 			)}
 		</View>
