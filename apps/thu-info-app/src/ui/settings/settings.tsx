@@ -189,7 +189,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										dispatch(setBalance(0));
 									},
 								},
-							]);
+							], {cancelable: true});
 						}}>
 						<Text
 							style={[
