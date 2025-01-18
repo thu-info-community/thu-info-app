@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 	useColorScheme,
 	View,
+	Platform,
 	ScrollView,
 	StyleSheet,
 } from "react-native";
@@ -166,7 +167,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						style={style.touchable}
 						onPress={() => {
 							Alert.alert(getStr("logout"), getStr("confirmLogout"), [
-								{text: getStr("cancel")},
+								...(Platform.OS === "android" || Platform.OS === "ios" ? [{text: getStr("cancel")}] : []),
 								{
 									text: getStr("no"),
 									onPress: () => {
