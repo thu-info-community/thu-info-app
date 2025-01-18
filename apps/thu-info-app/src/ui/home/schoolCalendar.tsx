@@ -7,7 +7,7 @@ import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import ImageViewer from "react-native-image-zoom-viewer";
-import {saveRemoteImg} from "../../utils/saveImg";
+import {saveImg} from "../../utils/saveImg";
 import {useSelector} from "react-redux";
 
 export const SchoolCalendar = () => {
@@ -58,7 +58,7 @@ export const SchoolCalendar = () => {
 						imageUrls={[{url: src}]}
 						style={{marginHorizontal: 10, borderRadius: 8}}
 						backgroundColor={colors.contentBackground}
-						onSave={saveRemoteImg}
+						onSave={saveImg}
 						menuContext={{
 							saveToLocal: getStr("saveImage"),
 							cancel: getStr("cancel"),

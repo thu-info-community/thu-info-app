@@ -6,7 +6,7 @@ import {Dimensions, Image, Text, View} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
-import {saveRemoteImg} from "../../utils/saveImg";
+import {saveImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {LibrarySection} from "@thu-info/lib/src/models/home/library";
@@ -65,7 +65,7 @@ export const LibrarySeatMapScreen = ({
 							url: `${LIBRARY_IMAGE_BASE}${route.params.section.id}/seat-free.jpg`,
 						},
 					]}
-					onSave={saveRemoteImg}
+					onSave={saveImg}
 					renderIndicator={() => <View />}
 					menuContext={{
 						saveToLocal: getStr("saveImage"),
