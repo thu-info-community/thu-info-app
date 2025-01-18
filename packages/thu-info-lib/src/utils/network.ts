@@ -179,6 +179,8 @@ export const uFetch = async (
                             // The value stored in `reader.result` has already been parsed with the correct encoding
                             resolve(reader.result);
                         }
+                    } else if (reader.result === null) {
+                        resolve("");
                     } else {
                         // This should not happen
                         reject(new Error("Blob parsing error."));
