@@ -10,7 +10,8 @@ import {saveRemoteImg} from "../../utils/saveImg";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {LibrarySection} from "@thu-info/lib/src/models/home/library";
-import {LIBRARY_IMAGE_BASE} from "@thu-info/lib/src/constants/strings";
+
+const LIBRARY_IMAGE_BASE = "https://seat.lib.tsinghua.edu.cn/Public/home/images/web/area/";
 
 export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 	const [sections, setSections] = useState<LibrarySection[]>([]);
