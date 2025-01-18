@@ -1,5 +1,5 @@
 import {RootNav} from "../../components/Root";
-import {useColorScheme, View} from "react-native";
+import {Platform, useColorScheme, View} from "react-native";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
@@ -37,7 +37,7 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{!disabledFunction.includes("invoice") && (
+				{(!disabledFunction.includes("invoice") && (Platform.OS === "android" || Platform.OS === "ios")) && (
 					<SecondaryItem
 						title="invoice"
 						destKey="invoice"
