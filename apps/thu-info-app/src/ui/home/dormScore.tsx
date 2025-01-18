@@ -1,10 +1,8 @@
 import {View, useColorScheme} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
-import {getStr} from "../../utils/i18n";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {helper, State} from "../../redux/store";
-import {saveRemoteImg} from "../../utils/saveImg";
 import {DormAuthError} from "@thu-info/lib/src/utils/error";
 import {RootNav} from "../../components/Root";
 import {useSelector} from "react-redux";
@@ -34,12 +32,8 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 				<ImageViewer
 					imageUrls={[{ url: `data:image/png;base64,${base64}` }]}
 					backgroundColor={colors.themeBackground}
-					onSave={saveRemoteImg}
+					saveToLocalByLongPress={false}
 					renderIndicator={() => <View />}
-					menuContext={{
-						saveToLocal: getStr("saveImage"),
-						cancel: getStr("cancel"),
-					}}
 				/>
 			)}
 		</View>
