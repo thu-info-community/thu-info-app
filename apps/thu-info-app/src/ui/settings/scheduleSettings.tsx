@@ -43,7 +43,6 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 					style={style.touchable}
 					onPress={() => {
 						Alert.alert(getStr("scheduleSync"), getStr("scheduleSyncTip"), [
-							{ text: getStr("cancel") },
 							{
 								text: getStr("syncSender"),
 								onPress: () => {
@@ -60,7 +59,7 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 									});
 								},
 							},
-						]);
+						], {cancelable: true});
 					}}>
 					<Text style={style.text}>{getStr("scheduleSync")}</Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
