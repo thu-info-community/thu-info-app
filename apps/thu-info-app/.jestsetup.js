@@ -57,12 +57,6 @@ global.console = {
 	debug: console.debug,
 };
 
-jest.mock('react-native-fs', () => ({
-		DocumentDirectoryPath: "",
-		downloadFile: jest.fn(),
-	}),
-);
-
 jest.mock("react-native-view-shot", () => ({
 	RNViewShot: jest.fn().mockResolvedValue(),
 }));
