@@ -32,7 +32,6 @@ export const checkUpdate = (force: boolean = false) => {
 								}),
 							),
 					},
-					{text: getStr("dismiss")},
 					{
 						text: getStr("download"),
 						onPress: async () => {

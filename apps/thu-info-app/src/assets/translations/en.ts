@@ -30,7 +30,7 @@ export default {
 	logoutFailed: "Failed to logout",
 	newVersionAvailable: "New version available.",
 	newVersionAvailableClick: "New version available, click to download!",
-	ignoreThisVersion: "Forget",
+	ignoreThisVersion: "Skip",
 	dismiss: "Dismiss",
 	download: "Download",
 	downloading: "Downloading...",
