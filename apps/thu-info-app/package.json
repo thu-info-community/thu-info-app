@@ -6,7 +6,6 @@
 	"scripts": {
 		"android": "react-native run-android",
 		"ios": "react-native run-ios",
-		"postinstall": "patch-package  # For Harmony",
 		"start": "react-native start",
 		"test": "jest",
 		"lint": "eslint src --ext .js,.jsx,.ts,.tsx",
