@@ -21,6 +21,7 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @react-native-oh-tpl/react-native-version-number@0.3.6-0.0.1 \
          @react-native-oh-tpl/react-native-webview@13.10.2-0.2.32 \
          @react-native-oh-tpl/slider@4.4.3-0.3.3 \
+         @react-native-ohos/react-native-fs@2.20.1-rc.2 \
          @thu-info/lib@../../packages/thu-info-lib \
          rtn-network-utils@../../packages/RTNNetworkUtils \
          react-native-svg@15.0.0 \

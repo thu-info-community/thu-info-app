@@ -13,6 +13,7 @@ import { SafeAreaViewPackage } from '@react-native-oh-tpl/react-native-safe-area
 import { WebViewPackage } from '@react-native-oh-tpl/react-native-webview/ts';
 import { RNDeviceInfoPackage } from '@react-native-oh-tpl/react-native-device-info/ts';
 import { CameraRollPackage } from '@react-native-oh-tpl/camera-roll/ts';
+import { FsPackage } from '@react-native-ohos/react-native-fs/ts';
 import { GeneratedPackage } from './GeneratedPackage';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
@@ -31,6 +32,7 @@ export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
     new WebViewPackage(ctx),
     new RNDeviceInfoPackage(ctx),
     new CameraRollPackage(ctx),
+    new FsPackage(ctx),
     new GeneratedPackage(ctx),
   ];
 }

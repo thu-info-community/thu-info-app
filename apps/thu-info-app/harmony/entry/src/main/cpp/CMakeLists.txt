@@ -23,6 +23,7 @@ add_subdirectory("${OH_MODULES}/roh_cookies/src/main/cpp" ./rn_cookies)
 add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/react-native-svg/src/main/cpp" ./svg)
 add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/react-native-safe-area-context/src/main/cpp" ./safe-area)
 add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/slider/src/main/cpp" ./slider)
+add_subdirectory("${OH_MODULES}/@react-native-ohos/react-native-fs/src/main/cpp" ./fs)
 
 file(GLOB GENERATED_CPP_FILES "./generated/*.cpp")
 
@@ -48,3 +49,4 @@ target_link_libraries(rnoh_app PUBLIC rnoh_cookies)
 target_link_libraries(rnoh_app PUBLIC rnoh_svg)
 target_link_libraries(rnoh_app PUBLIC rnoh_safe_area)
 target_link_libraries(rnoh_app PUBLIC rnoh_slider)
+target_link_libraries(rnoh_app PUBLIC rnoh_fs)

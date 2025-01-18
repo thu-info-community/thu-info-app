@@ -4,6 +4,7 @@
 #include "AsyncStoragePackage.h"
 #include "generated/RNOHGeneratedPackage.h"
 #include "CookiesPackage.h"
+#include "RNFSPackage.h"
 #include "SVGPackage.h"
 #include "SafeAreaViewPackage.h"
 #include "SliderPackage.h"
@@ -15,6 +16,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
     return {
         std::make_shared<BlurPackage>(ctx),         std::make_shared<GestureHandlerPackage>(ctx),
         std::make_shared<AsyncStoragePackage>(ctx), std::make_shared<RNOHGeneratedPackage>(ctx),
+        std::make_shared<RNFSPackage>(ctx),
         std::make_shared<CookiesPackage>(ctx),      std::make_shared<SVGPackage>(ctx),
         std::make_shared<SafeAreaViewPackage>(ctx), std::make_shared<SliderPackage>(ctx),
         std::make_shared<BaseRtnNetworkUtilsPackage>(ctx)
