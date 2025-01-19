@@ -28,6 +28,7 @@ import {CardTransactionType} from "@thu-info/lib/src/models/card/transaction";
 import {CardRechargeType} from "@thu-info/lib/src/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
 import {RootNav} from "../../components/Root";
+import { styles } from "../settings/settings";
 
 export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
@@ -58,6 +59,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const style = styles(themeName);
 
 	const refresh = () => {
 		setRefreshing(true);
@@ -117,7 +119,18 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 				)
 				.then((r) => {
 					setProcessing(false);
+					dispatch(
+						updateRechargeAmount({
+							amount: Number(money),
+							date: dayjs().format("YYYY-MM-DD"),
+						}),
+					);
+					Snackbar.show({
+						text: getStr("rechargeSuccess"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
 					setMoney("");
+					setMoneyQuickSelected(undefined);
 					refresh();
 					if (typeof r === "string") {
 						Linking.openURL(r);
@@ -215,6 +228,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							justifyContent: "center",
 							alignItems: "center",
 							marginTop: 24,
+							marginHorizontal: 12,
 						}}>
 						<Text
 							style={{
@@ -222,7 +236,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								fontWeight: "600",
 								color: colors.text,
 								alignSelf: "flex-start",
-								marginLeft: 12,
+								marginStart: 4,
 							}}>
 							{getStr("deposit")}
 						</Text>
@@ -237,8 +251,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											backgroundColor:
 												moneyQuickSelected === price
 													? colors.themePurple
-													: colors.themeLightGrey,
-											marginLeft: index === 0 ? 0 : 8,
+													: colors.inputBorder,
+											marginLeft: index === 0 ? 0 : 16,
 										}}
 										onPress={() => {
 											setMoneyQuickSelected(price);
@@ -250,8 +264,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											style={{
 												color:
 													moneyQuickSelected === price
-														? colors.contentBackground
-														: colors.fontB3,
+														? "#FFFFFF"
+														: colors.fontB2,
 											}}>
 											{price} 元
 										</Text>
@@ -272,7 +286,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 									value={money}
 									onChangeText={(v) => {
 										setMoney(v);
-										setMoneyQuickSelected(undefined);
+										setMoneyQuickSelected(Number(v));
 									}}
 									editable={!processing}
 									style={{
@@ -286,7 +300,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							<View
 								style={{
 									borderBottomWidth: 1,
-									borderBottomColor: colors.themeLightGrey,
+									borderBottomColor: colors.themeGrey,
 									marginVertical: 12,
 								}}
 							/>
@@ -314,7 +328,13 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												</Text>
 											</TouchableOpacity>
 											<View
-												style={{height: 1, backgroundColor: colors.themeGrey}}
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+														marginHorizontal: 0,
+													},
+												]}
 											/>
 											<TouchableOpacity
 												onPress={() => {
@@ -331,7 +351,13 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												</Text>
 											</TouchableOpacity>
 											<View
-												style={{height: 1, backgroundColor: colors.themeGrey}}
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+														marginHorizontal: 0,
+													},
+												]}
 											/>
 											<TouchableOpacity
 												onPress={() => {
@@ -371,13 +397,14 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									flexDirection: "row",
 									justifyContent: "center",
-									marginVertical: 24,
+									marginTop: 24,
+									marginBottom: 8,
 								}}>
 								<TouchableOpacity
 									style={{
 										backgroundColor: valid
-											? colors.primaryLight
-											: colors.mainTheme,
+											? colors.themePurple
+											: colors.themeTransparentPurple,
 										alignItems: "center",
 										justifyContent: "center",
 										paddingVertical: 8,
@@ -388,12 +415,6 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 									onPress={() => {
 										const today = dayjs().format("YYYY-MM-DD");
 										if (today !== lastRechargeDate) {
-											dispatch(
-												updateRechargeAmount({
-													amount: Number(money),
-													date: today,
-												}),
-											);
 											performRecharge();
 										} else {
 											if (todayRechargeAmount >= 400) {
@@ -412,15 +433,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 														},
 														{
 															text: getStr("ok"),
-															onPress: () => {
-																dispatch(
-																	updateRechargeAmount({
-																		amount: Number(money),
-																		date: today,
-																	}),
-																);
-																performRecharge();
-															},
+															onPress: performRecharge,
 														},
 													],
 												);
@@ -431,8 +444,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											color:
 												valid && !processing
-													? colors.contentBackground
-													: colors.themeGrey,
+													? "#FFFFFF"
+													: colors.themeLightGrey,
 											fontSize: 16,
 										}}>
 										{getStr(processing ? "processing" : "deposit")}
@@ -445,7 +458,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								textAlign: "left",
 								fontSize: 14,
 								color: colors.statusWarning,
-								marginHorizontal: 16,
+								marginHorizontal: 4,
 								marginTop: 32,
 							}}>
 							{getStr("depositHint")}
