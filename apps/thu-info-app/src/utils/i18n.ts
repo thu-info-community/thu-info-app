@@ -21,5 +21,11 @@ export const langCode = translations === zh ? "zh" : "en";
 
 export function getStr<K extends keyof typeof zh>(key: K): string {
 	// @ts-ignore
+	if (!translations[key]) {
+		console.warn(`Missing translation for key: ${key}, language: ${langCode}`);
+		return key;
+	}
+
+	// @ts-ignore
 	return translations[key];
 }

@@ -28,6 +28,7 @@ import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
 import type {RTNNetworkUtils} from "rtn-network-utils";
+import { loginUsereg } from "./network";
 
 let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
 try {
@@ -38,7 +39,7 @@ try {
     }
 } catch { /* empty */ }
 
-type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab" | "cr";
+type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab" | "cr" | "net";
 
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
@@ -319,6 +320,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
     case "cr": {
         await loginCr(helper);
+        return "";
+    }
+    case "net": {
+        await loginUsereg(helper, payload);
         return "";
     }
     }

@@ -126,7 +126,14 @@ import {
     submitFeedback,
 } from "./lib/app";
 import {MOCK_LATEST_VERSION} from "./mocks/app";
-import { getNetworkBalance, getNetworkDetail, getOnlineDevices, loginNetwork, logoutNetwork } from "./lib/network";
+import {
+    getNetworkBalance,
+    getNetworkDetail,
+    getNetworkVerificationCode,
+    getOnlineDevices, isNetworkLoggedIn,
+    loginNetwork,
+    logoutNetwork, loginNetworkWithCode
+} from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {
     canRechargeCampusCard,
@@ -965,6 +972,12 @@ export class InfoHelper {
     public getDegreeProgramCompletion = async () => getDegreeProgramCompletion(this);
 
     public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
+
+    public getNetworkVerificationImageUrl = async () => getNetworkVerificationCode(this);
+
+    public loginNetworkWithCode = async (code: string) => loginNetworkWithCode(this, code);
+
+    public isNetworkLoggedIn = async () => isNetworkLoggedIn();
 
     public getNetworkDetail = async (year: number, month: number) => getNetworkDetail(this, year, month);
 

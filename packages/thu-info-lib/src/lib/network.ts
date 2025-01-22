@@ -9,20 +9,66 @@ import {
     NETWORK_IMPORT_IP, NETWORK_IMPORT_LOGIN,
     NETWORK_IMPORT_USER,
     NETWORK_USER_INFO,
-    NETWORK_1X_USER,
+    NETWORK_1X_USER, NETWORK_VERIFICATION_CODE_URL, NETWORK_LOGIN_URL, NETWORK_BASE_URL
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
 import { xEncode, xBase64Encode } from "../utils/srunCrypto";
 import CryptoJS from "crypto-js/core";
+import { JSEncrypt } from "jsencrypt";
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
+
+let verification_code = "";
+let emailName = "";
+
+// Refresh and get verification code
+export const getNetworkVerificationCode = async (helper: InfoHelper): Promise<string> => {
+    if (helper.mocked()) {
+        return "";
+    }
+
+    await uFetch(NETWORK_VERIFICATION_CODE_URL + "?refresh=1");
+    return NETWORK_VERIFICATION_CODE_URL + "?_=" + new Date().getTime();
+};
+
+
+export const loginNetworkWithCode = async (helper: InfoHelper, code: string): Promise<void> => {
+    verification_code = code;
+    await loginUsereg(helper, code);
+};
+
+
+export const isNetworkLoggedIn = async (): Promise<boolean> => {
+    const resp = await uFetch(NETWORK_BASE_URL);
+    return emailName != "" && resp.includes(emailName);
+};
+
+
+export const loginUsereg = async (helper: InfoHelper, code: string = verification_code): Promise<void> => {
+    const rsa_pubkey_str = cheerio.load(await uFetch(NETWORK_BASE_URL))("#public").val() as string;
+    const rsa_pubkey = new JSEncrypt();
+    rsa_pubkey.setPublicKey(rsa_pubkey_str);
+
+    emailName = (await helper.getUserInfo()).emailName;
+
+    const result = JSON.parse(await uFetch(NETWORK_LOGIN_URL, {
+        "LoginForm[username]": emailName,
+        "LoginForm[password]": rsa_pubkey.encrypt(helper.password),
+        "LoginForm[verifyCode]": code,
+    }));
+
+    if (result.success !== true) {
+        throw new LibError(result.message);
+    }
+};
+
 
 export const getNetworkDetail = async (helper: InfoHelper, year: number, month: number): Promise<Detial> =>
     roamingWrapperWithMocks(
         helper,
-        "default",
-        "66D157166A3E5EEB3C558B66803B2929",
+        "net",
+        verification_code,
         async () => {
             const resp = await uFetch(NETWORK_DETAIL_URL + `&year=${year}&month=${month}`);
             if (resp === "请登录先" || resp.includes(webVPNTitle))
@@ -76,8 +122,8 @@ export const getNetworkDetail = async (helper: InfoHelper, year: number, month: 
 
 export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> => roamingWrapperWithMocks(
     helper,
-    "default",
-    "66D157166A3E5EEB3C558B66803B2929",
+    "net",
+    verification_code,
     async () => {
         const ret: Device[] = [];
         const resp1 = await uFetch(NETWORK_IMPORT_USER);
@@ -149,8 +195,8 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
 export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
     roamingWrapperWithMocks(
         helper,
-        "default",
-        "66D157166A3E5EEB3C558B66803B2929",
+        "net",
+        verification_code,
         async () => {
             const resp = await uFetch(NETWORK_USER_INFO);
             if (resp === "请登录先" || resp.includes(webVPNTitle))
