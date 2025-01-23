@@ -9671,10 +9671,10 @@ react-native-fetch-api@3.0.0:
   dependencies:
     p-defer "^3.0.0"
 
-react-native-gesture-handler@2.22.0:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.22.0.tgz#d90dad3e4d7fe149e3d1d445f697b487f717ac8e"
-  integrity sha512-m5Ps1cOSxSiMP4re+XsbeWcC9DNJuIEjMSmtUxBdyfYEJtdu5iAAiX7KlHHrf2mnK4I/56Ncy4PvPKWBwSpWpQ==
+react-native-gesture-handler@2.22.1:
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.22.1.tgz#869d2b5ffd8b19e44a36780b99cbd88826323353"
+  integrity sha512-E0C9D+Ia2UZYevoSV9rTKjhFWEVdR/3l4Z3TUoQrI/wewgzDlmJOrYvGW5aMlPUuQF2vHQOdFfAWhVEqFu4tWw==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
