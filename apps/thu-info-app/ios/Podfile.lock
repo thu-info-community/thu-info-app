@@ -1624,7 +1624,7 @@ PODS:
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
-  - RNGestureHandler (2.22.0):
+  - RNGestureHandler (2.22.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2060,7 +2060,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: cc6479c4acd84cc7004946946c8afe30b018184d
   RNDeviceInfo: 3f2e5fcca3637f75c6d30ba287293c2f97206781
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
-  RNGestureHandler: 8b33b2c5688a54fcce223d184753757da498235c
+  RNGestureHandler: a883459e2f268dde0af479e0d6e73bc8662a3502
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNPermissions: a732d15d51a24c2c78dd6d10ee336172c78bf6fd
