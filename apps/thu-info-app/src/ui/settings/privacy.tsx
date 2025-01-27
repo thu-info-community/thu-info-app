@@ -74,7 +74,7 @@ export const PrivacyScreen = ({navigation}: {navigation: RootNav}) => {
 						backgroundColor: theme.colors.themePurple,
 					}}
 					onPress={() => {
-						dispatch(configSet({key: "privacy312", value: true}))
+						dispatch(configSet({key: "privacy312", value: true}));
 						navigation.pop();
 					}}>
 					<Text
@@ -101,7 +101,7 @@ export const PrivacyScreen = ({navigation}: {navigation: RootNav}) => {
 						backgroundColor: theme.colors.themePurple,
 					}}
 					onPress={() => {
-						dispatch(configSet({key: "privacy312", value: false}))
+						dispatch(configSet({key: "privacy312", value: false}));
 						BackHandler.exitApp();
 					}}>
 					<Text
