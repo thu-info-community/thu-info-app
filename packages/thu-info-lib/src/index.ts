@@ -128,7 +128,6 @@ import {
 import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {
     getNetworkBalance,
-    getNetworkDetail,
     getNetworkVerificationCode,
     getOnlineDevices,
     loginNetwork,
@@ -977,8 +976,6 @@ export class InfoHelper {
     public getNetworkVerificationImageUrl = async () => getNetworkVerificationCode(this);
 
     public loginUsereg = async (code: string) => loginUsereg(this, code);
-
-    public getNetworkDetail = async (year: number, month: number) => getNetworkDetail(this, year, month);
 
     public getOnlineDevices = async () => getOnlineDevices(this);
 

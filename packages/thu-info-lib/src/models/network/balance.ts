@@ -1,4 +1,7 @@
 export interface Balance {
+    productName: string;
+    usedBytes: string;
+    usedSeconds: string;
     accountBalance: string;
-    availableBalance: string;
+    settlementDate: string;
 }

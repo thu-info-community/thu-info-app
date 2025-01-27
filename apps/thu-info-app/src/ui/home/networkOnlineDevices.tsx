@@ -75,14 +75,11 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 					}}
 				/>
 				<Item left={getStr("ip6")} right={device.ip6} />
-				<Item left={getStr("nasIP")} right={device.nasIp} />
 				<Item left={getStr("loggedAt")} right={device.loggedAt} />
-				<Item left={getStr("in")} right={device.in} />
-				<Item left={getStr("out")} right={device.out} />
 				<Item left={getStr("mac")} right={device.mac} />
 				<Item
 					left={getStr("authType")}
-					right={getStr(device.authType === "802.1x" ? "_8021x" : "import")}
+					right={device.authPermission}
 				/>
 				<RoundedView
 					style={{
@@ -171,7 +168,7 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							<DeviceCard
 								refresh={refresh}
 								device={d}
-								key={d.ip4 + "@" + d.nasIp}
+								key={d.ip4}
 							/>
 						))
 					) : (

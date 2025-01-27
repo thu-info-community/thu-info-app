@@ -2,8 +2,8 @@ import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {Text, View, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
-import {styles} from "../../ui/settings/settings";
-import {Detial} from "@thu-info/lib/src/models/network/detial";
+import {styles} from "../settings/settings.tsx";
+import {Detail} from "@thu-info/lib/src/models/network/detail.ts";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
 import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import { UseregAuthError } from "@thu-info/lib/src/utils/error";
 import { RootNav } from "../../components/Root";
 
-const DetailCard = ({detail}: {detail: Detial}) => {
+const DetailCard = ({detail}: {detail: Detail}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
@@ -128,7 +128,7 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const [m, setM] = useState(now.month() + 1);
 	const [y, setY] = useState(now.year());
-	const [detail, setDetail] = useState<Detial>();
+	const [detail, _setDetail] = useState<Detail>();
 	const [popupYear, setPopupYear] = useState<number>(y);
 	const [popupMonth, setPopupMonth] = useState<number>(m);
 
@@ -148,9 +148,9 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 	const refresh = () => {
 		setRefreshing(true);
 		(async () => {
-			await helper
-				.getNetworkDetail(y, m)
-				.then(setDetail);
+			// await helper
+			// 	.getNetworkDetail(y, m)
+			// 	.then(setDetail);
 			await helper
 				.getNetworkBalance()
 				.then((b) => setRemainder(b.accountBalance));
