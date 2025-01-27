@@ -65,9 +65,6 @@
         "no-shadow": [
             "off"
         ],
-        "prettier/prettier": [
-            "off"
-        ],
         "quotes": [
             "error",
             "double"
