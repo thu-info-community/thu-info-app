@@ -96,8 +96,6 @@ export const uFetch = async (
                 body: serialized ? (post as never as string) : stringify(post, paramEncoding),
             };
 
-    console.log(url, init);
-
     // Perform the network request
     try {
         // @ts-ignore
@@ -118,7 +116,6 @@ export const uFetch = async (
             } catch {
                 throw new ResponseStatusError(`Unexpected response status code: ${response.status}`);
             }
-            console.log(response.text());
             throw new ResponseStatusError(`Unexpected response status code: ${response.status} (${path})`);
         }
 

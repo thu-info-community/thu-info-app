@@ -18,6 +18,9 @@ import themes from "../../assets/themes/themes";
 import { RoundedView } from "../../components/views";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { styles } from "../settings/settings";
+import { UseregAuthError } from "@thu-info/lib/src/utils/error.ts";
+import { NetworkRetry } from "../../components/easySnackbars.ts";
+import { RootNav } from "../../components/Root.tsx";
 
 const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) => {
 	const themeName = useColorScheme();
@@ -117,7 +120,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 	);
 };
 
-export const NetworkOnlineDevicesScreen = () => {
+export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const { colors } = themes(themeName);
 
@@ -136,14 +139,15 @@ export const NetworkOnlineDevicesScreen = () => {
 			.getOnlineDevices()
 			.then(setDevices)
 			.catch((e) => {
-				Snackbar.show({
-					text: getStr("networkRetry") + e?.message,
-					duration: Snackbar.LENGTH_SHORT,
-				});
+				if (e instanceof UseregAuthError) {
+					navigation.navigate("NetworkLogin");
+				} else {
+					NetworkRetry(e);
+				}
 			})
 			.then(() => setRefreshing(false));
 	};
-	useEffect(refresh, []);
+	useEffect(refresh, [navigation]);
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}

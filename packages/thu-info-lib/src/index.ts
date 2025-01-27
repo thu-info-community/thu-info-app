@@ -130,9 +130,10 @@ import {
     getNetworkBalance,
     getNetworkDetail,
     getNetworkVerificationCode,
-    getOnlineDevices, isNetworkLoggedIn,
+    getOnlineDevices,
     loginNetwork,
-    logoutNetwork, loginNetworkWithCode
+    logoutNetwork,
+    loginUsereg,
 } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {
@@ -975,9 +976,7 @@ export class InfoHelper {
 
     public getNetworkVerificationImageUrl = async () => getNetworkVerificationCode(this);
 
-    public loginNetworkWithCode = async (code: string) => loginNetworkWithCode(this, code);
-
-    public isNetworkLoggedIn = async () => isNetworkLoggedIn();
+    public loginUsereg = async (code: string) => loginUsereg(this, code);
 
     public getNetworkDetail = async (year: number, month: number) => getNetworkDetail(this, year, month);
 

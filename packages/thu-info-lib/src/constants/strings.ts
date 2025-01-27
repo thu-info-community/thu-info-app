@@ -277,6 +277,8 @@ export const NETWORK_VERIFICATION_CODE_URL =
 export const NETWORK_BASE_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/";
 export const NETWORK_LOGIN_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/login";
+export const NETWORK_VALIDATE_USER_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/site/validate-user";
 export const NETWORK_DETAIL_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/user_detail_statistics.php?action=query";

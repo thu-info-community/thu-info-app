@@ -66,18 +66,19 @@ export const NetworkLoginScreen = ({ navigation }: { navigation: RootNav }) => {
         </TouchableOpacity>
         <Text style={{
           fontSize: 16,
-          color: colors.fontB3
+          color: colors.fontB3,
         }}>
           {getStr("networkVerificationCodeRefreshHint")}
         </Text>
         </View>
         <CodeField
+          {...props}
           value={verificationCode}
           onChangeText={(v) => {
             if (v.match(/^\d{0,4}$/)) {
               setVerificationCode(v);
               if (v.length === 4) {
-                helper.loginNetworkWithCode(v).then(() => {
+                helper.loginUsereg(v).then(() => {
                     navigation.pop();
                   }).catch((e) => {
                     setVerificationCode("");

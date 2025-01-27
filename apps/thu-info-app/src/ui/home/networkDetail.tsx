@@ -4,13 +4,15 @@ import {Text, View, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import {styles} from "../../ui/settings/settings";
 import {Detial} from "@thu-info/lib/src/models/network/detial";
-import Snackbar from "react-native-snackbar";
+import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
 import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import IconDown from "../../assets/icons/IconDown";
 import dayjs from "dayjs";
+import { UseregAuthError } from "@thu-info/lib/src/utils/error";
+import { RootNav } from "../../components/Root";
 
 const DetailCard = ({detail}: {detail: Detial}) => {
 	const themeName = useColorScheme();
@@ -121,7 +123,7 @@ const DetailCard = ({detail}: {detail: Detial}) => {
 	);
 };
 
-export const NetworkDetailScreen = () => {
+export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 	const now = dayjs();
 
 	const [m, setM] = useState(now.month() + 1);
@@ -148,26 +150,20 @@ export const NetworkDetailScreen = () => {
 		(async () => {
 			await helper
 				.getNetworkDetail(y, m)
-				.then(setDetail)
-				.catch((e) => {
-					Snackbar.show({
-						text: getStr("networkRetry") + e?.message,
-						duration: Snackbar.LENGTH_SHORT,
-					});
-				});
+				.then(setDetail);
 			await helper
 				.getNetworkBalance()
-				.then((b) => setRemainder(b.accountBalance))
-				.catch((e) => {
-					Snackbar.show({
-						text: getStr("networkRetry") + e?.message,
-						duration: Snackbar.LENGTH_SHORT,
-					});
-				});
-		})().then(() => setRefreshing(false));
+				.then((b) => setRemainder(b.accountBalance));
+		})().catch((e) => {
+			if (e instanceof UseregAuthError) {
+				navigation.navigate("NetworkLogin");
+			} else {
+				NetworkRetry(e);
+			}
+		}).then(() => setRefreshing(false));
 	};
 
-	useEffect(refresh, [y, m]);
+	useEffect(refresh, [y, m, navigation]);
 	return (
 		<GestureHandlerRootView>
 		<ScrollView

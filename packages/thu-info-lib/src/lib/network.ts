@@ -1,15 +1,19 @@
 import { InfoHelper } from "../index";
 import { roamingWrapperWithMocks } from "./core";
-import { uFetch } from "../utils/network";
+import { stringify, uFetch } from "../utils/network";
 import * as cheerio from "cheerio";
 import { Detial } from "../models/network/detial";
-import { LibError } from "../utils/error";
+import { LibError, UseregAuthError } from "../utils/error";
 import {
     NETWORK_DETAIL_URL, NETWORK_IMPORT_CHALLENGE,
     NETWORK_IMPORT_IP, NETWORK_IMPORT_LOGIN,
     NETWORK_IMPORT_USER,
     NETWORK_USER_INFO,
-    NETWORK_1X_USER, NETWORK_VERIFICATION_CODE_URL, NETWORK_LOGIN_URL, NETWORK_BASE_URL
+    NETWORK_1X_USER,
+    NETWORK_VERIFICATION_CODE_URL,
+    NETWORK_LOGIN_URL,
+    NETWORK_BASE_URL,
+    NETWORK_VALIDATE_USER_URL,
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
@@ -18,9 +22,6 @@ import CryptoJS from "crypto-js/core";
 import { JSEncrypt } from "jsencrypt";
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
-
-let verification_code = "";
-let emailName = "";
 
 // Refresh and get verification code
 export const getNetworkVerificationCode = async (helper: InfoHelper): Promise<string> => {
@@ -33,46 +34,70 @@ export const getNetworkVerificationCode = async (helper: InfoHelper): Promise<st
 };
 
 
-export const loginNetworkWithCode = async (helper: InfoHelper, code: string): Promise<void> => {
-    verification_code = code;
-    await loginUsereg(helper, code);
-};
-
-
-export const isNetworkLoggedIn = async (): Promise<boolean> => {
+const ensureNetworkLoggedIn = async (): Promise<void> => {
     const resp = await uFetch(NETWORK_BASE_URL);
-    return emailName != "" && resp.includes(emailName);
+    if (resp.includes(webVPNTitle)) {
+        throw new LibError();
+    } else if (resp.includes("loginform-verifycode")) {
+        throw new UseregAuthError();
+    }
 };
 
 
-export const loginUsereg = async (helper: InfoHelper, code: string = verification_code): Promise<void> => {
-    const rsa_pubkey_str = cheerio.load(await uFetch(NETWORK_BASE_URL))("#public").val() as string;
+export const loginUsereg = async (helper: InfoHelper, code: string): Promise<void> => {
+    const $ = cheerio.load(await uFetch(NETWORK_BASE_URL));
+    const csrfToken = $("meta[name=csrf-token]").attr("content");
+    if (!csrfToken) {
+        throw new Error("Failed to get csrf token.");
+    }
+    const rsa_pubkey_str = $("#public").val() as string;
     const rsa_pubkey = new JSEncrypt();
     rsa_pubkey.setPublicKey(rsa_pubkey_str);
 
-    emailName = (await helper.getUserInfo()).emailName;
+    const {emailName} = await helper.getUserInfo();
+    const password = rsa_pubkey.encrypt(helper.password);
 
-    const result = JSON.parse(await uFetch(NETWORK_LOGIN_URL, {
-        "LoginForm[username]": emailName,
-        "LoginForm[password]": rsa_pubkey.encrypt(helper.password),
-        "LoginForm[verifyCode]": code,
-    }));
+    const result = await (await fetch(NETWORK_VALIDATE_USER_URL, {
+        method: "POST",
+        headers: {
+            "X-CSRF-Token": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body: stringify({
+            "LoginForm[username]": emailName,
+            "LoginForm[password]": password,
+            "LoginForm[verifyCode]": code,
+        }),
+    })).json();
 
     if (result.success !== true) {
         throw new LibError(result.message);
     }
+
+    const csrfInput = $("input[name=_csrf-8800]").attr("value");
+    if (!csrfInput) {
+        throw new Error("Failed to get csrf token.");
+    }
+
+    await uFetch(NETWORK_LOGIN_URL, {
+        "_csrf-8800": csrfInput,
+        "LoginForm[username]": emailName,
+        "LoginForm[password]": password,
+        "LoginForm[smsCode]": "",
+        "LoginForm[verifyCode]": code,
+    });
 };
 
 
 export const getNetworkDetail = async (helper: InfoHelper, year: number, month: number): Promise<Detial> =>
     roamingWrapperWithMocks(
         helper,
-        "net",
-        verification_code,
+        undefined,
+        "",
         async () => {
+            await ensureNetworkLoggedIn();
             const resp = await uFetch(NETWORK_DETAIL_URL + `&year=${year}&month=${month}`);
-            if (resp === "请登录先" || resp.includes(webVPNTitle))
-                throw new LibError();
             const $ = cheerio.load(resp);
             const tr = $(".maintab table:eq(2) tbody tr:eq(1)").children();
             return {
@@ -122,13 +147,12 @@ export const getNetworkDetail = async (helper: InfoHelper, year: number, month: 
 
 export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> => roamingWrapperWithMocks(
     helper,
-    "net",
-    verification_code,
+    undefined,
+    "",
     async () => {
+        await ensureNetworkLoggedIn();
         const ret: Device[] = [];
         const resp1 = await uFetch(NETWORK_IMPORT_USER);
-        if (resp1 === "请登录先" || resp1.includes(webVPNTitle))
-            throw new LibError();
         const $1 = cheerio.load(resp1);
         const importDevices = $1(".maintab tr td table:eq(1) tr");
         for (let i = 0; i < importDevices.length; i++) {
@@ -195,12 +219,11 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
 export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
     roamingWrapperWithMocks(
         helper,
-        "net",
-        verification_code,
+        undefined,
+        "",
         async () => {
+            await ensureNetworkLoggedIn();
             const resp = await uFetch(NETWORK_USER_INFO);
-            if (resp === "请登录先" || resp.includes(webVPNTitle))
-                throw new LibError();
             const $ = cheerio.load(resp);
             const balances = $("table.maintab tr:eq(2) td:eq(1) table tr:eq(9)").children();
             return {

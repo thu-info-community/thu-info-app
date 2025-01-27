@@ -1,6 +1,6 @@
-import { useColorScheme, View } from "react-native";
+import {useColorScheme, View} from "react-native";
 import {RootNav} from "../../components/Root";
-import { currState } from "../../redux/store";
+import {currState} from "../../redux/store";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
@@ -10,18 +10,9 @@ export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const disabledFunction = currState().config.homeFunctionDisabled;
-
 	return (
 		<View style={style.SecondaryRootView}>
 			<View style={style.SecondaryContentView}>
-				<SecondaryItem
-					title="networkLogin"
-					destKey="networkLogin"
-					icon={<IconNetworkDetail />}
-					onPress={() => {
-						navigation.navigate("NetworkLogin");
-					}}
-				/>
 				{!disabledFunction.includes("networkDetail") && (
 					<SecondaryItem
 						title="networkDetail"
