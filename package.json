@@ -18,10 +18,7 @@
 	},
 	"dependencies": {
 		"editor": "1.0.0",
-		"lerna": "8.1.9",
-		"pre-commit": "1.2.2"
-	},
-	"pre-commit": [
-		"lint"
-	]
+		"husky": "9.1.7",
+		"lerna": "8.1.9"
+	}
 }
