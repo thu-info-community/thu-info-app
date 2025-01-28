@@ -1,6 +1,6 @@
 {
   "name": "rtn-network-utils",
-  "version": "1.0.0",
+  "version": "3.13.0",
   "description": "",
   "main": "index.ts",
   "harmony": {
@@ -32,6 +32,5 @@
     "react": "*",
     "react-native": "*"
   },
-  "dependencies": {},
   "private": true
 }
