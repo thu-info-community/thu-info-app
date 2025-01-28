@@ -37,7 +37,6 @@ jobs:
   build-and-publish:
     needs: unit-test-and-style-check
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags')
     steps:
       - uses: actions/checkout@v4
       - name: Setup caching
@@ -56,6 +55,7 @@ jobs:
         run: |
           yarn workspace @thu-info/lib build
       - name: Prepare for publishing
+        if: startsWith(github.ref, 'refs/tags')
         id: prepare_publish
         run: |
           export ref='${{ github.ref }}'
@@ -66,6 +66,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Publish to NPM
+        if: startsWith(github.ref, 'refs/tags')
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TAG: ${{ steps.prepare_publish.outputs.tag }}
