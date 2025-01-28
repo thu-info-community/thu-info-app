@@ -128,6 +128,7 @@ import {
 import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {
     getNetworkBalance,
+    getNetworkAccountInfo,
     getNetworkVerificationCode,
     getOnlineDevices,
     loginNetwork,
@@ -980,6 +981,8 @@ export class InfoHelper {
     public getOnlineDevices = async () => getOnlineDevices(this);
 
     public getNetworkBalance = async () => getNetworkBalance(this);
+
+    public getNetworkAccountInfo = async () => getNetworkAccountInfo(this);
 
     public logoutNetworkDevice = async (device: Device) => logoutNetwork(device);
 

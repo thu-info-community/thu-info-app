@@ -7,11 +7,16 @@ import {
     NETWORK_VERIFICATION_CODE_URL,
     NETWORK_LOGIN_URL,
     NETWORK_VALIDATE_USER_URL,
-    NETWORK_HOME_URL, NETWORK_HOME_DELETE_URL, NETWORK_IMPORT_DEVICE_URL
+    NETWORK_HOME_URL,
+    NETWORK_HOME_DELETE_URL,
+    NETWORK_IMPORT_DEVICE_URL,
+    NETWORK_USER_INFO_URL,
+    NETWORK_ALLOWED_DEVICES_URL
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
 import { JSEncrypt } from "jsencrypt";
+import { AccountInfo } from "../models/network/account";
 
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
 
@@ -151,6 +156,47 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
             "settlementDate": "2025-02-01",
         }
     );
+
+export const getNetworkAccountInfo = async (helper: InfoHelper): Promise<AccountInfo> =>
+    roamingWrapperWithMocks(
+        helper, undefined, "", async () => {
+            await ensureNetworkLoggedIn();
+            const $home = cheerio.load(await uFetch(NETWORK_HOME_URL));
+            const status = $home(".glyphicon-info-sign").parent().children("a").text().trim();
+            const $users = cheerio.load(await uFetch(NETWORK_USER_INFO_URL))("#w0").find("td");
+            const username = $users.eq(0).text().trim();
+            const contactEmail = $users.eq(1).text().trim();
+            const contactPhone = $users.eq(2).text().trim();
+            const contactLandline = $users.eq(5).text().trim();
+            const realName = $users.eq(6).text().trim();
+            const userGroup = $users.eq(7).text().trim();
+            const location = $users.eq(3).text().trim();
+            const $devices = cheerio.load(await uFetch(NETWORK_ALLOWED_DEVICES_URL));
+            const allowedDevicesText = $devices(".glyphicon-exclamation-sign").parent().text().trim();
+            const allowedDevices = parseInt(allowedDevicesText.match(/(\d+)/)?.[0] || "0");
+            return {
+                "username": username,
+                "contactEmail": contactEmail,
+                "contactPhone": contactPhone,
+                "contactLandline": contactLandline,
+                "realName": realName,
+                "status": status,
+                "userGroup": userGroup,
+                "location": location,
+                "allowedDevices": allowedDevices,
+            };
+        },
+        {
+            "username": "thuinfo",
+            "contactEmail": "contact@thuinfo.net",
+            "contactPhone": "12345678901",
+            "contactLandline": "010-62876543",
+            "realName": "THUInfo",
+            "status": "正常",
+            "userGroup": "学生组",
+            "location": "",
+            "allowedDevices": 8,
+        });
 
 export const logoutNetwork = async (device: Device): Promise<void> => {
     await ensureNetworkLoggedIn();
