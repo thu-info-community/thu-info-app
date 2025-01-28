@@ -14,14 +14,12 @@
 		"test": "yarn workspaces run test",
 		"lint": "yarn workspaces run lint",
 		"fix": "yarn workspaces run fix",
+		"prepare": "husky",
 		"preversion": "git pull --rebase && node -e \"require('editor')('release-notes.md')\" && git add release-notes.md"
 	},
 	"dependencies": {
 		"editor": "1.0.0",
-		"lerna": "8.1.9",
-		"pre-commit": "1.2.2"
-	},
-	"pre-commit": [
-		"lint"
-	]
+		"husky": "9.1.7",
+		"lerna": "8.1.9"
+	}
 }

@@ -27,12 +27,11 @@ import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
-import type {RTNNetworkUtils} from "rtn-network-utils";
 
 let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const rtn_network_utils: typeof RTNNetworkUtils = require("rtn-network-utils").RTNNetworkUtils;
+    const rtn_network_utils = require("rtn-network-utils").RTNNetworkUtils;
     if (rtn_network_utils) {
         getRedirectLocation = rtn_network_utils.getRedirectLocation;
     }
