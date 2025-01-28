@@ -21,7 +21,7 @@ import { AccountInfo } from "../models/network/account";
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
 
 // Refresh and get verification code
-export const getNetworkVerificationCode = async (helper: InfoHelper): Promise<string> => {
+export const getNetworkVerificationImageUrl = async (helper: InfoHelper): Promise<string> => {
     if (helper.mocked()) {
         return "";
     }
