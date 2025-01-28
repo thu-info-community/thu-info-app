@@ -76,6 +76,10 @@ export class UserInfoError extends LibError {
 
 }
 
+export class UseregAuthError extends LibError {
+
+}
+
 export class ResponseStatusError extends LibError {
     constructor(message?: string) {
         super(message);

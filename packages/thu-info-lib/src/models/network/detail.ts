@@ -7,7 +7,7 @@ export interface Usage {
     readonly currentCost: string;
 }
 
-export interface Detial {
+export interface Detail {
     readonly year: number;
     readonly month: number;
     readonly wirelessUsage: Usage;
