@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useEffect, useState } from "react";
 import {helper} from "../../redux/store";
 import {Text, View, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -38,6 +38,8 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 		}).then(() => setRefreshing(false));
 	};
 
+	useEffect(refresh, [navigation]);
+
 	interface RowProps {
 		left: string;
 		right: string;
@@ -76,17 +78,17 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 				/>
 			}>
 			<RoundedView style={{margin: 24}}>
-				<Row left={getStr("networkUsername")} right={accountInfo?.username ?? ""}/>
-				<Row left={getStr("networkRealName")} right={accountInfo?.realName ?? ""}/>
-				<Row left={getStr("networkContactEmail")} right={accountInfo?.contactEmail ?? ""}/>
-				<Row left={getStr("networkAccountStatus")} right={accountInfo?.status ?? ""}/>
-				<Row left={getStr("networkUserGroup")} right={accountInfo?.userGroup ?? ""}/>
-				<Row left={getStr("networkProductName")} right={balance?.productName ?? ""}/>
-				<Row left={getStr("networkRemainder")} right={`${balance?.accountBalance ?? "0.00"}`}/>
-				<Row left={getStr("networkSettlementDate")} right={balance?.settlementDate ?? ""}/>
-				<Row left={getStr("networkUsedBytes")} right={balance?.usedBytes ?? ""}/>
-				<Row left={getStr("networkUsedTime")} right={balance?.usedSeconds ?? ""}/>
-				<Row left={getStr("networkAllowedDevices")} right={accountInfo?.allowedDevices.toString() ?? ""}/>
+				<Row left={getStr("networkUsername")} right={accountInfo?.username ?? "-"}/>
+				<Row left={getStr("networkRealName")} right={accountInfo?.realName ?? "-"}/>
+				<Row left={getStr("networkContactEmail")} right={accountInfo?.contactEmail ?? "-"}/>
+				<Row left={getStr("networkAccountStatus")} right={accountInfo?.status ?? "-"}/>
+				<Row left={getStr("networkUserGroup")} right={accountInfo?.userGroup ?? "-"}/>
+				<Row left={getStr("networkProductName")} right={balance?.productName ?? "-"}/>
+				<Row left={getStr("networkRemainder")} right={`${balance?.accountBalance ?? "-"}`}/>
+				<Row left={getStr("networkSettlementDate")} right={balance?.settlementDate ?? "-"}/>
+				<Row left={getStr("networkUsedBytes")} right={(balance?.usedBytes ?? "-") + "B"}/>
+				<Row left={getStr("networkUsedTime")} right={balance?.usedSeconds ?? "-"}/>
+				<Row left={getStr("networkAllowedDevices")} right={accountInfo?.allowedDevices.toString() ?? "-"}/>
 			</RoundedView>
 		</ScrollView>
 		</GestureHandlerRootView>

@@ -59,9 +59,16 @@ export const NetworkLoginScreen = ({ navigation }: { navigation: RootNav }) => {
             });
           }}>
           <Image
-            source={{ uri: imageUrl }}
+            source={{
+              uri: imageUrl,
+              cache: "reload",
+          }}
             width={180}
             height={68}
+            style={{
+              backgroundColor: "white",
+              borderRadius: 12,
+            }}
           />
         </TouchableOpacity>
         <Text style={{
