@@ -24,7 +24,7 @@ import {
 import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
-import { IdAuthError, LibError, LoginError, UrlError } from "../utils/error";
+import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
 
@@ -85,7 +85,7 @@ export const getCsrfToken = async () => {
 
 let outstandingLoginPromise: Promise<void> | undefined = undefined;
 
-const twoFactorAuth = async (helper: InfoHelper, deviceName = "THU Info APP"): Promise<string> => {
+const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     const { result: r1, msg: m1, object: o1 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
         action: "FIND_APPROACHES",
     }));
@@ -125,7 +125,7 @@ const twoFactorAuth = async (helper: InfoHelper, deviceName = "THU Info APP"): P
         if (trustFingerprint) {
             const { result: r4, msg: m4 } = JSON.parse(await uFetch(SAVE_FINGER_URL, {
                 fingerprint: helper.fingerprint,
-                deviceName: deviceName,
+                deviceName: await helper.trustFingerprintNameHook(),
                 radioVal: "是",
             }));
             if (r4 != "success") {

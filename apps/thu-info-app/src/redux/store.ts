@@ -50,6 +50,7 @@ import {
 } from "./slices/campusCard";
 import { LoginError } from "@thu-info/lib/src/utils/error";
 import { getStr } from "../utils/i18n.ts";
+import DeviceInfo from "react-native-device-info";
 
 export const helper = new InfoHelper();
 
@@ -344,4 +345,8 @@ helper.trustFingerprintHook = () => {
 			{cancelable: false},
 		);
 	});
+};
+
+helper.trustFingerprintNameHook = async () => {
+	return `THU Info APP (${DeviceInfo.getDeviceNameSync()})`;
 };

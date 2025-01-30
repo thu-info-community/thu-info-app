@@ -233,6 +233,13 @@ export class InfoHelper {
     public trustFingerprintHook: (() => Promise<boolean>) | undefined = undefined;
 
     /**
+     * Invoked to get a trusted device name for the fingerprint.
+     *
+     * Override this value to customize.
+     */
+    public trustFingerprintNameHook: (() => Promise<string>) = async () => "THU Info Lib";
+
+    /**
      * Login with userId and password.
      */
     public login = async (
