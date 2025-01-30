@@ -49,7 +49,6 @@ import {
 	defaultCampusCard,
 } from "./slices/campusCard";
 import { LoginError } from "@thu-info/lib/src/utils/error";
-import { getStr } from "../utils/i18n.ts";
 import DeviceInfo from "react-native-device-info";
 
 export const helper = new InfoHelper();
@@ -307,18 +306,20 @@ helper.twoFactorAuthHook = () => {
 helper.twoFactorAuthLimitHook = () => {
 	return new Promise<void>((resolve) => {
 		Alert.alert(
-			getStr("twoFactorDevHitLimitTitle"),
-			getStr("twoFactorDevHitLimitContent"),
+			"二次认证（2FA）",
+			"您的二次认证信任设备数量已达到上限，请前往 https://id.tsinghua.edu.cn/ 的 “多因子认证” 管理页面进行管理。\n" +
+			"You have reached the limit of trusted devices. Manage your trusted devices in \"Two-factor Authentication\" section.\n",
 			[
 				{
-					text: getStr("go"),
+					text: "Go",
 					onPress: () => {
 						Linking.openURL("https://id.tsinghua.edu.cn/");
 						resolve();
 					},
 				},
 				{
-					text: getStr("ok"),
+					text: "Cancel",
+					style: "cancel",
 					onPress: () => {
 						resolve();
 					},
