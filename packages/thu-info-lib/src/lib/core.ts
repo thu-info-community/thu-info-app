@@ -125,11 +125,16 @@ const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
         if (trustFingerprint) {
             const { result: r4, msg: m4 } = JSON.parse(await uFetch(SAVE_FINGER_URL, {
                 fingerprint: helper.fingerprint,
-                deviceName: "THU Info APP",
+                deviceName: await helper.trustFingerprintNameHook(),
                 radioVal: "是",
             }));
             if (r4 != "success") {
-                throw new LoginError(m4);
+                if (m4.includes("上限") || m4.includes("limit")) {
+                    helper.twoFactorAuthLimitHook && await helper.twoFactorAuthLimitHook();
+                }
+                else {
+                    throw new LoginError(m4);
+                }
             }
         }
     }

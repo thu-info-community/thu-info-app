@@ -305,6 +305,7 @@ export default {
 	view: "View",
 	accept: "Accept",
 	decline: "Decline",
+	go: "GO",
 	configureDorm: "Login to myhome.tsinghua.edu.cn",
 	configureDormHint:
 		"This password was probably set even before you entered the school...",

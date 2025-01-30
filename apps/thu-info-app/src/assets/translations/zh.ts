@@ -284,6 +284,7 @@ export default {
 	view: "查看",
 	accept: "接受",
 	decline: "拒绝",
+	go: "跳转",
 	configureDorm: "请登录清华家园网",
 	configureDormHint: "这个密码很可能是你入学前就设置好了的……",
 	email: "邮箱",

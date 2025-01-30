@@ -30,7 +30,7 @@ import {
 	ReservationState,
 } from "./slices/reservation";
 import Snackbar from "react-native-snackbar";
-import {Alert, AppState, Platform, ToastAndroid} from "react-native";
+import { Alert, AppState, Linking, Platform, ToastAndroid } from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";
 import {
@@ -49,6 +49,7 @@ import {
 	defaultCampusCard,
 } from "./slices/campusCard";
 import { LoginError } from "@thu-info/lib/src/utils/error";
+import DeviceInfo from "react-native-device-info";
 
 export const helper = new InfoHelper();
 
@@ -302,6 +303,33 @@ helper.twoFactorAuthHook = () => {
 	});
 };
 
+helper.twoFactorAuthLimitHook = () => {
+	return new Promise<void>((resolve) => {
+		Alert.alert(
+			"二次认证（2FA）",
+			"您的二次认证信任设备数量已达到上限，请前往 https://id.tsinghua.edu.cn/ 的 “多因子认证” 管理页面进行管理。\n" +
+			"You have reached the limit of trusted devices. Manage your trusted devices in \"Two-factor Authentication\" section.\n",
+			[
+				{
+					text: "Go",
+					onPress: () => {
+						Linking.openURL("https://id.tsinghua.edu.cn/");
+						resolve();
+					},
+				},
+				{
+					text: "Cancel",
+					style: "cancel",
+					onPress: () => {
+						resolve();
+					},
+				},
+			],
+			{cancelable: false},
+		);
+	});
+};
+
 helper.trustFingerprintHook = () => {
 	return new Promise<boolean>((resolve) => {
 		Alert.alert(
@@ -318,4 +346,8 @@ helper.trustFingerprintHook = () => {
 			{cancelable: false},
 		);
 	});
+};
+
+helper.trustFingerprintNameHook = async () => {
+	return `THU Info APP (${DeviceInfo.getDeviceNameSync()})`;
 };
