@@ -19,6 +19,8 @@ export default {
 	missingTwoFactorMethod:
 		"找不到想要的二次认证方式？前往https://id.tsinghua.edu.cn/ 绑定。",
 	twoFactorTrust: "是否将本设备标记为信任设备？",
+	twoFactorDevHitLimitTitle: "信任设备数量达到上限",
+	twoFactorDevHitLimitContent: "您的二次认证信任设备数量已达到上限，请前往 https://id.tsinghua.edu.cn/ 的 “多因子认证” 管理页面进行管理，删除部分不需要的设备后重试。点击“跳转”以转到管理页。",
 	slogan: "一次登录，处处畅行",
 	loggingIn: "正在登录中...",
 	forceLogin: "刷新 Web VPN 状态",
@@ -284,6 +286,7 @@ export default {
 	view: "查看",
 	accept: "接受",
 	decline: "拒绝",
+	go: "跳转",
 	configureDorm: "请登录清华家园网",
 	configureDormHint: "这个密码很可能是你入学前就设置好了的……",
 	email: "邮箱",

@@ -219,6 +219,13 @@ export class InfoHelper {
     public twoFactorAuthHook: (() => Promise<string | undefined>) | undefined = undefined;
 
     /**
+     * Invoked when 2FA over limit is detected.
+     *
+     * Override this value to customize.
+     */
+    public twoFactorAuthLimitHook: (() => Promise<void>) | undefined = undefined;
+
+    /**
      * Invoked when it has to be decided whether to trust the current fingerprint.
      *
      * Override this value to customize.

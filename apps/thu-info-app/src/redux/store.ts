@@ -30,7 +30,7 @@ import {
 	ReservationState,
 } from "./slices/reservation";
 import Snackbar from "react-native-snackbar";
-import {Alert, AppState, Platform, ToastAndroid} from "react-native";
+import { Alert, AppState, Linking, Platform, ToastAndroid } from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";
 import {
@@ -49,6 +49,7 @@ import {
 	defaultCampusCard,
 } from "./slices/campusCard";
 import { LoginError } from "@thu-info/lib/src/utils/error";
+import { getStr } from "../utils/i18n.ts";
 
 export const helper = new InfoHelper();
 
@@ -299,6 +300,31 @@ helper.twoFactorMethodHook = (hasWeChatBool: boolean, phone: string | null, hasT
 helper.twoFactorAuthHook = () => {
 	return new Promise<string | undefined>((resolve) => {
 		futures.twoFactorAuthFuture = resolve;
+	});
+};
+
+helper.twoFactorAuthLimitHook = () => {
+	return new Promise<void>((resolve) => {
+		Alert.alert(
+			getStr("twoFactorDevHitLimitTitle"),
+			getStr("twoFactorDevHitLimitContent"),
+			[
+				{
+					text: getStr("go"),
+					onPress: () => {
+						Linking.openURL("https://id.tsinghua.edu.cn/");
+						resolve();
+					},
+				},
+				{
+					text: getStr("ok"),
+					onPress: () => {
+						resolve();
+					},
+				},
+			],
+			{cancelable: false},
+		);
 	});
 };
 

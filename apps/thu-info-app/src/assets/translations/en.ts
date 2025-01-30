@@ -19,6 +19,8 @@ export default {
 	missingTwoFactorMethod:
 		"Missing 2FA method? Visit https://id.tsinghua.edu.cn/ to bind your 2FA devices.",
 	twoFactorTrust: "Do you want to mark this device as a trusted device?",
+	twoFactorDevHitLimitTitle: "2FA trusted devices limit reached",
+	twoFactorDevHitLimitContent: "You have reached the limit of trusted devices. Visit https://id.tsinghua.edu.cn/ and manage your trusted devices in \"Two-factor Authentication\" section. Press \"GO\" key to open the management page.",
 	slogan: "Login once, roam anywhere",
 	loggingIn: "Logging In...",
 	forceLogin: "Refresh WebVPN Session",
@@ -305,6 +307,7 @@ export default {
 	view: "View",
 	accept: "Accept",
 	decline: "Decline",
+	go: "GO",
 	configureDorm: "Login to myhome.tsinghua.edu.cn",
 	configureDormHint:
 		"This password was probably set even before you entered the school...",
