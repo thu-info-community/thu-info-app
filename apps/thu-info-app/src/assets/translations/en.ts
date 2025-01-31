@@ -571,7 +571,7 @@ export default {
 	network: "Network",
 	networkLogin: "Login Network Self-service System",
 	networkVerificationCode: "Verification Code",
-	networkVerificationCodeRefreshHint: "Press to refresh",
+	networkVerificationCodeRefreshHint: "Tap the image to refresh",
 	networkDetail: "Network Detail",
 	networkUsername: "Username",
 	networkRealName: "Real Name",

@@ -537,7 +537,7 @@ export default {
 	network: "校园网",
 	networkLogin: "登录网络自助服务平台",
 	networkVerificationCode: "验证码",
-	networkVerificationCodeRefreshHint: "轻按刷新",
+	networkVerificationCodeRefreshHint: "点击图片刷新",
 	networkDetail: "校园网详情",
 	networkUsername: "用户名",
 	networkRealName: "姓名",
