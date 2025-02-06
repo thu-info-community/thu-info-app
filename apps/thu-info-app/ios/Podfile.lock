@@ -1262,7 +1262,7 @@ PODS:
     - React-Core
   - react-native-pdf (6.7.6):
     - React-Core
-  - react-native-safe-area-context (5.1.0):
+  - react-native-safe-area-context (5.2.0):
     - React-Core
   - react-native-slider (4.5.5):
     - DoubleConversion
@@ -1624,7 +1624,7 @@ PODS:
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
-  - RNGestureHandler (2.22.1):
+  - RNGestureHandler (2.23.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2023,7 +2023,7 @@ SPEC CHECKSUMS:
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-pdf: 70ec85fc764070ce9324f5aea504795e889e6ba0
-  react-native-safe-area-context: 04803a01f39f31cc6605a5531280b477b48f8a88
+  react-native-safe-area-context: 849d7df29ecb2a7155c769c0b76849ba952c2aa3
   react-native-slider: d1358b33bc126281514fe480bb9a00c0aa9f9aac
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-view-shot: 9aea6ab99c8d81590d6b630d62a418ced77d1ed7
@@ -2060,7 +2060,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 03861ec2e1e46b20e51963c62c51dc288beb7c43
   RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
-  RNGestureHandler: a883459e2f268dde0af479e0d6e73bc8662a3502
+  RNGestureHandler: 5c2841d67f68abab3ca126f3588f029212647ed5
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNPermissions: 087fc4fffb8ef109b678fc793c46e4a280e71140
