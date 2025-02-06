@@ -1618,9 +1618,9 @@ PODS:
     - React-logger (= 0.77.0)
     - React-perflogger (= 0.77.0)
     - React-utils (= 0.77.0)
-  - RNCAsyncStorage (2.1.0):
+  - RNCAsyncStorage (2.1.1):
     - React-Core
-  - RNDeviceInfo (14.0.2):
+  - RNDeviceInfo (14.0.4):
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
@@ -1649,7 +1649,7 @@ PODS:
     - React
   - RNLocalize (3.4.1):
     - React-Core
-  - RNPermissions (5.2.4):
+  - RNPermissions (5.2.5):
     - React-Core
   - RNScreens (4.6.0):
     - DoubleConversion
@@ -2057,13 +2057,13 @@ SPEC CHECKSUMS:
   ReactAppDependencyProvider: 3d947e9d62f351c06c71497e1be897e6006dc303
   ReactCodegen: d37e41cb44d96314297f8f5cd0a43eb614f2268a
   ReactCommon: 6014af4276bb2debc350e2620ef1bd856b4d981c
-  RNCAsyncStorage: cc6479c4acd84cc7004946946c8afe30b018184d
-  RNDeviceInfo: 3f2e5fcca3637f75c6d30ba287293c2f97206781
+  RNCAsyncStorage: 03861ec2e1e46b20e51963c62c51dc288beb7c43
+  RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
   RNDeviceTimeFormat: a66bbc4c86e0e683c006b90095687c7bb351c983
   RNGestureHandler: a883459e2f268dde0af479e0d6e73bc8662a3502
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
-  RNPermissions: a732d15d51a24c2c78dd6d10ee336172c78bf6fd
+  RNPermissions: 087fc4fffb8ef109b678fc793c46e4a280e71140
   RNScreens: e9bb7c3063237983e75d01bb45ce591cc4e7afc2
   RNShare: 92af4eb158ab55614e973f9c9a217ba273029afa
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
