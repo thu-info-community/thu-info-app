@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-safearea-height/index.js b/node_modules/react-native-safearea-height/index.js
+index 5c0076e..b1e0ca5 100644
+--- a/node_modules/react-native-safearea-height/index.js
++++ b/node_modules/react-native-safearea-height/index.js
+@@ -136,6 +136,7 @@ export function getStatusBarHeight(skipAndroid) {
+   return Platform.select({
+     ios: statusBarHeight,
+     android: skipAndroid ? 0 : StatusBar.currentHeight,
++    harmony: StatusBar.currentHeight,
+     default: 0,
+   });
+ }
