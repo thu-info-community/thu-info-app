@@ -22,7 +22,7 @@
 		"@react-native-community/blur": "4.4.1",
 		"@react-native-community/slider": "4.5.5",
 		"@react-native-cookies/cookies": "6.2.1",
-		"@react-native-oh/react-native-harmony": "0.72.48-2",
+		"@react-native-oh/react-native-harmony": "0.72.53",
 		"@react-navigation/bottom-tabs": "7.2.0",
 		"@react-navigation/native": "7.0.14",
 		"@react-navigation/stack": "7.1.1",
