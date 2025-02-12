@@ -9705,10 +9705,10 @@ react-native-safe-area-context@5.2.0:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.2.0.tgz#60a9faab2a6319a61411a652ed862ec0f59384be"
   integrity sha512-QpcGA6MRKe8Zbpf1hirCBudNQYGsMv0n/CTTROMOFcXbqRUoEXLCsYxUmYKi7JJb3ziL2DbyzWXyH2/gw4Tkfw==
 
-react-native-safearea-height@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/react-native-safearea-height/-/react-native-safearea-height-1.0.7.tgz#244885abde94f4b01de30e806241b83858737a17"
-  integrity sha512-yAqk8z9/jWTLI2pchU42FO4uP7ih79SV1SQD3kHLlRZIoV45YAHoWvC7uDviwU4VcsE9fTxmSxR0d0lzjweiRg==
+react-native-safearea-height@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-safearea-height/-/react-native-safearea-height-1.0.8.tgz#efa2cecc2dfb2368288c435603ade3ee9c695479"
+  integrity sha512-nAACsA6HwbMI5zUKHUy4IOvqrohA2AFYB31Yhv6JOXbok6S7VOjOWJZNJx4dllECREon254Y2ZlqeVGUb2eqgQ==
 
 react-native-screens@4.6.0:
   version "4.6.0"
