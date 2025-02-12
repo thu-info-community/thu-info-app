@@ -379,7 +379,7 @@ export default {
 	LM_BM_207_FDYDWJS: "辅导员队伍建设",
 	LM_BM_203_XXDT: "信息动态",
 	LM_BM_211_BGTZ: "办公通知",
-	LM_BM_208_XYXW: "校园新闻",
+	LM_BM_211_XYXW: "校园新闻",
 	colonMark: "：",
 	slightPauseMark: "、",
 	addSubscription: "+  关注",
