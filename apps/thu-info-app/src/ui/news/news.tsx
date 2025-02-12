@@ -208,8 +208,8 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				setFetchedAll(false);
 			} else {
 				if (fetchedAll) {
-					setRefreshing(false);
 					setLoading(false);
+					setRefreshing(false);
 					return;
 				}
 				setPage((p) => p + 1);
@@ -233,8 +233,8 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					});
 				})
 				.then(() => {
-					setRefreshing(false);
 					setLoading(false);
+					setRefreshing(false);
 				});
 			return;
 		}
@@ -251,8 +251,8 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			}
 		} else {
 			if (fetchedAll) {
-				setRefreshing(false);
 				setLoading(false);
+				setRefreshing(false);
 				return;
 			}
 			setPage((p) => p + 1);
@@ -287,8 +287,8 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				});
 			})
 			.then(() => {
-				setRefreshing(false);
 				setLoading(false);
+				setRefreshing(false);
 			});
 	};
 
@@ -375,8 +375,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							style={{
 								flex: 0,
 								flexDirection: "row",
-								marginLeft: 28,
-								marginRight: 12,
+								marginHorizontal: 12,
 								alignItems: "center",
 							}}>
 							<TextInput
@@ -387,7 +386,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 									textAlignVertical: "center",
 									fontSize: 14,
 									paddingVertical: 4,
-									paddingLeft: 39,
+									paddingLeft: 36,
 									backgroundColor: theme.colors.themeBackground,
 									color: theme.colors.text,
 									borderColor: theme.colors.themePurple,
@@ -498,7 +497,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 			})()}
 			<FlatList
-				style={{flex: 1, margin: 12, marginBottom: 0}}
+				style={{flex: 1, paddingHorizontal: 12, marginVertical: 12, marginBottom: 0}}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
