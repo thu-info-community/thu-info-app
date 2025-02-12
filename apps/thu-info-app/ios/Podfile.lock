@@ -1260,7 +1260,7 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-pdf (6.7.6):
+  - react-native-pdf (6.7.7):
     - React-Core
   - react-native-safe-area-context (5.2.0):
     - React-Core
@@ -2022,7 +2022,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: ba6fe40e438f40415fdc16fec5cb72ef17b5c2ba
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
-  react-native-pdf: 70ec85fc764070ce9324f5aea504795e889e6ba0
+  react-native-pdf: 73accc61238e8e9bc6e376191225028af20b996e
   react-native-safe-area-context: 849d7df29ecb2a7155c769c0b76849ba952c2aa3
   react-native-slider: d1358b33bc126281514fe480bb9a00c0aa9f9aac
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
