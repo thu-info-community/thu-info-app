@@ -49,6 +49,10 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const adaptedHtml = `<head>
 		<meta name="viewport" content="width=100, initial-scale=1">
 		<style>
+			body {
+				padding: 10px;
+			}
+
 			* {
 				background-color: ${theme.colors.themeBackground} !important;
 				color: ${theme.colors.text} !important;
@@ -61,6 +65,24 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 			
 			a {
 				color: ${theme.colors.themePurple} !important;
+			}
+
+			img {
+				max-width: 100%;
+				height: auto !important;
+			}
+
+			p {
+				text-align: justify;
+			}
+
+			table {
+				max-width: 100%;
+				border-collapse: collapse;
+			}
+				
+			table, th, td {
+				border: 1px solid ${theme.colors.text} !important;
 			}
 		</style>
 	</head>
@@ -88,8 +110,11 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				)}
 			</View>
 			{refreshing && (
-				<View style={style.container}>
-					<ActivityIndicator size="large" color={theme.colors.primary} />
+				<View style={[
+					style.container,
+					{justifyContent: "center", alignItems: "center"},
+				]}>
+					<ActivityIndicator size="large" color={theme.colors.accent} />
 				</View>
 			)}
 		</>
@@ -100,7 +125,6 @@ const styles = themedStyles((theme) => ({
 	container: {
 		backgroundColor: theme.colors.themeBackground,
 		flex: 1,
-		padding: 15,
 		position: "absolute",
 		top: 0,
 		left: 0,

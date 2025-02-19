@@ -77,7 +77,8 @@ export default {
 	restartToApply: "Restart APP to apply changes.",
 	privacy: "Privacy",
 	privacyPolicy: "Privacy Policy",
-	privacyPolicyPrompt: "Please read and accept the privacy policy, or you will not be allowed to log in with the APP.",
+	privacyPolicyPrompt:
+		"Please read and accept the privacy policy, or you will not be allowed to log in with the APP.",
 	helpAndFeedback: "Help and Support",
 	feishuFeedback: "Questionnaire",
 	countdown: "Countdown",
@@ -204,8 +205,7 @@ export default {
 		"Login failed. Please go to Settings->Password Management to setup MyHome password, or try again later.",
 	credentialNote:
 		"Your credentials will only be stored locally and encrypted safely by system keychain/keystore.",
-	credentialNoteHarmony:
-		"Your credentials will only be stored locally.",
+	credentialNoteHarmony: "Your credentials will only be stored locally.",
 	myhomeLogin: "Login myhome",
 	myhomeLoginNote: "Login myhome to access dorm score and ele recharge.",
 	wrongPassword: "Wrong password.",
@@ -394,6 +394,16 @@ export default {
 	LM_BYJYXX: "Career Development Notification",
 	LM_JYZPXX: "Recruitment Information",
 	LM_XJ_GJZZSXRZ: "International Organization Internship and Recruitment",
+	LM_QRXX: "Weekly Infomation",
+	LM_DWJB: "Ministry News",
+	LM_BM_253_BSZN: "Procedures Guide",
+	LM_BM_253_XMTZ: "Project Notification",
+	LM_BM_254_JWGG: "Administrative Notification",
+	LM_BM_282_WKDT: "News of Arts",
+	LM_BM_207_FDYDWJS: "Counselor Team Building",
+	LM_BM_203_XXDT: "News and Information",
+	LM_BM_211_BGTZ: "Notification",
+	LM_BM_211_XYXW: "Campus News",
 	colonMark: ": ",
 	slightPauseMark: ", ",
 	addSubscription: "+ Subscription",
@@ -635,6 +645,7 @@ export default {
 	recentThreeMonths: "Recent 3 months",
 	noData: "No data",
 	enableNewUI: "Enable new UI",
-	scheduleNewUINotice: "With transparency background, which may affect readability",
+	scheduleNewUINotice:
+		"With transparency background, which may affect readability",
 	rechargeSuccess: "Recharge succeeded.",
 };

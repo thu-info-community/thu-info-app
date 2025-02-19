@@ -7,6 +7,7 @@ import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import Snackbar from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
+import md5 from "md5";
 
 export const NewsListItem = ({
 	item,
@@ -22,6 +23,8 @@ export const NewsListItem = ({
 	reloadFunc?: any;
 }) => {
 	const [inFav, setInFav] = useState(item.inFav);
+	const colorList: string[] = theme.colors.courseItemColorList;
+	const channelColor = colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
 
 	return (
 		<TouchableOpacity
@@ -81,7 +84,7 @@ export const NewsListItem = ({
 									height: 12,
 									width: 3,
 									borderRadius: 1.5,
-									backgroundColor: theme.colors.accent,
+									backgroundColor: channelColor,
 								}}
 							/>
 						</>
