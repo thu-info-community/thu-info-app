@@ -52,7 +52,7 @@
         "iconv-lite": "0.6.3",
         "image-size": "^1.0.1",
         "jsencrypt": "^3.3.2",
-        "jspdf": "^2.5.1",
+        "jspdf": "^3.0.0",
         "sm-crypto": "^0.3.13"
     },
     "devDependencies": {
