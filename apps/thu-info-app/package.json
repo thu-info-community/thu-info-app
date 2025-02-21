@@ -50,7 +50,7 @@
 		"react-native-pdf": "6.7.7",
 		"react-native-permissions": "5.2.5",
 		"react-native-polyfill-globals": "3.1.0",
-		"react-native-qrcode-svg": "6.3.14",
+		"react-native-qrcode-svg": "6.3.15",
 		"react-native-safe-area-context": "5.2.0",
 		"react-native-safearea-height": "1.0.8",
 		"react-native-screens": "4.8.0",
