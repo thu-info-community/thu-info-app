@@ -1651,7 +1651,7 @@ PODS:
     - React-Core
   - RNPermissions (5.2.5):
     - React-Core
-  - RNScreens (4.9.0):
+  - RNScreens (4.9.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2064,7 +2064,7 @@ SPEC CHECKSUMS:
   RNKeychain: 840f8e6f13be0576202aefcdffd26a4f54bfe7b5
   RNLocalize: 06991b9c31e7a898a9fa6ddb204ce0f53a967248
   RNPermissions: 087fc4fffb8ef109b678fc793c46e4a280e71140
-  RNScreens: 92045ed4a8d561352cebaa00a8c9f1a8fb80419b
+  RNScreens: de623eecde9991bf75034b80ff5b05b014f0ffdf
   RNShare: 388aa509809c6879949406504edb279eb3104a16
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   RNSVG: 4cbae6c6f0ef2b0aa277c5fce8447d3e4cd97cd0
