@@ -1,6 +1,5 @@
 /* eslint-disable quotes */
 import {jsPDF} from 'jspdf';
-import imageSize from "../utils/image-size";
 import {roamingWrapperWithMocks} from "./core";
 import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL} from "../constants/strings";
 import {SearchResultItem, SearchResult, BookChapter, BookDetail} from "../models/home/reserves-lib";
@@ -116,7 +115,7 @@ export const downloadChapters = async (chapters: BookChapter[], setCompletion?: 
         const config = configs[chap];
         for (let page = 1; page <= config.length; ++page) {
             const img = await (await fetch(`https://reserves.lib.tsinghua.edu.cn${config.url}files/mobile/${page}.jpg`)).arrayBuffer();
-            const size = imageSize(new Buffer(img)) as { width: number, height: number };
+            const size = undefined as never as { width: number, height: number };
             if (!doc) {
                 doc = new jsPDF({ format: [size.width, size.height], unit: 'px' });
             } else {
