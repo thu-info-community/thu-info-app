@@ -26,7 +26,7 @@
 		"@react-navigation/bottom-tabs": "7.2.1",
 		"@react-navigation/native": "7.0.15",
 		"@react-navigation/stack": "7.1.2",
-		"@reduxjs/toolkit": "2.6.0",
+		"@reduxjs/toolkit": "2.6.1",
 		"@thu-info/lib": "*",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
