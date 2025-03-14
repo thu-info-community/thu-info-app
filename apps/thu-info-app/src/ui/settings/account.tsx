@@ -1,7 +1,8 @@
 import {getStr} from "../../utils/i18n";
-import {State} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {useDispatch, useSelector} from "react-redux";
 import {
+	Alert,
 	Platform,
 	Switch,
 	Text,
@@ -15,6 +16,8 @@ import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
 import {configSet} from "../../redux/slices/config";
 import themes from "../../assets/themes/themes";
+import Snackbar from "react-native-snackbar";
+import {logout} from "../../redux/slices/auth.ts";
 
 export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -78,6 +81,37 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 							}}
 						/>
 					</View>
+				</RoundedView>
+			)}
+			{helper.mocked() && (
+				<RoundedView style={style.rounded}>
+					<TouchableOpacity
+						style={style.touchable}
+						onPress={() => {
+							Alert.alert(
+								getStr("deleteAccountConfirm"),
+								getStr("deleteAccountPrompt"),
+								[
+									{text: getStr("confirm"), onPress: () => {
+										helper.logout();
+										dispatch(logout());
+										navigation.pop();
+										setTimeout(() => {
+											Snackbar.show({
+												text: getStr("accountDeleted"),
+												duration: Snackbar.LENGTH_LONG,
+											});
+										}, 800);
+									}},
+									{text: getStr("cancel")},
+								]
+							);
+						}}>
+						<Text style={style.text}>{getStr("deleteAccount")}</Text>
+						<View style={{flexDirection: "row", alignItems: "center"}}>
+							<IconRight height={20} width={20} />
+						</View>
+					</TouchableOpacity>
 				</RoundedView>
 			)}
 		</View>
