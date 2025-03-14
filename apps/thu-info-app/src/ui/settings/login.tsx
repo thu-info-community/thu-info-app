@@ -104,7 +104,6 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<View style={style.container}>
 			<View style={style.absoluteContainer}>
-				<View style={{height: 80}} />
 				<IconMain width={108} height={108} />
 				<View style={{height: 20}} />
 				<View style={{flexDirection: "row", alignItems: "center"}}>
@@ -154,6 +153,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 				<Text style={style.credentialNoteStyle}>
 					{getStr(Platform.OS === "android" || Platform.OS === "ios" ? "credentialNote" : "credentialNoteHarmony")}
 				</Text>
+				<View style={{height: 80}} />
 				<TouchableOpacity onPress={() => navigation.navigate("FeishuFeedback")}>
 					<Text style={style.feedbackTextStyle}>
 						{getStr("feishuFeedback")}
