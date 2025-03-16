@@ -288,6 +288,9 @@ export const NETWORK_USER_INFO_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/users";
 export const NETWORK_ALLOWED_DEVICES_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/user/online-num";
+export const MADMODEL_BASE_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421fdf6459128346d5c300b9ae28c462a3b27469fc32211fa26a3e464";
+export const MADMODEL_AUTH_LOGIN_URL = `${MADMODEL_BASE_URL}/model-api/auth-login`;
 
 export const THOS_SELECT_ONE_URL = "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4/fp/fp/Uniformcommon/selectOnePresetData";
 

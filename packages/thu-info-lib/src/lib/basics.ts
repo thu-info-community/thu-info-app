@@ -693,6 +693,20 @@ export const getCalendarImageUrl = async (helper: InfoHelper, year: number, seme
         "",
     );
 
+export const getMadModelToken = async (helper: InfoHelper): Promise<string> =>
+    roamingWrapperWithMocks(
+        helper,
+        "id",
+        "d736f067a6705ab942df52f958a0f23b/0?/authLogin",
+        async (param) => {
+            if (param === undefined) {
+                throw new LibError("Please retry.");
+            }
+            return JSON.parse(param).data;
+        },
+        "",
+    );
+
 export const countdown = async (helper: InfoHelper): Promise<string[]> =>
     roamingWrapperWithMocks(
         helper,

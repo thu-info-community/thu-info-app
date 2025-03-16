@@ -5,3 +5,4 @@
 
 ## @thu-info/lib
 - 添加了信任设备超限回调函数和指纹名称回调函数
+- 新增 `getMadModelToken`

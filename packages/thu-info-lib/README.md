@@ -38,6 +38,7 @@ We support a wide range of APIs:
 - Network (`getNetworkVerificationImageUrl`, `loginUsereg`, `getOnlineDevices`, `getNetworkBalance`, `getNetworkAccountInfo`, `loginNetworkDevice`, `logoutNetworkDevice`)
 - THOS (`getScoreByCourseId`)
 - New Campus Card (`loginCampusCard`, `getCampusCardInfo`, `getCampusCardPhotoUrl`, `getCampusCardTransactions`, `changeCampusCardPassword`, `modifyCampusCardMaxTransactionAmount`, `reportCampusCardLoss`, `cancelCampusCardLoss`, `rechargeCampusCard`)
+- MadModel (`getMadModelToken`)
 
 Usages are documented in `dist/index` and also between the codes.
 

@@ -14,6 +14,7 @@ import {
     INVOICE_LOGIN_URL,
     LOGIN_URL,
     LOGOUT_URL,
+    MADMODEL_AUTH_LOGIN_URL,
     ROAMING_URL,
     SAVE_FINGER_URL,
     USER_DATA_URL,
@@ -54,6 +55,7 @@ const HOST_MAP: { [key: string]: string } = {
     "usereg": "77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73",
     "thos": "77726476706e69737468656265737421e4ff4e8f69247b59700f81b9991b2631ca359dd4",
     "zzjl.graduate": "77726476706e69737468656265737421eaed4b9069377a517a1d88b89d1b37269c624d2b1c6925f37faea82b8d",
+    "madmodel.cs": "77726476706e69737468656265737421fdf6459128346d5c300b9ae28c462a3b27469fc32211fa26a3e464",
 };
 
 const SM2_MAGIC_NUMBER = "04";
@@ -294,6 +296,15 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             return response;
         }
         const redirectUrl = cheerio.load(response)("a").attr()!.href;
+
+        if (redirectUrl.includes(HOST_MAP["madmodel.cs"])) {
+            const ticket = /ticket=(.+)/.exec(redirectUrl);
+            if (ticket === null || ticket[1] === undefined) {
+                throw new LibError("Failed to get ticket of madmodel.cs");
+            }
+            await uFetch(redirectUrl);
+            return await uFetch(`${MADMODEL_AUTH_LOGIN_URL}/check?ticket=${ticket[1]}`);
+        }
 
         return await uFetch(redirectUrl);
     }

@@ -17,6 +17,7 @@ import {
     getCalendarImageUrl, getSchoolCalendarYear,
     getGraduateIncome,
     getBankPaymentParellize,
+    getMadModelToken,
 } from "./lib/basics";
 import {forgetDevice, login, logout} from "./lib/core";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -462,6 +463,9 @@ export class InfoHelper {
      * Get the current countdown notifications from INFO.
      */
     public getCountdown = async (): Promise<string[]> => countdown(this);
+
+    public getMadModelToken = async (): Promise<string> =>
+        getMadModelToken(this);
 
     /**
      * Get the dorm score image, in base64 format.
