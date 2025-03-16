@@ -69,6 +69,7 @@ import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import {InfoHelper} from "@thu-info/lib";
+import IconDeepSeek from "../../assets/icons/IconDeepSeek";
 
 const iconSize = 40;
 
@@ -552,7 +553,8 @@ export type HomeFunction =
 	| "network"
 	| "networkDetail"
 	| "onlineDevices"
-	| "schoolCalendar";
+	| "schoolCalendar"
+    | "deepseek";
 
 const subFunctionLocked = () => {
 	const s = currState();
@@ -898,6 +900,16 @@ const getHomeFunctions = (
 		}}>
 		<IconCalendar width={iconSize} height={iconSize} />
 	</HomeIcon>,
+	<HomeIcon
+		key="deepseek"
+		title="deepseek"
+		onPress={() => {
+			addUsageStat(FunctionType.DeepSeek);
+			updateTop5("deepseek");
+			navigation.navigate("DeepSeek");
+		}}>
+		<IconDeepSeek width={iconSize} height={iconSize} />
+	</HomeIcon>,
 ];
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
@@ -964,6 +976,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	if (!(disabledList ?? []).includes("schoolCalendar" as HomeFunction)) {
 		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
 	}
+	needToShowFunctionNames.push("deepseek" as HomeFunction);
 
 	const top5Filtered = top5.filter(
 		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),

@@ -125,6 +125,7 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
+import {DeepSeek} from "../ui/home/deepseek.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
@@ -266,6 +267,7 @@ type HomeStackParamList = {
 	NetworkDetail: undefined;
 	OnlineDevices: undefined;
 	SchoolCalendar: undefined;
+	DeepSeek: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -783,6 +785,11 @@ export const Root = () => {
 				name="SchoolCalendar"
 				component={SchoolCalendar}
 				options={{title: getStr("schoolCalendar")}}
+			/>
+			<Stack.Screen
+				name="DeepSeek"
+				component={DeepSeek}
+				options={{title: getStr("deepseek")}}
 			/>
 			{/* News */}
 			<Stack.Screen

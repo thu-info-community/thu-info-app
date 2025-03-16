@@ -28,6 +28,7 @@ export enum FunctionType {
 	SchoolCalendar,
 	CampusCard,
 	Income,
+	DeepSeek,
 }
 
 export const addUsageStat = async (func: FunctionType) => {

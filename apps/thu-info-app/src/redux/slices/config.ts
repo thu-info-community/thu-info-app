@@ -43,6 +43,7 @@ export interface ConfigState {
 	fingerprintSecure: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
 	privacy312: boolean | undefined;
+	deepseekToken: string | undefined;
 }
 
 const initialState: ConfigState = {
@@ -84,6 +85,7 @@ const initialState: ConfigState = {
 	fingerprintSecure: false,
 	scheduleEnableNewUI: true,
 	privacy312: false,
+	deepseekToken: undefined,
 };
 
 export const defaultConfig = initialState;
