@@ -630,6 +630,7 @@ export default {
 	calendarNotFound: "Calendar not found",
 	deepseek: "DeepSeek",
 	askDeepSeekPrompt: "Please enter your question",
+	reasoningDone: "Reasoning done.",
 	loginTimeoutRetry: "Login timeout. Please retry later.",
 	ziJingDorm: "Zijing Building",
 	nanQuDorm: "Building",
