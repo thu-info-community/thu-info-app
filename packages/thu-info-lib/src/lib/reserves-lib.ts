@@ -1,12 +1,10 @@
 /* eslint-disable quotes */
-import {jsPDF} from 'jspdf';
 import {roamingWrapperWithMocks} from "./core";
 import {RESERVES_LIB_SEARCH, RESERVES_LIB_DETAIL} from "../constants/strings";
 import {SearchResultItem, SearchResult, BookChapter, BookDetail} from "../models/home/reserves-lib";
 import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
-import fetch from "cross-fetch";
 import {MOCK_RESERVES_LIB_SEARCH} from "../mocks/reserves-lib";
 import {LibError} from '../utils/error';
 
@@ -89,41 +87,7 @@ export const bookDetail = (helper: InfoHelper, bookId: string): Promise<BookDeta
         undefined,
     );
 
-export const downloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void): Promise<jsPDF> => {
-    const chapterExp = /\/http\/77726476706e69737468656265737421e2f2529935266d43300480aed641303c455d43259619a3eaf6eebb99(.*)index.html/;
-    const pageCountExp = /bookConfig.totalPageCount=(.*?);/;
-    const configs = await Promise.all(
-        chapters.map(async (chap) => ({
-            url: chapterExp.exec(chap.href)?.[1] as string,
-            length: Number(
-                pageCountExp.exec(
-                    await (
-                        await fetch(
-                            `https://reserves.lib.tsinghua.edu.cn${chapterExp.exec(chap.href)?.[1] as string}mobile/javascript/config.js`
-                        )
-                    ).text()
-                )?.[1]
-            ),
-        }))
-    );
-    let doc: jsPDF | undefined = undefined;
-    const total = configs.map((config) => config.length).reduce((a, b) => a + b);
-    let complete = 0;
-    setCompletion && setCompletion(total, complete);
-    // 减小并发
-    for (let chap = 0; chap < configs.length; ++chap) {
-        const config = configs[chap];
-        for (let page = 1; page <= config.length; ++page) {
-            const img = await (await fetch(`https://reserves.lib.tsinghua.edu.cn${config.url}files/mobile/${page}.jpg`)).arrayBuffer();
-            const size = undefined as never as { width: number, height: number };
-            if (!doc) {
-                doc = new jsPDF({ format: [size.width, size.height], unit: 'px' });
-            } else {
-                doc.addPage([size.width, size.height]);
-            }
-            doc.addImage(new Uint8Array(img), 'JPEG', 0, 0, size.width, size.height);
-            setCompletion && setCompletion(total, ++complete);
-        }
-    }
-    return doc as jsPDF;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const downloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void): Promise<void> => {
+    throw new LibError("downloadChapters is deprecated.");
 };
