@@ -598,6 +598,8 @@ export default {
 	askDeepSeekPrompt: "想聊些什么呀？",
 	reasoningDone: "已深度思考",
 	loginTimeoutRetry: "登录超时，请重试",
+	newConversation: "新对话",
+	alreadyLatestChat: "已经是最新对话了",
 	ziJingDorm: "紫荆公寓",
 	nanQuDorm: "南区宿舍",
 	shuangQingDorm: "双清公寓",

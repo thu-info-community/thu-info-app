@@ -9,11 +9,15 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import IconAdd from "../../assets/icons/IconAdd.tsx";
+import IconHamburgerMenu from "../../assets/icons/IconHamburgerMenu.tsx";
+import IconSend from "../../assets/icons/IconSend.tsx";
 import EventSource from "react-native-sse";
+import {v4 as uuidv4} from "uuid";
+import Markdown from "react-native-markdown-display";
 import { helper, State } from "../../redux/store.ts";
 import { MADMODEL_AUTH_LOGIN_URL, MADMODEL_BASE_URL } from "@thu-info/lib/src/constants/strings.ts";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +32,12 @@ import {getStatusBarHeight} from "react-native-safearea-height";
 interface Message {
 	role: "system" | "user" | "assistant" | "tool";
 	content: string;  // We currently do not support multi-modal.
+}
+
+interface Conversation {
+	id: string;
+	title: string;
+	messages: Message[];
 }
 
 const splitReasoning = (answer: string): [string, string] => {
@@ -47,16 +57,25 @@ const splitReasoning = (answer: string): [string, string] => {
 
 const models = ["DeepSeek-R1-Distill-32B", "DeepSeek-R1-671B"];
 
+const newConversation = (): Conversation => ({
+	id: uuidv4(),
+	title: getStr("newConversation"),
+	messages: [],
+});
+
 export const DeepSeek = () => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [model, setModel] = useState<string>(models[0]);
-	const [messages, setMessages] = useState<Message[]>([]);
+	const [conversation, setConversation] = useState<Conversation>(newConversation());
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const {deepseekToken} = useSelector((s: State) => s.config);
 	const dispatch = useDispatch();
+
+	const inputRef = useRef<TextInput>(null);
 
 	const headerHeight = useHeaderHeight();
 
@@ -83,6 +102,17 @@ export const DeepSeek = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const createConversation = () => {
+		setConversation(prev => {
+			if (prev.messages.length === 0) {
+				Snackbar.show({text: getStr("alreadyLatestChat"), duration: Snackbar.LENGTH_SHORT});
+			}
+			return newConversation();
+		});
+		setSidebarOpen(false);
+		inputRef.current?.focus();
+	};
+
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -94,9 +124,16 @@ export const DeepSeek = () => {
 				padding: 4,
 				alignItems: "center",
 			}}>
+				<TouchableOpacity
+					style={{flex: 0, alignItems: "center", justifyContent: "center", padding: 4}}
+					onPress={() => {
+						setSidebarOpen(true);
+					}}>
+					<IconHamburgerMenu height={24} width={24} />
+				</TouchableOpacity>
 				<View style={{flex: 1}}>
-					{messages.length > 0 ? (<Text style={{ color: colors.text, textAlign: "center"}}>
-						对话主题
+					{conversation.messages.length > 0 ? (<Text style={{ color: colors.text, textAlign: "center"}}>
+						{conversation.title}
 					</Text>) : (<TouchableOpacity style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}} onPress={() => setOpen(true)}>
 						<Text
 							style={{color: open ? colors.primary : colors.fontB2}}>
@@ -113,9 +150,7 @@ export const DeepSeek = () => {
 				</View>
 				<TouchableOpacity
 					style={{flex: 0, alignItems: "center", justifyContent: "center", padding: 4}}
-					onPress={() => {
-						setMessages([]);
-					}}>
+					onPress={createConversation}>
 					<IconAdd height={24} width={24} />
 				</TouchableOpacity>
 				<Modal visible={open} transparent>
@@ -173,9 +208,9 @@ export const DeepSeek = () => {
 					</TouchableOpacity>
 				</Modal>
 			</View>
-			<FlatList style={{margin: 16}} data={messages} renderItem={({item}) => {
+			<FlatList style={{margin: 16}} data={conversation.messages} renderItem={({item}) => {
 				if (item.role === "user") {
-					return <View style={{
+					return <View style={{flexDirection: "row", justifyContent: "flex-end"}}><View style={{
 						backgroundColor: colors.themeTransparentPurple,
 						paddingVertical: 8,
 						paddingHorizontal: 4,
@@ -183,9 +218,9 @@ export const DeepSeek = () => {
 						marginVertical: 4,
 					}}>
 						<Text style={{color: colors.text}}>{item.content}</Text>
-					</View>;
+					</View></View>;
 				} else if (item.role === "assistant") {
-					const [reasoning, answer] = splitReasoning(item.content)
+					const [reasoning, answer] = splitReasoning(item.content);
 					return <View style={{
 						flexDirection: "row",
 						marginVertical: 4,
@@ -200,19 +235,21 @@ export const DeepSeek = () => {
 								<View style={{height: "100%", width: 2, backgroundColor: colors.fontB3}}/>
 								<Text style={{color: colors.fontB3, marginLeft: 8}}>{reasoning}</Text>
 							</View>}
-							{answer.trim().length > 0 && <Text style={{color: colors.text}}>{answer}</Text>}
+							{answer.trim().length > 0 && <Markdown>{answer}</Markdown>}
 						</View>
 					</View>;
 				} else {
 					return null;
 				}
-			}} />
+			}}
+				ListEmptyComponent={<View><Text style={{color: colors.text, fontSize: 24}}>deepseekWelcomeText</Text></View>} />
 			<View style={{
 				flex: 0,
 				flexDirection: "row",
 				alignItems: "center",
 			}}>
 				<TextInput
+					ref={inputRef}
 					value={input}
 					onChangeText={setInput}
 					style={{
@@ -239,16 +276,22 @@ export const DeepSeek = () => {
 						if (input.trim() === "" || generating) {
 							return;
 						}
-						setMessages((prev) => prev.concat({
-							role: "user",
-							content: input.trim(),
+						setConversation((prev) => ({
+							...prev,
+							messages: prev.messages.concat({
+								role: "user",
+								content: input.trim(),
+							}),
 						}));
 						setInput("");
 						setGenerating(true);
 						try {
-							setMessages((prev) => prev.concat({
-								role: "assistant",
-								content: "",
+							setConversation((prev) => ({
+								...prev,
+								messages: prev.messages.concat({
+									role: "assistant",
+									content: "",
+								}),
 							}));
 							const es = new EventSource(
 								`${MADMODEL_BASE_URL}/v1/chat/completions`,
@@ -261,7 +304,7 @@ export const DeepSeek = () => {
 									body: JSON.stringify({
 										model,
 										messages: [
-											...messages.map((message) => message.role === "assistant" ? {...message, content: splitReasoning(message.content)[1]} : message),
+											...conversation.messages.map((message) => message.role === "assistant" ? {...message, content: splitReasoning(message.content)[1]} : message),
 											{
 												role: "user",
 												content: input.trim(),
@@ -282,9 +325,12 @@ export const DeepSeek = () => {
 										} else {
 											const value = JSON.parse(event.data);
 											if (value.errorMessage) {
-												setMessages((prev) => prev.slice(0, prev.length - 1).concat({
-													role: "assistant",
-													content: prev[prev.length - 1].content + value.errorMessage,
+												setConversation((prev) => ({
+													...prev,
+													messages: prev.messages.slice(0, prev.messages.length - 1).concat({
+														role: "assistant",
+														content: prev.messages[prev.messages.length - 1].content + value.errorMessage,
+													}),
 												}));
 												resolve();
 												return;
@@ -295,9 +341,12 @@ export const DeepSeek = () => {
 											}
 											const delta = choice.delta;
 											if (delta.content != null) {
-												setMessages((prev) => prev.slice(0, prev.length - 1).concat({
-													role: "assistant",
-													content: prev[prev.length - 1].content + delta.content,
+												setConversation((prev) => ({
+													...prev,
+													messages: prev.messages.slice(0, prev.messages.length - 1).concat({
+														role: "assistant",
+														content: prev.messages[prev.messages.length - 1].content + delta.content,
+													}),
 												}));
 											}
 										}
@@ -323,9 +372,40 @@ export const DeepSeek = () => {
 							setGenerating(false);
 						}
 					}}>
-					<IconAdd height={18} width={18} />
+					<IconSend height={18} width={18} color={input.trim() === "" || generating ? colors.themeGrey : colors.primary} />
 				</TouchableOpacity>
 			</View>
+			<Modal visible={sidebarOpen} transparent>
+				<TouchableOpacity
+					style={{
+						width: "100%",
+						height: "100%",
+					}}
+					onPress={() => setSidebarOpen(false)}>
+					<View
+						style={{
+							position: "absolute",
+							backgroundColor: colors.text,
+							opacity: 0.3,
+							width: "100%",
+							height: "100%",
+						}}
+					/>
+					<View
+						style={{
+							position: "absolute",
+							backgroundColor: colors.contentBackground,
+							width: "62%",
+							height: "100%",
+						}}>
+						<TouchableOpacity
+							style={{alignSelf: "flex-end", alignItems: "center", justifyContent: "center", padding: 4, margin: 4}}
+							onPress={createConversation}>
+							<IconAdd height={24} width={24} />
+						</TouchableOpacity>
+					</View>
+				</TouchableOpacity>
+			</Modal>
 		</KeyboardAvoidingView>
 	);
 };

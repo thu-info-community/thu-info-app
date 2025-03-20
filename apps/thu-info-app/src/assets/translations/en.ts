@@ -632,6 +632,8 @@ export default {
 	askDeepSeekPrompt: "Please enter your question",
 	reasoningDone: "Reasoning done.",
 	loginTimeoutRetry: "Login timeout. Please retry later.",
+	newConversation: "New Conversation",
+	alreadyLatestChat: "We are already on the latest chat.",
 	ziJingDorm: "Zijing Building",
 	nanQuDorm: "Building",
 	shuangQingDorm: "Shuangqing Apartment",
