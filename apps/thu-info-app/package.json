@@ -89,7 +89,7 @@
 		"@react-native/typescript-config": "0.78.1",
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.5",
-		"@types/react": "18.3.18",
+		"@types/react": "18.3.19",
 		"@types/react-test-renderer": "19.0.0",
 		"@types/semver": "7.5.8",
 		"babel-plugin-transform-remove-console": "6.9.4",
