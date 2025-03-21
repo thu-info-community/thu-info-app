@@ -26,6 +26,7 @@ export const HomeIcon = ({
 				flexShrink: 0,
 				flexBasis: "20%",
 			}}
+			testID={`HomeIcon-${title}`}
 			onPress={onPress}>
 			{children}
 			<Text
