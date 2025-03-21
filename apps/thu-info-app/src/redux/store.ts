@@ -50,6 +50,7 @@ import {
 } from "./slices/campusCard";
 import { LoginError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
+import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 
 export const helper = new InfoHelper();
 
@@ -106,6 +107,7 @@ export interface State {
 	campusCard: CampusCardState;
 	timetable: TimetableState;
 	announcement: AnnouncementState;
+	deepseek: DeepseekState;
 }
 
 const rootReducer = combineReducers({
@@ -132,6 +134,7 @@ const rootReducer = combineReducers({
 	campusCard: campusCardReducer,
 	timetable: timetableReducer,
 	announcement: announcementReducer,
+	deepseek: deepseekReducer,
 });
 
 const authTransform = createTransform(
@@ -237,6 +240,7 @@ const persistConfig = {
 						campusCard: state.campusCard ?? defaultCampusCard,
 						timetable: state.timetable ?? defaultTimetable,
 						announcement: state.announcement ?? defaultAnnouncement,
+						deepseek: state.deepseek ?? defaultDeepseek,
 						// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  },
 		),

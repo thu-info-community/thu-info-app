@@ -28,13 +28,14 @@ import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-safearea-height";
+import { updateHistory } from "../../redux/slices/deepseek.ts";
 
-interface Message {
+export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
 	content: string;  // We currently do not support multi-modal.
 }
 
-interface Conversation {
+export interface Conversation {
 	id: string;
 	title: string;
 	messages: Message[];
@@ -70,9 +71,11 @@ export const DeepSeek = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [model, setModel] = useState<string>(models[0]);
 	const [conversation, setConversation] = useState<Conversation>(newConversation());
+	const [searchKey, setSearchKey] = useState("");
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const {deepseekToken} = useSelector((s: State) => s.config);
+	const {history} = useSelector((s: State) => s.deepseek);
 	const dispatch = useDispatch();
 
 	const inputRef = useRef<TextInput>(null);
@@ -276,13 +279,17 @@ export const DeepSeek = () => {
 						if (input.trim() === "" || generating) {
 							return;
 						}
-						setConversation((prev) => ({
-							...prev,
-							messages: prev.messages.concat({
-								role: "user",
-								content: input.trim(),
-							}),
-						}));
+						setConversation((prev) => {
+							const next = {
+								...prev,
+								messages: prev.messages.concat({
+									role: "user",
+									content: input.trim(),
+								}),
+							};
+							dispatch(updateHistory(next));
+							return next;
+						});
 						setInput("");
 						setGenerating(true);
 						try {
@@ -370,6 +377,10 @@ export const DeepSeek = () => {
 							});
 						} finally {
 							setGenerating(false);
+							setConversation((prev) => {
+								dispatch(updateHistory(prev));
+								return prev;
+							});
 						}
 					}}>
 					<IconSend height={18} width={18} color={input.trim() === "" || generating ? colors.themeGrey : colors.primary} />
@@ -395,14 +406,57 @@ export const DeepSeek = () => {
 						style={{
 							position: "absolute",
 							backgroundColor: colors.contentBackground,
+							paddingHorizontal: 18,
 							width: "62%",
 							height: "100%",
 						}}>
 						<TouchableOpacity
-							style={{alignSelf: "flex-end", alignItems: "center", justifyContent: "center", padding: 4, margin: 4}}
+							style={{alignSelf: "flex-end", alignItems: "center", justifyContent: "center", flex: 0, padding: 4, marginVertical: 4}}
 							onPress={createConversation}>
 							<IconAdd height={24} width={24} />
 						</TouchableOpacity>
+						<View
+							style={{
+								flex: 0,
+								flexDirection: "row",
+								alignItems: "center",
+							}}>
+							<TextInput
+								value={searchKey}
+								onChangeText={setSearchKey}
+								style={{
+									flex: 1,
+									textAlignVertical: "center",
+									fontSize: 14,
+									marginVertical: 4,
+									paddingVertical: 4,
+									paddingHorizontal: 18,
+									backgroundColor: colors.themeBackground,
+									color: colors.text,
+									borderColor: colors.themePurple,
+									borderWidth: 1.5,
+									borderRadius: 18,
+								}}
+								placeholder={getStr("search")}
+								placeholderTextColor={colors.fontB3}
+							/>
+						</View>
+						<Text style={{color: colors.fontB2, margin: 4, marginTop: 8}}>{getStr("deepseekLocalStorageNotice")}</Text>
+						<FlatList
+							style={{flex: 1, marginTop: 8}}
+							data={history}
+							renderItem={({item}) => (<TouchableOpacity
+								style={{
+									padding: 4,
+								}}
+								onPress={() => {
+									setConversation(item);
+								}}
+							>
+								<Text style={{color: colors.text}}>{item.title}</Text>
+							</TouchableOpacity>)}
+							keyExtractor={(item) => item.id}
+						/>
 					</View>
 				</TouchableOpacity>
 			</Modal>

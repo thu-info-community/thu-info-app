@@ -634,6 +634,7 @@ export default {
 	loginTimeoutRetry: "Login timeout. Please retry later.",
 	newConversation: "New Conversation",
 	alreadyLatestChat: "We are already on the latest chat.",
+	deepseekLocalStorageNotice: "Conversations are stored locally.",
 	ziJingDorm: "Zijing Building",
 	nanQuDorm: "Building",
 	shuangQingDorm: "Shuangqing Apartment",
