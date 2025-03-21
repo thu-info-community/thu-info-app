@@ -130,10 +130,12 @@ import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
 import { NetworkLoginScreen } from "../ui/home/networkLogin.tsx";
+import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
 
 type RootTabParamList = {
 	HomeTab: undefined;
 	NewsTab: undefined;
+	DeepSeekTab: undefined;
 	ScheduleTab: undefined;
 	SettingsTab: undefined;
 };
@@ -163,6 +165,9 @@ const RootTabs = () => {
 						case "NewsTab": {
 							return <IconNewsTab size={size} active={focused} />;
 						}
+						case "DeepSeekTab": {
+							return <IconDeepSeekTab size={size} active={focused} />;
+						}
 						case "ScheduleTab": {
 							return <IconScheduleTab size={size} active={focused} />;
 						}
@@ -187,6 +192,11 @@ const RootTabs = () => {
 				name="NewsTab"
 				component={NewsScreen}
 				options={{title: getStr("news"), headerShown: false}}
+			/>
+			<Tab.Screen
+				name="DeepSeekTab"
+				component={DeepSeek}
+				options={{title: getStr("deepseek"), headerShown: false}}
 			/>
 			<Tab.Screen
 				name="ScheduleTab"
@@ -267,7 +277,6 @@ type HomeStackParamList = {
 	NetworkDetail: undefined;
 	OnlineDevices: undefined;
 	SchoolCalendar: undefined;
-	DeepSeek: undefined;
 };
 
 export type FormRouteProp = RouteProp<HomeStackParamList, "Form">;
@@ -336,6 +345,10 @@ export type NewsDetailRouteProp = RouteProp<NewsStackParamList, "NewsDetail">;
 
 export type NewsFavRouteProp = RouteProp<NewsStackParamList, "NewsFav">;
 
+type DeepSeekStackParamList = {
+	DeepSeek: undefined;
+};
+
 type ScheduleStackParamList = {
 	ScheduleAdd: ScheduleDetailProps | undefined;
 	ScheduleHidden: undefined;
@@ -389,6 +402,7 @@ export type DigitalPasswordRouteProp = RouteProp<
 
 export type RootStackParamList = {RootTabs: undefined} & HomeStackParamList &
 	NewsStackParamList &
+	DeepSeekStackParamList &
 	ScheduleStackParamList &
 	SettingsStackParamList;
 
@@ -786,11 +800,6 @@ export const Root = () => {
 				component={SchoolCalendar}
 				options={{title: getStr("schoolCalendar")}}
 			/>
-			<Stack.Screen
-				name="DeepSeek"
-				component={DeepSeek}
-				options={{title: getStr("deepseek")}}
-			/>
 			{/* News */}
 			<Stack.Screen
 				name="NewsDetail"
@@ -865,6 +874,12 @@ export const Root = () => {
 				name={"NewsSubChannelSelect"}
 				component={NewsSubChannelSelectScreen}
 				options={{title: getStr("newsSubChannelSelect")}}
+			/>
+			{/* DeepSeek */}
+			<Stack.Screen
+				name="DeepSeek"
+				component={DeepSeek}
+				options={{title: getStr("deepseek")}}
 			/>
 			{/* Schedule */}
 			<Stack.Screen

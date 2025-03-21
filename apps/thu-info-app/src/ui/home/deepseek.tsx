@@ -119,8 +119,7 @@ export const DeepSeek = () => {
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={120}
-			style={{flex: 1, flexDirection: "column"}}>
+			style={{flex: 1, paddingTop: getStatusBarHeight(), flexDirection: "column"}}>
 			<View style={{
 				flexDirection: "row",
 				height: 40,
