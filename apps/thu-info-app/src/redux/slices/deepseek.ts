@@ -16,7 +16,7 @@ export const deepseekSlice = createSlice({
 	name: "deepseek",
 	initialState,
 	reducers: {
-		updateHistory: (state, {payload}: PayloadAction<Conversation>) => {
+		deepseekUpdateHistory: (state, {payload}: PayloadAction<Conversation>) => {
 			const index = state.history.findIndex(conversation => conversation.id === payload.id);
 			if (index >= 0) {
 				state.history[index] = payload;
@@ -24,9 +24,12 @@ export const deepseekSlice = createSlice({
 				state.history.splice(0, 0, payload);
 			}
 		},
+		deepseekClear: (state: DeepseekState) => {
+			state.history = [];
+		},
 	},
 });
 
-export const {updateHistory} = deepseekSlice.actions;
+export const {deepseekUpdateHistory, deepseekClear} = deepseekSlice.actions;
 
 export const deepseekReducer = deepseekSlice.reducer;

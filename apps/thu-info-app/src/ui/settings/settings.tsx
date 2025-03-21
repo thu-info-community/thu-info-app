@@ -28,6 +28,7 @@ import {
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
+import { deepseekClear } from "../../redux/slices/deepseek.ts";
 
 const performLogout = () => {
 	helper
@@ -184,6 +185,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										dispatch(logout());
 										dispatch(setDormPassword(""));
 										dispatch(scheduleClear());
+										dispatch(deepseekClear());
 										dispatch(setActiveLibBookRecord([]));
 										dispatch(setActiveSportsReservationRecord([]));
 										dispatch(setBalance(0));

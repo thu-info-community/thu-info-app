@@ -28,7 +28,7 @@ import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-safearea-height";
-import { updateHistory } from "../../redux/slices/deepseek.ts";
+import { deepseekUpdateHistory } from "../../redux/slices/deepseek.ts";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -286,7 +286,7 @@ export const DeepSeek = () => {
 									content: input.trim(),
 								}),
 							};
-							dispatch(updateHistory(next));
+							dispatch(deepseekUpdateHistory(next));
 							return next;
 						});
 						setInput("");
@@ -377,7 +377,7 @@ export const DeepSeek = () => {
 						} finally {
 							setGenerating(false);
 							setConversation((prev) => {
-								dispatch(updateHistory(prev));
+								dispatch(deepseekUpdateHistory(prev));
 								return prev;
 							});
 						}
