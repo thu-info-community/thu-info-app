@@ -1671,8 +1671,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNKeychain (4.0.5):
-    - React
+  - RNKeychain (10.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNLocalize (3.4.1):
     - React-Core
   - RNPermissions (5.3.0):
@@ -2087,7 +2106,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: d863506092aef7e7af3a1c350c913d867d795047
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
   RNGestureHandler: 9f3109e11ed88fe5bed280bf7762b25e4c52f396
-  RNKeychain: ffd0513e676445c637410b47249460cbf56bc9cb
+  RNKeychain: 8024819eb861575c8e1bdcfc6e02c2b947ed16f7
   RNLocalize: 15463c4d79c7da45230064b4adcf5e9bb984667e
   RNPermissions: be04ef7b412d8fdca6d6cab368263e92f8cb189d
   RNScreens: 90e2348b58c6160a8c057436f9ece62d5b21e37b
