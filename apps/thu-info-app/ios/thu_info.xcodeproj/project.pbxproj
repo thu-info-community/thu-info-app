@@ -8,11 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* thu_infoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* thu_infoTests.m */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		57B92B80AE971F6909E47DF5 /* libPods-thu_info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 218D1AD92244712A33494ECE /* libPods-thu_info.a */; };
+		95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D69E112D92B04800E89447 /* AppDelegate.swift */; };
 		BDDADECCD2D2E251B470FCFC /* libPods-thu_info-thu_infoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 903F46B539522F11A683B599 /* libPods-thu_info-thu_infoTests.a */; };
 		F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F311085F24DAC95B00D20197 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
@@ -33,12 +32,9 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* thu_infoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = thu_infoTests.m; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* thu_info.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = thu_info.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = thu_info/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = thu_info/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = thu_info/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = thu_info/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = thu_info/main.m; sourceTree = "<group>"; };
 		180A811AF1DE4EFD89C0E259 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		208215A885294AEA8C48EAC4 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		218D1AD92244712A33494ECE /* libPods-thu_info.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-thu_info.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,6 +52,7 @@
 		903F46B539522F11A683B599 /* libPods-thu_info-thu_infoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-thu_info-thu_infoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		914A3326A08A41E7A0671969 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = thu_info/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		95D69E112D92B04800E89447 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B670C55A829F35BD67127FE4 /* Pods-thu_info-thu_infoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-thu_info-thu_infoTests.debug.xcconfig"; path = "Target Support Files/Pods-thu_info-thu_infoTests/Pods-thu_info-thu_infoTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D12476EB077346729CF67BF3 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		DA430ABA7860579CD9215FC3 /* Pods-thu_info.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-thu_info.debug.xcconfig"; path = "Target Support Files/Pods-thu_info/Pods-thu_info.debug.xcconfig"; sourceTree = "<group>"; };
@@ -109,14 +106,12 @@
 		13B07FAE1A68108700A75B9A /* thu_info */ = {
 			isa = PBXGroup;
 			children = (
+				95D69E112D92B04800E89447 /* AppDelegate.swift */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				F311085F24DAC95B00D20197 /* InfoPlist.strings */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */,
 			);
 			name = thu_info;
@@ -259,7 +254,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = F3D2L9HSSK;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1620;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -486,8 +481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,10 +689,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -762,10 +753,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

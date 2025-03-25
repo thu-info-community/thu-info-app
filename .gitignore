@@ -36,6 +36,7 @@ local.properties
 *.jks
 *.keystore
 !debug.keystore
+.kotlin/
 
 # Visual Studio Code
 #
