@@ -66,6 +66,7 @@ export interface ScheduleDetailProps {
 	end: number | string;
 	alias: string;
 	type: ScheduleType;
+	activeWeeks?: number[];
 }
 
 export const ScheduleDetailScreen = ({

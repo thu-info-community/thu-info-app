@@ -514,7 +514,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												height: 40,
 												flexDirection: "row",
 											}}>
-											{Array.from(new Array(hideWeekend ? 5 : 7 )).map((_, index) => (
+											{Array.from(new Array(hideWeekend ? 5 : 7)).map((_, index) => (
 												<View
 													style={{
 														flex: 1,
@@ -596,6 +596,15 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																	end: slice.end,
 																	alias: shortenMap[val.name] ?? "",
 																	type: val.type,
+																	activeWeeks: val.activeTime.base
+																		.map((v) =>
+																			v.dayOfWeek === slice.dayOfWeek &&
+																			v.begin === slice.begin &&
+																			v.end === slice.end
+																				? v.activeWeeks
+																				: [],
+																		)
+																		.flat(),
 																});
 															}}
 														/>
