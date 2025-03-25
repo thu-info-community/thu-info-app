@@ -89,5 +89,5 @@ export const bookDetail = (helper: InfoHelper, bookId: string): Promise<BookDeta
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const downloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void): Promise<void> => {
-    throw new LibError("downloadChapters is deprecated.");
+    throw new LibError("downloadChapters is obsolete.");
 };
