@@ -63,11 +63,15 @@ export const ScheduleAddScreen = ({
 	const dispatch = useDispatch();
 
 	const [weeks, setWeeks] = useState(
-		Array.from(new Array(weekCount), (_, k) => k + 1),
+		params?.activeWeeks
+			? params.activeWeeks
+			: Array.from(new Array(weekCount), (_, k) => k + 1),
 	);
 
-	const [popupWeeks, setPopupWeeks] = useState<number[]>(
-		Array.from(new Array(weekCount), (_, k) => k + 1),
+	const [popupWeeks, setPopupWeeks] = useState(
+		params?.activeWeeks
+			? params.activeWeeks
+			: Array.from(new Array(weekCount), (_, k) => k + 1),
 	);
 
 	const popupIsAllOdd =
@@ -88,17 +92,21 @@ export const ScheduleAddScreen = ({
 
 	const popupIsEmptyWeeks = String([...popupWeeks]) === String([]);
 
-	const [day, setDay] = useState(1);
-	const [popupDay, setPopupDay] = useState(1);
+	const [day, setDay] = useState(params?.dayOfWeek ?? 1);
+	const [popupDay, setPopupDay] = useState(params?.dayOfWeek ?? 1);
 
-	const [periodBegin, setPeriodBegin] = useState(1);
-	const [periodEnd, setPeriodEnd] = useState(14);
+	const [periodBegin, setPeriodBegin] = useState(params ? Number(params.begin) : 1);
+	const [periodEnd, setPeriodEnd] = useState(params ? Number(params?.end) : 14);
 
-	const [popupPeriodBegin, setPopupPeriodBegin] = useState(1);
-	const [popupPeriodEnd, setPopupPeriodEnd] = useState(14);
+	const [popupPeriodBegin, setPopupPeriodBegin] = useState(params ? Number(params?.begin) : 1);
+	const [popupPeriodEnd, setPopupPeriodEnd] = useState(params ? Number(params?.end) : 14);
 
 	const [title, setTitle] = useState(params?.alias ?? "");
 	const [locale, setLocale] = useState(params?.location ?? "");
+
+	// Prepare for modify custom schedule's time
+	// const timeEditable = (params && params?.type !== ScheduleType.CUSTOM) || false;
+	const timeEditable = params !== undefined;
 
 	const valid =
 		(title.trim().length > 0 || params !== undefined) && weeks.length > 0;
@@ -121,18 +129,33 @@ export const ScheduleAddScreen = ({
 								dispatch(scheduleUpdateAlias([params.name, title]));
 							}
 							dispatch(scheduleUpdateLocation([params.name, locale]));
-							// TODO: 要允许修改计划的时间
-							navigation.navigate("ScheduleDetail", {
-								...params,
-								alias: title,
-								location: locale,
-							});
-							return;
+
+							if (
+								// 时间没有变化
+								day === params.dayOfWeek &&
+								periodBegin === Number(params.begin) &&
+								periodEnd === Number(params.end) &&
+								weeks.length === params.activeWeeks?.length &&
+								weeks.every(
+									(val, idx) =>
+										params.activeWeeks && val === params.activeWeeks[idx],
+								)
+							) {
+								navigation.pop(2);
+								return;
+							}
+							// TODO: Modify custom schedule's time
+							// dispatch(scheduleDelOrHide([params.name, {
+							// 	dayOfWeek: params.dayOfWeek,
+							// 	begin: Number(params.begin),
+							// 	end: Number(params.end),
+							// 	activeWeeks: params.activeWeeks || [],
+							// }, Choice.ALL]));
 						}
 
 						// TODO: 需要禁止添加和已有计划重名的计划
 						let newSchedule: Schedule = {
-							name: numberToCode(customCnt) + title,
+							name: numberToCode(customCnt) + (title || params?.name.substring(6) || ""),
 							location: locale,
 							activeTime: {base: []},
 							delOrHideTime: {base: []},
@@ -267,7 +290,7 @@ export const ScheduleAddScreen = ({
 			</RoundedView>
 			<RoundedView style={{marginTop: 16, padding: 16}}>
 				<BottomPopupTriggerView
-					disabled={params !== undefined}
+					disabled={timeEditable}
 					popupTitle={explainWeekList(popupWeeks)}
 					popupContent={
 						<View>
@@ -453,7 +476,11 @@ export const ScheduleAddScreen = ({
 						</Text>
 						<View style={{flex: 1}} />
 						<Text
-							style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
+							style={{
+								color: timeEditable ? theme.colors.fontB3 : theme.colors.fontB2,
+								fontSize: 16,
+								flex: 0,
+							}}
 							numberOfLines={1}>
 							{explainWeekList(weeks)}
 						</Text>
@@ -468,7 +495,7 @@ export const ScheduleAddScreen = ({
 					}}
 				/>
 				<BottomPopupTriggerView
-					disabled={params !== undefined}
+					disabled={timeEditable}
 					popupTitle={`${getStr("dayOfWeek")[popupDay]} ${
 						beginTime[popupPeriodBegin]
 					} - ${endTime[popupPeriodEnd]}`}
@@ -558,7 +585,11 @@ export const ScheduleAddScreen = ({
 						</Text>
 						<View style={{flex: 1}} />
 						<Text
-							style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
+							style={{
+								color: timeEditable ? theme.colors.fontB3 : theme.colors.fontB2,
+								fontSize: 16,
+								flex: 0,
+							}}
 							numberOfLines={1}>
 							{explainPeriod(day, periodBegin, periodEnd)}
 						</Text>
