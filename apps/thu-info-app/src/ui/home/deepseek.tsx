@@ -29,6 +29,8 @@ import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import { deepseekUpdateHistory } from "../../redux/slices/deepseek.ts";
+import { ChannelTag } from "@thu-info/lib/dist/models/news/news.ts";
+import themedStyles from "../../utils/themedStyles.ts";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -68,6 +70,8 @@ export const DeepSeek = () => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [dataSource, setDataSource] = useState<ChannelTag | undefined>(undefined);
+	const [searching, setSearching] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [model, setModel] = useState<string>(models[0]);
 	const [conversation, setConversation] = useState<Conversation>(newConversation());
@@ -80,7 +84,18 @@ export const DeepSeek = () => {
 
 	const inputRef = useRef<TextInput>(null);
 
+	const style = styles(themeName);
+
 	const headerHeight = useHeaderHeight();
+
+	let statusText = "";
+	if (searching) {
+		statusText = getStr("searching");
+	} else if (conversation.messages[conversation.messages.length - 1]?.content?.includes("</think>")) {
+		statusText = getStr("reasoningDone");
+	} else {
+		statusText = getStr("reasoning");
+	}
 
 	useEffect(() => {
 		if (!deepseekToken) {
@@ -232,7 +247,7 @@ export const DeepSeek = () => {
 							<IconDeepSeek width={16} height={16} />
 						</View>
 						<View style={{flex: 1}}>
-							<Text style={{color: colors.fontB3, marginVertical: 4}}>{getStr("reasoningDone")}</Text>
+							<Text style={{color: colors.fontB3, marginVertical: 4}}>{statusText}</Text>
 							{reasoning.trim().length > 0 && <View style={{flexDirection: "row"}}>
 								<View style={{height: "100%", width: 2, backgroundColor: colors.fontB3}}/>
 								<Text style={{color: colors.fontB3, marginLeft: 8}}>{reasoning}</Text>
@@ -245,6 +260,21 @@ export const DeepSeek = () => {
 				}
 			}}
 				ListEmptyComponent={<View><Text style={{color: colors.text, fontSize: 24}}>deepseekWelcomeText</Text></View>} />
+			<View style={{
+				flex: 0,
+				flexDirection: "row",
+				padding: 4,
+			}}>
+				<TouchableOpacity onPress={() => setDataSource((prev) => prev === "LM_XJ_XSSQDT" ? undefined : "LM_XJ_XSSQDT")} style={[style.capsule, dataSource === "LM_XJ_XSSQDT" ? {backgroundColor: colors.themeTransparentPurple} : {}]}>
+					<Text style={{color: colors.text}}>{getStr("LM_XJ_XSSQDT")}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => setDataSource((prev) => prev === "LM_BYJYXX" ? undefined : "LM_BYJYXX")} style={[style.capsule, dataSource === "LM_BYJYXX" ? {backgroundColor: colors.themeTransparentPurple} : {}]}>
+					<Text style={{color: colors.text}}>{getStr("LM_BYJYXX")}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => setDataSource((prev) => prev === "LM_JWGG" ? undefined : "LM_JWGG")} style={[style.capsule, dataSource === "LM_JWGG" ? {backgroundColor: colors.themeTransparentPurple} : {}]}>
+					<Text style={{color: colors.text}}>{getStr("LM_JWGG")}</Text>
+				</TouchableOpacity>
+			</View>
 			<View style={{
 				flex: 0,
 				flexDirection: "row",
@@ -299,6 +329,20 @@ export const DeepSeek = () => {
 									content: "",
 								}),
 							}));
+							let prompt = input.trim();
+							if (dataSource) {
+								setSearching(true);
+								const newsList = await helper.getNewsList(1, 20, dataSource);
+								prompt = `请根据下面新闻标题回答问题：
+
+新闻标题：
+
+${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
+
+问题：
+` + prompt;
+								setSearching(false);
+							}
 							const es = new EventSource(
 								`${MADMODEL_BASE_URL}/v1/chat/completions`,
 								{
@@ -313,7 +357,7 @@ export const DeepSeek = () => {
 											...conversation.messages.map((message) => message.role === "assistant" ? {...message, content: splitReasoning(message.content)[1]} : message),
 											{
 												role: "user",
-												content: input.trim(),
+												content: prompt,
 											},
 										],
 										temperature: 0.6,
@@ -375,6 +419,7 @@ export const DeepSeek = () => {
 								duration: Snackbar.LENGTH_SHORT,
 							});
 						} finally {
+							setDataSource(undefined);
 							setGenerating(false);
 							setConversation((prev) => {
 								dispatch(deepseekUpdateHistory(prev));
@@ -462,3 +507,15 @@ export const DeepSeek = () => {
 		</KeyboardAvoidingView>
 	);
 };
+
+const styles = themedStyles(({colors}) => ({
+	capsule: {
+		borderRadius: 16,
+		paddingHorizontal: 16,
+		paddingVertical: 4,
+		margin: 8,
+		borderWidth: 1,
+		borderColor: colors.text,
+		backgroundColor: colors.themeBackground,
+	},
+}));
