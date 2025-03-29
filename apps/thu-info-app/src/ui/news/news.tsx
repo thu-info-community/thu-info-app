@@ -620,7 +620,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					}, deepseekOpen ? { width: "80%", borderColor: theme.colors.inputBorder, borderWidth: 1 } : {}]}>
 					{deepseekOpen ?
 						<View style={{flexDirection: "row"}}>
-						    <TextInput
+							<TextInput
 								value={deepseekInput}
 								onChangeText={setDeepseekInput}
 								style={{
