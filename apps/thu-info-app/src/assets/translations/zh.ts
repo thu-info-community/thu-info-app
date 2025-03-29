@@ -596,6 +596,8 @@ export default {
 	calendarNotFound: "未找到校历",
 	deepseek: "DeepSeek",
 	askDeepSeekPrompt: "想聊些什么呀？",
+	searching: "正在搜索",
+	reasoning: "正在深度思考",
 	reasoningDone: "已深度思考",
 	loginTimeoutRetry: "登录超时，请重试",
 	newConversation: "新对话",

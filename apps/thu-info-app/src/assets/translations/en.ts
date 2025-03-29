@@ -630,6 +630,8 @@ export default {
 	calendarNotFound: "Calendar not found",
 	deepseek: "DeepSeek",
 	askDeepSeekPrompt: "Please enter your question",
+	searching: "Searching...",
+	reasoning: "Reasoning...",
 	reasoningDone: "Reasoning done.",
 	loginTimeoutRetry: "Login timeout. Please retry later.",
 	newConversation: "New Conversation",
