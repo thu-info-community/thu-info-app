@@ -5,7 +5,7 @@ import themes from "../assets/themes/themes";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
-import {NewsSlice} from "@thu-info/lib/src/models/news/news";
+import {ChannelTag, NewsSlice} from "@thu-info/lib/src/models/news/news";
 import {ScheduleScreen} from "../ui/schedule/schedule";
 import {SettingsScreen} from "../ui/settings/settings";
 import {
@@ -135,10 +135,15 @@ import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
 type RootTabParamList = {
 	HomeTab: undefined;
 	NewsTab: undefined;
-	DeepSeekTab: undefined;
+	DeepSeekTab: { prompt: string; dataSource: ChannelTag } | undefined;
 	ScheduleTab: undefined;
 	SettingsTab: undefined;
 };
+
+export type DeepSeekTabProp = RouteProp<
+	RootTabParamList,
+	"DeepSeekTab"
+>;
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -874,12 +879,6 @@ export const Root = () => {
 				name={"NewsSubChannelSelect"}
 				component={NewsSubChannelSelectScreen}
 				options={{title: getStr("newsSubChannelSelect")}}
-			/>
-			{/* DeepSeek */}
-			<Stack.Screen
-				name="DeepSeek"
-				component={DeepSeek}
-				options={{title: getStr("deepseek")}}
 			/>
 			{/* Schedule */}
 			<Stack.Screen

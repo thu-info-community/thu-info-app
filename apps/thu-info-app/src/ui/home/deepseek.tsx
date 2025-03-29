@@ -29,8 +29,9 @@ import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import { deepseekUpdateHistory } from "../../redux/slices/deepseek.ts";
-import { ChannelTag } from "@thu-info/lib/dist/models/news/news.ts";
+import { ChannelTag } from "@thu-info/lib/src/models/news/news.ts";
 import themedStyles from "../../utils/themedStyles.ts";
+import { DeepSeekTabProp } from "../../components/Root.tsx";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -66,7 +67,7 @@ const newConversation = (): Conversation => ({
 	messages: [],
 });
 
-export const DeepSeek = () => {
+export const DeepSeek = ({ route: { params } }: { route: DeepSeekTabProp }) => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
@@ -119,6 +120,13 @@ export const DeepSeek = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (params) {
+			setInput(params.prompt);
+			setDataSource(params.dataSource);
+		}
+	}, [params]);
 
 	const createConversation = () => {
 		setConversation(prev => {
