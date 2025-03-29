@@ -7,6 +7,7 @@ import {
 	TextInput,
 	FlatList,
 	TouchableOpacity,
+	TouchableWithoutFeedback,
 } from "react-native";
 import {useState, useEffect} from "react";
 import Snackbar from "react-native-snackbar";
@@ -27,6 +28,8 @@ import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
 import {getStatusBarHeight} from "react-native-safearea-height";
+import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
+import IconSend from "../../assets/icons/IconSend.tsx";
 
 type Category =
 	| "catSubscribed"
@@ -322,6 +325,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 		}
 	}, [categorySelected]);
 
+	const [deepseekOpen, setDeepseekOpen] = useState(false);
+	const [deepseekInput, setDeepseekInput] = useState("");
+
 	let screenHeight = Dimensions.get("window");
 
 	return (
@@ -584,6 +590,58 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>
+			{deepseekOpen ? <TouchableWithoutFeedback onPress={() => setDeepseekOpen(false)}>
+				<View style={{ position: "absolute", width: "100%", height: "100%" }}/>
+			</TouchableWithoutFeedback> : null}
+			<View style={{
+				position: "absolute",
+				width: "100%",
+				bottom: 60,
+				padding: 12,
+				alignItems: "flex-end",
+			}}>
+				<TouchableWithoutFeedback
+					onPress={() => setDeepseekOpen((prev) => {
+						if (prev) {
+							if (deepseekInput.trim() === "") {
+								return true;
+							} else {
+								// @ts-ignore
+								navigation.jumpTo("DeepSeekTab", { prompt: deepseekInput.trim(), dataSource: channelSelected });
+							}
+						}
+						return !prev;
+					})}>
+					<View style={[{
+						backgroundColor: theme.colors.contentBackground,
+						borderRadius: 24,
+						marginHorizontal: 16,
+						alignItems: "flex-end",
+					}, deepseekOpen ? { width: "80%", borderColor: theme.colors.inputBorder, borderWidth: 1 } : {}]}>
+					{deepseekOpen ?
+						<View style={{flexDirection: "row"}}>
+						    <TextInput
+								value={deepseekInput}
+								onChangeText={setDeepseekInput}
+								style={{
+									flex: 1,
+									textAlignVertical: "center",
+									paddingHorizontal: 8,
+									height: "100%",
+									color: theme.colors.text,
+								}}
+								textAlignVertical="center"
+								placeholder={getStr("askDeepSeekPrompt")}
+								placeholderTextColor={theme.colors.fontB3}
+							/>
+						<View style={{padding: 8}}>
+							<IconSend height={32} width={32} color={deepseekInput.trim() === "" ? theme.colors.themeGrey : theme.colors.primary} />
+						</View>
+						</View>
+						: <View style={{padding: 8}}><IconDeepSeek width={32} height={32} /></View>}
+					</View>
+				</TouchableWithoutFeedback>
+			</View>
 		</View>
 	);
 };
