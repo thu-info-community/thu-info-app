@@ -191,7 +191,7 @@ export const DeepSeek = ({ route: { params } }: { route: DeepSeekTabProp }) => {
 								backgroundColor: colors.text,
 								opacity: 0.3,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight + 32,
 								bottom: 0,
 							}}
 						/>
@@ -200,7 +200,7 @@ export const DeepSeek = ({ route: { params } }: { route: DeepSeekTabProp }) => {
 								position: "absolute",
 								backgroundColor: colors.contentBackground,
 								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
+								top: headerHeight + 32,
 								borderBottomStartRadius: 12,
 								borderBottomEndRadius: 12,
 							}}>
