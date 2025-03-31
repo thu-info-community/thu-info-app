@@ -1,5 +1,5 @@
 {
-	"branchConcurrentLimit": 1,
+	"branchConcurrentLimit": 2,
 	"extends": [
 		"config:recommended"
 	],
