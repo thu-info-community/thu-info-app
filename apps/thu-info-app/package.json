@@ -35,7 +35,7 @@
 		"md5": "2.3.0",
 		"moment": "2.30.1",
 		"react": "19.0.0",
-		"react-native": "0.78.1",
+		"react-native": "0.78.2",
 		"react-native-biometrics": "3.0.1",
 		"react-native-blob-util": "0.21.2",
 		"react-native-confirmation-code-field": "7.4.0",
