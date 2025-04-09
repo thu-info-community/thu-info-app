@@ -155,7 +155,7 @@ export const ScheduleAddScreen = ({
 
 						// TODO: 需要禁止添加和已有计划重名的计划
 						let newSchedule: Schedule = {
-							name: numberToCode(customCnt) + (title || params?.name.substring(6) || ""),
+							name: numberToCode(customCnt) + (title || params?.name?.substring(6) || ""),
 							location: locale,
 							activeTime: {base: []},
 							delOrHideTime: {base: []},
