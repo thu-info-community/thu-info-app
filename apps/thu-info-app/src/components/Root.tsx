@@ -126,6 +126,7 @@ import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/ho
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
 import {DeepSeek} from "../ui/home/deepseek.tsx";
+import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
@@ -387,6 +388,7 @@ type SettingsStackParamList = {
 	Language: undefined;
 	DarkMode: undefined;
 	ScheduleSettings: undefined;
+	DeepSeekSettings: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
 	FeishuFeedback: undefined;
@@ -971,6 +973,11 @@ export const Root = () => {
 				name="DarkMode"
 				component={DarkModeScreen}
 				options={{title: getStr("darkMode")}}
+			/>
+			<Stack.Screen
+				name="DeepSeekSettings"
+				component={DeepSeekSettingsScreen}
+				options={{ title: getStr("deepseek") }}
 			/>
 			<Stack.Screen
 				name="ScheduleSettings"

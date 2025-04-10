@@ -5,7 +5,7 @@ import themes from "../themes/themes";
 export default ({size, active}: {size: number; active: boolean}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const color = active ? colors.themePurple : colors.fontB3;
+	const color = active ? colors.themePurple : colors.fontB2;
 
 	return (
 		<Svg width={size} height={size} viewBox="0 0 48 48" fill="none">

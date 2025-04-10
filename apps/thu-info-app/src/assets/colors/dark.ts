@@ -31,6 +31,7 @@ export const colorDark: ColorTheme = {
 	themeDarkGrey: "#B5B5B5",
 	themeGrey: "#D6D3DB",
 	themeLightGrey: "#E9E9E9",
+	themeTransparentGrey: "#88888822",
 	themeGold: "#FFCC00",
 	courseItemColorList: [
 		"#00a6f2",

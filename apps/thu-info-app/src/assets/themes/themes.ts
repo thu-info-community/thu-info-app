@@ -35,6 +35,7 @@ export interface ColorTheme {
 	themeDarkGrey: string;
 	themeGrey: string;
 	themeLightGrey: string;
+	themeTransparentGrey: string;
 	themeGold: string;
 	courseItemColorList: string[];
 }
