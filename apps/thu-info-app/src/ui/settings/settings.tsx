@@ -94,6 +94,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
+						onPress={() => navigation.navigate("DeepSeekSettings")}>
+						<Text style={style.text}>{getStr("deepseek")}</Text>
+						<IconRight height={20} width={20} />
+					</TouchableOpacity>
+				</RoundedView>
+				<RoundedView style={style.rounded}>
+					<TouchableOpacity
+						style={style.touchable}
 						onPress={() => navigation.navigate("ScheduleSettings")}>
 						<Text style={style.text}>{getStr("schedule")}</Text>
 						<IconRight height={20} width={20} />
@@ -163,49 +171,58 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						</Text>
 					</TouchableOpacity>
 				</RoundedView>
-				{ helper.userId && <RoundedView style={style.rounded}>
-					<TouchableOpacity
-						style={style.touchable}
-						onPress={() => {
-							Alert.alert(getStr("logout"), getStr("confirmLogout"), [
-								...(Platform.OS === "android" || Platform.OS === "ios" ? [{text: getStr("cancel")}] : []),
-								{
-									text: getStr("no"),
-									onPress: () => {
-										performLogout();
-										dispatch(logout());
+				{helper.userId && (
+					<RoundedView style={style.rounded}>
+						<TouchableOpacity
+							style={style.touchable}
+							onPress={() => {
+								Alert.alert(
+									getStr("logout"),
+									getStr("confirmLogout"),
+									[
+										...(Platform.OS === "android" || Platform.OS === "ios"
+											? [{text: getStr("cancel")}]
+											: []),
+										{
+											text: getStr("no"),
+											onPress: () => {
+												performLogout();
+												dispatch(logout());
+											},
+										},
+										{
+											text: getStr("yes"),
+											onPress: () => {
+												helper.userId = "";
+												helper.password = "";
+												performLogout();
+												dispatch(logout());
+												dispatch(setDormPassword(""));
+												dispatch(scheduleClear());
+												dispatch(deepseekClear());
+												dispatch(setActiveLibBookRecord([]));
+												dispatch(setActiveSportsReservationRecord([]));
+												dispatch(setBalance(0));
+											},
+										},
+									],
+									{cancelable: true},
+								);
+							}}>
+							<Text
+								style={[
+									style.text,
+									{
+										textAlign: "center",
+										flex: 1,
+										color: theme.colors.statusWarning,
 									},
-								},
-								{
-									text: getStr("yes"),
-									onPress: () => {
-										helper.userId = "";
-										helper.password = "";
-										performLogout();
-										dispatch(logout());
-										dispatch(setDormPassword(""));
-										dispatch(scheduleClear());
-										dispatch(deepseekClear());
-										dispatch(setActiveLibBookRecord([]));
-										dispatch(setActiveSportsReservationRecord([]));
-										dispatch(setBalance(0));
-									},
-								},
-							], {cancelable: true});
-						}}>
-						<Text
-							style={[
-								style.text,
-								{
-									textAlign: "center",
-									flex: 1,
-									color: theme.colors.statusWarning,
-								},
-							]}>
-							{getStr("logout")}
-						</Text>
-					</TouchableOpacity>
-				</RoundedView> }
+								]}>
+								{getStr("logout")}
+							</Text>
+						</TouchableOpacity>
+					</RoundedView>
+				)}
 				<View style={{height: 80}} />
 			</View>
 		</ScrollView>

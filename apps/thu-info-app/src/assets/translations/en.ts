@@ -661,4 +661,10 @@ export default {
 	scheduleNewUINotice:
 		"With transparency background, which may affect readability",
 	rechargeSuccess: "Recharge succeeded.",
+	deepseekWelcomeText: "Ask me anything!",
+	enableBubbleMessage: "Show DeepSeek messages in bubble",
+	bubbleMessageHint: "Turn off to show its messages in list",
+	deleteConversationConfirm: "Are you sure to delete this conversation?",
+	deleteAllHistoryConfirm: "Are you sure to delete all conversations?",
+	copied: "Copied",
 };
