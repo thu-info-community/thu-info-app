@@ -1790,6 +1790,8 @@ PODS:
     - React-utils (= 0.79.1)
   - RNCAsyncStorage (2.1.2):
     - React-Core
+  - RNCClipboard (1.16.2):
+    - React-Core
   - RNDeviceInfo (14.0.4):
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
@@ -1987,6 +1989,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../../../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../../../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../../../node_modules/react-native-device-info`)
   - RNDeviceTimeFormat (from `../../../node_modules/react-native-device-time-format`)
   - RNGestureHandler (from `../../../node_modules/react-native-gesture-handler`)
@@ -2169,6 +2172,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../../../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../../../node_modules/@react-native-clipboard/clipboard"
   RNDeviceInfo:
     :path: "../../../node_modules/react-native-device-info"
   RNDeviceTimeFormat:
@@ -2285,6 +2290,7 @@ SPEC CHECKSUMS:
   RNShare: ef61d9be34bf9881d515851d0710a023cdc4f0f4
   RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
   RNSVG: ab84f2de7dd4f2c86d01825b8a65e0ef712fc36b
+  RNCClipboard: 4411a880506f11fbcbdc03b5093eb8ffb246d900
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: d15f5aa644c466e917569ac43b19cbf17975239a
 
