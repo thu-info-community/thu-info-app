@@ -36,7 +36,6 @@ import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import IconCopy from "../../assets/icons/IconCopy.tsx";
 import IconRefresh from "../../assets/icons/IconRefresh.tsx";
-import {useHeaderHeight} from "@react-navigation/elements";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {
 	deepseekClear,
@@ -47,6 +46,7 @@ import {ChannelTag} from "@thu-info/lib/src/models/news/news.ts";
 import themedStyles from "../../utils/themedStyles.ts";
 import {DeepSeekTabProp} from "../../components/Root.tsx";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -273,7 +273,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 
 	const style = styles(themeName);
 
-	const headerHeight = useHeaderHeight();
+	const insets = useSafeAreaInsets();
 
 	useEffect(() => {
 		if (!deepseekToken) {
@@ -412,6 +412,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						alignItems: "center",
 						justifyContent: "center",
 						padding: 4,
+						marginStart: 2,
 					}}
 					onPress={() => {
 						setSidebarOpen(true);
@@ -450,6 +451,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						alignItems: "center",
 						justifyContent: "center",
 						padding: 4,
+						marginEnd: 2,
 					}}
 					onPress={createConversation}>
 					<IconAdd height={24} width={24} />
@@ -468,7 +470,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								backgroundColor: colors.text,
 								opacity: 0.3,
 								width: "100%",
-								top: headerHeight + 40,
+								top: getStatusBarHeight(true) + 40,
 								bottom: 0,
 							}}
 						/>
@@ -477,7 +479,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								position: "absolute",
 								backgroundColor: colors.contentBackground,
 								width: "100%",
-								top: headerHeight + 40,
+								top: getStatusBarHeight(true) + 40,
 								borderBottomStartRadius: 12,
 								borderBottomEndRadius: 12,
 							}}>
@@ -876,7 +878,8 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						position: "absolute",
 						backgroundColor: colors.contentBackground,
 						paddingHorizontal: 16,
-						paddingVertical: 16,
+						paddingTop: getStatusBarHeight(true) + 2,
+						paddingBottom: insets.bottom,
 						width: "62%",
 						height: "100%",
 					}}>
@@ -932,8 +935,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						renderItem={({item}) => (
 							<Pressable
 								style={{
-									padding: 4,
-									paddingHorizontal: 8,
+									padding: 8,
 									marginStart: 4,
 									backgroundColor:
 										deleteId === item.id
@@ -994,9 +996,9 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					/>
 					<TouchableOpacity
 						style={{
-							padding: 8,
+							paddingVertical: 12,
 							marginTop: 8,
-							borderRadius: 8,
+							borderRadius: 12,
 							backgroundColor: colors.themeTransparentGrey,
 						}}
 						onPress={createConversation}>
@@ -1006,9 +1008,9 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={{
-							padding: 8,
+							paddingVertical: 12,
 							marginTop: 8,
-							borderRadius: 8,
+							borderRadius: 12,
 							backgroundColor: colors.statusWarningOpacity,
 						}}
 						onPress={deleteAllHistory}>
