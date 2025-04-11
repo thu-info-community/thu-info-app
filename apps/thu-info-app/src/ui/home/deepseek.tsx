@@ -108,7 +108,6 @@ const newConversation = (): Conversation => ({
 const sendDeepSeekMessage = async ({
 	input,
 	conversation,
-	setConversation,
 	dataSource,
 	setSearching,
 	model,
@@ -117,34 +116,21 @@ const sendDeepSeekMessage = async ({
 }: {
 	input: string;
 	conversation: Conversation;
-	setConversation: React.Dispatch<React.SetStateAction<Conversation>>;
 	dataSource: ChannelTag | undefined;
 	setSearching: React.Dispatch<React.SetStateAction<boolean>>;
 	model: string;
 	deepseekToken: string;
 	dispatch: any;
 }) => {
-	setConversation(() => {
-		const next = {
-			...conversation,
-			messages: conversation.messages.concat({
-				role: "user",
-				content: input.trim(),
-				timestamp: Date.now(),
-			}),
-		};
-		dispatch(deepseekUpdateHistory(next));
-		return next;
-	});
-
-	setConversation((prev) => ({
-		...prev,
-		messages: prev.messages.concat({
-			role: "assistant",
-			content: "",
+	let next = {
+		...conversation,
+		messages: conversation.messages.concat({
+			role: "user",
+			content: input.trim(),
 			timestamp: Date.now(),
 		}),
-	}));
+	};
+	dispatch(deepseekUpdateHistory(next));
 
 	let prompt = input.trim();
 	if (dataSource) {
@@ -191,6 +177,16 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 		pollingInterval: 0,
 	});
 
+	next = {
+		...next,
+		messages: next.messages.concat({
+			role: "assistant",
+			content: "",
+			timestamp: Date.now(),
+		}),
+	};
+	dispatch(deepseekUpdateHistory(next));
+
 	await new Promise<void>((resolve, reject) => {
 		es.addEventListener("message", (event) => {
 			if (event.data) {
@@ -199,7 +195,8 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 				} else {
 					const value = JSON.parse(event.data);
 					if (value.errorMessage) {
-						setConversation((prev) => ({
+						const prev = next;
+						next = {
 							...prev,
 							messages: prev.messages
 								.slice(0, prev.messages.length - 1)
@@ -210,7 +207,8 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 										value.errorMessage,
 									timestamp: Date.now(),
 								}),
-						}));
+						};
+						dispatch(deepseekUpdateHistory(next));
 						resolve();
 						return;
 					}
@@ -220,7 +218,8 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 					}
 					const delta = choice.delta;
 					if (delta.content != null) {
-						setConversation((prev) => ({
+						const prev = next;
+						next = {
 							...prev,
 							messages: prev.messages
 								.slice(0, prev.messages.length - 1)
@@ -231,7 +230,8 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 										delta.content,
 									timestamp: Date.now(),
 								}),
-						}));
+						};
+						dispatch(deepseekUpdateHistory(next));
 					}
 				}
 			}
@@ -259,9 +259,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [searching, setSearching] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [model, setModel] = useState<string>(models[0]);
-	const [conversation, setConversation] = useState<Conversation>(
-		newConversation(),
-	);
+	const [currentIndex, setCurrentIndex] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 	const themeName = useColorScheme();
@@ -307,16 +305,28 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 		}
 	}, [params]);
 
+	useEffect(() => {
+		if (
+			history.length === 0 ||
+			Date.now() - history[0].timestamp > 1000 * 60 * 30
+		) {
+			dispatch(deepseekUpdateHistory(newConversation()));
+		}
+		setCurrentIndex(0);
+	}, [history, dispatch]);
+
+	const conversation = history[currentIndex] || newConversation();
+
 	const createConversation = () => {
-		setConversation((prev) => {
-			if (prev.messages.length === 0) {
-				Snackbar.show({
-					text: getStr("alreadyLatestChat"),
-					duration: Snackbar.LENGTH_SHORT,
-				});
-			}
-			return newConversation();
-		});
+		if (history.length === 0 || history[0].messages.length !== 0) {
+			dispatch(deepseekUpdateHistory(newConversation()));
+		} else {
+			currentIndex === 0 && Snackbar.show({
+				text: getStr("alreadyLatestChat"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
+		setCurrentIndex(0);
 		setSidebarOpen(false);
 		inputRef.current?.focus();
 	};
@@ -335,7 +345,6 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					onPress: () => {
 						dispatch(deepseekClear());
 						setSidebarOpen(false);
-						setConversation(newConversation());
 					},
 				},
 			],
@@ -366,7 +375,6 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			await sendDeepSeekMessage({
 				input: userMessage.content,
 				conversation: tempConversation,
-				setConversation,
 				dataSource: newDataSource,
 				setSearching,
 				model,
@@ -825,7 +833,6 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							await sendDeepSeekMessage({
 								input,
 								conversation,
-								setConversation,
 								dataSource,
 								setSearching,
 								model,
@@ -840,10 +847,6 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						} finally {
 							setDataSource(undefined);
 							setGenerating(false);
-							setConversation((prev) => {
-								dispatch(deepseekUpdateHistory(prev));
-								return prev;
-							});
 						}
 					}}>
 					<IconSend
@@ -933,15 +936,15 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 									paddingHorizontal: 8,
 									marginStart: 4,
 									backgroundColor:
-										item.timestamp === conversation.timestamp
-											? colors.themeTransparentGrey
-											: deleteId === item.id
+										deleteId === item.id
 											? colors.statusWarningOpacity
+											: item.timestamp === conversation.timestamp
+											? colors.themeTransparentGrey
 											: colors.contentBackground,
 									borderRadius: 8,
 								}}
 								onPress={() => {
-									setConversation(item);
+									setCurrentIndex(history.findIndex((c) => c.id === item.id));
 									setSidebarOpen(false);
 								}}
 								onLongPress={() => {
@@ -961,8 +964,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 												text: getStr("confirm"),
 												onPress: () => {
 													dispatch(deepseekDeleteConversation(item));
-													conversation.id === item.id &&
-														setConversation(newConversation());
+													setDeleteId(null);
 													setSidebarOpen(false);
 												},
 											},
