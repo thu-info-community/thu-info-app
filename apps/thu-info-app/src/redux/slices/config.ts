@@ -44,6 +44,7 @@ export interface ConfigState {
 	scheduleEnableNewUI: boolean | undefined;
 	privacy312: boolean | undefined;
 	deepseekToken: string | undefined;
+	bubbleMessage: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -86,6 +87,7 @@ const initialState: ConfigState = {
 	scheduleEnableNewUI: true,
 	privacy312: false,
 	deepseekToken: undefined,
+	bubbleMessage: true,
 };
 
 export const defaultConfig = initialState;

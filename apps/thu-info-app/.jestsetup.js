@@ -2,7 +2,11 @@ import "react-native-gesture-handler/jestSetup"
 
 import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
 
-import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock'
+import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
+
+import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
+
+jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);
 jest.mock('react-native-device-info', () => mockRNDeviceInfo)
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
