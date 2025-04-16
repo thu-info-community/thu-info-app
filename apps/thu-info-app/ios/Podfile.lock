@@ -2280,6 +2280,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 56af652dbd9ffd95a2c4d47eee9f054e892151ac
   ReactCommon: aa48e4fddbc6a0afa19dca39a1b6016c150b5db4
   RNCAsyncStorage: b9f5f78da5d16a853fe3dc22e8268d932fc45a83
+  RNCClipboard: e1d17c9d093d8129ef50b39b63a17a0e8ccd0ade
   RNDeviceInfo: d863506092aef7e7af3a1c350c913d867d795047
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
   RNGestureHandler: 428d7b57ca46b96f09b79597167dda208d1ecf31
@@ -2290,7 +2291,6 @@ SPEC CHECKSUMS:
   RNShare: ef61d9be34bf9881d515851d0710a023cdc4f0f4
   RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
   RNSVG: ab84f2de7dd4f2c86d01825b8a65e0ef712fc36b
-  RNCClipboard: 4411a880506f11fbcbdc03b5093eb8ffb246d900
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: d15f5aa644c466e917569ac43b19cbf17975239a
 
