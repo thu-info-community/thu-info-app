@@ -51,14 +51,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
 	content: string; // We currently do not support multi-modal.
-	timestamp: number;
+	timestamp?: number;
 }
 
 export interface Conversation {
 	id: string;
 	title: string;
 	messages: Message[];
-	timestamp: number;
+	timestamp?: number;
 }
 
 const splitReasoningAndStatus = (
@@ -308,7 +308,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	useEffect(() => {
 		if (
 			history.length === 0 ||
-			Date.now() - history[0].timestamp > 1000 * 60 * 30
+			Date.now() - (history[0].timestamp ?? 0) > 1000 * 60 * 30
 		) {
 			dispatch(deepseekUpdateHistory(newConversation()));
 		}
@@ -519,7 +519,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				}}
 				data={conversation.messages}
 				keyExtractor={(item, index) =>
-					item.timestamp.toString() + item.role + index.toString()
+					item.timestamp?.toString() + item.role + index.toString()
 				}
 				renderItem={({item, index}) => {
 					if (item.role === "user") {
@@ -535,7 +535,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											textAlign: "right",
 											fontSize: 13,
 										}}>
-										{new Date(item.timestamp).toLocaleString([], {
+										{new Date(item.timestamp ?? 0).toLocaleString([], {
 											month: "numeric",
 											day: "numeric",
 											hour: "2-digit",
@@ -589,7 +589,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 									<Text style={{color: colors.fontB3}}>
 										{getStr(searching ? "searching" : statusText)}
 										&nbsp;&nbsp;
-										{new Date(item.timestamp).toLocaleString([], {
+										{new Date(item.timestamp ?? 0).toLocaleString([], {
 											month: "numeric",
 											day: "numeric",
 											hour: "2-digit",
@@ -916,7 +916,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						style={{flex: 1, marginTop: 8}}
 						sections={Object.entries(
 							history.reduce((acc, item) => {
-								const date = new Date(item.timestamp).toLocaleDateString();
+								const date = new Date(item.timestamp ?? 0).toLocaleDateString();
 								if (!acc[date]) {
 									acc[date] = [];
 								}
