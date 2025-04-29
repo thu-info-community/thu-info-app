@@ -2197,10 +2197,10 @@
     tar "^6.1.15"
     tmp "^0.2.1"
 
-"@react-native-oh/react-native-harmony@0.72.59":
-  version "0.72.59"
-  resolved "https://registry.yarnpkg.com/@react-native-oh/react-native-harmony/-/react-native-harmony-0.72.59.tgz#7928dc2c0cb040fad7c70df998af516cede5c400"
-  integrity sha512-yv+J6pRoNBcBnI9xKrZHekSHmT1JlTk1a+Uooc8uab8TZ6uVYEUOaJMGZjbjEBQhaNiZipMksLsJb9Vq53IZNg==
+"@react-native-oh/react-native-harmony@0.72.67":
+  version "0.72.67"
+  resolved "https://registry.yarnpkg.com/@react-native-oh/react-native-harmony/-/react-native-harmony-0.72.67.tgz#bfcf73152a26bdf31e365cf1b084e929e3203f33"
+  integrity sha512-O1Pf6pxJAjK33hZGQc7dA+NVt4bj2xmew2y8zFUEqfh0j90nOdZ9ihuDLE2lF8cB0uSh7IWPDgXmYD5Aq2C/jA==
   dependencies:
     "@react-native-oh/react-native-harmony-cli" "^0.0.28"
     colors "^1.4.0"
