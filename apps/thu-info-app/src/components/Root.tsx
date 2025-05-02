@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
+import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
@@ -203,6 +204,11 @@ const RootTabs = () => {
 				name="DeepSeekTab"
 				component={DeepSeek}
 				options={{title: getStr("deepseek"), headerShown: false}}
+				listeners={() => ({
+					tabPress: () => {
+						addUsageStat(FunctionType.DeepSeek);
+					},
+				})}
 			/>
 			<Tab.Screen
 				name="ScheduleTab"
