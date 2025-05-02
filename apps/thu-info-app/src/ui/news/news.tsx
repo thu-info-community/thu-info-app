@@ -3,6 +3,7 @@ import {
 	View,
 	RefreshControl,
 	Dimensions,
+	Keyboard,
 	ScrollView,
 	TextInput,
 	FlatList,
@@ -330,6 +331,23 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	let screenHeight = Dimensions.get("window");
 
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+	useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", (e) => {
+			setKeyboardHeight(e.endCoordinates.height); // Capture the keyboard height when it appears
+		});
+
+		const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+			setKeyboardHeight(0); // Reset when the keyboard is hidden
+		});
+
+		return () => {
+			keyboardDidHideListener.remove();
+			keyboardDidShowListener.remove();
+		};
+	}, []);
+
 	return (
 		<View
 			style={{flex: 1, paddingTop: getStatusBarHeight()}}
@@ -596,7 +614,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			<View style={{
 				position: "absolute",
 				width: "100%",
-				bottom: 60,
+				bottom: keyboardHeight > 0 ? keyboardHeight - 60 : 60,
 				padding: 12,
 				alignItems: "flex-end",
 			}}>
