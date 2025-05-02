@@ -3,6 +3,7 @@ import type {PayloadAction} from "@reduxjs/toolkit";
 import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
+import { v4 as uuidv4 } from "uuid";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
@@ -45,6 +46,7 @@ export interface ConfigState {
 	privacy312: boolean | undefined;
 	deepseekToken: string | undefined;
 	bubbleMessage: boolean | undefined;
+	uuid: string;
 }
 
 const initialState: ConfigState = {
@@ -88,6 +90,7 @@ const initialState: ConfigState = {
 	privacy312: false,
 	deepseekToken: undefined,
 	bubbleMessage: true,
+	uuid: uuidv4(),
 };
 
 export const defaultConfig = initialState;

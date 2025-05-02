@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {helper, State} from "../../redux/store";
+import {currState, helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import {BlurView} from "@react-native-community/blur";
 import themedStyles from "../../utils/themedStyles";
@@ -67,7 +67,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(() => {
 				if (Platform.OS === "ios" || Platform.OS === "android") {
 					helper
-						.appStartUp(Platform.OS)
+						.appStartUp(Platform.OS, currState().config.uuid)
 						.then(
 							({
 								bookingRecords,

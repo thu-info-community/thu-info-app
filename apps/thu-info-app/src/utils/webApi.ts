@@ -3,7 +3,7 @@ import {
 	HubConnectionBuilder,
 	HubConnectionState,
 } from "@microsoft/signalr";
-import {helper} from "../redux/store";
+import {currState, helper} from "../redux/store";
 import {HttpTransportType} from "@microsoft/signalr";
 
 const rootUrl = "https://app.cs.tsinghua.edu.cn";
@@ -32,7 +32,7 @@ export enum FunctionType {
 }
 
 export const addUsageStat = async (func: FunctionType) => {
-	helper.appUsageStat(func.valueOf()).catch(() => {});
+	helper.appUsageStat(func.valueOf(), currState().config.uuid).catch(() => {});
 };
 
 export interface ScheduleSyncSending {

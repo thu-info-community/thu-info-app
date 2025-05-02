@@ -22,24 +22,38 @@ import {
 } from "../mocks/app";
 import {Feedback} from "../models/app/feedback";
 
-export const appStartupStat = async (helper: InfoHelper): Promise<void> =>
+export const appStartupStat = async (helper: InfoHelper, uuid: string): Promise<void> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
         "",
         async () => {
-            await uFetch(APP_STARTUP_STAT_URL);
+            await uFetch(
+                APP_STARTUP_STAT_URL,
+                JSON.stringify({Uuid: uuid}) as never as object,
+                60000,
+                "UTF-8",
+                true,
+                "application/json",
+            );
         },
         undefined,
     );
 
-export const appUsageStat = async (helper: InfoHelper, usage: number): Promise<void> =>
+export const appUsageStat = async (helper: InfoHelper, usage: number, uuid: string): Promise<void> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
         "",
         async () => {
-            await uFetch(`${APP_USAGE_STAT_URL}/${usage}`);
+            await uFetch(
+                `${APP_USAGE_STAT_URL}`,
+                JSON.stringify({Uuid: uuid, Function: usage}) as never as object,
+                60000,
+                "UTF-8",
+                true,
+                "application/json",
+            );
         },
         undefined,
     );

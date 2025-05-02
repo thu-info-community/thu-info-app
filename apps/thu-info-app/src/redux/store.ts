@@ -227,6 +227,7 @@ const persistConfig = {
 							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
+							uuid: state.config.uuid ?? defaultConfig.uuid,
 						},
 						schedule: {
 							...state.schedule,

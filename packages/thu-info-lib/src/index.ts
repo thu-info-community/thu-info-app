@@ -265,7 +265,7 @@ export class InfoHelper {
      *
      * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
      */
-    public appStartUp = async (platform: "ios" | "android") => {
+    public appStartUp = async (platform: "ios" | "android", uuid: string) => {
         if (this.userId === "") {
             return {
                 bookingRecords: [],
@@ -289,13 +289,13 @@ export class InfoHelper {
         } catch {
             // no-op
         }
-        appStartupStat(this).catch(() => {
+        appStartupStat(this, uuid).catch(() => {
         });
         return {bookingRecords, sportsReservationRecords, crTimetable, balance, latestAnnounces, latestVersion};
     };
 
-    public appUsageStat = async (usage: number) => {
-        await appUsageStat(this, usage);
+    public appUsageStat = async (usage: number, uuid: string) => {
+        await appUsageStat(this, usage, uuid);
     };
 
     public getLatestAnnounces = async () => getLatestAnnounces(this);
