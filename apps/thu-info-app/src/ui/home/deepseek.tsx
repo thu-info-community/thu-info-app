@@ -116,7 +116,7 @@ const sendDeepSeekMessage = async ({
 }: {
 	input: string;
 	conversation: Conversation;
-	dataSource: ChannelTag | undefined;
+	dataSource: ChannelTag | undefined | null;
 	setSearching: React.Dispatch<React.SetStateAction<boolean>>;
 	model: string;
 	deepseekToken: string;
@@ -168,7 +168,7 @@ const sendDeepSeekMessage = async ({
 
 	}
 
-	if (dataSource) {
+	if (dataSource !== null) {
 		setSearching(true);
 		const {choices} = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
 			method: "POST",
@@ -229,7 +229,7 @@ ${prompt}
 						? {
 								...message,
 								content: splitReasoningAndStatus(message.content)[1],
-						  }
+					     }
 						: message,
 				),
 				{
@@ -310,8 +310,8 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
-	const [dataSource, setDataSource] = useState<ChannelTag | undefined>(
-		undefined,
+	const [dataSource, setDataSource] = useState<ChannelTag | undefined | null>(
+		null,  // null indicates that no data source should be used
 	);
 	const [searching, setSearching] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -411,7 +411,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 
 	const refreshMessage = async (
 		messageIndex: number,
-		newDataSource: ChannelTag | undefined,
+		newDataSource: ChannelTag | undefined | null,
 	) => {
 		if (generating || !deepseekToken) {
 			return;
@@ -795,7 +795,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				<TouchableOpacity
 					onPress={() =>
 						setDataSource((prev) =>
-							prev === "LM_XJ_XSSQDT" ? undefined : "LM_XJ_XSSQDT",
+							prev === "LM_XJ_XSSQDT" ? null : "LM_XJ_XSSQDT",
 						)
 					}
 					style={[
@@ -804,7 +804,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
-							  }
+						      }
 							: {},
 					]}>
 					<Text
@@ -819,7 +819,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				<TouchableOpacity
 					onPress={() =>
 						setDataSource((prev) =>
-							prev === "LM_BYJYXX" ? undefined : "LM_BYJYXX",
+							prev === "LM_BYJYXX" ? null : "LM_BYJYXX",
 						)
 					}
 					style={[
@@ -828,7 +828,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
-							  }
+						      }
 							: {},
 					]}>
 					<Text
@@ -842,7 +842,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				<TouchableOpacity
 					onPress={() =>
 						setDataSource((prev) =>
-							prev === "LM_JWGG" ? undefined : "LM_JWGG",
+							prev === "LM_JWGG" ? null : "LM_JWGG",
 						)
 					}
 					style={[
@@ -851,7 +851,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
-							  }
+						      }
 							: {},
 					]}>
 					<Text
@@ -917,7 +917,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								duration: Snackbar.LENGTH_SHORT,
 							});
 						} finally {
-							setDataSource(undefined);
+							setDataSource(null);
 							setGenerating(false);
 						}
 					}}>
