@@ -637,6 +637,7 @@ export default {
 	newConversation: "New Conversation",
 	alreadyLatestChat: "We are already on the latest chat.",
 	deepseekLocalStorageNotice: "Conversations are stored locally.",
+	aigcWarning: "AI can make mistakes. Use with caution.",
 	ziJingDorm: "Zijing Building",
 	nanQuDorm: "Building",
 	shuangQingDorm: "Shuangqing Apartment",

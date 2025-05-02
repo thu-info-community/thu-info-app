@@ -604,6 +604,7 @@ export default {
 	newConversation: "新对话",
 	alreadyLatestChat: "已经是最新对话了",
 	deepseekLocalStorageNotice: "会话记录均保存在本机",
+	aigcWarning: "本答案由 AI 生成，请注意甄别",
 	ziJingDorm: "紫荆公寓",
 	nanQuDorm: "南区宿舍",
 	shuangQingDorm: "双清公寓",

@@ -128,23 +128,90 @@ const sendDeepSeekMessage = async ({
 			role: "user",
 			content: input.trim(),
 			timestamp: Date.now(),
+		}, {
+			role: "assistant",
+			content: "",
+			timestamp: Date.now(),
 		}),
 	};
 	dispatch(deepseekUpdateHistory(next));
 
 	let prompt = input.trim();
+
+	if (conversation.title === getStr("newConversation")) {
+		const {choices} = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${deepseekToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				model: models[1],
+				messages: [
+					{
+						role: "system",
+						content: "你将和用户进行若干轮对话，请先根据用户的输入概括一个合适且简短的标题。直接输出标题。\n---\n" + prompt,
+					},
+				],
+				temperature: 0.6,
+				repetition_penalty: 1.05,
+				stream: false,
+			}),
+		})).json();
+		const answer = choices[0].message.content;
+		const title = splitReasoningAndStatus(answer)[1].trim();
+		next = {
+			...next,
+			title,
+		};
+		dispatch(deepseekUpdateHistory(next));
+
+	}
+
 	if (dataSource) {
 		setSearching(true);
-		const newsList = await helper.getNewsList(1, 20, dataSource);
-		prompt =
-			`请根据下面新闻标题回答问题：
+		const {choices} = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${deepseekToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				model: models[1],
+				messages: [
+					{
+						role: "system",
+						content: "你的任务是从用户的输入中提取关键词，用于RAG搜索。请提取3-5个最相关的关键词，每个关键词不应超过4个字，确保它们简洁且能准确反映用户输入的核心内容。你提取的关键词必须是中文，除非用户的关键词是特定的专有名词、术语或其他关键信息。你必须直接给我这些关键词，以符号+连接每个关键词。\n---\n" + prompt,
+					},
+				],
+				temperature: 0.2,
+				repetition_penalty: 1.05,
+				stream: false,
+			}),
+		})).json();
+		const answer = choices[0].message.content;
+		const keywords = splitReasoningAndStatus(answer)[1];
+		const newsList = await helper.searchNewsList(1, keywords, dataSource);
+		const newsDetail = [];
+		for (let newsSlice of newsList.slice(0, 5)) {
+			try {
+				const [title, _content, abstract] = await helper.getNewsDetail(newsSlice.url);
+				newsDetail.push(`# ${title}\n${abstract}`);
+			} catch {
+				// No-op
+			}
+		}
+		prompt = `请根据下面新闻回答问题：
 
-新闻标题：
-
-${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
+${newsDetail.join("\n\n")}
 
 问题：
-` + prompt;
+${prompt}
+
+---
+
+补充信息：
+- 用户当前的时间是${new Date().toLocaleString("zh-CN", { hour12: false })}`;
 		setSearching(false);
 	}
 
@@ -171,21 +238,11 @@ ${newsList.map((item, index) => `${index + 1}. ${item.name}`).join("\n")}
 				},
 			],
 			temperature: 0.6,
-			repetition_penalty: 1.2,
+			repetition_penalty: 1.05,
 			stream: true,
 		}),
 		pollingInterval: 0,
 	});
-
-	next = {
-		...next,
-		messages: next.messages.concat({
-			role: "assistant",
-			content: "",
-			timestamp: Date.now(),
-		}),
-	};
-	dispatch(deepseekUpdateHistory(next));
 
 	await new Promise<void>((resolve, reject) => {
 		es.addEventListener("message", (event) => {
@@ -657,6 +714,19 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											color={colors.themeTransparentPurple}
 										/>
 									)}
+									<View
+										style={{
+											backgroundColor: colors.themeTransparentPurple,
+											borderRadius: 16,
+											paddingVertical: 8,
+											paddingHorizontal: 12,
+											margin: 4,
+											width: "100%",
+											alignItems: "center",
+											justifyContent: "center",
+										}}>
+										<Text style={{color: colors.themeDarkPurple}}>{getStr("aigcWarning")}</Text>
+									</View>
 									<View
 										style={[
 											{flexDirection: "row"},
