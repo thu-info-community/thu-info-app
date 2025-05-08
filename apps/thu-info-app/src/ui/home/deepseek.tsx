@@ -13,6 +13,8 @@ import {
 	SectionList,
 	ActivityIndicator,
 	Pressable,
+	Animated,
+	useWindowDimensions,
 } from "react-native";
 import {useEffect, useRef, useState} from "react";
 import themes from "../../assets/themes/themes";
@@ -70,7 +72,7 @@ const splitReasoningAndStatus = (
 ] => {
 	const beginTag = "<think>";
 	const endTag = "</think>";
-	if (answer.startsWith("嗯，")) {
+	if (answer.startsWith("嗯，") || answer.startsWith("好的，")) {
 		answer = beginTag + answer;
 	}
 	if (answer.includes(beginTag) && answer.includes(endTag)) {
@@ -97,6 +99,8 @@ const splitReasoningAndStatus = (
 };
 
 const models = ["DeepSeek-R1-Distill-32B", "DeepSeek-R1-671B"];
+
+const systemErrorMessage = "服务器繁忙,请稍后再试";
 
 const newConversation = (): Conversation => ({
 	id: uuidv4(),
@@ -139,33 +143,13 @@ const sendDeepSeekMessage = async ({
 	let prompt = input.trim();
 
 	if (conversation.title === getStr("newConversation")) {
-		const {choices} = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${deepseekToken}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				model: models[1],
-				messages: [
-					{
-						role: "system",
-						content: "你将和用户进行若干轮对话，请先根据用户的输入概括一个合适且简短的标题。直接输出标题。\n---\n" + prompt,
-					},
-				],
-				temperature: 0.6,
-				repetition_penalty: 1.05,
-				stream: false,
-			}),
-		})).json();
-		const answer = choices[0].message.content;
-		const title = splitReasoningAndStatus(answer)[1].trim();
-		next = {
-			...next,
-			title,
-		};
-		dispatch(deepseekUpdateHistory(next));
-
+		generateConversationTitle(prompt, deepseekToken).then((title) => {
+			next = {
+				...next,
+				title,
+			};
+			dispatch(deepseekUpdateHistory(next));
+		});
 	}
 
 	if (dataSource !== null) {
@@ -304,7 +288,32 @@ ${prompt}
 			resolve();
 		});
 	});
+
 };
+
+async function generateConversationTitle(content: string, deepseekToken: string): Promise<string> {
+	const { choices } = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${deepseekToken}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			model: models[1],
+			messages: [
+				{
+					role: "system",
+					content: getStr("summaryPrompt") + content + "}}",
+				},
+			],
+			temperature: 0.6,
+			repetition_penalty: 1.05,
+			stream: false,
+		}),
+	})).json();
+	const answer = choices[0].message.content;
+	return splitReasoningAndStatus(answer)[1].trim();
+}
 
 export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [input, setInput] = useState("");
@@ -315,6 +324,8 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	);
 	const [searching, setSearching] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const sidebarPosition = useRef(new Animated.Value(-1)).current;
+
 	const [model, setModel] = useState<string>(models[0]);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [searchKey, setSearchKey] = useState("");
@@ -384,7 +395,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			});
 		}
 		setCurrentIndex(0);
-		setSidebarOpen(false);
+		toggleSidebar(false);
 		inputRef.current?.focus();
 	};
 
@@ -401,7 +412,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					text: getStr("confirm"),
 					onPress: () => {
 						dispatch(deepseekClear());
-						setSidebarOpen(false);
+						toggleSidebar(false);
 					},
 				},
 			],
@@ -448,6 +459,18 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 		}
 	};
 
+	const toggleSidebar = (open: boolean) => {
+		Animated.timing(sidebarPosition, {
+			toValue: open ? 0 : -1, // 0 for visible, -1 for hidden
+			duration: 300,
+			useNativeDriver: true,
+		}).start(() => {
+			if (!open) {
+				setSidebarOpen(false); // Close modal after animation
+			}
+		});
+	};
+
 	return (
 		<KeyboardAvoidingView
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -473,6 +496,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					}}
 					onPress={() => {
 						setSidebarOpen(true);
+						toggleSidebar(true);
 					}}>
 					<IconHamburgerMenu height={24} width={24} />
 				</TouchableOpacity>
@@ -608,7 +632,16 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											marginLeft: 40,
 											marginVertical: 4,
 										}}>
-										<Text style={{color: colors.text}}>{item.content}</Text>
+										<Pressable
+											onLongPress={() => {
+												Clipboard.setString(item.content);
+												Snackbar.show({
+													text: getStr("copied"),
+													duration: Snackbar.LENGTH_SHORT,
+												});
+											}}>
+											<Text style={{ color: colors.text }}>{item.content}</Text>
+										</Pressable>
 									</View>
 								</View>
 							</View>
@@ -644,7 +677,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 										alignItems: "flex-start",
 									}}>
 									<Text style={{color: colors.fontB3}}>
-										{getStr(searching ? "searching" : statusText)}
+										{searching && index === conversation.messages.length - 1 ? getStr("searching") : getStr(statusText)}
 										&nbsp;&nbsp;
 										{new Date(item.timestamp ?? 0).toLocaleString([], {
 											month: "numeric",
@@ -714,23 +747,29 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											color={colors.themeTransparentPurple}
 										/>
 									)}
-									<View
-										style={{
-											backgroundColor: colors.themeTransparentPurple,
-											borderRadius: 16,
-											paddingVertical: 8,
-											paddingHorizontal: 12,
-											margin: 4,
-											width: "100%",
-											alignItems: "center",
-											justifyContent: "center",
-										}}>
-										<Text style={{color: colors.themeDarkPurple}}>{getStr("aigcWarning")}</Text>
-									</View>
+									{(index !== conversation.messages.length - 1 || !generating) && item.content !== systemErrorMessage && (
+										<View
+											style={{
+												backgroundColor: `${colors.themeLightPurple}33`,
+												borderRadius: 8,
+												borderWidth: 1,
+												borderColor: colors.themePurple,
+												paddingVertical: 8,
+												paddingHorizontal: 12,
+												marginVertical: 4,
+												width: "100%",
+												alignItems: "center",
+												justifyContent: "center",
+											}}>
+											<Text style={{color: colors.themePurple, fontSize: 12}}>
+												{getStr("aigcWarning")}
+											</Text>
+										</View>
+									)}
 									<View
 										style={[
 											{flexDirection: "row"},
-											generating ? {display: "none"} : {},
+											index === conversation.messages.length - 1 && generating ? {display: "none"} : {},
 										]}>
 										<TouchableOpacity
 											style={{
@@ -936,16 +975,30 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						position: "absolute",
 						end: 0,
 						top: 0,
-						backgroundColor: colors.themeBackground,
-						opacity: 0.75,
-						width: "38%",
+						width: "100%",
 						height: "100%",
 					}}
-					onPress={() => setSidebarOpen(false)}
-				/>
-				<View
+					onPress={() => toggleSidebar(false)}
+				>
+					<Animated.View
+						style={{
+							flex: 1,
+							opacity: sidebarPosition.interpolate({
+								inputRange: [-1, 0],
+								outputRange: [0, 0.75],
+							}),
+							backgroundColor: colors.themeBackground,
+						}}
+					/>
+				</Pressable>
+				<Animated.View
 					style={{
 						position: "absolute",
+						top: 0,
+						transform: [{ translateX: sidebarPosition.interpolate({
+							inputRange: [-1, 0],
+							outputRange: [-0.62 * useWindowDimensions().width, 0],
+						}) }],
 						backgroundColor: colors.contentBackground,
 						paddingHorizontal: 16,
 						paddingTop: getStatusBarHeight(true) + 2,
@@ -1017,7 +1070,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								}}
 								onPress={() => {
 									setCurrentIndex(history.findIndex((c) => c.id === item.id));
-									setSidebarOpen(false);
+									toggleSidebar(false);
 								}}
 								onLongPress={() => {
 									setDeleteId(item.id);
@@ -1037,7 +1090,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 												onPress: () => {
 													dispatch(deepseekDeleteConversation(item));
 													setDeleteId(null);
-													setSidebarOpen(false);
+													toggleSidebar(false);
 												},
 											},
 										],
@@ -1088,7 +1141,7 @@ export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							{getStr("delete") + getStr("all")}
 						</Text>
 					</TouchableOpacity>
-				</View>
+				</Animated.View>
 			</Modal>
 		</KeyboardAvoidingView>
 	);

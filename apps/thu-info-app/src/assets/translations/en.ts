@@ -668,4 +668,6 @@ export default {
 	deleteConversationConfirm: "Are you sure to delete this conversation?",
 	deleteAllHistoryConfirm: "Are you sure to delete all conversations?",
 	copied: "Copied",
+	summaryPrompt:
+		"Generate a concise and descriptive title for the following conversation. The title should:\n- Be no longer than 10 words\n- Without punctuation or special symbols, and avoid using emojis\n- Clearly reflect the main topic of the conversation\n- ONLY generate the final title\n\nHere is the conversation: \n{{",
 };
