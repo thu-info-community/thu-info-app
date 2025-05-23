@@ -21,7 +21,7 @@
 		"@react-native-camera-roll/camera-roll": "7.10.0",
 		"@react-native-clipboard/clipboard": "^1.16.2",
 		"@react-native-community/blur": "4.4.1",
-		"@react-native-community/slider": "4.5.6",
+		"@react-native-community/slider": "4.5.7",
 		"@react-native-cookies/cookies": "6.2.1",
 		"@react-native-oh/react-native-harmony": "0.72.70",
 		"@react-navigation/bottom-tabs": "7.3.13",
