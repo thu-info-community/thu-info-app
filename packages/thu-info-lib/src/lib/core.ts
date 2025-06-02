@@ -18,8 +18,6 @@ import {
     ROAMING_URL,
     SAVE_FINGER_URL,
     USER_DATA_URL,
-    WEB_VPN_ID_BASE_URL,
-    WEB_VPN_ID_LOGIN_URL,
     WEB_VPN_OAUTH_LOGIN_URL,
 } from "../constants/strings";
 import * as cheerio from "cheerio";
@@ -256,8 +254,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     case "cab":
     case "id_website":
     case "id": {
-        const idBaseUrl = policy === "card" ? ID_BASE_URL : policy === "id_website" ? ID_WEBSITE_BASE_URL : WEB_VPN_ID_BASE_URL;
-        const idLoginUrl = policy === "card" ? ID_LOGIN_URL : policy === "id_website" ? ID_WEBSITE_LOGIN_URL : WEB_VPN_ID_LOGIN_URL;
+        const idBaseUrl = policy === "card" ? ID_BASE_URL : policy === "id_website" ? ID_WEBSITE_BASE_URL : ID_BASE_URL;
+        const idLoginUrl = policy === "card" ? ID_LOGIN_URL : policy === "id_website" ? ID_WEBSITE_LOGIN_URL : ID_LOGIN_URL;
         let response = "";
         const target = policy === "id_website" ? "账号设置" : "登录成功。正在重定向到";
         for (let i = 0; i < 2; i++) {
