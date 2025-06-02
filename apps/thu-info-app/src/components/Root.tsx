@@ -126,7 +126,7 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
-import {DeepSeek} from "../ui/home/deepseek.tsx";
+// import {DeepSeek} from "../ui/home/deepseek.tsx";
 import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
@@ -200,7 +200,7 @@ const RootTabs = () => {
 				component={NewsScreen}
 				options={{title: getStr("news"), headerShown: false}}
 			/>
-			<Tab.Screen
+			{/* <Tab.Screen
 				name="DeepSeekTab"
 				component={DeepSeek}
 				options={{title: getStr("deepseek"), headerShown: false}}
@@ -209,7 +209,7 @@ const RootTabs = () => {
 						addUsageStat(FunctionType.DeepSeek);
 					},
 				})}
-			/>
+			/> */}
 			<Tab.Screen
 				name="ScheduleTab"
 				component={ScheduleScreen}
