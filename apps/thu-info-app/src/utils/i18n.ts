@@ -20,7 +20,7 @@ const translations = getLocale() as typeof zh;
 export const langCode = translations === zh ? "zh" : "en";
 
 export function getStr<K extends keyof typeof zh>(key: K): string {
-	if (!translations[key]) {
+	if (translations[key] === undefined) {
 		console.warn(`Missing translation for key ${key}, language ${langCode}`);
 		return key;
 	}
