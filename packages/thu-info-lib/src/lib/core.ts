@@ -306,7 +306,10 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (policy === "id_website") {
             return response;
         }
-        const redirectUrl = getWebVPNUrl(cheerio.load(response)("a").attr()!.href);
+        let redirectUrl = cheerio.load(response)("a").attr()!.href;
+        if (policy !== "card") {
+            redirectUrl = getWebVPNUrl(redirectUrl);
+        }
 
         if (redirectUrl.includes(HOST_MAP["madmodel.cs"])) {
             const ticket = /ticket=(.+)/.exec(redirectUrl);
