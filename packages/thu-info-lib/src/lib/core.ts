@@ -74,6 +74,19 @@ const parseUrl = (urlIn: string) => {
     return `https://webvpn.tsinghua.edu.cn/${protocolFull}/${HOST_MAP[host]}/${path}`;
 };
 
+const getWebVPNUrl = (urlIn: string): string => {
+    if (urlIn.search("oauth.tsinghua.edu.cn") !== -1) {
+        return urlIn;
+    }
+
+    const url = new URL(urlIn);
+    const scheme = url.protocol.replace(":", "");
+    const host = url.hostname;
+    const port = url.port || (scheme == "https" ? "443" : "80");
+    const uri = url.pathname + (url.search ? url.search : "") + (url.hash ? url.hash : "");
+    return `https://oauth.tsinghua.edu.cn/lb-auth/lbredirect?scheme=${scheme}&host=${host}&port=${port}&uri=${uri}`;
+};
+
 export const getCsrfToken = async () => {
     const cookie = await uFetch(GET_COOKIE_URL);
     const q = /XSRF-TOKEN=(.+?);/.exec(cookie + ";");
@@ -293,7 +306,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         if (policy === "id_website") {
             return response;
         }
-        const redirectUrl = cheerio.load(response)("a").attr()!.href;
+        const redirectUrl = getWebVPNUrl(cheerio.load(response)("a").attr()!.href);
 
         if (redirectUrl.includes(HOST_MAP["madmodel.cs"])) {
             const ticket = /ticket=(.+)/.exec(redirectUrl);
