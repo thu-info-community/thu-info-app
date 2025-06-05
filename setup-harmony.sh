@@ -23,6 +23,7 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @react-native-oh-tpl/slider@4.4.3-0.3.3 \
          @thu-info/lib@../../packages/thu-info-lib \
          rtn-network-utils@../../packages/RTNNetworkUtils \
+         react@18.3.1 \
          react-native-svg@15.0.0 \
          react-native-gesture-handler@2.14.1 \
          react-native@0.72.17
