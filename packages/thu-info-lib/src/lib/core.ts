@@ -309,6 +309,14 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let redirectUrl = cheerio.load(response)("a").attr()!.href;
         if (policy !== "card") {
             redirectUrl = getWebVPNUrl(redirectUrl);
+            if (getRedirectLocation) {
+                // Patch for OpenHarmony
+                const idUrl = await getRedirectLocation(redirectUrl);
+                if (!idUrl) {
+                    throw new LoginError("Failed to get id url.");
+                }
+                redirectUrl = idUrl;
+            }
         }
 
         if (redirectUrl.includes(HOST_MAP["madmodel.cs"])) {
