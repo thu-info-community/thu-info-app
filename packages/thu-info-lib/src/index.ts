@@ -469,9 +469,8 @@ export class InfoHelper {
 
     /**
      * Get the dorm score image, in base64 format.
-     * @param dormPassword  password for myhome.tsinghua.edu.cn
      */
-    public getDormScore = async (dormPassword: string): Promise<string> => getDormScore(this, dormPassword);
+    public getDormScore = async (): Promise<string> => getDormScore(this);
 
     /**
      * Make an electricity recharge payment order, and get the pay-code of the

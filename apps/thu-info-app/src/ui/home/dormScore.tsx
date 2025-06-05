@@ -3,12 +3,10 @@ import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
 import {helper, State} from "../../redux/store";
-import {DormAuthError} from "@thu-info/lib/src/utils/error";
-import {RootNav} from "../../components/Root";
 import {useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 
-export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
+export const DormScoreScreen = () => {
 	const [base64, setBase64] = useState<string>();
 	const dormPassword = useSelector((s: State) => s.credentials.dormPassword);
 	const themeName = useColorScheme();
@@ -17,14 +15,7 @@ export const DormScoreScreen = ({navigation}: {navigation: RootNav}) => {
 		helper
 			.getDormScore(dormPassword)
 			.then(setBase64)
-			.catch((e) => {
-				if (e instanceof DormAuthError) {
-					navigation.navigate("MyhomeLogin");
-				} else {
-					NetworkRetry();
-				}
-			});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+			.catch(NetworkRetry);
 	}, [dormPassword]);
 	return (
 		<View style={{flex: 1}}>

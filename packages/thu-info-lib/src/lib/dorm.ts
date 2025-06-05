@@ -6,7 +6,6 @@ import {
     ELE_REMAINDER_URL,
     DORM_SCORE_URL,
     WEB_VPN_ROOT_URL,
-    DORM_LOGIN_URL_PREFIX,
     CHANGE_HOME_PASSWORD_URL,
 } from "../constants/strings";
 import * as cheerio from "cheerio";
@@ -20,20 +19,12 @@ import {MOCK_DORM_SCORE_BASE64, MOCK_ELE_PAY_RECORD, MOCK_ELE_REMAINDER} from ".
 import {DormAuthError, EleError} from "../utils/error";
 type TagElement = Element & {type: ElementType.Tag};
 
-export const getDormScore = (helper: InfoHelper, dormPassword: string): Promise<string> =>
+export const getDormScore = (helper: InfoHelper): Promise<string> =>
     roamingWrapperWithMocks(
         helper,
-        undefined,
-        "",
+        "id",
+        "0a993de7e533cd43a594459abdcab27d/0",
         async () => {
-            await uFetch(DORM_LOGIN_URL_PREFIX, {
-                __VIEWSTATE: "/wEPDwUKLTEzNDQzMjMyOGRkBAc4N3HClJjnEWfrw0ASTb/U6Ev/SwndECOSr8NHmdI=",
-                __VIEWSTATEGENERATOR: "7FA746C3",
-                __EVENTVALIDATION: "/wEWBgK41bCLBQKPnvPTAwLXmu9LAvKJ/YcHAsSg1PwGArrUlUcttKZxxZPSNTWdfrBVquy6KRkUYY9npuyVR3kB+BCrnQ==",
-                weixin_user_authenticateCtrl1$txtUserName: helper.userId,
-                weixin_user_authenticateCtrl1$txtPassword: dormPassword,
-                weixin_user_authenticateCtrl1$btnLogin: "登录",
-            });
             const response = await uFetch(DORM_SCORE_URL);
             const chart = cheerio.load(response)("#weixin_health_linechartCtrl1_Chart1");
             if (chart.length !== 1) {
@@ -49,7 +40,7 @@ export const getEleRechargePayCode = async (
     helper: InfoHelper,
     money: number,
 ): Promise<string> => {
-    await roam(helper, "id", "051bb58cba58a1c5f67857606497387f");
+    await roam(helper, "id", "0a993de7e533cd43a594459abdcab27d/1");
 
     const $ = await uFetch(RECHARGE_ELE_URL).then(cheerio.load);
 
@@ -76,7 +67,7 @@ export const getElePayRecord = async (
     roamingWrapperWithMocks(
         helper,
         "id",
-        "051bb58cba58a1c5f67857606497387f",
+        "0a993de7e533cd43a594459abdcab27d/1",
         async () => {
             const data = (await uFetch(ELE_PAY_RECORD_URL).then(cheerio.load))(".myTable tr");
             if (data.length === 0) throw new EleError();
@@ -98,7 +89,7 @@ export const getEleRemainder = async (
     roamingWrapperWithMocks(
         helper,
         "id",
-        "051bb58cba58a1c5f67857606497387f",
+        "0a993de7e533cd43a594459abdcab27d/1",
         async () => {
             const $ = await uFetch(ELE_REMAINDER_URL).then(cheerio.load);
             if ($("#net_Default_LoginCtrl1_txtUserName").length === 1) throw new EleError();
