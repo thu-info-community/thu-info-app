@@ -4,7 +4,7 @@ import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconDormScore from "../../assets/icons/IconDormScore";
-// import IconEleRecharge from "../../assets/icons/IconEleRecharge";
+import IconEleRecharge from "../../assets/icons/IconEleRecharge";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {currState} from "../../redux/store";
 
@@ -48,17 +48,17 @@ export const DormScreen = ({navigation}: {navigation: RootNav}) => {
 						}}
 					/>
 				)}
-				{/*{!disabledFunction.includes("electricity") && (*/}
-				{/*	<SecondaryItem*/}
-				{/*		title="electricity"*/}
-				{/*		destKey="electricity"*/}
-				{/*		icon={<IconEleRecharge />}*/}
-				{/*		onPress={() => {*/}
-				{/*			addUsageStat(FunctionType.Electricity);*/}
-				{/*			navigation.navigate("Electricity");*/}
-				{/*		}}*/}
-				{/*	/>*/}
-				{/*)}*/}
+				{!disabledFunction.includes("electricity") && (
+					<SecondaryItem
+						title="electricity"
+						destKey="electricity"
+						icon={<IconEleRecharge />}
+						onPress={() => {
+							addUsageStat(FunctionType.Electricity);
+							navigation.navigate("Electricity");
+						}}
+					/>
+				)}
 			</View>
 		</View>
 	);
