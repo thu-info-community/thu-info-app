@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import {helper} from "../../redux/store";
-import {hasAlipay} from "../../utils/alipay";
+import {doAlipay, hasAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
@@ -20,7 +20,7 @@ export const ElectricityScreen = () => {
 	const {colors} = themes(themeName);
 
 	const [money, setMoney] = useState("");
-	const [processing, _setProcessing] = useState(false);
+	const [processing, setProcessing] = useState(false);
 	const [moneyQuickSelected, setMoneyQuickSelected] = useState<
 		number | undefined
 	>();
@@ -183,11 +183,22 @@ export const ElectricityScreen = () => {
 										!processing &&
 										hasAlipay()
 											.then(() => {
-												Snackbar.show({
-													text: "敬请期待！",
-													duration: Snackbar.LENGTH_INDEFINITE,
-													action: {text: getStr("ok")},
-												});
+												setProcessing(true);
+												helper
+													.getEleRechargePayCode(Number(money))
+													.then(doAlipay)
+													.then(() => {
+														setProcessing(false);
+														setMoney("");
+													})
+													.catch(() => {
+														Snackbar.show({
+															text: getStr("payFailure"),
+															duration: Snackbar.LENGTH_INDEFINITE,
+															action: {text: getStr("ok")},
+														});
+														setProcessing(false);
+													});
 											})
 											.catch(() =>
 												Snackbar.show({

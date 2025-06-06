@@ -486,8 +486,12 @@ export class InfoHelper {
      * @param money  a number representing the amount of money to be paid
      *               <b>(in yuan, must be integer)</b>
      */
-    public getEleRechargePayCode = async (money: number): Promise<string> =>
-        getEleRechargePayCode(this, money);
+    public getEleRechargePayCode = async (money: number): Promise<string> => {
+        if (!await canRechargeCampusCard(this)) {
+            throw new Error("暂不支持宿舍电费充值，请升级应用程序。");
+        }
+        return getEleRechargePayCode(this, money);
+    };
 
     /**
      * Get the recent ele-recharge records.
