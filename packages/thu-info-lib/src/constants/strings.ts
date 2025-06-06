@@ -122,7 +122,7 @@ export const CLASSROOM_STATE_MIDDLE = "&weeknumber=";
 export const INVOICE_LIST_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51/invoiceSys/getList.do";
 export const INVOICE_CONTENT_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51/invoiceSys/invoiceShow.do?bus_no=";
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51/invoice/showInvPdf.do?uuid=";
 export const INVOICE_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f4ed519669247b59700f81b9991b2631aee63c51/roam/roamAuth.do";
 export const LOSE_CARD_URL =

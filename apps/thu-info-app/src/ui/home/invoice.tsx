@@ -26,7 +26,7 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 						text: getStr("loading"),
 						duration: Snackbar.LENGTH_SHORT,
 					});
-					helper.getInvoicePDF(invoice.bus_no).then((pdf) => {
+					helper.getInvoicePDF(invoice.uuid).then((pdf) => {
 						navigation.navigate("InvoicePDF", {
 							base64: pdf,
 							filename: `${invoice.financial_item_name}-${invoice.inv_no}`,

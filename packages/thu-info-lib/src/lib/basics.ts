@@ -491,12 +491,12 @@ export const getInvoiceList = (helper: InfoHelper, page: number): Promise<{data:
         MOCK_INVOICE_DATA,
     );
 
-export const getInvoicePDF = (helper: InfoHelper, busNumber: string): Promise<string> =>
+export const getInvoicePDF = (helper: InfoHelper, uuid: string): Promise<string> =>
     roamingWrapperWithMocks(
         helper,
         "default",
         "625B81A7A9D148B01DA59185CC4074E1",
-        () => uFetch(INVOICE_CONTENT_URL + busNumber),
+        () => uFetch(INVOICE_CONTENT_URL + uuid),
         SAMPLE_INVOICE_BASE64,
     );
 

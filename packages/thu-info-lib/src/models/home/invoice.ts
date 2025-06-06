@@ -27,4 +27,5 @@ export interface Invoice {
     payment_item_type_name: string,
     red_bus_no: string,
     tax_amount: number,
+    uuid: number,
 }

@@ -424,7 +424,7 @@ export class InfoHelper {
     /**
      * Get the invoice PDF in base64 format.
      */
-    public getInvoicePDF = async (busNumber: string): Promise<string> => getInvoicePDF(this, busNumber);
+    public getInvoicePDF = async (uuid: string): Promise<string> => getInvoicePDF(this, uuid);
 
     /**
      * Get the bank payment records of the user.
