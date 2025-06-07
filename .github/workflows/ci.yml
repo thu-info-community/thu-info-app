@@ -182,7 +182,8 @@ jobs:
           path: apps/thu-info-app/ios/thu_info.ipa
   build-harmony:
     needs: install-and-test
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: ghcr.io/sanchuanhehe/harmony-next-pipeline-docker/harmonyos-ci-image:v5.0.4
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node
@@ -198,14 +199,13 @@ jobs:
           key: cache-harmony-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-harmony-
-      - name: Setup OpenHarmony environment
-        uses: Snapp-Mobile/oh-action@v0.1
-        with:
-          working-directory: apps/thu-info-app/harmony
-          install-dependencies: false
-      - name: Install dependencies
+      - name: Setup Harmony
         run: |
           ./setup-harmony.sh
+      - name: Install dependencies
+        working-directory: apps/thu-info-app/harmony
+        run: |
+          ohpm install --all
       - name: Bundle project
         working-directory: apps/thu-info-app
         run: |
@@ -214,6 +214,10 @@ jobs:
       - name: Build project
         working-directory: apps/thu-info-app/harmony
         run: |
-          ohpm install --all
-          hvigorw --version --accept-license
-          # hvigorw assembleHap --mode module -p product=default --stacktrace --no-parallel --no-daemon
+          hvigorw clean --no-daemon
+          hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: harmony-output
+          path: apps/thu-info-app/harmony/entry/build/default/outputs/default
