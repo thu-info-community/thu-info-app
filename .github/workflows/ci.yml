@@ -201,6 +201,7 @@ jobs:
             cache-harmony-
       - name: Setup Harmony
         run: |
+          npm install -g yarn
           ./setup-harmony.sh
       - name: Install dependencies
         working-directory: apps/thu-info-app/harmony
