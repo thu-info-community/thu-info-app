@@ -9616,10 +9616,10 @@ react-native-blob-util@0.22.2:
     base-64 "0.1.0"
     glob "^10.3.10"
 
-react-native-confirmation-code-field@7.6.1:
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-7.6.1.tgz#ac07d3f63e1df2d99731df2ebf2dc57e26278a85"
-  integrity sha512-ki65sUbGHdLF+dl5+qvXolhhKceIR6G0uJrFyCfoOqJUyWrE3bIcE+gZ/FsvYfkIBwKZmnF0KHQ09T4/SnE0AQ==
+react-native-confirmation-code-field@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-8.0.0.tgz#51c33e794e871c80b72d83b4e6691a2b56108494"
+  integrity sha512-icyKBLMvfeQ3GiQqPfGSso0cl55cfP6RicDBRcwLpxTlrgyofyCgY4qTKtA2yTvKO4u7Hwc+44hwi/YsUkpAyA==
 
 react-native-device-info@14.0.4:
   version "14.0.4"
