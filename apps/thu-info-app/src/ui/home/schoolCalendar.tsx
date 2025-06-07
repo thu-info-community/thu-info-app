@@ -24,8 +24,8 @@ export const SchoolCalendar = () => {
 
 	const [src, setSrc] = useState("");
 	const [year, setYear] = useState(currentYear);
-	const [lastYear, setLastYear] = useState(currentYear);
-	const firstYear = lastYear - 2;
+	const [latestYear, setLatestYear] = useState(currentYear);
+	const firstYear = latestYear - 3;
 	const [yearSelection, setYearSelection] = useState(currentYear);
 	const [semesterSelection, setSemesterSelection] = useState(
 		semester === "autumn" ? 0 : 1,
@@ -40,7 +40,7 @@ export const SchoolCalendar = () => {
 
 	useEffect(() => {
 		helper.getCalendarYear().then((r) => {
-			setLastYear(r);
+			setLatestYear(r + 1);
 		});
 	}, []);
 
@@ -75,7 +75,7 @@ export const SchoolCalendar = () => {
 						<View style={{flexDirection: "row"}}>
 							<ScrollPicker
 								dataSource={Array.from(
-									new Array(currentYear - firstYear + 1),
+									new Array(latestYear - firstYear + 1),
 									(_, k) => `${k + firstYear - 1}-${k + firstYear}`,
 								)}
 								selectedIndex={year - firstYear}

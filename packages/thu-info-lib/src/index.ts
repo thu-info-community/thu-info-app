@@ -449,7 +449,8 @@ export class InfoHelper {
     public getCalendar = async (): Promise<CalendarData> => getCalendar(this);
 
     /**
-     * Get the latest school calendar year (from THUInfo backend)
+     * Get the latest school calendar year (from THUInfo backend).
+     * `2024` means that 2024-2025 school year is available.
      */
     public getCalendarYear = async (): Promise<number> => getSchoolCalendarYear();
 
