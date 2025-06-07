@@ -160,8 +160,12 @@ jobs:
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
+      - name: Select Xcode 16
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Update beta
-        run: cd apps/thu-info-app/ios && yarn ios
+        run: cd apps/thu-info-app/ios && fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
@@ -171,6 +175,11 @@ jobs:
           CCACHE_FILECLONE: "true"
           CCACHE_DEPEND: "true"
           CCACHE_INODECACHE: "true"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thu_info.ipa
+          path: apps/thu-info-app/ios/thu_info.ipa
   build-harmony:
     needs: install-and-test
     runs-on: macos-latest
