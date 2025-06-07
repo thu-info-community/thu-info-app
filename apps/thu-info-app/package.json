@@ -63,7 +63,7 @@
 		"react-native-url-polyfill": "2.0.0",
 		"react-native-version-number": "0.3.6",
 		"react-native-view-shot": "4.0.3",
-		"react-native-webview": "13.14.1",
+		"react-native-webview": "13.14.2",
 		"react-native-wheel-scrollview-picker": "2.0.9",
 		"react-redux": "9.2.0",
 		"redux-persist": "6.0.0",
