@@ -185,10 +185,6 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v4
@@ -199,10 +195,14 @@ jobs:
           restore-keys: |
             cache-harmony-
       - name: Setup OpenHarmony environment
-        uses: Snapp-Mobile/oh-action@v0.1
+        uses: eclipse-oniro4openharmony/oh-app-action@v0.1
         with:
           working-directory: apps/thu-info-app/harmony
           install-dependencies: false
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Install dependencies
         run: |
           ./setup-harmony.sh
