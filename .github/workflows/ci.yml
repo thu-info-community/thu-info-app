@@ -195,7 +195,7 @@ jobs:
           restore-keys: |
             cache-harmony-
       - name: Setup OpenHarmony environment
-        uses: eclipse-oniro4openharmony/oh-app-action@v0.1
+        uses: Snapp-Mobile/oh-action@v0.1
         with:
           working-directory: apps/thu-info-app/harmony
           install-dependencies: false
