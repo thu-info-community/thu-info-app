@@ -2,6 +2,7 @@ import { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony/ts';
 import { AsyncStoragePackage } from '@react-native-oh-tpl/async-storage/ts';
 import RnohReactNativeHarmonyGestureHandlerPackage from '@react-native-oh-tpl/react-native-gesture-handler';
 import { RNSnackbarPackage } from '@react-native-oh-tpl/react-native-snackbar/ts';
+import { ClipboardPackage } from '@react-native-oh-tpl/clipboard/ts';
 import { CookiesPackage } from 'roh_cookies/src/main/ets/CookiesPackage';
 import { RNGetRandomValuesPackage } from '@react-native-oh-tpl/react-native-get-random-values/ts';
 import { RNSharePackage } from 'react-native-share/ts';
@@ -25,6 +26,7 @@ export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
     new RNSharePackage(ctx),
     new RNLocalizePackage(ctx),
     new BlobUtilPackage(ctx),
+    new ClipboardPackage(ctx),
     new RNVersionNumberPackage(ctx),
     new SvgPackage(ctx),
     new SafeAreaViewPackage(ctx),

@@ -10,6 +10,7 @@ yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @react-native-oh-tpl/camera-roll@7.8.3-0.1.2 \
          @react-native-oh-tpl/cookies@6.2.1-0.0.7 \
          @react-native-oh-tpl/react-native-blob-util@0.19.6-0.0.13 \
+         @react-native-oh-tpl/clipboard@1.13.2-0.0.9 \
          @react-native-oh-tpl/react-native-device-info@11.1.0-0.0.5 \
          @react-native-oh-tpl/react-native-gesture-handler@2.14.1-2.14.15 \
          @react-native-oh-tpl/react-native-get-random-values@1.11.0-0.0.1 \

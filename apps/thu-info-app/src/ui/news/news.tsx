@@ -29,8 +29,8 @@ import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
 import {getStatusBarHeight} from "react-native-safearea-height";
-// import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
-// import IconSend from "../../assets/icons/IconSend.tsx";
+import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
+import IconSend from "../../assets/icons/IconSend.tsx";
 
 type Category =
 	| "catSubscribed"
@@ -327,7 +327,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	}, [categorySelected]);
 
 	const [deepseekOpen, setDeepseekOpen] = useState(false);
-	const [deepseekInput, _setDeepseekInput] = useState("");
+	const [deepseekInput, setDeepseekInput] = useState("");
 
 	let screenHeight = Dimensions.get("window");
 
@@ -636,7 +636,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						marginHorizontal: 16,
 						alignItems: "flex-end",
 					}, deepseekOpen ? { width: "80%", borderColor: theme.colors.inputBorder, borderWidth: 1 } : {}]}>
-					{/* deepseekOpen ?
+					{deepseekOpen ?
 						<View style={{flexDirection: "row"}}>
 							<TextInput
 								value={deepseekInput}
@@ -656,7 +656,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<IconSend height={32} width={32} color={deepseekInput.trim() === "" ? theme.colors.themeGrey : theme.colors.primary} />
 						</View>
 						</View>
-						: <View style={{padding: 8}}><IconDeepSeek width={32} height={32} /></View> */}
+						: <View style={{padding: 8}}><IconDeepSeek width={32} height={32} /></View>}
 					</View>
 				</TouchableWithoutFeedback>
 			</View>

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
-// import {addUsageStat, FunctionType} from "../utils/webApi";
+import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
@@ -126,7 +126,7 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
-// import {DeepSeek} from "../ui/home/deepseek.tsx";
+import {DeepSeekScreen} from "../ui/home/deepseek";
 import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
@@ -200,16 +200,16 @@ const RootTabs = () => {
 				component={NewsScreen}
 				options={{title: getStr("news"), headerShown: false}}
 			/>
-			{/* <Tab.Screen
+			<Tab.Screen
 				name="DeepSeekTab"
-				component={DeepSeek}
+				component={DeepSeekScreen}
 				options={{title: getStr("deepseek"), headerShown: false}}
 				listeners={() => ({
 					tabPress: () => {
 						addUsageStat(FunctionType.DeepSeek);
 					},
 				})}
-			/> */}
+			/>
 			<Tab.Screen
 				name="ScheduleTab"
 				component={ScheduleScreen}

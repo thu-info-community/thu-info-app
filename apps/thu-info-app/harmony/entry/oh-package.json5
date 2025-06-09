@@ -16,6 +16,7 @@
     "react-native-share": "file:../../node_modules/@react-native-oh-tpl/react-native-share/harmony/react_native_share.har",
     "@react-native-oh-tpl/react-native-localize": "file:../../node_modules/@react-native-oh-tpl/react-native-localize/harmony/rn_localize.har",
     "@react-native-oh-tpl/react-native-blob-util": "file:../../node_modules/@react-native-oh-tpl/react-native-blob-util/harmony/blobUtil.har",
+    "@react-native-oh-tpl/clipboard": "file:../../node_modules/@react-native-oh-tpl/clipboard/harmony/clipboard.har",
     "@react-native-oh-tpl/react-native-version-number": "file:../../node_modules/@react-native-oh-tpl/react-native-version-number/harmony/rnoh_version_number.har",
     "@react-native-oh-tpl/react-native-svg": "file:../../node_modules/@react-native-oh-tpl/react-native-svg/harmony/svg.har",
     "@react-native-oh-tpl/react-native-safe-area-context": "file:../../node_modules/@react-native-oh-tpl/react-native-safe-area-context/harmony/safe_area.har",

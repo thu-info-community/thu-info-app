@@ -315,7 +315,7 @@ async function generateConversationTitle(content: string, deepseekToken: string)
 	return splitReasoningAndStatus(answer)[1].trim();
 }
 
-export const DeepSeek = ({route: {params}}: {route: DeepSeekTabProp}) => {
+export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
