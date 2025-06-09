@@ -1,6 +1,12 @@
 const {getDefaultConfig, mergeConfig} = require("@react-native/metro-config");
-const {createHarmonyMetroConfig} = require("@react-native-oh/react-native-harmony/metro.config");
 const path = require("path");
+
+let createHarmonyMetroConfig = () => (option) => ({});
+try {
+	({createHarmonyMetroConfig} = require("@react-native-oh/react-native-harmony/metro.config"));
+} catch {
+	// Optional dependency `@react-native-oh/react-native-harmony` not found. Skipping Harmony config.
+}
 
 // Find the project and workspace directories
 const projectRoot = __dirname;

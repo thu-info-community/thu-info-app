@@ -5,7 +5,8 @@ set -e
 rm package.json
 mv yarn.lock apps/thu-info-app/
 cd apps/thu-info-app/
-yarn add @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
+yarn add @react-native-oh/react-native-harmony@0.72.70 \
+         @react-native-oh-tpl/async-storage@1.21.0-0.2.1 \
          @react-native-oh-tpl/blur@4.4.0-0.1.1 \
          @react-native-oh-tpl/camera-roll@7.8.3-0.1.2 \
          @react-native-oh-tpl/cookies@6.2.1-0.0.7 \
