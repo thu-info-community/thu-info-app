@@ -224,7 +224,7 @@ export const ElectricityScreen = () => {
 						style={{
 							textAlign: "left",
 							fontSize: 14,
-							color: colors.fontB3,
+							color: colors.statusWarning,
 							marginHorizontal: 16,
 							marginTop: 32,
 						}}>

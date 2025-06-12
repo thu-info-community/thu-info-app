@@ -325,7 +325,7 @@ export default {
 	testAccountNotSupportEleRecharge:
 		"Electricity recharge with testing account is not supported.",
 	eleRechargeHint:
-		"As this functionality is money-related, and we are not sure whether this functionality always works, do be careful when using it, and do not pay too much in one action(You cannot pay more than 42 yuan in one action now).\nIn case of any failure, do contact us as soon as possible.",
+		"If your recharge has not been credited, please do not repeat the transaction!\nAfter recharging, tap the \"History\" button at the top right corner of the screen to check the transaction status.\nIn case of recharge failure, please send an email to i@thuinfo.net within 1 hour, and attach your payment record and the electricity recharge record. We will provide compensation equal to the uncredited cash amount.",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleEdit: "Edit Schedule",

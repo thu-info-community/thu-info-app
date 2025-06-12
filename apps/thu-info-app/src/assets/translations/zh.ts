@@ -302,7 +302,7 @@ export default {
 	cancelPayment: "取消支付",
 	testAccountNotSupportEleRecharge: "测试账号暂不支持电费充值",
 	eleRechargeHint:
-		"该功能关乎个人财产，且难以进行充分测试，可能仍有漏洞。\n建议使用该 APP 充值时，一次充值金额不要过高（目前设定为不超过 42 元）。\n若充值失败，请及时向我们反馈。",
+		"充值如未到账，请勿重复充值！\n充值后请轻触屏幕右上角“历史记录”按钮，查看充值到账情况。\n如遇充值失败，请在一个小时内发送邮件至 i@thuinfo.net，并附上电费充值记录和支付记录。我们将给出未到账金额等量的现金赔偿。",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleEdit: "编辑计划",
