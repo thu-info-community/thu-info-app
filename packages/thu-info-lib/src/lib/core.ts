@@ -41,6 +41,7 @@ type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab"
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
+    "zhjwxk.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
     "ecard": "77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a",
     "learn": "77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc",
     "mails": "77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40",
@@ -267,6 +268,9 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     case "cab":
     case "id_website":
     case "id": {
+        if (payload === "8172c6fdda6516b4d31be37189ecf88b/1") {
+            await uFetch("https://zhjwxk.cic.tsinghua.edu.cn/xklogin.do");
+        }
         const idBaseUrl = policy === "card" ? ID_BASE_URL : policy === "id_website" ? ID_WEBSITE_BASE_URL : ID_BASE_URL;
         const idLoginUrl = policy === "card" ? ID_LOGIN_URL : policy === "id_website" ? ID_WEBSITE_LOGIN_URL : ID_LOGIN_URL;
         let response = "";
@@ -307,7 +311,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             return response;
         }
         let redirectUrl = cheerio.load(response)("a").attr()!.href;
-        if (policy !== "card") {
+        if (policy !== "card" && !redirectUrl.includes("zhjwxk.cic")) {
             redirectUrl = getWebVPNUrl(redirectUrl);
             if (getRedirectLocation) {
                 // Patch for OpenHarmony

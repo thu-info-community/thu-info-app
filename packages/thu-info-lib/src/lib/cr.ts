@@ -130,6 +130,7 @@ const crFetch = async (
     post?: object,
     paramEncoding = "UTF-8",
 ): Promise<string> => {
+    url = url.replace("https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290", "https://zhjwxk.cic.tsinghua.edu.cn");
     const result = await uFetch(url, post, 60000, paramEncoding);
     if (result.includes("needCaptcha")) {
         throw new LibError();
@@ -142,8 +143,8 @@ const crFetch = async (
 
 export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSemester[]> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const root = await crFetch(helper.graduate() ? CR_MAIN_YJS_URL : CR_MAIN_URL);
         const baseSemIdRes = /m=showTree&p_xnxq=(\d\d\d\d-\d\d\d\d-\d)/.exec(root);
@@ -161,8 +162,8 @@ export const getCrAvailableSemesters = async (helper: InfoHelper): Promise<CrSem
 
 export const getCoursePlan = async (helper: InfoHelper, semester: string) => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const data = await crFetch(helper.graduate() ? COURSE_PLAN_YJS_URL : COURSE_PLAN_URL_PREFIX + semester);
         const courses = cheerio.load(data)(".trr2");
@@ -217,8 +218,8 @@ export const searchCrRemaining = async (helper: InfoHelper, {
     period
 }: SearchParams): Promise<CrRemainingSearchResult> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
             m: "kylSearch",
@@ -268,8 +269,8 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
     period
 }: SearchParams): Promise<CrPrimaryOpenSearchResult> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const $ = await crFetch(helper.graduate() ? CR_SEARCH_YJS_URL : CR_SEARCH_URL, {
             m: "kkxxSearch",
@@ -327,8 +328,8 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
 
 export const searchCrCourses = async (helper: InfoHelper, params: SearchParams): Promise<CrSearchResult> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const [remaining, primaryOpen] = await Promise.all([searchCrRemaining(helper, params), searchCrPrimaryOpen(helper, params)]);
         return {
@@ -350,8 +351,8 @@ export type Priority = "bx" | "xx" | "rx" | "ty" | "xwk" | "fxwk" | "tyk" | "cx"
 
 export const selectCourse = async (helper: InfoHelper, semesterId: string, priority: Priority, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const mainHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=${priority}Search&p_xnxq=${semesterId}&tokenPriFlag=${priority}`);
         const $ = cheerio.load(mainHtml);
@@ -378,8 +379,8 @@ export const selectCourse = async (helper: InfoHelper, semesterId: string, prior
 
 export const deleteCourse = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string) => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
@@ -413,8 +414,8 @@ const willStringToNumber = (will: string): 1 | 2 | 3 => {
 
 export const getSelectedCourses = async (helper: InfoHelper, semesterId: string): Promise<SelectedCourse[]> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
@@ -438,8 +439,8 @@ export const getSelectedCourses = async (helper: InfoHelper, semesterId: string)
 
 export const changeCourseWill = async (helper: InfoHelper, semesterId: string, courseId: string, courseSeq: string, will: 1 | 2 | 3) => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const yxHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxSearchTab&p_xnxq=${semesterId}&tokenPriFlag=yx`);
         const $ = cheerio.load(yxHtml);
@@ -470,8 +471,8 @@ export const getCrCurrentStage = async (
     endTime: string;
 }> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const html = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=selectKc&p_xnxq=${semesterId}&pathContent=%D2%BB%BC%B6%D1%A1%BF%CE`);
         const stageRes = /"当前选课阶段：(.+?)&nbsp;&nbsp;"/.exec(html);
@@ -494,8 +495,8 @@ export const searchCoursePriorityMeta = async (
     semesterId: string,
 ): Promise<{ curr: string, next: string }> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const $ = cheerio.load(await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=xkqkSearch&p_xnxq=${semesterId}`));
         const pad = $(".pad");
@@ -513,8 +514,8 @@ export const searchCoursePriorityInformation = async (
     query: SearchCoursePriorityQuery,
 ): Promise<SearchCoursePriorityResult[]> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const responseHtml = await (async () => {
             const tag = query.isSports ? "Ty" : "BR";
@@ -568,8 +569,8 @@ export const getQueueInfo = async (
     semesterId: string,
 ): Promise<QueueInfo[]> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         const data = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=dlSearch&p_xnxq=${semesterId}&pathContent=%B6%D3%C1%D0%D0%C5%CF%A2%B2%E9%D1%AF`);
         const courses = cheerio.load(data)(".trr2");
@@ -599,8 +600,8 @@ export const cancelCoursePF = async (
     courseId: string,
 ): Promise<void> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
         const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
@@ -637,8 +638,8 @@ export const setCoursePF = async (
     courseId: string,
 ): Promise<void> => roamingWrapperWithMocks(
     helper,
-    "cr",
-    "",
+    "id",
+    "8172c6fdda6516b4d31be37189ecf88b/1",
     async () => {
         await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=pfkcxz&p_xnxq=${semesterId}`);
         const pfHtml = await crFetch(`${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}?m=yxpfxz&p_xnxq=${semesterId}&tokenPriFlag=yx`);
