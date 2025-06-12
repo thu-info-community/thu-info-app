@@ -161,7 +161,7 @@ const sendDeepSeekMessage = async ({
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				model: models[1],
+				model: models[0],
 				messages: [
 					{
 						role: "system",
@@ -299,7 +299,7 @@ async function generateConversationTitle(content: string, deepseekToken: string)
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			model: models[1],
+			model: models[0],
 			messages: [
 				{
 					role: "system",
