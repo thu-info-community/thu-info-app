@@ -834,12 +834,35 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				<TouchableOpacity
 					onPress={() =>
 						setDataSource((prev) =>
-							prev === "LM_XJ_XSSQDT" ? null : "LM_XJ_XSSQDT",
+							prev === "LM_JWGG" ? null : "LM_JWGG",
 						)
 					}
 					style={[
 						style.capsule,
-						dataSource === "LM_XJ_XSSQDT"
+						dataSource === "LM_JWGG"
+							? {
+								backgroundColor: colors.themeTransparentPurple,
+								borderColor: colors.transparent,
+							}
+							: {},
+					]}>
+					<Text
+						style={{
+							color: dataSource === "LM_JWGG" ? colors.fontB1 : colors.fontB2,
+							fontSize: 13,
+						}}>
+						{getStr("LM_JWGG")}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() =>
+						setDataSource((prev) =>
+							prev === "LM_XSBGGG" ? null : "LM_XSBGGG",
+						)
+					}
+					style={[
+						style.capsule,
+						dataSource === "LM_XSBGGG"
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
@@ -849,10 +872,10 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					<Text
 						style={{
 							color:
-								dataSource === "LM_XJ_XSSQDT" ? colors.fontB1 : colors.fontB2,
+								dataSource === "LM_XSBGGG" ? colors.fontB1 : colors.fontB2,
 							fontSize: 13,
 						}}>
-						{getStr("LM_XJ_XSSQDT")}
+						{getStr("LM_XSBGGG")}
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -876,29 +899,6 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							fontSize: 13,
 						}}>
 						{getStr("LM_BYJYXX")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() =>
-						setDataSource((prev) =>
-							prev === "LM_JWGG" ? null : "LM_JWGG",
-						)
-					}
-					style={[
-						style.capsule,
-						dataSource === "LM_JWGG"
-							? {
-									backgroundColor: colors.themeTransparentPurple,
-									borderColor: colors.transparent,
-						      }
-							: {},
-					]}>
-					<Text
-						style={{
-							color: dataSource === "LM_JWGG" ? colors.fontB1 : colors.fontB2,
-							fontSize: 13,
-						}}>
-						{getStr("LM_JWGG")}
 					</Text>
 				</TouchableOpacity>
 			</View>
