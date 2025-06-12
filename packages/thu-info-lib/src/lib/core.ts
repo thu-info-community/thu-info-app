@@ -261,6 +261,14 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
             }
             return await uFetch(INVOICE_LOGIN_URL, {ticket: ticket[1]});
         }
+        if (url.includes(HOST_MAP["madmodel.cs"])) {
+            const ticket = /ticket=(.+)/.exec(url);
+            if (ticket === null || ticket[1] === undefined) {
+                throw new LibError("Failed to get ticket of madmodel.cs");
+            }
+            await uFetch(url);
+            return await uFetch(`${MADMODEL_AUTH_LOGIN_URL}/check?ticket=${ticket[1]}`);
+        }
         return await uFetch(url);
     }
     case "card":
@@ -318,16 +326,6 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
                 redirectUrl = idUrl;
             }
         }
-
-        if (redirectUrl.includes(HOST_MAP["madmodel.cs"])) {
-            const ticket = /ticket=(.+)/.exec(redirectUrl);
-            if (ticket === null || ticket[1] === undefined) {
-                throw new LibError("Failed to get ticket of madmodel.cs");
-            }
-            await uFetch(redirectUrl);
-            return await uFetch(`${MADMODEL_AUTH_LOGIN_URL}/check?ticket=${ticket[1]}`);
-        }
-
         return await uFetch(redirectUrl);
     }
     case "gitlab": {

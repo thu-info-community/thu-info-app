@@ -696,8 +696,8 @@ export const getCalendarImageUrl = async (helper: InfoHelper, year: number, seme
 export const getMadModelToken = async (helper: InfoHelper): Promise<string> =>
     roamingWrapperWithMocks(
         helper,
-        "id",
-        "d736f067a6705ab942df52f958a0f23b/0?/authLogin",
+        "default",
+        "19D04E39D96B36C494F2E48A1A4741FD",
         async (param) => {
             if (param === undefined) {
                 throw new LibError("Please retry.");
