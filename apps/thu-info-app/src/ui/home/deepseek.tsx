@@ -49,6 +49,7 @@ import themedStyles from "../../utils/themedStyles.ts";
 import {DeepSeekTabProp} from "../../components/Root.tsx";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -388,6 +389,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const createConversation = () => {
 		if (history.length === 0 || history[0].messages.length !== 0) {
 			dispatch(deepseekUpdateHistory(newConversation()));
+			addUsageStat(FunctionType.DeepSeekCreate);
 		} else {
 			currentIndex === 0 && Snackbar.show({
 				text: getStr("alreadyLatestChat"),
@@ -440,6 +442,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				messages: conversation.messages.slice(0, messageIndex - 1),
 			};
 
+			addUsageStat(FunctionType.DeepSeekRetry);
 			await sendDeepSeekMessage({
 				input: userMessage.content,
 				conversation: tempConversation,
@@ -777,6 +780,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											}}
 											disabled={generating}
 											onPress={() => {
+												addUsageStat(FunctionType.DeepSeekCopy);
 												Clipboard.setString(answer);
 												Snackbar.show({
 													text: getStr("copied"),
@@ -941,6 +945,10 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						Keyboard.dismiss();
 						setGenerating(true);
 						try {
+							addUsageStat(FunctionType.DeepSeekSend);
+							if (dataSource !== null) {
+								addUsageStat(FunctionType.DeepSeekSendRAG);
+							}
 							await sendDeepSeekMessage({
 								input,
 								conversation,

@@ -194,11 +194,21 @@ const RootTabs = () => {
 				name="HomeTab"
 				component={HomeScreen}
 				options={{title: getStr("home"), headerShown: false}}
+				listeners={() => ({
+					tabPress: () => {
+						addUsageStat(FunctionType.Home);
+					},
+				})}
 			/>
 			<Tab.Screen
 				name="NewsTab"
 				component={NewsScreen}
 				options={{title: getStr("news"), headerShown: false}}
+				listeners={() => ({
+					tabPress: () => {
+						addUsageStat(FunctionType.News);
+					},
+				})}
 			/>
 			{helper.userId === "" || helper.mocked() ? null : <Tab.Screen
 				name="DeepSeekTab"
@@ -214,6 +224,11 @@ const RootTabs = () => {
 				name="ScheduleTab"
 				component={ScheduleScreen}
 				options={{title: getStr("schedule"), headerShown: false}}
+				listeners={() => ({
+					tabPress: () => {
+						addUsageStat(FunctionType.Schedule);
+					},
+				})}
 			/>
 			<Tab.Screen
 				name="SettingsTab"

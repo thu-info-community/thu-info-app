@@ -31,6 +31,7 @@ import IconSubscription from "../../assets/icons/IconSubscription";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
+import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 
 type Category =
 	| "catSubscribed"
@@ -624,6 +625,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							if (deepseekInput.trim() === "") {
 								return true;
 							} else {
+								addUsageStat(FunctionType.DeepSeekJump);
 								// @ts-ignore
 								navigation.jumpTo("DeepSeekTab", { prompt: deepseekInput.trim(), dataSource: channelSelected });
 							}

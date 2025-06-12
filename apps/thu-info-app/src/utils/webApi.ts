@@ -29,6 +29,15 @@ export enum FunctionType {
 	CampusCard,
 	Income,
 	DeepSeek,
+	Home,
+	News,
+	Schedule,
+	DeepSeekCreate,
+	DeepSeekSend,
+	DeepSeekSendRAG,
+	DeepSeekCopy,
+	DeepSeekRetry,
+	DeepSeekJump,
 }
 
 export const addUsageStat = async (func: FunctionType) => {
