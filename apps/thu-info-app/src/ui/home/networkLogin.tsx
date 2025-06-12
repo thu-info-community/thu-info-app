@@ -20,6 +20,7 @@ import {
 import {getStr} from "../../utils/i18n.ts";
 import Snackbar from "react-native-snackbar";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {uFetch} from "@thu-info/lib/src/utils/network";
 
 export const NetworkLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -31,14 +32,18 @@ export const NetworkLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const refresh = () => {
 		setRefreshing(true);
 		helper.getNetworkVerificationImageUrl().then((url) => {
-			setImageUrl(url);
+			uFetch(url).then((base64) => {
+				setImageUrl(`data:image/png;base64,${base64}`);
+			});
 			setRefreshing(false);
 		});
 	};
 
 	useEffect(() => {
 		helper.getNetworkVerificationImageUrl().then((url) => {
-			setImageUrl(url);
+			uFetch(url).then((base64) => {
+				setImageUrl(`data:image/png;base64,${base64}`);
+			});
 		});
 	}, []);
 
@@ -89,7 +94,9 @@ export const NetworkLoginScreen = ({navigation}: {navigation: RootNav}) => {
 						<TouchableOpacity
 							onPress={() => {
 								helper.getNetworkVerificationImageUrl().then((url) => {
-									setImageUrl(url);
+									uFetch(url).then((base64) => {
+										setImageUrl(`data:image/png;base64,${base64}`);
+									});
 								});
 							}}>
 							<Image
