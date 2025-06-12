@@ -91,14 +91,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 				</RoundedView>
-				<RoundedView style={style.rounded}>
+				{helper.userId === "" || helper.mocked() ? null : <RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
 						onPress={() => navigation.navigate("DeepSeekSettings")}>
 						<Text style={style.text}>{getStr("deepseek")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
-				</RoundedView>
+				</RoundedView>}
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}

@@ -200,7 +200,7 @@ const RootTabs = () => {
 				component={NewsScreen}
 				options={{title: getStr("news"), headerShown: false}}
 			/>
-			<Tab.Screen
+			{helper.userId === "" || helper.mocked() ? null : <Tab.Screen
 				name="DeepSeekTab"
 				component={DeepSeekScreen}
 				options={{title: getStr("deepseek"), headerShown: false}}
@@ -209,7 +209,7 @@ const RootTabs = () => {
 						addUsageStat(FunctionType.DeepSeek);
 					},
 				})}
-			/>
+			/>}
 			<Tab.Screen
 				name="ScheduleTab"
 				component={ScheduleScreen}

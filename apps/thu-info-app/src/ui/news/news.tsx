@@ -636,7 +636,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						marginHorizontal: 16,
 						alignItems: "flex-end",
 					}, deepseekOpen ? { width: "80%", borderColor: theme.colors.inputBorder, borderWidth: 1 } : {}]}>
-					{deepseekOpen ?
+					{helper.userId === "" || helper.mocked() ? null : deepseekOpen ?
 						<View style={{flexDirection: "row"}}>
 							<TextInput
 								value={deepseekInput}
