@@ -10,7 +10,9 @@ module.exports = {
         filename: "[name].js",
     },
     plugins: [
-        new NodePolyfillPlugin(),
+        new NodePolyfillPlugin({
+            excludeAliases: ["Buffer"],
+        }),
     ],
     devServer: {
         contentBase: "./dist",
