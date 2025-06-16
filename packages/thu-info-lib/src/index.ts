@@ -265,7 +265,7 @@ export class InfoHelper {
      *
      * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
      */
-    public appStartUp = async (platform: "ios" | "android", uuid: string) => {
+    public appStartUp = async (platform: "ios" | "android", uuid: string, version?: string) => {
         if (this.userId === "") {
             return {
                 bookingRecords: [],
@@ -276,7 +276,7 @@ export class InfoHelper {
                 latestVersion: MOCK_LATEST_VERSION,
             };
         }
-        const latestAnnounces = await getLatestAnnounces(this);
+        const latestAnnounces = await getLatestAnnounces(this, version);
         const latestVersion = await getLatestVersion(this, platform);
         let bookingRecords: LibBookRecord[] = [];
         const sportsReservationRecords: SportsReservationRecord[] = [];
@@ -298,7 +298,7 @@ export class InfoHelper {
         await appUsageStat(this, usage, uuid);
     };
 
-    public getLatestAnnounces = async () => getLatestAnnounces(this);
+    public getLatestAnnounces = async (version?: string) => getLatestAnnounces(this, version);
 
     public getLatestVersion = async (platform: "ios" | "android") => getLatestVersion(this, platform);
 

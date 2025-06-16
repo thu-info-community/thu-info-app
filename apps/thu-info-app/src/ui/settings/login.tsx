@@ -67,7 +67,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(() => {
 				if (Platform.OS === "ios" || Platform.OS === "android") {
 					helper
-						.appStartUp(Platform.OS, currState().config.uuid)
+						.appStartUp(Platform.OS, currState().config.uuid, VersionNumber.appVersion)
 						.then(
 							({
 								bookingRecords,
