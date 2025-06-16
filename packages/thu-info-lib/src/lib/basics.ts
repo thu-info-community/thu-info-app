@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type {ElementType} from "domelementtype";
-import type {DataNode, Element} from "domhandler";
+import type {AnyNode, DataNode, Element} from "domhandler";
 import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import {
     ASSESSMENT_BASE_URL,
@@ -584,7 +584,7 @@ const parseAndFilterBankPayment = (html: string) => {
         if (((titleElement.parentNode?.next?.next as TagElement)?.firstChild as TagElement)?.name !== "table") {
             return undefined;
         }
-        const data = cheerio.load((titleElement.parent?.next?.next as TagElement)?.firstChild as cheerio.AnyNode)("tbody tr").slice(1, -1);
+        const data = cheerio.load((titleElement.parent?.next?.next as TagElement)?.firstChild as AnyNode)("tbody tr").slice(1, -1);
         const payment = data.map((__, row) => {
             const columns = cheerio.load(row)("td");
             return {
