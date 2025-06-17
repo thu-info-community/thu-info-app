@@ -9528,10 +9528,10 @@ react-native-screens@4.11.1:
     react-native-is-edge-to-edge "^1.1.7"
     warn-once "^0.1.0"
 
-react-native-share@12.0.11:
-  version "12.0.11"
-  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-12.0.11.tgz#390ea0c8c0c5efbb2ca946c50b7cd7fee6f71c76"
-  integrity sha512-jb9RzHjgFKvl/fVPPAiyxjmMHjnwKhKiZul6ptSUX7w7Rl7ifDYpdY7uJkipevyvwcn5DlzqXBcd8d6DPBeNVg==
+react-native-share@12.1.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-12.1.0.tgz#19b404b6ce1ba170cc075134629bdb23045f64ea"
+  integrity sha512-9OZrrEx9pZfl8Pw8Uh/k5Tc1o6oBaBfctq3z2wxy6eJBY6O/aRhs7/WPrXAoQmh9dCxc5sIClcKN57ef34iORQ==
 
 react-native-snackbar@2.9.0:
   version "2.9.0"
