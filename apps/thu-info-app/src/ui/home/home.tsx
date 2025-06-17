@@ -1011,7 +1011,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		};
 
 		helper
-			.appStartUp(Platform.OS, currState().config.uuid)
+			.appStartUp(Platform.OS, currState().config.uuid, VersionNumber.appVersion)
 			.then(
 				({
 					bookingRecords,

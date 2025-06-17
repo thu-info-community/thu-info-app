@@ -255,7 +255,7 @@ export const PROGRAM_LIST_URL =
 export const FULL_PROGRAM_URL_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.vjhBksPyfakcbBs.do?m=index2&theModule=pyfa&p_fajhh=";
 export const APP_ANNOUNCEMENT_URL =
-    "https://app.cs.tsinghua.edu.cn/api/announce?page=1";
+    "https://app.cs.tsinghua.edu.cn/api/announce?page=1&version=";
 export const APP_LATEST_VERSION_URL =
     "https://app.cs.tsinghua.edu.cn/api/version";
 export const APP_STARTUP_STAT_URL =

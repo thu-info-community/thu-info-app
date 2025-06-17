@@ -58,12 +58,12 @@ export const appUsageStat = async (helper: InfoHelper, usage: number, uuid: stri
         undefined,
     );
 
-export const getLatestAnnounces = async (helper: InfoHelper): Promise<Announcement[]> =>
+export const getLatestAnnounces = async (helper: InfoHelper, version?: string): Promise<Announcement[]> =>
     roamingWrapperWithMocks(
         helper,
         undefined,
         "",
-        () => uFetch(APP_ANNOUNCEMENT_URL).then(JSON.parse).then((r: any[]) => r.map((e) => ({
+        () => uFetch(APP_ANNOUNCEMENT_URL + (version ?? "0.0.0")).then(JSON.parse).then((r: any[]) => r.map((e) => ({
             id: e.id,
             title: e.title,
             content: e.content,
