@@ -965,6 +965,10 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		needToShowFunctionNames.push("schoolCalendar" as HomeFunction);
 	}
 
+	if (!(disabledList ?? []).includes("cr" as HomeFunction)) {
+		needToShowFunctionNames.push("cr" as HomeFunction);
+	}
+
 	const top5Filtered = top5.filter(
 		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),
 	);
