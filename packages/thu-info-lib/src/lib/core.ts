@@ -1,5 +1,6 @@
 import {
     CHECK_CURRENT_DEVICE_URL,
+    CR_LOGIN_HOME_URL,
     DELETE_DEVICE_URL,
     DOUBLE_AUTH_URL,
     GET_COOKIE_URL,
@@ -24,7 +25,6 @@ import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
-import {loginCr} from "./cr";
 import {sm2} from "sm-crypto";
 
 let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
@@ -41,6 +41,7 @@ type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab"
 const HOST_MAP: { [key: string]: string } = {
     "zhjw.cic": "77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290",
     "jxgl.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
+    "zhjwxk.cic": "77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f",
     "ecard": "77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a",
     "learn": "77726476706e69737468656265737421fcf2408e297e7c4377068ea48d546d30ca8cc97bcc",
     "mails": "77726476706e69737468656265737421fdf64890347e7c4377068ea48d546d3011ff591d40",
@@ -273,6 +274,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     }
     case "card":
     case "cab":
+    case "cr":
     case "id_website":
     case "id": {
         const idBaseUrl = policy === "card" ? ID_BASE_URL : policy === "id_website" ? ID_WEBSITE_BASE_URL : ID_BASE_URL;
@@ -280,7 +282,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let response = "";
         const target = policy === "id_website" ? "账号设置" : "登录成功。正在重定向到";
         for (let i = 0; i < 2; i++) {
-            const sm2PublicKey = cheerio.load(await uFetch(idBaseUrl + payload))("#sm2publicKey").text();
+            const sm2PublicKey = cheerio.load(await uFetch(policy === "cr" ? CR_LOGIN_HOME_URL : (idBaseUrl + payload)))("#sm2publicKey").text();
             if (sm2PublicKey === "") {
                 throw new LoginError("Failed to get public key.");
             }
@@ -351,10 +353,6 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         }
         const redirectUrl = cheerio.load(response)("a").attr()!.href;
         return await uFetch(redirectUrl);
-    }
-    case "cr": {
-        await loginCr(helper);
-        return "";
     }
     }
 };

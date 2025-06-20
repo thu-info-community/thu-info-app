@@ -15,8 +15,6 @@ import {
     CR_ZYTJB_URL,
     CR_ZYTJB_YJS_URL,
     DEADLINE_URL,
-    KCXX_BKS_URL,
-    KCXX_YJS_URL,
 } from "../constants/strings";
 import {uFetch} from "../utils/network";
 import * as cheerio from "cheerio";
@@ -99,18 +97,7 @@ export const loginCr = async (helper: InfoHelper) => roamingWrapperWithMocks(
     undefined,
     "",
     async () => {
-        let ok = false;
-        for (let i = 0; i < 3; i++) {
-            const r = await uFetch(helper.graduate() ? KCXX_YJS_URL : KCXX_BKS_URL);
-            if (!r.includes("jsp.timeout.bodyMessage")) {
-                ok = true;
-                break;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-        if (!ok) {
-            throw new LibError("time out用户登陆超时或访问内容不存在。请重试，如访问仍然失败，请与系统管理员联系。");
-        }
+        throw new LibError("The method `loginCr' is obsolete.");
     },
     undefined,
 );
