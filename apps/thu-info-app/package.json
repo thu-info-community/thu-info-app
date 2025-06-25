@@ -94,7 +94,7 @@
 		"@types/semver": "7.7.0",
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"eslint": "8.57.1",
-		"jest": "30.0.2",
+		"jest": "30.0.3",
 		"patch-package": "8.0.0",
 		"react-test-renderer": "19.0.0",
 		"typescript": "5.8.3"
