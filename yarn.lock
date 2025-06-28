@@ -1972,9 +1972,9 @@
   integrity sha512-6zuK+E+z3a4Nij5OrkMh9BL7J1/Eg0PB8iX7/chNwhghpTZ93cr3Zrj/02ueglN0BV/tIKmb+BDERfzVIGRT7w==
 
 "@react-native-clipboard/clipboard@^1.16.2":
-  version "1.16.2"
-  resolved "https://registry.yarnpkg.com/@react-native-clipboard/clipboard/-/clipboard-1.16.2.tgz#d8517eea937d336b8fe1ca44e955e691d27f5ba4"
-  integrity sha512-VqUYwVxo7DyHMz7v2LxLMaAOSu3pKFvzpqR4jQezdH0VyaudILTTcUf7dR4TroARU/lLkTU8nZA11UniTvGVXg==
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/@react-native-clipboard/clipboard/-/clipboard-1.16.3.tgz#7807a90fd9984bf4d3a96faf2eee20457984a9bd"
+  integrity sha512-cMIcvoZKIrShzJHEaHbTAp458R9WOv0fB6UyC7Ek4Qk561Ow/DrzmmJmH/rAZg21Z6ixJ4YSdFDC14crqIBmCQ==
 
 "@react-native-community/blur@4.4.1":
   version "4.4.1"
