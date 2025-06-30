@@ -182,12 +182,16 @@ export const getCoursePlan = async (helper: InfoHelper, semester: string) => roa
     MOCK_COURSE_PLAN,
 );
 
-const getText = (e: Element, index: number) => {
-    return cheerio.load((e as TagElement).children[index]).text().trim();
+const getText = (e: Element) => {
+    return cheerio.load(e).text().trim();
 };
 
 const parseFooter = ($: CheerioAPI) => {
-    const footerText = ((($("p.yeM").toArray()[0] as TagElement).children[5] as DataNode).data as string).trim().replace(/,/g, "");
+    const footer = $("p.yeM").toArray()[0] as TagElement;
+    if (!footer) {
+        return [0, 0, 0];
+    }
+    const footerText = ((footer.children[5] as DataNode).data as string).trim().replace(/,/g, "");
     const regResult = /第 (\d+) ?页 \/ 共 (\d+) 页（共 (\d+) 条记录）/.exec(footerText);
     if (regResult === null || regResult.length !== 4) {
         throw new CrError("cannot parse cr remaining footer data");
@@ -225,15 +229,17 @@ export const searchCrRemaining = async (helper: InfoHelper, {
         }, "GBK").then(cheerio.load);
         const [currPage, totalPage, totalCount] = parseFooter($);
         const courses = $(".trr2").toArray().map((e) => {
+            const items = cheerio.load(e)("td");
+            const hasQueueInfo = items.length == 8;
             return {
-                id: getText(e, 1),
-                seq: Number(getText(e, 3)),
-                name: getText(e, 5),
-                capacity: Number(getText(e, 7)),
-                remaining: Number(getText(e, 9)),
-                queue: Number(getText(e, 11)),
-                teacher: getText(e, 13),
-                time: getText(e, 15),
+                id: getText(items[0]),
+                seq: Number(getText(items[1])),
+                name: getText(items[2]),
+                capacity: Number(getText(items[3])),
+                remaining: Number(getText(items[4])),
+                queue: hasQueueInfo ? Number(getText(items[5])) : 0,
+                teacher: getText(items[hasQueueInfo ? 6 : 5]),
+                time: getText(items[hasQueueInfo ? 7 : 6]),
             } as CrRemainingInfo;
         });
         return {
@@ -283,23 +289,24 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
         }, "GBK").then(cheerio.load);
         const [currPage, totalPage, totalCount] = parseFooter($);
         const courses = $(".trr2").toArray().map((e) => {
+            const items = cheerio.load(e)("td");
             return {
-                department: getText(e, 1),
-                id: getText(e, 3),
-                seq: Number(getText(e, 5)),
-                name: getText(e, 7),
-                credits: Number(getText(e, 9)),
-                teacher: getText(e, 11),
-                bksCap: Number(getText(e, 13)),
-                yjsCap: Number(getText(e, 17)),
-                time: getText(e, 21),
-                note: getText(e, 23),
-                feature: getText(e, 25),
-                year: getText(e, 27),
-                secondary: getText(e, 29),
-                reUseCap: getText(e, 33),
-                restrict: getText(e, 35),
-                culture: getText(e, 37),
+                department: getText(items[0]),
+                id: getText(items[1]),
+                seq: Number(getText(items[2])),
+                name: getText(items[3]),
+                credits: Number(getText(items[4])),
+                teacher: getText(items[5]),
+                bksCap: Number(getText(items[6])),
+                yjsCap: Number(getText(items[8])),
+                time: getText(items[10]),
+                note: getText(items[11]),
+                feature: getText(items[12]),
+                year: getText(items[13]),
+                secondary: getText(items[14]),
+                reUseCap: getText(items[16]),
+                restrict: getText(items[17]),
+                culture: getText(items[18]),
             } as CrPrimaryOpenInfo;
         });
         return {
@@ -319,15 +326,18 @@ export const searchCrCourses = async (helper: InfoHelper, params: SearchParams):
     async () => {
         const [remaining, primaryOpen] = await Promise.all([searchCrRemaining(helper, params), searchCrPrimaryOpen(helper, params)]);
         return {
-            currPage: remaining.currPage,
-            totalPage: remaining.totalPage,
-            totalCount: remaining.totalCount,
-            courses: primaryOpen.courses.map((e, i) => ({
-                ...e,
-                capacity: remaining.courses[i].capacity,
-                remaining: remaining.courses[i].remaining,
-                queue: remaining.courses[i].queue,
-            })),
+            currPage: primaryOpen.currPage,
+            totalPage: primaryOpen.totalPage,
+            totalCount: primaryOpen.totalCount,
+            courses: primaryOpen.courses.map((e) => {
+                const remainingInfo = remaining.courses.find((r) => r.id === e.id);
+                return {
+                    ...e,
+                    capacity: remainingInfo?.capacity ?? NaN,
+                    remaining: remainingInfo?.remaining ?? NaN,
+                    queue: remainingInfo?.queue ?? NaN,
+                };
+            }),
         };
     },
     MOCK_CR_SEARCH_RESULT,
