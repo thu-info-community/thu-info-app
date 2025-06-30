@@ -12,11 +12,13 @@ export const CourseTimeQuickGlance = ({
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const segments =
-		time.match(/\d-\d/g)?.map((s) => ({
-			dayOfWeek: Number(s[0]),
-			section: Number(s[2]),
-		})) ?? [];
+	const segments = Array.from(
+		time.matchAll(/(\d)-(\d)\([^)]*\)/g),
+		([, d1, d2]) => ({
+			dayOfWeek: Number(d1),
+			section: Number(d2),
+		})
+	);
 	const widthPerDay = width / 7;
 	const heightPerSection = height / 6;
 	return (
