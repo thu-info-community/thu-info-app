@@ -1846,7 +1846,7 @@ PODS:
     - Yoga
   - RNLocalize (3.5.1):
     - React-Core
-  - RNPermissions (5.4.1):
+  - RNPermissions (5.4.2):
     - React-Core
   - RNScreens (4.13.1):
     - DoubleConversion
@@ -2286,7 +2286,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 43ff77261c9f3cfcfd195aa16860bfdcfe108ef5
   RNKeychain: b060a891b105741c67da179f4d88ed87960f22e7
   RNLocalize: 60ebbb668e46d3b9f276aaf2db8ae5353b84e514
-  RNPermissions: abc752c2f9476e333f012c1e083b71c8f6a3788c
+  RNPermissions: 9f2f89a30fa12d86cb24b9f8e53f6ddfac81805d
   RNScreens: b062e220dfd58455779e4e9f2123c81e37d51fe7
   RNShare: 9528acd4e374d3cb76b994b9e167d4a75cd8f452
   RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
