@@ -2530,10 +2530,10 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
-"@testing-library/react-native@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.2.1.tgz#8cc614167fdaccbe7da28250f5e0b7669c9f915e"
-  integrity sha512-gryBmOI/PFvEJmMy6CNruulxXTW3zs7YyZHJEUlVYEt9vWo5v09FvV0RlYHurxs3yx3ZSc0vOsQOhld5a5SfPg==
+"@testing-library/react-native@13.2.2":
+  version "13.2.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.2.2.tgz#8de8e6e145b8a10338f997ff7b739b79eb0b7c98"
+  integrity sha512-QALF+nZ4BSXBOtUs5ljLnaHKuyR+ykakYB3RYwciSrllhgZkbUjXeGkugCxrmEtQ2BUZnYVRY7AEGboMP/hucg==
   dependencies:
     chalk "^4.1.2"
     jest-matcher-utils "^30.0.2"
