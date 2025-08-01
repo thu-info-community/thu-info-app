@@ -1582,16 +1582,16 @@
     yargs "17.7.2"
     yargs-parser "21.1.1"
 
-"@microsoft/signalr@8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-8.0.7.tgz#94419ddbf9418753e493f4ae4c13990316ec2ea5"
-  integrity sha512-PHcdMv8v5hJlBkRHAuKG5trGViQEkPYee36LnJQx4xHOQ5LL4X0nEWIxOp5cCtZ7tu+30quz5V3k0b1YNuc6lw==
+"@microsoft/signalr@9.0.6":
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-9.0.6.tgz#67dd074941c2ec2b857f607504c920a0c6274e27"
+  integrity sha512-DrhgzFWI9JE4RPTsHYRxh4yr+OhnwKz8bnJe7eIi7mLLjqhJpEb62CiUy/YbFvLqLzcGzlzz1QWgVAW0zyipMQ==
   dependencies:
     abort-controller "^3.0.0"
     eventsource "^2.0.2"
     fetch-cookie "^2.0.3"
     node-fetch "^2.6.7"
-    ws "^7.4.5"
+    ws "^7.5.10"
 
 "@napi-rs/wasm-runtime@0.2.4":
   version "0.2.4"
@@ -11576,7 +11576,7 @@ ws@^6.2.3:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7, ws@^7.4.5, ws@^7.5.10:
+ws@^7, ws@^7.5.10:
   version "7.5.10"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
   integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
