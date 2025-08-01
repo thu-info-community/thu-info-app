@@ -97,7 +97,7 @@
 		"jest": "30.0.5",
 		"patch-package": "8.0.0",
 		"react-test-renderer": "19.0.0",
-		"typescript": "5.8.3"
+		"typescript": "5.9.2"
 	},
 	"engines": {
 		"node": ">=18"
