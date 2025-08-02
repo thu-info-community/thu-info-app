@@ -24,6 +24,7 @@ yarn add @react-native-oh/react-native-harmony@0.72.70 \
          @react-native-oh-tpl/react-native-webview@13.10.2-0.2.32 \
          @react-native-oh-tpl/slider@4.4.3-0.3.3 \
          @thu-info/lib@../../packages/thu-info-lib \
+         memfs@4.12.0 \
          rtn-network-utils@../../packages/RTNNetworkUtils \
          react@18.3.1 \
          react-native-svg@15.0.0 \
