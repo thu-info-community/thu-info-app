@@ -1360,7 +1360,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-cameraroll (7.10.1):
+  - react-native-cameraroll (7.10.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2239,7 +2239,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
   react-native-blob-util: 55bf7c1c4c90d138e45ddfeddbec0ec91d8df8c8
   react-native-blur: 815a35d3f8110c16b6abb02887256b876e2e15fe
-  react-native-cameraroll: d850ed83aa08b050b3e7ddc45724194481bdd2db
+  react-native-cameraroll: 048f4651b484d6446868a079098f238ddca50a1a
   react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba
   react-native-pdf: 6a51a22ccefb23eb93298771e4bf090913e86d70
