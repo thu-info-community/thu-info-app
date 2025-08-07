@@ -379,7 +379,13 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			history.length === 0 ||
 			Date.now() - (history[0].timestamp ?? 0) > 1000 * 60 * 30
 		) {
-			dispatch(deepseekUpdateHistory(newConversation()));
+			if (history.length > 0 && history[0]?.messages.length === 0 && history[0]?.title === getStr("newConversation")) {
+				const newConv = newConversation();
+				newConv.id = history[0].id;
+				dispatch(deepseekUpdateHistory(newConv));
+			} else {
+				dispatch(deepseekUpdateHistory(newConversation()));
+			}
 		}
 		setCurrentIndex(0);
 	}, [history, dispatch]);
