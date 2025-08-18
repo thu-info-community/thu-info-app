@@ -2519,14 +2519,14 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
-"@testing-library/react-native@13.2.2":
-  version "13.2.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.2.2.tgz#8de8e6e145b8a10338f997ff7b739b79eb0b7c98"
-  integrity sha512-QALF+nZ4BSXBOtUs5ljLnaHKuyR+ykakYB3RYwciSrllhgZkbUjXeGkugCxrmEtQ2BUZnYVRY7AEGboMP/hucg==
+"@testing-library/react-native@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.3.0.tgz#b6b13c0c8744656f14867ca4ef13cb6db9b1a6e8"
+  integrity sha512-6zBcjzweMZ6w4pvVtHrcv+FuTr3lC91UAKobcsOt4YTopCGee+xq9g1bP7W+OksSVpp71fkOm/I5stjU+UPLPw==
   dependencies:
-    chalk "^4.1.2"
-    jest-matcher-utils "^30.0.2"
-    pretty-format "^30.0.2"
+    jest-matcher-utils "^30.0.5"
+    picocolors "^1.1.1"
+    pretty-format "^30.0.5"
     redent "^3.0.0"
 
 "@tufjs/canonical-json@2.0.0":
@@ -6969,7 +6969,7 @@ jest-leak-detector@30.0.5:
     "@jest/get-type" "30.0.1"
     pretty-format "30.0.5"
 
-jest-matcher-utils@30.0.5, jest-matcher-utils@^30.0.2:
+jest-matcher-utils@30.0.5, jest-matcher-utils@^30.0.5:
   version "30.0.5"
   resolved "https://registry.yarnpkg.com/jest-matcher-utils/-/jest-matcher-utils-30.0.5.tgz#dff3334be58faea4a5e1becc228656fbbfc2467d"
   integrity sha512-uQgGWt7GOrRLP1P7IwNWwK1WAQbq+m//ZY0yXygyfWp0rJlksMSLQAA4wYQC3b6wl3zfnchyTx+k3HZ5aPtCbQ==
@@ -9345,7 +9345,7 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-pretty-format@30.0.5, pretty-format@^30.0.2:
+pretty-format@30.0.5, pretty-format@^30.0.5:
   version "30.0.5"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-30.0.5.tgz#e001649d472800396c1209684483e18a4d250360"
   integrity sha512-D1tKtYvByrBkFLe2wHJl2bwMJIiT8rW+XA+TiataH79/FszLQMrpGEvzUVkzPau7OCO0Qnrhpe87PqtOAIB8Yw==
