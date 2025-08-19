@@ -52,7 +52,7 @@
 		"react-native-permissions": "5.4.2",
 		"react-native-polyfill-globals": "3.1.0",
 		"react-native-qrcode-svg": "6.3.15",
-		"react-native-safe-area-context": "5.6.0",
+		"react-native-safe-area-context": "5.6.1",
 		"react-native-safearea-height": "1.0.8",
 		"react-native-screens": "4.14.1",
 		"react-native-share": "12.2.0",
