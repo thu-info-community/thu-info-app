@@ -2519,10 +2519,10 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
-"@testing-library/react-native@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.3.0.tgz#b6b13c0c8744656f14867ca4ef13cb6db9b1a6e8"
-  integrity sha512-6zBcjzweMZ6w4pvVtHrcv+FuTr3lC91UAKobcsOt4YTopCGee+xq9g1bP7W+OksSVpp71fkOm/I5stjU+UPLPw==
+"@testing-library/react-native@13.3.1":
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/react-native/-/react-native-13.3.1.tgz#c7fc622b9403b54db2beba67d7048e5fd4d5959b"
+  integrity sha512-o7aGggPVEl/Samx26ubACT0nuQn8/n+1VfDZ3lJ6SFrK9IYkEvaMY2M5hHg9kYcImNFlgsmqc3FgN1VaLAkjyA==
   dependencies:
     jest-matcher-utils "^30.0.5"
     picocolors "^1.1.1"
