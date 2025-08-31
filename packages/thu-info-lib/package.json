@@ -47,7 +47,7 @@
         "cheerio": "1.1.2",
         "cross-fetch": "4.1.0",
         "crypto-js": "4.2.0",
-        "dayjs": "1.11.15",
+        "dayjs": "1.11.18",
         "he": "^1.2.0",
         "iconv-lite": "0.7.0",
         "jsencrypt": "^3.3.2",
