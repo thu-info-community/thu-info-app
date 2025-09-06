@@ -78,9 +78,9 @@
 		"web-streams-polyfill": "3.3.3"
 	},
 	"devDependencies": {
-		"@babel/core": "7.28.3",
+		"@babel/core": "7.28.4",
 		"@babel/preset-env": "7.28.3",
-		"@babel/runtime": "7.28.3",
+		"@babel/runtime": "7.28.4",
 		"@react-native-community/cli": "20.0.1",
 		"@react-native/babel-preset": "0.81.1",
 		"@react-native/codegen": "0.81.1",
