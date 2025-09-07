@@ -9743,10 +9743,10 @@ react-native-safearea-height@1.0.8:
   resolved "https://registry.yarnpkg.com/react-native-safearea-height/-/react-native-safearea-height-1.0.8.tgz#efa2cecc2dfb2368288c435603ade3ee9c695479"
   integrity sha512-nAACsA6HwbMI5zUKHUy4IOvqrohA2AFYB31Yhv6JOXbok6S7VOjOWJZNJx4dllECREon254Y2ZlqeVGUb2eqgQ==
 
-react-native-screens@4.15.4:
-  version "4.15.4"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.15.4.tgz#834541023fd26589d2c81fcbe35576553caee840"
-  integrity sha512-aKHPDScUbpQiZEG9eZssHdG5jEQs4yiJ8eMx6g81Ex/xU7DZkv3911enzdCb+v4eJE79X8waizY0ZhauZJQmrw==
+react-native-screens@4.16.0:
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-4.16.0.tgz#efa42e77a092aa0b5277c9ae41391ea0240e0870"
+  integrity sha512-yIAyh7F/9uWkOzCi1/2FqvNvK6Wb9Y1+Kzn16SuGfN9YFJDTbwlzGRvePCNTOX0recpLQF3kc2FmvMUhyTCH1Q==
   dependencies:
     react-freeze "^1.0.0"
     react-native-is-edge-to-edge "^1.2.1"
