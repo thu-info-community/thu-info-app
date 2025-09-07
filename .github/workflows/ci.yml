@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Setup caching
@@ -38,7 +38,7 @@ jobs:
           distribution: "corretto"
           java-version: "17"
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Setup caching
@@ -99,7 +99,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Setup caching
@@ -179,7 +179,7 @@ jobs:
           working-directory: apps/thu-info-app/harmony
           install-dependencies: false
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Install dependencies
