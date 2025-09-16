@@ -33,6 +33,8 @@ import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
+import {exportScheduleToICS} from "../../utils/calendar";
+import Share from "react-native-share";
 
 const examBeginMap: {[key: string]: number} = {
 	"9:00": 2.5,
@@ -140,7 +142,7 @@ const Header = React.forwardRef(
 						popupTitle={`${getStr("weekNumPrefix")}${week}${getStr(
 							"weekNumSuffix",
 						)}`}
-						popupContent={(done) => (
+						popupContent={(done: () => void) => (
 							<>
 							{calendar && <View style={{marginHorizontal: 12}}>
 								<TouchableOpacity style={{padding: 6}} onPress={() => {
@@ -295,6 +297,52 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				});
 			})
 			.then(() => setRefreshing(false));
+	};
+
+	const handleExportICS = async () => {
+		if (!calendar) {
+			Snackbar.show({
+				text: getStr("scheduleExportICS"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+			return;
+		}
+
+		try {
+			const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendar.nextSemesterList.length ? calendar : calendar.nextSemesterList[nextSemesterIndex];
+			const result = await exportScheduleToICS(baseSchedule, semester);
+			
+			if (result.success && result.filePath) {
+				if (result.method === "download") {
+					// Already saved to Downloads
+					Snackbar.show({
+						text: getStr("scheduleICSDownloaded"),
+						duration: Snackbar.LENGTH_LONG,
+					});
+				} else {
+					// Manual share
+					await Share.open({
+						title: getStr("scheduleExportICS"),
+						url: `file://${result.filePath}`,
+						type: "text/calendar",
+						filename: semester.semesterName + ".ics",
+						subject: getStr("scheduleICSFileName") + " - " + semester.semesterName,
+					});
+
+					Snackbar.show({
+						text: getStr("scheduleICSGenerated"),
+						duration: Snackbar.LENGTH_SHORT,
+					});
+				}
+			} else {
+				throw new Error("Export failed");
+			}
+		} catch (error) {
+			Snackbar.show({
+				text: getStr("saveFailRetry"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
+		}
 	};
 
 	const current = dayjs();
@@ -718,6 +766,29 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							}}
 							/>
 						</View>
+						<TouchableOpacity
+							style={{
+								backgroundColor: theme.colors.contentBackground,
+								flexDirection: "row",
+								justifyContent: "center",
+								paddingHorizontal: 16,
+								paddingVertical: 12,
+								borderTopWidth: 1,
+								borderTopColor: theme.colors.inputBorder,
+							}}
+							onPress={() => {
+								setOpenConfig(false);
+								handleExportICS();
+							}}>
+							<Text
+								style={{
+									color: theme.colors.themePurple,
+									fontSize: 16,
+									fontWeight: "500",
+								}}>
+								{getStr("scheduleExportICS")}
+							</Text>
+						</TouchableOpacity>
 					</TouchableOpacity>
 				)}
 			</GestureHandlerRootView>

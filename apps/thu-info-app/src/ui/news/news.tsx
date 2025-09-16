@@ -269,13 +269,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					request ? 1 : page + 1,
 					searchKey,
 					channelSelected as ChannelTag,
-					// eslint-disable-next-line no-mixed-spaces-and-tabs
+					 
 			  )
 			: helper.getNewsList(
 					request ? 1 : page + 1,
 					30,
 					channelSelected as ChannelTag,
-					// eslint-disable-next-line no-mixed-spaces-and-tabs
+					 
 			  )
 		)
 			.then((res) => {

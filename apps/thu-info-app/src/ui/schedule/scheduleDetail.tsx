@@ -1,4 +1,4 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
+ 
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import {useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";

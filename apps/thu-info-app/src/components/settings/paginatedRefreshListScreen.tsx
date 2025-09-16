@@ -94,7 +94,7 @@ export function paginatedRefreshListScreen<T, R>(
 				ListHeaderComponent={
 					header
 						? header(theme, () => {
-								refresh(true); // eslint-disable-next-line no-mixed-spaces-and-tabs
+								refresh(true);  
 						  })
 						: undefined
 				}
