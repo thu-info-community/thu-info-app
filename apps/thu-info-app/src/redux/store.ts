@@ -242,7 +242,7 @@ const persistConfig = {
 						timetable: state.timetable ?? defaultTimetable,
 						announcement: state.announcement ?? defaultAnnouncement,
 						deepseek: state.deepseek ?? defaultDeepseek,
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
+						 
 				  },
 		),
 };

@@ -468,13 +468,13 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 		}
 	};
 
-	const toggleSidebar = (open: boolean) => {
+	const toggleSidebar = (_open: boolean) => {
 		Animated.timing(sidebarPosition, {
-			toValue: open ? 0 : -1, // 0 for visible, -1 for hidden
+			toValue: _open ? 0 : -1, // 0 for visible, -1 for hidden
 			duration: 300,
 			useNativeDriver: true,
 		}).start(() => {
-			if (!open) {
+			if (!_open) {
 				setSidebarOpen(false); // Close modal after animation
 			}
 		});
