@@ -104,6 +104,12 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 
 	useEffect(refresh, [dispatch]);
 
+	useEffect(() => {
+		if (paymentMethod === "wechat") {
+			dispatch(setPaymentMethod("bank"));
+		}
+	}, [paymentMethod, dispatch]);
+
 	const performRecharge = () => {
 		if (valid && !processing) {
 			setProcessing(true);
@@ -350,7 +356,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 													{getStr("payViaAlipay")}
 												</Text>
 											</TouchableOpacity>
-											<View
+											{/* <View
 												style={[
 													style.separator,
 													{
@@ -373,7 +379,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 													{getStr("payViaWechat")}
 												</Text>
 											</TouchableOpacity>
-											<View style={{height: 16}} />
+											<View style={{height: 16}} /> */}
 										</View>
 									)}
 									popupCanFulfill={true}
