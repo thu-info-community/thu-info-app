@@ -8,7 +8,7 @@ import {
 	View,
 } from "react-native";
 import {helper} from "../../redux/store";
-import {doAlipay, hasAlipay} from "../../utils/alipay";
+import {doAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 import Snackbar from "react-native-snackbar";
@@ -179,33 +179,24 @@ export const ElectricityScreen = () => {
 								}}
 								disabled={!valid || processing}
 								onPress={() => {
-									valid &&
-										!processing &&
-										hasAlipay()
+									if (valid && !processing) {
+										setProcessing(true);
+										helper
+											.getEleRechargePayCode(Number(money))
+											.then(doAlipay)
 											.then(() => {
-												setProcessing(true);
-												helper
-													.getEleRechargePayCode(Number(money))
-													.then(doAlipay)
-													.then(() => {
-														setProcessing(false);
-														setMoney("");
-													})
-													.catch(() => {
-														Snackbar.show({
-															text: getStr("payFailure"),
-															duration: Snackbar.LENGTH_INDEFINITE,
-															action: {text: getStr("ok")},
-														});
-														setProcessing(false);
-													});
+												setProcessing(false);
+												setMoney("");
 											})
-											.catch(() =>
+											.catch(() => {
 												Snackbar.show({
-													text: getStr("alipayRequired"),
-													duration: Snackbar.LENGTH_SHORT,
-												}),
-											);
+													text: getStr("payFailure"),
+													duration: Snackbar.LENGTH_INDEFINITE,
+													action: {text: getStr("ok")},
+												});
+												setProcessing(false);
+											});
+									}
 								}}>
 								<Text
 									style={{
