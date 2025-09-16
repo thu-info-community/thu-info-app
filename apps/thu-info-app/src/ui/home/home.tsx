@@ -637,7 +637,7 @@ const getHomeFunctions = (
 		}}>
 		<IconReserve width={iconSize} height={iconSize} />
 	</HomeIcon>,
-	<HomeIcon
+		...Platform.OS === "android" || Platform.OS === "ios" ? [<HomeIcon
 		key="cr"
 		title="courseRegistration"
 		onPress={() => {
@@ -645,7 +645,7 @@ const getHomeFunctions = (
 			navigation.navigate("CrHome");
 		}}>
 		<IconCr width={iconSize} height={iconSize} />
-	</HomeIcon>,
+	</HomeIcon>] : [],
 	<HomeIcon
 		key="library"
 		title="library"
