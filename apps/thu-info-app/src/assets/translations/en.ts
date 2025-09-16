@@ -462,7 +462,7 @@ export default {
 	captchaCaseSensitive: "Captcha (case sensitive)",
 	clickToRefresh: "REFRESH",
 	sportsRecord: "Sports Reservation Record",
-	courseRegistration: "Course Registration",
+	courseRegistration: "Course Registration Information",
 	coursePlan: "Course Plan",
 	courseQueue: "In queue",
 	courseRemaining: "Remaining",

@@ -435,7 +435,7 @@ export default {
 	captchaCaseSensitive: "验证码（大小写敏感）",
 	clickToRefresh: "点击刷新",
 	sportsRecord: "体育场馆预约记录",
-	courseRegistration: "选课",
+	courseRegistration: "选课信息",
 	coursePlan: "教学计划",
 	courseQueue: "队列人数",
 	courseRemaining: "课余量",
