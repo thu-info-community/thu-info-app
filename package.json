@@ -20,6 +20,6 @@
 	"dependencies": {
 		"editor": "1.0.0",
 		"husky": "9.1.7",
-		"lerna": "8.2.4"
+		"lerna": "9.0.0"
 	}
 }
