@@ -7697,9 +7697,9 @@ jsc-safe-url@^0.2.2:
   integrity sha512-0wM3YBWtYePOjfyXQH5MWQ8H7sdk5EXSwZvmSLKk2RboVQ2Bu239jycHDz5J/8Blf3K0Qnoy2b6xD+z10MFB+Q==
 
 jsencrypt@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/jsencrypt/-/jsencrypt-3.3.2.tgz#b0f1a2278810c7ba1cb8957af11195354622df7c"
-  integrity sha512-arQR1R1ESGdAxY7ZheWr12wCaF2yF47v5qpB76TtV64H1pyGudk9Hvw8Y9tb/FiTIaaTRUyaSnm5T/Y53Ghm/A==
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/jsencrypt/-/jsencrypt-3.5.4.tgz#8db335ab164359449dd200d120f125f459476b25"
+  integrity sha512-kNjfYEMNASxrDGsmcSQh/rUTmcoRfSUkxnAz+MMywM8jtGu+fFEZ3nJjHM58zscVnwR0fYmG9sGkTDjqUdpiwA==
 
 jsesc@^3.0.2, jsesc@~3.0.2:
   version "3.0.2"
