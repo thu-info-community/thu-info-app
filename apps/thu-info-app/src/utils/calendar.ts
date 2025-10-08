@@ -129,7 +129,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 		schedule.activeTime.base.forEach((timeSlice: TimeSlice) => {
 			const startPeriod = PERIOD_TIME_MAP[timeSlice.begin];
 			const endPeriod = PERIOD_TIME_MAP[timeSlice.end];
-			
+
 			if (!startPeriod || !endPeriod) {
 				console.warn(`Unknown period: ${timeSlice.begin}-${timeSlice.end}`);
 				return;
@@ -239,7 +239,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 	// Combine all events into a single ICS string
 	const calendarHeader = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//thu-info-app//thu-info-app//EN\r\n";
 	const calendarFooter = "END:VCALENDAR\r\n";
-	
+
 	const allEvents = events.join("");
 	return calendarHeader + allEvents + calendarFooter;
 };
@@ -248,7 +248,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
  * Export the schedule to an ICS file and save it to the device
  */
 export const exportScheduleToICS = async (
-	schedules: Schedule[], 
+	schedules: Schedule[],
 	semester: Semester
 ): Promise<{success: boolean, filePath?: string, method: "download" | "share", error?: any}> => {
 	try {
@@ -278,7 +278,7 @@ export const exportScheduleToICS = async (
 					filePath: filePath,
 					method: "download",
 				};
-			} catch (e) {
+			} catch {
 			}
 		}
 

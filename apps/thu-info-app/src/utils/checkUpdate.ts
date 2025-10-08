@@ -42,7 +42,7 @@ export const checkUpdate = (force: boolean = false) => {
 										? r.downloadUrl
 										: TUNA_LATEST_URL,
 								);
-							} catch (e) {
+							} catch {
 								NetworkRetry();
 							}
 						},

@@ -311,7 +311,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		try {
 			const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendar.nextSemesterList.length ? calendar : calendar.nextSemesterList[nextSemesterIndex];
 			const result = await exportScheduleToICS(baseSchedule, semester);
-			
+
 			if (result.success && result.filePath) {
 				if (result.method === "download") {
 					// Already saved to Downloads
@@ -337,7 +337,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 			} else {
 				throw new Error("Export failed");
 			}
-		} catch (error) {
+		} catch {
 			Snackbar.show({
 				text: getStr("saveFailRetry"),
 				duration: Snackbar.LENGTH_SHORT,
