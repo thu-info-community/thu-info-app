@@ -375,7 +375,7 @@ const cabFetch = async (
         } else {
             result = JSON.parse(await uFetch(url, JSON.stringify(jsonStruct) as any, undefined, undefined, true, CONTENT_TYPE_JSON));
         }
-    } catch (e) {
+    } catch {
         throw new Error("Failed to parse cabFetch result");
     }
     if (result.code !== 0) {
