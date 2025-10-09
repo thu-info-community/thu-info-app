@@ -10064,10 +10064,10 @@ react-native-markdown-display@7.0.2:
     prop-types "^15.7.2"
     react-native-fit-image "^1.5.5"
 
-react-native-pdf@6.7.7:
-  version "6.7.7"
-  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.7.7.tgz#c9a9cffe3ab15a227de84fc1512942472a83ba0b"
-  integrity sha512-D0ga/eyPsVWSPEBm622sGVZLl3gibxPmfm2cxsLcUrZ4WDSGR5HyGmvvWaR/m9wXEyIbD4J6q9qzuG6yObcSXw==
+react-native-pdf@7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-7.0.1.tgz#60206f02ee4a1bf5b387d65a848d3550b9e0398d"
+  integrity sha512-JqGUIgMd7nnoo2Xy0m5BYuo8/Cqghs2bv7mgdcWnuqlqsF/Z+Y8jbo+uyqTP+8arTOgK449Fn9sHX3c+E1yjaQ==
   dependencies:
     crypto-js "4.2.0"
     deprecated-react-native-prop-types "^2.3.0"
