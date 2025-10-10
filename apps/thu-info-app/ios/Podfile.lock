@@ -1844,7 +1844,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNLocalize (3.5.3):
+  - RNLocalize (3.5.4):
     - React-Core
   - RNPermissions (5.4.2):
     - React-Core
@@ -2285,7 +2285,7 @@ SPEC CHECKSUMS:
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
   RNGestureHandler: 05b56a7bf6f70487bfdeed234d1f670916928203
   RNKeychain: b060a891b105741c67da179f4d88ed87960f22e7
-  RNLocalize: 2c6bf7900affb63a775695149694007d29ac583c
+  RNLocalize: d7859f87f1083349c73aa089e360af33ef89efc2
   RNPermissions: 9f2f89a30fa12d86cb24b9f8e53f6ddfac81805d
   RNScreens: 0cba9551497bcf6ceaa75878c08f5cb9a2fac6a4
   RNShare: 40ace3f87cd881869e8085aced9dc16b425c74aa
