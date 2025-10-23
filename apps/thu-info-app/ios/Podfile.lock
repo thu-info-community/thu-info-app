@@ -1796,7 +1796,7 @@ PODS:
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
-  - RNGestureHandler (2.28.0):
+  - RNGestureHandler (2.29.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1848,7 +1848,7 @@ PODS:
     - React-Core
   - RNPermissions (5.4.2):
     - React-Core
-  - RNScreens (4.17.1):
+  - RNScreens (4.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2283,11 +2283,11 @@ SPEC CHECKSUMS:
   RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
-  RNGestureHandler: 05b56a7bf6f70487bfdeed234d1f670916928203
+  RNGestureHandler: e954f8ed2512e759048855047367ba2c31665411
   RNKeychain: b060a891b105741c67da179f4d88ed87960f22e7
   RNLocalize: d7859f87f1083349c73aa089e360af33ef89efc2
   RNPermissions: 9f2f89a30fa12d86cb24b9f8e53f6ddfac81805d
-  RNScreens: 447d802724b6a1db62f907f41b6959a27f4443a0
+  RNScreens: 9f2cb400dfae289ca8eacd6e65b5505d0430ce75
   RNShare: 40ace3f87cd881869e8085aced9dc16b425c74aa
   RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
   RNSVG: c082074c0d83a12d67a17a2b7d500ac088f95b6f
