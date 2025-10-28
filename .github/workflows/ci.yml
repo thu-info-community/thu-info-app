@@ -10,7 +10,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Setup caching
         uses: actions/cache@v4
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v4
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v4
@@ -181,7 +181,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Install dependencies
         run: |
           ./setup-harmony.sh
