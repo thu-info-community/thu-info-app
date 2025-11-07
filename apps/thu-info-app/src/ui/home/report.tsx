@@ -437,6 +437,15 @@ export const ReportScreen = () => {
 							{"   "}
 							{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
 						</Text>
+						<Text
+							style={{
+								fontSize: 12,
+								color: colors.fontB3,
+								textAlign: "center",
+								marginTop: 6,
+							}}>
+							{getStr("gpaTooltip")}
+						</Text>
 					</RoundedView>
 					{(mode === "split" ? sections : []).map((section) => (
 						<RoundedView key={section.semester} style={{marginBottom: 16}}>

@@ -133,6 +133,7 @@ export default {
 	allCredits: "总学分数",
 	totalCredits: "计入 GPA 学分数",
 	totalPoints: "总学分绩",
+	gpaTooltip: "GPA 计算结果仅供参考，请以官方成绩单为准。",
 	newGPA: "新绩点",
 	oldGPA: "旧绩点",
 	allGPA: "总 GPA ：",
@@ -302,7 +303,7 @@ export default {
 	cancelPayment: "取消支付",
 	testAccountNotSupportEleRecharge: "测试账号暂不支持电费充值",
 	eleRechargeHint:
-		"充值如未到账，请勿重复充值！\n充值后请轻触屏幕右上角“历史记录”按钮，查看充值到账情况。\n如遇充值失败，请在一个小时内发送邮件至 i@thuinfo.net，并附上电费充值记录和支付记录。我们将给出未到账金额等量的现金赔偿。",
+		"电表每天抄表一次，余额显示可能有延迟。\n充值如未到账，请勿重复充值！\n充值后请轻触屏幕右上角“历史记录”按钮，查看充值到账情况。\n如遇充值失败，请在一个小时内发送邮件至 i@thuinfo.net，并附上电费充值记录和支付记录。我们将给出未到账金额等量的现金赔偿。",
 	scheduleCustomShorten: "设置简称",
 	scheduleAddCustom: "添加计划",
 	scheduleEdit: "编辑计划",

@@ -138,6 +138,7 @@ export default {
 	allCredits: "All credits",
 	totalCredits: "GPA-related credits",
 	totalPoints: "Total points",
+	gpaTooltip: "GPA is for reference only. Please check the official transcript for the finalized result.",
 	newGPA: "New GPA Policy",
 	oldGPA: "Old GPA Policy",
 	allGPA: "GPA : ",
@@ -325,7 +326,7 @@ export default {
 	testAccountNotSupportEleRecharge:
 		"Electricity recharge with testing account is not supported.",
 	eleRechargeHint:
-		"If your recharge has not been credited, please do not repeat the transaction!\nAfter recharging, tap the \"History\" button at the top right corner of the screen to check the transaction status.\nIn case of recharge failure, please send an email to i@thuinfo.net within 1 hour, and attach your payment record and the electricity recharge record. We will provide compensation equal to the uncredited cash amount.",
+		"The remainder value updates on a daily basis. Lags may be expected.\nIf your recharge has not been credited, please do not repeat the transaction!\nAfter recharging, tap the \"History\" button at the top right corner of the screen to check the transaction status.\nIn case of recharge failure, please send an email to i@thuinfo.net within 1 hour, and attach your payment record and the electricity recharge record. We will provide compensation equal to the uncredited cash amount.",
 	scheduleCustomShorten: "Aliases",
 	scheduleAddCustom: "New Schedule",
 	scheduleEdit: "Edit Schedule",
