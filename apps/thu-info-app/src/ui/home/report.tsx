@@ -423,7 +423,7 @@ export const ReportScreen = () => {
 								textAlign: "center",
 							}}>
 							{getStr("allGPA")}
-							{gpaToStr(gpa, 3)}
+							{gpaToStr(gpa, 2)}
 						</Text>
 						<Text
 							style={{
@@ -459,7 +459,7 @@ export const ReportScreen = () => {
 										color: colors.text,
 										flex: 0,
 									}}>
-									{gpaToStr(section.gpa, 3)}
+									{gpaToStr(section.gpa, 2)}
 								</Text>
 							</View>
 							<View
