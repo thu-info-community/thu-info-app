@@ -95,7 +95,7 @@ jobs:
             THUInfo_release_${{ steps.prepare_release.outputs.tag }}_allow_rooted.apk
   build-ios:
     needs: install-and-test
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v5
       - name: Setup Node
