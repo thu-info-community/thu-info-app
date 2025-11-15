@@ -1732,10 +1732,10 @@
     yargs "17.7.2"
     yargs-parser "21.1.1"
 
-"@microsoft/signalr@9.0.6":
-  version "9.0.6"
-  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-9.0.6.tgz#67dd074941c2ec2b857f607504c920a0c6274e27"
-  integrity sha512-DrhgzFWI9JE4RPTsHYRxh4yr+OhnwKz8bnJe7eIi7mLLjqhJpEb62CiUy/YbFvLqLzcGzlzz1QWgVAW0zyipMQ==
+"@microsoft/signalr@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@microsoft/signalr/-/signalr-10.0.0.tgz#465837ced767af7f7cc05988ea95afe8bb58d493"
+  integrity sha512-0BRqz/uCx3JdrOqiqgFhih/+hfTERaUfCZXFB52uMaZJrKaPRzHzMuqVsJC/V3pt7NozcNXGspjKiQEK+X7P2w==
   dependencies:
     abort-controller "^3.0.0"
     eventsource "^2.0.2"
