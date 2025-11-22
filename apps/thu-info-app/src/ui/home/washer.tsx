@@ -377,13 +377,19 @@ export const WasherDetailScreen = ({ route }: {
 					}
 
 					const statusArray = item.status.split(" ");
-					let status: "idle" | "working" | "error" | null = null;
+					let status: "idle" | "working" | "error" = "error";
 					let updateTime: Date | null = null;
 					let eta: number = 0;
 
 					for (let index = 0; index < statusArray.length; index++) {
 						const str = statusArray[index];
-						if (str.search("状态") !== -1) {
+						if (str.search("剩余") !== -1) {
+							eta = parseInt(str.match(/\d+/g)[0], 10);
+						} else if (str.search("更新") !== -1) {
+							updateTime = new Date(
+								str.split(":")[1] + " " + statusArray[index + 1],
+							);
+						} else {
 							if (str.search("待机") !== -1) {
 								status = "idle";
 							} else if (
@@ -391,15 +397,7 @@ export const WasherDetailScreen = ({ route }: {
 								str.search("运转") !== -1
 							) {
 								status = "working";
-							} else {
-								status = "error";
 							}
-						} else if (str.search("剩余") !== -1) {
-							eta = parseInt(str.match(/\d+/g)[0], 10);
-						} else if (str.search("更新") !== -1) {
-							updateTime = new Date(
-								str.split(":")[1] + " " + statusArray[index + 1],
-							);
 						}
 					}
 
