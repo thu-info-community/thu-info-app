@@ -246,47 +246,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 		</View>
 	);
 
-	const renderNotice = () => (
-		<View style={{ flexDirection: "column", marginBottom: 32 }}>
-			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
-				<View
-					style={{
-						flex: 1,
-						height: 1,
-						backgroundColor: theme.colors.primaryLight,
-						alignSelf: "center",
-					}}
-				/>
-				<Text
-					style={{
-						color: theme.colors.primary,
-						fontSize: 20,
-						margin: 16,
-					}}>
-					{getStr("washerNoticeTitle")}
-				</Text>
-				<View
-					style={{
-						flex: 1,
-						height: 1,
-						backgroundColor: theme.colors.primaryLight,
-						alignSelf: "center",
-					}}
-				/>
-			</View>
-			<View style={{ marginHorizontal: 24 }}>
-				<Text
-					style={{
-						color: theme.colors.text,
-						fontWeight: "bold",
-						fontSize: 16,
-					}}>
-					{getStr("washerNotice")}
-				</Text>
-			</View>
-		</View>
-	);
-
 	const renderCredit = () => (
 		<View style={{ marginHorizontal: 24, marginBottom: 32 }}>
 			<Text
@@ -302,7 +261,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	return (
 		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
 			<FlatList
-				ListHeaderComponent={renderNotice()}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
 				renderItem={({ item }) => renderBuildingGroup(item.name, item.buildings)}
