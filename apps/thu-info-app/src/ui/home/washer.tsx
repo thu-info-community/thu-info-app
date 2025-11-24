@@ -246,47 +246,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 		</View>
 	);
 
-	const renderNotice = () => (
-		<View style={{ flexDirection: "column", marginBottom: 32 }}>
-			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
-				<View
-					style={{
-						flex: 1,
-						height: 1,
-						backgroundColor: theme.colors.primaryLight,
-						alignSelf: "center",
-					}}
-				/>
-				<Text
-					style={{
-						color: theme.colors.primary,
-						fontSize: 20,
-						margin: 16,
-					}}>
-					{getStr("washerNoticeTitle")}
-				</Text>
-				<View
-					style={{
-						flex: 1,
-						height: 1,
-						backgroundColor: theme.colors.primaryLight,
-						alignSelf: "center",
-					}}
-				/>
-			</View>
-			<View style={{ marginHorizontal: 24 }}>
-				<Text
-					style={{
-						color: theme.colors.text,
-						fontWeight: "bold",
-						fontSize: 16,
-					}}>
-					{getStr("washerNotice")}
-				</Text>
-			</View>
-		</View>
-	);
-
 	const renderCredit = () => (
 		<View style={{ marginHorizontal: 24, marginBottom: 32 }}>
 			<Text
@@ -302,7 +261,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	return (
 		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
 			<FlatList
-				ListHeaderComponent={renderNotice()}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
 				renderItem={({ item }) => renderBuildingGroup(item.name, item.buildings)}
@@ -377,13 +335,19 @@ export const WasherDetailScreen = ({ route }: {
 					}
 
 					const statusArray = item.status.split(" ");
-					let status: "idle" | "working" | "error" | null = null;
+					let status: "idle" | "working" | "error" = "error";
 					let updateTime: Date | null = null;
 					let eta: number = 0;
 
 					for (let index = 0; index < statusArray.length; index++) {
 						const str = statusArray[index];
-						if (str.search("状态") !== -1) {
+						if (str.search("剩余") !== -1) {
+							eta = parseInt(str.match(/\d+/g)[0], 10);
+						} else if (str.search("更新") !== -1) {
+							updateTime = new Date(
+								str.split(":")[1] + " " + statusArray[index + 1],
+							);
+						} else {
 							if (str.search("待机") !== -1) {
 								status = "idle";
 							} else if (
@@ -391,15 +355,7 @@ export const WasherDetailScreen = ({ route }: {
 								str.search("运转") !== -1
 							) {
 								status = "working";
-							} else {
-								status = "error";
 							}
-						} else if (str.search("剩余") !== -1) {
-							eta = parseInt(str.match(/\d+/g)[0], 10);
-						} else if (str.search("更新") !== -1) {
-							updateTime = new Date(
-								str.split(":")[1] + " " + statusArray[index + 1],
-							);
 						}
 					}
 

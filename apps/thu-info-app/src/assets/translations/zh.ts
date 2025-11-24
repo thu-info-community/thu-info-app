@@ -631,9 +631,6 @@ export default {
 	minutesAbbr: "分钟",
 	washerError: "故障",
 	washerCredit: "感谢 gtxzsxxk@github.com 同学提供的 UI 灵感",
-	washerNoticeTitle: "重要公告",
-	washerNotice:
-		"厂家已停止对新洗衣机的维护，因此我们不接受对缺少洗衣机的反馈。此外，本系统数据完全来源于“华清捷利”小程序，因此我们不接受有关扩展功能的反馈。",
 	noMoreData: "没有更多数据了~",
 	hideWeekend: "隐藏周末",
 	loadAllData: "加载全部",
