@@ -1334,7 +1334,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-biometrics (3.0.1):
     - React-Core
-  - react-native-blob-util (0.23.2):
+  - react-native-blob-util (0.24.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2540,7 +2540,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: fae8da2c01aeb7f26ad739731b6dba61fd02fd97
   React-microtasksnativemodule: 20454ffccff553f0ee73fd20873aa8555a5867fb
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
-  react-native-blob-util: 3adb7f04fe5370a8f29443c8361d9aef6e99f507
+  react-native-blob-util: 2359bd637d639ce775f3a78d704a4432fd29cf5c
   react-native-blur: 06d0f9906ecd6cde3a42de16c6cd829a2bf0710c
   react-native-cameraroll: 126bff3dd6d0844dcbc69ebc34785138791c0ab3
   react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
