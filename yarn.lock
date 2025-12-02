@@ -2557,12 +2557,12 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
-"@react-navigation/bottom-tabs@7.8.8":
-  version "7.8.8"
-  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.8.8.tgz#dfae549b78152157b6dba7061848c4f31741a6db"
-  integrity sha512-WS84QCOEdARICYnpu4OSIOeCNsWuWuHi+WO1FUw2rBwKZnrmTT6g+Mv3wL+YqtnRGv5FuLexysVgOFouHrJCpQ==
+"@react-navigation/bottom-tabs@7.8.9":
+  version "7.8.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-7.8.9.tgz#8b76adac9b973be8f4aa5b83c2b20c448b81f1d8"
+  integrity sha512-clh62vDRyYckuhiutiBJlLc4eEF59YqdeMa5H8U/Y4TRaZM6BNzic+hYAs7fVSkRR44i63IvVjrJs8FUr1O1Jw==
   dependencies:
-    "@react-navigation/elements" "^2.8.4"
+    "@react-navigation/elements" "^2.8.5"
     color "^4.2.3"
     sf-symbols-typescript "^2.1.0"
 
@@ -2580,10 +2580,10 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
-"@react-navigation/elements@^2.8.4":
-  version "2.8.4"
-  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.8.4.tgz#2b0c7396adece25038bd2243c73bd61e8d48a9f7"
-  integrity sha512-AKqJ4kjDLlWBuF2kPFalw1bcQglPqmhFMQnwuPpaD23M5dDbW620JBv89qsSNM3LRIERjvuluv1yguqBmBdTBA==
+"@react-navigation/elements@^2.8.5":
+  version "2.8.5"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.8.5.tgz#55ff54cff64a38a3ca05054a78cb6267640c0835"
+  integrity sha512-SJqYcbW08DxULnHpUxJSULaYPxOnfReWmWWqzlS9pjdTlOdrBcyfepCkLXKnTXTr7u61nY0r14aAKyLjVhzBMQ==
   dependencies:
     color "^4.2.3"
     use-latest-callback "^0.2.4"
@@ -2607,12 +2607,12 @@
   dependencies:
     nanoid "^3.3.11"
 
-"@react-navigation/stack@7.6.8":
-  version "7.6.8"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.6.8.tgz#f8b5a896ddf21ff3aca5ab1a17a11d1cca9b0189"
-  integrity sha512-VIHDEKx16KrkigJI/JR8zyqASEOGDlcBOvOm+lAVcFLZ630cwYtPF276OCBWcnNdDzKCS522+/kLVW/XFOqPpw==
+"@react-navigation/stack@7.6.9":
+  version "7.6.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.6.9.tgz#82e22f3565403dbf295369118d82c88b1c665071"
+  integrity sha512-2U/FugJPP6SZ6X2Wvgl74wDkouU1md54jpc8Ht3PMCOSA1jo9bwUZRb8xvk/JA67VpINmDOKQT1h3mkWOgo/hA==
   dependencies:
-    "@react-navigation/elements" "^2.8.4"
+    "@react-navigation/elements" "^2.8.5"
     color "^4.2.3"
     use-latest-callback "^0.2.4"
 
