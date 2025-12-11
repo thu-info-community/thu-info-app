@@ -3,6 +3,7 @@ import themes from "../../assets/themes/themes";
 import { useEffect, useState } from "react";
 import Snackbar from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
+import { getWasherLoaction } from "../../utils/washer";
 import { RootNav } from "../../components/Root";
 import { IconStarButton } from "../../components/news/IconStarButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -359,8 +360,10 @@ export const WasherDetailScreen = ({ route }: {
 						}
 					}
 
+					const code = item.macUnionCode.split("");
+
 					data[item.floorName].push({
-						name: item.macUnionCode,
+						name: code[0] + "" + getWasherLoaction(code[1]),
 						floor: item.floorName,
 						status: status!,
 						updateTime: new Date(updateTime!),
