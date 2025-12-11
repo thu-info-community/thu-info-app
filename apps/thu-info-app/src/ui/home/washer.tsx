@@ -360,10 +360,10 @@ export const WasherDetailScreen = ({ route }: {
 						}
 					}
 
-					const code = item.macUnionCode.split("");
+					const code = item.macUnionCode.split(" ");
 
 					data[item.floorName].push({
-						name: code[0] + "" + getWasherLoaction(code[1]),
+						name: code[0] + " " + getWasherLoaction(code[1]),
 						floor: item.floorName,
 						status: status!,
 						updateTime: new Date(updateTime!),
