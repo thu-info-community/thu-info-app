@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 24
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 24
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
