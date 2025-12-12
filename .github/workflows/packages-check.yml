@@ -30,7 +30,7 @@ jobs:
         run: |
           yarn workspace @thu-info/lib build-dist
       - name: Upload demo
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: demo
           path: ./packages/thu-info-lib/demo/
