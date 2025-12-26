@@ -9915,10 +9915,10 @@ react-native-biometrics@3.0.1:
   resolved "https://registry.yarnpkg.com/react-native-biometrics/-/react-native-biometrics-3.0.1.tgz#23c5a0bdbae1fcb1e08b22936223fe0fc4af846e"
   integrity sha512-Ru80gXRa9KG04sl5AB9HyjLjVbduhqZVjA+AiOSGqr+fNqCDmCu9y5WEksnjbnniNLmq1yGcw+qcLXmR1ddLDQ==
 
-react-native-blob-util@0.24.5:
-  version "0.24.5"
-  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.24.5.tgz#7a9664ce725a593e1b5dbb430742a647a0d3bd16"
-  integrity sha512-GmhV7sJ0oC1ENLXE5mVe5eUE8JXgNNyylOmpgo6NZhkWzB0tCcV/RNNanpHw6CkAF+WdnPdnpo5G/yrSxX75fg==
+react-native-blob-util@0.24.6:
+  version "0.24.6"
+  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.24.6.tgz#f48a423e53315fb922e07ba08910c509a0887385"
+  integrity sha512-e4231VTT0bO1Yh9KGtY6jXq7pkLXgDTz+ziClEEbiGwWBuG92Z+wFRLptlzdVbibW8XtrO1XrdtiE8AOlplEXQ==
   dependencies:
     base-64 "0.1.0"
     glob "13.0.0"

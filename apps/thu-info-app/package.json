@@ -38,7 +38,7 @@
 		"react": "19.0.0",
 		"react-native": "0.79.3",
 		"react-native-biometrics": "3.0.1",
-		"react-native-blob-util": "0.24.5",
+		"react-native-blob-util": "0.24.6",
 		"react-native-confirmation-code-field": "8.0.1",
 		"react-native-device-info": "15.0.1",
 		"react-native-device-time-format": "2.4.0",
