@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 24
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: 24
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
@@ -69,7 +69,7 @@ jobs:
         run: |
           cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: app-release.apk
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk

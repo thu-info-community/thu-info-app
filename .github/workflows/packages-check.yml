@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
@@ -30,7 +30,7 @@ jobs:
         run: |
           yarn workspace @thu-info/lib build-dist
       - name: Upload demo
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: demo
           path: ./packages/thu-info-lib/demo/
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup caching
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             node_modules
