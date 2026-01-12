@@ -3,7 +3,6 @@ import themes from "../../assets/themes/themes";
 import { useEffect, useState } from "react";
 import Snackbar from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
-import { getWasherLoaction } from "../../utils/washer";
 import { RootNav } from "../../components/Root";
 import { IconStarButton } from "../../components/news/IconStarButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -278,11 +277,13 @@ export interface WasherDetailProps {
 }
 
 interface Washer {
+	type: string;
 	name: string;
 	floor: string;
 	status: "idle" | "working" | "error";
 	eta: number;
 	updateTime: Date;
+	location?: string;
 }
 
 interface Floor {
@@ -310,7 +311,7 @@ export const WasherDetailScreen = ({ route }: {
 			return;
 		}
 
-		fetch("https://api.cleverschool.cn/washapi4/device/status", {
+		const statusPromise = fetch("https://api.cleverschool.cn/washapi4/device/status", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -318,9 +319,23 @@ export const WasherDetailScreen = ({ route }: {
 			body: JSON.stringify({
 				towerKey: route.params.id,
 			}),
-		})
-			.then((res) => res.json())
-			.then((res) => {
+		}).then((res) => res.json());
+
+		// TODO: Write backend and fill API here
+		const locationPromise = fetch("")
+			.then((res) => res.json());
+
+		Promise.allSettled([statusPromise, locationPromise])
+			.then(([statusResult, locationResult]) => {
+				if (statusResult.status === "rejected") {
+					throw statusResult.reason;
+				}
+
+				const loc = locationResult.status === "fulfilled" ? locationResult.value : {
+					"he10000099": "1层2号"
+				};
+
+				const res = statusResult.value;
 				if (res.errorCode !== null) {
 					Snackbar.show({
 						text: res.errorMsg,
@@ -363,11 +378,13 @@ export const WasherDetailScreen = ({ route }: {
 					const code = item.macUnionCode.split(" ");
 
 					data[item.floorName].push({
-						name: code[0] + " " + getWasherLoaction(code[1]),
+						type: code[0],
+						name: code[1],
 						floor: item.floorName,
 						status: status!,
 						updateTime: new Date(updateTime!),
 						eta: eta,
+						location: loc[code[1]] ?? null,
 					});
 				}
 
@@ -442,7 +459,8 @@ export const WasherDetailScreen = ({ route }: {
 
 				for (const w of detail.data.items) {
 					floor.washers.push({
-						name: w.name + " " + type[catCode as "00" | "01" | "02"],
+						type: type[catCode as "00" | "01" | "02"],
+						name: w.name,
 						floor: floor.name,
 						status: status[w.state as 1 | 2 | 3] as "idle" | "working" | "error",
 						eta: -1,
@@ -576,6 +594,7 @@ export const WasherDetailScreen = ({ route }: {
 								padding: 16,
 								margin: 8,
 								width: 170,
+								justifyContent: "center",
 							}}>
 							<Text
 								style={{
@@ -583,8 +602,19 @@ export const WasherDetailScreen = ({ route }: {
 									fontSize: 14,
 									textAlign: "center",
 								}}>
-								{item.name}
+								{(item.location || item.name) + " " + item.type}
 							</Text>
+							{item.location && (
+								<Text
+									style={{
+										color: theme.colors.fontB2,
+										fontSize: 12,
+										textAlign: "center",
+									}}
+								>
+									{item.name}
+								</Text>
+							)}
 							<Text
 								style={{
 									color:
