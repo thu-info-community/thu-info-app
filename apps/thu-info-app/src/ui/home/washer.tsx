@@ -322,7 +322,7 @@ export const WasherDetailScreen = ({ route }: {
 		}).then((res) => res.json());
 
 		// TODO: Write backend and fill API here
-		const locationPromise = fetch("")
+		const locationPromise = fetch("https://app.cs.tsinghua.edu.cn/Api/JieliWashers?building=" + route.params.id)
 			.then((res) => res.json());
 
 		Promise.allSettled([statusPromise, locationPromise])
@@ -331,9 +331,7 @@ export const WasherDetailScreen = ({ route }: {
 					throw statusResult.reason;
 				}
 
-				const loc = locationResult.status === "fulfilled" ? locationResult.value : {
-					"he10000099": "1层2号"
-				};
+				const loc = locationResult.status === "fulfilled" ? locationResult.value : {};
 
 				const res = statusResult.value;
 				if (res.errorCode !== null) {
