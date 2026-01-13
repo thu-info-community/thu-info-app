@@ -49,7 +49,7 @@
         "crypto-js": "4.2.0",
         "dayjs": "1.11.19",
         "he": "^1.2.0",
-        "iconv-lite": "0.7.1",
+        "iconv-lite": "0.7.2",
         "jsencrypt": "^3.3.2",
         "sm-crypto": "^0.3.13"
     },
