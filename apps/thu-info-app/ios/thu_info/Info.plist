@@ -54,6 +54,8 @@
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We only use your data of camara roll to save schedule to your phone.</string>
+	<key>RCTNewArchEnabled</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
