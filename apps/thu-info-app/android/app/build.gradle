@@ -50,7 +50,7 @@ react {
 
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
-    hermesCommand = "../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
+    hermesCommand = "../../node_modules/hermes-compiler/hermesc/%OS-BIN%/hermesc"
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
@@ -145,5 +145,16 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+}
+
+afterEvaluate {
+    tasks.matching { it.name.startsWith('configureCMakeRelWithDebInfo') }.configureEach { cmakeTask ->
+        rootProject.allprojects.each { project ->
+            if (project.tasks?.findByName("generateCodegenArtifactsFromSchema")) {
+                println "CUSTOM TASK DEPENDENCY → ${cmakeTask.name} depends on :${project.name}:generateCodegenArtifactsFromSchema"
+                cmakeTask.dependsOn(":${project.name}:generateCodegenArtifactsFromSchema")
+            }
+        }
     }
 }

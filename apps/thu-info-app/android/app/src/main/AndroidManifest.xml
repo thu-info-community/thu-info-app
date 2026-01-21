@@ -18,6 +18,7 @@
       android:requestLegacyExternalStorage="true"
       android:taskAffinity=""
       android:theme="@style/AppTheme"
+      android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:supportsRtl="true">
       <activity
         android:name=".MainActivity"
