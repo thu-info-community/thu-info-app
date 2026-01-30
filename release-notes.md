@@ -1,5 +1,5 @@
 ## @thu-info/app
-- 修复了一些已知问题
+- 优化洗衣机地点显示
 
 ## @thu-info/lib
 - No changes
