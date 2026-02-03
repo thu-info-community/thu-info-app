@@ -59,7 +59,7 @@
         "@types/sm-crypto": "^0.3.4",
         "@typescript-eslint/eslint-plugin": "*",
         "@typescript-eslint/parser": "*",
-        "eslint": "8.57.1",
+        "eslint": "9.26.0",
         "esm": "3.2.25",
         "jest": "30.2.0",
         "node-polyfill-webpack-plugin": "4.1.0",
