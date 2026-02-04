@@ -646,7 +646,15 @@ export const getGraduateIncome = async (
 
 const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: string; jssj: string; id: string}): Semester => {
     const weekday = dayjs(kssj).day(); // 0 (Sun) - 6 (Sat)
-    const delta = weekday === 0 ? 1 : weekday <= 5 ? 1 - weekday : 8 - weekday; // move to the Monday of that teaching week
+    // Align to the Monday of the teaching week: Tue–Fri move backward, Sat/Sun move forward, Mon stays.
+    let delta: number;
+    if (weekday === 0) {
+        delta = 1; // Sunday -> next Monday
+    } else if (weekday === 6) {
+        delta = 2; // Saturday -> next Monday
+    } else {
+        delta = 1 - weekday; // Tuesday–Friday -> previous Monday, Monday -> 0
+    }
     return {
         firstDay: dayjs(kssj).add(delta, "day").format("YYYY-MM-DD"),
         semesterId: id,
@@ -654,6 +662,8 @@ const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: stri
         weekCount: dayjs(jssj).diff(kssj, "week") + 1,
     };
 };
+
+export const __parseCalendarDataForTest = parseCalendarData;
 
 export const getCalendar = async (helper: InfoHelper): Promise<CalendarData> =>
     roamingWrapperWithMocks(
