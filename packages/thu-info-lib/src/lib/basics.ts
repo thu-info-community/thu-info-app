@@ -645,8 +645,10 @@ export const getGraduateIncome = async (
     );
 
 const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: string; jssj: string; id: string}): Semester => {
+    const weekday = dayjs(kssj).day(); // 0 (Sun) - 6 (Sat)
+    const delta = weekday === 0 ? 1 : weekday <= 5 ? 1 - weekday : 8 - weekday; // move to the Monday of that teaching week
     return {
-        firstDay: dayjs(kssj).add(2, "day").format("YYYY-MM-DD"),
+        firstDay: dayjs(kssj).add(delta, "day").format("YYYY-MM-DD"),
         semesterId: id,
         semesterName: xnxqmc,
         weekCount: dayjs(jssj).diff(kssj, "week") + 1,
