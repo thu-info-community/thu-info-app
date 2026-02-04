@@ -31,3 +31,11 @@ describe("parseCalendarData firstDay alignment", () => {
         expect(make("2026-03-01").firstDay).toBe("2026-03-02");
     });
 });
+
+describe("parseCalendarData weekCount uses aligned firstDay", () => {
+    test("Start mid-week counts full weeks from Monday", () => {
+        const {firstDay, weekCount} = make("2026-02-27"); // Friday, aligns to 2026-02-23
+        expect(firstDay).toBe("2026-02-23");
+        expect(weekCount).toBe(dayjs("2026-06-27").diff(dayjs(firstDay), "week") + 1);
+    });
+});
