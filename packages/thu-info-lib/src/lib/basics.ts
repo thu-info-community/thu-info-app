@@ -646,7 +646,7 @@ export const getGraduateIncome = async (
 
 const parseCalendarData = ({kssj, jssj, id, xnxqmc}: {xnxqmc: string; kssj: string; jssj: string; id: string}): Semester => {
     const weekday = dayjs(kssj).day(); // 0 (Sun) - 6 (Sat)
-    // Align to the Monday of the teaching week: Tue–Fri move backward, Sat/Sun move forward, Mon stays.
+    // Align to the Monday of the teaching week: Tue–Fri -> previous Monday (negative delta), Mon -> 0, Sat/Sun -> next Monday.
     let delta: number;
     if (weekday === 0) {
         delta = 1; // Sunday -> next Monday
