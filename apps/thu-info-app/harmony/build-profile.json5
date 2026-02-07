@@ -1,6 +1,21 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        // Override by hvigorfile.ts
+        "material": {
+          "storePassword": "",
+          "certpath": "",
+          "keyAlias": "",
+          "keyPassword": "",
+          "profile": "",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": ""
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",

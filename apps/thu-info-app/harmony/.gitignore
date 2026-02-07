@@ -11,3 +11,4 @@
 **/.test
 /.appanalyzer
 generated
+secrets.env
