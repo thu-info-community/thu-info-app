@@ -339,12 +339,11 @@ helper.trustFingerprintHook = () => {
 	return new Promise<boolean>((resolve) => {
 		Alert.alert(
 			"二次认证（2FA）",
-			"是否将本设备标记为信任设备？\n" +
-				"Do you want to mark this device as a trusted device?",
+			"该设备将被标记为信任设备，以解锁丝滑登录体验。\n" +
+				"This device will be marked as a trusted device.",
 			[
-				{text: "No", style: "cancel", onPress: () => resolve(false)},
 				{
-					text: "Yes",
+					text: "确认",
 					onPress: () => resolve(true),
 				},
 			],
