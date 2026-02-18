@@ -52,11 +52,11 @@ const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: Semester) =>
                     .filter((s) => s.trim().length > 0)
                     .join(","),
             )
-            .then((str) => parseJSON(JSON.parse(`[${str}]`), firstDay)),
+            .then((str) => parseJSON(JSON.parse(`[${str}]`))),
         MOCK_PRIMARY_SCHEDULE,
     );
 
-const getSecondary = (helper: InfoHelper) =>
+const getSecondary = (helper: InfoHelper, {firstDay}: Semester) =>
     roamingWrapperWithMocks(
         helper,
         "default",
@@ -66,6 +66,7 @@ const getSecondary = (helper: InfoHelper) =>
             const upperBound = str.indexOf("}", lowerBound);
             return parseScript(
                 str.substring(lowerBound, upperBound),
+                firstDay,
             ) as Schedule[];
         }),
         MOCK_SECONDARY_SCHEDULE,
@@ -73,7 +74,8 @@ const getSecondary = (helper: InfoHelper) =>
 
 export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number | undefined) => {
     const calendarData = await getCalendar(helper);
-    const scheduleList: Schedule[] = (await getPrimary(helper, nextSemesterIndex === undefined || nextSemesterIndex >= calendarData.nextSemesterList.length ? calendarData : calendarData.nextSemesterList[nextSemesterIndex])).concat(helper.graduate() ? [] : await getSecondary(helper));
+    const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendarData.nextSemesterList.length ? calendarData : calendarData.nextSemesterList[nextSemesterIndex];
+    const scheduleList: Schedule[] = (await getPrimary(helper, semester)).concat(helper.graduate() ? [] : await getSecondary(helper, semester));
     return {
         schedule: mergeSchedules(scheduleList),
         calendar: calendarData,

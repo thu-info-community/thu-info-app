@@ -1,4 +1,4 @@
- 
+import dayjs from "dayjs";
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import {useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
@@ -62,8 +62,8 @@ export interface ScheduleDetailProps {
 	location: string;
 	week: number;
 	dayOfWeek: number;
-	begin: number | string;
-	end: number | string;
+	beginTime: dayjs.Dayjs;
+	endTime: dayjs.Dayjs;
 	alias: string;
 	type: ScheduleType;
 	activeWeeks?: number[];
@@ -106,12 +106,9 @@ export const ScheduleDetailScreen = ({
 						scheduleDelOrHide([
 							props.name,
 							{
-								activeWeeks: [props.week],
 								dayOfWeek: props.dayOfWeek,
-								// @ts-ignore
-								begin: props.begin,
-								// @ts-ignore
-								end: props.end,
+								beginTime: props.beginTime,
+								endTime: props.endTime,
 							},
 							choice,
 						]),
@@ -162,22 +159,10 @@ export const ScheduleDetailScreen = ({
 				<IconTime height={15} width={15} />
 				<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
 					{getStr("dayOfWeek")[props.dayOfWeek]}
-					{props.type === ScheduleType.EXAM
-						? (getStr("mark") === "CH" ? "（" : "(") +
-						  props.begin +
+					{(getStr("mark") === "CH" ? "（" : "(") +
+						  props.beginTime.format("HH:mm") +
 						  " ~ " +
-						  props.end +
-						  (getStr("mark") === "CH" ? "）" : ")")
-						: " " + getStr("periodNumPrefix") +
-						  props.begin +
-						  (props.begin === props.end ? "" : " ~ " + props.end) +
-						  getStr("periodNumSuffix") +
-						  (getStr("mark") === "CH" ? "（" : "(") +
-						  // @ts-ignore
-						  beginTime[props.begin] +
-						  " ~ " +
-						  // @ts-ignore
-						  endTime[props.end] +
+						  props.endTime.format("HH:mm") +
 						  (getStr("mark") === "CH" ? "）" : ")")}
 				</Text>
 			</View>

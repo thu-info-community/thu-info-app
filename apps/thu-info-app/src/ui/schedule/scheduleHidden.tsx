@@ -12,6 +12,9 @@ import {
 	getOverlappedBlock,
 	ScheduleType,
 	TimeSlice,
+	getBeginPeriod,
+	getEndPeriod,
+	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {
@@ -28,6 +31,7 @@ export const ScheduleHiddenScreen = () => {
 	const theme = themes(themeName);
 
 	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
+	const firstDay = useSelector((s: State) => s.config.firstDay);
 	const dispatch = useDispatch();
 
 	const getData = () => {
@@ -41,46 +45,12 @@ export const ScheduleHiddenScreen = () => {
 			.filter((val) => val.delOrHideTime.base.length !== 0)
 			.forEach((val) => {
 				val.delOrHideTime.base.forEach((e) => {
-					const rangeList: [number, number][] = [];
-					const slice: TimeSlice = {
-						...e,
-						activeWeeks: [...e.activeWeeks],
-					};
-					slice.activeWeeks.sort((a, b) => a - b);
-					rangeList.push([slice.activeWeeks[0], -1]);
-					slice.activeWeeks.forEach((week, ind) => {
-						if (!ind || week === slice.activeWeeks[ind - 1] + 1) {
-							return;
-						}
-
-						rangeList[rangeList.length - 1][1] = slice.activeWeeks[ind - 1];
-						rangeList.push([week, -1]);
-					});
-					rangeList[rangeList.length - 1][1] =
-						slice.activeWeeks[slice.activeWeeks.length - 1];
-
-					let resStr = "";
-					if (
-						rangeList.length === 1 &&
-						rangeList[0][0] === 1 &&
-						rangeList[0][1] === 16
-					) {
-						resStr += getStr("schedulePrefixRepeat");
-					} else {
-						resStr += getStr("schedulePrefixOncePrefix");
-						resStr += rangeList
-							.map((range) =>
-								range[0] === range[1]
-									? `${range[0]}`
-									: `${range[0]} ~ ${range[1]}`,
-							)
-							.join(", ");
-						resStr += getStr("schedulePrefixOnceSuffix");
-					}
+					const week = getWeekFromTime(e.beginTime, firstDay);
+					const resStr = getStr("weekNumPrefix") + week + getStr("weekNumSuffix");
 					res.push({
 						name: val.name,
 						type: val.type,
-						time: slice,
+						time: e,
 						weekPrefix: resStr,
 					});
 				});
@@ -103,8 +73,8 @@ export const ScheduleHiddenScreen = () => {
 						{`${item.weekPrefix} ${item.name.substr(
 							item.type === ScheduleType.CUSTOM ? 6 : 0,
 						)} ${getStr("dayOfWeek")[item.time.dayOfWeek]} [${
-							item.time.begin
-						}, ${item.time.end}]`}
+							item.time.beginTime.format("HH:mm")
+						}, ${item.time.endTime.format("HH:mm")}]`}
 					</Text>
 					<TouchableOpacity
 						style={{padding: 5, marginHorizontal: 6}}
@@ -134,16 +104,16 @@ export const ScheduleHiddenScreen = () => {
 													) +
 													"」\n" +
 													getStr("weekNumPrefix") +
-													val[2].activeWeeks[0] +
+													getWeekFromTime(val[2].beginTime, firstDay) +
 													getStr("weekNumSuffix") +
 													" " +
 													getStr("dayOfWeek")[val[2].dayOfWeek] +
 													" " +
 													getStr("periodNumPrefix") +
-													val[2].begin +
-													(val[2].begin === val[2].end
+													getBeginPeriod(val[2].beginTime) +
+													(getBeginPeriod(val[2].beginTime) === getEndPeriod(val[2].endTime)
 														? ""
-														: " ~ " + val[2].end) +
+														: " ~ " + getEndPeriod(val[2].endTime)) +
 													getStr("periodNumSuffix"),
 											)
 											.join("\n\n") +
@@ -208,7 +178,7 @@ export const ScheduleHiddenScreen = () => {
 				padding: 5,
 			}}
 			keyExtractor={(item) =>
-				`${item.name}.${item.time.dayOfWeek}.[${item.time.begin}-${item.time.end}]`
+				`${item.name}.${item.time.dayOfWeek}.[${item.time.beginTime.toDate()}-${item.time.endTime.toDate()}]`
 			}
 		/>
 	);

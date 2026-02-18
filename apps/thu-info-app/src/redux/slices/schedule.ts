@@ -2,7 +2,6 @@ import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
 import {
 	delOrHide,
-	MAX_WEEK_LIST,
 	removeDelOrHide,
 	Schedule,
 	TimeSlice,
@@ -126,14 +125,18 @@ export const scheduleSlice = createSlice({
 							break;
 						}
 						case Choice.REPEAT: {
-							delOrHide(val, {
-								...time,
-								activeWeeks: MAX_WEEK_LIST,
+							const matchingSlices = val.activeTime.base.filter((slice) =>
+								slice.dayOfWeek === time.dayOfWeek &&
+								slice.beginTime.format("HH:mm") === time.beginTime.format("HH:mm") &&
+								slice.endTime.format("HH:mm") === time.endTime.format("HH:mm")
+							);
+							matchingSlices.forEach((slice) => {
+								delOrHide(val, slice);
 							});
 							break;
 						}
 						case Choice.ALL: {
-							const timeSliceList = val.activeTime.base;
+							const timeSliceList = [...val.activeTime.base];
 							timeSliceList.forEach((slice) => {
 								delOrHide(val, slice);
 							});

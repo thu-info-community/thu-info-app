@@ -18,7 +18,11 @@ import {
 	scheduleTimeAdd,
 	ScheduleType,
 	TimeSlice,
+	getBeginPeriod,
+	getEndPeriod,
+	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
+import dayjs from "dayjs";
 import {State} from "../../redux/store";
 import {
 	Choice,
@@ -59,6 +63,7 @@ export const ScheduleAddScreen = ({
 	const customCnt = useSelector((s: State) => s.schedule.customCnt);
 
 	const weekCount = useSelector((s: State) => s.config.weekCount);
+	const firstDay = useSelector((s: State) => s.config.firstDay);
 
 	const dispatch = useDispatch();
 
@@ -95,11 +100,11 @@ export const ScheduleAddScreen = ({
 	const [day, setDay] = useState(params?.dayOfWeek ?? 1);
 	const [popupDay, setPopupDay] = useState(params?.dayOfWeek ?? 1);
 
-	const [periodBegin, setPeriodBegin] = useState(params ? Number(params.begin) : 1);
-	const [periodEnd, setPeriodEnd] = useState(params ? Number(params?.end) : 14);
+	const [periodBegin, setPeriodBegin] = useState(params && params.beginTime ? getBeginPeriod(params.beginTime) : 1);
+	const [periodEnd, setPeriodEnd] = useState(params && params.endTime ? getEndPeriod(params.endTime) : 14);
 
-	const [popupPeriodBegin, setPopupPeriodBegin] = useState(params ? Number(params?.begin) : 1);
-	const [popupPeriodEnd, setPopupPeriodEnd] = useState(params ? Number(params?.end) : 14);
+	const [popupPeriodBegin, setPopupPeriodBegin] = useState(params && params.beginTime ? getBeginPeriod(params.beginTime) : 1);
+	const [popupPeriodEnd, setPopupPeriodEnd] = useState(params && params.endTime ? getEndPeriod(params.endTime) : 14);
 
 	const [title, setTitle] = useState(params?.alias ?? "");
 	const [locale, setLocale] = useState(params?.location ?? "");
@@ -133,13 +138,9 @@ export const ScheduleAddScreen = ({
 							if (
 								// 时间没有变化
 								day === params.dayOfWeek &&
-								periodBegin === Number(params.begin) &&
-								periodEnd === Number(params.end) &&
-								weeks.length === params.activeWeeks?.length &&
-								weeks.every(
-									(val, idx) =>
-										params.activeWeeks && val === params.activeWeeks[idx],
-								)
+								periodBegin === getBeginPeriod(params.beginTime) &&
+								periodEnd === getEndPeriod(params.endTime) &&
+								weeks.length === params.activeWeeks?.length
 							) {
 								navigation.pop(2);
 								return;
@@ -164,11 +165,19 @@ export const ScheduleAddScreen = ({
 						};
 
 						weeks.forEach((week) => {
+							// Calculate date for this week and day
+							const courseDate = dayjs(firstDay)
+								.add((week - 1) * 7, "day")
+								.add(day - 1, "day");
+							
+							// Get time strings from period numbers
+							const beginTimeStr = beginTime[periodBegin] || "08:00";
+							const endTimeStr = endTime[periodEnd] || "08:45";
+							
 							scheduleTimeAdd(newSchedule.activeTime, {
 								dayOfWeek: day,
-								begin: periodBegin,
-								end: periodEnd,
-								activeWeeks: [week],
+								beginTime: dayjs(`${courseDate.format("YYYY-MM-DD")} ${beginTimeStr}`),
+								endTime: dayjs(`${courseDate.format("YYYY-MM-DD")} ${endTimeStr}`),
 							});
 						});
 
@@ -188,16 +197,16 @@ export const ScheduleAddScreen = ({
 												) +
 												"」\n" +
 												getStr("weekNumPrefix") +
-												val[2].activeWeeks[0] +
+												getWeekFromTime(val[2].beginTime, firstDay) +
 												getStr("weekNumSuffix") +
 												" " +
 												getStr("dayOfWeek")[val[2].dayOfWeek] +
 												" " +
 												getStr("periodNumPrefix") +
-												val[2].begin +
-												(val[2].begin === val[2].end
+												getBeginPeriod(val[2].beginTime) +
+												(getBeginPeriod(val[2].beginTime) === getEndPeriod(val[2].endTime)
 													? ""
-													: " ~ " + val[2].end) +
+													: " ~ " + getEndPeriod(val[2].endTime)) +
 												getStr("periodNumSuffix"),
 										)
 										.join("\n\n") +

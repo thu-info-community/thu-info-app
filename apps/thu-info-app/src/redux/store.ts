@@ -21,8 +21,9 @@ import CookieManager from "@react-native-cookies/cookies";
 import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
-	scheduleTimeAdd,
+	ScheduleTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
+import dayjs from "dayjs";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,
@@ -179,43 +180,72 @@ const configTransform = createTransform(
 	},
 );
 
+const scheduleTransform = createTransform(
+	(s: ScheduleState) => {
+		const transform = (scheduleTime: ScheduleTime) => ({
+			base: scheduleTime.base.map((slice) => ({
+				dayOfWeek: slice.dayOfWeek,
+				beginTime: slice.beginTime.valueOf(),
+				endTime: slice.endTime.valueOf(),
+			} as never)),
+		});
+		return {
+			...s,
+			baseSchedule: s.baseSchedule.map((schedule) => ({
+				...schedule,
+				activeTime: transform(schedule.activeTime),
+				delOrHideTime: transform(schedule.delOrHideTime),
+			})),
+		};
+	},
+	(s: ScheduleState) => {
+		const transform = (scheduleTime: any) => ({
+			base: scheduleTime.base.map((slice: any) => ({
+				dayOfWeek: slice.dayOfWeek,
+				beginTime: dayjs(slice.beginTime),
+				endTime: dayjs(slice.endTime),
+			})),
+		} as ScheduleTime);
+		return {
+			...s,
+			baseSchedule: s.baseSchedule.map((schedule) => ({
+				...schedule,
+				activeTime: transform(schedule.activeTime),
+				delOrHideTime: transform(schedule.delOrHideTime),
+			})),
+		};
+	},
+	{
+		whitelist: ["schedule"],
+	},
+);
+
 // 该函数用于计划部分数据库重构后的数据迁移
-const migrateSchedule = (old: any): Schedule => {
-	const res: Schedule = {
-		location: old.location || "[数据迁移错误]",
-		name: old.name || "[数据迁移错误]",
-		hash: old.hash || "[数据迁移错误]",
-		type: old.type,
-		activeTime: {base: []},
-		delOrHideTime: {base: []},
-	};
-
-	old?.activeTime?.forEach((val: any) => {
-		scheduleTimeAdd(res.activeTime, {
-			dayOfWeek: val.dayOfWeek,
-			begin: val.begin,
-			end: val.end,
-			activeWeeks: [val.week],
-		});
-	});
-
-	old?.delOrHideDetail?.forEach((val: any) => {
-		scheduleTimeAdd(res.delOrHideTime, {
-			dayOfWeek: val.dayOfWeek,
-			begin: val.begin,
-			end: val.end,
-			activeWeeks: [val.week],
-		});
-	});
-
-	return res;
+const migrateSchedule = (old: Schedule, semesterFirstDay: string): Schedule => {
+	const transform = (scheduleTime: any) => ({
+		base: scheduleTime.base.flatMap((oldSlice: any) => oldSlice.activeWeeks.map((week: number) => {
+			const beginTimes = ["", "08:00", "08:50", "09:50", "10:40", "11:30", "13:30", "14:20", "15:20", "16:10", "17:05", "17:55", "19:20", "20:10", "21:00"];
+			const endTimes = ["", "08:45", "09:35", "10:35", "11:25", "12:15", "14:15", "15:05", "16:05", "16:55", "17:50", "18:40", "20:05", "20:55", "21:45"];
+			const date = dayjs(semesterFirstDay).add((week - 1) * 7 + oldSlice.dayOfWeek - 1, "day").format("YYYY-MM-DD");
+			return {
+				dayOfWeek: oldSlice.dayOfWeek,
+				beginTime: dayjs(`${date} ${beginTimes[oldSlice.begin]}`),
+				endTime: dayjs(`${date} ${endTimes[oldSlice.end]}`),
+			};
+		})),
+	} as ScheduleTime);
+	return {
+		...old,
+		activeTime: transform(old.activeTime),
+		delOrHideTime: transform(old.delOrHideTime),
+	}
 };
 
 const persistConfig = {
 	version: 5,
 	key: "root",
 	storage: AsyncStorage,
-	transforms: [authTransform, configTransform],
+	transforms: [authTransform, configTransform, scheduleTransform],
 	migrate: (state: any) =>
 		Promise.resolve(
 			state === undefined
@@ -232,8 +262,8 @@ const persistConfig = {
 						schedule: {
 							...state.schedule,
 							baseSchedule:
-								state.schedule.baseSchedule?.[0]?.activeTime?.base === undefined
-									? state.schedule.baseSchedule?.map(migrateSchedule) ?? []
+								state.schedule.baseSchedule?.[0]?.activeTime?.base?.[0]?.beginTime === undefined
+									? state.schedule.baseSchedule?.map((schedule: Schedule) => migrateSchedule(schedule, state.config.firstDay ?? defaultConfig.firstDay)) ?? []
 									: state.schedule.baseSchedule,
 						},
 						top5: state.top5 ?? defaultTop5,

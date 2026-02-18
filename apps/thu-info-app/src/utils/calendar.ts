@@ -1,5 +1,5 @@
 import {getStr} from "./i18n";
-import {Schedule, ScheduleType, TimeSlice, ExamTimeSlice} from "@thu-info/lib/src/models/schedule/schedule";
+import {Schedule, ScheduleType, TimeSlice, getBeginPeriod, getEndPeriod} from "@thu-info/lib/src/models/schedule/schedule";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {createEvent} from "ics";
 import dayjs from "dayjs";
@@ -90,23 +90,6 @@ export const explainWeekAndDay = (week: number, dayOfWeek: number) => {
  * Convert the schedule to an ICS calendar format
  */
 export const generateScheduleICS = (schedules: Schedule[], semester: Semester): string => {
-	const PERIOD_TIME_MAP: {[key: number]: {start: string, end: string}} = {
-		1: {start: "08:00", end: "08:45"},
-		2: {start: "08:50", end: "09:35"},
-		3: {start: "09:50", end: "10:35"},
-		4: {start: "10:40", end: "11:25"},
-		5: {start: "11:30", end: "12:15"},
-		6: {start: "13:30", end: "14:15"},
-		7: {start: "14:20", end: "15:05"},
-		8: {start: "15:20", end: "16:05"},
-		9: {start: "16:10", end: "16:55"},
-		10: {start: "17:05", end: "17:50"},
-		11: {start: "17:55", end: "18:40"},
-		12: {start: "19:20", end: "20:05"},
-		13: {start: "20:10", end: "20:55"},
-		14: {start: "21:00", end: "21:45"},
-	};
-
 	const getScheduleTypeText = (type: ScheduleType): string => {
 		switch (type) {
 			case ScheduleType.PRIMARY:
@@ -127,108 +110,54 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 
 	schedules.forEach((schedule) => {
 		schedule.activeTime.base.forEach((timeSlice: TimeSlice) => {
-			const startPeriod = PERIOD_TIME_MAP[timeSlice.begin];
-			const endPeriod = PERIOD_TIME_MAP[timeSlice.end];
+			// Use beginTime and endTime directly
+			const startDateTime = timeSlice.beginTime;
+			const endDateTime = timeSlice.endTime;
+			
+			// Calculate week number from beginTime
+			const week = Math.floor(timeSlice.beginTime.diff(semesterStartDate, "day") / 7) + 1;
+			
+			// Get period numbers for description
+			const beginPeriod = getBeginPeriod(timeSlice.beginTime);
+			const endPeriod = getEndPeriod(timeSlice.endTime);
 
-			if (!startPeriod || !endPeriod) {
-				console.warn(`Unknown period: ${timeSlice.begin}-${timeSlice.end}`);
-				return;
+			let title = schedule.name;
+			if (schedule.type === ScheduleType.EXAM) {
+				title = `[${getStr("scheduleCourseTypeExam")}] ${schedule.name}`;
+			} else if (schedule.type === ScheduleType.CUSTOM) {
+				title = `[${getStr("scheduleCourseTypeCustom")}] ${schedule.name}`;
 			}
 
-			timeSlice.activeWeeks.forEach((week) => {
-				// Calculate the absolute date & time
-				const courseDate = semesterStartDate
-					.add((week - 1) * 7, "day")
-					.add(timeSlice.dayOfWeek - 1, "day");
-
-				const [startHour, startMinute] = startPeriod.start.split(":").map(Number);
-				const [endHour, endMinute] = endPeriod.end.split(":").map(Number);
-
-				const startDateTime = courseDate.hour(startHour).minute(startMinute);
-				const endDateTime = courseDate.hour(endHour).minute(endMinute);
-
-				let title = schedule.name;
-				if (schedule.type === ScheduleType.EXAM) {
-					title = `[${getStr("scheduleCourseTypeExam")}] ${schedule.name}`;
-				} else if (schedule.type === ScheduleType.CUSTOM) {
-					title = `[${getStr("scheduleCourseTypeCustom")}] ${schedule.name}`;
-				}
-
-				const eventResult = createEvent({
-					title,
-					start: [
-						startDateTime.year(),
-						startDateTime.month() + 1, // ICS months are 1-indexed
-						startDateTime.date(),
-						startDateTime.hour(),
-						startDateTime.minute()
-					],
-					end: [
-						endDateTime.year(),
-						endDateTime.month() + 1,
-						endDateTime.date(),
-						endDateTime.hour(),
-						endDateTime.minute()
-					],
-					location: schedule.location || undefined,
-					description: `${getStr("scheduleICSDescription")}: ${getScheduleTypeText(schedule.type)}\n` +
-						`${getStr("scheduleICSTimeSlot")}: ${getStr("scheduleICSPeriod").replace("{0}", timeSlice.begin.toString()).replace("{1}", timeSlice.end.toString())}\n` +
-						`${getStr("dayOfWeek")[0]}: ${getStr("dayOfWeek")[timeSlice.dayOfWeek]}\n` +
-						`${getStr("weekNumPrefix")}: ${getStr("scheduleICSWeekPrefix")}${week}${getStr("scheduleICSWeekSuffix")}`,
-					uid: `${schedule.hash}-${week}-${timeSlice.dayOfWeek}-${timeSlice.begin}@thu-info-app`,
-				});
-
-				if (!eventResult.error && eventResult.value) {
-					events.push(eventResult.value);
-				} else {
-					console.error("Failed to create event:", eventResult.error);
-				}
+			const eventResult = createEvent({
+				title,
+				start: [
+					startDateTime.year(),
+					startDateTime.month() + 1, // ICS months are 1-indexed
+					startDateTime.date(),
+					startDateTime.hour(),
+					startDateTime.minute()
+				],
+				end: [
+					endDateTime.year(),
+					endDateTime.month() + 1,
+					endDateTime.date(),
+					endDateTime.hour(),
+					endDateTime.minute()
+				],
+				location: schedule.location || undefined,
+				description: `${getStr("scheduleICSDescription")}: ${getScheduleTypeText(schedule.type)}\n` +
+					`${getStr("scheduleICSTimeSlot")}: ${getStr("scheduleICSPeriod").replace("{0}", beginPeriod.toString()).replace("{1}", endPeriod.toString())}\n` +
+					`${getStr("dayOfWeek")[0]}: ${getStr("dayOfWeek")[timeSlice.dayOfWeek]}\n` +
+					`${getStr("weekNumPrefix")}: ${getStr("scheduleICSWeekPrefix")}${week}${getStr("scheduleICSWeekSuffix")}`,
+				uid: `${schedule.hash}-${week}-${timeSlice.dayOfWeek}-${beginPeriod}@thu-info-app`,
 			});
+
+			if (!eventResult.error && eventResult.value) {
+				events.push(eventResult.value);
+			} else {
+				console.error("Failed to create event:", eventResult.error);
+			}
 		});
-
-		if (schedule.activeTime.exams) {
-			schedule.activeTime.exams.forEach((examTime: ExamTimeSlice) => {
-				const examDate = semesterStartDate
-					.add((examTime.weekNumber - 1) * 7, "day")
-					.add(examTime.dayOfWeek - 1, "day");
-
-				const [startHour, startMinute] = examTime.begin.split(":").map(Number);
-				const [endHour, endMinute] = examTime.end.split(":").map(Number);
-
-				const startDateTime = examDate.hour(startHour).minute(startMinute);
-				const endDateTime = examDate.hour(endHour).minute(endMinute);
-
-				const eventResult = createEvent({
-					title: `[${getStr("scheduleCourseTypeExam")}] ${schedule.name}`,
-					start: [
-						startDateTime.year(),
-						startDateTime.month() + 1,
-						startDateTime.date(),
-						startDateTime.hour(),
-						startDateTime.minute()
-					],
-					end: [
-						endDateTime.year(),
-						endDateTime.month() + 1,
-						endDateTime.date(),
-						endDateTime.hour(),
-						endDateTime.minute()
-					],
-					location: schedule.location || undefined,
-					description: `${getStr("scheduleCourseTypeExam")}: ${schedule.name}\n` +
-						`${getStr("scheduleICSTimeSlot")}: ${examTime.begin}-${examTime.end}\n` +
-						`${getStr("dayOfWeek")[0]}: ${getStr("dayOfWeek")[examTime.dayOfWeek]}\n` +
-						`${getStr("weekNumPrefix")}: ${getStr("scheduleICSWeekPrefix")}${examTime.weekNumber}${getStr("scheduleICSWeekSuffix")}`,
-					uid: `${schedule.hash}-exam-${examTime.weekNumber}-${examTime.dayOfWeek}@thu-info-app`,
-				});
-
-				if (!eventResult.error && eventResult.value) {
-					events.push(eventResult.value);
-				} else {
-					console.error("Failed to create event:", eventResult.error);
-				}
-			});
-		}
 	});
 
 	// Return empty calendar if no events found

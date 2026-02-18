@@ -38,6 +38,7 @@ import IconDormScore from "../../assets/icons/IconDormScore";
 import {
 	Schedule,
 	ScheduleType,
+	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import dayjs from "dayjs";
 import md5 from "md5";
@@ -95,114 +96,6 @@ export const HomeFunctionSection = ({
 		</View>
 	);
 };
-
-const beginTimeZh = [
-	"",
-	"上午 8:00",
-	"上午 8:50",
-	"上午 9:50",
-	"上午10:40",
-	"上午11:30",
-	"下午 1:30",
-	"下午 2:20",
-	"下午 3:20",
-	"下午 4:10",
-	"下午 5:05",
-	"下午 5:55",
-	"下午 7:20",
-	"下午 8:10",
-	"下午 9:00",
-];
-
-const endTimeZh = [
-	"",
-	"上午 8:45",
-	"上午 9:35",
-	"上午10:35",
-	"上午11:25",
-	"下午12:15",
-	"下午 2:15",
-	"下午 3:05",
-	"下午 4:05",
-	"下午 4:55",
-	"下午 5:50",
-	"下午 6:40",
-	"下午 8:05",
-	"下午 8:55",
-	"下午 9:45",
-];
-
-const beginTimeEn = [
-	"",
-	"8:00 AM",
-	"8:50 AM",
-	"9:50 AM",
-	"10:40 AM",
-	"11:30 AM",
-	"1:30 PM",
-	"2:20 PM",
-	"3:20 PM",
-	"4:10 PM",
-	"5:05 PM",
-	"5:55 PM",
-	"7:20 PM",
-	"8:10 PM",
-	"9:00 PM",
-];
-
-const endTimeEn = [
-	"",
-	"8:45 AM",
-	"9:35 AM",
-	"10:35 AM",
-	"11:25 AM",
-	"12:15 PM",
-	"2:15 PM",
-	"3:05 PM",
-	"4:05 PM",
-	"4:55 PM",
-	"5:50 PM",
-	"6:40 PM",
-	"8:05 PM",
-	"8:55 PM",
-	"9:45 PM",
-];
-
-const beginTime24 = [
-	"",
-	" 8:00",
-	" 8:50",
-	" 9:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-const endTime24 = [
-	"",
-	" 8:45",
-	" 9:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
 
 interface ScheduleViewModel {
 	name: string;
@@ -361,7 +254,6 @@ export const HomeScheduleSection = () => {
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
 	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
-	const is24Hour = useSelector((s: State) => s.config.is24Hour) ?? false;
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
@@ -372,21 +264,14 @@ export const HomeScheduleSection = () => {
 			_week += 1;
 			dayOfWeek = 1;
 		}
-		const a: (ScheduleViewModel & {begin: number; end: number})[] = [];
+		const a: (ScheduleViewModel & {beginTime: dayjs.Dayjs; endTime: dayjs.Dayjs})[] = [];
 		for (const s of schedules) {
 			for (const ss of s.activeTime.base) {
-				if (ss.activeWeeks.includes(_week)) {
+				const sliceWeek = getWeekFromTime(ss.beginTime, firstDay);
+				if (sliceWeek === _week) {
 					if (ss.dayOfWeek === dayOfWeek) {
-						const from = is24Hour
-							? beginTime24[ss.begin]
-							: getStr("mark") === "CH"
-							? beginTimeZh[ss.begin]
-							: beginTimeEn[ss.begin];
-						const to = is24Hour
-							? endTime24[ss.end]
-							: getStr("mark") === "CH"
-							? endTimeZh[ss.end]
-							: endTimeEn[ss.end];
+						const from = ss.beginTime.format("HH:mm");
+						const to = ss.endTime.format("HH:mm");
 
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
@@ -394,16 +279,16 @@ export const HomeScheduleSection = () => {
 								location: s.location,
 								from,
 								to,
-								begin: ss.begin,
-								end: ss.end,
+								beginTime: ss.beginTime,
+								endTime: ss.endTime,
 								color: getColor(s.name),
 								navProps: {
 									name: s.name,
 									location: s.location,
 									week: _week,
 									dayOfWeek: today,
-									begin: ss.begin,
-									end: ss.end,
+									beginTime: ss.beginTime,
+									endTime: ss.endTime,
 									alias: shortenMap[s.name] ?? "",
 									type: s.type,
 								},
@@ -414,16 +299,16 @@ export const HomeScheduleSection = () => {
 								location: s.location,
 								from,
 								to,
-								begin: ss.begin,
-								end: ss.end,
+								beginTime: ss.beginTime,
+								endTime: ss.endTime,
 								color: getColor(s.name),
 								navProps: {
 									name: s.name,
 									location: s.location,
 									week: _week,
 									dayOfWeek: today,
-									begin: ss.begin,
-									end: ss.end,
+									beginTime: ss.beginTime,
+									endTime: ss.endTime,
 									alias: shortenMap[s.name] ?? "",
 									type: s.type,
 								},
@@ -433,7 +318,7 @@ export const HomeScheduleSection = () => {
 				}
 			}
 		}
-		a.sort((x, y) => x.begin - y.begin);
+		a.sort((x, y) => x.beginTime.diff(y.beginTime));
 		return a;
 	};
 	const todaySchedules = selectSchedule(baseSchedule, today);
