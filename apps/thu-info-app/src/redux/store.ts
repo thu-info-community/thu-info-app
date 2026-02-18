@@ -200,11 +200,11 @@ const scheduleTransform = createTransform(
 	},
 	(s: ScheduleState) => {
 		const transform = (scheduleTime: any) => ({
-			base: scheduleTime.base.map((slice: any) => ({
+			base: scheduleTime.base.map((slice: any) => slice.beginTime ? {
 				dayOfWeek: slice.dayOfWeek,
 				beginTime: dayjs(slice.beginTime),
 				endTime: dayjs(slice.endTime),
-			})),
+			} : slice),
 		} as ScheduleTime);
 		return {
 			...s,
