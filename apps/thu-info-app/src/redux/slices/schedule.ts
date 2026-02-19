@@ -45,16 +45,11 @@ export const scheduleSlice = createSlice({
 			let newScheduleList: Schedule[] = [];
 
 			// 备份所有自定义计划
-			if (
-				state.semesterId === undefined ||
-				state.semesterId === payload.semesterId
-			) {
-				state.baseSchedule.forEach((val) => {
-					if (val.type === ScheduleType.CUSTOM) {
-						customList.push(val);
-					}
-				});
-			}
+			state.baseSchedule.forEach((val) => {
+				if (val.type === ScheduleType.CUSTOM) {
+					customList.push(val);
+				}
+			});
 
 			// 以新获取到的课表为基准
 			payload.schedule.forEach((val) => {
