@@ -40,7 +40,7 @@
 		"react-native-biometrics": "3.0.1",
 		"react-native-blob-util": "0.24.7",
 		"react-native-confirmation-code-field": "8.0.1",
-		"react-native-device-info": "15.0.1",
+		"react-native-device-info": "15.0.2",
 		"react-native-device-time-format": "2.4.0",
 		"react-native-fetch-api": "3.0.0",
 		"react-native-gesture-handler": "2.30.0",
