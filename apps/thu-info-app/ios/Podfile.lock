@@ -2911,7 +2911,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNLocalize (3.6.1):
+  - RNLocalize (3.7.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3525,7 +3525,7 @@ SPEC CHECKSUMS:
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
   RNGestureHandler: cd4be101cfa17ea6bbd438710caa02e286a84381
   RNKeychain: a2c134ab796272c3d605e035ab727591000b30f3
-  RNLocalize: 23e6689ec46c6cba49eb8cde959e30e49160a35b
+  RNLocalize: 1aedbc2c15073861a364174919d23c31c5924b16
   RNPermissions: 38357a69e7fdafbbb6b287d32a3dfff6ffd5e42a
   RNScreens: afaf526a9c804c3b4503f950cf3e67ed81e29ada
   RNShare: 60a6937925595bf06a0061ffe8a34dbbdd8c6584
