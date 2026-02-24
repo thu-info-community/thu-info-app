@@ -1,7 +1,5 @@
 import "react-native-gesture-handler/jestSetup"
 
-import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
-
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
 
 import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
@@ -65,7 +63,7 @@ jest.mock("react-native-view-shot", () => ({
 	RNViewShot: jest.fn().mockResolvedValue(),
 }));
 
-jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
+jest.mock("@react-native-async-storage/async-storage", () => jest.fn());
 
 jest.mock("react-native-keychain", () => ({
 	SECURITY_LEVEL_ANY: "MOCK_SECURITY_LEVEL_ANY",
