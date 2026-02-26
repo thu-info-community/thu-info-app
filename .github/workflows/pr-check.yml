@@ -69,7 +69,7 @@ jobs:
         run: |
           cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: app-release.apk
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
