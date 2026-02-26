@@ -84,7 +84,7 @@ export const ElectricityScreen = () => {
 					<IconRefresh width={16} height={16} />
 				</TouchableOpacity>
 			</RoundedView>
-			{!helper.mocked() && (
+			{false && (
 				<View
 					style={{
 						justifyContent: "center",
