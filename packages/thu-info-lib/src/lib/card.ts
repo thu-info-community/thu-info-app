@@ -18,7 +18,7 @@ import {
 import {CardInfo} from "../models/card/info";
 import {CardTransaction, CardTransactionType} from "../models/card/transaction";
 import {MOCK_CARD_INFO} from "../mocks/card";
-import {LoginError} from "../utils/error";
+import {LibError, LoginError} from "../utils/error";
 
 const CARD_API_VERSION = 1;
 
@@ -218,11 +218,14 @@ export const cardRechargeFromBank = async (helper: InfoHelper, transactionPasswo
     }
     await assureLoginValid(helper);
 
-    await fetchWithParse(CARD_RECHARGE_FROM_BANK_URL,
+    const {returncode} = await fetchWithParse(CARD_RECHARGE_FROM_BANK_URL,
         {
             idserial: accountBaseInfo.user,
             txamt: Math.floor(amount * 100),
         });
+    if (returncode === "ERROR") {
+        throw new LibError("圈存失败。请使用其他支付方式，或在 6:00~20:40 进行银行卡圈存。");
+    }
 };
 
 const enum CardRechargeType {
