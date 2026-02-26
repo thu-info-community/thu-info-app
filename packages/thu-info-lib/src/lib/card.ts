@@ -20,7 +20,7 @@ import {CardTransaction, CardTransactionType} from "../models/card/transaction";
 import {MOCK_CARD_INFO} from "../mocks/card";
 import {LibError, LoginError} from "../utils/error";
 
-const CARD_API_VERSION = 1;
+const CARD_API_VERSION = 2;
 
 const accountBaseInfo = {
     user: "",
