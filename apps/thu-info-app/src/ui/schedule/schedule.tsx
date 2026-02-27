@@ -44,6 +44,42 @@ interface NormalSliceRenderData {
 
 type SliceRenderData = NormalSliceRenderData;
 
+export const beginTime = [
+	"",
+	"08:00",
+	"08:50",
+	"09:50",
+	"10:40",
+	"11:30",
+	"13:30",
+	"14:20",
+	"15:20",
+	"16:10",
+	"17:05",
+	"17:55",
+	"19:20",
+	"20:10",
+	"21:00",
+];
+
+export const endTime = [
+	"",
+	"08:45",
+	"09:35",
+	"10:35",
+	"11:25",
+	"12:15",
+	"14:15",
+	"15:05",
+	"16:05",
+	"16:55",
+	"17:50",
+	"18:40",
+	"20:05",
+	"20:55",
+	"21:45",
+];
+
 const Header = React.forwardRef(
 	(
 		{
@@ -352,7 +388,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
 	// 每分钟高度
 	const minuteHeight = hourHeight / 60;
-	const scheduleBodyWidth = windowWidth - 32;
+	// 左侧时间列宽度和中间纵向时间轴宽度
+	const timeLabelWidth = 40;
+	const timeAxisWidth = 8;
+	const scheduleBodyWidth = windowWidth - timeLabelWidth - timeAxisWidth;
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 
@@ -423,14 +462,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					}>
 					<View style={{flexDirection: "row"}}>
 						{/* Timetable on the left: 0:00 - 24:00 */}
-						<View style={{width: 40, top: 40}}>
+						<View style={{width: timeLabelWidth, top: 40}}>
 							{Array.from(new Array(25), (_, k) => k).map((hour) => (
 								<Text
 									key={`time-label-${hour}`}
 									style={{
 										position: "absolute",
 										top: hour * hourHeight - 6, // roughly center text on the line
-										width: 40,
+										width: timeLabelWidth,
 										textAlign: "center",
 										color: theme.colors.fontB1,
 										fontSize: 10,
@@ -438,6 +477,76 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									{String(hour).padStart(2, "0")}:00
 								</Text>
 							))}
+						</View>
+
+						{/* Vertical time axis with class time markers */}
+						<View
+							style={{
+								width: timeAxisWidth,
+								top: 40,
+								height: 24 * hourHeight,
+							}}>
+							{/* main vertical line */}
+							<View
+								style={{
+									position: "absolute",
+									left: timeAxisWidth / 2,
+									top: 0,
+									bottom: 0,
+									width: 1,
+									backgroundColor: theme.colors.inputBorder,
+								}}
+							/>
+							{/* begin time markers */}
+							{beginTime.map((time, idx) => {
+								if (!time) {
+									return null;
+								}
+								const [h, m] = time.split(":");
+								const minutes =
+									parseInt(h, 10) * 60 + parseInt(m, 10);
+								return (
+									<View
+										key={`axis-begin-${idx}`}
+										style={{
+											position: "absolute",
+											left: timeAxisWidth / 2 - 3,
+											top: minutes * minuteHeight - 3,
+											width: 6,
+											height: 6,
+											borderRadius: 3,
+											backgroundColor: theme.colors.contentBackground,
+											borderWidth: 1,
+											borderColor: theme.colors.inputBorder,
+										}}
+									/>
+								);
+							})}
+							{/* end time markers */}
+							{endTime.map((time, idx) => {
+								if (!time) {
+									return null;
+								}
+								const [h, m] = time.split(":");
+								const minutes =
+									parseInt(h, 10) * 60 + parseInt(m, 10);
+								return (
+									<View
+										key={`axis-end-${idx}`}
+										style={{
+											position: "absolute",
+											left: timeAxisWidth / 2 - 3,
+											top: minutes * minuteHeight - 3,
+											width: 6,
+											height: 6,
+											borderRadius: 3,
+											backgroundColor: theme.colors.contentBackground,
+											borderWidth: 1,
+											borderColor: theme.colors.inputBorder,
+										}}
+									/>
+								);
+							})}
 						</View>
 
 						{/* Main content */}
