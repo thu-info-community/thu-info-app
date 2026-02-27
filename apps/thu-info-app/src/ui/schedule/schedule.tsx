@@ -286,7 +286,9 @@ const Header = React.forwardRef(
 
 export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
-	const {firstDay, weekCount, nextSemesterIndex} = useSelector((s: State) => s.config);
+	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
+		(s: State) => s.config,
+	);
 	const dispatch = useDispatch();
 
 	const [refreshing, setRefreshing] = useState(false);
@@ -384,6 +386,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const heightMode =
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
 	const hideWeekend = useSelector((s: State) => s.config.hideWeekend);
+	const showOfficialSchedule =
+		useSelector((s: State) => s.config.showOfficialSchedule) ?? true;
+	const showCustomSchedule =
+		useSelector((s: State) => s.config.showCustomSchedule) ?? true;
 	// 每小时高度，根据设置进行缩放
 	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
 	// 每分钟高度
@@ -412,6 +418,12 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 		}
 
 		baseSchedule.forEach((val) => {
+			if (
+				(val.type === ScheduleType.CUSTOM && !showCustomSchedule) ||
+				(val.type !== ScheduleType.CUSTOM && !showOfficialSchedule)
+			) {
+				return;
+			}
 			val.activeTime.base.forEach((slice) => {
 				const week = getWeekFromTime(slice.beginTime, firstDay);
 				// 由于状态异步更新的时间差，在学期切换时，可能存在某个时刻，
@@ -743,20 +755,86 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								paddingVertical: 8,
 							}}>
 							<Text
-							style={{
-								color: theme.colors.fontB1,
-								fontSize: 16,
-							}}>{getStr("hideWeekend")}</Text>
+								style={{
+									color: theme.colors.fontB1,
+									fontSize: 16,
+								}}>
+								{getStr("hideWeekend")}
+							</Text>
 							<Switch
-							thumbColor={theme.colors.contentBackground}
-							trackColor={{ true: theme.colors.themePurple }}
-							value={hideWeekend}
-							onValueChange={(value: boolean) => {
-								dispatch(configSet({
-								key: "hideWeekend",
-								value: value,
-								}));
-							}}
+								thumbColor={theme.colors.contentBackground}
+								trackColor={{true: theme.colors.themePurple}}
+								value={hideWeekend}
+								onValueChange={(value: boolean) => {
+									dispatch(
+										configSet({
+											key: "hideWeekend",
+											value: value,
+										}),
+									);
+								}}
+							/>
+						</View>
+						<View
+							style={{
+								backgroundColor: theme.colors.contentBackground,
+								flexDirection: "row",
+								justifyContent: "space-between",
+								paddingHorizontal: 16,
+								paddingVertical: 8,
+								borderTopWidth: 1,
+								borderTopColor: theme.colors.inputBorder,
+							}}>
+							<Text
+								style={{
+									color: theme.colors.fontB1,
+									fontSize: 16,
+								}}>
+								{getStr("scheduleFilterOfficial")}
+							</Text>
+							<Switch
+								thumbColor={theme.colors.contentBackground}
+								trackColor={{true: theme.colors.themePurple}}
+								value={showOfficialSchedule}
+								onValueChange={(value: boolean) => {
+									dispatch(
+										configSet({
+											key: "showOfficialSchedule",
+											value: value,
+										}),
+									);
+								}}
+							/>
+						</View>
+						<View
+							style={{
+								backgroundColor: theme.colors.contentBackground,
+								flexDirection: "row",
+								justifyContent: "space-between",
+								paddingHorizontal: 16,
+								paddingVertical: 8,
+								borderTopWidth: 1,
+								borderTopColor: theme.colors.inputBorder,
+							}}>
+							<Text
+								style={{
+									color: theme.colors.fontB1,
+									fontSize: 16,
+								}}>
+								{getStr("scheduleFilterCustom")}
+							</Text>
+							<Switch
+								thumbColor={theme.colors.contentBackground}
+								trackColor={{true: theme.colors.themePurple}}
+								value={showCustomSchedule}
+								onValueChange={(value: boolean) => {
+									dispatch(
+										configSet({
+											key: "showCustomSchedule",
+											value: value,
+										}),
+									);
+								}}
 							/>
 						</View>
 						<TouchableOpacity

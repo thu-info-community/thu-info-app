@@ -341,6 +341,8 @@ export default {
 	scheduleCourseTypeSecondary: "Secondary Course",
 	scheduleCourseTypeExam: "Exam",
 	scheduleCourseTypeCustom: "Custom",
+	scheduleFilterOfficial: "Official schedules",
+	scheduleFilterCustom: "Custom schedules",
 	scheduleICSDescription: "Course Type",
 	scheduleICSTimeSlot: "Time",
 	scheduleICSPeriod: "{0}-{1}",

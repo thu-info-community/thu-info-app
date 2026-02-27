@@ -43,6 +43,8 @@ export interface ConfigState {
 	washerFavourites: string[] | undefined;
 	fingerprintSecure: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
+	showOfficialSchedule: boolean | undefined;
+	showCustomSchedule: boolean | undefined;
 	privacy312: boolean | undefined;
 	deepseekToken: string | undefined;
 	bubbleMessage: boolean | undefined;
@@ -87,6 +89,8 @@ const initialState: ConfigState = {
 	washerFavourites: [],
 	fingerprintSecure: false,
 	scheduleEnableNewUI: true,
+	showOfficialSchedule: true,
+	showCustomSchedule: true,
 	privacy312: false,
 	deepseekToken: undefined,
 	bubbleMessage: true,

@@ -318,6 +318,8 @@ export default {
 	scheduleCourseTypeSecondary: "二级课",
 	scheduleCourseTypeExam: "考试",
 	scheduleCourseTypeCustom: "自定义",
+	scheduleFilterOfficial: "学校计划",
+	scheduleFilterCustom: "自定义计划",
 	scheduleICSDescription: "课程类型",
 	scheduleICSTimeSlot: "时间",
 	scheduleICSPeriod: "第{0}-{1}节",
