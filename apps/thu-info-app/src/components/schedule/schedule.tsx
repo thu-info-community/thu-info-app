@@ -26,7 +26,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const blockColor = props.blockColor || colors.themePurple;
 
 	const blockLeftPos = (props.dayOfWeek - 1) * props.gridWidth + blockMargin;
-	const blockTopPos = (props.begin - 1) * props.gridHeight + blockMargin;
+	// `begin` 和 `end` 表示距离 0:00 的分钟数，`gridHeight` 表示每分钟的高度
+	const blockTopPos = props.begin * props.gridHeight + blockMargin;
 	const blockRightPos = props.dayOfWeek * props.gridWidth - blockMargin;
 	const blockBottomPos = props.end * props.gridHeight - blockMargin;
 

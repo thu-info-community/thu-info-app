@@ -11,8 +11,6 @@ import {
 	Schedule,
 	ScheduleType,
 	TimeSlice,
-	getBeginPeriod,
-	getEndPeriod,
 	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {RootNav} from "../../components/Root";
@@ -24,7 +22,6 @@ import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import md5 from "md5";
-import {beginTime, endTime} from "./scheduleDetail";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
@@ -346,11 +343,15 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const [tableHeight, setTableHeight] = useState(
 		windowHeight - getStatusBarHeight() - 40,
 	);
-	const exactUnitHeight = (tableHeight - 40) / 14;
+	// 按上课时间（8:00-21:45）划分为 13.75 小时
+	const exactHourHeight = (tableHeight - 40) / 13.75;
 	const heightMode =
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
 	const hideWeekend = useSelector((s: State) => s.config.hideWeekend);
-	const unitHeight = exactUnitHeight * (1 + heightMode * 0.05);
+	// 每小时高度，根据设置进行缩放
+	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
+	// 每分钟高度
+	const minuteHeight = hourHeight / 60;
 	const scheduleBodyWidth = windowWidth - 32;
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
@@ -421,93 +422,40 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						/>
 					}>
 					<View style={{flexDirection: "row"}}>
-						{/* Timetable on the left */}
-						<View style={{width: 32, top: 40}}>
-							{Array.from(new Array(14), (_, k) => k + 1).map((session) => (
-								<View
+						{/* Timetable on the left: 0:00 - 24:00 */}
+						<View style={{width: 40, top: 40}}>
+							{Array.from(new Array(25), (_, k) => k).map((hour) => (
+								<Text
+									key={`time-label-${hour}`}
 									style={{
-										alignItems: "center",
-										justifyContent: "center",
-										height: unitHeight,
-									}}
-									key={`${session}-0`}>
-									<Text
-										style={{
-											textAlign: "center",
-											color: theme.colors.fontB1,
-											fontSize: 12,
-										}}>
-										{session}
-									</Text>
-									{heightMode > 1 && (
-										<>
-											<Text
-												style={{
-													textAlign: "center",
-													color: theme.colors.fontB2,
-													fontSize: 8,
-													marginTop: 4,
-												}}>
-												{beginTime[session]}
-											</Text>
-											<Text
-												style={{
-													textAlign: "center",
-													color: theme.colors.fontB2,
-													fontSize: 8,
-													marginTop: 1,
-												}}>
-												{endTime[session]}
-											</Text>
-										</>
-									)}
-								</View>
+										position: "absolute",
+										top: hour * hourHeight - 6, // roughly center text on the line
+										width: 40,
+										textAlign: "center",
+										color: theme.colors.fontB1,
+										fontSize: 10,
+									}}>
+									{String(hour).padStart(2, "0")}:00
+								</Text>
 							))}
 						</View>
 
 						{/* Main content */}
 						<View style={{flex: 1}}>
-							{/* Lunch and Supper mark */}
-							<View
-								style={{
-									backgroundColor: theme.colors.inputBorder,
-									height: 1,
-									position: "absolute",
-									left: 0,
-									right: 0,
-									top: 5 * unitHeight + 39.5,
-								}}
-							/>
-							<View
-								style={{
-									backgroundColor: theme.colors.inputBorder,
-									height: 1,
-									position: "absolute",
-									left: 0,
-									right: 0,
-									top: 11 * unitHeight + 39.5,
-								}}
-							/>
-							<Text
-								style={{
-									position: "absolute",
-									right: 8,
-									top: 5 * unitHeight + 40,
-									fontSize: 10,
-									color: theme.colors.fontB3,
-								}}>
-								{getStr("lunch")}
-							</Text>
-							<Text
-								style={{
-									position: "absolute",
-									right: 8,
-									top: 11 * unitHeight + 40,
-									fontSize: 10,
-									color: theme.colors.fontB3,
-								}}>
-								{getStr("supper")}
-							</Text>
+							{/* Hour marks */}
+							{Array.from(new Array(25), (_, k) => k).map((hour) => (
+								<View
+									key={`hour-line-${hour}`}
+									style={{
+										backgroundColor: theme.colors.inputBorder,
+										height: 1,
+										position: "absolute",
+										left: 0,
+										right: 0,
+										top: hour * hourHeight + 40,
+									}}
+								/>
+							))}
 
 							{/* Schedule content */}
 							<FlatList
@@ -525,7 +473,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								renderItem={({item, index: w}) => (
 									<View
 										style={{
-											height: 14 * unitHeight + 40, // Header has a height of 40
+											// Header has a height of 40
+											height: 24 * hourHeight + 40,
 											width: scheduleBodyWidth,
 										}}>
 										<View
@@ -583,13 +532,23 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 													const slice = data.slice;
 													const val = data.schedule;
 													const num = data.week;
-													const beginPeriod = getBeginPeriod(slice.beginTime);
-													const endPeriod = getEndPeriod(slice.endTime);
+													// 计算距离 0:00 的分钟数
+													const beginMinutes =
+														slice.beginTime.hour() * 60 +
+														slice.beginTime.minute();
+													const endMinutes =
+														slice.endTime.hour() * 60 +
+														slice.endTime.minute();
+													const beginClamped = Math.max(0, Math.min(24 * 60, beginMinutes));
+													const endClamped = Math.max(
+														beginClamped,
+														Math.min(24 * 60, endMinutes),
+													);
 													return (
 														<ScheduleBlock
 															dayOfWeek={slice.dayOfWeek}
-															begin={beginPeriod}
-															end={endPeriod}
+															begin={beginClamped}
+															end={endClamped}
 															name={
 																shortenMap[val.name] ??
 																val.name.substring(
@@ -597,9 +556,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																)
 															}
 															location={val.location}
-															gridHeight={unitHeight}
+															gridHeight={minuteHeight}
 															gridWidth={unitWidth}
-															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginPeriod}-${val.location}`}
+															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginClamped}-${val.location}`}
 															blockColor={
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
