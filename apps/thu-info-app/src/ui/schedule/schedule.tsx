@@ -104,12 +104,10 @@ const Header = React.forwardRef(
 			onChangeSetOpenConfig,
 			onPressAdd,
 			onSetWeek,
-			navigation,
 		}: {
 			calendar: CalendarData | undefined;
 			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
 			onChangeSetOpenConfig: Function;
-			navigation: RootNav;
 			onSetWeek: Function;
 			onPressAdd: () => void;
 		},

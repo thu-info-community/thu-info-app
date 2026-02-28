@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {ChannelTag, NewsSlice} from "@thu-info/lib/src/models/news/news";
@@ -432,9 +432,6 @@ const Stack = createStackNavigator<RootStackParamList>();
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
 export const Root = () => {
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
-
 	return (
 		<Stack.Navigator>
 			{/* Root Tabs */}
