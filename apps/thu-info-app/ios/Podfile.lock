@@ -2242,8 +2242,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNSnackbar (2.9.0):
+  - RNSnackbar (3.0.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNSVG (15.15.3):
     - hermes-engine
     - RCTRequired
@@ -2679,7 +2699,7 @@ SPEC CHECKSUMS:
   RNPermissions: 2f78a7a96c3b84a1ee9f19a2ed3a315d69128dab
   RNScreens: 6cb648bdad8fe9bee9259fe144df95b6d1d5b707
   RNShare: f40ea96fce38fd9fce6634c3f07c55b0292987d3
-  RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
+  RNSnackbar: 1b29d1a089e5ac37e9231b889ad5c9beecdbac17
   RNSVG: 507bf2685de6b3d49449efd4aae7e7471bb9c433
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
