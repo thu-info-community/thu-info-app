@@ -17,7 +17,7 @@ import {RoundedView} from "../../components/views";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {Library} from "@thu-info/lib/src/models/home/library";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 import dayjs from "dayjs";
 import {useDispatch, useSelector} from "react-redux";

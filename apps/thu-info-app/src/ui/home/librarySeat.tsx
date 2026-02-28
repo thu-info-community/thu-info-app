@@ -1,7 +1,7 @@
 import {LibrarySeatRouteProp} from "../../components/Root";
 import {Alert} from "react-native";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {libraryRefreshListScreen} from "../../components/home/libraryRefreshListScreen";
 import {helper, store} from "../../redux/store";
 import {Text, View} from "react-native";

@@ -27,7 +27,7 @@ import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
 import Slider from "@react-native-community/slider";
 import {BottomPopupTriggerView} from "../../components/views";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";

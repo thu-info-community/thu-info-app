@@ -9704,10 +9704,10 @@ react-native-share@12.2.5:
   resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-12.2.5.tgz#a793f8d7c337b2e8ee123630676b69c531c5addd"
   integrity sha512-2uwd/PdlUyvpsSBfL7OMiL4sD0Ja51wu5m62JSIXjrtlF+uSTUOGsMrE49ncIRYziqAfYUeI195WwhpvqXB0ww==
 
-react-native-snackbar@2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-2.9.0.tgz#281baef51163715042c5c2c9d63ff8a6250ed583"
-  integrity sha512-6FdTKbFRSeV2Y/NXVupPuDg4uayo3jjUs1u6DPWHLIF7gy8hoaj6YFYW3FT9VbUt3wvwn4hyV54bBuZ1WvmBLg==
+react-native-snackbar@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-snackbar/-/react-native-snackbar-3.0.1.tgz#ac82ea71235bbde126ca8a7d87e669e650f2bcf4"
+  integrity sha512-ZQs0C7K5fkBW/exhlhBQe59a3YmLZdLnnGsYrCaKh2DqiEo47stcPF+a9yke+SKshTnXomXgBgnQNN/y28kaoA==
 
 react-native-sse@1.2.1:
   version "1.2.1"

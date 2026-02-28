@@ -1,7 +1,7 @@
 import { FlatList, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import themes from "../../assets/themes/themes";
 import { useEffect, useState } from "react";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
 import { RootNav } from "../../components/Root";
 import { IconStarButton } from "../../components/news/IconStarButton";

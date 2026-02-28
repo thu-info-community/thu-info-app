@@ -1,4 +1,4 @@
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../utils/i18n";
 
 export const NetworkRetry = (e?: any) =>

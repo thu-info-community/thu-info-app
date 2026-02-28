@@ -1,5 +1,5 @@
 import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, RefreshControl} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";

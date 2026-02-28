@@ -1,7 +1,7 @@
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {roundedRefreshListScreen} from "../../components/settings/simpleRefreshListScreen";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {helper, store} from "../../redux/store";
 import {setActiveLibBookRecord} from "../../redux/slices/reservation";
 

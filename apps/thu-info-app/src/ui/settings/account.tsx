@@ -16,7 +16,7 @@ import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
 import {configSet} from "../../redux/slices/config";
 import themes from "../../assets/themes/themes";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {logout} from "../../redux/slices/auth.ts";
 
 export const AccountScreen = ({navigation}: {navigation: RootNav}) => {

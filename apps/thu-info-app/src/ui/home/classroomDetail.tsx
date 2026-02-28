@@ -10,7 +10,7 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {ClassroomDetailRouteProp} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import IconLeft from "../../assets/icons/IconLeft";
 import IconRight from "../../assets/icons/IconRight";
 import themes from "../../assets/themes/themes";

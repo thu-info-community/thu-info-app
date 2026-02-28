@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {CrSearchResultRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";

@@ -11,7 +11,7 @@ import IconPerson from "../../assets/icons/IconPerson";
 import {setDormPassword} from "../../redux/slices/credentials";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {DormAuthError} from "@thu-info/lib/src/utils/error";
 import {RoundedView} from "../../components/views";
 

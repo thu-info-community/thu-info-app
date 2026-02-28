@@ -1,7 +1,7 @@
 import {getStr} from "../../utils/i18n";
 import {Text, useColorScheme, View} from "react-native";
 import {helper} from "../../redux/store";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 import IconExclamation from "../../assets/icons/IconExclamation";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";

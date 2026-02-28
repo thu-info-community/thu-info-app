@@ -4,7 +4,7 @@ import {helper} from "../../redux/store";
 import {paginatedRefreshListScreen} from "../../components/settings/paginatedRefreshListScreen";
 import {RootNav} from "../../components/Root";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 
 export const InvoiceScreen = paginatedRefreshListScreen(
 	(_: PropsWithChildren<{navigation: RootNav}>, page) =>

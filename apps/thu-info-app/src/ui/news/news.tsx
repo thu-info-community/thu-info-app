@@ -11,7 +11,7 @@ import {
 	TouchableWithoutFeedback,
 } from "react-native";
 import {useState, useEffect} from "react";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";

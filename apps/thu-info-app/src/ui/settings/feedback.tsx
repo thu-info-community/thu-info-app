@@ -12,7 +12,7 @@ import {useEffect, useState} from "react";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {useColorScheme} from "react-native";
 import {
 	SettingsItem,

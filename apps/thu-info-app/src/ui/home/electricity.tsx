@@ -11,7 +11,7 @@ import {helper} from "../../redux/store";
 import {doAlipay} from "../../utils/alipay";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
 import IconRefresh from "../../assets/icons/IconRefresh";
 

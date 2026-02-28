@@ -18,7 +18,7 @@ import {
 	View,
 } from "react-native";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import {LibFuzzySearchResult} from "@thu-info/lib/src/models/home/library";
 import themes from "../../assets/themes/themes";

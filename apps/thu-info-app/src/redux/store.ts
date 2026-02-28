@@ -30,7 +30,7 @@ import {
 	reservationReducer,
 	ReservationState,
 } from "./slices/reservation";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import { Alert, AppState, Linking, Platform, ToastAndroid } from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";

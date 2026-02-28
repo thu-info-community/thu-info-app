@@ -12,7 +12,7 @@ import {
 import Pdf from "react-native-pdf";
 import {helper} from "../../redux/store";
 import ReactNativeBlobUtil from "react-native-blob-util";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 
 export const ReservesLibPDFScreen = ({

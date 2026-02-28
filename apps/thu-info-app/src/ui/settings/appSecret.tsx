@@ -18,7 +18,7 @@ import {setAppSecret} from "../../redux/slices/credentials";
 import IconRight from "../../assets/icons/IconRight";
 import {configSet} from "../../redux/slices/config";
 import ReactNativeBiometrics from "react-native-biometrics";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {clearAppSecret} from "../../redux/slices/config";
 
 const rnBiometrics = new ReactNativeBiometrics();

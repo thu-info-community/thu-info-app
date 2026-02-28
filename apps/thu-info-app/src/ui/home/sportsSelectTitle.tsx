@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {configSet} from "../../redux/slices/config";
 import {doAlipay} from "../../utils/alipay";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {useState} from "react";
 
 export const SportsSelectTitleScreen = ({

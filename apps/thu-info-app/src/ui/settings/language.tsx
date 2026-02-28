@@ -8,7 +8,7 @@ import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
 import {configSet} from "../../redux/slices/config";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
 
 export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {

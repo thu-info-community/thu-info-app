@@ -7,7 +7,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {StarRating} from "../../components/home/form";
 import themes from "../../assets/themes/themes";

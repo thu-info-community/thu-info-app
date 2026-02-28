@@ -2,7 +2,7 @@ import {Platform} from "react-native";
 import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
 import {CameraRoll} from "@react-native-camera-roll/camera-roll";
 import {getStr} from "./i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 
 export const saveImg = async (uri: string) => {
 	const permission =

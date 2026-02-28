@@ -7,7 +7,7 @@ import {useColorScheme} from "react-native";
 import IconLock from "../../assets/icons/IconLock";
 import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
 import {styles} from "./myhomeLogin";
 

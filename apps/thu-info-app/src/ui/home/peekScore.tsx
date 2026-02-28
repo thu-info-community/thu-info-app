@@ -10,7 +10,7 @@ import {helper} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {useState} from "react";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 
 export const PeekScoreScreen = () => {
 	const themeName = useColorScheme();

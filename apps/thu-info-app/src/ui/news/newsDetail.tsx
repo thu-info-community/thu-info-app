@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {WebView} from "react-native-webview";
 import {View, ActivityIndicator, Dimensions} from "react-native";

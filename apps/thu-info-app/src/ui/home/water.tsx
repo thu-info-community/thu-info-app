@@ -14,7 +14,7 @@ import {
 	postWaterSubmission,
 } from "../../network/water";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {NetworkRetry} from "../../components/easySnackbars";
 import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";

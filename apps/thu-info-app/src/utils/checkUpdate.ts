@@ -2,7 +2,7 @@ import {currState, helper, store} from "../redux/store";
 import {Alert, Linking, Platform} from "react-native";
 import {getStr} from "./i18n";
 import {configSet} from "../redux/slices/config";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 import {gt, lt} from "semver";
 import {NetworkRetry} from "../components/easySnackbars";

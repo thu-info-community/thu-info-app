@@ -1,6 +1,6 @@
 import {Alert, Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {helper} from "../../redux/store";
 import dayjs from "dayjs";
 import {NetworkRetry} from "../../components/easySnackbars";

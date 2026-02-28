@@ -5,7 +5,7 @@ import {useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
 import md5 from "md5";
 

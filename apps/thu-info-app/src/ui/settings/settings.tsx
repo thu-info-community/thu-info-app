@@ -12,7 +12,7 @@ import {
 	ScrollView,
 	StyleSheet,
 } from "react-native";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
 import {scheduleClear} from "../../redux/slices/schedule";
 import {login, logout} from "../../redux/slices/auth";

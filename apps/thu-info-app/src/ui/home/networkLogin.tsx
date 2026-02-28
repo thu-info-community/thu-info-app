@@ -18,7 +18,7 @@ import {
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import {getStr} from "../../utils/i18n.ts";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {RefreshControl, ScrollView} from "react-native-gesture-handler";
 import {uFetch} from "@thu-info/lib/src/utils/network";
 

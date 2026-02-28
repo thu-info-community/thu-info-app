@@ -32,7 +32,7 @@ import {
 } from "@thu-info/lib/src/constants/strings.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {configSet} from "../../redux/slices/config.ts";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";

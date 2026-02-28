@@ -16,7 +16,7 @@ import themes from "../../assets/themes/themes";
 import {styles} from "../../ui/settings/settings";
 import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
-import Snackbar from "react-native-snackbar";
+import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
