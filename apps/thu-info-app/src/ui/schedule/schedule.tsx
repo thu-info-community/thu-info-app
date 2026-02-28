@@ -1,4 +1,15 @@
-import {View, Text, Dimensions, TouchableOpacity, FlatList, Switch} from "react-native";
+import {
+	View,
+	Text,
+	Dimensions,
+	TouchableOpacity,
+	FlatList,
+	Switch,
+	Platform,
+	ToastAndroid,
+	Animated,
+	Easing,
+} from "react-native";
 import React, {
 	useState,
 	useEffect,
@@ -34,6 +45,11 @@ import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-g
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
+import {ScheduleAddModal, ScheduleEditParams} from "./scheduleAdd";
+import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
+import IconTime from "../../assets/icons/IconTime";
+import IconBoard from "../../assets/icons/IconBoard";
+import IconTrademark from "../../assets/icons/IconTrademark";
 
 interface NormalSliceRenderData {
 	type: "normal";
@@ -86,6 +102,7 @@ const Header = React.forwardRef(
 			calendar,
 			setCalendar,
 			onChangeSetOpenConfig,
+			onPressAdd,
 			onSetWeek,
 			navigation,
 		}: {
@@ -94,6 +111,7 @@ const Header = React.forwardRef(
 			onChangeSetOpenConfig: Function;
 			navigation: RootNav;
 			onSetWeek: Function;
+			onPressAdd: () => void;
 		},
 		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
@@ -274,7 +292,7 @@ const Header = React.forwardRef(
 					</View>
 					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
 						<TouchableOpacity
-							onPress={() => navigation.navigate("ScheduleAdd")}>
+							onPress={onPressAdd}>
 							<IconAdd width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -402,6 +420,148 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 
 	const [openConfig, setOpenConfig] = useState(false);
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [editingParams, setEditingParams] = useState<ScheduleEditParams | undefined>(undefined);
+	const [actionTarget, setActionTarget] = useState<ScheduleEditParams | undefined>(undefined);
+	const [detailExpanded, setDetailExpanded] = useState(false);
+	const [detailContentHeight, setDetailContentHeight] = useState(0);
+	const detailAnim = useRef(new Animated.Value(0)).current;
+
+	const nullAlias = (str: string | undefined) => {
+		if (str === undefined) {
+			return true;
+		}
+		return str.length === 0;
+	};
+
+	const handleHide = (choice: Choice, label: string) => {
+		if (!actionTarget) {
+			return;
+		}
+		if (actionTarget.type === ScheduleType.EXAM) {
+			return;
+		}
+		dispatch(
+			scheduleDelOrHide([
+				actionTarget.name,
+				{
+					dayOfWeek: actionTarget.dayOfWeek,
+					beginTime: actionTarget.beginTime,
+					endTime: actionTarget.endTime,
+				},
+				choice,
+			]),
+		);
+		setActionTarget(undefined);
+		setDetailExpanded(false);
+		detailAnim.setValue(0);
+		if (Platform.OS === "android") {
+			ToastAndroid.showWithGravity(
+				`已成功${label}`,
+				ToastAndroid.SHORT,
+				ToastAndroid.TOP,
+			);
+		}
+	};
+
+	const renderDetailContent = () => {
+		if (!actionTarget) {
+			return null;
+		}
+		return (
+			<View
+				style={{
+					paddingHorizontal: 16,
+					paddingVertical: 12,
+				}}>
+				<Text
+					style={{
+						fontSize: 16,
+						fontWeight: "600",
+						color: theme.colors.fontB1,
+						marginBottom: 4,
+					}}
+					numberOfLines={2}>
+					{nullAlias(actionTarget.alias)
+						? actionTarget.name.substring(
+								actionTarget.type === ScheduleType.CUSTOM ? 6 : 0,
+						  )
+						: actionTarget.alias}
+				</Text>
+				<Text
+					style={{
+						fontSize: 13,
+						color: theme.colors.themePurple,
+						marginBottom: 8,
+					}}>
+					{actionTarget.location === ""
+						? getStr("locationUnset")
+						: actionTarget.location}
+				</Text>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						marginBottom: 4,
+					}}>
+					<IconTime height={15} width={15} />
+					<Text
+						style={{
+							marginLeft: 8,
+							color: theme.colors.fontB2,
+							fontSize: 13,
+						}}>
+						{getStr("dayOfWeek")[actionTarget.dayOfWeek]}
+						{(getStr("mark") === "CH" ? "（" : "(") +
+							actionTarget.beginTime.format("HH:mm") +
+							" ~ " +
+							actionTarget.endTime.format("HH:mm") +
+							(getStr("mark") === "CH" ? "）" : ")")}
+					</Text>
+				</View>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						marginBottom: 4,
+					}}>
+					<IconBoard height={15} width={15} />
+					<Text
+						style={{
+							marginLeft: 8,
+							color: theme.colors.fontB2,
+							fontSize: 13,
+						}}>
+						{getStr("weekNumPrefix") +
+							actionTarget.week +
+							getStr("weekNumSuffix")}
+					</Text>
+				</View>
+				{!nullAlias(actionTarget.alias) && (
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+						}}>
+						<IconTrademark height={15} width={15} />
+						<Text
+							style={{
+								marginLeft: 8,
+								color: theme.colors.fontB2,
+								fontSize: 13,
+							}}>
+							{actionTarget.name.substring(
+								actionTarget.type === ScheduleType.CUSTOM ? 6 : 0,
+							)}
+							{getStr("lp")}
+							{getStr("originalName")}
+							{getStr("rp")}
+						</Text>
+					</View>
+				)}
+			</View>
+		);
+	};
 
 	const colorList: string[] = theme.colors.courseItemColorList;
 
@@ -457,6 +617,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				onChangeSetOpenConfig={() => {
 					setOpenConfig((v) => !v);
 				}}
+				onPressAdd={() => setShowAddModal(true)}
 				navigation={navigation}
 			/>
 			<GestureHandlerRootView style={{flex: 1}}>
@@ -644,7 +805,21 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 												</View>
 											))}
 										</View>
-										<View>
+										<View style={{height: 24 * hourHeight, width: scheduleBodyWidth}}>
+											<TouchableOpacity
+												activeOpacity={1}
+												style={{
+													position: "absolute",
+													left: 0,
+													right: 0,
+													top: 40,
+													bottom: 0,
+												}}
+												onPress={() => {
+													setEditingParams(undefined);
+													setShowAddModal(true);
+												}}
+											/>
 											{(item as SliceRenderData[]).map((data) => {
 												if (hideWeekend && data.slice.dayOfWeek > 5) {
 													return null;
@@ -686,9 +861,31 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 																		colorList.length
 																]}${enableNewUI ? "33" : ""}`
 															}
-															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
+															textColor={
+																enableNewUI
+																	? colorList[
+																			parseInt(
+																				md5(val.name).substr(0, 6),
+																				16,
+																			) % colorList.length
+																	  ]
+																	: "white"
+															}
 															onPress={() => {
-																navigation.navigate("ScheduleDetail", {
+																setEditingParams({
+																	name: val.name,
+																	location: val.location,
+																	week: num,
+																	dayOfWeek: slice.dayOfWeek,
+																	beginTime: slice.beginTime,
+																	endTime: slice.endTime,
+																	alias: shortenMap[val.name] ?? "",
+																	type: val.type,
+																});
+																setShowAddModal(true);
+															}}
+															onLongPress={() => {
+																setActionTarget({
 																	name: val.name,
 																	location: val.location,
 																	week: num,
@@ -863,6 +1060,183 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 					</TouchableOpacity>
 				)}
 			</GestureHandlerRootView>
+			<ScheduleAddModal
+				visible={showAddModal}
+				initialParams={editingParams}
+				onClose={() => {
+					setShowAddModal(false);
+					setEditingParams(undefined);
+				}}
+			/>
+			{actionTarget && (
+				<View
+					style={{
+						position: "absolute",
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+					}}>
+					<TouchableOpacity
+						activeOpacity={1}
+						onPress={() => {
+							setActionTarget(undefined);
+							setDetailExpanded(false);
+							detailAnim.setValue(0);
+						}}
+						style={{
+							position: "absolute",
+							left: 0,
+							right: 0,
+							top: 0,
+							bottom: 0,
+						}}
+					/>
+					<View
+						style={{
+							position: "absolute",
+							bottom: 80,
+							left: 32,
+							right: 32,
+						}}>
+						<View
+							style={{
+								backgroundColor: theme.colors.contentBackground,
+								borderRadius: 12,
+								paddingVertical: 8,
+								shadowColor: "#000",
+								shadowOpacity: 0.15,
+								shadowRadius: 8,
+								elevation: 4,
+							}}>
+							{actionTarget.type !== ScheduleType.EXAM && (
+								<>
+									{(() => {
+										const onceLabel =
+											getStr("hideSchedule") + getStr("once");
+										return (
+											<TouchableOpacity
+												onPress={() => handleHide(Choice.ONCE, onceLabel)}
+												style={{paddingVertical: 10}}>
+												<Text
+													style={{
+														textAlign: "center",
+														fontSize: 16,
+														color: theme.colors.fontB1,
+													}}>
+													{onceLabel}
+												</Text>
+											</TouchableOpacity>
+										);
+									})()}
+									{actionTarget.type !== ScheduleType.CUSTOM &&
+										(() => {
+											const repeatLabel =
+												getStr("hideSchedule") + getStr("repeatly");
+											return (
+												<TouchableOpacity
+													onPress={() =>
+														handleHide(Choice.REPEAT, repeatLabel)
+													}
+													style={{paddingVertical: 10}}>
+													<Text
+														style={{
+															textAlign: "center",
+															fontSize: 16,
+															color: theme.colors.fontB1,
+														}}>
+														{repeatLabel}
+													</Text>
+												</TouchableOpacity>
+											);
+										})()}
+									{(() => {
+										const allLabel =
+											(actionTarget.type === ScheduleType.CUSTOM
+												? getStr("delSchedule")
+												: getStr("hideSchedule")) + getStr("allTime");
+										return (
+											<TouchableOpacity
+												onPress={() => handleHide(Choice.ALL, allLabel)}
+												style={{paddingVertical: 10}}>
+												<Text
+													style={{
+														textAlign: "center",
+														fontSize: 16,
+														color: theme.colors.fontB1,
+													}}>
+													{allLabel}
+												</Text>
+											</TouchableOpacity>
+										);
+									})()}
+								</>
+							)}
+							<TouchableOpacity
+								onPress={() => {
+									const next = !detailExpanded;
+									setDetailExpanded(next);
+									Animated.timing(detailAnim, {
+										toValue: next ? 1 : 0,
+										duration: 300,
+										easing: Easing.out(Easing.ease),
+										useNativeDriver: false,
+									}).start();
+								}}
+								style={{paddingVertical: 10}}>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 16,
+										color: theme.colors.themePurple,
+									}}>
+									{detailExpanded ? "折叠详情 ▲" : "展开详情 ▼"}
+								</Text>
+							</TouchableOpacity>
+							{actionTarget && detailContentHeight === 0 && (
+								<View
+									style={{
+										position: "absolute",
+										opacity: 0,
+										left: 0,
+										right: 0,
+									}}>
+									<View
+										onLayout={({nativeEvent}) => {
+											if (detailContentHeight === 0) {
+												setDetailContentHeight(nativeEvent.layout.height);
+												if (detailExpanded) {
+													detailAnim.setValue(1);
+												}
+											}
+										}}>
+										{renderDetailContent()}
+									</View>
+								</View>
+							)}
+							<Animated.View
+								style={{
+									height:
+										detailContentHeight === 0
+											? 0
+											: detailAnim.interpolate({
+													inputRange: [0, 1],
+													outputRange: [0, Math.min(detailContentHeight, 300)],
+											  }),
+									overflow: "hidden",
+									marginHorizontal: 12,
+									marginBottom: 8,
+									borderRadius: 8,
+									backgroundColor: "#F8F9FA",
+									borderLeftWidth: detailExpanded ? 2 : 0,
+									borderLeftColor: theme.colors.themePurple,
+								}}>
+								{renderDetailContent()}
+							</Animated.View>
+						</View>
+					</View>
+				</View>
+			)}
 		</>
 	);
 };
