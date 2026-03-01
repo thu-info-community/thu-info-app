@@ -588,6 +588,25 @@ export const ScheduleScreen = () => {
 
 	const flatListRef = useRef<FlatList>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
+	const scrollViewRef = useRef<ScrollView>(null);
+	const hasScrolledToInitialRef = useRef(false);
+
+	// 打开计划时默认滚动，使「8:00」时间轴在首屏第一个可见（左侧时间列 top: 40，标签在 40 + hour*hourHeight - 6）
+	useEffect(() => {
+		if (
+			tableHeight > 0 &&
+			!hasScrolledToInitialRef.current &&
+			scrollViewRef.current
+		) {
+			hasScrolledToInitialRef.current = true;
+			// 视口顶放在 7:00 标签下方一点，这样第一个完整露出的是「8:00」
+			const scrollY = 40 + 7 * hourHeight - 5;
+			scrollViewRef.current.scrollTo({
+				y: scrollY,
+				animated: false,
+			});
+		}
+	}, [tableHeight, hourHeight]);
 
 	return (
 		<>
@@ -607,6 +626,7 @@ export const ScheduleScreen = () => {
 			/>
 			<GestureHandlerRootView style={{flex: 1}}>
 				<ScrollView
+					ref={scrollViewRef}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
 					}}
