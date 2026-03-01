@@ -379,6 +379,8 @@ export const ScheduleScreen = () => {
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const dark = useSelector((s: State) => s.config.darkMode);
+	const isDarkMode = dark || themeName === "dark";
 
 	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
@@ -454,6 +456,8 @@ export const ScheduleScreen = () => {
 		if (!actionTarget) {
 			return null;
 		}
+		const detailTextColor = isDarkMode ? theme.colors.fontB0 : theme.colors.fontB1;
+		const detailSecondaryColor = isDarkMode ? theme.colors.fontB1 : theme.colors.fontB2;
 		return (
 			<View
 				style={{
@@ -464,7 +468,7 @@ export const ScheduleScreen = () => {
 					style={{
 						fontSize: 16,
 						fontWeight: "600",
-						color: theme.colors.fontB1,
+						color: detailTextColor,
 						marginBottom: 4,
 					}}
 					numberOfLines={2}>
@@ -494,7 +498,7 @@ export const ScheduleScreen = () => {
 					<Text
 						style={{
 							marginLeft: 8,
-							color: theme.colors.fontB2,
+							color: detailSecondaryColor,
 							fontSize: 13,
 						}}>
 						{getStr("dayOfWeek")[actionTarget.dayOfWeek]}
@@ -515,7 +519,7 @@ export const ScheduleScreen = () => {
 					<Text
 						style={{
 							marginLeft: 8,
-							color: theme.colors.fontB2,
+							color: detailSecondaryColor,
 							fontSize: 13,
 						}}>
 						{getStr("weekNumPrefix") +
@@ -533,7 +537,7 @@ export const ScheduleScreen = () => {
 						<Text
 							style={{
 								marginLeft: 8,
-								color: theme.colors.fontB2,
+								color: detailSecondaryColor,
 								fontSize: 13,
 							}}>
 							{actionTarget.name.substring(
@@ -1223,7 +1227,7 @@ export const ScheduleScreen = () => {
 									marginHorizontal: 12,
 									marginBottom: 8,
 									borderRadius: 8,
-									backgroundColor: "#F8F9FA",
+									backgroundColor: isDarkMode ? "#2d2d2d" : "#F8F9FA",
 									borderLeftWidth: detailExpanded ? 2 : 0,
 									borderLeftColor: theme.colors.themePurple,
 								}}>
