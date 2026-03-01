@@ -165,6 +165,7 @@ export default {
 	currentVersion: "当前版本：",
 	version: "版本",
 	maintainers: "开发团队",
+	productDesign: "产品与设计",
 	sourceText: "源代码",
 	builtWithRN: "使用 React Native⚛️ 构建",
 	wechatGroup: "交流群",

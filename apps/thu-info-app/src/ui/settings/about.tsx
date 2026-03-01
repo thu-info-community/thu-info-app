@@ -12,6 +12,7 @@ import {
 	_84634E1A607A_URL,
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
+	FIONAXYZOU_URL,
 	GITHUB_ORG_URL,
 	ICP_URL,
 	Johnny_URL,
@@ -115,6 +116,19 @@ export const AboutScreen = () => {
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
 					84634E1A607A @ GitHub
+				</Text>
+			</TouchableOpacity>
+			<View style={{height: 10}} />
+			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
+				{getStr("productDesign")}
+			</Text>
+			<TouchableOpacity onPress={() => makeLinking(FIONAXYZOU_URL)}>
+				<Text
+					style={[
+						styles.textStyle,
+						{color: theme.colors.primaryLight, fontSize: 17},
+					]}>
+					fionaxyzou @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(Johnny_URL)}>

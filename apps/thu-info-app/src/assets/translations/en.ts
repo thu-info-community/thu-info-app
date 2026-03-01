@@ -169,6 +169,7 @@ export default {
 	currentVersion: "Current version: ",
 	version: "Version",
 	maintainers: "Maintainers",
+	productDesign: "Product & Design",
 	sourceText: "Source",
 	builtWithRN: "Proudly built with React Native⚛️",
 	wechatGroup: "Wechat Group",
