@@ -427,62 +427,89 @@ export const ScheduleAddModal = ({
 						}
 	};
 
+	const windowHeight = Dimensions.get("window").height;
+	const modalCardMaxHeight = Math.floor(windowHeight * 0.85);
+	const scrollMaxHeight = modalCardMaxHeight - 56 - 24;
+
 	return (
 		<Modal
 			visible={visible}
-			animationType="slide"
+			animationType="fade"
 			onRequestClose={onClose}
-			transparent={false}>
-			<View
-		style={{
-			flex: 1,
-			backgroundColor: theme.colors.contentBackground,
-		}}>
-		<View
-			style={{
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
-				paddingHorizontal: 16,
-				paddingVertical: 12,
-				borderBottomWidth: 1,
-				borderBottomColor: theme.colors.themeGrey,
-			}}>
-			<TouchableOpacity onPress={onClose}>
-				<Text
+			transparent={true}>
+			<View style={{flex: 1, justifyContent: "flex-start"}}>
+				<TouchableOpacity
+					activeOpacity={1}
+					onPress={onClose}
 					style={{
-						color: theme.colors.fontB2,
-						fontSize: 16,
-					}}>
-					{getStr("cancel")}
-				</Text>
-			</TouchableOpacity>
-			<Text
-				style={{
-					color: theme.colors.text,
-					fontSize: 16,
-					fontWeight: "600",
-				}}>
-				{getStr(
-					params === undefined ? "scheduleAddCustom" : "scheduleEdit",
-				)}
-			</Text>
-			<TouchableOpacity
-				disabled={!valid}
-				onPress={handleSave}
-				style={{opacity: valid ? 1 : 0.5}}>
-				<Text
+						position: "absolute",
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+						backgroundColor: "rgba(44, 42, 40, 0.42)",
+					}}
+				/>
+				<TouchableOpacity
+					activeOpacity={1}
+					onPress={() => {}}
 					style={{
-						color: valid
-							? theme.colors.themePurple
-							: theme.colors.themeGrey,
-						fontSize: 16,
+						marginTop: 48,
+						marginHorizontal: 20,
+						marginBottom: 24,
+						borderRadius: 12,
+						backgroundColor: theme.colors.contentBackground,
+						maxHeight: modalCardMaxHeight,
+						overflow: "hidden",
 					}}>
-					{getStr("save")}
-				</Text>
-			</TouchableOpacity>
-		</View>
-		<ScrollView style={{padding: 12}}>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							paddingHorizontal: 16,
+							paddingVertical: 12,
+							borderBottomWidth: 1,
+							borderBottomColor: theme.colors.themeGrey,
+						}}>
+						<TouchableOpacity onPress={onClose}>
+							<Text
+								style={{
+									color: theme.colors.fontB2,
+									fontSize: 16,
+								}}>
+								{getStr("cancel")}
+							</Text>
+						</TouchableOpacity>
+						<Text
+							style={{
+								color: theme.colors.text,
+								fontSize: 16,
+								fontWeight: "600",
+							}}>
+							{getStr(
+								params === undefined ? "scheduleAddCustom" : "scheduleEdit",
+							)}
+						</Text>
+						<TouchableOpacity
+							disabled={!valid}
+							onPress={handleSave}
+							style={{opacity: valid ? 1 : 0.5}}>
+							<Text
+								style={{
+									color: valid
+										? theme.colors.themePurple
+										: theme.colors.themeGrey,
+									fontSize: 16,
+								}}>
+								{getStr("save")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<ScrollView
+						style={{maxHeight: scrollMaxHeight}}
+						contentContainerStyle={{padding: 12, paddingBottom: 24}}
+						showsVerticalScrollIndicator={true}>
 			<RoundedView style={{marginTop: 4, padding: 16}}>
 				<TextInput
 					style={{
@@ -1199,8 +1226,9 @@ export const ScheduleAddModal = ({
 					</>
 				)}
 			</RoundedView>
-		</ScrollView>
-	</View>
+					</ScrollView>
+				</TouchableOpacity>
+			</View>
 		</Modal>
 	);
 };
