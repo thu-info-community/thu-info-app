@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {View, Text, TouchableOpacity, Modal} from "react-native";
-import {useState} from "react";
+import {useLayoutEffect, useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import {useDispatch} from "react-redux";
 import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
@@ -13,42 +13,7 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
-
-export const beginTime = [
-	"",
-	"08:00",
-	"08:50",
-	"09:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-export const endTime = [
-	"",
-	"08:45",
-	"09:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
+import {ScheduleAddModal} from "./scheduleAdd";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {
@@ -78,11 +43,27 @@ export const ScheduleDetailScreen = ({
 }) => {
 	const props = route.params;
 	const [delPopupShow, setDelPopupShow] = useState<boolean>(false);
+	const [editPopupShow, setEditPopupShow] = useState<boolean>(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const dispatch = useDispatch();
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			title: getStr("scheduleDetail"),
+			headerRight: () => (
+				<TouchableOpacity
+					style={{paddingHorizontal: 16, margin: 4}}
+					onPress={() => setEditPopupShow(true)}>
+					<Text style={{color: colors.themePurple, fontSize: 16}}>
+						{getStr("edit")}
+					</Text>
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation, colors.themePurple]);
 
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
@@ -205,6 +186,11 @@ export const ScheduleDetailScreen = ({
 					{getStr("hideScheduleText")}
 				</Text>
 			</TouchableOpacity>
+			<ScheduleAddModal
+				visible={editPopupShow}
+				onClose={() => setEditPopupShow(false)}
+				initialParams={props}
+			/>
 			<Modal visible={delPopupShow} transparent>
 				<TouchableOpacity
 					onPress={() => setDelPopupShow(false)}

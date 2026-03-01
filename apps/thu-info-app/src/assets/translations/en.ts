@@ -333,6 +333,8 @@ export default {
 	scheduleSaveImg: "Save Image",
 	scheduleHidden: "Hidden Lessons",
 	scheduleDetail: "Schedule details",
+	scheduleDetailExpand: "Expand details ▼",
+	scheduleDetailCollapse: "Collapse details ▲",
 	scheduleExportICS: "Export Calendar",
 	scheduleICSGenerated: "Schedule calendar generated",
 	scheduleICSDownloaded: "Schedule calendar has been saved to your Downloads folder",

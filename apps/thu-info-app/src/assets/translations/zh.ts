@@ -310,6 +310,8 @@ export default {
 	scheduleSaveImg: "保存图片",
 	scheduleHidden: "管理隐藏",
 	scheduleDetail: "计划详情",
+	scheduleDetailExpand: "展开详情 ▼",
+	scheduleDetailCollapse: "折叠详情 ▲",
 	scheduleExportICS: "导出日历",
 	scheduleICSGenerated: "课程表日历已生成",
 	scheduleICSDownloaded: "课程表日历已保存至下载文件夹",

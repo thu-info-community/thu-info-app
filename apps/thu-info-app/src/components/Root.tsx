@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {TouchableOpacity, useColorScheme, View} from "react-native";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {ChannelTag, NewsSlice} from "@thu-info/lib/src/models/news/news";
@@ -66,7 +66,6 @@ import {ElectricityScreen} from "../ui/home/electricity";
 import {EleRecordScreen} from "../ui/home/eleRecord";
 import {LoseCardScreen} from "../ui/home/loseCard";
 import {NewsDetailScreen} from "../ui/news/newsDetail";
-import {ScheduleAddScreen} from "../ui/schedule/scheduleAdd";
 import {ScheduleHiddenScreen} from "../ui/schedule/scheduleHidden";
 import {FeedbackScreen} from "../ui/settings/feedback";
 import {FeishuFeedbackScreen} from "../ui/settings/feishuFeedback";
@@ -377,16 +376,10 @@ type DeepSeekStackParamList = {
 };
 
 type ScheduleStackParamList = {
-	ScheduleAdd: ScheduleDetailProps | undefined;
 	ScheduleHidden: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 	ScheduleSync: {isSending: boolean};
 };
-
-export type ScheduleAddRouteProp = RouteProp<
-	ScheduleStackParamList,
-	"ScheduleAdd"
->;
 
 export type ScheduleDetailRouteProp = RouteProp<
 	ScheduleStackParamList,
@@ -439,9 +432,6 @@ const Stack = createStackNavigator<RootStackParamList>();
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
 export const Root = () => {
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
-
 	return (
 		<Stack.Navigator>
 			{/* Root Tabs */}
@@ -905,15 +895,6 @@ export const Root = () => {
 			/>
 			{/* Schedule */}
 			<Stack.Screen
-				name="ScheduleAdd"
-				component={ScheduleAddScreen}
-				options={({route: {params}}) => ({
-					title: getStr(
-						params === undefined ? "scheduleAddCustom" : "scheduleEdit",
-					),
-				})}
-			/>
-			<Stack.Screen
 				name="ScheduleHidden"
 				component={ScheduleHiddenScreen}
 				options={{title: getStr("scheduleHidden")}}
@@ -921,18 +902,7 @@ export const Root = () => {
 			<Stack.Screen
 				name="ScheduleDetail"
 				component={ScheduleDetailScreen}
-				options={({navigation, route: {params}}) => ({
-					title: getStr("scheduleDetail"),
-					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, margin: 4}}
-							onPress={() => navigation.navigate("ScheduleAdd", params)}>
-							<Text style={{color: theme.colors.primaryLight, fontSize: 16}}>
-								{getStr("edit")}
-							</Text>
-						</TouchableOpacity>
-					),
-				})}
+				options={{title: getStr("scheduleDetail")}}
 			/>
 			<Stack.Screen
 				name="ScheduleSync"

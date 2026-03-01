@@ -11,6 +11,7 @@ interface ScheduleBlockProps {
 	gridHeight: number;
 	gridWidth: number;
 	onPress: () => void;
+	onLongPress?: () => void;
 	textColor?: string;
 	blockColor?: string;
 	blockMargin?: number;
@@ -52,7 +53,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				paddingVertical: 6,
 				paddingHorizontal: 4,
 			}}
-			onPress={props.onPress}>
+			onPress={props.onPress}
+			onLongPress={props.onLongPress}>
 			<Text
 				onLayout={({nativeEvent}) => {
 					setTitleHeight(nativeEvent.layout.height);

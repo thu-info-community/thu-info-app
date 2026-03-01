@@ -1,7 +1,8 @@
-import {useLayoutEffect, useState} from "react";
+import {useState} from "react";
 import {
 	Alert,
 	Dimensions,
+	Modal,
 	ScrollView,
 	Switch,
 	Text,
@@ -12,7 +13,6 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
-import {RootNav, ScheduleAddRouteProp} from "../../components/Root";
 import {
 	getOverlappedBlock,
 	Schedule,
@@ -39,7 +39,60 @@ import {explainPeriod, explainWeekList} from "../../utils/calendar";
 import IconSelected from "../../assets/icons/IconSelected";
 import IconNotSelected from "../../assets/icons/IconNotSelected";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
-import {beginTime, endTime} from "./scheduleDetail";
+
+export const beginTime = [
+	"",
+	"08:00",
+	"08:50",
+	"09:50",
+	"10:40",
+	"11:30",
+	"13:30",
+	"14:20",
+	"15:20",
+	"16:10",
+	"17:05",
+	"17:55",
+	"19:20",
+	"20:10",
+	"21:00",
+];
+
+export const endTime = [
+	"",
+	"08:45",
+	"09:35",
+	"10:35",
+	"11:25",
+	"12:15",
+	"14:15",
+	"15:05",
+	"16:05",
+	"16:55",
+	"17:50",
+	"18:40",
+	"20:05",
+	"20:55",
+	"21:45",
+];
+
+export interface ScheduleEditParams {
+	name: string;
+	location: string;
+	week: number;
+	dayOfWeek: number;
+	beginTime: dayjs.Dayjs;
+	endTime: dayjs.Dayjs;
+	alias: string;
+	type: ScheduleType;
+	activeWeeks?: number[];
+}
+
+interface ScheduleAddModalProps {
+	visible: boolean;
+	onClose: () => void;
+	initialParams?: ScheduleEditParams;
+}
 
 export const numberToCode = (num: number): string => {
 	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
@@ -50,15 +103,15 @@ export const numberToCode = (num: number): string => {
 	return res;
 };
 
-export const ScheduleAddScreen = ({
-	navigation,
-	route: {params},
-}: {
-	navigation: RootNav;
-	route: ScheduleAddRouteProp;
-}) => {
+export const ScheduleAddModal = ({
+	visible,
+	onClose,
+	initialParams,
+}: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+
+	const params = initialParams;
 
 	const scheduleList = useSelector((s: State) => s.schedule.baseSchedule);
 	const customCnt = useSelector((s: State) => s.schedule.customCnt);
@@ -177,13 +230,10 @@ export const ScheduleAddScreen = ({
 	const windowWidth = Dimensions.get("window").width;
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 
-	useLayoutEffect(() => {
-		navigation.setOptions({
-			headerRight: () => (
-				<TouchableOpacity
-					style={{paddingHorizontal: 16, margin: 4}}
-					disabled={!valid}
-					onPress={() => {
+	const handleSave = () => {
+		if (!valid) {
+			return;
+		}
 						if (params !== undefined) {
 							// 代表是在修改现有计划
 							if (title.length === 0) {
@@ -200,7 +250,7 @@ export const ScheduleAddScreen = ({
 								periodEnd === getEndPeriod(params.endTime) &&
 								weeks.length === params.activeWeeks?.length
 							) {
-								navigation.pop(2);
+								onClose();
 								return;
 							}
 							// TODO: Modify custom schedule's time
@@ -363,7 +413,7 @@ export const ScheduleAddScreen = ({
 												);
 											});
 											dispatch(scheduleAddCustom(newSchedule));
-											navigation.pop();
+											onClose();
 										},
 									},
 									{
@@ -373,43 +423,65 @@ export const ScheduleAddScreen = ({
 							);
 						} else {
 							dispatch(scheduleAddCustom(newSchedule));
-							navigation.pop();
+							onClose();
 						}
-					}}>
-					<Text
-						style={{
-							color: valid ? theme.colors.themePurple : theme.colors.themeGrey,
-							fontSize: 16,
-						}}>
-						{getStr("save")}
-					</Text>
-				</TouchableOpacity>
-			),
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		navigation,
-		valid,
-		params,
-		customCnt,
-		title,
-		locale,
-		weeks,
-		day,
-		periodBegin,
-		periodEnd,
-		useCustomDateTime,
-		dateIndex,
-		beginHour,
-		beginMinute,
-		endHour,
-		endMinute,
-		repeatWeekly,
-		dispatch,
-		scheduleList,
-	]);
+	};
 
 	return (
+		<Modal
+			visible={visible}
+			animationType="slide"
+			onRequestClose={onClose}
+			transparent={false}>
+			<View
+		style={{
+			flex: 1,
+			backgroundColor: theme.colors.contentBackground,
+		}}>
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "space-between",
+				paddingHorizontal: 16,
+				paddingVertical: 12,
+				borderBottomWidth: 1,
+				borderBottomColor: theme.colors.themeGrey,
+			}}>
+			<TouchableOpacity onPress={onClose}>
+				<Text
+					style={{
+						color: theme.colors.fontB2,
+						fontSize: 16,
+					}}>
+					{getStr("cancel")}
+				</Text>
+			</TouchableOpacity>
+			<Text
+				style={{
+					color: theme.colors.text,
+					fontSize: 16,
+					fontWeight: "600",
+				}}>
+				{getStr(
+					params === undefined ? "scheduleAddCustom" : "scheduleEdit",
+				)}
+			</Text>
+			<TouchableOpacity
+				disabled={!valid}
+				onPress={handleSave}
+				style={{opacity: valid ? 1 : 0.5}}>
+				<Text
+					style={{
+						color: valid
+							? theme.colors.themePurple
+							: theme.colors.themeGrey,
+						fontSize: 16,
+					}}>
+					{getStr("save")}
+				</Text>
+			</TouchableOpacity>
+		</View>
 		<ScrollView style={{padding: 12}}>
 			<RoundedView style={{marginTop: 4, padding: 16}}>
 				<TextInput
@@ -1128,5 +1200,7 @@ export const ScheduleAddScreen = ({
 				)}
 			</RoundedView>
 		</ScrollView>
+	</View>
+		</Modal>
 	);
 };
