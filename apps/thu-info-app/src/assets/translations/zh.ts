@@ -312,6 +312,7 @@ export default {
 	scheduleDetail: "计划详情",
 	scheduleDetailExpand: "展开详情 ▼",
 	scheduleDetailCollapse: "折叠详情 ▲",
+	scheduleLongPressHint: "长按可隐藏/删除计划和查看计划详情",
 	scheduleExportICS: "导出日历",
 	scheduleICSGenerated: "课程表日历已生成",
 	scheduleICSDownloaded: "课程表日历已保存至下载文件夹",

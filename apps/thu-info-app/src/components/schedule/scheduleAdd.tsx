@@ -1226,6 +1226,18 @@ export const ScheduleAddModal = ({
 					</>
 				)}
 			</RoundedView>
+						{params !== undefined && (
+							<Text
+								style={{
+									color: theme.colors.fontB3,
+									fontSize: 12,
+									textAlign: "center",
+									marginTop: 16,
+									marginBottom: 8,
+								}}>
+								{getStr("scheduleLongPressHint")}
+							</Text>
+						)}
 					</ScrollView>
 				</TouchableOpacity>
 			</View>

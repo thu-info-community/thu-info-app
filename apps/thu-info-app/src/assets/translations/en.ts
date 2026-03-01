@@ -335,6 +335,7 @@ export default {
 	scheduleDetail: "Schedule details",
 	scheduleDetailExpand: "Expand details ▼",
 	scheduleDetailCollapse: "Collapse details ▲",
+	scheduleLongPressHint: "Long press to hide/delete schedule and view details",
 	scheduleExportICS: "Export Calendar",
 	scheduleICSGenerated: "Schedule calendar generated",
 	scheduleICSDownloaded: "Schedule calendar has been saved to your Downloads folder",
