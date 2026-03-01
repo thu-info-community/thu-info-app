@@ -114,9 +114,9 @@ const Header = React.forwardRef(
 		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
 		const themeName = useColorScheme();
-		const theme = themes(themeName);
 		const dark = useSelector((s: State) => s.config.darkMode);
 		const darkModeHook = dark || themeName === "dark";
+		const theme = themes(darkModeHook ? "dark" : themeName ?? undefined);
 
 		const {firstDay, weekCount, semesterId} = useSelector(
 			(s: State) => s.config,
@@ -157,7 +157,7 @@ const Header = React.forwardRef(
 				style={{
 					paddingVertical: 4,
 					alignItems: "center",
-					backgroundColor: theme.colors.contentBackground,
+					backgroundColor: theme.colors.bgPaper ?? theme.colors.contentBackground,
 					paddingTop: getStatusBarHeight(),
 				}}
 				key={String(darkModeHook)}>
@@ -212,7 +212,7 @@ const Header = React.forwardRef(
 												alignItems: "center",
 												backgroundColor:
 													week === weekButton
-														? theme.colors.themePurple
+														? theme.colors.primaryPurple
 														: undefined,
 												borderRadius: 8,
 											}}
@@ -231,9 +231,9 @@ const Header = React.forwardRef(
 															: "normal",
 													color:
 														week === weekButton
-															? "white"
+															? theme.colors.textInverse
 															: weekNumber === weekButton
-															? theme.colors.themePurple
+															? theme.colors.primaryPurple
 															: theme.colors.fontB1,
 												}}>
 												{weekButton}
@@ -390,7 +390,8 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 	const today = current.day() === 0 ? 7 : current.day();
 
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const theme = themes(darkMode ? "dark" : themeName ?? undefined);
 
 	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
@@ -486,16 +487,16 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 						  )
 						: actionTarget.alias}
 				</Text>
-				<Text
-					style={{
-						fontSize: 13,
-						color: theme.colors.themePurple,
-						marginBottom: 8,
-					}}>
-					{actionTarget.location === ""
-						? getStr("locationUnset")
-						: actionTarget.location}
-				</Text>
+								<Text
+									style={{
+										fontSize: 13,
+										color: theme.colors.primaryPurple,
+										marginBottom: 8,
+									}}>
+									{actionTarget.location === ""
+										? getStr("locationUnset")
+										: actionTarget.location}
+								</Text>
 				<View
 					style={{
 						flexDirection: "row",
@@ -600,6 +601,25 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const flatListRef = useRef<FlatList>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
+	const scrollViewRef = useRef<ScrollView>(null);
+	const hasScrolledToInitialRef = useRef(false);
+
+	// 打开计划时默认滚动，使「8:00」时间轴在首屏第一个可见（左侧时间列 top: 40，标签在 40 + hour*hourHeight - 6）
+	useEffect(() => {
+		if (
+			tableHeight > 0 &&
+			!hasScrolledToInitialRef.current &&
+			scrollViewRef.current
+		) {
+			hasScrolledToInitialRef.current = true;
+			// 视口顶放在 7:00 标签下方一点，这样第一个完整露出的是「8:00」
+			const scrollY = 40 + 7 * hourHeight - 5;
+			scrollViewRef.current.scrollTo({
+				y: scrollY,
+				animated: false,
+			});
+		}
+	}, [tableHeight, hourHeight]);
 
 	return (
 		<>
@@ -618,8 +638,10 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 				onPressAdd={() => setShowAddModal(true)}
 				navigation={navigation}
 			/>
-			<GestureHandlerRootView style={{flex: 1}}>
+			<GestureHandlerRootView style={{flex: 1, backgroundColor: theme.colors.bgPaper ?? theme.colors.bgPrimary ?? theme.colors.themeBackground}}>
 				<ScrollView
+					ref={scrollViewRef}
+					style={{backgroundColor: theme.colors.bgPaper ?? theme.colors.bgPrimary ?? theme.colors.themeBackground}}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
 					}}
@@ -642,7 +664,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 										top: hour * hourHeight - 6, // roughly center text on the line
 										width: timeLabelWidth,
 										textAlign: "center",
-										color: theme.colors.fontB1,
+										color: theme.colors.textPrimary,
 										fontSize: 10,
 									}}>
 									{String(hour).padStart(2, "0")}:00
@@ -775,7 +797,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 														style={{
 															textAlign: "center",
 															fontSize: 12,
-															color: theme.colors.fontB1,
+															color: theme.colors.textPrimary,
 														}}>
 														{getStr("dayOfWeek")[index + 1]}
 													</Text>
@@ -786,7 +808,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 															borderRadius: 1,
 															backgroundColor:
 																w === nowWeek - 1 && today === index + 1
-																	? theme.colors.themePurple
+																	? theme.colors.primaryPurple
 																	: undefined,
 														}}
 													/>
@@ -794,7 +816,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 														style={{
 															textAlign: "center",
 															fontSize: 9,
-															color: theme.colors.fontB1,
+															color: theme.colors.textSecondary,
 														}}>
 														{dayjs(firstDay)
 															.add(w * 7 + index, "day")
@@ -861,12 +883,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 															}
 															textColor={
 																enableNewUI
-																	? colorList[
-																			parseInt(
-																				md5(val.name).substr(0, 6),
-																				16,
-																			) % colorList.length
-																	  ]
+																	? (theme.colors.bgPrimary
+																		? theme.colors.textPrimary
+																		: colorList[
+																				parseInt(
+																					md5(val.name).substr(0, 6),
+																					16,
+																				) % colorList.length
+																		  ])
 																	: "white"
 															}
 															onPress={() => {
@@ -928,7 +952,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 								minimumValue={0}
 								maximumValue={20}
 								step={1}
-								minimumTrackTintColor={theme.colors.themePurple}
+								minimumTrackTintColor={theme.colors.primaryPurple}
 								thumbTintColor={theme.colors.primary}
 								value={heightMode}
 								onValueChange={(value) => {
@@ -958,7 +982,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							</Text>
 							<Switch
 								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								trackColor={{true: theme.colors.primaryPurple}}
 								value={hideWeekend}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -989,7 +1013,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							</Text>
 							<Switch
 								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								trackColor={{true: theme.colors.primaryPurple}}
 								value={showOfficialSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1020,7 +1044,7 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							</Text>
 							<Switch
 								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								trackColor={{true: theme.colors.primaryPurple}}
 								value={showCustomSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1033,12 +1057,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							/>
 						</View>
 						<TouchableOpacity
+							activeOpacity={0.85}
 							style={{
-								backgroundColor: theme.colors.contentBackground,
+								backgroundColor: theme.colors.btnPrimaryBg,
 								flexDirection: "row",
 								justifyContent: "center",
-								paddingHorizontal: 16,
+								paddingHorizontal: 24,
 								paddingVertical: 12,
+								borderRadius: 4,
 								borderTopWidth: 1,
 								borderTopColor: theme.colors.inputBorder,
 							}}
@@ -1048,9 +1074,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 							}}>
 							<Text
 								style={{
-									color: theme.colors.themePurple,
+									color: theme.colors.btnPrimaryText,
 									fontSize: 16,
-									fontWeight: "500",
+									fontWeight: "600",
 								}}>
 								{getStr("scheduleExportICS")}
 							</Text>
@@ -1182,14 +1208,14 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									}).start();
 								}}
 								style={{paddingVertical: 10}}>
-								<Text
-									style={{
-										textAlign: "center",
-										fontSize: 16,
-										color: theme.colors.themePurple,
-									}}>
-									{detailExpanded ? "折叠详情 ▲" : "展开详情 ▼"}
-								</Text>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 16,
+									color: theme.colors.primaryPurple,
+								}}>
+								{detailExpanded ? "折叠详情 ▲" : "展开详情 ▼"}
+							</Text>
 							</TouchableOpacity>
 							{actionTarget && detailContentHeight === 0 && (
 								<View
@@ -1225,9 +1251,9 @@ export const ScheduleScreen = ({navigation}: {navigation: RootNav}) => {
 									marginHorizontal: 12,
 									marginBottom: 8,
 									borderRadius: 8,
-									backgroundColor: "#F8F9FA",
+									backgroundColor: theme.colors.bgSecondary ?? theme.colors.themeLightGrey,
 									borderLeftWidth: detailExpanded ? 2 : 0,
-									borderLeftColor: theme.colors.themePurple,
+									borderLeftColor: theme.colors.primaryPurple,
 								}}>
 								{renderDetailContent()}
 							</Animated.View>

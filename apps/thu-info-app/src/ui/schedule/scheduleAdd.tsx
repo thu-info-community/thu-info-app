@@ -74,7 +74,8 @@ export const ScheduleAddModal = ({
 	initialParams,
 }: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const theme = themes(darkMode ? "dark" : themeName ?? undefined);
 
 	const params = initialParams;
 
@@ -162,6 +163,8 @@ export const ScheduleAddModal = ({
 
 	const [title, setTitle] = useState(params?.alias ?? "");
 	const [locale, setLocale] = useState(params?.location ?? "");
+	const [titleInputFocused, setTitleInputFocused] = useState(false);
+	const [localeInputFocused, setLocaleInputFocused] = useState(false);
 
 	// Prepare for modify custom schedule's time
 	// const timeEditable = (params && params?.type !== ScheduleType.CUSTOM) || false;
@@ -421,13 +424,21 @@ export const ScheduleAddModal = ({
 					<TouchableOpacity
 						disabled={!valid}
 						onPress={handleSave}
-						style={{opacity: valid ? 1 : 0.5}}>
+						activeOpacity={0.85}
+						style={{
+							opacity: valid ? 1 : 0.5,
+							backgroundColor: valid ? theme.colors.btnPrimaryBg : theme.colors.themeGrey,
+							paddingVertical: 12,
+							paddingHorizontal: 24,
+							borderRadius: 4,
+						}}>
 						<Text
 							style={{
 								color: valid
-									? theme.colors.themePurple
+									? theme.colors.btnPrimaryText
 									: theme.colors.themeGrey,
 								fontSize: 16,
+								fontWeight: "600",
 							}}>
 							{getStr("save")}
 						</Text>
@@ -435,21 +446,41 @@ export const ScheduleAddModal = ({
 				</View>
 				<ScrollView style={{padding: 12}}>
 					<RoundedView style={{marginTop: 4, padding: 16}}>
-						<TextInput
-							style={{
-								color: theme.colors.text,
-								padding: 0,
-								fontSize: 16,
-							}}
-							placeholder={
-								params?.name?.substring(
-									params?.type === ScheduleType.CUSTOM ? 6 : 0,
-								) ?? getStr("title")
-							}
-							placeholderTextColor={theme.colors.fontB3}
-							value={title}
-							onChangeText={setTitle}
-						/>
+						<View
+							style={[
+								{
+									borderWidth: titleInputFocused ? theme.colors.focusWidth : 0,
+									borderColor: theme.colors.primaryPurple,
+									borderRadius: 4,
+									padding: titleInputFocused ? theme.colors.focusOffset : 0,
+								},
+								titleInputFocused &&
+									theme.colors.focusOuterRing && {
+										shadowColor: theme.colors.focusOuterRing,
+										shadowOffset: {width: 0, height: 0},
+										shadowOpacity: 1,
+										shadowRadius: 4,
+										elevation: 4,
+									},
+							]}>
+							<TextInput
+								style={{
+									color: theme.colors.text,
+									padding: 0,
+									fontSize: 16,
+								}}
+								placeholder={
+									params?.name?.substring(
+										params?.type === ScheduleType.CUSTOM ? 6 : 0,
+									) ?? getStr("title")
+								}
+								placeholderTextColor={theme.colors.fontB3}
+								value={title}
+								onChangeText={setTitle}
+								onFocus={() => setTitleInputFocused(true)}
+								onBlur={() => setTitleInputFocused(false)}
+							/>
+						</View>
 						<View
 							style={{
 								height: 1,
@@ -457,17 +488,37 @@ export const ScheduleAddModal = ({
 								marginVertical: 12,
 							}}
 						/>
-						<TextInput
-							style={{
-								color: theme.colors.text,
-								padding: 0,
-								fontSize: 16,
-							}}
-							placeholder={getStr("location")}
-							placeholderTextColor={theme.colors.fontB3}
-							value={locale}
-							onChangeText={setLocale}
-						/>
+						<View
+							style={[
+								{
+									borderWidth: localeInputFocused ? theme.colors.focusWidth : 0,
+									borderColor: theme.colors.primaryPurple,
+									borderRadius: 4,
+									padding: localeInputFocused ? theme.colors.focusOffset : 0,
+								},
+								localeInputFocused &&
+									theme.colors.focusOuterRing && {
+										shadowColor: theme.colors.focusOuterRing,
+										shadowOffset: {width: 0, height: 0},
+										shadowOpacity: 1,
+										shadowRadius: 4,
+										elevation: 4,
+									},
+							]}>
+							<TextInput
+								style={{
+									color: theme.colors.text,
+									padding: 0,
+									fontSize: 16,
+								}}
+								placeholder={getStr("location")}
+								placeholderTextColor={theme.colors.fontB3}
+								value={locale}
+								onChangeText={setLocale}
+								onFocus={() => setLocaleInputFocused(true)}
+								onBlur={() => setLocaleInputFocused(false)}
+							/>
+						</View>
 					</RoundedView>
 					<RoundedView style={{marginTop: 16, padding: 16}}>
 						{!timeEditable && (
@@ -543,7 +594,7 @@ export const ScheduleAddModal = ({
 															marginVertical: 4,
 															alignItems: "center",
 															backgroundColor: popupWeeks.includes(week)
-																? theme.colors.themePurple
+																? theme.colors.primaryPurple
 																: undefined,
 															borderRadius: 8,
 														}}
@@ -562,7 +613,7 @@ export const ScheduleAddModal = ({
 																fontSize: 18,
 																lineHeight: 40,
 																color: popupWeeks.includes(week)
-																	? "white"
+																	? theme.colors.textInverse
 																	: theme.colors.fontB1,
 															}}>
 															{week}

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Text, TouchableOpacity, useColorScheme} from "react-native";
+import {Text, Pressable, useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
 
 interface ScheduleBlockProps {
@@ -24,7 +24,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const textColor = props.textColor || "white";
 
 	const blockMargin = props.blockMargin || 2;
-	const blockColor = props.blockColor || colors.themePurple;
+	const blockColor = props.blockColor || colors.primaryPurple;
 
 	const blockLeftPos = (props.dayOfWeek - 1) * props.gridWidth + blockMargin;
 	// `begin` 和 `end` 表示距离 0:00 的分钟数，`gridHeight` 表示每分钟的高度
@@ -41,8 +41,8 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	}
 
 	return (
-		<TouchableOpacity
-			style={{
+		<Pressable
+			style={({pressed}) => ({
 				position: "absolute",
 				left: blockLeftPos,
 				top: blockTopPos,
@@ -52,7 +52,9 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				borderRadius: 4,
 				paddingVertical: 6,
 				paddingHorizontal: 4,
-			}}
+				borderWidth: pressed ? 2 : 0,
+				borderColor: pressed ? colors.primaryPurpleDark : "transparent",
+			})}
 			onPress={props.onPress}
 			onLongPress={props.onLongPress}>
 			<Text
@@ -85,6 +87,6 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 					{"@" + props.location}
 				</Text>
 			) : null}
-		</TouchableOpacity>
+		</Pressable>
 	);
 };

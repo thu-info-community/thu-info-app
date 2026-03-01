@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import {useLayoutEffect, useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {State} from "../../redux/store";
 import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
@@ -82,7 +83,8 @@ export const ScheduleDetailScreen = ({
 	const [editPopupShow, setEditPopupShow] = useState<boolean>(false);
 
 	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const {colors} = themes(darkMode ? "dark" : themeName ?? undefined);
 
 	const dispatch = useDispatch();
 
@@ -93,13 +95,13 @@ export const ScheduleDetailScreen = ({
 				<TouchableOpacity
 					style={{paddingHorizontal: 16, margin: 4}}
 					onPress={() => setEditPopupShow(true)}>
-					<Text style={{color: colors.themePurple, fontSize: 16}}>
+					<Text style={{color: colors.primaryPurple, fontSize: 16}}>
 						{getStr("edit")}
 					</Text>
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, colors.themePurple]);
+	}, [navigation, colors.primaryPurple]);
 
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
@@ -136,7 +138,7 @@ export const ScheduleDetailScreen = ({
 					style={{
 						textAlign: "center",
 						fontSize: 20,
-						color: colors.statusWarning,
+						color: colors.darkError ?? colors.statusWarning,
 					}}>
 					{buttonText}
 				</Text>
@@ -169,7 +171,7 @@ export const ScheduleDetailScreen = ({
 					? props.name.substring(props.type === ScheduleType.CUSTOM ? 6 : 0)
 					: props.alias}
 			</Text>
-			<Text style={{fontSize: 14, color: colors.themePurple}}>
+			<Text style={{fontSize: 14, color: colors.primaryPurple}}>
 				{props.location === "" ? getStr("locationUnset") : props.location}
 			</Text>
 			<View style={{flexDirection: "row", marginTop: 22, alignItems: "center"}}>
@@ -218,7 +220,7 @@ export const ScheduleDetailScreen = ({
 					margin: 12,
 					padding: 12,
 				}}>
-				<Text style={{color: colors.statusError, fontSize: 20}}>
+				<Text style={{color: colors.darkError ?? colors.statusError, fontSize: 20}}>
 					{getStr("hideScheduleText")}
 				</Text>
 			</TouchableOpacity>
