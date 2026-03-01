@@ -159,6 +159,8 @@ export default {
 	acknowledgeLearnX: "感谢 learnX 开源代码提供参考范例 🎉",
 	acknowledgeCommunity: "致敬 JavaScript 开源社区 ❤️",
 	checkUpdate: "检查更新",
+	updateBannerTitle: "新版本已就绪！立即更新开启最新体验吧",
+	updateBannerDetailLink: "点击查看版本详情",
 	rollBack: "回滚到旧版",
 	about: "关于本软件",
 	aboutApp: "关于 THU Info",

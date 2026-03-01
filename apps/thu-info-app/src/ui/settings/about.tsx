@@ -6,6 +6,10 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import {useEffect} from "react";
+import {useRoute} from "@react-navigation/native";
+import type {RouteProp} from "@react-navigation/native";
+import type {RootStackParamList} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
@@ -33,6 +37,13 @@ const makeLinking = (url: string) =>
 export const AboutScreen = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const route = useRoute<RouteProp<RootStackParamList, "About">>();
+
+	useEffect(() => {
+		if (route.params?.openCheckUpdate) {
+			checkUpdate(true);
+		}
+	}, [route.params?.openCheckUpdate]);
 
 	return (
 		<ScrollView style={{paddingTop: 5, paddingBottom: 20, flex: 1}}>

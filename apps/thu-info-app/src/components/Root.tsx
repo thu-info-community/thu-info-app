@@ -408,7 +408,7 @@ type SettingsStackParamList = {
 	FeishuFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
-	About: undefined;
+	About: {openCheckUpdate?: boolean};
 };
 
 export type TwoFactorAuthRouteProp = RouteProp<

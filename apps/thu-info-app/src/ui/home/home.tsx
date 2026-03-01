@@ -9,7 +9,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {ReactElement, useEffect} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {RootNav} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
@@ -69,6 +69,7 @@ import IconCalendar from "../../assets/icons/IconCalendar";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
+import Svg, {Path} from "react-native-svg";
 import {InfoHelper} from "@thu-info/lib";
 
 const iconSize = 40;
@@ -868,6 +869,16 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const privacy312 = useSelector((s: State) => s.config.privacy312);
 
+	const doNotRemindSemver =
+		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
+	const latestVersion =
+		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
+	const newVersionAvailable =
+		gt(latestVersion, VersionNumber.appVersion) &&
+		gt(latestVersion, doNotRemindSemver);
+	const [updateBannerDismissed, setUpdateBannerDismissed] = useState(false);
+	const showUpdateBanner = newVersionAvailable && !updateBannerDismissed;
+
 	useEffect(() => {
 		// @ts-ignore
 		if (Platform.OS !== "ios" && Platform.OS !== "android" && Platform.OS !== "harmony") {
@@ -932,10 +943,73 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={{flex: 1, paddingTop: getStatusBarHeight()}}>
+			{showUpdateBanner && (
+				<View
+					style={{
+						position: "absolute",
+						top: getStatusBarHeight(),
+						left: 12,
+						right: 12,
+						zIndex: 10,
+						backgroundColor: theme.colors.contentBackground,
+						borderRadius: 8,
+						paddingVertical: 12,
+						paddingHorizontal: 14,
+						...Platform.select({
+							ios: {
+								shadowColor: "#B8A9D4",
+								shadowOffset: {width: 0, height: 0},
+								shadowOpacity: 0.45,
+								shadowRadius: 14,
+							},
+							android: {elevation: 8},
+						}),
+					}}>
+					<TouchableOpacity
+						hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+						style={{position: "absolute", right: 10, top: 10, zIndex: 1}}
+						onPress={() => setUpdateBannerDismissed(true)}>
+						<Text style={{fontSize: 20, color: theme.colors.text, lineHeight: 24}}>×</Text>
+					</TouchableOpacity>
+					<Text
+						style={{
+							color: theme.colors.text,
+							fontSize: 16,
+							fontWeight: "600",
+							paddingRight: 28,
+							marginBottom: 8,
+						}}>
+						{getStr("updateBannerTitle")}
+					</Text>
+					<TouchableOpacity
+						style={{alignSelf: "flex-end", flexDirection: "row", alignItems: "center", gap: 4}}
+						onPress={() =>
+							navigation.navigate("About", {openCheckUpdate: true})
+						}>
+						<Text
+							style={{
+								color: theme.colors.primaryLight,
+								fontSize: 14,
+							}}>
+							{getStr("updateBannerDetailLink")}
+						</Text>
+						<Svg viewBox="0 0 24 24" width={14} height={14} fill="none">
+							<Path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={3}
+								stroke={theme.colors.primaryLight}
+								d="M9 6L15 12L9 18"
+							/>
+						</Svg>
+					</TouchableOpacity>
+				</View>
+			)}
 			<ScrollView
 				style={{
 					backgroundColor: theme.colors.themeBackground,
 				}}
+				contentContainerStyle={showUpdateBanner ? {paddingTop: 76} : undefined}
 				key={String(darkModeHook)}>
 				<HomeFunctionSection title="recentlyUsedFunction">
 					{top5Filtered.length === 0 ? (

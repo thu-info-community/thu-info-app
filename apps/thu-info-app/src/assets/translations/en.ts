@@ -163,6 +163,8 @@ export default {
 	acknowledgeLearnX: "Great thanks to the `learnX` project 🎉",
 	acknowledgeCommunity: "Best regards to the JavaScript Community ❤️",
 	checkUpdate: "Check Update",
+	updateBannerTitle: "Please update to the latest version",
+	updateBannerDetailLink: "View version details",
 	rollBack: "Roll Back to Older Version",
 	about: "About",
 	aboutApp: "About THU Info",
