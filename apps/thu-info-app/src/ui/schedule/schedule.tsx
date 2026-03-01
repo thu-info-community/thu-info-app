@@ -33,7 +33,7 @@ import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-g
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
-import {ScheduleAddModal, ScheduleEditParams} from "./scheduleAdd";
+import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";

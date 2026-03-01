@@ -13,7 +13,7 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
-import {ScheduleAddModal} from "./scheduleAdd";
+import {ScheduleAddModal} from "../../components/schedule/scheduleAdd";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {

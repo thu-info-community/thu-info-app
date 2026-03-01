@@ -33,7 +33,7 @@ import {
 	scheduleUpdateLocation,
 } from "../../redux/slices/schedule";
 import {useColorScheme} from "react-native";
-import {BottomPopupTriggerView, RoundedView} from "../../components/views";
+import {BottomPopupTriggerView, RoundedView} from "../views";
 import IconRight from "../../assets/icons/IconRight";
 import {explainPeriod, explainWeekList} from "../../utils/calendar";
 import IconSelected from "../../assets/icons/IconSelected";
