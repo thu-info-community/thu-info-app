@@ -59,5 +59,6 @@ export const colorPkuLight: ColorTheme = {
 	focusColor: "#333333",
 	focusWidth: 2,
 	focusOffset: 2,
-	bgPaper: "#FAF8F5",
+	bgPaper: "#FDFBF7",
+	overlayBackdrop: "rgba(44, 42, 40, 0.42)",
 };

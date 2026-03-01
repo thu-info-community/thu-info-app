@@ -381,70 +381,97 @@ export const ScheduleAddModal = ({
 		}
 	};
 
+	const windowHeight = Dimensions.get("window").height;
+	const modalCardMaxHeight = Math.floor(windowHeight * 0.85);
+	const scrollMaxHeight = modalCardMaxHeight - 56 - 24;
+
 	return (
 		<Modal
 			visible={visible}
-			animationType="slide"
+			animationType="fade"
 			onRequestClose={onClose}
-			transparent={false}>
-			<View
-				style={{
-					flex: 1,
-					backgroundColor: theme.colors.contentBackground,
-				}}>
-				<View
+			transparent={true}>
+			<View style={{flex: 1, justifyContent: "flex-start"}}>
+				<TouchableOpacity
+					activeOpacity={1}
+					onPress={onClose}
 					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
-						paddingHorizontal: 16,
-						paddingVertical: 12,
-						borderBottomWidth: 1,
-						borderBottomColor: theme.colors.themeGrey,
+						position: "absolute",
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+						backgroundColor: theme.colors.overlayBackdrop ?? "rgba(44, 42, 40, 0.42)",
+					}}
+				/>
+				<TouchableOpacity
+					activeOpacity={1}
+					onPress={() => {}}
+					style={{
+						marginTop: 48,
+						marginHorizontal: 20,
+						marginBottom: 24,
+						borderRadius: 12,
+						backgroundColor: theme.colors.bgPaper ?? theme.colors.contentBackground,
+						maxHeight: modalCardMaxHeight,
+						overflow: "hidden",
 					}}>
-					<TouchableOpacity onPress={onClose}>
-						<Text
-							style={{
-								color: theme.colors.fontB2,
-								fontSize: 16,
-							}}>
-							{getStr("cancel")}
-						</Text>
-					</TouchableOpacity>
-					<Text
+					<View
 						style={{
-							color: theme.colors.text,
-							fontSize: 16,
-							fontWeight: "600",
-						}}>
-						{getStr(
-							params === undefined ? "scheduleAddCustom" : "scheduleEdit",
-						)}
-					</Text>
-					<TouchableOpacity
-						disabled={!valid}
-						onPress={handleSave}
-						activeOpacity={0.85}
-						style={{
-							opacity: valid ? 1 : 0.5,
-							backgroundColor: valid ? theme.colors.btnPrimaryBg : theme.colors.themeGrey,
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							paddingHorizontal: 16,
 							paddingVertical: 12,
-							paddingHorizontal: 24,
-							borderRadius: 4,
+							borderBottomWidth: 1,
+							borderBottomColor: theme.colors.themeGrey,
 						}}>
+						<TouchableOpacity onPress={onClose}>
+							<Text
+								style={{
+									color: theme.colors.fontB2,
+									fontSize: 16,
+								}}>
+								{getStr("cancel")}
+							</Text>
+						</TouchableOpacity>
 						<Text
 							style={{
-								color: valid
-									? theme.colors.btnPrimaryText
-									: theme.colors.themeGrey,
+								color: theme.colors.textPrimary,
 								fontSize: 16,
 								fontWeight: "600",
 							}}>
-							{getStr("save")}
+							{getStr(
+								params === undefined ? "scheduleAddCustom" : "scheduleEdit",
+							)}
 						</Text>
-					</TouchableOpacity>
-				</View>
-				<ScrollView style={{padding: 12}}>
+						<TouchableOpacity
+							disabled={!valid}
+							onPress={handleSave}
+							activeOpacity={0.85}
+							style={{
+								opacity: valid ? 1 : 0.5,
+								backgroundColor: valid ? theme.colors.btnPrimaryBg : theme.colors.themeGrey,
+								paddingVertical: 12,
+								paddingHorizontal: 24,
+								borderRadius: 4,
+							}}>
+							<Text
+								style={{
+									color: valid
+										? theme.colors.btnPrimaryText
+										: theme.colors.themeGrey,
+									fontSize: 16,
+									fontWeight: "600",
+								}}>
+								{getStr("save")}
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<ScrollView
+						style={{maxHeight: scrollMaxHeight}}
+						contentContainerStyle={{padding: 12, paddingBottom: 24}}
+						showsVerticalScrollIndicator={true}>
 					<RoundedView style={{marginTop: 4, padding: 16}}>
 						<View
 							style={[
@@ -1220,7 +1247,8 @@ export const ScheduleAddModal = ({
 							</>
 						)}
 					</RoundedView>
-				</ScrollView>
+					</ScrollView>
+				</TouchableOpacity>
 			</View>
 		</Modal>
 	);

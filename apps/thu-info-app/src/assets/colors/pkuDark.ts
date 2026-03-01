@@ -65,4 +65,5 @@ export const colorPkuDark: ColorTheme = {
 	darkError: "#D88C8C",
 	focusInnerMask: "#1A1918",
 	focusOuterRing: "#FFFFFF",
+	overlayBackdrop: "rgba(26, 25, 24, 0.55)",
 };

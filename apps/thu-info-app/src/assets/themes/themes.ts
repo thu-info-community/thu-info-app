@@ -69,6 +69,8 @@ export interface ColorTheme {
 	focusOuterRing?: string;
 	/** 浅色模式：计划等内容的纸张色背景（纸张美学） */
 	bgPaper?: string;
+	/** Modal 外半透明遮罩（规范暖炭黑/深色+透明度，保证下层文字仍可辨读） */
+	overlayBackdrop?: string;
 }
 
 export interface Theme {
