@@ -728,8 +728,9 @@ export const ScheduleScreen = () => {
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
 	const scrollViewRef = useRef<ScrollView>(null);
 	const hasScrolledToInitialRef = useRef(false);
+	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
 
-	// 打开计划时默认滚动，使「8:00」时间轴在首屏第一个可见（左侧时间列 top: 40，标签在 40 + hour*hourHeight - 6）
+	// 打开计划时默认滚动，使「8:00」时间轴在首屏第一个可见（表头已固定在外部，滚动内容从 0:00 开始）
 	useEffect(() => {
 		if (
 			tableHeight > 0 &&
@@ -738,7 +739,7 @@ export const ScheduleScreen = () => {
 		) {
 			hasScrolledToInitialRef.current = true;
 			// 视口顶放在 7:00 标签下方一点，这样第一个完整露出的是「8:00」
-			const scrollY = 40 + 7 * hourHeight - 5;
+			const scrollY = 7 * hourHeight - 5;
 			scrollViewRef.current.scrollTo({
 				y: scrollY,
 				animated: false,
@@ -766,8 +767,65 @@ export const ScheduleScreen = () => {
 				uploadingCustomSchedule={uploadingCustomSchedule}
 			/>
 			<GestureHandlerRootView style={{flex: 1}}>
+				{/* 冷冻第一行：周一、周二、周三……固定在顶部，垂直滚动时保持可见 */}
+				<View
+					style={{
+						flexDirection: "row",
+						height: 40,
+						backgroundColor: theme.colors.contentBackground,
+					}}>
+					<View style={{width: timeLabelWidth + timeAxisWidth}} />
+					<View
+						style={{
+							flexDirection: "row",
+							width: scheduleBodyWidth,
+							flex: 1,
+						}}>
+						{Array.from(new Array(hideWeekend ? 5 : 7)).map((_, index) => (
+							<View
+								style={{
+									flex: 1,
+									padding: 4,
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+								key={`frozen-${index + 1}`}>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 12,
+										color: theme.colors.fontB1,
+									}}>
+									{getStr("dayOfWeek")[index + 1]}
+								</Text>
+								<View
+									style={{
+										width: 18,
+										height: 2,
+										borderRadius: 1,
+										backgroundColor:
+											today === index + 1
+												? theme.colors.themePurple
+												: undefined,
+									}}
+								/>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 9,
+										color: theme.colors.fontB1,
+									}}>
+									{dayjs(firstDay)
+										.add(currentWeekIndex * 7 + index, "day")
+										.format("MM/DD")}
+								</Text>
+							</View>
+						))}
+					</View>
+				</View>
 				<ScrollView
 					ref={scrollViewRef}
+					style={{flex: 1}}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
 					}}
@@ -781,7 +839,7 @@ export const ScheduleScreen = () => {
 					}>
 					<View style={{flexDirection: "row"}}>
 						{/* Timetable on the left: 0:00 - 24:00 */}
-						<View style={{width: timeLabelWidth, top: 40}}>
+						<View style={{width: timeLabelWidth, height: 24 * hourHeight}}>
 							{Array.from(new Array(25), (_, k) => k).map((hour) => (
 								<Text
 									key={`time-label-${hour}`}
@@ -802,7 +860,6 @@ export const ScheduleScreen = () => {
 						<View
 							style={{
 								width: timeAxisWidth,
-								top: 40,
 								height: 24 * hourHeight,
 							}}>
 							{/* main vertical line */}
@@ -880,7 +937,7 @@ export const ScheduleScreen = () => {
 										position: "absolute",
 										left: 0,
 										right: 0,
-										top: hour * hourHeight + 40,
+										top: hour * hourHeight,
 									}}
 								/>
 							))}
@@ -898,59 +955,12 @@ export const ScheduleScreen = () => {
 									index: index,
 								})}
 								data={allSchedule()}
-								renderItem={({item, index: w}) => (
+								renderItem={({item}) => (
 									<View
 										style={{
-											// Header has a height of 40
-											height: 24 * hourHeight + 40,
+											height: 24 * hourHeight,
 											width: scheduleBodyWidth,
 										}}>
-										<View
-											style={{
-												height: 40,
-												flexDirection: "row",
-											}}>
-											{Array.from(new Array(hideWeekend ? 5 : 7)).map((_, index) => (
-												<View
-													style={{
-														flex: 1,
-														padding: 4,
-														alignItems: "center",
-														justifyContent: "center",
-													}}
-													key={`0-${index + 1}`}>
-													<Text
-														style={{
-															textAlign: "center",
-															fontSize: 12,
-															color: theme.colors.fontB1,
-														}}>
-														{getStr("dayOfWeek")[index + 1]}
-													</Text>
-													<View
-														style={{
-															width: 18,
-															height: 2,
-															borderRadius: 1,
-															backgroundColor:
-																w === nowWeek - 1 && today === index + 1
-																	? theme.colors.themePurple
-																	: undefined,
-														}}
-													/>
-													<Text
-														style={{
-															textAlign: "center",
-															fontSize: 9,
-															color: theme.colors.fontB1,
-														}}>
-														{dayjs(firstDay)
-															.add(w * 7 + index, "day")
-															.format("MM/DD")}
-													</Text>
-												</View>
-											))}
-										</View>
 										<View style={{height: 24 * hourHeight, width: scheduleBodyWidth}}>
 											<TouchableOpacity
 												activeOpacity={1}
@@ -958,7 +968,7 @@ export const ScheduleScreen = () => {
 													position: "absolute",
 													left: 0,
 													right: 0,
-													top: 40,
+													top: 0,
 													bottom: 0,
 												}}
 												onPress={() => {
@@ -1045,6 +1055,7 @@ export const ScheduleScreen = () => {
 									const index = Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
 									);
+									setCurrentWeekIndex(index);
 									headerRef.current?.setWeekNumber(index + 1);
 								}}
 								pagingEnabled={true}
