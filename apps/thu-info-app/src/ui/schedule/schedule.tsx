@@ -1,4 +1,17 @@
-import {View, Text, Dimensions, TouchableOpacity, FlatList, Switch, Platform, ToastAndroid, Animated, Easing} from "react-native";
+import {
+	View,
+	Text,
+	Dimensions,
+	TouchableOpacity,
+	FlatList,
+	Switch,
+	Platform,
+	ToastAndroid,
+	Animated,
+	Easing,
+	Alert,
+	ActivityIndicator,
+} from "react-native";
 import React, {
 	useState,
 	useEffect,
@@ -24,6 +37,7 @@ import md5 from "md5";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
+import IconUpload from "../../assets/icons/IconUpload";
 import Slider from "@react-native-community/slider";
 import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
@@ -92,12 +106,18 @@ const Header = React.forwardRef(
 			onChangeSetOpenConfig,
 			onPressAdd,
 			onSetWeek,
+			onPressUpload,
+			hasCustomSchedule,
+			uploadingCustomSchedule,
 		}: {
 			calendar: CalendarData | undefined;
 			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
 			onChangeSetOpenConfig: Function;
 			onSetWeek: Function;
 			onPressAdd: () => void;
+			onPressUpload: () => void;
+			hasCustomSchedule: boolean;
+			uploadingCustomSchedule: boolean;
 		},
 		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
@@ -271,6 +291,28 @@ const Header = React.forwardRef(
 							)}
 						</Text>
 					</BottomPopupTriggerView>
+					{hasCustomSchedule && (
+						<View
+							style={{
+								position: "absolute",
+								right: 80,
+								flexDirection: "row",
+							}}>
+							<TouchableOpacity
+								onPress={() => onPressUpload()}
+								disabled={uploadingCustomSchedule}
+								activeOpacity={0.7}>
+								{uploadingCustomSchedule ? (
+									<ActivityIndicator
+										size="small"
+										color={theme.colors.themePurple}
+									/>
+								) : (
+									<IconUpload width={24} height={24} />
+								)}
+							</TouchableOpacity>
+						</View>
+					)}
 					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
 						<TouchableOpacity onPress={() => onChangeSetOpenConfig()}>
 							<IconConfig width={24} height={24} />
@@ -406,6 +448,21 @@ export const ScheduleScreen = () => {
 	const scheduleBodyWidth = windowWidth - timeLabelWidth - timeAxisWidth;
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
+
+	const [uploadingCustomSchedule, setUploadingCustomSchedule] = useState(false);
+
+	const customSchedulesInCurrentSemester = baseSchedule.filter((schedule) => {
+		if (schedule.type !== ScheduleType.CUSTOM) {
+			return false;
+		}
+		return schedule.activeTime.base.some((slice) => {
+			const week = getWeekFromTime(slice.beginTime, firstDay);
+			return week >= 1 && week <= weekCount;
+		});
+	});
+
+	const hasCustomScheduleInCurrentSemester =
+		customSchedulesInCurrentSemester.length > 0;
 
 	const [openConfig, setOpenConfig] = useState(false);
 	const [showAddModal, setShowAddModal] = useState(false);
@@ -558,6 +615,43 @@ export const ScheduleScreen = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(getSchedule, [nextSemesterIndex]);
 
+	const handleUploadCustomSchedule = () => {
+		if (!hasCustomScheduleInCurrentSemester || uploadingCustomSchedule) {
+			return;
+		}
+		Alert.alert(
+			getStr("scheduleUploadCustomTitle"),
+			getStr("scheduleUploadCustomMessage"),
+			[
+				{
+					text: getStr("cancel"),
+					style: "cancel",
+				},
+				{
+					text: getStr("scheduleUploadCustomConfirm"),
+					onPress: async () => {
+						setUploadingCustomSchedule(true);
+						try {
+							await helper.saveCustomSchedule(customSchedulesInCurrentSemester);
+							Snackbar.show({
+								text: getStr("scheduleUploadCustomSuccess"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+							getSchedule();
+						} catch {
+							Snackbar.show({
+								text: getStr("networkRetry"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						} finally {
+							setUploadingCustomSchedule(false);
+						}
+					},
+				},
+			],
+		);
+	};
+
 	const allSchedule = () => {
 		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
 			weekCount,
@@ -627,6 +721,9 @@ export const ScheduleScreen = () => {
 					setOpenConfig((v) => !v);
 				}}
 				onPressAdd={() => setShowAddModal(true)}
+				onPressUpload={handleUploadCustomSchedule}
+				hasCustomSchedule={hasCustomScheduleInCurrentSemester}
+				uploadingCustomSchedule={uploadingCustomSchedule}
 			/>
 			<GestureHandlerRootView style={{flex: 1}}>
 				<ScrollView

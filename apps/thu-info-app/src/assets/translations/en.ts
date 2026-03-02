@@ -698,4 +698,8 @@ export default {
 	copied: "Copied",
 	summaryPrompt:
 		"Generate a concise and descriptive title for the following conversation. The title should:\n- Be no longer than 10 words\n- Without punctuation or special symbols, and avoid using emojis\n- Clearly reflect the main topic of the conversation\n- ONLY generate the final title\n\nHere is the conversation: \n{{",
+	scheduleUploadCustomTitle: "Upload custom schedules to 网络学堂",
+	scheduleUploadCustomMessage: "Upload custom schedules of current semester to 网络学堂?",
+	scheduleUploadCustomConfirm: "Upload",
+	scheduleUploadCustomSuccess: "Custom schedules have been uploaded to 网络学堂",
 };
