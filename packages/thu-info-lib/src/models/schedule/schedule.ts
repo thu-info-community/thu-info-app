@@ -147,7 +147,7 @@ export interface Schedule {
  */
 export const delOrHide = (schedule: Schedule, elem: TimeSlice): boolean => {
     const removed = scheduleTimeRemove(schedule.activeTime, elem);
-    if (removed) {
+    if (removed && schedule.category !== "个人日历" && schedule.type !== ScheduleType.CUSTOM) {
         scheduleTimeAdd(schedule.delOrHideTime, elem);
     }
     return removed;

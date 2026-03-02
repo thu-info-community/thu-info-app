@@ -70,7 +70,7 @@ export const ScheduleDetailScreen = ({
 			return null;
 		}
 		const verbText: string =
-			props.type === ScheduleType.CUSTOM && choice === Choice.ALL
+			props.type === ScheduleType.CUSTOM
 				? getStr("delSchedule")
 				: getStr("hideSchedule");
 		const buttonText: string =

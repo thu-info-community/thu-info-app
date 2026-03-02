@@ -1473,16 +1473,19 @@ export const ScheduleScreen = () => {
 							}}>
 							{renderDetailContent()}
 						</Animated.View>
-						{actionTarget.type !== ScheduleType.EXAM && (
 							<View>
 								{renderActionButton(
-									getStr("hideSchedule") + getStr("once"),
+                                    (actionTarget.type === ScheduleType.CUSTOM
+                                        ? getStr("delSchedule")
+                                        : getStr("hideSchedule")) + getStr("once"),
 									bauhausColors.actionGreen,
 									"rgba(91,140,124,0.10)",
 									"rgba(122,172,150,0.16)",
 									() => {
 										const onceLabel =
-											getStr("hideSchedule") + getStr("once");
+                                            (actionTarget.type === ScheduleType.CUSTOM
+                                                ? getStr("delSchedule")
+                                                : getStr("hideSchedule")) + getStr("once");
 										handleHide(Choice.ONCE, onceLabel);
 									},
 								)}
@@ -1514,7 +1517,6 @@ export const ScheduleScreen = () => {
 									},
 								)}
 							</View>
-						)}
 					</Animated.View>
 				</View>
 			)}
