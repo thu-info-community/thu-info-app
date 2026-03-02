@@ -16,10 +16,10 @@ import {
 	_84634E1A607A_URL,
 	ASHITEMARU_URL,
 	EVEELSEIF_URL,
-	FIONAXYZOU_URL,
 	GITHUB_ORG_URL,
 	ICP_URL,
 	Johnny_URL,
+	OLIVIA_URL,
 	UNIDY2002_URL,
 	VZHAO_21_URL,
 	WERKEYTOM_URL,
@@ -133,13 +133,13 @@ export const AboutScreen = () => {
 			<Text style={[styles.textStyle, {color: theme.colors.text}]}>
 				{getStr("productDesign")}
 			</Text>
-			<TouchableOpacity onPress={() => makeLinking(FIONAXYZOU_URL)}>
+			<TouchableOpacity onPress={() => makeLinking(OLIVIA_URL)}>
 				<Text
 					style={[
 						styles.textStyle,
 						{color: theme.colors.primaryLight, fontSize: 17},
 					]}>
-					fionaxyzou @ GitHub
+					OliviaFiona @ GitHub
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity onPress={() => makeLinking(Johnny_URL)}>
