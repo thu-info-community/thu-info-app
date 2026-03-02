@@ -144,6 +144,7 @@ const Header = React.forwardRef(
 		})();
 
 		const [week, setWeek] = useState(nowWeek);
+		const uploadIconScale = useRef(new Animated.Value(1)).current;
 
 		useImperativeHandle(
 			ref,
@@ -159,6 +160,40 @@ const Header = React.forwardRef(
 
 		const windowWidth = Dimensions.get("window").width;
 		const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
+
+		useEffect(() => {
+			let animation:
+				| Animated.CompositeAnimation
+				| undefined;
+			if (hasCustomSchedule && !uploadingCustomSchedule) {
+				animation = Animated.loop(
+					Animated.sequence([
+						Animated.timing(uploadIconScale, {
+							toValue: 1.12,
+							duration: 800,
+							easing: Easing.out(Easing.quad),
+							useNativeDriver: true,
+						}),
+						Animated.timing(uploadIconScale, {
+							toValue: 1,
+							duration: 800,
+							easing: Easing.in(Easing.quad),
+							useNativeDriver: true,
+						}),
+					]),
+				);
+				animation.start();
+			} else {
+				uploadIconScale.stopAnimation?.(() => {
+					uploadIconScale.setValue(1);
+				});
+			}
+			return () => {
+				if (animation) {
+					animation.stop();
+				}
+			};
+		}, [hasCustomSchedule, uploadingCustomSchedule, uploadIconScale]);
 
 		return (
 			<View
@@ -302,14 +337,19 @@ const Header = React.forwardRef(
 								onPress={() => onPressUpload()}
 								disabled={uploadingCustomSchedule}
 								activeOpacity={0.7}>
-								{uploadingCustomSchedule ? (
-									<ActivityIndicator
-										size="small"
-										color={theme.colors.themePurple}
-									/>
-								) : (
-									<IconUpload width={24} height={24} />
-								)}
+								<Animated.View
+									style={{
+										transform: [{scale: uploadIconScale}],
+									}}>
+									{uploadingCustomSchedule ? (
+										<ActivityIndicator
+											size="small"
+											color={theme.colors.themePurple}
+										/>
+									) : (
+										<IconUpload width={24} height={24} />
+									)}
+								</Animated.View>
 							</TouchableOpacity>
 						</View>
 					)}
