@@ -466,11 +466,11 @@ export const ScheduleScreen = () => {
 
 	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
-	const [tableHeight, setTableHeight] = useState(
-		windowHeight - getStatusBarHeight() - 40,
-	);
-	// 按上课时间（8:00-21:45）划分为 13.75 小时
-	const exactHourHeight = (tableHeight - 40) / 13.75;
+	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
+	const [tableHeight, setTableHeight] = useState(0);
+	const heightForCalc = tableHeight > 0 ? tableHeight : windowHeight - getStatusBarHeight() - 80;
+	// 按上课时间（8:00-21:45）划分为 13.75 小时（表头已移出，可视区域即 ScrollView 高度，不再减 40）
+	const exactHourHeight = heightForCalc / 13.75;
 	const heightMode =
 		useSelector((s: State) => s.config.scheduleHeightMode) ?? 10;
 	const hideWeekend = useSelector((s: State) => s.config.hideWeekend);
@@ -730,7 +730,7 @@ export const ScheduleScreen = () => {
 	const hasScrolledToInitialRef = useRef(false);
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
 
-	// 打开计划时默认滚动，使「8:00」时间轴在首屏第一个可见（表头已固定在外部，滚动内容从 0:00 开始）
+	// 打开计划时默认滚动，使「8:00」时间轴稳定作为首屏第一行（仅用 onLayout 高度，并做范围限制与延迟一帧）
 	useEffect(() => {
 		if (
 			tableHeight > 0 &&
@@ -738,12 +738,21 @@ export const ScheduleScreen = () => {
 			scrollViewRef.current
 		) {
 			hasScrolledToInitialRef.current = true;
-			// 视口顶放在 7:00 标签下方一点，这样第一个完整露出的是「8:00」
-			const scrollY = 7 * hourHeight - 5;
-			scrollViewRef.current.scrollTo({
-				y: scrollY,
-				animated: false,
-			});
+			const contentHeight = 24 * hourHeight;
+			const maxScrollY = Math.max(0, contentHeight - tableHeight);
+			// 8:00 标签为 top: 8*hourHeight-6、fontSize 10，需上移视口约 20px 才能完整露出
+			const labelClearance = 20;
+			const targetY = 8 * hourHeight - labelClearance;
+			const scrollY = Math.max(0, Math.min(targetY, maxScrollY));
+			const run = () => {
+				scrollViewRef.current?.scrollTo({
+					y: scrollY,
+					animated: false,
+				});
+			};
+			// 延迟一帧再滚，确保布局已稳定，提高鲁棒性
+			const id = requestAnimationFrame(run);
+			return () => cancelAnimationFrame(id);
 		}
 	}, [tableHeight, hourHeight]);
 
