@@ -85,7 +85,7 @@ export interface ScheduleTime {
 export const scheduleTimeAdd = (time: ScheduleTime, elem: TimeSlice, mergeAdjacent = false): boolean => {
     let isAdjacent = false;
     // 合并相邻的时间片
-    if (isAdjacent) {
+    if (mergeAdjacent) {
         for (const val of time.base) {
             if (elem.beginTime.isAfter(val.endTime) && elem.beginTime.diff(val.endTime, "minutes") <= 15) {
                 val.endTime = elem.endTime;

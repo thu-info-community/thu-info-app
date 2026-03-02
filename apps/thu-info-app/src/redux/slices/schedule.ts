@@ -69,6 +69,7 @@ export const scheduleSlice = createSlice({
 					location: selectedSchedule.location,
 					type: val.type,
 					hash: val.hash,
+					category: val.category,
 					activeTime: val.activeTime,
 					delOrHideTime: selectedSchedule.delOrHideTime,
 				};
