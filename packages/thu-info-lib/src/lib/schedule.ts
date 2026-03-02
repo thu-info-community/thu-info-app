@@ -115,7 +115,7 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
                         p_date,
                         p_start_time,
                         p_end_time,
-                    });
+                    }, 60000, "GBK");
                     form = cheerio.load(result)("form[action=\"jxmh.do\"]");
                     if (form.length === 0) {
                         return;

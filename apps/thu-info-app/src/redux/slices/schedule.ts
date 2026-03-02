@@ -81,8 +81,41 @@ export const scheduleSlice = createSlice({
 				newScheduleList.push(mergedSchedule);
 			});
 
+			// 对自定义计划去掉在新课表中完全重合的时间片
+			const filteredCustomList: Schedule[] = [];
+			customList.forEach((custom) => {
+				// 只处理自定义计划，防止未来 customList 构造方式变更
+				if (custom.type !== ScheduleType.CUSTOM) {
+					filteredCustomList.push(custom);
+					return;
+				}
+
+				const plainName = custom.name.substring(6);
+				const remainingSlices = custom.activeTime.base.filter((slice) => {
+					const overlapped = payload.schedule.some((sch) => {
+						if (sch.name !== plainName || sch.location !== custom.location) {
+							return false;
+						}
+						return sch.activeTime.base.some(
+							(t) =>
+								t.dayOfWeek === slice.dayOfWeek &&
+								t.beginTime.isSame(slice.beginTime, "minute") &&
+								t.endTime.isSame(slice.endTime, "minute"),
+						);
+					});
+					// overlapped === true 表示有完全相同的官方时间片，需要删掉
+					return !overlapped;
+				});
+
+				// 如果这个自定义计划的时间片都被删光了，则整体删除该自定义计划
+				if (remainingSlices.length > 0) {
+					custom.activeTime.base = remainingSlices;
+					filteredCustomList.push(custom);
+				}
+			});
+
 			state.semesterId = payload.semesterId;
-			state.baseSchedule = customList.concat(newScheduleList);
+			state.baseSchedule = filteredCustomList.concat(newScheduleList);
 		},
 		scheduleUpdateAlias: (
 			state,
