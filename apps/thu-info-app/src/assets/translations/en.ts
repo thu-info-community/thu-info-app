@@ -170,7 +170,7 @@ export default {
 	aboutApp: "About THU Info",
 	currentVersion: "Current version: ",
 	version: "Version",
-	maintainers: "Maintainers",
+	maintainers: "Developers",
 	productDesign: "Product & Design",
 	sourceText: "Source",
 	builtWithRN: "Proudly built with React Native⚛️",
