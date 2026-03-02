@@ -699,6 +699,7 @@ export const ScheduleAddModal = ({
 						<BottomPopupTriggerView
 							disabled={timeEditable}
 							popupTitle={explainWeekList(popupWeeks)}
+							popupCancelable={true}
 							popupContent={
 								<View>
 									<View
@@ -915,6 +916,7 @@ export const ScheduleAddModal = ({
 							popupTitle={`${getStr("dayOfWeek")[popupDay]} ${
 								beginTime[popupPeriodBegin]
 							} - ${endTime[popupPeriodEnd]}`}
+							popupCancelable={true}
 							popupContent={
 								<View style={{flexDirection: "row"}}>
 									<ScrollPicker
@@ -1050,6 +1052,7 @@ export const ScheduleAddModal = ({
 									getStr("dayOfWeek")[dow]
 								}`;
 							})()}
+							popupCancelable={true}
 							popupContent={
 								<View style={{flexDirection: "row"}}>
 									<ScrollPicker
@@ -1145,6 +1148,7 @@ export const ScheduleAddModal = ({
 								2,
 								"0",
 							)}`}
+							popupCancelable={true}
 							popupContent={
 								<View style={{flexDirection: "row"}}>
 									<ScrollPicker
