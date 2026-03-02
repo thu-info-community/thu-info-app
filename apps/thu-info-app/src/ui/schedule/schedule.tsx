@@ -11,6 +11,7 @@ import {
 	Easing,
 	Alert,
 	ActivityIndicator,
+	Pressable,
 } from "react-native";
 import React, {
 	useState,
@@ -476,6 +477,19 @@ export const ScheduleScreen = () => {
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const isDarkMode = dark || themeName === "dark";
 
+	const bauhausColors = {
+		baseBackground: isDarkMode ? "#1A1918" : "#F8F6F2",
+		surface: isDarkMode ? "#2A2927" : "#FDFBF7",
+		primaryText: isDarkMode ? "#F0EDE9" : "#2C2A28",
+		secondaryText: isDarkMode ? "#C8C5C0" : "#5C5A56",
+		location: isDarkMode ? "#A688B8" : "#8B6B9C",
+		actionGreen: isDarkMode ? "#7AAC96" : "#5B8C7C",
+		deleteAccent: isDarkMode ? "#D88C8C" : "#8FBC8F",
+		border: isDarkMode ? "#3A3937" : "rgba(255,255,255,0.8)",
+		divider: isDarkMode ? "#3A3937" : "rgba(0,0,0,0.04)",
+		focusRing: isDarkMode ? "#FFFFFF" : "#2C2A28",
+	};
+
 	const windowWidth = Math.floor(Dimensions.get("window").width);
 	const windowHeight = Dimensions.get("window").height;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
@@ -520,9 +534,40 @@ export const ScheduleScreen = () => {
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [editingParams, setEditingParams] = useState<ScheduleEditParams | undefined>(undefined);
 	const [actionTarget, setActionTarget] = useState<ScheduleEditParams | undefined>(undefined);
-	const [detailExpanded, setDetailExpanded] = useState(false);
-	const [detailContentHeight, setDetailContentHeight] = useState(0);
-	const detailAnim = useRef(new Animated.Value(0)).current;
+
+	const themeTransition = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current;
+	const popupAnim = useRef(new Animated.Value(0)).current;
+
+	const popupBaseBackground = themeTransition.interpolate({
+		inputRange: [0, 1],
+		outputRange: ["#F8F6F2", "#1A1918"],
+	});
+
+	const popupSurfaceBackground = themeTransition.interpolate({
+		inputRange: [0, 1],
+		outputRange: ["#FDFBF7", "#2A2927"],
+	});
+
+	useEffect(() => {
+		Animated.timing(themeTransition, {
+			toValue: isDarkMode ? 1 : 0,
+			duration: 300,
+			easing: Easing.out(Easing.ease),
+			useNativeDriver: false,
+		}).start();
+	}, [isDarkMode, themeTransition]);
+
+	useEffect(() => {
+		if (actionTarget) {
+			popupAnim.setValue(0);
+			Animated.timing(popupAnim, {
+				toValue: 1,
+				duration: 200,
+				easing: Easing.out(Easing.ease),
+				useNativeDriver: true,
+			}).start();
+		}
+	}, [actionTarget, popupAnim]);
 
 	const nullAlias = (str: string | undefined) => {
 		if (str === undefined) {
@@ -550,8 +595,6 @@ export const ScheduleScreen = () => {
 			]),
 		);
 		setActionTarget(undefined);
-		setDetailExpanded(false);
-		detailAnim.setValue(0);
 		if (Platform.OS === "android") {
 			ToastAndroid.showWithGravity(
 				`已成功${label}`,
@@ -565,8 +608,8 @@ export const ScheduleScreen = () => {
 		if (!actionTarget) {
 			return null;
 		}
-		const detailTextColor = isDarkMode ? theme.colors.fontB0 : theme.colors.fontB1;
-		const detailSecondaryColor = isDarkMode ? theme.colors.fontB1 : theme.colors.fontB2;
+		const detailTextColor = bauhausColors.primaryText;
+		const detailSecondaryColor = bauhausColors.secondaryText;
 		return (
 			<View
 				style={{
@@ -590,7 +633,7 @@ export const ScheduleScreen = () => {
 				<Text
 					style={{
 						fontSize: 13,
-						color: theme.colors.themePurple,
+						color: bauhausColors.location,
 						marginBottom: 8,
 					}}>
 					{actionTarget.location === ""
@@ -743,6 +786,43 @@ export const ScheduleScreen = () => {
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
 	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
 		undefined,
+	);
+
+	const renderActionButton = (
+		label: string,
+		textColor: string,
+		backgroundLight: string,
+		backgroundDark: string,
+		onPress: () => void,
+	) => (
+		<Pressable
+			onPress={onPress}
+			style={(state) => {
+				const {pressed} = state;
+				const focused =
+					(state as unknown as {focused?: boolean}).focused ?? false;
+				return {
+					marginTop: 8,
+					paddingVertical: pressed ? 11 : 10,
+					paddingHorizontal: 12,
+					borderRadius: 4,
+					backgroundColor: isDarkMode ? backgroundDark : backgroundLight,
+					alignItems: "center",
+					justifyContent: "center",
+					transform: pressed ? [{translateY: 1}] : [],
+					borderWidth: focused ? 2 : 1,
+					borderColor: focused ? bauhausColors.focusRing : "transparent",
+				};
+			}}>
+			<Text
+				style={{
+					fontSize: 14,
+					fontWeight: "500",
+					color: textColor,
+				}}>
+				{label}
+			</Text>
+		</Pressable>
 	);
 
 	// 打开计划时默认滚动，使「8:00」时间轴稳定作为首屏第一行（仅用 onLayout 高度，并做范围限制与延迟一帧）
@@ -1331,13 +1411,13 @@ export const ScheduleScreen = () => {
 						right: 0,
 						top: 0,
 						bottom: 0,
+						alignItems: "center",
+						justifyContent: "center",
 					}}>
 					<TouchableOpacity
 						activeOpacity={1}
 						onPress={() => {
 							setActionTarget(undefined);
-							setDetailExpanded(false);
-							detailAnim.setValue(0);
 						}}
 						style={{
 							position: "absolute",
@@ -1345,151 +1425,97 @@ export const ScheduleScreen = () => {
 							right: 0,
 							top: 0,
 							bottom: 0,
+							backgroundColor: "#00000055",
 						}}
 					/>
-					<View
+					<Animated.View
 						style={{
-							position: "absolute",
-							bottom: 80,
-							left: 32,
-							right: 32,
+							width: Math.min(400, windowWidth - 32),
+							borderRadius: 24,
+							padding: 18,
+							backgroundColor: popupBaseBackground,
+							borderWidth: 1,
+							borderColor: bauhausColors.border,
+							opacity: popupAnim,
+							transform: [
+								{
+									scale: popupAnim.interpolate({
+										inputRange: [0, 1],
+										outputRange: [0.95, 1],
+									}),
+								},
+								{
+									translateY: popupAnim.interpolate({
+										inputRange: [0, 1],
+										outputRange: [20, 0],
+									}),
+								},
+							],
 						}}>
-						<View
+						<Text
 							style={{
-								backgroundColor: theme.colors.contentBackground,
-								borderRadius: 12,
-								paddingVertical: 8,
-								shadowColor: "#000",
-								shadowOpacity: 0.15,
-								shadowRadius: 8,
-								elevation: 4,
+								textAlign: "center",
+								fontSize: 16,
+								fontWeight: "600",
+								color: bauhausColors.primaryText,
+								marginBottom: 12,
 							}}>
-							{actionTarget.type !== ScheduleType.EXAM && (
-								<>
-									{(() => {
+							{"日程详情"}
+						</Text>
+						<Animated.View
+							style={{
+								backgroundColor: popupSurfaceBackground,
+								borderRadius: 16,
+								padding: 16,
+								borderWidth: 1,
+								borderColor: bauhausColors.border,
+								marginBottom: 16,
+							}}>
+							{renderDetailContent()}
+						</Animated.View>
+						{actionTarget.type !== ScheduleType.EXAM && (
+							<View>
+								{renderActionButton(
+									getStr("hideSchedule") + getStr("once"),
+									bauhausColors.actionGreen,
+									"rgba(91,140,124,0.10)",
+									"rgba(122,172,150,0.16)",
+									() => {
 										const onceLabel =
 											getStr("hideSchedule") + getStr("once");
-										return (
-											<TouchableOpacity
-												onPress={() => handleHide(Choice.ONCE, onceLabel)}
-												style={{paddingVertical: 10}}>
-												<Text
-													style={{
-														textAlign: "center",
-														fontSize: 16,
-														color: theme.colors.fontB1,
-													}}>
-													{onceLabel}
-												</Text>
-											</TouchableOpacity>
-										);
-									})()}
-									{actionTarget.type !== ScheduleType.CUSTOM &&
-										(() => {
+										handleHide(Choice.ONCE, onceLabel);
+									},
+								)}
+								{actionTarget.type !== ScheduleType.CUSTOM &&
+									renderActionButton(
+										getStr("hideSchedule") + getStr("repeatly"),
+										bauhausColors.actionGreen,
+										"rgba(91,140,124,0.10)",
+										"rgba(122,172,150,0.16)",
+										() => {
 											const repeatLabel =
 												getStr("hideSchedule") + getStr("repeatly");
-											return (
-												<TouchableOpacity
-													onPress={() =>
-														handleHide(Choice.REPEAT, repeatLabel)
-													}
-													style={{paddingVertical: 10}}>
-													<Text
-														style={{
-															textAlign: "center",
-															fontSize: 16,
-															color: theme.colors.fontB1,
-														}}>
-														{repeatLabel}
-													</Text>
-												</TouchableOpacity>
-											);
-										})()}
-									{(() => {
+											handleHide(Choice.REPEAT, repeatLabel);
+										},
+									)}
+								{renderActionButton(
+									(actionTarget.type === ScheduleType.CUSTOM
+										? getStr("delSchedule")
+										: getStr("hideSchedule")) + getStr("allTime"),
+									bauhausColors.deleteAccent,
+									"rgba(143,188,143,0.10)",
+									"rgba(216,140,140,0.16)",
+									() => {
 										const allLabel =
 											(actionTarget.type === ScheduleType.CUSTOM
 												? getStr("delSchedule")
 												: getStr("hideSchedule")) + getStr("allTime");
-										return (
-											<TouchableOpacity
-												onPress={() => handleHide(Choice.ALL, allLabel)}
-												style={{paddingVertical: 10}}>
-												<Text
-													style={{
-														textAlign: "center",
-														fontSize: 16,
-														color: theme.colors.fontB1,
-													}}>
-													{allLabel}
-												</Text>
-											</TouchableOpacity>
-										);
-									})()}
-								</>
-							)}
-							<TouchableOpacity
-								onPress={() => {
-									const next = !detailExpanded;
-									setDetailExpanded(next);
-									Animated.timing(detailAnim, {
-										toValue: next ? 1 : 0,
-										duration: 300,
-										easing: Easing.out(Easing.ease),
-										useNativeDriver: false,
-									}).start();
-								}}
-								style={{paddingVertical: 10}}>
-								<Text
-									style={{
-										textAlign: "center",
-										fontSize: 16,
-										color: theme.colors.themePurple,
-									}}>
-									{detailExpanded ? getStr("scheduleDetailCollapse") : getStr("scheduleDetailExpand")}
-								</Text>
-							</TouchableOpacity>
-							{actionTarget && detailContentHeight === 0 && (
-								<View
-									style={{
-										position: "absolute",
-										opacity: 0,
-										left: 0,
-										right: 0,
-									}}>
-									<View
-										onLayout={({nativeEvent}) => {
-											if (detailContentHeight === 0) {
-												setDetailContentHeight(nativeEvent.layout.height);
-												if (detailExpanded) {
-													detailAnim.setValue(1);
-												}
-											}
-										}}>
-										{renderDetailContent()}
-									</View>
-								</View>
-							)}
-							<Animated.View
-								style={{
-									height:
-										detailContentHeight === 0
-											? 0
-											: detailAnim.interpolate({
-													inputRange: [0, 1],
-													outputRange: [0, Math.min(detailContentHeight, 300)],
-											  }),
-									overflow: "hidden",
-									marginHorizontal: 12,
-									marginBottom: 8,
-									borderRadius: 8,
-									backgroundColor: isDarkMode ? "#2d2d2d" : "#F8F9FA",
-									borderLeftWidth: detailExpanded ? 2 : 0,
-									borderLeftColor: theme.colors.themePurple,
-								}}>
-								{renderDetailContent()}
-							</Animated.View>
-						</View>
-					</View>
+										handleHide(Choice.ALL, allLabel);
+									},
+								)}
+							</View>
+						)}
+					</Animated.View>
 				</View>
 			)}
 		</>
