@@ -98,6 +98,18 @@ export const endTime = [
 	"21:45",
 ];
 
+interface NewScheduleDefaults {
+	week: number;
+	dayOfWeek: number;
+	periodBegin: number;
+	periodEnd: number;
+	dateIndex: number;
+	beginHour: number;
+	beginMinute: number;
+	endHour: number;
+	endMinute: number;
+}
+
 const Header = React.forwardRef(
 	(
 		{
@@ -729,6 +741,9 @@ export const ScheduleScreen = () => {
 	const scrollViewRef = useRef<ScrollView>(null);
 	const hasScrolledToInitialRef = useRef(false);
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
+	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
+		undefined,
+	);
 
 	// 打开计划时默认滚动，使「8:00」时间轴稳定作为首屏第一行（仅用 onLayout 高度，并做范围限制与延迟一帧）
 	useEffect(() => {
@@ -770,7 +785,11 @@ export const ScheduleScreen = () => {
 				onChangeSetOpenConfig={() => {
 					setOpenConfig((v) => !v);
 				}}
-				onPressAdd={() => setShowAddModal(true)}
+				onPressAdd={() => {
+					setEditingParams(undefined);
+					setAddDefaults(undefined);
+					setShowAddModal(true);
+				}}
 				onPressUpload={handleUploadCustomSchedule}
 				hasCustomSchedule={hasCustomScheduleInCurrentSemester}
 				uploadingCustomSchedule={uploadingCustomSchedule}
@@ -979,6 +998,76 @@ export const ScheduleScreen = () => {
 													right: 0,
 													top: 0,
 													bottom: 0,
+												}}
+												onPressIn={(e) => {
+													const {locationX, locationY} = e.nativeEvent;
+													const totalColumns = hideWeekend ? 5 : 7;
+													const columnWidth = unitWidth;
+													let dayIndex = Math.floor(locationX / columnWidth);
+													if (dayIndex < 0) {
+														dayIndex = 0;
+													} else if (dayIndex >= totalColumns) {
+														dayIndex = totalColumns - 1;
+													}
+													const dayOfWeek = dayIndex + 1;
+
+													const totalMinutesInDay = 24 * 60;
+													let minuteOfDay = Math.floor(locationY / minuteHeight);
+													if (minuteOfDay < 0) {
+														minuteOfDay = 0;
+													} else if (minuteOfDay >= totalMinutesInDay) {
+														minuteOfDay = totalMinutesInDay - 1;
+													}
+
+													const findPeriodByMinute = (m: number) => {
+														for (let i = 1; i < beginTime.length; i++) {
+															const beginStr = beginTime[i];
+															const endStr = endTime[i];
+															if (!beginStr || !endStr) {
+																continue;
+															}
+															const [bh, bm] = beginStr.split(":");
+															const [eh, em] = endStr.split(":");
+															const start =
+																parseInt(bh, 10) * 60 + parseInt(bm, 10);
+															const end =
+																parseInt(eh, 10) * 60 + parseInt(em, 10);
+															if (m >= start && m < end) {
+																return i;
+															}
+														}
+														return 1;
+													};
+
+													const periodBegin = findPeriodByMinute(minuteOfDay);
+													const periodEnd = Math.min(
+														periodBegin + 1,
+														endTime.length - 1,
+													);
+
+													const beginStr = beginTime[periodBegin] || "08:00";
+													const endStr = endTime[periodEnd] || "08:45";
+													const [bh, bm] = beginStr.split(":");
+													const [eh, em] = endStr.split(":");
+
+													const week = Math.max(
+														1,
+														Math.min(weekCount, currentWeekIndex + 1),
+													);
+													const dateIndex =
+														(week - 1) * 7 + (dayOfWeek - 1);
+
+													setAddDefaults({
+														week,
+														dayOfWeek,
+														periodBegin,
+														periodEnd,
+														dateIndex,
+														beginHour: parseInt(bh, 10),
+														beginMinute: parseInt(bm, 10),
+														endHour: parseInt(eh, 10),
+														endMinute: parseInt(em, 10),
+													});
 												}}
 												onPress={() => {
 													setEditingParams(undefined);
@@ -1220,9 +1309,18 @@ export const ScheduleScreen = () => {
 			<ScheduleAddModal
 				visible={showAddModal}
 				initialParams={editingParams}
+				defaultDayOfWeek={addDefaults?.dayOfWeek}
+				defaultDateIndex={addDefaults?.dateIndex}
+				defaultPeriodBegin={addDefaults?.periodBegin}
+				defaultPeriodEnd={addDefaults?.periodEnd}
+				defaultBeginHour={addDefaults?.beginHour}
+				defaultBeginMinute={addDefaults?.beginMinute}
+				defaultEndHour={addDefaults?.endHour}
+				defaultEndMinute={addDefaults?.endMinute}
 				onClose={() => {
 					setShowAddModal(false);
 					setEditingParams(undefined);
+					setAddDefaults(undefined);
 				}}
 			/>
 			{actionTarget && (

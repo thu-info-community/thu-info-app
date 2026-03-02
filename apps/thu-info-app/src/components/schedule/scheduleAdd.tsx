@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
 	Alert,
 	Dimensions,
@@ -92,6 +92,14 @@ interface ScheduleAddModalProps {
 	visible: boolean;
 	onClose: () => void;
 	initialParams?: ScheduleEditParams;
+	defaultDayOfWeek?: number;
+	defaultDateIndex?: number;
+	defaultPeriodBegin?: number;
+	defaultPeriodEnd?: number;
+	defaultBeginHour?: number;
+	defaultBeginMinute?: number;
+	defaultEndHour?: number;
+	defaultEndMinute?: number;
 }
 
 export const numberToCode = (num: number): string => {
@@ -107,6 +115,14 @@ export const ScheduleAddModal = ({
 	visible,
 	onClose,
 	initialParams,
+	defaultDayOfWeek,
+	defaultDateIndex,
+	defaultPeriodBegin,
+	defaultPeriodEnd,
+	defaultBeginHour,
+	defaultBeginMinute,
+	defaultEndHour,
+	defaultEndMinute,
 }: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -151,21 +167,33 @@ export const ScheduleAddModal = ({
 
 	const popupIsEmptyWeeks = String([...popupWeeks]) === String([]);
 
-	const [day, setDay] = useState(params?.dayOfWeek ?? 1);
-	const [popupDay, setPopupDay] = useState(params?.dayOfWeek ?? 1);
+	const [day, setDay] = useState(
+		params?.dayOfWeek ?? defaultDayOfWeek ?? 1,
+	);
+	const [popupDay, setPopupDay] = useState(
+		params?.dayOfWeek ?? defaultDayOfWeek ?? 1,
+	);
 
 	const [periodBegin, setPeriodBegin] = useState(
-		params && params.beginTime ? getBeginPeriod(params.beginTime) : 1,
+		params && params.beginTime
+			? getBeginPeriod(params.beginTime)
+			: defaultPeriodBegin ?? 1,
 	);
 	const [periodEnd, setPeriodEnd] = useState(
-		params && params.endTime ? getEndPeriod(params.endTime) : 14,
+		params && params.endTime
+			? getEndPeriod(params.endTime)
+			: defaultPeriodEnd ?? 14,
 	);
 
 	const [popupPeriodBegin, setPopupPeriodBegin] = useState(
-		params && params.beginTime ? getBeginPeriod(params.beginTime) : 1,
+		params && params.beginTime
+			? getBeginPeriod(params.beginTime)
+			: defaultPeriodBegin ?? 1,
 	);
 	const [popupPeriodEnd, setPopupPeriodEnd] = useState(
-		params && params.endTime ? getEndPeriod(params.endTime) : 14,
+		params && params.endTime
+			? getEndPeriod(params.endTime)
+			: defaultPeriodEnd ?? 14,
 	);
 
 	const [useCustomDateTime, setUseCustomDateTime] = useState(false);
@@ -180,23 +208,95 @@ export const ScheduleAddModal = ({
 		}
 		return 0;
 	})();
-	const [dateIndex, setDateIndex] = useState(todayIndex);
-	const [popupDateIndex, setPopupDateIndex] = useState(todayIndex);
+	const [dateIndex, setDateIndex] = useState(
+		defaultDateIndex ?? todayIndex,
+	);
+	const [popupDateIndex, setPopupDateIndex] = useState(
+		defaultDateIndex ?? todayIndex,
+	);
 
-	const [beginHour, setBeginHour] = useState(8);
-	const [beginMinute, setBeginMinute] = useState(0);
-	const [endHour, setEndHour] = useState(8);
-	const [endMinute, setEndMinute] = useState(45);
+	const [beginHour, setBeginHour] = useState(defaultBeginHour ?? 8);
+	const [beginMinute, setBeginMinute] = useState(
+		defaultBeginMinute ?? 0,
+	);
+	const [endHour, setEndHour] = useState(defaultEndHour ?? 8);
+	const [endMinute, setEndMinute] = useState(defaultEndMinute ?? 45);
 
-	const [popupBeginHour, setPopupBeginHour] = useState(8);
-	const [popupBeginMinute, setPopupBeginMinute] = useState(0);
-	const [popupEndHour, setPopupEndHour] = useState(8);
-	const [popupEndMinute, setPopupEndMinute] = useState(45);
+	const [popupBeginHour, setPopupBeginHour] = useState(
+		defaultBeginHour ?? 8,
+	);
+	const [popupBeginMinute, setPopupBeginMinute] = useState(
+		defaultBeginMinute ?? 0,
+	);
+	const [popupEndHour, setPopupEndHour] = useState(
+		defaultEndHour ?? 8,
+	);
+	const [popupEndMinute, setPopupEndMinute] = useState(
+		defaultEndMinute ?? 45,
+	);
 
 	const [repeatWeekly, setRepeatWeekly] = useState(false);
 
 	const [title, setTitle] = useState(params?.alias ?? "");
 	const [locale, setLocale] = useState(params?.location ?? "");
+
+	useEffect(() => {
+		if (!visible || params !== undefined) {
+			return;
+		}
+
+		const allWeeks = Array.from(new Array(weekCount), (_, k) => k + 1);
+		setWeeks(allWeeks);
+		setPopupWeeks(allWeeks);
+
+		const effectiveDay = defaultDayOfWeek ?? 1;
+		setDay(effectiveDay);
+		setPopupDay(effectiveDay);
+
+		const initialPeriodBegin = defaultPeriodBegin ?? 1;
+		const initialPeriodEnd = defaultPeriodEnd ?? 14;
+		setPeriodBegin(initialPeriodBegin);
+		setPeriodEnd(initialPeriodEnd);
+		setPopupPeriodBegin(initialPeriodBegin);
+		setPopupPeriodEnd(initialPeriodEnd);
+
+		const idx = defaultDateIndex ?? todayIndex;
+		setDateIndex(idx);
+		setPopupDateIndex(idx);
+
+		const bHour = defaultBeginHour ?? 8;
+		const bMinute = defaultBeginMinute ?? 0;
+		const eHour = defaultEndHour ?? 8;
+		const eMinute = defaultEndMinute ?? 45;
+
+		setBeginHour(bHour);
+		setBeginMinute(bMinute);
+		setEndHour(eHour);
+		setEndMinute(eMinute);
+
+		setPopupBeginHour(bHour);
+		setPopupBeginMinute(bMinute);
+		setPopupEndHour(eHour);
+		setPopupEndMinute(eMinute);
+
+		setUseCustomDateTime(false);
+		setRepeatWeekly(false);
+		setTitle("");
+		setLocale("");
+	}, [
+		visible,
+		params,
+		weekCount,
+		todayIndex,
+		defaultDayOfWeek,
+		defaultPeriodBegin,
+		defaultPeriodEnd,
+		defaultDateIndex,
+		defaultBeginHour,
+		defaultBeginMinute,
+		defaultEndHour,
+		defaultEndMinute,
+	]);
 
 	// Prepare for modify custom schedule's time
 	// const timeEditable = (params && params?.type !== ScheduleType.CUSTOM) || false;
