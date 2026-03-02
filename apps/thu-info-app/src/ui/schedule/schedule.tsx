@@ -534,6 +534,7 @@ export const ScheduleScreen = () => {
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [editingParams, setEditingParams] = useState<ScheduleEditParams | undefined>(undefined);
 	const [actionTarget, setActionTarget] = useState<ScheduleEditParams | undefined>(undefined);
+	const [deletingAction, setDeletingAction] = useState(false);
 
 	const themeTransition = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current;
 	const popupAnim = useRef(new Animated.Value(0)).current;
@@ -576,31 +577,74 @@ export const ScheduleScreen = () => {
 		return str.length === 0;
 	};
 
-	const handleHide = (choice: Choice, label: string) => {
+	const isCustomLike = (target: ScheduleEditParams | undefined) =>
+		target !== undefined &&
+		(target.type === ScheduleType.CUSTOM || target.category === "个人日历");
+
+	const handleHide = async (choice: Choice, label: string) => {
 		if (!actionTarget) {
 			return;
 		}
 		if (actionTarget.type === ScheduleType.EXAM) {
 			return;
 		}
-		dispatch(
-			scheduleDelOrHide([
-				actionTarget.name,
-				{
-					dayOfWeek: actionTarget.dayOfWeek,
-					beginTime: actionTarget.beginTime,
-					endTime: actionTarget.endTime,
-				},
-				choice,
-			]),
-		);
-		setActionTarget(undefined);
-		if (Platform.OS === "android") {
-			ToastAndroid.showWithGravity(
-				`已成功${label}`,
-				ToastAndroid.SHORT,
-				ToastAndroid.TOP,
+		try {
+			if (isCustomLike(actionTarget)) {
+				setDeletingAction(true);
+				const matchedSchedule = baseSchedule.find(
+					(s) =>
+						s.name === actionTarget.name &&
+						s.location === actionTarget.location &&
+						s.type === actionTarget.type &&
+						(actionTarget.category === undefined ||
+							s.category === actionTarget.category),
+				);
+
+				if (matchedSchedule) {
+					if (choice === Choice.ALL) {
+						await helper.deleteCustomSchedule([matchedSchedule]);
+					} else if (choice === Choice.ONCE) {
+						const matchedSlice = matchedSchedule.activeTime.base.find(
+							(slice) =>
+								slice.dayOfWeek === actionTarget.dayOfWeek &&
+								slice.beginTime.isSame(actionTarget.beginTime, "minute") &&
+								slice.endTime.isSame(actionTarget.endTime, "minute"),
+						);
+
+						if (matchedSlice) {
+							await helper.deleteCustomSchedule([
+								{
+									...matchedSchedule,
+									activeTime: {base: [matchedSlice]},
+									delOrHideTime: {base: []},
+								},
+							]);
+						}
+					}
+				}
+			}
+
+			dispatch(
+				scheduleDelOrHide([
+					actionTarget.name,
+					{
+						dayOfWeek: actionTarget.dayOfWeek,
+						beginTime: actionTarget.beginTime,
+						endTime: actionTarget.endTime,
+					},
+					choice,
+				]),
 			);
+			setActionTarget(undefined);
+			if (Platform.OS === "android") {
+				ToastAndroid.showWithGravity(
+					`已成功${label}`,
+					ToastAndroid.SHORT,
+					ToastAndroid.TOP,
+				);
+			}
+		} finally {
+			setDeletingAction(false);
 		}
 	};
 
@@ -794,9 +838,12 @@ export const ScheduleScreen = () => {
 		backgroundLight: string,
 		backgroundDark: string,
 		onPress: () => void,
+		disabled: boolean = false,
+		loading: boolean = false,
 	) => (
 		<Pressable
 			onPress={onPress}
+			disabled={disabled}
 			style={(state) => {
 				const {pressed} = state;
 				const focused =
@@ -814,14 +861,18 @@ export const ScheduleScreen = () => {
 					borderColor: focused ? bauhausColors.focusRing : "transparent",
 				};
 			}}>
-			<Text
-				style={{
-					fontSize: 14,
-					fontWeight: "500",
-					color: textColor,
-				}}>
-				{label}
-			</Text>
+			{loading ? (
+				<ActivityIndicator size="small" color={textColor} />
+			) : (
+				<Text
+					style={{
+						fontSize: 14,
+						fontWeight: "500",
+						color: textColor,
+					}}>
+					{label}
+				</Text>
+			)}
 		</Pressable>
 	);
 
@@ -1206,6 +1257,7 @@ export const ScheduleScreen = () => {
 																	endTime: slice.endTime,
 																	alias: shortenMap[val.name] ?? "",
 																	type: val.type,
+																	category: val.category,
 																});
 																setShowAddModal(true);
 															}}
@@ -1219,6 +1271,7 @@ export const ScheduleScreen = () => {
 																	endTime: slice.endTime,
 																	alias: shortenMap[val.name] ?? "",
 																	type: val.type,
+																	category: val.category,
 																});
 															}}
 														/>
@@ -1475,21 +1528,23 @@ export const ScheduleScreen = () => {
 						</Animated.View>
 							<View>
 								{renderActionButton(
-                                    (actionTarget.type === ScheduleType.CUSTOM
-                                        ? getStr("delSchedule")
-                                        : getStr("hideSchedule")) + getStr("once"),
+									(isCustomLike(actionTarget)
+										? getStr("delSchedule")
+										: getStr("hideSchedule")) + getStr("once"),
 									bauhausColors.actionGreen,
 									"rgba(91,140,124,0.10)",
 									"rgba(122,172,150,0.16)",
 									() => {
 										const onceLabel =
-                                            (actionTarget.type === ScheduleType.CUSTOM
-                                                ? getStr("delSchedule")
-                                                : getStr("hideSchedule")) + getStr("once");
-										handleHide(Choice.ONCE, onceLabel);
+											(isCustomLike(actionTarget)
+												? getStr("delSchedule")
+												: getStr("hideSchedule")) + getStr("once");
+										void handleHide(Choice.ONCE, onceLabel);
 									},
+									deletingAction,
+									deletingAction && isCustomLike(actionTarget),
 								)}
-								{actionTarget.type !== ScheduleType.CUSTOM &&
+								{!isCustomLike(actionTarget) &&
 									renderActionButton(
 										getStr("hideSchedule") + getStr("repeatly"),
 										bauhausColors.actionGreen,
@@ -1502,7 +1557,7 @@ export const ScheduleScreen = () => {
 										},
 									)}
 								{renderActionButton(
-									(actionTarget.type === ScheduleType.CUSTOM
+									(isCustomLike(actionTarget)
 										? getStr("delSchedule")
 										: getStr("hideSchedule")) + getStr("allTime"),
 									bauhausColors.deleteAccent,
@@ -1510,11 +1565,13 @@ export const ScheduleScreen = () => {
 									"rgba(216,140,140,0.16)",
 									() => {
 										const allLabel =
-											(actionTarget.type === ScheduleType.CUSTOM
+											(isCustomLike(actionTarget)
 												? getStr("delSchedule")
 												: getStr("hideSchedule")) + getStr("allTime");
-										handleHide(Choice.ALL, allLabel);
+										void handleHide(Choice.ALL, allLabel);
 									},
+									deletingAction,
+									deletingAction && isCustomLike(actionTarget),
 								)}
 							</View>
 					</Animated.View>

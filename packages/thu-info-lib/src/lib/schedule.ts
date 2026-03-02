@@ -138,10 +138,10 @@ export const deleteCustomSchedule = async (helper: InfoHelper, schedules: Schedu
                 throw new Error();
             }
             for (const schedule of schedules) {
-                if (schedule.type !== ScheduleType.CUSTOM) {
+                if (schedule.type !== ScheduleType.PRIMARY || schedule.category !== "个人日历") {
                     continue;
                 }
-                const zt = schedule.name.substring(6);
+                const zt = schedule.name;
                 const dd = schedule.location;
                 for (const time of schedule.activeTime.base) {
                     const role = form.find("input[name=\"role\"]").attr("value");

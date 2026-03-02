@@ -292,6 +292,7 @@ export const HomeScheduleSection = () => {
 									endTime: ss.endTime,
 									alias: shortenMap[s.name] ?? "",
 									type: s.type,
+									category: s.category,
 								},
 							});
 						} else {
@@ -312,6 +313,7 @@ export const HomeScheduleSection = () => {
 									endTime: ss.endTime,
 									alias: shortenMap[s.name] ?? "",
 									type: s.type,
+									category: s.category,
 								},
 							});
 						}

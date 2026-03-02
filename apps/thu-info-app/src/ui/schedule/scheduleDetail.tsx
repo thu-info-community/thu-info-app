@@ -2,8 +2,8 @@ import dayjs from "dayjs";
 import {View, Text, TouchableOpacity, Modal} from "react-native";
 import {useLayoutEffect, useState} from "react";
 import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
-import {useDispatch} from "react-redux";
-import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
+import {useDispatch, useSelector} from "react-redux";
+import {ScheduleType, Schedule} from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -14,6 +14,7 @@ import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
 import {ScheduleAddModal} from "../../components/schedule/scheduleAdd";
+import {helper, State} from "../../redux/store";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {
@@ -32,6 +33,7 @@ export interface ScheduleDetailProps {
 	alias: string;
 	type: ScheduleType;
 	activeWeeks?: number[];
+	category?: string;
 }
 
 export const ScheduleDetailScreen = ({
@@ -44,11 +46,13 @@ export const ScheduleDetailScreen = ({
 	const props = route.params;
 	const [delPopupShow, setDelPopupShow] = useState<boolean>(false);
 	const [editPopupShow, setEditPopupShow] = useState<boolean>(false);
+	const [deleting, setDeleting] = useState<boolean>(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const dispatch = useDispatch();
+	const {baseSchedule} = useSelector((s: State) => s.schedule);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -65,12 +69,60 @@ export const ScheduleDetailScreen = ({
 		});
 	}, [navigation, colors.themePurple]);
 
+	const isCustomLike =
+		props.type === ScheduleType.CUSTOM || props.category === "个人日历";
+
+	const buildSchedulesForDeletion = (
+		target: ScheduleDetailProps,
+		choice: Choice,
+		base: Schedule[],
+	): Schedule[] => {
+		const matchedSchedule = base.find(
+			(s) =>
+				s.name === target.name &&
+				s.location === target.location &&
+				s.type === target.type &&
+				(target.category === undefined || s.category === target.category),
+		);
+
+		if (!matchedSchedule) {
+			return [];
+		}
+
+		if (choice === Choice.ALL) {
+			return [matchedSchedule];
+		}
+
+		if (choice === Choice.ONCE) {
+			const matchedSlice = matchedSchedule.activeTime.base.find(
+				(slice) =>
+					slice.dayOfWeek === target.dayOfWeek &&
+					slice.beginTime.isSame(target.beginTime, "minute") &&
+					slice.endTime.isSame(target.endTime, "minute"),
+			);
+
+			if (!matchedSlice) {
+				return [];
+			}
+
+			return [
+				{
+					...matchedSchedule,
+					activeTime: {base: [matchedSlice]},
+					delOrHideTime: {base: []},
+				},
+			];
+		}
+
+		return [];
+	};
+
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
 			return null;
 		}
 		const verbText: string =
-			props.type === ScheduleType.CUSTOM
+			isCustomLike
 				? getStr("delSchedule")
 				: getStr("hideSchedule");
 		const buttonText: string =
@@ -79,22 +131,42 @@ export const ScheduleDetailScreen = ({
 				: choice === Choice.REPEAT
 				? verbText + getStr("repeatly")
 				: verbText + getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix") + getStr("once");
+		const showLoading = deleting && isCustomLike;
 		return (
 			<TouchableOpacity
-				onPress={() => {
-					setDelPopupShow(false);
-					dispatch(
-						scheduleDelOrHide([
-							props.name,
-							{
-								dayOfWeek: props.dayOfWeek,
-								beginTime: props.beginTime,
-								endTime: props.endTime,
-							},
-							choice,
-						]),
-					);
-					navigation.pop();
+				disabled={deleting}
+				onPress={async () => {
+					if (deleting) {
+						return;
+					}
+					try {
+						if (isCustomLike) {
+							setDeleting(true);
+							const schedulesToDelete = buildSchedulesForDeletion(
+								props,
+								choice,
+								baseSchedule,
+							);
+							if (schedulesToDelete.length > 0) {
+								await helper.deleteCustomSchedule(schedulesToDelete);
+							}
+						}
+						setDelPopupShow(false);
+						dispatch(
+							scheduleDelOrHide([
+								props.name,
+								{
+									dayOfWeek: props.dayOfWeek,
+									beginTime: props.beginTime,
+									endTime: props.endTime,
+								},
+								choice,
+							]),
+						);
+						navigation.pop();
+					} finally {
+						setDeleting(false);
+					}
 				}}>
 				<Text
 					style={{
@@ -102,7 +174,7 @@ export const ScheduleDetailScreen = ({
 						fontSize: 20,
 						color: colors.statusWarning,
 					}}>
-					{buttonText}
+					{showLoading ? getStr("loading") : buttonText}
 				</Text>
 			</TouchableOpacity>
 		);
@@ -223,7 +295,7 @@ export const ScheduleDetailScreen = ({
 						</Text>
 						{separatorView(true)}
 						{delButton(Choice.ONCE)}
-						{props.type !== ScheduleType.CUSTOM && (
+						{!isCustomLike && (
 							<>
 								{separatorView()}
 								{delButton(Choice.REPEAT)}

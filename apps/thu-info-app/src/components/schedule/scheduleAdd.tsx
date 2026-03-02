@@ -85,6 +85,7 @@ export interface ScheduleEditParams {
 	endTime: dayjs.Dayjs;
 	alias: string;
 	type: ScheduleType;
+	category?: string;
 	activeWeeks?: number[];
 }
 
