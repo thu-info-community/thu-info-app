@@ -60,7 +60,7 @@ import {
     removeNewsFromFavor, removeNewsSubscription,
     searchNewsList,
 } from "./lib/news";
-import {getSchedule} from "./lib/schedule";
+import {getSchedule, saveCustomSchedule} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {NewsSlice, NewsSubscription, ChannelTag} from "./models/news/news";
@@ -151,6 +151,7 @@ import {CardTransactionType} from "./models/card/transaction";
 import {CardRechargeType} from "./models/card/recharge";
 import { Device } from "./models/network/device";
 import { SportsReservationRecord } from "./models/home/sports";
+import { Schedule } from "./models/schedule/schedule";
 
 export class InfoHelper {
     public userId = "";
@@ -746,6 +747,8 @@ export class InfoHelper {
      *          exams) of the user.
      */
     public getSchedule = async (nextSemesterIndex?: number) => getSchedule(this, nextSemesterIndex);
+
+    public saveCustomSchedule = async (schedules: Schedule[]) => saveCustomSchedule(this, schedules);
 
     /**
      * Gets the timetable for course registration.

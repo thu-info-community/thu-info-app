@@ -74,6 +74,12 @@ export const ASSESSMENT_SUBMIT_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421faef469069336153301c9aa596522b20e33c1eb39606919f/jxpg/b/jxpg/pgjg/xs/zancunjs";
 export const EXPENDITURE_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421f5f4408e237e7c4377068ea48d546d303341e9882a/user/ExDetailsDown.do";
+export const JXRL_BKS_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/f/info/gxfw_fg/common/cardRoaming/JXRL_BKS";
+export const JXRL_YJS_URL =
+    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421f9f9479369247b59700f81b9991b2631506205de/f/info/gxfw_fg/common/cardRoaming/JXRL_YJS";
+export const JXMH_URL =
+    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh.do";
 export const JXRL_BKS_PREFIX =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jxmh_out.do?m=bks_jxrl_all&p_start_date=";
 export const JXRL_YJS_PREFIX =

@@ -1,27 +1,23 @@
 import {roamingWrapperWithMocks} from "./core";
 import {
-    JXRL_MIDDLE,
+    JXMH_URL,
     JXRL_BKS_PREFIX,
+    JXRL_BKS_URL,
+    JXRL_MIDDLE,
     JXRL_SUFFIX,
-    SECONDARY_URL,
     JXRL_YJS_PREFIX,
+    JXRL_YJS_URL,
+    SECONDARY_URL,
 } from "../constants/strings";
-import {
-    Schedule,
-    mergeSchedules,
-    parseJSON,
-    parseScript,
-} from "../models/schedule/schedule";
+import {mergeSchedules, parseJSON, parseScript, Schedule, ScheduleType} from "../models/schedule/schedule";
 import {Semester} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
-import {
-    MOCK_PRIMARY_SCHEDULE,
-    MOCK_SECONDARY_SCHEDULE,
-} from "../mocks/schedule";
+import {MOCK_PRIMARY_SCHEDULE, MOCK_SECONDARY_SCHEDULE} from "../mocks/schedule";
 import {ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
 import dayjs from "dayjs";
+import * as cheerio from "cheerio";
 
 const GROUP_SIZE = 3;
 
@@ -81,3 +77,51 @@ export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number 
         calendar: calendarData,
     };
 };
+
+export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule[]) =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        async () => {
+            const $ = cheerio.load(await uFetch(helper.graduate() ? JXRL_YJS_URL : JXRL_BKS_URL));
+            let form = $("form[action=\"jxmh.do\"]");
+            if (form.length === 0) {
+                throw new Error();
+            }
+            for (const schedule of schedules) {
+                if (schedule.type !== ScheduleType.CUSTOM) {
+                    continue;
+                }
+                const zt = schedule.name;
+                const dd = schedule.location;
+                for (const time of schedule.activeTime.base) {
+                    const role = form.find("input[name=\"role\"]").attr("value");
+                    const token = form.find("input[name=\"token\"]").attr("value");
+                    const p_date = time.beginTime.format("YYYYMMDD");
+                    const p_start_time = time.beginTime.format("HH:mm");
+                    const p_end_time = time.endTime.format("HH:mm");
+                    if (!token) {
+                        return;
+                    }
+                    const result = await uFetch(JXMH_URL, {
+                        m: "saveGrrl",
+                        role,
+                        grrlID: "",
+                        displayType: "",
+                        token,
+                        zt,
+                        dd,
+                        p_date,
+                        p_start_time,
+                        p_end_time,
+                    });
+                    form = cheerio.load(result)("form[action=\"jxmh.do\"]");
+                    if (form.length === 0) {
+                        return;
+                    }
+                }
+            }
+        },
+        undefined,
+    );
