@@ -31,7 +31,7 @@ We support a wide range of APIs:
 - Library (`getLibraryList`, `getLibrarySectionList`, `getLibraryFloorList`, `getLibrarySeatList`, `bookLibrarySeat`, `getBookingRecords`, `cancelBooking`)
 - Library room(`getLibraryRoomAccNo`, `loginLibraryRoomBooking`, `getLibraryRoomBookingResourceList`, `fuzzySearchLibraryId`, `bookLibraryRoom`, `getLibraryRoomBookingRecord`, `cancelLibraryRoomBooking`, `updateLibraryRoomEmail`)
 - News (`getNewsList`, `searchNewsList`, `getNewsSubscriptionList`, `getNewsSourceList`, `getNewsChannelList`, `addNewsSubscription`, `removeNewsSubscription`, `getNewsListBySubscription`, `getNewsDetail`, `addNewsToFavor`, `removeNewsFromFavor`, `getFavorNewsList`)
-- `getSchedule`, `saveCustomSchedule`
+- `getSchedule`, `saveCustomSchedule`, `deleteCustomSchedule`
 - Course Registration (`getCrTimetable`, `getCrCaptchaUrl`, `loginCr`, `getCrAvailableSemesters`, `getCrCoursePlan`, `searchCrRemaining`, `searchCrPrimaryOpen`, `searchCrCourses`, `selectCourse`, `deleteCourse`, `getSelectedCourses`, `changeCourseWill`, `getCrCurrentStage`, `searchCoursePriorityMeta`, `searchCoursePriorityInformation`, `getQueueInfo`, `cancelCoursePF`, `setCoursePF`)
 - Sports (`getSportsResources`, `updateSportsPhoneNumber`, `getSportsCaptchaUrl`, `makeSportsReservation`, `getSportsReservationRecords`, `paySportsReservation`, `unsubscribeSportsReservation`)
 - Reserves Lib (`searchReservesLib`, `getReservesLibBookDetail`, `reservesLibDownloadChapters`)

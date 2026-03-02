@@ -60,7 +60,7 @@ import {
     removeNewsFromFavor, removeNewsSubscription,
     searchNewsList,
 } from "./lib/news";
-import {getSchedule, saveCustomSchedule} from "./lib/schedule";
+import {getSchedule, saveCustomSchedule, deleteCustomSchedule} from "./lib/schedule";
 import {Course} from "./models/home/report";
 import {Form} from "./models/home/assessment";
 import {NewsSlice, NewsSubscription, ChannelTag} from "./models/news/news";
@@ -749,6 +749,8 @@ export class InfoHelper {
     public getSchedule = async (nextSemesterIndex?: number) => getSchedule(this, nextSemesterIndex);
 
     public saveCustomSchedule = async (schedules: Schedule[]) => saveCustomSchedule(this, schedules);
+
+    public deleteCustomSchedule = async (schedules: Schedule[]) => deleteCustomSchedule(this, schedules);
 
     /**
      * Gets the timetable for course registration.

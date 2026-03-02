@@ -16,6 +16,7 @@ export interface TimeSlice {
     dayOfWeek: number,
     beginTime: dayjs.Dayjs,
     endTime: dayjs.Dayjs,
+    id?: number,
 }
 
 // TimeSlice methods BEGIN
@@ -75,24 +76,26 @@ export interface ScheduleTime {
 // ScheduleTime methods BEGIN
 
 /**
- * 给计划时间插入新的时间片，如果发生时间块相邻，则自动合并
- * @note 必须保证插入的时间块和已有的不重叠，若重叠，插入失败
+ * 给计划时间插入新的时间片，
  * @param time 接受新时间片的计划时间
  * @param elem 需要插入的时间片
+ * @param mergeAdjacent 如果发生时间块相邻，则自动合并
  * @return 布尔类型，表示插入是否成功
  */
-export const scheduleTimeAdd = (time: ScheduleTime, elem: TimeSlice): boolean => {
+export const scheduleTimeAdd = (time: ScheduleTime, elem: TimeSlice, mergeAdjacent = false): boolean => {
     let isAdjacent = false;
     // 合并相邻的时间片
-    for (const val of time.base) {
-        if (elem.beginTime.isAfter(val.endTime) && elem.beginTime.diff(val.endTime, "minutes") <= 15) {
-            val.endTime = elem.endTime;
-            isAdjacent = true;
-            break;
-        } else if (val.beginTime.isAfter(elem.endTime) && val.beginTime.diff(elem.endTime, "minutes") <= 15) {
-            val.beginTime = elem.beginTime;
-            isAdjacent = true;
-            break;
+    if (isAdjacent) {
+        for (const val of time.base) {
+            if (elem.beginTime.isAfter(val.endTime) && elem.beginTime.diff(val.endTime, "minutes") <= 15) {
+                val.endTime = elem.endTime;
+                isAdjacent = true;
+                break;
+            } else if (val.beginTime.isAfter(elem.endTime) && val.beginTime.diff(elem.endTime, "minutes") <= 15) {
+                val.beginTime = elem.beginTime;
+                isAdjacent = true;
+                break;
+            }
         }
     }
     if (!isAdjacent) {
@@ -130,6 +133,7 @@ export interface Schedule {
     location: string,
     hash: string,
     type: ScheduleType,
+    category?: string,
     activeTime: ScheduleTime,
     delOrHideTime: ScheduleTime,
 }
@@ -173,14 +177,14 @@ export const mergeSchedules = (base: Schedule[]) => {
     const existName: string[] = [];
     const processedScheduleList: Schedule[] = [];
     base.forEach((schedule) => {
-        const nameLocation = `${schedule.name}.${schedule.location}`;
+        const nameLocation = `${schedule.name}.${schedule.location}.${schedule.category}`;
         const index = existName.indexOf(nameLocation);
         if (index === -1) {
             existName.push(nameLocation);
             processedScheduleList.push(schedule);
         } else {
             schedule.activeTime.base.forEach((time) => {
-                scheduleTimeAdd(processedScheduleList[index].activeTime, time);
+                scheduleTimeAdd(processedScheduleList[index].activeTime, time, schedule.category !== "个人日历");
             });
         }
     });
@@ -223,7 +227,7 @@ export const parseJSON = (json: any[]): Schedule[] => {
         try {
             const current = dayjs(o.nq);
             const dayOfWeek = current.day() === 0 ? 7 : current.day();
-            const lessonList = scheduleList.filter((val) => val.name === o.nr && val.location === (o.dd || ""));
+            const lessonList = scheduleList.filter((val) => val.name === o.nr && val.location === (o.dd || "") && val.category === o.fl);
             let lesson: Schedule;
             if (lessonList.length) {
                 lesson = lessonList[0];
@@ -233,16 +237,18 @@ export const parseJSON = (json: any[]): Schedule[] => {
                     location: o.dd || "",
                     hash: o.nr + "@" +o.dd,
                     type: ScheduleType.PRIMARY,
+                    category: o.fl,
                     activeTime: {base: []},
                     delOrHideTime: {base: []}
                 });
                 lesson = scheduleList[scheduleList.length - 1];
             }
             scheduleTimeAdd(lesson.activeTime, {
+                id: o.grrlID,
                 dayOfWeek,
                 beginTime: dayjs(`${o.nq} ${o.kssj.replace("：", ":")}`),
                 endTime: dayjs(`${o.nq} ${o.jssj.replace("：", ":")}`),
-            });
+            }, lesson.category !== "个人日历");
         } catch (e) {
             console.error(e);
         }

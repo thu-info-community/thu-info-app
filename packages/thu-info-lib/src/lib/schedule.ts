@@ -125,3 +125,49 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
         },
         undefined,
     );
+
+export const deleteCustomSchedule = async (helper: InfoHelper, schedules: Schedule[]) =>
+    roamingWrapperWithMocks(
+        helper,
+        undefined,
+        "",
+        async () => {
+            const $ = cheerio.load(await uFetch(helper.graduate() ? JXRL_YJS_URL : JXRL_BKS_URL));
+            let form = $("form[action=\"jxmh.do\"]");
+            if (form.length === 0) {
+                throw new Error();
+            }
+            for (const schedule of schedules) {
+                if (schedule.type !== ScheduleType.CUSTOM) {
+                    continue;
+                }
+                const zt = schedule.name.substring(6);
+                const dd = schedule.location;
+                for (const time of schedule.activeTime.base) {
+                    const role = form.find("input[name=\"role\"]").attr("value");
+                    const token = form.find("input[name=\"token\"]").attr("value");
+                    if (!token) {
+                        return;
+                    }
+                    const grrlID = time.id;
+                    if (!grrlID) {
+                        return;
+                    }
+                    const result = await uFetch(JXMH_URL, {
+                        m: "deleteGrrl",
+                        role,
+                        grrlID,
+                        displayType: "",
+                        token,
+                        zt,
+                        dd,
+                    }, 60000, "GBK");
+                    form = cheerio.load(result)("form[action=\"jxmh.do\"]");
+                    if (form.length === 0) {
+                        return;
+                    }
+                }
+            }
+        },
+        undefined,
+    );
