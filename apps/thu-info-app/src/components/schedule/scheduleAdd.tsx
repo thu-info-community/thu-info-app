@@ -126,6 +126,26 @@ export const ScheduleAddModal = ({
 }: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const isLightMode = themeName !== "dark";
+
+	const modalBackgroundColor = isLightMode
+		? "#F8F6F2"
+		: theme.colors.contentBackground;
+	const cardBackgroundColor = isLightMode
+		? "#FDFBF7"
+		: theme.colors.contentBackground;
+	const tabSelectedBackgroundColor = isLightMode
+		? "#8B6B9C"
+		: theme.colors.contentBackground;
+	const tabUnselectedBackgroundColor = isLightMode
+		? "#F0EEEA"
+		: theme.colors.themeGrey;
+	const tabSelectedTextColor = isLightMode ? "#FFFFFF" : theme.colors.fontB1;
+	const tabUnselectedTextColor = isLightMode
+		? "#5C5A56"
+		: theme.colors.fontB1;
+	const modalTextColor = isLightMode ? "#5C5A56" : theme.colors.fontB1;
+	const modalTitleColor = isLightMode ? "#2C2A28" : theme.colors.text;
 
 	const params = initialParams;
 
@@ -558,7 +578,7 @@ export const ScheduleAddModal = ({
 						marginHorizontal: 20,
 						marginBottom: 24,
 						borderRadius: 12,
-						backgroundColor: theme.colors.contentBackground,
+						backgroundColor: modalBackgroundColor,
 						maxHeight: modalCardMaxHeight,
 						overflow: "hidden",
 					}}>
@@ -567,25 +587,28 @@ export const ScheduleAddModal = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
-							paddingHorizontal: 16,
-							paddingVertical: 12,
+							paddingHorizontal: 20,
+							paddingVertical: 14,
 							borderBottomWidth: 1,
 							borderBottomColor: theme.colors.themeGrey,
 						}}>
-						<TouchableOpacity onPress={onClose}>
+						<TouchableOpacity
+							onPress={onClose}
+							style={{paddingHorizontal: 8, paddingVertical: 4}}>
 							<Text
 								style={{
-									color: theme.colors.fontB2,
+									color: modalTextColor,
 									fontSize: 16,
+									fontWeight: "600",
 								}}>
 								{getStr("cancel")}
 							</Text>
 						</TouchableOpacity>
 						<Text
 							style={{
-								color: theme.colors.text,
-								fontSize: 16,
-								fontWeight: "600",
+								color: modalTitleColor,
+								fontSize: 18,
+								fontWeight: "700",
 							}}>
 							{getStr(
 								params === undefined ? "scheduleAddCustom" : "scheduleEdit",
@@ -594,13 +617,16 @@ export const ScheduleAddModal = ({
 						<TouchableOpacity
 							disabled={!valid}
 							onPress={handleSave}
-							style={{opacity: valid ? 1 : 0.5}}>
+							style={{
+								opacity: valid ? 1 : 0.5,
+								paddingHorizontal: 8,
+								paddingVertical: 4,
+							}}>
 							<Text
 								style={{
-									color: valid
-										? theme.colors.themePurple
-										: theme.colors.themeGrey,
+									color: valid ? "#5B8C7C" : theme.colors.themeGrey,
 									fontSize: 16,
+									fontWeight: "600",
 								}}>
 								{getStr("save")}
 							</Text>
@@ -608,12 +634,18 @@ export const ScheduleAddModal = ({
 					</View>
 					<ScrollView
 						style={{maxHeight: scrollMaxHeight}}
-						contentContainerStyle={{padding: 12, paddingBottom: 24}}
+						contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 20}}
 						showsVerticalScrollIndicator={true}>
-			<RoundedView style={{marginTop: 4, padding: 16}}>
+			<RoundedView
+				style={{
+					marginTop: 8,
+					paddingHorizontal: 18,
+					paddingVertical: 20,
+					backgroundColor: cardBackgroundColor,
+				}}>
 				<TextInput
 					style={{
-						color: theme.colors.text,
+						color: modalTextColor,
 						padding: 0,
 						fontSize: 16,
 					}}
@@ -622,7 +654,7 @@ export const ScheduleAddModal = ({
 							params?.type === ScheduleType.CUSTOM ? 6 : 0,
 						) ?? getStr("title")
 					}
-					placeholderTextColor={theme.colors.fontB3}
+					placeholderTextColor={modalTextColor}
 					value={title}
 					onChangeText={setTitle}
 				/>
@@ -635,25 +667,32 @@ export const ScheduleAddModal = ({
 				/>
 				<TextInput
 					style={{
-						color: theme.colors.text,
+						color: modalTextColor,
 						padding: 0,
 						fontSize: 16,
 					}}
 					placeholder={getStr("location")}
-					placeholderTextColor={theme.colors.fontB3}
+					placeholderTextColor={modalTextColor}
 					value={locale}
 					onChangeText={setLocale}
 				/>
 			</RoundedView>
-			<RoundedView style={{marginTop: 16, padding: 16}}>
+			<RoundedView
+				style={{
+					marginTop: 20,
+					paddingHorizontal: 18,
+					paddingVertical: 20,
+					backgroundColor: cardBackgroundColor,
+				}}>
 				{!timeEditable && (
 					<View
 						style={{
 							flexDirection: "row",
 							marginBottom: 12,
 							alignSelf: "center",
-							backgroundColor: theme.colors.themeGrey,
-							borderRadius: 16,
+							backgroundColor: tabUnselectedBackgroundColor,
+							borderRadius: 999,
+							padding: 2,
 						}}>
 						<TouchableOpacity
 							style={{
@@ -661,13 +700,15 @@ export const ScheduleAddModal = ({
 								paddingHorizontal: 12,
 								borderRadius: 16,
 								backgroundColor: !useCustomDateTime
-									? theme.colors.contentBackground
+									? tabSelectedBackgroundColor
 									: "transparent",
 							}}
 							onPress={() => setUseCustomDateTime(false)}>
 							<Text
 								style={{
-									color: theme.colors.fontB1,
+									color: !useCustomDateTime
+										? tabSelectedTextColor
+										: tabUnselectedTextColor,
 									fontSize: 14,
 								}}>
 								{getStr("scheduleAddModeWeekPeriod" as any)}
@@ -679,13 +720,15 @@ export const ScheduleAddModal = ({
 								paddingHorizontal: 12,
 								borderRadius: 16,
 								backgroundColor: useCustomDateTime
-									? theme.colors.contentBackground
+									? tabSelectedBackgroundColor
 									: "transparent",
 							}}
 							onPress={() => setUseCustomDateTime(true)}>
 							<Text
 								style={{
-									color: theme.colors.fontB1,
+									color: useCustomDateTime
+										? tabSelectedTextColor
+										: tabUnselectedTextColor,
 									fontSize: 14,
 								}}>
 								{getStr("scheduleAddModeDateTime" as any)}
@@ -740,7 +783,7 @@ export const ScheduleAddModal = ({
 														lineHeight: 40,
 														color: popupWeeks.includes(week)
 															? "white"
-															: theme.colors.fontB1,
+															: modalTextColor,
 													}}>
 													{week}
 												</Text>
@@ -784,7 +827,7 @@ export const ScheduleAddModal = ({
 											)}
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 14,
 													marginLeft: 8,
 												}}>
@@ -813,7 +856,7 @@ export const ScheduleAddModal = ({
 											)}
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 14,
 													marginLeft: 8,
 												}}>
@@ -842,7 +885,7 @@ export const ScheduleAddModal = ({
 											)}
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 14,
 													marginLeft: 8,
 												}}>
@@ -864,7 +907,7 @@ export const ScheduleAddModal = ({
 											)}
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 14,
 													marginLeft: 8,
 												}}>
@@ -881,20 +924,18 @@ export const ScheduleAddModal = ({
 							popupOnCancelled={() => {}}>
 							<View
 								style={{flexDirection: "row", alignItems: "center"}}>
-								<Text
-									style={{
-										color: theme.colors.fontB1,
-										fontSize: 16,
-										flex: 0,
-									}}>
+									<Text
+										style={{
+											color: modalTextColor,
+											fontSize: 16,
+											flex: 0,
+										}}>
 									{getStr("weeks")}
 								</Text>
 								<View style={{flex: 1}} />
 								<Text
 									style={{
-										color: timeEditable
-											? theme.colors.fontB3
-											: theme.colors.fontB2,
+										color: modalTextColor,
 										fontSize: 16,
 										flex: 0,
 									}}
@@ -929,7 +970,7 @@ export const ScheduleAddModal = ({
 										renderItem={(data) => (
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 20,
 												}}
 												key={data}>
@@ -955,7 +996,7 @@ export const ScheduleAddModal = ({
 										renderItem={(data) => (
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 20,
 												}}
 												key={data}>
@@ -981,7 +1022,7 @@ export const ScheduleAddModal = ({
 										renderItem={(data) => (
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 20,
 												}}
 												key={data}>
@@ -1012,7 +1053,7 @@ export const ScheduleAddModal = ({
 								style={{flexDirection: "row", alignItems: "center"}}>
 								<Text
 									style={{
-										color: theme.colors.fontB1,
+										color: modalTextColor,
 										fontSize: 16,
 										flex: 0,
 									}}>
@@ -1021,9 +1062,7 @@ export const ScheduleAddModal = ({
 								<View style={{flex: 1}} />
 								<Text
 									style={{
-										color: timeEditable
-											? theme.colors.fontB3
-											: theme.colors.fontB2,
+										color: modalTextColor,
 										fontSize: 16,
 										flex: 0,
 									}}
@@ -1073,7 +1112,7 @@ export const ScheduleAddModal = ({
 										renderItem={(data, index) => (
 											<Text
 												style={{
-													color: theme.colors.fontB1,
+													color: modalTextColor,
 													fontSize: 20,
 												}}
 												key={`${data}-${index}`}>
@@ -1100,7 +1139,7 @@ export const ScheduleAddModal = ({
 								style={{flexDirection: "row", alignItems: "center"}}>
 								<Text
 									style={{
-										color: theme.colors.fontB1,
+										color: modalTextColor,
 										fontSize: 16,
 										flex: 0,
 									}}>
@@ -1109,9 +1148,7 @@ export const ScheduleAddModal = ({
 								<View style={{flex: 1}} />
 								<Text
 									style={{
-										color: timeEditable
-											? theme.colors.fontB3
-											: theme.colors.fontB2,
+										color: modalTextColor,
 										fontSize: 16,
 										flex: 0,
 									}}
@@ -1267,12 +1304,12 @@ export const ScheduleAddModal = ({
 							popupOnCancelled={() => {}}>
 							<View
 								style={{flexDirection: "row", alignItems: "center"}}>
-								<Text
-									style={{
-										color: theme.colors.fontB1,
-										fontSize: 16,
-										flex: 0,
-									}}>
+									<Text
+										style={{
+											color: modalTextColor,
+											fontSize: 16,
+											flex: 0,
+										}}>
 									{getStr("scheduleTimeRange" as any)}
 								</Text>
 								<View style={{flex: 1}} />
@@ -1311,7 +1348,7 @@ export const ScheduleAddModal = ({
 							}}>
 							<Text
 								style={{
-									color: theme.colors.fontB1,
+									color: modalTextColor,
 									fontSize: 16,
 									flex: 1,
 								}}>
@@ -1333,7 +1370,7 @@ export const ScheduleAddModal = ({
 						{params !== undefined && (
 							<Text
 								style={{
-									color: theme.colors.fontB3,
+									color: modalTextColor,
 									fontSize: 12,
 									textAlign: "center",
 									marginTop: 16,
