@@ -6,6 +6,12 @@ import dayjs from "dayjs";
 import {Platform} from "react-native";
 import ReactNativeBlobUtil from "react-native-blob-util";
 
+const extractVEventBlocks = (icsText: string): string[] => {
+	const normalized = icsText.replace(/\r\n/g, "\n");
+	const matches = normalized.match(/BEGIN:VEVENT[\s\S]*?END:VEVENT/g);
+	return matches ? matches.map((event) => event.trim()) : [];
+};
+
 export const explainWeekList = (weekList: number[]): string => {
 	const listDistinct = Array.from(new Set(weekList));
 	const listSorted = listDistinct
@@ -105,7 +111,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 		}
 	};
 
-	const events: any[] = [];
+	const events: string[] = [];
 	const semesterStartDate = dayjs(semester.firstDay);
 
 	schedules.forEach((schedule) => {
@@ -153,7 +159,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 			});
 
 			if (!eventResult.error && eventResult.value) {
-				events.push(eventResult.value);
+				events.push(...extractVEventBlocks(eventResult.value));
 			} else {
 				console.error("Failed to create event:", eventResult.error);
 			}
@@ -162,14 +168,20 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 
 	// Return empty calendar if no events found
 	if (events.length === 0) {
-		return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//thu-info-app//thu-info-app//EN\r\nEND:VCALENDAR\r\n";
+		return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//thu-info-app//thu-info-app//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-PUBLISHED-TTL:PT1H\r\nEND:VCALENDAR\r\n";
 	}
 
-	// Combine all events into a single ICS string
-	const calendarHeader = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//thu-info-app//thu-info-app//EN\r\n";
+	// Rebuild the calendar from extracted VEVENT blocks to avoid nested VCALENDAR fragments.
+	const calendarHeader =
+		"BEGIN:VCALENDAR\r\n" +
+		"VERSION:2.0\r\n" +
+		"PRODID:-//thu-info-app//thu-info-app//EN\r\n" +
+		"CALSCALE:GREGORIAN\r\n" +
+		"METHOD:PUBLISH\r\n" +
+		"X-PUBLISHED-TTL:PT1H\r\n";
 	const calendarFooter = "END:VCALENDAR\r\n";
 
-	const allEvents = events.join("");
+	const allEvents = `${events.join("\r\n")}\r\n`;
 	return calendarHeader + allEvents + calendarFooter;
 };
 
