@@ -512,8 +512,41 @@ export const ScheduleScreen = () => {
 	const timeLabelWidth = 40;
 	const timeAxisWidth = 8;
 	const scheduleBodyWidth = windowWidth - timeLabelWidth - timeAxisWidth;
+	const timeStripVerticalPadding = 12; // 时间条上下留白
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
+
+	// 不展示早于 min(用户本学期最早日程开始时间, 8:00)（向下取整到整点）的时间段
+	const displayStartHour = (() => {
+		const EIGHT_AM_MINUTES = 8 * 60;
+		let earliestMinutes: number | null = null;
+		baseSchedule.forEach((val) => {
+			if (
+				(val.type === ScheduleType.CUSTOM && !showCustomSchedule) ||
+				(val.type !== ScheduleType.CUSTOM && !showOfficialSchedule)
+			) {
+				return;
+			}
+			val.activeTime.base.forEach((slice) => {
+				const week = getWeekFromTime(slice.beginTime, firstDay);
+				if (week >= 1 && week <= weekCount) {
+					const minutes =
+						slice.beginTime.hour() * 60 + slice.beginTime.minute();
+					if (
+						earliestMinutes === null ||
+						minutes < earliestMinutes
+					) {
+						earliestMinutes = minutes;
+					}
+				}
+			});
+		});
+		const effectiveMinutes =
+			earliestMinutes !== null
+				? Math.min(earliestMinutes, EIGHT_AM_MINUTES)
+				: EIGHT_AM_MINUTES;
+		return Math.floor(effectiveMinutes / 60);
+	})();
 
 	const [uploadingCustomSchedule, setUploadingCustomSchedule] = useState(false);
 
@@ -825,8 +858,6 @@ export const ScheduleScreen = () => {
 
 	const flatListRef = useRef<FlatList>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
-	const scrollViewRef = useRef<ScrollView>(null);
-	const hasScrolledToInitialRef = useRef(false);
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
 	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
 		undefined,
@@ -875,32 +906,6 @@ export const ScheduleScreen = () => {
 			)}
 		</Pressable>
 	);
-
-	// 打开计划时默认滚动，使「8:00」时间轴稳定作为首屏第一行（仅用 onLayout 高度，并做范围限制与延迟一帧）
-	useEffect(() => {
-		if (
-			tableHeight > 0 &&
-			!hasScrolledToInitialRef.current &&
-			scrollViewRef.current
-		) {
-			hasScrolledToInitialRef.current = true;
-			const contentHeight = 24 * hourHeight;
-			const maxScrollY = Math.max(0, contentHeight - tableHeight);
-			// 8:00 标签为 top: 8*hourHeight-6、fontSize 10，需上移视口约 20px 才能完整露出
-			const labelClearance = 20;
-			const targetY = 8 * hourHeight - labelClearance;
-			const scrollY = Math.max(0, Math.min(targetY, maxScrollY));
-			const run = () => {
-				scrollViewRef.current?.scrollTo({
-					y: scrollY,
-					animated: false,
-				});
-			};
-			// 延迟一帧再滚，确保布局已稳定，提高鲁棒性
-			const id = requestAnimationFrame(run);
-			return () => cancelAnimationFrame(id);
-		}
-	}, [tableHeight, hourHeight]);
 
 	return (
 		<>
@@ -983,7 +988,6 @@ export const ScheduleScreen = () => {
 					</View>
 				</View>
 				<ScrollView
-					ref={scrollViewRef}
 					style={{flex: 1}}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
@@ -996,15 +1000,26 @@ export const ScheduleScreen = () => {
 							progressBackgroundColor={theme.colors.contentBackground}
 						/>
 					}>
-					<View style={{flexDirection: "row"}}>
-						{/* Timetable on the left: 0:00 - 24:00 */}
-						<View style={{width: timeLabelWidth, height: 24 * hourHeight}}>
-							{Array.from(new Array(25), (_, k) => k).map((hour) => (
+					<View
+						style={{
+							flexDirection: "row",
+							paddingVertical: timeStripVerticalPadding,
+						}}>
+						{/* Timetable on the left: displayStartHour - 24:00 */}
+						<View
+							style={{
+								width: timeLabelWidth,
+								height: (24 - displayStartHour) * hourHeight,
+							}}>
+							{Array.from(
+								new Array(25 - displayStartHour),
+								(_, k) => displayStartHour + k,
+							).map((hour) => (
 								<Text
 									key={`time-label-${hour}`}
 									style={{
 										position: "absolute",
-										top: hour * hourHeight - 6, // roughly center text on the line
+										top: (hour - displayStartHour) * hourHeight - 6,
 										width: timeLabelWidth,
 										textAlign: "center",
 										color: theme.colors.fontB1,
@@ -1019,7 +1034,7 @@ export const ScheduleScreen = () => {
 						<View
 							style={{
 								width: timeAxisWidth,
-								height: 24 * hourHeight,
+								height: (24 - displayStartHour) * hourHeight,
 							}}>
 							{/* main vertical line */}
 							<View
@@ -1040,13 +1055,19 @@ export const ScheduleScreen = () => {
 								const [h, m] = time.split(":");
 								const minutes =
 									parseInt(h, 10) * 60 + parseInt(m, 10);
+								if (minutes < displayStartHour * 60) {
+									return null;
+								}
 								return (
 									<View
 										key={`axis-begin-${idx}`}
 										style={{
 											position: "absolute",
 											left: timeAxisWidth / 2 - 3,
-											top: minutes * minuteHeight - 3,
+											top:
+												(minutes - displayStartHour * 60) *
+													minuteHeight -
+												3,
 											width: 6,
 											height: 6,
 											borderRadius: 3,
@@ -1065,13 +1086,19 @@ export const ScheduleScreen = () => {
 								const [h, m] = time.split(":");
 								const minutes =
 									parseInt(h, 10) * 60 + parseInt(m, 10);
+								if (minutes < displayStartHour * 60) {
+									return null;
+								}
 								return (
 									<View
 										key={`axis-end-${idx}`}
 										style={{
 											position: "absolute",
 											left: timeAxisWidth / 2 - 3,
-											top: minutes * minuteHeight - 3,
+											top:
+												(minutes - displayStartHour * 60) *
+													minuteHeight -
+												3,
 											width: 6,
 											height: 6,
 											borderRadius: 3,
@@ -1087,7 +1114,10 @@ export const ScheduleScreen = () => {
 						{/* Main content */}
 						<View style={{flex: 1}}>
 							{/* Hour marks */}
-							{Array.from(new Array(25), (_, k) => k).map((hour) => (
+							{Array.from(
+								new Array(25 - displayStartHour),
+								(_, k) => displayStartHour + k,
+							).map((hour) => (
 								<View
 									key={`hour-line-${hour}`}
 									style={{
@@ -1096,7 +1126,7 @@ export const ScheduleScreen = () => {
 										position: "absolute",
 										left: 0,
 										right: 0,
-										top: hour * hourHeight,
+										top: (hour - displayStartHour) * hourHeight,
 									}}
 								/>
 							))}
@@ -1117,10 +1147,14 @@ export const ScheduleScreen = () => {
 								renderItem={({item}) => (
 									<View
 										style={{
-											height: 24 * hourHeight,
+											height: (24 - displayStartHour) * hourHeight,
 											width: scheduleBodyWidth,
 										}}>
-										<View style={{height: 24 * hourHeight, width: scheduleBodyWidth}}>
+										<View
+											style={{
+												height: (24 - displayStartHour) * hourHeight,
+												width: scheduleBodyWidth,
+											}}>
 											<TouchableOpacity
 												activeOpacity={1}
 												style={{
@@ -1143,7 +1177,9 @@ export const ScheduleScreen = () => {
 													const dayOfWeek = dayIndex + 1;
 
 													const totalMinutesInDay = 24 * 60;
-													let minuteOfDay = Math.floor(locationY / minuteHeight);
+													let minuteOfDay =
+														displayStartHour * 60 +
+														Math.floor(locationY / minuteHeight);
 													if (minuteOfDay < 0) {
 														minuteOfDay = 0;
 													} else if (minuteOfDay >= totalMinutesInDay) {
@@ -1213,23 +1249,27 @@ export const ScheduleScreen = () => {
 													const slice = data.slice;
 													const val = data.schedule;
 													const num = data.week;
-													// 计算距离 0:00 的分钟数
+													const startThreshold = displayStartHour * 60;
 													const beginMinutes =
 														slice.beginTime.hour() * 60 +
 														slice.beginTime.minute();
 													const endMinutes =
 														slice.endTime.hour() * 60 +
 														slice.endTime.minute();
-													const beginClamped = Math.max(0, Math.min(24 * 60, beginMinutes));
-													const endClamped = Math.max(
-														beginClamped,
-														Math.min(24 * 60, endMinutes),
+													if (endMinutes <= startThreshold) {
+														return null;
+													}
+													// 在“从 displayStartHour 开始”的坐标系中的 begin/end（分钟）
+													const visibleBegin = Math.max(
+														0,
+														beginMinutes - startThreshold,
 													);
+													const visibleEnd = endMinutes - startThreshold;
 													return (
 														<ScheduleBlock
 															dayOfWeek={slice.dayOfWeek}
-															begin={beginClamped}
-															end={endClamped}
+															begin={visibleBegin}
+															end={visibleEnd}
 															name={
 																shortenMap[val.name] ??
 																val.name.substring(
@@ -1239,7 +1279,7 @@ export const ScheduleScreen = () => {
 															location={val.location}
 															gridHeight={minuteHeight}
 															gridWidth={unitWidth}
-															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginClamped}-${val.location}`}
+															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginMinutes}-${val.location}`}
 															blockColor={
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
