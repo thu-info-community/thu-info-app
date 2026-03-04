@@ -76,6 +76,7 @@ export default {
 	enableDarkMode: "开启深色模式",
 	language: "显示语言",
 	autoFollow: "跟随系统",
+	tabletMode: "平板模式（实验中）",
 	restartToApply: "重启应用后生效。",
 	privacy: "隐私",
 	privacyPolicy: "隐私政策",

@@ -10,7 +10,7 @@ import {
 	View,
 } from "react-native";
 import {ReactElement, useEffect, useState} from "react";
-import {RootNav} from "../../components/Root";
+import {RootNav, RootStackParamList} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
@@ -55,7 +55,7 @@ import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/slices/config";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
-import {useNavigation} from "@react-navigation/native";
+import {StackActions, useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {
@@ -71,6 +71,7 @@ import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
 import {InfoHelper} from "@thu-info/lib";
+import useDetailNavigator from "../../utils/useDetailNavigator";
 
 const iconSize = 40;
 
@@ -111,12 +112,24 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const navigation = useNavigation<RootNav>();
+	const detailNavigator = useDetailNavigator();
 	return (
 		<TouchableOpacity
 			disabled={schedule.navProps === undefined}
 			onPress={() => {
-				schedule.navProps &&
+				if (!schedule.navProps) {
+					return;
+				}
+				if (detailNavigator) {
+					detailNavigator.dispatch(
+						StackActions.replace("ScheduleDetail", {
+							...schedule.navProps,
+							disableAnimation: true,
+						}),
+					);
+				} else {
 					navigation.navigate("ScheduleDetail", schedule.navProps);
+				}
 			}}>
 			<View
 				style={{
@@ -454,7 +467,7 @@ const subFunctionLocked = () => {
 };
 
 const getHomeFunctions = (
-	navigation: RootNav,
+	navigate: (name: keyof RootStackParamList, params?: any) => void,
 	updateTop5: (func: HomeFunction) => void,
 ): ReactElement[] => [
 	<HomeIcon
@@ -467,12 +480,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterReport &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "Report",
 				});
 			} else {
-				navigation.navigate("Report");
+				navigate("Report");
 			}
 		}}>
 		<IconReport width={iconSize} height={iconSize} />
@@ -487,12 +500,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterPhysicalExam &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "PhysicalExam",
 				});
 			} else {
-				navigation.navigate("PhysicalExam");
+				navigate("PhysicalExam");
 			}
 		}}>
 		<IconPhysicalExam width={iconSize} height={iconSize} />
@@ -503,7 +516,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.TeachingEvaluation);
 			updateTop5("teachingEvaluation");
-			navigation.navigate("Evaluation");
+			navigate("Evaluation");
 		}}>
 		<IconEvaluation width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -513,7 +526,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Classrooms);
 			updateTop5("classroomState");
-			navigation.navigate("ClassroomList");
+			navigate("ClassroomList");
 		}}>
 		<IconClassroom width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -521,7 +534,7 @@ const getHomeFunctions = (
 		key="reserve"
 		title="reservation"
 		onPress={() => {
-			navigation.navigate("Reserve");
+			navigate("Reserve");
 		}}>
 		<IconReserve width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -530,7 +543,7 @@ const getHomeFunctions = (
 		title="courseRegistration"
 		onPress={() => {
 			updateTop5("cr");
-			navigation.navigate("CrHome");
+			navigate("CrHome");
 		}}>
 		<IconCr width={iconSize} height={iconSize} />
 	</HomeIcon>] : [],
@@ -540,7 +553,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Library);
 			updateTop5("library");
-			navigation.navigate("Library");
+			navigate("Library");
 		}}>
 		<IconLibrary width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -550,7 +563,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.PrivateRooms);
 			updateTop5("libRoomBook");
-			navigation.navigate("LibRoomSelect");
+			navigate("LibRoomSelect");
 		}}>
 		<IconLibRoom width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -559,7 +572,7 @@ const getHomeFunctions = (
 		title="reservesLib"
 		onPress={() => {
 			updateTop5("reservesLib");
-			navigation.navigate("ReservesLibWelcome");
+			navigate("ReservesLibWelcome");
 		}}>
 		<IconBook width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -573,12 +586,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "CampusCard",
 				});
 			} else {
-				navigation.navigate("CampusCard");
+				navigate("CampusCard");
 			}
 		}}>
 		<IconExpenditure width={iconSize} height={iconSize} />
@@ -593,12 +606,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "Expenditure",
 				});
 			} else {
-				navigation.navigate("Expenditure");
+				navigate("Expenditure");
 			}
 		}}>
 		<IconExpenditure width={iconSize} height={iconSize} />
@@ -611,12 +624,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "Finance",
 				});
 			} else {
-				navigation.navigate("Finance");
+				navigate("Finance");
 			}
 		}}>
 		<IconFinance width={iconSize} height={iconSize} />
@@ -627,7 +640,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.GymnasiumReg);
 			updateTop5("sportsBook");
-			navigation.navigate("Sports");
+			navigate("Sports");
 		}}>
 		<IconSports width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -641,12 +654,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "BankPayment",
 				});
 			} else {
-				navigation.navigate("BankPayment");
+				navigate("BankPayment");
 			}
 		}}>
 		<IconBankPayment width={iconSize} height={iconSize} />
@@ -661,12 +674,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "Invoice",
 				});
 			} else {
-				navigation.navigate("Invoice");
+				navigate("Invoice");
 			}
 		}}>
 		<IconInvoice width={iconSize} height={iconSize} />
@@ -681,12 +694,12 @@ const getHomeFunctions = (
 				currState().config.verifyPasswordBeforeEnterFinance &&
 				subFunctionLocked()
 			) {
-				navigation.navigate("DigitalPassword", {
+				navigate("DigitalPassword", {
 					action: "verify",
 					target: "Income",
 				});
 			} else {
-				navigation.navigate("Income");
+				navigate("Income");
 			}
 		}}>
 		<IconIncome width={iconSize} height={iconSize} />
@@ -696,7 +709,7 @@ const getHomeFunctions = (
 		title="campusMap"
 		onPress={() => {
 			updateTop5("campusMap");
-			navigation.navigate("CampusMap");
+			navigate("CampusMap");
 		}}>
 		<IconLocal width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -706,7 +719,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.QZYQ);
 			updateTop5("qzyq");
-			navigation.navigate("Qzyq", {ticketNumber: 0});
+			navigate("Qzyq", {ticketNumber: 0});
 		}}>
 		<IconWater width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -716,7 +729,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.WasherInfo);
 			updateTop5("washer");
-			navigation.navigate("Washer");
+			navigate("Washer");
 		}}>
 		<IconWasher width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -726,7 +739,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.Electricity);
 			updateTop5("electricity");
-			navigation.navigate("Electricity");
+			navigate("Electricity");
 		}}>
 		<IconEleRecharge width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -736,7 +749,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.DormScore);
 			updateTop5("dormScore");
-			navigation.navigate("DormScore");
+			navigate("DormScore");
 		}}>
 		<IconDormScore width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -744,7 +757,7 @@ const getHomeFunctions = (
 		key="dormitory"
 		title="dorm"
 		onPress={() => {
-			navigation.navigate("Dorm");
+			navigate("Dorm");
 		}}>
 		<IconDorm width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -752,7 +765,7 @@ const getHomeFunctions = (
 		key="network"
 		title="network"
 		onPress={() => {
-			navigation.navigate("Network");
+			navigate("Network");
 		}}>
 		<IconNetwork width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -762,7 +775,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.NetworkDetail);
 			updateTop5("networkDetail");
-			navigation.navigate("NetworkDetail");
+			navigate("NetworkDetail");
 		}}>
 		<IconNetworkDetail width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -772,7 +785,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.OnlineDevices);
 			updateTop5("onlineDevices");
-			navigation.navigate("OnlineDevices");
+			navigate("OnlineDevices");
 		}}>
 		<IconNetworkOnlineDevices width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -782,7 +795,7 @@ const getHomeFunctions = (
 		onPress={() => {
 			addUsageStat(FunctionType.SchoolCalendar);
 			updateTop5("schoolCalendar");
-			navigation.navigate("SchoolCalendar");
+			navigate("SchoolCalendar");
 		}}>
 		<IconCalendar width={iconSize} height={iconSize} />
 	</HomeIcon>,
@@ -794,6 +807,26 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+	const detailNavigator = useDetailNavigator();
+
+	const navigateWithDetail = (
+		name: keyof RootStackParamList,
+		params?: RootStackParamList[typeof name],
+	) => {
+		if (detailNavigator) {
+			detailNavigator.dispatch(
+				StackActions.replace(name, {
+					...(params as object),
+					// @ts-ignore
+					disableAnimation: true,
+					// make sure to clear old stack state
+				}),
+			);
+		} else {
+			// @ts-ignore
+			navigation.navigate(name, params);
+		}
+	};
 
 	const top5Functions = useSelector((s: State) => s.top5.top5Functions);
 	const disabledList: HomeFunction[] | undefined = useSelector(
@@ -806,8 +839,9 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const sunsetFunctions: HomeFunction[] = ["expenditure"];
 
-	const homeFunctions = getHomeFunctions(navigation, (func) =>
-		dispatch(top5Update(func)),
+	const homeFunctions = getHomeFunctions(
+		navigateWithDetail,
+		(func) => dispatch(top5Update(func)),
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];

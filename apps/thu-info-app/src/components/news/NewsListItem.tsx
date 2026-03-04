@@ -1,6 +1,6 @@
 import {NewsSlice} from "@thu-info/lib/src/models/news/news";
 import {Theme} from "../../assets/themes/themes";
-import {RootNav} from "../Root";
+import {RootNav, RootStackParamList} from "../Root";
 import {useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {getStr} from "../../utils/i18n";
@@ -8,6 +8,8 @@ import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
 import md5 from "md5";
+import useDetailNavigator from "../../utils/useDetailNavigator";
+import {StackActions} from "@react-navigation/native";
 
 export const NewsListItem = ({
 	item,
@@ -25,6 +27,27 @@ export const NewsListItem = ({
 	const [inFav, setInFav] = useState(item.inFav);
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const channelColor = colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
+	const detailNavigator = useDetailNavigator();
+
+	const handlePress = () => {
+		const params: RootStackParamList["NewsDetail"] = {
+			detail: item,
+			inFavInit: inFav,
+			setInFavFunc: setInFav,
+			isFromFav,
+			reloadFunc,
+		};
+		if (detailNavigator) {
+			detailNavigator.dispatch(
+				StackActions.replace("NewsDetail", {
+					...params,
+					disableAnimation: true,
+				}),
+			);
+		} else {
+			navigation.navigate("NewsDetail", params);
+		}
+	};
 
 	return (
 		<TouchableOpacity
@@ -36,15 +59,7 @@ export const NewsListItem = ({
 				marginVertical: 4,
 				borderRadius: 8,
 			}}
-			onPress={() =>
-				navigation.navigate("NewsDetail", {
-					detail: item,
-					inFavInit: inFav,
-					setInFavFunc: setInFav,
-					isFromFav: isFromFav,
-					reloadFunc: reloadFunc,
-				})
-			}>
+			onPress={handlePress}>
 			<Text
 				numberOfLines={3}
 				style={{

@@ -27,7 +27,7 @@ export const SecondaryItem = ({
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const windowWidth = Dimensions.get("window").width;
-	const viewSize = (windowWidth - 32) / 2 - 1;
+	const viewSize = Math.min((windowWidth - 32) / 2 - 1, 180);
 	const dispatch = useDispatch();
 	return (
 		<TouchableOpacity

@@ -53,6 +53,8 @@ import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
+import useDetailNavigator from "../../utils/useDetailNavigator";
+import {StackActions} from "@react-navigation/native";
 
 interface NormalSliceRenderData {
 	type: "normal";
@@ -385,6 +387,7 @@ const Header = React.forwardRef(
 );
 
 export const ScheduleScreen = () => {
+	const detailNavigator = useDetailNavigator();
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
 		(s: State) => s.config,
@@ -1296,7 +1299,7 @@ export const ScheduleScreen = () => {
 															}
 															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
-																setEditingParams({
+																const detailProps = {
 																	name: val.name,
 																	location: val.location,
 																	week: num,
@@ -1306,8 +1309,18 @@ export const ScheduleScreen = () => {
 																	alias: shortenMap[val.name] ?? "",
 																	type: val.type,
 																	category: val.category,
-																});
-																setShowAddModal(true);
+																};
+																if (detailNavigator) {
+																	detailNavigator.dispatch(
+																		StackActions.replace("ScheduleDetail", {
+																			...detailProps,
+																			disableAnimation: true,
+																		}),
+																	);
+																} else {
+																	setEditingParams(detailProps);
+																	setShowAddModal(true);
+																}
 															}}
 															onLongPress={() => {
 																setActionTarget({

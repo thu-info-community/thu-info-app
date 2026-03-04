@@ -78,6 +78,7 @@ export default {
 	enableDarkMode: "Enable dark mode",
 	language: "Language",
 	autoFollow: "Auto",
+	tabletMode: "Tablet Mode (experimental)",
 	restartToApply: "Restart APP to apply changes.",
 	privacy: "Privacy",
 	privacyPolicy: "Privacy Policy",
