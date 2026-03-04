@@ -1196,6 +1196,8 @@ export const ScheduleScreen = () => {
 													}
 
 													const findPeriodByMinute = (m: number) => {
+														let closestIndex = 1;
+														let minDistance = Number.POSITIVE_INFINITY;
 														for (let i = 1; i < beginTime.length; i++) {
 															const beginStr = beginTime[i];
 															const endStr = endTime[i];
@@ -1211,8 +1213,14 @@ export const ScheduleScreen = () => {
 															if (m >= start && m < end) {
 																return i;
 															}
+															const mid = (start + end) / 2;
+															const dist = Math.abs(m - mid);
+															if (dist < minDistance) {
+																minDistance = dist;
+																closestIndex = i;
+															}
 														}
-														return 1;
+														return closestIndex;
 													};
 
 													const periodBegin = findPeriodByMinute(minuteOfDay);
