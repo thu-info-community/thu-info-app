@@ -1044,7 +1044,9 @@ export const ScheduleScreen = () => {
 									top: 0,
 									bottom: 0,
 									width: 1,
-									backgroundColor: theme.colors.inputBorder,
+									backgroundColor: isDarkMode
+										? "rgba(255,255,255,0.08)"
+										: "rgba(0,0,0,0.06)",
 								}}
 							/>
 							{/* begin time markers */}
@@ -1073,7 +1075,9 @@ export const ScheduleScreen = () => {
 											borderRadius: 3,
 											backgroundColor: theme.colors.contentBackground,
 											borderWidth: 1,
-											borderColor: theme.colors.inputBorder,
+											borderColor: isDarkMode
+												? "rgba(255,255,255,0.08)"
+												: "rgba(0,0,0,0.06)",
 										}}
 									/>
 								);
@@ -1104,7 +1108,9 @@ export const ScheduleScreen = () => {
 											borderRadius: 3,
 											backgroundColor: theme.colors.contentBackground,
 											borderWidth: 1,
-											borderColor: theme.colors.inputBorder,
+											borderColor: isDarkMode
+												? "rgba(255,255,255,0.08)"
+												: "rgba(0,0,0,0.06)",
 										}}
 									/>
 								);
@@ -1121,7 +1127,9 @@ export const ScheduleScreen = () => {
 								<View
 									key={`hour-line-${hour}`}
 									style={{
-										backgroundColor: theme.colors.inputBorder,
+										backgroundColor: isDarkMode
+											? "rgba(255,255,255,0.08)"
+											: "rgba(0,0,0,0.06)",
 										height: 1,
 										position: "absolute",
 										left: 0,
