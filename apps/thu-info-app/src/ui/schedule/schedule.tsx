@@ -120,7 +120,6 @@ const Header = React.forwardRef(
 			onPressAdd,
 			onSetWeek,
 			onPressUpload,
-			hasCustomSchedule,
 			uploadingCustomSchedule,
 		}: {
 			calendar: CalendarData | undefined;
@@ -158,6 +157,8 @@ const Header = React.forwardRef(
 
 		const [week, setWeek] = useState(nowWeek);
 		const uploadIconScale = useRef(new Animated.Value(1)).current;
+
+		const hasCustomSchedule = false;
 
 		useImperativeHandle(
 			ref,
