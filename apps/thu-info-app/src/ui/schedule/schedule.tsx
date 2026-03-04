@@ -471,8 +471,6 @@ export const ScheduleScreen = () => {
 			return weekNumber;
 		}
 	})();
-	const today = current.day() === 0 ? 7 : current.day();
-
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
@@ -969,7 +967,9 @@ export const ScheduleScreen = () => {
 										height: 2,
 										borderRadius: 1,
 										backgroundColor:
-											today === index + 1
+											dayjs(firstDay)
+												.add(currentWeekIndex * 7 + index, "day")
+												.isSame(current, "day")
 												? theme.colors.themePurple
 												: undefined,
 									}}
@@ -1301,7 +1301,7 @@ export const ScheduleScreen = () => {
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
 																		colorList.length
-																]}${enableNewUI ? "33" : ""}`
+																]}${enableNewUI ? "44" : ""}`
 															}
 															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
