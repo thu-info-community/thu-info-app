@@ -700,11 +700,7 @@ export const ScheduleScreen = () => {
 						marginBottom: 4,
 					}}
 					numberOfLines={2}>
-					{nullAlias(actionTarget.alias)
-						? actionTarget.name.substring(
-								actionTarget.type === ScheduleType.CUSTOM ? 6 : 0,
-						  )
-						: actionTarget.alias}
+					{nullAlias(actionTarget.alias) ? actionTarget.name : actionTarget.alias}
 				</Text>
 				<Text
 					style={{
@@ -768,9 +764,7 @@ export const ScheduleScreen = () => {
 								color: detailSecondaryColor,
 								fontSize: 13,
 							}}>
-							{actionTarget.name.substring(
-								actionTarget.type === ScheduleType.CUSTOM ? 6 : 0,
-							)}
+							{actionTarget.name}
 							{getStr("lp")}
 							{getStr("originalName")}
 							{getStr("rp")}
@@ -1288,10 +1282,7 @@ export const ScheduleScreen = () => {
 															begin={visibleBegin}
 															end={visibleEnd}
 															name={
-																shortenMap[val.name] ??
-																val.name.substring(
-																	val.type === ScheduleType.CUSTOM ? 6 : 0,
-																)
+																shortenMap[val.name] ?? val.name
 															}
 															location={val.location}
 															gridHeight={minuteHeight}

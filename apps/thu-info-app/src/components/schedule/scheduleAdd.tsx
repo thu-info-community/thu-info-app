@@ -103,15 +103,6 @@ interface ScheduleAddModalProps {
 	defaultEndMinute?: number;
 }
 
-export const numberToCode = (num: number): string => {
-	const pow10: number[] = [100000, 10000, 1000, 100, 10, 1];
-	let res: string = "";
-	pow10.forEach((val) => {
-		res += Math.floor(num / val) % 10;
-	});
-	return res;
-};
-
 export const ScheduleAddModal = ({
 	visible,
 	onClose,
@@ -151,7 +142,6 @@ export const ScheduleAddModal = ({
 	const params = initialParams;
 
 	const scheduleList = useSelector((s: State) => s.schedule.baseSchedule);
-	const customCnt = useSelector((s: State) => s.schedule.customCnt);
 
 	const weekCount = useSelector((s: State) => s.config.weekCount);
 	const firstDay = useSelector((s: State) => s.config.firstDay);
@@ -385,7 +375,7 @@ export const ScheduleAddModal = ({
 
 						// TODO: 需要禁止添加和已有计划重名的计划
 						const newSchedule: Schedule = {
-							name: numberToCode(customCnt) + (title || params?.name?.substring(6) || ""),
+							name: title || params?.name || "",
 							location: locale,
 							activeTime: {base: []},
 							delOrHideTime: {base: []},
@@ -488,9 +478,7 @@ export const ScheduleAddModal = ({
 										.map(
 											(val) =>
 												"「" +
-												val[0].substring(
-													val[1] === ScheduleType.CUSTOM ? 6 : 0,
-												) +
+												val[0] +
 												"」\n" +
 												getStr("weekNumPrefix") +
 												getWeekFromTime(val[2].beginTime, firstDay) +
@@ -650,11 +638,7 @@ export const ScheduleAddModal = ({
 						padding: 0,
 						fontSize: 16,
 					}}
-					placeholder={
-						params?.name?.substring(
-							params?.type === ScheduleType.CUSTOM ? 6 : 0,
-						) ?? getStr("title")
-					}
+					placeholder={params?.name ?? getStr("title")}
 					placeholderTextColor={modalTextColor}
 					value={title}
 					onChangeText={setTitle}

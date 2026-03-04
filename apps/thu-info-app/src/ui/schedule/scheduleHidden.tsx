@@ -70,11 +70,11 @@ export const ScheduleHiddenScreen = () => {
 							fontSize: 15,
 							color: theme.colors.text,
 						}}>
-						{`${item.weekPrefix} ${item.name.substr(
-							item.type === ScheduleType.CUSTOM ? 6 : 0,
-						)} ${getStr("dayOfWeek")[item.time.dayOfWeek]} [${
-							item.time.beginTime.format("HH:mm")
-						}, ${item.time.endTime.format("HH:mm")}]`}
+						{`${item.weekPrefix} ${item.name} ${
+							getStr("dayOfWeek")[item.time.dayOfWeek]
+						} [${item.time.beginTime.format("HH:mm")}, ${item.time.endTime.format(
+							"HH:mm",
+						)}]`}
 					</Text>
 					<TouchableOpacity
 						style={{padding: 5, marginHorizontal: 6}}
@@ -98,11 +98,7 @@ export const ScheduleHiddenScreen = () => {
 										overlapList
 											.map(
 												(val) =>
-													"「" +
-													val[0].substr(
-														val[1] === ScheduleType.CUSTOM ? 6 : 0,
-													) +
-													"」\n" +
+													"「" + val[0] + "」\n" +
 													getStr("weekNumPrefix") +
 													getWeekFromTime(val[2].beginTime, firstDay) +
 													getStr("weekNumSuffix") +

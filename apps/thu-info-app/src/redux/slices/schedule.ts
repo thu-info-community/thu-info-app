@@ -91,7 +91,7 @@ export const scheduleSlice = createSlice({
 					return;
 				}
 
-				const plainName = custom.name.substring(6);
+				const plainName = custom.name;
 				const remainingSlices = custom.activeTime.base.filter((slice) => {
 					const overlapped = payload.schedule.some((sch) => {
 						if (sch.name !== plainName || sch.location !== custom.location) {

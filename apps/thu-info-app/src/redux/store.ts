@@ -22,6 +22,7 @@ import {is24HourFormat} from "react-native-device-time-format";
 import {
 	Schedule,
 	ScheduleTime,
+	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import dayjs from "dayjs";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
@@ -220,7 +221,15 @@ const scheduleTransform = createTransform(
 	},
 );
 
-// 该函数用于计划部分数据库重构后的数据迁移
+const stripCustomPrefix = (schedule: Schedule): Schedule => ({
+	...schedule,
+	name:
+		schedule.type === ScheduleType.CUSTOM
+			? schedule.name.replace(/^\d{6}/, "")
+			: schedule.name,
+});
+
+// 该函数用于计划部分数据库重构后的数据迁移（包括旧版名称前缀清理）
 const migrateSchedule = (old: Schedule, semesterFirstDay: string): Schedule => {
 	const transform = (scheduleTime: any) => ({
 		base: scheduleTime.base.flatMap((oldSlice: any) => oldSlice.activeWeeks.map((week: number) => {
@@ -234,15 +243,15 @@ const migrateSchedule = (old: Schedule, semesterFirstDay: string): Schedule => {
 			};
 		})),
 	} as ScheduleTime);
-	return {
+	return stripCustomPrefix({
 		...old,
 		activeTime: transform(old.activeTime),
 		delOrHideTime: transform(old.delOrHideTime),
-	}
+	});
 };
 
 const persistConfig = {
-	version: 5,
+	version: 6,
 	key: "root",
 	storage: AsyncStorage,
 	transforms: [authTransform, configTransform, scheduleTransform],
@@ -259,13 +268,33 @@ const persistConfig = {
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
 							uuid: state.config.uuid ?? defaultConfig.uuid,
 						},
-						schedule: {
-							...state.schedule,
-							baseSchedule:
-								state.schedule.baseSchedule?.[0]?.activeTime?.base?.[0]?.beginTime === undefined
-									? state.schedule.baseSchedule?.map((schedule: Schedule) => migrateSchedule(schedule, state.config.firstDay ?? defaultConfig.firstDay)) ?? []
-									: state.schedule.baseSchedule,
-						},
+						schedule: state.schedule
+							? {
+									...state.schedule,
+									baseSchedule:
+										state.schedule.baseSchedule?.[0]?.activeTime?.base?.[0]
+											?.beginTime === undefined
+											? state.schedule.baseSchedule?.map(
+													(schedule: Schedule) =>
+														migrateSchedule(
+															schedule,
+															state.config.firstDay ??
+																defaultConfig.firstDay,
+														),
+											  ) ?? []
+											: state.schedule.baseSchedule?.map((schedule: Schedule) =>
+													stripCustomPrefix(schedule),
+											  ),
+									shortenMap: Object.fromEntries(
+										Object.entries(state.schedule.shortenMap ?? {}).map(
+											([key, value]) => [
+												key.replace(/^\d{6}/, ""),
+												value,
+											],
+										),
+									),
+								}
+							: state.schedule,
 						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
 						campusCard: state.campusCard ?? defaultCampusCard,

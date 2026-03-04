@@ -201,9 +201,7 @@ export const ScheduleDetailScreen = ({
 					fontWeight: "bold",
 				}}
 				numberOfLines={2}>
-				{nullAlias(props.alias)
-					? props.name.substring(props.type === ScheduleType.CUSTOM ? 6 : 0)
-					: props.alias}
+				{nullAlias(props.alias) ? props.name : props.alias}
 			</Text>
 			<Text style={{fontSize: 14, color: colors.themePurple}}>
 				{props.location === "" ? getStr("locationUnset") : props.location}
@@ -230,7 +228,7 @@ export const ScheduleDetailScreen = ({
 					style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
 					<IconTrademark height={15} width={15} />
 					<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-						{props.name.substring(props.type === ScheduleType.CUSTOM ? 6 : 0)}
+						{props.name}
 						{getStr("lp")}
 						{getStr("originalName")}
 						{getStr("rp")}

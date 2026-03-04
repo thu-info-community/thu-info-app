@@ -93,7 +93,7 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
                 if (schedule.type !== ScheduleType.CUSTOM) {
                     continue;
                 }
-                const zt = schedule.name.substring(6);
+                const zt = schedule.name;
                 const dd = schedule.location;
                 for (const time of schedule.activeTime.base) {
                     const role = form.find("input[name=\"role\"]").attr("value");
