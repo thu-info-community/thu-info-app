@@ -826,7 +826,7 @@ export const ScheduleAddModal = ({
 					activeOpacity={1}
 					onPress={() => {}}
 					style={{
-						marginTop: 48,
+						marginTop: 100,
 						marginHorizontal: 20,
 						marginBottom: 24,
 						borderRadius: 12,
