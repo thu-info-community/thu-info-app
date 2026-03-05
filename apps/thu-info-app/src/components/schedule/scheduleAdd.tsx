@@ -310,6 +310,91 @@ export const ScheduleAddModal = ({
 		defaultEndMinute,
 	]);
 
+	// When editing custom schedule: init ALL time-section and title/locale from current schedule; choose 上课时间 vs 自然时间 by alignment.
+	// Must run on open because modal may stay mounted and useState initial values only apply on first mount.
+	useEffect(() => {
+		if (
+			!visible ||
+			!params ||
+			params.type !== ScheduleType.CUSTOM
+		) {
+			return;
+		}
+		const currentSchedule = scheduleList.find(
+			(s) =>
+				s.name === params.name && s.type === ScheduleType.CUSTOM,
+		);
+		const beginPeriod = getBeginPeriod(params.beginTime);
+		const endPeriod = getEndPeriod(params.endTime);
+		const alignsWithClassTime = beginPeriod > 0 && endPeriod > 0;
+
+		setTitle(params.alias ?? "");
+		setLocale(params.location ?? "");
+
+		if (currentSchedule) {
+			const samePatternSlices = currentSchedule.activeTime.base.filter(
+				(slice) =>
+					slice.dayOfWeek === params.dayOfWeek &&
+					slice.beginTime.format("HH:mm") ===
+						params.beginTime.format("HH:mm") &&
+					slice.endTime.format("HH:mm") ===
+						params.endTime.format("HH:mm"),
+			);
+			const weeksFromSchedule = [
+				...new Set(
+					samePatternSlices.map((slice) =>
+						getWeekFromTime(slice.beginTime, firstDay),
+					),
+				),
+			].filter((w) => w >= 1 && w <= weekCount);
+			weeksFromSchedule.sort((a, b) => a - b);
+			if (weeksFromSchedule.length > 0) {
+				setWeeks(weeksFromSchedule);
+				setPopupWeeks(weeksFromSchedule);
+			}
+		}
+
+		if (alignsWithClassTime) {
+			setUseCustomDateTime(false);
+			setDay(params.dayOfWeek);
+			setPopupDay(params.dayOfWeek);
+			setPeriodBegin(beginPeriod);
+			setPeriodEnd(endPeriod);
+			setPopupPeriodBegin(beginPeriod);
+			setPopupPeriodEnd(endPeriod);
+		} else {
+			setUseCustomDateTime(true);
+			const dateIdx = Math.min(
+				totalDays - 1,
+				Math.max(
+					0,
+					(params.week - 1) * 7 + (params.dayOfWeek - 1),
+				),
+			);
+			setDateIndex(dateIdx);
+			setPopupDateIndex(dateIdx);
+			const bHour = params.beginTime.hour();
+			const bMinute = params.beginTime.minute();
+			const eHour = params.endTime.hour();
+			const eMinute = params.endTime.minute();
+			setBeginHour(bHour);
+			setBeginMinute(bMinute);
+			setEndHour(eHour);
+			setEndMinute(eMinute);
+			setPopupBeginHour(bHour);
+			setPopupBeginMinute(bMinute);
+			setPopupEndHour(eHour);
+			setPopupEndMinute(eMinute);
+		}
+	}, [
+		visible,
+		params,
+		scheduleList,
+		firstDay,
+		weekCount,
+		totalDays,
+	]);
+
 	// Prepare for modify custom schedule's time
 	// For custom schedule editing, time IS editable; for non-custom, hide the section entirely
 	const isEditingCustom = params !== undefined && params.type === ScheduleType.CUSTOM;
