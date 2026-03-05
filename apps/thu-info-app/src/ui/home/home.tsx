@@ -289,7 +289,7 @@ export const HomeScheduleSection = () => {
 
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
-								name: shortenMap[s.name] ?? s.name.slice(6),
+								name: shortenMap[s.name] ?? s.name,
 								location: s.location,
 								from,
 								to,
