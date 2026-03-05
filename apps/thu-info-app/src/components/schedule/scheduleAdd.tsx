@@ -258,12 +258,20 @@ export const ScheduleAddModal = ({
 		}
 
 		if (params !== undefined && params.type === ScheduleType.CUSTOM) {
-			// Editing an existing custom schedule: initialize fields from the schedule's data
+			// Editing an existing custom schedule: initialize all fields from the schedule's data
 			const isCustomTime =
 				getBeginPeriod(params.beginTime) === 0 ||
 				getEndPeriod(params.endTime) === 0;
 			setUseCustomDateTime(isCustomTime);
 			setRepeatWeekly(false);
+
+			// Initialize title and location
+			setTitle(params.alias ?? "");
+			setLocale(params.location ?? "");
+
+			// Always initialize day of week from the schedule's slice
+			setDay(params.dayOfWeek);
+			setPopupDay(params.dayOfWeek);
 
 			if (isCustomTime) {
 				const semesterStart = dayjs(firstDay).startOf("day");
@@ -285,6 +293,16 @@ export const ScheduleAddModal = ({
 				setPopupBeginMinute(bMinute);
 				setPopupEndHour(eHour);
 				setPopupEndMinute(eMinute);
+			} else {
+				// Period mode: initialize period selectors from existing schedule
+				const pBegin = getBeginPeriod(params.beginTime);
+				const pEnd = getEndPeriod(params.endTime);
+				const effectivePBegin = pBegin > 0 ? pBegin : 1;
+				const effectivePEnd = pEnd > 0 ? pEnd : 14;
+				setPeriodBegin(effectivePBegin);
+				setPeriodEnd(effectivePEnd);
+				setPopupPeriodBegin(effectivePBegin);
+				setPopupPeriodEnd(effectivePEnd);
 			}
 			return;
 		}
