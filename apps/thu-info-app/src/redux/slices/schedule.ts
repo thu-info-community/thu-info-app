@@ -4,6 +4,7 @@ import {
 	delOrHide,
 	removeDelOrHide,
 	Schedule,
+	ScheduleTime,
 	TimeSlice,
 	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
@@ -199,6 +200,20 @@ export const scheduleSlice = createSlice({
 				}
 			});
 		},
+		scheduleUpdateCustomTime: (
+			state,
+			{payload}: PayloadAction<[string, ScheduleTime]>,
+		) => {
+			const [title, newActiveTime] = payload;
+			state.baseSchedule.forEach((val) => {
+				if (val.name === title && val.type === ScheduleType.CUSTOM) {
+					val.activeTime = newActiveTime;
+					// Reset delOrHideTime since existing hide rules are tied to old time slots
+					// and become invalid after the time slots are replaced
+					val.delOrHideTime = {base: []};
+				}
+			});
+		},
 		scheduleSync: (state, {payload}: PayloadAction<ScheduleState>) => {
 			state.baseSchedule = payload.baseSchedule;
 			state.customCnt = payload.customCnt;
@@ -219,6 +234,7 @@ export const {
 	scheduleAddCustom,
 	scheduleDelOrHide,
 	scheduleRemoveHiddenRule,
+	scheduleUpdateCustomTime,
 	scheduleSync,
 	scheduleClear,
 } = scheduleSlice.actions;
