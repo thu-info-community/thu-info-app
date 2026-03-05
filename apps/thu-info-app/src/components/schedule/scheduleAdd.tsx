@@ -31,6 +31,7 @@ import {
 	scheduleDelOrHide,
 	scheduleUpdateAlias,
 	scheduleUpdateLocation,
+	scheduleUpdateCustomTime,
 } from "../../redux/slices/schedule";
 import {useColorScheme} from "react-native";
 import {BottomPopupTriggerView, RoundedView} from "../views";
@@ -310,8 +311,9 @@ export const ScheduleAddModal = ({
 	]);
 
 	// Prepare for modify custom schedule's time
-	// const timeEditable = (params && params?.type !== ScheduleType.CUSTOM) || false;
-	const timeEditable = params !== undefined;
+	// For custom schedule editing, time IS editable; for non-custom, hide the section entirely
+	const isEditingCustom = params !== undefined && params.type === ScheduleType.CUSTOM;
+	const isNonCustomEdit = params !== undefined && params.type !== ScheduleType.CUSTOM;
 
 	const dateTimeValid = (() => {
 		if (!useCustomDateTime) {
@@ -336,7 +338,7 @@ export const ScheduleAddModal = ({
 
 	const valid =
 		(title.trim().length > 0 || params !== undefined) &&
-		(!useCustomDateTime ? weeks.length > 0 : dateTimeValid);
+		(isNonCustomEdit || (!useCustomDateTime ? weeks.length > 0 : dateTimeValid));
 
 	const windowWidth = Dimensions.get("window").width;
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
@@ -345,195 +347,272 @@ export const ScheduleAddModal = ({
 		if (!valid) {
 			return;
 		}
-						if (params !== undefined) {
-							// 代表是在修改现有计划
-							if (title.length === 0) {
-								dispatch(scheduleUpdateAlias([params.name, undefined]));
-							} else {
-								dispatch(scheduleUpdateAlias([params.name, title]));
-							}
-							dispatch(scheduleUpdateLocation([params.name, locale]));
 
-							if (
-								// 时间没有变化
-								day === params.dayOfWeek &&
-								periodBegin === getBeginPeriod(params.beginTime) &&
-								periodEnd === getEndPeriod(params.endTime) &&
-								weeks.length === params.activeWeeks?.length
-							) {
-								onClose();
-								return;
-							}
-							// TODO: Modify custom schedule's time
-							// dispatch(scheduleDelOrHide([params.name, {
-							// 	dayOfWeek: params.dayOfWeek,
-							// 	begin: Number(params.begin),
-							// 	end: Number(params.end),
-							// 	activeWeeks: params.activeWeeks || [],
-							// }, Choice.ALL]));
-						}
+		if (params !== undefined) {
+			// 代表是在修改现有计划
+			if (title.length === 0) {
+				dispatch(scheduleUpdateAlias([params.name, undefined]));
+			} else {
+				dispatch(scheduleUpdateAlias([params.name, title]));
+			}
+			dispatch(scheduleUpdateLocation([params.name, locale]));
 
-						// TODO: 需要禁止添加和已有计划重名的计划
-						const newSchedule: Schedule = {
-							name: title || params?.name || "",
-							location: locale,
-							activeTime: {base: []},
-							delOrHideTime: {base: []},
-							type: ScheduleType.CUSTOM,
-							hash: "",
-						};
+			if (isEditingCustom) {
+				// 修改自定义计划的时间
+				const newActiveTime: {base: TimeSlice[]} = {base: []};
 
-						if (!useCustomDateTime) {
-							weeks.forEach((week) => {
-								const courseDate = dayjs(firstDay)
-									.add((week - 1) * 7, "day")
-									.add(day - 1, "day");
+				if (!useCustomDateTime) {
+					weeks.forEach((week) => {
+						const courseDate = dayjs(firstDay)
+							.add((week - 1) * 7, "day")
+							.add(day - 1, "day");
 
-								const beginTimeStr = beginTime[periodBegin] || "08:00";
-								const endTimeStr = endTime[periodEnd] || "08:45";
+						const beginTimeStr = beginTime[periodBegin] || "08:00";
+						const endTimeStr = endTime[periodEnd] || "08:45";
 
-								scheduleTimeAdd(newSchedule.activeTime, {
-									dayOfWeek: day,
-									beginTime: dayjs(
-										`${courseDate.format("YYYY-MM-DD")} ${beginTimeStr}`,
-									),
-									endTime: dayjs(
-										`${courseDate.format("YYYY-MM-DD")} ${endTimeStr}`,
-									),
-								});
+						scheduleTimeAdd(newActiveTime, {
+							dayOfWeek: day,
+							beginTime: dayjs(
+								`${courseDate.format("YYYY-MM-DD")} ${beginTimeStr}`,
+							),
+							endTime: dayjs(
+								`${courseDate.format("YYYY-MM-DD")} ${endTimeStr}`,
+							),
+						});
+					});
+				} else {
+					if (totalDays <= 0) {
+						Alert.alert(
+							getStr("scheduleInvalidTimeTitle" as any),
+							getStr("scheduleInvalidTimeMessage" as any),
+						);
+						return;
+					}
+
+					const baseDate = dayjs(firstDay)
+						.add(dateIndex, "day")
+						.startOf("day");
+					const baseBegin = baseDate
+						.hour(beginHour)
+						.minute(beginMinute)
+						.second(0)
+						.millisecond(0);
+					const baseEnd = baseDate
+						.hour(endHour)
+						.minute(endMinute)
+						.second(0)
+						.millisecond(0);
+
+					if (!baseEnd.isAfter(baseBegin)) {
+						Alert.alert(
+							getStr("scheduleInvalidTimeTitle" as any),
+							getStr("scheduleInvalidTimeMessage" as any),
+						);
+						return;
+					}
+
+					const baseDayOfWeek =
+						baseBegin.day() === 0 ? 7 : baseBegin.day();
+
+					if (!repeatWeekly) {
+						scheduleTimeAdd(newActiveTime, {
+							dayOfWeek: baseDayOfWeek,
+							beginTime: baseBegin,
+							endTime: baseEnd,
+						});
+					} else {
+						const baseWeek = getWeekFromTime(baseBegin, firstDay);
+
+						if (baseWeek > weekCount) {
+							scheduleTimeAdd(newActiveTime, {
+								dayOfWeek: baseDayOfWeek,
+								beginTime: baseBegin,
+								endTime: baseEnd,
 							});
 						} else {
-							if (totalDays <= 0) {
-								Alert.alert(
-									getStr("scheduleInvalidTimeTitle" as any),
-									getStr("scheduleInvalidTimeMessage" as any),
-								);
-								return;
-							}
-
-							const baseDate = dayjs(firstDay)
-								.add(dateIndex, "day")
-								.startOf("day");
-							const baseBegin = baseDate
-								.hour(beginHour)
-								.minute(beginMinute)
-								.second(0)
-								.millisecond(0);
-							const baseEnd = baseDate
-								.hour(endHour)
-								.minute(endMinute)
-								.second(0)
-								.millisecond(0);
-
-							if (!baseEnd.isAfter(baseBegin)) {
-								Alert.alert(
-									getStr("scheduleInvalidTimeTitle" as any),
-									getStr("scheduleInvalidTimeMessage" as any),
-								);
-								return;
-							}
-
-							const baseDayOfWeek =
-								baseBegin.day() === 0 ? 7 : baseBegin.day();
-
-							if (!repeatWeekly) {
-								scheduleTimeAdd(newSchedule.activeTime, {
+							const startWeek = Math.max(baseWeek, 1);
+							for (let w = startWeek; w <= weekCount; w++) {
+								const offset = w - baseWeek;
+								const begin = baseBegin.add(offset, "week");
+								const end = baseEnd.add(offset, "week");
+								scheduleTimeAdd(newActiveTime, {
 									dayOfWeek: baseDayOfWeek,
-									beginTime: baseBegin,
-									endTime: baseEnd,
+									beginTime: begin,
+									endTime: end,
 								});
-							} else {
-								const baseWeek = getWeekFromTime(baseBegin, firstDay);
-
-								if (baseWeek > weekCount) {
-									scheduleTimeAdd(newSchedule.activeTime, {
-										dayOfWeek: baseDayOfWeek,
-										beginTime: baseBegin,
-										endTime: baseEnd,
-									});
-								} else {
-									const startWeek = Math.max(baseWeek, 1);
-									for (let w = startWeek; w <= weekCount; w++) {
-										const offset = w - baseWeek;
-										const begin = baseBegin.add(offset, "week");
-										const end = baseEnd.add(offset, "week");
-										scheduleTimeAdd(newSchedule.activeTime, {
-											dayOfWeek: baseDayOfWeek,
-											beginTime: begin,
-											endTime: end,
-										});
-									}
-								}
 							}
 						}
+					}
+				}
 
-						let overlapList: [string, ScheduleType, TimeSlice][] =
-							getOverlappedBlock(newSchedule, scheduleList);
+				dispatch(scheduleUpdateCustomTime([params.name, newActiveTime]));
+			}
 
-						if (overlapList.length) {
-							Alert.alert(
-								getStr("scheduleConflict"),
-								getStr("customIntro") +
-									overlapList
-										.map(
-											(val) =>
-												"「" +
-												val[0] +
-												"」\n" +
-												getStr("weekNumPrefix") +
-												getWeekFromTime(val[2].beginTime, firstDay) +
-												getStr("weekNumSuffix") +
-												" " +
-												getStr("dayOfWeek")[val[2].dayOfWeek] +
-												" " +
-												(() => {
-													const beginPeriod = getBeginPeriod(
-														val[2].beginTime,
-													);
-													const endPeriod = getEndPeriod(
-														val[2].endTime,
-													);
-													if (beginPeriod > 0 && endPeriod > 0) {
-														return (
-															getStr("periodNumPrefix") +
-															beginPeriod +
-															(beginPeriod === endPeriod
-																? ""
-																: " ~ " + endPeriod) +
-															getStr("periodNumSuffix")
-														);
-													}
-													return (
-														val[2].beginTime.format("HH:mm") +
-														" ~ " +
-														val[2].endTime.format("HH:mm")
-													);
-												})(),
-										)
-										.join("\n\n") +
-									getStr("customText"),
-								[
-									{
-										text: getStr("confirm"),
-										onPress: () => {
-											overlapList.forEach((val) => {
-												dispatch(
-													scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
-												);
-											});
-											dispatch(scheduleAddCustom(newSchedule));
-											onClose();
-										},
-									},
-									{
-										text: getStr("cancel"),
-									},
-								],
-							);
-						} else {
+			onClose();
+			return;
+		}
+
+		// TODO: 需要禁止添加和已有计划重名的计划
+		const newSchedule: Schedule = {
+			name: title || params?.name || "",
+			location: locale,
+			activeTime: {base: []},
+			delOrHideTime: {base: []},
+			type: ScheduleType.CUSTOM,
+			hash: "",
+		};
+
+		if (!useCustomDateTime) {
+			weeks.forEach((week) => {
+				const courseDate = dayjs(firstDay)
+					.add((week - 1) * 7, "day")
+					.add(day - 1, "day");
+
+				const beginTimeStr = beginTime[periodBegin] || "08:00";
+				const endTimeStr = endTime[periodEnd] || "08:45";
+
+				scheduleTimeAdd(newSchedule.activeTime, {
+					dayOfWeek: day,
+					beginTime: dayjs(
+						`${courseDate.format("YYYY-MM-DD")} ${beginTimeStr}`,
+					),
+					endTime: dayjs(
+						`${courseDate.format("YYYY-MM-DD")} ${endTimeStr}`,
+					),
+				});
+			});
+		} else {
+			if (totalDays <= 0) {
+				Alert.alert(
+					getStr("scheduleInvalidTimeTitle" as any),
+					getStr("scheduleInvalidTimeMessage" as any),
+				);
+				return;
+			}
+
+			const baseDate = dayjs(firstDay)
+				.add(dateIndex, "day")
+				.startOf("day");
+			const baseBegin = baseDate
+				.hour(beginHour)
+				.minute(beginMinute)
+				.second(0)
+				.millisecond(0);
+			const baseEnd = baseDate
+				.hour(endHour)
+				.minute(endMinute)
+				.second(0)
+				.millisecond(0);
+
+			if (!baseEnd.isAfter(baseBegin)) {
+				Alert.alert(
+					getStr("scheduleInvalidTimeTitle" as any),
+					getStr("scheduleInvalidTimeMessage" as any),
+				);
+				return;
+			}
+
+			const baseDayOfWeek =
+				baseBegin.day() === 0 ? 7 : baseBegin.day();
+
+			if (!repeatWeekly) {
+				scheduleTimeAdd(newSchedule.activeTime, {
+					dayOfWeek: baseDayOfWeek,
+					beginTime: baseBegin,
+					endTime: baseEnd,
+				});
+			} else {
+				const baseWeek = getWeekFromTime(baseBegin, firstDay);
+
+				if (baseWeek > weekCount) {
+					scheduleTimeAdd(newSchedule.activeTime, {
+						dayOfWeek: baseDayOfWeek,
+						beginTime: baseBegin,
+						endTime: baseEnd,
+					});
+				} else {
+					const startWeek = Math.max(baseWeek, 1);
+					for (let w = startWeek; w <= weekCount; w++) {
+						const offset = w - baseWeek;
+						const begin = baseBegin.add(offset, "week");
+						const end = baseEnd.add(offset, "week");
+						scheduleTimeAdd(newSchedule.activeTime, {
+							dayOfWeek: baseDayOfWeek,
+							beginTime: begin,
+							endTime: end,
+						});
+					}
+				}
+			}
+		}
+
+		let overlapList: [string, ScheduleType, TimeSlice][] =
+			getOverlappedBlock(newSchedule, scheduleList);
+
+		if (overlapList.length) {
+			Alert.alert(
+				getStr("scheduleConflict"),
+				getStr("customIntro") +
+					overlapList
+						.map(
+							(val) =>
+								"「" +
+								val[0] +
+								"」\n" +
+								getStr("weekNumPrefix") +
+								getWeekFromTime(val[2].beginTime, firstDay) +
+								getStr("weekNumSuffix") +
+								" " +
+								getStr("dayOfWeek")[val[2].dayOfWeek] +
+								" " +
+								(() => {
+									const beginPeriod = getBeginPeriod(
+										val[2].beginTime,
+									);
+									const endPeriod = getEndPeriod(
+										val[2].endTime,
+									);
+									if (beginPeriod > 0 && endPeriod > 0) {
+										return (
+											getStr("periodNumPrefix") +
+											beginPeriod +
+											(beginPeriod === endPeriod
+												? ""
+												: " ~ " + endPeriod) +
+											getStr("periodNumSuffix")
+										);
+									}
+									return (
+										val[2].beginTime.format("HH:mm") +
+										" ~ " +
+										val[2].endTime.format("HH:mm")
+									);
+								})(),
+						)
+						.join("\n\n") +
+					getStr("customText"),
+				[
+					{
+						text: getStr("confirm"),
+						onPress: () => {
+							overlapList.forEach((val) => {
+								dispatch(
+									scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
+								);
+							});
 							dispatch(scheduleAddCustom(newSchedule));
 							onClose();
-						}
+						},
+					},
+					{
+						text: getStr("cancel"),
+					},
+				],
+			);
+		} else {
+			dispatch(scheduleAddCustom(newSchedule));
+			onClose();
+		}
 	};
 
 	const windowHeight = Dimensions.get("window").height;
@@ -662,6 +741,9 @@ export const ScheduleAddModal = ({
 					onChangeText={setLocale}
 				/>
 			</RoundedView>
+			{/* Time editing section: shown when adding new schedule or editing custom schedule.
+			    Hidden entirely for non-custom schedule edits since time slots cannot be modified. */}
+			{!isNonCustomEdit && (
 			<RoundedView
 				style={{
 					marginTop: 20,
@@ -669,8 +751,7 @@ export const ScheduleAddModal = ({
 					paddingVertical: 20,
 					backgroundColor: cardBackgroundColor,
 				}}>
-				{!timeEditable && (
-					<View
+				<View
 						style={{
 							flexDirection: "row",
 							marginBottom: 12,
@@ -720,12 +801,10 @@ export const ScheduleAddModal = ({
 							</Text>
 						</TouchableOpacity>
 					</View>
-				)}
 
 				{!useCustomDateTime && (
 					<>
 						<BottomPopupTriggerView
-							disabled={timeEditable}
 							popupTitle={explainWeekList(popupWeeks)}
 							popupCancelable={true}
 							popupContent={
@@ -938,7 +1017,6 @@ export const ScheduleAddModal = ({
 							}}
 						/>
 						<BottomPopupTriggerView
-							disabled={timeEditable}
 							popupTitle={`${getStr("dayOfWeek")[popupDay]} ${
 								beginTime[popupPeriodBegin]
 							} - ${endTime[popupPeriodEnd]}`}
@@ -1063,7 +1141,6 @@ export const ScheduleAddModal = ({
 				{useCustomDateTime && (
 					<>
 						<BottomPopupTriggerView
-							disabled={timeEditable}
 							popupTitle={(() => {
 								if (totalDays <= 0) {
 									return "";
@@ -1161,7 +1238,6 @@ export const ScheduleAddModal = ({
 							}}
 						/>
 						<BottomPopupTriggerView
-							disabled={timeEditable}
 							popupTitle={`${String(popupBeginHour).padStart(2, "0")}:${String(
 								popupBeginMinute,
 							).padStart(2, "0")} - ${String(
@@ -1300,9 +1376,7 @@ export const ScheduleAddModal = ({
 								<View style={{flex: 1}} />
 								<Text
 									style={{
-										color: timeEditable
-											? theme.colors.fontB3
-											: theme.colors.fontB2,
+										color: theme.colors.fontB2,
 										fontSize: 16,
 										flex: 0,
 									}}
@@ -1352,6 +1426,7 @@ export const ScheduleAddModal = ({
 					</>
 				)}
 			</RoundedView>
+			)}
 						{params !== undefined && (
 							<Text
 								style={{
