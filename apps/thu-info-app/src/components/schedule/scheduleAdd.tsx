@@ -361,6 +361,9 @@ export const ScheduleAddModal = ({
 				// 修改自定义计划的时间
 				const newActiveTime: {base: TimeSlice[]} = {base: []};
 
+				// Also compute a single new slice for "change once" use
+				let singleNewSlice: TimeSlice | null = null;
+
 				if (!useCustomDateTime) {
 					weeks.forEach((week) => {
 						const courseDate = dayjs(firstDay)
@@ -380,6 +383,22 @@ export const ScheduleAddModal = ({
 							),
 						});
 					});
+
+					// For "change once": use the specific week from the clicked occurrence
+					const onceCourseDate = dayjs(firstDay)
+						.add((params.week - 1) * 7, "day")
+						.add(day - 1, "day");
+					const onceBeginTimeStr = beginTime[periodBegin] || "08:00";
+					const onceEndTimeStr = endTime[periodEnd] || "08:45";
+					singleNewSlice = {
+						dayOfWeek: day,
+						beginTime: dayjs(
+							`${onceCourseDate.format("YYYY-MM-DD")} ${onceBeginTimeStr}`,
+						),
+						endTime: dayjs(
+							`${onceCourseDate.format("YYYY-MM-DD")} ${onceEndTimeStr}`,
+						),
+					};
 				} else {
 					if (totalDays <= 0) {
 						Alert.alert(
@@ -414,6 +433,13 @@ export const ScheduleAddModal = ({
 					const baseDayOfWeek =
 						baseBegin.day() === 0 ? 7 : baseBegin.day();
 
+					// Single new slice for "change once"
+					singleNewSlice = {
+						dayOfWeek: baseDayOfWeek,
+						beginTime: baseBegin,
+						endTime: baseEnd,
+					};
+
 					if (!repeatWeekly) {
 						scheduleTimeAdd(newActiveTime, {
 							dayOfWeek: baseDayOfWeek,
@@ -443,6 +469,79 @@ export const ScheduleAddModal = ({
 							}
 						}
 					}
+				}
+
+				// Check whether this schedule has weekly-repeating occurrences at the same time pattern
+				const currentSchedule = scheduleList.find(
+					(s) => s.name === params.name && s.type === ScheduleType.CUSTOM,
+				);
+				const repeatingSlices = (currentSchedule?.activeTime.base ?? []).filter(
+					(slice) =>
+						slice.dayOfWeek === params.dayOfWeek &&
+						slice.beginTime.format("HH:mm") ===
+							params.beginTime.format("HH:mm") &&
+						slice.endTime.format("HH:mm") ===
+							params.endTime.format("HH:mm"),
+				);
+
+				if (repeatingSlices.length > 1 && singleNewSlice !== null) {
+					// Prompt user to choose between "change once" and "change all repeating"
+					const capturedSingleSlice = singleNewSlice;
+					Alert.alert(
+						getStr("scheduleEditRepeatingTitle"),
+						getStr("scheduleEditRepeatingMessage"),
+						[
+							{
+								text: getStr("scheduleEditOnce"),
+								onPress: () => {
+									// Keep all slices except the exact clicked one, then add the new single slice
+									const onceActiveTime: {base: TimeSlice[]} = {base: []};
+									(currentSchedule?.activeTime.base ?? []).forEach(
+										(slice) => {
+											if (
+												!slice.beginTime.isSame(
+													params.beginTime,
+													"minute",
+												) ||
+												!slice.endTime.isSame(
+													params.endTime,
+													"minute",
+												)
+											) {
+												scheduleTimeAdd(onceActiveTime, {
+													...slice,
+												});
+											}
+										},
+									);
+									scheduleTimeAdd(onceActiveTime, capturedSingleSlice);
+									dispatch(
+										scheduleUpdateCustomTime([
+											params.name,
+											onceActiveTime,
+										]),
+									);
+									onClose();
+								},
+							},
+							{
+								text: getStr("scheduleEditAllRepeat"),
+								onPress: () => {
+									dispatch(
+										scheduleUpdateCustomTime([
+											params.name,
+											newActiveTime,
+										]),
+									);
+									onClose();
+								},
+							},
+							{
+								text: getStr("cancel"),
+							},
+						],
+					);
+					return;
 				}
 
 				dispatch(scheduleUpdateCustomTime([params.name, newActiveTime]));

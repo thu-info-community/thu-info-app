@@ -550,6 +550,10 @@ export default {
 	illegalLocation: "Illegal Location",
 	locationCannotBeNull: "Can not set the location null string.",
 	modifyTime: "Modify Time",
+	scheduleEditRepeatingTitle: "Edit Repeating Schedule",
+	scheduleEditRepeatingMessage: "This schedule repeats across multiple time slots. Which occurrences do you want to modify?",
+	scheduleEditOnce: "Only this one",
+	scheduleEditAllRepeat: "All repeating",
 	confirmDeletion: "Confirm deletion",
 	confirmDeletionText:
 		"Are you sure to delete the location? This operation cannot be undone. Press 'OK' to delete the location.",

@@ -520,6 +520,10 @@ export default {
 	illegalLocation: "地点错误",
 	locationCannotBeNull: "不能将地点设置为空。",
 	modifyTime: "修改时间",
+	scheduleEditRepeatingTitle: "修改重复日程",
+	scheduleEditRepeatingMessage: "此日程在多个时间段重复，您要修改哪些日程？",
+	scheduleEditOnce: "仅本次",
+	scheduleEditAllRepeat: "所有重复",
 	confirmDeletion: "确认删除",
 	confirmDeletionText:
 		"是否确认删除地点？该操作不能撤销。点按“确认”来删除地点。",
