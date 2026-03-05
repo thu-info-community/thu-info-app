@@ -7,6 +7,7 @@ import {
 	ScheduleTime,
 	TimeSlice,
 	ScheduleType,
+	scheduleTimeAdd,
 } from "@thu-info/lib/src/models/schedule/schedule";
 
 export interface ScheduleState {
@@ -136,8 +137,32 @@ export const scheduleSlice = createSlice({
 			});
 		},
 		scheduleAddCustom: (state, {payload}: PayloadAction<Schedule>) => {
-			state.baseSchedule.push(payload);
-			state.customCnt += 1;
+			if (payload.type !== ScheduleType.CUSTOM) {
+				state.baseSchedule.push(payload);
+				return;
+			}
+			const existing = state.baseSchedule.find(
+				(s) =>
+					s.type === ScheduleType.CUSTOM &&
+					s.name === payload.name &&
+					s.location === payload.location,
+			);
+			if (existing) {
+				payload.activeTime.base.forEach((slice) => {
+					const alreadyHas = existing.activeTime.base.some(
+						(s) =>
+							s.dayOfWeek === slice.dayOfWeek &&
+							s.beginTime.isSame(slice.beginTime, "minute") &&
+							s.endTime.isSame(slice.endTime, "minute"),
+					);
+					if (!alreadyHas) {
+						scheduleTimeAdd(existing.activeTime, slice);
+					}
+				});
+			} else {
+				state.baseSchedule.push(payload);
+				state.customCnt += 1;
+			}
 		},
 		scheduleDelOrHide: (
 			state,
