@@ -310,7 +310,16 @@ export const ScheduleAddModal = ({
 		defaultEndMinute,
 	]);
 
-	// When editing custom schedule: init ALL time-section and title/locale from current schedule; choose 上课时间 vs 自然时间 by alignment.
+	// When opening for edit (any schedule type), sync title and location from params so 标题/地点 default to current values.
+	useEffect(() => {
+		if (!visible || !params) {
+			return;
+		}
+		setTitle(params.alias ?? "");
+		setLocale(params.location ?? "");
+	}, [visible, params]);
+
+	// When editing custom schedule: init ALL time-section from current schedule; choose 上课时间 vs 自然时间 by alignment.
 	// Must run on open because modal may stay mounted and useState initial values only apply on first mount.
 	useEffect(() => {
 		if (
@@ -327,9 +336,6 @@ export const ScheduleAddModal = ({
 		const beginPeriod = getBeginPeriod(params.beginTime);
 		const endPeriod = getEndPeriod(params.endTime);
 		const alignsWithClassTime = beginPeriod > 0 && endPeriod > 0;
-
-		setTitle(params.alias ?? "");
-		setLocale(params.location ?? "");
 
 		if (currentSchedule) {
 			const samePatternSlices = currentSchedule.activeTime.base.filter(
