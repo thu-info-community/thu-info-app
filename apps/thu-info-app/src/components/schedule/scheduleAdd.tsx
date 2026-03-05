@@ -253,61 +253,7 @@ export const ScheduleAddModal = ({
 	const [locale, setLocale] = useState(params?.location ?? "");
 
 	useEffect(() => {
-		if (!visible) {
-			return;
-		}
-
-		if (params !== undefined && params.type === ScheduleType.CUSTOM) {
-			// Editing an existing custom schedule: initialize all fields from the schedule's data
-			const isCustomTime =
-				getBeginPeriod(params.beginTime) === 0 ||
-				getEndPeriod(params.endTime) === 0;
-			setUseCustomDateTime(isCustomTime);
-			setRepeatWeekly(false);
-
-			// Initialize title and location
-			setTitle(params.alias ?? "");
-			setLocale(params.location ?? "");
-
-			// Always initialize day of week from the schedule's slice
-			setDay(params.dayOfWeek);
-			setPopupDay(params.dayOfWeek);
-
-			if (isCustomTime) {
-				const semesterStart = dayjs(firstDay).startOf("day");
-				const sliceDate = params.beginTime.startOf("day");
-				const diff = sliceDate.diff(semesterStart, "day");
-				const clampedDiff = Math.max(0, Math.min(totalDays - 1, diff));
-				setDateIndex(clampedDiff);
-				setPopupDateIndex(clampedDiff);
-
-				const bHour = params.beginTime.hour();
-				const bMinute = params.beginTime.minute();
-				const eHour = params.endTime.hour();
-				const eMinute = params.endTime.minute();
-				setBeginHour(bHour);
-				setBeginMinute(bMinute);
-				setEndHour(eHour);
-				setEndMinute(eMinute);
-				setPopupBeginHour(bHour);
-				setPopupBeginMinute(bMinute);
-				setPopupEndHour(eHour);
-				setPopupEndMinute(eMinute);
-			} else {
-				// Period mode: initialize period selectors from existing schedule
-				const pBegin = getBeginPeriod(params.beginTime);
-				const pEnd = getEndPeriod(params.endTime);
-				const effectivePBegin = pBegin > 0 ? pBegin : 1;
-				const effectivePEnd = pEnd > 0 ? pEnd : 14;
-				setPeriodBegin(effectivePBegin);
-				setPeriodEnd(effectivePEnd);
-				setPopupPeriodBegin(effectivePBegin);
-				setPopupPeriodEnd(effectivePEnd);
-			}
-			return;
-		}
-
-		if (params !== undefined) {
+		if (!visible || params !== undefined) {
 			return;
 		}
 
@@ -352,8 +298,6 @@ export const ScheduleAddModal = ({
 	}, [
 		visible,
 		params,
-		firstDay,
-		totalDays,
 		weekCount,
 		todayIndex,
 		defaultDayOfWeek,
