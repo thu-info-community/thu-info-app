@@ -2,6 +2,10 @@ name: Test and Publish
 
 on: push
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   unit-test-and-style-check:
     runs-on: ubuntu-latest
