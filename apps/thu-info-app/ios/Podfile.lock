@@ -2220,7 +2220,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNShare (12.2.5):
+  - RNShare (12.2.6):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2698,7 +2698,7 @@ SPEC CHECKSUMS:
   RNLocalize: 1e6eb4290e89502c3d2193d82dfb7de14a9e672b
   RNPermissions: 7ac9b8c660982e3dee9030186ec11c367351e5ab
   RNScreens: 6cb648bdad8fe9bee9259fe144df95b6d1d5b707
-  RNShare: f40ea96fce38fd9fce6634c3f07c55b0292987d3
+  RNShare: aad7f2a80ae80be5e2bf57583be28b1a18f95de1
   RNSnackbar: 1b29d1a089e5ac37e9231b889ad5c9beecdbac17
   RNSVG: 507bf2685de6b3d49449efd4aae7e7471bb9c433
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
