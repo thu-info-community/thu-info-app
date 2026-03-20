@@ -1514,7 +1514,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-pdf (7.0.3):
+  - react-native-pdf (7.0.4):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2651,7 +2651,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: bd1a177463acbba89365d09e81057294eba1e2f6
   react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
   react-native-get-random-values: a603782b2b222a34533c66371614790282dba3f1
-  react-native-pdf: 70836b3b48595c7f85a3aa2b5d122b175c455733
+  react-native-pdf: dac049a15aec41db452e372f85184d3f15741b12
   react-native-safe-area-context: ae7587b95fb580d1800c5b0b2a7bd48c2868e67a
   react-native-slider: 8b9a218d1a3e526146a170cb6133be9cda23e70e
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
