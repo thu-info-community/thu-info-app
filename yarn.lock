@@ -6211,9 +6211,9 @@ iconv-lite@0.7.2, iconv-lite@^0.7.0, iconv-lite@~0.7.0:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
 ics@^3.8.1:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/ics/-/ics-3.9.0.tgz#29b86a92b04cd009e4a9ce65658fdec0cc86df6f"
-  integrity sha512-a2dlnljjbkXicDVL318sDayPk1lpee2yh1nTuE9hhv8UF1Imm2Imqe7SxXkgS6a/LpjblaRJf20Eyxehn3wXaw==
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/ics/-/ics-3.9.1.tgz#c67fe7ad041d72c39ece0f4d0bf4ce8f67f8c2aa"
+  integrity sha512-wanjdE/xKJJOkIujddNzxzI4R3V5vKKCgonzid30dDr1tJG4/nciCq82I5rgVAGzcHu+osQakTOA44jwG8RV7w==
   dependencies:
     nanoid "^3.1.23"
     runes2 "^1.1.2"
