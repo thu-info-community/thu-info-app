@@ -99,7 +99,7 @@
 		"patch-package": "8.0.1",
 		"prettier": "3.8.1",
 		"react-test-renderer": "19.2.3",
-		"typescript": "5.9.3"
+		"typescript": "6.0.2"
 	},
 	"engines": {
 		"node": ">=18"
