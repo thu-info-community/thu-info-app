@@ -2068,10 +2068,10 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.7.tgz#eb5014dfd0b03e7f3ba2eeeff506eed89b028058"
   integrity sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==
 
-"@react-native-async-storage/async-storage@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-3.0.1.tgz#89e6e56472b2d208f01b6ff4569fc9578ecf4bf9"
-  integrity sha512-VHwHb19sMg4Xh3W5M6YmJ/HSm1uh8RYFa6Dozm9o/jVYTYUgz2BmDXqXF7sum3glQaR34/hlwVc94px1sSdC2A==
+"@react-native-async-storage/async-storage@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-3.0.2.tgz#caf2d0d7038dc2b8a2a48971bdbd047db0a2ac86"
+  integrity sha512-XP0zDIl+1XoeuQ7f878qXKdl77zLwzLALPpxvNRc7ZtDh9ew36WSvOdQOhFkexMySapFAWxEbZxS8K8J2DU4eg==
   dependencies:
     idb "8.0.3"
 
