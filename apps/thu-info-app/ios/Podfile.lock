@@ -2085,7 +2085,7 @@ PODS:
     - React-Core
   - RNDeviceTimeFormat (2.0.0):
     - React-Core
-  - RNGestureHandler (2.30.1):
+  - RNGestureHandler (2.31.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2693,7 +2693,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 88d7eeb555d1183915f0885bdbc5c97eb6f7f3ba
   RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNDeviceTimeFormat: 6d5c681a1a41086bf120d08cd96e0bc3da1bb2da
-  RNGestureHandler: 695faf9c1f0aa1a6d52ab778e459a1bcbae3153b
+  RNGestureHandler: 5e7f23adbdc5b74c1333fdcba3455e93e84e52e6
   RNKeychain: 667b7bd224f14055ae4cb52b41a82ad0ad70574f
   RNLocalize: 1e6eb4290e89502c3d2193d82dfb7de14a9e672b
   RNPermissions: 7ac9b8c660982e3dee9030186ec11c367351e5ab
