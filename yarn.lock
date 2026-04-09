@@ -2489,10 +2489,10 @@
   dependencies:
     nanoid "^3.3.11"
 
-"@react-navigation/stack@7.8.9":
-  version "7.8.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.8.9.tgz#ecb80ebeae4ef289883bdb1364519f585e648095"
-  integrity sha512-lxw+kIExNchrIIXBUVfPsqsmcuoLhdVWhkKy9l1Ns2gu0JAz80lKri3ftsBbDXaE9c0LgSq5kaoxq+AkD/c3cg==
+"@react-navigation/stack@7.8.10":
+  version "7.8.10"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.8.10.tgz#137d1f2c74c6e5a2eb133d8f4bf1decad42edeb4"
+  integrity sha512-Nwa9VOPAa7hD5Z+5S2Z3jLN8zUZwRJtz2NthFd0PKFzGPUS+6qw69PAO6J99qNBxhc+SEJ6nP+9o0ViLbCLs/A==
   dependencies:
     "@react-navigation/elements" "^2.9.14"
     color "^4.2.3"
