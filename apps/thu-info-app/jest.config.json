@@ -1,5 +1,5 @@
 {
-    "preset": "react-native",
+    "preset": "@react-native/jest-preset",
     "setupFiles": [
         "<rootDir>/.jestsetup.js"
     ],
