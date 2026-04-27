@@ -11,6 +11,7 @@ polyfillEncoding();
 polyfillReadableStream();
 polyfillURL();
 polyfillCrypto();
+global.self = global;
 import {name} from "./app.json";
 import {App} from "./src/App";
 import dayjs from "dayjs";
