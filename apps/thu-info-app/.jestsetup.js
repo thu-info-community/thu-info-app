@@ -1,5 +1,7 @@
 import "react-native-gesture-handler/jestSetup"
 
+global.self = global;
+
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
 
 import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
