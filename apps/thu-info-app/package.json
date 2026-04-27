@@ -104,5 +104,8 @@
 	},
 	"engines": {
 		"node": ">=18"
+	},
+	"resolutions": {
+		"web-streams-polyfill": "<4"
 	}
 }
