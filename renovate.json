@@ -23,7 +23,11 @@
 			],
 			"automerge": true,
 			"automergeType": "branch"
-		}
+		},
+	    {  
+            "matchPackageNames": ["@react-native/**"],  
+            "groupName": "React Native monorepo packages"  
+        }
 	],
 	"postUpdateOptions": [
 		"yarnDedupeHighest"
