@@ -96,7 +96,7 @@
 		"babel-plugin-transform-remove-console": "6.9.4",
 		"dotenv": "17.4.2",
 		"eslint": "8.57.1",
-		"jest": "30.3.0",
+		"jest": "30.4.2",
 		"patch-package": "8.0.1",
 		"prettier": "3.8.3",
 		"react-test-renderer": "19.2.3",
