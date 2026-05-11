@@ -57,6 +57,6 @@ const config = {
 	},
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
+module.exports = mergeConfig(getDefaultConfig(__dirname), config, createHarmonyMetroConfig({
 	reactNativeHarmonyPackageName: "@react-native-oh/react-native-harmony",
-}), config);
+}));
