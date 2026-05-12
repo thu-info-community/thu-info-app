@@ -2,6 +2,13 @@
 
 set -e
 
+# Reverse 09ff3a86 (snackbar v3) except lockfiles—avoids git revert merge conflicts on package.json.
+# --3way tolerates nearby edits (e.g. schedule.tsx) when plain -R fails.
+git diff 09ff3a86^..09ff3a86 -- \
+	':(exclude)apps/thu-info-app/package.json' \
+	':(exclude)yarn.lock' \
+	| git apply -R --3way
+
 cd packages/thu-info-lib/
 yarn add cheerio@1.0.0-rc.12
 cd ../../
@@ -34,5 +41,6 @@ yarn add @react-native-oh/react-native-harmony@0.82.29 \
          react@19.1.1 \
          react-native@0.82.1 \
          react-native-screens@4.24.0 \
+         react-native-snackbar@2.9.0 \
          strip-ansi@6.0.1
 yarn patch-package
