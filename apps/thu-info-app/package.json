@@ -25,7 +25,7 @@
 		"@react-native-cookies/cookies": "6.2.1",
 		"@react-navigation/bottom-tabs": "7.16.0",
 		"@react-navigation/native": "7.2.4",
-		"@react-navigation/stack": "7.9.0",
+		"@react-navigation/stack": "7.9.1",
 		"@reduxjs/toolkit": "2.11.2",
 		"@thu-info/lib": "*",
 		"base-64": "1.0.0",

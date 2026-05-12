@@ -2503,10 +2503,10 @@
   dependencies:
     nanoid "^3.3.11"
 
-"@react-navigation/stack@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.9.0.tgz#9876a7b8cabbee0aa1947abbcc5dbd551b2445f5"
-  integrity sha512-9ndJmQwPqIH9OJ0xXMUCx8V42IONkHcJWPmg3HJc40c9AJ6ZOPJjvSjXw8nT0en1YEN58z4MvKiNIgLXTQEKnA==
+"@react-navigation/stack@7.9.1":
+  version "7.9.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.9.1.tgz#c421a301062e10ac7fb4998acc9b92c6d20560f2"
+  integrity sha512-2YjKfzYEW4oE+0R47/QZ4av6dlNlEbpaRod/Z3WiqZuQYyfxjnO5s5THvHoFowXLx5mHOJ3oG8PQ567bvRxiHw==
   dependencies:
     "@react-navigation/elements" "^2.9.17"
     color "^4.2.3"
