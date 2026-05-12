@@ -163,7 +163,10 @@ jobs:
     needs: install-and-test
     runs-on: macos-latest
     steps:
+      # setup-harmony.sh applies a reverse patch from commit 09ff3a86; shallow clones lack that object.
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v5
