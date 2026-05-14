@@ -44,3 +44,7 @@ yarn add @react-native-oh/react-native-harmony@0.82.29 \
          react-native-snackbar@2.9.0 \
          strip-ansi@6.0.1
 yarn patch-package
+cd harmony/
+ohpm install
+cd entry/
+ohpm install

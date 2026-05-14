@@ -71,11 +71,6 @@ npx pod-install && yarn ios   # For iOS
 ```bash
 cd thu-info-app
 ./setup-harmony.sh
-```
-
-Open DevEco Studio and sync project.
-
-```bash
 cd apps/thu-info-app
 yarn codegen-harmony
 yarn bundle-harmony
