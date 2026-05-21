@@ -1,6 +1,8 @@
 {
   "modelVersion": "5.0.1",
   "dependencies": {
+    "@ohos/hvigor": "6.22.7",
+    "@ohos/hvigor-ohos-plugin": "6.22.7"
   },
   "execution": {
     // "analyze": "normal",                     /* Define the build analyze mode. Value: [ "normal" | "advanced" | false ]. Default: "normal" */
