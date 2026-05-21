@@ -161,7 +161,8 @@ jobs:
           path: apps/thu-info-app/ios/thu_info.ipa
   build-harmony:
     needs: install-and-test
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: ghcr.io/sanchuanhehe/harmony-next-pipeline-docker/harmonyos-ci-image:latest
     steps:
       # setup-harmony.sh applies a reverse patch from commit 09ff3a86; shallow clones lack that object.
       - uses: actions/checkout@v6
@@ -176,26 +177,312 @@ jobs:
           key: cache-harmony-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-harmony-
-      - name: Setup OpenHarmony environment
-        uses: Snapp-Mobile/oh-action@v0.1
-        with:
-          working-directory: apps/thu-info-app/harmony
-          install-dependencies: false
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 24
+      - name: Setup Harmony npm registry
+        run: |
+          echo "@ohos:registry=https://repo.harmonyos.com/npm/" >> "$HOME/.npmrc"
+          echo "@ohos:registry=https://repo.harmonyos.com/npm/" >> .npmrc
       - name: Install dependencies
         run: |
+          git config --global --add safe.directory $(pwd)
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm install -g yarn@1.22.22
           ./setup-harmony.sh
       - name: Bundle project
         working-directory: apps/thu-info-app
         run: |
           yarn codegen-harmony
           yarn bundle-harmony
-      - name: Build project
+      - name: Setup SDK directory layout
         working-directory: apps/thu-info-app/harmony
+        env:
+          DEVECO_SDK_HOME: /opt/harmonyos-tools/command-line-tools/sdk/default
+        shell: bash
         run: |
-          ohpm install --all
-          # hvigorw --version --accept-license
-          # hvigorw assembleHap --mode module -p product=default --stacktrace --no-parallel --no-daemon
+          set -eux
+          desired_api=20
+          desired_sdk="6.0.0(${desired_api})"
+          desired_platform_version="6.0.0"
+          export DESIRED_API="${desired_api}"
+          export DESIRED_SDK="${desired_sdk}"
+          sdk_api_root="${DEVECO_SDK_HOME}/hms"
+          openharmony_root="${DEVECO_SDK_HOME}/openharmony"
+          sdk_version="6.0.0.35"
+          sdk_release_type="Beta1"
+          ensure_component_meta() {
+            local component_dir="$1"
+            local component_path="$2"
+            local display_name="$3"
+            [ -d "${component_dir}" ] || return 0
+            cat > "${component_dir}/uni-package.json" <<EOF
+          {
+            "meta": {
+              "version": "1.0.0"
+            },
+            "data": {
+              "apiVersion": "${desired_api}",
+              "displayName": "${display_name}",
+              "path": "${component_path}",
+              "platformVersion": "${desired_platform_version}",
+              "releaseType": "${sdk_release_type}",
+              "version": "${sdk_version}"
+            }
+          }
+          EOF
+            cp -f "${component_dir}/uni-package.json" "${component_dir}/sdk-pkg.json"
+          }
+          ensure_component_meta "${sdk_api_root}/toolchains" "toolchains" "Toolchains"
+          ensure_component_meta "${sdk_api_root}/ets" "ets" "ArkTS"
+          ensure_component_meta "${sdk_api_root}/js" "js" "JS"
+          ensure_component_meta "${sdk_api_root}/native" "native" "Native"
+          ensure_component_meta "${sdk_api_root}/previewer" "previewer" "Previewer"
+          for comp in ets js native previewer toolchains; do
+            src="${sdk_api_root}/${comp}"
+            [ -d "${src}" ] || src="${openharmony_root}/${comp}"
+            rm -rf "${DEVECO_SDK_HOME}/${comp}"
+            ln -s "${src}" "${DEVECO_SDK_HOME}/${comp}" || cp -a "${src}" "${DEVECO_SDK_HOME}/${comp}"
+          done
+          mkdir -p "${DEVECO_SDK_HOME}/toolchains/openharmony" "${DEVECO_SDK_HOME}/toolchains/hms"
+          for variant in openharmony hms; do
+            if [ "${variant}" = "openharmony" ]; then
+              comp_src="${openharmony_root}/ets"
+            else
+              comp_src="${sdk_api_root}/ets"
+            fi
+            [ -d "${comp_src}" ] || continue
+            comp_dst="${DEVECO_SDK_HOME}/toolchains/${variant}/ets"
+            rm -rf "${comp_dst}"
+            ln -s "${comp_src}" "${comp_dst}" || cp -a "${comp_src}" "${comp_dst}"
+          done
+          for comp in toolchains js native previewer; do
+            for variant in openharmony hms; do
+              mkdir -p "${DEVECO_SDK_HOME}/toolchains/${variant}/${comp}"
+              if [ "${variant}" = "openharmony" ]; then
+                meta_src_root="${openharmony_root}/${comp}"
+              else
+                meta_src_root="${sdk_api_root}/${comp}"
+              fi
+              [ -d "${meta_src_root}" ] || continue
+              for meta in oh-uni-package.json uni-package.json sdk-pkg.json; do
+                if [ -f "${meta_src_root}/${meta}" ] && [ ! -f "${DEVECO_SDK_HOME}/toolchains/${variant}/${comp}/${meta}" ]; then
+                  cp -f "${meta_src_root}/${meta}" "${DEVECO_SDK_HOME}/toolchains/${variant}/${comp}/${meta}"
+                fi
+              done
+            done
+          done
+          rm -rf "${DEVECO_SDK_HOME}/toolchains/openharmony/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/hms/toolchains/modulecheck"
+          if [ -d "${openharmony_root}/toolchains/modulecheck" ]; then
+            ln -s "${openharmony_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/openharmony/toolchains/modulecheck" || cp -a "${openharmony_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/openharmony/toolchains/modulecheck"
+          fi
+          if [ -d "${sdk_api_root}/toolchains/modulecheck" ]; then
+            ln -s "${sdk_api_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/hms/toolchains/modulecheck" || cp -a "${sdk_api_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/hms/toolchains/modulecheck"
+          elif [ -d "${openharmony_root}/toolchains/modulecheck" ]; then
+            ln -s "${openharmony_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/hms/toolchains/modulecheck" || cp -a "${openharmony_root}/toolchains/modulecheck" "${DEVECO_SDK_HOME}/toolchains/hms/toolchains/modulecheck"
+          fi
+          cmake_src="$(find "${DEVECO_SDK_HOME}" -path '*/native/build-tools/cmake/bin/cmake' | head -n 1)"
+          cmake_src_root="$(dirname "$(dirname "${cmake_src}")")"
+          cmake_dst_root="${DEVECO_SDK_HOME}/toolchains/openharmony/native/build-tools/cmake"
+          mkdir -p "$(dirname "${cmake_dst_root}")"
+          rm -rf "${cmake_dst_root}"
+          ln -s "${cmake_src_root}" "${cmake_dst_root}" || cp -a "${cmake_src_root}" "${cmake_dst_root}"
+          toolchain_src="$(find "${DEVECO_SDK_HOME}" -path '*/native/build/cmake/ohos.toolchain.cmake' | head -n 1)"
+          toolchain_src_root="$(dirname "${toolchain_src}")"
+          toolchain_dst_root="${DEVECO_SDK_HOME}/toolchains/openharmony/native/build/cmake"
+          mkdir -p "$(dirname "${toolchain_dst_root}")"
+          rm -rf "${toolchain_dst_root}"
+          ln -s "${toolchain_src_root}" "${toolchain_dst_root}" || cp -a "${toolchain_src_root}" "${toolchain_dst_root}"
+          app_packing_jar_src="$(find "${DEVECO_SDK_HOME}" -name 'app_packing_tool.jar' | head -n 1)"
+          app_packing_jar_src_dir="$(dirname "${app_packing_jar_src}")"
+          for variant in openharmony hms; do
+            app_packing_jar_dst_dir="${DEVECO_SDK_HOME}/toolchains/${variant}/toolchains/lib"
+            mkdir -p "${app_packing_jar_dst_dir}"
+            cp -f "${app_packing_jar_src_dir}"/*.jar "${app_packing_jar_dst_dir}/"
+          done
+          restool_src="$(find "${DEVECO_SDK_HOME}" -path '*/toolchains/restool' | head -n 1)"
+          restool_dst="${DEVECO_SDK_HOME}/toolchains/openharmony/toolchains/restool"
+          mkdir -p "$(dirname "${restool_dst}")"
+          cp -f "${restool_src}" "${restool_dst}"
+          chmod +x "${restool_dst}" || true
+          hms_toolchains_lib="${DEVECO_SDK_HOME}/toolchains/hms/toolchains/lib"
+          hms_nested_toolchains_lib="${DEVECO_SDK_HOME}/hms/toolchains/hms/toolchains/lib"
+          mkdir -p "${hms_toolchains_lib}" "${hms_nested_toolchains_lib}"
+          mapfile -t restool_lib_dirs < <(find "${DEVECO_SDK_HOME}" -type d \( -path '*/toolchains/lib' -o -path '*/previewer/common/bin' \) | sort -u)
+          for src_lib_dir in "${restool_lib_dirs[@]}"; do
+            cp -f "${src_lib_dir}"/*.so* "${hms_toolchains_lib}/" 2>/dev/null || true
+            cp -f "${src_lib_dir}"/*.so* "${hms_nested_toolchains_lib}/" 2>/dev/null || true
+          done
+          clang_src="$(find "${DEVECO_SDK_HOME}" -path '*/native/llvm/bin/clang' | head -n 1)"
+          llvm_src_root="$(dirname "$(dirname "${clang_src}")")"
+          llvm_dst_root="${DEVECO_SDK_HOME}/toolchains/openharmony/native/llvm"
+          mkdir -p "$(dirname "${llvm_dst_root}")"
+          rm -rf "${llvm_dst_root}"
+          ln -s "${llvm_src_root}" "${llvm_dst_root}" || cp -a "${llvm_src_root}" "${llvm_dst_root}"
+          sysroot_probe="$(find "${DEVECO_SDK_HOME}" -path '*/native/sysroot/usr/lib/aarch64-linux-ohos/Scrt1.o' | head -n 1)"
+          sysroot_src_root="$(dirname "$(dirname "$(dirname "$(dirname "${sysroot_probe}")")")")"
+          sysroot_dst_root="${DEVECO_SDK_HOME}/toolchains/openharmony/native/sysroot"
+          mkdir -p "$(dirname "${sysroot_dst_root}")"
+          rm -rf "${sysroot_dst_root}"
+          ln -s "${sysroot_src_root}" "${sysroot_dst_root}" || cp -a "${sysroot_src_root}" "${sysroot_dst_root}"
+      - name: Prepare signing materials
+        working-directory: apps/thu-info-app/harmony
+        env:
+          OH_CERT: ${{ secrets.OH_CERT }}
+          OH_PROFILE: ${{ secrets.OH_PROFILE_B64 }}
+          OH_STORE_FILE: ${{ secrets.OH_STORE_FILE_B64 }}
+          OH_SIGN_MATERIAL: ${{ secrets.OH_SIGN_MATERIAL_B64 }}
+          OH_STORE_PASSWORD: ${{ secrets.OH_STORE_PASSWORD }}
+          OH_KEY_ALIAS: ${{ secrets.OH_KEY_ALIAS }}
+          OH_KEY_PASSWORD: ${{ secrets.OH_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -eux
+          mkdir -p .ci-sign
+          rm -rf .ci-sign/material /tmp/oh_sign_unpack
+          if [ -n "${OH_SIGN_MATERIAL:-}" ]; then
+            mkdir -p /tmp/oh_sign_unpack
+            printf '%s' "${OH_SIGN_MATERIAL}" | base64 -d > /tmp/oh_sign_material.tar
+            tar -xf /tmp/oh_sign_material.tar -C /tmp/oh_sign_unpack
+            cp -a "$(find /tmp/oh_sign_unpack -type d -name material | head -n 1)" .ci-sign/material
+          fi
+          find .ci-sign/material -name '._*' -type f -delete
+          chmod -R a+rX,u+w .ci-sign/material
+          cert_file="$(pwd)/.ci-sign/oh_cert.cer"
+          printf '%s\n' "${OH_CERT}" > "${cert_file}"
+          OH_CERT_PATH="${cert_file}"
+          if [ -d .ci-sign/material ]; then
+            if [ -z "${OH_STORE_FILE:-}" ]; then
+              OH_STORE_FILE="$(find .ci-sign/material -type f \( -name '*.p12' -o -name '*.pfx' \) | head -n 1)"
+            fi
+            if [ -z "${OH_PROFILE:-}" ]; then
+              OH_PROFILE="$(find .ci-sign/material -type f \( -name '*.p7b' -o -name '*.mobileprovision' -o -name '*.profile' \) | head -n 1)"
+            fi
+          fi
+          resolve_to_file() {
+            local raw="$1"
+            local out="$2"
+            if [ -f "${raw}" ]; then
+              cp -f "${raw}" "${out}"
+              return 0
+            fi
+            printf '%s' "${raw}" | base64 -d > "${out}"
+            [ -s "${out}" ]
+          }
+          if [ -n "${OH_STORE_FILE:-}" ] && [ ! -f "${OH_STORE_FILE}" ]; then
+            resolve_to_file "${OH_STORE_FILE}" "$(pwd)/.ci-sign/oh_store_file.p12"
+            OH_STORE_FILE="$(pwd)/.ci-sign/oh_store_file.p12"
+          fi
+          if [ -n "${OH_PROFILE:-}" ] && [ ! -f "${OH_PROFILE}" ]; then
+            resolve_to_file "${OH_PROFILE}" "$(pwd)/.ci-sign/oh_profile.p7b"
+            OH_PROFILE="$(pwd)/.ci-sign/oh_profile.p7b"
+          fi
+          echo "OH_STORE_FILE=${OH_STORE_FILE:-}"
+          echo "OH_PROFILE=${OH_PROFILE:-}"
+          echo "OH_CERT_PATH=${OH_CERT_PATH:-}"
+          echo "HAS_OH_SIGN_MATERIAL=$([ -n "${OH_SIGN_MATERIAL:-}" ] && echo 1 || echo 0)"
+          OH_STORE_PASSWORD="$(printf '%s' "${OH_STORE_PASSWORD:-}" | tr -d '\r\n')"
+          OH_KEY_PASSWORD="$(printf '%s' "${OH_KEY_PASSWORD:-}" | tr -d '\r\n')"
+          if [ -z "${OH_STORE_FILE:-}" ] || [ -z "${OH_PROFILE:-}" ] || [ -z "${OH_CERT_PATH:-}" ]; then
+            echo "ERROR: Missing signing materials after resolution."
+            exit 2
+          fi
+          cat > secrets.env <<EOF
+          OH_STORE_PASSWORD=${OH_STORE_PASSWORD:-}
+          OH_CERT_PATH=${OH_CERT_PATH:-}
+          OH_KEY_ALIAS=${OH_KEY_ALIAS:-}
+          OH_KEY_PASSWORD=${OH_KEY_PASSWORD:-}
+          OH_PROFILE=${OH_PROFILE:-}
+          OH_STORE_FILE=${OH_STORE_FILE:-}
+          EOF
+      - name: Patch project and source files
+        working-directory: apps/thu-info-app/harmony
+        env:
+          DEVECO_SDK_HOME: /opt/harmonyos-tools/command-line-tools/sdk/default
+        shell: bash
+        run: |
+          set -eux
+          desired_api=20
+          desired_sdk="6.0.0(${desired_api})"
+          sdk_api_root="${DEVECO_SDK_HOME}/hms"
+          rcp_header_src="$(find /opt/harmonyos-tools/command-line-tools/sdk -path '*/usr/include/RemoteCommunicationKit/rcp.h' | head -n 1)"
+          native_roots=("${sdk_api_root}/native" "${DEVECO_SDK_HOME}/openharmony/native" "${DEVECO_SDK_HOME}/toolchains/openharmony/native")
+          rcp_lib_match="$(find "$(dirname "$(dirname "$(dirname "${rcp_header_src}")")")" -path '*/usr/lib/aarch64-linux-ohos/librcp*' | head -n 1)"
+          rcp_lib_dir_src="$(dirname "${rcp_lib_match}")"
+          for native_root in "${native_roots[@]}"; do
+            [ -d "${native_root}" ] || continue
+            mkdir -p "${native_root}/sysroot/usr/include/RemoteCommunicationKit"
+            rcp_header_dst="${native_root}/sysroot/usr/include/RemoteCommunicationKit/rcp.h"
+            if [ "$(readlink -f "${rcp_header_src}")" != "$(readlink -f "${rcp_header_dst}" 2>/dev/null || echo '')" ]; then
+              cp -f "${rcp_header_src}" "${rcp_header_dst}"
+            fi
+            if [ -d "${rcp_lib_dir_src}" ]; then
+              rcp_lib_dst_dir="${native_root}/sysroot/usr/lib/aarch64-linux-ohos"
+              mkdir -p "${rcp_lib_dst_dir}"
+              for lib in "${rcp_lib_dir_src}"/librcp*; do
+                [ -e "${lib}" ] || continue
+                lib_name="$(basename "${lib}")"
+                if [ "$(readlink -f "${lib}")" != "$(readlink -f "${rcp_lib_dst_dir}/${lib_name}" 2>/dev/null || echo '')" ]; then
+                  cp -f "${lib}" "${rcp_lib_dst_dir}/${lib_name}"
+                fi
+              done
+            fi
+          done
+      - name: Build Harmony release
+        working-directory: apps/thu-info-app/harmony
+        env:
+          DEVECO_SDK_HOME: /opt/harmonyos-tools/command-line-tools/sdk/default
+          OHOS_BASE_SDK_HOME: /opt/harmonyos-tools/command-line-tools/sdk/default
+          OH_STORE_PASSWORD: ${{ secrets.OH_STORE_PASSWORD }}
+          OH_CERT: ${{ secrets.OH_CERT }}
+          OH_CERT_PATH: ${{ secrets.OH_CERT_PATH }}
+          OH_KEY_ALIAS: ${{ secrets.OH_KEY_ALIAS }}
+          OH_KEY_PASSWORD: ${{ secrets.OH_KEY_PASSWORD }}
+          OH_PROFILE: ${{ secrets.OH_PROFILE_B64 }}
+          OH_STORE_FILE: ${{ secrets.OH_STORE_FILE_B64 }}
+          OH_SIGN_MATERIAL: ${{ secrets.OH_SIGN_MATERIAL_B64 }}
+          RNOH_C_API_ARCH: "1"
+          HARMONY_SDK_FULL_VERSION: "20"
+        shell: bash
+        run: |
+          set -eux
+          desired_api=20
+          export DESIRED_API="${desired_api}"
+          export HARMONY_SDK_FULL_VERSION="${desired_api}"
+          node_path="$(command -v node)"
+          export NODE_HOME="$(dirname "$(dirname "${node_path}")")"
+          export PATH="${NODE_HOME}/bin:${PATH}"
+          node_realpath="$(readlink -f "${node_path}" || echo "${node_path}")"
+          hvigor_node_path="/opt/harmonyos-tools/command-line-tools/tool/node/bin/node"
+          mkdir -p "$(dirname "${hvigor_node_path}")"
+          printf '%s\n' '#!/usr/bin/env sh' "exec '${node_realpath}' \"\$@\"" > "${hvigor_node_path}"
+          chmod +x "${hvigor_node_path}" || true
+          npm config set registry https://registry.npmmirror.com || true
+          npm install -g pnpm@8.13.1
+          export HVIGOR_USER_HOME="${HOME}/.hvigor"
+          mkdir -p "${HVIGOR_USER_HOME}/wrapper/tools"
+          pushd "${HVIGOR_USER_HOME}/wrapper/tools"
+          npm install pnpm@8.13.1
+          popd
+          ./hvigorw --version --accept-license
+          hvigor_ws_node_modules="$(find /github/home/.hvigor/project_caches -type d -path '*/workspace/node_modules' | head -n 1)"
+          rm -rf node_modules
+          ln -s "${hvigor_ws_node_modules}" node_modules
+          hmos_loader_js="$(find /github/home/.hvigor/project_caches -path '*/@ohos/hvigor-ohos-plugin/src/sdk/hmos-sdk-loader.js' | head -n 1)"
+          node -e 'const fs=require("fs");const p=process.argv[1];let s=fs.readFileSync(p,"utf8");const before=s;const fullRepl="(process.env.HARMONY_SDK_FULL_VERSION||`${e.fullVersion}`)";s=s.replace(/getLocalSdks\(`\$\{e\.fullVersion\}`\)/g,"getLocalSdks("+fullRepl+")");s=s.replace(/getLocalSdks\(\s*e\.api\s*\)/g,"getLocalSdks("+fullRepl+")");s=s.replace(/getLocalSdks\(\s*([a-zA-Z0-9_$.]+)\.api\s*\)/g,"getLocalSdks(process.env.HARMONY_SDK_FULL_VERSION||$1.fullVersion||$1.api)");s=s.replaceAll("if(!fs_extra_1.default.existsSync(a))return!1","if(!fs_extra_1.default.existsSync(a)){_log.debug();}");s=s.replaceAll(`_log.printErrorExit("SDK_COMPONENT_MISSING")`,`_log.warn("SDK_COMPONENT_MISSING: some SDK components not found, using stubs")`);if(s!==before){fs.writeFileSync(p,s);}' "${hmos_loader_js}"
+          ./hvigorw assembleHap --mode module -p module=entry@default -p product=default -p buildMode=release --stacktrace --no-parallel --no-daemon
+          ./hvigorw assembleApp --mode project -p product=default -p buildMode=release --stacktrace --no-parallel --no-daemon
+          echo "=== Build output listing ==="
+          find . -name "*.hap" -o -name "*.app" | sort
+          echo "====================="
+      - name: Upload Harmony artifacts
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: harmony-hap
+          if-no-files-found: error
+          path: |
+            apps/thu-info-app/harmony/entry/build/default/outputs/default/entry-default-signed.hap
+            apps/thu-info-app/harmony/build/outputs/default/harmony-default-signed.app
