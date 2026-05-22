@@ -27,15 +27,6 @@ import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
 import {sm2} from "sm-crypto";
 
-let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
-try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-    const rtn_network_utils = require("rtn-network-utils").RTNNetworkUtils;
-    if (rtn_network_utils) {
-        getRedirectLocation = rtn_network_utils.getRedirectLocation;
-    }
-} catch { /* empty */ }
-
 type RoamingPolicy = "default" | "id" | "id_website" | "card" | "cab" | "gitlab" | "cr";
 
 const HOST_MAP: { [key: string]: string } = {
@@ -182,22 +173,7 @@ export const login = async (
                 }, 3 * 60 * 1000);
                 (async () => {
                     await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
-                    let sm2PublicKey = "";
-                    if (getRedirectLocation) {
-                        // Patch for OpenHarmony
-                        const oauthUrl = await getRedirectLocation(WEB_VPN_OAUTH_LOGIN_URL);
-                        if (!oauthUrl) {
-                            throw new LoginError("Failed to get oauth url.");
-                        }
-                        await uFetch(oauthUrl);
-                        const idUrl = await getRedirectLocation(oauthUrl);
-                        if (!idUrl) {
-                            throw new LoginError("Failed to get id url.");
-                        }
-                        sm2PublicKey = cheerio.load(await uFetch(idUrl))("#sm2publicKey").text();
-                    } else {
-                        sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
-                    }
+                    const sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
                     if (sm2PublicKey === "") {
                         throw new LoginError("Failed to get public key.");
                     }
@@ -217,12 +193,9 @@ export const login = async (
                         throw new LoginError(message);
                     }
                     const callbackUrl = cheerio.load(response)("a").attr()!.href;
-                    const redirectUrl = await (getRedirectLocation ?? getRedirectUrl)(callbackUrl);
+                    const redirectUrl = await getRedirectUrl(callbackUrl);
                     if (redirectUrl === LOGIN_URL || redirectUrl == null) {
                         throw new LoginError("登录失败，请稍后重试。");
-                    }
-                    if (getRedirectLocation) {
-                        await uFetch(redirectUrl);
                     }
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
@@ -319,14 +292,6 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let redirectUrl = cheerio.load(response)("a").attr()!.href;
         if (policy !== "card") {
             redirectUrl = getWebVPNUrl(redirectUrl);
-            if (getRedirectLocation) {
-                // Patch for OpenHarmony
-                const idUrl = await getRedirectLocation(redirectUrl);
-                if (!idUrl) {
-                    throw new LoginError("Failed to get id url.");
-                }
-                redirectUrl = idUrl;
-            }
         }
         return await uFetch(redirectUrl);
     }

@@ -32,9 +32,6 @@ module.exports = {
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
     },
-    externals: {
-        "rtn-network-utils": "rtn-network-utils",
-    },
     mode: "development",
     devtool: "inline-source-map",
 };

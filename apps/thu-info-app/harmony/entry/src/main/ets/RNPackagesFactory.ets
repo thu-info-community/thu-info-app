@@ -14,7 +14,6 @@ import { WebViewPackage } from '@react-native-ohos/react-native-webview/ts';
 import { RNDeviceInfoPackage } from '@react-native-ohos/react-native-device-info/ts';
 import { CameraRollPackage } from '@react-native-ohos/camera-roll/ts';
 import { SvgPackage } from '@react-native-ohos/react-native-svg/ts';
-import { GeneratedPackage } from './GeneratedPackage';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
   return [
@@ -33,6 +32,5 @@ export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
     new WebViewPackage(ctx),
     new RNDeviceInfoPackage(ctx),
     new CameraRollPackage(ctx),
-    new GeneratedPackage(ctx),
   ];
 }

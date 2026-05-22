@@ -37,7 +37,6 @@ yarn add @react-native-oh/react-native-harmony@0.82.29 \
          @react-native-ohos/slider@5.1.2 \
          @thu-info/lib@../../packages/thu-info-lib \
          memfs@4.12.0 \
-         rtn-network-utils@../../packages/RTNNetworkUtils \
          react@19.1.1 \
          react-native@0.82.1 \
          react-native-screens@4.24.0 \
