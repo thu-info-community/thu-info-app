@@ -75,7 +75,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: app-release.apk
+          archive: false
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
       - name: Prepare for release
         id: prepare_release
@@ -157,7 +157,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: thu_info.ipa
+          archive: false
           path: apps/thu-info-app/ios/thu_info.ipa
   build-harmony:
     needs: install-and-test
@@ -477,12 +477,13 @@ jobs:
           echo "=== Build output listing ==="
           find . -name "*.hap" -o -name "*.app" | sort
           echo "====================="
-      - name: Upload Harmony artifacts
-        if: ${{ success() }}
+      - name: Upload Harmony hap
         uses: actions/upload-artifact@v7
         with:
-          name: harmony-hap
-          if-no-files-found: error
-          path: |
-            apps/thu-info-app/harmony/entry/build/default/outputs/default/entry-default-signed.hap
-            apps/thu-info-app/harmony/build/outputs/default/harmony-default-signed.app
+          archive: false
+          path: apps/thu-info-app/harmony/entry/build/default/outputs/default/entry-default-signed.hap
+      - name: Upload Harmony app
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: apps/thu-info-app/harmony/build/outputs/default/harmony-default-signed.app
