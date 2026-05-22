@@ -211,8 +211,8 @@ jobs:
           export DESIRED_SDK="${desired_sdk}"
           sdk_api_root="${DEVECO_SDK_HOME}/hms"
           openharmony_root="${DEVECO_SDK_HOME}/openharmony"
-          sdk_version="6.0.0.35"
-          sdk_release_type="Beta1"
+          sdk_version="6.0.2.130"
+          sdk_release_type="Release"
           ensure_component_meta() {
             local component_dir="$1"
             local component_path="$2"
