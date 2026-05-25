@@ -123,6 +123,7 @@ const Header = React.forwardRef(
 			onSetWeek,
 			onPressUpload,
 			uploadingCustomSchedule,
+			contentWidth,
 		}: {
 			calendar: CalendarData | undefined;
 			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
@@ -132,6 +133,7 @@ const Header = React.forwardRef(
 			onPressUpload: () => void;
 			hasCustomSchedule: boolean;
 			uploadingCustomSchedule: boolean;
+			contentWidth: number;
 		},
 		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
@@ -174,8 +176,7 @@ const Header = React.forwardRef(
 			[setWeek],
 		);
 
-		const windowWidth = Dimensions.get("window").width;
-		const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
+		const weekButtonWidth = (contentWidth - 24) / 4 - 6 - 1;
 
 		useEffect(() => {
 			let animation:
@@ -388,6 +389,7 @@ const Header = React.forwardRef(
 
 export const ScheduleScreen = () => {
 	const detailNavigator = useDetailNavigator();
+	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
 		(s: State) => s.config,
@@ -492,7 +494,9 @@ export const ScheduleScreen = () => {
 		focusRing: isDarkMode ? "#FFFFFF" : "#2C2A28",
 	};
 
-	const windowWidth = Math.floor(Dimensions.get("window").width);
+	const fallbackWidth = Math.floor(Dimensions.get("window").width);
+	const layoutWidth =
+		contentWidth > 0 ? contentWidth : fallbackWidth;
 	const windowHeight = Dimensions.get("window").height;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
 	const [tableHeight, setTableHeight] = useState(0);
@@ -513,7 +517,7 @@ export const ScheduleScreen = () => {
 	// 左侧时间列宽度和中间纵向时间轴宽度
 	const timeLabelWidth = 40;
 	const timeAxisWidth = 8;
-	const scheduleBodyWidth = windowWidth - timeLabelWidth - timeAxisWidth;
+	const scheduleBodyWidth = layoutWidth - timeLabelWidth - timeAxisWidth;
 	const timeStripVerticalPadding = 12; // 时间条上下留白
 	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
@@ -904,11 +908,19 @@ export const ScheduleScreen = () => {
 	);
 
 	return (
-		<>
+		<View
+			style={{flex: 1}}
+			onLayout={({nativeEvent}) => {
+				const width = Math.floor(nativeEvent.layout.width);
+				if (width > 0 && width !== contentWidth) {
+					setContentWidth(width);
+				}
+			}}>
 			<Header
 				ref={headerRef}
 				calendar={calendar}
 				setCalendar={(payload) => dispatch(setCalendarConfig(payload))}
+				contentWidth={layoutWidth}
 				onSetWeek={(w: number) => {
 					flatListRef.current?.scrollToIndex({
 						index: w - 1,
@@ -938,7 +950,6 @@ export const ScheduleScreen = () => {
 					<View
 						style={{
 							flexDirection: "row",
-							width: scheduleBodyWidth,
 							flex: 1,
 						}}>
 						{Array.from(new Array(hideWeekend ? 5 : 7)).map((_, index) => (
@@ -1544,7 +1555,7 @@ export const ScheduleScreen = () => {
 					/>
 					<Animated.View
 						style={{
-							width: Math.min(400, windowWidth - 32),
+							width: Math.min(400, layoutWidth - 32),
 							borderRadius: 24,
 							padding: 18,
 							backgroundColor: popupBaseBackground,
@@ -1638,6 +1649,6 @@ export const ScheduleScreen = () => {
 					</Animated.View>
 				</View>
 			)}
-		</>
+		</View>
 	);
 };
