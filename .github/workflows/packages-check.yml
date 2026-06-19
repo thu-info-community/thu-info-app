@@ -10,7 +10,7 @@ jobs:
   unit-test-and-style-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Setup caching
         uses: actions/cache@v5
         with:
