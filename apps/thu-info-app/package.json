@@ -88,7 +88,7 @@
 		"@react-native/jest-preset": "0.86.0",
 		"@react-native/metro-config": "0.86.0",
 		"@react-native/typescript-config": "0.86.0",
-		"@testing-library/react-native": "14.0.0",
+		"@testing-library/react-native": "14.0.1",
 		"@types/connect": "3.4.38",
 		"@types/md5": "2.3.6",
 		"@types/react": "19.2.17",
