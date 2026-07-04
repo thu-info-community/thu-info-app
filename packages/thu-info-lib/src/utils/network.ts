@@ -21,6 +21,130 @@ export const setCookie = (key: string, value: string) => {
 
 };
 
+const splitCombinedSetCookieHeader = (header: string): string[] => {
+    const cookiesList: string[] = [];
+    const lowerHeader = header.toLowerCase();
+    let start = 0;
+    let inExpires = false;
+
+    for (let i = 0; i < header.length; i++) {
+        if (!inExpires && lowerHeader.startsWith("expires=", i)) {
+            inExpires = true;
+        } else if (inExpires && header[i] === ";") {
+            inExpires = false;
+        } else if (header[i] === ",") {
+            const rest = header.slice(i + 1);
+            if (!inExpires && /^\s*[^=;,\s]+=/.test(rest)) {
+                cookiesList.push(header.slice(start, i).trim());
+                start = i + 1;
+            }
+        }
+    }
+
+    const finalCookie = header.slice(start).trim();
+    if (finalCookie !== "") {
+        cookiesList.push(finalCookie);
+    }
+    return cookiesList;
+};
+
+const getSetCookieHeaders = (headers: Headers): string[] => {
+    const headersWithHelpers = headers as Headers & {
+        getSetCookie?: () => string[];
+        raw?: () => Record<string, string[] | string | undefined>;
+    };
+
+    if (typeof headersWithHelpers.getSetCookie === "function") {
+        const setCookieHeaders = headersWithHelpers.getSetCookie();
+        if (setCookieHeaders.length > 0) {
+            return setCookieHeaders;
+        }
+    }
+
+    if (typeof headersWithHelpers.raw === "function") {
+        const rawHeaders = headersWithHelpers.raw();
+        const setCookieHeaders = rawHeaders["set-cookie"];
+        if (Array.isArray(setCookieHeaders)) {
+            return setCookieHeaders;
+        }
+        if (typeof setCookieHeaders === "string") {
+            return [setCookieHeaders];
+        }
+    }
+
+    const combinedSetCookieHeader = headers.get("set-cookie");
+    return combinedSetCookieHeader ? splitCombinedSetCookieHeader(combinedSetCookieHeader) : [];
+};
+
+export const updateCookiesFromHeaders = (headers: Headers) => {
+    for (const setCookieHeader of getSetCookieHeaders(headers)) {
+        const cookieSegment = setCookieHeader.split(";")[0]?.trim();
+        if (!cookieSegment) {
+            continue;
+        }
+
+        const separatorIndex = cookieSegment.indexOf("=");
+        if (separatorIndex === -1) {
+            continue;
+        }
+
+        const key = cookieSegment.slice(0, separatorIndex).trim();
+        const value = cookieSegment.slice(separatorIndex + 1).trim();
+        if (key !== "") {
+            cookies[key] = value;
+        }
+    }
+};
+
+const getCookieHeader = () => Object.keys(cookies).map((key) => `${key}=${cookies[key]}`).join(";");
+
+const resolveRedirectUrl = (location: string, baseUrl: string) => new URL(location, baseUrl).toString();
+
+const isRedirectStatus = (status: number) => [301, 302, 303, 307, 308].includes(status);
+
+const fetchWithNodeRedirects = async (
+    url: string,
+    init: RequestInit,
+): Promise<Response> => {
+    let location = url;
+    let method = init.method;
+    let body = init.body;
+    const baseHeaders = {...(init.headers as Record<string, string>)};
+    delete baseHeaders.Cookie;
+
+    for (let i = 0; i < 10; i++) {
+        const response = await fetch(location, {
+            ...init,
+            method,
+            body,
+            headers: {
+                ...baseHeaders,
+                Cookie: getCookieHeader(),
+            },
+            redirect: "manual",
+        });
+        updateCookiesFromHeaders(response.headers);
+
+        if (!isRedirectStatus(response.status)) {
+            return response;
+        }
+
+        const nextLocation = response.headers.get("location") ?? response.headers.get("Location");
+        if (!nextLocation) {
+            throw new ResponseStatusError("Redirect response missing location header.");
+        }
+
+        if (response.status === 303 || ((response.status === 301 || response.status === 302) && method === "POST")) {
+            method = undefined;
+            body = undefined;
+        }
+
+        location = resolveRedirectUrl(nextLocation, location);
+    }
+
+    throw new ResponseStatusError("Max redirect times reached.");
+};
+
 /**
  * An enhanced implementation of `encodeURIComponent`, which supports
  * arbitrary charset.
@@ -81,13 +205,15 @@ export const uFetch = async (
     const timeoutEvent = setTimeout(() => {
         controller.abort();
     }, timeout);
-    const defaultInit = {
+    const defaultInit: RequestInit = {
         headers: headers,
-        signal: controller.signal,
+        // `abort-controller` provides a compatible runtime signal, but its type
+        // is narrower than the DOM lib's newer AbortSignal definition.
+        signal: controller.signal as unknown as AbortSignal,
     };
 
     // Switch method to `POST` if post-body is provided
-    const init =
+    const init: RequestInit =
         post === undefined
             ? defaultInit
             : {
@@ -99,7 +225,9 @@ export const uFetch = async (
     // Perform the network request
     try {
         // @ts-ignore
-        const response = await fetch(url, init);
+        const response = global.FileReader === undefined
+            ? await fetchWithNodeRedirects(url, init)
+            : await fetch(url, init);
 
         if (response.status !== 200 && response.status !== 201) {
             let path = url;
@@ -120,24 +248,7 @@ export const uFetch = async (
         }
 
         // Manage cookies
-        response.headers.forEach((value: string, key: string) => {
-            if (key === "set-cookie") {
-                // TODO: check relevant specifications and rewrite this
-                if (value.includes("Expires")) {
-                    const segment = value.split(";")[0];
-                    const [item, val] = segment.split("=");
-                    cookies[item.trim()] = val.trim();
-                } else {
-                    for (const v of value.split(",")) {
-                        const segment = v.split(";")[0];
-                        const [item, val] = segment.split("=");
-                        if (val) {
-                            cookies[item.trim()] = val.trim();
-                        }
-                    }
-                }
-            }
-        });
+        updateCookiesFromHeaders(response.headers);
 
         // Detect charset based on content-type
         const contentType = response.headers.get("Content-Type");
@@ -250,14 +361,16 @@ export const getRedirectUrl = async (
     // Perform the network request
     try {
         let location = url;
-        for (let i = 0; i < 5; i++) {
+        // The WebVPN and ID flow may now require more than five hops before landing.
+        for (let i = 0; i < 10; i++) {
             const response = await fetch(location, init);
+            updateCookiesFromHeaders(response.headers);
 
             if (response.status !== 301 && response.status !== 302) {
                 return location;
             }
 
-            location = response.headers.get("Location") ?? "";
+            location = resolveRedirectUrl(response.headers.get("Location") ?? "", location);
         }
 
         throw new ResponseStatusError("Max redirect times reached.");
