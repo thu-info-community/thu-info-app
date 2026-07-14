@@ -393,24 +393,24 @@ export const parseWeekPattern = (pattern: string, weekCount: number): number[] =
         return [];
     }
 
-    // 全周
-    if (normalized === "全周") {
+    // 全周（normalized 后为 "全"）
+    if (normalized === "全") {
         return Array.from({length: weekCount}, (_, i) => i + 1);
     }
-    // 单周
-    if (normalized === "单周") {
+    // 单周（normalized 后为 "单"）
+    if (normalized === "单") {
         return Array.from({length: weekCount}, (_, i) => i + 1).filter((w) => w % 2 === 1);
     }
-    // 双周
-    if (normalized === "双周") {
+    // 双周（normalized 后为 "双"）
+    if (normalized === "双") {
         return Array.from({length: weekCount}, (_, i) => i + 1).filter((w) => w % 2 === 0);
     }
-    // 前八周 / 前8周
-    if (/^前(?:八|8)周$/.test(normalized)) {
+    // 前八周 / 前8周（normalized 后为 "前八" / "前8"）
+    if (/^前(?:八|8)$/.test(normalized)) {
         return Array.from({length: Math.min(8, weekCount)}, (_, i) => i + 1);
     }
-    // 后八周 / 后8周
-    if (/^后(?:八|8)周$/.test(normalized)) {
+    // 后八周 / 后8周（normalized 后为 "后八" / "后8"）
+    if (/^后(?:八|8)$/.test(normalized)) {
         const start = Math.max(1, weekCount - 7);
         return Array.from({length: weekCount - start + 1}, (_, i) => start + i);
     }
