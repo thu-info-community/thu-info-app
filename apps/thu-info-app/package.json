@@ -60,7 +60,7 @@
 		"react-native-snackbar": "3.0.1",
 		"react-native-sse": "1.2.1",
 		"react-native-svg": "15.15.5",
-		"react-native-url-polyfill": "3.0.0",
+		"react-native-url-polyfill": "4.0.0",
 		"react-native-version-number": "0.3.6",
 		"react-native-webview": "14.0.1",
 		"react-native-wheel-scrollview-picker": "2.0.9",
