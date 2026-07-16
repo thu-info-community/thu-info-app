@@ -9,6 +9,8 @@ import {
     SearchCoursePriorityResult,
     SelectedCourse,
 } from "../models/cr/cr";
+import {Schedule, ScheduleType} from "../models/schedule/schedule";
+import dayjs from "dayjs";
 
 export const MOCK_CR_TIMETABLE: CrTimetable[] = [
     {
@@ -1417,4 +1419,33 @@ export const MOCK_QUEUE_INFO: QueueInfo[] = [
         time: "2-3(全周)",
         teacher: "黄垚"
     }
+];
+
+export const MOCK_CR_SCHEDULE: Schedule[] = [
+    {
+        name: "夏季学期模拟课程",
+        location: "六教6A001",
+        hash: "夏季学期模拟课程@六教6A001",
+        type: ScheduleType.PRIMARY,
+        activeTime: {
+            base: [
+                {
+                    dayOfWeek: 1,
+                    beginTime: dayjs("2026-08-17 09:50"),
+                    endTime: dayjs("2026-08-17 12:15"),
+                },
+                {
+                    dayOfWeek: 3,
+                    beginTime: dayjs("2026-08-19 09:50"),
+                    endTime: dayjs("2026-08-19 12:15"),
+                },
+                {
+                    dayOfWeek: 5,
+                    beginTime: dayjs("2026-08-21 09:50"),
+                    endTime: dayjs("2026-08-21 12:15"),
+                },
+            ],
+        },
+        delOrHideTime: {base: []},
+    },
 ];

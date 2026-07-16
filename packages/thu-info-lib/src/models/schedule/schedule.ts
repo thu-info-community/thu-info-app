@@ -378,3 +378,184 @@ export const parseScript = (
     });
     return verbose ? verboseResult : result;
 };
+
+/**
+ * 统一的周次模式解析器，支持以下格式：
+ * - 范围表达式："8-11周"、"第3,5-7周"、"1-3,5,7-9"
+ * - 特殊关键词："全周"、"单周"、"双周"、"前八周"/"前8周"、"后八周"/"后8周"
+ * @param pattern  周次描述字符串
+ * @param weekCount  学期总周数（用于"全周"、"后八周"等需要知道总周数的模式）
+ * @returns  排序去重后的周次数组
+ */
+export const parseWeekPattern = (pattern: string, weekCount: number): number[] => {
+    const normalized = pattern.replace(/第|周/g, "").trim();
+    if (normalized.length === 0) {
+        return [];
+    }
+
+    // 全周（normalized 后为 "全"）
+    if (normalized === "全") {
+        return Array.from({length: weekCount}, (_, i) => i + 1);
+    }
+    // 单周（normalized 后为 "单"）
+    if (normalized === "单") {
+        return Array.from({length: weekCount}, (_, i) => i + 1).filter((w) => w % 2 === 1);
+    }
+    // 双周（normalized 后为 "双"）
+    if (normalized === "双") {
+        return Array.from({length: weekCount}, (_, i) => i + 1).filter((w) => w % 2 === 0);
+    }
+    // 前八周 / 前8周（normalized 后为 "前八" / "前8"）
+    if (/^前(?:八|8)$/.test(normalized)) {
+        return Array.from({length: Math.min(8, weekCount)}, (_, i) => i + 1);
+    }
+    // 后八周 / 后8周（normalized 后为 "后八" / "后8"）
+    if (/^后(?:八|8)$/.test(normalized)) {
+        const start = Math.max(1, weekCount - 7);
+        return Array.from({length: weekCount - start + 1}, (_, i) => start + i);
+    }
+
+    // 兜底：逗号分隔的范围表达式
+    const weeks: number[] = [];
+    parseSecondaryWeek(normalized, (w) => weeks.push(w));
+    return [...new Set(weeks)].sort((a, b) => a - b);
+};
+
+/**
+ * 解析 CR 选课系统的一级课表页面（m=kbSearch），
+ * 提取 setInitValue 函数中的课程安排数据。
+ *
+ * CR 系统的 setInitValue 结构：
+ * ```
+ * strHTML = "";
+ * var strHTML1 = "";
+ * strHTML += "...<b>课程名</b>..."
+ * strHTML1 += "；教师"
+ * strHTML1 += "；课程属性"
+ * strHTML1 += "；周次模式"
+ * strHTML1 += "；上课地点"
+ * getElementById('a{session}_{day}').innerHTML += strHTML+"<br>";
+ * ```
+ *
+ * @param html  CR kbSearch 页面的完整 HTML
+ * @param firstDay  学期第一天（YYYY-MM-DD）
+ * @param weekCount  学期总周数
+ * @returns  解析后的 Schedule[]
+ */
+export const parseCRSchedule = (
+    html: string,
+    firstDay: string,
+    weekCount: number,
+): Schedule[] => {
+    // session → [beginTime, endTime] 映射（a1～a6）
+    const sessionTimes: [string, string][] = [
+        ["", ""],
+        ["08:00", "09:35"],   // a1: 第1节
+        ["09:50", "12:15"],   // a2: 第2节
+        ["13:30", "15:05"],   // a3: 第3节
+        ["15:20", "16:55"],   // a4: 第4节
+        ["17:05", "18:40"],   // a5: 第5节
+        ["19:20", "21:45"],   // a6: 第6节
+    ];
+
+    const scheduleList: Schedule[] = [];
+
+    // 定位 setInitValue 函数体
+    const funcStart = html.indexOf("function setInitValue");
+    if (funcStart === -1) {
+        return [];
+    }
+    const funcEnd = html.indexOf("initTopLocal", funcStart);
+    if (funcEnd === -1) {
+        return [];
+    }
+    const body = html.substring(funcStart, funcEnd);
+
+    // 匹配每个课程时间槽赋值块：
+    // strHTML = ""; var strHTML1 = ""; ...(课程名+详情)... getElementById('a{session}_{day}')
+    const blockRegex =
+        /strHTML\s*=\s*"";\s+var strHTML1\s*=\s*"";([\s\S]*?)getElementById\('a(\d+)_(\d+)'\)/g;
+
+    let match: RegExpExecArray | null;
+    while ((match = blockRegex.exec(body)) !== null) {
+        try {
+            const blockContent = match[1];
+            const session = parseInt(match[2], 10);
+            const dayOfWeek = parseInt(match[3], 10);
+
+            // 提取课程名
+            const nameMatch = /<b>(.+?)<\/b>/.exec(blockContent);
+            if (!nameMatch) {
+                continue;
+            }
+            const name = nameMatch[1];
+
+            // 提取 strHTML1 各行中的分号分隔字段
+            const fields: string[] = [];
+            const fieldRegex = /strHTML1\s*\+=\s*["']；(.+?)["']/g;
+            let fieldMatch: RegExpExecArray | null;
+            while ((fieldMatch = fieldRegex.exec(blockContent)) !== null) {
+                fields.push(fieldMatch[1]);
+            }
+
+            if (fields.length < 3) {
+                // 至少需要：教师、课程属性、周次模式
+                continue;
+            }
+
+            const category = fields[1];                     // 必修/限选/任选
+            const weekPattern = fields[2];                  // 8-11周 / 全周 / 单周...
+            const location = fields.length >= 4 ? fields[3] : "";
+
+            // 解析周次
+            const weeks = parseWeekPattern(weekPattern, weekCount);
+            if (weeks.length === 0) {
+                continue;
+            }
+
+            // session 有效性检查
+            if (session < 1 || session > 6) {
+                continue;
+            }
+            const [begin, end] = sessionTimes[session];
+
+            // 查找或创建 Schedule（按 name + location + category 分组）
+            const hash = name + "@" + location;
+            let lesson = scheduleList.find(
+                (s) => s.hash === hash && s.category === category,
+            );
+            if (!lesson) {
+                scheduleList.push({
+                    name,
+                    location,
+                    hash,
+                    type: ScheduleType.PRIMARY,
+                    category,
+                    activeTime: {base: []},
+                    delOrHideTime: {base: []},
+                });
+                lesson = scheduleList[scheduleList.length - 1];
+            }
+
+            // 为每个周次生成 TimeSlice
+            for (const week of weeks) {
+                const date = dayjs(firstDay)
+                    .add((week - 1) * 7 + dayOfWeek - 1, "day")
+                    .format("YYYY-MM-DD");
+                scheduleTimeAdd(
+                    lesson.activeTime,
+                    {
+                        dayOfWeek,
+                        beginTime: dayjs(`${date} ${begin}`),
+                        endTime: dayjs(`${date} ${end}`),
+                    },
+                    true,  // mergeAdjacent: CR 同一门课多天分开展示
+                );
+            }
+        } catch {
+            // 单条解析失败不影响其他课程
+        }
+    }
+
+    return scheduleList;
+};
