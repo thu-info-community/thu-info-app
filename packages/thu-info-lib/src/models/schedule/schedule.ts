@@ -474,7 +474,7 @@ export const parseCRSchedule = (
     // 匹配每个课程时间槽赋值块：
     // strHTML = ""; var strHTML1 = ""; ...(课程名+详情)... getElementById('a{session}_{day}')
     const blockRegex =
-        /strHTML\s*=\s*"";\s*\n\s*var strHTML1\s*=\s*"";([\s\S]*?)getElementById\('a(\d+)_(\d+)'\)/g;
+        /strHTML\s*=\s*"";\s+var strHTML1\s*=\s*"";([\s\S]*?)getElementById\('a(\d+)_(\d+)'\)/g;
 
     let match: RegExpExecArray | null;
     while ((match = blockRegex.exec(body)) !== null) {
