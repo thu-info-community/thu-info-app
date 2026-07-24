@@ -10574,10 +10574,10 @@ slice-ansi@^2.0.0:
     astral-regex "^1.0.0"
     is-fullwidth-code-point "^2.0.0"
 
-sm-crypto@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/sm-crypto/-/sm-crypto-0.4.0.tgz#13917f5b41e8428d764e9e6934840fdede6a4022"
-  integrity sha512-OexH2V1EqmhXuOIPGoCl55OjMF0wwPUM/zhUjT0Q6vHBeopSRvTNRy76/1eRoFs3VBKt39hdFnxwpFmooHYa2A==
+sm-crypto@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/sm-crypto/-/sm-crypto-0.5.0.tgz#7d8cce17a981f215a736bd38f7261a55b10a19c6"
+  integrity sha512-oTfBsCOoUBdORtqXxsOF1yGL0LlOJk9U6wvGTjpS9wfM4H3pLfz9B7RORQSztTuFtjv3sTP4IN82R/nQJ9o8mA==
   dependencies:
     jsbn "^1.1.0"
 
