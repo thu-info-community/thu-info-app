@@ -9533,10 +9533,10 @@ react-native-qrcode-svg@6.3.21:
     qrcode "^1.5.4"
     text-encoding "^0.7.0"
 
-react-native-safe-area-context@5.8.0:
-  version "5.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.8.0.tgz#d2fb9fc8e0f0583311e261dc484b95ceb80f8902"
-  integrity sha512-t+ZsAVzY/wWzzx34vqGbo3/as9EEESJdbyZNL7Yg5EYX+toYMtMqFoDDCvqZUi35eeGVsXc6pAaEk4edMwbuCQ==
+react-native-safe-area-context@5.8.1:
+  version "5.8.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.8.1.tgz#ceba91293ca06e878f64d3a28abde164191f15a9"
+  integrity sha512-dDYVAJcW5LJlXAqTUFAaWvYJovqxrh6HdJlOkdTQ7dXCcKWhCq5vKoDXJc3n1q5rYcAUaIwmToKNPKibnogC4g==
 
 react-native-safearea-height@1.0.8:
   version "1.0.8"
