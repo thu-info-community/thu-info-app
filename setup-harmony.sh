@@ -33,6 +33,7 @@ yarn workspace @thu-info/app add \
 	memfs@4.12.0 \
 	react@19.1.1 \
 	react-native@0.82.1 \
+	react-native-gesture-handler@2.32.0 \
 	react-native-screens@4.24.0 \
 	react-native-snackbar@2.9.0 \
 	strip-ansi@6.0.1
