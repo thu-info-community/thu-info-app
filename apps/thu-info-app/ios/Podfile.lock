@@ -21,6 +21,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - CookieManager (6.4.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - FBLazyVector (0.86.2)
   - hermes-engine (250829098.0.16):
     - hermes-engine/Pre-built (= 250829098.0.16)
@@ -1516,8 +1538,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-cookies (6.2.1):
-    - React-Core
   - react-native-get-random-values (2.0.0):
     - hermes-engine
     - RCTRequired
@@ -2349,6 +2369,7 @@ PODS:
 
 DEPENDENCIES:
   - "AsyncStorage (from `../../../node_modules/@react-native-async-storage/async-storage`)"
+  - "CookieManager (from `../../../node_modules/@preeternal/react-native-cookie-manager`)"
   - FBLazyVector (from `../../../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../../../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCTDeprecation (from `../../../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2393,7 +2414,6 @@ DEPENDENCIES:
   - react-native-blob-util (from `../../../node_modules/react-native-blob-util`)
   - "react-native-blur (from `../../../node_modules/@react-native-community/blur`)"
   - "react-native-cameraroll (from `../../../node_modules/@react-native-camera-roll/camera-roll`)"
-  - "react-native-cookies (from `../../../node_modules/@react-native-cookies/cookies`)"
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
   - react-native-pdf (from `../../../node_modules/react-native-pdf`)
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
@@ -2450,6 +2470,8 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   AsyncStorage:
     :path: "../../../node_modules/@react-native-async-storage/async-storage"
+  CookieManager:
+    :path: "../../../node_modules/@preeternal/react-native-cookie-manager"
   FBLazyVector:
     :path: "../../../node_modules/react-native/Libraries/FBLazyVector"
   hermes-engine:
@@ -2537,8 +2559,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/@react-native-community/blur"
   react-native-cameraroll:
     :path: "../../../node_modules/@react-native-camera-roll/camera-roll"
-  react-native-cookies:
-    :path: "../../../node_modules/@react-native-cookies/cookies"
   react-native-get-random-values:
     :path: "../../../node_modules/react-native-get-random-values"
   react-native-pdf:
@@ -2646,6 +2666,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AsyncStorage: 163ab23f6aa37a58b7f2379d0b4ee7ac84d6655c
+  CookieManager: 4465329b104f3890671565066cb527ad2a5264f4
   FBLazyVector: 3c3be9a019176b5699455f7f66c5444b78a411c6
   hermes-engine: b2a73ff2b2d1b33d1aff00a6c9aefc07f6ecfc32
   RCTDeprecation: bccb6545c26db881ecddfd83a3f9ea82aba1605f
@@ -2689,7 +2710,6 @@ SPEC CHECKSUMS:
   react-native-blob-util: 13e70f811eb34f14864622c4afa37cc20fe8100e
   react-native-blur: ea6c78ddeaa7aa0fce36ea29d1f81dd23063032a
   react-native-cameraroll: 4d4fcff8a057235ce7a9f57d4566409207216a86
-  react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
   react-native-get-random-values: 68792987aef40e8aa72dc448d97e009d1f440c88
   react-native-pdf: 2bc0989bc44ef7e5221c49c0f1bb464a2c27640b
   react-native-safe-area-context: c4a6d0fbf9c77ee28dab7e4d4c369df7753f20d4

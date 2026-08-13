@@ -72,7 +72,7 @@ jest.mock("react-native-keychain", () => ({
 
 jest.mock("react-native-snackbar", () => ({LENGTH_LONG: 0, LENGTH_SHORT: 0, show: jest.fn()}));
 
-jest.mock("@react-native-cookies/cookies", () => ({
+jest.mock("@preeternal/react-native-cookie-manager", () => ({
 	clearAll: jest.fn().mockResolvedValue(),
 }));
 jest.mock('react-native-share', () => ({

@@ -11,6 +11,7 @@ git diff 09ff3a86^..09ff3a86 -- \
 
 yarn workspace @thu-info/lib add cheerio@1.0.0-rc.12
 yarn workspace @thu-info/app add \
+	@react-native-cookies/cookies@6.2.1 \
   @react-native-oh/react-native-harmony@0.82.29 \
   @react-native-oh/react-native-harmony-cli@0.82.29 \
   @react-native-ohos/async-storage@2.2.1 \
