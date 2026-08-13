@@ -119,7 +119,7 @@ android {
             buildConfigField "String", "SIGNATURE_DIGEST", "\"$signatureDigest\""
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 
