@@ -9417,10 +9417,10 @@ react-native-fit-image@^1.5.5:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-gesture-handler@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-3.2.0.tgz#4706686bc6f3bec5e18ead24744fb0e123601613"
-  integrity sha512-s8pTrXd/67oqk8EyavAOSTjsG+PdHGaUKpEAuX8IWVTwLVPafSSvktDsbD6ncuoMrZGWagMSSiLMsQwrLzDuTg==
+react-native-gesture-handler@3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-3.2.1.tgz#83ee1e6f3453ed46d20cbd9c510e836a3333641d"
+  integrity sha512-VEWscxUN29aeccbD2McF0LSXrwOhSdisaSRFiEWg0O/3WrVghNJp/tOtLrCgzb9gfcZ3xdA+K2Sp8F5G3iHx/Q==
   dependencies:
     "@types/react-test-renderer" "^19.1.0"
     invariant "^2.2.4"
