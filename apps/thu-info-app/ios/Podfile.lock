@@ -1402,7 +1402,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context (5.9.0):
+  - react-native-safe-area-context (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1415,8 +1415,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.9.0)
-    - react-native-safe-area-context/fabric (= 5.9.0)
+    - react-native-safe-area-context/common (= 5.9.1)
+    - react-native-safe-area-context/fabric (= 5.9.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1426,7 +1426,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/common (5.9.0):
+  - react-native-safe-area-context/common (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1448,7 +1448,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-safe-area-context/fabric (5.9.0):
+  - react-native-safe-area-context/fabric (5.9.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2534,7 +2534,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 8de502febd3b1008249ad131245537153b18bcde
   react-native-get-random-values: 4c923ad74f603ac6359e7990c36fd3af06f129b9
   react-native-pdf: 4030c8482d0ef0bcf7c4b2f947442b25d04c149c
-  react-native-safe-area-context: 3a6b38edff2a811fc1e27f5ff81249b24ea7e607
+  react-native-safe-area-context: f17f4ec987ecdd130820a4a850498b874fb70388
   react-native-slider: e0a97e600464494e978b1e6759783ebeccc999cf
   react-native-version-number: 3d74b5224ca4e1032b1593937d86d3f3c94bf95c
   react-native-webview: f189adab64d5d71cec3b9e9ec3261355376ec7a2
