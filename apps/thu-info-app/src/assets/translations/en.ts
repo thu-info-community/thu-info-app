@@ -341,6 +341,7 @@ export default {
 	scheduleDetailCollapse: "Collapse details ▲",
 	scheduleLongPressHint: "Long press to hide/delete schedule and view details",
 	scheduleExportICS: "Export Calendar",
+	scheduleEmpty: "The academic affairs system has not updated yet, or there are no courses.",
 	scheduleICSGenerated: "Schedule calendar generated",
 	scheduleICSDownloaded: "Schedule calendar has been saved to your Downloads folder",
 	scheduleICSFileName: "CourseSchedule",

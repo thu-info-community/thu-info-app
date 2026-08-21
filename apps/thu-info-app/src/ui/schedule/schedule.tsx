@@ -408,6 +408,12 @@ export const ScheduleScreen = () => {
 				const semester = nextSemesterIndex === undefined || nextSemesterIndex >= result.calendar.nextSemesterList.length ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
 				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
 				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
+				if (result.schedule.length === 0) {
+					Snackbar.show({
+						text: getStr("scheduleEmpty"),
+						duration: Snackbar.LENGTH_LONG,
+					});
+				}
 			})
 			.catch((e) => {
 				Snackbar.show({

@@ -318,6 +318,7 @@ export default {
 	scheduleDetailCollapse: "折叠详情 ▲",
 	scheduleLongPressHint: "长按可隐藏/删除日程和查看日程详情",
 	scheduleExportICS: "导出日历",
+	scheduleEmpty: "教务系统尚未更新或无课程",
 	scheduleICSGenerated: "课程表日历已生成",
 	scheduleICSDownloaded: "课程表日历已保存至下载文件夹",
 	scheduleICSFileName: "课程表",
