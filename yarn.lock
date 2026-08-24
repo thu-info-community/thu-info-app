@@ -10199,9 +10199,9 @@ slice-ansi@^2.0.0:
     is-fullwidth-code-point "^2.0.0"
 
 sm-crypto@^0.5.0:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/sm-crypto/-/sm-crypto-0.5.6.tgz#832af6841d706df82582bb69d835fd713ff89d99"
-  integrity sha512-0q4Cp5GtiZNNklo3MvrTMmRo2CNg5mgYwD4TlfJqQWePIFMR/wNlrwS3385HgtDwsPJOWrWjOlD+wwtPTqCjdQ==
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/sm-crypto/-/sm-crypto-0.5.7.tgz#5b572e574e9976a9ee94a01f2799beb559391723"
+  integrity sha512-Bxz1jWGtI7t/bn6Vbf4iGKcntslKVYAi6oBTtboTL+0WhqBTwsDFinIxIezjkBidxt8aNnEF1V3ZYU6TI0V1gQ==
   dependencies:
     jsbn "^1.1.0"
 
