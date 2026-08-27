@@ -16,6 +16,7 @@ import {uFetch} from "../utils/network";
 import {MOCK_PRIMARY_SCHEDULE, MOCK_SECONDARY_SCHEDULE} from "../mocks/schedule";
 import {ScheduleError} from "../utils/error";
 import {getCalendar} from "./basics";
+import {getCRSchedule} from "./cr";
 import dayjs from "dayjs";
 import * as cheerio from "cheerio";
 
@@ -72,6 +73,19 @@ export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number 
     const calendarData = await getCalendar(helper);
     const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendarData.nextSemesterList.length ? calendarData : calendarData.nextSemesterList[nextSemesterIndex];
     const scheduleList: Schedule[] = (await getPrimary(helper, semester)).concat(helper.graduate() ? [] : await getSecondary(helper, semester));
+
+    // 夏季学期（semesterId 末位为 3）：Primary 的 bks_jxrl_all 无数据，
+    // 从 CR 选课系统一级课表（m=kbSearch）获取课程安排作为替代数据源。
+    if (semester.semesterId.endsWith("-3")) {
+        const crSchedule = await getCRSchedule(
+            helper,
+            semester.semesterId,
+            semester.firstDay,
+            semester.weekCount,
+        );
+        scheduleList.push(...crSchedule);
+    }
+
     return {
         schedule: mergeSchedules(scheduleList),
         calendar: calendarData,

@@ -1,13 +1,13 @@
-import { FileUtil } from '@ohos/hvigor';
+import * as fs from 'fs';
 import { appTasks } from '@ohos/hvigor-ohos-plugin';
 
 import * as dotenv from 'dotenv';
 
-const packageJson = JSON.parse(FileUtil.readFileSync('../package.json'));
+const packageJson = JSON.parse(fs.readFileSync('../package.json', 'utf8'));
 const versionName = packageJson.version;
 const versionCode = packageJson.build;
 
-const secretsEnv = dotenv.parse(FileUtil.readFileSync('secrets.env'));
+const secretsEnv = dotenv.parse(fs.readFileSync('secrets.env', 'utf8'));
 
 export default {
     system: appTasks,  /* Built-in plugin of Hvigor. It cannot be modified. */

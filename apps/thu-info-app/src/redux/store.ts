@@ -17,8 +17,7 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "@thu-info/lib";
-import CookieManager from "@react-native-cookies/cookies";
-import {is24HourFormat} from "react-native-device-time-format";
+import {uses24HourClock} from "react-native-localize";
 import {
 	Schedule,
 	ScheduleTime,
@@ -54,6 +53,16 @@ import { LoginError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 
+const CookieManager = (() => {
+	try {
+		const module = require("@react-native-cookies/cookies");
+		return module.default ?? module;
+	} catch {
+		const module = require("@preeternal/react-native-cookie-manager");
+		return module.default ?? module;
+	}
+})();
+
 export const helper = new InfoHelper();
 
 helper.fingerprint = defaultAuth.fingerprint;
@@ -78,9 +87,7 @@ AppState.addEventListener("change", (state) => {
 			store.dispatch(configSet({key: "subFunctionUnlocked", value: false}));
 		}
 		if (Platform.OS === "android" || Platform.OS === "ios") {
-			is24HourFormat().then((result) => {
-				store.dispatch(configSet({key: "is24Hour", value: result}));
-			});
+			store.dispatch(configSet({key: "is24Hour", value: uses24HourClock()}));
 		}
 	} else {
 		store.dispatch(configSet({key: "exitTimestamp", value: Date.now()}));

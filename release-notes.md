@@ -1,7 +1,5 @@
 ## @thu-info/app
-- 优化日程页面的 UI
-- 修复平板模式下黑边的问题
-- 修复了自定义日程无法编辑的问题
+- 修复夏季学期课表空白的问题 @Savage-Tea
 
 ## @thu-info/lib
-- feat: implement `saveCustomSchedule` and `deleteCustomSchedule`
+- fix: add CR kbSearch as summer semester schedule fallback @Savage-Tea

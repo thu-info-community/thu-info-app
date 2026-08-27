@@ -36,6 +36,7 @@ import {
     SearchParams,
     SelectedCourse,
 } from "../models/cr/cr";
+import {parseCRSchedule, Schedule} from "../models/schedule/schedule";
 import {getCheerioText} from "../utils/cheerio";
 import {getCsrfToken, roamingWrapperWithMocks} from "./core";
 import {CrError, CrTimeoutError, LibError} from "../utils/error";
@@ -51,6 +52,7 @@ import {
     MOCK_SEARCH_COURSE_PRIORITY_INFO_RESULT,
     MOCK_SEARCH_COURSE_PRIORITY_META,
     MOCK_SELECTED_COURSES,
+    MOCK_CR_SCHEDULE,
 } from "../mocks/cr";
 type TagElement = Element & {type: ElementType.Tag};
 import dayjs from "dayjs";
@@ -669,3 +671,34 @@ export const setCoursePF = async (
     },
     undefined,
 );
+
+/**
+ * 从选课系统获取一级课表。
+ * 通过 CR 系统的一级课表页面（m=kbSearch）获取课程安排，
+ * 复用已有的 CR SSO 认证链路（policy: "cr"）。
+ *
+ * @param helper
+ * @param semesterId  学期 ID（如 "2025-2026-3"）
+ * @param firstDay  学期第一天（YYYY-MM-DD）
+ * @param weekCount  学期总周数
+ * @returns  解析后的 Schedule[]
+ */
+export const getCRSchedule = async (
+    helper: InfoHelper,
+    semesterId: string,
+    firstDay: string,
+    weekCount: number,
+): Promise<Schedule[]> =>
+    roamingWrapperWithMocks(
+        helper,
+        "cr",
+        "",
+        async () => {
+            const url =
+                `${helper.graduate() ? CR_SELECT_YJS_URL : CR_SELECT_URL}` +
+                `?m=kbSearch&p_xnxq=${semesterId}&pathContent=${encodeURI("一级课表")}`;
+            const html = await crFetch(url);
+            return parseCRSchedule(html, firstDay, weekCount);
+        },
+        MOCK_CR_SCHEDULE,
+    );

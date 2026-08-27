@@ -23,10 +23,24 @@ const config = {
 	watchFolders: [workspaceRoot],
 	resolver: {
 		nodeModulesPaths: [
-			path.resolve(projectRoot, "node_modules"),
 			path.resolve(workspaceRoot, "node_modules"),
+			path.resolve(projectRoot, "node_modules"),
 		],
-		unstable_enablePackageExports: false,
+		resolveRequest: (context, moduleImport, platform) => {
+			if (
+				moduleImport === "cheerio" ||
+				moduleImport.startsWith("cheerio/")
+			) {
+				// Disable package exports only for this specific package
+				return context.resolveRequest(
+					{ ...context, unstable_enablePackageExports: false },
+					moduleImport,
+					platform,
+				);
+			}
+			// Everything else uses normal resolution (with exports enabled)
+			return context.resolveRequest(context, moduleImport, platform);
+		},
 	},
 	server: {
 		enhanceMiddleware: (middleware) => {
@@ -43,6 +57,6 @@ const config = {
 	},
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
+module.exports = mergeConfig(getDefaultConfig(__dirname), config, createHarmonyMetroConfig({
 	reactNativeHarmonyPackageName: "@react-native-oh/react-native-harmony",
-}), config);
+}));

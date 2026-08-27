@@ -4,6 +4,7 @@
         "module": "NodeNext",
         "moduleResolution": "nodenext",
         "declaration": true,
+        "rootDir": "./src",
         "outDir": "./dist",
         "strict": true,
         "allowSyntheticDefaultImports": true,

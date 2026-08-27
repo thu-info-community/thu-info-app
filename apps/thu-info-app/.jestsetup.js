@@ -1,5 +1,7 @@
 import "react-native-gesture-handler/jestSetup"
 
+global.self = global;
+
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';
 
 import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock.js';
@@ -70,16 +72,12 @@ jest.mock("react-native-keychain", () => ({
 
 jest.mock("react-native-snackbar", () => ({LENGTH_LONG: 0, LENGTH_SHORT: 0, show: jest.fn()}));
 
-jest.mock("@react-native-cookies/cookies", () => ({
+jest.mock("@preeternal/react-native-cookie-manager", () => ({
 	clearAll: jest.fn().mockResolvedValue(),
 }));
 jest.mock('react-native-share', () => ({
 	default: jest.fn(),
 }));
-jest.mock('react-native-device-time-format', () => ({
-	is24HourFormat: () => false,
-}));
-
 jest.mock('redux-persist/lib/integration/react', () => ({
 	PersistGate: ({children}) => children
 }))

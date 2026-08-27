@@ -2,10 +2,15 @@
 	"name": "thu-info",
 	"version": "0.0.1",
 	"private": true,
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": {
+		"packages": [
+			"apps/*",
+			"packages/*"
+		],
+		"nohoist": [
+			"@thu-info/app/rtn-network-utils"
+		]
+	},
 	"scripts": {
 		"android": "yarn workspace @thu-info/app android",
 		"ios": "yarn workspace @thu-info/app ios",
@@ -20,6 +25,6 @@
 	"dependencies": {
 		"editor": "1.0.0",
 		"husky": "9.1.7",
-		"lerna": "9.0.7"
+		"lerna": "10.0.1"
 	}
 }

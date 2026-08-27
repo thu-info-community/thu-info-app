@@ -1,4 +1,4 @@
-import { WebView, WEB_VIEW } from '@react-native-oh-tpl/react-native-webview';
+import { WebView, WEB_VIEW } from '@react-native-ohos/react-native-webview';
 import {
   AnyJSBundleProvider,
   ComponentBuilderContext,
@@ -12,7 +12,7 @@ import {
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
 import { createRNPackages } from '../RNPackagesFactory';
-import { RNCSlider, SLIDER_TYPE } from "@react-native-oh-tpl/slider"
+import { RNCSlider, SLIDER_TYPE } from "@react-native-ohos/slider"
 import { window } from '@kit.ArkUI';
 
 @Builder
