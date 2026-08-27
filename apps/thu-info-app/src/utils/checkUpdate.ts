@@ -6,7 +6,14 @@ import {Snackbar} from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
 import {gt, lt} from "semver";
 import {NetworkRetry} from "../components/easySnackbars";
-import {TUNA_BASE_URL, TUNA_LATEST_URL} from "../constants/strings";
+
+export const openUpdateDownload = async (downloadUrl: string) => {
+	try {
+		await Linking.openURL(downloadUrl);
+	} catch {
+		NetworkRetry();
+	}
+};
 
 export const checkUpdate = (force: boolean = false) => {
 	if (Platform.OS !== "ios" && Platform.OS !== "android") {
@@ -34,18 +41,7 @@ export const checkUpdate = (force: boolean = false) => {
 					},
 					{
 						text: getStr("download"),
-						onPress: async () => {
-							try {
-								const {status} = await fetch(TUNA_BASE_URL + r.versionName);
-								await Linking.openURL(
-									Platform.OS === "ios" || status === 404
-										? r.downloadUrl
-										: TUNA_LATEST_URL,
-								);
-							} catch {
-								NetworkRetry();
-							}
-						},
+						onPress: () => openUpdateDownload(r.downloadUrl),
 					},
 				],
 				{cancelable: true},
