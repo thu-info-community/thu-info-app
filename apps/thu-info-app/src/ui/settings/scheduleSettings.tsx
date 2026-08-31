@@ -1,6 +1,7 @@
 import { getStr } from "../../utils/i18n";
 import {
 	Alert,
+	Platform,
 	Switch,
 	Text,
 	TouchableOpacity,
@@ -26,6 +27,12 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 
 	return (
 		<View style={{ flex: 1, padding: 12, paddingTop: 0 }}>
+			{(Platform.OS === "android" || Platform.OS === "ios") && <RoundedView style={style.rounded}>
+				<TouchableOpacity style={style.touchable} onPress={() => navigation.navigate("ScheduleImport")}>
+					<Text style={style.text}>{getStr("scheduleImportTitle")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+			</RoundedView>}
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

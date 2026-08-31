@@ -1,5 +1,13 @@
 import "react-native-gesture-handler/jestSetup"
 
+jest.mock("@react-native-documents/picker", () => ({
+	pick: jest.fn(),
+	keepLocalCopy: jest.fn(),
+	isErrorWithCode: (error) => typeof error?.code === "string",
+	errorCodes: {OPERATION_CANCELED: "OPERATION_CANCELED"},
+	types: {allFiles: "*/*"},
+}));
+
 global.self = global;
 
 import mockRNDeviceInfo from 'react-native-device-info/jest/react-native-device-info-mock';

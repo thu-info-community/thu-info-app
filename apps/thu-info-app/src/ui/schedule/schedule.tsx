@@ -54,7 +54,8 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
+import {StackActions, useNavigation} from "@react-navigation/native";
+import type {RootNav} from "../../components/Root";
 
 interface NormalSliceRenderData {
 	type: "normal";
@@ -388,6 +389,7 @@ const Header = React.forwardRef(
 );
 
 export const ScheduleScreen = () => {
+	const navigation = useNavigation<RootNav>();
 	const detailNavigator = useDetailNavigator();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
@@ -1508,6 +1510,11 @@ export const ScheduleScreen = () => {
 								{getStr("scheduleExportICS")}
 							</Text>
 						</TouchableOpacity>
+						{(Platform.OS === "android" || Platform.OS === "ios") && <TouchableOpacity
+							style={{padding: 12, alignItems: "center"}}
+							onPress={() => {setOpenConfig(false); navigation.navigate("ScheduleImport");}}>
+							<Text style={{color: theme.colors.themePurple, fontSize: 16}}>{getStr("scheduleImportTitle")}</Text>
+						</TouchableOpacity>}
 					</TouchableOpacity>
 				)}
 			</GestureHandlerRootView>

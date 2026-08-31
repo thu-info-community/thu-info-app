@@ -1,5 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
+import dayjs from "dayjs";
+import {
+	ImportMode, ImportRange, ImportRecord, classifyImportRecords,
+	isInImportRange, mergeImportRanges, scheduleRecords,
+} from "../../utils/scheduleImportData";
 import {
 	delOrHide,
 	removeDelOrHide,
@@ -15,6 +20,8 @@ export interface ScheduleState {
 	baseSchedule: Schedule[];
 	shortenMap: {[key: string]: string | undefined};
 	customCnt: number;
+	/** Optional for compatibility with persisted state and older sync senders. */
+	replacementRanges?: ImportRange[];
 }
 
 const initialState: ScheduleState = {
@@ -22,6 +29,7 @@ const initialState: ScheduleState = {
 	baseSchedule: [],
 	shortenMap: {},
 	customCnt: 1,
+	replacementRanges: [],
 };
 
 export enum Choice {
@@ -29,6 +37,26 @@ export enum Choice {
 	REPEAT,
 	ALL,
 }
+
+const addCustomSchedule = (state: ScheduleState, payload: Schedule) => {
+	if (payload.type !== ScheduleType.CUSTOM) {
+		state.baseSchedule.push(payload);
+		return;
+	}
+	const existing = state.baseSchedule.find((s) => s.type === ScheduleType.CUSTOM &&
+		s.name === payload.name && s.location === payload.location);
+	if (existing) {
+		payload.activeTime.base.forEach((slice) => {
+			if (!existing.activeTime.base.some((s) => s.beginTime.valueOf() === slice.beginTime.valueOf() &&
+				s.endTime.valueOf() === slice.endTime.valueOf())) {
+				scheduleTimeAdd(existing.activeTime, slice);
+			}
+		});
+	} else {
+		state.baseSchedule.push(payload);
+		state.customCnt += 1;
+	}
+};
 
 export const scheduleSlice = createSlice({
 	name: "schedule",
@@ -54,7 +82,12 @@ export const scheduleSlice = createSlice({
 			});
 
 			// 以新获取到的课表为基准
-			payload.schedule.forEach((val) => {
+			const fetched = payload.schedule.map((schedule) => ({
+				...schedule,
+				activeTime: {base: schedule.activeTime.base.filter((slice) =>
+					!(state.replacementRanges ?? []).some((range) => isInImportRange(slice.beginTime.valueOf(), range)))},
+			}));
+			fetched.forEach((val) => {
 				const selectedScheduleList = state.baseSchedule.filter(
 					(item) => item.hash === val.hash,
 				);
@@ -95,7 +128,7 @@ export const scheduleSlice = createSlice({
 
 				const plainName = custom.name;
 				const remainingSlices = custom.activeTime.base.filter((slice) => {
-					const overlapped = payload.schedule.some((sch) => {
+					const overlapped = fetched.some((sch) => {
 						if (sch.name !== plainName || sch.location !== custom.location) {
 							return false;
 						}
@@ -137,32 +170,42 @@ export const scheduleSlice = createSlice({
 			});
 		},
 		scheduleAddCustom: (state, {payload}: PayloadAction<Schedule>) => {
-			if (payload.type !== ScheduleType.CUSTOM) {
-				state.baseSchedule.push(payload);
+			addCustomSchedule(state, payload);
+		},
+		scheduleImportCustomBatch: (state, {payload}: PayloadAction<{
+			records: ImportRecord[]; mode: ImportMode; range: ImportRange;
+		}>) => {
+			const {records, mode, range} = payload;
+			// Validate the entire batch before a replacement can remove anything.
+			if (!records.length || records.length > 5000 || !Number.isFinite(range.start) ||
+				!Number.isFinite(range.end) || range.end <= range.start ||
+				!records.every((r) => r.name.trim() && Number.isFinite(r.start) && Number.isFinite(r.end) &&
+					r.end > r.start && isInImportRange(r.start, range) && dayjs(r.start).isSame(dayjs(r.end), "day"))) {
 				return;
 			}
-			const existing = state.baseSchedule.find(
-				(s) =>
-					s.type === ScheduleType.CUSTOM &&
-					s.name === payload.name &&
-					s.location === payload.location,
-			);
-			if (existing) {
-				payload.activeTime.base.forEach((slice) => {
-					const alreadyHas = existing.activeTime.base.some(
-						(s) =>
-							s.dayOfWeek === slice.dayOfWeek &&
-							s.beginTime.isSame(slice.beginTime, "minute") &&
-							s.endTime.isSame(slice.endTime, "minute"),
-					);
-					if (!alreadyHas) {
-						scheduleTimeAdd(existing.activeTime, slice);
+			if (mode === "replace") {
+				state.replacementRanges = mergeImportRanges([...(state.replacementRanges ?? []), range]);
+				state.baseSchedule.forEach((schedule) => {
+					schedule.activeTime.base = schedule.activeTime.base.filter((slice) => !isInImportRange(slice.beginTime.valueOf(), range));
+					if (schedule.type === ScheduleType.CUSTOM) {
+						schedule.delOrHideTime.base = schedule.delOrHideTime.base.filter((slice) => !isInImportRange(slice.beginTime.valueOf(), range));
 					}
 				});
-			} else {
-				state.baseSchedule.push(payload);
-				state.customCnt += 1;
+				state.baseSchedule = state.baseSchedule.filter((s) => s.type !== ScheduleType.CUSTOM || s.activeTime.base.length > 0);
 			}
+			const classified = classifyImportRecords(records, scheduleRecords(state.baseSchedule));
+			classified.filter((r) => r.status !== "duplicate").forEach((record) => {
+				const beginTime = dayjs(record.start);
+				addCustomSchedule(state, {
+					name: record.name.trim(), location: record.location.trim(), type: ScheduleType.CUSTOM,
+					hash: "", delOrHideTime: {base: []},
+					activeTime: {base: [{dayOfWeek: beginTime.day() || 7, beginTime, endTime: dayjs(record.end)}]},
+				});
+			});
+		},
+		scheduleClearImportOverrides: (state) => {
+			// Caller fetches successfully before clearing, then dispatches scheduleFetch.
+			state.replacementRanges = [];
 		},
 		scheduleDelOrHide: (
 			state,
@@ -243,11 +286,13 @@ export const scheduleSlice = createSlice({
 			state.baseSchedule = payload.baseSchedule;
 			state.customCnt = payload.customCnt;
 			state.shortenMap = payload.shortenMap;
+			state.replacementRanges = payload.replacementRanges ?? [];
 		},
 		scheduleClear: (state) => {
 			state.baseSchedule = [];
 			state.customCnt = 1;
 			state.shortenMap = {};
+			state.replacementRanges = [];
 		},
 	},
 });
@@ -257,6 +302,8 @@ export const {
 	scheduleUpdateAlias,
 	scheduleUpdateLocation,
 	scheduleAddCustom,
+	scheduleImportCustomBatch,
+	scheduleClearImportOverrides,
 	scheduleDelOrHide,
 	scheduleRemoveHiddenRule,
 	scheduleUpdateCustomTime,

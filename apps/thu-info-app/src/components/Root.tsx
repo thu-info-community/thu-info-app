@@ -114,6 +114,7 @@ import {ResetDormPasswordScreen} from "../ui/settings/resetDormPassword";
 import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
+import {ScheduleImportScreen} from "../ui/schedule/scheduleImport";
 import {LoginScreen} from "../ui/settings/login";
 import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {useSelector} from "react-redux";
@@ -380,6 +381,7 @@ type ScheduleStackParamList = {
 	ScheduleHidden: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 	ScheduleSync: {isSending: boolean};
+	ScheduleImport: undefined;
 };
 
 export type ScheduleDetailRouteProp = RouteProp<
@@ -905,6 +907,11 @@ export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
 				options={{title: getStr("newsSubChannelSelect")}}
 			/>
 			{/* Schedule */}
+			<Stack.Screen
+				name="ScheduleImport"
+				component={ScheduleImportScreen}
+				options={{title: getStr("scheduleImportTitle")}}
+			/>
 			<Stack.Screen
 				name="ScheduleHidden"
 				component={ScheduleHiddenScreen}
