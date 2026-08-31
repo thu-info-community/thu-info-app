@@ -99,7 +99,7 @@ const splitReasoningAndStatus = (
 	}
 };
 
-const models = ["DeepSeek-R1-Distill-32B", "DeepSeek-R1-671B"];
+const models = ["DeepSeek-V4-Flash"];
 
 const systemErrorMessage = "服务器繁忙,请稍后再试";
 
