@@ -21,6 +21,11 @@ interface buildingGroup {
 	buildings: building[];
 }
 
+const HAIER_SEARCH_POSITIONS = [
+	{ lng: 116.32697, lat: 40.00281 },
+	{ lng: 116.3424247, lat: 40.0313472 },
+];
+
 export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -120,29 +125,38 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 			});
 
 		// Fetch HaiLeShengHuo buildings
-		fetch("https://yshz-user.haier-ioc.com/position/nearPosition", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: "{\"lng\":116.32697,\"lat\":40.00281,\"page\":1,\"pageSize\":30}",
-		}).then((res) => res.json())
-			.then((res) => {
-				if (res.code !== 0) {
-					return;
-				}
+		Promise.all(HAIER_SEARCH_POSITIONS.map((position) =>
+			fetch("https://yshz-user.haier-ioc.com/position/nearPosition", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ ...position, page: 1, pageSize: 30 }),
+			}).then((res) => res.json()),
+		)).then((responses) => {
+				const buildingsById = new Map<string, building>();
 
-				let group: buildingGroup = { name: getStr("haiLeShengHuo"), buildings: [] };
+				for (const res of responses) {
+					if (res.code !== 0) {
+						continue;
+					}
 
-				for (const b of res.data.items) {
-					if (b.name.search("清华") !== -1) {
-						group.buildings.push({
-							name: b.name,
-							id: b.id,
-							hlsh: true,
-						});
+					for (const b of res.data.items) {
+						if (b.name.search("清华") !== -1 && b.name.search("中学") === -1) {
+							const id = String(b.id);
+							buildingsById.set(id, {
+								name: b.name,
+								id,
+								hlsh: true,
+							});
+						}
 					}
 				}
+
+				const group: buildingGroup = {
+					name: getStr("haiLeShengHuo"),
+					buildings: [...buildingsById.values()],
+				};
 
 				group.buildings.sort((a, b) => {
 					if (a.name < b.name) {
