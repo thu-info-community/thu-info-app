@@ -27,6 +27,14 @@ const config = {
 			path.resolve(projectRoot, "node_modules"),
 		],
 		resolveRequest: (context, moduleImport, platform) => {
+			if (moduleImport === "@react-native/assets-registry/registry") {
+				return context.resolveRequest(
+					context,
+					"react-native/asset-registry",
+					platform,
+				);
+			}
+
 			if (
 				moduleImport === "cheerio" ||
 				moduleImport.startsWith("cheerio/")
