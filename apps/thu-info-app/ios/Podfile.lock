@@ -23,7 +23,7 @@ PODS:
     - Yoga
   - boost (1.84.0):
     - ReactNativeDependencies
-  - CookieManager (6.4.0):
+  - CookieManager (6.4.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2481,7 +2481,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AsyncStorage: f0453c14a52d22d3f6184284c55f2117fbfd9954
   boost: 8502bfdc46e2804408af2e163049ece181009af4
-  CookieManager: 31a68671d6967ee4b778c6720e05984689f212a7
+  CookieManager: 5b0305b7bcaedb83d0c44ef5ec64b65fa1aabf14
   DoubleConversion: 501a575c40c0b50c89685762dd3e415e6bb26fb0
   fast_float: 7c925d1cebf8328d4018d061f49377e9f887e3b4
   FBLazyVector: e08a27053b503eeb756ea4bd75d570d2f2522a1b
