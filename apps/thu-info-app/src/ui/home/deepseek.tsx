@@ -25,6 +25,7 @@ import IconSend from "../../assets/icons/IconSend.tsx";
 import EventSource from "react-native-sse";
 import {v4 as uuidv4} from "uuid";
 import Markdown from "react-native-markdown-display";
+import dayjs from "dayjs";
 import {helper, State} from "../../redux/store.ts";
 import {
 	MADMODEL_AUTH_LOGIN_URL,
@@ -44,17 +45,29 @@ import {
 	deepseekUpdateHistory,
 	deepseekDeleteConversation,
 } from "../../redux/slices/deepseek.ts";
+import {scheduleAddCustom} from "../../redux/slices/schedule.ts";
+import {
+	Schedule,
+	ScheduleType,
+	scheduleTimeAdd,
+} from "@thu-info/lib/src/models/schedule/schedule";
 import {ChannelTag} from "@thu-info/lib/src/models/news/news.ts";
 import themedStyles from "../../utils/themedStyles.ts";
 import {DeepSeekTabProp} from "../../components/Root.tsx";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
 	content: string; // We currently do not support multi-modal.
 	timestamp?: number;
+	tool_calls?: {
+		id: string;
+		type: "function";
+		function: {name: string; arguments: string};
+	}[];
+	tool_call_id?: string;
 }
 
 export interface Conversation {
@@ -110,6 +123,241 @@ const newConversation = (): Conversation => ({
 	timestamp: Date.now(),
 });
 
+interface DeepSeekTool {
+	name: string;
+	description: string;
+	parameters: Record<string, unknown>;
+	execute: (
+		args: Record<string, unknown>,
+		ctx: {firstDay: string; weekCount: number; dispatch: any},
+	) => string;
+}
+
+const deepseekTools: DeepSeekTool[] = [
+	{
+		name: "create_schedule",
+		description:
+			"当用户想要创建、添加一条日程、课程或提醒时调用。一次性日程用 date，每周重复的日程用 dayOfWeek。如果用户同时提到集合时间和任务时间（如「11点集合，11点半到12点开会」），应分别调用两次创建「集合」和「任务」两条日程。",
+		parameters: {
+			type: "object",
+			properties: {
+				title: {type: "string", description: "日程名称"},
+				location: {type: "string", description: "地点，可为空字符串"},
+				date: {
+					type: "string",
+					description: "一次性日程的具体日期，格式 YYYY-MM-DD",
+				},
+				dayOfWeek: {
+					type: "integer",
+					description: "每周重复日程的星期几，1 表示周一，7 表示周日",
+				},
+				beginTime: {
+					type: "string",
+					description: "开始时间，格式 HH:mm，如 14:00",
+				},
+				endTime: {
+					type: "string",
+					description: "结束时间，格式 HH:mm，如 16:00",
+				},
+				weeks: {
+					type: "array",
+					items: {type: "integer"},
+					description: "周次列表，如 [1,2,3]。为空或省略表示每周",
+				},
+			},
+			required: ["title", "beginTime", "endTime"],
+		},
+		execute: (args, {firstDay, weekCount, dispatch}) => {
+			const missing = missingScheduleFields(args);
+			if (missing.length > 0) {
+				return `信息不足，缺少：${missing.join("、")}。请向用户询问这些信息，不要自行猜测。`;
+			}
+			const schedule = createScheduleFromToolArgs(args, firstDay, weekCount);
+			if (!schedule) {
+				return getStr("deepseekScheduleFail");
+			}
+			dispatch(scheduleAddCustom(schedule));
+			return getStr("deepseekScheduleCreated") + "：" + schedule.name;
+		},
+	},
+];
+
+const openaiTools = deepseekTools.map((tool) => ({
+	type: "function",
+	function: {
+		name: tool.name,
+		description: tool.description,
+		parameters: tool.parameters,
+	},
+}));
+
+export const createScheduleFromToolArgs = (
+	args: Record<string, unknown>,
+	firstDay: string,
+	weekCount: number,
+): Schedule | undefined => {
+	const title = String(args.title ?? "").trim();
+	const beginTime = String(args.beginTime ?? "");
+	const endTime = String(args.endTime ?? "");
+	if (
+		title.length === 0 ||
+		!/^\d{2}:\d{2}$/.test(beginTime) ||
+		!/^\d{2}:\d{2}$/.test(endTime)
+	) {
+		return undefined;
+	}
+	const location = String(args.location ?? "");
+	const weeks =
+		Array.isArray(args.weeks) && args.weeks.length > 0
+			? args.weeks
+					.map((w) => Number(w))
+					.filter((w) => Number.isInteger(w) && w >= 1 && w <= weekCount)
+			: Array.from({length: weekCount}, (_, k) => k + 1);
+
+	const schedule: Schedule = {
+		name: title,
+		location,
+		hash: "",
+		type: ScheduleType.CUSTOM,
+		activeTime: {base: []},
+		delOrHideTime: {base: []},
+	};
+
+	const date = String(args.date ?? "").trim();
+	if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+		scheduleTimeAdd(schedule.activeTime, {
+			dayOfWeek: dayjs(date).day() === 0 ? 7 : dayjs(date).day(),
+			beginTime: dayjs(`${date} ${beginTime}`),
+			endTime: dayjs(`${date} ${endTime}`),
+		});
+		return schedule;
+	}
+
+	const dayOfWeek = Number(args.dayOfWeek);
+	if (!Number.isInteger(dayOfWeek) || dayOfWeek < 1 || dayOfWeek > 7) {
+		return undefined;
+	}
+	weeks.forEach((week) => {
+		const dateStr = dayjs(firstDay)
+			.add((week - 1) * 7 + (dayOfWeek - 1), "day")
+			.format("YYYY-MM-DD");
+		scheduleTimeAdd(schedule.activeTime, {
+			dayOfWeek,
+			beginTime: dayjs(`${dateStr} ${beginTime}`),
+			endTime: dayjs(`${dateStr} ${endTime}`),
+		});
+	});
+	return schedule;
+};
+
+const missingScheduleFields = (args: Record<string, unknown>): string[] => {
+	const missing: string[] = [];
+	if (String(args.title ?? "").trim().length === 0) {
+		missing.push("标题/内容");
+	}
+	if (!/^\d{2}:\d{2}$/.test(String(args.beginTime ?? ""))) {
+		missing.push("开始时间");
+	}
+	if (!/^\d{2}:\d{2}$/.test(String(args.endTime ?? ""))) {
+		missing.push("结束时间");
+	}
+	const date = String(args.date ?? "").trim();
+	const dayOfWeek = Number(args.dayOfWeek);
+	if (
+		!/^\d{4}-\d{2}-\d{2}$/.test(date) &&
+		(!Number.isInteger(dayOfWeek) || dayOfWeek < 1 || dayOfWeek > 7)
+	) {
+		missing.push("日期或星期");
+	}
+	return missing;
+};
+
+const streamAssistant = async ({
+	messages,
+	model,
+	deepseekToken,
+	onContent,
+}: {
+	messages: Message[];
+	model: string;
+	deepseekToken: string;
+	onContent: (content: string) => void;
+}): Promise<{id: string; name: string; arguments: string}[]> => {
+	const toolCalls: {id: string; name: string; arguments: string}[] = [];
+
+	const es = new EventSource(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${deepseekToken}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			model,
+			messages,
+			temperature: 0.6,
+			repetition_penalty: 1.05,
+			stream: true,
+			tools: openaiTools,
+		}),
+		pollingInterval: 0,
+	});
+
+	await new Promise<void>((resolve, reject) => {
+		es.addEventListener("message", (event) => {
+			if (!event.data) {
+				return;
+			}
+			if (event.data.trim() === "[DONE]") {
+				resolve();
+				return;
+			}
+			const value = JSON.parse(event.data);
+			if (value.errorMessage) {
+				onContent(value.errorMessage);
+				resolve();
+				return;
+			}
+			const choice = value.choices[0];
+			if (choice?.delta == null) {
+				return;
+			}
+			const delta = choice.delta;
+			if (delta.tool_calls != null) {
+				for (const tc of delta.tool_calls) {
+					const index = tc.index ?? 0;
+					while (toolCalls.length <= index) {
+						toolCalls.push({id: "", name: "", arguments: ""});
+					}
+					if (tc.id != null) {
+						toolCalls[index].id = tc.id;
+					}
+					if (tc.function?.name != null) {
+						toolCalls[index].name = tc.function.name;
+					}
+					if (tc.function?.arguments != null) {
+						toolCalls[index].arguments += tc.function.arguments;
+					}
+				}
+			}
+			if (delta.content != null) {
+				onContent(delta.content);
+			}
+		});
+		es.addEventListener("error", (event) => {
+			if (event.type === "error" || event.type === "exception") {
+				reject(new Error(event.message));
+			} else {
+				reject(new Error(event.type));
+			}
+		});
+		es.addEventListener("close", () => {
+			resolve();
+		});
+	});
+
+	return toolCalls;
+};
+
 const sendDeepSeekMessage = async ({
 	input,
 	conversation,
@@ -117,6 +365,8 @@ const sendDeepSeekMessage = async ({
 	setSearching,
 	model,
 	deepseekToken,
+	firstDay,
+	weekCount,
 	dispatch,
 }: {
 	input: string;
@@ -125,19 +375,24 @@ const sendDeepSeekMessage = async ({
 	setSearching: React.Dispatch<React.SetStateAction<boolean>>;
 	model: string;
 	deepseekToken: string;
+	firstDay: string;
+	weekCount: number;
 	dispatch: any;
 }) => {
 	let next = {
 		...conversation,
-		messages: conversation.messages.concat({
-			role: "user",
-			content: input.trim(),
-			timestamp: Date.now(),
-		}, {
-			role: "assistant",
-			content: "",
-			timestamp: Date.now(),
-		}),
+		messages: conversation.messages.concat(
+			{
+				role: "user",
+				content: input.trim(),
+				timestamp: Date.now(),
+			},
+			{
+				role: "assistant",
+				content: "",
+				timestamp: Date.now(),
+			},
+		),
 	};
 	dispatch(deepseekUpdateHistory(next));
 
@@ -155,32 +410,38 @@ const sendDeepSeekMessage = async ({
 
 	if (dataSource !== null) {
 		setSearching(true);
-		const {choices} = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${deepseekToken}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				model: models[0],
-				messages: [
-					{
-						role: "system",
-						content: "你的任务是从用户的输入中提取关键词，用于RAG搜索。请提取3-5个最相关的关键词，每个关键词不应超过4个字，确保它们简洁且能准确反映用户输入的核心内容。你提取的关键词必须是中文，除非用户的关键词是特定的专有名词、术语或其他关键信息。你必须直接给我这些关键词，以符号+连接每个关键词。\n---\n" + prompt,
-					},
-				],
-				temperature: 0.2,
-				repetition_penalty: 1.05,
-				stream: false,
-			}),
-		})).json();
+		const {choices} = await (
+			await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${deepseekToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					model: models[0],
+					messages: [
+						{
+							role: "system",
+							content:
+								"你的任务是从用户的输入中提取关键词，用于RAG搜索。请提取3-5个最相关的关键词，每个关键词不应超过4个字，确保它们简洁且能准确反映用户输入的核心内容。你提取的关键词必须是中文，除非用户的关键词是特定的专有名词、术语或其他关键信息。你必须直接给我这些关键词，以符号+连接每个关键词。\n---\n" +
+								prompt,
+						},
+					],
+					temperature: 0.2,
+					repetition_penalty: 1.05,
+					stream: false,
+				}),
+			})
+		).json();
 		const answer = choices[0].message.content;
 		const keywords = splitReasoningAndStatus(answer)[1];
 		const newsList = await helper.searchNewsList(1, keywords, dataSource);
 		const newsDetail = [];
 		for (let newsSlice of newsList.slice(0, 5)) {
 			try {
-				const [title, _content, abstract] = await helper.getNewsDetail(newsSlice.url);
+				const [title, _content, abstract] = await helper.getNewsDetail(
+					newsSlice.url,
+				);
 				newsDetail.push(`# ${title}\n${abstract}`);
 			} catch {
 				// No-op
@@ -196,122 +457,117 @@ ${prompt}
 ---
 
 补充信息：
-- 用户当前的时间是${new Date().toLocaleString("zh-CN", { hour12: false })}`;
+- 用户当前的时间是${new Date().toLocaleString("zh-CN", {hour12: false})}`;
 		setSearching(false);
 	}
 
-	const es = new EventSource(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${deepseekToken}`,
-			"Content-Type": "application/json",
+	const modelMessages: Message[] = [
+		{
+			role: "system",
+			content: `你是清华校园助手，可以回答用户的各种问题、检索校内信息，并在用户需要时调用工具完成日程创建等操作。今天是 ${new Date().toISOString().split("T")[0]}，本学期从 ${firstDay} 开始，共 ${weekCount} 周。`,
 		},
-		body: JSON.stringify({
+		...conversation.messages.map((message) =>
+			message.role === "assistant"
+				? {
+						...message,
+						content: splitReasoningAndStatus(message.content)[1],
+					}
+				: message,
+		),
+		{
+			role: "user",
+			content: prompt,
+		},
+	];
+
+	// 工具调用循环：模型可以连续调用多个工具，直到不再调用为止
+	const MAX_TOOL_ROUNDS = 4;
+	for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+		const toolCalls = await streamAssistant({
+			messages: modelMessages,
 			model,
-			messages: [
-				...conversation.messages.map((message) =>
-					message.role === "assistant"
-						? {
-								...message,
-								content: splitReasoningAndStatus(message.content)[1],
-					     }
-						: message,
-				),
-				{
-					role: "user",
-					content: prompt,
-				},
-			],
-			temperature: 0.6,
-			repetition_penalty: 1.05,
-			stream: true,
-		}),
-		pollingInterval: 0,
-	});
+			deepseekToken,
+			onContent: (content) => {
+				const prev = next;
+				next = {
+					...prev,
+					messages: prev.messages.slice(0, prev.messages.length - 1).concat({
+						role: "assistant",
+						content: prev.messages[prev.messages.length - 1].content + content,
+						timestamp: Date.now(),
+					}),
+				};
+				dispatch(deepseekUpdateHistory(next));
+			},
+		});
 
-	await new Promise<void>((resolve, reject) => {
-		es.addEventListener("message", (event) => {
-			if (event.data) {
-				if (event.data.trim() === "[DONE]") {
-					resolve();
-				} else {
-					const value = JSON.parse(event.data);
-					if (value.errorMessage) {
-						const prev = next;
-						next = {
-							...prev,
-							messages: prev.messages
-								.slice(0, prev.messages.length - 1)
-								.concat({
-									role: "assistant",
-									content:
-										prev.messages[prev.messages.length - 1].content +
-										value.errorMessage,
-									timestamp: Date.now(),
-								}),
-						};
-						dispatch(deepseekUpdateHistory(next));
-						resolve();
-						return;
-					}
-					const choice = value.choices[0];
-					if (choice?.delta == null) {
-						return;
-					}
-					const delta = choice.delta;
-					if (delta.content != null) {
-						const prev = next;
-						next = {
-							...prev,
-							messages: prev.messages
-								.slice(0, prev.messages.length - 1)
-								.concat({
-									role: "assistant",
-									content:
-										prev.messages[prev.messages.length - 1].content +
-										delta.content,
-									timestamp: Date.now(),
-								}),
-						};
-						dispatch(deepseekUpdateHistory(next));
-					}
-				}
-			}
-		});
-		es.addEventListener("error", (event) => {
-			if (event.type === "error" || event.type === "exception") {
-				reject(new Error(event.message));
-			} else {
-				reject(new Error(event.type));
-			}
-		});
-		es.addEventListener("close", () => {
-			resolve();
-		});
-	});
+		if (toolCalls.length === 0) {
+			break;
+		}
 
+		modelMessages.push({
+			role: "assistant",
+			content: next.messages[next.messages.length - 1].content,
+			tool_calls: toolCalls.map((tc) => ({
+				id: tc.id,
+				type: "function",
+				function: {name: tc.name, arguments: tc.arguments},
+			})),
+		});
+
+		for (const tc of toolCalls) {
+			const tool = deepseekTools.find((t) => t.name === tc.name);
+			let args: Record<string, unknown> = {};
+			try {
+				args = JSON.parse(tc.arguments);
+			} catch {
+				// No-op
+			}
+			const result = tool
+				? tool.execute(args, {firstDay, weekCount, dispatch})
+				: "未知工具";
+			modelMessages.push({
+				role: "tool",
+				tool_call_id: tc.id,
+				content: result,
+			});
+		}
+
+		next = {
+			...next,
+			messages: next.messages
+				.slice(0, next.messages.length - 1)
+				.concat({role: "assistant", content: "", timestamp: Date.now()}),
+		};
+		dispatch(deepseekUpdateHistory(next));
+	}
 };
 
-async function generateConversationTitle(content: string, deepseekToken: string): Promise<string> {
-	const { choices } = await (await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${deepseekToken}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			model: models[0],
-			messages: [
-				{
-					role: "system",
-					content: getStr("summaryPrompt") + content + "}}",
-				},
-			],
-			temperature: 0.6,
-			repetition_penalty: 1.05,
-			stream: false,
-		}),
-	})).json();
+async function generateConversationTitle(
+	content: string,
+	deepseekToken: string,
+): Promise<string> {
+	const {choices} = await (
+		await fetch(`${MADMODEL_BASE_URL}/v1/chat/completions`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${deepseekToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				model: models[0],
+				messages: [
+					{
+						role: "system",
+						content: getStr("summaryPrompt") + content + "}}",
+					},
+				],
+				temperature: 0.6,
+				repetition_penalty: 1.05,
+				stream: false,
+			}),
+		})
+	).json();
 	const answer = choices[0].message.content;
 	return splitReasoningAndStatus(answer)[1].trim();
 }
@@ -321,7 +577,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [dataSource, setDataSource] = useState<ChannelTag | undefined | null>(
-		null,  // null indicates that no data source should be used
+		null, // null indicates that no data source should be used
 	);
 	const [searching, setSearching] = useState(false);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -333,7 +589,9 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const {deepseekToken} = useSelector((s: State) => s.config);
+	const {deepseekToken, firstDay, weekCount} = useSelector(
+		(s: State) => s.config,
+	);
 	const {history} = useSelector((s: State) => s.deepseek);
 	const {bubbleMessage} = useSelector((s: State) => s.config);
 	const dispatch = useDispatch();
@@ -379,7 +637,11 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			history.length === 0 ||
 			Date.now() - (history[0].timestamp ?? 0) > 1000 * 60 * 30
 		) {
-			if (history.length > 0 && history[0]?.messages.length === 0 && history[0]?.title === getStr("newConversation")) {
+			if (
+				history.length > 0 &&
+				history[0]?.messages.length === 0 &&
+				history[0]?.title === getStr("newConversation")
+			) {
 				const newConv = newConversation();
 				newConv.id = history[0].id;
 				dispatch(deepseekUpdateHistory(newConv));
@@ -397,10 +659,11 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			dispatch(deepseekUpdateHistory(newConversation()));
 			addUsageStat(FunctionType.DeepSeekCreate);
 		} else {
-			currentIndex === 0 && Snackbar.show({
-				text: getStr("alreadyLatestChat"),
-				duration: Snackbar.LENGTH_SHORT,
-			});
+			currentIndex === 0 &&
+				Snackbar.show({
+					text: getStr("alreadyLatestChat"),
+					duration: Snackbar.LENGTH_SHORT,
+				});
 		}
 		setCurrentIndex(0);
 		toggleSidebar(false);
@@ -456,6 +719,8 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				setSearching,
 				model,
 				deepseekToken,
+				firstDay,
+				weekCount,
 				dispatch,
 			});
 		} catch (e: any) {
@@ -482,7 +747,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 
 	return (
 		<KeyboardAvoidingView
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior={Platform.OS === "ios" ? "padding" : undefined}
 			style={{
 				flex: 1,
 				paddingTop: getStatusBarHeight(),
@@ -649,7 +914,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 													duration: Snackbar.LENGTH_SHORT,
 												});
 											}}>
-											<Text style={{ color: colors.text }}>{item.content}</Text>
+											<Text style={{color: colors.text}}>{item.content}</Text>
 										</Pressable>
 									</View>
 								</View>
@@ -686,7 +951,9 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 										alignItems: "flex-start",
 									}}>
 									<Text style={{color: colors.fontB3}}>
-										{searching && index === conversation.messages.length - 1 ? getStr("searching") : getStr(statusText)}
+										{searching && index === conversation.messages.length - 1
+											? getStr("searching")
+											: getStr(statusText)}
 										&nbsp;&nbsp;
 										{new Date(item.timestamp ?? 0).toLocaleString([], {
 											month: "numeric",
@@ -756,29 +1023,33 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 											color={colors.themeTransparentPurple}
 										/>
 									)}
-									{(index !== conversation.messages.length - 1 || !generating) && item.content !== systemErrorMessage && (
-										<View
-											style={{
-												backgroundColor: `${colors.themeLightPurple}33`,
-												borderRadius: 8,
-												borderWidth: 1,
-												borderColor: colors.themePurple,
-												paddingVertical: 8,
-												paddingHorizontal: 12,
-												marginVertical: 4,
-												width: "100%",
-												alignItems: "center",
-												justifyContent: "center",
-											}}>
-											<Text style={{color: colors.themePurple, fontSize: 12}}>
-												{getStr("aigcWarning")}
-											</Text>
-										</View>
-									)}
+									{(index !== conversation.messages.length - 1 ||
+										!generating) &&
+										item.content !== systemErrorMessage && (
+											<View
+												style={{
+													backgroundColor: `${colors.themeLightPurple}33`,
+													borderRadius: 8,
+													borderWidth: 1,
+													borderColor: colors.themePurple,
+													paddingVertical: 8,
+													paddingHorizontal: 12,
+													marginVertical: 4,
+													width: "100%",
+													alignItems: "center",
+													justifyContent: "center",
+												}}>
+												<Text style={{color: colors.themePurple, fontSize: 12}}>
+													{getStr("aigcWarning")}
+												</Text>
+											</View>
+										)}
 									<View
 										style={[
 											{flexDirection: "row"},
-											index === conversation.messages.length - 1 && generating ? {display: "none"} : {},
+											index === conversation.messages.length - 1 && generating
+												? {display: "none"}
+												: {},
 										]}>
 										<TouchableOpacity
 											style={{
@@ -843,17 +1114,15 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				}}>
 				<TouchableOpacity
 					onPress={() =>
-						setDataSource((prev) =>
-							prev === "LM_JWGG" ? null : "LM_JWGG",
-						)
+						setDataSource((prev) => (prev === "LM_JWGG" ? null : "LM_JWGG"))
 					}
 					style={[
 						style.capsule,
 						dataSource === "LM_JWGG"
 							? {
-								backgroundColor: colors.themeTransparentPurple,
-								borderColor: colors.transparent,
-							}
+									backgroundColor: colors.themeTransparentPurple,
+									borderColor: colors.transparent,
+								}
 							: {},
 					]}>
 					<Text
@@ -866,9 +1135,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() =>
-						setDataSource((prev) =>
-							prev === "LM_XSBGGG" ? null : "LM_XSBGGG",
-						)
+						setDataSource((prev) => (prev === "LM_XSBGGG" ? null : "LM_XSBGGG"))
 					}
 					style={[
 						style.capsule,
@@ -876,13 +1143,12 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
-						      }
+								}
 							: {},
 					]}>
 					<Text
 						style={{
-							color:
-								dataSource === "LM_XSBGGG" ? colors.fontB1 : colors.fontB2,
+							color: dataSource === "LM_XSBGGG" ? colors.fontB1 : colors.fontB2,
 							fontSize: 13,
 						}}>
 						{getStr("LM_XSBGGG")}
@@ -890,9 +1156,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() =>
-						setDataSource((prev) =>
-							prev === "LM_BYJYXX" ? null : "LM_BYJYXX",
-						)
+						setDataSource((prev) => (prev === "LM_BYJYXX" ? null : "LM_BYJYXX"))
 					}
 					style={[
 						style.capsule,
@@ -900,7 +1164,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							? {
 									backgroundColor: colors.themeTransparentPurple,
 									borderColor: colors.transparent,
-						      }
+								}
 							: {},
 					]}>
 					<Text
@@ -934,6 +1198,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						borderColor: colors.themePurple,
 						borderWidth: 1.5,
 						borderRadius: 24,
+						maxHeight: 120,
 					}}
 					textAlignVertical="top"
 					multiline={true}
@@ -962,6 +1227,8 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								setSearching,
 								model,
 								deepseekToken,
+								firstDay,
+								weekCount,
 								dispatch,
 							});
 						} catch (e: any) {
@@ -992,8 +1259,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 						width: "100%",
 						height: "100%",
 					}}
-					onPress={() => toggleSidebar(false)}
-				>
+					onPress={() => toggleSidebar(false)}>
 					<Animated.View
 						style={{
 							flex: 1,
@@ -1009,10 +1275,14 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					style={{
 						position: "absolute",
 						top: 0,
-						transform: [{ translateX: sidebarPosition.interpolate({
-							inputRange: [-1, 0],
-							outputRange: [-0.62 * useWindowDimensions().width, 0],
-						}) }],
+						transform: [
+							{
+								translateX: sidebarPosition.interpolate({
+									inputRange: [-1, 0],
+									outputRange: [-0.62 * useWindowDimensions().width, 0],
+								}),
+							},
+						],
 						backgroundColor: colors.contentBackground,
 						paddingHorizontal: 16,
 						paddingTop: getStatusBarHeight(true) + 2,
@@ -1052,14 +1322,19 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					<SectionList
 						style={{flex: 1, marginTop: 8}}
 						sections={Object.entries(
-							history.reduce((acc, item) => {
-								const date = new Date(item.timestamp ?? 0).toLocaleDateString();
-								if (!acc[date]) {
-									acc[date] = [];
-								}
-								acc[date].push(item);
-								return acc;
-							}, {} as Record<string, Conversation[]>),
+							history.reduce(
+								(acc, item) => {
+									const date = new Date(
+										item.timestamp ?? 0,
+									).toLocaleDateString();
+									if (!acc[date]) {
+										acc[date] = [];
+									}
+									acc[date].push(item);
+									return acc;
+								},
+								{} as Record<string, Conversation[]>,
+							),
 						)
 							.sort(
 								([dateA], [dateB]) =>
@@ -1078,8 +1353,8 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 										deleteId === item.id
 											? colors.statusWarningOpacity
 											: item.timestamp === conversation.timestamp
-											? colors.themeTransparentGrey
-											: colors.contentBackground,
+												? colors.themeTransparentGrey
+												: colors.contentBackground,
 									borderRadius: 8,
 								}}
 								onPress={() => {
