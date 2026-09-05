@@ -303,17 +303,20 @@ const streamAssistant = async ({
 	});
 
 	await new Promise<void>((resolve, reject) => {
+		const timer = setTimeout(() => reject(new Error("timeout")), 90000);
 		es.addEventListener("message", (event) => {
 			if (!event.data) {
 				return;
 			}
 			if (event.data.trim() === "[DONE]") {
+				clearTimeout(timer);
 				resolve();
 				return;
 			}
 			const value = JSON.parse(event.data);
 			if (value.errorMessage) {
 				onContent(value.errorMessage);
+				clearTimeout(timer);
 				resolve();
 				return;
 			}
@@ -344,6 +347,7 @@ const streamAssistant = async ({
 			}
 		});
 		es.addEventListener("error", (event) => {
+			clearTimeout(timer);
 			if (event.type === "error" || event.type === "exception") {
 				reject(new Error(event.message));
 			} else {
@@ -351,6 +355,7 @@ const streamAssistant = async ({
 			}
 		});
 		es.addEventListener("close", () => {
+			clearTimeout(timer);
 			resolve();
 		});
 	});
@@ -538,6 +543,20 @@ ${prompt}
 			messages: next.messages
 				.slice(0, next.messages.length - 1)
 				.concat({role: "assistant", content: "", timestamp: Date.now()}),
+		};
+		dispatch(deepseekUpdateHistory(next));
+	}
+
+	if (next.messages[next.messages.length - 1].content.length === 0) {
+		next = {
+			...next,
+			messages: next.messages
+				.slice(0, next.messages.length - 1)
+				.concat({
+					role: "assistant",
+					content: systemErrorMessage,
+					timestamp: Date.now(),
+				}),
 		};
 		dispatch(deepseekUpdateHistory(next));
 	}
@@ -747,10 +766,11 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 
 	return (
 		<KeyboardAvoidingView
-			behavior={Platform.OS === "ios" ? "padding" : undefined}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			style={{
 				flex: 1,
 				paddingTop: getStatusBarHeight(),
+				paddingBottom: insets.bottom,
 				flexDirection: "column",
 			}}>
 			<View
@@ -869,6 +889,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			</View>
 			<FlatList
 				style={{
+					flex: 1,
 					padding: 16,
 					paddingStart: 8,
 				}}
@@ -1182,29 +1203,38 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					flexDirection: "row",
 					alignItems: "center",
 				}}>
-				<TextInput
-					ref={inputRef}
-					value={input}
-					onChangeText={setInput}
+				<View
 					style={{
 						flex: 1,
-						textAlignVertical: "center",
-						fontSize: 14,
 						marginBottom: 4,
 						marginHorizontal: 8,
-						padding: 12,
-						paddingEnd: 36,
-						color: colors.text,
+						flexDirection: "row",
+						alignItems: "center",
 						borderColor: colors.themePurple,
 						borderWidth: 1.5,
 						borderRadius: 24,
-						maxHeight: 120,
-					}}
-					textAlignVertical="top"
-					multiline={true}
-					placeholder={getStr("askDeepSeekPrompt")}
-					placeholderTextColor={colors.fontB3}
-				/>
+						overflow: "hidden",
+					}}>
+					<TextInput
+						ref={inputRef}
+						value={input}
+						onChangeText={setInput}
+						style={{
+							flex: 1,
+							textAlignVertical: "center",
+							fontSize: 14,
+							padding: 12,
+							paddingEnd: 36,
+							color: colors.text,
+							maxHeight: 120,
+						}}
+						textAlignVertical="top"
+						multiline={true}
+						underlineColorAndroid="transparent"
+						placeholder={getStr("askDeepSeekPrompt")}
+						placeholderTextColor={colors.fontB3}
+					/>
+				</View>
 				<TouchableOpacity
 					style={{position: "absolute", right: 24, bottom: 16}}
 					disabled={input.trim() === "" || generating}
