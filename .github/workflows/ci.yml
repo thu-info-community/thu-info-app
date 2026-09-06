@@ -102,6 +102,13 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+      - name: Setup Ruby
+        id: setup-ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+      - name: Export Ruby path
+        run: echo "PATH=${{ steps.setup-ruby.outputs.ruby-prefix }}/bin:$PATH" >> "$GITHUB_ENV"
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v6
@@ -144,7 +151,7 @@ jobs:
         with:
           xcode-version: latest-stable
       - name: Update beta
-        run: cd apps/thu-info-app/ios && fastlane beta
+        run: cd apps/thu-info-app/ios && bundle exec fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
