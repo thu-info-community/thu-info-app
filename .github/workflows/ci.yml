@@ -106,7 +106,7 @@ jobs:
         id: setup-ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.1"
       - name: Export Ruby path
         run: echo "PATH=${{ steps.setup-ruby.outputs.ruby-prefix }}/bin:$PATH" >> "$GITHUB_ENV"
       - name: Setup caching
