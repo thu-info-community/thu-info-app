@@ -103,9 +103,12 @@ jobs:
         with:
           node-version: 24
       - name: Setup Ruby
+        id: setup-ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
+      - name: Export Ruby path
+        run: echo "PATH=${{ steps.setup-ruby.outputs.ruby-prefix }}/bin:$PATH" >> "$GITHUB_ENV"
       - name: Setup caching
         if: startsWith(github.ref, 'refs/tags') == false
         uses: actions/cache@v6
