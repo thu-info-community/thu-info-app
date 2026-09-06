@@ -97,8 +97,8 @@ GEM
     dotenv (2.8.1)
     drb (2.2.3)
     emoji_regex (3.2.3)
-    erb (2.2.3)
-      cgi
+    erb (4.0.3.1)
+      cgi (>= 0.3.3)
     ethon (0.18.0)
       ffi (>= 1.15.0)
       logger
