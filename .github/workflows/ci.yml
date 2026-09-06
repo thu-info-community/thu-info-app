@@ -151,7 +151,7 @@ jobs:
         with:
           xcode-version: latest-stable
       - name: Update beta
-        run: cd apps/thu-info-app/ios && fastlane beta
+        run: cd apps/thu-info-app/ios && bundle exec fastlane beta
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
