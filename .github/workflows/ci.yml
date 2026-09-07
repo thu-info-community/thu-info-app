@@ -106,7 +106,7 @@ jobs:
         id: setup-ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.10"
+          ruby-version: "4.0.6"
           bundler: "2.6.2"
       - name: Export Ruby path
         run: echo "PATH=${{ steps.setup-ruby.outputs.ruby-prefix }}/bin:$PATH" >> "$GITHUB_ENV"
