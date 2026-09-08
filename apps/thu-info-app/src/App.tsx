@@ -9,7 +9,7 @@ import {
 	NavigationContainerRef,
 	NavigationIndependentTree,
 } from "@react-navigation/native";
-import {Alert, StatusBar, useColorScheme, useWindowDimensions} from "react-native";
+import {Alert, Dimensions, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
@@ -31,9 +31,8 @@ const RootComponent = () => {
 
 	const detailNavigationContainerRef = useRef<NavigationContainerRef<{}>>(null);
 
-	const {width: windowWidth} = useWindowDimensions();
-	// Leave a usable detail pane beside the 320-point master; keep its navigator mounted when narrow.
-	const showDetail = windowWidth >= 720;
+	const windowWidth = Dimensions.get("window").width;
+	const showDetail = windowWidth >= 400;
 	const splitEnabled = (tabletMode ?? false) && DeviceInfo.isTablet();
 
 	useEffect(() => {
