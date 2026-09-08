@@ -9489,10 +9489,10 @@ react-native-polyfill-globals@3.1.0:
   resolved "https://registry.yarnpkg.com/react-native-polyfill-globals/-/react-native-polyfill-globals-3.1.0.tgz#da7f6c695cd2360096b9a233c4e711d91f1542f8"
   integrity sha512-6ACmV1SjXvZP2LN6J2yK58yNACKddcvoiKLrSQdISx32IdYStfdmGXrbAfpd+TANrTlIaZ2SLoFXohNwhnqm/w==
 
-react-native-qrcode-svg@6.3.23:
-  version "6.3.23"
-  resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.3.23.tgz#f2cf132044ab5f07d59d009b3dc5f0572be02af0"
-  integrity sha512-pDlR6bE1Dz7p/mxtvn0/v7crcsEnm53Adm9iDHsM8ORH+J7SpcasifrBWeawjkNTZrQmrAD1hLZGH2bry+zctA==
+react-native-qrcode-svg@6.3.24:
+  version "6.3.24"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-6.3.24.tgz#ee743192af379569acbe7b743b4446f610cbec4e"
+  integrity sha512-oqv2OrEldXArsB3pqMJCLs2RNr4kRkawAe8dSiYKySRPEE/6WSt3/0o5mWnshmd8a8SbYNdj8UKwKYxh2hzPaA==
   dependencies:
     prop-types "^15.8.0"
     qrcode "^1.5.4"
