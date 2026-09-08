@@ -1,4 +1,5 @@
 export default {
+	thos: "Online Services",
 	mark: "EN",
 	infoAccount: "INFO Account",
 	myhomeAccount: "Myhome Account",

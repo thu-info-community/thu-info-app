@@ -1,4 +1,5 @@
 export default {
+	thos: "在线服务",
 	mark: "CH",
 	infoAccount: "信息门户账号",
 	myhomeAccount: "家园网账号",
