@@ -1,8 +1,8 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {
 	FlatList,
 	Modal,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -406,11 +406,9 @@ export const ReportScreen = () => {
 			<ScrollView
 				style={{marginHorizontal: 12}}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
-						colors={[colors.accent]}
-						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<View>

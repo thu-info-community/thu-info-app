@@ -1,3 +1,4 @@
+import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {
 	View,
 	Text,
@@ -44,7 +45,7 @@ import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
 import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
-import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
@@ -1002,11 +1003,9 @@ export const ScheduleScreen = () => {
 						setTableHeight(nativeEvent.layout.height);
 					}}
 					refreshControl={
-						<RefreshControl
+						<ThemedGestureRefreshControl
 							refreshing={refreshing}
 							onRefresh={getSchedule}
-							colors={[theme.colors.accent]}
-							progressBackgroundColor={theme.colors.contentBackground}
 						/>
 					}>
 					<View
@@ -1382,6 +1381,7 @@ export const ScheduleScreen = () => {
 								maximumValue={20}
 								step={1}
 								minimumTrackTintColor={theme.colors.themePurple}
+								maximumTrackTintColor={theme.colors.inputBorder}
 								thumbTintColor={theme.colors.primary}
 								value={heightMode}
 								onValueChange={(value) => {
@@ -1410,8 +1410,12 @@ export const ScheduleScreen = () => {
 								{getStr("hideWeekend")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={hideWeekend}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1441,8 +1445,12 @@ export const ScheduleScreen = () => {
 								{getStr("scheduleFilterOfficial")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={showOfficialSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1472,8 +1480,12 @@ export const ScheduleScreen = () => {
 								{getStr("scheduleFilterCustom")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={showCustomSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(

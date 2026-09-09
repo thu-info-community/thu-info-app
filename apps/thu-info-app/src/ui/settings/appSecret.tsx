@@ -68,8 +68,9 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{true: colors.themePurple}}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						value={appSecret !== undefined}
 						onValueChange={() => {
 							if (appSecret === undefined) {
@@ -127,8 +128,9 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 						<View style={style.touchable}>
 							<Text style={style.text}>{getStr("enterApp")}</Text>
 							<Switch
-								thumbColor={colors.contentBackground}
-								trackColor={{true: colors.themePurple}}
+								ios_backgroundColor={colors.inputBorder}
+								thumbColor={colors.themeLightGrey}
+								trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 								value={verifyPasswordBeforeEnterApp === true}
 								onValueChange={(value) => {
 									dispatch(
@@ -183,8 +185,9 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 						<View style={style.touchable}>
 							<Text style={style.text}>{getStr("useBiometrics")}</Text>
 							<Switch
-								thumbColor={colors.contentBackground}
-								trackColor={{true: colors.themePurple}}
+								ios_backgroundColor={colors.inputBorder}
+								thumbColor={colors.themeLightGrey}
+								trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 								value={useBiometrics === true}
 								onValueChange={(enable) => {
 									if (enable) {

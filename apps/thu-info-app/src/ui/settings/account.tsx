@@ -68,8 +68,9 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("backgroundSecurityWarning")}
 						</Text>
 						<Switch
-							thumbColor={colors.contentBackground}
-							trackColor={{true: colors.themePurple}}
+							ios_backgroundColor={colors.inputBorder}
+							thumbColor={colors.themeLightGrey}
+							trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 							value={!disableBackgroundSecurityWarning}
 							onValueChange={(value) => {
 								dispatch(

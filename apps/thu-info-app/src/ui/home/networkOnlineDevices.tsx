@@ -1,9 +1,10 @@
+import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import { useEffect, useState } from "react";
 import { Device } from "@thu-info/lib/src/models/network/device";
 import { helper } from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
-import { GestureHandlerRootView, RefreshControl, ScrollView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
 	Platform,
@@ -153,11 +154,9 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 			<GestureHandlerRootView style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView
 					refreshControl={
-						<RefreshControl
+						<ThemedGestureRefreshControl
 							refreshing={refreshing}
 							onRefresh={refresh}
-							colors={[colors.accent]}
-							progressBackgroundColor={colors.contentBackground}
 						/>
 					}
 					contentContainerStyle={{ padding: 8 }}
@@ -216,10 +215,11 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							{getStr("internetAccess")}
 						</Text>
 						<Switch
+							ios_backgroundColor={colors.inputBorder}
 							value={internetAccess}
 							onValueChange={setInternetAccess}
-							thumbColor={internetAccess ? colors.themeDarkPurple : colors.themeDarkGrey}
-							trackColor={{ true: colors.themePurple }}
+							thumbColor={colors.themeLightGrey}
+							trackColor={{ false: colors.inputBorder, true: colors.themePurple }}
 						/>
 					</View>
 					<View
