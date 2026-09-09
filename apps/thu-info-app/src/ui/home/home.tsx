@@ -86,6 +86,11 @@ export const HomeFunctionSection = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const functionItems = Array.isArray(children)
+		? children.filter((child: ReactElement | undefined): child is ReactElement =>
+				child !== undefined,
+		  )
+		: undefined;
 
 	return (
 		<View style={style.SectionContainer}>
@@ -94,7 +99,39 @@ export const HomeFunctionSection = ({
 				<View
 					style={style.functionSectionContent}
 					testID={"homeFunctions-" + title}>
-					{children}
+					{functionItems === undefined
+						? children
+						: Array.from(
+								{length: Math.ceil(functionItems.length / 5)},
+								(_, rowIndex) => {
+									const rowItems = functionItems.slice(
+										rowIndex * 5,
+										rowIndex * 5 + 5,
+									);
+									return (
+										<View
+											key={`function-row-${rowIndex}`}
+											style={style.functionSectionRow}>
+											{rowItems.map((item, itemIndex) => (
+												<View
+													key={`function-item-${rowIndex}-${itemIndex}`}
+													style={style.functionSectionItem}>
+													{item}
+												</View>
+											))}
+											{Array.from(
+													{length: 5 - rowItems.length},
+													(_, itemIndex) => (
+														<View
+															key={`function-spacer-${rowIndex}-${itemIndex}`}
+															style={style.functionSectionItem}
+														/>
+													),
+												)}
+										</View>
+									);
+								},
+							)}
 				</View>
 			</View>
 		</View>
@@ -1108,9 +1145,15 @@ const styles = themedStyles((theme) => ({
 		color: theme.colors.text,
 	},
 	functionSectionContent: {
+		flexDirection: "column",
+	},
+	functionSectionRow: {
+		width: "100%",
 		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "flex-start",
+	},
+	functionSectionItem: {
+		flex: 1,
+		minWidth: 0,
 	},
 	scheduleSectionContentPrimaryTitle: {
 		color: theme.colors.themeDarkPurple,

@@ -24,13 +24,19 @@ export const HomeIcon = ({
 				alignItems: "center",
 				flexGrow: 0,
 				flexShrink: 0,
-				flexBasis: "20%",
+				width: "100%",
+				minWidth: 0,
 			}}
 			testID={`HomeIcon-${title}`}
 			onPress={onPress}>
 			{children}
 			<Text
-				style={{color: theme.colors.text, marginTop: 8}}
+				style={{
+					color: theme.colors.text,
+					marginTop: 8,
+					width: "100%",
+					textAlign: "center",
+				}}
 				ellipsizeMode="tail"
 				numberOfLines={1}>
 				{getStr(title)}
