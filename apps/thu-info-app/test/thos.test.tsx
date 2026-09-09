@@ -1,7 +1,11 @@
 import React from "react";
 import {beforeEach, afterEach, expect, jest, test} from "@jest/globals";
 import {act, fireEvent, render, screen} from "@testing-library/react-native";
-import {ThosPortalScreen, ThosScreen} from "../src/ui/home/thos";
+import {
+	THOS_BACK_SCRIPT,
+	ThosPortalScreen,
+	ThosScreen,
+} from "../src/ui/home/thos";
 import {
 	ThosServiceDetailScreen,
 	ThosTaskDetailScreen,
@@ -43,7 +47,8 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 		setItem: jest.fn(async () => {}),
 	},
 }));
-const nav = {navigate: jest.fn(), goBack: jest.fn()} as unknown as RootNav;
+const setOptions = jest.fn();
+const nav = {navigate: jest.fn(), goBack: jest.fn(), setOptions} as unknown as RootNav;
 const portal = () => (
 	<ThosPortalScreen route={{params: {url: THOS_HOME}}} navigation={nav} />
 );
@@ -85,19 +90,16 @@ test("quick and all services share the catalog and favorites remain local", asyn
 		complete: true,
 	});
 	await render(<ThosScreen navigation={nav} />);
-	await fireEvent.press(screen.getByText("快捷服务"));
-	expect(
-		screen.getByText("还没有快捷服务，去全部服务收藏常用事项。"),
-	).toBeTruthy();
-	await fireEvent.press(screen.getByText("去全部服务"));
+	expect(screen.getByText("收藏服务 0")).toBeTruthy();
 	expect(screen.getByText("测试入校")).toBeTruthy();
 	expect(screen.getByText("测试场地")).toBeTruthy();
-	await fireEvent.press(screen.getAllByText("收藏服务")[0]);
+	await fireEvent.press(screen.getByTestId("thos-favorite-synthetic-a"));
+	expect(screen.getByText("收藏服务 1")).toBeTruthy();
 	expect(AsyncStorage.setItem).toHaveBeenCalledWith(
 		"thos-favorites:synthetic-user",
 		"[\"synthetic-a\"]",
 	);
-	await fireEvent.press(screen.getByText("快捷服务"));
+	await fireEvent.press(screen.getByText("收藏服务 1"));
 	expect(screen.getByText("测试入校")).toBeTruthy();
 	expect(screen.queryByText("测试场地")).toBeNull();
 	await fireEvent.changeText(screen.getByTestId("thos-search"), "no-match");
@@ -107,6 +109,34 @@ test("quick and all services share the catalog and favorites remain local", asyn
 	expect(screen.getByTestId("thos-search").props.value).toBe("");
 	expect(helper.getThosServices).toHaveBeenCalledTimes(1);
 	expect(nav.navigate).not.toHaveBeenCalled();
+});
+
+test("defaults to favorite services when local favorites exist", async () => {
+	jest.mocked(AsyncStorage.getItem).mockResolvedValueOnce(
+		JSON.stringify(["synthetic-a"]),
+	);
+	jest.mocked(helper.getThosServices).mockResolvedValue({
+		items: [
+			{
+				id: "synthetic-a",
+				name: "测试入校",
+				department: "测试部门",
+				url: THOS_HOME,
+			},
+			{
+				id: "synthetic-b",
+				name: "测试场地",
+				department: "测试部门",
+				url: THOS_HOME,
+			},
+		],
+		total: 2,
+		complete: true,
+	});
+	await render(<ThosScreen navigation={nav} />);
+	expect(screen.getByText("收藏服务 1")).toBeTruthy();
+	expect(screen.getByText("测试入校")).toBeTruthy();
+	expect(screen.queryByText("测试场地")).toBeNull();
 });
 
 test("WebView starts only after THUInfo establishes the target session", async () => {
@@ -127,6 +157,26 @@ test("WebView starts only after THUInfo establishes the target session", async (
 	expect(web.props.userAgent).toBe(USER_AGENT);
 	expect(web.props.sharedCookiesEnabled).toBe(true);
 	expect(helper.prepareThosSession).toHaveBeenCalledTimes(1);
+});
+test("portal installs a native handler for the official back button", async () => {
+	await render(portal());
+	const web = screen.getByTestId("thos-webview");
+	expect(web.props.injectedJavaScriptBeforeContentLoaded).toContain(
+		THOS_BACK_SCRIPT,
+	);
+	expect(web.props.injectedJavaScriptBeforeContentLoaded).toContain(
+		"#head_back",
+	);
+});
+test("official back button returns to the app when the webview has no history", async () => {
+	await render(portal());
+	await fireEvent(screen.getByTestId("thos-webview"), "message", {
+		nativeEvent: {
+			url: THOS_HOME,
+			data: JSON.stringify({type: "thos-back"}),
+		},
+	});
+	expect(nav.goBack).toHaveBeenCalledTimes(1);
 });
 test("auth redirect returns to built-in authentication instead of an embedded login", async () => {
 	await render(portal());
@@ -220,7 +270,8 @@ test("request failures stay unknown rather than being presented as empty lists",
 		.mocked(helper.getThosTasks)
 		.mockRejectedValue(new Error("synthetic failure"));
 	await render(<ThosScreen navigation={nav} />);
-	expect(screen.getByText("尚未读取，不能视为空列表")).toBeTruthy();
+	await fireEvent.press(screen.getByText("待我处理"));
+	expect(screen.getByText("读取中")).toBeTruthy();
 	expect(screen.getByTestId("thos-error").props.children).toContain(
 		"待我处理读取失败",
 	);
@@ -278,12 +329,13 @@ test("task and service cards open native details without visiting an official pa
 		.mocked(helper.getThosServices)
 		.mockResolvedValue({items: [nativeService], total: 1, complete: true});
 	await render(<ThosScreen navigation={nav} />);
+	await fireEvent.press(screen.getByText("待我处理"));
 	await fireEvent.press(screen.getByText(nativeTask.title));
 	expect(nav.navigate).toHaveBeenLastCalledWith("ThosTaskDetail", {
 		task: nativeTask,
 		accountId: "synthetic-user",
 	});
-	await fireEvent.press(screen.getByText("服务中心"));
+	await fireEvent.press(screen.getByText("全部服务"));
 	await fireEvent.press(screen.getByText(nativeService.name));
 	expect(nav.navigate).toHaveBeenLastCalledWith("ThosServiceDetail", {
 		service: nativeService,
@@ -296,11 +348,14 @@ test("native task detail shows actual node and unknown progress until explicit w
 	await render(taskDetail());
 	expect(screen.getByTestId("thos-native-detail")).toBeTruthy();
 	expect(screen.getByText("合成测试节点")).toBeTruthy();
-	expect(screen.getByText("系统未提供进度百分比")).toBeTruthy();
+	expect(screen.queryByText("系统未提供进度百分比")).toBeNull();
 	expect(screen.queryByTestId("thos-webview")).toBeNull();
 	expect(helper.prepareThosSession).not.toHaveBeenCalled();
 	expect(nav.navigate).not.toHaveBeenCalled();
-	await fireEvent.press(screen.getByText("进入在线服务网站"));
+	const headerRight = setOptions.mock.calls[setOptions.mock.calls.length - 1]?.[0]
+		.headerRight?.();
+	expect(headerRight).toBeTruthy();
+	await act(async () => headerRight?.props.onPress());
 	expect(nav.navigate).toHaveBeenCalledWith("ThosPortal", {url: THOS_HOME});
 });
 
@@ -312,7 +367,7 @@ test("service details do not infer missing type or availability", async () => {
 		/>,
 	);
 	expect(screen.getByText(nativeService.department!)).toBeTruthy();
-	expect(screen.getAllByText("系统未提供")).toHaveLength(2);
+	expect(screen.queryByText("系统未提供")).toBeNull();
 	expect(screen.queryByTestId("thos-webview")).toBeNull();
 	jest
 		.mocked(helper.getThosServices)
@@ -321,7 +376,9 @@ test("service details do not infer missing type or availability", async () => {
 			total: 1,
 			complete: true,
 		});
-	await fireEvent.press(screen.getByText("刷新详情"));
+	await act(async () => {
+			await screen.getByTestId("thos-native-detail").props.refreshControl.props.onRefresh();
+		});
 	expect(screen.getByText("服务集合")).toBeTruthy();
 	expect(screen.getByText("不在开放时间内")).toBeTruthy();
 	expect(nav.navigate).not.toHaveBeenCalled();
@@ -329,7 +386,9 @@ test("service details do not infer missing type or availability", async () => {
 
 test("a moved task retains last known information with an explicit refresh error", async () => {
 	await render(taskDetail());
-	await fireEvent.press(screen.getByText("刷新详情"));
+	await act(async () => {
+			await screen.getByTestId("thos-native-detail").props.refreshControl.props.onRefresh();
+	});
 	expect(helper.getThosTasks).toHaveBeenCalledWith("todo");
 	expect(screen.getByTestId("thos-detail-error")).toBeTruthy();
 	expect(screen.getByText(nativeTask.title)).toBeTruthy();
@@ -348,7 +407,7 @@ test("account changes hide native details and discard outstanding refresh result
 	// Keep the request pending while switching accounts.
 	let refresh!: Promise<void>;
 	await act(async () => {
-		refresh = fireEvent.press(screen.getByText("刷新详情"));
+		refresh = screen.getByTestId("thos-native-detail").props.refreshControl.props.onRefresh();
 	});
 	mockUserId = "another-synthetic-user";
 	await result.rerender(taskDetail());

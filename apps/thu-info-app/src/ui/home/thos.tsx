@@ -12,6 +12,8 @@ import {
 	TouchableOpacity,
 	useColorScheme,
 	useWindowDimensions,
+	StyleProp,
+	ViewStyle,
 	View,
 } from "react-native";
 import {useSelector} from "react-redux";
@@ -36,6 +38,10 @@ import type {
 	ThosTask,
 	ThosTaskKind,
 } from "@thu-info/lib/src/models/home/thos-services";
+import IconRefreshNavBar from "../../assets/icons/IconRefreshNavBar";
+import IconBrowser from "../../assets/icons/IconBrowser";
+import IconStar from "../../assets/icons/IconStar";
+import IconStarActive from "../../assets/icons/IconStarActive";
 
 const labels: Record<ThosTaskKind, string> = {
 	active: "在办事务",
@@ -44,19 +50,21 @@ const labels: Record<ThosTaskKind, string> = {
 };
 type TaskPages = Partial<Record<ThosTaskKind, ThosPage<ThosTask>>>;
 const genericError = "连接在线服务失败，请重试。认证由 THU Info 内置登录完成。";
-const emptyMessage = "尚未读取，不能视为空列表";
+const emptyMessage = "读取中";
 const blankPageMessage =
-	"页面长时间没有显示内容。可通过 THU Info 重新连接，或返回事务列表；不会重放已提交的表单。";
+	"页面长时间没有显示内容。请点击右上角刷新，或返回事务列表；不会重放已提交的表单。";
 export const ThosButton = ({
 	title,
 	onPress,
 	selected = false,
 	disabled = false,
+	style,
 }: {
 	title: string;
 	onPress: () => void;
 	selected?: boolean;
 	disabled?: boolean;
+	style?: StyleProp<ViewStyle>;
 }) => {
 	const {colors} = themes(useColorScheme());
 	return (
@@ -64,15 +72,18 @@ export const ThosButton = ({
 			accessibilityRole="button"
 			disabled={disabled}
 			onPress={onPress}
-			style={{
-				minHeight: 44,
-				paddingHorizontal: 14,
-				paddingVertical: 11,
-				borderRadius: 12,
-				margin: 4,
-				backgroundColor: selected ? colors.mainTheme : colors.contentBackground,
-				opacity: disabled ? 0.5 : 1,
-			}}>
+			style={[
+				{
+					minHeight: 44,
+					paddingHorizontal: 14,
+					paddingVertical: 11,
+					borderRadius: 12,
+					margin: 4,
+					backgroundColor: selected ? colors.mainTheme : colors.contentBackground,
+					opacity: disabled ? 0.5 : 1,
+				},
+				style,
+			]}>
 			<Text
 				style={{color: selected ? "white" : colors.text, fontWeight: "600"}}>
 				{title}
@@ -81,6 +92,36 @@ export const ThosButton = ({
 	);
 };
 const Chip = ThosButton;
+
+export const useThosBrowserHeader = (
+	navigation: RootNav,
+	onPress: () => void,
+	disabled = false,
+	visible = true,
+) => {
+	useEffect(() => {
+		if (!navigation.setOptions) return;
+		navigation.setOptions({
+			headerRight: visible
+				? () => (
+						<TouchableOpacity
+							testID="thos-open-website"
+							accessibilityRole="button"
+							accessibilityLabel="进入在线服务网站"
+							disabled={disabled}
+							onPress={onPress}
+							style={{
+								paddingHorizontal: 16,
+								marginHorizontal: 4,
+								opacity: disabled ? 0.5 : 1,
+							}}>
+							<IconBrowser width={24} height={24} />
+						</TouchableOpacity>
+					  )
+				: undefined,
+		});
+	}, [disabled, navigation, onPress, visible]);
+};
 
 export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	const {colors} = themes(useColorScheme());
@@ -91,7 +132,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	const [counts, setCounts] = useState<ThosCounts>();
 	const [tasks, setTasks] = useState<TaskPages>({});
 	const [services, setServices] = useState<ThosPage<ThosService>>();
-	const [tab, setTab] = useState<ThosTaskKind | "services">("todo");
+	const [tab, setTab] = useState<ThosTaskKind | "services">("services");
 	const [query, setQuery] = useState("");
 	const [favorites, setFavorites] = useState<string[]>([]);
 	const [onlyFavorites, setOnlyFavorites] = useState(false);
@@ -151,6 +192,8 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 		setTasks({});
 		setServices(undefined);
 		setFavorites([]);
+		setTab("services");
+		setOnlyFavorites(false);
 		setError(undefined);
 		setUpdated(undefined);
 		setBusy(false);
@@ -160,8 +203,11 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 				.then((raw) => {
 					try {
 						const value = JSON.parse(raw ?? "[]");
-						if (alive && Array.isArray(value))
-							setFavorites(value.filter((x) => typeof x === "string"));
+						if (alive && Array.isArray(value)) {
+							const next = value.filter((x) => typeof x === "string");
+							setFavorites(next);
+							setOnlyFavorites(next.length > 0);
+						}
 					} catch {
 						/* ignore invalid local preferences */
 					}
@@ -173,15 +219,20 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 			requestGeneration.current++;
 		};
 	}, [userId, load]);
-	const open = (url: string) => {
+	const open = useCallback((url: string) => {
 		if (!demo && url)
 			navigation.navigate("ThosPortal", {url: routeThosUrl(url)});
-	};
+	}, [demo, navigation]);
+	const openCurrentPage = useCallback(
+		() => open(THOS_BASE + thosPages[tab]),
+		[open, tab],
+	);
 	const favorite = (id: string) => {
 		const next = favorites.includes(id)
 			? favorites.filter((x) => x !== id)
 			: [...favorites, id];
 		setFavorites(next);
+		if (onlyFavorites && next.length === 0) setOnlyFavorites(false);
 		AsyncStorage.setItem(
 			`thos-favorites:${userId}`,
 			JSON.stringify(next),
@@ -189,9 +240,10 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 	const showServices = (quick: boolean) => {
 		setTab("services");
-		setOnlyFavorites(quick);
+		setOnlyFavorites(quick && favorites.length > 0);
 		setQuery("");
 	};
+	useThosBrowserHeader(navigation, openCurrentPage, demo);
 	const rows = tab === "services" ? [] : (tasks[tab]?.items ?? []);
 	const pending =
 		tab === "todo"
@@ -228,12 +280,6 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 				width: "100%",
 				alignSelf: "center",
 			}}>
-			<Text style={{fontSize: 26, fontWeight: "700", color: colors.text}}>
-				清华在线服务
-			</Text>
-			<Text style={{marginVertical: 10, color: colors.fontB2}}>
-				查看进度、处理待办，从 THU Info 直达服务申请。
-			</Text>
 			{demo && (
 				<Text style={{color: colors.statusWarning, marginVertical: 8}}>
 					演示账号 · 虚构数据，官方页面入口已禁用
@@ -254,6 +300,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 								key={kind}
 								onPress={() => {
 									setTab(kind);
+									setOnlyFavorites(false);
 									setQuery("");
 								}}
 								style={{
@@ -261,40 +308,49 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 									minWidth: 90,
 									padding: 14,
 									margin: 4,
-									borderRadius: 16,
-									backgroundColor: colors.contentBackground,
+									borderRadius: 12,
+									alignItems: "center",
+									backgroundColor:
+										tab === kind
+											? colors.mainTheme
+											: colors.contentBackground,
 								}}>
 								<Text
 									style={{
 										fontSize: 28,
 										fontWeight: "700",
-										color: colors.mainTheme,
+										color: tab === kind ? "white" : colors.mainTheme,
 									}}>
 									{counts?.[kind] ?? "—"}
 								</Text>
-								<Text style={{color: colors.text, marginTop: 6}}>
+								<Text
+									style={{
+										color: tab === kind ? "white" : colors.text,
+										marginTop: 6,
+									}}>
 									{labels[kind]}
 								</Text>
 							</TouchableOpacity>
 						))}
 					</View>
 					<View style={{flexDirection: "row", flexWrap: "wrap"}}>
-						<Chip title="服务中心" onPress={() => showServices(false)} />
-						<Chip title="刷新事务" onPress={load} disabled={busy} />
 						<Chip
 							title={`草稿 ${counts?.drafts ?? "—"}`}
 							onPress={() => open(THOS_BASE + thosPages.drafts)}
 							disabled={demo}
+							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 						<Chip
 							title={`待阅 ${counts?.unread ?? "—"}`}
 							onPress={() => open(THOS_BASE + thosPages.unread)}
 							disabled={demo}
+							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 						<Chip
 							title="阶段性事项"
 							onPress={() => open(THOS_BASE + thosPages.phases)}
 							disabled={demo}
+							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 					</View>
 					{error && (
@@ -304,26 +360,22 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 							{error}
 						</Text>
 					)}
-					<View style={{flexDirection: "row", flexWrap: "wrap", marginTop: 12}}>
-						{(["todo", "active", "completed"] as const).map((kind) => (
-							<Chip
-								key={kind}
-								title={labels[kind]}
-								selected={tab === kind}
-								onPress={() => {
-									setTab(kind);
-									setOnlyFavorites(false);
-									setQuery("");
-								}}
-							/>
-						))}
+					<View
+						style={{
+							flexDirection: "row",
+							flexWrap: "wrap",
+							justifyContent: "space-between",
+							marginTop: 12,
+						}}>
 						<Chip
-							title="快捷服务"
+							title={`收藏服务 ${favorites.length}`}
+							style={{flex: 1, alignItems: "center"}}
 							selected={tab === "services" && onlyFavorites}
 							onPress={() => showServices(true)}
 						/>
 						<Chip
 							title="全部服务"
+							style={{flex: 1, alignItems: "center"}}
 							selected={tab === "services" && !onlyFavorites}
 							onPress={() => showServices(false)}
 						/>
@@ -336,7 +388,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 						placeholder={
 							tab === "services"
 								? onlyFavorites
-									? "搜索快捷服务"
+									? "搜索收藏服务"
 									: "搜索服务或部门，如入校、场地"
 								: "搜索事务、编号或节点"
 						}
@@ -352,24 +404,13 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 							marginVertical: 12,
 						}}
 					/>
-					{tab === "services" && (
+					{!(tab === "services" && onlyFavorites) && !complete && (
 						<Text style={{color: colors.fontB2, marginBottom: 8}}>
-							{onlyFavorites
-								? "快捷服务来自你在本机收藏的常用事项，可直接进入对应服务。"
-								: "收藏常用事项后，就能在「快捷服务」中找到；收藏不会修改系统数据。"}
+							{!page
+								? emptyMessage
+								: "当前为部分结果，请对照官方列表"}
 						</Text>
 					)}
-					<Text style={{color: colors.fontB2, marginBottom: 8}}>
-						{!page
-							? emptyMessage
-							: complete
-								? tab === "todo"
-									? "待办列表与在办列表均已读完，含需要你修改的退回事项"
-									: tab === "services" && onlyFavorites
-										? `快捷服务 ${(services?.items ?? []).filter((item) => favorites.includes(item.id)).length} 项 · 本机收藏`
-										: `已读取全部 ${page.total} 条`
-								: "当前为部分结果，请对照官方列表"}
-					</Text>
 					<View style={{flexDirection: "row", flexWrap: "wrap", gap: 12}}>
 						{tab === "services"
 							? serviceRows.map((item) => (
@@ -378,37 +419,48 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											width:
 												width >= 900 ? "31%" : width >= 600 ? "47%" : "100%",
-											borderRadius: 16,
+											borderRadius: 12,
 											padding: 16,
-											backgroundColor: colors.contentBackground,
-										}}>
-										<TouchableOpacity
-											onPress={() =>
-												navigation.navigate("ThosServiceDetail", {
-													service: item,
-													accountId: userId,
-												})
-											}
-											accessibilityRole="button">
-											<Text
-												style={{
-													color: colors.text,
-													fontSize: 17,
-													fontWeight: "600",
-												}}>
-												{item.name}
-											</Text>
-											<Text style={{color: colors.fontB2, marginVertical: 10}}>
-												{item.department || "部门未提供"}
-											</Text>
-										</TouchableOpacity>
-										<Chip
-											title={
-												favorites.includes(item.id) ? "取消收藏" : "收藏服务"
-											}
-											onPress={() => favorite(item.id)}
-										/>
-									</View>
+							backgroundColor: colors.contentBackground,
+						}}>
+						<View style={{flexDirection: "row", alignItems: "flex-start"}}>
+							<TouchableOpacity
+								onPress={() =>
+									navigation.navigate("ThosServiceDetail", {
+										service: item,
+										accountId: userId,
+									})
+								}
+								accessibilityRole="button"
+								style={{flex: 1}}>
+								<Text
+									style={{
+										color: colors.text,
+										fontSize: 17,
+										fontWeight: "600",
+									}}>
+									{item.name}
+								</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								testID={`thos-favorite-${item.id}`}
+								accessibilityRole="button"
+								accessibilityLabel={
+									favorites.includes(item.id) ? "取消收藏" : "收藏服务"
+								}
+								onPress={() => favorite(item.id)}
+								style={{padding: 4, marginLeft: 8}}>
+								{favorites.includes(item.id) ? (
+									<IconStarActive width={24} height={24} />
+								) : (
+									<IconStar width={24} height={24} />
+								)}
+							</TouchableOpacity>
+						</View>
+						<Text style={{color: colors.fontB2, marginVertical: 10}}>
+							{item.department || "部门未提供"}
+						</Text>
+					</View>
 								))
 							: taskRows.map((item) => (
 									<TouchableOpacity
@@ -422,7 +474,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											width: "100%",
 											padding: 16,
-											borderRadius: 16,
+											borderRadius: 12,
 											backgroundColor: colors.contentBackground,
 										}}>
 										<Text
@@ -434,7 +486,8 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 											{item.title}
 										</Text>
 										<Text style={{color: colors.mainTheme, marginVertical: 8}}>
-											{item.status} · {item.node || "节点未提供"}
+											{item.status}
+											{item.node ? ` · ${item.node}` : ""}
 										</Text>
 										{item.progress !== undefined && (
 											<>
@@ -472,7 +525,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 						(tab === "services" ? serviceRows : taskRows).length === 0 && (
 							<Text style={{padding: 20, color: colors.fontB2}}>
 								{tab === "services" && onlyFavorites && !query && complete
-									? "还没有快捷服务，去全部服务收藏常用事项。"
+									? "还没有收藏服务，去全部服务收藏常用事项。"
 									: query
 										? "没有匹配结果"
 										: complete
@@ -480,18 +533,9 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 											: "当前尚无结果，请打开官方页面核对"}
 							</Text>
 						)}
-					{tab === "services" && onlyFavorites && (
-						<Chip title="去全部服务" onPress={() => showServices(false)} />
-					)}
-					<Chip
-						title="进入在线服务网站"
-						onPress={() => open(THOS_BASE + thosPages[tab])}
-						disabled={demo}
-					/>
 					{updated && (
 						<Text style={{color: colors.fontB2, marginTop: 12}}>
-							本次读取：{new Date(updated).toLocaleTimeString()} ·
-							事务仅保留在内存
+							刷新时间：{new Date(updated).toLocaleTimeString()}
 						</Text>
 					)}
 				</>
@@ -506,6 +550,14 @@ var tries=0;function check(){var b=document.body;
 var visible=!!b&&((b.innerText||'').trim().length>20||!!b.querySelector('iframe,form,input,canvas'));
 window.ReactNativeWebView.postMessage(JSON.stringify({type:'thos-render-health',visible:visible}));
 if(!visible&&++tries<60)setTimeout(check,1000);}setTimeout(check,500);})();true;`;
+export const THOS_BACK_SCRIPT = `(function(){if(window.__thuInfoThosBackStarted)return;window.__thuInfoThosBackStarted=true;
+document.addEventListener('click',function(event){var target=event.target;
+var button=target&&target.closest?target.closest('#head_back'):null;
+if(!button||!window.ReactNativeWebView||!window.ReactNativeWebView.postMessage)return;
+event.preventDefault();event.stopImmediatePropagation();
+window.ReactNativeWebView.postMessage(JSON.stringify({type:'thos-back'}));
+},true);})();true;`;
+export const THOS_INJECTED_SCRIPT = `${THOS_HEALTH_SCRIPT}\n${THOS_BACK_SCRIPT}`;
 
 export const ThosPortalScreen = ({
 	route,
@@ -519,6 +571,7 @@ export const ThosPortalScreen = ({
 	const browser = useRef<WebView<object>>(null);
 	const generation = useRef(0);
 	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const backing = useRef(false);
 	const [source, setSource] = useState<string>();
 	const [epoch, setEpoch] = useState(0);
 	const [busy, setBusy] = useState(true);
@@ -563,6 +616,26 @@ export const ThosPortalScreen = ({
 		};
 	}, [prepare]);
 	useEffect(() => {
+		if (!navigation.setOptions) return;
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					testID="thos-portal-refresh"
+					accessibilityRole="button"
+					accessibilityLabel="刷新"
+					disabled={busy}
+					onPress={prepare}
+					style={{
+						paddingHorizontal: 16,
+						marginHorizontal: 4,
+						opacity: busy ? 0.5 : 1,
+					}}>
+					<IconRefreshNavBar width={24} height={24} />
+				</TouchableOpacity>
+			),
+		});
+	}, [busy, navigation, prepare]);
+	useEffect(() => {
 		const listener = BackHandler.addEventListener("hardwareBackPress", () => {
 			if (canBack) {
 				browser.current?.goBack();
@@ -596,7 +669,7 @@ export const ThosPortalScreen = ({
 		if (url === "about:blank") return true;
 		if (isThosAuthUrl(url)) {
 			fail(
-				"THOS 会话需要更新，请点「通过 THU Info 重新连接」，使用内置认证继续。",
+				"THOS 会话需要更新，请点右上角刷新，使用内置认证继续。",
 			);
 			return false;
 		}
@@ -611,7 +684,7 @@ export const ThosPortalScreen = ({
 		}
 		return true;
 	};
-	const health = (event: WebViewMessageEvent) => {
+	const handleMessage = (event: WebViewMessageEvent) => {
 		// Official services can redirect within the university; rendering health is not proof of authentication.
 		if (
 			!isThosUniversityUrl(event.nativeEvent.url) ||
@@ -620,6 +693,16 @@ export const ThosPortalScreen = ({
 			return;
 		try {
 			const result = JSON.parse(event.nativeEvent.data);
+			if (result.type === "thos-back") {
+				if (backing.current) return;
+				backing.current = true;
+				if (canBack && browser.current) browser.current.goBack();
+				else navigation.goBack();
+				setTimeout(() => {
+					backing.current = false;
+				}, 500);
+				return;
+			}
 			if (result.type === "thos-render-health" && result.visible === true) {
 				clearTimer();
 				setBusy(false);
@@ -635,20 +718,11 @@ export const ThosPortalScreen = ({
 		<View
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			testID="thos-portal">
-			<View style={{flexDirection: "row", flexWrap: "wrap", padding: 4}}>
-				<Chip
-					title="返回"
-					onPress={() =>
-						canBack ? browser.current?.goBack() : navigation.goBack()
-					}
-				/>
-				<Chip title="通过 THU Info 重新连接" onPress={prepare} />
-			</View>
 			{busy && (
 				<View style={{padding: 12, flexDirection: "row", gap: 12}}>
 					<ActivityIndicator color={colors.mainTheme} />
 					<Text style={{color: colors.text}}>
-						{source ? "正在载入官方页面…" : "正在复用 THU Info 登录会话…"}
+						{source ? "正在载入…" : "正在复用 THU Info 登录会话…"}
 					</Text>
 				</View>
 			)}
@@ -693,18 +767,18 @@ export const ThosPortalScreen = ({
 						setError(undefined);
 						timer.current = setTimeout(() => fail(blankPageMessage), 25_000);
 					}}
-					injectedJavaScriptBeforeContentLoaded={THOS_HEALTH_SCRIPT}
+					injectedJavaScriptBeforeContentLoaded={THOS_INJECTED_SCRIPT}
 					onLoadProgress={({nativeEvent}) => {
 						if (nativeEvent.progress >= 0.5)
-							browser.current?.injectJavaScript(THOS_HEALTH_SCRIPT);
+							browser.current?.injectJavaScript(THOS_INJECTED_SCRIPT);
 					}}
 					onLoadEnd={() => {
-						browser.current?.injectJavaScript(THOS_HEALTH_SCRIPT);
+						browser.current?.injectJavaScript(THOS_INJECTED_SCRIPT);
 					}}
-					onMessage={health}
+					onMessage={handleMessage}
 					onError={() =>
 						fail(
-							"官方页面加载失败，请通过 THU Info 重新连接。若正处理表单，请先在事务列表核对状态。",
+							"官方页面加载失败，请点右上角刷新。若正处理表单，请先在事务列表核对状态。",
 						)
 					}
 					onHttpError={({nativeEvent}) => {
@@ -712,10 +786,10 @@ export const ThosPortalScreen = ({
 							fail(`系统页面暂时不可用（HTTP ${nativeEvent.statusCode}）`);
 					}}
 					onRenderProcessGone={() =>
-						fail("网页进程已退出，请重新连接。未提交的表单可能需要重新填写。")
+						fail("网页进程已退出，请点击右上角刷新。未提交的表单可能需要重新填写。")
 					}
 					onContentProcessDidTerminate={() =>
-						fail("网页进程已退出，请重新连接。")
+						fail("网页进程已退出，请点击右上角刷新。")
 					}
 				/>
 			)}

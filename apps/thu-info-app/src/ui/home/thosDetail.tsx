@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
 	RefreshControl,
 	ScrollView,
@@ -15,7 +15,7 @@ import type {
 	ThosService,
 	ThosTask,
 } from "@thu-info/lib/src/models/home/thos-services";
-import {ThosButton} from "./thos";
+import {useThosBrowserHeader} from "./thos";
 
 export type ThosTaskDetailParams = {task: ThosTask; accountId: string};
 export type ThosServiceDetailParams = {service: ThosService; accountId: string};
@@ -58,11 +58,12 @@ function useDetail<T>(initial: T, accountId: string, read: () => Promise<T>) {
 
 const Fact = ({label, value}: {label: string; value?: string}) => {
 	const {colors} = themes(useColorScheme());
+	if (!value) return null;
 	return (
 		<View style={{paddingVertical: 12, gap: 6}}>
 			<Text style={{color: colors.fontB2, fontSize: 13}}>{label}</Text>
 			<Text selectable style={{color: colors.text, fontSize: 16}}>
-				{value || "系统未提供"}
+				{value}
 			</Text>
 		</View>
 	);
@@ -113,7 +114,6 @@ const DetailPage = ({
 				</Text>
 			)}
 			{children}
-			<ThosButton title="刷新详情" onPress={refresh} disabled={busy} />
 		</ScrollView>
 	);
 };
@@ -134,6 +134,15 @@ export const ThosTaskDetailScreen = ({
 		return task;
 	});
 	const task = detail.data;
+	const openWebsite = useCallback(() => {
+		if (task.url) navigation.navigate("ThosPortal", {url: task.url});
+	}, [navigation, task.url]);
+	useThosBrowserHeader(
+		navigation,
+		openWebsite,
+		helper.mocked() || !task.url,
+		detail.allowed,
+	);
 	return (
 		<DetailPage title={detail.allowed ? task.title : "事务详情"} {...detail}>
 			<RoundedView style={{paddingHorizontal: 20}}>
@@ -142,7 +151,7 @@ export const ThosTaskDetailScreen = ({
 					{task.status}
 				</Text>
 				<Fact label="当前办理节点" value={task.node} />
-				{task.progress !== undefined ? (
+				{task.progress !== undefined && (
 					<View style={{gap: 10}}>
 						<Text style={{color: colors.fontB2}}>
 							系统流程进度 {task.progress}%
@@ -164,8 +173,6 @@ export const ThosTaskDetailScreen = ({
 							/>
 						</View>
 					</View>
-				) : (
-					<Text style={{color: colors.fontB2}}>系统未提供进度百分比</Text>
 				)}
 			</RoundedView>
 			<RoundedView style={{paddingHorizontal: 20}}>
@@ -175,14 +182,6 @@ export const ThosTaskDetailScreen = ({
 					value={task.date}
 				/>
 			</RoundedView>
-			<Text style={{color: colors.fontB2}}>
-				这里显示系统返回的当前状态与节点；完整办理记录和表单可在官方页面查看。
-			</Text>
-			<ThosButton
-				title="进入在线服务网站"
-				disabled={helper.mocked() || !task.url}
-				onPress={() => navigation.navigate("ThosPortal", {url: task.url})}
-			/>
 		</DetailPage>
 	);
 };
@@ -210,6 +209,15 @@ export const ThosServiceDetailScreen = ({
 		return service;
 	});
 	const service = detail.data;
+	const openWebsite = useCallback(() => {
+		if (service.url) navigation.navigate("ThosPortal", {url: service.url});
+	}, [navigation, service.url]);
+	useThosBrowserHeader(
+		navigation,
+		openWebsite,
+		helper.mocked() || !service.url,
+		detail.allowed,
+	);
 	return (
 		<DetailPage title={detail.allowed ? service.name : "服务信息"} {...detail}>
 			<RoundedView style={{paddingHorizontal: 20}}>
@@ -240,13 +248,8 @@ export const ThosServiceDetailScreen = ({
 				</Text>
 			</RoundedView>
 			<Text style={{color: colors.fontB2}}>
-				收藏常用服务后，可从「快捷服务」直接找到。收藏在目录中管理，仅保存在本机。
+				收藏常用服务后，可从「收藏服务」直接找到。收藏在目录中管理，仅保存在本机。
 			</Text>
-			<ThosButton
-				title="进入在线服务网站"
-				disabled={helper.mocked() || !service.url}
-				onPress={() => navigation.navigate("ThosPortal", {url: service.url})}
-			/>
 		</DetailPage>
 	);
 };

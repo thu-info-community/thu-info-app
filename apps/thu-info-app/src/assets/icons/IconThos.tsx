@@ -25,7 +25,7 @@ export default ({width, height}: {width: number; height: number}) => {
 			/>
 			<Path
 				d="M14 25l3 3 5-6M27 25h7M14 35l3 3 5-6M27 35h7"
-				stroke={colors.mainTheme}
+				stroke={colors.fontB1}
 				strokeWidth="3"
 				strokeLinecap="round"
 				strokeLinejoin="round"
