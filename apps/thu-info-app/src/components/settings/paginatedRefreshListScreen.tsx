@@ -1,5 +1,5 @@
 import {ThemedRefreshControl} from "../themedRefreshControl";
-import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
+import {PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {FlatList, StyleProp, ViewStyle} from "react-native";
@@ -22,7 +22,7 @@ export function paginatedRefreshListScreen<T, R>(
 	empty?: (theme: Theme) => ReactElement,
 	initialNumToRender?: number,
 	containerStyles?: StyleProp<ViewStyle>,
-): FC<PropsWithChildren<R>> {
+): (props: PropsWithChildren<R>) => ReactElement {
 	return (props: PropsWithChildren<R>) => {
 		const [data, setData] = useState<T[]>([]);
 		const [page, setPage] = useState<number>(1);

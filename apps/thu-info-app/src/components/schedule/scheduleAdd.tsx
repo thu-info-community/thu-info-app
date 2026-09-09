@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {
 	Alert,
@@ -816,7 +817,9 @@ export const ScheduleAddModal = ({
 			animationType="fade"
 			onRequestClose={onClose}
 			transparent={true}>
-			<View style={{flex: 1, justifyContent: "flex-start"}}>
+			<KeyboardAvoidingScreen
+				keyboardVerticalOffset={0}
+				style={{flex: 1, justifyContent: "flex-start"}}>
 				<TouchableOpacity
 					activeOpacity={1}
 					onPress={onClose}
@@ -839,6 +842,7 @@ export const ScheduleAddModal = ({
 						borderRadius: 12,
 						backgroundColor: modalBackgroundColor,
 						maxHeight: modalCardMaxHeight,
+						flexShrink: 1,
 						overflow: "hidden",
 					}}>
 					<View
@@ -1633,7 +1637,7 @@ export const ScheduleAddModal = ({
 						)}
 					</ScrollView>
 				</TouchableOpacity>
-			</View>
+			</KeyboardAvoidingScreen>
 		</Modal>
 	);
 };

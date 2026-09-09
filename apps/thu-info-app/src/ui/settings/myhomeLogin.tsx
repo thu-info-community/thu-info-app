@@ -1,4 +1,5 @@
-import {TextInput, View, Text, TouchableOpacity} from "react-native";
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
+import {TextInput, Text, TouchableOpacity} from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
@@ -27,7 +28,7 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 
 	return (
-		<View style={style.container}>
+		<KeyboardAvoidingScreen style={style.container}>
 			<RoundedView style={style.inputRounded}>
 				<IconPerson width={18} height={18} />
 				<TextInput
@@ -90,7 +91,7 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 					</Text>
 				</RoundedView>
 			</TouchableOpacity>
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };
 

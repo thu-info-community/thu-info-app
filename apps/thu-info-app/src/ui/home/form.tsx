@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {
@@ -182,73 +183,75 @@ export const FormScreen = ({
 	useEffect(() => fetchForm(url), [url]);
 
 	return (
-		<ScrollView
-			style={style.container}
-			showsVerticalScrollIndicator={false}
-			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-				/>
-			}>
-			<View style={[style.titleContainer, {marginTop: 16}]}>
-				<View
-					style={[style.titleIcon, {backgroundColor: colors.statusWarning}]}
-				/>
-				<Text style={style.titleStyle}>{getStr("generalImpression")}</Text>
-			</View>
-			{evaluationForm && (
-				<RoundedView>
-					<Text
+		<KeyboardAvoidingScreen>
+			<ScrollView
+				style={style.container}
+				showsVerticalScrollIndicator={false}
+				refreshControl={
+					<ThemedRefreshControl
+						refreshing={refreshing}
+					/>
+				}>
+				<View style={[style.titleContainer, {marginTop: 16}]}>
+					<View
+						style={[style.titleIcon, {backgroundColor: colors.statusWarning}]}
+					/>
+					<Text style={style.titleStyle}>{getStr("generalImpression")}</Text>
+				</View>
+				{evaluationForm && (
+					<RoundedView>
+						<Text
+							style={{
+								color: colors.text,
+								marginTop: 12,
+								fontSize: 20,
+								fontWeight: "bold",
+								textAlign: "center",
+							}}>
+							{route.params.name}
+						</Text>
+						<View style={{marginTop: 8, alignItems: "center"}}>
+							<StarRating scoreRef={evaluationForm.overall.score} />
+						</View>
+					</RoundedView>
+				)}
+				<RoundedView style={{marginTop: 8, padding: 16}}>
+					<TextInput
 						style={{
+							height: 100,
+							textAlign: "left",
+							alignSelf: "stretch",
+							textAlignVertical: "top",
 							color: colors.text,
-							marginTop: 12,
-							fontSize: 20,
-							fontWeight: "bold",
-							textAlign: "center",
-						}}>
-						{route.params.name}
-					</Text>
-					<View style={{marginTop: 8, alignItems: "center"}}>
-						<StarRating scoreRef={evaluationForm.overall.score} />
-					</View>
+						}}
+						multiline={true}
+						placeholder={getStr("moreSuggestionsToCourse")}
+						placeholderTextColor={colors.fontB3}
+						defaultValue={evaluationForm?.overall?.suggestion ?? ""}
+						onChangeText={(text) => {
+							if (evaluationForm) {
+								evaluationForm.overall.suggestion = text;
+							}
+						}}
+					/>
 				</RoundedView>
-			)}
-			<RoundedView style={{marginTop: 8, padding: 16}}>
-				<TextInput
-					style={{
-						height: 100,
-						textAlign: "left",
-						alignSelf: "stretch",
-						textAlignVertical: "top",
-						color: colors.text,
-					}}
-					multiline={true}
-					placeholder={getStr("moreSuggestionsToCourse")}
-					placeholderTextColor={colors.fontB3}
-					defaultValue={evaluationForm?.overall?.suggestion ?? ""}
-					onChangeText={(text) => {
-						if (evaluationForm) {
-							evaluationForm.overall.suggestion = text;
-						}
-					}}
-				/>
-			</RoundedView>
-			{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
-			{evaluationForm &&
-				renderEvaluation(evaluationForm.assistants, "assistant")}
-			<TouchableOpacity
-				style={[
-					style.buttonStyle,
-					{
-						backgroundColor:
-							evaluationForm === undefined ? "lightgrey" : colors.primaryLight,
-					},
-				]}
-				onPress={post}
-				disabled={evaluationForm === undefined}>
-				<Text style={style.buttonTextStyle}>{getStr("post")}</Text>
-			</TouchableOpacity>
-		</ScrollView>
+				{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
+				{evaluationForm &&
+					renderEvaluation(evaluationForm.assistants, "assistant")}
+				<TouchableOpacity
+					style={[
+						style.buttonStyle,
+						{
+							backgroundColor:
+								evaluationForm === undefined ? "lightgrey" : colors.primaryLight,
+						},
+					]}
+					onPress={post}
+					disabled={evaluationForm === undefined}>
+					<Text style={style.buttonTextStyle}>{getStr("post")}</Text>
+				</TouchableOpacity>
+			</ScrollView>
+		</KeyboardAvoidingScreen>
 	);
 };
 

@@ -1,10 +1,10 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {getStr} from "../../utils/i18n";
 import {
 	Text,
 	TextInput,
 	TouchableOpacity,
 	useColorScheme,
-	View,
 } from "react-native";
 import {helper} from "../../redux/store";
 import themes from "../../assets/themes/themes";
@@ -20,7 +20,7 @@ export const PeekScoreScreen = () => {
 	const [courseGrade, setCourseGrade] = useState("");
 	const [querying, setQuerying] = useState(false);
 	return (
-		<View
+		<KeyboardAvoidingScreen
 			style={{
 				flex: 1,
 				marginHorizontal: 12,
@@ -102,6 +102,6 @@ export const PeekScoreScreen = () => {
 					</Text>
 				</RoundedView>
 			</TouchableOpacity>
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };

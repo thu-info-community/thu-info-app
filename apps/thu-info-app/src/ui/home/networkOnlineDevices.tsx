@@ -7,7 +7,7 @@ import { getStr } from "../../utils/i18n";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
-	// Platform,
+	Platform,
 	Switch,
 	Text,
 	TextInput,
@@ -149,8 +149,7 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}
-			// behavior={Platform.OS === "ios" ? "padding" : "height"}
-			behavior="padding"
+			behavior={Platform.OS === "android" ? "height" : "padding"}
 			keyboardVerticalOffset={headerHeight}>
 			<GestureHandlerRootView style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView

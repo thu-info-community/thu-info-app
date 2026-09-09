@@ -1,5 +1,6 @@
 import {ThemedRefreshControl} from "./themedRefreshControl";
 import {createElement, ReactElement, useCallback, useEffect, useRef, useState} from "react";
+import {KeyboardAvoidingScreen} from "./keyboardAvoidingScreen";
 import {
 	Animated,
 	BackHandler,
@@ -394,7 +395,8 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 		<>
 			<TouchableOpacity {...triggerProps} />
 			<Modal visible={visible} transparent onRequestClose={handleSystemClose}>
-				<Animated.View
+				<KeyboardAvoidingScreen
+					keyboardVerticalOffset={0}
 					style={{
 						width: "100%",
 						height: "100%",
@@ -488,7 +490,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 							? props.popupContent(() => animateCloseWith("backdrop", props.popupOnCancelled))
 							: props.popupContent}
 					</Animated.View>
-				</Animated.View>
+				</KeyboardAvoidingScreen>
 			</Modal>
 		</>
 	);

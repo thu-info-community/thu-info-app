@@ -52,6 +52,7 @@ import {
 import { LoginError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
+import {getSerializableEntries, isSerializable} from "./serializable";
 
 const CookieManager = (() => {
 	try {
@@ -319,6 +320,8 @@ export const store = configureStore({
 		getDefaultMiddleware({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+				isSerializable,
+				getEntries: getSerializableEntries,
 			},
 		}),
 });
