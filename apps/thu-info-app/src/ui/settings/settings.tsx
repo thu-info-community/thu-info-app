@@ -29,6 +29,7 @@ import {
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
 import { deepseekClear } from "../../redux/slices/deepseek.ts";
+import {agentService} from "../../agent/service";
 import useDetailNavigator from "../../utils/useDetailNavigator";
 import {StackActions} from "@react-navigation/native";
 
@@ -207,7 +208,13 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 										},
 										{
 											text: getStr("yes"),
-											onPress: () => {
+											onPress: async () => {
+												try {
+													await agentService.clear(helper.userId);
+												} catch {
+													Alert.alert("THUInfo", "Unable to clear agent history. Please retry before signing out.");
+													return;
+												}
 												helper.userId = "";
 												helper.password = "";
 												performLogout();

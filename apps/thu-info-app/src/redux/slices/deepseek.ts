@@ -1,9 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import type {Conversation} from "../../ui/home/deepseek.tsx";
+import type {Conversation} from "../../agent/types";
 
 export interface DeepseekState {
 	history: Conversation[];
+	agentMigrated?: boolean;
+	newsRevision?: number;
 }
 
 const initialState: DeepseekState = {
@@ -16,6 +18,11 @@ export const deepseekSlice = createSlice({
 	name: "deepseek",
 	initialState,
 	reducers: {
+		deepseekInvalidateNews: (state) => { state.newsRevision = (state.newsRevision ?? 0) + 1; },
+		deepseekMigrationComplete: (state) => {
+			state.history = [];
+			state.agentMigrated = true;
+		},
 		deepseekUpdateHistory: (
 			state,
 			{payload}: PayloadAction<Conversation>,
@@ -46,6 +53,6 @@ export const deepseekSlice = createSlice({
 	},
 });
 
-export const {deepseekUpdateHistory, deepseekClear, deepseekDeleteConversation} = deepseekSlice.actions;
+export const {deepseekUpdateHistory, deepseekClear, deepseekDeleteConversation, deepseekMigrationComplete, deepseekInvalidateNews} = deepseekSlice.actions;
 
 export const deepseekReducer = deepseekSlice.reducer;

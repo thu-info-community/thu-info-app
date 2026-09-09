@@ -58,6 +58,7 @@ import {DeepSeekTabProp} from "../../components/Root.tsx";
 import Clipboard from "@react-native-clipboard/clipboard";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
+import {AgentDeepSeekScreen} from "./agentDeepseek";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -592,7 +593,12 @@ async function generateConversationTitle(
 	return splitReasoningAndStatus(answer)[1].trim();
 }
 
-export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
+export const DeepSeekScreen = (props: {route: DeepSeekTabProp}) => {
+	const agent = useSelector((state: State) => state.config.agentEnabled || state.deepseek.agentMigrated);
+	return agent ? <AgentDeepSeekScreen {...props} /> : <LegacyDeepSeekScreen {...props} />;
+};
+
+const LegacyDeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [input, setInput] = useState("");
 	const [generating, setGenerating] = useState(false);
 	const [open, setOpen] = useState(false);

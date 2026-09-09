@@ -8,6 +8,8 @@
         "src/**/*"
     ],
     "scripts": {
+        "agent:generate": "node scripts/generate-agent.cjs",
+        "agent:check": "node scripts/generate-agent.cjs --check",
         "build": "tsc",
         "test": "OPENSSL_CONF=${PWD}/openssl.cnf jest",
         "play": "OPENSSL_CONF=${PWD}/openssl.cnf node -r esm --experimental-repl-await",

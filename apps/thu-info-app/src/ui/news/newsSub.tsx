@@ -18,6 +18,7 @@ import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import IconCheck from "../../assets/icons/IconCheck";
 import {styles} from "../settings/settings";
+import {useNewsInvalidation} from "../../agent/useNewsInvalidation";
 
 const NewsSubItem = ({
 	newsSub,
@@ -107,6 +108,7 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	useEffect(fetchSubscriptionList, []);
+	useNewsInvalidation(fetchSubscriptionList);
 
 	return (
 		<KeyboardAvoidingScreen>

@@ -32,6 +32,7 @@ import {getStatusBarHeight} from "react-native-safearea-height";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
+import {useNewsInvalidation} from "../../agent/useNewsInvalidation";
 
 type Category =
 	| "catSubscribed"
@@ -299,6 +300,10 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(fetchNewsList, [channelSelected]);
+	useNewsInvalidation(() => {
+		fetchNewsList();
+		helper.getNewsSubscriptionList().then((items) => setSubscriptions([{id: "0", title: getStr("all"), order: -1}, ...items])).catch(() => {});
+	});
 
 	const [reload, setReload] = useState(1);
 	const [inited, setInited] = useState(false);

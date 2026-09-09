@@ -53,6 +53,7 @@ import { LoginError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import type {RootStackParamList} from "../components/Root";
 
 const CookieManager = (() => {
 	try {
@@ -330,10 +331,7 @@ export const persistor = persistStore(store);
 
 export const currState = () => store.getState() as State;
 
-export const navigationRef = createNavigationContainerRef<{
-	Login: undefined;
-	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
-}>();
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 helper.loginErrorHook = (e) => {
 	if (e instanceof LoginError && navigationRef.isReady()) {

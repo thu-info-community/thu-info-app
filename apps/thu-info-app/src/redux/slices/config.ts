@@ -4,6 +4,7 @@ import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import { v4 as uuidv4 } from "uuid";
+import type {ThinkingLevel} from "../../agent/types";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
@@ -48,6 +49,8 @@ export interface ConfigState {
 	privacy312: boolean | undefined;
 	deepseekToken: string | undefined;
 	bubbleMessage: boolean | undefined;
+	agentEnabled: boolean;
+	agentThinking: ThinkingLevel;
 	uuid: string;
 	tabletMode: boolean | undefined;
 }
@@ -95,6 +98,8 @@ const initialState: ConfigState = {
 	privacy312: false,
 	deepseekToken: undefined,
 	bubbleMessage: true,
+	agentEnabled: false,
+	agentThinking: "default",
 	uuid: uuidv4(),
 	tabletMode: true,
 };

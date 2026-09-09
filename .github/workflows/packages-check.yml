@@ -29,6 +29,7 @@ jobs:
           INFO_PASSWORD: ${{ secrets.INFO_PASSWORD }}
         run: |
           yarn workspace @thu-info/lib lint
+          yarn workspace @thu-info/lib agent:check
         #  yarn workspace @thu-info/lib test
       - name: Build demo
         run: |
