@@ -32,6 +32,7 @@ jest.mock("../src/redux/store", () => ({
 		getThosTasks: jest.fn(),
 		getThosServices: jest.fn(),
 	},
+	currState: () => ({config: {language: "zh"}}),
 	navigationRef: {isReady: () => true, navigate: jest.fn()},
 }));
 jest.mock("../src/assets/themes/themes", () => ({

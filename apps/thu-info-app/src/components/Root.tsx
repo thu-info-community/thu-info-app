@@ -853,12 +853,12 @@ export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
 			<Stack.Screen
 				name="ThosTaskDetail"
 				component={ThosTaskDetailScreen}
-				options={{title: "事务详情"}}
+				options={{title: getStr("thosTaskDetail")}}
 			/>
 			<Stack.Screen
 				name="ThosServiceDetail"
 				component={ThosServiceDetailScreen}
-				options={{title: "服务信息"}}
+				options={{title: getStr("thosServiceInfo")}}
 			/>
 			<Stack.Screen
 				name="NewsDetail"

@@ -10,13 +10,18 @@ import {
 import {useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
+import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../../components/views";
 import type {RootNav} from "../../components/Root";
 import type {
 	ThosService,
 	ThosTask,
 } from "@thu-info/lib/src/models/home/thos-services";
-import {useThosBrowserHeader} from "./thos";
+import {
+	getThosPhaseStateLabel,
+	getThosTaskStatusLabel,
+	useThosBrowserHeader,
+} from "./thos";
 
 export type ThosTaskDetailParams = {task: ThosTask; accountId: string};
 export type ThosServiceDetailParams = {service: ThosService; accountId: string};
@@ -47,9 +52,7 @@ function useDetail<T>(initial: T, accountId: string, read: () => Promise<T>) {
 			if (token === requests.current) setData(result);
 		} catch {
 			if (token === requests.current)
-				setError(
-					"未能更新详情。当前显示上次读取的信息；事项状态可能已变化，请返回列表刷新核对。",
-				);
+				setError(getStr("thosDetailUpdateFailed"));
 		} finally {
 			if (token === requests.current) setBusy(false);
 		}
@@ -88,9 +91,7 @@ const DetailPage = ({
 	if (!allowed)
 		return (
 			<View style={{padding: 24}} testID="thos-account-changed">
-				<Text style={{color: colors.text}}>
-					登录账号已变化，请返回在线服务重新读取。
-				</Text>
+				<Text style={{color: colors.text}}>{getStr("thosAccountChanged")}</Text>
 			</View>
 		);
 	return (
@@ -145,20 +146,25 @@ export const ThosTaskDetailScreen = ({
 		detail.allowed,
 	);
 	return (
-		<DetailPage title={detail.allowed ? task.title : "事务详情"} {...detail}>
+		<DetailPage
+			title={detail.allowed ? task.title : getStr("thosTaskDetail")}
+			{...detail}>
 			<RoundedView style={{paddingHorizontal: 20}}>
 				<Text
 					style={{color: colors.mainTheme, fontSize: 22, fontWeight: "700"}}>
-					{task.status}
+					{getThosTaskStatusLabel(task.status)}
 				</Text>
-				<Fact label="当前办理节点" value={task.node} />
+				<Fact label={getStr("thosCurrentNode")} value={task.node} />
 				{task.progress !== undefined && (
 					<View style={{gap: 10}}>
 						<Text style={{color: colors.fontB2}}>
-							系统流程进度 {task.progress}%
+							{getStr("thosFlowProgress").replace("{0}", String(task.progress))}
 						</Text>
 						<View
-							accessibilityLabel={`流程进度 ${task.progress}%`}
+							accessibilityLabel={getStr("thosAccessibilityProgress").replace(
+								"{0}",
+								String(task.progress),
+							)}
 							style={{
 								height: 8,
 								borderRadius: 4,
@@ -175,18 +181,25 @@ export const ThosTaskDetailScreen = ({
 						</View>
 					</View>
 				)}
-				<Fact label="办理状态" value={task.workflowStatus} />
-				<Fact label="事项摘要" value={task.summary} />
+				<Fact
+					label={getStr("thosWorkflowStatus")}
+					value={
+						task.workflowStatus
+							? getThosTaskStatusLabel(task.workflowStatus)
+							: undefined
+					}
+				/>
+				<Fact label={getStr("thosSummary")} value={task.summary} />
 			</RoundedView>
 			{task.phaseSteps && task.phaseSteps.length > 0 && (
 				<RoundedView style={{paddingHorizontal: 20}}>
 					<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
-						阶段明细
+						{getStr("thosPhaseDetails")}
 					</Text>
 					{task.phaseSteps.map((step) => (
 						<View key={`${step.order}:${step.name}`} style={{paddingTop: 16}}>
 							<Text style={{color: colors.text, fontWeight: "600"}}>
-								{step.order}. {step.name} · {phaseStateLabels[step.state] ?? "状态未知"}
+								{step.order}. {step.name} · {getThosPhaseStateLabel(step.state)}
 							</Text>
 							{step.items.map((item) => (
 								<TouchableOpacity
@@ -202,7 +215,7 @@ export const ThosTaskDetailScreen = ({
 										style={{
 											color: item.url ? colors.mainTheme : colors.fontB2,
 										}}>
-										{item.name} · {phaseStateLabels[item.state] ?? "状态未知"}
+										{item.name} · {getThosPhaseStateLabel(item.state)}
 									</Text>
 								</TouchableOpacity>
 							))}
@@ -211,7 +224,7 @@ export const ThosTaskDetailScreen = ({
 					{task.relatedServices && task.relatedServices.length > 0 && (
 						<View style={{paddingTop: 20}}>
 							<Text style={{color: colors.text, fontWeight: "600"}}>
-								其他相关服务
+								{getStr("thosRelatedServices")}
 							</Text>
 							{task.relatedServices.map((service) => (
 								<TouchableOpacity
@@ -229,15 +242,15 @@ export const ThosTaskDetailScreen = ({
 				</RoundedView>
 			)}
 			<RoundedView style={{paddingHorizontal: 20}}>
-				<Fact label="事务编号" value={task.id} />
+				<Fact label={getStr("thosTaskNumber")} value={task.id} />
 				{task.kind !== "phases" && (
 					<Fact
 						label={
 							task.kind === "completed"
-								? "办结时间"
+								? getStr("thosCompletionTime")
 								: task.kind === "drafts"
-									? "最后修改时间"
-									: "申请时间"
+									? getStr("thosLastModifiedTime")
+									: getStr("thosApplicationTime")
 						}
 						value={task.date}
 					/>
@@ -247,17 +260,17 @@ export const ThosTaskDetailScreen = ({
 	);
 };
 
-const kindLabels = {
-	form: "填报服务",
-	guide: "引导服务",
-	integration: "集成服务",
-	group: "服务集合",
-};
-const phaseStateLabels: Record<string, string> = {
-	"0": "待办理",
-	"1": "正在办理",
-	"4": "办理成功",
-	"5": "办理失败",
+const getServiceKindLabel = (kind: NonNullable<ThosService["kind"]>) => {
+	switch (kind) {
+		case "form":
+			return getStr("thosFormService");
+		case "guide":
+			return getStr("thosGuideService");
+		case "integration":
+			return getStr("thosIntegrationService");
+		case "group":
+			return getStr("thosServiceGroup");
+	}
 };
 
 export const ThosServiceDetailScreen = ({
@@ -286,37 +299,37 @@ export const ThosServiceDetailScreen = ({
 		detail.allowed,
 	);
 	return (
-		<DetailPage title={detail.allowed ? service.name : "服务信息"} {...detail}>
+		<DetailPage
+			title={detail.allowed ? service.name : getStr("thosServiceInfo")}
+			{...detail}>
 			<RoundedView style={{paddingHorizontal: 20}}>
-				<Fact label="提供部门" value={service.department} />
+				<Fact label={getStr("thosDepartment")} value={service.department} />
 				<Fact
-					label="服务类型"
-					value={service.kind ? kindLabels[service.kind] : undefined}
+					label={getStr("thosServiceType")}
+					value={service.kind ? getServiceKindLabel(service.kind) : undefined}
 				/>
 				<Fact
-					label="开放时间状态"
+					label={getStr("thosOpenStatus")}
 					value={
 						service.inOpenPeriod === undefined
 							? undefined
 							: service.inOpenPeriod
-								? "在开放时间内"
-								: "不在开放时间内"
+								? getStr("thosInOpenPeriod")
+								: getStr("thosOutOfOpenPeriod")
 					}
 				/>
 			</RoundedView>
 			<RoundedView style={{paddingHorizontal: 20}}>
 				<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
-					办理方式
+					{getStr("thosHowToHandle")}
 				</Text>
 				<Text style={{color: colors.fontB1, marginTop: 12, lineHeight: 24}}>
 					{service.kind === "group"
-						? "这是服务集合，具体事项与办理条件以官方目录为准。"
-						: "服务信息在 App 内查看。申请表单目前仍由官方页面提供，进入后请按学校说明办理。"}
+						? getStr("thosServiceGroupDescription")
+						: getStr("thosServiceDescription")}
 				</Text>
 			</RoundedView>
-			<Text style={{color: colors.fontB2}}>
-				收藏常用服务后，可从「收藏服务」直接找到。收藏在目录中管理，仅保存在本机。
-			</Text>
+			<Text style={{color: colors.fontB2}}>{getStr("thosFavoriteHint")}</Text>
 		</DetailPage>
 	);
 };
