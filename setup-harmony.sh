@@ -2,12 +2,23 @@
 
 set -e
 
-# Reverse 09ff3a86 (snackbar v3) except lockfiles—avoids git revert merge conflicts on package.json.
-# --3way tolerates nearby edits (e.g. schedule.tsx) when plain -R fails.
-git diff 09ff3a86^..09ff3a86 -- \
-	':(exclude)apps/thu-info-app/package.json' \
-	':(exclude)yarn.lock' \
-	| git apply -R --3way
+# Harmony uses Snackbar v2's default export. Convert current sources instead of
+# reversing the v3 migration commit, whose patch conflicts with newer UI edits.
+node <<'NODE'
+const fs = require('node:fs');
+const path = require('node:path');
+const root = 'apps/thu-info-app/src';
+for (const entry of fs.readdirSync(root, {recursive: true})) {
+  if (!/\.tsx?$/.test(entry)) continue;
+  const file = path.join(root, entry);
+  const source = fs.readFileSync(file, 'utf8');
+  const converted = source.replace(
+    /import\s*\{\s*Snackbar\s*\}\s*from\s*(['"])react-native-snackbar\1/g,
+    'import Snackbar from $1react-native-snackbar$1',
+  );
+  if (converted !== source) fs.writeFileSync(file, converted);
+}
+NODE
 
 yarn workspace @thu-info/lib add cheerio@1.0.0-rc.12
 yarn workspace @thu-info/app add \
