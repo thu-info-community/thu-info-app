@@ -1317,7 +1317,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							],
 							backgroundColor: colors.contentBackground,
 							paddingHorizontal: 16,
-							paddingTop: getStatusBarHeight(true) + 2,
+							paddingTop: getStatusBarHeight() + 2,
 							paddingBottom: insets.bottom,
 							width: "62%",
 							height: "100%",
