@@ -133,6 +133,12 @@ import { IncomeScreen } from "../ui/home/income.tsx";
 import { NetworkLoginScreen } from "../ui/home/networkLogin.tsx";
 import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
 import {EmptyScreen} from "../ui/home/empty";
+import {ThosScreen, ThosPortalScreen} from "../ui/home/thos";
+import {ThosServiceDetailScreen, ThosTaskDetailScreen} from "../ui/home/thosDetail";
+import type {
+	ThosServiceDetailParams,
+	ThosTaskDetailParams,
+} from "../ui/home/thosDetail";
 
 type RootTabParamList = {
 	HomeTab: undefined;
@@ -246,6 +252,10 @@ const RootTabs = () => {
 };
 
 type HomeStackParamList = {
+	Thos: undefined;
+	ThosPortal: {url: string};
+	ThosTaskDetail: ThosTaskDetailParams;
+	ThosServiceDetail: ThosServiceDetailParams;
 	Report: undefined;
 	PeekScore: undefined;
 	Evaluation: undefined;
@@ -830,6 +840,26 @@ export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
 				options={{title: getStr("schoolCalendar")}}
 			/>
 			{/* News */}
+			<Stack.Screen
+				name="Thos"
+				component={ThosScreen}
+				options={{title: getStr("thos")}}
+			/>
+			<Stack.Screen
+				name="ThosPortal"
+				component={ThosPortalScreen}
+				options={{title: getStr("thos")}}
+			/>
+			<Stack.Screen
+				name="ThosTaskDetail"
+				component={ThosTaskDetailScreen}
+				options={{title: getStr("thosTaskDetail")}}
+			/>
+			<Stack.Screen
+				name="ThosServiceDetail"
+				component={ThosServiceDetailScreen}
+				options={{title: getStr("thosServiceInfo")}}
+			/>
 			<Stack.Screen
 				name="NewsDetail"
 				component={NewsDetailScreen}

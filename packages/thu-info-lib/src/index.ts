@@ -137,6 +137,8 @@ import {
     loginUsereg,
 } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
+import {prepareThosSession, getThosTasks, getThosServices} from "./lib/thos-services";
+import type {ThosTaskKind} from "./models/home/thos-services";
 import {
     canRechargeCampusCard,
     cardCancelLoss, cardChangeTransactionPassword,
@@ -1016,6 +1018,9 @@ export class InfoHelper {
     public loginNetworkDevice = async (ip: string, internet: boolean) => loginNetwork(this, ip, internet);
 
     public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
+    public prepareThosSession = async () => prepareThosSession(this);
+    public getThosTasks = async (kind: ThosTaskKind) => getThosTasks(this, kind);
+    public getThosServices = async () => getThosServices(this);
 
     public loginCampusCard = async () => cardLogin(this);
 

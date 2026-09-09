@@ -9,7 +9,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {ReactElement, useEffect, useState} from "react";
+import {ReactElement, useContext, useEffect, useState} from "react";
 import {RootNav, RootStackParamList} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
@@ -66,12 +66,14 @@ import IconNetwork from "../../assets/icons/IconNetwork";
 import IconNetworkDetail from "../../assets/icons/IconNetworkDetail";
 import IconNetworkOnlineDevices from "../../assets/icons/IconNetworkOnlineDevices";
 import IconCalendar from "../../assets/icons/IconCalendar";
+import IconThos from "../../assets/icons/IconThos";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
 import {InfoHelper} from "@thu-info/lib";
 import useDetailNavigator from "../../utils/useDetailNavigator";
+import {SplitViewContext} from "../../components/SplitView";
 
 const iconSize = 40;
 
@@ -453,7 +455,8 @@ export type HomeFunction =
 	| "network"
 	| "networkDetail"
 	| "onlineDevices"
-	| "schoolCalendar";
+	| "schoolCalendar"
+	| "thos";
 
 const subFunctionLocked = () => {
 	const s = currState();
@@ -470,6 +473,15 @@ const getHomeFunctions = (
 	navigate: (name: keyof RootStackParamList, params?: any) => void,
 	updateTop5: (func: HomeFunction) => void,
 ): ReactElement[] => [
+	<HomeIcon
+		key="thos"
+		title="thos"
+		onPress={() => {
+			updateTop5("thos");
+			navigate("Thos");
+		}}>
+		<IconThos width={iconSize} height={iconSize} />
+	</HomeIcon>,
 	<HomeIcon
 		key="report"
 		title="report"
@@ -807,12 +819,14 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
-	const detailNavigator = useDetailNavigator();
+	const {detailNavigationContainerRef} = useContext(SplitViewContext);
 
 	const navigateWithDetail = (
 		name: keyof RootStackParamList,
 		params?: RootStackParamList[typeof name],
 	) => {
+		// Resolve on press: the detail navigator may not have mounted when the home screen first rendered.
+		const detailNavigator = detailNavigationContainerRef?.current;
 		if (detailNavigator) {
 			detailNavigator.dispatch(
 				StackActions.replace(name, {
@@ -845,6 +859,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
+	if (!(disabledList ?? []).includes("thos")) needToShowFunctionNames.push("thos");
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
 			if (!(disabledList ?? []).includes(i as HomeFunction)) {
