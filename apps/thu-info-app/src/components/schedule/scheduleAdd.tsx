@@ -130,10 +130,10 @@ export const ScheduleAddModal = ({
 		: theme.colors.contentBackground;
 	const tabSelectedBackgroundColor = isLightMode
 		? "#8B6B9C"
-		: theme.colors.contentBackground;
+		: theme.colors.inputBorder;
 	const tabUnselectedBackgroundColor = isLightMode
 		? "#F0EEEA"
-		: theme.colors.themeGrey;
+		: theme.colors.themeBackground;
 	const tabSelectedTextColor = isLightMode ? "#FFFFFF" : theme.colors.fontB1;
 	const tabUnselectedTextColor = isLightMode
 		? "#5C5A56"
