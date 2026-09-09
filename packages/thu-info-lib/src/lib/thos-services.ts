@@ -5,6 +5,8 @@ import { LibError } from "../utils/error";
 import type {
     ThosCounts,
     ThosPage,
+    ThosPhaseStep,
+    ThosRelatedService,
     ThosService,
     ThosTask,
     ThosTaskKind,
@@ -31,6 +33,10 @@ const paths = {
     active: "/fp/fp/myserviceapply/getZBSXList",
     todo: "/fp/fp/taskcenter/getDBSXList",
     completed: "/fp/fp/myserviceapply/getBJSXList",
+    drafts: "/fp/fp/draft/pageDraft",
+    unread: "/fp/fp/carboncopy/getDYSXList",
+    phases: "/fp/fp/aggregation/getAggItemList",
+    phaseSteps: "/fp/aggregation/getActWork",
     services: "/fp/fp/formHome/AllSvsByConditionpage",
 };
 type Row = Record<string, unknown>;
@@ -58,16 +64,19 @@ const number = (value: Row, key: string): number | undefined => {
         ? Number(raw)
         : undefined;
 };
-export const parseThosBody = (body: string): Row => {
+const json = (body: string): unknown => {
     if (body.trimStart().startsWith("<"))
         return invalid(
             "在线服务接口返回了网页，需要重新建立 THOS 会话或检查系统状态",
         );
     try {
-        return row(JSON.parse(body));
+        return JSON.parse(body);
     } catch {
         return invalid("在线服务返回了无法识别的数据");
     }
+};
+export const parseThosBody = (body: string): Row => {
+    return row(json(body));
 };
 export const parseThosCounts = (value: unknown): ThosCounts => {
     const data = row(value);
@@ -129,7 +138,184 @@ export const isThosPage = (value: string): boolean => {
     );
 };
 
+const normalizeThosTarget = (value: string, fallback: string): string => {
+    if (value.startsWith("/")) return THOS_BASE + value;
+    try {
+        return routeThosUrl(value);
+    } catch {
+        return THOS_BASE + fallback;
+    }
+};
+const workflowStatus = (value: Row): string | undefined => {
+    const state = text(value, "CURRENT_STATE", "current_state");
+    return {
+        "0": "撤回申请",
+        "1": "正在办理",
+        "4": "办理成功",
+        "5": "办理失败",
+    }[state];
+};
+const parseProgress = (current: number | undefined, total: number | undefined) =>
+    current !== undefined && total !== undefined && total > 0 && current <= total
+        ? Math.floor((current / total) * 100)
+        : undefined;
+const parseRelatedServices = (
+    value: unknown,
+    aggregateId: string,
+): ThosRelatedService[] | undefined => {
+    if (value === undefined || value === null) return undefined;
+    if (!Array.isArray(value))
+        return invalid("在线服务阶段性事项关联服务返回异常");
+    return value.map((raw) => {
+        const data = row(raw);
+        const id = text(data, "SERVICE_ID", "service_id");
+        const name = text(data, "SERVICE_NAME", "service_name");
+        if (!id || !name)
+            return invalid("在线服务阶段性关联服务字段发生变化，请打开系统原页核对");
+        return {
+            id,
+            name,
+            url:
+                THOS_BASE +
+                `/fp/view?m=fp#seqPid=${encodeURIComponent(aggregateId)}&from=hall&serveID=${encodeURIComponent(id)}&act=fp/serveapply`,
+        };
+    });
+};
+
+export const parseThosDraft = (value: unknown): ThosTask => {
+    const data = row(value);
+    const id = text(data, "processInstId", "process_inst_id", "procinst_id");
+    const serviceId = text(data, "serviceId", "service_id");
+    const title = text(data, "draftName", "service_name", "SERVICE_NAME");
+    if (!id || !title)
+        return invalid("在线服务草稿字段发生变化，请打开系统原页核对");
+    const target = serviceId
+        ? `/fp/view?m=fp#act=fp/serveapply&serveID=${encodeURIComponent(serviceId)}&procinstId=${encodeURIComponent(id)}`
+        : thosPages.drafts;
+    return {
+        id,
+        key: id,
+        serviceId: serviceId || undefined,
+        title,
+        kind: "drafts",
+        status: "草稿",
+        node: "",
+        date: text(data, "modifyTime", "startTime"),
+        summary: text(data, "draftSummary"),
+        url: THOS_BASE + target,
+    };
+};
+
+export const parseThosUnread = (value: unknown): ThosTask => {
+    const data = row(value);
+    const id = text(data, "procinst_id", "proc_inst_id", "PROC_INST_ID");
+    const taskId = text(data, "task_id", "WORKITEM_INS_ID", "TASK_ID");
+    const serviceId = text(data, "service_id", "SERVICE_ID");
+    const title = text(data, "service_name", "SERVICE_NAME");
+    if (!id || !title)
+        return invalid("在线服务待阅事项字段发生变化，请打开系统原页核对");
+    const readState = text(data, "READSTATE", "readState");
+    const readStatus = readState
+        ? text(data, "READ_TYPE") === "1" && text(data, "APPROVE_PERSON")
+            ? `任务已被${text(data, "APPROVE_PERSON")}办理`
+            : "已阅"
+        : "未阅";
+    const rawUrl = text(data, "URL", "url");
+    const target = rawUrl
+        ? normalizeThosTarget(rawUrl, thosPages.unread)
+        : serviceId && taskId
+            ? THOS_BASE +
+                `/fp/view?m=fp#service_id=${encodeURIComponent(serviceId)}&task_id=${encodeURIComponent(taskId)}&procinst_id=${encodeURIComponent(id)}&pt=done&pr=read&act=fp/taskcenter/todo`
+            : THOS_BASE + thosPages.unread;
+    return {
+        id,
+        key: taskId ? `${id}:${taskId}` : id,
+        serviceId: serviceId || undefined,
+        title,
+        kind: "unread",
+        status: readStatus,
+        workflowStatus: workflowStatus(data),
+        node: text(data, "curActName", "CURRENT_ACT_NAME", "task_name"),
+        date: text(data, "apply_time", "start_time", "START_TIME"),
+        summary: text(data, "summary"),
+        url: target,
+    };
+};
+
+export const parseThosPhase = (value: unknown): ThosTask => {
+    const data = row(value);
+    const id = text(data, "AGG_PROC_ID", "agg_proc_id");
+    const title = text(data, "NAME", "name");
+    if (!id || !title)
+        return invalid("在线服务阶段性事项字段发生变化，请打开系统原页核对");
+    const state = text(data, "STATE", "state");
+    const nums = number(data, "NUMS");
+    const total = number(data, "SUMTEMP");
+    return {
+        id,
+        key: id,
+        title,
+        kind: "phases",
+        status:
+            state === "1"
+                ? "正在办理"
+                : state === "4"
+                    ? "办理成功"
+                    : state === "5"
+                        ? "办理失败"
+                        : "状态未知",
+        node:
+            nums !== undefined && total !== undefined
+                ? `当前进度 ${nums}/${total}`
+                : "",
+        date: "",
+        progress: parseProgress(nums, total),
+        relatedServices: parseRelatedServices(data.REL, id),
+        url: THOS_BASE +
+            `/fp/view?m=fp#act=fp/aggregation/aggregationList&procinst_id=${encodeURIComponent(id)}`,
+    };
+};
+
+export const parseThosPhaseSteps = (value: unknown): ThosPhaseStep[] => {
+    if (!Array.isArray(value))
+        return invalid("在线服务阶段性事项步骤返回异常");
+    return value.map((raw, index) => {
+        const data = row(raw);
+        const order = text(data, "ACT_ORDER_ID", "act_order_id") || String(index + 1);
+        const name = text(data, "ACT_NAME", "act_name");
+        const rawItems = data.itemInfo;
+        if (!name || !Array.isArray(rawItems))
+            return invalid("在线服务阶段性事项步骤字段发生变化，请打开系统原页核对");
+        return {
+            order,
+            name,
+            state: text(data, "ACT_STATE", "act_state"),
+            items: rawItems.map((rawItem, itemIndex) => {
+                const item = row(rawItem);
+                const itemName = text(item, "ITEM_NAME", "item_name");
+                if (!itemName)
+                    return invalid("在线服务阶段性服务字段发生变化，请打开系统原页核对");
+                const serviceId = text(item, "SERVICE_ID", "service_id");
+                const workItemId = text(item, "WORKITEM_ID", "workitem_id");
+                const rawUrl = text(item, "ITEM_URL", "item_url");
+                return {
+                    id: workItemId || serviceId || `${order}:${itemIndex}`,
+                    name: itemName,
+                    state: text(item, "ITEM_STATE", "item_state"),
+                    serviceId: serviceId || undefined,
+                    url: rawUrl
+                        ? normalizeThosTarget(rawUrl, thosPages.phases)
+                        : undefined,
+                };
+            }),
+        };
+    });
+};
+
 export const parseThosTask = (value: unknown, kind: ThosTaskKind): ThosTask => {
+    if (kind === "drafts") return parseThosDraft(value);
+    if (kind === "unread") return parseThosUnread(value);
+    if (kind === "phases") return parseThosPhase(value);
     const data = row(value);
     const id = text(
         data,
@@ -278,6 +464,26 @@ const read = (
             ),
         ),
     );
+const readArray = (
+    helper: InfoHelper,
+    endpoint: keyof typeof paths,
+    params: Row,
+): Promise<unknown[]> =>
+    roamingWrapper(helper, "default", THOS_ROAM_ID, async () => {
+        const value = json(
+            await uFetch(
+                THOS_BASE + paths[endpoint],
+                JSON.stringify(params) as never,
+                30_000,
+                "UTF-8",
+                true,
+                "application/json;charset=utf-8",
+            ),
+        );
+        if (!Array.isArray(value))
+            return invalid("在线服务阶段性事项步骤返回异常");
+        return value;
+    });
 
 export const prepareThosSession = async (
     helper: InfoHelper,
@@ -313,11 +519,17 @@ export const getThosTasks = async (
 ): Promise<ThosPage<ThosTask>> => {
     if (helper.mocked()) {
         const title =
-      kind === "todo"
-          ? "会议活动及场地申请（演示）"
-          : kind === "active"
-              ? "亲友来访人员报备（演示）"
-              : "在读证明申请（演示）";
+            kind === "todo"
+                ? "会议活动及场地申请（演示）"
+                : kind === "active"
+                    ? "亲友来访人员报备（演示）"
+                    : kind === "completed"
+                        ? "在读证明申请（演示）"
+                        : kind === "drafts"
+                            ? "演示草稿"
+                            : kind === "unread"
+                                ? "演示待阅事项"
+                                : "演示阶段性事项";
         return {
             items: [
                 {
@@ -326,11 +538,17 @@ export const getThosTasks = async (
                     title,
                     kind,
                     status:
-            kind === "completed"
-                ? "办理成功"
-                : kind === "todo"
-                    ? "待我处理"
-                    : "退回修改",
+                        kind === "completed"
+                            ? "办理成功"
+                            : kind === "todo"
+                                ? "待我处理"
+                                : kind === "active"
+                                    ? "退回修改"
+                                    : kind === "drafts"
+                                        ? "草稿"
+                                        : kind === "unread"
+                                            ? "未阅"
+                                            : "正在办理",
                     node: "演示节点",
                     date: "",
                     url: "",
@@ -338,6 +556,67 @@ export const getThosTasks = async (
             ],
             total: 1,
             complete: true,
+        };
+    }
+    if (kind === "drafts")
+        return collectThosPages(
+            (page) =>
+                read(helper, "drafts", {
+                    draftName: "",
+                    processInstId: "",
+                    draftSummary: "",
+                    pageNum: String(page),
+                    pageSize: "10",
+                }),
+            parseThosDraft,
+            (item) => item.key,
+        );
+    if (kind === "unread")
+        return collectThosPages(
+            (page) =>
+                read(helper, "unread", {
+                    service_name: "",
+                    start_date: "",
+                    end_date: "",
+                    apply_name: "",
+                    unit_name: "",
+                    procinst_id: "",
+                    summary: "",
+                    readresult: "",
+                    bjstart_date: "",
+                    bjend_date: "",
+                    result: "",
+                    pageNum: String(page),
+                    pageSize: "10",
+                }),
+            parseThosUnread,
+            (item) => item.key,
+        );
+    if (kind === "phases") {
+        const phasePage = await collectThosPages(
+            (pageNumber) =>
+                read(helper, "phases", {
+                    name: "",
+                    agg_proc_id: "",
+                    state: "",
+                    pageNum: String(pageNumber),
+                    pageSize: "10",
+                }),
+            parseThosPhase,
+            (item) => item.key,
+        );
+        return {
+            ...phasePage,
+            items: await Promise.all(
+                phasePage.items.map(async (item) => ({
+                    ...item,
+                    phaseSteps: parseThosPhaseSteps(
+                        await readArray(helper, "phaseSteps", {
+                            agg_proc_id: item.id,
+                        }),
+                    ),
+                })),
+            ),
         };
     }
     const fields =

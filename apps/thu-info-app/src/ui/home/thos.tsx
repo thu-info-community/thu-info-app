@@ -47,12 +47,14 @@ const labels: Record<ThosTaskKind, string> = {
 	active: "在办事务",
 	todo: "待我处理",
 	completed: "已办结",
+	drafts: "草稿",
+	unread: "待阅",
+	phases: "阶段性事项",
 };
+const primaryTaskKinds = ["active", "todo", "completed"] as const;
 type TaskPages = Partial<Record<ThosTaskKind, ThosPage<ThosTask>>>;
 const genericError = "连接在线服务失败，请重试。认证由 THU Info 内置登录完成。";
 const emptyMessage = "读取中";
-const blankPageMessage =
-	"页面长时间没有显示内容。请点击右上角刷新，或返回事务列表；不会重放已提交的表单。";
 export const ThosButton = ({
 	title,
 	onPress,
@@ -159,7 +161,14 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 			if (!alive()) return;
 			setCounts(result);
 			const warnings: string[] = [];
-			for (const kind of ["todo", "active", "completed"] as ThosTaskKind[]) {
+			for (const kind of [
+				"todo",
+				"active",
+				"completed",
+				"drafts",
+				"unread",
+				"phases",
+			] as ThosTaskKind[]) {
 				if (!alive()) return;
 				try {
 					const page = await helper.getThosTasks(kind);
@@ -243,6 +252,11 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 		setOnlyFavorites(quick && favorites.length > 0);
 		setQuery("");
 	};
+	const showTasks = (kind: ThosTaskKind) => {
+		setTab(kind);
+		setOnlyFavorites(false);
+		setQuery("");
+	};
 	useThosBrowserHeader(navigation, openCurrentPage, demo);
 	const rows = tab === "services" ? [] : (tasks[tab]?.items ?? []);
 	const pending =
@@ -257,7 +271,9 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 				]
 			: rows;
 	const taskRows = pending.filter((x) =>
-		`${x.title} ${x.node} ${x.id}`.toLowerCase().includes(query.toLowerCase()),
+		`${x.title} ${x.node} ${x.id} ${x.status} ${x.workflowStatus ?? ""} ${x.summary ?? ""}`
+			.toLowerCase()
+			.includes(query.toLowerCase()),
 	);
 	const serviceRows = (services?.items ?? []).filter(
 		(x) =>
@@ -295,14 +311,10 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 							flexWrap: "wrap",
 							marginVertical: 10,
 						}}>
-						{(["active", "todo", "completed"] as ThosTaskKind[]).map((kind) => (
+						{primaryTaskKinds.map((kind) => (
 							<TouchableOpacity
 								key={kind}
-								onPress={() => {
-									setTab(kind);
-									setOnlyFavorites(false);
-									setQuery("");
-								}}
+								onPress={() => showTasks(kind)}
 								style={{
 									flex: 1,
 									minWidth: 90,
@@ -336,20 +348,20 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 					<View style={{flexDirection: "row", flexWrap: "wrap"}}>
 						<Chip
 							title={`草稿 ${counts?.drafts ?? "—"}`}
-							onPress={() => open(THOS_BASE + thosPages.drafts)}
-							disabled={demo}
+							onPress={() => showTasks("drafts")}
+							selected={tab === "drafts"}
 							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 						<Chip
 							title={`待阅 ${counts?.unread ?? "—"}`}
-							onPress={() => open(THOS_BASE + thosPages.unread)}
-							disabled={demo}
+							onPress={() => showTasks("unread")}
+							selected={tab === "unread"}
 							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 						<Chip
 							title="阶段性事项"
-							onPress={() => open(THOS_BASE + thosPages.phases)}
-							disabled={demo}
+							onPress={() => showTasks("phases")}
+							selected={tab === "phases"}
 							style={{flex: 1, minWidth: 90, alignItems: "center"}}
 						/>
 					</View>
@@ -487,8 +499,14 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 										</Text>
 										<Text style={{color: colors.mainTheme, marginVertical: 8}}>
 											{item.status}
+											{item.workflowStatus ? ` · ${item.workflowStatus}` : ""}
 											{item.node ? ` · ${item.node}` : ""}
 										</Text>
+										{!!item.summary && (
+											<Text style={{color: colors.fontB2, marginBottom: 6}}>
+												事项摘要：{item.summary}
+											</Text>
+										)}
 										{item.progress !== undefined && (
 											<>
 												<View
@@ -514,7 +532,11 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 										)}
 										{!!item.date && (
 											<Text style={{color: colors.fontB2, marginTop: 6}}>
-												{item.kind === "completed" ? "办结时间" : "申请时间"}：
+												{item.kind === "completed"
+													? "办结时间"
+													: item.kind === "drafts"
+														? "最后修改时间"
+														: "申请时间"}：
 												{item.date}
 											</Text>
 										)}
@@ -544,12 +566,6 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 };
 
-// Only reports rendering health; no cookies, form fields or personal page text cross this message boundary.
-export const THOS_HEALTH_SCRIPT = `(function(){if(window.__thuInfoThosHealthStarted)return;window.__thuInfoThosHealthStarted=true;
-var tries=0;function check(){var b=document.body;
-var visible=!!b&&((b.innerText||'').trim().length>20||!!b.querySelector('iframe,form,input,canvas'));
-window.ReactNativeWebView.postMessage(JSON.stringify({type:'thos-render-health',visible:visible}));
-if(!visible&&++tries<60)setTimeout(check,1000);}setTimeout(check,500);})();true;`;
 export const THOS_BACK_SCRIPT = `(function(){if(window.__thuInfoThosBackStarted)return;window.__thuInfoThosBackStarted=true;
 document.addEventListener('click',function(event){var target=event.target;
 var button=target&&target.closest?target.closest('#head_back'):null;
@@ -557,7 +573,6 @@ if(!button||!window.ReactNativeWebView||!window.ReactNativeWebView.postMessage)r
 event.preventDefault();event.stopImmediatePropagation();
 window.ReactNativeWebView.postMessage(JSON.stringify({type:'thos-back'}));
 },true);})();true;`;
-export const THOS_INJECTED_SCRIPT = `${THOS_HEALTH_SCRIPT}\n${THOS_BACK_SCRIPT}`;
 
 export const ThosPortalScreen = ({
 	route,
@@ -570,7 +585,6 @@ export const ThosPortalScreen = ({
 	const userId = useSelector((s: State) => s.auth.userId);
 	const browser = useRef<WebView<object>>(null);
 	const generation = useRef(0);
-	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const backing = useRef(false);
 	const [source, setSource] = useState<string>();
 	const [epoch, setEpoch] = useState(0);
@@ -578,12 +592,8 @@ export const ThosPortalScreen = ({
 	const [error, setError] = useState<string>();
 	const [canBack, setCanBack] = useState(false);
 	const [current, setCurrent] = useState("");
-	const clearTimer = () => {
-		if (timer.current) clearTimeout(timer.current);
-	};
 	const prepare = useCallback(async () => {
 		const token = ++generation.current;
-		clearTimer();
 		setBusy(true);
 		setError(undefined);
 		setSource(undefined);
@@ -612,7 +622,6 @@ export const ThosPortalScreen = ({
 		prepare();
 		return () => {
 			requestGeneration.current++;
-			clearTimer();
 		};
 	}, [prepare]);
 	useEffect(() => {
@@ -646,7 +655,6 @@ export const ThosPortalScreen = ({
 		return () => listener.remove();
 	}, [canBack]);
 	const fail = (message: string) => {
-		clearTimer();
 		setBusy(false);
 		setError(message);
 	};
@@ -685,7 +693,6 @@ export const ThosPortalScreen = ({
 		return true;
 	};
 	const handleMessage = (event: WebViewMessageEvent) => {
-		// Official services can redirect within the university; rendering health is not proof of authentication.
 		if (
 			!isThosUniversityUrl(event.nativeEvent.url) ||
 			isThosAuthUrl(event.nativeEvent.url)
@@ -703,15 +710,8 @@ export const ThosPortalScreen = ({
 				}, 500);
 				return;
 			}
-			if (result.type === "thos-render-health" && result.visible === true) {
-				clearTimer();
-				setBusy(false);
-				setError((previous) =>
-					previous === blankPageMessage ? undefined : previous,
-				);
-			}
 		} catch {
-			/* Non-health messages cannot invoke native actions. */
+			/* Non-JSON messages cannot invoke native actions. */
 		}
 	};
 	return (
@@ -762,18 +762,12 @@ export const ThosPortalScreen = ({
 						setCurrent(state.url);
 					}}
 					onLoadStart={() => {
-						clearTimer();
 						setBusy(true);
 						setError(undefined);
-						timer.current = setTimeout(() => fail(blankPageMessage), 25_000);
 					}}
-					injectedJavaScriptBeforeContentLoaded={THOS_INJECTED_SCRIPT}
-					onLoadProgress={({nativeEvent}) => {
-						if (nativeEvent.progress >= 0.5)
-							browser.current?.injectJavaScript(THOS_INJECTED_SCRIPT);
-					}}
+					injectedJavaScriptBeforeContentLoaded={THOS_BACK_SCRIPT}
 					onLoadEnd={() => {
-						browser.current?.injectJavaScript(THOS_INJECTED_SCRIPT);
+						setBusy(false);
 					}}
 					onMessage={handleMessage}
 					onError={() =>

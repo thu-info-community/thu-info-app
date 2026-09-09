@@ -193,64 +193,6 @@ test("auth redirect returns to built-in authentication instead of an embedded lo
 		"使用内置认证",
 	);
 });
-test("blank page gets a recovery message after 25 seconds", async () => {
-	jest.useFakeTimers();
-	await render(portal());
-	await fireEvent(screen.getByTestId("thos-webview"), "loadStart");
-	await act(async () => {
-		jest.advanceTimersByTime(25000);
-	});
-	expect(screen.getByTestId("thos-portal-error").props.children).toContain(
-		"长时间没有显示内容",
-	);
-	expect(helper.prepareThosSession).toHaveBeenCalledTimes(1);
-});
-test("only target-page rendering health clears the timeout", async () => {
-	jest.useFakeTimers();
-	await render(portal());
-	await fireEvent(screen.getByTestId("thos-webview"), "loadStart");
-	await fireEvent(screen.getByTestId("thos-webview"), "message", {
-		nativeEvent: {
-			url: THOS_HOME,
-			data: JSON.stringify({type: "thos-render-health", visible: true}),
-		},
-	});
-	await act(async () => {
-		jest.advanceTimersByTime(25000);
-	});
-	expect(screen.queryByTestId("thos-portal-error")).toBeNull();
-});
-test("late rendering clears the blank-page warning after an official university redirect", async () => {
-	jest.useFakeTimers();
-	await render(portal());
-	await fireEvent(screen.getByTestId("thos-webview"), "loadStart");
-	await act(async () => {
-		jest.advanceTimersByTime(25000);
-	});
-	expect(screen.getByTestId("thos-portal-error")).toBeTruthy();
-	await fireEvent(screen.getByTestId("thos-webview"), "message", {
-		nativeEvent: {
-			url: "https://webvpn.tsinghua.edu.cn/http/university-proxy/fp/view",
-			data: JSON.stringify({type: "thos-render-health", visible: true}),
-		},
-	});
-	expect(screen.queryByTestId("thos-portal-error")).toBeNull();
-});
-test("untrusted rendering messages cannot dismiss the blank-page warning", async () => {
-	jest.useFakeTimers();
-	await render(portal());
-	await fireEvent(screen.getByTestId("thos-webview"), "loadStart");
-	await act(async () => {
-		jest.advanceTimersByTime(25000);
-	});
-	await fireEvent(screen.getByTestId("thos-webview"), "message", {
-		nativeEvent: {
-			url: "https://tsinghua.edu.cn.example.com/fp/view",
-			data: JSON.stringify({type: "thos-render-health", visible: true}),
-		},
-	});
-	expect(screen.getByTestId("thos-portal-error")).toBeTruthy();
-});
 test("failed shared authentication does not open the portal", async () => {
 	jest
 		.mocked(helper.prepareThosSession)
@@ -304,6 +246,40 @@ const nativeTask: ThosTask = {
 	date: "",
 	url: THOS_HOME,
 };
+const nativeDraft: ThosTask = {
+	id: "synthetic-draft",
+	key: "synthetic-draft",
+	kind: "drafts",
+	title: "合成测试草稿",
+	status: "草稿",
+	node: "",
+	date: "2026-09-09 14:05",
+	summary: "尚未提交",
+	url: THOS_HOME,
+};
+const nativeUnread: ThosTask = {
+	id: "synthetic-unread",
+	key: "synthetic-unread:work",
+	kind: "unread",
+	title: "合成待阅事项",
+	status: "未阅",
+	workflowStatus: "正在办理",
+	node: "当前节点",
+	date: "2026-09-09",
+	url: THOS_HOME,
+};
+const nativePhase: ThosTask = {
+	id: "synthetic-phase",
+	key: "synthetic-phase",
+	kind: "phases",
+	title: "合成阶段性事项",
+	status: "正在办理",
+	node: "当前进度 1/2",
+	date: "",
+	progress: 50,
+	phaseSteps: [],
+	url: THOS_HOME,
+};
 const nativeService: ThosService = {
 	id: "synthetic-service",
 	name: "合成测试服务",
@@ -342,6 +318,40 @@ test("task and service cards open native details without visiting an official pa
 		accountId: "synthetic-user",
 	});
 	expect(nav.navigate).toHaveBeenCalledTimes(2);
+});
+
+test("draft list uses the same native selection and detail flow", async () => {
+	jest.mocked(helper.getThosTasks).mockImplementation(async (kind) => ({
+		items: kind === "drafts" ? [nativeDraft] : [],
+		total: kind === "drafts" ? 1 : 0,
+		complete: true,
+	}));
+	await render(<ThosScreen navigation={nav} />);
+	await fireEvent.press(screen.getByText("草稿 —"));
+	expect(screen.getByText(nativeDraft.title)).toBeTruthy();
+	await fireEvent.press(screen.getByText(nativeDraft.title));
+	expect(nav.navigate).toHaveBeenLastCalledWith("ThosTaskDetail", {
+		task: nativeDraft,
+		accountId: "synthetic-user",
+	});
+});
+
+test("unread and phased lists use the same native selection flow", async () => {
+	jest.mocked(helper.getThosTasks).mockImplementation(async (kind) => ({
+		items:
+			kind === "unread"
+				? [nativeUnread]
+				: kind === "phases"
+					? [nativePhase]
+					: [],
+		total: kind === "unread" || kind === "phases" ? 1 : 0,
+		complete: true,
+	}));
+	await render(<ThosScreen navigation={nav} />);
+	await fireEvent.press(screen.getByText("待阅 —"));
+	expect(screen.getByText(nativeUnread.title)).toBeTruthy();
+	await fireEvent.press(screen.getByText("阶段性事项"));
+	expect(screen.getByText(nativePhase.title)).toBeTruthy();
 });
 
 test("native task detail shows actual node and unknown progress until explicit website navigation", async () => {

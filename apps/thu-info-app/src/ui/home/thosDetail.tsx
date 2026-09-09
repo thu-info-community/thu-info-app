@@ -3,6 +3,7 @@ import {
 	RefreshControl,
 	ScrollView,
 	Text,
+	TouchableOpacity,
 	useColorScheme,
 	View,
 } from "react-native";
@@ -174,13 +175,73 @@ export const ThosTaskDetailScreen = ({
 						</View>
 					</View>
 				)}
+				<Fact label="办理状态" value={task.workflowStatus} />
+				<Fact label="事项摘要" value={task.summary} />
 			</RoundedView>
+			{task.phaseSteps && task.phaseSteps.length > 0 && (
+				<RoundedView style={{paddingHorizontal: 20}}>
+					<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
+						阶段明细
+					</Text>
+					{task.phaseSteps.map((step) => (
+						<View key={`${step.order}:${step.name}`} style={{paddingTop: 16}}>
+							<Text style={{color: colors.text, fontWeight: "600"}}>
+								{step.order}. {step.name} · {phaseStateLabels[step.state] ?? "状态未知"}
+							</Text>
+							{step.items.map((item) => (
+								<TouchableOpacity
+									key={item.id}
+									disabled={!item.url}
+									onPress={() => {
+										if (item.url)
+											navigation.navigate("ThosPortal", {url: item.url});
+									}}
+									accessibilityRole="button"
+									style={{paddingVertical: 10}}>
+									<Text
+										style={{
+											color: item.url ? colors.mainTheme : colors.fontB2,
+										}}>
+										{item.name} · {phaseStateLabels[item.state] ?? "状态未知"}
+									</Text>
+								</TouchableOpacity>
+							))}
+						</View>
+					))}
+					{task.relatedServices && task.relatedServices.length > 0 && (
+						<View style={{paddingTop: 20}}>
+							<Text style={{color: colors.text, fontWeight: "600"}}>
+								其他相关服务
+							</Text>
+							{task.relatedServices.map((service) => (
+								<TouchableOpacity
+									key={service.id}
+									onPress={() =>
+										navigation.navigate("ThosPortal", {url: service.url})
+									}
+									accessibilityRole="button"
+									style={{paddingVertical: 10}}>
+									<Text style={{color: colors.mainTheme}}>{service.name}</Text>
+								</TouchableOpacity>
+							))}
+						</View>
+					)}
+				</RoundedView>
+			)}
 			<RoundedView style={{paddingHorizontal: 20}}>
 				<Fact label="事务编号" value={task.id} />
-				<Fact
-					label={task.kind === "completed" ? "办结时间" : "申请时间"}
-					value={task.date}
-				/>
+				{task.kind !== "phases" && (
+					<Fact
+						label={
+							task.kind === "completed"
+								? "办结时间"
+								: task.kind === "drafts"
+									? "最后修改时间"
+									: "申请时间"
+						}
+						value={task.date}
+					/>
+				)}
 			</RoundedView>
 		</DetailPage>
 	);
@@ -191,6 +252,12 @@ const kindLabels = {
 	guide: "引导服务",
 	integration: "集成服务",
 	group: "服务集合",
+};
+const phaseStateLabels: Record<string, string> = {
+	"0": "待办理",
+	"1": "正在办理",
+	"4": "办理成功",
+	"5": "办理失败",
 };
 
 export const ThosServiceDetailScreen = ({
