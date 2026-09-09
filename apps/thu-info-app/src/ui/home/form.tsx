@@ -1,8 +1,8 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {
 	Text,
 	View,
-	RefreshControl,
 	TextInput,
 	ScrollView,
 	TouchableOpacity,
@@ -186,11 +186,8 @@ export const FormScreen = ({
 			style={style.container}
 			showsVerticalScrollIndicator={false}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<View style={[style.titleContainer, {marginTop: 16}]}>

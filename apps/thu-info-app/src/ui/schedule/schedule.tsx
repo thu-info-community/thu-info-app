@@ -1,3 +1,4 @@
+import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {
 	View,
 	Text,
@@ -44,7 +45,7 @@ import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
 import {configSet, setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
-import {GestureHandlerRootView, RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
@@ -1002,12 +1003,9 @@ export const ScheduleScreen = () => {
 						setTableHeight(nativeEvent.layout.height);
 					}}
 					refreshControl={
-						<RefreshControl
+						<ThemedGestureRefreshControl
 							refreshing={refreshing}
 							onRefresh={getSchedule}
-							tintColor={theme.colors.themePurple}
-							colors={[theme.colors.themePurple]}
-							progressBackgroundColor={theme.colors.contentBackground}
 						/>
 					}>
 					<View

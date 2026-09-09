@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	FlatList,
-	RefreshControl,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -80,12 +80,9 @@ export const CrCoursePlanScreen = ({
 				</View>
 			}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({item: {id, name, property, credit, group}}) => (

@@ -1,9 +1,9 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {RootNav, SportsDetailProp} from "../../components/Root";
 import {helper} from "../../redux/store";
 import {
 	Alert,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -112,12 +112,9 @@ export const SportsDetailScreen = ({
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<RoundedView

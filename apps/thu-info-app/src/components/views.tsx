@@ -1,3 +1,4 @@
+import {ThemedRefreshControl} from "./themedRefreshControl";
 import {createElement, ReactElement, useCallback, useEffect, useRef, useState} from "react";
 import {
 	Animated,
@@ -8,7 +9,6 @@ import {
 	Modal,
 	PanResponder,
 	PanResponderGestureState,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -61,12 +61,9 @@ export function RoundedListView<T>(props: ViewProps & ListProps<T>) {
 		<ScrollView
 			refreshControl={
 				props.refreshing !== undefined && props.onRefresh !== undefined ? (
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={props.refreshing}
 						onRefresh={props.onRefresh}
-						tintColor={colors.themePurple}
-						colors={[colors.themePurple]}
-						progressBackgroundColor={colors.contentBackground}
 					/>
 				) : undefined
 			}

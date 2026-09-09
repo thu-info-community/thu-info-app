@@ -1,7 +1,8 @@
+import {ThemedRefreshControl} from "../themedRefreshControl";
 import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {FlatList, RefreshControl} from "react-native";
+import {FlatList} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {RoundedListView} from "../views";
@@ -50,12 +51,9 @@ export function simpleRefreshListScreen<T>(
 				style={{flex: 1}}
 				data={data}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={refresh}
-						tintColor={theme.colors.themePurple}
-						colors={[theme.colors.themePurple]}
-						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				renderItem={({item, index}) =>

@@ -1,7 +1,7 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Dimensions,
 	FlatList,
-	RefreshControl,
 	Text,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
@@ -260,12 +260,9 @@ export const ClassroomDetailScreen = ({
 			</View>
 			<FlatList
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={refresh}
-						tintColor={theme.colors.themePurple}
-						colors={[theme.colors.themePurple]}
-						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				style={{

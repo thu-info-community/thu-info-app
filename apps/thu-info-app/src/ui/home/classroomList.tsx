@@ -1,5 +1,5 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -36,12 +36,9 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<ScrollView
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			style={{

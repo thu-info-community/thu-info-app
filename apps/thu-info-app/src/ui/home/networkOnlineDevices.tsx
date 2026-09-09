@@ -1,9 +1,10 @@
+import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import { useEffect, useState } from "react";
 import { Device } from "@thu-info/lib/src/models/network/device";
 import { helper } from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
-import { GestureHandlerRootView, RefreshControl, ScrollView } from "react-native-gesture-handler";
+import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
 	// Platform,
@@ -154,12 +155,9 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 			<GestureHandlerRootView style={{ flex: 1, flexDirection: "column" }}>
 				<ScrollView
 					refreshControl={
-						<RefreshControl
+						<ThemedGestureRefreshControl
 							refreshing={refreshing}
 							onRefresh={refresh}
-							tintColor={colors.themePurple}
-							colors={[colors.themePurple]}
-							progressBackgroundColor={colors.contentBackground}
 						/>
 					}
 					contentContainerStyle={{ padding: 8 }}

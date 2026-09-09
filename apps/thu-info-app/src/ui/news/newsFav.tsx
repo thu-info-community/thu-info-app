@@ -1,8 +1,8 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {NewsFavRouteProp, RootNav} from "../../components/Root";
 import {
 	Dimensions,
 	FlatList,
-	RefreshControl,
 	Text,
 	useColorScheme,
 	View,
@@ -82,12 +82,9 @@ export const NewsFavScreen = ({
 			<FlatList
 				style={{margin: 12, marginBottom: 0}}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
-						tintColor={theme.colors.themePurple}
-						colors={[theme.colors.themePurple]}
-						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				ListEmptyComponent={

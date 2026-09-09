@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {
-	RefreshControl,
 	SectionList,
 	Text,
 	useColorScheme,
@@ -165,14 +165,11 @@ export const ExpenditureScreen = () => {
 		<SectionList
 			sections={txList}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={() => {
 						setYm({year: today.year(), month: today.month() + 1, clear: true});
 					}}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			onEndReached={() => {

@@ -1,7 +1,7 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Text,
 	View,
-	RefreshControl,
 	Dimensions,
 	Keyboard,
 	ScrollView,
@@ -524,12 +524,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			<FlatList
 				style={{flex: 1, paddingHorizontal: 12, marginVertical: 12, marginBottom: 0}}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
-						tintColor={theme.colors.themePurple}
-						colors={[theme.colors.themePurple]}
-						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				ListEmptyComponent={

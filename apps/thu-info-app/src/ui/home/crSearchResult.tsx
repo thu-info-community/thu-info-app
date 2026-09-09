@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	FlatList,
-	RefreshControl,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
@@ -56,12 +56,9 @@ export const CrSearchResultScreen = ({
 			style={{flex: 1}}
 			data={searchResult}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={() => refresh(true)}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({

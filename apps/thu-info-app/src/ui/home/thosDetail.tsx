@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -99,12 +99,9 @@ const DetailPage = ({
 			testID="thos-native-detail"
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={busy}
 					onRefresh={refresh}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			contentContainerStyle={{

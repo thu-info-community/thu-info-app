@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Alert,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -155,12 +155,9 @@ export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					tintColor={colors.themePurple}
-					colors={[colors.themePurple]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<>
