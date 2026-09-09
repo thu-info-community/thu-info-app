@@ -7,6 +7,8 @@ import {newSession, SessionStore} from "./storage";
 import {nativeSessionStorage} from "./nativeStorage";
 import {nativeCompletionTransport} from "./nativeTransport";
 import {createNativeToolContext, sessionNeedsUnlock} from "./nativeTools";
+import {probeToolSupport} from "./probe";
+import {campusModel} from "./types";
 
 /** At most one active runner. Native portal cookies belong to the logged-in account. */
 class AgentService {
@@ -67,12 +69,17 @@ class AgentService {
 		if (currState().auth.userId !== account || helper.userId !== account) {
 			throw new Error("Account changed");
 		}
-		if (this.token?.account === account && Date.now() - this.token.checkedAt < 5 * 60 * 1000) {
+		if (
+			this.token?.account === account &&
+			Date.now() - this.token.checkedAt < 5 * 60 * 1000
+		) {
 			return this.token.value;
 		}
 		// Legacy persisted tokens are not account-tagged; never reuse one across accounts.
 		const value = await helper.getMadModelToken().catch(() => {
-			throw new Error("Unable to authorize the campus model. Check your login and connection.");
+			throw new Error(
+				"Unable to authorize the campus model. Check your login and connection.",
+			);
 		});
 		if (currState().auth.userId !== account || helper.userId !== account) {
 			throw new Error("Account changed");
@@ -80,6 +87,27 @@ class AgentService {
 		this.token = {account, value, checkedAt: Date.now()};
 		store.dispatch(configSet({key: "deepseekToken", value}));
 		return value;
+	}
+	probeToolSupport(disableThinking = false) {
+		const account = currState().auth.userId;
+		return this.serial(async () => {
+			if (
+				!account ||
+				currState().auth.userId !== account ||
+				currState().config.appLocked ||
+				this.current?.isRunning()
+			) {
+				throw new Error(
+					"Sign in, unlock the app and stop the current run before testing the gateway",
+				);
+			}
+			return probeToolSupport(
+				nativeCompletionTransport(() => this.getToken(account)),
+				campusModel,
+				undefined,
+				disableThinking,
+			);
+		});
 	}
 	open(id?: string, create = false): Promise<AgentRuntime> {
 		const account = currState().auth.userId;
@@ -107,11 +135,14 @@ class AgentService {
 			}
 			await sessions.migrate(currState().deepseek.history);
 			if (currState().auth.userId !== account) {
-				throw new Error("Account changed during migration; original history was retained");
+				throw new Error(
+					"Account changed during migration; original history was retained",
+				);
 			}
 			store.dispatch(deepseekMigrationComplete());
 			await sessions.cleanup();
-			const target = id ?? (create ? undefined : (await sessions.list(0, 1))[0]?.id);
+			const target =
+				id ?? (create ? undefined : (await sessions.list(0, 1))[0]?.id);
 			const session = target
 				? await sessions.load(target)
 				: newSession(account, "New conversation");

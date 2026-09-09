@@ -96,6 +96,76 @@ export const DeepSeekSettingsScreen = () => {
 						"通过校园 Chat Completions 接口在本机运行。明确要求的本地日程、收藏、订阅可直接更新；预约、选课、发送消息、支付、账号变更及批量操作需确认。密码和支付在原生页面完成。完成接口及真机验证前需手动启用预览。",
 					)}
 				</Text>
+				<Pressable
+					style={style.touchable}
+					disabled={busy || !account}
+					onPress={async () => {
+						setBusy(true);
+						try {
+							const supported = await agentService.probeToolSupport();
+							Alert.alert(
+								agentText("Gateway tool check", "接口工具检查"),
+								supported
+									? agentText(
+											"The gateway returned a valid native tool call. This check did not execute a tool or access campus data.",
+											"接口返回了有效的原生工具调用。本次检查未执行工具或访问校园数据。",
+										)
+									: agentText(
+											"The gateway did not return the required native tool call. Agent actions cannot be verified on this gateway. No tool was executed; ask the gateway administrator to enable function calling.",
+											"接口未返回指定的原生工具调用，无法确认当前接口支持智能体操作。未执行任何工具，请联系接口管理员启用函数调用支持。",
+										),
+							);
+						} catch (e) {
+							Alert.alert(
+								agentText("Gateway tool check", "接口工具检查"),
+								String(e),
+							);
+						} finally {
+							setBusy(false);
+						}
+					}}>
+					<Text style={style.text}>
+						{agentText(
+							busy ? "Checking…" : "Check gateway tool support",
+							busy ? "正在检查…" : "检查接口工具支持",
+						)}
+					</Text>
+				</Pressable>
+				<Pressable
+					style={style.touchable}
+					disabled={busy || !account}
+					onPress={async () => {
+						setBusy(true);
+						try {
+							const supported = await agentService.probeToolSupport(true);
+							Alert.alert(
+								agentText("Non-thinking tool check", "关闭思考的工具检查"),
+								supported
+									? agentText(
+											"A valid native tool call was returned with thinking disabled. This diagnostic does not change your thinking setting or execute any tool.",
+											"请求关闭思考时返回了有效的原生工具调用。本次诊断不会修改思考设置或执行工具。",
+										)
+									: agentText(
+											"No valid native tool call was returned with thinking disabled either. No tool or campus write was executed.",
+											"请求关闭思考后仍未返回有效的原生工具调用。未执行任何工具或校园写入。",
+										),
+							);
+						} catch (e) {
+							Alert.alert(
+								agentText("Non-thinking tool check", "关闭思考的工具检查"),
+								String(e),
+							);
+						} finally {
+							setBusy(false);
+						}
+					}}>
+					<Text style={style.text}>
+						{agentText(
+							"Check tools with thinking disabled",
+							"请求关闭思考并检查工具",
+						)}
+					</Text>
+				</Pressable>
 			</RoundedView>
 			<RoundedView style={style.rounded}>
 				<Text style={[style.text, {padding: 16}]}>

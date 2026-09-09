@@ -312,6 +312,18 @@ export const AgentDeepSeekScreen = ({
 								style={{
 									body: {color: colors.text},
 									link: {color: colors.themePurple},
+									code_inline: {
+										color: colors.text,
+										backgroundColor: colors.contentBackground,
+									},
+									code_block: {
+										color: colors.text,
+										backgroundColor: colors.contentBackground,
+									},
+									fence: {
+										color: colors.text,
+										backgroundColor: colors.contentBackground,
+									},
 								}}
 								onLinkPress={(url) => {
 									if (/^https?:\/\//i.test(url)) {
