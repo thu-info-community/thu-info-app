@@ -1,8 +1,8 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import { useEffect, useRef, useState } from "react";
 import {
 	FlatList,
 	Modal,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -157,11 +157,9 @@ export const BankPaymentScreen = () => {
 			<ScrollView
 				style={{flex: 1, margin: 12, marginTop: 4}}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
-						colors={[colors.accent]}
-						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<View>

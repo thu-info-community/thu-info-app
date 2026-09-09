@@ -119,7 +119,8 @@ export const ScheduleAddModal = ({
 }: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const isLightMode = themeName !== "dark";
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const isLightMode = !(darkMode || themeName === "dark");
 
 	const modalBackgroundColor = isLightMode
 		? "#F8F6F2"
@@ -129,10 +130,10 @@ export const ScheduleAddModal = ({
 		: theme.colors.contentBackground;
 	const tabSelectedBackgroundColor = isLightMode
 		? "#8B6B9C"
-		: theme.colors.contentBackground;
+		: theme.colors.inputBorder;
 	const tabUnselectedBackgroundColor = isLightMode
 		? "#F0EEEA"
-		: theme.colors.themeGrey;
+		: theme.colors.themeBackground;
 	const tabSelectedTextColor = isLightMode ? "#FFFFFF" : theme.colors.fontB1;
 	const tabUnselectedTextColor = isLightMode
 		? "#5C5A56"
@@ -1604,13 +1605,14 @@ export const ScheduleAddModal = ({
 								{getStr("scheduleRepeatWeekly" as any)}
 							</Text>
 							<Switch
+								ios_backgroundColor={theme.colors.inputBorder}
 								value={repeatWeekly}
 								onValueChange={setRepeatWeekly}
 								trackColor={{
-									false: theme.colors.themeGrey,
+									false: theme.colors.inputBorder,
 									true: theme.colors.themePurple,
 								}}
-								thumbColor={"white"}
+								thumbColor={theme.colors.themeLightGrey}
 							/>
 						</View>
 					</>

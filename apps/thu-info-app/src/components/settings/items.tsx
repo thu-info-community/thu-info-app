@@ -11,6 +11,8 @@ import {cloneElement, ReactElement} from "react";
 import IconRight from "../../assets/icons/IconRight";
 import {useColorScheme} from "react-native";
 import themes, {ColorTheme} from "../../assets/themes/themes";
+import {State} from "../../redux/store";
+import {useSelector} from "react-redux";
 
 const setIconWidth = (icon: ReactElement | undefined, colors: ColorTheme) =>
 	icon === undefined
@@ -57,12 +59,12 @@ export const SettingsItem = ({
 		</View>
 	);
 	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+		<TouchableHighlight underlayColor={colors.themeTransparentGrey} onPress={onPress}>
 			{content}
 		</TouchableHighlight>
 	) : (
 		<TouchableNativeFeedback
-			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			background={TouchableNativeFeedback.Ripple(colors.themeTransparentGrey, false)}
 			onPress={onPress}>
 			{content}
 		</TouchableNativeFeedback>
@@ -88,12 +90,12 @@ export const SettingsMiddleText = ({
 		</View>
 	);
 	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+		<TouchableHighlight underlayColor={colors.themeTransparentGrey} onPress={onPress}>
 			{content}
 		</TouchableHighlight>
 	) : (
 		<TouchableNativeFeedback
-			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			background={TouchableNativeFeedback.Ripple(colors.themeTransparentGrey, false)}
 			onPress={onPress}>
 			{content}
 		</TouchableNativeFeedback>
@@ -113,11 +115,13 @@ export const SettingsLargeButton = ({
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const darkMode = useSelector((s: State) => s.config.darkMode);
+	const isDarkMode = darkMode || themeName === "dark";
 	return (
 		<TouchableOpacity
 			style={{
 				backgroundColor:
-					themeName === "dark"
+					isDarkMode
 						? disabled
 							? "#FFF4"
 							: "#ccc4"

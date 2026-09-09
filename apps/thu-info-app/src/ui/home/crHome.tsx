@@ -1,6 +1,6 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	FlatList,
-	RefreshControl,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
@@ -35,11 +35,9 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 			style={{flex: 1}}
 			data={semesters}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					colors={[colors.accent]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}
 			renderItem={({item: {id, name}}) => (

@@ -1,7 +1,8 @@
+import {ThemedRefreshControl} from "../themedRefreshControl";
 import {FC, PropsWithChildren, ReactElement, useEffect, useState} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {FlatList, RefreshControl, StyleProp, ViewStyle} from "react-native";
+import {FlatList, StyleProp, ViewStyle} from "react-native";
 import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
@@ -71,11 +72,9 @@ export function paginatedRefreshListScreen<T, R>(
 					...(containerStyles as object),
 				}}
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={() => refresh(true)}
-						colors={[theme.colors.accent]}
-						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}
 				renderItem={({item, index}) =>

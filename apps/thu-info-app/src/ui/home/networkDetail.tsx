@@ -1,3 +1,4 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
 import {Text, View, useColorScheme} from "react-native";
@@ -6,7 +7,6 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
 import {
 	GestureHandlerRootView,
-	RefreshControl,
 	ScrollView,
 } from "react-native-gesture-handler";
 import {useIsFocused} from "@react-navigation/native";
@@ -85,11 +85,9 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 		<GestureHandlerRootView>
 			<ScrollView
 				refreshControl={
-					<RefreshControl
+					<ThemedRefreshControl
 						refreshing={refreshing}
 						onRefresh={refresh}
-						colors={[colors.accent]}
-						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<RoundedView style={{margin: 24, paddingVertical: 8}}>

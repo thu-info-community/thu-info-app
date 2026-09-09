@@ -1,3 +1,4 @@
+import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {RootNav} from "../../components/Root.tsx";
 import {
 	Image,
@@ -19,7 +20,7 @@ import {
 } from "react-native-confirmation-code-field";
 import {getStr} from "../../utils/i18n.ts";
 import {Snackbar} from "react-native-snackbar";
-import {RefreshControl, ScrollView} from "react-native-gesture-handler";
+import {ScrollView} from "react-native-gesture-handler";
 import {uFetch} from "@thu-info/lib/src/utils/network";
 
 export const NetworkLoginScreen = ({navigation}: {navigation: RootNav}) => {
@@ -57,11 +58,9 @@ export const NetworkLoginScreen = ({navigation}: {navigation: RootNav}) => {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}>
 			<ScrollView
 				refreshControl={
-					<RefreshControl
+					<ThemedGestureRefreshControl
 						refreshing={refreshing}
 						onRefresh={refresh}
-						colors={[colors.accent]}
-						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>
 				<RoundedView

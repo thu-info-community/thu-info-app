@@ -1,3 +1,4 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
 	ActivityIndicator,
@@ -5,7 +6,6 @@ import {
 	BackHandler,
 	Linking,
 	Platform,
-	RefreshControl,
 	ScrollView,
 	Text,
 	TextInput,
@@ -352,7 +352,12 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
 			keyboardShouldPersistTaps="handled"
-			refreshControl={<RefreshControl refreshing={busy} onRefresh={load} />}
+			refreshControl={
+				<ThemedRefreshControl
+					refreshing={busy}
+					onRefresh={load}
+				/>
+			}
 			contentContainerStyle={{
 				padding: 16,
 				paddingBottom: 40,

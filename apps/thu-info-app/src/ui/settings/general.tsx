@@ -62,8 +62,9 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("tabletMode")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{true: colors.themePurple}}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						value={tabletMode ?? false}
 						onValueChange={(value) => {
 							dispatch(configSet({key: "tabletMode", value}));

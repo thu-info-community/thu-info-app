@@ -1,7 +1,7 @@
+import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {RootNav} from "../../components/Root";
 import {
-	RefreshControl,
 	ScrollView,
 	Text,
 	TouchableOpacity,
@@ -45,11 +45,9 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<RefreshControl
+				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					colors={[colors.accent]}
-					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>
 			<RoundedView

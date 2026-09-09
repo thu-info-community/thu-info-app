@@ -258,6 +258,8 @@ export const LibRoomPerformBookScreen = ({
 							popupContent={
 								<View style={{flexDirection: "row"}}>
 									<ScrollPicker
+										wrapperBackground={colors.contentBackground}
+										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
 										dataSource={validBegs.map((val) => val.start)}
 										selectedIndex={validBegs.findIndex(
@@ -278,6 +280,8 @@ export const LibRoomPerformBookScreen = ({
 										}}
 									/>
 									<ScrollPicker
+										wrapperBackground={colors.contentBackground}
+										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
 										ref={rightScrollRef}
 										dataSource={validEnds.map((val) => val.start)}
@@ -315,7 +319,7 @@ export const LibRoomPerformBookScreen = ({
 					{res.maxUser > 1 && (
 						<View>
 							<View
-								style={{backgroundColor: "lightgray", height: 1, margin: 8}}
+								style={{backgroundColor: colors.inputBorder, height: 1, margin: 8}}
 							/>
 							<View
 								style={{
@@ -354,7 +358,7 @@ export const LibRoomPerformBookScreen = ({
 										backgroundColor: colors.themeBackground,
 										color: colors.text,
 										textAlign: "left",
-										borderColor: "lightgrey",
+										borderColor: colors.inputBorder,
 										borderWidth: 1,
 										borderRadius: 5,
 										padding: 6,
@@ -369,6 +373,7 @@ export const LibRoomPerformBookScreen = ({
 								/>
 								<Button
 									title={getStr("search")}
+									color={colors.themePurple}
 									disabled={userKeyword.length === 0}
 									onPress={() => {
 										helper.fuzzySearchLibraryId(userKeyword).then((r) => {
@@ -420,7 +425,7 @@ export const LibRoomPerformBookScreen = ({
 											<TouchableOpacity
 												style={{
 													backgroundColor: colors.contentBackground,
-													borderColor: "gray",
+													borderColor: colors.inputBorder,
 													borderRadius: 5,
 													borderWidth: 1,
 													paddingHorizontal: 4,
@@ -529,7 +534,7 @@ export const LibRoomPerformBookScreen = ({
 										key={member.id}
 										style={{
 											backgroundColor: colors.contentBackground,
-											borderColor: "gray",
+											borderColor: colors.inputBorder,
 											borderRadius: 5,
 											borderWidth: 1,
 											paddingHorizontal: 4,

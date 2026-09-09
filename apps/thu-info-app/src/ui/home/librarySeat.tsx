@@ -71,7 +71,7 @@ export const LibrarySeatScreen = libraryRefreshListScreen(
 				}}>
 				{getStr("bookTips")}
 			</Text>
-			<View style={{backgroundColor: "lightgray", height: 1}} />
+			<View style={{backgroundColor: theme.colors.inputBorder, height: 1}} />
 		</View>
 	),
 );
