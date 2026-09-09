@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {
 	TextInput,
 	View,
@@ -102,7 +103,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	};
 
 	return (
-		<View style={style.container}>
+		<KeyboardAvoidingScreen style={style.container}>
 			<View style={style.absoluteContainer}>
 				<IconMain width={108} height={108} />
 				<View style={{height: 20}} />
@@ -182,7 +183,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					<Text style={style.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
 				</View>
 			) : null}
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };
 

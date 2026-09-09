@@ -1,9 +1,9 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Text,
 	View,
 	Dimensions,
-	Keyboard,
 	ScrollView,
 	TextInput,
 	FlatList,
@@ -332,25 +332,9 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	let screenHeight = Dimensions.get("window");
 
-	const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", (e) => {
-			setKeyboardHeight(e.endCoordinates.height); // Capture the keyboard height when it appears
-		});
-
-		const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
-			setKeyboardHeight(0); // Reset when the keyboard is hidden
-		});
-
-		return () => {
-			keyboardDidHideListener.remove();
-			keyboardDidShowListener.remove();
-		};
-	}, []);
-
 	return (
-		<View
+		<KeyboardAvoidingScreen
+			keyboardVerticalOffset={0}
 			style={{flex: 1, paddingTop: getStatusBarHeight()}}
 			key={darkModeHook}>
 			<View style={{flex: 0}}>
@@ -613,7 +597,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 			<View style={{
 				position: "absolute",
 				width: "100%",
-				bottom: keyboardHeight > 0 ? keyboardHeight - 60 : 60,
+				bottom: 0,
 				padding: 12,
 				alignItems: "flex-end",
 			}}>
@@ -660,6 +644,6 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableWithoutFeedback>
 			</View>
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };

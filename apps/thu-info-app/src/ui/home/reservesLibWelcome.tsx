@@ -1,4 +1,5 @@
 import {RootNav} from "../../components/Root";
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {
 	TextInput,
 	TouchableOpacity,
@@ -79,7 +80,7 @@ export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 		});
 	}, []);
 
-	return paginatedRefreshListScreen(
+	const content = paginatedRefreshListScreen(
 		async (_: PropsWithChildren<{navigation: RootNav}>, page) =>
 			search.length === 0
 				? []
@@ -135,4 +136,5 @@ export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 			</View>
 		),
 	)(props);
+	return <KeyboardAvoidingScreen>{content}</KeyboardAvoidingScreen>;
 };

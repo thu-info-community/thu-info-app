@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {Text, useColorScheme, View} from "react-native";
@@ -74,7 +75,7 @@ export const DigitalPasswordScreen = ({
 	}, []);
 
 	return (
-		<View style={{flex: 1, padding: 12, justifyContent: "center"}}>
+		<KeyboardAvoidingScreen style={{flex: 1, padding: 12, justifyContent: "center"}}>
 			<RoundedView
 				style={{
 					width: "100%",
@@ -175,6 +176,6 @@ export const DigitalPasswordScreen = ({
 					</RoundedView>
 				</View>
 			)}
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };

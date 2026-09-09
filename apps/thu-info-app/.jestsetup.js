@@ -8,7 +8,10 @@ import mockClipboard from '@react-native-clipboard/clipboard/jest/clipboard-mock
 
 jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);
 jest.mock('react-native-device-info', () => mockRNDeviceInfo)
-jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
+jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => ({
+	__esModule: true,
+	default: require('react-native/Libraries/vendor/emitter/EventEmitter').default,
+}));
 
 jest.mock("react-native-localize", () => ({
 	findBestAvailableLanguage: () => ({

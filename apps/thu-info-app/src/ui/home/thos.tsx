@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
@@ -347,298 +348,300 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	const page = tab === "services" ? services : tasks[tab];
 	const complete = page?.complete && (tab !== "todo" || tasks.active?.complete);
 	return (
-		<ScrollView
-			testID="thos-dashboard"
-			style={{flex: 1, backgroundColor: colors.themeBackground}}
-			onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
-			keyboardShouldPersistTaps="handled"
-			refreshControl={
-				<ThemedRefreshControl
-					refreshing={busy}
-					onRefresh={load}
-				/>
-			}
-			contentContainerStyle={{
-				padding: 16,
-				paddingBottom: 40,
-				maxWidth: 1100,
-				width: "100%",
-				alignSelf: "center",
-			}}>
-			{demo && (
-				<Text style={{color: colors.statusWarning, marginVertical: 8}}>
-					{getStr("thosDemoNotice")}
-				</Text>
-			)}
-			{!userId ? (
-				<Chip title={getStr("thosLogin")} onPress={login} />
-			) : (
-				<>
-					<View
-						style={{
-							flexDirection: "row",
-							flexWrap: "wrap",
-							marginVertical: 10,
-						}}>
-						{primaryTaskKinds.map((kind) => (
-							<TouchableOpacity
-								key={kind}
-								onPress={() => showTasks(kind)}
-								style={{
-									flex: 1,
-									minWidth: 90,
-									padding: 14,
-									margin: 4,
-									borderRadius: 12,
-									alignItems: "center",
-									backgroundColor:
-										tab === kind ? colors.mainTheme : colors.contentBackground,
-								}}>
-								<Text
-									style={{
-										fontSize: 28,
-										fontWeight: "700",
-										color: tab === kind ? "white" : colors.mainTheme,
-									}}>
-									{counts?.[kind] ?? "—"}
-								</Text>
-								<Text
-									style={{
-										color: tab === kind ? "white" : colors.text,
-										marginTop: 6,
-									}}>
-									{getTaskLabel(kind)}
-								</Text>
-							</TouchableOpacity>
-						))}
-					</View>
-					<View style={{flexDirection: "row", flexWrap: "wrap"}}>
-						<Chip
-							title={`${getStr("thosDrafts")} ${counts?.drafts ?? "—"}`}
-							onPress={() => showTasks("drafts")}
-							selected={tab === "drafts"}
-							style={{flex: 1, minWidth: 90, alignItems: "center"}}
-						/>
-						<Chip
-							title={`${getStr("thosUnread")} ${counts?.unread ?? "—"}`}
-							onPress={() => showTasks("unread")}
-							selected={tab === "unread"}
-							style={{flex: 1, minWidth: 90, alignItems: "center"}}
-						/>
-						<Chip
-							title={getStr("thosPhases")}
-							onPress={() => showTasks("phases")}
-							selected={tab === "phases"}
-							style={{flex: 1, minWidth: 90, alignItems: "center"}}
-						/>
-					</View>
-					{error && (
-						<Text
-							testID="thos-error"
-							style={{color: colors.statusError, padding: 12}}>
-							{error}
-						</Text>
-					)}
-					<View
-						style={{
-							flexDirection: "row",
-							flexWrap: "wrap",
-							justifyContent: "space-between",
-							marginTop: 12,
-						}}>
-						<Chip
-							title={`${getStr("thosFavorites")} ${favorites.length}`}
-							style={{flex: 1, alignItems: "center"}}
-							selected={tab === "services" && onlyFavorites}
-							onPress={() => showServices(true)}
-						/>
-						<Chip
-							title={getStr("thosAllServices")}
-							style={{flex: 1, alignItems: "center"}}
-							selected={tab === "services" && !onlyFavorites}
-							onPress={() => showServices(false)}
-						/>
-					</View>
-					<TextInput
-						testID="thos-search"
-						accessibilityLabel={getStr("thosSearchAccessibility")}
-						value={query}
-						onChangeText={setQuery}
-						placeholder={
-							tab === "services"
-								? onlyFavorites
-									? getStr("thosSearchFavorites")
-									: getStr("thosSearchServices")
-								: getStr("thosSearchTasks")
-						}
-						placeholderTextColor={colors.fontB2}
-						returnKeyType="search"
-						submitBehavior="blurAndSubmit"
-						style={{
-							color: colors.text,
-							borderColor: colors.inputBorder,
-							borderWidth: 1,
-							borderRadius: 12,
-							padding: 12,
-							marginVertical: 12,
-						}}
+		<KeyboardAvoidingScreen>
+			<ScrollView
+				testID="thos-dashboard"
+				style={{flex: 1, backgroundColor: colors.themeBackground}}
+				onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+				keyboardShouldPersistTaps="handled"
+				refreshControl={
+					<ThemedRefreshControl
+						refreshing={busy}
+						onRefresh={load}
 					/>
-					{!(tab === "services" && onlyFavorites) && !complete && (
-						<Text style={{color: colors.fontB2, marginBottom: 8}}>
-							{!page ? getStr("thosReading") : getStr("thosPartialResults")}
-						</Text>
-					)}
-					<View style={{flexDirection: "row", flexWrap: "wrap", gap: 12}}>
-						{tab === "services"
-							? serviceRows.map((item) => (
-									<View
-										key={item.id}
+				}
+				contentContainerStyle={{
+					padding: 16,
+					paddingBottom: 40,
+					maxWidth: 1100,
+					width: "100%",
+					alignSelf: "center",
+				}}>
+				{demo && (
+					<Text style={{color: colors.statusWarning, marginVertical: 8}}>
+						{getStr("thosDemoNotice")}
+					</Text>
+				)}
+				{!userId ? (
+					<Chip title={getStr("thosLogin")} onPress={login} />
+				) : (
+					<>
+						<View
+							style={{
+								flexDirection: "row",
+								flexWrap: "wrap",
+								marginVertical: 10,
+							}}>
+							{primaryTaskKinds.map((kind) => (
+								<TouchableOpacity
+									key={kind}
+									onPress={() => showTasks(kind)}
+									style={{
+										flex: 1,
+										minWidth: 90,
+										padding: 14,
+										margin: 4,
+										borderRadius: 12,
+										alignItems: "center",
+										backgroundColor:
+											tab === kind ? colors.mainTheme : colors.contentBackground,
+									}}>
+									<Text
 										style={{
-											width:
-												width >= 900 ? "31%" : width >= 600 ? "47%" : "100%",
-											borderRadius: 12,
-											padding: 16,
-											backgroundColor: colors.contentBackground,
+											fontSize: 28,
+											fontWeight: "700",
+											color: tab === kind ? "white" : colors.mainTheme,
 										}}>
-										<View
-											style={{flexDirection: "row", alignItems: "flex-start"}}>
-											<TouchableOpacity
-												onPress={() =>
-													navigation.navigate("ThosServiceDetail", {
-														service: item,
-														accountId: userId,
-													})
-												}
-												accessibilityRole="button"
-												style={{flex: 1}}>
-												<Text
-													style={{
-														color: colors.text,
-														fontSize: 17,
-														fontWeight: "600",
-													}}>
-													{item.name}
-												</Text>
-											</TouchableOpacity>
-											<TouchableOpacity
-												testID={`thos-favorite-${item.id}`}
-												accessibilityRole="button"
-												accessibilityLabel={
-													favorites.includes(item.id)
-														? getStr("thosCancelFavorite")
-														: getStr("thosFavoriteService")
-												}
-												onPress={() => favorite(item.id)}
-												style={{padding: 4, marginLeft: 8}}>
-												{favorites.includes(item.id) ? (
-													<IconStarActive width={24} height={24} />
-												) : (
-													<IconStar width={24} height={24} />
-												)}
-											</TouchableOpacity>
-										</View>
-										<Text style={{color: colors.fontB2, marginVertical: 10}}>
-											{item.department || getStr("thosDepartmentUnavailable")}
-										</Text>
-									</View>
-								))
-							: taskRows.map((item) => (
-									<TouchableOpacity
-										key={`${item.kind}:${item.key}`}
-										onPress={() =>
-											navigation.navigate("ThosTaskDetail", {
-												task: item,
-												accountId: userId,
-											})
-										}
+										{counts?.[kind] ?? "—"}
+									</Text>
+									<Text
 										style={{
-											width: "100%",
-											padding: 16,
-											borderRadius: 12,
-											backgroundColor: colors.contentBackground,
+											color: tab === kind ? "white" : colors.text,
+											marginTop: 6,
 										}}>
-										<Text
-											style={{
-												color: colors.text,
-												fontSize: 17,
-												fontWeight: "600",
-											}}>
-											{item.title}
-										</Text>
-										<Text style={{color: colors.mainTheme, marginVertical: 8}}>
-											{getThosTaskStatusLabel(item.status)}
-											{item.workflowStatus
-												? ` · ${getThosTaskStatusLabel(item.workflowStatus)}`
-												: ""}
-											{item.node ? ` · ${item.node}` : ""}
-										</Text>
-										{!!item.summary && (
-											<Text style={{color: colors.fontB2, marginBottom: 6}}>
-												{getStr("thosSummary")}
-												{item.summary}
-											</Text>
-										)}
-										{item.progress !== undefined && (
-											<>
-												<View
-													accessibilityLabel={getStr("thosProgress").replace(
-														"{0}",
-														String(item.progress),
-													)}
-													style={{
-														height: 5,
-														borderRadius: 3,
-														backgroundColor: colors.themeGrey,
-													}}>
-													<View
-														style={{
-															height: 5,
-															width: `${item.progress}%`,
-															backgroundColor: colors.mainTheme,
-															borderRadius: 3,
-														}}
-													/>
-												</View>
-												<Text style={{color: colors.fontB2, marginTop: 6}}>
-													{item.progress}%
-												</Text>
-											</>
-										)}
-										{!!item.date && (
-											<Text style={{color: colors.fontB2, marginTop: 6}}>
-												{item.kind === "completed"
-													? getStr("thosCompletionTime")
-													: item.kind === "drafts"
-														? getStr("thosLastModifiedTime")
-														: getStr("thosApplicationTime")}
-												{getStr("colonMark")}
-												{item.date}
-											</Text>
-										)}
-									</TouchableOpacity>
-								))}
-					</View>
-					{page &&
-						(tab === "services" ? serviceRows : taskRows).length === 0 && (
-							<Text style={{padding: 20, color: colors.fontB2}}>
-								{tab === "services" && onlyFavorites && !query && complete
-									? getStr("thosNoFavorites")
-									: query
-										? getStr("thosNoMatch")
-										: complete
-											? getStr("thosNoTasks")
-											: getStr("thosNoResults")}
+										{getTaskLabel(kind)}
+									</Text>
+								</TouchableOpacity>
+							))}
+						</View>
+						<View style={{flexDirection: "row", flexWrap: "wrap"}}>
+							<Chip
+								title={`${getStr("thosDrafts")} ${counts?.drafts ?? "—"}`}
+								onPress={() => showTasks("drafts")}
+								selected={tab === "drafts"}
+								style={{flex: 1, minWidth: 90, alignItems: "center"}}
+							/>
+							<Chip
+								title={`${getStr("thosUnread")} ${counts?.unread ?? "—"}`}
+								onPress={() => showTasks("unread")}
+								selected={tab === "unread"}
+								style={{flex: 1, minWidth: 90, alignItems: "center"}}
+							/>
+							<Chip
+								title={getStr("thosPhases")}
+								onPress={() => showTasks("phases")}
+								selected={tab === "phases"}
+								style={{flex: 1, minWidth: 90, alignItems: "center"}}
+							/>
+						</View>
+						{error && (
+							<Text
+								testID="thos-error"
+								style={{color: colors.statusError, padding: 12}}>
+								{error}
 							</Text>
 						)}
-					{updated && (
-						<Text style={{color: colors.fontB2, marginTop: 12}}>
-							{getStr("thosRefreshTime")}
-							{new Date(updated).toLocaleTimeString()}
-						</Text>
-					)}
-				</>
-			)}
-		</ScrollView>
+						<View
+							style={{
+								flexDirection: "row",
+								flexWrap: "wrap",
+								justifyContent: "space-between",
+								marginTop: 12,
+							}}>
+							<Chip
+								title={`${getStr("thosFavorites")} ${favorites.length}`}
+								style={{flex: 1, alignItems: "center"}}
+								selected={tab === "services" && onlyFavorites}
+								onPress={() => showServices(true)}
+							/>
+							<Chip
+								title={getStr("thosAllServices")}
+								style={{flex: 1, alignItems: "center"}}
+								selected={tab === "services" && !onlyFavorites}
+								onPress={() => showServices(false)}
+							/>
+						</View>
+						<TextInput
+							testID="thos-search"
+							accessibilityLabel={getStr("thosSearchAccessibility")}
+							value={query}
+							onChangeText={setQuery}
+							placeholder={
+								tab === "services"
+									? onlyFavorites
+										? getStr("thosSearchFavorites")
+										: getStr("thosSearchServices")
+									: getStr("thosSearchTasks")
+							}
+							placeholderTextColor={colors.fontB2}
+							returnKeyType="search"
+							submitBehavior="blurAndSubmit"
+							style={{
+								color: colors.text,
+								borderColor: colors.inputBorder,
+								borderWidth: 1,
+								borderRadius: 12,
+								padding: 12,
+								marginVertical: 12,
+							}}
+						/>
+						{!(tab === "services" && onlyFavorites) && !complete && (
+							<Text style={{color: colors.fontB2, marginBottom: 8}}>
+								{!page ? getStr("thosReading") : getStr("thosPartialResults")}
+							</Text>
+						)}
+						<View style={{flexDirection: "row", flexWrap: "wrap", gap: 12}}>
+							{tab === "services"
+								? serviceRows.map((item) => (
+										<View
+											key={item.id}
+											style={{
+												width:
+													width >= 900 ? "31%" : width >= 600 ? "47%" : "100%",
+												borderRadius: 12,
+												padding: 16,
+												backgroundColor: colors.contentBackground,
+											}}>
+											<View
+												style={{flexDirection: "row", alignItems: "flex-start"}}>
+												<TouchableOpacity
+													onPress={() =>
+														navigation.navigate("ThosServiceDetail", {
+															service: item,
+															accountId: userId,
+														})
+													}
+													accessibilityRole="button"
+													style={{flex: 1}}>
+													<Text
+														style={{
+															color: colors.text,
+															fontSize: 17,
+															fontWeight: "600",
+														}}>
+														{item.name}
+													</Text>
+												</TouchableOpacity>
+												<TouchableOpacity
+													testID={`thos-favorite-${item.id}`}
+													accessibilityRole="button"
+													accessibilityLabel={
+														favorites.includes(item.id)
+															? getStr("thosCancelFavorite")
+															: getStr("thosFavoriteService")
+													}
+													onPress={() => favorite(item.id)}
+													style={{padding: 4, marginLeft: 8}}>
+													{favorites.includes(item.id) ? (
+														<IconStarActive width={24} height={24} />
+													) : (
+														<IconStar width={24} height={24} />
+													)}
+												</TouchableOpacity>
+											</View>
+											<Text style={{color: colors.fontB2, marginVertical: 10}}>
+												{item.department || getStr("thosDepartmentUnavailable")}
+											</Text>
+										</View>
+									))
+								: taskRows.map((item) => (
+										<TouchableOpacity
+											key={`${item.kind}:${item.key}`}
+											onPress={() =>
+												navigation.navigate("ThosTaskDetail", {
+													task: item,
+													accountId: userId,
+												})
+											}
+											style={{
+												width: "100%",
+												padding: 16,
+												borderRadius: 12,
+												backgroundColor: colors.contentBackground,
+											}}>
+											<Text
+												style={{
+													color: colors.text,
+													fontSize: 17,
+													fontWeight: "600",
+												}}>
+												{item.title}
+											</Text>
+											<Text style={{color: colors.mainTheme, marginVertical: 8}}>
+												{getThosTaskStatusLabel(item.status)}
+												{item.workflowStatus
+													? ` · ${getThosTaskStatusLabel(item.workflowStatus)}`
+													: ""}
+												{item.node ? ` · ${item.node}` : ""}
+											</Text>
+											{!!item.summary && (
+												<Text style={{color: colors.fontB2, marginBottom: 6}}>
+													{getStr("thosSummary")}
+													{item.summary}
+												</Text>
+											)}
+											{item.progress !== undefined && (
+												<>
+													<View
+														accessibilityLabel={getStr("thosProgress").replace(
+															"{0}",
+															String(item.progress),
+														)}
+														style={{
+															height: 5,
+															borderRadius: 3,
+															backgroundColor: colors.themeGrey,
+														}}>
+														<View
+															style={{
+																height: 5,
+																width: `${item.progress}%`,
+																backgroundColor: colors.mainTheme,
+																borderRadius: 3,
+															}}
+														/>
+													</View>
+													<Text style={{color: colors.fontB2, marginTop: 6}}>
+														{item.progress}%
+													</Text>
+												</>
+											)}
+											{!!item.date && (
+												<Text style={{color: colors.fontB2, marginTop: 6}}>
+													{item.kind === "completed"
+														? getStr("thosCompletionTime")
+														: item.kind === "drafts"
+															? getStr("thosLastModifiedTime")
+															: getStr("thosApplicationTime")}
+													{getStr("colonMark")}
+													{item.date}
+												</Text>
+											)}
+										</TouchableOpacity>
+									))}
+						</View>
+						{page &&
+							(tab === "services" ? serviceRows : taskRows).length === 0 && (
+								<Text style={{padding: 20, color: colors.fontB2}}>
+									{tab === "services" && onlyFavorites && !query && complete
+										? getStr("thosNoFavorites")
+										: query
+											? getStr("thosNoMatch")
+											: complete
+												? getStr("thosNoTasks")
+												: getStr("thosNoResults")}
+								</Text>
+							)}
+						{updated && (
+							<Text style={{color: colors.fontB2, marginTop: 12}}>
+								{getStr("thosRefreshTime")}
+								{new Date(updated).toLocaleTimeString()}
+							</Text>
+						)}
+					</>
+				)}
+			</ScrollView>
+		</KeyboardAvoidingScreen>
 	);
 };
 

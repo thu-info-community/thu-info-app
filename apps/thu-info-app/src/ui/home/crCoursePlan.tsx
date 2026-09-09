@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	FlatList,
@@ -41,75 +42,77 @@ export const CrCoursePlanScreen = ({
 	useEffect(refresh, [route.params.semesterId]);
 
 	return (
-		<FlatList
-			style={{flex: 1}}
-			data={coursePlan}
-			ListHeaderComponent={
-				<View style={{flexDirection: "row"}}>
-					<TextInput
-						value={searchKey}
-						onChangeText={setSearchKey}
-						style={{
-							flex: 3,
-							marginLeft: 12,
-							textAlignVertical: "center",
-							fontSize: 15,
-							paddingHorizontal: 12,
-							backgroundColor: colors.themeBackground,
-							color: colors.text,
-							borderColor: colors.inputBorder,
-							borderWidth: 1,
-							borderRadius: 5,
-						}}
-						placeholder={getStr("searchCourseName")}
-						placeholderTextColor={colors.fontB3}
+		<KeyboardAvoidingScreen>
+			<FlatList
+				style={{flex: 1}}
+				data={coursePlan}
+				ListHeaderComponent={
+					<View style={{flexDirection: "row"}}>
+						<TextInput
+							value={searchKey}
+							onChangeText={setSearchKey}
+							style={{
+								flex: 3,
+								marginLeft: 12,
+								textAlignVertical: "center",
+								fontSize: 15,
+								paddingHorizontal: 12,
+								backgroundColor: colors.themeBackground,
+								color: colors.text,
+								borderColor: colors.inputBorder,
+								borderWidth: 1,
+								borderRadius: 5,
+							}}
+							placeholder={getStr("searchCourseName")}
+							placeholderTextColor={colors.fontB3}
+						/>
+						<SettingsLargeButton
+							text={getStr("search")}
+							onPress={() => {
+								navigation.navigate("CrSearchResult", {
+									searchParams: {
+										semester: route.params.semesterId,
+										name: searchKey,
+									},
+								});
+							}}
+							disabled={searchKey.length === 0}
+							redText={false}
+						/>
+					</View>
+				}
+				refreshControl={
+					<ThemedRefreshControl
+						refreshing={refreshing}
+						onRefresh={refresh}
 					/>
-					<SettingsLargeButton
-						text={getStr("search")}
+				}
+				renderItem={({item: {id, name, property, credit, group}}) => (
+					<TouchableOpacity
+						style={{
+							paddingHorizontal: 15,
+							paddingVertical: 6,
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}
 						onPress={() => {
 							navigation.navigate("CrSearchResult", {
-								searchParams: {
-									semester: route.params.semesterId,
-									name: searchKey,
-								},
+								searchParams: {semester: route.params.semesterId, id},
 							});
-						}}
-						disabled={searchKey.length === 0}
-						redText={false}
-					/>
-				</View>
-			}
-			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
-			}
-			renderItem={({item: {id, name, property, credit, group}}) => (
-				<TouchableOpacity
-					style={{
-						paddingHorizontal: 15,
-						paddingVertical: 6,
-						flexDirection: "row",
-						justifyContent: "space-between",
-					}}
-					onPress={() => {
-						navigation.navigate("CrSearchResult", {
-							searchParams: {semester: route.params.semesterId, id},
-						});
-					}}>
-					<View style={{flex: 2, alignItems: "flex-start"}}>
-						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-							[{property}] {name}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{id} ({credit} cr)
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>{group}</Text>
-					</View>
-				</TouchableOpacity>
-			)}
-			keyExtractor={({id}) => id}
-		/>
+						}}>
+						<View style={{flex: 2, alignItems: "flex-start"}}>
+							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+								[{property}] {name}
+							</Text>
+							<Text style={{color: "grey", marginVertical: 2}}>
+								{id} ({credit} cr)
+							</Text>
+							<Text style={{color: "grey", marginVertical: 2}}>{group}</Text>
+						</View>
+					</TouchableOpacity>
+				)}
+				keyExtractor={({id}) => id}
+			/>
+		</KeyboardAvoidingScreen>
 	);
 };

@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {View, Text, TouchableOpacity, Linking} from "react-native";
 import {useEffect, useState} from "react";
 import {futures, helper} from "../../redux/store";
@@ -42,7 +43,7 @@ export const TwoFactorAuthScreen = ({
 	}, []);
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<KeyboardAvoidingScreen style={{flex: 1, padding: 12}}>
 			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
 				{getStr("twoFactorPrompt")}
 			</Text>
@@ -185,6 +186,6 @@ export const TwoFactorAuthScreen = ({
 					/>
 				</RoundedView>
 			)}
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };

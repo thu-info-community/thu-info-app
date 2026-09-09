@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {TextInput, View, Text, TouchableOpacity} from "react-native";
 import {useState} from "react";
 import {helper} from "../../redux/store";
@@ -25,7 +26,7 @@ export const ResetDormPasswordScreen = ({
 	const style = styles(themeName);
 
 	return (
-		<View style={style.container}>
+		<KeyboardAvoidingScreen style={style.container}>
 			<RoundedView style={style.inputRounded}>
 				<IconLock width={18} height={18} />
 				<TextInput
@@ -74,6 +75,6 @@ export const ResetDormPasswordScreen = ({
 					{getStr("resetDormPasswordHint")}
 				</Text>
 			</View>
-		</View>
+		</KeyboardAvoidingScreen>
 	);
 };

@@ -1,3 +1,4 @@
+import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {
 	ScrollView,
 	Text,
@@ -108,166 +109,168 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 	useEffect(fetchSubscriptionList, []);
 
 	return (
-		<ScrollView style={{backgroundColor: theme.colors.themeBackground}}>
-			<View
-				style={{
-					marginHorizontal: 12,
-				}}>
-				<Text
+		<KeyboardAvoidingScreen>
+			<ScrollView style={{backgroundColor: theme.colors.themeBackground}}>
+				<View
 					style={{
-						textAlign: "left",
-						fontSize: 15,
-						marginTop: 18,
-						marginLeft: 12,
-						marginBottom: 8,
-						fontWeight: "bold",
-						color: theme.colors.text,
+						marginHorizontal: 12,
 					}}>
-					{getStr("mySub")}
-				</Text>
-				{subList.map((s) => (
-					<NewsSubItem newsSub={s} key={s.id} setSubList={setSubList} />
-				))}
-				<Text
-					style={{
-						textAlign: "left",
-						fontSize: 15,
-						marginTop: 18,
-						marginLeft: 12,
-						marginBottom: 8,
-						fontWeight: "bold",
-						color: theme.colors.text,
-					}}>
-					{getStr("createSub")}
-				</Text>
-				<RoundedView style={{marginTop: 16, padding: 16}}>
-					<TouchableOpacity
-						onPress={() => {
-							// @ts-ignore
-							navigation.navigate("NewsSubSourceSelect", {
-								sourceSelected,
-								setSourceSelected,
-							});
-						}}>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
-							<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
-								{getStr("newsSource")}
-							</Text>
-							<View style={{flex: 1}} />
-							<Text
-								style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
-								numberOfLines={1}>
-								{sourceSelected.sourceName}
-							</Text>
-							<IconRight height={24} width={24} />
-						</View>
-					</TouchableOpacity>
-					<View
+					<Text
 						style={{
-							height: 1,
-							backgroundColor: theme.colors.themeGrey,
-							marginVertical: 12,
-						}}
-					/>
-					<TouchableOpacity
-						onPress={() => {
-							// @ts-ignore
-							navigation.navigate("NewsSubChannelSelect", {
-								channelSelected,
-								setChannelSelected,
-							});
-						}}>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
-							<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
-								{getStr("newsChannel")}
-							</Text>
-							<View style={{flex: 1}} />
-							<Text
-								style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
-								numberOfLines={1}>
-								{channelSelected.title}
-							</Text>
-							<IconRight height={24} width={24} />
-						</View>
-					</TouchableOpacity>
-					<View
-						style={{
-							height: 1,
-							backgroundColor: theme.colors.themeGrey,
-							marginVertical: 12,
-						}}
-					/>
-					<TextInput
-						style={{
+							textAlign: "left",
+							fontSize: 15,
+							marginTop: 18,
+							marginLeft: 12,
+							marginBottom: 8,
+							fontWeight: "bold",
 							color: theme.colors.text,
-							padding: 0,
-							fontSize: 16,
-						}}
-						placeholder={getStr("newsKeyword")}
-						placeholderTextColor={theme.colors.fontB3}
-						selectionColor={theme.colors.accent}
-						onChangeText={setKeyword}
-					/>
-				</RoundedView>
-				<Text
-					style={{
-						justifyContent: "center",
-						paddingVertical: 12,
-						paddingHorizontal: 16,
-						marginVertical: 4,
-						fontSize: 16,
-						color: theme.colors.fontB3,
-					}}>
-					{getStr("newsSubTip")}
-				</Text>
-				<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-					<TouchableOpacity
-						style={{
-							backgroundColor:
-								sourceSelected.sourceId === "" &&
-								channelSelected.id === undefined
-									? theme.colors.themeGrey
-									: theme.colors.primaryLight,
-							alignItems: "center",
-							justifyContent: "center",
-							paddingVertical: 8,
-							paddingHorizontal: 24,
-							borderRadius: 4,
-							marginRight: 12,
-						}}
-						disabled={
-							sourceSelected.sourceId === "" && channelSelected.id === undefined
-						}
-						onPress={() => {
-							helper
-								.addNewsSubscription(
-									// @ts-ignore
-									channelSelected.id,
-									sourceSelected.sourceId,
-									keyword,
-								)
-								.then((res) => {
-									if (res) {
-										setSourceSelected(emptySource);
-										setChannelSelected(emptyChannel);
-										fetchSubscriptionList();
-									} else {
-										return;
-									}
-								})
-								.catch(NetworkRetry);
 						}}>
-						<Text
-							style={{
-								color: theme.colors.contentBackground,
-								fontSize: 16,
+						{getStr("mySub")}
+					</Text>
+					{subList.map((s) => (
+						<NewsSubItem newsSub={s} key={s.id} setSubList={setSubList} />
+					))}
+					<Text
+						style={{
+							textAlign: "left",
+							fontSize: 15,
+							marginTop: 18,
+							marginLeft: 12,
+							marginBottom: 8,
+							fontWeight: "bold",
+							color: theme.colors.text,
+						}}>
+						{getStr("createSub")}
+					</Text>
+					<RoundedView style={{marginTop: 16, padding: 16}}>
+						<TouchableOpacity
+							onPress={() => {
+								// @ts-ignore
+								navigation.navigate("NewsSubSourceSelect", {
+									sourceSelected,
+									setSourceSelected,
+								});
 							}}>
-							{getStr("add")}
-						</Text>
-					</TouchableOpacity>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
+									{getStr("newsSource")}
+								</Text>
+								<View style={{flex: 1}} />
+								<Text
+									style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
+									numberOfLines={1}>
+									{sourceSelected.sourceName}
+								</Text>
+								<IconRight height={24} width={24} />
+							</View>
+						</TouchableOpacity>
+						<View
+							style={{
+								height: 1,
+								backgroundColor: theme.colors.themeGrey,
+								marginVertical: 12,
+							}}
+						/>
+						<TouchableOpacity
+							onPress={() => {
+								// @ts-ignore
+								navigation.navigate("NewsSubChannelSelect", {
+									channelSelected,
+									setChannelSelected,
+								});
+							}}>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
+									{getStr("newsChannel")}
+								</Text>
+								<View style={{flex: 1}} />
+								<Text
+									style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
+									numberOfLines={1}>
+									{channelSelected.title}
+								</Text>
+								<IconRight height={24} width={24} />
+							</View>
+						</TouchableOpacity>
+						<View
+							style={{
+								height: 1,
+								backgroundColor: theme.colors.themeGrey,
+								marginVertical: 12,
+							}}
+						/>
+						<TextInput
+							style={{
+								color: theme.colors.text,
+								padding: 0,
+								fontSize: 16,
+							}}
+							placeholder={getStr("newsKeyword")}
+							placeholderTextColor={theme.colors.fontB3}
+							selectionColor={theme.colors.accent}
+							onChangeText={setKeyword}
+						/>
+					</RoundedView>
+					<Text
+						style={{
+							justifyContent: "center",
+							paddingVertical: 12,
+							paddingHorizontal: 16,
+							marginVertical: 4,
+							fontSize: 16,
+							color: theme.colors.fontB3,
+						}}>
+						{getStr("newsSubTip")}
+					</Text>
+					<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+						<TouchableOpacity
+							style={{
+								backgroundColor:
+									sourceSelected.sourceId === "" &&
+									channelSelected.id === undefined
+										? theme.colors.themeGrey
+										: theme.colors.primaryLight,
+								alignItems: "center",
+								justifyContent: "center",
+								paddingVertical: 8,
+								paddingHorizontal: 24,
+								borderRadius: 4,
+								marginRight: 12,
+							}}
+							disabled={
+								sourceSelected.sourceId === "" && channelSelected.id === undefined
+							}
+							onPress={() => {
+								helper
+									.addNewsSubscription(
+										// @ts-ignore
+										channelSelected.id,
+										sourceSelected.sourceId,
+										keyword,
+									)
+									.then((res) => {
+										if (res) {
+											setSourceSelected(emptySource);
+											setChannelSelected(emptyChannel);
+											fetchSubscriptionList();
+										} else {
+											return;
+										}
+									})
+									.catch(NetworkRetry);
+							}}>
+							<Text
+								style={{
+									color: theme.colors.contentBackground,
+									fontSize: 16,
+								}}>
+								{getStr("add")}
+							</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
-		</ScrollView>
+			</ScrollView>
+		</KeyboardAvoidingScreen>
 	);
 };
 
