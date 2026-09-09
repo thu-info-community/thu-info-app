@@ -38,7 +38,8 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 				<RefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
-					colors={[colors.accent]}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
 					progressBackgroundColor={colors.contentBackground}
 				/>
 			}

@@ -25,8 +25,9 @@ export const AppSecretCustomizeScreen = () => {
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("report")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{true: colors.themePurple}}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						value={verifyPasswordBeforeEnterReport === true}
 						onValueChange={(value) => {
 							dispatch(
@@ -39,8 +40,9 @@ export const AppSecretCustomizeScreen = () => {
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("campusFinance")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{true: colors.themePurple}}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						value={verifyPasswordBeforeEnterFinance === true}
 						onValueChange={(value) => {
 							dispatch(
@@ -53,8 +55,9 @@ export const AppSecretCustomizeScreen = () => {
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("physicalExam")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{true: colors.themePurple}}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						value={verifyPasswordBeforeEnterPhysicalExam === true}
 						onValueChange={(value) => {
 							dispatch(

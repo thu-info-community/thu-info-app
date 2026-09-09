@@ -74,7 +74,8 @@ export function paginatedRefreshListScreen<T, R>(
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={() => refresh(true)}
-						colors={[theme.colors.accent]}
+						tintColor={theme.colors.themePurple}
+						colors={[theme.colors.themePurple]}
 						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}

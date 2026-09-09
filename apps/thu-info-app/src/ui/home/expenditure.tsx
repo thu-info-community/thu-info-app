@@ -170,7 +170,8 @@ export const ExpenditureScreen = () => {
 					onRefresh={() => {
 						setYm({year: today.year(), month: today.month() + 1, clear: true});
 					}}
-					colors={[colors.accent]}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
 					progressBackgroundColor={colors.contentBackground}
 				/>
 			}

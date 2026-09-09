@@ -85,7 +85,8 @@ export const NewsFavScreen = ({
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchNewsList}
-						colors={[theme.colors.accent]}
+						tintColor={theme.colors.themePurple}
+						colors={[theme.colors.themePurple]}
 						progressBackgroundColor={theme.colors.contentBackground}
 					/>
 				}

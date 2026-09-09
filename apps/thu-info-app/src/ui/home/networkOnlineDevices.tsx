@@ -157,7 +157,8 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 						<RefreshControl
 							refreshing={refreshing}
 							onRefresh={refresh}
-							colors={[colors.accent]}
+							tintColor={colors.themePurple}
+							colors={[colors.themePurple]}
 							progressBackgroundColor={colors.contentBackground}
 						/>
 					}
@@ -217,10 +218,11 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							{getStr("internetAccess")}
 						</Text>
 						<Switch
+							ios_backgroundColor={colors.inputBorder}
 							value={internetAccess}
 							onValueChange={setInternetAccess}
-							thumbColor={internetAccess ? colors.themeDarkPurple : colors.themeDarkGrey}
-							trackColor={{ true: colors.themePurple }}
+							thumbColor={colors.themeLightGrey}
+							trackColor={{ false: colors.inputBorder, true: colors.themePurple }}
 						/>
 					</View>
 					<View

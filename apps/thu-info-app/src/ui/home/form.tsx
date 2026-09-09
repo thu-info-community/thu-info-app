@@ -188,7 +188,8 @@ export const FormScreen = ({
 			refreshControl={
 				<RefreshControl
 					refreshing={refreshing}
-					colors={[colors.accent]}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
 					progressBackgroundColor={colors.contentBackground}
 				/>
 			}>

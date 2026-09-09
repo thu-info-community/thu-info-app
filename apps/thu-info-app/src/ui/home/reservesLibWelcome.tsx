@@ -38,7 +38,7 @@ const BookItem = ({
 			}}>
 			<View
 				style={{flexDirection: "column", flex: 3, alignItems: "flex-start"}}>
-				<Text style={{fontSize: 13, marginHorizontal: 10, color: "grey"}}>
+				<Text style={{fontSize: 13, marginHorizontal: 10, color: colors.fontB2}}>
 					{book.author}
 				</Text>
 				<Text style={{fontSize: 17, marginHorizontal: 10, color: colors.text}}>
@@ -53,12 +53,12 @@ const BookItem = ({
 		</View>
 	);
 	return Platform.OS === "ios" ? (
-		<TouchableHighlight underlayColor="#0002" onPress={onPress}>
+		<TouchableHighlight underlayColor={colors.themeTransparentGrey} onPress={onPress}>
 			{content}
 		</TouchableHighlight>
 	) : (
 		<TouchableNativeFeedback
-			background={TouchableNativeFeedback.Ripple("#0002", false)}
+			background={TouchableNativeFeedback.Ripple(colors.themeTransparentGrey, false)}
 			onPress={onPress}>
 			{content}
 		</TouchableNativeFeedback>
@@ -107,7 +107,7 @@ export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 							backgroundColor: colors.themeBackground,
 							color: colors.text,
 							textAlign: "left",
-							borderColor: "lightgrey",
+							borderColor: colors.inputBorder,
 							borderWidth: 1,
 							borderRadius: 5,
 							padding: 6,

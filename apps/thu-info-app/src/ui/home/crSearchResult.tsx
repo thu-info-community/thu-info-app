@@ -59,7 +59,8 @@ export const CrSearchResultScreen = ({
 				<RefreshControl
 					refreshing={refreshing}
 					onRefresh={() => refresh(true)}
-					colors={[colors.accent]}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
 					progressBackgroundColor={colors.contentBackground}
 				/>
 			}

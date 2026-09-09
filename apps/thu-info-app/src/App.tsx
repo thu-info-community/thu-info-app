@@ -4,6 +4,7 @@ import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {useEffect, useRef} from "react";
 import {
+	DarkTheme,
 	DefaultTheme,
 	NavigationContainer,
 	NavigationContainerRef,
@@ -23,6 +24,17 @@ const RootComponent = () => {
 	const theme = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
+	const navigationTheme = {
+		...(darkModeHook ? DarkTheme : DefaultTheme),
+		colors: {
+			...(darkModeHook ? DarkTheme.colors : DefaultTheme.colors),
+			primary: theme.colors.themePurple,
+			text: theme.colors.text,
+			background: theme.colors.themeBackground,
+			card: theme.colors.contentBackground,
+			border: theme.colors.inputBorder,
+		},
+	};
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const studentNotified = useSelector((s: State) => s.config.studentNotified);
@@ -69,17 +81,7 @@ const RootComponent = () => {
 				showDetail={showDetail}>
 				<NavigationContainer
 					ref={navigationRef}
-					theme={{
-						...DefaultTheme,
-						colors: {
-							...DefaultTheme.colors,
-							primary: theme.colors.themePurple,
-							text: theme.colors.text,
-							background: theme.colors.themeBackground,
-							card: theme.colors.contentBackground,
-							border: darkModeHook ? "white" : DefaultTheme.colors.border,
-						},
-					}}>
+					theme={navigationTheme}>
 					{appLocked === true ? (
 						<DigitalPasswordScreen
 							navigation={undefined}
@@ -94,19 +96,7 @@ const RootComponent = () => {
 					<NavigationIndependentTree>
 						<NavigationContainer
 							ref={detailNavigationContainerRef}
-							theme={{
-								...DefaultTheme,
-								colors: {
-									...DefaultTheme.colors,
-									primary: theme.colors.themePurple,
-									text: theme.colors.text,
-									background: theme.colors.themeBackground,
-									card: theme.colors.contentBackground,
-									border: darkModeHook
-										? "white"
-										: DefaultTheme.colors.border,
-								},
-							}}>
+							theme={navigationTheme}>
 							<Root showRootTabs={false} />
 						</NavigationContainer>
 					</NavigationIndependentTree>

@@ -1005,7 +1005,8 @@ export const ScheduleScreen = () => {
 						<RefreshControl
 							refreshing={refreshing}
 							onRefresh={getSchedule}
-							colors={[theme.colors.accent]}
+							tintColor={theme.colors.themePurple}
+							colors={[theme.colors.themePurple]}
 							progressBackgroundColor={theme.colors.contentBackground}
 						/>
 					}>
@@ -1382,6 +1383,7 @@ export const ScheduleScreen = () => {
 								maximumValue={20}
 								step={1}
 								minimumTrackTintColor={theme.colors.themePurple}
+								maximumTrackTintColor={theme.colors.inputBorder}
 								thumbTintColor={theme.colors.primary}
 								value={heightMode}
 								onValueChange={(value) => {
@@ -1410,8 +1412,12 @@ export const ScheduleScreen = () => {
 								{getStr("hideWeekend")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={hideWeekend}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1441,8 +1447,12 @@ export const ScheduleScreen = () => {
 								{getStr("scheduleFilterOfficial")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={showOfficialSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(
@@ -1472,8 +1482,12 @@ export const ScheduleScreen = () => {
 								{getStr("scheduleFilterCustom")}
 							</Text>
 							<Switch
-								thumbColor={theme.colors.contentBackground}
-								trackColor={{true: theme.colors.themePurple}}
+								ios_backgroundColor={theme.colors.inputBorder}
+								thumbColor={theme.colors.themeLightGrey}
+								trackColor={{
+									false: theme.colors.inputBorder,
+									true: theme.colors.themePurple,
+								}}
 								value={showCustomSchedule}
 								onValueChange={(value: boolean) => {
 									dispatch(

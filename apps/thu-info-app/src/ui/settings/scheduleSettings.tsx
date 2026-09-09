@@ -80,8 +80,9 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("enableNewUI")}</Text>
 					<Switch
-						thumbColor={colors.contentBackground}
-						trackColor={{ true: colors.themePurple }}
+						ios_backgroundColor={colors.inputBorder}
+						thumbColor={colors.themeLightGrey}
+						trackColor={{ false: colors.inputBorder, true: colors.themePurple }}
 						value={scheduleEnableNewUI}
 						onValueChange={(value: boolean) => {
 							dispatch(configSet({

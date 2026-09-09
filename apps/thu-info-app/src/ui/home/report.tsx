@@ -409,7 +409,8 @@ export const ReportScreen = () => {
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={fetchData}
-						colors={[colors.accent]}
+						tintColor={colors.themePurple}
+						colors={[colors.themePurple]}
 						progressBackgroundColor={colors.contentBackground}
 					/>
 				}>

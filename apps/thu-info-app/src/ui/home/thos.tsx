@@ -352,7 +352,15 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
 			keyboardShouldPersistTaps="handled"
-			refreshControl={<RefreshControl refreshing={busy} onRefresh={load} />}
+			refreshControl={
+				<RefreshControl
+					refreshing={busy}
+					onRefresh={load}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
+					progressBackgroundColor={colors.contentBackground}
+				/>
+			}
 			contentContainerStyle={{
 				padding: 16,
 				paddingBottom: 40,

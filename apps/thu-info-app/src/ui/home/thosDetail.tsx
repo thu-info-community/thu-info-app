@@ -98,7 +98,15 @@ const DetailPage = ({
 		<ScrollView
 			testID="thos-native-detail"
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
-			refreshControl={<RefreshControl refreshing={busy} onRefresh={refresh} />}
+			refreshControl={
+				<RefreshControl
+					refreshing={busy}
+					onRefresh={refresh}
+					tintColor={colors.themePurple}
+					colors={[colors.themePurple]}
+					progressBackgroundColor={colors.contentBackground}
+				/>
+			}
 			contentContainerStyle={{
 				padding: 16,
 				paddingBottom: 48,

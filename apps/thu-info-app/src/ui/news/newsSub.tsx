@@ -204,6 +204,8 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 							fontSize: 16,
 						}}
 						placeholder={getStr("newsKeyword")}
+						placeholderTextColor={theme.colors.fontB3}
+						selectionColor={theme.colors.accent}
 						onChangeText={setKeyword}
 					/>
 				</RoundedView>

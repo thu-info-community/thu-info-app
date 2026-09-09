@@ -48,7 +48,7 @@ export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
 			<View
 				style={{
 					flex: 1,
-					backgroundColor: "lightgrey",
+					backgroundColor: colors.inputBorder,
 					height: 2,
 					marginTop: 12,
 				}}
@@ -64,7 +64,7 @@ export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
 					<View
 						style={{
 							flex: duration,
-							backgroundColor: occupied ? "blue" : "lightgrey",
+							backgroundColor: occupied ? colors.themeBlue : colors.inputBorder,
 							height: 2,
 						}}
 						key={start}
@@ -76,9 +76,9 @@ export const LibRoomBookTimeIndicator = ({res}: {res: LibRoomRes}) => {
 					<View
 						style={{
 							flex: 1,
-							borderLeftColor: "lightgrey",
+							borderLeftColor: colors.inputBorder,
 							borderLeftWidth: 1,
-							borderRightColor: "lightgrey",
+							borderRightColor: colors.inputBorder,
 							borderRightWidth: index === endH - startH - 1 ? 1 : 0,
 						}}
 						key={index}>
