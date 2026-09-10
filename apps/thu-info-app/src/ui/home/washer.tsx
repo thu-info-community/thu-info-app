@@ -131,7 +131,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ ...position, page: 1, pageSize: 30 }),
+				body: JSON.stringify({ ...position, page: 1, pageSize: 50 }),
 			}).then((res) => res.json()),
 		)).then((responses) => {
 				const buildingsById = new Map<string, building>();
