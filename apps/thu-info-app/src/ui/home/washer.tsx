@@ -1,24 +1,25 @@
-import { FlatList, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { FlatList, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import themes from "../../assets/themes/themes";
 import { useEffect, useState } from "react";
 import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
-import { RootNav } from "../../components/Root";
+import type { RootNav } from "../../components/Root";
 import { IconStarButton } from "../../components/news/IconStarButton";
 import { useDispatch, useSelector } from "react-redux";
 import { configSet } from "../../redux/slices/config";
-import { State } from "../../redux/store";
+import type { State } from "../../redux/store";
 import { NetworkRetry } from "../../components/easySnackbars.ts";
-
-interface building {
-	name: string;
-	id: string;
-	hlsh: boolean;
-}
+import {
+	fetchXiaolanBuildings,
+	fetchXiaolanFloors,
+	isWasherFavourite,
+} from "../../utils/washer";
+import type {WasherBuilding as building, Washer, WasherFloor as Floor, WasherProvider} from "../../utils/washer";
 
 interface buildingGroup {
 	name: string;
 	buildings: building[];
+	xiaolan?: boolean;
 }
 
 const HAIER_SEARCH_POSITIONS = [
@@ -26,9 +27,26 @@ const HAIER_SEARCH_POSITIONS = [
 	{ lng: 116.3424247, lat: 40.0313472 },
 ];
 
+const WASHER_PROVIDERS = [
+	{provider: "all", label: "all"},
+	{provider: "jieli", label: "jieli"},
+	{provider: "haile", label: "haiLeShengHuo"},
+	{provider: "xiaolan", label: "xiaolanSmart"},
+] as const;
+
+const WASHER_STATUS_LABELS = {
+	idle: "washerIdle",
+	working: "washerWorking",
+	error: "washerError",
+	offline: "washerOffline",
+	standby: "washerStandby",
+	unknown: "washerUnknown",
+} as const;
+
 export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const [selectedProvider, setSelectedProvider] = useState<WasherProvider | "all">("all");
 
 	const currentFavourites = useSelector(
 		(s: State) => s.config.washerFavourites ?? [],
@@ -37,8 +55,28 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	const [fetchedBuildingGroups, setFetchedBuildingGroups] = useState<
 		buildingGroup[]
 	>([]);
+	const [haileGroups, setHaileGroups] = useState<buildingGroup[]>([]);
+	const [xiaolanBuildings, setXiaolanBuildings] = useState<building[]>([]);
+	const [xiaolanLoading, setXiaolanLoading] = useState(true);
+	const [xiaolanError, setXiaolanError] = useState(false);
+	const [xiaolanReload, setXiaolanReload] = useState(0);
 
 	useEffect(() => {
+		const controller = new AbortController();
+		setXiaolanLoading(true);
+		setXiaolanError(false);
+		fetchXiaolanBuildings(controller.signal).then((buildings) => {
+			if (!controller.signal.aborted) setXiaolanBuildings(buildings);
+		}).catch(() => {
+			if (!controller.signal.aborted) setXiaolanError(true);
+		}).finally(() => {
+			if (!controller.signal.aborted) setXiaolanLoading(false);
+		});
+		return () => controller.abort();
+	}, [xiaolanReload]);
+
+	useEffect(() => {
+		let active = true;
 		setFetchedBuildingGroups(() => []);
 
 		fetch("https://api.cleverschool.cn/washapi4/device/tower", {
@@ -73,25 +111,25 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 						groups[0].buildings.push({
 							name: b.text,
 							id: b.value,
-							hlsh: false,
+							provider: "jieli",
 						});
 					} else if (b.text.search("南区") !== -1) {
 						groups[1].buildings.push({
 							name: b.text,
 							id: b.value,
-							hlsh: false,
+							provider: "jieli",
 						});
 					} else if (b.text.search("双清") !== -1) {
 						groups[2].buildings.push({
 							name: b.text,
 							id: b.value,
-							hlsh: false,
+							provider: "jieli",
 						});
 					} else {
 						groups[3].buildings.push({
 							name: b.text,
 							id: b.value,
-							hlsh: false,
+							provider: "jieli",
 						});
 					}
 				}
@@ -121,8 +159,8 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 						}
 					});
 				}
-				setFetchedBuildingGroups((g) => [...groups, ...g]);
-			});
+				if (active) setFetchedBuildingGroups(groups);
+			}).catch((e) => { if (active) NetworkRetry(e); });
 
 		// Fetch HaiLeShengHuo buildings
 		Promise.all(HAIER_SEARCH_POSITIONS.map((position) =>
@@ -147,7 +185,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 							buildingsById.set(id, {
 								name: b.name,
 								id,
-								hlsh: true,
+								provider: "haile",
 							});
 						}
 					}
@@ -168,31 +206,35 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 					}
 				});
 
-				setFetchedBuildingGroups((g) => [...g, group]);
-			});
+				if (active) setHaileGroups([group]);
+			}).catch((e) => { if (active) NetworkRetry(e); });
+		return () => { active = false; };
 	}, []);
 
-	let buildingGroups = fetchedBuildingGroups;
-	if (currentFavourites.length > 0) {
-		// Get distinct favourite buildings
-		const favouriteBuildings = new Set(
-			currentFavourites.map((f) => f.endsWith("海乐生活") ?
-				f : f.match(/(.*?)-([^-]*)/g)![0]),
-		);
-
+	let buildingGroups: buildingGroup[] = [
+		...(selectedProvider === "all" || selectedProvider === "jieli" ? fetchedBuildingGroups : []),
+		...(selectedProvider === "all" || selectedProvider === "haile" ? haileGroups : []),
+		...(selectedProvider === "all" || selectedProvider === "xiaolan"
+			? [{name: getStr("xiaolanSmart"), buildings: xiaolanBuildings, xiaolan: true}]
+			: []),
+	];
+	const favouriteBuildings = new Map<string, building>();
+	for (const favourite of currentFavourites) {
+		const b = favourite.building;
+		if (selectedProvider !== "all" && b.provider !== selectedProvider) continue;
+		favouriteBuildings.set(`${b.provider}:${b.id}`, b);
+	}
+	if (favouriteBuildings.size > 0) {
 		buildingGroups = [
 			{
 				name: getStr("favourites"),
-				buildings: [...favouriteBuildings.values()].map((f): building => {
-					const [name, id, hlsh] = f.split("-");
-					return { name, id, hlsh: hlsh === "海乐生活" };
-				}),
+				buildings: [...favouriteBuildings.values()],
 			},
 			...buildingGroups,
 		];
 	}
 
-	const renderBuildingGroup = (name: string, buildings: building[]) => (
+	const renderBuildingGroup = ({name, buildings, xiaolan}: buildingGroup) => (
 		<View style={{ flexDirection: "column", marginBottom: 32 }}>
 			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
 				<View
@@ -220,6 +262,18 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 					}}
 				/>
 			</View>
+			{xiaolan && (xiaolanLoading || xiaolanError || buildings.length === 0) && (
+				<View style={{alignItems: "center", marginBottom: 16}}>
+					<Text style={{color: theme.colors.text}}>
+						{getStr(xiaolanLoading ? "loading" : xiaolanError ? "loadFail" : "noData")}
+					</Text>
+					{xiaolanError && !xiaolanLoading && (
+						<TouchableOpacity onPress={() => setXiaolanReload((n) => n + 1)} style={{padding: 12}}>
+							<Text style={{color: theme.colors.primary}}>{getStr("washerRetry")}</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+			)}
 			<View
 				style={{
 					flexDirection: "row",
@@ -228,12 +282,13 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 				}}>
 				{buildings.map((item) => (
 					<TouchableOpacity
-						key={item.name + item.id}
+						// Jieli can return different building names with the same ID.
+						key={JSON.stringify([item.provider, item.id, item.name])}
 						onPress={() => {
 							navigation.navigate("WasherDetail", {
 								name: item.name,
 								id: item.id,
-								hlsh: item.hlsh,
+								provider: item.provider,
 							});
 						}}>
 						<View
@@ -274,37 +329,61 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 
 	return (
 		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
+			<ScrollView
+				horizontal
+				showsHorizontalScrollIndicator={false}
+				style={{flexGrow: 0, flexShrink: 0, marginBottom: 8}}
+				contentContainerStyle={{paddingHorizontal: 12, flexGrow: 1}}>
+				{WASHER_PROVIDERS.map(({provider, label}) => {
+					const selected = selectedProvider === provider;
+					return (
+						<TouchableOpacity
+							key={provider}
+							accessibilityRole="tab"
+							accessibilityState={{selected}}
+							activeOpacity={0.7}
+							onPress={() => setSelectedProvider(provider)}
+							style={{
+								flexGrow: 1,
+								minHeight: 52,
+								paddingTop: 14,
+								paddingBottom: 16,
+								paddingHorizontal: 18,
+								alignItems: "center",
+								justifyContent: "center",
+							}}>
+							<Text style={{
+								color: selected ? theme.colors.primary : theme.colors.fontB2,
+								fontSize: 16,
+								fontWeight: "600",
+								textAlign: "center",
+							}}>
+								{getStr(label)}
+							</Text>
+							<View style={{
+								position: "absolute",
+								bottom: 4,
+								width: 24,
+								height: 3,
+								borderRadius: 2,
+								backgroundColor: selected ? theme.colors.primary : "transparent",
+							}} />
+						</TouchableOpacity>
+					);
+				})}
+			</ScrollView>
 			<FlatList
+				key={selectedProvider}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
-				renderItem={({ item }) => renderBuildingGroup(item.name, item.buildings)}
+				renderItem={({ item }) => renderBuildingGroup(item)}
 				keyExtractor={(item) => item.name}
 			/>
 		</View>
 	);
 };
 
-export interface WasherDetailProps {
-	name: string;
-	id: string;
-	hlsh: boolean;
-}
-
-interface Washer {
-	type: string;
-	name: string;
-	floor: string;
-	status: "idle" | "working" | "error";
-	eta: number;
-	updateTime: Date;
-	location?: string;
-}
-
-interface Floor {
-	name: string;
-	washers: Washer[];
-	favourite: boolean;
-}
+export type WasherDetailProps = building;
 
 export const WasherDetailScreen = ({ route }: {
 	route: { params: WasherDetailProps };
@@ -313,6 +392,30 @@ export const WasherDetailScreen = ({ route }: {
 	const theme = themes(themeName);
 
 	const [fetchedFloors, setFetchedFloors] = useState<Floor[]>([]);
+	const [xiaolanDetail, setXiaolanDetail] = useState<{
+		buildingId: string;
+		floors: Floor[];
+		fetchedAt?: Date;
+	}>();
+	const [xiaolanLoading, setXiaolanLoading] = useState(true);
+	const [xiaolanError, setXiaolanError] = useState(false);
+	const [xiaolanReload, setXiaolanReload] = useState(0);
+	const {id, provider} = route.params;
+
+	useEffect(() => {
+		if (provider !== "xiaolan") return;
+		const controller = new AbortController();
+		setXiaolanLoading(true);
+		setXiaolanError(false);
+		fetchXiaolanFloors(id, controller.signal).then((detail) => {
+			if (!controller.signal.aborted) setXiaolanDetail({buildingId: id, ...detail});
+		}).catch(() => {
+			if (!controller.signal.aborted) setXiaolanError(true);
+		}).finally(() => {
+			if (!controller.signal.aborted) setXiaolanLoading(false);
+		});
+		return () => controller.abort();
+	}, [id, provider, xiaolanReload]);
 
 	const dispatch = useDispatch();
 	const currentFavourites = useSelector(
@@ -321,9 +424,11 @@ export const WasherDetailScreen = ({ route }: {
 
 	// Jieli Logic
 	useEffect(() => {
-		if (route.params.hlsh) {
+		if (route.params.provider !== "jieli") {
 			return;
 		}
+		let active = true;
+		setFetchedFloors([]);
 
 		const statusPromise = fetch("https://api.cleverschool.cn/washapi4/device/status", {
 			method: "POST",
@@ -419,15 +524,18 @@ export const WasherDetailScreen = ({ route }: {
 					});
 				}
 
-				setFetchedFloors(updatedFloors);
-			});
-	}, [route.params.id, route.params.name, route.params.hlsh]);
+				if (active) setFetchedFloors(updatedFloors);
+			}).catch((e) => { if (active) NetworkRetry(e); });
+		return () => { active = false; };
+	}, [route.params.id, route.params.name, route.params.provider]);
 
 	// Haile Logic
 	useEffect(() => {
-		if (!route.params.hlsh) {
+		if (route.params.provider !== "haile") {
 			return;
 		}
+		let active = true;
+		setFetchedFloors([]);
 
 		const fetchData = async () => {
 			const floor: Floor = {
@@ -490,48 +598,30 @@ export const WasherDetailScreen = ({ route }: {
 				return 0;
 			});
 
-			setFetchedFloors([floor]);
+			if (active) setFetchedFloors([floor]);
 		};
 
 		fetchData().catch((e) => {
-			NetworkRetry(e);
+			if (active) NetworkRetry(e);
 		});
+		return () => { active = false; };
+	}, [route.params.id, route.params.name, route.params.provider]);
 
-	}, [route.params.id, route.params.name, route.params.hlsh]);
-
-	const floors = [];
-
-	for (const floor of fetchedFloors) {
-		floor.favourite = currentFavourites.includes(
-			route.params.name + "-" + route.params.id + "-" + floor.name,
-		);
-	}
-
-	for (const floor of fetchedFloors) {
-		if (!floor.favourite) {
-			continue;
-		}
-
-		floors.push(floor);
-	}
-
-	for (const floor of fetchedFloors) {
-		if (floor.favourite) {
-			continue;
-		}
-
-		floors.push(floor);
-	}
+	const currentDetail = xiaolanDetail?.buildingId === id ? xiaolanDetail : undefined;
+	const sourceFloors = provider === "xiaolan" ? currentDetail?.floors ?? [] : fetchedFloors;
+	const floors = sourceFloors.map((floor) => ({
+		...floor,
+		favourite: currentFavourites.some((value) => isWasherFavourite(value, route.params, floor.id ?? floor.name)),
+	})).sort((a, b) => Number(b.favourite) - Number(a.favourite));
 
 	const RenderFloor = (
-		building: string, // Building name-id
 		name: string,
 		washers: Washer[],
 		favourite: boolean,
-		hlsh: boolean,
+		roomId: string,
 	) => {
 		return (
-			<View key={name} style={{ flexDirection: "column", marginBottom: 16 }}>
+			<View key={roomId} style={{ flexDirection: "column", marginBottom: 16 }}>
 				<View style={{ flexDirection: "row", margin: 16 }}>
 					<View
 						style={{
@@ -551,18 +641,9 @@ export const WasherDetailScreen = ({ route }: {
 						<IconStarButton
 							active={favourite}
 							onPress={() => {
-								const favouriteId = building + "-" + name;
 								const updatedFavourites = favourite
-									? []
-									: [...currentFavourites, favouriteId];
-
-								if (favourite) {
-									for (const f of currentFavourites) {
-										if (f !== favouriteId) {
-											updatedFavourites.push(f);
-										}
-									}
-								}
+									? currentFavourites.filter((f) => !isWasherFavourite(f, route.params, roomId))
+									: [...currentFavourites, {building: {...route.params}, roomId}];
 
 								dispatch(
 									configSet({
@@ -597,9 +678,12 @@ export const WasherDetailScreen = ({ route }: {
 						flexWrap: "wrap",
 						justifyContent: "center",
 					}}>
+					{washers.length === 0 && (
+						<Text style={{color: theme.colors.text}}>{getStr("noData")}</Text>
+					)}
 					{washers.map((item) => (
 						<View
-							key={item.name}
+							key={item.id ?? item.name}
 							style={{
 								backgroundColor: theme.colors.contentBackground,
 								borderRadius: 16,
@@ -632,20 +716,23 @@ export const WasherDetailScreen = ({ route }: {
 									color:
 										item.status === "idle"
 											? theme.colors.themeGreen
-											: item.status === "working"
-												? theme.colors.fontB2
-												: theme.colors.statusError,
+											: item.status === "error"
+												? theme.colors.statusError
+												: theme.colors.fontB2,
 									fontSize: 20,
 									textAlign: "center",
 									marginVertical: 6,
 								}}>
-								{item.status === "idle"
-									? getStr("washerIdle")
-									: item.status === "working"
-										? (hlsh ? getStr("washerWorking") : item.eta + " " + getStr("minutesAbbr"))
-										: getStr("washerError")}
+								{item.status === "working" && provider === "jieli"
+									? item.eta + " " + getStr("minutesAbbr")
+									: getStr(WASHER_STATUS_LABELS[item.status] ?? "washerUnknown")}
 							</Text>
-							{!hlsh && (
+							{item.status === "working" && item.estimatedCompleteTime && (
+								<Text style={{color: theme.colors.fontB2, fontSize: 12, textAlign: "center"}}>
+									{getStr("washerEstimatedEnd") + " " + item.estimatedCompleteTime.toLocaleString()}
+								</Text>
+							)}
+							{provider === "jieli" && item.updateTime && (
 								<Text
 									style={{
 										color: theme.colors.fontB2,
@@ -666,16 +753,38 @@ export const WasherDetailScreen = ({ route }: {
 	};
 
 	return (
-		<View style={{ backgroundColor: theme.colors.themeBackground }}>
+		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
 			<FlatList
 				data={floors}
+				keyExtractor={(item) => item.id ?? item.name}
+				refreshing={provider === "xiaolan" && xiaolanLoading}
+				onRefresh={provider === "xiaolan" ? () => setXiaolanReload((n) => n + 1) : undefined}
+				ListHeaderComponent={provider === "xiaolan" ? (
+					<View style={{alignItems: "center", padding: 16}}>
+						{currentDetail?.fetchedAt && (
+							<Text style={{color: theme.colors.fontB2}}>
+								{getStr("updateTime") + " " + currentDetail.fetchedAt.toLocaleString()}
+							</Text>
+						)}
+						{xiaolanLoading && <Text style={{color: theme.colors.text}}>{getStr("loading")}</Text>}
+						{xiaolanError && !xiaolanLoading && (
+							<TouchableOpacity onPress={() => setXiaolanReload((n) => n + 1)} style={{padding: 12}}>
+								<Text style={{color: theme.colors.primary}}>
+									{getStr(currentDetail ? "washerRefreshFailed" : "loadFail") + " · " + getStr("washerRetry")}
+								</Text>
+							</TouchableOpacity>
+						)}
+					</View>
+				) : null}
+				ListEmptyComponent={provider === "xiaolan" && !xiaolanLoading && !xiaolanError ? (
+					<Text style={{color: theme.colors.text, textAlign: "center"}}>{getStr("noData")}</Text>
+				) : null}
 				renderItem={({ item }) =>
 					RenderFloor(
-						route.params.name + "-" + route.params.id,
 						item.name,
 						item.washers,
 						item.favourite,
-						route.params.hlsh,
+						item.id ?? item.name,
 					)
 				}
 			/>

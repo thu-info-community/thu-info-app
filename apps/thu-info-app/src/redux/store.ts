@@ -53,6 +53,7 @@ import { LoginError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import {migrateWasherFavourites} from "./migrations/washerFavourites";
 
 const CookieManager = (() => {
 	try {
@@ -259,7 +260,7 @@ const migrateSchedule = (old: Schedule, semesterFirstDay: string): Schedule => {
 };
 
 const persistConfig = {
-	version: 6,
+	version: 7,
 	key: "root",
 	storage: AsyncStorage,
 	transforms: [authTransform, configTransform, scheduleTransform],
@@ -271,6 +272,9 @@ const persistConfig = {
 						...state,
 						config: {
 							...state.config,
+							washerFavourites: (state._persist?.version ?? -1) < 7
+								? migrateWasherFavourites(state.config.washerFavourites)
+								: state.config.washerFavourites,
 							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
