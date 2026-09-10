@@ -4,6 +4,7 @@ import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import { v4 as uuidv4 } from "uuid";
+import type {WasherFavourite} from "../../utils/washer";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
@@ -40,7 +41,7 @@ export interface ConfigState {
 	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
-	washerFavourites: string[] | undefined;
+	washerFavourites: WasherFavourite[] | undefined;
 	fingerprintSecure: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
 	showOfficialSchedule: boolean | undefined;
