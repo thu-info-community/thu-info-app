@@ -1,7 +1,6 @@
 import { FlatList, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import themes from "../../assets/themes/themes";
 import { useEffect, useState } from "react";
-import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
 import type { RootNav } from "../../components/Root";
 import { IconStarButton } from "../../components/news/IconStarButton";
@@ -10,22 +9,19 @@ import { configSet } from "../../redux/slices/config";
 import type { State } from "../../redux/store";
 import { NetworkRetry } from "../../components/easySnackbars.ts";
 import {
+	fetchJieliBuildings,
+	fetchJieliFloors,
+	fetchHaileBuildings,
+	fetchHaileFloors,
 	fetchXiaolanBuildings,
 	fetchXiaolanFloors,
 	isWasherFavourite,
 } from "../../utils/washer";
-import type {WasherBuilding as building, Washer, WasherFloor as Floor, WasherProvider} from "../../utils/washer";
+import type {WasherBuilding as building, WasherBuildingGroup, Washer, WasherFloor as Floor, WasherProvider} from "../../utils/washer";
 
-interface buildingGroup {
-	name: string;
-	buildings: building[];
+interface buildingGroup extends WasherBuildingGroup {
 	xiaolan?: boolean;
 }
-
-const HAIER_SEARCH_POSITIONS = [
-	{ lng: 116.32697, lat: 40.00281 },
-	{ lng: 116.3424247, lat: 40.0313472 },
-];
 
 const WASHER_PROVIDERS = [
 	{provider: "all", label: "all"},
@@ -76,139 +72,19 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	}, [xiaolanReload]);
 
 	useEffect(() => {
-		let active = true;
-		setFetchedBuildingGroups(() => []);
-
-		fetch("https://api.cleverschool.cn/washapi4/device/tower", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: "{}",
-		})
-			.then((res) => res.json())
-			.then((res) => {
-				if (res.errorCode != null) {
-					Snackbar.show({
-						text: res.errorMsg,
-						duration: Snackbar.LENGTH_LONG,
-					});
-				}
-
-				let groups: buildingGroup[] = [
-					{ name: getStr("ziJingDorm"), buildings: [] },
-					{ name: getStr("nanQuDorm"), buildings: [] },
-					{ name: getStr("shuangQingDorm"), buildings: [] },
-					{ name: getStr("otherDorm"), buildings: [] },
-				];
-
-				for (const b of res.data) {
-					if (b.value === "0") {
-						continue;
-					}
-
-					if (b.text.search("紫荆") !== -1) {
-						groups[0].buildings.push({
-							name: b.text,
-							id: b.value,
-							provider: "jieli",
-						});
-					} else if (b.text.search("南区") !== -1) {
-						groups[1].buildings.push({
-							name: b.text,
-							id: b.value,
-							provider: "jieli",
-						});
-					} else if (b.text.search("双清") !== -1) {
-						groups[2].buildings.push({
-							name: b.text,
-							id: b.value,
-							provider: "jieli",
-						});
-					} else {
-						groups[3].buildings.push({
-							name: b.text,
-							id: b.value,
-							provider: "jieli",
-						});
-					}
-				}
-
-				for (const g of groups) {
-					g.buildings.sort((a, b) => {
-						// First by the number
-						const aNumArr = a.name.match(/\d+/g);
-						const bNumArr = b.name.match(/\d+/g);
-
-						if (aNumArr !== null && bNumArr !== null) {
-							const aNum = parseInt(aNumArr[0], 10);
-							const bNum = parseInt(bNumArr[0], 10);
-							if (aNum < bNum) {
-								return -1;
-							} else if (aNum > bNum) {
-								return 1;
-							}
-						}
-
-						if (a.name < b.name) {
-							return -1;
-						} else if (a.name > b.name) {
-							return 1;
-						} else {
-							return 0;
-						}
-					});
-				}
-				if (active) setFetchedBuildingGroups(groups);
-			}).catch((e) => { if (active) NetworkRetry(e); });
-
-		// Fetch HaiLeShengHuo buildings
-		Promise.all(HAIER_SEARCH_POSITIONS.map((position) =>
-			fetch("https://yshz-user.haier-ioc.com/position/nearPosition", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ ...position, page: 1, pageSize: 50 }),
-			}).then((res) => res.json()),
-		)).then((responses) => {
-				const buildingsById = new Map<string, building>();
-
-				for (const res of responses) {
-					if (res.code !== 0) {
-						continue;
-					}
-
-					for (const b of res.data.items) {
-						if (b.name.search("清华") !== -1 && b.name.search("中学") === -1) {
-							const id = String(b.id);
-							buildingsById.set(id, {
-								name: b.name,
-								id,
-								provider: "haile",
-							});
-						}
-					}
-				}
-
-				const group: buildingGroup = {
-					name: getStr("haiLeShengHuo"),
-					buildings: [...buildingsById.values()],
-				};
-
-				group.buildings.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				});
-
-				if (active) setHaileGroups([group]);
-			}).catch((e) => { if (active) NetworkRetry(e); });
-		return () => { active = false; };
+		const controller = new AbortController();
+		setFetchedBuildingGroups([]);
+		fetchJieliBuildings(controller.signal).then((groups) => {
+			if (!controller.signal.aborted) setFetchedBuildingGroups(groups);
+		}).catch((error) => {
+			if (!controller.signal.aborted) NetworkRetry(error);
+		});
+		fetchHaileBuildings(controller.signal).then((groups) => {
+			if (!controller.signal.aborted) setHaileGroups(groups);
+		}).catch((error) => {
+			if (!controller.signal.aborted) NetworkRetry(error);
+		});
+		return () => controller.abort();
 	}, []);
 
 	let buildingGroups: buildingGroup[] = [
@@ -422,190 +298,18 @@ export const WasherDetailScreen = ({ route }: {
 		(s: State) => s.config.washerFavourites ?? [],
 	);
 
-	// Jieli Logic
 	useEffect(() => {
-		if (route.params.provider !== "jieli") {
-			return;
-		}
-		let active = true;
+		if (provider === "xiaolan") return;
+		const controller = new AbortController();
 		setFetchedFloors([]);
-
-		const statusPromise = fetch("https://api.cleverschool.cn/washapi4/device/status", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				towerKey: route.params.id,
-			}),
-		}).then((res) => res.json());
-
-		// TODO: Write backend and fill API here
-		const locationPromise = fetch("https://app.cs.tsinghua.edu.cn/Api/JieliWashers?building=" + route.params.id)
-			.then((res) => res.json());
-
-		Promise.allSettled([statusPromise, locationPromise])
-			.then(([statusResult, locationResult]) => {
-				if (statusResult.status === "rejected") {
-					throw statusResult.reason;
-				}
-
-				const loc = locationResult.status === "fulfilled" ? locationResult.value : {};
-
-				const res = statusResult.value;
-				if (res.errorCode !== null) {
-					Snackbar.show({
-						text: res.errorMsg,
-						duration: Snackbar.LENGTH_LONG,
-					});
-				}
-
-				const data: { [key: string]: Washer[] } = {};
-
-				for (const item of res.data) {
-					if (data[item.floorName] === undefined) {
-						data[item.floorName] = [];
-					}
-
-					const statusArray = item.status.split(" ");
-					let status: "idle" | "working" | "error" = "error";
-					let updateTime: Date | null = null;
-					let eta: number = 0;
-
-					for (let index = 0; index < statusArray.length; index++) {
-						const str = statusArray[index];
-						if (str.search("剩余") !== -1) {
-							eta = parseInt(str.match(/\d+/g)[0], 10);
-						} else if (str.search("更新") !== -1) {
-							updateTime = new Date(
-								str.split(":")[1] + " " + statusArray[index + 1],
-							);
-						} else {
-							if (str.search("待机") !== -1) {
-								status = "idle";
-							} else if (
-								str.search("工作") !== -1 ||
-								str.search("运转") !== -1
-							) {
-								status = "working";
-							}
-						}
-					}
-
-					const code = item.macUnionCode.split(" ");
-
-					data[item.floorName].push({
-						type: code[0],
-						name: code[1],
-						floor: item.floorName,
-						status: status!,
-						updateTime: new Date(updateTime!),
-						eta: eta,
-						location: loc[code[1]] ?? null,
-					});
-				}
-
-				const updatedFloors: Floor[] = [];
-
-				// First push favourites
-				for (const floorName in data) {
-					updatedFloors.push({
-						name: floorName,
-						washers: data[floorName].sort((a, b) => {
-							if (a.name < b.name) {
-								return -1;
-							} else if (a.name > b.name) {
-								return 1;
-							}
-
-							return 0;
-						}),
-						favourite: false,
-					});
-				}
-
-				if (active) setFetchedFloors(updatedFloors);
-			}).catch((e) => { if (active) NetworkRetry(e); });
-		return () => { active = false; };
-	}, [route.params.id, route.params.name, route.params.provider]);
-
-	// Haile Logic
-	useEffect(() => {
-		if (route.params.provider !== "haile") {
-			return;
-		}
-		let active = true;
-		setFetchedFloors([]);
-
-		const fetchData = async () => {
-			const floor: Floor = {
-				name: "海乐生活",
-				washers: [],
-				favourite: false,
-			};
-
-			const type = {
-				"00": "洗衣机",
-				"01": "洗鞋机",
-				"02": "烘干机",
-			};
-
-			const status = {
-				1: "idle",
-				2: "working",
-				3: "error",
-			};
-
-			for (const catCode of ["00", "01", "02"]) {
-				const rawDetailRes = await fetch("https://yshz-user.haier-ioc.com/position/deviceDetailPage", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						"positionId": route.params.id,
-						"categoryCode": catCode,
-						"page": 1,
-						"floorCode": "",
-						"pageSize": 100,
-					}),
-				});
-
-				const detail = await rawDetailRes.json();
-
-				if (detail.code !== 0) {
-					continue;
-				}
-
-				for (const w of detail.data.items) {
-					floor.washers.push({
-						type: type[catCode as "00" | "01" | "02"],
-						name: w.name,
-						floor: floor.name,
-						status: status[w.state as 1 | 2 | 3] as "idle" | "working" | "error",
-						eta: -1,
-						updateTime: new Date(),
-					});
-				}
-			}
-
-			floor.washers.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				}
-				return 0;
-			});
-
-			if (active) setFetchedFloors([floor]);
-		};
-
-		fetchData().catch((e) => {
-			if (active) NetworkRetry(e);
+		const fetchFloors = provider === "jieli" ? fetchJieliFloors : fetchHaileFloors;
+		fetchFloors(id, controller.signal).then((floors) => {
+			if (!controller.signal.aborted) setFetchedFloors(floors);
+		}).catch((error) => {
+			if (!controller.signal.aborted) NetworkRetry(error);
 		});
-		return () => { active = false; };
-	}, [route.params.id, route.params.name, route.params.provider]);
+		return () => controller.abort();
+	}, [id, provider]);
 
 	const currentDetail = xiaolanDetail?.buildingId === id ? xiaolanDetail : undefined;
 	const sourceFloors = provider === "xiaolan" ? currentDetail?.floors ?? [] : fetchedFloors;
