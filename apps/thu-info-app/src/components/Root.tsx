@@ -115,7 +115,6 @@ import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockTime";
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
-import {ScheduleSettingsScreen} from "../ui/settings/scheduleSettings";
 import {useSelector} from "react-redux";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
@@ -412,7 +411,6 @@ type SettingsStackParamList = {
 	General: undefined;
 	Language: undefined;
 	DarkMode: undefined;
-	ScheduleSettings: undefined;
 	DeepSeekSettings: undefined;
 	Privacy: undefined;
 	HelpAndFeedback: undefined;
@@ -1010,11 +1008,6 @@ export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
 				name="DeepSeekSettings"
 				component={DeepSeekSettingsScreen}
 				options={{ title: getStr("deepseek") }}
-			/>
-			<Stack.Screen
-				name="ScheduleSettings"
-				component={ScheduleSettingsScreen}
-				options={{title: getStr("scheduleSettings")}}
 			/>
 			<Stack.Screen
 				name="Privacy"

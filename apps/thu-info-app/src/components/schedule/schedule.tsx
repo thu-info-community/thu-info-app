@@ -97,7 +97,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	);
 };
 
-export const SchedulePeriodSwitch = ({notice = false}: {notice?: boolean}) => {
+export const SchedulePeriodSwitch = () => {
 	const {colors} = themes(useColorScheme());
 	const enabled =
 		useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
@@ -126,17 +126,6 @@ export const SchedulePeriodSwitch = ({notice = false}: {notice?: boolean}) => {
 					}}
 				/>
 			</View>
-			{notice && (
-				<Text
-					style={{
-						marginHorizontal: 16,
-						marginTop: 8,
-						color: colors.fontB3,
-						fontSize: 12,
-					}}>
-					{getStr("scheduleClassPeriodsNotice")}
-				</Text>
-			)}
 		</View>
 	);
 };

@@ -803,10 +803,8 @@ export default {
 	recentThreeMonths: "Recent 3 months",
 	noData: "No data",
 	scheduleUseClassPeriods: "Show class periods",
-	scheduleClassPeriodsNotice: "Turn off to use a daily timeline. Long breaks expand automatically when they contain personal plans.",
-	enableNewUI: "Enable new UI",
-	scheduleNewUINotice:
-		"With transparency background, which may affect readability",
+	scheduleHeightLabel: "Schedule height",
+	enableNewUI: "Use translucent UI",
 	rechargeSuccess: "Recharge succeeded.",
 	deepseekWelcomeText: "Ask me anything!",
 	enableBubbleMessage: "Show DeepSeek messages in bubble",

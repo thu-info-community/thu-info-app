@@ -27,7 +27,7 @@ test("both switches share state, old configs default on and an explicit off surv
 	const rendered = await render(
 		<Provider store={store}>
 			<SchedulePeriodSwitch />
-			<SchedulePeriodSwitch notice />
+			<SchedulePeriodSwitch />
 		</Provider>,
 	);
 	expect(

@@ -5,7 +5,6 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	FlatList,
-	Switch,
 	Platform,
 	ToastAndroid,
 	Animated,
@@ -33,7 +32,6 @@ import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
 import {
 	ScheduleBlock,
-	SchedulePeriodSwitch,
 	ScheduleTimeAxis,
 	ScheduleGridLines,
 } from "../../components/schedule/schedule";
@@ -52,10 +50,9 @@ import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
 import IconUpload from "../../assets/icons/IconUpload";
-import Slider from "@react-native-community/slider";
 import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
-import {configSet, setCalendarConfig} from "../../redux/slices/config";
+import {setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
@@ -67,7 +64,9 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
+import {StackActions, useNavigation} from "@react-navigation/native";
+import type {RootNav} from "../../components/Root";
+import {ScheduleSettings} from "../../components/schedule/settings";
 
 interface NormalSliceRenderData {
 	type: "normal";
@@ -351,7 +350,7 @@ const Header = React.forwardRef(
 						</View>
 					)}
 					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
-						<TouchableOpacity onPress={() => onChangeSetOpenConfig()}>
+						<TouchableOpacity accessibilityRole="button" accessibilityLabel={getStr("scheduleSettings")} onPress={() => onChangeSetOpenConfig()}>
 							<IconConfig width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -368,6 +367,7 @@ const Header = React.forwardRef(
 );
 
 export const ScheduleScreen = () => {
+	const navigation = useNavigation<RootNav>();
 	const detailNavigator = useDetailNavigator();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
@@ -1200,162 +1200,29 @@ export const ScheduleScreen = () => {
 					</View>
 				</ScrollView>
 				{openConfig && (
-					<TouchableOpacity
-						onPress={() => setOpenConfig(false)}
-						style={{
-							position: "absolute",
-							height: "100%",
-							width: "100%",
-							backgroundColor: "#00000055",
-						}}>
-						<View style={{backgroundColor: theme.colors.contentBackground}}>
-							<SchedulePeriodSwitch />
-							<Slider
-								style={{height: 40, width: "100%"}}
-								minimumValue={0}
-								maximumValue={20}
-								step={1}
-								minimumTrackTintColor={theme.colors.themePurple}
-								maximumTrackTintColor={theme.colors.inputBorder}
-								thumbTintColor={theme.colors.primary}
-								value={heightMode}
-								onValueChange={(value) => {
-									dispatch(
-										configSet({
-											key: "scheduleHeightMode",
-											value: value as number,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("hideWeekend")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={hideWeekend}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "hideWeekend",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("scheduleFilterOfficial")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={showOfficialSchedule}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "showOfficialSchedule",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("scheduleFilterCustom")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={showCustomSchedule}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "showCustomSchedule",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<TouchableOpacity
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "center",
-								paddingHorizontal: 16,
-								paddingVertical: 12,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}
-							onPress={() => {
-								setOpenConfig(false);
-								handleExportICS();
-							}}>
-							<Text
-								style={{
-									color: theme.colors.themePurple,
-									fontSize: 16,
-									fontWeight: "500",
-								}}>
-								{getStr("scheduleExportICS")}
-							</Text>
-						</TouchableOpacity>
-					</TouchableOpacity>
+					<ScheduleSettings
+						onClose={() => setOpenConfig(false)}
+						onManageHidden={() => {
+							setOpenConfig(false);
+							if (detailNavigator) {
+								detailNavigator.dispatch(StackActions.replace("ScheduleHidden", {disableAnimation: true}));
+							} else {
+								navigation.navigate("ScheduleHidden");
+							}
+						}}
+						onSync={(isSending) => {
+							setOpenConfig(false);
+							if (detailNavigator) {
+								detailNavigator.dispatch(StackActions.replace("ScheduleSync", {isSending, disableAnimation: true}));
+							} else {
+								navigation.navigate("ScheduleSync", {isSending});
+							}
+						}}
+						onExport={() => {
+							setOpenConfig(false);
+							handleExportICS();
+						}}
+					/>
 				)}
 			</GestureHandlerRootView>
 			<ScheduleAddModal

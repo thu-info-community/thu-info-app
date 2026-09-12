@@ -9,7 +9,8 @@ import {
 } from "@testing-library/react-native";
 import {Provider} from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
-import {StyleSheet} from "react-native";
+import {StyleSheet, Alert} from "react-native";
+import {getStr} from "../src/utils/i18n";
 import dayjs from "dayjs";
 import {ScheduleScreen} from "../src/ui/schedule/schedule";
 import {
@@ -23,6 +24,15 @@ import {
 	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
 
+const mockNavigate = jest.fn();
+const mockDetailDispatch = jest.fn();
+let mockUseDetail = false;
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual<typeof import("@react-navigation/native")>(
+		"@react-navigation/native",
+	),
+	useNavigation: () => ({navigate: mockNavigate}),
+}));
 jest.mock("uuid", () => ({v4: () => "schedule-screen-test"}));
 jest.mock("../src/redux/store", () => ({
 	currState: () => ({config: {language: "zh", darkMode: false}}),
@@ -31,7 +41,7 @@ jest.mock("../src/redux/store", () => ({
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
 jest.mock("../src/utils/useDetailNavigator", () => ({
 	__esModule: true,
-	default: () => undefined,
+	default: () => (mockUseDetail ? {dispatch: mockDetailDispatch} : undefined),
 }));
 jest.mock("../src/utils/calendar", () => ({exportScheduleToICS: jest.fn()}));
 jest.mock("../src/components/themedRefreshControl", () => ({
@@ -50,11 +60,15 @@ jest.mock("../src/components/schedule/scheduleAdd", () => ({
 
 beforeEach(() => {
 	jest.useFakeTimers();
+	mockNavigate.mockClear();
+	mockDetailDispatch.mockClear();
+	mockUseDetail = false;
 });
 afterEach(async () => {
 	await cleanup();
 	jest.clearAllTimers();
 	jest.useRealTimers();
+	jest.restoreAllMocks();
 });
 
 const firstDay = dayjs().startOf("day").format("YYYY-MM-DD");
@@ -153,4 +167,79 @@ test("hidden weekends and filtered custom plans no longer contribute empty gap s
 		store.dispatch(configSet({key: "showCustomSchedule", value: false}));
 	});
 	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
+});
+
+const openSettings = async () => {
+	await fireEvent.press(
+		screen.getByRole("button", {name: getStr("scheduleSettings")}),
+	);
+};
+
+test("all schedule preferences live in the scrollable popup and controls keep it open", async () => {
+	const store = await setup([]);
+	await openSettings();
+	expect(screen.getByTestId("schedule-settings-scroll")).toBeTruthy();
+	expect(screen.getAllByText("按节次显示")).toHaveLength(1);
+	expect(screen.getByText("日程高度")).toBeTruthy();
+	expect(screen.getByText("使用半透明 UI")).toBeTruthy();
+	await fireEvent(
+		screen.getByRole("switch", {name: getStr("enableNewUI")}),
+		"valueChange",
+		false,
+	);
+	expect(store.getState().config.scheduleEnableNewUI).toBe(false);
+	await act(() => {
+		store.dispatch(configSet({key: "scheduleEnableNewUI", value: undefined}));
+	});
+	expect(
+		screen.getByRole("switch", {name: getStr("enableNewUI")}).props.value,
+	).toBe(false);
+	expect(screen.getByTestId("schedule-settings")).toBeTruthy();
+	await fireEvent.press(screen.getByTestId("schedule-settings-backdrop"));
+	expect(screen.queryByTestId("schedule-settings")).toBeNull();
+});
+
+test("hidden schedule management closes the popup and uses phone navigation", async () => {
+	await setup([]);
+	await openSettings();
+	await fireEvent.press(
+		screen.getByRole("button", {name: getStr("scheduleHidden")}),
+	);
+	expect(mockNavigate).toHaveBeenCalledWith("ScheduleHidden");
+	expect(screen.queryByTestId("schedule-settings")).toBeNull();
+});
+
+test.each([true, false])(
+	"schedule sync retains sending=%s and closes only after choosing a role",
+	async (isSending) => {
+		const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+		await setup([]);
+		await openSettings();
+		await fireEvent.press(
+			screen.getByRole("button", {name: getStr("scheduleSync")}),
+		);
+		expect(screen.getByTestId("schedule-settings")).toBeTruthy();
+		const buttons = alert.mock.calls[0][2]!;
+		await act(() => {
+			buttons[isSending ? 0 : 1].onPress!();
+		});
+		expect(mockNavigate).toHaveBeenCalledWith("ScheduleSync", {isSending});
+		expect(screen.queryByTestId("schedule-settings")).toBeNull();
+	},
+);
+
+test("tablet settings navigation targets the detail pane", async () => {
+	mockUseDetail = true;
+	await setup([]);
+	await openSettings();
+	await fireEvent.press(
+		screen.getByRole("button", {name: getStr("scheduleHidden")}),
+	);
+	expect(mockDetailDispatch).toHaveBeenCalledWith(
+		expect.objectContaining({
+			type: "REPLACE",
+			payload: {name: "ScheduleHidden", params: {disableAnimation: true}},
+		}),
+	);
+	expect(mockNavigate).not.toHaveBeenCalled();
 });
