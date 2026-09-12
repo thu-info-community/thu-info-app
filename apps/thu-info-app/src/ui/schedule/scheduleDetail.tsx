@@ -1,9 +1,9 @@
-import dayjs from "dayjs";
-import {View, Text, TouchableOpacity, Modal} from "react-native";
+import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
+import {View, Text, TouchableOpacity, Modal, Alert} from "react-native";
 import {useLayoutEffect, useState} from "react";
-import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
-import {useDispatch, useSelector} from "react-redux";
-import {ScheduleType, Schedule} from "@thu-info/lib/src/models/schedule/schedule";
+import {Choice} from "../../redux/slices/schedule";
+import {useStore} from "react-redux";
+import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -13,7 +13,7 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
-import {ScheduleAddModal} from "../../components/schedule/scheduleAdd";
+import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
 import {helper, State} from "../../redux/store";
 
 const nullAlias = (str: string) => {
@@ -23,18 +23,7 @@ const nullAlias = (str: string) => {
 	return str.length === 0;
 };
 
-export interface ScheduleDetailProps {
-	name: string;
-	location: string;
-	week: number;
-	dayOfWeek: number;
-	beginTime: dayjs.Dayjs;
-	endTime: dayjs.Dayjs;
-	alias: string;
-	type: ScheduleType;
-	activeWeeks?: number[];
-	category?: string;
-}
+export type ScheduleDetailProps = ScheduleEditParams;
 
 export const ScheduleDetailScreen = ({
 	navigation,
@@ -51,8 +40,7 @@ export const ScheduleDetailScreen = ({
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	const dispatch = useDispatch();
-	const {baseSchedule} = useSelector((s: State) => s.schedule);
+	const reduxStore = useStore<State>();
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -71,51 +59,6 @@ export const ScheduleDetailScreen = ({
 
 	const isCustomLike =
 		props.type === ScheduleType.CUSTOM || props.category === "个人日历";
-
-	const buildSchedulesForDeletion = (
-		target: ScheduleDetailProps,
-		choice: Choice,
-		base: Schedule[],
-	): Schedule[] => {
-		const matchedSchedule = base.find(
-			(s) =>
-				s.name === target.name &&
-				s.location === target.location &&
-				s.type === target.type &&
-				(target.category === undefined || s.category === target.category),
-		);
-
-		if (!matchedSchedule) {
-			return [];
-		}
-
-		if (choice === Choice.ALL) {
-			return [matchedSchedule];
-		}
-
-		if (choice === Choice.ONCE) {
-			const matchedSlice = matchedSchedule.activeTime.base.find(
-				(slice) =>
-					slice.dayOfWeek === target.dayOfWeek &&
-					slice.beginTime.isSame(target.beginTime, "minute") &&
-					slice.endTime.isSame(target.endTime, "minute"),
-			);
-
-			if (!matchedSlice) {
-				return [];
-			}
-
-			return [
-				{
-					...matchedSchedule,
-					activeTime: {base: [matchedSlice]},
-					delOrHideTime: {base: []},
-				},
-			];
-		}
-
-		return [];
-	};
 
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
@@ -140,30 +83,12 @@ export const ScheduleDetailScreen = ({
 						return;
 					}
 					try {
-						if (isCustomLike) {
-							setDeleting(true);
-							const schedulesToDelete = buildSchedulesForDeletion(
-								props,
-								choice,
-								baseSchedule,
-							);
-							if (schedulesToDelete.length > 0) {
-								await helper.deleteCustomSchedule(schedulesToDelete);
-							}
-						}
+						setDeleting(true);
+						await deleteScheduleOccurrences(helper, reduxStore, props.localId, props, choice, reduxStore.getState().config);
 						setDelPopupShow(false);
-						dispatch(
-							scheduleDelOrHide([
-								props.name,
-								{
-									dayOfWeek: props.dayOfWeek,
-									beginTime: props.beginTime,
-									endTime: props.endTime,
-								},
-								choice,
-							]),
-						);
 						navigation.pop();
+					} catch {
+						Alert.alert(getStr("networkRetry"));
 					} finally {
 						setDeleting(false);
 					}

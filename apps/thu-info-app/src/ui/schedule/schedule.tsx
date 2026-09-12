@@ -1,3 +1,5 @@
+import {StoredSchedule, schedulesInSemester} from "../../redux/scheduleData";
+import {deleteScheduleOccurrences, uploadCustomSchedules, beginScheduleRequest, isLatestScheduleRequest} from "../../redux/scheduleOperations";
 import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {
 	View,
@@ -15,15 +17,15 @@ import {
 } from "react-native";
 import React, {
 	useState,
+	useCallback,
 	useMemo,
 	useEffect,
 	useRef,
 	useImperativeHandle,
 	ElementRef,
 } from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, useStore} from "react-redux";
 import {
-	Schedule,
 	ScheduleType,
 	TimeSlice,
 	getWeekFromTime,
@@ -59,7 +61,7 @@ import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
 import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
-import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
+import {Choice} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
@@ -71,7 +73,7 @@ import {ScheduleSettings} from "../../components/schedule/settings";
 interface NormalSliceRenderData {
 	type: "normal";
 	slice: TimeSlice;
-	schedule: Schedule;
+	schedule: StoredSchedule;
 	week: number;
 }
 
@@ -127,7 +129,7 @@ const Header = React.forwardRef(
 		const semesterType = Number(semesterId[semesterId.length - 1]);
 
 		const current = dayjs();
-		const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+		const weekNumber = getWeekFromTime(current, firstDay);
 		const nowWeek = (() => {
 			if (weekNumber > weekCount) {
 				return weekCount;
@@ -375,29 +377,37 @@ export const ScheduleScreen = () => {
 		(s: State) => s.config,
 	);
 	const dispatch = useDispatch();
+	const reduxStore = useStore<State>();
 
 	const [refreshing, setRefreshing] = useState(false);
 	const [calendar, setCalendar] = useState<CalendarData | undefined>();
 
-	const getSchedule = () => {
+	const requests = useRef({sequence: 0}).current;
+	const selectedIndex = useRef(nextSemesterIndex);
+	selectedIndex.current = nextSemesterIndex;
+	const getSchedule = useCallback(() => {
+		const sequence = ++requests.sequence;
+		const version = beginScheduleRequest(reduxStore);
 		setRefreshing(true);
-		helper
+		return helper
 			.getSchedule(nextSemesterIndex)
 			.then((result) => {
+				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
 				setCalendar(result.calendar);
 				const semester = nextSemesterIndex === undefined || nextSemesterIndex >= result.calendar.nextSemesterList.length ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
 				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
 				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
 			})
 			.catch((e) => {
+				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
 				Snackbar.show({
 					text:
 						typeof e.message === "string" ? e.message : getStr("networkRetry"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
 			})
-			.then(() => setRefreshing(false));
-	};
+			.finally(() => { if (sequence === requests.sequence) { setRefreshing(false); } });
+	}, [dispatch, nextSemesterIndex, requests, reduxStore]);
 
 	const handleExportICS = async () => {
 		if (!calendar) {
@@ -410,7 +420,7 @@ export const ScheduleScreen = () => {
 
 		try {
 			const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendar.nextSemesterList.length ? calendar : calendar.nextSemesterList[nextSemesterIndex];
-			const result = await exportScheduleToICS(baseSchedule, semester);
+			const result = await exportScheduleToICS(baseSchedule.map((schedule) => ({...schedule, name: shortenMap[schedule.localId] ?? schedule.name})), semester);
 
 			if (result.success && result.filePath) {
 				if (result.method === "download") {
@@ -446,7 +456,7 @@ export const ScheduleScreen = () => {
 	};
 
 	const current = dayjs();
-	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+	const weekNumber = getWeekFromTime(current, firstDay);
 	const nowWeek = (() => {
 		if (weekNumber > weekCount) {
 			return weekCount;
@@ -538,15 +548,8 @@ export const ScheduleScreen = () => {
 
 	const [uploadingCustomSchedule, setUploadingCustomSchedule] = useState(false);
 
-	const customSchedulesInCurrentSemester = baseSchedule.filter((schedule) => {
-		if (schedule.type !== ScheduleType.CUSTOM) {
-			return false;
-		}
-		return schedule.activeTime.base.some((slice) => {
-			const week = getWeekFromTime(slice.beginTime, firstDay);
-			return week >= 1 && week <= weekCount;
-		});
-	});
+	const customSchedulesInCurrentSemester = schedulesInSemester(
+		baseSchedule.filter((schedule) => schedule.type === ScheduleType.CUSTOM), {firstDay, weekCount});
 
 	const hasCustomScheduleInCurrentSemester =
 		customSchedulesInCurrentSemester.length > 0;
@@ -610,52 +613,8 @@ export const ScheduleScreen = () => {
 			return;
 		}
 		try {
-			if (isCustomLike(actionTarget)) {
-				setDeletingAction(true);
-				const matchedSchedule = baseSchedule.find(
-					(s) =>
-						s.name === actionTarget.name &&
-						s.location === actionTarget.location &&
-						s.type === actionTarget.type &&
-						(actionTarget.category === undefined ||
-							s.category === actionTarget.category),
-				);
-
-				if (matchedSchedule) {
-					if (choice === Choice.ALL) {
-						await helper.deleteCustomSchedule([matchedSchedule]);
-					} else if (choice === Choice.ONCE) {
-						const matchedSlice = matchedSchedule.activeTime.base.find(
-							(slice) =>
-								slice.dayOfWeek === actionTarget.dayOfWeek &&
-								slice.beginTime.isSame(actionTarget.beginTime, "minute") &&
-								slice.endTime.isSame(actionTarget.endTime, "minute"),
-						);
-
-						if (matchedSlice) {
-							await helper.deleteCustomSchedule([
-								{
-									...matchedSchedule,
-									activeTime: {base: [matchedSlice]},
-									delOrHideTime: {base: []},
-								},
-							]);
-						}
-					}
-				}
-			}
-
-			dispatch(
-				scheduleDelOrHide([
-					actionTarget.name,
-					{
-						dayOfWeek: actionTarget.dayOfWeek,
-						beginTime: actionTarget.beginTime,
-						endTime: actionTarget.endTime,
-					},
-					choice,
-				]),
-			);
+			setDeletingAction(true);
+			await deleteScheduleOccurrences(helper, reduxStore, actionTarget.localId, actionTarget, choice, {firstDay, weekCount});
 			setActionTarget(undefined);
 			if (Platform.OS === "android") {
 				ToastAndroid.showWithGravity(
@@ -664,6 +623,8 @@ export const ScheduleScreen = () => {
 					ToastAndroid.TOP,
 				);
 			}
+		} catch {
+			Snackbar.show({text: getStr("networkRetry"), duration: Snackbar.LENGTH_SHORT});
 		} finally {
 			setDeletingAction(false);
 		}
@@ -766,8 +727,10 @@ export const ScheduleScreen = () => {
 
 	const colorList: string[] = theme.colors.courseItemColorList;
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(getSchedule, [nextSemesterIndex]);
+	useEffect(() => {
+		getSchedule();
+		return () => { requests.sequence++; };
+	}, [getSchedule, requests]);
 
 	const handleUploadCustomSchedule = () => {
 		if (!hasCustomScheduleInCurrentSemester || uploadingCustomSchedule) {
@@ -786,7 +749,7 @@ export const ScheduleScreen = () => {
 					onPress: async () => {
 						setUploadingCustomSchedule(true);
 						try {
-							await helper.saveCustomSchedule(customSchedulesInCurrentSemester);
+							await uploadCustomSchedules(helper, reduxStore);
 							Snackbar.show({
 								text: getStr("scheduleUploadCustomSuccess"),
 								duration: Snackbar.LENGTH_SHORT,
@@ -1128,7 +1091,7 @@ export const ScheduleScreen = () => {
 															top={block.top}
 															height={block.height}
 															name={
-																shortenMap[val.name] ?? val.name
+																shortenMap[val.localId] ?? val.name
 															}
 															location={val.location}
 															timeLabel={block.timeLabel}
@@ -1144,13 +1107,15 @@ export const ScheduleScreen = () => {
 															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
 																const detailProps = {
+																	localId: val.localId,
+																	id: slice.id,
 																	name: val.name,
 																	location: val.location,
 																	week: num,
 																	dayOfWeek: slice.dayOfWeek,
 																	beginTime: slice.beginTime,
 																	endTime: slice.endTime,
-																	alias: shortenMap[val.name] ?? "",
+																	alias: shortenMap[val.localId] ?? "",
 																	type: val.type,
 																	category: val.category,
 																};
@@ -1168,13 +1133,15 @@ export const ScheduleScreen = () => {
 															}}
 															onLongPress={() => {
 																setActionTarget({
+																	localId: val.localId,
+																	id: slice.id,
 																	name: val.name,
 																	location: val.location,
 																	week: num,
 																	dayOfWeek: slice.dayOfWeek,
 																	beginTime: slice.beginTime,
 																	endTime: slice.endTime,
-																	alias: shortenMap[val.name] ?? "",
+																	alias: shortenMap[val.localId] ?? "",
 																	type: val.type,
 																	category: val.category,
 																});

@@ -1,3 +1,5 @@
+import {autumn, summer, plan as customPlan, time} from "./fixtures/schedules";
+import {storeSchedule} from "../src/redux/scheduleData";
 import React from "react";
 import {expect, jest, test, beforeEach, afterEach} from "@jest/globals";
 import {
@@ -17,14 +19,19 @@ import {
 	configReducer,
 	configSet,
 	defaultConfig,
+	setCalendarConfig,
 } from "../src/redux/slices/config";
-import {scheduleReducer} from "../src/redux/slices/schedule";
+import {scheduleReducer, scheduleAddCustom} from "../src/redux/slices/schedule";
 import {
 	Schedule,
 	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
 
 const mockNavigate = jest.fn();
+const mockSnackbar = jest.fn();
+jest.mock("react-native-snackbar", () => ({Snackbar: {show: (...args: unknown[]) => mockSnackbar(...args), LENGTH_SHORT: 0, LENGTH_LONG: 0}}));
+const mockGetSchedule = jest.fn<(...args: any[]) => Promise<any>>();
+let mockScheduleResponses: ((result: any) => void)[] = [];
 const mockDetailDispatch = jest.fn();
 let mockUseDetail = false;
 jest.mock("@react-navigation/native", () => ({
@@ -36,7 +43,7 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("uuid", () => ({v4: () => "schedule-screen-test"}));
 jest.mock("../src/redux/store", () => ({
 	currState: () => ({config: {language: "zh", darkMode: false}}),
-	helper: {getSchedule: () => new Promise(() => {})},
+	helper: {getSchedule: (...args: any[]) => mockGetSchedule(...args)},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
 jest.mock("../src/utils/useDetailNavigator", () => ({
@@ -60,7 +67,10 @@ jest.mock("../src/components/schedule/scheduleAdd", () => ({
 
 beforeEach(() => {
 	jest.useFakeTimers();
+	mockScheduleResponses = [];
+	mockGetSchedule.mockReset().mockImplementation(() => new Promise((resolve) => mockScheduleResponses.push(resolve)));
 	mockNavigate.mockClear();
+	mockSnackbar.mockClear();
 	mockDetailDispatch.mockClear();
 	mockUseDetail = false;
 });
@@ -99,7 +109,9 @@ const setup = async (plans: Schedule[]) => {
 		preloadedState: {
 			config: {...defaultConfig, firstDay, weekCount: 2},
 			schedule: {
-				baseSchedule: plans,
+				baseSchedule: plans.map((entry) => ({...storeSchedule(entry), localId: entry.hash})),
+				overrides: {},
+				pendingUploads: [],
 				shortenMap: {},
 				customCnt: 1,
 				semesterId: defaultConfig.semesterId,
@@ -242,4 +254,37 @@ test("tablet settings navigation targets the detail pane", async () => {
 		}),
 	);
 	expect(mockNavigate).not.toHaveBeenCalled();
+});
+
+
+test("a stale semester response cannot overwrite the latest selection", async () => {
+	const store = await setup([]);
+	await act(() => {store.dispatch(setCalendarConfig({...autumn, semesterName: "秋季", nextSemesterIndex: 0}));});
+	expect(mockScheduleResponses).toHaveLength(2);
+	const calendar = {...summer, semesterName: "夏季", nextSemesterList: [{...autumn, semesterName: "秋季"}]};
+	await act(async () => {mockScheduleResponses[1]({calendar, schedule: []});});
+	expect(store.getState().schedule.semesterId).toBe(autumn.semesterId);
+	await act(async () => {mockScheduleResponses[0]({calendar, schedule: [customPlan()]});});
+	expect(store.getState().config.semesterId).toBe(autumn.semesterId);
+	expect(store.getState().schedule.baseSchedule).toEqual([]);
+});
+
+test("the same persisted summer Sunday is absent from the autumn grid", async () => {
+	const store = await setup([]);
+	await act(() => {
+		store.dispatch(setCalendarConfig({...autumn, semesterName: "秋季", nextSemesterIndex: undefined}));
+		store.dispatch(scheduleAddCustom(customPlan([time("2025-09-14")], {name: "夏季周日"})));
+	});
+	expect(screen.queryByText("夏季周日")).toBeNull();
+	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
+});
+
+
+test("failed refresh retains the current schedule and reports the failure", async () => {
+	mockGetSchedule.mockRejectedValueOnce(new Error("offline"));
+	const store = await setup([plan(1, 1)]);
+	await act(async () => {});
+	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
+	expect(mockSnackbar).toHaveBeenCalledWith(expect.objectContaining({text: "offline"}));
+	expect(screen.getByTestId("schedule-scroll").props.refreshControl.props.refreshing).toBe(false);
 });
