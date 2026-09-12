@@ -1,3 +1,5 @@
+import {StoredSchedule, schedulesInSemester} from "../../redux/scheduleData";
+import {deleteScheduleOccurrences, uploadCustomSchedules, beginScheduleRequest, isLatestScheduleRequest} from "../../redux/scheduleOperations";
 import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {
 	View,
@@ -5,7 +7,6 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	FlatList,
-	Switch,
 	Platform,
 	ToastAndroid,
 	Animated,
@@ -16,21 +17,32 @@ import {
 } from "react-native";
 import React, {
 	useState,
+	useCallback,
+	useMemo,
 	useEffect,
 	useRef,
 	useImperativeHandle,
 	ElementRef,
 } from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, useStore} from "react-redux";
 import {
-	Schedule,
 	ScheduleType,
 	TimeSlice,
 	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
-import {ScheduleBlock} from "../../components/schedule/schedule";
+import {
+	ScheduleBlock,
+	ScheduleTimeAxis,
+	ScheduleGridLines,
+} from "../../components/schedule/schedule";
+import {
+	buildScheduleLayout,
+	scheduleRowAt,
+	scheduleAddTime,
+	ScheduleLayout,
+} from "../../utils/scheduleLayout";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -40,67 +52,34 @@ import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
 import IconUpload from "../../assets/icons/IconUpload";
-import Slider from "@react-native-community/slider";
 import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
-import {configSet, setCalendarConfig} from "../../redux/slices/config";
+import {setCalendarConfig} from "../../redux/slices/config";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
 import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
-import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
+import {Choice} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
+import {StackActions, useNavigation} from "@react-navigation/native";
+import type {RootNav} from "../../components/Root";
+import {ScheduleSettings} from "../../components/schedule/settings";
 
 interface NormalSliceRenderData {
 	type: "normal";
 	slice: TimeSlice;
-	schedule: Schedule;
+	schedule: StoredSchedule;
 	week: number;
 }
 
 type SliceRenderData = NormalSliceRenderData;
 
-export const beginTime = [
-	"",
-	"08:00",
-	"08:50",
-	"09:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-export const endTime = [
-	"",
-	"08:45",
-	"09:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
+export {beginTime, endTime} from "../../utils/scheduleLayout";
 
 interface NewScheduleDefaults {
 	week: number;
@@ -112,6 +91,7 @@ interface NewScheduleDefaults {
 	beginMinute: number;
 	endHour: number;
 	endMinute: number;
+	useCustomDateTime: boolean;
 }
 
 const Header = React.forwardRef(
@@ -149,7 +129,7 @@ const Header = React.forwardRef(
 		const semesterType = Number(semesterId[semesterId.length - 1]);
 
 		const current = dayjs();
-		const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+		const weekNumber = getWeekFromTime(current, firstDay);
 		const nowWeek = (() => {
 			if (weekNumber > weekCount) {
 				return weekCount;
@@ -372,7 +352,7 @@ const Header = React.forwardRef(
 						</View>
 					)}
 					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
-						<TouchableOpacity onPress={() => onChangeSetOpenConfig()}>
+						<TouchableOpacity accessibilityRole="button" accessibilityLabel={getStr("scheduleSettings")} onPress={() => onChangeSetOpenConfig()}>
 							<IconConfig width={24} height={24} />
 						</TouchableOpacity>
 					</View>
@@ -389,6 +369,7 @@ const Header = React.forwardRef(
 );
 
 export const ScheduleScreen = () => {
+	const navigation = useNavigation<RootNav>();
 	const detailNavigator = useDetailNavigator();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
@@ -396,29 +377,37 @@ export const ScheduleScreen = () => {
 		(s: State) => s.config,
 	);
 	const dispatch = useDispatch();
+	const reduxStore = useStore<State>();
 
 	const [refreshing, setRefreshing] = useState(false);
 	const [calendar, setCalendar] = useState<CalendarData | undefined>();
 
-	const getSchedule = () => {
+	const requests = useRef({sequence: 0}).current;
+	const selectedIndex = useRef(nextSemesterIndex);
+	selectedIndex.current = nextSemesterIndex;
+	const getSchedule = useCallback(() => {
+		const sequence = ++requests.sequence;
+		const version = beginScheduleRequest(reduxStore);
 		setRefreshing(true);
-		helper
+		return helper
 			.getSchedule(nextSemesterIndex)
 			.then((result) => {
+				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
 				setCalendar(result.calendar);
 				const semester = nextSemesterIndex === undefined || nextSemesterIndex >= result.calendar.nextSemesterList.length ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
 				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
 				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
 			})
 			.catch((e) => {
+				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
 				Snackbar.show({
 					text:
 						typeof e.message === "string" ? e.message : getStr("networkRetry"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
 			})
-			.then(() => setRefreshing(false));
-	};
+			.finally(() => { if (sequence === requests.sequence) { setRefreshing(false); } });
+	}, [dispatch, nextSemesterIndex, requests, reduxStore]);
 
 	const handleExportICS = async () => {
 		if (!calendar) {
@@ -431,7 +420,7 @@ export const ScheduleScreen = () => {
 
 		try {
 			const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendar.nextSemesterList.length ? calendar : calendar.nextSemesterList[nextSemesterIndex];
-			const result = await exportScheduleToICS(baseSchedule, semester);
+			const result = await exportScheduleToICS(baseSchedule.map((schedule) => ({...schedule, name: shortenMap[schedule.localId] ?? schedule.name})), semester);
 
 			if (result.success && result.filePath) {
 				if (result.method === "download") {
@@ -467,7 +456,7 @@ export const ScheduleScreen = () => {
 	};
 
 	const current = dayjs();
-	const weekNumber = Math.floor(current.diff(firstDay) / 604800000) + 1;
+	const weekNumber = getWeekFromTime(current, firstDay);
 	const nowWeek = (() => {
 		if (weekNumber > weekCount) {
 			return weekCount;
@@ -512,6 +501,8 @@ export const ScheduleScreen = () => {
 	const showCustomSchedule =
 		useSelector((s: State) => s.config.showCustomSchedule) ?? true;
 	// 每小时高度，根据设置进行缩放
+	const useClassPeriods = useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
+	const periodHeight = heightForCalc / 14 * (1 + heightMode * 0.05);
 	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
 	// 每分钟高度
 	const minuteHeight = hourHeight / 60;
@@ -557,15 +548,8 @@ export const ScheduleScreen = () => {
 
 	const [uploadingCustomSchedule, setUploadingCustomSchedule] = useState(false);
 
-	const customSchedulesInCurrentSemester = baseSchedule.filter((schedule) => {
-		if (schedule.type !== ScheduleType.CUSTOM) {
-			return false;
-		}
-		return schedule.activeTime.base.some((slice) => {
-			const week = getWeekFromTime(slice.beginTime, firstDay);
-			return week >= 1 && week <= weekCount;
-		});
-	});
+	const customSchedulesInCurrentSemester = schedulesInSemester(
+		baseSchedule.filter((schedule) => schedule.type === ScheduleType.CUSTOM), {firstDay, weekCount});
 
 	const hasCustomScheduleInCurrentSemester =
 		customSchedulesInCurrentSemester.length > 0;
@@ -629,52 +613,8 @@ export const ScheduleScreen = () => {
 			return;
 		}
 		try {
-			if (isCustomLike(actionTarget)) {
-				setDeletingAction(true);
-				const matchedSchedule = baseSchedule.find(
-					(s) =>
-						s.name === actionTarget.name &&
-						s.location === actionTarget.location &&
-						s.type === actionTarget.type &&
-						(actionTarget.category === undefined ||
-							s.category === actionTarget.category),
-				);
-
-				if (matchedSchedule) {
-					if (choice === Choice.ALL) {
-						await helper.deleteCustomSchedule([matchedSchedule]);
-					} else if (choice === Choice.ONCE) {
-						const matchedSlice = matchedSchedule.activeTime.base.find(
-							(slice) =>
-								slice.dayOfWeek === actionTarget.dayOfWeek &&
-								slice.beginTime.isSame(actionTarget.beginTime, "minute") &&
-								slice.endTime.isSame(actionTarget.endTime, "minute"),
-						);
-
-						if (matchedSlice) {
-							await helper.deleteCustomSchedule([
-								{
-									...matchedSchedule,
-									activeTime: {base: [matchedSlice]},
-									delOrHideTime: {base: []},
-								},
-							]);
-						}
-					}
-				}
-			}
-
-			dispatch(
-				scheduleDelOrHide([
-					actionTarget.name,
-					{
-						dayOfWeek: actionTarget.dayOfWeek,
-						beginTime: actionTarget.beginTime,
-						endTime: actionTarget.endTime,
-					},
-					choice,
-				]),
-			);
+			setDeletingAction(true);
+			await deleteScheduleOccurrences(helper, reduxStore, actionTarget.localId, actionTarget, choice, {firstDay, weekCount});
 			setActionTarget(undefined);
 			if (Platform.OS === "android") {
 				ToastAndroid.showWithGravity(
@@ -683,6 +623,8 @@ export const ScheduleScreen = () => {
 					ToastAndroid.TOP,
 				);
 			}
+		} catch {
+			Snackbar.show({text: getStr("networkRetry"), duration: Snackbar.LENGTH_SHORT});
 		} finally {
 			setDeletingAction(false);
 		}
@@ -785,8 +727,10 @@ export const ScheduleScreen = () => {
 
 	const colorList: string[] = theme.colors.courseItemColorList;
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	useEffect(getSchedule, [nextSemesterIndex]);
+	useEffect(() => {
+		getSchedule();
+		return () => { requests.sequence++; };
+	}, [getSchedule, requests]);
 
 	const handleUploadCustomSchedule = () => {
 		if (!hasCustomScheduleInCurrentSemester || uploadingCustomSchedule) {
@@ -805,7 +749,7 @@ export const ScheduleScreen = () => {
 					onPress: async () => {
 						setUploadingCustomSchedule(true);
 						try {
-							await helper.saveCustomSchedule(customSchedulesInCurrentSemester);
+							await uploadCustomSchedules(helper, reduxStore);
 							Snackbar.show({
 								text: getStr("scheduleUploadCustomSuccess"),
 								duration: Snackbar.LENGTH_SHORT,
@@ -825,7 +769,7 @@ export const ScheduleScreen = () => {
 		);
 	};
 
-	const allSchedule = () => {
+	const weekSchedules = useMemo(() => {
 		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
 			weekCount,
 		);
@@ -855,14 +799,48 @@ export const ScheduleScreen = () => {
 		});
 
 		return weekSchedule;
-	};
+	}, [baseSchedule, firstDay, weekCount, showCustomSchedule, showOfficialSchedule]);
 
-	const flatListRef = useRef<FlatList>(null);
+	const flatListRef = useRef<FlatList<ScheduleLayout<SliceRenderData>>>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
+	useEffect(() => {
+		if (weekCount > 0 && currentWeekIndex >= weekCount) {
+			setCurrentWeekIndex(weekCount - 1);
+			headerRef.current?.setWeekNumber(weekCount);
+			flatListRef.current?.scrollToIndex({index: weekCount - 1, animated: false});
+		}
+	}, [currentWeekIndex, weekCount]);
 	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
 		undefined,
 	);
+
+	const weekLayouts = useMemo(
+		() => weekSchedules.map((entries) => buildScheduleLayout(
+			entries.filter((entry) => !hideWeekend || entry.slice.dayOfWeek <= 5),
+			{
+				classPeriods: useClassPeriods,
+				periodHeight,
+				cardMinHeight: unitWidth < 64 ? 64 : 52,
+				minuteHeight,
+				startMinute: displayStartHour * 60,
+			},
+		)),
+		[weekSchedules, hideWeekend, useClassPeriods, periodHeight, minuteHeight, displayStartHour, unitWidth],
+	);
+	const activeLayout = weekLayouts[
+		Math.max(0, Math.min(currentWeekIndex, weekLayouts.length - 1))
+	];
+	const contentHeight = activeLayout?.height ?? 14 * periodHeight;
+	const verticalScrollRef = useRef<ElementRef<typeof ScrollView>>(null);
+	const verticalOffset = useRef(0);
+	useEffect(() => {
+		const maxOffset = Math.max(0, contentHeight + timeStripVerticalPadding * 2 - tableHeight);
+		if (verticalOffset.current > maxOffset) {
+			verticalOffset.current = maxOffset;
+			verticalScrollRef.current?.scrollTo({y: maxOffset, animated: false});
+		}
+	}, [contentHeight, tableHeight]);
 
 	const renderActionButton = (
 		label: string,
@@ -998,6 +976,12 @@ export const ScheduleScreen = () => {
 					</View>
 				</View>
 				<ScrollView
+					testID="schedule-scroll"
+					ref={verticalScrollRef}
+					onScroll={({nativeEvent}) => {
+						verticalOffset.current = nativeEvent.contentOffset.y;
+					}}
+					scrollEventThrottle={16}
 					style={{flex: 1}}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
@@ -1013,165 +997,44 @@ export const ScheduleScreen = () => {
 							flexDirection: "row",
 							paddingVertical: timeStripVerticalPadding,
 						}}>
-						{/* Timetable on the left: displayStartHour - 24:00 */}
-						<View
-							style={{
-								width: timeLabelWidth,
-								height: (24 - displayStartHour) * hourHeight,
-							}}>
-							{Array.from(
-								new Array(25 - displayStartHour),
-								(_, k) => displayStartHour + k,
-							).map((hour) => (
-								<Text
-									key={`time-label-${hour}`}
-									style={{
-										position: "absolute",
-										top: (hour - displayStartHour) * hourHeight - 6,
-										width: timeLabelWidth,
-										textAlign: "center",
-										color: theme.colors.fontB1,
-										fontSize: 10,
-									}}>
-									{String(hour).padStart(2, "0")}:00
-								</Text>
-							))}
-						</View>
-
-						{/* Vertical time axis with class time markers */}
-						<View
-							style={{
-								width: timeAxisWidth,
-								height: (24 - displayStartHour) * hourHeight,
-							}}>
-							{/* main vertical line */}
-							<View
-								style={{
-									position: "absolute",
-									left: timeAxisWidth / 2,
-									top: 0,
-									bottom: 0,
-									width: 1,
-									backgroundColor: isDarkMode
-										? "rgba(255,255,255,0.08)"
-										: "rgba(0,0,0,0.06)",
-								}}
-							/>
-							{/* begin time markers */}
-							{beginTime.map((time, idx) => {
-								if (!time) {
-									return null;
-								}
-								const [h, m] = time.split(":");
-								const minutes =
-									parseInt(h, 10) * 60 + parseInt(m, 10);
-								if (minutes < displayStartHour * 60) {
-									return null;
-								}
-								return (
-									<View
-										key={`axis-begin-${idx}`}
-										style={{
-											position: "absolute",
-											left: timeAxisWidth / 2 - 3,
-											top:
-												(minutes - displayStartHour * 60) *
-													minuteHeight -
-												3,
-											width: 6,
-											height: 6,
-											borderRadius: 3,
-											backgroundColor: theme.colors.contentBackground,
-											borderWidth: 1,
-											borderColor: isDarkMode
-												? "rgba(255,255,255,0.08)"
-												: "rgba(0,0,0,0.06)",
-										}}
-									/>
-								);
-							})}
-							{/* end time markers */}
-							{endTime.map((time, idx) => {
-								if (!time) {
-									return null;
-								}
-								const [h, m] = time.split(":");
-								const minutes =
-									parseInt(h, 10) * 60 + parseInt(m, 10);
-								if (minutes < displayStartHour * 60) {
-									return null;
-								}
-								return (
-									<View
-										key={`axis-end-${idx}`}
-										style={{
-											position: "absolute",
-											left: timeAxisWidth / 2 - 3,
-											top:
-												(minutes - displayStartHour * 60) *
-													minuteHeight -
-												3,
-											width: 6,
-											height: 6,
-											borderRadius: 3,
-											backgroundColor: theme.colors.contentBackground,
-											borderWidth: 1,
-											borderColor: isDarkMode
-												? "rgba(255,255,255,0.08)"
-												: "rgba(0,0,0,0.06)",
-										}}
-									/>
-								);
-							})}
-						</View>
+						<ScheduleTimeAxis
+							rows={activeLayout?.rows ?? []}
+							height={contentHeight}
+							classPeriods={useClassPeriods}
+							heightMode={heightMode}
+						/>
 
 						{/* Main content */}
 						<View style={{flex: 1}}>
-							{/* Hour marks */}
-							{Array.from(
-								new Array(25 - displayStartHour),
-								(_, k) => displayStartHour + k,
-							).map((hour) => (
-								<View
-									key={`hour-line-${hour}`}
-									style={{
-										backgroundColor: isDarkMode
-											? "rgba(255,255,255,0.08)"
-											: "rgba(0,0,0,0.06)",
-										height: 1,
-										position: "absolute",
-										left: 0,
-										right: 0,
-										top: (hour - displayStartHour) * hourHeight,
-									}}
-								/>
-							))}
-
 							{/* Schedule content */}
-							<FlatList
+							<FlatList<ScheduleLayout<SliceRenderData>>
+								testID="schedule-weeks"
 								ref={flatListRef}
 								horizontal={true}
 								showsHorizontalScrollIndicator={false}
-								style={{width: scheduleBodyWidth}}
+								style={{width: scheduleBodyWidth, height: contentHeight}}
 								initialNumToRender={3}
 								getItemLayout={(_, index) => ({
 									length: scheduleBodyWidth,
 									offset: scheduleBodyWidth * index,
 									index: index,
 								})}
-								data={allSchedule()}
-								renderItem={({item}) => (
+								data={weekLayouts}
+								renderItem={({item, index: pageIndex}) => (
 									<View
+										testID={`schedule-page-${pageIndex}`}
 										style={{
-											height: (24 - displayStartHour) * hourHeight,
+											height: item.height,
 											width: scheduleBodyWidth,
 										}}>
 										<View
 											style={{
-												height: (24 - displayStartHour) * hourHeight,
+												height: item.height,
 												width: scheduleBodyWidth,
 											}}>
+											<ScheduleGridLines rows={item.rows} />
 											<TouchableOpacity
+												testID={`schedule-add-${pageIndex}`}
 												activeOpacity={1}
 												style={{
 													position: "absolute",
@@ -1192,72 +1055,23 @@ export const ScheduleScreen = () => {
 													}
 													const dayOfWeek = dayIndex + 1;
 
-													const totalMinutesInDay = 24 * 60;
-													let minuteOfDay =
-														displayStartHour * 60 +
-														Math.floor(locationY / minuteHeight);
-													if (minuteOfDay < 0) {
-														minuteOfDay = 0;
-													} else if (minuteOfDay >= totalMinutesInDay) {
-														minuteOfDay = totalMinutesInDay - 1;
+													const row = scheduleRowAt(item.rows, locationY);
+													if (!row) {
+														return;
 													}
-
-													const findPeriodByMinute = (m: number) => {
-														let closestIndex = 1;
-														let minDistance = Number.POSITIVE_INFINITY;
-														for (let i = 1; i < beginTime.length; i++) {
-															const beginStr = beginTime[i];
-															const endStr = endTime[i];
-															if (!beginStr || !endStr) {
-																continue;
-															}
-															const [bh, bm] = beginStr.split(":");
-															const [eh, em] = endStr.split(":");
-															const start =
-																parseInt(bh, 10) * 60 + parseInt(bm, 10);
-															const end =
-																parseInt(eh, 10) * 60 + parseInt(em, 10);
-															if (m >= start && m < end) {
-																return i;
-															}
-															const mid = (start + end) / 2;
-															const dist = Math.abs(m - mid);
-															if (dist < minDistance) {
-																minDistance = dist;
-																closestIndex = i;
-															}
-														}
-														return closestIndex;
-													};
-
-													const periodBegin = findPeriodByMinute(minuteOfDay);
-													const periodEnd = Math.min(
-														periodBegin + 1,
-														endTime.length - 1,
-													);
-
-													const beginStr = beginTime[periodBegin] || "08:00";
-													const endStr = endTime[periodEnd] || "08:45";
-													const [bh, bm] = beginStr.split(":");
-													const [eh, em] = endStr.split(":");
-
-													const week = Math.max(
-														1,
-														Math.min(weekCount, currentWeekIndex + 1),
-													);
-													const dateIndex =
-														(week - 1) * 7 + (dayOfWeek - 1);
-
+													const defaults = scheduleAddTime(row, locationY);
+													const week = pageIndex + 1;
 													setAddDefaults({
 														week,
 														dayOfWeek,
-														periodBegin,
-														periodEnd,
-														dateIndex,
-														beginHour: parseInt(bh, 10),
-														beginMinute: parseInt(bm, 10),
-														endHour: parseInt(eh, 10),
-														endMinute: parseInt(em, 10),
+														periodBegin: defaults.periodBegin,
+														periodEnd: defaults.periodEnd,
+														dateIndex: (week - 1) * 7 + dayOfWeek - 1,
+														beginHour: Math.floor(defaults.begin / 60),
+														beginMinute: defaults.begin % 60,
+														endHour: Math.floor(defaults.end / 60),
+														endMinute: defaults.end % 60,
+														useCustomDateTime: defaults.custom,
 													});
 												}}
 												onPress={() => {
@@ -1265,42 +1079,25 @@ export const ScheduleScreen = () => {
 													setShowAddModal(true);
 												}}
 											/>
-											{(item as SliceRenderData[]).map((data) => {
-												if (hideWeekend && data.slice.dayOfWeek > 5) {
-													return null;
-												}
+											{item.blocks.map((block, blockIndex) => {
+												const data = block.entry;
 												if (data.type === "normal") {
 													const slice = data.slice;
 													const val = data.schedule;
 													const num = data.week;
-													const startThreshold = displayStartHour * 60;
-													const beginMinutes =
-														slice.beginTime.hour() * 60 +
-														slice.beginTime.minute();
-													const endMinutes =
-														slice.endTime.hour() * 60 +
-														slice.endTime.minute();
-													if (endMinutes <= startThreshold) {
-														return null;
-													}
-													// 在“从 displayStartHour 开始”的坐标系中的 begin/end（分钟）
-													const visibleBegin = Math.max(
-														0,
-														beginMinutes - startThreshold,
-													);
-													const visibleEnd = endMinutes - startThreshold;
 													return (
 														<ScheduleBlock
 															dayOfWeek={slice.dayOfWeek}
-															begin={visibleBegin}
-															end={visibleEnd}
+															top={block.top}
+															height={block.height}
 															name={
-																shortenMap[val.name] ?? val.name
+																shortenMap[val.localId] ?? val.name
 															}
 															location={val.location}
-															gridHeight={minuteHeight}
+															timeLabel={block.timeLabel}
+															compact={block.compact}
 															gridWidth={unitWidth}
-															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginMinutes}-${val.location}`}
+															key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.beginTime.valueOf()}-${blockIndex}`}
 															blockColor={
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
@@ -1310,13 +1107,15 @@ export const ScheduleScreen = () => {
 															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
 															onPress={() => {
 																const detailProps = {
+																	localId: val.localId,
+																	id: slice.id,
 																	name: val.name,
 																	location: val.location,
 																	week: num,
 																	dayOfWeek: slice.dayOfWeek,
 																	beginTime: slice.beginTime,
 																	endTime: slice.endTime,
-																	alias: shortenMap[val.name] ?? "",
+																	alias: shortenMap[val.localId] ?? "",
 																	type: val.type,
 																	category: val.category,
 																};
@@ -1334,13 +1133,15 @@ export const ScheduleScreen = () => {
 															}}
 															onLongPress={() => {
 																setActionTarget({
+																	localId: val.localId,
+																	id: slice.id,
 																	name: val.name,
 																	location: val.location,
 																	week: num,
 																	dayOfWeek: slice.dayOfWeek,
 																	beginTime: slice.beginTime,
 																	endTime: slice.endTime,
-																	alias: shortenMap[val.name] ?? "",
+																	alias: shortenMap[val.localId] ?? "",
 																	type: val.type,
 																	category: val.category,
 																});
@@ -1354,9 +1155,9 @@ export const ScheduleScreen = () => {
 								)}
 								initialScrollIndex={nowWeek - 1}
 								onScroll={({nativeEvent}) => {
-									const index = Math.round(
+									const index = Math.max(0, Math.min(weekCount - 1, Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
-									);
+									)));
 									setCurrentWeekIndex(index);
 									headerRef.current?.setWeekNumber(index + 1);
 								}}
@@ -1366,161 +1167,29 @@ export const ScheduleScreen = () => {
 					</View>
 				</ScrollView>
 				{openConfig && (
-					<TouchableOpacity
-						onPress={() => setOpenConfig(false)}
-						style={{
-							position: "absolute",
-							height: "100%",
-							width: "100%",
-							backgroundColor: "#00000055",
-						}}>
-						<View style={{backgroundColor: theme.colors.contentBackground}}>
-							<Slider
-								style={{height: 40, width: "100%"}}
-								minimumValue={0}
-								maximumValue={20}
-								step={1}
-								minimumTrackTintColor={theme.colors.themePurple}
-								maximumTrackTintColor={theme.colors.inputBorder}
-								thumbTintColor={theme.colors.primary}
-								value={heightMode}
-								onValueChange={(value) => {
-									dispatch(
-										configSet({
-											key: "scheduleHeightMode",
-											value: value as number,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("hideWeekend")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={hideWeekend}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "hideWeekend",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("scheduleFilterOfficial")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={showOfficialSchedule}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "showOfficialSchedule",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<View
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "space-between",
-								paddingHorizontal: 16,
-								paddingVertical: 8,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}>
-							<Text
-								style={{
-									color: theme.colors.fontB1,
-									fontSize: 16,
-								}}>
-								{getStr("scheduleFilterCustom")}
-							</Text>
-							<Switch
-								ios_backgroundColor={theme.colors.inputBorder}
-								thumbColor={theme.colors.themeLightGrey}
-								trackColor={{
-									false: theme.colors.inputBorder,
-									true: theme.colors.themePurple,
-								}}
-								value={showCustomSchedule}
-								onValueChange={(value: boolean) => {
-									dispatch(
-										configSet({
-											key: "showCustomSchedule",
-											value: value,
-										}),
-									);
-								}}
-							/>
-						</View>
-						<TouchableOpacity
-							style={{
-								backgroundColor: theme.colors.contentBackground,
-								flexDirection: "row",
-								justifyContent: "center",
-								paddingHorizontal: 16,
-								paddingVertical: 12,
-								borderTopWidth: 1,
-								borderTopColor: theme.colors.inputBorder,
-							}}
-							onPress={() => {
-								setOpenConfig(false);
-								handleExportICS();
-							}}>
-							<Text
-								style={{
-									color: theme.colors.themePurple,
-									fontSize: 16,
-									fontWeight: "500",
-								}}>
-								{getStr("scheduleExportICS")}
-							</Text>
-						</TouchableOpacity>
-					</TouchableOpacity>
+					<ScheduleSettings
+						onClose={() => setOpenConfig(false)}
+						onManageHidden={() => {
+							setOpenConfig(false);
+							if (detailNavigator) {
+								detailNavigator.dispatch(StackActions.replace("ScheduleHidden", {disableAnimation: true}));
+							} else {
+								navigation.navigate("ScheduleHidden");
+							}
+						}}
+						onSync={(isSending) => {
+							setOpenConfig(false);
+							if (detailNavigator) {
+								detailNavigator.dispatch(StackActions.replace("ScheduleSync", {isSending, disableAnimation: true}));
+							} else {
+								navigation.navigate("ScheduleSync", {isSending});
+							}
+						}}
+						onExport={() => {
+							setOpenConfig(false);
+							handleExportICS();
+						}}
+					/>
 				)}
 			</GestureHandlerRootView>
 			<ScheduleAddModal
@@ -1530,6 +1199,7 @@ export const ScheduleScreen = () => {
 				defaultDateIndex={addDefaults?.dateIndex}
 				defaultPeriodBegin={addDefaults?.periodBegin}
 				defaultPeriodEnd={addDefaults?.periodEnd}
+				defaultUseCustomDateTime={addDefaults?.useCustomDateTime}
 				defaultBeginHour={addDefaults?.beginHour}
 				defaultBeginMinute={addDefaults?.beginMinute}
 				defaultEndHour={addDefaults?.endHour}

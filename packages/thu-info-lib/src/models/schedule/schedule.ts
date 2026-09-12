@@ -60,9 +60,16 @@ export const getEndPeriod = (endTime: dayjs.Dayjs): number => {
  * @returns 周次（1开始），如果无法计算则返回 0
  */
 export const getWeekFromTime = (time: dayjs.Dayjs, semesterFirstDay: string): number => {
-    const semesterStart = dayjs(semesterFirstDay);
-    const diffDays = time.diff(semesterStart, "day");
+    const semesterStart = dayjs(semesterFirstDay).startOf("day");
+    // Dayjs truncates fractional differences toward zero: the Sunday before
+    // term must not become week 1 just because its time is later than midnight.
+    const diffDays = time.startOf("day").diff(semesterStart, "day");
     return Math.floor(diffDays / 7) + 1;
+};
+
+export const isInSemester = (time: dayjs.Dayjs, firstDay: string, weekCount: number): boolean => {
+    const week = getWeekFromTime(time, firstDay);
+    return week >= 1 && week <= weekCount;
 };
 
 // TimeSlice methods END
@@ -177,7 +184,7 @@ export const mergeSchedules = (base: Schedule[]) => {
     const existName: string[] = [];
     const processedScheduleList: Schedule[] = [];
     base.forEach((schedule) => {
-        const nameLocation = `${schedule.name}.${schedule.location}.${schedule.category}`;
+        const nameLocation = JSON.stringify([schedule.type, schedule.name, schedule.location, schedule.category]);
         const index = existName.indexOf(nameLocation);
         if (index === -1) {
             existName.push(nameLocation);

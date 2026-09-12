@@ -1,3 +1,4 @@
+import {StoredSchedule} from "../../redux/scheduleData";
 import {
 	Alert,
 	BackHandler,
@@ -36,7 +37,6 @@ import {currState, helper, State} from "../../redux/store";
 import {top5Update} from "../../redux/slices/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
 import {
-	Schedule,
 	ScheduleType,
 	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
@@ -299,18 +299,18 @@ export const HomeScheduleSection = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
-	const firstDay = useSelector((s: State) => s.config.firstDay);
+	const {firstDay, weekCount} = useSelector((s: State) => s.config);
 	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
 	const shortenMap = useSelector((s: State) => s.schedule.shortenMap);
 	const crTimetable = useSelector((s: State) => s.timetable.crTimetable);
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
-	const week = Math.floor(now.diff(firstDay) / 604800000) + 1;
+	const week = getWeekFromTime(now, firstDay);
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
-	const selectSchedule = (schedules: Schedule[], dayOfWeek: number) => {
+	const selectSchedule = (schedules: StoredSchedule[], dayOfWeek: number) => {
 		// dayOfWeek use 8 to specify Monday of next week
 		let _week = week;
 		if (dayOfWeek === 8) {
@@ -321,14 +321,14 @@ export const HomeScheduleSection = () => {
 		for (const s of schedules) {
 			for (const ss of s.activeTime.base) {
 				const sliceWeek = getWeekFromTime(ss.beginTime, firstDay);
-				if (sliceWeek === _week) {
+				if (sliceWeek === _week && sliceWeek >= 1 && sliceWeek <= weekCount) {
 					if (ss.dayOfWeek === dayOfWeek) {
 						const from = ss.beginTime.format("HH:mm");
 						const to = ss.endTime.format("HH:mm");
 
 						if (s.type === ScheduleType.CUSTOM) {
 							a.push({
-								name: shortenMap[s.name] ?? s.name,
+								name: shortenMap[s.localId] ?? s.name,
 								location: s.location,
 								from,
 								to,
@@ -336,20 +336,22 @@ export const HomeScheduleSection = () => {
 								endTime: ss.endTime,
 								color: getColor(s.name),
 								navProps: {
+									localId: s.localId,
+									id: ss.id,
 									name: s.name,
 									location: s.location,
 									week: _week,
-									dayOfWeek: today,
+									dayOfWeek: ss.dayOfWeek,
 									beginTime: ss.beginTime,
 									endTime: ss.endTime,
-									alias: shortenMap[s.name] ?? "",
+									alias: shortenMap[s.localId] ?? "",
 									type: s.type,
 									category: s.category,
 								},
 							});
 						} else {
 							a.push({
-								name: shortenMap[s.name] ?? s.name,
+								name: shortenMap[s.localId] ?? s.name,
 								location: s.location,
 								from,
 								to,
@@ -357,13 +359,15 @@ export const HomeScheduleSection = () => {
 								endTime: ss.endTime,
 								color: getColor(s.name),
 								navProps: {
+									localId: s.localId,
+									id: ss.id,
 									name: s.name,
 									location: s.location,
 									week: _week,
-									dayOfWeek: today,
+									dayOfWeek: ss.dayOfWeek,
 									beginTime: ss.beginTime,
 									endTime: ss.endTime,
-									alias: shortenMap[s.name] ?? "",
+									alias: shortenMap[s.localId] ?? "",
 									type: s.type,
 									category: s.category,
 								},

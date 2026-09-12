@@ -1,4 +1,6 @@
-import {useDispatch, useSelector} from "react-redux";
+import {scheduleConflicts} from "../../redux/scheduleData";
+import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
+import {useDispatch, useSelector, useStore} from "react-redux";
 import {
 	FlatList,
 	Text,
@@ -7,19 +9,18 @@ import {
 	Dimensions,
 	Alert,
 } from "react-native";
-import {State} from "../../redux/store";
+import {State, helper} from "../../redux/store";
 import {
-	getOverlappedBlock,
 	ScheduleType,
 	TimeSlice,
 	getBeginPeriod,
 	getEndPeriod,
 	getWeekFromTime,
+	isInSemester,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {
 	Choice,
-	scheduleDelOrHide,
 	scheduleRemoveHiddenRule,
 } from "../../redux/slices/schedule";
 import themes from "../../assets/themes/themes";
@@ -31,11 +32,13 @@ export const ScheduleHiddenScreen = () => {
 	const theme = themes(themeName);
 
 	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
-	const firstDay = useSelector((s: State) => s.config.firstDay);
+	const {firstDay, weekCount} = useSelector((s: State) => s.config);
+	const reduxStore = useStore<State>();
 	const dispatch = useDispatch();
 
 	const getData = () => {
 		let res: {
+			localId: string;
 			name: string;
 			type: ScheduleType;
 			time: TimeSlice;
@@ -45,9 +48,11 @@ export const ScheduleHiddenScreen = () => {
 			.filter((val) => val.delOrHideTime.base.length !== 0)
 			.forEach((val) => {
 				val.delOrHideTime.base.forEach((e) => {
+					if (!isInSemester(e.beginTime, firstDay, weekCount)) { return; }
 					const week = getWeekFromTime(e.beginTime, firstDay);
 					const resStr = getStr("weekNumPrefix") + week + getStr("weekNumSuffix");
 					res.push({
+						localId: val.localId,
 						name: val.name,
 						type: val.type,
 						time: e,
@@ -79,18 +84,9 @@ export const ScheduleHiddenScreen = () => {
 					<TouchableOpacity
 						style={{padding: 5, marginHorizontal: 6}}
 						onPress={() => {
-							let overlapList: [string, ScheduleType, TimeSlice][] =
-								getOverlappedBlock(
-									{
-										name: item.name,
-										location: "",
-										activeTime: {base: [item.time]},
-										delOrHideTime: {base: []},
-										type: ScheduleType.PRIMARY,
-										hash: "",
-									},
-									baseSchedule,
-								);
+							const conflicts = scheduleConflicts({name: item.name, location: "", hash: "",
+								type: item.type, activeTime: {base: [item.time]}, delOrHideTime: {base: []}}, baseSchedule);
+							const overlapList = conflicts.map(({schedule, slice}): [string, ScheduleType, TimeSlice] => [schedule.name, schedule.type, slice]);
 							if (overlapList.length) {
 								Alert.alert(
 									getStr("scheduleConflict"),
@@ -117,15 +113,13 @@ export const ScheduleHiddenScreen = () => {
 									[
 										{
 											text: getStr("confirm"),
-											onPress: () => {
-												dispatch(
-													scheduleRemoveHiddenRule([item.name, item.time]),
-												);
-												overlapList.forEach((val) => {
-													dispatch(
-														scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
-													);
-												});
+											onPress: async () => {
+												try {
+													for (const {schedule, slice} of conflicts) {
+														await deleteScheduleOccurrences(helper, reduxStore, schedule.localId, slice, Choice.ONCE, {firstDay, weekCount});
+													}
+													dispatch(scheduleRemoveHiddenRule([item.localId, item.time]));
+												} catch { Alert.alert(getStr("networkRetry")); }
 											},
 										},
 										{
@@ -134,7 +128,7 @@ export const ScheduleHiddenScreen = () => {
 									],
 								);
 							} else {
-								dispatch(scheduleRemoveHiddenRule([item.name, item.time]));
+								dispatch(scheduleRemoveHiddenRule([item.localId, item.time]));
 							}
 						}}>
 						<Text style={{color: theme.colors.themePurple}}>解除隐藏</Text>
@@ -174,7 +168,7 @@ export const ScheduleHiddenScreen = () => {
 				padding: 5,
 			}}
 			keyExtractor={(item) =>
-				`${item.name}.${item.time.dayOfWeek}.[${item.time.beginTime.toDate()}-${item.time.endTime.toDate()}]`
+				`${item.localId}.${item.time.dayOfWeek}.[${item.time.beginTime.toDate()}-${item.time.endTime.toDate()}]`
 			}
 		/>
 	);

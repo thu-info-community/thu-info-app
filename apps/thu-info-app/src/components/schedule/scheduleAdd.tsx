@@ -1,3 +1,5 @@
+import {scheduleConflicts, selectOccurrences} from "../../redux/scheduleData";
+import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
 import {KeyboardAvoidingScreen} from "../keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {
@@ -11,11 +13,10 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, useStore} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
-	getOverlappedBlock,
 	Schedule,
 	scheduleTimeAdd,
 	ScheduleType,
@@ -25,14 +26,12 @@ import {
 	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import dayjs from "dayjs";
-import {State} from "../../redux/store";
+import {State, helper} from "../../redux/store";
 import {
 	Choice,
 	scheduleAddCustom,
-	scheduleDelOrHide,
-	scheduleUpdateAlias,
-	scheduleUpdateLocation,
-	scheduleUpdateCustomTime,
+	scheduleEditDetails,
+	scheduleEditCustom,
 } from "../../redux/slices/schedule";
 import {useColorScheme} from "react-native";
 import {BottomPopupTriggerView, RoundedView} from "../views";
@@ -42,43 +41,12 @@ import IconSelected from "../../assets/icons/IconSelected";
 import IconNotSelected from "../../assets/icons/IconNotSelected";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 
-export const beginTime = [
-	"",
-	"08:00",
-	"08:50",
-	"09:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-export const endTime = [
-	"",
-	"08:45",
-	"09:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
+import {beginTime, endTime} from "../../utils/scheduleLayout";
+export {beginTime, endTime} from "../../utils/scheduleLayout";
 
 export interface ScheduleEditParams {
+	localId: string;
+	id?: number;
 	name: string;
 	location: string;
 	week: number;
@@ -99,6 +67,7 @@ interface ScheduleAddModalProps {
 	defaultDateIndex?: number;
 	defaultPeriodBegin?: number;
 	defaultPeriodEnd?: number;
+	defaultUseCustomDateTime?: boolean;
 	defaultBeginHour?: number;
 	defaultBeginMinute?: number;
 	defaultEndHour?: number;
@@ -113,6 +82,7 @@ export const ScheduleAddModal = ({
 	defaultDateIndex,
 	defaultPeriodBegin,
 	defaultPeriodEnd,
+	defaultUseCustomDateTime,
 	defaultBeginHour,
 	defaultBeginMinute,
 	defaultEndHour,
@@ -150,6 +120,7 @@ export const ScheduleAddModal = ({
 	const firstDay = useSelector((s: State) => s.config.firstDay);
 
 	const dispatch = useDispatch();
+	const reduxStore = useStore<State>();
 
 	const [weeks, setWeeks] = useState(
 		params?.activeWeeks
@@ -293,7 +264,7 @@ export const ScheduleAddModal = ({
 		setPopupEndHour(eHour);
 		setPopupEndMinute(eMinute);
 
-		setUseCustomDateTime(false);
+		setUseCustomDateTime(defaultUseCustomDateTime ?? false);
 		setRepeatWeekly(false);
 		setTitle("");
 		setLocale("");
@@ -306,6 +277,7 @@ export const ScheduleAddModal = ({
 		defaultPeriodBegin,
 		defaultPeriodEnd,
 		defaultDateIndex,
+		defaultUseCustomDateTime,
 		defaultBeginHour,
 		defaultBeginMinute,
 		defaultEndHour,
@@ -333,8 +305,9 @@ export const ScheduleAddModal = ({
 		}
 		const currentSchedule = scheduleList.find(
 			(s) =>
-				s.name === params.name && s.type === ScheduleType.CUSTOM,
+				s.localId === params.localId && s.type === ScheduleType.CUSTOM,
 		);
+		setRepeatWeekly(false);
 		const beginPeriod = getBeginPeriod(params.beginTime);
 		const endPeriod = getEndPeriod(params.endTime);
 		const alignsWithClassTime = beginPeriod > 0 && endPeriod > 0;
@@ -442,13 +415,6 @@ export const ScheduleAddModal = ({
 		}
 
 		if (params !== undefined) {
-			// 代表是在修改现有计划
-			if (title.length === 0) {
-				dispatch(scheduleUpdateAlias([params.name, undefined]));
-			} else {
-				dispatch(scheduleUpdateAlias([params.name, title]));
-			}
-			dispatch(scheduleUpdateLocation([params.name, locale]));
 
 			if (isEditingCustom) {
 				// 修改自定义计划的时间
@@ -564,89 +530,46 @@ export const ScheduleAddModal = ({
 					}
 				}
 
-				// Check whether this schedule has weekly-repeating occurrences at the same time pattern
-				const currentSchedule = scheduleList.find(
-					(s) => s.name === params.name && s.type === ScheduleType.CUSTOM,
-				);
-				const repeatingSlices = (currentSchedule?.activeTime.base ?? []).filter(
-					(slice) =>
-						slice.dayOfWeek === params.dayOfWeek &&
-						slice.beginTime.format("HH:mm") ===
-							params.beginTime.format("HH:mm") &&
-						slice.endTime.format("HH:mm") ===
-							params.endTime.format("HH:mm"),
-				);
-
+				const currentSchedule = scheduleList.find((s) => s.localId === params.localId);
+				if (!currentSchedule) { return; }
+				const repeatingSlices = selectOccurrences(currentSchedule, params, Choice.REPEAT, {firstDay, weekCount});
+				const commit = (choice: Choice, slices: TimeSlice[]) => {
+					try {
+						dispatch(scheduleEditCustom({localId: params.localId, time: params, choice,
+							range: {firstDay, weekCount}, name: title || params.name, location: locale, slices}));
+						onClose();
+					} catch {
+						Alert.alert(getStr("networkRetry"));
+					}
+				};
 				if (repeatingSlices.length > 1 && singleNewSlice !== null) {
-					// Prompt user to choose between "change once" and "change all repeating"
-					const capturedSingleSlice = singleNewSlice;
-					Alert.alert(
-						getStr("scheduleEditRepeatingTitle"),
-						getStr("scheduleEditRepeatingMessage"),
-						[
-							{
-								text: getStr("scheduleEditOnce"),
-								onPress: () => {
-									// Keep all slices except the exact clicked one, then add the new single slice
-									const onceActiveTime: {base: TimeSlice[]} = {base: []};
-									(currentSchedule?.activeTime.base ?? []).forEach(
-										(slice) => {
-											if (
-												!slice.beginTime.isSame(
-													params.beginTime,
-													"minute",
-												) ||
-												!slice.endTime.isSame(
-													params.endTime,
-													"minute",
-												)
-											) {
-												scheduleTimeAdd(onceActiveTime, {
-													...slice,
-												});
-											}
-										},
-									);
-									scheduleTimeAdd(onceActiveTime, capturedSingleSlice);
-									dispatch(
-										scheduleUpdateCustomTime([
-											params.name,
-											onceActiveTime,
-										]),
-									);
-									onClose();
-								},
-							},
-							{
-								text: getStr("scheduleEditAllRepeat"),
-								onPress: () => {
-									dispatch(
-										scheduleUpdateCustomTime([
-											params.name,
-											newActiveTime,
-										]),
-									);
-									onClose();
-								},
-							},
-							{
-								text: getStr("cancel"),
-							},
-						],
-					);
+					const once = singleNewSlice;
+					const repeating = useCustomDateTime ? repeatingSlices.map((slice) => ({
+						dayOfWeek: once.dayOfWeek,
+						beginTime: slice.beginTime.add(once.beginTime.diff(params.beginTime, "minute"), "minute"),
+						endTime: slice.endTime.add(once.endTime.diff(params.endTime, "minute"), "minute"),
+					})) : newActiveTime.base;
+					Alert.alert(getStr("scheduleEditRepeatingTitle"), getStr("scheduleEditRepeatingMessage"), [
+						{text: getStr("scheduleEditOnce"), onPress: () => commit(Choice.ONCE, [once])},
+						{text: getStr("scheduleEditAllRepeat"), onPress: () => commit(Choice.REPEAT, repeating)},
+						{text: getStr("cancel"), style: "cancel"},
+					]);
 					return;
 				}
-
-				dispatch(scheduleUpdateCustomTime([params.name, newActiveTime]));
+				commit(Choice.ONCE, newActiveTime.base);
+				return;
 			}
-
-			onClose();
+			try {
+				dispatch(scheduleEditDetails({localId: params.localId, alias: title || undefined, location: locale}));
+				onClose();
+			} catch {
+				Alert.alert(getStr("networkRetry"));
+			}
 			return;
 		}
 
-		// TODO: 需要禁止添加和已有计划重名的计划
 		const newSchedule: Schedule = {
-			name: title || params?.name || "",
+			name: title,
 			location: locale,
 			activeTime: {base: []},
 			delOrHideTime: {base: []},
@@ -738,8 +661,8 @@ export const ScheduleAddModal = ({
 			}
 		}
 
-		let overlapList: [string, ScheduleType, TimeSlice][] =
-			getOverlappedBlock(newSchedule, scheduleList);
+		const conflicts = scheduleConflicts(newSchedule, scheduleList);
+		const overlapList = conflicts.map(({schedule, slice}): [string, ScheduleType, TimeSlice] => [schedule.name, schedule.type, slice]);
 
 		if (overlapList.length) {
 			Alert.alert(
@@ -786,14 +709,16 @@ export const ScheduleAddModal = ({
 				[
 					{
 						text: getStr("confirm"),
-						onPress: () => {
-							overlapList.forEach((val) => {
-								dispatch(
-									scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
-								);
-							});
-							dispatch(scheduleAddCustom(newSchedule));
-							onClose();
+						onPress: async () => {
+							try {
+								for (const {schedule, slice} of conflicts) {
+									await deleteScheduleOccurrences(helper, reduxStore, schedule.localId, slice, Choice.ONCE, {firstDay, weekCount});
+								}
+								dispatch(scheduleAddCustom(newSchedule));
+								onClose();
+							} catch {
+								Alert.alert(getStr("networkRetry"));
+							}
 						},
 					},
 					{

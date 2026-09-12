@@ -1,3 +1,4 @@
+import {serializeScheduleState} from "../../redux/scheduleData";
 import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
 import {ScheduleSyncReceiving, ScheduleSyncSending} from "../../utils/webApi";
 import {currState, store} from "../../redux/store";
@@ -288,7 +289,7 @@ export function ScheduleSyncScreen(props: any) {
 												switch (currentClient.kind) {
 													case "send":
 														await currentClient.confirmAndSend(
-															JSON.stringify(currState().schedule),
+															JSON.stringify(serializeScheduleState(currState().schedule)),
 															() => {
 																setState({state: "done"});
 															},
@@ -297,8 +298,13 @@ export function ScheduleSyncScreen(props: any) {
 													case "receive":
 														await currentClient.confirmAndReceive(
 															(json: string) => {
-																store.dispatch(scheduleSync(JSON.parse(json)));
-																setState({state: "done"});
+																try {
+																	store.dispatch(scheduleSync(JSON.parse(json), currState().config.firstDay, currState().config.semesterId));
+																	setState({state: "done"});
+																} catch {
+																	setState({state: "initial"});
+																	NetworkRetry();
+																}
 															},
 														);
 														break;
