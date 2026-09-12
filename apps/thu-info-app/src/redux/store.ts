@@ -275,6 +275,7 @@ const persistConfig = {
 							washerFavourites: (state._persist?.version ?? -1) < 7
 								? migrateWasherFavourites(state.config.washerFavourites)
 								: state.config.washerFavourites,
+							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
 							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,

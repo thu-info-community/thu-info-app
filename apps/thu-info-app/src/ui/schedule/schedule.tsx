@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import React, {
 	useState,
+	useMemo,
 	useEffect,
 	useRef,
 	useImperativeHandle,
@@ -30,7 +31,18 @@ import {
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
-import {ScheduleBlock} from "../../components/schedule/schedule";
+import {
+	ScheduleBlock,
+	SchedulePeriodSwitch,
+	ScheduleTimeAxis,
+	ScheduleGridLines,
+} from "../../components/schedule/schedule";
+import {
+	buildScheduleLayout,
+	scheduleRowAt,
+	scheduleAddTime,
+	ScheduleLayout,
+} from "../../utils/scheduleLayout";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -66,41 +78,7 @@ interface NormalSliceRenderData {
 
 type SliceRenderData = NormalSliceRenderData;
 
-export const beginTime = [
-	"",
-	"08:00",
-	"08:50",
-	"09:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-export const endTime = [
-	"",
-	"08:45",
-	"09:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
+export {beginTime, endTime} from "../../utils/scheduleLayout";
 
 interface NewScheduleDefaults {
 	week: number;
@@ -112,6 +90,7 @@ interface NewScheduleDefaults {
 	beginMinute: number;
 	endHour: number;
 	endMinute: number;
+	useCustomDateTime: boolean;
 }
 
 const Header = React.forwardRef(
@@ -512,6 +491,8 @@ export const ScheduleScreen = () => {
 	const showCustomSchedule =
 		useSelector((s: State) => s.config.showCustomSchedule) ?? true;
 	// 每小时高度，根据设置进行缩放
+	const useClassPeriods = useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
+	const periodHeight = heightForCalc / 14 * (1 + heightMode * 0.05);
 	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
 	// 每分钟高度
 	const minuteHeight = hourHeight / 60;
@@ -825,7 +806,7 @@ export const ScheduleScreen = () => {
 		);
 	};
 
-	const allSchedule = () => {
+	const weekSchedules = useMemo(() => {
 		const weekSchedule: SliceRenderData[][] = new Array<SliceRenderData[]>(
 			weekCount,
 		);
@@ -855,14 +836,48 @@ export const ScheduleScreen = () => {
 		});
 
 		return weekSchedule;
-	};
+	}, [baseSchedule, firstDay, weekCount, showCustomSchedule, showOfficialSchedule]);
 
-	const flatListRef = useRef<FlatList>(null);
+	const flatListRef = useRef<FlatList<ScheduleLayout<SliceRenderData>>>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
 	const [currentWeekIndex, setCurrentWeekIndex] = useState(nowWeek - 1);
+	useEffect(() => {
+		if (weekCount > 0 && currentWeekIndex >= weekCount) {
+			setCurrentWeekIndex(weekCount - 1);
+			headerRef.current?.setWeekNumber(weekCount);
+			flatListRef.current?.scrollToIndex({index: weekCount - 1, animated: false});
+		}
+	}, [currentWeekIndex, weekCount]);
 	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
 		undefined,
 	);
+
+	const weekLayouts = useMemo(
+		() => weekSchedules.map((entries) => buildScheduleLayout(
+			entries.filter((entry) => !hideWeekend || entry.slice.dayOfWeek <= 5),
+			{
+				classPeriods: useClassPeriods,
+				periodHeight,
+				cardMinHeight: unitWidth < 64 ? 64 : 52,
+				minuteHeight,
+				startMinute: displayStartHour * 60,
+			},
+		)),
+		[weekSchedules, hideWeekend, useClassPeriods, periodHeight, minuteHeight, displayStartHour, unitWidth],
+	);
+	const activeLayout = weekLayouts[
+		Math.max(0, Math.min(currentWeekIndex, weekLayouts.length - 1))
+	];
+	const contentHeight = activeLayout?.height ?? 14 * periodHeight;
+	const verticalScrollRef = useRef<ElementRef<typeof ScrollView>>(null);
+	const verticalOffset = useRef(0);
+	useEffect(() => {
+		const maxOffset = Math.max(0, contentHeight + timeStripVerticalPadding * 2 - tableHeight);
+		if (verticalOffset.current > maxOffset) {
+			verticalOffset.current = maxOffset;
+			verticalScrollRef.current?.scrollTo({y: maxOffset, animated: false});
+		}
+	}, [contentHeight, tableHeight]);
 
 	const renderActionButton = (
 		label: string,
@@ -998,6 +1013,12 @@ export const ScheduleScreen = () => {
 					</View>
 				</View>
 				<ScrollView
+					testID="schedule-scroll"
+					ref={verticalScrollRef}
+					onScroll={({nativeEvent}) => {
+						verticalOffset.current = nativeEvent.contentOffset.y;
+					}}
+					scrollEventThrottle={16}
 					style={{flex: 1}}
 					onLayout={({nativeEvent}) => {
 						setTableHeight(nativeEvent.layout.height);
@@ -1013,165 +1034,44 @@ export const ScheduleScreen = () => {
 							flexDirection: "row",
 							paddingVertical: timeStripVerticalPadding,
 						}}>
-						{/* Timetable on the left: displayStartHour - 24:00 */}
-						<View
-							style={{
-								width: timeLabelWidth,
-								height: (24 - displayStartHour) * hourHeight,
-							}}>
-							{Array.from(
-								new Array(25 - displayStartHour),
-								(_, k) => displayStartHour + k,
-							).map((hour) => (
-								<Text
-									key={`time-label-${hour}`}
-									style={{
-										position: "absolute",
-										top: (hour - displayStartHour) * hourHeight - 6,
-										width: timeLabelWidth,
-										textAlign: "center",
-										color: theme.colors.fontB1,
-										fontSize: 10,
-									}}>
-									{String(hour).padStart(2, "0")}:00
-								</Text>
-							))}
-						</View>
-
-						{/* Vertical time axis with class time markers */}
-						<View
-							style={{
-								width: timeAxisWidth,
-								height: (24 - displayStartHour) * hourHeight,
-							}}>
-							{/* main vertical line */}
-							<View
-								style={{
-									position: "absolute",
-									left: timeAxisWidth / 2,
-									top: 0,
-									bottom: 0,
-									width: 1,
-									backgroundColor: isDarkMode
-										? "rgba(255,255,255,0.08)"
-										: "rgba(0,0,0,0.06)",
-								}}
-							/>
-							{/* begin time markers */}
-							{beginTime.map((time, idx) => {
-								if (!time) {
-									return null;
-								}
-								const [h, m] = time.split(":");
-								const minutes =
-									parseInt(h, 10) * 60 + parseInt(m, 10);
-								if (minutes < displayStartHour * 60) {
-									return null;
-								}
-								return (
-									<View
-										key={`axis-begin-${idx}`}
-										style={{
-											position: "absolute",
-											left: timeAxisWidth / 2 - 3,
-											top:
-												(minutes - displayStartHour * 60) *
-													minuteHeight -
-												3,
-											width: 6,
-											height: 6,
-											borderRadius: 3,
-											backgroundColor: theme.colors.contentBackground,
-											borderWidth: 1,
-											borderColor: isDarkMode
-												? "rgba(255,255,255,0.08)"
-												: "rgba(0,0,0,0.06)",
-										}}
-									/>
-								);
-							})}
-							{/* end time markers */}
-							{endTime.map((time, idx) => {
-								if (!time) {
-									return null;
-								}
-								const [h, m] = time.split(":");
-								const minutes =
-									parseInt(h, 10) * 60 + parseInt(m, 10);
-								if (minutes < displayStartHour * 60) {
-									return null;
-								}
-								return (
-									<View
-										key={`axis-end-${idx}`}
-										style={{
-											position: "absolute",
-											left: timeAxisWidth / 2 - 3,
-											top:
-												(minutes - displayStartHour * 60) *
-													minuteHeight -
-												3,
-											width: 6,
-											height: 6,
-											borderRadius: 3,
-											backgroundColor: theme.colors.contentBackground,
-											borderWidth: 1,
-											borderColor: isDarkMode
-												? "rgba(255,255,255,0.08)"
-												: "rgba(0,0,0,0.06)",
-										}}
-									/>
-								);
-							})}
-						</View>
+						<ScheduleTimeAxis
+							rows={activeLayout?.rows ?? []}
+							height={contentHeight}
+							classPeriods={useClassPeriods}
+							heightMode={heightMode}
+						/>
 
 						{/* Main content */}
 						<View style={{flex: 1}}>
-							{/* Hour marks */}
-							{Array.from(
-								new Array(25 - displayStartHour),
-								(_, k) => displayStartHour + k,
-							).map((hour) => (
-								<View
-									key={`hour-line-${hour}`}
-									style={{
-										backgroundColor: isDarkMode
-											? "rgba(255,255,255,0.08)"
-											: "rgba(0,0,0,0.06)",
-										height: 1,
-										position: "absolute",
-										left: 0,
-										right: 0,
-										top: (hour - displayStartHour) * hourHeight,
-									}}
-								/>
-							))}
-
 							{/* Schedule content */}
-							<FlatList
+							<FlatList<ScheduleLayout<SliceRenderData>>
+								testID="schedule-weeks"
 								ref={flatListRef}
 								horizontal={true}
 								showsHorizontalScrollIndicator={false}
-								style={{width: scheduleBodyWidth}}
+								style={{width: scheduleBodyWidth, height: contentHeight}}
 								initialNumToRender={3}
 								getItemLayout={(_, index) => ({
 									length: scheduleBodyWidth,
 									offset: scheduleBodyWidth * index,
 									index: index,
 								})}
-								data={allSchedule()}
-								renderItem={({item}) => (
+								data={weekLayouts}
+								renderItem={({item, index: pageIndex}) => (
 									<View
+										testID={`schedule-page-${pageIndex}`}
 										style={{
-											height: (24 - displayStartHour) * hourHeight,
+											height: item.height,
 											width: scheduleBodyWidth,
 										}}>
 										<View
 											style={{
-												height: (24 - displayStartHour) * hourHeight,
+												height: item.height,
 												width: scheduleBodyWidth,
 											}}>
+											<ScheduleGridLines rows={item.rows} />
 											<TouchableOpacity
+												testID={`schedule-add-${pageIndex}`}
 												activeOpacity={1}
 												style={{
 													position: "absolute",
@@ -1192,72 +1092,23 @@ export const ScheduleScreen = () => {
 													}
 													const dayOfWeek = dayIndex + 1;
 
-													const totalMinutesInDay = 24 * 60;
-													let minuteOfDay =
-														displayStartHour * 60 +
-														Math.floor(locationY / minuteHeight);
-													if (minuteOfDay < 0) {
-														minuteOfDay = 0;
-													} else if (minuteOfDay >= totalMinutesInDay) {
-														minuteOfDay = totalMinutesInDay - 1;
+													const row = scheduleRowAt(item.rows, locationY);
+													if (!row) {
+														return;
 													}
-
-													const findPeriodByMinute = (m: number) => {
-														let closestIndex = 1;
-														let minDistance = Number.POSITIVE_INFINITY;
-														for (let i = 1; i < beginTime.length; i++) {
-															const beginStr = beginTime[i];
-															const endStr = endTime[i];
-															if (!beginStr || !endStr) {
-																continue;
-															}
-															const [bh, bm] = beginStr.split(":");
-															const [eh, em] = endStr.split(":");
-															const start =
-																parseInt(bh, 10) * 60 + parseInt(bm, 10);
-															const end =
-																parseInt(eh, 10) * 60 + parseInt(em, 10);
-															if (m >= start && m < end) {
-																return i;
-															}
-															const mid = (start + end) / 2;
-															const dist = Math.abs(m - mid);
-															if (dist < minDistance) {
-																minDistance = dist;
-																closestIndex = i;
-															}
-														}
-														return closestIndex;
-													};
-
-													const periodBegin = findPeriodByMinute(minuteOfDay);
-													const periodEnd = Math.min(
-														periodBegin + 1,
-														endTime.length - 1,
-													);
-
-													const beginStr = beginTime[periodBegin] || "08:00";
-													const endStr = endTime[periodEnd] || "08:45";
-													const [bh, bm] = beginStr.split(":");
-													const [eh, em] = endStr.split(":");
-
-													const week = Math.max(
-														1,
-														Math.min(weekCount, currentWeekIndex + 1),
-													);
-													const dateIndex =
-														(week - 1) * 7 + (dayOfWeek - 1);
-
+													const defaults = scheduleAddTime(row, locationY);
+													const week = pageIndex + 1;
 													setAddDefaults({
 														week,
 														dayOfWeek,
-														periodBegin,
-														periodEnd,
-														dateIndex,
-														beginHour: parseInt(bh, 10),
-														beginMinute: parseInt(bm, 10),
-														endHour: parseInt(eh, 10),
-														endMinute: parseInt(em, 10),
+														periodBegin: defaults.periodBegin,
+														periodEnd: defaults.periodEnd,
+														dateIndex: (week - 1) * 7 + dayOfWeek - 1,
+														beginHour: Math.floor(defaults.begin / 60),
+														beginMinute: defaults.begin % 60,
+														endHour: Math.floor(defaults.end / 60),
+														endMinute: defaults.end % 60,
+														useCustomDateTime: defaults.custom,
 													});
 												}}
 												onPress={() => {
@@ -1265,42 +1116,25 @@ export const ScheduleScreen = () => {
 													setShowAddModal(true);
 												}}
 											/>
-											{(item as SliceRenderData[]).map((data) => {
-												if (hideWeekend && data.slice.dayOfWeek > 5) {
-													return null;
-												}
+											{item.blocks.map((block, blockIndex) => {
+												const data = block.entry;
 												if (data.type === "normal") {
 													const slice = data.slice;
 													const val = data.schedule;
 													const num = data.week;
-													const startThreshold = displayStartHour * 60;
-													const beginMinutes =
-														slice.beginTime.hour() * 60 +
-														slice.beginTime.minute();
-													const endMinutes =
-														slice.endTime.hour() * 60 +
-														slice.endTime.minute();
-													if (endMinutes <= startThreshold) {
-														return null;
-													}
-													// 在“从 displayStartHour 开始”的坐标系中的 begin/end（分钟）
-													const visibleBegin = Math.max(
-														0,
-														beginMinutes - startThreshold,
-													);
-													const visibleEnd = endMinutes - startThreshold;
 													return (
 														<ScheduleBlock
 															dayOfWeek={slice.dayOfWeek}
-															begin={visibleBegin}
-															end={visibleEnd}
+															top={block.top}
+															height={block.height}
 															name={
 																shortenMap[val.name] ?? val.name
 															}
 															location={val.location}
-															gridHeight={minuteHeight}
+															timeLabel={block.timeLabel}
+															compact={block.compact}
 															gridWidth={unitWidth}
-															key={`${val.name}-${num}-${slice.dayOfWeek}-${beginMinutes}-${val.location}`}
+															key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.beginTime.valueOf()}-${blockIndex}`}
 															blockColor={
 																`${colorList[
 																	parseInt(md5(val.name).substr(0, 6), 16) %
@@ -1354,9 +1188,9 @@ export const ScheduleScreen = () => {
 								)}
 								initialScrollIndex={nowWeek - 1}
 								onScroll={({nativeEvent}) => {
-									const index = Math.round(
+									const index = Math.max(0, Math.min(weekCount - 1, Math.round(
 										nativeEvent.contentOffset.x / scheduleBodyWidth,
-									);
+									)));
 									setCurrentWeekIndex(index);
 									headerRef.current?.setWeekNumber(index + 1);
 								}}
@@ -1375,6 +1209,7 @@ export const ScheduleScreen = () => {
 							backgroundColor: "#00000055",
 						}}>
 						<View style={{backgroundColor: theme.colors.contentBackground}}>
+							<SchedulePeriodSwitch />
 							<Slider
 								style={{height: 40, width: "100%"}}
 								minimumValue={0}
@@ -1530,6 +1365,7 @@ export const ScheduleScreen = () => {
 				defaultDateIndex={addDefaults?.dateIndex}
 				defaultPeriodBegin={addDefaults?.periodBegin}
 				defaultPeriodEnd={addDefaults?.periodEnd}
+				defaultUseCustomDateTime={addDefaults?.useCustomDateTime}
 				defaultBeginHour={addDefaults?.beginHour}
 				defaultBeginMinute={addDefaults?.beginMinute}
 				defaultEndHour={addDefaults?.endHour}

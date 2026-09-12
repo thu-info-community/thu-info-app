@@ -42,41 +42,8 @@ import IconSelected from "../../assets/icons/IconSelected";
 import IconNotSelected from "../../assets/icons/IconNotSelected";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 
-export const beginTime = [
-	"",
-	"08:00",
-	"08:50",
-	"09:50",
-	"10:40",
-	"11:30",
-	"13:30",
-	"14:20",
-	"15:20",
-	"16:10",
-	"17:05",
-	"17:55",
-	"19:20",
-	"20:10",
-	"21:00",
-];
-
-export const endTime = [
-	"",
-	"08:45",
-	"09:35",
-	"10:35",
-	"11:25",
-	"12:15",
-	"14:15",
-	"15:05",
-	"16:05",
-	"16:55",
-	"17:50",
-	"18:40",
-	"20:05",
-	"20:55",
-	"21:45",
-];
+import {beginTime, endTime} from "../../utils/scheduleLayout";
+export {beginTime, endTime} from "../../utils/scheduleLayout";
 
 export interface ScheduleEditParams {
 	name: string;
@@ -99,6 +66,7 @@ interface ScheduleAddModalProps {
 	defaultDateIndex?: number;
 	defaultPeriodBegin?: number;
 	defaultPeriodEnd?: number;
+	defaultUseCustomDateTime?: boolean;
 	defaultBeginHour?: number;
 	defaultBeginMinute?: number;
 	defaultEndHour?: number;
@@ -113,6 +81,7 @@ export const ScheduleAddModal = ({
 	defaultDateIndex,
 	defaultPeriodBegin,
 	defaultPeriodEnd,
+	defaultUseCustomDateTime,
 	defaultBeginHour,
 	defaultBeginMinute,
 	defaultEndHour,
@@ -293,7 +262,7 @@ export const ScheduleAddModal = ({
 		setPopupEndHour(eHour);
 		setPopupEndMinute(eMinute);
 
-		setUseCustomDateTime(false);
+		setUseCustomDateTime(defaultUseCustomDateTime ?? false);
 		setRepeatWeekly(false);
 		setTitle("");
 		setLocale("");
@@ -306,6 +275,7 @@ export const ScheduleAddModal = ({
 		defaultPeriodBegin,
 		defaultPeriodEnd,
 		defaultDateIndex,
+		defaultUseCustomDateTime,
 		defaultBeginHour,
 		defaultBeginMinute,
 		defaultEndHour,

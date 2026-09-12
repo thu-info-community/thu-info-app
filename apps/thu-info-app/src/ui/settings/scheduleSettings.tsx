@@ -1,3 +1,4 @@
+import {SchedulePeriodSwitch} from "../../components/schedule/schedule";
 import { getStr } from "../../utils/i18n";
 import {
 	Alert,
@@ -26,6 +27,9 @@ export const ScheduleSettingsScreen = ({ navigation }: { navigation: RootNav }) 
 
 	return (
 		<View style={{ flex: 1, padding: 12, paddingTop: 0 }}>
+			<RoundedView style={style.rounded}>
+				<SchedulePeriodSwitch notice />
+			</RoundedView>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

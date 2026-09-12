@@ -43,6 +43,7 @@ export interface ConfigState {
 	is24Hour: boolean | undefined;
 	washerFavourites: WasherFavourite[] | undefined;
 	fingerprintSecure: boolean | undefined;
+	scheduleUseClassPeriods: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
 	showOfficialSchedule: boolean | undefined;
 	showCustomSchedule: boolean | undefined;
@@ -90,6 +91,7 @@ const initialState: ConfigState = {
 	is24Hour: false,
 	washerFavourites: [],
 	fingerprintSecure: false,
+	scheduleUseClassPeriods: true,
 	scheduleEnableNewUI: true,
 	showOfficialSchedule: true,
 	showCustomSchedule: true,

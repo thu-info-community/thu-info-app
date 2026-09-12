@@ -802,6 +802,8 @@ export default {
 	loadAllData: "Load all data",
 	recentThreeMonths: "Recent 3 months",
 	noData: "No data",
+	scheduleUseClassPeriods: "Show class periods",
+	scheduleClassPeriodsNotice: "Turn off to use a daily timeline. Long breaks expand automatically when they contain personal plans.",
 	enableNewUI: "Enable new UI",
 	scheduleNewUINotice:
 		"With transparency background, which may affect readability",
