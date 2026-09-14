@@ -9455,10 +9455,10 @@ react-native-keychain@10.0.0:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-10.0.0.tgz#1de6f54d27b2376deaac4d51883c066f53b7be7b"
   integrity sha512-YzPKSAnSzGEJ12IK6CctNLU79T1W15WDrElRQ+1/FsOazGX9ucFPTQwgYe8Dy8jiSEDJKM4wkVa3g4lD2Z+Pnw==
 
-react-native-localize@3.7.0:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.7.0.tgz#4ad7347bf7a1756627f491f48cf7507e7356cf13"
-  integrity sha512-6Ohx+zZzycC6zhNVBGM/u1U+O6Ww29YIFseeyXqsKcO/pTfjLcdE40IUJF4SVVwrdh00IMJwy90HjLGUaeqK7Q==
+react-native-localize@3.7.1:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.7.1.tgz#3b2cb957143955f6f3141e7b69984723d40f23d4"
+  integrity sha512-jt9+8+4n3GhnnfMRiqqK5SKQfibCSYiQNYHh02QKwBKVZPtk1RHBp9WV2OCdbTg/8GWuhPDViAzBvwkibjX5LQ==
 
 react-native-markdown-display@7.0.2:
   version "7.0.2"
