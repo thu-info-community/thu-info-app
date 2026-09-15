@@ -321,6 +321,36 @@ export const getRedirectUrl = async (
     timeout = 60000
 ): Promise<string> => {
     if (global.FileReader) {
+        let native: {getRedirectResponse?: (url: string, timeoutMs: number) => Promise<{
+            status: number;
+            location: string | null;
+        }>} | null = null;
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+            native = require("rtn-network-utils").RTNNetworkUtils;
+        } catch { /* Browser/Android/iOS do not provide the Harmony module. */ }
+        if (native !== null && typeof native.getRedirectResponse === "function") {
+            let location = url;
+            const deadline = Date.now() + timeout;
+            for (let i = 0; i < 10; i++) {
+                const remaining = deadline - Date.now();
+                if (remaining <= 0) {
+                    throw new ResponseStatusError("Redirect request timeout.");
+                }
+                const response = await native.getRedirectResponse(location, remaining);
+                if (![301, 302, 303, 307, 308].includes(response.status)) {
+                    return location;
+                }
+                if (!response.location || response.location.trim() === "") {
+                    throw new ResponseStatusError("Redirect response missing location header.");
+                }
+                location = resolveRedirectUrl(response.location, location);
+            }
+            throw new ResponseStatusError("Max redirect times reached.");
+        }
+        if (native !== null) {
+            throw new Error("RTNNetworkUtils does not support getRedirectResponse.");
+        }
         // For browser and react-native
         return new Promise((resolve) => {
             const req = new XMLHttpRequest();
