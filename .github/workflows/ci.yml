@@ -30,6 +30,10 @@ jobs:
   build-android:
     needs: install-and-test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v7
       - name: Setup Java
@@ -72,30 +76,71 @@ jobs:
           SIGNATURE_DIGEST: ${{ secrets.SIGNATURE_DIGEST }}
         run: |
           cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
+      - name: Prepare artifact for attestation
+        id: prepare_artifact
+        run: |
+          artifact_path=apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
+          test -s "$artifact_path"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            release_path="THUInfo_release_${GITHUB_REF_NAME}.apk"
+            cp "$artifact_path" "$release_path"
+            artifact_path="$release_path"
+          fi
+          echo "path=$artifact_path" >> "$GITHUB_OUTPUT"
+      - name: Attest Android APK
+        uses: actions/attest@v4
+        with:
+          subject-path: ${{ steps.prepare_artifact.outputs.path }}
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           archive: false
           path: apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk
-      - name: Prepare for release
-        id: prepare_release
-        if: startsWith(github.ref, 'refs/tags')
+      - name: Check release immutability
+        id: release_status
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          export ref='${{ github.ref }}'
-          export tag=${ref:10}
-          echo "::set-output name=tag::$tag"
-          mv apps/thu-info-app/android/app/build/outputs/apk/release/app-release.apk THUInfo_release_${tag}.apk
+          encoded_tag=$(jq -rn --arg tag "$GITHUB_REF_NAME" '$tag | @uri')
+          response_file=$(mktemp)
+          status=$(curl --silent --show-error --max-time 60 \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            --output "$response_file" --write-out '%{http_code}' \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/tags/$encoded_tag")
+          case "$status" in
+            200) immutable=$(jq -r '.immutable == true and .draft == false' "$response_file") ;;
+            404) immutable=false ;; # Drafts are handled by the release action.
+            *) echo "::error::Could not check release immutability (HTTP $status)"; exit 1 ;;
+          esac
+          echo "immutable=$immutable" >> "$GITHUB_OUTPUT"
+          if [ "$immutable" = true ]; then
+            echo 'Release publication skipped: this tag already has an immutable release. Newly built CI artifacts are attested, but published assets remain unchanged. Use a new version tag to publish changed binaries.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags')
+        if: github.ref_type == 'tag' && steps.release_status.outputs.immutable == 'false'
         uses: softprops/action-gh-release@v3
         with:
+          draft: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
           body_path: ./release-notes.md
-          files: |
-            THUInfo_release_${{ steps.prepare_release.outputs.tag }}.apk
-            THUInfo_release_${{ steps.prepare_release.outputs.tag }}_allow_rooted.apk
+          fail_on_unmatched_files: true
+          files: ${{ steps.prepare_artifact.outputs.path }}
+      - name: Publish Release
+        if: github.ref_type == 'tag' && steps.release_status.outputs.immutable == 'false'
+        uses: softprops/action-gh-release@v3
+        with:
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          make_latest: ${{ contains(github.ref_name, '-') && 'false' || 'legacy' }}
   build-ios:
     needs: install-and-test
     runs-on: macos-26
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v7
       - name: Setup Node
@@ -162,6 +207,12 @@ jobs:
           CCACHE_FILECLONE: "true"
           CCACHE_DEPEND: "true"
           CCACHE_INODECACHE: "true"
+      - name: Check iOS artifact
+        run: test -s apps/thu-info-app/ios/thu_info.ipa
+      - name: Attest iOS IPA
+        uses: actions/attest@v4
+        with:
+          subject-path: apps/thu-info-app/ios/thu_info.ipa
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
@@ -170,6 +221,10 @@ jobs:
   build-harmony:
     needs: install-and-test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     container: ghcr.io/sanchuanhehe/harmony-next-pipeline-docker/harmonyos-ci-image:latest
     steps:
       - uses: actions/checkout@v7
@@ -482,6 +537,16 @@ jobs:
           echo "=== Build output listing ==="
           find . -name "*.hap" -o -name "*.app" | sort
           echo "====================="
+      - name: Check Harmony artifacts
+        run: |
+          test -s apps/thu-info-app/harmony/entry/build/default/outputs/default/entry-default-signed.hap
+          test -s apps/thu-info-app/harmony/build/outputs/default/harmony-default-signed.app
+      - name: Attest Harmony artifacts
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            apps/thu-info-app/harmony/entry/build/default/outputs/default/entry-default-signed.hap
+            apps/thu-info-app/harmony/build/outputs/default/harmony-default-signed.app
       - name: Upload Harmony hap
         uses: actions/upload-artifact@v7
         with:
