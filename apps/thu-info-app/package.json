@@ -27,7 +27,7 @@
 		"@react-navigation/native": "7.3.18",
 		"@react-navigation/stack": "7.10.24",
 		"@reduxjs/toolkit": "2.12.0",
-		"@thu-info/lib": "*",
+		"@thu-info/lib": "3.17.0-alpha1",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
 		"dayjs": "1.11.23",

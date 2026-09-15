@@ -263,8 +263,8 @@ export async function fetchXiaolanFloors(buildingId: string, signal: AbortSignal
 		if (!id || !Array.isArray(facility.devices)) throw new Error(getStr("loadFail"));
 		const floor = label(store.floor);
 		const name = label(detail.name, label(store.opStoreName, `${getStr("washerRoom")} ${floor || id}`));
-		const washers = facility.devices.map((value): Washer => {
-			const device = object(value);
+		const washers = facility.devices.map((deviceValue): Washer => {
+			const device = object(deviceValue);
 			const deviceId = label(device.deviceId);
 			if (!deviceId) throw new Error(getStr("loadFail"));
 			return {

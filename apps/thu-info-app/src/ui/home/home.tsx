@@ -121,7 +121,7 @@ export const HomeFunctionSection = ({
 											))}
 											{Array.from(
 													{length: 5 - rowItems.length},
-													(_, itemIndex) => (
+													(_spacer, itemIndex) => (
 														<View
 															key={`function-spacer-${rowIndex}-${itemIndex}`}
 															style={style.functionSectionItem}
@@ -1010,14 +1010,14 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					sportsReservationRecords,
 					crTimetable,
 					balance,
-					latestVersion,
+					latestVersion: startupVersion,
 					latestAnnounces,
 				}) => {
 					dispatch(setActiveLibBookRecord(bookingRecords));
 					dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
 					dispatch(setCrTimetable(crTimetable));
 					dispatch(
-						configSet({key: "latestVersion", value: latestVersion.versionName}),
+						configSet({key: "latestVersion", value: startupVersion.versionName}),
 					);
 					dispatch(updateAnnouncements(latestAnnounces));
 					dispatch(setBalance(balance));

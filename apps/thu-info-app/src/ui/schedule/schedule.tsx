@@ -1293,7 +1293,7 @@ export const ScheduleScreen = () => {
 											(isCustomLike(actionTarget)
 												? getStr("delSchedule")
 												: getStr("hideSchedule")) + getStr("once");
-										void handleHide(Choice.ONCE, onceLabel);
+										handleHide(Choice.ONCE, onceLabel);
 									},
 									deletingAction,
 									deletingAction && isCustomLike(actionTarget),
@@ -1322,7 +1322,7 @@ export const ScheduleScreen = () => {
 											(isCustomLike(actionTarget)
 												? getStr("delSchedule")
 												: getStr("hideSchedule")) + getStr("allTime");
-										void handleHide(Choice.ALL, allLabel);
+										handleHide(Choice.ALL, allLabel);
 									},
 									deletingAction,
 									deletingAction && isCustomLike(actionTarget),
