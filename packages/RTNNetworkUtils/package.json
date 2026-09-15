@@ -1,6 +1,6 @@
 {
   "name": "rtn-network-utils",
-  "version": "3.13.0",
+  "version": "3.17.0",
   "description": "",
   "main": "index.ts",
   "harmony": {
