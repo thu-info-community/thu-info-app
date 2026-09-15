@@ -151,8 +151,9 @@ jobs:
         id: setup-ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "4.0.6"
+          ruby-version: "4.0.7"
           bundler: "2.6.2"
+          bundler-cache: true
       - name: Export Ruby path
         run: echo "PATH=${{ steps.setup-ruby.outputs.ruby-prefix }}/bin:$PATH" >> "$GITHUB_ENV"
       - name: Setup caching
@@ -163,7 +164,6 @@ jobs:
             node_modules
             */*/node_modules
             apps/thu-info-app/ios/Pods
-            vendor/bundle
           key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
             cache-${{ runner.OS }}-
@@ -173,7 +173,6 @@ jobs:
       - name: Install dependencies
         run: |
           yarn
-          bundle install
           cd apps/thu-info-app/ios && bundle exec pod update hermes-engine React-Core-prebuilt ReactNativeDependencies && bundle exec pod install && cd ../../..
       - name: Commit lockfile changes
         if: endsWith(github.ref, 'master') == true
