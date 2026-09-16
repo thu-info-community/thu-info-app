@@ -1966,7 +1966,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNLocalize (3.7.1):
+  - RNLocalize (3.7.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2578,7 +2578,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNGestureHandler: f1976ee206660832241a6802c866bc4b019be94d
   RNKeychain: 551d42b0ef53426f82551a0cc961cfa10ad33afa
-  RNLocalize: 8b722a9aa728d0fcd33ce941f01b0d6d8343c5de
+  RNLocalize: 294dafe569e94074123dd287fe562b9c5b09a248
   RNPermissions: 25343d73adae0cf1b1e1f175e13b90f9090df012
   RNScreens: 038dc998fe1ab34778d9e8f4a33318a6c7a5bde8
   RNShare: 17b29dee409f837fad3971a41e6fed5c929e1dab
