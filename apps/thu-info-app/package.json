@@ -97,7 +97,7 @@
 		"eslint": "8.57.1",
 		"jest": "30.5.1",
 		"patch-package": "8.0.1",
-		"prettier": "3.9.6",
+		"prettier": "3.9.7",
 		"test-renderer": "^1.2.0",
 		"typescript": "6.0.3"
 	},
