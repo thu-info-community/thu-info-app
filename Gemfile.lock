@@ -105,7 +105,7 @@ GEM
       logger
     excon (1.7.1)
       logger
-    faraday (2.14.3)
+    faraday (2.14.4)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -120,7 +120,7 @@ GEM
     faraday-retry (2.4.0)
       faraday (~> 2.0)
     fastimage (2.4.1)
-    fastlane (2.240.0)
+    fastlane (2.240.1)
       CFPropertyList (>= 2.3, < 5.0.0)
       abbrev (~> 0.1)
       addressable (>= 2.9.0, < 3.0.0)
@@ -130,6 +130,7 @@ GEM
       base64 (~> 0.2)
       benchmark (>= 0.1.0)
       bundler (>= 2.4.0, < 5.0.0)
+      cgi (~> 0.4)
       colored (~> 1.2)
       commander (~> 4.6)
       csv (~> 3.3)
@@ -144,7 +145,7 @@ GEM
       fastimage (>= 2.1.0, < 3.0.0)
       fastlane-sirp (>= 1.1.0)
       gh_inspector (>= 1.1.2, < 2.0.0)
-      google-apis-androidpublisher_v3 (~> 0.99.0)
+      google-apis-androidpublisher_v3 (~> 0.99)
       google-apis-playcustomapp_v1 (~> 0.1)
       google-cloud-env (>= 1.6.0, < 2.4.0)
       google-cloud-storage (~> 1.31)
@@ -163,7 +164,7 @@ GEM
       ostruct (>= 0.1.0)
       plist (>= 3.1.0, < 4.0.0)
       rubyzip (>= 3.4.0, < 4.0.0)
-      security (= 0.2.0)
+      security (~> 0.3)
       simctl (~> 1.6.3)
       terminal-notifier (>= 2.0.0, < 3.0.0)
       terminal-table (~> 4)
@@ -281,7 +282,7 @@ GEM
     ruby-macho (4.1.0)
     rubyzip (3.6.0)
     securerandom (0.4.1)
-    security (0.2.0)
+    security (0.3.0)
     signet (0.22.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -326,7 +327,7 @@ PLATFORMS
 
 DEPENDENCIES
   cocoapods (= 1.17.0)
-  fastlane (= 2.240.0)
+  fastlane (= 2.240.1)
 
 RUBY VERSION
    ruby 3.4.1p0
