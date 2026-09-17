@@ -332,7 +332,7 @@ export const searchCrCourses = async (helper: InfoHelper, params: SearchParams):
             totalPage: primaryOpen.totalPage,
             totalCount: primaryOpen.totalCount,
             courses: primaryOpen.courses.map((e) => {
-                const remainingInfo = remaining.courses.find((r) => r.id === e.id);
+                const remainingInfo = remaining.courses.find((r) => r.id === e.id && r.seq === e.seq);
                 return {
                     ...e,
                     capacity: remainingInfo?.capacity ?? NaN,
