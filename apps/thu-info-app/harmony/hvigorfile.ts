@@ -7,7 +7,10 @@ const packageJson = JSON.parse(fs.readFileSync('../package.json', 'utf8'));
 const versionName = packageJson.version;
 const versionCode = packageJson.build;
 
-const secretsEnv = dotenv.parse(fs.readFileSync('secrets.env', 'utf8'));
+const manualSigning = process.env.THUINFO_HARMONY_MANUAL_SIGN === '1';
+const secretsEnv: Record<string, string> = manualSigning
+    ? {}
+    : dotenv.parse(fs.readFileSync('secrets.env', 'utf8'));
 
 export default {
     system: appTasks,  /* Built-in plugin of Hvigor. It cannot be modified. */
@@ -18,7 +21,7 @@ export default {
                     versionCode,
                     versionName,
                 },
-                signingConfig: {
+                signingConfig: manualSigning ? undefined : {
                     type: 'HarmonyOS',
                     material: {
                         storePassword: secretsEnv.OH_STORE_PASSWORD,

@@ -6,7 +6,13 @@
 // variable statements), so derived values live in member functions. All UI
 // lives in member @Builder methods reading state through `this` — global
 // builders with by-value params would not refresh on snapshot pushes.
-import { parseSnapshot, pickNextItem, WidgetItem } from '../common/WidgetModels';
+import {
+  parseSnapshot,
+  pickNextItem,
+  WidgetDayModel,
+  WidgetItem,
+  WidgetSnapshotModel,
+} from '../common/WidgetModels';
 
 let cardStorage = new LocalStorage();
 
@@ -16,22 +22,57 @@ struct NextCard {
   @LocalStorageProp('snapshot') snapshotText: string = '';
   @LocalStorageProp('dimension') dimension: string = '2*2';
 
+  private snapshot(): WidgetSnapshotModel | null {
+    return parseSnapshot(this.snapshotText);
+  }
+
   private missing(): boolean {
-    const snapshot = parseSnapshot(this.snapshotText);
+    const snapshot = this.snapshot();
     return snapshot === null || snapshot.empty;
   }
 
   private item(): WidgetItem | null {
-    const snapshot = parseSnapshot(this.snapshotText);
+    const snapshot = this.snapshot();
     if (snapshot === null || snapshot.empty) {
       return null;
     }
     return pickNextItem(snapshot, Date.now());
   }
 
-  private week(): number {
-    const snapshot = parseSnapshot(this.snapshotText);
-    return snapshot === null ? 0 : snapshot.week;
+  private itemDay(): WidgetDayModel | null {
+    const snapshot = this.snapshot();
+    if (snapshot === null || snapshot.empty) {
+      return null;
+    }
+    const now = Date.now();
+    for (let d = 0; d < snapshot.nextDays.length; d++) {
+      const day = snapshot.nextDays[d];
+      for (let i = 0; i < day.items.length; i++) {
+        if (day.items[i].end > now) {
+          return day;
+        }
+      }
+    }
+    return null;
+  }
+
+  private itemWeek(): number {
+    const snapshot = this.snapshot();
+    const day = this.itemDay();
+    if (snapshot === null || day === null) {
+      return 0;
+    }
+    return day.dayOfWeek < snapshot.today.dayOfWeek ? snapshot.week + 1 : snapshot.week;
+  }
+
+  private itemDayLabel(): string {
+    return this.itemDay()?.label ?? '';
+  }
+
+  private isToday(): boolean {
+    const snapshot = this.snapshot();
+    const day = this.itemDay();
+    return snapshot !== null && day !== null && day.date === snapshot.today.date;
   }
 
   private ongoing(): boolean {
@@ -39,7 +80,7 @@ struct NextCard {
     return item !== null && Date.now() >= item.begin;
   }
 
-  // 1*2: one line — name and start time.
+  // 1*2: course details on the left and the time range on the right.
   @Builder
   strip() {
     Column() {
@@ -55,25 +96,35 @@ struct NextCard {
           .maxLines(1)
       } else {
         Row() {
-          Column()
-            .width(3)
-            .height('70%')
-            .borderRadius(2)
-            .backgroundColor(this.item()?.color ?? '#8B55E4')
-          Text(this.item()?.name ?? '')
-            .fontSize(13)
-            .fontWeight(FontWeight.Bold)
-            .fontColor($r('app.color.widget_text_primary'))
-            .maxLines(1)
-            .margin({ left: 6 })
-            .layoutWeight(1)
-          Text(this.item()?.from ?? '')
-            .fontSize(13)
-            .fontColor($r('app.color.widget_text_secondary'))
-            .margin({ left: 6 })
+          Column({ space: 2 }) {
+            Text(this.item()?.name ?? '')
+              .fontSize(12)
+              .fontWeight(FontWeight.Bold)
+              .fontColor($r('app.color.widget_text_primary'))
+              .maxLines(1)
+            Text(this.item()?.loc ?? '')
+              .fontSize(10)
+              .fontColor($r('app.color.widget_text_tertiary'))
+              .maxLines(1)
+          }
+          .alignItems(HorizontalAlign.Start)
+          .layoutWeight(1)
+
+          Column({ space: 2 }) {
+            Text(this.item()?.from ?? '')
+              .fontSize(12)
+              .fontWeight(FontWeight.Medium)
+              .fontColor($r('app.color.widget_text_primary'))
+            Text(this.item()?.to ?? '')
+              .fontSize(10)
+              .fontColor($r('app.color.widget_text_secondary'))
+          }
+          .alignItems(HorizontalAlign.End)
+          .margin({ left: 8 })
         }
         .width('100%')
         .alignItems(VerticalAlign.Center)
+        .opacity(this.isToday() ? 1 : 0.55)
       }
     }
     .width('100%')
@@ -83,7 +134,8 @@ struct NextCard {
     .alignItems(HorizontalAlign.Start)
   }
 
-  // 2*2: name, time range, location and a live "in progress" badge.
+  // 2*2: week/day in the header, course and location in the middle, time at
+  // the bottom, plus a live "in progress" badge when applicable.
   @Builder
   tile() {
     Column() {
@@ -102,40 +154,35 @@ struct NextCard {
           Text($r('app.string.widget_next_header'))
             .fontSize(11)
             .fontColor($r('app.color.widget_text_secondary'))
-          Text($r('app.string.widget_week_label', this.week()))
+          Text($r('app.string.widget_week_day_label', this.itemWeek(), this.itemDayLabel()))
             .fontSize(11)
             .fontColor($r('app.color.widget_text_secondary'))
         }
         .width('100%')
         .justifyContent(FlexAlign.SpaceBetween)
 
-        Column() {
-          Row() {
-            Column()
-              .width(4)
-              .height('100%')
-              .borderRadius(2)
-              .backgroundColor(this.item()?.color ?? '#8B55E4')
-            Text(this.item()?.name ?? '')
-              .fontSize(17)
-              .fontWeight(FontWeight.Bold)
-              .fontColor($r('app.color.widget_text_primary'))
-              .maxLines(2)
-              .margin({ left: 8 })
-          }
-          .alignItems(VerticalAlign.Center)
-
-          Text(`${this.item()?.from ?? ''} – ${this.item()?.to ?? ''}`)
-            .fontSize(13)
-            .fontColor($r('app.color.widget_text_secondary'))
-            .margin({ top: 4 })
+        Column({ space: 4 }) {
+          Text(this.item()?.name ?? '')
+            .fontSize(17)
+            .fontWeight(FontWeight.Bold)
+            .fontColor($r('app.color.widget_text_primary'))
+            .maxLines(1)
           if ((this.item()?.loc ?? '') !== '') {
             Text(this.item()?.loc ?? '')
               .fontSize(12)
               .fontColor($r('app.color.widget_text_tertiary'))
               .maxLines(1)
-              .margin({ top: 2 })
           }
+        }
+        .layoutWeight(1)
+        .justifyContent(FlexAlign.Center)
+        .alignItems(HorizontalAlign.Start)
+        .width('100%')
+
+        Row() {
+          Text(`${this.item()?.from ?? ''} – ${this.item()?.to ?? ''}`)
+            .fontSize(13)
+            .fontColor($r('app.color.widget_text_secondary'))
           if (this.ongoing()) {
             Text($r('app.string.widget_ongoing'))
               .fontSize(10)
@@ -143,12 +190,11 @@ struct NextCard {
               .padding({ left: 6, right: 6, top: 2, bottom: 2 })
               .borderRadius(8)
               .border({ width: 1, color: $r('app.color.widget_accent') })
-              .margin({ top: 6 })
           }
         }
-        .layoutWeight(1)
-        .justifyContent(FlexAlign.Center)
         .width('100%')
+        .justifyContent(FlexAlign.SpaceBetween)
+        .alignItems(VerticalAlign.Center)
       }
     }
     .width('100%')

@@ -61,6 +61,10 @@
       "value": "第 %d 周"
     },
     {
+      "name": "widget_week_day_label",
+      "value": "第%d周周%s"
+    },
+    {
       "name": "widget_more_count",
       "value": "还有 %d 项"
     },

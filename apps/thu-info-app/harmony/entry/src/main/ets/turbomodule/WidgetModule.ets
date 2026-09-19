@@ -16,6 +16,22 @@ import { dimensionToString } from "../widget/common/WidgetModels";
 const TAG = "RTNWidget";
 const LAUNCH_TTL_MS = 60_000;
 
+interface WidgetFormStats {
+  name: string;
+  dimension: string;
+}
+
+interface WidgetStats {
+  liveForms: number;
+  forms: WidgetFormStats[];
+  snapshotAgeMs: number;
+}
+
+interface WidgetFormData {
+  snapshot: string;
+  dimension: string;
+}
+
 export class WidgetModule extends TurboModule implements TM.RTNWidget.Spec {
   async updateScheduleSnapshot(snapshot: string): Promise<boolean> {
     const context = this.ctx.uiAbilityContext;
@@ -53,14 +69,16 @@ export class WidgetModule extends TurboModule implements TM.RTNWidget.Spec {
       // Snapshot never written.
     }
     const records = readLiveForms(context);
-    return JSON.stringify({
+    const forms: WidgetFormStats[] = records.map((record: FormRecord): WidgetFormStats => ({
+      name: record.name,
+      dimension: dimensionToString(record.dim),
+    }));
+    const stats: WidgetStats = {
       liveForms: records.length,
-      forms: records.map((record: FormRecord) => ({
-        name: record.name,
-        dimension: dimensionToString(record.dim),
-      })),
+      forms: forms,
       snapshotAgeMs: generatedAt === 0 ? -1 : Date.now() - generatedAt,
-    });
+    };
+    return JSON.stringify(stats);
   }
 
   // Push the stored snapshot to every live form. The registry is owned by the
@@ -72,7 +90,7 @@ export class WidgetModule extends TurboModule implements TM.RTNWidget.Spec {
     const snapshot = readSnapshot(context);
     const records = readLiveForms(context);
     for (const record of records) {
-      const formData: Record<string, string> = {
+      const formData: WidgetFormData = {
         snapshot: snapshot,
         dimension: dimensionToString(record.dim),
       };
