@@ -12,3 +12,4 @@
 /.appanalyzer
 generated
 secrets.env
+signing/

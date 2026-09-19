@@ -36,10 +36,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
 import {top5Update} from "../../redux/slices/top5";
 import IconDormScore from "../../assets/icons/IconDormScore";
-import {
-	ScheduleType,
-	getWeekFromTime,
-} from "@thu-info/lib/src/models/schedule/schedule";
+import {selectDaySchedule} from "../../utils/scheduleQuery";
 import dayjs from "dayjs";
 import md5 from "md5";
 import {ScheduleDetailProps} from "../schedule/scheduleDetail";
@@ -306,80 +303,34 @@ export const HomeScheduleSection = () => {
 	const now = dayjs();
 	const today = now.day() === 0 ? 7 : now.day();
 	const tomorrow = today + 1;
-	const week = getWeekFromTime(now, firstDay);
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const getColor = (x: string) =>
 		colorList[parseInt(md5(x).substr(0, 6), 16) % colorList.length];
-	const selectSchedule = (schedules: StoredSchedule[], dayOfWeek: number) => {
-		// dayOfWeek use 8 to specify Monday of next week
-		let _week = week;
-		if (dayOfWeek === 8) {
-			_week += 1;
-			dayOfWeek = 1;
-		}
-		const a: (ScheduleViewModel & {beginTime: dayjs.Dayjs; endTime: dayjs.Dayjs})[] = [];
-		for (const s of schedules) {
-			for (const ss of s.activeTime.base) {
-				const sliceWeek = getWeekFromTime(ss.beginTime, firstDay);
-				if (sliceWeek === _week && sliceWeek >= 1 && sliceWeek <= weekCount) {
-					if (ss.dayOfWeek === dayOfWeek) {
-						const from = ss.beginTime.format("HH:mm");
-						const to = ss.endTime.format("HH:mm");
-
-						if (s.type === ScheduleType.CUSTOM) {
-							a.push({
-								name: shortenMap[s.localId] ?? s.name,
-								location: s.location,
-								from,
-								to,
-								beginTime: ss.beginTime,
-								endTime: ss.endTime,
-								color: getColor(s.name),
-								navProps: {
-									localId: s.localId,
-									id: ss.id,
-									name: s.name,
-									location: s.location,
-									week: _week,
-									dayOfWeek: ss.dayOfWeek,
-									beginTime: ss.beginTime,
-									endTime: ss.endTime,
-									alias: shortenMap[s.localId] ?? "",
-									type: s.type,
-									category: s.category,
-								},
-							});
-						} else {
-							a.push({
-								name: shortenMap[s.localId] ?? s.name,
-								location: s.location,
-								from,
-								to,
-								beginTime: ss.beginTime,
-								endTime: ss.endTime,
-								color: getColor(s.name),
-								navProps: {
-									localId: s.localId,
-									id: ss.id,
-									name: s.name,
-									location: s.location,
-									week: _week,
-									dayOfWeek: ss.dayOfWeek,
-									beginTime: ss.beginTime,
-									endTime: ss.endTime,
-									alias: shortenMap[s.localId] ?? "",
-									type: s.type,
-									category: s.category,
-								},
-							});
-						}
-					}
-				}
-			}
-		}
-		a.sort((x, y) => x.beginTime.diff(y.beginTime));
-		return a;
-	};
+	const selectSchedule = (schedules: StoredSchedule[], dayOfWeek: number) =>
+		selectDaySchedule(schedules, dayOfWeek, now, {
+			firstDay,
+			weekCount,
+			shortenMap,
+			colorList,
+		}).map((x) => {
+			const source = schedules.find((s) => s.localId === x.localId)!;
+			return {
+				...x,
+				navProps: {
+					localId: x.localId,
+					id: x.id,
+					name: x.sourceName,
+					location: x.location,
+					week: x.week,
+					dayOfWeek: x.dayOfWeek,
+					beginTime: x.beginTime,
+					endTime: x.endTime,
+					alias: x.alias,
+					type: source.type,
+					category: source.category,
+				},
+			};
+		});
 	const todaySchedules = selectSchedule(baseSchedule, today);
 	const tomorrowSchedules = selectSchedule(baseSchedule, tomorrow);
 	const style = styles(themeName);

@@ -53,3 +53,7 @@ yarn workspace @thu-info/app add \
 yarn patch-package
 
 ( cd apps/thu-info-app/harmony && ohpm install && cd entry && ohpm install )
+
+# Turbo module codegen output (harmony/entry/src/main/cpp/generated, gitignored)
+# must be regenerated after installing the harmony dependencies above.
+yarn workspace @thu-info/app codegen-harmony

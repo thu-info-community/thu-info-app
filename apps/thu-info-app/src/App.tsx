@@ -18,6 +18,7 @@ import {Root} from "./components/Root";
 import {getStr} from "./utils/i18n";
 import {SplitViewProvider} from "./components/SplitView";
 import DeviceInfo from "react-native-device-info";
+import {initWidgetSync} from "./utils/scheduleWidget";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
@@ -107,6 +108,8 @@ const RootComponent = () => {
 };
 
 export const App = () => {
+	// No-op outside harmony; pushes the schedule snapshot to home-screen cards.
+	initWidgetSync();
 	return (
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>

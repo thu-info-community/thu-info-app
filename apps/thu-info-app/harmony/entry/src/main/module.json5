@@ -46,6 +46,20 @@
             "resource": "$profile:backup_config"
           }
         ],
+      },
+      {
+        "name": "ScheduleFormAbility",
+        "srcEntry": "./ets/widget/ScheduleFormAbility.ets",
+        "label": "$string:widget_schedule_label",
+        "description": "$string:widget_schedule_desc",
+        "type": "form",
+        "exported": false,
+        "metadata": [
+          {
+            "name": "ohos.extension.form",
+            "resource": "$profile:schedule_form_config"
+          }
+        ]
       }
     ],
     "requestPermissions": [

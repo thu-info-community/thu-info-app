@@ -11,6 +11,82 @@
     {
       "name": "EntryAbility_label",
       "value": "THU Info"
+    },
+    {
+      "name": "widget_schedule_label",
+      "value": "Schedule cards"
+    },
+    {
+      "name": "widget_schedule_desc",
+      "value": "Home screen cards showing the class schedule"
+    },
+    {
+      "name": "widget_next_name",
+      "value": "Next class"
+    },
+    {
+      "name": "widget_next_desc",
+      "value": "Shows the next class of the day"
+    },
+    {
+      "name": "widget_today_name",
+      "value": "Today's classes"
+    },
+    {
+      "name": "widget_today_desc",
+      "value": "Shows all classes of today"
+    },
+    {
+      "name": "widget_week_name",
+      "value": "Weekly classes"
+    },
+    {
+      "name": "widget_week_desc",
+      "value": "Shows the classes of this week"
+    },
+    {
+      "name": "widget_next_header",
+      "value": "Next up"
+    },
+    {
+      "name": "widget_today_header",
+      "value": "Today"
+    },
+    {
+      "name": "widget_week_header",
+      "value": "This week"
+    },
+    {
+      "name": "widget_week_label",
+      "value": "Week %d"
+    },
+    {
+      "name": "widget_week_day_label",
+      "value": "Week %d, %s"
+    },
+    {
+      "name": "widget_more_count",
+      "value": "+%d more"
+    },
+    {
+      "name": "widget_ongoing",
+      "value": "In progress"
+    },
+    {
+      "name": "widget_empty_hint",
+      "value": "Open THU Info to sync your schedule"
+    },
+    {
+      "name": "widget_empty_none_today",
+      "value": "No classes today"
+    },
+    {
+      "name": "widget_empty_none_soon",
+      "value": "No classes in the next 7 days"
+    },
+    {
+      "name": "widget_empty_none_week",
+      "value": "No classes this week"
     }
   ]
 }

@@ -8,7 +8,8 @@
 			"packages/*"
 		],
 		"nohoist": [
-			"@thu-info/app/rtn-network-utils"
+			"@thu-info/app/rtn-network-utils",
+			"@thu-info/app/rtn-widget"
 		]
 	},
 	"scripts": {
