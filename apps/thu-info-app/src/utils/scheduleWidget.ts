@@ -1,9 +1,20 @@
 import dayjs, {Dayjs} from "dayjs";
+import md5 from "md5";
 import {AppState, DeviceEventEmitter, Platform} from "react-native";
-import {getWeekFromTime} from "@thu-info/lib/src/models/schedule/schedule";
+import {
+	getWeekFromTime,
+	ScheduleType,
+	TimeSlice,
+} from "@thu-info/lib/src/models/schedule/schedule";
 import themes from "../assets/themes/themes";
 import {navigationRef, persistor, State, store} from "../redux/store";
+import {StoredSchedule} from "../redux/scheduleData";
 import {DayScheduleItem, selectDaySchedule} from "./scheduleQuery";
+import {
+	buildScheduleLayout,
+	formatScheduleMinute,
+	ScheduleLayoutEntry,
+} from "./scheduleLayout";
 
 export interface WidgetScheduleItem {
 	name: string;
@@ -24,15 +35,46 @@ export interface WidgetDay {
 	items: WidgetScheduleItem[];
 }
 
+export interface WidgetWeekRow {
+	kind: "period" | "gap" | "hour";
+	period?: number;
+	begin: string;
+	end: string;
+	top: number;
+	height: number;
+}
+
+export interface WidgetWeekBlock extends WidgetScheduleItem {
+	dayOfWeek: number;
+	top: number;
+	height: number;
+	timeLabel: string;
+	compact: boolean;
+	fill: string;
+	textColor: string;
+}
+
+export interface WidgetWeekView {
+	week: number;
+	days: WidgetDay[];
+	rows: WidgetWeekRow[];
+	blocks: WidgetWeekBlock[];
+	classPeriods: boolean;
+	showWeekend: boolean;
+	showAxisTimes: boolean;
+}
+
 export interface WidgetSnapshot {
 	v: 1;
 	generatedAt: number;
 	week: number;
 	today: WidgetDay;
 	tomorrow: WidgetDay;
-	// Seven consecutive days starting today; the week card and the
-	// "next item" fallback both read from this list.
+	// Seven consecutive days starting today, used by the next-item fallback.
 	nextDays: WidgetDay[];
+	// Additive and optional so a card can still read a persisted v1 snapshot
+	// written by an older app build until the first refresh arrives.
+	weekView?: WidgetWeekView;
 	empty: boolean;
 }
 
@@ -67,6 +109,200 @@ const weekdayLabel = (language: string, dayOfWeek: number): string => {
 	return WEEKDAY_ZH[dayOfWeek - 1];
 };
 
+interface WidgetLayoutEntry extends ScheduleLayoutEntry {
+	schedule: StoredSchedule;
+	slice: TimeSlice;
+	item: WidgetScheduleItem;
+}
+
+const clamp = (value: number, low: number, high: number) =>
+	Math.max(low, Math.min(value, high));
+
+const widgetColor = (schedule: StoredSchedule, colorList: string[]): string => {
+	return colorList[
+		parseInt(md5(schedule.name).substr(0, 6), 16) % colorList.length
+	];
+};
+
+const withAlpha = (color: string, alpha: string): string =>
+	color.startsWith("#") && color.length === 7
+		? `#${alpha}${color.slice(1)}`
+		: color;
+
+const displayStartMinute = (
+	schedules: StoredSchedule[],
+	firstDay: string,
+	weekCount: number,
+): number => {
+	let earliest: number | undefined;
+	for (const schedule of schedules) {
+		for (const slice of schedule.activeTime.base) {
+			const week = getWeekFromTime(slice.beginTime, firstDay);
+			if (week < 1 || week > weekCount) {
+				continue;
+			}
+			const minute = slice.beginTime.hour() * 60 + slice.beginTime.minute();
+			if (earliest === undefined || minute < earliest) {
+				earliest = minute;
+			}
+		}
+	}
+	return Math.floor(Math.min(earliest ?? 8 * 60, 8 * 60) / 60) * 60;
+};
+
+const normalizeWeekLayout = (
+	entries: WidgetLayoutEntry[],
+	classPeriods: boolean,
+	startMinute: number,
+): Pick<WidgetWeekView, "rows" | "blocks"> => {
+	if (entries.length === 0) {
+		return {rows: [], blocks: []};
+	}
+	const layout = buildScheduleLayout(entries, {
+		classPeriods,
+		periodHeight: 45,
+		cardMinHeight: 52,
+		minuteHeight: 1,
+		startMinute,
+	});
+	if (layout.blocks.length === 0) {
+		return {rows: [], blocks: []};
+	}
+
+	let cropTop = Math.min(...layout.blocks.map((block) => block.top));
+	let cropBottom = Math.max(
+		...layout.blocks.map((block) => block.top + block.height),
+	);
+	// Keep the complete app row containing the first/last item. This removes
+	// only leading/trailing empty time while preserving gaps and relative time.
+	for (const row of layout.rows) {
+		if (
+			row.height > 0 &&
+			row.top < cropBottom &&
+			row.top + row.height > cropTop
+		) {
+			cropTop = Math.min(cropTop, row.top);
+			cropBottom = Math.max(cropBottom, row.top + row.height);
+		}
+	}
+	const range = Math.max(1, cropBottom - cropTop);
+	const normalizeTop = (top: number) => clamp((top - cropTop) / range, 0, 1);
+	const normalizeHeight = (top: number, height: number) => {
+		const normalizedTop = normalizeTop(top);
+		const normalizedBottom = clamp((top + height - cropTop) / range, 0, 1);
+		return Math.max(0, normalizedBottom - normalizedTop);
+	};
+
+	return {
+		rows: layout.rows
+			.filter(
+				(row) =>
+					row.top <= cropBottom && row.top + row.height >= cropTop,
+			)
+			.map((row) => ({
+				kind: row.kind,
+				period: row.period,
+				begin: formatScheduleMinute(row.begin),
+				end: formatScheduleMinute(row.end),
+				top: normalizeTop(row.top),
+				height: normalizeHeight(row.top, row.height),
+			})),
+		blocks: layout.blocks.map((block) => ({
+			...block.entry.item,
+			dayOfWeek: block.entry.slice.dayOfWeek,
+			top: normalizeTop(block.top),
+			height: normalizeHeight(block.top, block.height),
+			timeLabel: block.timeLabel ?? "",
+			compact: block.compact ?? false,
+			fill: block.entry.item.color,
+			textColor: "#FFFFFFFF",
+		})),
+	};
+};
+
+const buildWeekView = (
+	state: State,
+	now: Dayjs,
+	colorList: string[],
+): WidgetWeekView => {
+	const {firstDay, weekCount, language} = state.config;
+	const rawWeek = getWeekFromTime(now, firstDay);
+	const week = weekCount > 0 ? clamp(rawWeek, 1, weekCount) : rawWeek;
+	const monday = dayjs(firstDay).add((week - 1) * 7, "day");
+	const showOfficial = state.config.showOfficialSchedule ?? true;
+	const showCustom = state.config.showCustomSchedule ?? true;
+	const schedules = state.schedule.baseSchedule.filter((schedule) =>
+		schedule.type === ScheduleType.CUSTOM ? showCustom : showOfficial,
+	);
+	const ctx = {
+		firstDay,
+		weekCount,
+		shortenMap: state.schedule.shortenMap,
+		colorList,
+	};
+	const allDays = Array.from({length: 7}, (_, index): WidgetDay => {
+		const date = monday.add(index, "day");
+		const dayOfWeek = index + 1;
+		return {
+			dayOfWeek,
+			date: date.format("MM-DD"),
+			label: weekdayLabel(language, dayOfWeek),
+			items: selectDaySchedule(schedules, dayOfWeek, date, ctx).map(toWidgetItem),
+		};
+	});
+	const weekendHasItems = allDays[5].items.length > 0 || allDays[6].items.length > 0;
+	const showWeekend = !(state.config.hideWeekend ?? false) && weekendHasItems;
+	const days = showWeekend ? allDays : allDays.slice(0, 5);
+	const enableNewUI = state.config.scheduleEnableNewUI ?? true;
+	const entries: WidgetLayoutEntry[] = [];
+	for (const schedule of schedules) {
+		const color = widgetColor(schedule, colorList);
+		for (const slice of schedule.activeTime.base) {
+			if (
+				getWeekFromTime(slice.beginTime, firstDay) !== week ||
+				(!showWeekend && slice.dayOfWeek > 5)
+			) {
+				continue;
+			}
+			entries.push({
+				schedule,
+				slice,
+				item: {
+					name: state.schedule.shortenMap[schedule.localId] ?? schedule.name,
+					loc: schedule.location,
+					from: slice.beginTime.format("HH:mm"),
+					to: slice.endTime.format("HH:mm"),
+					begin: slice.beginTime.valueOf(),
+					end: slice.endTime.valueOf(),
+					color,
+				},
+			});
+		}
+	}
+	const classPeriods = state.config.scheduleUseClassPeriods ?? true;
+	const normalized = normalizeWeekLayout(
+		entries,
+		classPeriods,
+		displayStartMinute(schedules, firstDay, weekCount),
+	);
+	if (enableNewUI) {
+		normalized.blocks = normalized.blocks.map((block) => ({
+			...block,
+			fill: withAlpha(block.color, "44"),
+			textColor: block.color,
+		}));
+	}
+	return {
+		week,
+		days,
+		rows: normalized.rows,
+		blocks: normalized.blocks,
+		classPeriods,
+		showWeekend,
+		showAxisTimes: (state.config.scheduleHeightMode ?? 10) > 1,
+	};
+};
+
 export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 	const now = dayjs();
 	const {firstDay, weekCount, language} = state.config;
@@ -97,6 +333,7 @@ export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 		today: nextDays[0],
 		tomorrow: nextDays[1],
 		nextDays,
+		weekView: buildWeekView(state, now, colorList),
 		empty: state.schedule.baseSchedule.length === 0,
 	};
 };
@@ -197,6 +434,12 @@ const relevant = (s: State) => ({
 	weekCount: s.config.weekCount,
 	semesterId: s.schedule.semesterId,
 	language: s.config.language,
+	hideWeekend: s.config.hideWeekend,
+	scheduleUseClassPeriods: s.config.scheduleUseClassPeriods,
+	scheduleHeightMode: s.config.scheduleHeightMode,
+	scheduleEnableNewUI: s.config.scheduleEnableNewUI,
+	showOfficialSchedule: s.config.showOfficialSchedule,
+	showCustomSchedule: s.config.showCustomSchedule,
 });
 
 let initialized = false;
@@ -217,7 +460,13 @@ export const initWidgetSync = () => {
 			next.firstDay !== last.firstDay ||
 			next.weekCount !== last.weekCount ||
 			next.semesterId !== last.semesterId ||
-			next.language !== last.language
+			next.language !== last.language ||
+			next.hideWeekend !== last.hideWeekend ||
+			next.scheduleUseClassPeriods !== last.scheduleUseClassPeriods ||
+			next.scheduleHeightMode !== last.scheduleHeightMode ||
+			next.scheduleEnableNewUI !== last.scheduleEnableNewUI ||
+			next.showOfficialSchedule !== last.showOfficialSchedule ||
+			next.showCustomSchedule !== last.showCustomSchedule
 		) {
 			last = next;
 			schedulePush();

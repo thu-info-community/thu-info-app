@@ -19,6 +19,35 @@ export interface WidgetDayModel {
   items: WidgetItem[];
 }
 
+export interface WidgetWeekRowModel {
+  kind: string;
+  period?: number;
+  begin: string;
+  end: string;
+  top: number;
+  height: number;
+}
+
+export interface WidgetWeekBlockModel extends WidgetItem {
+  dayOfWeek: number;
+  top: number;
+  height: number;
+  timeLabel: string;
+  compact: boolean;
+  fill: string;
+  textColor: string;
+}
+
+export interface WidgetWeekViewModel {
+  week: number;
+  days: WidgetDayModel[];
+  rows: WidgetWeekRowModel[];
+  blocks: WidgetWeekBlockModel[];
+  classPeriods: boolean;
+  showWeekend: boolean;
+  showAxisTimes: boolean;
+}
+
 export interface WidgetSnapshotModel {
   v: number;
   generatedAt: number;
@@ -26,6 +55,7 @@ export interface WidgetSnapshotModel {
   today: WidgetDayModel;
   tomorrow: WidgetDayModel;
   nextDays: WidgetDayModel[];
+  weekView?: WidgetWeekViewModel;
   empty: boolean;
 }
 

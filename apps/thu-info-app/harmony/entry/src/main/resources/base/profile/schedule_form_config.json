@@ -27,7 +27,6 @@
       "isDynamic": true,
       "colorMode": "auto",
       "supportDimensions": [
-        "2*2",
         "2*4",
         "4*4"
       ],

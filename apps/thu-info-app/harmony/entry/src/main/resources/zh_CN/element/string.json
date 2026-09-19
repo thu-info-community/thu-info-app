@@ -83,6 +83,10 @@
     {
       "name": "widget_empty_none_soon",
       "value": "近 7 天暂无课程"
+    },
+    {
+      "name": "widget_empty_none_week",
+      "value": "本周暂无课程"
     }
   ]
 }
