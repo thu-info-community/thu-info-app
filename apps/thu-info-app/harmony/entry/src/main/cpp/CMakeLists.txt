@@ -38,17 +38,20 @@ file(GLOB GENERATED_CPP_FILES "./generated/*.cpp")
 
 set(rtn_network_utils_generated_dir "${RNOH_GENERATED_DIR}/rtn_network_utils")
 file(GLOB_RECURSE rtn_network_utils_generated_dir_SRC "${rtn_network_utils_generated_dir}/**/*.cpp")
+set(rtn_widget_generated_dir "${RNOH_GENERATED_DIR}/rtn_widget")
+file(GLOB_RECURSE rtn_widget_generated_dir_SRC "${rtn_widget_generated_dir}/**/*.cpp")
 file(GLOB rtn_network_utils_package_SRC CONFIGURE_DEPENDS *.cpp)
 
 add_library(rnoh_app SHARED
     ${GENERATED_CPP_FILES}
     ${rtn_network_utils_generated_dir_SRC}
+    ${rtn_widget_generated_dir_SRC}
     ${rtn_network_utils_package_SRC}
     "./PackageProvider.cpp"
     "${RNOH_CPP_DIR}/RNOHAppNapiBridge.cpp"
 )
 
-target_include_directories(rnoh_app PUBLIC ${rtn_network_utils_generated_dir})
+target_include_directories(rnoh_app PUBLIC ${rtn_network_utils_generated_dir} ${rtn_widget_generated_dir})
 
 target_link_libraries(rnoh_app PUBLIC rnoh)
 target_link_libraries(rnoh_app PUBLIC rnoh_async_storage)

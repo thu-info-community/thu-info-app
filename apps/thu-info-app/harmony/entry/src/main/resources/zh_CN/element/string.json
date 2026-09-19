@@ -11,6 +11,74 @@
     {
       "name": "EntryAbility_label",
       "value": "THU Info"
+    },
+    {
+      "name": "widget_schedule_label",
+      "value": "课表卡片"
+    },
+    {
+      "name": "widget_schedule_desc",
+      "value": "在桌面显示课程表的卡片"
+    },
+    {
+      "name": "widget_next_name",
+      "value": "下一节课"
+    },
+    {
+      "name": "widget_next_desc",
+      "value": "显示下一节课程"
+    },
+    {
+      "name": "widget_today_name",
+      "value": "今日课程"
+    },
+    {
+      "name": "widget_today_desc",
+      "value": "显示今天的全部课程"
+    },
+    {
+      "name": "widget_week_name",
+      "value": "本周课程"
+    },
+    {
+      "name": "widget_week_desc",
+      "value": "显示本周的课程"
+    },
+    {
+      "name": "widget_next_header",
+      "value": "下一项日程"
+    },
+    {
+      "name": "widget_today_header",
+      "value": "今日课程"
+    },
+    {
+      "name": "widget_week_header",
+      "value": "本周课程"
+    },
+    {
+      "name": "widget_week_label",
+      "value": "第 %d 周"
+    },
+    {
+      "name": "widget_more_count",
+      "value": "还有 %d 项"
+    },
+    {
+      "name": "widget_ongoing",
+      "value": "进行中"
+    },
+    {
+      "name": "widget_empty_hint",
+      "value": "打开 THU Info 同步课表"
+    },
+    {
+      "name": "widget_empty_none_today",
+      "value": "今日暂无课程"
+    },
+    {
+      "name": "widget_empty_none_soon",
+      "value": "近 7 天暂无课程"
     }
   ]
 }

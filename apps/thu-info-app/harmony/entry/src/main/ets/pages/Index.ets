@@ -91,6 +91,9 @@ struct Index {
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {
             rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
+            // EntryAbility reads this to forward card-tap launches while the
+            // app is already foreground (no AppState change fires then).
+            AppStorage.setOrCreate('thuinfo_rn_instance', rnInstance)
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([

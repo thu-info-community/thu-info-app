@@ -1,0 +1,59 @@
+{
+  "forms": [
+    {
+      "name": "schedule_next",
+      "displayName": "$string:widget_next_name",
+      "description": "$string:widget_next_desc",
+      "src": "./ets/widget/pages/NextCard.ets",
+      "uiSyntax": "arkts",
+      "isDynamic": true,
+      "colorMode": "auto",
+      "supportDimensions": [
+        "1*2",
+        "2*2"
+      ],
+      "defaultDimension": "2*2",
+      "updateEnabled": true,
+      "updateDuration": 2,
+      "isDefault": false,
+      "resizable": true
+    },
+    {
+      "name": "schedule_today",
+      "displayName": "$string:widget_today_name",
+      "description": "$string:widget_today_desc",
+      "src": "./ets/widget/pages/TodayCard.ets",
+      "uiSyntax": "arkts",
+      "isDynamic": true,
+      "colorMode": "auto",
+      "supportDimensions": [
+        "2*2",
+        "2*4",
+        "4*4"
+      ],
+      "defaultDimension": "2*4",
+      "updateEnabled": true,
+      "updateDuration": 4,
+      "isDefault": true,
+      "resizable": true
+    },
+    {
+      "name": "schedule_week",
+      "displayName": "$string:widget_week_name",
+      "description": "$string:widget_week_desc",
+      "src": "./ets/widget/pages/WeekCard.ets",
+      "uiSyntax": "arkts",
+      "isDynamic": true,
+      "colorMode": "auto",
+      "supportDimensions": [
+        "4*4",
+        "6*4"
+      ],
+      "defaultDimension": "4*4",
+      "updateEnabled": true,
+      "updateDuration": 8,
+      "isDefault": false,
+      "resizable": true
+    }
+  ]
+}

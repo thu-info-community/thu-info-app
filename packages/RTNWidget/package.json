@@ -1,0 +1,30 @@
+{
+  "name": "rtn-widget",
+  "version": "3.17.0",
+  "description": "",
+  "main": "index.ts",
+  "harmony": {
+    "alias": "rtn-widget",
+    "codegenConfig": [
+      {
+        "version": 2,
+        "specPaths": [
+          "./src/specs/v2"
+        ]
+      }
+    ]
+  },
+  "files": [
+    "index.ts",
+    "src/*",
+    "harmony.tar.gz"
+  ],
+  "scripts": {
+    "lint": "exit 0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "private": true
+}
