@@ -29,7 +29,7 @@ object WeekCardRenderer {
         val missing = snapshot == null || snapshot.empty
         val weekView = snapshot?.weekView
         return if (missing) {
-            renderHintOnly(context, size, snapshot)
+            renderHintOnly(context, snapshot)
         } else if (weekView == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             renderLegacy(context, snapshot, weekView)
         } else {
@@ -38,11 +38,7 @@ object WeekCardRenderer {
     }
 
     // snapshot === null || snapshot.empty -> the plain hint, nothing else.
-    private fun renderHintOnly(
-        context: Context,
-        size: WidgetSize,
-        snapshot: WidgetSnapshot?,
-    ): RemoteViews {
+    private fun renderHintOnly(context: Context, snapshot: WidgetSnapshot?): RemoteViews {
         val rv = newRemoteViews(context, R.layout.widget_week_mirrored)
         rv.setTextViewText(
             R.id.widget_week_empty,
@@ -88,7 +84,7 @@ object WeekCardRenderer {
         for (day in weekView.days) {
             val heading = newRemoteViews(
                 context,
-                if (isToday(snapshot, day)) {
+                if (snapshot.today.date == day.date) {
                     R.layout.widget_week_day_heading_today
                 } else {
                     R.layout.widget_week_day_heading
@@ -358,7 +354,7 @@ object WeekCardRenderer {
                 block.setInt(
                     R.id.widget_lblock_bg,
                     "setImageLevel",
-                    WidgetPalette.legacyBlock(item.color),
+                    WidgetPalette.bar(item.color),
                 )
                 column.addView(R.id.widget_legacy_col, block)
             }
@@ -366,9 +362,6 @@ object WeekCardRenderer {
         }
         return rv
     }
-
-    private fun isToday(snapshot: WidgetSnapshot, day: WidgetDay): Boolean =
-        snapshot.today.date == day.date
 
     private fun gridHeightDp(size: WidgetSize, showAxis: Boolean): Float {
         val scale = size.fontScale

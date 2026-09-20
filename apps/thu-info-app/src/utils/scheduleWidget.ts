@@ -9,7 +9,11 @@ import {
 import themes from "../assets/themes/themes";
 import {navigationRef, persistor, State, store} from "../redux/store";
 import {StoredSchedule} from "../redux/scheduleData";
-import {DayScheduleItem, selectDaySchedule} from "./scheduleQuery";
+import {
+	DayScheduleItem,
+	ScheduleQueryContext,
+	selectDaySchedule,
+} from "./scheduleQuery";
 import {
 	buildScheduleLayout,
 	formatScheduleMinute,
@@ -135,6 +139,22 @@ const dateText = (language: "zh" | "en", d: Dayjs): string => {
 		: `${DAY_EN[dayOfWeek]} ${d.month() + 1}/${d.date()}`;
 };
 
+// One day of the snapshot. Both the today/nextDays list (unfiltered base
+// schedule) and the week-view days (show/hide-filtered) build it.
+const widgetDay = (
+	lang: "zh" | "en",
+	schedules: StoredSchedule[],
+	ctx: ScheduleQueryContext,
+	dayOfWeek: number,
+	date: Dayjs,
+): WidgetDay => ({
+	dayOfWeek,
+	date: date.format("MM-DD"),
+	label: weekdayLabel(lang, dayOfWeek),
+	dateText: dateText(lang, date),
+	items: selectDaySchedule(schedules, dayOfWeek, date, ctx).map(toWidgetItem),
+});
+
 interface WidgetLayoutEntry extends ScheduleLayoutEntry {
 	schedule: StoredSchedule;
 	slice: TimeSlice;
@@ -246,10 +266,10 @@ const normalizeWeekLayout = (
 const buildWeekView = (
 	state: State,
 	now: Dayjs,
-	colorList: string[],
+	lang: "zh" | "en",
+	ctx: ScheduleQueryContext,
 ): WidgetWeekView => {
-	const {firstDay, weekCount, language} = state.config;
-	const lang = resolveLanguage(language);
+	const {firstDay, weekCount} = ctx;
 	const rawWeek = getWeekFromTime(now, firstDay);
 	const week = weekCount > 0 ? clamp(rawWeek, 1, weekCount) : rawWeek;
 	const monday = dayjs(firstDay).add((week - 1) * 7, "day");
@@ -258,25 +278,9 @@ const buildWeekView = (
 	const schedules = state.schedule.baseSchedule.filter((schedule) =>
 		schedule.type === ScheduleType.CUSTOM ? showCustom : showOfficial,
 	);
-	const ctx = {
-		firstDay,
-		weekCount,
-		shortenMap: state.schedule.shortenMap,
-		colorList,
-	};
-	const allDays = Array.from({length: 7}, (_, index): WidgetDay => {
-		const date = monday.add(index, "day");
-		const dayOfWeek = index + 1;
-		return {
-			dayOfWeek,
-			date: date.format("MM-DD"),
-			label: weekdayLabel(lang, dayOfWeek),
-			dateText: dateText(lang, date),
-			items: selectDaySchedule(schedules, dayOfWeek, date, ctx).map(
-				toWidgetItem,
-			),
-		};
-	});
+	const allDays = Array.from({length: 7}, (_, index) =>
+		widgetDay(lang, schedules, ctx, index + 1, monday.add(index, "day")),
+	);
 	const weekendHasItems =
 		allDays[5].items.length > 0 || allDays[6].items.length > 0;
 	const showWeekend = !(state.config.hideWeekend ?? false) && weekendHasItems;
@@ -284,7 +288,7 @@ const buildWeekView = (
 	const enableNewUI = state.config.scheduleEnableNewUI ?? true;
 	const entries: WidgetLayoutEntry[] = [];
 	for (const schedule of schedules) {
-		const color = widgetColor(schedule, colorList);
+		const color = widgetColor(schedule, ctx.colorList);
 		for (const slice of schedule.activeTime.base) {
 			if (
 				getWeekFromTime(slice.beginTime, firstDay) !== week ||
@@ -336,28 +340,20 @@ export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 	const {firstDay, weekCount, language} = state.config;
 	const lang = resolveLanguage(language);
 	// The palette is identical across light and dark themes.
-	const colorList = themes("light").colors.courseItemColorList;
-	const ctx = {
+	const ctx: ScheduleQueryContext = {
 		firstDay,
 		weekCount,
 		shortenMap: state.schedule.shortenMap,
-		colorList,
+		colorList: themes("light").colors.courseItemColorList,
 	};
-	const dayOf = (d: Dayjs): WidgetDay => {
-		const dayOfWeek = d.day() === 0 ? 7 : d.day();
-		return {
-			dayOfWeek,
-			date: d.format("MM-DD"),
-			label: weekdayLabel(lang, dayOfWeek),
-			dateText: dateText(lang, d),
-			items: selectDaySchedule(
-				state.schedule.baseSchedule,
-				dayOfWeek,
-				d,
-				ctx,
-			).map(toWidgetItem),
-		};
-	};
+	const dayOf = (d: Dayjs): WidgetDay =>
+		widgetDay(
+			lang,
+			state.schedule.baseSchedule,
+			ctx,
+			d.day() === 0 ? 7 : d.day(),
+			d,
+		);
 	const nextDays = [0, 1, 2, 3, 4, 5, 6].map((offset) =>
 		dayOf(now.add(offset, "day")),
 	);
@@ -369,7 +365,7 @@ export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 		today: nextDays[0],
 		tomorrow: nextDays[1],
 		nextDays,
-		weekView: buildWeekView(state, now, colorList),
+		weekView: buildWeekView(state, now, lang, ctx),
 		empty: state.schedule.baseSchedule.length === 0,
 	};
 };
@@ -487,19 +483,12 @@ export const initWidgetSync = () => {
 	let last = relevant(store.getState());
 	store.subscribe(() => {
 		const next = relevant(store.getState());
+		// relevant() already names every watched field; compare those fields
+		// directly instead of restating the list here.
 		if (
-			next.baseSchedule !== last.baseSchedule ||
-			next.shortenMap !== last.shortenMap ||
-			next.firstDay !== last.firstDay ||
-			next.weekCount !== last.weekCount ||
-			next.semesterId !== last.semesterId ||
-			next.language !== last.language ||
-			next.hideWeekend !== last.hideWeekend ||
-			next.scheduleUseClassPeriods !== last.scheduleUseClassPeriods ||
-			next.scheduleHeightMode !== last.scheduleHeightMode ||
-			next.scheduleEnableNewUI !== last.scheduleEnableNewUI ||
-			next.showOfficialSchedule !== last.showOfficialSchedule ||
-			next.showCustomSchedule !== last.showCustomSchedule
+			(Object.keys(next) as (keyof typeof next)[]).some(
+				(key) => next[key] !== last[key],
+			)
 		) {
 			last = next;
 			schedulePush();

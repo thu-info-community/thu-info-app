@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mirror of harmony/entry/src/main/resources/zh_CN/element/string.json. -->
+<!-- Strings for the three home-screen cards (zh-CN). -->
 <resources>
-	<string name="widget_schedule_label">课表卡片</string>
-	<string name="widget_schedule_desc">在桌面显示课程表的卡片</string>
 	<string name="widget_next_name">下一节课</string>
 	<string name="widget_next_desc">显示下一节课程</string>
 	<string name="widget_today_name">今日课程</string>
@@ -14,7 +12,6 @@
 	<string name="widget_week_header">本周课程</string>
 	<string name="widget_week_label">第 %1$d 周</string>
 	<string name="widget_week_day_label">第%1$d周周%2$s</string>
-	<string name="widget_more_count">还有 %1$d 项</string>
 	<string name="widget_ongoing">进行中</string>
 	<string name="widget_empty_hint">打开 THU Info 同步课表</string>
 	<string name="widget_empty_none_today">今日暂无课程</string>

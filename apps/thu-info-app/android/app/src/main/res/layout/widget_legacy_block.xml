@@ -3,7 +3,6 @@
 	color is a level-list (widget_lblock) selected through setImageLevel, so the
 	block is an ImageView behind the text instead of a tinted background. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/widget_lblock"
 	android:layout_width="match_parent"
 	android:layout_height="0dp"
 	android:layout_weight="1">

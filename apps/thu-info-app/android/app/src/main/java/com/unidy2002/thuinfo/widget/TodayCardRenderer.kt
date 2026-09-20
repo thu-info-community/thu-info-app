@@ -18,17 +18,12 @@ object TodayCardRenderer {
         val missing = snapshot == null || snapshot.empty
         val day = snapshot?.today
         val sc = WidgetStrings.context(context, snapshot)
-        if (missing || day == null) {
-            rv.setTextViewText(R.id.widget_today_empty, sc.getString(R.string.widget_empty_hint))
-            rv.setViewVisibility(R.id.widget_today_empty, View.VISIBLE)
-            rv.setViewVisibility(R.id.widget_today_header, View.GONE)
-            rv.setViewVisibility(R.id.widget_today_rows, View.GONE)
-            return rv
-        }
-        if (day.items.isEmpty()) {
+        if (missing || day == null || day.items.isEmpty()) {
             rv.setTextViewText(
                 R.id.widget_today_empty,
-                sc.getString(R.string.widget_empty_none_today),
+                sc.getString(
+                    if (missing) R.string.widget_empty_hint else R.string.widget_empty_none_today,
+                ),
             )
             rv.setViewVisibility(R.id.widget_today_empty, View.VISIBLE)
             rv.setViewVisibility(R.id.widget_today_header, View.GONE)
@@ -45,25 +40,22 @@ object TodayCardRenderer {
         rv.removeAllViews(R.id.widget_today_rows)
         val capacity = TodayWindowing.capacity(detailed)
         val now = System.currentTimeMillis()
-        val rowsLayout = if (detailed) {
-            R.layout.widget_today_row_detailed
-        } else {
-            R.layout.widget_today_row_compact
-        }
         for (item in TodayWindowing.visibleItems(day.items, capacity, now)) {
-            rv.addView(R.id.widget_today_rows, renderRow(context, rowsLayout, detailed, item, now))
+            rv.addView(R.id.widget_today_rows, renderRow(context, detailed, item, now))
         }
         return rv
     }
 
     private fun renderRow(
         context: Context,
-        rowsLayout: Int,
         detailed: Boolean,
         item: WidgetItem,
         now: Long,
     ): RemoteViews {
-        val row = newRemoteViews(context, rowsLayout)
+        val row = newRemoteViews(
+            context,
+            if (detailed) R.layout.widget_today_row_detailed else R.layout.widget_today_row_compact,
+        )
         if (detailed) {
             row.setTextViewText(R.id.widget_detail_name, item.name)
             if (item.loc.isEmpty()) {

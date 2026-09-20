@@ -25,15 +25,10 @@ object WidgetPalette {
     private fun normalize(hex: String): String = hex.removePrefix("#").lowercase()
 
     // Level-list index for the ImageView-backed shapes (setImageLevel is a
-    // RemoteViews-callable setter on every API level). Unknown colors fall
-    // back to the first palette entry.
-    private fun level(hex: String): Int = HEXES.indexOf(normalize(hex)).coerceAtLeast(0)
-
-    // TodayCard color bar (widget_bar.xml, radius 2).
-    fun bar(hex: String): Int = level(hex)
-
-    // WeekCard legacy block (widget_lblock.xml, radius 4).
-    fun legacyBlock(hex: String): Int = level(hex)
+    // RemoteViews-callable setter on every API level): the Today rows use
+    // widget_bar.xml and the Week legacy blocks widget_lblock.xml — same
+    // colors, different radii. Unknown colors fall back to the first entry.
+    fun bar(hex: String): Int = HEXES.indexOf(normalize(hex)).coerceAtLeast(0)
 
     // WeekCard.ets paints .backgroundColor(block.fill) verbatim: the JS builder
     // only prepends the 44 alpha for the new schedule UI, so an 8-digit fill is

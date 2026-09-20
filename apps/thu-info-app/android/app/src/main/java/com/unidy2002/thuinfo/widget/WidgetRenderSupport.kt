@@ -3,7 +3,6 @@ package com.unidy2002.thuinfo.widget
 import android.content.Context
 import android.util.TypedValue
 import android.widget.RemoteViews
-import com.unidy2002.thuinfo.R
 
 internal fun newRemoteViews(context: Context, layoutId: Int): RemoteViews =
     RemoteViews(context.packageName, layoutId)

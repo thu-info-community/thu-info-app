@@ -54,18 +54,15 @@ data class WidgetWeekView(
     val rows: List<WidgetWeekRow>,
     val blocks: List<WidgetWeekBlock>,
     val classPeriods: Boolean,
-    val showWeekend: Boolean,
     val showAxisTimes: Boolean,
 )
 
 data class WidgetSnapshot(
-    val generatedAt: Long,
     val week: Int,
     // Resolved app language ("zh"/"en"); renderers resolve string resources
     // against it so the cards never mix the app language with the system's.
     val language: String = "",
     val today: WidgetDay,
-    val tomorrow: WidgetDay,
     val nextDays: List<WidgetDay>,
     val weekView: WidgetWeekView?,
     val empty: Boolean,
@@ -89,12 +86,9 @@ object WidgetSnapshotParser {
                 return null
             }
             WidgetSnapshot(
-                generatedAt = root.optLong("generatedAt", 0L),
                 week = root.optInt("week", 0),
                 language = root.optString("language"),
                 today = parseDay(root.optJSONObject("today"))
-                    ?: WidgetDay(1, "", "", items = emptyList()),
-                tomorrow = parseDay(root.optJSONObject("tomorrow"))
                     ?: WidgetDay(1, "", "", items = emptyList()),
                 nextDays = nextDays,
                 weekView = parseWeekView(root.optJSONObject("weekView")),
@@ -217,7 +211,6 @@ object WidgetSnapshotParser {
             rows = rows,
             blocks = blocks,
             classPeriods = obj.optBoolean("classPeriods", true),
-            showWeekend = obj.optBoolean("showWeekend", false),
             showAxisTimes = obj.optBoolean("showAxisTimes", false),
         )
     }

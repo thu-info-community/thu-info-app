@@ -5,7 +5,6 @@ import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
-import com.facebook.react.uimanager.ViewManager
 
 // Registered manually in MainApplication (the widget code is app-specific).
 // In this RN 0.87 bridgeless runtime a manually-registered module flagged as a
@@ -33,7 +32,4 @@ class WidgetPackage : BaseReactPackage() {
                 ),
             )
         }
-
-    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
-        emptyList()
 }

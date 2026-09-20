@@ -44,7 +44,7 @@ abstract class ScheduleWidgetProvider : AppWidgetProvider() {
         fun pushAll(context: Context, snapshotJson: String) {
             val manager = AppWidgetManager.getInstance(context) ?: return
             WidgetSnapshotStore.write(context, snapshotJson)
-            val snapshot = WidgetSnapshotStore.read(context)
+            val snapshot = WidgetSnapshotParser.parse(snapshotJson)
             val providers = mapOf(
                 WidgetKind.NEXT to NextScheduleWidget::class.java,
                 WidgetKind.TODAY to TodayScheduleWidget::class.java,

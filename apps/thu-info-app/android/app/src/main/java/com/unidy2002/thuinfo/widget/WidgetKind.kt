@@ -19,15 +19,6 @@ object WidgetVariants {
     const val TODAY_DETAILED_MIN_HEIGHT_DP = 300
     // HarmonyOS shows the time axis only on 6*4 (six launcher rows tall).
     const val WEEK_AXIS_MIN_HEIGHT_DP = 500
-
-    fun nextVariant(heightDp: Int): String =
-        if (heightDp < NEXT_STRIP_MAX_HEIGHT_DP) "1*2" else "2*2"
-
-    fun todayVariant(heightDp: Int): String =
-        if (heightDp < TODAY_DETAILED_MIN_HEIGHT_DP) "2*4" else "4*4"
-
-    fun weekVariant(heightDp: Int): String =
-        if (heightDp >= WEEK_AXIS_MIN_HEIGHT_DP) "6*4" else "4*4"
 }
 
 // TodayCard.ets windowing, kept free of Android imports so it is unit-testable.
