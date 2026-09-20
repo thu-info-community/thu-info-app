@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard legacy block fill: radius 4, opaque #ef5b75. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+	<solid android:color="#FFef5b75" />
+	<corners android:radius="4dp" />
+</shape>

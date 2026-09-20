@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets courseBlock(): 1dp-inset rounded block, name/time/@loc.
+	Size, position, palette, fonts and line counts are set at runtime. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_block"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="1dp">
+
+	<LinearLayout
+		android:id="@+id/widget_block_inner"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:clipToOutline="true"
+		android:paddingStart="2dp"
+		android:paddingEnd="2dp">
+
+		<TextView
+			android:id="@+id/widget_block_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="9sp"
+			android:textStyle="bold"
+			android:textColor="@color/widget_text_primary"
+			android:maxLines="1"
+			android:ellipsize="end" />
+
+		<TextView
+			android:id="@+id/widget_block_time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="7sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1"
+			android:ellipsize="end"
+			android:visibility="gone" />
+
+		<TextView
+			android:id="@+id/widget_block_loc"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="7sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1"
+			android:ellipsize="end"
+			android:visibility="gone" />
+	</LinearLayout>
+</FrameLayout>

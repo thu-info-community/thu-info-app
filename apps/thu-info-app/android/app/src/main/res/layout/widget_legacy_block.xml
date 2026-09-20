@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets legacyItemBlock(): solid palette block, 7sp white name. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_lblock"
+	android:layout_width="match_parent"
+	android:layout_height="0dp"
+	android:layout_weight="1"
+	android:orientation="vertical"
+	android:padding="2dp">
+
+	<TextView
+		android:id="@+id/widget_lblock_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="7sp"
+		android:textColor="#FFFFFFFF"
+		android:maxLines="1"
+		android:ellipsize="end" />
+</LinearLayout>

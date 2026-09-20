@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mirror of harmony/entry/src/main/resources/base/element/string.json (en). -->
+<resources>
+	<string name="widget_schedule_label">Schedule cards</string>
+	<string name="widget_schedule_desc">Home screen cards showing the class schedule</string>
+	<string name="widget_next_name">Next class</string>
+	<string name="widget_next_desc">Shows the next class of the day</string>
+	<string name="widget_today_name">Today\'s classes</string>
+	<string name="widget_today_desc">Shows all classes of today</string>
+	<string name="widget_week_name">Weekly classes</string>
+	<string name="widget_week_desc">Shows the classes of this week</string>
+	<string name="widget_next_header">Next up</string>
+	<string name="widget_today_header">Today</string>
+	<string name="widget_week_header">This week</string>
+	<string name="widget_week_label">Week %1$d</string>
+	<string name="widget_week_day_label">Week %1$d, %2$s</string>
+	<string name="widget_more_count">+%1$d more</string>
+	<string name="widget_ongoing">In progress</string>
+	<string name="widget_empty_hint">Open THU Info to sync your schedule</string>
+	<string name="widget_empty_none_today">No classes today</string>
+	<string name="widget_empty_none_soon">No classes in the next 7 days</string>
+	<string name="widget_empty_none_week">No classes this week</string>
+</resources>

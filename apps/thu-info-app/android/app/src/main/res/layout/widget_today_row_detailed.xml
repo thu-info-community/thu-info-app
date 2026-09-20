@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TodayCard.ets detailedRow(): 4dp bar, course block left, times right. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_row"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:baselineAligned="false"
+	android:gravity="center_vertical"
+	android:paddingStart="4dp"
+	android:paddingTop="3dp"
+	android:paddingEnd="4dp"
+	android:paddingBottom="3dp">
+
+	<ImageView
+		android:id="@+id/widget_detail_bar"
+		android:layout_width="4dp"
+		android:layout_height="match_parent" />
+
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="3"
+		android:layout_marginStart="6dp"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@+id/widget_detail_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="19sp"
+			android:fontFamily="sans-serif-medium"
+			android:textColor="@color/widget_text_primary"
+			android:maxLines="2"
+			android:ellipsize="end" />
+
+		<TextView
+			android:id="@+id/widget_detail_loc"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:textSize="15sp"
+			android:textColor="@color/widget_text_tertiary"
+			android:maxLines="2"
+			android:ellipsize="end"
+			android:visibility="gone" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="2"
+		android:layout_marginStart="6dp"
+		android:orientation="vertical"
+		android:gravity="end">
+
+		<TextView
+			android:id="@+id/widget_detail_from"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="17sp"
+			android:fontFamily="sans-serif-medium"
+			android:textColor="@color/widget_text_primary" />
+
+		<TextView
+			android:id="@+id/widget_detail_to"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:textSize="15sp"
+			android:textColor="@color/widget_text_secondary" />
+	</LinearLayout>
+</LinearLayout>

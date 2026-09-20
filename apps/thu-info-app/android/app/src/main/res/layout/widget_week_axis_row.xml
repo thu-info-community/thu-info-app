@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets axisRow(): period number with optional begin/end times,
+	or a plain hour label; height and top offset are set at runtime. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_axis_row"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:gravity="center">
+
+	<TextView
+		android:id="@+id/widget_axis_period"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="9sp"
+		android:textColor="@color/widget_text_primary"
+		android:maxLines="1"
+		android:visibility="gone" />
+
+	<TextView
+		android:id="@+id/widget_axis_begin"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="6sp"
+		android:textColor="@color/widget_text_secondary"
+		android:maxLines="1"
+		android:visibility="gone" />
+
+	<TextView
+		android:id="@+id/widget_axis_end"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="6sp"
+		android:textColor="@color/widget_text_secondary"
+		android:maxLines="1"
+		android:visibility="gone" />
+
+	<TextView
+		android:id="@+id/widget_axis_hour"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="7sp"
+		android:textColor="@color/widget_text_secondary"
+		android:maxLines="1"
+		android:visibility="gone" />
+</LinearLayout>
