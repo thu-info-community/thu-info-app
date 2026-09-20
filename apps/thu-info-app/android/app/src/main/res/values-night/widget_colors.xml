@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mirror of harmony/entry/src/main/resources/dark/element/color.json. -->
+<resources>
+	<color name="widget_background">#222222</color>
+	<color name="widget_text_primary">#FFEFEFEF</color>
+	<color name="widget_text_secondary">#FF9A9A9A</color>
+	<color name="widget_text_tertiary">#FF707070</color>
+	<color name="widget_accent">#8B55E4</color>
+	<color name="widget_divider">#14FFFFFF</color>
+	<color name="widget_today_bg">#338B55E4</color>
+</resources>

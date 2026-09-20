@@ -9,7 +9,11 @@ import {
 import themes from "../assets/themes/themes";
 import {navigationRef, persistor, State, store} from "../redux/store";
 import {StoredSchedule} from "../redux/scheduleData";
-import {DayScheduleItem, selectDaySchedule} from "./scheduleQuery";
+import {
+	DayScheduleItem,
+	ScheduleQueryContext,
+	selectDaySchedule,
+} from "./scheduleQuery";
 import {
 	buildScheduleLayout,
 	formatScheduleMinute,
@@ -32,6 +36,8 @@ export interface WidgetDay {
 	// Localized short weekday name, resolved app-side so the cards never need
 	// locale APIs (which are restricted in the form render process).
 	label: string;
+	// Full date line for the Today card header, in the app language.
+	dateText: string;
 	items: WidgetScheduleItem[];
 }
 
@@ -68,6 +74,9 @@ export interface WidgetSnapshot {
 	v: 1;
 	generatedAt: number;
 	week: number;
+	// Resolved app language; the Android cards resolve their string resources
+	// against it so the UI never mixes the app language with the system's.
+	language: "zh" | "en";
 	today: WidgetDay;
 	tomorrow: WidgetDay;
 	// Seven consecutive days starting today, used by the next-item fallback.
@@ -91,23 +100,60 @@ const toWidgetItem = (item: DayScheduleItem): WidgetScheduleItem => ({
 const WEEKDAY_ZH = ["一", "二", "三", "四", "五", "六", "日"];
 const WEEKDAY_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const weekdayLabel = (language: string, dayOfWeek: number): string => {
-	if (language === "en") {
-		return WEEKDAY_EN[dayOfWeek - 1];
+// The cards speak the app's language instead of the launcher's system locale
+// so they never mix the two ("auto" follows the system).
+const resolveLanguage = (language: string): "zh" | "en" => {
+	if (language === "zh" || language === "en") {
+		return language;
 	}
-	if (language !== "zh") {
-		try {
-			// Lazily required: unavailable in some environments (e.g. tests).
-			const {getLocales} = require("react-native-localize");
-			if (!getLocales()[0]?.languageTag.startsWith("zh")) {
-				return WEEKDAY_EN[dayOfWeek - 1];
-			}
-		} catch {
-			// Fall back to Chinese below.
-		}
+	try {
+		// Lazily required: unavailable in some environments (e.g. tests).
+		const {getLocales} = require("react-native-localize");
+		return getLocales()[0]?.languageTag.startsWith("zh") ? "zh" : "en";
+	} catch {
+		return "zh";
 	}
-	return WEEKDAY_ZH[dayOfWeek - 1];
 };
+
+const weekdayLabel = (language: "zh" | "en", dayOfWeek: number): string =>
+	language === "en" ? WEEKDAY_EN[dayOfWeek - 1] : WEEKDAY_ZH[dayOfWeek - 1];
+
+// The same date line the home agenda section renders (home.tsx), so the card
+// header reads like the app instead of "09-20 日".
+const DAY_ZH = [
+	"",
+	"星期一",
+	"星期二",
+	"星期三",
+	"星期四",
+	"星期五",
+	"星期六",
+	"星期天",
+];
+const DAY_EN = ["", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."];
+
+const dateText = (language: "zh" | "en", d: Dayjs): string => {
+	const dayOfWeek = d.day() === 0 ? 7 : d.day();
+	return language === "zh"
+		? `${d.month() + 1}月${d.date()}日 ${DAY_ZH[dayOfWeek]}`
+		: `${DAY_EN[dayOfWeek]} ${d.month() + 1}/${d.date()}`;
+};
+
+// One day of the snapshot. Both the today/nextDays list (unfiltered base
+// schedule) and the week-view days (show/hide-filtered) build it.
+const widgetDay = (
+	lang: "zh" | "en",
+	schedules: StoredSchedule[],
+	ctx: ScheduleQueryContext,
+	dayOfWeek: number,
+	date: Dayjs,
+): WidgetDay => ({
+	dayOfWeek,
+	date: date.format("MM-DD"),
+	label: weekdayLabel(lang, dayOfWeek),
+	dateText: dateText(lang, date),
+	items: selectDaySchedule(schedules, dayOfWeek, date, ctx).map(toWidgetItem),
+});
 
 interface WidgetLayoutEntry extends ScheduleLayoutEntry {
 	schedule: StoredSchedule;
@@ -195,10 +241,7 @@ const normalizeWeekLayout = (
 
 	return {
 		rows: layout.rows
-			.filter(
-				(row) =>
-					row.top <= cropBottom && row.top + row.height >= cropTop,
-			)
+			.filter((row) => row.top <= cropBottom && row.top + row.height >= cropTop)
 			.map((row) => ({
 				kind: row.kind,
 				period: row.period,
@@ -223,9 +266,10 @@ const normalizeWeekLayout = (
 const buildWeekView = (
 	state: State,
 	now: Dayjs,
-	colorList: string[],
+	lang: "zh" | "en",
+	ctx: ScheduleQueryContext,
 ): WidgetWeekView => {
-	const {firstDay, weekCount, language} = state.config;
+	const {firstDay, weekCount} = ctx;
 	const rawWeek = getWeekFromTime(now, firstDay);
 	const week = weekCount > 0 ? clamp(rawWeek, 1, weekCount) : rawWeek;
 	const monday = dayjs(firstDay).add((week - 1) * 7, "day");
@@ -234,29 +278,17 @@ const buildWeekView = (
 	const schedules = state.schedule.baseSchedule.filter((schedule) =>
 		schedule.type === ScheduleType.CUSTOM ? showCustom : showOfficial,
 	);
-	const ctx = {
-		firstDay,
-		weekCount,
-		shortenMap: state.schedule.shortenMap,
-		colorList,
-	};
-	const allDays = Array.from({length: 7}, (_, index): WidgetDay => {
-		const date = monday.add(index, "day");
-		const dayOfWeek = index + 1;
-		return {
-			dayOfWeek,
-			date: date.format("MM-DD"),
-			label: weekdayLabel(language, dayOfWeek),
-			items: selectDaySchedule(schedules, dayOfWeek, date, ctx).map(toWidgetItem),
-		};
-	});
-	const weekendHasItems = allDays[5].items.length > 0 || allDays[6].items.length > 0;
+	const allDays = Array.from({length: 7}, (_, index) =>
+		widgetDay(lang, schedules, ctx, index + 1, monday.add(index, "day")),
+	);
+	const weekendHasItems =
+		allDays[5].items.length > 0 || allDays[6].items.length > 0;
 	const showWeekend = !(state.config.hideWeekend ?? false) && weekendHasItems;
 	const days = showWeekend ? allDays : allDays.slice(0, 5);
 	const enableNewUI = state.config.scheduleEnableNewUI ?? true;
 	const entries: WidgetLayoutEntry[] = [];
 	for (const schedule of schedules) {
-		const color = widgetColor(schedule, colorList);
+		const color = widgetColor(schedule, ctx.colorList);
 		for (const slice of schedule.activeTime.base) {
 			if (
 				getWeekFromTime(slice.beginTime, firstDay) !== week ||
@@ -306,43 +338,43 @@ const buildWeekView = (
 export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 	const now = dayjs();
 	const {firstDay, weekCount, language} = state.config;
+	const lang = resolveLanguage(language);
 	// The palette is identical across light and dark themes.
-	const colorList = themes("light").colors.courseItemColorList;
-	const ctx = {
+	const ctx: ScheduleQueryContext = {
 		firstDay,
 		weekCount,
 		shortenMap: state.schedule.shortenMap,
-		colorList,
+		colorList: themes("light").colors.courseItemColorList,
 	};
-	const dayOf = (d: Dayjs): WidgetDay => {
-		const dayOfWeek = d.day() === 0 ? 7 : d.day();
-		return {
-			dayOfWeek,
-			date: d.format("MM-DD"),
-			label: weekdayLabel(language, dayOfWeek),
-			items: selectDaySchedule(state.schedule.baseSchedule, dayOfWeek, d, ctx).map(
-				toWidgetItem,
-			),
-		};
-	};
-	const nextDays = [0, 1, 2, 3, 4, 5, 6].map((offset) => dayOf(now.add(offset, "day")));
+	const dayOf = (d: Dayjs): WidgetDay =>
+		widgetDay(
+			lang,
+			state.schedule.baseSchedule,
+			ctx,
+			d.day() === 0 ? 7 : d.day(),
+			d,
+		);
+	const nextDays = [0, 1, 2, 3, 4, 5, 6].map((offset) =>
+		dayOf(now.add(offset, "day")),
+	);
 	return {
 		v: 1,
 		generatedAt: now.valueOf(),
 		week: getWeekFromTime(now, firstDay),
+		language: lang,
 		today: nextDays[0],
 		tomorrow: nextDays[1],
 		nextDays,
-		weekView: buildWeekView(state, now, colorList),
+		weekView: buildWeekView(state, now, lang, ctx),
 		empty: state.schedule.baseSchedule.length === 0,
 	};
 };
 
-// The harmony build resolves this through the RTNWidget turbo module; other
-// platforms (and dev environments without the module) silently skip syncing.
+// The harmony and Android builds resolve this through the RTNWidget module;
+// other platforms (and dev environments without the module) silently skip syncing.
 const RTNWidget: import("rtn-widget/src/specs/v2/NativeWidget").Spec | null =
 	// @ts-ignore -- "harmony" exists only in the RNOH-patched Platform types.
-	Platform.OS === "harmony"
+	Platform.OS === "harmony" || Platform.OS === "android"
 		? (() => {
 				try {
 					return require("rtn-widget").RTNWidget;
@@ -385,13 +417,10 @@ const schedulePush = () => {
 		return;
 	}
 	if (pendingTimer === null) {
-		pendingTimer = setTimeout(
-			() => {
-				pendingTimer = null;
-				pushSnapshot().catch(() => {});
-			},
-			PUSH_THROTTLE_MS - elapsed,
-		);
+		pendingTimer = setTimeout(() => {
+			pendingTimer = null;
+			pushSnapshot().catch(() => {});
+		}, PUSH_THROTTLE_MS - elapsed);
 	}
 };
 
@@ -446,7 +475,7 @@ let initialized = false;
 
 export const initWidgetSync = () => {
 	// @ts-ignore -- "harmony" exists only in the RNOH-patched Platform types.
-	if (initialized || Platform.OS !== "harmony") {
+	if (initialized || (Platform.OS !== "harmony" && Platform.OS !== "android")) {
 		return;
 	}
 	initialized = true;
@@ -454,19 +483,12 @@ export const initWidgetSync = () => {
 	let last = relevant(store.getState());
 	store.subscribe(() => {
 		const next = relevant(store.getState());
+		// relevant() already names every watched field; compare those fields
+		// directly instead of restating the list here.
 		if (
-			next.baseSchedule !== last.baseSchedule ||
-			next.shortenMap !== last.shortenMap ||
-			next.firstDay !== last.firstDay ||
-			next.weekCount !== last.weekCount ||
-			next.semesterId !== last.semesterId ||
-			next.language !== last.language ||
-			next.hideWeekend !== last.hideWeekend ||
-			next.scheduleUseClassPeriods !== last.scheduleUseClassPeriods ||
-			next.scheduleHeightMode !== last.scheduleHeightMode ||
-			next.scheduleEnableNewUI !== last.scheduleEnableNewUI ||
-			next.showOfficialSchedule !== last.showOfficialSchedule ||
-			next.showCustomSchedule !== last.showCustomSchedule
+			(Object.keys(next) as (keyof typeof next)[]).some(
+				(key) => next[key] !== last[key],
+			)
 		) {
 			last = next;
 			schedulePush();

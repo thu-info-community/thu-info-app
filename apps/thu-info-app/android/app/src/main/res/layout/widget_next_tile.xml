@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NextCard.ets tile() (2*2): header, centered course, time + ongoing badge. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layoutDirection="ltr"
+	android:orientation="vertical"
+	android:background="@drawable/widget_bg"
+	android:padding="12dp">
+
+	<TextView
+		android:id="@+id/widget_next_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:gravity="center"
+		android:textSize="13sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_next_header_row"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:visibility="gone">
+
+		<TextView
+			android:id="@+id/widget_next_header"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/widget_next_header"
+			android:textSize="13sp"
+			android:textColor="@color/widget_text_secondary" />
+
+		<TextView
+			android:id="@+id/widget_next_week_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="13sp"
+			android:textColor="@color/widget_text_secondary" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/widget_next_mid"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<TextView
+			android:id="@+id/widget_next_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="22sp"
+			android:textStyle="bold"
+			android:textColor="@color/widget_text_primary"
+			android:maxLines="1"
+			android:ellipsize="end" />
+
+		<TextView
+			android:id="@+id/widget_next_loc"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="4dp"
+			android:textSize="16sp"
+			android:textColor="@color/widget_text_tertiary"
+			android:maxLines="1"
+			android:ellipsize="end" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/widget_next_bottom"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<TextView
+			android:id="@+id/widget_next_time"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:textSize="17sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1" />
+
+		<TextView
+			android:id="@+id/widget_next_badge"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/widget_ongoing_badge"
+			android:paddingStart="6dp"
+			android:paddingEnd="6dp"
+			android:paddingTop="2dp"
+			android:paddingBottom="2dp"
+			android:text="@string/widget_ongoing"
+			android:textSize="12sp"
+			android:textColor="@color/widget_accent"
+			android:visibility="gone" />
+	</LinearLayout>
+</LinearLayout>

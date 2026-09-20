@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TodayCard.ets content() at 2*4: compact rows, capacity 4, 1dp gaps. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layoutDirection="ltr"
+	android:orientation="vertical"
+	android:background="@drawable/widget_bg"
+	android:gravity="center_vertical"
+	android:padding="12dp">
+
+	<TextView
+		android:id="@+id/widget_today_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="14sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_today_header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<TextView
+			android:id="@+id/widget_today_title"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/widget_today_header"
+			android:textSize="19sp"
+			android:textStyle="bold"
+			android:textColor="@color/widget_text_primary" />
+
+		<TextView
+			android:id="@+id/widget_today_date"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="14sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/widget_today_rows"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginTop="4dp"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:gravity="center_vertical"
+		android:divider="@drawable/widget_divider_v_1"
+		android:showDividers="middle"
+		android:visibility="gone" />
+</LinearLayout>

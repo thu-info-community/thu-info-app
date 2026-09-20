@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets legacyItemBlock(): solid palette block, 7sp white name. The
+	color is a level-list (widget_lblock) selected through setImageLevel, so the
+	block is an ImageView behind the text instead of a tinted background. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="0dp"
+	android:layout_weight="1">
+
+	<ImageView
+		android:id="@+id/widget_lblock_bg"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:src="@drawable/widget_lblock" />
+
+	<TextView
+		android:id="@+id/widget_lblock_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingStart="2dp"
+		android:paddingTop="2dp"
+		android:paddingEnd="2dp"
+		android:textSize="7sp"
+		android:textColor="#FFFFFFFF"
+		android:maxLines="1"
+		android:ellipsize="end" />
+</FrameLayout>

@@ -2,12 +2,14 @@ package com.unidy2002.thuinfo
 
 import android.os.Bundle
 import android.os.Build
+import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+import com.unidy2002.thuinfo.widget.WidgetLaunchStore
 
 class MainActivity : ReactActivity() {
     /**
@@ -18,6 +20,8 @@ class MainActivity : ReactActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(null)
+        // Cold start from a schedule widget: remember the launch for JS to consume.
+        WidgetLaunchStore.offer(intent)
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
         and (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM)) {
             window.setNavigationBarContrastEnforced(false)
@@ -26,6 +30,15 @@ class MainActivity : ReactActivity() {
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 )
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        // Warm start from a schedule widget: the JS side listens for "widgetLaunch".
+        WidgetLaunchStore.offer(intent)
+        (application as MainApplication).reactHost.currentReactContext
+            ?.emitDeviceEvent("widgetLaunch")
     }
 
     /**

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TodayCard.ets compactRow(): 24dp row, 3x18dp color bar, name/loc/time. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_row"
+	android:layout_width="match_parent"
+	android:layout_height="28dp"
+	android:orientation="horizontal"
+	android:baselineAligned="false"
+	android:gravity="center_vertical"
+	android:paddingStart="3dp"
+	android:paddingEnd="3dp">
+
+	<ImageView
+		android:id="@+id/widget_compact_bar"
+		android:layout_width="3dp"
+		android:layout_height="20dp"
+		android:src="@drawable/widget_bar" />
+
+	<TextView
+		android:id="@+id/widget_compact_name"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="4"
+		android:layout_marginStart="5dp"
+		android:textSize="14sp"
+		android:fontFamily="sans-serif-medium"
+		android:textColor="@color/widget_text_primary"
+		android:maxLines="1"
+		android:ellipsize="end" />
+
+	<TextView
+		android:id="@+id/widget_compact_loc"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="3"
+		android:layout_marginStart="6dp"
+		android:textSize="13sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:maxLines="1"
+		android:ellipsize="end" />
+
+	<TextView
+		android:id="@+id/widget_compact_time"
+		android:layout_width="90dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="6dp"
+		android:gravity="end"
+		android:textSize="13sp"
+		android:textColor="@color/widget_text_secondary"
+		android:maxLines="1" />
+</LinearLayout>

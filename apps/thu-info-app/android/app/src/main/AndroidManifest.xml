@@ -33,6 +33,39 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <receiver
+        android:name=".widget.NextScheduleWidget"
+        android:exported="false"
+        android:label="@string/widget_next_name">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/widget_next_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.TodayScheduleWidget"
+        android:exported="false"
+        android:label="@string/widget_today_name">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/widget_today_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.WeekScheduleWidget"
+        android:exported="false"
+        android:label="@string/widget_week_name">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/widget_week_info" />
+      </receiver>
     </application>
 
     <queries>

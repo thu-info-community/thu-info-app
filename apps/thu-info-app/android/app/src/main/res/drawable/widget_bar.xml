@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TodayCard color bar. One level-list replaces 11 per-color drawables: the
+	renderer selects a color with ImageView.setImageLevel (index into
+	WidgetPalette.HEXES), which RemoteViews can call on every API level. -->
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:maxLevel="0">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FF00A6F2" />
+		</shape>
+	</item>
+	<item android:maxLevel="1">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FF3CB3C8" />
+		</shape>
+	</item>
+	<item android:maxLevel="2">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFFC6B50" />
+		</shape>
+	</item>
+	<item android:maxLevel="3">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFF067BB" />
+		</shape>
+	</item>
+	<item android:maxLevel="4">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFEF5B75" />
+		</shape>
+	</item>
+	<item android:maxLevel="5">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FF7D7AEA" />
+		</shape>
+	</item>
+	<item android:maxLevel="6">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFBF73E5" />
+		</shape>
+	</item>
+	<item android:maxLevel="7">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFFF9900" />
+		</shape>
+	</item>
+	<item android:maxLevel="8">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FFEEBE00" />
+		</shape>
+	</item>
+	<item android:maxLevel="9">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FF5B8EFF" />
+		</shape>
+	</item>
+	<item android:maxLevel="10">
+		<shape android:shape="rectangle">
+			<corners android:radius="2dp" />
+			<solid android:color="#FF139161" />
+		</shape>
+	</item>
+</level-list>

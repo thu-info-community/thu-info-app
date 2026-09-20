@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- HarmonyOS launchers round the card corners themselves; Android widgets
+	     paint their own background, so approximate that radius. Android 12+
+	     exposes the system radius. -->
+	<dimen name="widget_corner_radius">16dp</dimen>
+</resources>

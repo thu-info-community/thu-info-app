@@ -108,7 +108,8 @@ const RootComponent = () => {
 };
 
 export const App = () => {
-	// No-op outside harmony; pushes the schedule snapshot to home-screen cards.
+	// No-op on platforms without schedule widgets; pushes the schedule snapshot
+	// to the home-screen cards on harmony and Android.
 	initWidgetSync();
 	return (
 		<Provider store={store}>
