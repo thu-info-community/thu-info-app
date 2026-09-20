@@ -15,7 +15,8 @@
 	<ImageView
 		android:id="@+id/widget_detail_bar"
 		android:layout_width="4dp"
-		android:layout_height="match_parent" />
+		android:layout_height="match_parent"
+		android:src="@drawable/widget_bar" />
 
 	<LinearLayout
 		android:layout_width="0dp"

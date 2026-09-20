@@ -76,7 +76,7 @@ object TodayCardRenderer {
             row.setTextViewText(R.id.widget_detail_to, item.to)
             row.setInt(
                 R.id.widget_detail_bar,
-                "setBackgroundResource",
+                "setImageLevel",
                 WidgetPalette.bar(item.color),
             )
         } else {
@@ -85,7 +85,7 @@ object TodayCardRenderer {
             row.setTextViewText(R.id.widget_compact_time, "${item.from}–${item.to}")
             row.setInt(
                 R.id.widget_compact_bar,
-                "setBackgroundResource",
+                "setImageLevel",
                 WidgetPalette.bar(item.color),
             )
         }

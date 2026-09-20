@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- WeekCard block fill, new schedule UI: radius 3, #bf73e5 at 27% alpha. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-	<solid android:color="#44bf73e5" />
-	<corners android:radius="3dp" />
-</shape>

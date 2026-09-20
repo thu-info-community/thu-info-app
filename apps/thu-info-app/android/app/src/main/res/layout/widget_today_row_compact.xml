@@ -13,7 +13,8 @@
 	<ImageView
 		android:id="@+id/widget_compact_bar"
 		android:layout_width="3dp"
-		android:layout_height="20dp" />
+		android:layout_height="20dp"
+		android:src="@drawable/widget_bar" />
 
 	<TextView
 		android:id="@+id/widget_compact_name"

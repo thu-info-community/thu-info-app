@@ -1,6 +1,7 @@
 package com.unidy2002.thuinfo.widget
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
@@ -197,7 +198,12 @@ object WeekCardRenderer {
         blockRv.setInt(
             R.id.widget_block_inner,
             "setBackgroundResource",
-            WidgetPalette.weekBlock(block.fill),
+            R.drawable.widget_block_bg,
+        )
+        blockRv.setColorStateList(
+            R.id.widget_block_inner,
+            "setBackgroundTintList",
+            ColorStateList.valueOf(WidgetPalette.weekBlockTint(block.fill)),
         )
 
         // Detail degradation order: time, second location line, second name
@@ -350,8 +356,8 @@ object WeekCardRenderer {
                 val block = newRemoteViews(context, R.layout.widget_legacy_block)
                 block.setTextViewText(R.id.widget_lblock_name, item.name)
                 block.setInt(
-                    R.id.widget_lblock,
-                    "setBackgroundResource",
+                    R.id.widget_lblock_bg,
+                    "setImageLevel",
                     WidgetPalette.legacyBlock(item.color),
                 )
                 column.addView(R.id.widget_legacy_col, block)

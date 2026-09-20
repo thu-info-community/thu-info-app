@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- TodayCard color bar: 3x18dp, radius 2, opaque #3cb3c8 (course palette). -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-	<solid android:color="#FF3cb3c8" />
-	<corners android:radius="2dp" />
-</shape>
