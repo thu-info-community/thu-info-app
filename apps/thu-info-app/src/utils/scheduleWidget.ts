@@ -1,6 +1,6 @@
 import dayjs, {Dayjs} from "dayjs";
 import md5 from "md5";
-import {AppState, DeviceEventEmitter, Platform} from "react-native";
+import {AppState, DeviceEventEmitter} from "react-native";
 import {
 	getWeekFromTime,
 	ScheduleType,
@@ -370,19 +370,15 @@ export const buildScheduleSnapshot = (state: State): WidgetSnapshot => {
 	};
 };
 
-// The harmony and Android builds resolve this through the RTNWidget module;
-// other platforms (and dev environments without the module) silently skip syncing.
-const RTNWidget: import("rtn-widget/src/specs/v2/NativeWidget").Spec | null =
-	// @ts-ignore -- "harmony" exists only in the RNOH-patched Platform types.
-	Platform.OS === "harmony" || Platform.OS === "android"
-		? (() => {
-				try {
-					return require("rtn-widget").RTNWidget;
-				} catch {
-					return null;
-				}
-			})()
-		: null;
+// All supported platforms provide the RTNWidget module. Keep the fallback for
+// tests and development environments where native modules are unavailable.
+const RTNWidget: import("rtn-widget/src/specs/v2/NativeWidget").Spec | null = (() => {
+	try {
+		return require("rtn-widget").RTNWidget;
+	} catch {
+		return null;
+	}
+})();
 
 const PUSH_THROTTLE_MS = 5000;
 let lastPush = 0;
@@ -474,8 +470,7 @@ const relevant = (s: State) => ({
 let initialized = false;
 
 export const initWidgetSync = () => {
-	// @ts-ignore -- "harmony" exists only in the RNOH-patched Platform types.
-	if (initialized || (Platform.OS !== "harmony" && Platform.OS !== "android")) {
+	if (initialized) {
 		return;
 	}
 	initialized = true;

@@ -12,8 +12,22 @@
 		232AFBCF1E59C027EBF1E4DA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */; };
 		57B92B80AE971F6909E47DF5 /* libPods-thu_info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 218D1AD92244712A33494ECE /* libPods-thu_info.a */; };
 		95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D69E112D92B04800E89447 /* AppDelegate.swift */; };
+		A0B100000000000000000001 /* WidgetModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B100000000000000000011 /* WidgetModule.swift */; };
+		A0B100000000000000000002 /* WidgetModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A0B100000000000000000012 /* WidgetModuleBridge.m */; };
+		A0B100000000000000000003 /* ScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A0B100000000000000000013 /* ScheduleWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A0B100000000000000000004 /* ScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B100000000000000000014 /* ScheduleWidget.swift */; };
 		F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F311085F24DAC95B00D20197 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A0B100000000000000000032 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A0B100000000000000000023;
+			remoteInfo = ScheduleWidget;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -37,6 +51,13 @@
 		914A3326A08A41E7A0671969 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = thu_info/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		95D69E112D92B04800E89447 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A0B100000000000000000011 /* WidgetModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModule.swift; sourceTree = "<group>"; };
+		A0B100000000000000000012 /* WidgetModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetModuleBridge.m; sourceTree = "<group>"; };
+		A0B100000000000000000013 /* ScheduleWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScheduleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0B100000000000000000014 /* ScheduleWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleWidget.swift; sourceTree = "<group>"; };
+		A0B100000000000000000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A0B100000000000000000016 /* ScheduleWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ScheduleWidget.entitlements; sourceTree = "<group>"; };
+		A0B100000000000000000017 /* thu_info.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = thu_info.entitlements; sourceTree = "<group>"; };
 		D12476EB077346729CF67BF3 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		DA430ABA7860579CD9215FC3 /* Pods-thu_info.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-thu_info.debug.xcconfig"; path = "Target Support Files/Pods-thu_info/Pods-thu_info.debug.xcconfig"; sourceTree = "<group>"; };
 		DB03922170714F8DAC9C10B9 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -58,13 +79,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A0B100000000000000000021 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A0B100000000000000000033 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A0B100000000000000000003 /* ScheduleWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXGroup section */
 		13B07FAE1A68108700A75B9A /* thu_info */ = {
 			isa = PBXGroup;
 			children = (
 				95D69E112D92B04800E89447 /* AppDelegate.swift */,
+				A0B100000000000000000011 /* WidgetModule.swift */,
+				A0B100000000000000000012 /* WidgetModuleBridge.m */,
+				A0B100000000000000000017 /* thu_info.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -105,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* thu_info */,
+				A0B100000000000000000022 /* ScheduleWidget */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -120,8 +166,19 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* thu_info.app */,
+				A0B100000000000000000013 /* ScheduleWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A0B100000000000000000022 /* ScheduleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				A0B100000000000000000014 /* ScheduleWidget.swift */,
+				A0B100000000000000000015 /* Info.plist */,
+				A0B100000000000000000016 /* ScheduleWidget.entitlements */,
+			);
+			path = ScheduleWidget;
 			sourceTree = "<group>";
 		};
 		BBC006693EB7463CA2D0342A /* Resources */ = {
@@ -161,15 +218,34 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				0CD1AFE75A3EBE9DF772B3AA /* [CP] Copy Pods Resources */,
 				095DDD9500038CC5EB817CAE /* [CP] Embed Pods Frameworks */,
+				A0B100000000000000000033 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A0B100000000000000000031 /* PBXTargetDependency */,
 			);
 			name = thu_info;
 			productName = thu_info;
 			productReference = 13B07F961A680F5B00A75B9A /* thu_info.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A0B100000000000000000023 /* ScheduleWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0B100000000000000000041 /* Build configuration list for PBXNativeTarget "ScheduleWidget" */;
+			buildPhases = (
+				A0B100000000000000000024 /* Sources */,
+				A0B100000000000000000021 /* Frameworks */,
+				A0B100000000000000000025 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ScheduleWidget;
+			productName = ScheduleWidget;
+			productReference = A0B100000000000000000013 /* ScheduleWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -182,6 +258,10 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = F3D2L9HSSK;
 						LastSwiftMigration = 1620;
+						ProvisioningStyle = Manual;
+					};
+					A0B100000000000000000023 = {
+						DevelopmentTeam = F3D2L9HSSK;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -201,6 +281,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* thu_info */,
+				A0B100000000000000000023 /* ScheduleWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -214,6 +295,13 @@
 				F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				232AFBCF1E59C027EBF1E4DA /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0B100000000000000000025 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,10 +406,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */,
+				A0B100000000000000000001 /* WidgetModule.swift in Sources */,
+				A0B100000000000000000002 /* WidgetModuleBridge.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0B100000000000000000024 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0B100000000000000000004 /* ScheduleWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A0B100000000000000000031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0B100000000000000000023 /* ScheduleWidget */;
+			targetProxy = A0B100000000000000000032 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
@@ -352,6 +458,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = thu_info/thu_info.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3881;
@@ -387,6 +494,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = thu_info/thu_info.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 3881;
@@ -570,6 +678,42 @@
 			};
 			name = Release;
 		};
+		A0B100000000000000000042 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ScheduleWidget/ScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3881;
+				DEVELOPMENT_TEAM = F3D2L9HSSK;
+				INFOPLIST_FILE = ScheduleWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 3.17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu-info.widget";
+				PRODUCT_NAME = ScheduleWidget;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A0B100000000000000000043 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ScheduleWidget/ScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 3881;
+				DEVELOPMENT_TEAM = F3D2L9HSSK;
+				INFOPLIST_FILE = ScheduleWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 3.17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.thu-info.widget";
+				PRODUCT_NAME = ScheduleWidget;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -587,6 +731,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0B100000000000000000041 /* Build configuration list for PBXNativeTarget "ScheduleWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0B100000000000000000042 /* Debug */,
+				A0B100000000000000000043 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
