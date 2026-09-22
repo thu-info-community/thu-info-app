@@ -2200,10 +2200,10 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.7.tgz#eb5014dfd0b03e7f3ba2eeeff506eed89b028058"
   integrity sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==
 
-"@preeternal/react-native-cookie-manager@6.4.1":
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/@preeternal/react-native-cookie-manager/-/react-native-cookie-manager-6.4.1.tgz#8ce006a3a4984950069dbb2cf747f2fc57166ad5"
-  integrity sha512-RuVvkOxlR2qmZMYOHr5FRFSaGDA0QGSF/wL+OFlYQ5ih2e4vkjbrlobsYJaZTkt/ABGV5T5TCgkRACFC2heLQw==
+"@preeternal/react-native-cookie-manager@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@preeternal/react-native-cookie-manager/-/react-native-cookie-manager-7.0.0.tgz#3b4761ae8cc6c38c4cc7c666fed1e3700eed0c94"
+  integrity sha512-xgbzW7Ebz6YO9k5aYAHpMc1Psd0hu67iAoPE6c8UbWbl8d959nsTOMxrT2xBOrYiVKt/cOjmC5W0gcIE+Dly2w==
 
 "@react-native-async-storage/async-storage@3.1.1":
   version "3.1.1"
