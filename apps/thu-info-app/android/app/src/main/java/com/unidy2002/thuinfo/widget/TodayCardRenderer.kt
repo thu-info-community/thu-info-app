@@ -4,6 +4,9 @@ import android.content.Context
 import android.view.View
 import android.widget.RemoteViews
 import com.unidy2002.thuinfo.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 // 1:1 port of harmony/entry/src/main/ets/widget/pages/TodayCard.ets (2*4
 // compact / 4*4 detailed). Rows are RemoteViews added into a container whose
@@ -15,14 +18,20 @@ object TodayCardRenderer {
             context,
             if (detailed) R.layout.widget_today_detailed else R.layout.widget_today_compact,
         )
+        val now = System.currentTimeMillis()
+        val todayDate = SimpleDateFormat("MM-dd", Locale.US).format(Date(now))
         val missing = snapshot == null || snapshot.empty
-        val day = snapshot?.today
+        val day = snapshot?.let { FollowUpCourses.currentDay(it.nextDays, todayDate) }
+        val visible = snapshot?.let {
+            FollowUpCourses.visibleItems(it.nextDays, todayDate, FollowUpCourses.capacity(detailed), now)
+        } ?: emptyList()
         val sc = WidgetStrings.context(context, snapshot)
-        if (missing || day == null || day.items.isEmpty()) {
+        if (missing || day == null || visible.isEmpty()) {
             rv.setTextViewText(
                 R.id.widget_today_empty,
                 sc.getString(
-                    if (missing) R.string.widget_empty_hint else R.string.widget_empty_none_today,
+                    if (missing || day == null) R.string.widget_empty_hint
+                    else R.string.widget_empty_none_followup,
                 ),
             )
             rv.setViewVisibility(R.id.widget_today_empty, View.VISIBLE)
@@ -38,10 +47,8 @@ object TodayCardRenderer {
         rv.setViewVisibility(R.id.widget_today_header, View.VISIBLE)
         rv.setViewVisibility(R.id.widget_today_rows, View.VISIBLE)
         rv.removeAllViews(R.id.widget_today_rows)
-        val capacity = TodayWindowing.capacity(detailed)
-        val now = System.currentTimeMillis()
-        for (item in TodayWindowing.visibleItems(day.items, capacity, now)) {
-            rv.addView(R.id.widget_today_rows, renderRow(context, detailed, item, now))
+        for (course in visible) {
+            rv.addView(R.id.widget_today_rows, renderRow(context, detailed, course, todayDate, now))
         }
         return rv
     }
@@ -49,19 +56,22 @@ object TodayCardRenderer {
     private fun renderRow(
         context: Context,
         detailed: Boolean,
-        item: WidgetItem,
+        course: FollowUpCourse,
+        todayDate: String,
         now: Long,
     ): RemoteViews {
+        val item = course.item
+        val location = FollowUpCourses.locationText(course, todayDate)
         val row = newRemoteViews(
             context,
             if (detailed) R.layout.widget_today_row_detailed else R.layout.widget_today_row_compact,
         )
         if (detailed) {
             row.setTextViewText(R.id.widget_detail_name, item.name)
-            if (item.loc.isEmpty()) {
+            if (location.isEmpty()) {
                 row.setViewVisibility(R.id.widget_detail_loc, View.GONE)
             } else {
-                row.setTextViewText(R.id.widget_detail_loc, item.loc)
+                row.setTextViewText(R.id.widget_detail_loc, location)
                 row.setViewVisibility(R.id.widget_detail_loc, View.VISIBLE)
             }
             row.setTextViewText(R.id.widget_detail_from, item.from)
@@ -73,7 +83,7 @@ object TodayCardRenderer {
             )
         } else {
             row.setTextViewText(R.id.widget_compact_name, item.name)
-            row.setTextViewText(R.id.widget_compact_loc, item.loc.ifEmpty { "—" })
+            row.setTextViewText(R.id.widget_compact_loc, location.ifEmpty { "—" })
             row.setTextViewText(R.id.widget_compact_time, "${item.from}–${item.to}")
             row.setInt(
                 R.id.widget_compact_bar,
@@ -85,7 +95,7 @@ object TodayCardRenderer {
         row.setInt(
             R.id.widget_row,
             "setBackgroundResource",
-            if (TodayWindowing.ongoing(item, now)) {
+            if (FollowUpCourses.ongoing(item, now)) {
                 if (detailed) R.drawable.widget_detailed_row_bg else R.drawable.widget_compact_row_bg
             } else {
                 0

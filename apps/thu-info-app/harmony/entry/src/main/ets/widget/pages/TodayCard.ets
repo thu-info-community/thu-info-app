@@ -1,11 +1,16 @@
-// "Today's schedule" card (2*4 / 4*4). Overflow is clipped to a window that
-// always contains the ongoing item, or the next item when nothing is ongoing.
+// Recent courses card (2*4 / 4*4). It starts at the current or most recent
+// course today, then fills the card with courses from the following days.
 //
 // Note: build() and @Builder bodies may only contain UI syntax (no local
 // variable statements), so derived values live in member functions. All UI
 // lives in member @Builder methods reading state through `this` — global
 // builders with by-value params would not refresh on snapshot pushes.
 import { parseSnapshot, WidgetDayModel, WidgetItem, WidgetSnapshotModel } from '../common/WidgetModels';
+
+interface VisibleCourse {
+  day: WidgetDayModel;
+  item: WidgetItem;
+}
 
 let cardStorage = new LocalStorage();
 
@@ -24,11 +29,33 @@ struct TodayCard {
     return snapshot === null || snapshot.empty;
   }
 
-  private day(): WidgetDayModel {
+  private currentDate(): string {
+    const date = new Date();
+    const month = `0${date.getMonth() + 1}`.slice(-2);
+    const day = `0${date.getDate()}`.slice(-2);
+    return `${month}-${day}`;
+  }
+
+  private day(): WidgetDayModel | null {
     const snapshot = this.snapshot();
-    return snapshot === null
-      ? { dayOfWeek: 1, date: '', label: '', items: [] }
-      : snapshot.today;
+    if (snapshot === null) {
+      return null;
+    }
+    const date = this.currentDate();
+    for (let i = 0; i < snapshot.nextDays.length; i++) {
+      if (snapshot.nextDays[i].date === date) {
+        return snapshot.nextDays[i];
+      }
+    }
+    return null;
+  }
+
+  private dayDateText(): string {
+    const day = this.day();
+    if (day === null) {
+      return '';
+    }
+    return day.dateText ?? `${day.date} ${day.label}`;
   }
 
   // These capacities keep every complete row readable at its card size.
@@ -39,45 +66,54 @@ struct TodayCard {
     return 4;
   }
 
-  private overflowing(): boolean {
-    return this.day().items.length > this.capacity();
-  }
+  private visibleItems(): VisibleCourse[] {
+    const snapshot = this.snapshot();
+    if (snapshot === null) {
+      return [];
+    }
+    const todayDate = this.currentDate();
+    let todayIndex = -1;
+    for (let i = 0; i < snapshot.nextDays.length; i++) {
+      if (snapshot.nextDays[i].date === todayDate) {
+        todayIndex = i;
+        break;
+      }
+    }
+    if (todayIndex < 0) {
+      return [];
+    }
 
-  private automaticFocusIndex(): number {
-    const items = this.day().items;
-    if (items.length === 0) {
-      return -1;
+    const courses: VisibleCourse[] = [];
+    for (let d = todayIndex; d < snapshot.nextDays.length; d++) {
+      const day = snapshot.nextDays[d];
+      for (let i = 0; i < day.items.length; i++) {
+        courses.push({ day: day, item: day.items[i] });
+      }
     }
     const now = Date.now();
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].begin <= now && now < items[i].end) {
-        return i;
+    let nextIndex = -1;
+    for (let i = 0; i < courses.length; i++) {
+      if (courses[i].item.end > now) {
+        nextIndex = i;
+        break;
       }
     }
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].begin > now) {
-        return i;
-      }
+    const todayCount = snapshot.nextDays[todayIndex].items.length;
+    let start = nextIndex;
+    if (nextIndex < 0) {
+      start = todayCount - 1;
+    } else if (courses[nextIndex].item.begin > now && nextIndex > 0 && nextIndex <= todayCount) {
+      start = nextIndex - 1;
     }
-    return items.length - 1;
+    return start < 0 ? [] : courses.slice(start, start + this.capacity());
   }
 
-  private windowStart(): number {
-    if (!this.overflowing()) {
-      return 0;
+  private locationText(item: WidgetItem, day: WidgetDayModel): string {
+    if (day.date === this.currentDate()) {
+      return item.loc;
     }
-    const maximumStart = this.day().items.length - this.capacity();
-    const itemsBeforeFocus = Math.floor((this.capacity() - 1) / 2);
-    const desiredStart = this.automaticFocusIndex() - itemsBeforeFocus;
-    return Math.max(0, Math.min(desiredStart, maximumStart));
-  }
-
-  private visibleItems(): WidgetItem[] {
-    const items = this.day().items;
-    if (!this.overflowing()) {
-      return items;
-    }
-    return items.slice(this.windowStart(), this.windowStart() + this.capacity());
+    const date = day.date.replace('-', '/');
+    return item.loc === '' ? date : `${date} · ${item.loc}`;
   }
 
   private titleFontSize(): number {
@@ -118,7 +154,7 @@ struct TodayCard {
   }
 
   @Builder
-  compactItemRow(item: WidgetItem) {
+  compactItemRow(item: WidgetItem, day: WidgetDayModel) {
     Row() {
       Column()
         .width(3)
@@ -135,7 +171,7 @@ struct TodayCard {
         .layoutWeight(4)
         .margin({ left: 5 })
 
-      Text(item.loc === '' ? '—' : item.loc)
+      Text(this.locationText(item, day) === '' ? '—' : this.locationText(item, day))
         .fontSize(this.locationFontSize())
         .fontColor($r('app.color.widget_text_tertiary'))
         .maxLines(1)
@@ -160,7 +196,7 @@ struct TodayCard {
   }
 
   @Builder
-  detailedItemRow(item: WidgetItem) {
+  detailedItemRow(item: WidgetItem, day: WidgetDayModel) {
     Row() {
       Column()
         .width(4)
@@ -175,8 +211,8 @@ struct TodayCard {
           .fontColor($r('app.color.widget_text_primary'))
           .maxLines(2)
           .textOverflow({ overflow: TextOverflow.Ellipsis })
-        if (item.loc !== '') {
-          Text(item.loc)
+        if (this.locationText(item, day) !== '') {
+          Text(this.locationText(item, day))
             .fontSize(this.locationFontSize())
             .fontColor($r('app.color.widget_text_tertiary'))
             .maxLines(2)
@@ -210,11 +246,11 @@ struct TodayCard {
   }
 
   @Builder
-  itemRow(item: WidgetItem) {
+  itemRow(course: VisibleCourse) {
     if (this.dimension === '4*4') {
-      this.detailedItemRow(item)
+      this.detailedItemRow(course.item, course.day)
     } else {
-      this.compactItemRow(item)
+      this.compactItemRow(course.item, course.day)
     }
   }
 
@@ -222,16 +258,16 @@ struct TodayCard {
   scheduleRows() {
     Column() {
       Column({ space: this.dimension === '4*4' ? 2 : 1 }) {
-        ForEach(this.visibleItems(), (item: WidgetItem, index: number) => {
-          this.itemRow(item)
-        }, (item: WidgetItem, index: number) =>
-          `${this.dimension}-${this.windowStart() + index}-${item.begin}-${item.name}`)
+        ForEach(this.visibleItems(), (course: VisibleCourse, index: number) => {
+          this.itemRow(course)
+        }, (course: VisibleCourse, index: number) =>
+          `${this.dimension}-${index}-${course.item.begin}-${course.item.name}`)
       }
       .width('100%')
     }
     .width('100%')
     .height('100%')
-    .justifyContent(FlexAlign.Center)
+    .justifyContent(FlexAlign.Start)
   }
 
   @Builder
@@ -241,8 +277,12 @@ struct TodayCard {
         Text($r('app.string.widget_empty_hint'))
           .fontSize(12)
           .fontColor($r('app.color.widget_text_tertiary'))
-      } else if (this.day().items.length === 0) {
-        Text($r('app.string.widget_empty_none_today'))
+      } else if (this.day() === null) {
+        Text($r('app.string.widget_empty_hint'))
+          .fontSize(12)
+          .fontColor($r('app.color.widget_text_tertiary'))
+      } else if (this.visibleItems().length === 0) {
+        Text($r('app.string.widget_empty_none_followup'))
           .fontSize(12)
           .fontColor($r('app.color.widget_text_tertiary'))
       } else {
@@ -251,10 +291,14 @@ struct TodayCard {
             .fontSize(this.titleFontSize())
             .fontWeight(FontWeight.Bold)
             .fontColor($r('app.color.widget_text_primary'))
-          Text(`${this.day().date} ${this.day().label}`)
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+            .layoutWeight(1)
+          Text(this.dayDateText())
             .fontSize(this.metaFontSize())
             .fontColor($r('app.color.widget_text_secondary'))
             .maxLines(1)
+            .margin({ left: 6 })
         }
         .width('100%')
         .justifyContent(FlexAlign.SpaceBetween)
@@ -270,7 +314,7 @@ struct TodayCard {
     .width('100%')
     .height('100%')
     .padding({ left: 12, right: 12, top: 12, bottom: 12 })
-    .justifyContent(FlexAlign.Center)
+    .justifyContent(FlexAlign.Start)
     .alignItems(HorizontalAlign.Start)
     .onClick(() => {
       this.openSchedule();

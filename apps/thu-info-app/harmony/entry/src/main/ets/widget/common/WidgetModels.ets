@@ -16,6 +16,7 @@ export interface WidgetDayModel {
   dayOfWeek: number;
   date: string;
   label: string;
+  dateText?: string;
   items: WidgetItem[];
 }
 

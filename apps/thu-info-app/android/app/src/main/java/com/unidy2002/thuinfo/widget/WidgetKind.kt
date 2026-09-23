@@ -21,45 +21,42 @@ object WidgetVariants {
     const val WEEK_AXIS_MIN_HEIGHT_DP = 500
 }
 
-// TodayCard.ets windowing, kept free of Android imports so it is unit-testable.
-// Overflow is clipped to a window that always contains the ongoing item, or
-// the next item when nothing is ongoing.
-object TodayWindowing {
+// TodayCard.ets selection, kept free of Android imports so it is unit-testable.
+data class FollowUpCourse(val day: WidgetDay, val item: WidgetItem)
+
+object FollowUpCourses {
     fun capacity(detailed: Boolean): Int = if (detailed) 5 else 4
 
-    fun automaticFocusIndex(items: List<WidgetItem>, now: Long): Int {
-        if (items.isEmpty()) {
-            return -1
+    fun currentDay(days: List<WidgetDay>, todayDate: String): WidgetDay? =
+        days.firstOrNull { it.date == todayDate }
+
+    fun visibleItems(
+        days: List<WidgetDay>,
+        todayDate: String,
+        capacity: Int,
+        now: Long,
+    ): List<FollowUpCourse> {
+        val todayIndex = days.indexOfFirst { it.date == todayDate }
+        if (todayIndex < 0) return emptyList()
+
+        val courses = days.drop(todayIndex).flatMap { day ->
+            day.items.map { item -> FollowUpCourse(day, item) }
         }
-        for (i in items.indices) {
-            if (items[i].begin <= now && now < items[i].end) {
-                return i
-            }
+        val nextIndex = courses.indexOfFirst { it.item.end > now }
+        val start = when {
+            nextIndex < 0 -> courses.indexOfLast { it.day.date == todayDate }
+            courses[nextIndex].item.begin <= now -> nextIndex
+            nextIndex > 0 && courses[nextIndex - 1].day.date == todayDate -> nextIndex - 1
+            else -> nextIndex
         }
-        for (i in items.indices) {
-            if (items[i].begin > now) {
-                return i
-            }
-        }
-        return items.size - 1
+        return if (start < 0) emptyList() else courses.drop(start).take(capacity)
     }
 
-    fun windowStart(itemCount: Int, capacity: Int, focusIndex: Int): Int {
-        if (itemCount <= capacity) {
-            return 0
-        }
-        val maximumStart = itemCount - capacity
-        val itemsBeforeFocus = (capacity - 1) / 2
-        val desiredStart = focusIndex - itemsBeforeFocus
-        return maxOf(0, minOf(desiredStart, maximumStart))
-    }
-
-    fun visibleItems(items: List<WidgetItem>, capacity: Int, now: Long): List<WidgetItem> {
-        if (items.size <= capacity) {
-            return items
-        }
-        val start = windowStart(items.size, capacity, automaticFocusIndex(items, now))
-        return items.subList(start, start + capacity)
+    fun locationText(course: FollowUpCourse, todayDate: String): String {
+        val location = course.item.loc
+        if (course.day.date == todayDate) return location
+        val date = course.day.date.replace('-', '/')
+        return if (location.isEmpty()) date else "$date · $location"
     }
 
     // TodayCard.ets ongoing(): begin <= now < end.

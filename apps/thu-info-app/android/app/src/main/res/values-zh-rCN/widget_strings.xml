@@ -3,17 +3,17 @@
 <resources>
 	<string name="widget_next_name">下一节课</string>
 	<string name="widget_next_desc">显示下一节课程</string>
-	<string name="widget_today_name">今日课程</string>
-	<string name="widget_today_desc">显示今天的全部课程</string>
+	<string name="widget_today_name">近期课程</string>
+	<string name="widget_today_desc">显示最近及后续课程</string>
 	<string name="widget_week_name">本周课程</string>
 	<string name="widget_week_desc">显示本周的课程</string>
 	<string name="widget_next_header">下一项日程</string>
-	<string name="widget_today_header">今日课程</string>
+	<string name="widget_today_header">近期课程</string>
 	<string name="widget_week_header">本周课程</string>
 	<string name="widget_week_label">第 %1$d 周</string>
 	<string name="widget_week_day_label">第%1$d周周%2$s</string>
 	<string name="widget_empty_hint">打开 THU Info 同步课表</string>
-	<string name="widget_empty_none_today">今日暂无课程</string>
+	<string name="widget_empty_none_followup">近期暂无课程</string>
 	<string name="widget_empty_none_soon">近 7 天暂无课程</string>
 	<string name="widget_empty_none_week">本周暂无课程</string>
 </resources>

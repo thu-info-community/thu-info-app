@@ -7,7 +7,7 @@
 	android:layoutDirection="ltr"
 	android:orientation="vertical"
 	android:background="@drawable/widget_bg"
-	android:gravity="center_vertical"
+	android:gravity="top"
 	android:padding="12dp">
 
 	<TextView
@@ -35,7 +35,9 @@
 			android:text="@string/widget_today_header"
 			android:textSize="19sp"
 			android:textStyle="bold"
-			android:textColor="@color/widget_text_primary" />
+			android:textColor="@color/widget_text_primary"
+			android:maxLines="1"
+			android:ellipsize="end" />
 
 		<TextView
 			android:id="@+id/widget_today_date"
@@ -53,7 +55,7 @@
 		android:layout_marginTop="4dp"
 		android:layout_weight="1"
 		android:orientation="vertical"
-		android:gravity="center_vertical"
+		android:gravity="top"
 		android:divider="@drawable/widget_divider_v_1"
 		android:showDividers="middle"
 		android:visibility="gone" />
