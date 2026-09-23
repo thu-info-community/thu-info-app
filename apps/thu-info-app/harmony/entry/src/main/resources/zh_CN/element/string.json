@@ -30,11 +30,11 @@
     },
     {
       "name": "widget_today_name",
-      "value": "今日课程"
+      "value": "近期课程"
     },
     {
       "name": "widget_today_desc",
-      "value": "显示今天的全部课程"
+      "value": "显示最近及后续课程"
     },
     {
       "name": "widget_week_name",
@@ -50,7 +50,7 @@
     },
     {
       "name": "widget_today_header",
-      "value": "今日课程"
+      "value": "近期课程"
     },
     {
       "name": "widget_week_header",
@@ -69,16 +69,12 @@
       "value": "还有 %d 项"
     },
     {
-      "name": "widget_ongoing",
-      "value": "进行中"
-    },
-    {
       "name": "widget_empty_hint",
       "value": "打开 THU Info 同步课表"
     },
     {
-      "name": "widget_empty_none_today",
-      "value": "今日暂无课程"
+      "name": "widget_empty_none_followup",
+      "value": "近期暂无课程"
     },
     {
       "name": "widget_empty_none_soon",

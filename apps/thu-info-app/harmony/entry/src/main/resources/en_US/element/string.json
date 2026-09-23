@@ -30,11 +30,11 @@
     },
     {
       "name": "widget_today_name",
-      "value": "Today's classes"
+      "value": "Upcoming classes"
     },
     {
       "name": "widget_today_desc",
-      "value": "Shows all classes of today"
+      "value": "Shows recent and upcoming classes"
     },
     {
       "name": "widget_week_name",
@@ -50,7 +50,7 @@
     },
     {
       "name": "widget_today_header",
-      "value": "Today"
+      "value": "Upcoming classes"
     },
     {
       "name": "widget_week_header",
@@ -69,16 +69,12 @@
       "value": "+%d more"
     },
     {
-      "name": "widget_ongoing",
-      "value": "In progress"
-    },
-    {
       "name": "widget_empty_hint",
       "value": "Open THU Info to sync your schedule"
     },
     {
-      "name": "widget_empty_none_today",
-      "value": "No classes today"
+      "name": "widget_empty_none_followup",
+      "value": "No upcoming classes"
     },
     {
       "name": "widget_empty_none_soon",

@@ -75,7 +75,7 @@ object NextCardRenderer {
     }
 
     // 2*2: week/day in the header, course and location in the middle, time at
-    // the bottom, plus a live "in progress" badge when applicable.
+    // the bottom.
     private fun renderTile(context: Context, snapshot: WidgetSnapshot?): RemoteViews {
         val rv = newRemoteViews(context, R.layout.widget_next_tile)
         val sc = WidgetStrings.context(context, snapshot)
@@ -118,10 +118,6 @@ object NextCardRenderer {
             rv.setViewVisibility(R.id.widget_next_loc, View.VISIBLE)
         }
         rv.setTextViewText(R.id.widget_next_time, "${item.from} – ${item.to}")
-        // ongoing() only checks the begin time (NextCard.ets:78-81).
-        val ongoing = System.currentTimeMillis() >= item.begin
-        rv.setTextViewText(R.id.widget_next_badge, sc.getString(R.string.widget_ongoing))
-        rv.setViewVisibility(R.id.widget_next_badge, if (ongoing) View.VISIBLE else View.GONE)
         rv.setViewVisibility(R.id.widget_next_empty, View.GONE)
         rv.setViewVisibility(R.id.widget_next_header_row, View.VISIBLE)
         rv.setViewVisibility(R.id.widget_next_mid, View.VISIBLE)
