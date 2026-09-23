@@ -69,10 +69,6 @@
       "value": "+%d more"
     },
     {
-      "name": "widget_ongoing",
-      "value": "In progress"
-    },
-    {
       "name": "widget_empty_hint",
       "value": "Open THU Info to sync your schedule"
     },

@@ -12,7 +12,6 @@
 	<string name="widget_week_header">本周课程</string>
 	<string name="widget_week_label">第 %1$d 周</string>
 	<string name="widget_week_day_label">第%1$d周周%2$s</string>
-	<string name="widget_ongoing">进行中</string>
 	<string name="widget_empty_hint">打开 THU Info 同步课表</string>
 	<string name="widget_empty_none_today">今日暂无课程</string>
 	<string name="widget_empty_none_soon">近 7 天暂无课程</string>

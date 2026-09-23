@@ -75,11 +75,6 @@ struct NextCard {
     return snapshot !== null && day !== null && day.date === snapshot.today.date;
   }
 
-  private ongoing(): boolean {
-    const item = this.item();
-    return item !== null && Date.now() >= item.begin;
-  }
-
   // 1*2: course details on the left and the time range on the right.
   @Builder
   strip() {
@@ -135,7 +130,7 @@ struct NextCard {
   }
 
   // 2*2: week/day in the header, course and location in the middle, time at
-  // the bottom, plus a live "in progress" badge when applicable.
+  // the bottom.
   @Builder
   tile() {
     Column() {
@@ -179,22 +174,10 @@ struct NextCard {
         .alignItems(HorizontalAlign.Start)
         .width('100%')
 
-        Row() {
-          Text(`${this.item()?.from ?? ''} – ${this.item()?.to ?? ''}`)
-            .fontSize(13)
-            .fontColor($r('app.color.widget_text_secondary'))
-          if (this.ongoing()) {
-            Text($r('app.string.widget_ongoing'))
-              .fontSize(10)
-              .fontColor($r('app.color.widget_accent'))
-              .padding({ left: 6, right: 6, top: 2, bottom: 2 })
-              .borderRadius(8)
-              .border({ width: 1, color: $r('app.color.widget_accent') })
-          }
-        }
-        .width('100%')
-        .justifyContent(FlexAlign.SpaceBetween)
-        .alignItems(VerticalAlign.Center)
+        Text(`${this.item()?.from ?? ''} – ${this.item()?.to ?? ''}`)
+          .fontSize(13)
+          .fontColor($r('app.color.widget_text_secondary'))
+          .width('100%')
       }
     }
     .width('100%')

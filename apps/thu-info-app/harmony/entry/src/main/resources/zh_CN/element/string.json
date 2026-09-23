@@ -69,10 +69,6 @@
       "value": "还有 %d 项"
     },
     {
-      "name": "widget_ongoing",
-      "value": "进行中"
-    },
-    {
       "name": "widget_empty_hint",
       "value": "打开 THU Info 同步课表"
     },
