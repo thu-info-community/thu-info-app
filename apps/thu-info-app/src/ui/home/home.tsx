@@ -47,7 +47,6 @@ import {
 } from "../../redux/slices/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
-import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/slices/config";
@@ -709,15 +708,6 @@ const getHomeFunctions = (
 		<IconIncome width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
-		key="campusMap"
-		title="campusMap"
-		onPress={() => {
-			updateTop5("campusMap");
-			navigate("CampusMap");
-		}}>
-		<IconLocal width={iconSize} height={iconSize} />
-	</HomeIcon>,
-	<HomeIcon
 		key="qzyq"
 		title="qzyq"
 		onPress={() => {
@@ -843,7 +833,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
 	}
 
-	const sunsetFunctions: HomeFunction[] = ["expenditure"];
+	// "campusMap" has no screen any more, but it may still sit in a user's persisted
+	// `top5`. It is already dropped by the `f &&` guard below (the entry is gone from
+	// `getHomeFunctions`); listing it here as well keeps the intent explicit and covers
+	// the store if the function is ever reintroduced.
+	const sunsetFunctions: HomeFunction[] = ["expenditure", "campusMap"];
 
 	const homeFunctions = getHomeFunctions(
 		navigateWithDetail,

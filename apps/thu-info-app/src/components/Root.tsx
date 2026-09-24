@@ -301,12 +301,10 @@ type HomeStackParamList = {
 	SportsSuccess: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
-	CampusMap: undefined;
 	MyhomeLogin: undefined;
 	ResetDormPassword: undefined;
 	Electricity: undefined;
 	EleRecord: undefined;
-	ECard: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 	Network: undefined;
 	NetworkLogin: undefined;

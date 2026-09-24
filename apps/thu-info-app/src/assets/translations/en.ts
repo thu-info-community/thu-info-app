@@ -280,7 +280,6 @@ export default {
 	eCard: "E-Card",
 	bankPayment: "Bank Payment",
 	bankPaymentFoundation: "Bank Payment (Foundation)",
-	campusMap: "Map",
 	dorm: "Dormitory",
 	life: "Life",
 	thirdParty: "Third-party Services",
