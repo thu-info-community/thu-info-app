@@ -51,7 +51,6 @@ export interface ConfigState {
 	deepseekToken: string | undefined;
 	bubbleMessage: boolean | undefined;
 	uuid: string;
-	tabletMode: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -99,7 +98,6 @@ const initialState: ConfigState = {
 	deepseekToken: undefined,
 	bubbleMessage: true,
 	uuid: uuidv4(),
-	tabletMode: true,
 };
 
 export const defaultConfig = initialState;

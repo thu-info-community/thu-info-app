@@ -193,7 +193,7 @@ const scheduleTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 8,
+	version: 9,
 	key: "root",
 	storage: AsyncStorage,
 	transforms: [authTransform, configTransform, scheduleTransform],
@@ -213,6 +213,10 @@ const persistConfig = {
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
 							uuid: state.config.uuid ?? defaultConfig.uuid,
+							// `tabletMode` is gone — the layout is driven by width now.
+							// `undefined` drops the flag from the persisted JSON on the
+							// next write.
+							tabletMode: undefined,
 						},
 						schedule: state.schedule
 							? restoreScheduleState(state.schedule, state.config.firstDay ?? defaultConfig.firstDay,
