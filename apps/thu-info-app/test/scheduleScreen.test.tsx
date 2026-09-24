@@ -14,7 +14,7 @@ import {configureStore} from "@reduxjs/toolkit";
 import {StyleSheet, Alert} from "react-native";
 import {getStr} from "../src/utils/i18n";
 import dayjs from "dayjs";
-import {ScheduleScreen} from "../src/ui/schedule/schedule";
+import {MAX_UNIT_WIDTH, ScheduleScreen} from "../src/ui/schedule/schedule";
 import {
 	configReducer,
 	configSet,
@@ -108,7 +108,7 @@ const plan = (day: number, week: number): Schedule => {
 };
 const height = (id: string) =>
 	StyleSheet.flatten(screen.getByTestId(id).props.style).height as number;
-const setup = async (plans: Schedule[]) => {
+const setup = async (plans: Schedule[], width = 750) => {
 	const store = configureStore({
 		reducer: {config: configReducer, schedule: scheduleReducer},
 		preloadedState: {
@@ -130,6 +130,10 @@ const setup = async (plans: Schedule[]) => {
 	);
 	await fireEvent(screen.getByTestId("schedule-scroll"), "layout", {
 		nativeEvent: {layout: {height: 630, width: 700}},
+	});
+	// The grid width comes from the wrapper that owns the screen, not the scroller.
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width}},
 	});
 	return store;
 };
@@ -184,6 +188,25 @@ test("hidden weekends and filtered custom plans no longer contribute empty gap s
 		store.dispatch(configSet({key: "showCustomSchedule", value: false}));
 	});
 	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
+});
+
+test("day columns stop widening at the cap, and the grid stays uncapped on a phone", async () => {
+	const store = await setup([plan(1, 1)], 1200);
+	const pagerWidth = () =>
+		StyleSheet.flatten(screen.getByTestId("schedule-weeks").props.style)
+			.width as number;
+	// 1200 − 40 − 8 = 1152 for the grid; 1152 / 7 = 164.6 without the cap.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 7);
+	await act(() => {
+		store.dispatch(configSet({key: "hideWeekend", value: true}));
+	});
+	// Five days would stretch to 230dp each; the cap holds them at 96.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 5);
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width: 400}},
+	});
+	// 400 − 48 = 352, below 5 × 96, so the columns fill the width as before.
+	expect(pagerWidth()).toBe(352);
 });
 
 const openSettings = async () => {
