@@ -29,8 +29,6 @@ import {
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
 import { deepseekClear } from "../../redux/slices/deepseek.ts";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
 
 const performLogout = () => {
 	helper
@@ -57,18 +55,9 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const darkModeHook = dark || themeName === "dark";
 	const {userId, password} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
-	const detailNavigator = useDetailNavigator();
 
 	const handleNavigate = (name: keyof RootStackParamList) => {
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace(name, {
-					disableAnimation: true,
-				}),
-			);
-		} else {
-			navigation.navigate(name);
-		}
+		navigation.navigate(name);
 	};
 
 	const doNotRemindSemver =

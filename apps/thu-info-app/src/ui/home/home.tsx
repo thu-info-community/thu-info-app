@@ -10,7 +10,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {ReactElement, useContext, useEffect, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {RootNav, RootStackParamList} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
 import {HomeIcon} from "../../components/home/icon";
@@ -51,7 +51,7 @@ import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/slices/config";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
-import {StackActions, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {
@@ -68,8 +68,6 @@ import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
 import {InfoHelper} from "@thu-info/lib";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {SplitViewContext} from "../../components/SplitView";
 
 const iconSize = 40;
 
@@ -147,7 +145,6 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const navigation = useNavigation<RootNav>();
-	const detailNavigator = useDetailNavigator();
 	return (
 		<TouchableOpacity
 			disabled={schedule.navProps === undefined}
@@ -155,16 +152,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 				if (!schedule.navProps) {
 					return;
 				}
-				if (detailNavigator) {
-					detailNavigator.dispatch(
-						StackActions.replace("ScheduleDetail", {
-							...schedule.navProps,
-							disableAnimation: true,
-						}),
-					);
-				} else {
-					navigation.navigate("ScheduleDetail", schedule.navProps);
-				}
+				navigation.navigate("ScheduleDetail", schedule.navProps);
 			}}>
 			<View
 				style={{
@@ -801,27 +789,13 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
-	const {detailNavigationContainerRef} = useContext(SplitViewContext);
 
 	const navigateWithDetail = (
 		name: keyof RootStackParamList,
 		params?: RootStackParamList[typeof name],
 	) => {
-		// Resolve on press: the detail navigator may not have mounted when the home screen first rendered.
-		const detailNavigator = detailNavigationContainerRef?.current;
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace(name, {
-					...(params as object),
-					// @ts-ignore
-					disableAnimation: true,
-					// make sure to clear old stack state
-				}),
-			);
-		} else {
-			// @ts-ignore
-			navigation.navigate(name, params);
-		}
+		// @ts-ignore
+		navigation.navigate(name, params);
 	};
 
 	const top5Functions = useSelector((s: State) => s.top5.top5Functions);

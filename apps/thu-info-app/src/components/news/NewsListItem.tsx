@@ -8,8 +8,6 @@ import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
 import md5 from "md5";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
 
 export const NewsListItem = ({
 	item,
@@ -27,7 +25,6 @@ export const NewsListItem = ({
 	const [inFav, setInFav] = useState(item.inFav);
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const channelColor = colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
-	const detailNavigator = useDetailNavigator();
 	// Channels come from the news API, so a new one can appear before it has a
 	// translation. `getStr` would render the raw id (`LM_BM_207_TZGG`) — hide the
 	// badge instead, and keep the source line with it (see below).
@@ -41,16 +38,7 @@ export const NewsListItem = ({
 			isFromFav,
 			reloadFunc,
 		};
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace("NewsDetail", {
-					...params,
-					disableAnimation: true,
-				}),
-			);
-		} else {
-			navigation.navigate("NewsDetail", params);
-		}
+		navigation.navigate("NewsDetail", params);
 	};
 
 	return (

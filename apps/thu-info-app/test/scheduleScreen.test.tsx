@@ -32,8 +32,7 @@ const mockSnackbar = jest.fn();
 jest.mock("react-native-snackbar", () => ({Snackbar: {show: (...args: unknown[]) => mockSnackbar(...args), LENGTH_SHORT: 0, LENGTH_LONG: 0}}));
 const mockGetSchedule = jest.fn<(...args: any[]) => Promise<any>>();
 let mockScheduleResponses: ((result: any) => void)[] = [];
-const mockDetailDispatch = jest.fn();
-let mockUseDetail = false;
+let mockIsWide = false;
 jest.mock("@react-navigation/native", () => ({
 	...jest.requireActual<typeof import("@react-navigation/native")>(
 		"@react-navigation/native",
@@ -46,9 +45,16 @@ jest.mock("../src/redux/store", () => ({
 	helper: {getSchedule: (...args: any[]) => mockGetSchedule(...args)},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
-jest.mock("../src/utils/useDetailNavigator", () => ({
-	__esModule: true,
-	default: () => (mockUseDetail ? {dispatch: mockDetailDispatch} : undefined),
+// The breakpoints come from the window, which the test renderer does not set up,
+// so pin the tier directly.
+jest.mock("../src/utils/useResponsive", () => ({
+	useResponsive: () => ({
+		width: mockIsWide ? 900 : 390,
+		height: mockIsWide ? 1000 : 844,
+		formFactor: mockIsWide ? "expanded" : "compact",
+		isWide: mockIsWide,
+		isExpanded: mockIsWide,
+	}),
 }));
 jest.mock("../src/utils/calendar", () => ({exportScheduleToICS: jest.fn()}));
 jest.mock("../src/components/themedRefreshControl", () => ({
@@ -71,8 +77,7 @@ beforeEach(() => {
 	mockGetSchedule.mockReset().mockImplementation(() => new Promise((resolve) => mockScheduleResponses.push(resolve)));
 	mockNavigate.mockClear();
 	mockSnackbar.mockClear();
-	mockDetailDispatch.mockClear();
-	mockUseDetail = false;
+	mockIsWide = false;
 });
 afterEach(async () => {
 	await cleanup();
@@ -211,7 +216,7 @@ test("all schedule preferences live in the scrollable popup and controls keep it
 	expect(screen.queryByTestId("schedule-settings")).toBeNull();
 });
 
-test("hidden schedule management closes the popup and uses phone navigation", async () => {
+test("hidden schedule management closes the popup and navigates", async () => {
 	await setup([]);
 	await openSettings();
 	await fireEvent.press(
@@ -240,20 +245,25 @@ test.each([true, false])(
 	},
 );
 
-test("tablet settings navigation targets the detail pane", async () => {
-	mockUseDetail = true;
-	await setup([]);
-	await openSettings();
-	await fireEvent.press(
-		screen.getByRole("button", {name: getStr("scheduleHidden")}),
+test("a course tap pushes the detail screen when there is room for it", async () => {
+	mockIsWide = true;
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.objectContaining({name: "午间计划-1-1"}),
 	);
-	expect(mockDetailDispatch).toHaveBeenCalledWith(
-		expect.objectContaining({
-			type: "REPLACE",
-			payload: {name: "ScheduleHidden", params: {disableAnimation: true}},
-		}),
+	expect(screen.getByTestId("add-modal").props.visible).toBe(false);
+});
+
+test("a course tap opens the edit modal on a phone", async () => {
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).not.toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.anything(),
 	);
-	expect(mockNavigate).not.toHaveBeenCalled();
+	expect(screen.getByTestId("add-modal").props.visible).toBe(true);
 });
 
 

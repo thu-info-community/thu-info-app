@@ -65,8 +65,8 @@ import {Choice} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions, useNavigation} from "@react-navigation/native";
+import {useResponsive} from "../../utils/useResponsive";
+import {useNavigation} from "@react-navigation/native";
 import type {RootNav} from "../../components/Root";
 import {ScheduleSettings} from "../../components/schedule/settings";
 
@@ -370,7 +370,7 @@ const Header = React.forwardRef(
 
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
-	const detailNavigator = useDetailNavigator();
+	const {isWide} = useResponsive();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
@@ -1119,13 +1119,8 @@ export const ScheduleScreen = () => {
 																	type: val.type,
 																	category: val.category,
 																};
-																if (detailNavigator) {
-																	detailNavigator.dispatch(
-																		StackActions.replace("ScheduleDetail", {
-																			...detailProps,
-																			disableAnimation: true,
-																		}),
-																	);
+																if (isWide) {
+																	navigation.navigate("ScheduleDetail", detailProps);
 																} else {
 																	setEditingParams(detailProps);
 																	setShowAddModal(true);
@@ -1171,19 +1166,11 @@ export const ScheduleScreen = () => {
 						onClose={() => setOpenConfig(false)}
 						onManageHidden={() => {
 							setOpenConfig(false);
-							if (detailNavigator) {
-								detailNavigator.dispatch(StackActions.replace("ScheduleHidden", {disableAnimation: true}));
-							} else {
-								navigation.navigate("ScheduleHidden");
-							}
+							navigation.navigate("ScheduleHidden");
 						}}
 						onSync={(isSending) => {
 							setOpenConfig(false);
-							if (detailNavigator) {
-								detailNavigator.dispatch(StackActions.replace("ScheduleSync", {isSending, disableAnimation: true}));
-							} else {
-								navigation.navigate("ScheduleSync", {isSending});
-							}
+							navigation.navigate("ScheduleSync", {isSending});
 						}}
 						onExport={() => {
 							setOpenConfig(false);

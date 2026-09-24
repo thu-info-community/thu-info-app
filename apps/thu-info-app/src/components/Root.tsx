@@ -131,7 +131,6 @@ import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
 import { NetworkLoginScreen } from "../ui/home/networkLogin.tsx";
 import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
-import {EmptyScreen} from "../ui/home/empty";
 import {ThosScreen, ThosPortalScreen} from "../ui/home/thos";
 import {ThosServiceDetailScreen, ThosTaskDetailScreen} from "../ui/home/thosDetail";
 import type {
@@ -438,25 +437,14 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
-export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
+export const Root = () => {
 	return (
 		<Stack.Navigator>
-			{/* Root Tabs */}
-			{showRootTabs && (
-				<Stack.Screen
-					name="RootTabs"
-					component={RootTabs}
-					options={{title: "", headerShown: false}}
-				/>
-			)}
-			{/* Empty screen for split-view detail navigator */}
-			{!showRootTabs && (
-				<Stack.Screen
-					name="Empty"
-					component={EmptyScreen}
-					options={{title: "", headerShown: false}}
-				/>
-			)}
+			<Stack.Screen
+				name="RootTabs"
+				component={RootTabs}
+				options={{title: "", headerShown: false}}
+			/>
 			{/* Home */}
 			<Stack.Screen
 				name="Report"

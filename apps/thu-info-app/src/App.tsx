@@ -2,26 +2,18 @@ import "./utils/extensions";
 import {Provider, useDispatch, useSelector} from "react-redux";
 import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
 import {
 	DarkTheme,
 	DefaultTheme,
 	NavigationContainer,
-	NavigationContainerRef,
-	NavigationIndependentTree,
 } from "@react-navigation/native";
-import {
-	Alert,
-	StatusBar,
-	useColorScheme,
-	useWindowDimensions,
-} from "react-native";
+import {Alert, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 import {getStr} from "./utils/i18n";
-import {SplitViewProvider} from "./components/SplitView";
 import {initWidgetSync} from "./utils/scheduleWidget";
 
 const RootComponent = () => {
@@ -43,19 +35,7 @@ const RootComponent = () => {
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const studentNotified = useSelector((s: State) => s.config.studentNotified);
-	const tabletMode = useSelector((s: State) => s.config.tabletMode);
 	const dispatch = useDispatch();
-
-	const detailNavigationContainerRef = useRef<NavigationContainerRef<{}>>(null);
-
-	// `DeviceInfo.isTablet()` cannot be used here: react-native-device-info caches it
-	// twice over (a module-level memo in `getSupportedPlatformInfoSync({memoKey: "tablet"})`
-	// that only `clearMemo()` clears, plus a constant native snapshot), so an app started
-	// with the fold closed would report `false` forever. Decide on the live window width
-	// instead — `useWindowDimensions` re-renders on every configuration change.
-	const {width: windowWidth} = useWindowDimensions();
-	const showDetail = windowWidth >= 400;
-	const splitEnabled = (tabletMode ?? false) && windowWidth >= 600;
 
 	useEffect(() => {
 		if (studentNotified !== true) {
@@ -83,35 +63,17 @@ const RootComponent = () => {
 				backgroundColor={darkModeHook ? "black" : "white"}
 				animated
 			/>
-			<SplitViewProvider
-				splitEnabled={splitEnabled}
-				detailNavigationContainerRef={
-					showDetail ? detailNavigationContainerRef : null
-				}
-				showDetail={showDetail}>
-				<NavigationContainer
-					ref={navigationRef}
-					theme={navigationTheme}>
-					{appLocked === true ? (
-						<DigitalPasswordScreen
-							navigation={undefined}
-							// @ts-ignore
-							route={{params: {action: "verify"}}}
-						/>
-					) : (
-						<Root showRootTabs />
-					)}
-				</NavigationContainer>
-				{splitEnabled && (
-					<NavigationIndependentTree>
-						<NavigationContainer
-							ref={detailNavigationContainerRef}
-							theme={navigationTheme}>
-							<Root showRootTabs={false} />
-						</NavigationContainer>
-					</NavigationIndependentTree>
+			<NavigationContainer ref={navigationRef} theme={navigationTheme}>
+				{appLocked === true ? (
+					<DigitalPasswordScreen
+						navigation={undefined}
+						// @ts-ignore
+						route={{params: {action: "verify"}}}
+					/>
+				) : (
+					<Root />
 				)}
-			</SplitViewProvider>
+			</NavigationContainer>
 		</>
 	);
 };
