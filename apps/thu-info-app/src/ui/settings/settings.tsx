@@ -29,8 +29,9 @@ import {
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
 import { deepseekClear } from "../../redux/slices/deepseek.ts";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
+
+/** 设置项的宽度上限（dp）：宽屏下居中，免得一行设置横跨整个屏幕。 */
+const SETTINGS_MAX_WIDTH = 640;
 
 const performLogout = () => {
 	helper
@@ -57,18 +58,9 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const darkModeHook = dark || themeName === "dark";
 	const {userId, password} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
-	const detailNavigator = useDetailNavigator();
 
 	const handleNavigate = (name: keyof RootStackParamList) => {
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace(name, {
-					disableAnimation: true,
-				}),
-			);
-		} else {
-			navigation.navigate(name);
-		}
+		navigation.navigate(name);
 	};
 
 	const doNotRemindSemver =
@@ -82,7 +74,16 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	return (
 		<ScrollView>
-			<View style={{flex: 1, padding: 12}} key={String(darkModeHook)}>
+			<View
+				// 宽屏下收窄到 640dp 并居中；窄屏下这两个值都不生效。
+				style={{
+					flex: 1,
+					padding: 12,
+					width: "100%",
+					maxWidth: SETTINGS_MAX_WIDTH,
+					alignSelf: "center",
+				}}
+				key={String(darkModeHook)}>
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}

@@ -14,7 +14,7 @@ import {configureStore} from "@reduxjs/toolkit";
 import {StyleSheet, Alert} from "react-native";
 import {getStr} from "../src/utils/i18n";
 import dayjs from "dayjs";
-import {ScheduleScreen} from "../src/ui/schedule/schedule";
+import {MAX_UNIT_WIDTH, ScheduleScreen} from "../src/ui/schedule/schedule";
 import {
 	configReducer,
 	configSet,
@@ -32,8 +32,7 @@ const mockSnackbar = jest.fn();
 jest.mock("react-native-snackbar", () => ({Snackbar: {show: (...args: unknown[]) => mockSnackbar(...args), LENGTH_SHORT: 0, LENGTH_LONG: 0}}));
 const mockGetSchedule = jest.fn<(...args: any[]) => Promise<any>>();
 let mockScheduleResponses: ((result: any) => void)[] = [];
-const mockDetailDispatch = jest.fn();
-let mockUseDetail = false;
+let mockIsWide = false;
 jest.mock("@react-navigation/native", () => ({
 	...jest.requireActual<typeof import("@react-navigation/native")>(
 		"@react-navigation/native",
@@ -46,9 +45,16 @@ jest.mock("../src/redux/store", () => ({
 	helper: {getSchedule: (...args: any[]) => mockGetSchedule(...args)},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
-jest.mock("../src/utils/useDetailNavigator", () => ({
-	__esModule: true,
-	default: () => (mockUseDetail ? {dispatch: mockDetailDispatch} : undefined),
+// The breakpoints come from the window, which the test renderer does not set up,
+// so pin the tier directly.
+jest.mock("../src/utils/useResponsive", () => ({
+	useResponsive: () => ({
+		width: mockIsWide ? 900 : 390,
+		height: mockIsWide ? 1000 : 844,
+		formFactor: mockIsWide ? "expanded" : "compact",
+		isWide: mockIsWide,
+		isExpanded: mockIsWide,
+	}),
 }));
 jest.mock("../src/utils/calendar", () => ({exportScheduleToICS: jest.fn()}));
 jest.mock("../src/components/themedRefreshControl", () => ({
@@ -71,8 +77,7 @@ beforeEach(() => {
 	mockGetSchedule.mockReset().mockImplementation(() => new Promise((resolve) => mockScheduleResponses.push(resolve)));
 	mockNavigate.mockClear();
 	mockSnackbar.mockClear();
-	mockDetailDispatch.mockClear();
-	mockUseDetail = false;
+	mockIsWide = false;
 });
 afterEach(async () => {
 	await cleanup();
@@ -103,7 +108,7 @@ const plan = (day: number, week: number): Schedule => {
 };
 const height = (id: string) =>
 	StyleSheet.flatten(screen.getByTestId(id).props.style).height as number;
-const setup = async (plans: Schedule[]) => {
+const setup = async (plans: Schedule[], width = 750) => {
 	const store = configureStore({
 		reducer: {config: configReducer, schedule: scheduleReducer},
 		preloadedState: {
@@ -125,6 +130,10 @@ const setup = async (plans: Schedule[]) => {
 	);
 	await fireEvent(screen.getByTestId("schedule-scroll"), "layout", {
 		nativeEvent: {layout: {height: 630, width: 700}},
+	});
+	// The grid width comes from the wrapper that owns the screen, not the scroller.
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width}},
 	});
 	return store;
 };
@@ -181,6 +190,25 @@ test("hidden weekends and filtered custom plans no longer contribute empty gap s
 	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
 });
 
+test("day columns stop widening at the cap, and the grid stays uncapped on a phone", async () => {
+	const store = await setup([plan(1, 1)], 1200);
+	const pagerWidth = () =>
+		StyleSheet.flatten(screen.getByTestId("schedule-weeks").props.style)
+			.width as number;
+	// 1200 − 40 − 8 = 1152 for the grid; 1152 / 7 = 164.6 without the cap.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 7);
+	await act(() => {
+		store.dispatch(configSet({key: "hideWeekend", value: true}));
+	});
+	// Five days would stretch to 230dp each; the cap holds them at 96.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 5);
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width: 400}},
+	});
+	// 400 − 48 = 352, below 5 × 96, so the columns fill the width as before.
+	expect(pagerWidth()).toBe(352);
+});
+
 const openSettings = async () => {
 	await fireEvent.press(
 		screen.getByRole("button", {name: getStr("scheduleSettings")}),
@@ -211,7 +239,7 @@ test("all schedule preferences live in the scrollable popup and controls keep it
 	expect(screen.queryByTestId("schedule-settings")).toBeNull();
 });
 
-test("hidden schedule management closes the popup and uses phone navigation", async () => {
+test("hidden schedule management closes the popup and navigates", async () => {
 	await setup([]);
 	await openSettings();
 	await fireEvent.press(
@@ -240,20 +268,25 @@ test.each([true, false])(
 	},
 );
 
-test("tablet settings navigation targets the detail pane", async () => {
-	mockUseDetail = true;
-	await setup([]);
-	await openSettings();
-	await fireEvent.press(
-		screen.getByRole("button", {name: getStr("scheduleHidden")}),
+test("a course tap pushes the detail screen when there is room for it", async () => {
+	mockIsWide = true;
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.objectContaining({name: "午间计划-1-1"}),
 	);
-	expect(mockDetailDispatch).toHaveBeenCalledWith(
-		expect.objectContaining({
-			type: "REPLACE",
-			payload: {name: "ScheduleHidden", params: {disableAnimation: true}},
-		}),
+	expect(screen.getByTestId("add-modal").props.visible).toBe(false);
+});
+
+test("a course tap opens the edit modal on a phone", async () => {
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).not.toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.anything(),
 	);
-	expect(mockNavigate).not.toHaveBeenCalled();
+	expect(screen.getByTestId("add-modal").props.visible).toBe(true);
 });
 
 

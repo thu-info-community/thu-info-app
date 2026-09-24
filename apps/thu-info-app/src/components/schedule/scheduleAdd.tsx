@@ -4,13 +4,13 @@ import {KeyboardAvoidingScreen} from "../keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {
 	Alert,
-	Dimensions,
 	Modal,
 	ScrollView,
 	Switch,
 	Text,
 	TextInput,
 	TouchableOpacity,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {useDispatch, useSelector, useStore} from "react-redux";
@@ -90,6 +90,7 @@ export const ScheduleAddModal = ({
 }: ScheduleAddModalProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const {width: windowWidth, height: windowHeight} = useWindowDimensions();
 	const darkMode = useSelector((s: State) => s.config.darkMode);
 	const isLightMode = !(darkMode || themeName === "dark");
 
@@ -406,7 +407,6 @@ export const ScheduleAddModal = ({
 		(title.trim().length > 0 || params !== undefined) &&
 		(isNonCustomEdit || (!useCustomDateTime ? weeks.length > 0 : dateTimeValid));
 
-	const windowWidth = Dimensions.get("window").width;
 	const weekButtonWidth = (windowWidth - 24) / 4 - 6 - 1;
 
 	const handleSave = () => {
@@ -732,7 +732,6 @@ export const ScheduleAddModal = ({
 		}
 	};
 
-	const windowHeight = Dimensions.get("window").height;
 	const modalCardMaxHeight = Math.floor(windowHeight * 0.85);
 	const scrollMaxHeight = modalCardMaxHeight - 56 - 24;
 

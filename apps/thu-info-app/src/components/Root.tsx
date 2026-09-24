@@ -4,6 +4,9 @@ import {getStr} from "../utils/i18n";
 import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
 import {TouchableOpacity, useColorScheme, View} from "react-native";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {FloatingTabBar, TAB_BAR_CLEARANCE} from "./FloatingTabBar";
+import {useResponsive} from "../utils/useResponsive";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
 import {ChannelTag, NewsSlice} from "@thu-info/lib/src/models/news/news";
@@ -131,7 +134,6 @@ import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
 import { NetworkLoginScreen } from "../ui/home/networkLogin.tsx";
 import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
-import {EmptyScreen} from "../ui/home/empty";
 import {ThosScreen, ThosPortalScreen} from "../ui/home/thos";
 import {ThosServiceDetailScreen, ThosTaskDetailScreen} from "../ui/home/thosDetail";
 import type {
@@ -157,6 +159,8 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const RootTabs = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
+	const {isWide} = useResponsive();
+	const insets = useSafeAreaInsets();
 
 	const doNotRemindSemver =
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
@@ -168,7 +172,13 @@ const RootTabs = () => {
 
 	return (
 		<Tab.Navigator
+			// 宽屏换成居中的浮岛；窄屏保持原生 tab bar（`undefined` 即回退到默认）。
+			tabBar={isWide ? (props) => <FloatingTabBar {...props} /> : undefined}
 			screenOptions={({route}) => ({
+				// 浮岛是 absolute 的，不占布局，各根屏得自己让出它盖住的那一条。
+				sceneStyle: isWide
+					? {paddingBottom: TAB_BAR_CLEARANCE + insets.bottom}
+					: undefined,
 				tabBarIcon: ({focused, size}) => {
 					switch (route.name) {
 						case "HomeTab": {
@@ -301,12 +311,10 @@ type HomeStackParamList = {
 	SportsSuccess: SportsSelectParams;
 	SportsRecord: undefined;
 	BankPayment: undefined;
-	CampusMap: undefined;
 	MyhomeLogin: undefined;
 	ResetDormPassword: undefined;
 	Electricity: undefined;
 	EleRecord: undefined;
-	ECard: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 	Network: undefined;
 	NetworkLogin: undefined;
@@ -440,25 +448,14 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
-export const Root = ({showRootTabs = true}: {showRootTabs?: boolean}) => {
+export const Root = () => {
 	return (
 		<Stack.Navigator>
-			{/* Root Tabs */}
-			{showRootTabs && (
-				<Stack.Screen
-					name="RootTabs"
-					component={RootTabs}
-					options={{title: "", headerShown: false}}
-				/>
-			)}
-			{/* Empty screen for split-view detail navigator */}
-			{!showRootTabs && (
-				<Stack.Screen
-					name="Empty"
-					component={EmptyScreen}
-					options={{title: "", headerShown: false}}
-				/>
-			)}
+			<Stack.Screen
+				name="RootTabs"
+				component={RootTabs}
+				options={{title: "", headerShown: false}}
+			/>
 			{/* Home */}
 			<Stack.Screen
 				name="Report"

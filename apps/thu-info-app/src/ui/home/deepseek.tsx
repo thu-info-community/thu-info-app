@@ -115,6 +115,12 @@ const splitReasoningAndStatus = (
 
 const models = ["DeepSeek-V4-Flash"];
 
+/** 对话列的最大宽度（dp）。更宽的话一行文字太长，读起来费劲。 */
+const CHAT_MAX_WIDTH = 760;
+/** 历史抽屉占屏宽的比例（窄屏用），以及它在宽屏下的宽度上限（dp）。 */
+const HISTORY_DRAWER_RATIO = 0.62;
+const HISTORY_DRAWER_WIDTH = 320;
+
 const systemErrorMessage = "服务器繁忙,请稍后再试";
 
 const newConversation = (): Conversation => ({
@@ -609,6 +615,9 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 	const [deleteId, setDeleteId] = useState<string | null>(null);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// 宽屏上把对话列收窄到可读宽度并居中；窄屏下这两个值都不生效。
+	const {width: windowWidth} = useWindowDimensions();
+	const drawerWidth = Math.min(windowWidth * HISTORY_DRAWER_RATIO, HISTORY_DRAWER_WIDTH);
 	const {deepseekToken, firstDay, weekCount} = useSelector(
 		(s: State) => s.config,
 	);
@@ -893,6 +902,9 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					flex: 1,
 					padding: 16,
 					paddingStart: 8,
+					width: "100%",
+					maxWidth: CHAT_MAX_WIDTH,
+					alignSelf: "center",
 				}}
 				data={conversation.messages}
 				keyExtractor={(item, index) =>
@@ -1203,6 +1215,9 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					flex: 0,
 					flexDirection: "row",
 					alignItems: "center",
+					width: "100%",
+					maxWidth: CHAT_MAX_WIDTH,
+					alignSelf: "center",
 				}}>
 				<View
 					style={{
@@ -1311,7 +1326,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								{
 									translateX: sidebarPosition.interpolate({
 										inputRange: [-1, 0],
-										outputRange: [-0.62 * useWindowDimensions().width, 0],
+										outputRange: [-drawerWidth, 0],
 									}),
 								},
 							],
@@ -1319,7 +1334,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 							paddingHorizontal: 16,
 							paddingTop: getStatusBarHeight() + 2,
 							paddingBottom: insets.bottom,
-							width: "62%",
+							width: drawerWidth,
 							height: "100%",
 						}}>
 						<View

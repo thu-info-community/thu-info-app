@@ -1,5 +1,5 @@
 import {RootStackParamList} from "../../components/Root";
-import {Dimensions, useColorScheme, View} from "react-native";
+import {useColorScheme, useWindowDimensions, View} from "react-native";
 import Pdf from "react-native-pdf";
 import {RouteProp} from "@react-navigation/native";
 import themedStyles from "../../utils/themedStyles";
@@ -13,10 +13,11 @@ export const InvoicePDFScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const {width, height} = useWindowDimensions();
 	return (
 		<View style={style.container}>
 			<Pdf
-				style={style.pdf}
+				style={[style.pdf, {width, height}]}
 				source={{uri: `data:application/pdf;base64,${base64}`}}
 			/>
 		</View>
@@ -33,7 +34,5 @@ const styles = themedStyles((theme) => ({
 	pdf: {
 		flex: 1,
 		backgroundColor: theme.colors.themeBackground,
-		width: Dimensions.get("window").width,
-		height: Dimensions.get("window").height,
 	},
 }));

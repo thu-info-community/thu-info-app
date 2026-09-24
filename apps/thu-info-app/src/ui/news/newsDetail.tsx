@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {WebView} from "react-native-webview";
-import {View, ActivityIndicator, Dimensions} from "react-native";
+import {View, ActivityIndicator, useWindowDimensions} from "react-native";
 import {NewsDetailRouteProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "@thu-info/lib/src/constants/strings";
@@ -21,6 +21,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const style = styles(themeName);
+	const {width, height} = useWindowDimensions();
 
 	const fetchHtml = () => {
 		setRefreshing(true);
@@ -104,7 +105,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 					/>
 				) : (
 					<Pdf
-						style={style.pdf}
+						style={[style.pdf, {width, height}]}
 						source={{uri: `data:application/pdf;base64,${pdf}`}}
 					/>
 				)}
@@ -139,7 +140,5 @@ const styles = themedStyles((theme) => ({
 
 	pdf: {
 		flex: 1,
-		width: Dimensions.get("window").width,
-		height: Dimensions.get("window").height,
 	},
 }));

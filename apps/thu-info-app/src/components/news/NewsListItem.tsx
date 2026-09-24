@@ -3,13 +3,11 @@ import {Theme} from "../../assets/themes/themes";
 import {RootNav, RootStackParamList} from "../Root";
 import {useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
-import {getStr} from "../../utils/i18n";
+import {getStr, hasStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
 import md5 from "md5";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
 
 export const NewsListItem = ({
 	item,
@@ -27,7 +25,10 @@ export const NewsListItem = ({
 	const [inFav, setInFav] = useState(item.inFav);
 	const colorList: string[] = theme.colors.courseItemColorList;
 	const channelColor = colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
-	const detailNavigator = useDetailNavigator();
+	// Channels come from the news API, so a new one can appear before it has a
+	// translation. `getStr` would render the raw id (`LM_BM_207_TZGG`) — hide the
+	// badge instead, and keep the source line with it (see below).
+	const showChannel = hasStr(item.channel);
 
 	const handlePress = () => {
 		const params: RootStackParamList["NewsDetail"] = {
@@ -37,16 +38,7 @@ export const NewsListItem = ({
 			isFromFav,
 			reloadFunc,
 		};
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace("NewsDetail", {
-					...params,
-					disableAnimation: true,
-				}),
-			);
-		} else {
-			navigation.navigate("NewsDetail", params);
-		}
+		navigation.navigate("NewsDetail", params);
 	};
 
 	return (
@@ -93,27 +85,31 @@ export const NewsListItem = ({
 								}}>
 								{item.source}
 							</Text>
-							<View
-								style={{
-									marginHorizontal: 6,
-									height: 12,
-									width: 3,
-									borderRadius: 1.5,
-									backgroundColor: channelColor,
-								}}
-							/>
+							{showChannel && (
+								<View
+									style={{
+										marginHorizontal: 6,
+										height: 12,
+										width: 3,
+										borderRadius: 1.5,
+										backgroundColor: channelColor,
+									}}
+								/>
+							)}
 						</>
 					)}
-					<Text
-						numberOfLines={1}
-						style={{
-							flex: 1,
-							fontWeight: "600",
-							color: theme.colors.fontB2,
-							fontSize: 12,
-						}}>
-						{getStr(item.channel)}
-					</Text>
+					{showChannel && (
+						<Text
+							numberOfLines={1}
+							style={{
+								flex: 1,
+								fontWeight: "600",
+								color: theme.colors.fontB2,
+								fontSize: 12,
+							}}>
+							{getStr(item.channel)}
+						</Text>
+					)}
 				</View>
 				{item.topped && (
 					<View

@@ -57,7 +57,9 @@ If you are a developer...
 - [Node.js](https://nodejs.org/) >= 18
 - [Yarn](https://classic.yarnpkg.com/lang/en/) Classic
 - [JDK](https://adoptium.net/temurin/releases) >= 17
-- [Android Studio](https://developer.android.com/studio/index.html) or [Intellij IDEA](https://www.jetbrains.com/idea/) with `Android SDK Platform 34` and `Android SDK Build-Tools 34.0.0` installed.
+- [Android Studio](https://developer.android.com/studio/index.html) or [Intellij IDEA](https://www.jetbrains.com/idea/) with `Android SDK Platform 37`, `Android SDK Build-Tools 37.0.0`, `Android NDK 27.1.12297006` and `Android SDK CMake 3.22.1` installed.
+
+These are pinned by [`apps/thu-info-app/android/build.gradle`](apps/thu-info-app/android/build.gradle); the NDK and CMake are required because the New Architecture compiles the codegen'd C++ for each native module.
 
 #### iOS
 

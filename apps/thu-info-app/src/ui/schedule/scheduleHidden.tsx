@@ -6,7 +6,7 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
-	Dimensions,
+	useWindowDimensions,
 	Alert,
 } from "react-native";
 import {State, helper} from "../../redux/store";
@@ -27,7 +27,7 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
 export const ScheduleHiddenScreen = () => {
-	let screenHeight = Dimensions.get("window");
+	const screenHeight = useWindowDimensions();
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 

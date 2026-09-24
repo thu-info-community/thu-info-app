@@ -4,7 +4,6 @@ import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl
 import {
 	View,
 	Text,
-	Dimensions,
 	TouchableOpacity,
 	FlatList,
 	Platform,
@@ -65,8 +64,8 @@ import {Choice} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions, useNavigation} from "@react-navigation/native";
+import {useResponsive} from "../../utils/useResponsive";
+import {useNavigation} from "@react-navigation/native";
 import type {RootNav} from "../../components/Root";
 import {ScheduleSettings} from "../../components/schedule/settings";
 
@@ -368,9 +367,12 @@ const Header = React.forwardRef(
 	},
 );
 
+/** 单日列宽上限（dp）。再宽一节课的卡片就会显得空旷。 */
+export const MAX_UNIT_WIDTH = 96;
+
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
-	const detailNavigator = useDetailNavigator();
+	const {isWide, width: windowWidth, height: windowHeight} = useResponsive();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
@@ -484,10 +486,9 @@ export const ScheduleScreen = () => {
 		focusRing: isDarkMode ? "#FFFFFF" : "#2C2A28",
 	};
 
-	const fallbackWidth = Math.floor(Dimensions.get("window").width);
+	const fallbackWidth = Math.floor(windowWidth);
 	const layoutWidth =
 		contentWidth > 0 ? contentWidth : fallbackWidth;
-	const windowHeight = Dimensions.get("window").height;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
 	const [tableHeight, setTableHeight] = useState(0);
 	const heightForCalc = tableHeight > 0 ? tableHeight : windowHeight - getStatusBarHeight() - 80;
@@ -509,9 +510,13 @@ export const ScheduleScreen = () => {
 	// 左侧时间列宽度和中间纵向时间轴宽度
 	const timeLabelWidth = 40;
 	const timeAxisWidth = 8;
-	const scheduleBodyWidth = layoutWidth - timeLabelWidth - timeAxisWidth;
 	const timeStripVerticalPadding = 12; // 时间条上下留白
-	const unitWidth = scheduleBodyWidth / (hideWeekend ? 5 : 7);
+	const dayCount = hideWeekend ? 5 : 7;
+	const scheduleBodyWidth = layoutWidth - timeLabelWidth - timeAxisWidth;
+	// 不封顶时，平板/折叠屏展开/三折叠这些宽屏形态会把单日列拉到 150dp 以上，
+	// 一节 45 分钟的课占掉一大片空白。封顶后网格在可用宽度里水平居中。
+	const unitWidth = Math.min(scheduleBodyWidth / dayCount, MAX_UNIT_WIDTH);
+	const gridWidth = unitWidth * dayCount;
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 
 	// 不展示早于 min(用户本学期最早日程开始时间, 8:00)（向下取整到整点）的时间段
@@ -888,6 +893,7 @@ export const ScheduleScreen = () => {
 
 	return (
 		<View
+			testID="schedule-root"
 			style={{flex: 1}}
 			onLayout={({nativeEvent}) => {
 				const width = Math.floor(nativeEvent.layout.width);
@@ -928,51 +934,57 @@ export const ScheduleScreen = () => {
 					<View style={{width: timeLabelWidth + timeAxisWidth}} />
 					<View
 						style={{
-							flexDirection: "row",
 							flex: 1,
+							alignItems: "center",
 						}}>
-						{Array.from(new Array(hideWeekend ? 5 : 7)).map((_, index) => (
-							<View
-								style={{
-									flex: 1,
-									padding: 4,
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-								key={`frozen-${index + 1}`}>
-								<Text
-									style={{
-										textAlign: "center",
-										fontSize: 12,
-										color: theme.colors.fontB1,
-									}}>
-									{getStr("dayOfWeek")[index + 1]}
-								</Text>
+						<View
+							style={{
+								flexDirection: "row",
+								width: gridWidth,
+							}}>
+							{Array.from(new Array(dayCount)).map((_, index) => (
 								<View
 									style={{
-										width: 18,
-										height: 2,
-										borderRadius: 1,
-										backgroundColor:
-											dayjs(firstDay)
-												.add(currentWeekIndex * 7 + index, "day")
-												.isSame(current, "day")
-												? theme.colors.themePurple
-												: undefined,
+										width: unitWidth,
+										padding: 4,
+										alignItems: "center",
+										justifyContent: "center",
 									}}
-								/>
-								<Text
-									style={{
-										textAlign: "center",
-										fontSize: 9,
-										color: theme.colors.fontB1,
-									}}>
-									{dayjs(firstDay)
-										.add(currentWeekIndex * 7 + index, "day")
-										.format("MM/DD")}
-								</Text>
-							</View>
-						))}
+									key={`frozen-${index + 1}`}>
+									<Text
+										style={{
+											textAlign: "center",
+											fontSize: 12,
+											color: theme.colors.fontB1,
+										}}>
+										{getStr("dayOfWeek")[index + 1]}
+									</Text>
+									<View
+										style={{
+											width: 18,
+											height: 2,
+											borderRadius: 1,
+											backgroundColor:
+												dayjs(firstDay)
+													.add(currentWeekIndex * 7 + index, "day")
+													.isSame(current, "day")
+													? theme.colors.themePurple
+													: undefined,
+										}}
+									/>
+									<Text
+										style={{
+											textAlign: "center",
+											fontSize: 9,
+											color: theme.colors.fontB1,
+										}}>
+										{dayjs(firstDay)
+											.add(currentWeekIndex * 7 + index, "day")
+											.format("MM/DD")}
+									</Text>
+								</View>
+							))}
+						</View>
 					</View>
 				</View>
 				<ScrollView
@@ -1005,18 +1017,18 @@ export const ScheduleScreen = () => {
 						/>
 
 						{/* Main content */}
-						<View style={{flex: 1}}>
+						<View style={{flex: 1, alignItems: "center"}}>
 							{/* Schedule content */}
 							<FlatList<ScheduleLayout<SliceRenderData>>
 								testID="schedule-weeks"
 								ref={flatListRef}
 								horizontal={true}
 								showsHorizontalScrollIndicator={false}
-								style={{width: scheduleBodyWidth, height: contentHeight}}
+								style={{width: gridWidth, height: contentHeight}}
 								initialNumToRender={3}
 								getItemLayout={(_, index) => ({
-									length: scheduleBodyWidth,
-									offset: scheduleBodyWidth * index,
+									length: gridWidth,
+									offset: gridWidth * index,
 									index: index,
 								})}
 								data={weekLayouts}
@@ -1025,12 +1037,12 @@ export const ScheduleScreen = () => {
 										testID={`schedule-page-${pageIndex}`}
 										style={{
 											height: item.height,
-											width: scheduleBodyWidth,
+											width: gridWidth,
 										}}>
 										<View
 											style={{
 												height: item.height,
-												width: scheduleBodyWidth,
+												width: gridWidth,
 											}}>
 											<ScheduleGridLines rows={item.rows} />
 											<TouchableOpacity
@@ -1045,7 +1057,7 @@ export const ScheduleScreen = () => {
 												}}
 												onPressIn={(e) => {
 													const {locationX, locationY} = e.nativeEvent;
-													const totalColumns = hideWeekend ? 5 : 7;
+													const totalColumns = dayCount;
 													const columnWidth = unitWidth;
 													let dayIndex = Math.floor(locationX / columnWidth);
 													if (dayIndex < 0) {
@@ -1119,13 +1131,8 @@ export const ScheduleScreen = () => {
 																	type: val.type,
 																	category: val.category,
 																};
-																if (detailNavigator) {
-																	detailNavigator.dispatch(
-																		StackActions.replace("ScheduleDetail", {
-																			...detailProps,
-																			disableAnimation: true,
-																		}),
-																	);
+																if (isWide) {
+																	navigation.navigate("ScheduleDetail", detailProps);
 																} else {
 																	setEditingParams(detailProps);
 																	setShowAddModal(true);
@@ -1156,7 +1163,7 @@ export const ScheduleScreen = () => {
 								initialScrollIndex={nowWeek - 1}
 								onScroll={({nativeEvent}) => {
 									const index = Math.max(0, Math.min(weekCount - 1, Math.round(
-										nativeEvent.contentOffset.x / scheduleBodyWidth,
+										nativeEvent.contentOffset.x / gridWidth,
 									)));
 									setCurrentWeekIndex(index);
 									headerRef.current?.setWeekNumber(index + 1);
@@ -1171,19 +1178,11 @@ export const ScheduleScreen = () => {
 						onClose={() => setOpenConfig(false)}
 						onManageHidden={() => {
 							setOpenConfig(false);
-							if (detailNavigator) {
-								detailNavigator.dispatch(StackActions.replace("ScheduleHidden", {disableAnimation: true}));
-							} else {
-								navigation.navigate("ScheduleHidden");
-							}
+							navigation.navigate("ScheduleHidden");
 						}}
 						onSync={(isSending) => {
 							setOpenConfig(false);
-							if (detailNavigator) {
-								detailNavigator.dispatch(StackActions.replace("ScheduleSync", {isSending, disableAnimation: true}));
-							} else {
-								navigation.navigate("ScheduleSync", {isSending});
-							}
+							navigation.navigate("ScheduleSync", {isSending});
 						}}
 						onExport={() => {
 							setOpenConfig(false);

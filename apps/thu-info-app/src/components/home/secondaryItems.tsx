@@ -1,9 +1,9 @@
 import themedStyles from "../../utils/themedStyles";
 import {
-	Dimensions,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {ReactElement} from "react";
@@ -26,7 +26,7 @@ export const SecondaryItem = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
-	const windowWidth = Dimensions.get("window").width;
+	const windowWidth = useWindowDimensions().width;
 	const viewSize = Math.min((windowWidth - 32) / 2 - 1, 180);
 	const dispatch = useDispatch();
 	return (

@@ -10,10 +10,10 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {ReactElement, useContext, useEffect, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {RootNav, RootStackParamList} from "../../components/Root";
 import IconReport from "../../assets/icons/IconReport";
-import {HomeIcon} from "../../components/home/icon";
+import {HomeIcon, HomeIconProps} from "../../components/home/icon";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconFinance from "../../assets/icons/IconFinance";
 import IconClassroom from "../../assets/icons/IconClassroom";
@@ -22,6 +22,7 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import zh from "../../assets/translations/zh";
 import {getLocale, getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
+import {useResponsive} from "../../utils/useResponsive";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
@@ -47,12 +48,11 @@ import {
 } from "../../redux/slices/reservation";
 import IconDorm from "../../assets/icons/IconDorm";
 import IconCr from "../../assets/icons/IconCr";
-import IconLocal from "../../assets/icons/IconLocal";
 import IconReserve from "../../assets/icons/IconReserve";
 import IconPhysicalExam from "../../assets/icons/IconPhysicalExam";
 import {configSet} from "../../redux/slices/config";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
-import {StackActions, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import {
@@ -69,10 +69,30 @@ import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
 import {InfoHelper} from "@thu-info/lib";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {SplitViewContext} from "../../components/SplitView";
 
 const iconSize = 40;
+
+/** 每格低于这个宽度就少放一列。360dp 起的手机仍然是 5 列。 */
+const MIN_FUNCTION_ITEM_WIDTH = 62;
+const MIN_FUNCTION_COLUMNS = 4;
+const MAX_FUNCTION_COLUMNS = 8;
+/** onLayout 出结果前的列数，与手机上一致。 */
+const DEFAULT_FUNCTION_COLUMNS = 5;
+
+/**
+ * 一行摆几格。用宫格自己的宽度算（不是窗口宽度）：宽屏下它可能只占半屏，
+ * 拿窗口宽度算会把每格挤到 47dp。
+ */
+const functionColumnsFor = (availableWidth: number): number =>
+	availableWidth <= 0
+		? DEFAULT_FUNCTION_COLUMNS
+		: Math.min(
+				MAX_FUNCTION_COLUMNS,
+				Math.max(
+					MIN_FUNCTION_COLUMNS,
+					Math.floor(availableWidth / MIN_FUNCTION_ITEM_WIDTH),
+				),
+		  );
 
 export const HomeFunctionSection = ({
 	title,
@@ -83,6 +103,10 @@ export const HomeFunctionSection = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const [contentWidth, setContentWidth] = useState(0);
+	// 固定 5 列时，平板/折叠屏展开会把每个图标撑到 160dp，一行只有五个孤零零的方块。
+	// 改成按可用宽度排满：图标大小和手机上一致，宽屏只是每行多摆几个。
+	const columns = functionColumnsFor(contentWidth);
 	const functionItems = Array.isArray(children)
 		? children.filter((child: ReactElement | undefined): child is ReactElement =>
 				child !== undefined,
@@ -95,15 +119,21 @@ export const HomeFunctionSection = ({
 			<View style={style.SectionContentContainer}>
 				<View
 					style={style.functionSectionContent}
+					onLayout={({nativeEvent}) => {
+						const measured = Math.floor(nativeEvent.layout.width);
+						if (measured > 0 && measured !== contentWidth) {
+							setContentWidth(measured);
+						}
+					}}
 					testID={"homeFunctions-" + title}>
 					{functionItems === undefined
 						? children
 						: Array.from(
-								{length: Math.ceil(functionItems.length / 5)},
+								{length: Math.ceil(functionItems.length / columns)},
 								(_, rowIndex) => {
 									const rowItems = functionItems.slice(
-										rowIndex * 5,
-										rowIndex * 5 + 5,
+										rowIndex * columns,
+										rowIndex * columns + columns,
 									);
 									return (
 										<View
@@ -117,7 +147,7 @@ export const HomeFunctionSection = ({
 												</View>
 											))}
 											{Array.from(
-													{length: 5 - rowItems.length},
+													{length: columns - rowItems.length},
 													(_spacer, itemIndex) => (
 														<View
 															key={`function-spacer-${rowIndex}-${itemIndex}`}
@@ -148,7 +178,6 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const navigation = useNavigation<RootNav>();
-	const detailNavigator = useDetailNavigator();
 	return (
 		<TouchableOpacity
 			disabled={schedule.navProps === undefined}
@@ -156,16 +185,7 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 				if (!schedule.navProps) {
 					return;
 				}
-				if (detailNavigator) {
-					detailNavigator.dispatch(
-						StackActions.replace("ScheduleDetail", {
-							...schedule.navProps,
-							disableAnimation: true,
-						}),
-					);
-				} else {
-					navigation.navigate("ScheduleDetail", schedule.navProps);
-				}
+				navigation.navigate("ScheduleDetail", schedule.navProps);
 			}}>
 			<View
 				style={{
@@ -464,7 +484,7 @@ const subFunctionLocked = () => {
 const getHomeFunctions = (
 	navigate: (name: keyof RootStackParamList, params?: any) => void,
 	updateTop5: (func: HomeFunction) => void,
-): ReactElement[] => [
+): ReactElement<HomeIconProps>[] => [
 	<HomeIcon
 		key="thos"
 		title="thos"
@@ -709,15 +729,6 @@ const getHomeFunctions = (
 		<IconIncome width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
-		key="campusMap"
-		title="campusMap"
-		onPress={() => {
-			updateTop5("campusMap");
-			navigate("CampusMap");
-		}}>
-		<IconLocal width={iconSize} height={iconSize} />
-	</HomeIcon>,
-	<HomeIcon
 		key="qzyq"
 		title="qzyq"
 		onPress={() => {
@@ -805,33 +816,52 @@ const getHomeFunctions = (
 	</HomeIcon>,
 ];
 
+/**
+ * 宽屏右栏顶部的校园卡余额。余额由 Home 挂载时的 `helper.appStartUp` 带回并写进
+ * redux（见下面 `dispatch(setBalance(balance))`），所以这里不发额外的请求。
+ */
+const HomeBalanceChip = ({
+	onPress,
+}: {
+	onPress?: (event: any) => void;
+}) => {
+	const themeName = useColorScheme();
+	const style = styles(themeName);
+	const balance = useSelector((s: State) => s.campusCard.balance);
+
+	if (helper.userId === "" || helper.mocked()) {
+		return null;
+	}
+
+	return (
+		<View style={style.SectionContainer}>
+			<TouchableOpacity
+				style={style.balanceChip}
+				disabled={onPress === undefined}
+				onPress={onPress}>
+				<Text style={style.balanceChipTitle}>{getStr("campusCard")}</Text>
+				<Text style={style.balanceChipValue} numberOfLines={1}>
+					{getStr("remainder")} ¥{balance.toFixed(2)}
+				</Text>
+			</TouchableOpacity>
+		</View>
+	);
+};
+
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const dispatch = useDispatch();
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
-	const {detailNavigationContainerRef} = useContext(SplitViewContext);
+	const {isExpanded} = useResponsive();
 
 	const navigateWithDetail = (
 		name: keyof RootStackParamList,
 		params?: RootStackParamList[typeof name],
 	) => {
-		// Resolve on press: the detail navigator may not have mounted when the home screen first rendered.
-		const detailNavigator = detailNavigationContainerRef?.current;
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace(name, {
-					...(params as object),
-					// @ts-ignore
-					disableAnimation: true,
-					// make sure to clear old stack state
-				}),
-			);
-		} else {
-			// @ts-ignore
-			navigation.navigate(name, params);
-		}
+		// @ts-ignore
+		navigation.navigate(name, params);
 	};
 
 	const top5Functions = useSelector((s: State) => s.top5.top5Functions);
@@ -843,7 +873,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		dispatch(configSet({key: "homeFunctionDisabled", value: []}));
 	}
 
-	const sunsetFunctions: HomeFunction[] = ["expenditure"];
+	// "campusMap" has no screen any more, but it may still sit in a user's persisted
+	// `top5`. It is already dropped by the `f &&` guard below (the entry is gone from
+	// `getHomeFunctions`); listing it here as well keeps the intent explicit and covers
+	// the store if the function is ever reintroduced.
+	const sunsetFunctions: HomeFunction[] = ["expenditure", "campusMap"];
 
 	const homeFunctions = getHomeFunctions(
 		navigateWithDetail,
@@ -984,6 +1018,30 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// 宽屏两列用：左栏放「找功能」，右栏放「今天」。窄屏按原顺序单列，逐字节不变。
+	const recentlyUsedSection = (
+		<HomeFunctionSection title="recentlyUsedFunction">
+			{top5Filtered.length === 0 ? (
+				<View style={{flex: 1, marginTop: 16 - 8, alignItems: "center", justifyContent: "center"}}>
+					<Text style={{color: theme.colors.text}}>
+						{getStr("recentUseHint")}
+					</Text>
+				</View>
+			) : (
+				top5Filtered
+			)}
+		</HomeFunctionSection>
+	);
+	const allFunctionSection = (
+		<HomeFunctionSection title="allFunction">
+			{needToShowFunctions}
+		</HomeFunctionSection>
+	);
+	// 复用宫格里「校园卡」那一项的 onPress，密码校验 / 埋点 / top5 都跟着走。
+	const campusCardOnPress: ((event: any) => void) | undefined = homeFunctions.find(
+		(f) => f.props.title === "campusCard",
+	)?.props.onPress;
+
 	return (
 		<View style={{flex: 1, paddingTop: getStatusBarHeight()}}>
 			{showUpdateBanner && (
@@ -1054,23 +1112,28 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				}}
 				contentContainerStyle={showUpdateBanner ? {paddingTop: 76} : undefined}
 				key={String(darkModeHook)}>
-				<HomeFunctionSection title="recentlyUsedFunction">
-					{top5Filtered.length === 0 ? (
-						<View style={{flex: 1, marginTop: 16 - 8, alignItems: "center", justifyContent: "center"}}>
-							<Text style={{color: theme.colors.text}}>
-								{getStr("recentUseHint")}
-							</Text>
+				{isExpanded ? (
+					<View style={{flexDirection: "row", alignItems: "flex-start"}}>
+						<View style={{flex: 1}}>
+							{recentlyUsedSection}
+							{allFunctionSection}
 						</View>
-					) : (
-						top5Filtered
-					)}
-				</HomeFunctionSection>
-				<AnnouncementSection />
-				<HomeReservationSection />
-				<HomeScheduleSection />
-				<HomeFunctionSection title="allFunction">
-					{needToShowFunctions}
-				</HomeFunctionSection>
+						<View style={{flex: 1}}>
+							<HomeScheduleSection />
+							<HomeBalanceChip onPress={campusCardOnPress} />
+							<HomeReservationSection />
+							<AnnouncementSection />
+						</View>
+					</View>
+				) : (
+					<>
+						{recentlyUsedSection}
+						<AnnouncementSection />
+						<HomeReservationSection />
+						<HomeScheduleSection />
+						{allFunctionSection}
+					</>
+				)}
 				<View style={{height: 12}} />
 			</ScrollView>
 		</View>
@@ -1125,5 +1188,23 @@ const styles = themedStyles((theme) => ({
 		paddingVertical: 20,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+	balanceChip: {
+		marginTop: 16,
+		backgroundColor: theme.colors.contentBackground,
+		shadowColor: "grey",
+		borderRadius: 20,
+		paddingHorizontal: 16,
+		paddingVertical: 14,
+	},
+	balanceChipTitle: {
+		fontSize: 13,
+		fontWeight: "bold",
+		color: theme.colors.text,
+	},
+	balanceChipValue: {
+		marginTop: 6,
+		fontSize: 15,
+		color: theme.colors.fontB2,
 	},
 }));
