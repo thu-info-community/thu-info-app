@@ -2,7 +2,7 @@ import {
 	LibraryMapRouteProp,
 	LibrarySeatMapRouteProp,
 } from "../../components/Root";
-import {Dimensions, Image, Text, View} from "react-native";
+import {Image, Text, View, useWindowDimensions} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
 import ImageViewer from "react-native-image-zoom-viewer";
@@ -23,7 +23,7 @@ export const LibraryMapScreen = ({route}: {route: LibraryMapRouteProp}) => {
 			.catch(NetworkRetry);
 	}, [route.params.dateChoice, route.params.floor]);
 
-	const {width, height} = Dimensions.get("window");
+	const {width, height} = useWindowDimensions();
 
 	return (
 		<View>

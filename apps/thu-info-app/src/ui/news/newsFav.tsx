@@ -1,7 +1,7 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {NewsFavRouteProp, RootNav} from "../../components/Root";
 import {
-	Dimensions,
+	useWindowDimensions,
 	FlatList,
 	Text,
 	useColorScheme,
@@ -24,7 +24,7 @@ export const NewsFavScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	let screenHeight = Dimensions.get("window");
+	const screenHeight = useWindowDimensions();
 	const [inited, setInited] = useState(false);
 	const [refreshing, setRefreshing] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

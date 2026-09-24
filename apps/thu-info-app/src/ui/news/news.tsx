@@ -3,7 +3,7 @@ import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Text,
 	View,
-	Dimensions,
+	useWindowDimensions,
 	ScrollView,
 	TextInput,
 	FlatList,
@@ -330,7 +330,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [deepseekOpen, setDeepseekOpen] = useState(false);
 	const [deepseekInput, setDeepseekInput] = useState("");
 
-	let screenHeight = Dimensions.get("window");
+	const screenHeight = useWindowDimensions();
 
 	return (
 		<KeyboardAvoidingScreen

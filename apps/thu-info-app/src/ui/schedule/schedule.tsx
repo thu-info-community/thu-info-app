@@ -4,7 +4,6 @@ import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl
 import {
 	View,
 	Text,
-	Dimensions,
 	TouchableOpacity,
 	FlatList,
 	Platform,
@@ -373,7 +372,7 @@ export const MAX_UNIT_WIDTH = 96;
 
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
-	const {isWide} = useResponsive();
+	const {isWide, width: windowWidth, height: windowHeight} = useResponsive();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
@@ -487,10 +486,9 @@ export const ScheduleScreen = () => {
 		focusRing: isDarkMode ? "#FFFFFF" : "#2C2A28",
 	};
 
-	const fallbackWidth = Math.floor(Dimensions.get("window").width);
+	const fallbackWidth = Math.floor(windowWidth);
 	const layoutWidth =
 		contentWidth > 0 ? contentWidth : fallbackWidth;
-	const windowHeight = Dimensions.get("window").height;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
 	const [tableHeight, setTableHeight] = useState(0);
 	const heightForCalc = tableHeight > 0 ? tableHeight : windowHeight - getStatusBarHeight() - 80;

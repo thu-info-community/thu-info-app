@@ -4,7 +4,6 @@ import {KeyboardAvoidingScreen} from "./keyboardAvoidingScreen";
 import {
 	Animated,
 	BackHandler,
-	Dimensions,
 	Easing,
 	GestureResponderEvent,
 	Modal,
@@ -15,6 +14,7 @@ import {
 	TouchableOpacity,
 	TouchableOpacityProps,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 	ViewProps,
 } from "react-native";
@@ -155,7 +155,7 @@ const BACKDROP_MAX_OPACITY = 0.6;
 export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const screenHeight = Dimensions.get("window").height;
+	const screenHeight = useWindowDimensions().height;
 
 	const [sheetState, setSheetState] = useState<SheetState>("closed");
 	const [visible, setVisible] = useState(false);

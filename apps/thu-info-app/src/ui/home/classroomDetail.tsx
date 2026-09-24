@@ -1,10 +1,10 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
-	Dimensions,
 	FlatList,
 	Text,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {useEffect, useRef, useState} from "react";
@@ -89,6 +89,7 @@ export const ClassroomDetailScreen = ({
 	})();
 
 	const themeName = useColorScheme();
+	const windowWidth = useWindowDimensions().width;
 	const theme = themes(themeName);
 
 	const refresh = () => {
@@ -379,7 +380,7 @@ export const ClassroomDetailScreen = ({
 												tipItem.col !== index
 											) {
 												const totalWidth =
-													Dimensions.get("window").width - 32 - statesLayoutX;
+													windowWidth - 32 - statesLayoutX;
 												const elementWidth = totalWidth / 6;
 												const top = classroomIndex * 30;
 												const left =
