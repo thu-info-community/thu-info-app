@@ -10,14 +10,18 @@ import {
 	NavigationContainerRef,
 	NavigationIndependentTree,
 } from "@react-navigation/native";
-import {Alert, Dimensions, StatusBar, useColorScheme} from "react-native";
+import {
+	Alert,
+	StatusBar,
+	useColorScheme,
+	useWindowDimensions,
+} from "react-native";
 import themes from "./assets/themes/themes";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 import {getStr} from "./utils/i18n";
 import {SplitViewProvider} from "./components/SplitView";
-import DeviceInfo from "react-native-device-info";
 import {initWidgetSync} from "./utils/scheduleWidget";
 
 const RootComponent = () => {
@@ -44,9 +48,14 @@ const RootComponent = () => {
 
 	const detailNavigationContainerRef = useRef<NavigationContainerRef<{}>>(null);
 
-	const windowWidth = Dimensions.get("window").width;
+	// `DeviceInfo.isTablet()` cannot be used here: react-native-device-info caches it
+	// twice over (a module-level memo in `getSupportedPlatformInfoSync({memoKey: "tablet"})`
+	// that only `clearMemo()` clears, plus a constant native snapshot), so an app started
+	// with the fold closed would report `false` forever. Decide on the live window width
+	// instead — `useWindowDimensions` re-renders on every configuration change.
+	const {width: windowWidth} = useWindowDimensions();
 	const showDetail = windowWidth >= 400;
-	const splitEnabled = (tabletMode ?? false) && DeviceInfo.isTablet();
+	const splitEnabled = (tabletMode ?? false) && windowWidth >= 600;
 
 	useEffect(() => {
 		if (studentNotified !== true) {
