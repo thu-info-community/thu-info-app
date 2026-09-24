@@ -22,6 +22,7 @@ import IconLibrary from "../../assets/icons/IconLibrary";
 import zh from "../../assets/translations/zh";
 import {getLocale, getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
+import {useResponsive} from "../../utils/useResponsive";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
@@ -71,6 +72,13 @@ import {InfoHelper} from "@thu-info/lib";
 
 const iconSize = 40;
 
+/** 宫格两侧的固定留白：SectionContainer 12 ×2 + SectionContentContainer 12 ×2。 */
+const FUNCTION_GRID_INSET = 48;
+/** 每格低于这个宽度就少放一列。360dp 起的手机仍然是 5 列。 */
+const MIN_FUNCTION_ITEM_WIDTH = 62;
+const MIN_FUNCTION_COLUMNS = 4;
+const MAX_FUNCTION_COLUMNS = 8;
+
 export const HomeFunctionSection = ({
 	title,
 	children,
@@ -80,6 +88,16 @@ export const HomeFunctionSection = ({
 }) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
+	const {width} = useResponsive();
+	// 固定 5 列时，平板/折叠屏展开会把每个图标撑到 160dp，一行只有五个孤零零的方块。
+	// 改成按可用宽度排满：图标大小和手机上一致，宽屏只是每行多摆几个。
+	const columns = Math.min(
+		MAX_FUNCTION_COLUMNS,
+		Math.max(
+			MIN_FUNCTION_COLUMNS,
+			Math.floor((width - FUNCTION_GRID_INSET) / MIN_FUNCTION_ITEM_WIDTH),
+		),
+	);
 	const functionItems = Array.isArray(children)
 		? children.filter((child: ReactElement | undefined): child is ReactElement =>
 				child !== undefined,
@@ -96,11 +114,11 @@ export const HomeFunctionSection = ({
 					{functionItems === undefined
 						? children
 						: Array.from(
-								{length: Math.ceil(functionItems.length / 5)},
+								{length: Math.ceil(functionItems.length / columns)},
 								(_, rowIndex) => {
 									const rowItems = functionItems.slice(
-										rowIndex * 5,
-										rowIndex * 5 + 5,
+										rowIndex * columns,
+										rowIndex * columns + columns,
 									);
 									return (
 										<View
@@ -114,7 +132,7 @@ export const HomeFunctionSection = ({
 												</View>
 											))}
 											{Array.from(
-													{length: 5 - rowItems.length},
+													{length: columns - rowItems.length},
 													(_spacer, itemIndex) => (
 														<View
 															key={`function-spacer-${rowIndex}-${itemIndex}`}

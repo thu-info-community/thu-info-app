@@ -33,6 +33,9 @@ import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 
+/** 列表宽度上限（dp）：宽屏下把阅读列收窄并居中，而不是让一行文字横跨整个屏幕。 */
+const NEWS_LIST_MAX_WIDTH = 720;
+
 type Category =
 	| "catSubscribed"
 	| "catPublicInformation"
@@ -506,7 +509,15 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 			})()}
 			<FlatList
-				style={{flex: 1, paddingHorizontal: 12, marginVertical: 12, marginBottom: 0}}
+				style={{
+					flex: 1,
+					paddingHorizontal: 12,
+					marginVertical: 12,
+					marginBottom: 0,
+					width: "100%",
+					maxWidth: NEWS_LIST_MAX_WIDTH,
+					alignSelf: "center",
+				}}
 				refreshControl={
 					<ThemedRefreshControl
 						refreshing={refreshing}
