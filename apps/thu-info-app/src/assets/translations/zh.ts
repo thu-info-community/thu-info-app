@@ -326,7 +326,7 @@ export default {
 	autoScoreFailure: "自动打分失败，请检查网络后重试。",
 	autoScoreSuccess: "您已经成功为该课程打满分。",
 	campusFinance: "校园财务",
-	campusCard: "新版校园卡",
+	campusCard: "校园卡",
 	expenditure: "校园卡消费",
 	query: "查询",
 	querying: "查询中",
