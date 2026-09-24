@@ -532,6 +532,7 @@ export default {
 	LM_BM_254_JWGG: "Administrative Notification",
 	LM_BM_282_WKDT: "News of Arts",
 	LM_BM_207_FDYDWJS: "Counselor Team Building",
+	LM_BM_207_TZGG: "Notices",
 	LM_BM_203_XXDT: "News and Information",
 	LM_BM_211_BGTZ: "Notification",
 	LM_BM_211_XYXW: "Campus News",

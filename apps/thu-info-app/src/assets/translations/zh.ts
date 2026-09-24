@@ -503,6 +503,7 @@ export default {
 	LM_BM_254_JWGG: "教务公告",
 	LM_BM_282_WKDT: "文科动态",
 	LM_BM_207_FDYDWJS: "辅导员队伍建设",
+	LM_BM_207_TZGG: "通知公告",
 	LM_BM_203_XXDT: "信息动态",
 	LM_BM_211_BGTZ: "办公通知",
 	LM_BM_211_XYXW: "校园新闻",
