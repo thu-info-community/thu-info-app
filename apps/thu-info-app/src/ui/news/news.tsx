@@ -28,6 +28,7 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
+import {useResponsive} from "../../utils/useResponsive";
 import {getStatusBarHeight} from "react-native-safearea-height";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
@@ -334,6 +335,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [deepseekInput, setDeepseekInput] = useState("");
 
 	const screenHeight = useWindowDimensions();
+	const {isExpanded} = useResponsive();
 
 	return (
 		<KeyboardAvoidingScreen
@@ -509,6 +511,10 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 			})()}
 			<FlatList
+				// `numColumns` 不允许中途改变，所以宽档切换时连 key 一起换。
+				key={isExpanded ? "news-2" : "news-1"}
+				numColumns={isExpanded ? 2 : 1}
+				columnWrapperStyle={isExpanded ? {gap: 12} : undefined}
 				style={{
 					flex: 1,
 					paddingHorizontal: 12,
@@ -596,9 +602,16 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 				data={newsList}
 				keyExtractor={(item) => item.url}
-				renderItem={({item}) => (
-					<NewsListItem item={item} theme={theme} navigation={navigation} />
-				)}
+				renderItem={({item}) =>
+					isExpanded ? (
+						// flex 平分一行；maxWidth 让落单的最后一张仍占半栏而不是整栏。
+						<View style={{flex: 1, maxWidth: "50%"}}>
+							<NewsListItem item={item} theme={theme} navigation={navigation} />
+						</View>
+					) : (
+						<NewsListItem item={item} theme={theme} navigation={navigation} />
+					)
+				}
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>
