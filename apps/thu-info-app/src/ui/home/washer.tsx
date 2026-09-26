@@ -13,21 +13,19 @@ import {
 	fetchJieliFloors,
 	fetchHaileBuildings,
 	fetchHaileFloors,
-	fetchXiaolanBuildings,
 	fetchXiaolanFloors,
 	isWasherFavourite,
 } from "../../utils/washer";
 import type {WasherBuilding as building, WasherBuildingGroup, Washer, WasherFloor as Floor, WasherProvider} from "../../utils/washer";
 
-interface buildingGroup extends WasherBuildingGroup {
-	xiaolan?: boolean;
-}
+type buildingGroup = WasherBuildingGroup;
 
+// Xiaolan Smart is temporarily hidden: its API is unusable, so the provider tab
+// and its building group are not offered. See git history to restore.
 const WASHER_PROVIDERS = [
 	{provider: "all", label: "all"},
 	{provider: "jieli", label: "jieli"},
 	{provider: "haile", label: "haiLeShengHuo"},
-	{provider: "xiaolan", label: "xiaolanSmart"},
 ] as const;
 
 const WASHER_STATUS_LABELS = {
@@ -52,24 +50,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 		buildingGroup[]
 	>([]);
 	const [haileGroups, setHaileGroups] = useState<buildingGroup[]>([]);
-	const [xiaolanBuildings, setXiaolanBuildings] = useState<building[]>([]);
-	const [xiaolanLoading, setXiaolanLoading] = useState(true);
-	const [xiaolanError, setXiaolanError] = useState(false);
-	const [xiaolanReload, setXiaolanReload] = useState(0);
-
-	useEffect(() => {
-		const controller = new AbortController();
-		setXiaolanLoading(true);
-		setXiaolanError(false);
-		fetchXiaolanBuildings(controller.signal).then((buildings) => {
-			if (!controller.signal.aborted) setXiaolanBuildings(buildings);
-		}).catch(() => {
-			if (!controller.signal.aborted) setXiaolanError(true);
-		}).finally(() => {
-			if (!controller.signal.aborted) setXiaolanLoading(false);
-		});
-		return () => controller.abort();
-	}, [xiaolanReload]);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -90,13 +70,11 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	let buildingGroups: buildingGroup[] = [
 		...(selectedProvider === "all" || selectedProvider === "jieli" ? fetchedBuildingGroups : []),
 		...(selectedProvider === "all" || selectedProvider === "haile" ? haileGroups : []),
-		...(selectedProvider === "all" || selectedProvider === "xiaolan"
-			? [{name: getStr("xiaolanSmart"), buildings: xiaolanBuildings, xiaolan: true}]
-			: []),
 	];
 	const favouriteBuildings = new Map<string, building>();
 	for (const favourite of currentFavourites) {
 		const b = favourite.building;
+		if (b.provider === "xiaolan") continue; // unsupported
 		if (selectedProvider !== "all" && b.provider !== selectedProvider) continue;
 		favouriteBuildings.set(`${b.provider}:${b.id}`, b);
 	}
@@ -110,7 +88,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 		];
 	}
 
-	const renderBuildingGroup = ({name, buildings, xiaolan}: buildingGroup) => (
+	const renderBuildingGroup = ({name, buildings}: buildingGroup) => (
 		<View style={{ flexDirection: "column", marginBottom: 32 }}>
 			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
 				<View
@@ -138,18 +116,6 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 					}}
 				/>
 			</View>
-			{xiaolan && (xiaolanLoading || xiaolanError || buildings.length === 0) && (
-				<View style={{alignItems: "center", marginBottom: 16}}>
-					<Text style={{color: theme.colors.text}}>
-						{getStr(xiaolanLoading ? "loading" : xiaolanError ? "loadFail" : "noData")}
-					</Text>
-					{xiaolanError && !xiaolanLoading && (
-						<TouchableOpacity onPress={() => setXiaolanReload((n) => n + 1)} style={{padding: 12}}>
-							<Text style={{color: theme.colors.primary}}>{getStr("washerRetry")}</Text>
-						</TouchableOpacity>
-					)}
-				</View>
-			)}
 			<View
 				style={{
 					flexDirection: "row",
