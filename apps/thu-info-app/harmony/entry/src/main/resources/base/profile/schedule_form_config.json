@@ -14,7 +14,7 @@
       ],
       "defaultDimension": "2*2",
       "updateEnabled": true,
-      "updateDuration": 2,
+      "updateDuration": 4,
       "isDefault": false,
       "resizable": true
     },
@@ -32,7 +32,7 @@
       ],
       "defaultDimension": "2*4",
       "updateEnabled": true,
-      "updateDuration": 4,
+      "updateDuration": 8,
       "isDefault": true,
       "resizable": true
     },
