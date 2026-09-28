@@ -188,6 +188,11 @@ const getText = (e: Element) => {
     return cheerio.load(e).text().trim();
 };
 
+const getNumber = (e: Element | undefined) => {
+    const text = e ? getText(e) : "";
+    return text === "" ? NaN : Number(text);
+};
+
 const parseFooter = ($: CheerioAPI) => {
     const footer = $("p.yeM").toArray()[0] as TagElement;
     if (!footer) {
@@ -237,9 +242,9 @@ export const searchCrRemaining = async (helper: InfoHelper, {
                 id: getText(items[0]),
                 seq: Number(getText(items[1])),
                 name: getText(items[2]),
-                capacity: Number(getText(items[3])),
-                remaining: Number(getText(items[4])),
-                queue: hasQueueInfo ? Number(getText(items[5])) : 0,
+                capacity: getNumber(items[3]),
+                remaining: getNumber(items[4]),
+                queue: hasQueueInfo ? getNumber(items[5]) : NaN,
                 teacher: getText(items[hasQueueInfo ? 6 : 5]),
                 time: getText(items[hasQueueInfo ? 7 : 6]),
             } as CrRemainingInfo;
@@ -299,8 +304,8 @@ export const searchCrPrimaryOpen = async (helper: InfoHelper, {
                 name: getText(items[3]),
                 credits: Number(getText(items[4])),
                 teacher: getText(items[5]),
-                bksCap: Number(getText(items[6])),
-                yjsCap: Number(getText(items[8])),
+                bksCap: getNumber(items[6]),
+                yjsCap: getNumber(items[8]),
                 time: getText(items[10]),
                 note: getText(items[11]),
                 feature: getText(items[12]),
@@ -326,16 +331,20 @@ export const searchCrCourses = async (helper: InfoHelper, params: SearchParams):
     "cr",
     "",
     async () => {
-        const [remaining, primaryOpen] = await Promise.all([searchCrRemaining(helper, params), searchCrPrimaryOpen(helper, params)]);
+        // Both searches use the same CR endpoint; keep their requests in order.
+        const primaryOpen = await searchCrPrimaryOpen(helper, params);
+        const remaining = await searchCrRemaining(helper, params);
+        const graduate = helper.graduate();
         return {
             currPage: primaryOpen.currPage,
             totalPage: primaryOpen.totalPage,
             totalCount: primaryOpen.totalCount,
-            courses: primaryOpen.courses.map((e) => {
-                const remainingInfo = remaining.courses.find((r) => r.id === e.id && r.seq === e.seq);
+            courses: primaryOpen.courses.map((course) => {
+                const remainingInfo = remaining.courses.find((r) => r.id === course.id && r.seq === course.seq);
+                const capacity = graduate ? course.yjsCap : course.bksCap;
                 return {
-                    ...e,
-                    capacity: remainingInfo?.capacity ?? NaN,
+                    ...course,
+                    capacity: remainingInfo?.capacity ?? capacity,
                     remaining: remainingInfo?.remaining ?? NaN,
                     queue: remainingInfo?.queue ?? NaN,
                 };
