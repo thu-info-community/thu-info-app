@@ -6,7 +6,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {Snackbar} from "react-native-snackbar";
 import {helper} from "../../redux/store";
@@ -26,14 +26,19 @@ export const CrSearchResultScreen = ({
 	const [page, setPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number | undefined>();
 	const [refreshing, setRefreshing] = useState(false);
+	const requestInFlight = useRef(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const refresh = (force: boolean) => {
-		if (!force && totalPage !== undefined && page >= totalPage) {
+		if (
+			requestInFlight.current ||
+			(!force && (totalPage === undefined || page >= totalPage))
+		) {
 			return;
 		}
+		requestInFlight.current = true;
 		setRefreshing(true);
 		helper
 			.searchCrCourses({
@@ -46,13 +51,17 @@ export const CrSearchResultScreen = ({
 				setPage(r.currPage);
 			})
 			.catch(NetworkRetry)
-			.then(() => setRefreshing(false));
+			.finally(() => {
+				requestInFlight.current = false;
+				setRefreshing(false);
+			});
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => refresh(true), []);
 
 	return (
 		<FlatList
+			testID="cr-search-results"
 			style={{flex: 1}}
 			data={searchResult}
 			refreshControl={
@@ -101,10 +110,12 @@ export const CrSearchResultScreen = ({
 							{getStr("courseTime")} {time}
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseRemaining")} {remaining}/{capacity}
+							{getStr("courseRemaining")}{" "}
+							{Number.isFinite(remaining) ? remaining : "--"}/
+							{Number.isFinite(capacity) ? capacity : "--"}
 						</Text>
 						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseQueue")} {queue}
+							{getStr("courseQueue")} {Number.isFinite(queue) ? queue : "--"}
 						</Text>
 					</View>
 					<View

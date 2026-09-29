@@ -38,9 +38,9 @@ export interface CrRemainingInfo {
     id: string;        // 课程号
     seq: number;       // 课序号
     name: string;      // 课程名
-    capacity: number;  // 课容量
-    remaining: number; // 课余量
-    queue: number;     // 队列人数
+    capacity: number;  // 课容量，NaN 表示未知
+    remaining: number; // 课余量，NaN 表示未知
+    queue: number;     // 队列人数，NaN 表示未知
     teacher: string;   // 任课老师
     time: string;      // 上课时间
 }
