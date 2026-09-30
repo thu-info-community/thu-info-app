@@ -99,6 +99,124 @@ export const getCsrfToken = async () => {
 
 let outstandingLoginPromise: Promise<void> | undefined = undefined;
 
+/**
+ * Builds the credential `POST` body for the unified ID system.
+ *
+ * `scheme` selects the field names: `/do/off/ui/auth/login/check` expects
+ * `i_user` / `i_pass`, while `/security_check` (the `id_website` policy) expects
+ * `username` / `password`. Mixing them up silently breaks the target system, so
+ * the mapping lives here rather than at every call site.
+ *
+ * The upstream login form also carries the "trusted browser" checkbox
+ * `singleLogin` — checked by default, labelled "本次登录使用信任浏览器访问校内其他系统时
+ * 不必再输入账号密码（统一登录）" — which makes the resulting ID session reusable by
+ * other campus systems without a password (see {@link passwordlessEntry}).
+ * `fingerGenPrint` is deliberately left empty: the field is a browser-only
+ * device token that the ID platform does not require for the trusted flow, and
+ * this library has no browser to generate a stable one from.
+ */
+export const __idCredentialFormForTest = async (
+    helper: InfoHelper,
+    publicKey: string,
+    password: string,
+    scheme: "i_user" | "username",
+): Promise<{ [key: string]: string }> => {
+    const form: { [key: string]: string } = {
+        [scheme === "i_user" ? "i_user" : "username"]: helper.userId,
+        [scheme === "i_user" ? "i_pass" : "password"]: SM2_MAGIC_NUMBER + sm2.doEncrypt(password, publicKey),
+        fingerPrint: helper.fingerprint,
+        fingerGenPrint: "",
+        i_captcha: "",
+    };
+    if (helper.trustBrowser) {
+        // A checked checkbox submits "on". Both fields must be absent rather
+        // than `undefined`: `stringify` iterates over the keys and would
+        // otherwise serialize the literal string "undefined".
+        form.singleLogin = "on";
+        form.deviceName = await helper.trustFingerprintNameHook();
+    }
+    return form;
+};
+
+/**
+ * Logs in without a password, reusing the trusted-browser state of a live ID
+ * session.
+ *
+ * When the session was created with `singleLogin`, the ID platform answers the
+ * login entry page with a small auto-submitting form instead of the credential
+ * form: the OAuth entry targets `/do/off/ui/auth/login/checkSingle`, the `/f/`
+ * entry (`id_website`) targets `/security_check`. Neither accepts a password —
+ * the fingerprint registered as a trusted device is enough — so the submission
+ * is built from the page itself rather than from a hard-coded URL, which also
+ * keeps the two entries working without knowing which one we were served. This
+ * is what keeps `roam()` from re-sending the password for every campus system it
+ * enters.
+ *
+ * The response has the same shape as the one from `ID_LOGIN_URL`, so callers can
+ * follow their usual redirect/`<a href>` handling. Returns `null` when the
+ * platform did not grant the passwordless path — no trusted-browser form on the
+ * page, or the fingerprint was not accepted — in which case the caller keeps its
+ * previous behaviour (throwing, as there is no public key to encrypt with).
+ */
+export const passwordlessEntry = async (helper: InfoHelper, entryHtml: string): Promise<string | null> => {
+    if (!helper.trustBrowser) {
+        return null;
+    }
+    const $ = cheerio.load(entryHtml);
+    const form = $("form")
+        .filter((_i, f) => $(f).find("input[name='fingerPrint']").length > 0)
+        .first();
+    const action = form.attr("action");
+    if (action === undefined) {
+        return null;
+    }
+    // The form submits itself with a script that fills in the fingerprint, so
+    // take the field list from the markup: `checkSingle` carries `i_rememberme=on`
+    // on top of the fingerprint, `/security_check` carries nothing else.
+    const body: { [key: string]: string } = {};
+    form.find("input[name]").each((_i, input) => {
+        const name = $(input).attr("name")!;
+        body[name] = name === "fingerPrint" ? helper.fingerprint : $(input).attr("value") ?? "";
+    });
+    let response: string;
+    try {
+        // Resolved against the ID platform rather than the entry page: the action
+        // is root-relative, and this is where the ID session cookie lives (the
+        // `cr` entry is served through WebVPN, so the two differ).
+        response = await uFetch(action.startsWith("/") ? ID_HOST_URL + action : action, body);
+    } catch {
+        return null;
+    }
+    // A fingerprint the platform does not trust is answered with the credential
+    // form again, i.e. nothing was granted.
+    return response.includes("sm2publicKey") ? null : response;
+};
+
+/**
+ * Obtains the login response for the unified ID system, preferring the
+ * passwordless path when the live session is trusted.
+ *
+ * `entryHtml` is the login entry page the caller has already fetched: an empty
+ * public key means the platform served the trusted-browser form instead of the
+ * credential form, so there is nothing to encrypt a password with.
+ */
+const idLoginResponse = async (
+    helper: InfoHelper,
+    entryHtml: string,
+    idLoginUrl: string,
+    scheme: "i_user" | "username",
+): Promise<string> => {
+    const sm2PublicKey = cheerio.load(entryHtml)("#sm2publicKey").text();
+    if (sm2PublicKey === "") {
+        const passwordless = await passwordlessEntry(helper, entryHtml);
+        if (passwordless === null) {
+            throw new LoginError("Failed to get public key.");
+        }
+        return passwordless;
+    }
+    return await uFetch(idLoginUrl, await __idCredentialFormForTest(helper, sm2PublicKey, helper.password, scheme));
+};
+
 const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     const { result: r1, msg: m1, object: o1 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
         action: "FIND_APPROACHES",
@@ -177,12 +295,12 @@ export const login = async (
         await helper.clearCookieHandler();
         if (outstandingLoginPromise === undefined) {
             outstandingLoginPromise = new Promise<void>((resolve, reject) => {
-                setTimeout(() => {
+                const timeoutEvent = setTimeout(() => {
                     reject(new LoginError("Login timeout."));
                 }, 3 * 60 * 1000);
                 (async () => {
                     await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
-                    let sm2PublicKey = "";
+                    let entryHtml = "";
                     if (getRedirectLocation) {
                         // Patch for OpenHarmony
                         const oauthUrl = await getRedirectLocation(WEB_VPN_OAUTH_LOGIN_URL);
@@ -194,20 +312,11 @@ export const login = async (
                         if (!idUrl) {
                             throw new LoginError("Failed to get id url.");
                         }
-                        sm2PublicKey = cheerio.load(await uFetch(idUrl))("#sm2publicKey").text();
+                        entryHtml = await uFetch(idUrl);
                     } else {
-                        sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
+                        entryHtml = await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
                     }
-                    if (sm2PublicKey === "") {
-                        throw new LoginError("Failed to get public key.");
-                    }
-                    let response = await uFetch(ID_LOGIN_URL, {
-                        i_user: helper.userId,
-                        i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                        fingerPrint: helper.fingerprint,
-                        fingerGenPrint: "",
-                        i_captcha: "",
-                    });
+                    let response = await idLoginResponse(helper, entryHtml, ID_LOGIN_URL, "i_user");
                     if (response.includes("二次认证")) {
                         response = await twoFactorAuth(helper);
                     }
@@ -226,11 +335,18 @@ export const login = async (
                     }
                     await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
                     outstandingLoginPromise = undefined;
-                })().then(resolve, (e: any) => {
-                    helper.loginErrorHook && helper.loginErrorHook(e);
-                    outstandingLoginPromise = undefined;
-                    reject(e);
-                });
+                })().then(
+                    (r) => {
+                        clearTimeout(timeoutEvent);
+                        resolve(r);
+                    },
+                    (e: any) => {
+                        clearTimeout(timeoutEvent);
+                        helper.loginErrorHook && helper.loginErrorHook(e);
+                        outstandingLoginPromise = undefined;
+                        reject(e);
+                    },
+                );
             });
         }
         await outstandingLoginPromise;
@@ -282,27 +398,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let response = "";
         const target = policy === "id_website" ? "账号设置" : "登录成功。正在重定向到";
         for (let i = 0; i < 2; i++) {
-            const sm2PublicKey = cheerio.load(await uFetch(policy === "cr" ? CR_LOGIN_HOME_URL : (idBaseUrl + payload)))("#sm2publicKey").text();
-            if (sm2PublicKey === "") {
-                throw new LoginError("Failed to get public key.");
-            }
-            if (policy === "id_website") {
-                response = await uFetch(idLoginUrl, {
-                    username: helper.userId,
-                    password:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                    fingerPrint: helper.fingerprint,
-                    fingerGenPrint: "",
-                    i_captcha: "",
-                });
-            } else {
-                response = await uFetch(idLoginUrl, {
-                    i_user: helper.userId,
-                    i_pass:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                    fingerPrint: helper.fingerprint,
-                    fingerGenPrint: "",
-                    i_captcha: "",
-                });
-            }
+            const entryHtml = await uFetch(policy === "cr" ? CR_LOGIN_HOME_URL : (idBaseUrl + payload));
+            response = await idLoginResponse(helper, entryHtml, idLoginUrl, policy === "id_website" ? "username" : "i_user");
             if (response.includes("二次认证")) {
                 response = await twoFactorAuth(helper);
             }
@@ -334,17 +431,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const data = await uFetch(GITLAB_LOGIN_URL);
         if (data.includes("sign_out")) return data;
         const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr()!.value;
-        const sm2PublicKey = cheerio.load(await uFetch(GITLAB_AUTH_URL, {authenticity_token}))("#sm2publicKey").text();
-        if (sm2PublicKey === "") {
-            throw new LoginError("Failed to get public key.");
-        }
-        let response = await uFetch(ID_LOGIN_URL, {
-            i_user: helper.userId,
-            i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-            fingerPrint: helper.fingerprint,
-            fingerGenPrint: "",
-            i_captcha: "",
-        });
+        const entryHtml = await uFetch(GITLAB_AUTH_URL, {authenticity_token});
+        let response = await idLoginResponse(helper, entryHtml, ID_LOGIN_URL, "i_user");
         if (response.includes("二次认证")) {
             response = await twoFactorAuth(helper);
         }
