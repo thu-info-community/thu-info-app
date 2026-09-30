@@ -1,12 +1,10 @@
 import { InfoHelper } from "../index";
-import { roamingWrapperWithMocks } from "./core";
-import { stringify, uFetch } from "../utils/network";
+import { roamingWrapper, roamingWrapperWithMocks } from "./core";
+import { uFetch } from "../utils/network";
 import * as cheerio from "cheerio";
 import { LibError, UseregAuthError } from "../utils/error";
 import {
-    NETWORK_VERIFICATION_CODE_URL,
     NETWORK_LOGIN_URL,
-    NETWORK_VALIDATE_USER_URL,
     NETWORK_HOME_URL,
     NETWORK_HOME_DELETE_URL,
     NETWORK_IMPORT_DEVICE_URL,
@@ -15,22 +13,18 @@ import {
 } from "../constants/strings";
 import { Device } from "../models/network/device";
 import { Balance } from "../models/network/balance";
-import { JSEncrypt } from "jsencrypt";
 import { AccountInfo } from "../models/network/account";
 
-export const webVPNTitle = "<title>清华大学WebVPN</title>";
+const webVPNTitle = "<title>清华大学WebVPN</title>";
 
-// Refresh and get verification code
-export const getNetworkVerificationImageUrl = async (helper: InfoHelper): Promise<string> => {
-    if (helper.mocked()) {
-        return "";
-    }
+// Roaming entry (yyfwid) of the usereg network self-service platform in the
+// information portal. Used with RoamingPolicy "default": the portal hands out an
+// SSO redirect into usereg, so no captcha is involved.
+export const NETWORK_ROAM_ID = "66D157166A3E5EEB3C558B66803B2929";
 
-    await uFetch(NETWORK_VERIFICATION_CODE_URL + "?refresh=1");
-    return NETWORK_VERIFICATION_CODE_URL + "?_=" + new Date().getTime();
-};
-
-
+// Probe whether usereg serves us an authenticated page. Throwing
+// `UseregAuthError` here is what makes the surrounding roaming wrapper roam into
+// usereg through the information portal and retry the operation.
 const ensureNetworkLoggedIn = async (): Promise<void> => {
     const resp = await uFetch(NETWORK_LOGIN_URL);
     if (resp.includes(webVPNTitle)) {
@@ -40,56 +34,10 @@ const ensureNetworkLoggedIn = async (): Promise<void> => {
     }
 };
 
-
-export const loginUsereg = async (helper: InfoHelper, code: string): Promise<void> => {
-    const $ = cheerio.load(await uFetch(NETWORK_LOGIN_URL));
-    const csrfToken = $("meta[name=csrf-token]").attr("content");
-    if (!csrfToken) {
-        throw new Error("Failed to get csrf token.");
-    }
-    const rsa_pubkey_str = $("#public").val() as string;
-    const rsa_pubkey = new JSEncrypt();
-    rsa_pubkey.setPublicKey(rsa_pubkey_str);
-
-    const {emailName} = await helper.getUserInfo();
-    const password = rsa_pubkey.encrypt(helper.password);
-
-    const result = await (await fetch(NETWORK_VALIDATE_USER_URL, {
-        method: "POST",
-        headers: {
-            "X-CSRF-Token": csrfToken,
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        body: stringify({
-            "LoginForm[username]": emailName,
-            "LoginForm[password]": password,
-            "LoginForm[verifyCode]": code,
-        }),
-    })).json();
-
-    if (result.success !== true) {
-        throw new LibError(result.message);
-    }
-
-    const csrfInput = $("input[name=_csrf-8800]").attr("value");
-    if (!csrfInput) {
-        throw new Error("Failed to get csrf token.");
-    }
-
-    await uFetch(NETWORK_LOGIN_URL, {
-        "_csrf-8800": csrfInput,
-        "LoginForm[username]": emailName,
-        "LoginForm[password]": password,
-        "LoginForm[smsCode]": "",
-        "LoginForm[verifyCode]": code,
-    });
-};
-
 export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> => roamingWrapperWithMocks(
     helper,
-    undefined,
-    "",
+    "default",
+    NETWORK_ROAM_ID,
     async () => {
         await ensureNetworkLoggedIn();
         const ret: Device[] = [];
@@ -133,8 +81,8 @@ export const getOnlineDevices = async (helper: InfoHelper): Promise<Device[]> =>
 export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
     roamingWrapperWithMocks(
         helper,
-        undefined,
-        "",
+        "default",
+        NETWORK_ROAM_ID,
         async () => {
             await ensureNetworkLoggedIn();
             const resp = await uFetch(NETWORK_HOME_URL);
@@ -159,7 +107,7 @@ export const getNetworkBalance = async (helper: InfoHelper): Promise<Balance> =>
 
 export const getNetworkAccountInfo = async (helper: InfoHelper): Promise<AccountInfo> =>
     roamingWrapperWithMocks(
-        helper, undefined, "", async () => {
+        helper, "default", NETWORK_ROAM_ID, async () => {
             await ensureNetworkLoggedIn();
             const $home = cheerio.load(await uFetch(NETWORK_HOME_URL));
             const status = $home(".glyphicon-info-sign").parent().children("a").text().trim();
@@ -198,42 +146,44 @@ export const getNetworkAccountInfo = async (helper: InfoHelper): Promise<Account
             "allowedDevices": 8,
         });
 
-export const logoutNetwork = async (device: Device): Promise<void> => {
-    await ensureNetworkLoggedIn();
-    const $ = cheerio.load(await uFetch(NETWORK_HOME_URL));
-    const csrfToken = $("input[name=_csrf-8800]").attr("value");
-    const resp = await uFetch(NETWORK_HOME_DELETE_URL.replace("{id}", device.key.toString()).replace("{mac}", device.mac), {
-        "_csrf-8800": csrfToken,
+export const logoutNetwork = async (helper: InfoHelper, device: Device): Promise<void> =>
+    roamingWrapper(helper, "default", NETWORK_ROAM_ID, async () => {
+        await ensureNetworkLoggedIn();
+        const $ = cheerio.load(await uFetch(NETWORK_HOME_URL));
+        const csrfToken = $("input[name=_csrf-8800]").attr("value");
+        const resp = await uFetch(NETWORK_HOME_DELETE_URL.replace("{id}", device.key.toString()).replace("{mac}", device.mac), {
+            "_csrf-8800": csrfToken,
+        });
+
+        if (!resp.includes("w5-success-0")) {
+            const $2 = cheerio.load(resp);
+            throw new LibError($2("#w5-danger-0").text().split("\n\n")[1]);
+        }
     });
 
-    if (!resp.includes("w5-success-0")) {
-        const $2 = cheerio.load(resp);
-        throw new LibError($2("#w5-danger-0").text().split("\n\n")[1]);
-    }
-};
+export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<string> =>
+    roamingWrapper(helper, "default", NETWORK_ROAM_ID, async () => {
+        await ensureNetworkLoggedIn();
 
-export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<string> => {
-    await ensureNetworkLoggedIn();
+        const $ = cheerio.load(await uFetch(NETWORK_IMPORT_DEVICE_URL));
+        const csrfToken = $("input[name=_csrf-8800]").attr("value");
 
-    const $ = cheerio.load(await uFetch(NETWORK_IMPORT_DEVICE_URL));
-    const csrfToken = $("input[name=_csrf-8800]").attr("value");
+        const resp = cheerio.load(await uFetch(NETWORK_IMPORT_DEVICE_URL, {
+            "_csrf-8800": csrfToken,
+            "CertificationForm[ip]": ip,
+            "CertificationForm[password]": helper.password,
+            "CertificationForm[type]": internet ? "out" : "in",
+        }));
 
-    const resp = cheerio.load(await uFetch(NETWORK_IMPORT_DEVICE_URL, {
-        "_csrf-8800": csrfToken,
-        "CertificationForm[ip]": ip,
-        "CertificationForm[password]": helper.password,
-        "CertificationForm[type]": internet ? "out" : "in",
-    }));
+        if (resp("#w0-success-0").length > 0) {
+            return resp("#w0-success-0").text().split("\n\n")[1];
+        }
 
-    if (resp("#w0-success-0").length > 0) {
-        return resp("#w0-success-0").text().split("\n\n")[1];
-    }
+        else if (resp("#w0-error-0").length > 0) {
+            throw new LibError(resp("#w0-error-0").text().split("\n\n")[1]);
+        }
 
-    else if (resp("#w0-error-0").length > 0) {
-        throw new LibError(resp("#w0-error-0").text().split("\n\n")[1]);
-    }
-
-    else {
-        throw new LibError("Unknown error.");
-    }
-};
+        else {
+            throw new LibError("Unknown error.");
+        }
+    });

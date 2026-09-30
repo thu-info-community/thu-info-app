@@ -19,7 +19,6 @@ import themes from "../../assets/themes/themes";
 import { RoundedView } from "../../components/views";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { styles } from "../settings/settings";
-import { UseregAuthError } from "@thu-info/lib/src/utils/error.ts";
 import { NetworkRetry } from "../../components/easySnackbars.ts";
 import { RootNav } from "../../components/Root.tsx";
 
@@ -136,13 +135,7 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 		helper
 			.getOnlineDevices()
 			.then(setDevices)
-			.catch((e) => {
-				if (e instanceof UseregAuthError) {
-					navigation.navigate("NetworkLogin");
-				} else {
-					NetworkRetry(e);
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
 	useEffect(refresh, [navigation]);

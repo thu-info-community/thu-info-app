@@ -281,12 +281,8 @@ export const APP_SOCKET_STATUS_URL =
     "https://app.cs.tsinghua.edu.cn/api/socket";
 export const APP_PRIVACY_URL =
     "https://app.cs.tsinghua.edu.cn/privacy";
-export const NETWORK_VERIFICATION_CODE_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/site/captcha";
 export const NETWORK_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/login";
-export const NETWORK_VALIDATE_USER_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/site/validate-user";
 export const NETWORK_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/home";
 export const NETWORK_HOME_DELETE_URL =

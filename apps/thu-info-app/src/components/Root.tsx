@@ -132,7 +132,6 @@ import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
-import { NetworkLoginScreen } from "../ui/home/networkLogin.tsx";
 import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
 import {ThosScreen, ThosPortalScreen} from "../ui/home/thos";
 import {ThosServiceDetailScreen, ThosTaskDetailScreen} from "../ui/home/thosDetail";
@@ -317,7 +316,6 @@ type HomeStackParamList = {
 	EleRecord: undefined;
 	ScheduleDetail: ScheduleDetailProps;
 	Network: undefined;
-	NetworkLogin: undefined;
 	NetworkDetail: undefined;
 	OnlineDevices: undefined;
 	SchoolCalendar: undefined;
@@ -813,11 +811,6 @@ export const Root = () => {
 				name="Network"
 				component={NetworkScreen}
 				options={{title: getStr("network")}}
-			/>
-			<Stack.Screen
-				name="NetworkLogin"
-				component={NetworkLoginScreen}
-				options={{title: getStr("networkLogin")}}
 			/>
 			<Stack.Screen
 				name="NetworkDetail"
