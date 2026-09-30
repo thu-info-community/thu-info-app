@@ -23,6 +23,7 @@ import {
     SWITCH_LANG_URL,
     CALENDAR_IMAGE_URL,
     CALENDAR_YEAR_URL,
+    ID_ACCOUNT_SETTINGS_URL,
     LEARN_HOME_URL,
     YJS_REPORT_BXR_URL,
     GRADUATE_INCOME_URL,
@@ -49,6 +50,7 @@ import {
     MOCK_INVOICE_DATA,
     MOCK_PHYSICAL_EXAM_RESULT,
     MOCK_REPORT,
+    MOCK_USER_INFO,
     SAMPLE_INVOICE_BASE64,
 } from "../mocks/basics";
 import {
@@ -60,6 +62,7 @@ import {
 } from "../utils/error";
 import {BankPayment, BankPaymentByMonth, GraduateIncome} from "../models/home/bank";
 import {CalendarData, Semester} from "../models/schedule/calendar";
+import {UserInfo} from "../models/id/account";
 import {Invoice} from "../models/home/invoice";
 import {Classroom, ClassroomState, ClassroomStateResult, ClassroomStatus} from "../models/home/classroom";
 import dayjs from "dayjs";
@@ -69,33 +72,56 @@ type TagElement = Element & {type: ElementType.Tag};
 export const webVPNTitle = "<title>清华大学WebVPN</title>";
 export const systemMessage = "time out用户登陆超时或访问内容不存在。请重试";
 
-export const getUserInfo = async (helper: InfoHelper): Promise<{
-    fullName: string;
-    emailName: string;
-}> =>
+/**
+ * Extract the identity of the logged-in user from the account settings page
+ * of the THU unified ID system.
+ *
+ * The page embeds the account object in an inline script:
+ * `$.extend(uidm, {"ss": {"account": {...}, "props": {...}}, "now": ...});`
+ * The account object is flat, so `[^}]*` captures it exactly. The
+ * unauthenticated `/f/login` page renders the same `$.extend(uidm, ...)`
+ * script but with no `"account"` key (and `"authenticated":false`), which is
+ * what makes `"account"` a safe discriminator.
+ */
+export const __parseUserInfoForTest = (html: string): UserInfo => {
+    const accountRes = /"account"\s*:\s*(\{[^}]*\})/.exec(html);
+    if (accountRes === null || accountRes[1] === undefined) {
+        throw new UserInfoError();
+    }
+    let account: any;
+    try {
+        account = JSON.parse(accountRes[1]);
+    } catch {
+        throw new UserInfoError();
+    }
+    // `username` is load-bearing: the usereg login uses it as
+    // `LoginForm[username]` and the library room booking builds an address
+    // from it. A JSON null (not just undefined) must not slip through, or
+    // consumers receive null / `"null@mails.tsinghua.edu.cn"`.
+    if (typeof account.username !== "string" || account.username === "") {
+        throw new UserInfoError();
+    }
+    if (typeof account.realName !== "string") {
+        throw new UserInfoError();
+    }
+    return {
+        userId: account.userId ?? "",
+        username: account.username,
+        fullName: account.realName,
+        emailName: account.username,
+        deptString: account.deptString ?? "",
+        phone: account.phone ?? "",
+    };
+};
+
+export const getUserInfo = async (helper: InfoHelper): Promise<UserInfo> =>
     roamingWrapperWithMocks(
         helper,
-        "default",
-        "F315577F5BF20E1B1668EDD594B2C04F",
-        async (param) => {
-            if (param === undefined) {
-                throw new LibError();
-            } else {
-                const nameRes = /'name':'(.+?)'/g.exec(param);
-                if (nameRes === null || nameRes[1] === undefined) {
-                    throw new UserInfoError();
-                }
-                const emailRes = /'addr':'(.+?)@mails.tsinghua.edu.cn'/g.exec(param);
-                if (emailRes === null || emailRes[1] === undefined) {
-                    throw new UserInfoError();
-                }
-                return {fullName: nameRes[1], emailName: emailRes[1]};
-            }
-        },
-        {
-            fullName: "",
-            emailName: "",
-        },
+        "id_website",
+        "",
+        async (param) =>
+            __parseUserInfoForTest(param ?? await uFetch(ID_ACCOUNT_SETTINGS_URL)),
+        MOCK_USER_INFO,
     );
 
 export const naiveSendMail = async (helper: InfoHelper, subject: string, content: string, recipient: string): Promise<void> =>
