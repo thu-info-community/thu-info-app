@@ -11,7 +11,6 @@ import {
 } from "react-native-gesture-handler";
 import {useIsFocused} from "@react-navigation/native";
 import {RoundedView} from "../../components/views";
-import {UseregAuthError} from "@thu-info/lib/src/utils/error";
 import {RootNav} from "../../components/Root";
 import {Balance} from "@thu-info/lib/src/models/network/balance";
 import {AccountInfo} from "@thu-info/lib/src/models/network/account";
@@ -32,20 +31,16 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 		}
 		setRefreshing(true);
 		(async () => {
-			const [b, a] = await Promise.all([
-				helper.getNetworkBalance(),
-				helper.getNetworkAccountInfo(),
-			]);
+			// Sequential on purpose: on a cold usereg session both calls would fail
+			// their login probe and roam into usereg concurrently, and two parallel
+			// SSO entries can invalidate each other. The first call establishes the
+			// session for the second.
+			const b = await helper.getNetworkBalance();
+			const a = await helper.getNetworkAccountInfo();
 			setBalance(b);
 			setAccountInfo(a);
 		})()
-			.catch((e) => {
-				if (e instanceof UseregAuthError) {
-					navigation.navigate("NetworkLogin");
-				} else {
-					NetworkRetry(e);
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
 

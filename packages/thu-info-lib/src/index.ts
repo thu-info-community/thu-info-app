@@ -130,11 +130,9 @@ import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {
     getNetworkBalance,
     getNetworkAccountInfo,
-    getNetworkVerificationImageUrl,
     getOnlineDevices,
     loginNetwork,
     logoutNetwork,
-    loginUsereg,
 } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {prepareThosSession, getThosTasks, getThosServices} from "./lib/thos-services";
@@ -1005,17 +1003,13 @@ export class InfoHelper {
 
     public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
 
-    public getNetworkVerificationImageUrl = async () => getNetworkVerificationImageUrl(this);
-
-    public loginUsereg = async (code: string) => loginUsereg(this, code);
-
     public getOnlineDevices = async () => getOnlineDevices(this);
 
     public getNetworkBalance = async () => getNetworkBalance(this);
 
     public getNetworkAccountInfo = async () => getNetworkAccountInfo(this);
 
-    public logoutNetworkDevice = async (device: Device) => logoutNetwork(device);
+    public logoutNetworkDevice = async (device: Device) => logoutNetwork(this, device);
 
     public loginNetworkDevice = async (ip: string, internet: boolean) => loginNetwork(this, ip, internet);
 

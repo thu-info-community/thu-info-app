@@ -94,8 +94,7 @@ export const __parseUserInfoForTest = (html: string): UserInfo => {
     } catch {
         throw new UserInfoError();
     }
-    // `username` is load-bearing: the usereg login uses it as
-    // `LoginForm[username]` and the library room booking builds an address
+    // `username` is load-bearing: the library room booking builds an address
     // from it. A JSON null (not just undefined) must not slip through, or
     // consumers receive null / `"null@mails.tsinghua.edu.cn"`.
     if (typeof account.username !== "string" || account.username === "") {
