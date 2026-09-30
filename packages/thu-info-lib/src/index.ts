@@ -159,6 +159,20 @@ export class InfoHelper {
     public fingerprint = "";
 
     /**
+     * Whether to ask the unified ID system to trust this install.
+     *
+     * The upstream login form checks "信任浏览器" by default: it makes the
+     * resulting ID session reusable by other campus systems without entering
+     * the account and password again, which is what allows `roam()` to enter a
+     * subsystem without re-sending the password.
+     *
+     * Mirror the upstream default by leaving this `true`. Setting it to `false`
+     * makes the ID session a one-shot one, and roaming falls back to submitting
+     * the password again.
+     */
+    public trustBrowser = true;
+
+    /**
      * Mock account and password.
      *
      * Due to various reasons, consumers of this library might hope to get
