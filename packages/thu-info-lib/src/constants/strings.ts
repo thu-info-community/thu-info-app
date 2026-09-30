@@ -14,6 +14,9 @@ export const DOUBLE_AUTH_URL = "https://id.tsinghua.edu.cn/b/doubleAuth/login";
 export const SAVE_FINGER_URL = "https://id.tsinghua.edu.cn/b/doubleAuth/personal/saveFinger";
 export const ID_WEBSITE_BASE_URL = "https://id.tsinghua.edu.cn/f/login";
 export const ID_WEBSITE_LOGIN_URL = "https://id.tsinghua.edu.cn/security_check";
+// Account settings page of the unified ID system. Also the page returned by
+// `roam(helper, "id_website", "")` after a successful `/security_check` POST.
+export const ID_ACCOUNT_SETTINGS_URL = "https://id.tsinghua.edu.cn/f/account/settings";
 export const CHECK_CURRENT_DEVICE_URL = "https://id.tsinghua.edu.cn/b/account/checkCurrentDeviceIfNeedAdd?currentFinger={fingerprint}&device_gen_finger_print=null";
 export const GET_DEVICE_LIST_URL = "https://id.tsinghua.edu.cn/b/account/getDeviceList";
 export const DELETE_DEVICE_URL = "https://id.tsinghua.edu.cn/b/account/deleteDevice";

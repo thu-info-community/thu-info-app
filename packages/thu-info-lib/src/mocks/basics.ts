@@ -3,6 +3,16 @@ import {BankPaymentByMonth, GraduateIncome} from "../models/home/bank";
 import {CalendarData} from "../models/schedule/calendar";
 import {Invoice} from "../models/home/invoice";
 import {ClassroomStateResult} from "../models/home/classroom";
+import {UserInfo} from "../models/id/account";
+
+export const MOCK_USER_INFO: UserInfo = {
+    userId: "",
+    username: "",
+    fullName: "",
+    emailName: "",
+    deptString: "",
+    phone: "",
+};
 
 export const MOCK_REPORT = [
     {

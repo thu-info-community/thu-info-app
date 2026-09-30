@@ -330,8 +330,10 @@ export class InfoHelper {
     public switchLang = async (lang: "zh" | "en"): Promise<void> => switchLang(this, lang);
 
     /**
-     * Get the user's full name and email name (i.e. username for email
-     * account)
+     * Get the identity information of the logged-in user from the THU
+     * unified ID system: full name, email name (i.e. username for email
+     * account), student / staff ID, account name, department and phone
+     * number.
      */
     public getUserInfo = async () => getUserInfo(this);
 
