@@ -6,7 +6,6 @@ import {
 	StyleSheet,
 	Text,
 	useColorScheme,
-	useWindowDimensions,
 	View,
 } from "react-native";
 import Pdf from "react-native-pdf";
@@ -25,7 +24,6 @@ export const ReservesLibPDFScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const {width, height} = useWindowDimensions();
 
 	const [content, setContent] = useState<string>();
 	const [total, setTotal] = useState(0);
@@ -93,7 +91,7 @@ export const ReservesLibPDFScreen = ({
 				</Text>
 			)}
 			{content !== undefined && (
-				<Pdf style={[styles.pdf, {width, height}]} source={{uri: content}} />
+				<Pdf style={styles.pdf} source={{uri: content}} />
 			)}
 		</View>
 	);
@@ -103,8 +101,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: "flex-start",
-		alignItems: "center",
-		marginTop: 25,
+		alignItems: "stretch",
 	},
 	pdf: {
 		flex: 1,

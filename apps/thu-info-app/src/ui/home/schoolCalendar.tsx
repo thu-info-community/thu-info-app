@@ -6,7 +6,7 @@ import {getStr} from "../../utils/i18n";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
-import ImageViewer from "react-native-image-zoom-viewer";
+import {ResponsiveImageViewer} from "../../components/ResponsiveImageViewer";
 import {saveImg} from "../../utils/saveImg";
 import {useSelector} from "react-redux";
 
@@ -54,7 +54,7 @@ export const SchoolCalendar = () => {
 		<View style={{flex: 1, padding: 16}}>
 			<RoundedView style={{marginVertical: 16, flex: 1}}>
 				{src !== "" && !error && (
-					<ImageViewer
+						<ResponsiveImageViewer
 						imageUrls={[{url: src}]}
 						style={{marginHorizontal: 10, borderRadius: 8}}
 						backgroundColor={colors.contentBackground}

@@ -1,7 +1,7 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {Text, useColorScheme, View} from "react-native";
+import {ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {DigitalPasswordRouteProp, RootNav} from "../../components/Root";
@@ -75,107 +75,124 @@ export const DigitalPasswordScreen = ({
 	}, []);
 
 	return (
-		<KeyboardAvoidingScreen style={{flex: 1, padding: 12, justifyContent: "center"}}>
-			<RoundedView
-				style={{
-					width: "100%",
-					alignItems: "center",
-					marginBottom: 16,
-					borderRadius: 20,
+		<KeyboardAvoidingScreen>
+			<ScrollView
+				style={{flex: 1}}
+				keyboardShouldPersistTaps="handled"
+				contentContainerStyle={{
+					flexGrow: 1,
+					padding: 12,
+					justifyContent: "center",
 				}}>
-				<Text style={{color: colors.text, margin: 16, fontSize: 20}}>
-					{title}
-				</Text>
-				<CodeField
-					{...props}
-					value={value}
-					onChangeText={(v) => {
-						if (v.match(/^\d{0,4}$/)) {
-							setValue(v);
-							if (v.length === 4) {
-								if (navigation) {
-									if (params.action === "new") {
-										navigation.replace("DigitalPassword", {
-											action: "confirm",
-											payload: v,
-										});
-									} else if (params.action === "confirm") {
-										if (v === params.payload) {
-											navigation.pop();
-											dispatch(setAppSecret(v));
-											dispatch(setupAppSecret());
-										}
-									} else if (params.action === "verify") {
-										if (appSecret === v) {
-											navigation.replace(params.target);
-											dispatch(
-												configSet({key: "subFunctionUnlocked", value: true}),
-											);
-										}
-									}
-								} else {
-									if (appSecret === v) {
-										dispatch(configSet({key: "appLocked", value: false}));
-									}
-								}
-							}
-						}
-					}}
-					cellCount={PASSWORD_LENGTH}
-					autoFocus={true}
-					rootStyle={{margin: 16}}
-					keyboardType="number-pad"
-					textContentType="oneTimeCode"
-					secureTextEntry={true}
-					renderCell={({index, symbol, isFocused}) => (
-						<View
-							key={index}
-							style={{
-								width: 55,
-								height: 73,
-								paddingHorizontal: 12,
-								paddingVertical: 8,
-								borderWidth: 2,
-								borderColor: isFocused ? colors.mainTheme : colors.themeGrey,
-								borderRadius: 12,
-								justifyContent: "center",
-								marginLeft: index === 0 ? 0 : 12,
-							}}>
-							<Text
-								style={{
-									fontSize: 32,
-									textAlign: "center",
-									color: colors.primaryLight,
-								}}
-								onLayout={getCellOnLayoutHandler(index)}>
-								{symbol ? "*" : isFocused ? <Cursor /> : null}
-							</Text>
-						</View>
-					)}
-				/>
-			</RoundedView>
-			{mismatch && (
-				<View style={{alignItems: "center"}}>
+				<View style={{width: "100%", maxWidth: 480, alignSelf: "center"}}>
 					<RoundedView
 						style={{
-							position: "absolute",
-							top: 32,
+							width: "100%",
+							alignItems: "center",
+							marginBottom: 8,
 							paddingVertical: 8,
-							paddingHorizontal: 16,
-							borderColor: colors.statusWarning,
-							borderWidth: 1,
 							borderRadius: 20,
 						}}>
-						<Text style={{color: colors.statusWarning, fontSize: 16}}>
-							{getStr(
-								params.action === "confirm"
-									? "confirmFailed"
-									: "wrongPasswordHint",
-							)}
+						<Text style={{color: colors.text, margin: 8, fontSize: 20}}>
+							{title}
 						</Text>
+						<CodeField
+							{...props}
+							value={value}
+							onChangeText={(v) => {
+								if (v.match(/^\d{0,4}$/)) {
+									setValue(v);
+									if (v.length === 4) {
+										if (navigation) {
+											if (params.action === "new") {
+												navigation.replace("DigitalPassword", {
+													action: "confirm",
+													payload: v,
+												});
+											} else if (params.action === "confirm") {
+												if (v === params.payload) {
+													navigation.pop();
+													dispatch(setAppSecret(v));
+													dispatch(setupAppSecret());
+												}
+											} else if (params.action === "verify") {
+												if (appSecret === v) {
+													navigation.replace(params.target);
+													dispatch(
+														configSet({
+															key: "subFunctionUnlocked",
+															value: true,
+														}),
+													);
+												}
+											}
+										} else {
+											if (appSecret === v) {
+												dispatch(configSet({key: "appLocked", value: false}));
+											}
+										}
+									}
+								}
+							}}
+							cellCount={PASSWORD_LENGTH}
+							autoFocus={true}
+							rootStyle={{width: "100%", paddingHorizontal: 16, gap: 8}}
+							keyboardType="number-pad"
+							textContentType="oneTimeCode"
+							secureTextEntry={true}
+							renderCell={({index, symbol, isFocused}) => (
+								<View
+									key={index}
+									style={{
+										flex: 1,
+										maxWidth: 55,
+										minWidth: 0,
+										minHeight: 56,
+										paddingHorizontal: 12,
+										paddingVertical: 8,
+										borderWidth: 2,
+										borderColor: isFocused
+											? colors.mainTheme
+											: colors.themeGrey,
+										borderRadius: 12,
+										justifyContent: "center",
+									}}>
+									<Text
+										style={{
+											fontSize: 32,
+											textAlign: "center",
+											color: colors.primaryLight,
+										}}
+										onLayout={getCellOnLayoutHandler(index)}>
+										{symbol ? "*" : isFocused ? <Cursor /> : null}
+									</Text>
+								</View>
+							)}
+						/>
 					</RoundedView>
+					{mismatch && (
+						<View style={{alignItems: "center"}}>
+							<RoundedView
+								style={{
+									marginTop: 16,
+									paddingVertical: 8,
+									paddingHorizontal: 16,
+									borderColor: colors.statusWarning,
+									borderWidth: 1,
+									borderRadius: 20,
+								}}>
+								<Text style={{color: colors.statusWarning, fontSize: 16}}>
+									{getStr(
+										params.action === "confirm"
+											? "confirmFailed"
+											: "wrongPasswordHint",
+									)}
+								</Text>
+							</RoundedView>
+						</View>
+					)}
 				</View>
-			)}
+			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
 };

@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	Linking,
 	Platform,
+	ScrollView,
 } from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
@@ -104,74 +105,100 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<KeyboardAvoidingScreen style={style.container}>
-			<View style={style.absoluteContainer}>
-				<IconMain width={108} height={108} />
-				<View style={{height: 20}} />
-				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<IconPerson width={18} height={18} />
-					<TextInput
-						style={style.textInputStyle}
-						placeholder={getStr("userId")}
-						placeholderTextColor={theme.colors.primary}
-						selectionColor={theme.colors.accent}
-						value={userId}
-						testID="loginUserId"
-						onChangeText={setUserId}
-						keyboardType={"numeric"}
-					/>
-				</View>
-				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<IconLock width={18} height={18} />
-					<TextInput
-						style={style.textInputStyle}
-						placeholder={getStr("password")}
-						placeholderTextColor={theme.colors.primary}
-						selectionColor={theme.colors.accent}
-						value={password}
-						testID="loginPassword"
-						onChangeText={setPassword}
-						onSubmitEditing={() => {
-							performLogin();
-						}}
-						secureTextEntry
-					/>
-				</View>
-				{(privacy312 === true || Platform.OS === "android" || Platform.OS === "ios") ? <TouchableOpacity
-					style={style.loginButtonStyle}
-					testID="loginButton"
-					onPress={() => {
-						performLogin();
-					}}>
-					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-				</TouchableOpacity> : <TouchableOpacity
-					style={style.loginButtonStyle}
-					testID="loginButton"
-					onPress={() => {
-						navigation.navigate("Privacy");
-					}}>
-					<Text style={style.loginButtonTextStyle}>{getStr("privacyPolicy")}</Text>
-				</TouchableOpacity>}
-				<Text style={style.credentialNoteStyle}>
-					{getStr(Platform.OS === "android" || Platform.OS === "ios" ? "credentialNote" : "credentialNoteHarmony")}
-				</Text>
-				<View style={{height: 80}} />
-				<TouchableOpacity onPress={() => navigation.navigate("FeishuFeedback")}>
-					<Text style={style.feedbackTextStyle}>
-						{getStr("feishuFeedback")}
+			<ScrollView
+				style={{width: "100%"}}
+				contentContainerStyle={{
+					flexGrow: 1,
+					justifyContent: "center",
+					alignItems: "center",
+					padding: 24,
+				}}
+				keyboardShouldPersistTaps="handled">
+				<View style={{width: "100%", maxWidth: 400, alignItems: "center"}}>
+					<IconMain width={108} height={108} />
+					<View style={{height: 20}} />
+					<View
+						style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
+						<IconPerson width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("userId")}
+							placeholderTextColor={theme.colors.primary}
+							selectionColor={theme.colors.accent}
+							value={userId}
+							testID="loginUserId"
+							onChangeText={setUserId}
+							keyboardType={"numeric"}
+						/>
+					</View>
+					<View
+						style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
+						<IconLock width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("password")}
+							placeholderTextColor={theme.colors.primary}
+							selectionColor={theme.colors.accent}
+							value={password}
+							testID="loginPassword"
+							onChangeText={setPassword}
+							onSubmitEditing={() => {
+								performLogin();
+							}}
+							secureTextEntry
+						/>
+					</View>
+					{privacy312 === true ||
+					Platform.OS === "android" ||
+					Platform.OS === "ios" ? (
+						<TouchableOpacity
+							style={style.loginButtonStyle}
+							testID="loginButton"
+							onPress={() => {
+								performLogin();
+							}}>
+							<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
+						</TouchableOpacity>
+					) : (
+						<TouchableOpacity
+							style={style.loginButtonStyle}
+							testID="loginButton"
+							onPress={() => {
+								navigation.navigate("Privacy");
+							}}>
+							<Text style={style.loginButtonTextStyle}>
+								{getStr("privacyPolicy")}
+							</Text>
+						</TouchableOpacity>
+					)}
+					<Text style={style.credentialNoteStyle}>
+						{getStr(
+							Platform.OS === "android" || Platform.OS === "ios"
+								? "credentialNote"
+								: "credentialNoteHarmony",
+						)}
 					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => Linking.openURL("https://app.cs.tsinghua.edu.cn")}>
-					<Text
-						style={
-							haveNewerVersion ? style.newVersionStyle : style.websiteTextStyle
-						}>
-						{haveNewerVersion
-							? getStr("newVersionAvailableClick")
-							: "app.cs.tsinghua.edu.cn"}
-					</Text>
-				</TouchableOpacity>
-			</View>
+					<TouchableOpacity
+						onPress={() => navigation.navigate("FeishuFeedback")}>
+						<Text style={style.feedbackTextStyle}>
+							{getStr("feishuFeedback")}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => Linking.openURL("https://app.cs.tsinghua.edu.cn")}>
+						<Text
+							style={
+								haveNewerVersion
+									? style.newVersionStyle
+									: style.websiteTextStyle
+							}>
+							{haveNewerVersion
+								? getStr("newVersionAvailableClick")
+								: "app.cs.tsinghua.edu.cn"}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
 			{processing ? (
 				<View style={style.absoluteContainer}>
 					<BlurView
@@ -221,7 +248,7 @@ const styles = themedStyles((theme) => {
 
 		textInputStyle: {
 			color: theme.colors.primary,
-			width: "36%",
+			flex: 1,
 			textAlign: "left",
 			marginHorizontal: 10,
 			padding: 10,
@@ -245,7 +272,7 @@ const styles = themedStyles((theme) => {
 
 		feedbackTextStyle: {
 			color: theme.colors.primary,
-			marginTop: 80,
+			marginTop: 24,
 		},
 
 		websiteTextStyle: {

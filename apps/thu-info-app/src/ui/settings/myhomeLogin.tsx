@@ -1,5 +1,11 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {TextInput, Text, TouchableOpacity} from "react-native";
+import {
+	ScrollView,
+	View,
+	TextInput,
+	Text,
+	TouchableOpacity,
+} from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
@@ -28,69 +34,75 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 
 	return (
-		<KeyboardAvoidingScreen style={style.container}>
-			<RoundedView style={style.inputRounded}>
-				<IconPerson width={18} height={18} />
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("userId")}
-					placeholderTextColor={theme.colors.fontB3}
-					value={userId}
-					editable={false}
-				/>
-			</RoundedView>
-			<RoundedView style={style.inputRounded}>
-				<IconLock width={18} height={18} />
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("password")}
-					placeholderTextColor={theme.colors.fontB3}
-					value={password}
-					onChangeText={setPassword}
-					secureTextEntry
-				/>
-			</RoundedView>
-			<TouchableOpacity
-				style={style.loginButtonStyle}
-				disabled={processing}
-				onPress={() => {
-					setProcessing(true);
-					Snackbar.show({
-						text: getStr("processing"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
-					helper
-						.getDormScore(password)
-						.then(() => {
-							navigation.pop();
-							dispatch(setDormPassword(password));
-						})
-						.catch((e) => {
-							if (e instanceof DormAuthError) {
-								Snackbar.show({
-									text: getStr("wrongPassword"),
-									duration: Snackbar.LENGTH_SHORT,
-								});
-							} else {
-								NetworkRetry();
-							}
-						})
-						.then(() => setProcessing(false));
-				}}>
-				<RoundedView style={style.loginRounded}>
-					<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-				</RoundedView>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={style.resetButtonStyle}
-				disabled={processing}
-				onPress={() => navigation.navigate("ResetDormPassword")}>
-				<RoundedView style={style.loginRounded}>
-					<Text style={style.loginButtonTextStyle}>
-						{getStr("resetPassword")}
-					</Text>
-				</RoundedView>
-			</TouchableOpacity>
+		<KeyboardAvoidingScreen style={{flex: 1}}>
+			<ScrollView
+				keyboardShouldPersistTaps="handled"
+				contentContainerStyle={style.container}>
+				<View style={style.form}>
+					<RoundedView style={style.inputRounded}>
+						<IconPerson width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("userId")}
+							placeholderTextColor={theme.colors.fontB3}
+							value={userId}
+							editable={false}
+						/>
+					</RoundedView>
+					<RoundedView style={style.inputRounded}>
+						<IconLock width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("password")}
+							placeholderTextColor={theme.colors.fontB3}
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+						/>
+					</RoundedView>
+					<TouchableOpacity
+						style={style.loginButtonStyle}
+						disabled={processing}
+						onPress={() => {
+							setProcessing(true);
+							Snackbar.show({
+								text: getStr("processing"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+							helper
+								.getDormScore(password)
+								.then(() => {
+									navigation.pop();
+									dispatch(setDormPassword(password));
+								})
+								.catch((e) => {
+									if (e instanceof DormAuthError) {
+										Snackbar.show({
+											text: getStr("wrongPassword"),
+											duration: Snackbar.LENGTH_SHORT,
+										});
+									} else {
+										NetworkRetry();
+									}
+								})
+								.then(() => setProcessing(false));
+						}}>
+						<RoundedView style={style.loginRounded}>
+							<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
+						</RoundedView>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={style.resetButtonStyle}
+						disabled={processing}
+						onPress={() => navigation.navigate("ResetDormPassword")}>
+						<RoundedView style={style.loginRounded}>
+							<Text style={style.loginButtonTextStyle}>
+								{getStr("resetPassword")}
+							</Text>
+						</RoundedView>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
 };
@@ -98,11 +110,12 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 export const styles = themedStyles((theme) => {
 	return {
 		container: {
-			flex: 1,
-			padding: 12,
+			flexGrow: 1,
+			padding: 24,
 			justifyContent: "center",
 			alignItems: "center",
 		},
+		form: {width: "100%", maxWidth: 480},
 
 		inputRounded: {
 			flexDirection: "row",
@@ -122,7 +135,7 @@ export const styles = themedStyles((theme) => {
 
 		loginButtonStyle: {
 			flexDirection: "row",
-			marginTop: 83,
+			marginTop: 24,
 			justifyContent: "center",
 			alignItems: "center",
 		},

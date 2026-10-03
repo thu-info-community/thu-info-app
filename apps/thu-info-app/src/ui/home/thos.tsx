@@ -1,3 +1,4 @@
+import {FlexGrid} from "../../components/FlexGrid";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import React, {useCallback, useEffect, useRef, useState} from "react";
@@ -12,7 +13,6 @@ import {
 	TextInput,
 	TouchableOpacity,
 	useColorScheme,
-	useWindowDimensions,
 	StyleProp,
 	ViewStyle,
 	View,
@@ -187,8 +187,7 @@ export const useThosBrowserHeader = (
 
 export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	const {colors} = themes(useColorScheme());
-	const {width: windowWidth} = useWindowDimensions();
-	const [width, setWidth] = useState(windowWidth);
+	const [width, setWidth] = useState(0);
 	const userId = useSelector((s: State) => s.auth.userId);
 	const demo = helper.mocked();
 	const [counts, setCounts] = useState<ThosCounts>();
@@ -490,14 +489,21 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 								{!page ? getStr("thosReading") : getStr("thosPartialResults")}
 							</Text>
 						)}
-						<View style={{flexDirection: "row", flexWrap: "wrap", gap: 12}}>
+						<FlexGrid
+							columns={
+								tab === "services"
+									? width >= 900
+										? 3
+										: width >= 600
+											? 2
+											: 1
+									: 1
+							}>
 							{tab === "services"
 								? serviceRows.map((item) => (
 										<View
 											key={item.id}
 											style={{
-												width:
-													width >= 900 ? "31%" : width >= 600 ? "47%" : "100%",
 												borderRadius: 12,
 												padding: 16,
 												backgroundColor: colors.contentBackground,
@@ -619,7 +625,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 											)}
 										</TouchableOpacity>
 									))}
-						</View>
+						</FlexGrid>
 						{page &&
 							(tab === "services" ? serviceRows : taskRows).length === 0 && (
 								<Text style={{padding: 20, color: colors.fontB2}}>

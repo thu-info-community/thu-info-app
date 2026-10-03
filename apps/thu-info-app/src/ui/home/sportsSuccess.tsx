@@ -1,4 +1,10 @@
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {RootNav, SportsSuccessProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
@@ -16,9 +22,13 @@ const Row = ({left, right}: {left: string; right: string}) => {
 				alignItems: "center",
 				justifyContent: "space-between",
 				marginTop: 12,
+				gap: 12,
 			}}>
-			<Text style={{color: colors.fontB3, fontSize: 16}}>{left}</Text>
-			<Text style={{color: colors.text, fontSize: 16}}>{right}</Text>
+			<Text style={{color: colors.fontB3, fontSize: 16, flex: 1}}>{left}</Text>
+			<Text
+				style={{color: colors.text, fontSize: 16, flex: 2, textAlign: "right"}}>
+				{right}
+			</Text>
 		</View>
 	);
 };
@@ -43,60 +53,70 @@ export const SportsSuccessScreen = ({
 	const {colors} = themes(themeName);
 
 	return (
-		<RoundedView style={{marginTop: 36, paddingVertical: 0, borderRadius: 20}}>
-			<View
+		<ScrollView style={{flex: 1}} contentContainerStyle={{padding: 12}}>
+			<RoundedView
 				style={{
-					height: 211,
-					backgroundColor: colors.themePurple,
-					borderTopStartRadius: 20,
-					borderTopEndRadius: 20,
-					alignItems: "center",
-					justifyContent: "center",
+					width: "100%",
+					maxWidth: 640,
+					alignSelf: "center",
+					marginHorizontal: 0,
+					paddingVertical: 0,
+					borderRadius: 20,
 				}}>
-				<IconSuccess height={128} width={128} />
-			</View>
-			<View style={{margin: 36}}>
-				<Row left={getStr("gym")} right={name} />
-				<Row left={getStr("date")} right={date} />
-				<Row left={getStr("duration")} right={period} />
-				{selectedFieldIndex !== undefined && (
-					<Row
-						left={getStr("field")}
-						right={availableFields[selectedFieldIndex].name}
-					/>
-				)}
-				<View style={{height: 12}} />
-				<Row left={getStr("phoneNumber")} right={phone} />
-				{selectedFieldIndex !== undefined && (
-					<Row
-						left={getStr("paid")}
-						right={`￥${availableFields[selectedFieldIndex].cost}`}
-					/>
-				)}
-				<View style={{height: 12}} />
-				<TouchableOpacity
+				<View
 					style={{
-						padding: 8,
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: 4,
-						alignSelf: "flex-end",
+						height: 211,
 						backgroundColor: colors.themePurple,
-					}}
-					onPress={() => {
-						navigation.replace("SportsRecord");
+						borderTopStartRadius: 20,
+						borderTopEndRadius: 20,
+						alignItems: "center",
+						justifyContent: "center",
 					}}>
-					<Text
+					<IconSuccess height={128} width={128} />
+				</View>
+				<View style={{margin: 24}}>
+					<Row left={getStr("gym")} right={name} />
+					<Row left={getStr("date")} right={date} />
+					<Row left={getStr("duration")} right={period} />
+					{selectedFieldIndex !== undefined && (
+						<Row
+							left={getStr("field")}
+							right={availableFields[selectedFieldIndex].name}
+						/>
+					)}
+					<View style={{height: 12}} />
+					<Row left={getStr("phoneNumber")} right={phone} />
+					{selectedFieldIndex !== undefined && (
+						<Row
+							left={getStr("paid")}
+							right={`￥${availableFields[selectedFieldIndex].cost}`}
+						/>
+					)}
+					<View style={{height: 12}} />
+					<TouchableOpacity
 						style={{
-							color: "white",
-							fontWeight: "400",
-							fontSize: 16,
-							lineHeight: 20,
+							padding: 8,
+							justifyContent: "center",
+							alignItems: "center",
+							borderRadius: 4,
+							alignSelf: "flex-end",
+							backgroundColor: colors.themePurple,
+						}}
+						onPress={() => {
+							navigation.replace("SportsRecord");
 						}}>
-						{getStr("pay")}
-					</Text>
-				</TouchableOpacity>
-			</View>
-		</RoundedView>
+						<Text
+							style={{
+								color: "white",
+								fontWeight: "400",
+								fontSize: 16,
+								lineHeight: 20,
+							}}>
+							{getStr("pay")}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</RoundedView>
+		</ScrollView>
 	);
 };

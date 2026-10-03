@@ -67,18 +67,21 @@ export const NewsListItem = ({
 					flexDirection: "row",
 					alignItems: "center",
 					marginTop: 12,
+					gap: 8,
 				}}>
 				<View
 					style={{
 						flexDirection: "row",
-						flex: item.topped ? 18 : 21,
-						marginRight: 2,
+						flex: 1,
+						minWidth: 0,
 						alignItems: "center",
 					}}>
 					{item.source.length > 0 && (
 						<>
 							<Text
+								numberOfLines={2}
 								style={{
+									flexShrink: 1,
 									fontWeight: "600",
 									color: theme.colors.fontB2,
 									fontSize: 12,
@@ -102,7 +105,7 @@ export const NewsListItem = ({
 						<Text
 							numberOfLines={1}
 							style={{
-								flex: 1,
+								flexShrink: 1,
 								fontWeight: "600",
 								color: theme.colors.fontB2,
 								fontSize: 12,
@@ -120,7 +123,7 @@ export const NewsListItem = ({
 							borderRadius: 20,
 							paddingHorizontal: 6,
 							marginHorizontal: 2,
-							flex: 3,
+							flexShrink: 0,
 							alignItems: "center",
 						}}>
 						<Text style={{color: theme.colors.statusWarning, fontSize: 11}}>
@@ -131,13 +134,12 @@ export const NewsListItem = ({
 				<View
 					style={{
 						flexDirection: "row",
-						flex: 8,
-						marginLeft: 2,
+						flexShrink: 0,
 						alignItems: "center",
 					}}>
 					<Text
 						numberOfLines={1}
-						style={{color: theme.colors.fontB2, marginRight: -6}}>
+						style={{color: theme.colors.fontB2, fontSize: 12}}>
 						{item.date.slice(0, 10)}
 					</Text>
 					<IconStarButton

@@ -1,4 +1,4 @@
-import {useColorScheme, View} from "react-native";
+import {ScrollView, useColorScheme, View} from "react-native";
 import {RootNav} from "../../components/Root";
 import {currState} from "../../redux/store";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
@@ -11,7 +11,7 @@ export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 	const style = styles(themeName);
 	const disabledFunction = currState().config.homeFunctionDisabled;
 	return (
-		<View style={style.SecondaryRootView}>
+		<ScrollView style={{flex: 1}} contentContainerStyle={style.SecondaryRootView}>
 			<View style={style.SecondaryContentView}>
 				{!disabledFunction.includes("networkDetail") && (
 					<SecondaryItem
@@ -36,6 +36,6 @@ export const NetworkScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				)}
 			</View>
-		</View>
+		</ScrollView>
 	);
 };

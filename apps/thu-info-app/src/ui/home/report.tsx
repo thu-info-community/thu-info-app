@@ -1,13 +1,10 @@
+import {
+	InlineFilterPanel,
+	FilterBackdrop,
+} from "../../components/InlineFilterPanel";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
-import {
-	FlatList,
-	Modal,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -37,8 +34,6 @@ import {
 	GradeP,
 	GradeW,
 } from "../../assets/icons/IconGrades";
-import {useHeaderHeight} from "@react-navigation/elements";
-import {getStatusBarHeight} from "react-native-safearea-height";
 
 export const semesterWeight = (semester: string): number => {
 	const year = Number(semester.slice(0, 4));
@@ -234,8 +229,6 @@ export const ReportScreen = () => {
 	const [bx, setBx] = useState(false);
 	const [mode, setMode] = useState<"split" | "gather">("split");
 
-	const headerHeight = useHeaderHeight();
-
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
@@ -277,7 +270,7 @@ export const ReportScreen = () => {
 			<View
 				style={{
 					flexDirection: "row",
-					height: 32,
+					minHeight: 40,
 					alignItems: "center",
 					backgroundColor: colors.contentBackground,
 				}}>
@@ -285,7 +278,7 @@ export const ReportScreen = () => {
 					<TouchableOpacity
 						onPress={() => setOpen((v) => (v === "flag" ? undefined : "flag"))}
 						style={{
-							marginLeft: 36,
+							marginLeft: 12,
 							flexDirection: "row",
 							alignItems: "center",
 							flex: 0,
@@ -306,7 +299,7 @@ export const ReportScreen = () => {
 				<TouchableOpacity
 					onPress={() => setOpen((v) => (v === "bx" ? undefined : "bx"))}
 					style={{
-						marginLeft: 32,
+						marginLeft: 12,
 						flexDirection: "row",
 						alignItems: "center",
 						flex: 0,
@@ -325,259 +318,218 @@ export const ReportScreen = () => {
 				<View style={{flex: 1}} />
 				<TouchableOpacity
 					onPress={() => setMode((m) => (m === "split" ? "gather" : "split"))}
-					style={{marginRight: 36, padding: 4, alignItems: "center", flex: 0}}>
+					style={{marginRight: 12, padding: 4, alignItems: "center", flex: 0}}>
 					<IconExchange height={18} width={18} />
 				</TouchableOpacity>
-				<Modal visible={open !== undefined} transparent>
-					<TouchableOpacity
-						style={{
-							width: "100%",
-							height: "100%",
-						}}
-						onPress={() => setOpen(undefined)}>
-						<View
-							style={{
-								position: "absolute",
-								backgroundColor: colors.text,
-								opacity: 0.3,
-								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
-								bottom: 0,
-							}}
-						/>
-						<View
-							style={{
-								position: "absolute",
-								backgroundColor: colors.contentBackground,
-								width: "100%",
-								top: headerHeight - getStatusBarHeight() + 32,
-								borderBottomStartRadius: 12,
-								borderBottomEndRadius: 12,
-							}}>
-							<FlatList
-								data={dropdownData}
-								renderItem={({item, index}) => {
-									const showTick =
-										open === "flag" ? index + 1 === flag : (index === 1) === bx;
-									return (
-										<TouchableOpacity
-											onPress={() => {
-												setOpen((o) => {
-													if (o === "flag") {
-														switch (index) {
-															case 1: {
-																setFlag(2);
-																break;
-															}
-															case 2: {
-																setFlag(3);
-																break;
-															}
-															default: {
-																setFlag(1);
-																break;
-															}
-														}
-													} else {
-														setBx(index === 1);
-													}
-													return undefined;
-												});
-											}}
-											style={{
-												paddingHorizontal: 16,
-												marginVertical: 8,
-												flexDirection: "row",
-												justifyContent: "space-between",
-											}}>
-											<Text style={{color: colors.text, fontSize: 14}}>
-												{item}
-											</Text>
-											{showTick ? <IconCheck height={18} width={18} /> : null}
-										</TouchableOpacity>
-									);
-								}}
-								keyExtractor={(item) => item}
-							/>
-						</View>
-					</TouchableOpacity>
-				</Modal>
 			</View>
-			<ScrollView
-				style={{marginHorizontal: 12}}
-				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-						onRefresh={fetchData}
-					/>
-				}>
-				<View>
-					<RoundedView style={{marginVertical: 16}}>
-						<Text
-							style={{
-								fontSize: 16,
-								fontWeight: "bold",
-								color: colors.text,
-								textAlign: "center",
-							}}>
-							{getStr("allGPA")}
-							{gpaToStr(gpa, 1)}
+			<InlineFilterPanel
+				visible={open !== undefined}
+				onClose={() => setOpen(undefined)}>
+				{dropdownData.map((item, index) => (
+					<TouchableOpacity
+						key={item}
+						onPress={() => {
+							if (open === "flag") setFlag((index + 1) as 1 | 2 | 3);
+							else setBx(index === 1);
+							setOpen(undefined);
+						}}
+						style={{
+							paddingHorizontal: 16,
+							paddingVertical: 12,
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 8,
+						}}>
+						<Text style={{flex: 1, color: colors.text, fontSize: 14}}>
+							{item}
 						</Text>
-						<Text
-							style={{
-								fontSize: 12,
-								color: colors.fontB2,
-								textAlign: "center",
-							}}>
-							{getStr("allCredits")}:{allCredits}
-							{"   "}
-							{getStr("totalCredits")}:{totalCredits}
-							{"   "}
-							{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
-						</Text>
-						<Text
-							style={{
-								fontSize: 12,
-								color: colors.fontB3,
-								textAlign: "center",
-								marginTop: 6,
-							}}>
-							{getStr("gpaTooltip")}
-						</Text>
-					</RoundedView>
-					{(mode === "split" ? sections : []).map((section) => (
-						<RoundedView key={section.semester} style={{marginBottom: 16}}>
-							<View style={{flexDirection: "row", marginHorizontal: 12}}>
-								<Text
-									numberOfLines={1}
-									style={{
-										fontSize: 16,
-										fontWeight: "bold",
-										color: colors.text,
-										flex: 1,
-									}}>
-									{section.semester}
-								</Text>
-								<Text
-									numberOfLines={1}
-									style={{
-										fontSize: 16,
-										fontWeight: "bold",
-										color: colors.text,
-										flex: 0,
-									}}>
-									{gpaToStr(section.gpa, 1)}
-								</Text>
-							</View>
-							<View
+						{(open === "flag" ? index + 1 === flag : (index === 1) === bx) && (
+							<IconCheck height={18} width={18} />
+						)}
+					</TouchableOpacity>
+				))}
+			</InlineFilterPanel>
+			<View style={{flex: 1}}>
+				<ScrollView
+					style={{marginHorizontal: 12}}
+					refreshControl={
+						<ThemedRefreshControl
+							refreshing={refreshing}
+							onRefresh={fetchData}
+						/>
+					}>
+					<View>
+						<RoundedView style={{marginVertical: 16}}>
+							<Text
 								style={{
-									flexDirection: "row",
-									marginHorizontal: 12,
-									marginTop: 4,
-									marginBottom: 8,
+									fontSize: 16,
+									fontWeight: "bold",
+									color: colors.text,
+									textAlign: "center",
 								}}>
-								<Text style={{fontSize: 12, color: colors.fontB2}}>
-									{getStr("allCredits")}:{section.allCredits}
-									{"  "}
-									{getStr("totalCredits")}:{section.totalCredits}
-									{"  "}
-									{getStr("totalPoints")}:{gpaToStr(section.totalPoints, 1)}
-								</Text>
-							</View>
-							{section.data.map((course, index) => (
-								<View key={course.name}>
-									{index > 0 && (
-										<View
-											style={[
-												style.separator,
-												{
-													marginVertical: 0,
-												},
-											]}
-										/>
-									)}
-									<View
-										style={{
-											flexDirection: "row",
-											marginHorizontal: 16,
-											marginVertical: 8,
-										}}>
-										<ReportIcon grade={course.grade} />
-										<Text
-											numberOfLines={1}
-											style={{
-												fontSize: 16,
-												flex: 2,
-												color: colors.text,
-												marginLeft: 8,
-											}}>
-											{course.name}
-										</Text>
-										<Text
-											numberOfLines={1}
-											style={{
-												fontSize: 16,
-												flex: 0,
-												color: colors.fontB2,
-											}}>
-											{course.credit}
-											{" cr · "}
-											{gpaToStr(course.point, 1)}
-										</Text>
-									</View>
-								</View>
-							))}
+								{getStr("allGPA")}
+								{gpaToStr(gpa, 1)}
+							</Text>
+							<Text
+								style={{
+									fontSize: 12,
+									color: colors.fontB2,
+									textAlign: "center",
+								}}>
+								{getStr("allCredits")}:{allCredits}
+								{"   "}
+								{getStr("totalCredits")}:{totalCredits}
+								{"   "}
+								{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
+							</Text>
+							<Text
+								style={{
+									fontSize: 12,
+									color: colors.fontB3,
+									textAlign: "center",
+									marginTop: 6,
+								}}>
+								{getStr("gpaTooltip")}
+							</Text>
 						</RoundedView>
-					))}
-					{mode === "gather" && (
-						<RoundedView style={{marginBottom: 16}}>
-							{reportSorted.map((course, index) => (
-								<View key={course.name + course.semester}>
-									{index > 0 && (
-										<View
-											style={[
-												style.separator,
-												{
-													marginVertical: 0,
-												},
-											]}
-										/>
-									)}
-									<View
+						{(mode === "split" ? sections : []).map((section) => (
+							<RoundedView key={section.semester} style={{marginBottom: 16}}>
+								<View style={{flexDirection: "row", marginHorizontal: 12}}>
+									<Text
+										numberOfLines={1}
 										style={{
-											flexDirection: "row",
-											marginHorizontal: 16,
-											marginVertical: 8,
+											fontSize: 16,
+											fontWeight: "bold",
+											color: colors.text,
+											flex: 1,
 										}}>
-										<ReportIcon grade={course.grade} />
-										<Text
-											numberOfLines={1}
-											style={{
-												fontSize: 16,
-												flex: 2,
-												color: colors.text,
-												marginLeft: 8,
-											}}>
-											[{course.semester}] {course.name}
-										</Text>
-										<Text
-											numberOfLines={1}
-											style={{
-												fontSize: 16,
-												flex: 0,
-												color: colors.fontB2,
-											}}>
-											{course.credit}
-											{" cr · "}
-											{gpaToStr(course.point, 1)}
-										</Text>
-									</View>
+										{section.semester}
+									</Text>
+									<Text
+										numberOfLines={1}
+										style={{
+											fontSize: 16,
+											fontWeight: "bold",
+											color: colors.text,
+											flex: 0,
+										}}>
+										{gpaToStr(section.gpa, 1)}
+									</Text>
 								</View>
-							))}
-						</RoundedView>
-					)}
-				</View>
-			</ScrollView>
+								<View
+									style={{
+										flexDirection: "row",
+										marginHorizontal: 12,
+										marginTop: 4,
+										marginBottom: 8,
+									}}>
+									<Text style={{fontSize: 12, color: colors.fontB2}}>
+										{getStr("allCredits")}:{section.allCredits}
+										{"  "}
+										{getStr("totalCredits")}:{section.totalCredits}
+										{"  "}
+										{getStr("totalPoints")}:{gpaToStr(section.totalPoints, 1)}
+									</Text>
+								</View>
+								{section.data.map((course, index) => (
+									<View key={course.name}>
+										{index > 0 && (
+											<View
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+													},
+												]}
+											/>
+										)}
+										<View
+											style={{
+												flexDirection: "row",
+												marginHorizontal: 16,
+												marginVertical: 8,
+											}}>
+											<ReportIcon grade={course.grade} />
+											<Text
+												numberOfLines={1}
+												style={{
+													fontSize: 16,
+													flex: 2,
+													color: colors.text,
+													marginLeft: 8,
+												}}>
+												{course.name}
+											</Text>
+											<Text
+												numberOfLines={1}
+												style={{
+													fontSize: 16,
+													flex: 0,
+													color: colors.fontB2,
+												}}>
+												{course.credit}
+												{" cr · "}
+												{gpaToStr(course.point, 1)}
+											</Text>
+										</View>
+									</View>
+								))}
+							</RoundedView>
+						))}
+						{mode === "gather" && (
+							<RoundedView style={{marginBottom: 16}}>
+								{reportSorted.map((course, index) => (
+									<View key={course.name + course.semester}>
+										{index > 0 && (
+											<View
+												style={[
+													style.separator,
+													{
+														marginVertical: 0,
+													},
+												]}
+											/>
+										)}
+										<View
+											style={{
+												flexDirection: "row",
+												marginHorizontal: 16,
+												marginVertical: 8,
+											}}>
+											<ReportIcon grade={course.grade} />
+											<Text
+												numberOfLines={1}
+												style={{
+													fontSize: 16,
+													flex: 2,
+													color: colors.text,
+													marginLeft: 8,
+												}}>
+												[{course.semester}] {course.name}
+											</Text>
+											<Text
+												numberOfLines={1}
+												style={{
+													fontSize: 16,
+													flex: 0,
+													color: colors.fontB2,
+												}}>
+												{course.credit}
+												{" cr · "}
+												{gpaToStr(course.point, 1)}
+											</Text>
+										</View>
+									</View>
+								))}
+							</RoundedView>
+						)}
+					</View>
+				</ScrollView>
+				<FilterBackdrop
+					visible={open !== undefined}
+					onClose={() => setOpen(undefined)}
+				/>
+			</View>
 		</View>
 	);
 };

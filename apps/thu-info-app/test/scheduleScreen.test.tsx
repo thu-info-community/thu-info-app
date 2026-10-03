@@ -190,6 +190,23 @@ test("hidden weekends and filtered custom plans no longer contribute empty gap s
 	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
 });
 
+test("folding preserves the selected week and realigns the horizontal page", async () => {
+	await setup([plan(1, 1)], 900);
+	const pager = screen.getByTestId("schedule-weeks");
+	const width = StyleSheet.flatten(pager.props.style).width;
+	await fireEvent(pager, "scroll", {
+		nativeEvent: {contentOffset: {x: width, y: 0}, contentSize: {width: width * 2, height: 630}, layoutMeasurement: {width, height: 630}},
+	});
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width: 400}},
+	});
+	const foldedPager = screen.getByTestId("schedule-weeks");
+	expect(StyleSheet.flatten(foldedPager.props.style).width).toBe(352);
+	expect(foldedPager.props.initialScrollIndex).toBe(1);
+	expect(foldedPager.props.getItemLayout(undefined, 1).offset).toBe(352);
+	expect(screen.getByText(`${getStr("weekNumPrefix")}2${getStr("weekNumSuffix")}`)).toBeTruthy();
+});
+
 test("day columns stop widening at the cap, and the grid stays uncapped on a phone", async () => {
 	const store = await setup([plan(1, 1)], 1200);
 	const pagerWidth = () =>

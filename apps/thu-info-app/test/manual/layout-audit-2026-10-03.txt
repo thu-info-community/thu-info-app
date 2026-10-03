@@ -1,0 +1,88 @@
+THUInfo 页面布局检查记录（2026-10-03）
+
+范围与结果
+本次修改位于 React Native 客户端和 Android 配置层；未修改 thu-info-lib 的门户、登录、Cookie 或解析逻辑。
+检查了 Root.tsx 中 88 个实际页面（83 个 Stack 页面、5 个 Tab 页面；RootTabs 容器另计），包括用表达式注册名称的页面。
+全部页面均已进行源码审查，并在 Android 模拟器至少进入一次；逐页覆盖见 layout-screen-coverage.csv。
+跨尺寸回归重点覆盖 24 个页面及公共组件，并补测服务受限页面的 mock 内容。
+这是页面布局验证，页面成功进入不代表对应校园服务接口或交易流程已通过。
+
+主要修复
+普通页面的居中、留白、弹窗和 PDF 容器改用 flex、百分比、maxWidth、ScrollView 和安全区。
+周数和办事服务网格使用 FlexGrid；筛选菜单在工具栏下按正常文档流展开。
+课表、地图和动画只保留必要的几何计算，使用实际容器 onLayout 尺寸。
+课表宽度变化时重新对齐分页，保持当前周，修复折叠后课程与星期列错位。
+修复窄屏中的新闻元信息、长评教课程名、体检说明及票据字段挤占空间。
+二级菜单、体育场地列表和预约结果可在短窗口滚动。
+登录、重置密码、PIN 和二次认证表单可随键盘改变可用高度。
+图片缩放组件在宽度或高度变化时刷新裁剪区域；data URI 图片由原生 Image 获取解码尺寸，避免 Android getSize 导致空白。
+Android 接收 density、screenLayout 和 smallestScreenSize 配置变化；Activity 创建时刷新 RN 的 dp/sp 转换，修复热切换 DPI 后文字被截断。
+
+设备与尺寸
+使用 emulator-5554 / Pixel_10_Pro_Fold，Android 17（API 37），字体缩放 1.0。
+下列尺寸由 adb wm size / density 设置；dp 为未弹出键盘时的近似窗口尺寸。
+
+场景                 分辨率         DPI   近似 dp          核心页面数
+直屏手机             1080x2400      480   360x800          24
+较宽手机             1440x2560      480   480x853          24
+折叠屏展开           2076x2152      390   852x883          24（另有完整页面巡视）
+三折叠展开比例       2880x2160      320   1440x1080        24
+平板竖屏             1600x2560      320   800x1280         24
+平板横屏             2560x1600      320   1280x800         24
+高 DPI 折叠屏        2076x2152      600   554x574          24
+真实折叠闭合外屏     物理外屏       390   443x970          24
+
+三折叠场景通过窗口比例模拟，未模拟真实三折叠设备的铰链和遮挡区域。
+使用 cmd device_state state 0 / 2 验证真实外屏与内屏切换；修复后再次检查课表和打开中的周数弹窗。
+额外设置 2400x1080 / 480 并临时忽略方向请求：应用受现有手机竖屏策略限制，实际为 270x360 dp 的短窗口。
+该短窗口检查了 20 个页面的容器与滚动，不把它计作 800x360 dp 的应用横屏验证。
+
+最终 DPI 热切换
+固定 2076x2152，不重启应用，连续使用 320、390、480、600 DPI。
+每档复测 10 页：首页、新闻、课表、财务、宿舍、myhome 登录、重置密码、登录、PIN、教室详情。
+登录和当前导航在切换中保留；复查按钮文字、课表星期列和带键盘的 PIN 提示，未发现新的明显截断或错位。
+
+Mock 验证
+真实登录保留，通过临时运行时替换读取接口或提供测试参数检查 24 个页面：
+PhysicalExam、Evaluation、Form、DormScore、Invoice、InvoicePDF、SportsRecord、SportsDetail、
+SportsSelect、SportsSelectField、SportsSelectTitle、SportsSuccess、LibrarySeat、LibrarySeatMap、
+LibraryMap、TwoFactorAuth、NewsSubChannelSelect、Privacy、FeishuFeedback、Report、BankPayment、
+Electricity、EleRecord、ReservesLibPDF。
+手机与折叠展开均进入全部 24 页；修复后补测 9 页，三折叠另检查 20 页，横向平板另检查 18 页。
+横向平板补测批次在最后两个登录/PIN 页面前退出；这两页已有核心平板回归覆盖。
+新闻详情额外使用样例 PDF 验证 PDF 分支在 600 DPI 下的显示，随后恢复真实新闻接口。
+样例数据包括长课程名、长体检说明、14 个场地、40 个座位、长 WebView 内容和合成评分图。
+未提交评教、预约、支付、验证码、挂失或密码设置。
+这些 mock 结果仅证明内容布局，不能代替真实服务可用性或业务流程验证。
+
+交互检查
+课表周数弹窗打开时闭合/展开，取消关闭；折叠后的课程列与星期列重新对齐。
+新增课程标题的键盘与滚动，取消后未保存课程。
+成绩筛选和模型筛选紧接工具栏，Android 返回键关闭面板。
+历史抽屉从手机切换到三折叠尺寸后保持尺寸限制，返回键关闭。
+PIN 键盘、六格二次认证输入框；教室首末时段气泡；原生 PDF 的页面容器。
+
+自动验证
+yarn test --runInBand：16 个套件通过，108 项测试通过；仓库原有 1 个套件 / 1 项测试跳过。
+新增 7 项布局回归检查，覆盖断点、地图坐标、筛选关闭、弹窗手势、图片高度变化、data URI 解码尺寸和课表折叠分页。
+yarn lint：通过。
+git diff --check：通过。
+Android x86_64 debug assembleDebug：通过，并安装至本次模拟器验证。
+TypeScript 全量检查：基线 42 个错误，当前 41 个错误，没有新增诊断；全量检查仍未通过。
+iOS、HarmonyOS 未进行设备验证或原生构建；共享 UI 的测试不等同于这些平台的实机结果。
+
+复现设置
+adb reverse tcp:8081 tcp:8081
+在 apps/thu-info-app 运行 yarn start；本机调试 host 为 localhost:8081。
+adb shell wm size 1080x2400
+adb shell wm density 480
+对照上表逐个切换尺寸与密度，重点检查课表列、登录按钮文字、键盘表单、弹窗和列表末项。
+adb shell cmd device_state state 0
+adb shell cmd device_state state 2
+切换物理内外屏前使用 wm size reset，避免分辨率覆盖影响外屏。
+
+收尾
+临时读取接口 mock 和测试预约缓存已恢复；没有将 mock 开关或真实截图/凭据加入仓库。
+测试截图与原始 UI dump 仅用于本机检查，未包含在本报告中。
+模拟器恢复原始分辨率、DPI 和折叠状态；应用停留在真实账号首页。
+保留 8081 的 adb reverse 供当前 Metro 连接使用，清理临时 18081 代理及测试 PDF。

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import themes from "../assets/themes/themes";
-import {useResponsive} from "../utils/useResponsive";
 
 /** 浮岛尺寸（dp）。 */
 const ITEM_WIDTH = 96;
@@ -58,12 +57,6 @@ export const FloatingTabBar = ({
 	const {colors} = themes(themeName);
 	const navigationTheme: Theme = useTheme();
 	const insets = useSafeAreaInsets();
-	const {width} = useResponsive();
-
-	const barWidth = Math.min(
-		state.routes.length * ITEM_WIDTH + BAR_PADDING * 2,
-		width - SIDE_MARGIN * 2,
-	);
 
 	return (
 		<View
@@ -77,10 +70,13 @@ export const FloatingTabBar = ({
 				alignItems: "center",
 				justifyContent: "flex-end",
 				paddingBottom: insets.bottom + BOTTOM_GAP,
+				paddingHorizontal: SIDE_MARGIN,
 			}}>
 			<View
 				style={{
-					width: barWidth,
+					width: "100%",
+					maxWidth: state.routes.length * ITEM_WIDTH + BAR_PADDING * 2,
+					paddingHorizontal: BAR_PADDING,
 					height: BAR_HEIGHT,
 					flexDirection: "row",
 					justifyContent: "center",
@@ -136,7 +132,8 @@ export const FloatingTabBar = ({
 							onPress={onPress}
 							onLongPress={onLongPress}
 							style={{
-								width: ITEM_WIDTH,
+								flex: 1,
+								minWidth: 0,
 								height: BAR_HEIGHT,
 								alignItems: "center",
 								justifyContent: "center",
