@@ -4,7 +4,14 @@ import {
 } from "../../components/InlineFilterPanel";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
-import {ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+	StyleProp,
+	ViewStyle,
+} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
@@ -220,6 +227,169 @@ const ReportIcon = ({grade}: {grade: string}) => {
 	return null;
 };
 
+interface ReportAppearance {
+	colors: ReturnType<typeof themes>["colors"];
+	separatorStyle: StyleProp<ViewStyle>;
+}
+
+const ReportCourseRow = ({
+	course,
+	index,
+	showSemester = false,
+	colors,
+	separatorStyle,
+}: {
+	course: Course;
+	index: number;
+	showSemester?: boolean;
+} & ReportAppearance) => {
+	return (
+		<View>
+			{index > 0 && (
+				<View
+					style={[
+						separatorStyle,
+						{
+							marginVertical: 0,
+						},
+					]}
+				/>
+			)}
+			<View
+				style={{
+					flexDirection: "row",
+					marginHorizontal: 16,
+					marginVertical: 8,
+				}}>
+				<ReportIcon grade={course.grade} />
+				<Text
+					numberOfLines={1}
+					style={{
+						fontSize: 16,
+						flex: 2,
+						color: colors.text,
+						marginLeft: 8,
+					}}>
+					{showSemester ? `[${course.semester}] ${course.name}` : course.name}
+				</Text>
+				<Text
+					numberOfLines={1}
+					style={{
+						fontSize: 16,
+						flex: 0,
+						color: colors.fontB2,
+					}}>
+					{course.credit}
+					{" cr · "}
+					{gpaToStr(course.point, 1)}
+				</Text>
+			</View>
+		</View>
+	);
+};
+
+const ReportSemester = ({
+	section,
+	colors,
+	separatorStyle,
+}: {section: Section} & ReportAppearance) => {
+	return (
+		<RoundedView key={section.semester} style={{marginBottom: 16}}>
+			<View style={{flexDirection: "row", marginHorizontal: 12}}>
+				<Text
+					numberOfLines={1}
+					style={{
+						fontSize: 16,
+						fontWeight: "bold",
+						color: colors.text,
+						flex: 1,
+					}}>
+					{section.semester}
+				</Text>
+				<Text
+					numberOfLines={1}
+					style={{
+						fontSize: 16,
+						fontWeight: "bold",
+						color: colors.text,
+						flex: 0,
+					}}>
+					{gpaToStr(section.gpa, 1)}
+				</Text>
+			</View>
+			<View
+				style={{
+					flexDirection: "row",
+					marginHorizontal: 12,
+					marginTop: 4,
+					marginBottom: 8,
+				}}>
+				<Text style={{fontSize: 12, color: colors.fontB2}}>
+					{getStr("allCredits")}:{section.allCredits}
+					{"  "}
+					{getStr("totalCredits")}:{section.totalCredits}
+					{"  "}
+					{getStr("totalPoints")}:{gpaToStr(section.totalPoints, 1)}
+				</Text>
+			</View>
+			{section.data.map((course, index) => (
+				<ReportCourseRow
+					key={course.name}
+					course={course}
+					index={index}
+					colors={colors}
+					separatorStyle={separatorStyle}
+				/>
+			))}
+		</RoundedView>
+	);
+};
+
+const ReportSummary = ({
+	gpa,
+	allCredits,
+	totalCredits,
+	totalPoints,
+	colors,
+}: Omit<ReturnType<typeof prepareData>, "sections"> &
+	Pick<ReportAppearance, "colors">) => {
+	return (
+		<RoundedView style={{marginVertical: 16}}>
+			<Text
+				style={{
+					fontSize: 16,
+					fontWeight: "bold",
+					color: colors.text,
+					textAlign: "center",
+				}}>
+				{getStr("allGPA")}
+				{gpaToStr(gpa, 1)}
+			</Text>
+			<Text
+				style={{
+					fontSize: 12,
+					color: colors.fontB2,
+					textAlign: "center",
+				}}>
+				{getStr("allCredits")}:{allCredits}
+				{"   "}
+				{getStr("totalCredits")}:{totalCredits}
+				{"   "}
+				{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
+			</Text>
+			<Text
+				style={{
+					fontSize: 12,
+					color: colors.fontB3,
+					textAlign: "center",
+					marginTop: 6,
+				}}>
+				{getStr("gpaTooltip")}
+			</Text>
+		</RoundedView>
+	);
+};
+
 export const ReportScreen = () => {
 	const [report, setReport] = useState<Course[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
@@ -262,8 +432,8 @@ export const ReportScreen = () => {
 		open === undefined
 			? []
 			: open === "flag"
-			? [getStr("reportFlag1"), getStr("reportFlag2"), getStr("reportFlag3")]
-			: [getStr("bxr"), getStr(helper.graduate() ? "xwk" : "bx")];
+				? [getStr("reportFlag1"), getStr("reportFlag2"), getStr("reportFlag3")]
+				: [getStr("bxr"), getStr(helper.graduate() ? "xwk" : "bx")];
 
 	return (
 		<View style={{flex: 1}}>
@@ -359,167 +529,32 @@ export const ReportScreen = () => {
 						/>
 					}>
 					<View>
-						<RoundedView style={{marginVertical: 16}}>
-							<Text
-								style={{
-									fontSize: 16,
-									fontWeight: "bold",
-									color: colors.text,
-									textAlign: "center",
-								}}>
-								{getStr("allGPA")}
-								{gpaToStr(gpa, 1)}
-							</Text>
-							<Text
-								style={{
-									fontSize: 12,
-									color: colors.fontB2,
-									textAlign: "center",
-								}}>
-								{getStr("allCredits")}:{allCredits}
-								{"   "}
-								{getStr("totalCredits")}:{totalCredits}
-								{"   "}
-								{getStr("totalPoints")}:{gpaToStr(totalPoints, 1)}
-							</Text>
-							<Text
-								style={{
-									fontSize: 12,
-									color: colors.fontB3,
-									textAlign: "center",
-									marginTop: 6,
-								}}>
-								{getStr("gpaTooltip")}
-							</Text>
-						</RoundedView>
+						<ReportSummary
+							colors={colors}
+							gpa={gpa}
+							allCredits={allCredits}
+							totalCredits={totalCredits}
+							totalPoints={totalPoints}
+						/>
 						{(mode === "split" ? sections : []).map((section) => (
-							<RoundedView key={section.semester} style={{marginBottom: 16}}>
-								<View style={{flexDirection: "row", marginHorizontal: 12}}>
-									<Text
-										numberOfLines={1}
-										style={{
-											fontSize: 16,
-											fontWeight: "bold",
-											color: colors.text,
-											flex: 1,
-										}}>
-										{section.semester}
-									</Text>
-									<Text
-										numberOfLines={1}
-										style={{
-											fontSize: 16,
-											fontWeight: "bold",
-											color: colors.text,
-											flex: 0,
-										}}>
-										{gpaToStr(section.gpa, 1)}
-									</Text>
-								</View>
-								<View
-									style={{
-										flexDirection: "row",
-										marginHorizontal: 12,
-										marginTop: 4,
-										marginBottom: 8,
-									}}>
-									<Text style={{fontSize: 12, color: colors.fontB2}}>
-										{getStr("allCredits")}:{section.allCredits}
-										{"  "}
-										{getStr("totalCredits")}:{section.totalCredits}
-										{"  "}
-										{getStr("totalPoints")}:{gpaToStr(section.totalPoints, 1)}
-									</Text>
-								</View>
-								{section.data.map((course, index) => (
-									<View key={course.name}>
-										{index > 0 && (
-											<View
-												style={[
-													style.separator,
-													{
-														marginVertical: 0,
-													},
-												]}
-											/>
-										)}
-										<View
-											style={{
-												flexDirection: "row",
-												marginHorizontal: 16,
-												marginVertical: 8,
-											}}>
-											<ReportIcon grade={course.grade} />
-											<Text
-												numberOfLines={1}
-												style={{
-													fontSize: 16,
-													flex: 2,
-													color: colors.text,
-													marginLeft: 8,
-												}}>
-												{course.name}
-											</Text>
-											<Text
-												numberOfLines={1}
-												style={{
-													fontSize: 16,
-													flex: 0,
-													color: colors.fontB2,
-												}}>
-												{course.credit}
-												{" cr · "}
-												{gpaToStr(course.point, 1)}
-											</Text>
-										</View>
-									</View>
-								))}
-							</RoundedView>
+							<ReportSemester
+								key={section.semester}
+								section={section}
+								colors={colors}
+								separatorStyle={style.separator}
+							/>
 						))}
 						{mode === "gather" && (
 							<RoundedView style={{marginBottom: 16}}>
 								{reportSorted.map((course, index) => (
-									<View key={course.name + course.semester}>
-										{index > 0 && (
-											<View
-												style={[
-													style.separator,
-													{
-														marginVertical: 0,
-													},
-												]}
-											/>
-										)}
-										<View
-											style={{
-												flexDirection: "row",
-												marginHorizontal: 16,
-												marginVertical: 8,
-											}}>
-											<ReportIcon grade={course.grade} />
-											<Text
-												numberOfLines={1}
-												style={{
-													fontSize: 16,
-													flex: 2,
-													color: colors.text,
-													marginLeft: 8,
-												}}>
-												[{course.semester}] {course.name}
-											</Text>
-											<Text
-												numberOfLines={1}
-												style={{
-													fontSize: 16,
-													flex: 0,
-													color: colors.fontB2,
-												}}>
-												{course.credit}
-												{" cr · "}
-												{gpaToStr(course.point, 1)}
-											</Text>
-										</View>
-									</View>
+									<ReportCourseRow
+										colors={colors}
+										separatorStyle={style.separator}
+										key={course.name + course.semester}
+										course={course}
+										index={index}
+										showSemester
+									/>
 								))}
 							</RoundedView>
 						)}

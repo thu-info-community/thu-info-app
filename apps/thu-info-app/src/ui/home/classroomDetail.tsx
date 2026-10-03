@@ -24,6 +24,204 @@ import {
 	ClassroomStatus,
 } from "@thu-info/lib/src/models/home/classroom";
 
+const ClassroomStatusCell = ({
+	status,
+	index,
+	upcoming,
+	showTip,
+	onPress,
+	theme,
+}: {
+	status: ClassroomStatus;
+	index: number;
+	upcoming: boolean;
+	showTip: boolean;
+	onPress: () => void;
+	theme: ReturnType<typeof themes>;
+}) => {
+	return (
+		<TouchableWithoutFeedback key={index} onPress={onPress}>
+			<View
+				style={{
+					flex: 1,
+					height: 26,
+					margin: 2,
+					backgroundColor:
+						status === ClassroomStatus.AVAILABLE
+							? upcoming
+								? theme.colors.themeDarkGrey
+								: theme.colors.themeGrey
+							: upcoming
+								? theme.colors.themePurple
+								: theme.colors.themeTransparentPurple,
+				}}>
+				{showTip && (
+					<View
+						style={{
+							position: "absolute",
+							bottom: "100%",
+							left: 0,
+							right: 0,
+							alignItems:
+								index === 0
+									? "flex-start"
+									: index === 5
+										? "flex-end"
+										: "center",
+						}}>
+						<Text
+							style={{
+								minWidth: 26,
+								minHeight: 14,
+								textAlign: "center",
+								color: theme.colors.contentBackground,
+								backgroundColor: theme.colors.fontB1,
+								fontSize: 9,
+								padding: 1,
+							}}>
+							{getStr("classroomStatus")[status]}
+						</Text>
+					</View>
+				)}
+			</View>
+		</TouchableWithoutFeedback>
+	);
+};
+
+const ClassroomStatusRow = ({
+	item: {name, status},
+	classroomIndex,
+	day,
+	currentPeriod,
+	tipItem,
+	onToggleTip,
+	theme,
+}: {
+	item: ClassroomState;
+	classroomIndex: number;
+	day: number;
+	currentPeriod: number;
+	tipItem: {row: number; col: number};
+	onToggleTip: (row: number, col: number) => void;
+	theme: ReturnType<typeof themes>;
+}) => {
+	return (
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+			}}
+			key={name}>
+			<Text
+				style={{
+					flex: 3,
+					fontSize: 16,
+					color: theme.colors.text,
+				}}>
+				{name.split(":")[0]}
+			</Text>
+			<Text
+				style={{
+					flex: 2,
+					textAlign: "center",
+					fontSize: 16,
+					color: theme.colors.text,
+				}}>
+				{name.split(":")[1].replace("(人)", "")}
+			</Text>
+			<View style={{flex: 5, flexDirection: "row"}}>
+				{Array.from({length: 6}, (_, index) => (
+					<ClassroomStatusCell
+						theme={theme}
+						key={index}
+						status={status[(day - 1) * 6 + index]}
+						index={index}
+						upcoming={index + 1 >= currentPeriod}
+						showTip={tipItem.row === classroomIndex && tipItem.col === index}
+						onPress={() => onToggleTip(classroomIndex, index)}
+					/>
+				))}
+			</View>
+		</View>
+	);
+};
+
+const ClassroomStatusHeader = ({
+	currentPeriod,
+	theme,
+}: {
+	currentPeriod: number;
+	theme: ReturnType<typeof themes>;
+}) => {
+	return (
+		<View
+			style={{
+				flexDirection: "row",
+				marginBottom: 8,
+			}}>
+			<Text
+				style={{
+					flex: 3,
+					fontSize: 14,
+					color: theme.colors.fontB2,
+				}}>
+				{getStr("classroomName")}
+			</Text>
+			<View style={{flex: 2}}>
+				<Text
+					style={{
+						textAlign: "center",
+						fontSize: 14,
+						color: theme.colors.fontB2,
+					}}>
+					{getStr("classroomCapacity")}
+				</Text>
+				<Text
+					style={{
+						textAlign: "center",
+						fontSize: 11,
+						marginTop: 4,
+						color: theme.colors.fontB3,
+					}}>
+					（人）
+				</Text>
+			</View>
+			<View style={{flex: 5}}>
+				<Text
+					style={{
+						textAlign: "center",
+						fontSize: 14,
+						marginBottom: 4,
+						color: theme.colors.fontB2,
+					}}>
+					{getStr("classroomCondition")}
+				</Text>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+					}}>
+					{[1, 2, 3, 4, 5, 6].map((val) => (
+						<Text
+							key={val}
+							style={{
+								flex: 1,
+								textAlign: "center",
+								fontSize: 11,
+								color:
+									val >= currentPeriod
+										? theme.colors.fontB1
+										: theme.colors.fontB3,
+							}}>
+							{val}
+						</Text>
+					))}
+				</View>
+			</View>
+		</View>
+	);
+};
+
 export const ClassroomDetailScreen = ({
 	route: {
 		params: {searchName, weekNumber},
@@ -149,6 +347,12 @@ export const ClassroomDetailScreen = ({
 		setTipItem({row: -1, col: -1});
 	}, [currDay]);
 
+	const toggleTip = (row: number, col: number) => {
+		setTipItem((old) =>
+			old.row === row && old.col === col ? {row: -1, col: -1} : {row, col},
+		);
+	};
+
 	return (
 		<View style={{backgroundColor: theme.colors.contentBackground, flex: 1}}>
 			<View
@@ -165,8 +369,8 @@ export const ClassroomDetailScreen = ({
 							day > 1
 								? [week, day - 1, table]
 								: week > 1
-								? [week - 1, 7, table]
-								: [week, day, table],
+									? [week - 1, 7, table]
+									: [week, day, table],
 						)
 					}
 					disabled={data[0] === 1 && data[1] === 1}>
@@ -252,172 +456,27 @@ export const ClassroomDetailScreen = ({
 			</View>
 			<FlatList
 				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-						onRefresh={refresh}
-					/>
+					<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 				}
 				style={{
 					marginHorizontal: 16,
 					marginTop: 27,
 				}}
 				ListHeaderComponent={
-					<View
-						style={{
-							flexDirection: "row",
-							marginBottom: 8,
-						}}>
-						<Text
-							style={{
-								flex: 3,
-								fontSize: 14,
-								color: theme.colors.fontB2,
-							}}>
-							{getStr("classroomName")}
-						</Text>
-						<View style={{flex: 2}}>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 14,
-									color: theme.colors.fontB2,
-								}}>
-								{getStr("classroomCapacity")}
-							</Text>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 11,
-									marginTop: 4,
-									color: theme.colors.fontB3,
-								}}>
-								（人）
-							</Text>
-						</View>
-						<View style={{flex: 5}}>
-							<Text
-								style={{
-									textAlign: "center",
-									fontSize: 14,
-									marginBottom: 4,
-									color: theme.colors.fontB2,
-								}}>
-								{getStr("classroomCondition")}
-							</Text>
-							<View
-								style={{
-									flexDirection: "row",
-									alignItems: "center",
-								}}>
-								{[1, 2, 3, 4, 5, 6].map((val) => (
-									<Text
-										key={val}
-										style={{
-											flex: 1,
-											textAlign: "center",
-											fontSize: 11,
-											color:
-												val >= currentPeriod
-													? theme.colors.fontB1
-													: theme.colors.fontB3,
-										}}>
-										{val}
-									</Text>
-								))}
-							</View>
-						</View>
-					</View>
+					<ClassroomStatusHeader currentPeriod={currentPeriod} theme={theme} />
 				}
 				data={data[2]}
 				initialNumToRender={30}
-				renderItem={({item: {name, status}, index: classroomIndex}) => (
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-						}}
-						key={name}>
-						<Text
-							style={{
-								flex: 3,
-								fontSize: 16,
-								color: theme.colors.text,
-							}}>
-							{name.split(":")[0]}
-						</Text>
-						<Text
-							style={{
-								flex: 2,
-								textAlign: "center",
-								fontSize: 16,
-								color: theme.colors.text,
-							}}>
-							{name.split(":")[1].replace("(人)", "")}
-						</Text>
-						<View style={{flex: 5, flexDirection: "row"}}>
-							{Array.from({length: 6}, (_, index) => (
-								<TouchableWithoutFeedback
-									key={index}
-									onPress={() =>
-										setTipItem((old) =>
-											old.row === classroomIndex && old.col === index
-												? {row: -1, col: -1}
-												: {row: classroomIndex, col: index},
-										)
-									}>
-									<View
-										style={{
-											flex: 1,
-											height: 26,
-											margin: 2,
-											backgroundColor:
-												status[(data[1] - 1) * 6 + index] ===
-												ClassroomStatus.AVAILABLE
-													? index + 1 >= currentPeriod
-														? theme.colors.themeDarkGrey
-														: theme.colors.themeGrey
-													: index + 1 >= currentPeriod
-													? theme.colors.themePurple
-													: theme.colors.themeTransparentPurple,
-										}}>
-										{tipItem.row === classroomIndex &&
-											tipItem.col === index && (
-												<View
-													style={{
-														position: "absolute",
-														bottom: "100%",
-														left: 0,
-														right: 0,
-														alignItems:
-															index === 0
-																? "flex-start"
-																: index === 5
-																	? "flex-end"
-																	: "center",
-													}}>
-													<Text
-														style={{
-															minWidth: 26,
-															minHeight: 14,
-															textAlign: "center",
-															color: theme.colors.contentBackground,
-															backgroundColor: theme.colors.fontB1,
-															fontSize: 9,
-															padding: 1,
-														}}>
-														{
-															getStr("classroomStatus")[
-																status[(data[1] - 1) * 6 + index]
-															]
-														}
-													</Text>
-												</View>
-											)}
-									</View>
-								</TouchableWithoutFeedback>
-							))}
-						</View>
-					</View>
+				renderItem={({item, index}) => (
+					<ClassroomStatusRow
+						theme={theme}
+						item={item}
+						classroomIndex={index}
+						day={data[1]}
+						currentPeriod={currentPeriod}
+						tipItem={tipItem}
+						onToggleTip={toggleTip}
+					/>
 				)}
 			/>
 		</View>

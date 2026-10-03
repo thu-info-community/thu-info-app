@@ -1,3 +1,4 @@
+import {CodeInputCell} from "../../components/CodeInputCell";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {View, ScrollView, Text, TouchableOpacity, Linking} from "react-native";
 import {useEffect, useState} from "react";
@@ -11,7 +12,6 @@ import {RoundedView} from "../../components/views.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {
 	CodeField,
-	Cursor,
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 
@@ -22,9 +22,9 @@ export const TwoFactorAuthScreen = ({
 	navigation: RootNav;
 	route: TwoFactorAuthRouteProp;
 }) => {
-	const [method, setMethod] = useState<"wechat" | "mobile" | "totp" | undefined>(
-		undefined,
-	);
+	const [method, setMethod] = useState<
+		"wechat" | "mobile" | "totp" | undefined
+	>(undefined);
 	const [captcha, setCaptcha] = useState("");
 	const [props, getCellOnLayoutHandler] = useClearByFocusCell({
 		value: captcha,
@@ -41,6 +41,17 @@ export const TwoFactorAuthScreen = ({
 			futures.twoFactorAuthFuture?.(undefined);
 		};
 	}, []);
+
+	const handleCaptchaChange = (v: string) => {
+		if (v.match(/^\d{0,6}$/)) {
+			setCaptcha(v);
+			if (v.length === 6) {
+				futures.twoFactorAuthFuture?.(v);
+				futures.twoFactorAuthFuture = undefined;
+				navigation.pop();
+			}
+		}
+	};
 
 	return (
 		<KeyboardAvoidingScreen>
@@ -159,16 +170,7 @@ export const TwoFactorAuthScreen = ({
 							<CodeField
 								{...props}
 								value={captcha}
-								onChangeText={(v) => {
-									if (v.match(/^\d{0,6}$/)) {
-										setCaptcha(v);
-										if (v.length === 6) {
-											futures.twoFactorAuthFuture?.(v);
-											futures.twoFactorAuthFuture = undefined;
-											navigation.pop();
-										}
-									}
-								}}
+								onChangeText={handleCaptchaChange}
 								rootStyle={{width: "100%", paddingHorizontal: 16, gap: 8}}
 								cellCount={6}
 								autoFocus={false}
@@ -176,31 +178,13 @@ export const TwoFactorAuthScreen = ({
 								textContentType="oneTimeCode"
 								secureTextEntry={false}
 								renderCell={({index, symbol, isFocused}) => (
-									<View
+									<CodeInputCell
 										key={index}
-										style={{
-											flex: 1,
-											maxWidth: 55,
-											minWidth: 0,
-											minHeight: 73,
-
-											borderWidth: 2,
-											borderColor: isFocused
-												? colors.mainTheme
-												: colors.themeGrey,
-											borderRadius: 12,
-											justifyContent: "center",
-										}}>
-										<Text
-											style={{
-												fontSize: 32,
-												textAlign: "center",
-												color: colors.primaryLight,
-											}}
-											onLayout={getCellOnLayoutHandler(index)}>
-											{symbol ? symbol : isFocused ? <Cursor /> : null}
-										</Text>
-									</View>
+										symbol={symbol}
+										focused={isFocused}
+										colors={colors}
+										onLayout={getCellOnLayoutHandler(index)}
+									/>
 								)}
 							/>
 						</RoundedView>

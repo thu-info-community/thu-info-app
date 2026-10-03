@@ -1,21 +1,8 @@
-import {FlexGrid} from "../FlexGrid";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {scheduleConflicts, selectOccurrences} from "../../redux/scheduleData";
 import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
-import {KeyboardAvoidingScreen} from "../keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
-import {
-	Alert,
-	Modal,
-	ScrollView,
-	Switch,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import {Alert, Text} from "react-native";
 import {useDispatch, useSelector, useStore} from "react-redux";
-import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {
 	Schedule,
@@ -34,13 +21,20 @@ import {
 	scheduleEditDetails,
 	scheduleEditCustom,
 } from "../../redux/slices/schedule";
-import {useColorScheme} from "react-native";
-import {BottomPopupTriggerView, RoundedView} from "../views";
-import IconRight from "../../assets/icons/IconRight";
-import {explainPeriod, explainWeekList} from "../../utils/calendar";
-import IconSelected from "../../assets/icons/IconSelected";
-import IconNotSelected from "../../assets/icons/IconNotSelected";
-import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {
+	ScheduleFormModal,
+	ScheduleDetailsFields,
+	ScheduleTimeFields,
+	ScheduleFieldSeparator,
+	useScheduleFormColors,
+} from "./scheduleAddForm";
+import {
+	ScheduleWeekField,
+	SchedulePeriodField,
+	ScheduleDateField,
+	ScheduleTimeRangeField,
+	ScheduleRepeatField,
+} from "./scheduleAddPickers";
 
 import {beginTime, endTime} from "../../utils/scheduleLayout";
 export {beginTime, endTime} from "../../utils/scheduleLayout";
@@ -89,28 +83,7 @@ export const ScheduleAddModal = ({
 	defaultEndHour,
 	defaultEndMinute,
 }: ScheduleAddModalProps) => {
-	const themeName = useColorScheme();
-	const theme = themes(themeName);
-	const insets = useSafeAreaInsets();
-	const darkMode = useSelector((s: State) => s.config.darkMode);
-	const isLightMode = !(darkMode || themeName === "dark");
-
-	const modalBackgroundColor = isLightMode
-		? "#F8F6F2"
-		: theme.colors.contentBackground;
-	const cardBackgroundColor = isLightMode
-		? "#FDFBF7"
-		: theme.colors.contentBackground;
-	const tabSelectedBackgroundColor = isLightMode
-		? "#8B6B9C"
-		: theme.colors.inputBorder;
-	const tabUnselectedBackgroundColor = isLightMode
-		? "#F0EEEA"
-		: theme.colors.themeBackground;
-	const tabSelectedTextColor = isLightMode ? "#FFFFFF" : theme.colors.fontB1;
-	const tabUnselectedTextColor = isLightMode ? "#5C5A56" : theme.colors.fontB1;
-	const modalTextColor = isLightMode ? "#5C5A56" : theme.colors.fontB1;
-	const modalTitleColor = isLightMode ? "#2C2A28" : theme.colors.text;
+	const colors = useScheduleFormColors();
 
 	const params = initialParams;
 
@@ -133,24 +106,6 @@ export const ScheduleAddModal = ({
 			? params.activeWeeks
 			: Array.from(new Array(weekCount), (_, k) => k + 1),
 	);
-
-	const popupIsAllOdd =
-		String([...popupWeeks].sort((a, b) => a - b)) ===
-		String(
-			Array.from(new Array(Math.ceil(weekCount / 2)), (_, k) => k * 2 + 1),
-		);
-
-	const popupIsAllEven =
-		String([...popupWeeks].sort((a, b) => a - b)) ===
-		String(
-			Array.from(new Array(Math.floor(weekCount / 2)), (_, k) => k * 2 + 2),
-		);
-
-	const popupIsAllWeeks =
-		String([...popupWeeks].sort((a, b) => a - b)) ===
-		String(Array.from(new Array(Math.floor(weekCount)), (_, k) => k + 1));
-
-	const popupIsEmptyWeeks = String([...popupWeeks]) === String([]);
 
 	const [day, setDay] = useState(params?.dayOfWeek ?? defaultDayOfWeek ?? 1);
 	const [popupDay, setPopupDay] = useState(
@@ -745,829 +700,113 @@ export const ScheduleAddModal = ({
 	};
 
 	return (
-		<Modal
+		<ScheduleFormModal
 			visible={visible}
-			animationType="fade"
-			onRequestClose={onClose}
-			transparent={true}>
-			<KeyboardAvoidingScreen
-				keyboardVerticalOffset={0}
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					paddingHorizontal: 20,
-					paddingTop: insets.top + 16,
-					paddingBottom: insets.bottom + 16,
-				}}>
-				<TouchableOpacity
-					activeOpacity={1}
-					onPress={onClose}
+			colors={colors}
+			editing={params !== undefined}
+			valid={valid}
+			onClose={onClose}
+			onSave={handleSave}>
+			<ScheduleDetailsFields
+				colors={colors}
+				title={title}
+				location={locale}
+				titlePlaceholder={params?.name ?? getStr("title")}
+				onTitleChange={setTitle}
+				onLocationChange={setLocale}
+			/>
+			{!isNonCustomEdit && (
+				<ScheduleTimeFields
+					colors={colors}
+					customDateTime={useCustomDateTime}
+					onModeChange={setUseCustomDateTime}>
+					{useCustomDateTime ? (
+						<>
+							<ScheduleDateField
+								colors={colors}
+								firstDay={firstDay}
+								totalDays={totalDays}
+								value={dateIndex}
+								draft={popupDateIndex}
+								onDraftChange={setPopupDateIndex}
+								onConfirm={() => setDateIndex(popupDateIndex)}
+							/>
+							<ScheduleFieldSeparator colors={colors} />
+							<ScheduleTimeRangeField
+								colors={colors}
+								value={{beginHour, beginMinute, endHour, endMinute}}
+								draft={{
+									beginHour: popupBeginHour,
+									beginMinute: popupBeginMinute,
+									endHour: popupEndHour,
+									endMinute: popupEndMinute,
+								}}
+								onDraftChange={(draft) => {
+									setPopupBeginHour(draft.beginHour);
+									setPopupBeginMinute(draft.beginMinute);
+									setPopupEndHour(draft.endHour);
+									setPopupEndMinute(draft.endMinute);
+								}}
+								onConfirm={() => {
+									setBeginHour(popupBeginHour);
+									setBeginMinute(popupBeginMinute);
+									setEndHour(popupEndHour);
+									setEndMinute(popupEndMinute);
+								}}
+							/>
+							<ScheduleFieldSeparator colors={colors} />
+							<ScheduleRepeatField
+								colors={colors}
+								value={repeatWeekly}
+								onChange={setRepeatWeekly}
+							/>
+						</>
+					) : (
+						<>
+							<ScheduleWeekField
+								colors={colors}
+								count={weekCount}
+								value={weeks}
+								draft={popupWeeks}
+								onDraftChange={setPopupWeeks}
+								onConfirm={() => setWeeks(popupWeeks)}
+							/>
+							<ScheduleFieldSeparator colors={colors} />
+							<SchedulePeriodField
+								colors={colors}
+								value={{day, begin: periodBegin, end: periodEnd}}
+								draft={{
+									day: popupDay,
+									begin: popupPeriodBegin,
+									end: popupPeriodEnd,
+								}}
+								onDraftChange={(draft) => {
+									setPopupDay(draft.day);
+									setPopupPeriodBegin(draft.begin);
+									setPopupPeriodEnd(draft.end);
+								}}
+								onConfirm={() => {
+									setDay(popupDay);
+									setPeriodBegin(popupPeriodBegin);
+									setPeriodEnd(popupPeriodEnd);
+								}}
+							/>
+						</>
+					)}
+				</ScheduleTimeFields>
+			)}
+			{params !== undefined && (
+				<Text
 					style={{
-						position: "absolute",
-						left: 0,
-						right: 0,
-						top: 0,
-						bottom: 0,
-						backgroundColor: "rgba(44, 42, 40, 0.42)",
-					}}
-				/>
-				<TouchableOpacity
-					activeOpacity={1}
-					onPress={() => {}}
-					style={{
-						width: "100%",
-						maxWidth: 640,
-						alignSelf: "center",
-						borderRadius: 12,
-						backgroundColor: modalBackgroundColor,
-						maxHeight: "100%",
-						flexShrink: 1,
-						overflow: "hidden",
+						color: colors.formText,
+						fontSize: 12,
+						textAlign: "center",
+						marginTop: 16,
+						marginBottom: 8,
 					}}>
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-							paddingHorizontal: 20,
-							paddingVertical: 14,
-							borderBottomWidth: 1,
-							borderBottomColor: theme.colors.themeGrey,
-						}}>
-						<TouchableOpacity
-							onPress={onClose}
-							style={{paddingHorizontal: 8, paddingVertical: 4}}>
-							<Text
-								style={{
-									color: modalTextColor,
-									fontSize: 16,
-									fontWeight: "600",
-								}}>
-								{getStr("cancel")}
-							</Text>
-						</TouchableOpacity>
-						<Text
-							style={{
-								color: modalTitleColor,
-								fontSize: 18,
-								fontWeight: "700",
-							}}>
-							{getStr(
-								params === undefined ? "scheduleAddCustom" : "scheduleEdit",
-							)}
-						</Text>
-						<TouchableOpacity
-							disabled={!valid}
-							onPress={handleSave}
-							style={{
-								opacity: valid ? 1 : 0.5,
-								paddingHorizontal: 8,
-								paddingVertical: 4,
-							}}>
-							<Text
-								style={{
-									color: valid ? "#5B8C7C" : theme.colors.themeGrey,
-									fontSize: 16,
-									fontWeight: "600",
-								}}>
-								{getStr("save")}
-							</Text>
-						</TouchableOpacity>
-					</View>
-					<ScrollView
-						style={{flexGrow: 0, flexShrink: 1}}
-						keyboardShouldPersistTaps="handled"
-						contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 20}}
-						showsVerticalScrollIndicator={true}>
-						<RoundedView
-							style={{
-								marginTop: 8,
-								paddingHorizontal: 18,
-								paddingVertical: 20,
-								backgroundColor: cardBackgroundColor,
-							}}>
-							<TextInput
-								style={{
-									color: modalTextColor,
-									padding: 0,
-									fontSize: 16,
-								}}
-								placeholder={params?.name ?? getStr("title")}
-								placeholderTextColor={modalTextColor}
-								value={title}
-								onChangeText={setTitle}
-							/>
-							<View
-								style={{
-									height: 1,
-									backgroundColor: theme.colors.themeGrey,
-									marginVertical: 12,
-								}}
-							/>
-							<TextInput
-								style={{
-									color: modalTextColor,
-									padding: 0,
-									fontSize: 16,
-								}}
-								placeholder={getStr("location")}
-								placeholderTextColor={modalTextColor}
-								value={locale}
-								onChangeText={setLocale}
-							/>
-						</RoundedView>
-						{/* Time editing section: shown when adding new schedule or editing custom schedule.
-			    Hidden entirely for non-custom schedule edits since time slots cannot be modified. */}
-						{!isNonCustomEdit && (
-							<RoundedView
-								style={{
-									marginTop: 20,
-									paddingHorizontal: 18,
-									paddingVertical: 20,
-									backgroundColor: cardBackgroundColor,
-								}}>
-								<View
-									style={{
-										flexDirection: "row",
-										marginBottom: 12,
-										alignSelf: "center",
-										backgroundColor: tabUnselectedBackgroundColor,
-										borderRadius: 999,
-										padding: 2,
-									}}>
-									<TouchableOpacity
-										style={{
-											paddingVertical: 6,
-											paddingHorizontal: 12,
-											borderRadius: 16,
-											backgroundColor: !useCustomDateTime
-												? tabSelectedBackgroundColor
-												: "transparent",
-										}}
-										onPress={() => setUseCustomDateTime(false)}>
-										<Text
-											style={{
-												color: !useCustomDateTime
-													? tabSelectedTextColor
-													: tabUnselectedTextColor,
-												fontSize: 14,
-											}}>
-											{getStr("scheduleAddModeWeekPeriod" as any)}
-										</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={{
-											paddingVertical: 6,
-											paddingHorizontal: 12,
-											borderRadius: 16,
-											backgroundColor: useCustomDateTime
-												? tabSelectedBackgroundColor
-												: "transparent",
-										}}
-										onPress={() => setUseCustomDateTime(true)}>
-										<Text
-											style={{
-												color: useCustomDateTime
-													? tabSelectedTextColor
-													: tabUnselectedTextColor,
-												fontSize: 14,
-											}}>
-											{getStr("scheduleAddModeDateTime" as any)}
-										</Text>
-									</TouchableOpacity>
-								</View>
-
-								{!useCustomDateTime && (
-									<>
-										<BottomPopupTriggerView
-											popupTitle={explainWeekList(popupWeeks)}
-											popupCancelable={true}
-											popupContent={
-												<View>
-													<View
-														style={{
-															marginHorizontal: 12,
-															marginTop: 7,
-														}}>
-														<FlexGrid>
-															{Array.from(
-																new Array(weekCount),
-																(_, k) => k + 1,
-															).map((week) => (
-																<TouchableOpacity
-																	style={{
-																		marginVertical: 4,
-																		alignItems: "center",
-																		backgroundColor: popupWeeks.includes(week)
-																			? theme.colors.themePurple
-																			: undefined,
-																		borderRadius: 8,
-																	}}
-																	onPress={() => {
-																		setPopupWeeks((a) => {
-																			if (a.includes(week)) {
-																				return a.filter((w) => w !== week);
-																			} else {
-																				return [...a, week];
-																			}
-																		});
-																	}}
-																	key={week}>
-																	<Text
-																		style={{
-																			fontSize: 18,
-																			lineHeight: 40,
-																			color: popupWeeks.includes(week)
-																				? "white"
-																				: modalTextColor,
-																		}}>
-																		{week}
-																	</Text>
-																</TouchableOpacity>
-															))}
-														</FlexGrid>
-													</View>
-													<View
-														style={{
-															height: 1,
-															backgroundColor: theme.colors.themeGrey,
-															marginTop: 14,
-															marginBottom: 28,
-														}}
-													/>
-													<View
-														style={{
-															flexDirection: "row",
-															alignItems: "center",
-															justifyContent: "center",
-															marginBottom: 32,
-														}}>
-														<TouchableOpacity
-															onPress={() =>
-																setPopupWeeks(
-																	Array.from(
-																		new Array(Math.ceil(weekCount / 2)),
-																		(_, k) => k * 2 + 1,
-																	),
-																)
-															}
-															style={{
-																flexDirection: "row",
-																alignItems: "center",
-																justifyContent: "center",
-																marginHorizontal: 16,
-															}}>
-															{popupIsAllOdd ? (
-																<IconSelected height={16} width={16} />
-															) : (
-																<IconNotSelected height={16} width={16} />
-															)}
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 14,
-																	marginLeft: 8,
-																}}>
-																{getStr("oddWeeks")}
-															</Text>
-														</TouchableOpacity>
-														<TouchableOpacity
-															onPress={() =>
-																setPopupWeeks(
-																	Array.from(
-																		new Array(Math.floor(weekCount / 2)),
-																		(_, k) => k * 2 + 2,
-																	),
-																)
-															}
-															style={{
-																flexDirection: "row",
-																alignItems: "center",
-																justifyContent: "center",
-																marginHorizontal: 16,
-															}}>
-															{popupIsAllEven ? (
-																<IconSelected height={16} width={16} />
-															) : (
-																<IconNotSelected height={16} width={16} />
-															)}
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 14,
-																	marginLeft: 8,
-																}}>
-																{getStr("evenWeeks")}
-															</Text>
-														</TouchableOpacity>
-														<TouchableOpacity
-															onPress={() =>
-																setPopupWeeks(
-																	Array.from(
-																		new Array(Math.floor(weekCount)),
-																		(_, k) => k + 1,
-																	),
-																)
-															}
-															style={{
-																flexDirection: "row",
-																alignItems: "center",
-																justifyContent: "center",
-																marginHorizontal: 16,
-															}}>
-															{popupIsAllWeeks ? (
-																<IconSelected height={16} width={16} />
-															) : (
-																<IconNotSelected height={16} width={16} />
-															)}
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 14,
-																	marginLeft: 8,
-																}}>
-																{getStr("allWeeks")}
-															</Text>
-														</TouchableOpacity>
-														<TouchableOpacity
-															onPress={() => setPopupWeeks(Array.from([]))}
-															style={{
-																flexDirection: "row",
-																alignItems: "center",
-																justifyContent: "center",
-																marginHorizontal: 16,
-															}}>
-															{popupIsEmptyWeeks ? (
-																<IconSelected height={16} width={16} />
-															) : (
-																<IconNotSelected height={16} width={16} />
-															)}
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 14,
-																	marginLeft: 8,
-																}}>
-																{getStr("noWeek")}
-															</Text>
-														</TouchableOpacity>
-													</View>
-												</View>
-											}
-											popupCanFulfill={popupWeeks.length > 0}
-											popupOnFulfilled={() => {
-												setWeeks(popupWeeks);
-											}}
-											popupOnCancelled={() => {}}>
-											<View
-												style={{flexDirection: "row", alignItems: "center"}}>
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}>
-													{getStr("weeks")}
-												</Text>
-												<View style={{flex: 1}} />
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}
-													numberOfLines={1}>
-													{explainWeekList(weeks)}
-												</Text>
-												<IconRight height={24} width={24} />
-											</View>
-										</BottomPopupTriggerView>
-										<View
-											style={{
-												height: 1,
-												backgroundColor: theme.colors.themeGrey,
-												marginVertical: 12,
-											}}
-										/>
-										<BottomPopupTriggerView
-											popupTitle={`${getStr("dayOfWeek")[popupDay]} ${
-												beginTime[popupPeriodBegin]
-											} - ${endTime[popupPeriodEnd]}`}
-											popupCancelable={true}
-											popupContent={
-												<View style={{flexDirection: "row"}}>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(
-															new Array(7),
-															(_, k) => getStr("dayOfWeek")[k + 1],
-														)}
-														selectedIndex={popupDay - 1}
-														renderItem={(data) => (
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 20,
-																}}
-																key={data}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupDay(selectedIndex + 1);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(
-															new Array(14),
-															(_, k) => beginTime[k + 1],
-														)}
-														selectedIndex={popupPeriodBegin - 1}
-														renderItem={(data) => (
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 20,
-																}}
-																key={data}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupPeriodBegin(selectedIndex + 1);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(
-															new Array(15 - popupPeriodBegin),
-															(_, k) => endTime[k + popupPeriodBegin],
-														)}
-														selectedIndex={popupPeriodEnd - popupPeriodBegin}
-														renderItem={(data) => (
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 20,
-																}}
-																key={data}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupPeriodEnd(
-																selectedIndex + popupPeriodBegin,
-															);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-												</View>
-											}
-											popupCanFulfill={popupPeriodBegin <= popupPeriodEnd}
-											popupOnFulfilled={() => {
-												setDay(popupDay);
-												setPeriodBegin(popupPeriodBegin);
-												setPeriodEnd(popupPeriodEnd);
-											}}
-											popupOnCancelled={() => {}}>
-											<View
-												style={{flexDirection: "row", alignItems: "center"}}>
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}>
-													{getStr("periods")}
-												</Text>
-												<View style={{flex: 1}} />
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}
-													numberOfLines={1}>
-													{explainPeriod(day, periodBegin, periodEnd)}
-												</Text>
-												<IconRight height={24} width={24} />
-											</View>
-										</BottomPopupTriggerView>
-									</>
-								)}
-
-								{useCustomDateTime && (
-									<>
-										<BottomPopupTriggerView
-											popupTitle={(() => {
-												if (totalDays <= 0) {
-													return "";
-												}
-												const d = dayjs(firstDay)
-													.add(popupDateIndex, "day")
-													.startOf("day");
-												const dow = d.day() === 0 ? 7 : d.day();
-												return `${d.format("YYYY-MM-DD")} ${
-													getStr("dayOfWeek")[dow]
-												}`;
-											})()}
-											popupCancelable={true}
-											popupContent={
-												<View style={{flexDirection: "row"}}>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(
-															new Array(totalDays),
-															(_, k) => {
-																const d = dayjs(firstDay)
-																	.add(k, "day")
-																	.startOf("day");
-																const dow = d.day() === 0 ? 7 : d.day();
-																return `${d.format("YYYY-MM-DD")} ${
-																	getStr("dayOfWeek")[dow]
-																}`;
-															},
-														)}
-														selectedIndex={popupDateIndex}
-														renderItem={(data, index) => (
-															<Text
-																style={{
-																	color: modalTextColor,
-																	fontSize: 20,
-																}}
-																key={`${data}-${index}`}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupDateIndex(selectedIndex);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-												</View>
-											}
-											popupCanFulfill={totalDays > 0}
-											popupOnFulfilled={() => {
-												setDateIndex(popupDateIndex);
-											}}
-											popupOnCancelled={() => {}}>
-											<View
-												style={{flexDirection: "row", alignItems: "center"}}>
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}>
-													{getStr("scheduleDate" as any)}
-												</Text>
-												<View style={{flex: 1}} />
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}
-													numberOfLines={1}>
-													{totalDays > 0
-														? (() => {
-																const d = dayjs(firstDay)
-																	.add(dateIndex, "day")
-																	.startOf("day");
-																const dow = d.day() === 0 ? 7 : d.day();
-																return `${d.format("YYYY-MM-DD")} ${
-																	getStr("dayOfWeek")[dow]
-																}`;
-															})()
-														: ""}
-												</Text>
-												<IconRight height={24} width={24} />
-											</View>
-										</BottomPopupTriggerView>
-										<View
-											style={{
-												height: 1,
-												backgroundColor: theme.colors.themeGrey,
-												marginVertical: 12,
-											}}
-										/>
-										<BottomPopupTriggerView
-											popupTitle={`${String(popupBeginHour).padStart(2, "0")}:${String(
-												popupBeginMinute,
-											).padStart(2, "0")} - ${String(popupEndHour).padStart(
-												2,
-												"0",
-											)}:${String(popupEndMinute).padStart(2, "0")}`}
-											popupCancelable={true}
-											popupContent={
-												<View style={{flexDirection: "row"}}>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(new Array(24), (_, k) =>
-															String(k).padStart(2, "0"),
-														)}
-														selectedIndex={popupBeginHour}
-														renderItem={(data, index) => (
-															<Text
-																style={{
-																	color: theme.colors.fontB1,
-																	fontSize: 20,
-																}}
-																key={`${data}-${index}`}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupBeginHour(selectedIndex);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(new Array(60), (_, k) =>
-															String(k).padStart(2, "0"),
-														)}
-														selectedIndex={popupBeginMinute}
-														renderItem={(data, index) => (
-															<Text
-																style={{
-																	color: theme.colors.fontB1,
-																	fontSize: 20,
-																}}
-																key={`${data}-${index}`}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupBeginMinute(selectedIndex);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(new Array(24), (_, k) =>
-															String(k).padStart(2, "0"),
-														)}
-														selectedIndex={popupEndHour}
-														renderItem={(data, index) => (
-															<Text
-																style={{
-																	color: theme.colors.fontB1,
-																	fontSize: 20,
-																}}
-																key={`${data}-${index}`}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupEndHour(selectedIndex);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-													<ScrollPicker
-														style={{flex: 1}}
-														dataSource={Array.from(new Array(60), (_, k) =>
-															String(k).padStart(2, "0"),
-														)}
-														selectedIndex={popupEndMinute}
-														renderItem={(data, index) => (
-															<Text
-																style={{
-																	color: theme.colors.fontB1,
-																	fontSize: 20,
-																}}
-																key={`${data}-${index}`}>
-																{data}
-															</Text>
-														)}
-														onValueChange={(_, selectedIndex) => {
-															setPopupEndMinute(selectedIndex);
-														}}
-														wrapperHeight={200}
-														wrapperBackground={theme.colors.contentBackground}
-														itemHeight={48}
-														highlightColor={theme.colors.themeGrey}
-														highlightBorderWidth={1}
-													/>
-												</View>
-											}
-											popupCanFulfill={true}
-											popupOnFulfilled={() => {
-												setBeginHour(popupBeginHour);
-												setBeginMinute(popupBeginMinute);
-												setEndHour(popupEndHour);
-												setEndMinute(popupEndMinute);
-											}}
-											popupOnCancelled={() => {}}>
-											<View
-												style={{flexDirection: "row", alignItems: "center"}}>
-												<Text
-													style={{
-														color: modalTextColor,
-														fontSize: 16,
-														flex: 0,
-													}}>
-													{getStr("scheduleTimeRange" as any)}
-												</Text>
-												<View style={{flex: 1}} />
-												<Text
-													style={{
-														color: theme.colors.fontB2,
-														fontSize: 16,
-														flex: 0,
-													}}
-													numberOfLines={1}>
-													{`${String(beginHour).padStart(2, "0")}:${String(
-														beginMinute,
-													).padStart(2, "0")} - ${String(endHour).padStart(
-														2,
-														"0",
-													)}:${String(endMinute).padStart(2, "0")}`}
-												</Text>
-												<IconRight height={24} width={24} />
-											</View>
-										</BottomPopupTriggerView>
-										<View
-											style={{
-												height: 1,
-												backgroundColor: theme.colors.themeGrey,
-												marginVertical: 12,
-											}}
-										/>
-										<View
-											style={{
-												flexDirection: "row",
-												alignItems: "center",
-											}}>
-											<Text
-												style={{
-													color: modalTextColor,
-													fontSize: 16,
-													flex: 1,
-												}}>
-												{getStr("scheduleRepeatWeekly" as any)}
-											</Text>
-											<Switch
-												ios_backgroundColor={theme.colors.inputBorder}
-												value={repeatWeekly}
-												onValueChange={setRepeatWeekly}
-												trackColor={{
-													false: theme.colors.inputBorder,
-													true: theme.colors.themePurple,
-												}}
-												thumbColor={theme.colors.themeLightGrey}
-											/>
-										</View>
-									</>
-								)}
-							</RoundedView>
-						)}
-						{params !== undefined && (
-							<Text
-								style={{
-									color: modalTextColor,
-									fontSize: 12,
-									textAlign: "center",
-									marginTop: 16,
-									marginBottom: 8,
-								}}>
-								{getStr("scheduleLongPressHint")}
-							</Text>
-						)}
-					</ScrollView>
-				</TouchableOpacity>
-			</KeyboardAvoidingScreen>
-		</Modal>
+					{getStr("scheduleLongPressHint")}
+				</Text>
+			)}
+		</ScheduleFormModal>
 	);
 };

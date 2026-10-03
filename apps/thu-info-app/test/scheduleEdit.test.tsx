@@ -23,14 +23,57 @@ jest.mock("../src/redux/store", () => ({
 	helper: {},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
-jest.mock("../src/components/views", () => ({
-	RoundedView: ({children}: {children: React.ReactNode}) => children,
-	BottomPopupTriggerView: ({children}: {children: React.ReactNode}) => children,
-}));
+jest.mock("../src/components/views", () => {
+	const React = require("react");
+	const {View, TouchableOpacity} = require("react-native");
+	return {
+		RoundedView: ({children}: {children: React.ReactNode}) => children,
+		BottomPopupTriggerView: ({
+			children,
+			popupContent,
+			popupOnFulfilled,
+			popupOnCancelled,
+			popupCanFulfill,
+		}: any) => {
+			const [open, setOpen] = React.useState(false);
+			return (
+				<View>
+					<TouchableOpacity onPress={() => setOpen(true)}>
+						{children}
+					</TouchableOpacity>
+					{open && (
+						<View>
+							{popupContent}
+							<TouchableOpacity
+								testID="picker-confirm"
+								disabled={!popupCanFulfill}
+								onPress={() => {
+									popupOnFulfilled();
+									setOpen(false);
+								}}
+							/>
+							<TouchableOpacity
+								testID="picker-cancel"
+								onPress={() => {
+									popupOnCancelled();
+									setOpen(false);
+								}}
+							/>
+						</View>
+					)}
+				</View>
+			);
+		},
+	};
+});
 jest.mock("../src/components/keyboardAvoidingScreen", () => ({
 	KeyboardAvoidingScreen: ({children}: {children: React.ReactNode}) => children,
 }));
-jest.mock("react-native-wheel-scrollview-picker", () => () => null);
+jest.mock("react-native-wheel-scrollview-picker", () => {
+	const React = require("react");
+	const {View} = require("react-native");
+	return (props: object) => <View {...props} testID="schedule-picker-wheel" />;
+});
 jest.mock("../src/utils/calendar", () => ({
 	explainPeriod: () => "period",
 	explainWeekList: () => "weeks",
@@ -67,6 +110,101 @@ const setup = async () => {
 	);
 	return {store, close};
 };
+
+const setupNew = async () => {
+	const store = configureStore({
+		reducer: {schedule: scheduleReducer, config: configReducer},
+		preloadedState: {config: {...defaultConfig, ...autumn}},
+		middleware: (m) => m({serializableCheck: false}),
+	});
+	const close = jest.fn();
+	await render(
+		<Provider store={store}>
+			<ScheduleAddModal visible onClose={close} />
+		</Provider>,
+	);
+	await fireEvent.changeText(
+		screen.getByPlaceholderText(getStr("title")),
+		"讨论会",
+	);
+	return {store, close};
+};
+
+test.each(["confirm", "cancel"] as const)(
+	"%s applies only confirmed week and period selections when saving",
+	async (action) => {
+		const {store, close} = await setupNew();
+		await fireEvent.press(screen.getByText(getStr("weeks")));
+		await fireEvent.press(screen.getByText(getStr("oddWeeks")));
+		await fireEvent.press(screen.getByTestId(`picker-${action}`));
+		await fireEvent.press(screen.getByText(getStr("periods")));
+		await fireEvent(
+			screen.getAllByTestId("schedule-picker-wheel")[0],
+			"valueChange",
+			"",
+			2,
+		);
+		await fireEvent(
+			screen.getAllByTestId("schedule-picker-wheel")[1],
+			"valueChange",
+			"",
+			5,
+		);
+		await fireEvent(
+			screen.getAllByTestId("schedule-picker-wheel")[2],
+			"valueChange",
+			"",
+			1,
+		);
+		await fireEvent.press(screen.getByTestId(`picker-${action}`));
+		await fireEvent.press(screen.getByText(getStr("save")));
+		const slices = store.getState().schedule.baseSchedule[0].activeTime.base;
+		expect(slices).toHaveLength(action === "confirm" ? 9 : 18);
+		expect(slices[0].beginTime.format("YYYY-MM-DD HH:mm")).toBe(
+			action === "confirm" ? "2025-09-17 13:30" : "2025-09-15 08:00",
+		);
+		expect(slices[0].endTime.format("HH:mm")).toBe(
+			action === "confirm" ? "15:05" : "21:45",
+		);
+		expect(close).toHaveBeenCalledTimes(1);
+	},
+);
+
+test.each(["confirm", "cancel"] as const)(
+	"%s keeps date and natural-time picker drafts separate from saved values",
+	async (action) => {
+		const {store, close} = await setupNew();
+		await fireEvent.press(screen.getByText(getStr("scheduleAddModeDateTime")));
+		await fireEvent.press(screen.getByText(getStr("scheduleDate")));
+		await fireEvent(
+			screen.getByTestId("schedule-picker-wheel"),
+			"valueChange",
+			"",
+			2,
+		);
+		await fireEvent.press(screen.getByTestId(`picker-${action}`));
+		await fireEvent.press(screen.getByText(getStr("scheduleTimeRange")));
+		for (const [index, value] of [9, 10, 10, 20].entries()) {
+			await fireEvent(
+				screen.getAllByTestId("schedule-picker-wheel")[index],
+				"valueChange",
+				"",
+				value,
+			);
+		}
+		await fireEvent.press(screen.getByTestId(`picker-${action}`));
+		await fireEvent.press(screen.getByText(getStr("save")));
+		const slices = store.getState().schedule.baseSchedule[0].activeTime.base;
+		expect(slices).toHaveLength(1);
+		expect(slices[0].beginTime.format("YYYY-MM-DD HH:mm")).toBe(
+			action === "confirm" ? "2025-09-17 09:10" : "2025-09-15 08:00",
+		);
+		expect(slices[0].endTime.format("HH:mm")).toBe(
+			action === "confirm" ? "10:20" : "08:45",
+		);
+		expect(close).toHaveBeenCalledTimes(1);
+	},
+);
 
 test("canceling the repeating edit dialog does not save title or location", async () => {
 	const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});

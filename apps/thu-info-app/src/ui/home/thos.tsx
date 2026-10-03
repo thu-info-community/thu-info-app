@@ -185,6 +185,160 @@ export const useThosBrowserHeader = (
 	}, [disabled, navigation, onPress, visible]);
 };
 
+const ThosServiceCard = ({
+	item,
+	colors,
+	navigation,
+	userId,
+	isFavorite,
+	onFavorite,
+}: {
+	item: ThosService;
+	colors: ReturnType<typeof themes>["colors"];
+	navigation: RootNav;
+	userId: string;
+	isFavorite: boolean;
+	onFavorite: () => void;
+}) => {
+	return (
+		<View
+			key={item.id}
+			style={{
+				borderRadius: 12,
+				padding: 16,
+				backgroundColor: colors.contentBackground,
+			}}>
+			<View style={{flexDirection: "row", alignItems: "flex-start"}}>
+				<TouchableOpacity
+					onPress={() =>
+						navigation.navigate("ThosServiceDetail", {
+							service: item,
+							accountId: userId,
+						})
+					}
+					accessibilityRole="button"
+					style={{flex: 1}}>
+					<Text
+						style={{
+							color: colors.text,
+							fontSize: 17,
+							fontWeight: "600",
+						}}>
+						{item.name}
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					testID={`thos-favorite-${item.id}`}
+					accessibilityRole="button"
+					accessibilityLabel={
+						isFavorite
+							? getStr("thosCancelFavorite")
+							: getStr("thosFavoriteService")
+					}
+					onPress={onFavorite}
+					style={{padding: 4, marginLeft: 8}}>
+					{isFavorite ? (
+						<IconStarActive width={24} height={24} />
+					) : (
+						<IconStar width={24} height={24} />
+					)}
+				</TouchableOpacity>
+			</View>
+			<Text style={{color: colors.fontB2, marginVertical: 10}}>
+				{item.department || getStr("thosDepartmentUnavailable")}
+			</Text>
+		</View>
+	);
+};
+
+const ThosTaskCard = ({
+	item,
+	colors,
+	navigation,
+	userId,
+}: {
+	item: ThosTask;
+	colors: ReturnType<typeof themes>["colors"];
+	navigation: RootNav;
+	userId: string;
+}) => {
+	return (
+		<TouchableOpacity
+			key={`${item.kind}:${item.key}`}
+			onPress={() =>
+				navigation.navigate("ThosTaskDetail", {
+					task: item,
+					accountId: userId,
+				})
+			}
+			style={{
+				width: "100%",
+				padding: 16,
+				borderRadius: 12,
+				backgroundColor: colors.contentBackground,
+			}}>
+			<Text
+				style={{
+					color: colors.text,
+					fontSize: 17,
+					fontWeight: "600",
+				}}>
+				{item.title}
+			</Text>
+			<Text style={{color: colors.mainTheme, marginVertical: 8}}>
+				{getThosTaskStatusLabel(item.status)}
+				{item.workflowStatus
+					? ` · ${getThosTaskStatusLabel(item.workflowStatus)}`
+					: ""}
+				{item.node ? ` · ${item.node}` : ""}
+			</Text>
+			{!!item.summary && (
+				<Text style={{color: colors.fontB2, marginBottom: 6}}>
+					{getStr("thosSummary")}
+					{item.summary}
+				</Text>
+			)}
+			{item.progress !== undefined && (
+				<>
+					<View
+						accessibilityLabel={getStr("thosProgress").replace(
+							"{0}",
+							String(item.progress),
+						)}
+						style={{
+							height: 5,
+							borderRadius: 3,
+							backgroundColor: colors.themeGrey,
+						}}>
+						<View
+							style={{
+								height: 5,
+								width: `${item.progress}%`,
+								backgroundColor: colors.mainTheme,
+								borderRadius: 3,
+							}}
+						/>
+					</View>
+					<Text style={{color: colors.fontB2, marginTop: 6}}>
+						{item.progress}%
+					</Text>
+				</>
+			)}
+			{!!item.date && (
+				<Text style={{color: colors.fontB2, marginTop: 6}}>
+					{item.kind === "completed"
+						? getStr("thosCompletionTime")
+						: item.kind === "drafts"
+							? getStr("thosLastModifiedTime")
+							: getStr("thosApplicationTime")}
+					{getStr("colonMark")}
+					{item.date}
+				</Text>
+			)}
+		</TouchableOpacity>
+	);
+};
+
 export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 	const {colors} = themes(useColorScheme());
 	const [width, setWidth] = useState(0);
@@ -354,10 +508,7 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 				onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
 				keyboardShouldPersistTaps="handled"
 				refreshControl={
-					<ThemedRefreshControl
-						refreshing={busy}
-						onRefresh={load}
-					/>
+					<ThemedRefreshControl refreshing={busy} onRefresh={load} />
 				}
 				contentContainerStyle={{
 					padding: 16,
@@ -393,7 +544,9 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 										borderRadius: 12,
 										alignItems: "center",
 										backgroundColor:
-											tab === kind ? colors.mainTheme : colors.contentBackground,
+											tab === kind
+												? colors.mainTheme
+												: colors.contentBackground,
 									}}>
 									<Text
 										style={{
@@ -501,129 +654,24 @@ export const ThosScreen = ({navigation}: {navigation: RootNav}) => {
 							}>
 							{tab === "services"
 								? serviceRows.map((item) => (
-										<View
+										<ThosServiceCard
+											colors={colors}
 											key={item.id}
-											style={{
-												borderRadius: 12,
-												padding: 16,
-												backgroundColor: colors.contentBackground,
-											}}>
-											<View
-												style={{flexDirection: "row", alignItems: "flex-start"}}>
-												<TouchableOpacity
-													onPress={() =>
-														navigation.navigate("ThosServiceDetail", {
-															service: item,
-															accountId: userId,
-														})
-													}
-													accessibilityRole="button"
-													style={{flex: 1}}>
-													<Text
-														style={{
-															color: colors.text,
-															fontSize: 17,
-															fontWeight: "600",
-														}}>
-														{item.name}
-													</Text>
-												</TouchableOpacity>
-												<TouchableOpacity
-													testID={`thos-favorite-${item.id}`}
-													accessibilityRole="button"
-													accessibilityLabel={
-														favorites.includes(item.id)
-															? getStr("thosCancelFavorite")
-															: getStr("thosFavoriteService")
-													}
-													onPress={() => favorite(item.id)}
-													style={{padding: 4, marginLeft: 8}}>
-													{favorites.includes(item.id) ? (
-														<IconStarActive width={24} height={24} />
-													) : (
-														<IconStar width={24} height={24} />
-													)}
-												</TouchableOpacity>
-											</View>
-											<Text style={{color: colors.fontB2, marginVertical: 10}}>
-												{item.department || getStr("thosDepartmentUnavailable")}
-											</Text>
-										</View>
+											item={item}
+											navigation={navigation}
+											userId={userId}
+											isFavorite={favorites.includes(item.id)}
+											onFavorite={() => favorite(item.id)}
+										/>
 									))
 								: taskRows.map((item) => (
-										<TouchableOpacity
+										<ThosTaskCard
+											colors={colors}
 											key={`${item.kind}:${item.key}`}
-											onPress={() =>
-												navigation.navigate("ThosTaskDetail", {
-													task: item,
-													accountId: userId,
-												})
-											}
-											style={{
-												width: "100%",
-												padding: 16,
-												borderRadius: 12,
-												backgroundColor: colors.contentBackground,
-											}}>
-											<Text
-												style={{
-													color: colors.text,
-													fontSize: 17,
-													fontWeight: "600",
-												}}>
-												{item.title}
-											</Text>
-											<Text style={{color: colors.mainTheme, marginVertical: 8}}>
-												{getThosTaskStatusLabel(item.status)}
-												{item.workflowStatus
-													? ` · ${getThosTaskStatusLabel(item.workflowStatus)}`
-													: ""}
-												{item.node ? ` · ${item.node}` : ""}
-											</Text>
-											{!!item.summary && (
-												<Text style={{color: colors.fontB2, marginBottom: 6}}>
-													{getStr("thosSummary")}
-													{item.summary}
-												</Text>
-											)}
-											{item.progress !== undefined && (
-												<>
-													<View
-														accessibilityLabel={getStr("thosProgress").replace(
-															"{0}",
-															String(item.progress),
-														)}
-														style={{
-															height: 5,
-															borderRadius: 3,
-															backgroundColor: colors.themeGrey,
-														}}>
-														<View
-															style={{
-																height: 5,
-																width: `${item.progress}%`,
-																backgroundColor: colors.mainTheme,
-																borderRadius: 3,
-															}}
-														/>
-													</View>
-													<Text style={{color: colors.fontB2, marginTop: 6}}>
-														{item.progress}%
-													</Text>
-												</>
-											)}
-											{!!item.date && (
-												<Text style={{color: colors.fontB2, marginTop: 6}}>
-													{item.kind === "completed"
-														? getStr("thosCompletionTime")
-														: item.kind === "drafts"
-															? getStr("thosLastModifiedTime")
-															: getStr("thosApplicationTime")}
-													{getStr("colonMark")}
-													{item.date}
-												</Text>
-											)}
-										</TouchableOpacity>
+											item={item}
+											navigation={navigation}
+											userId={userId}
+										/>
 									))}
 						</FlexGrid>
 						{page &&

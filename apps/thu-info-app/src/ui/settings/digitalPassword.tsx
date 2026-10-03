@@ -1,3 +1,4 @@
+import {CodeInputCell} from "../../components/CodeInputCell";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {useEffect, useState} from "react";
 import {getStr} from "../../utils/i18n";
@@ -7,7 +8,6 @@ import {RoundedView} from "../../components/views";
 import {DigitalPasswordRouteProp, RootNav} from "../../components/Root";
 import {
 	CodeField,
-	Cursor,
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import {State} from "../../redux/store";
@@ -43,8 +43,8 @@ export const DigitalPasswordScreen = ({
 		params.action === "new"
 			? "newPassword"
 			: params.action === "confirm"
-			? "confirmPassword"
-			: "verifyPassword",
+				? "confirmPassword"
+				: "verifyPassword",
 	);
 
 	const mismatch =
@@ -74,6 +74,42 @@ export const DigitalPasswordScreen = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handlePasswordChange = (v: string) => {
+		if (v.match(/^\d{0,4}$/)) {
+			setValue(v);
+			if (v.length === 4) {
+				if (navigation) {
+					if (params.action === "new") {
+						navigation.replace("DigitalPassword", {
+							action: "confirm",
+							payload: v,
+						});
+					} else if (params.action === "confirm") {
+						if (v === params.payload) {
+							navigation.pop();
+							dispatch(setAppSecret(v));
+							dispatch(setupAppSecret());
+						}
+					} else if (params.action === "verify") {
+						if (appSecret === v) {
+							navigation.replace(params.target);
+							dispatch(
+								configSet({
+									key: "subFunctionUnlocked",
+									value: true,
+								}),
+							);
+						}
+					}
+				} else {
+					if (appSecret === v) {
+						dispatch(configSet({key: "appLocked", value: false}));
+					}
+				}
+			}
+		}
+	};
+
 	return (
 		<KeyboardAvoidingScreen>
 			<ScrollView
@@ -99,41 +135,7 @@ export const DigitalPasswordScreen = ({
 						<CodeField
 							{...props}
 							value={value}
-							onChangeText={(v) => {
-								if (v.match(/^\d{0,4}$/)) {
-									setValue(v);
-									if (v.length === 4) {
-										if (navigation) {
-											if (params.action === "new") {
-												navigation.replace("DigitalPassword", {
-													action: "confirm",
-													payload: v,
-												});
-											} else if (params.action === "confirm") {
-												if (v === params.payload) {
-													navigation.pop();
-													dispatch(setAppSecret(v));
-													dispatch(setupAppSecret());
-												}
-											} else if (params.action === "verify") {
-												if (appSecret === v) {
-													navigation.replace(params.target);
-													dispatch(
-														configSet({
-															key: "subFunctionUnlocked",
-															value: true,
-														}),
-													);
-												}
-											}
-										} else {
-											if (appSecret === v) {
-												dispatch(configSet({key: "appLocked", value: false}));
-											}
-										}
-									}
-								}
-							}}
+							onChangeText={handlePasswordChange}
 							cellCount={PASSWORD_LENGTH}
 							autoFocus={true}
 							rootStyle={{width: "100%", paddingHorizontal: 16, gap: 8}}
@@ -141,32 +143,14 @@ export const DigitalPasswordScreen = ({
 							textContentType="oneTimeCode"
 							secureTextEntry={true}
 							renderCell={({index, symbol, isFocused}) => (
-								<View
+								<CodeInputCell
 									key={index}
-									style={{
-										flex: 1,
-										maxWidth: 55,
-										minWidth: 0,
-										minHeight: 56,
-										paddingHorizontal: 12,
-										paddingVertical: 8,
-										borderWidth: 2,
-										borderColor: isFocused
-											? colors.mainTheme
-											: colors.themeGrey,
-										borderRadius: 12,
-										justifyContent: "center",
-									}}>
-									<Text
-										style={{
-											fontSize: 32,
-											textAlign: "center",
-											color: colors.primaryLight,
-										}}
-										onLayout={getCellOnLayoutHandler(index)}>
-										{symbol ? "*" : isFocused ? <Cursor /> : null}
-									</Text>
-								</View>
+									symbol={symbol}
+									focused={isFocused}
+									masked
+									colors={colors}
+									onLayout={getCellOnLayoutHandler(index)}
+								/>
 							)}
 						/>
 					</RoundedView>
