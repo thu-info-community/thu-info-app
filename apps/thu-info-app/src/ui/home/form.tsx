@@ -271,6 +271,8 @@ const styles = themedStyles(({colors}) => ({
 	},
 
 	titleStyle: {
+		flex: 1,
+		minWidth: 0,
 		fontWeight: "bold",
 		fontSize: 16,
 		marginHorizontal: 8,

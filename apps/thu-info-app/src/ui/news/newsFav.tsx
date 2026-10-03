@@ -1,12 +1,6 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {NewsFavRouteProp, RootNav} from "../../components/Root";
-import {
-	useWindowDimensions,
-	FlatList,
-	Text,
-	useColorScheme,
-	View,
-} from "react-native";
+import {FlatList, Text, useColorScheme, View} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {NewsListItem} from "../../components/news/NewsListItem";
@@ -24,7 +18,6 @@ export const NewsFavScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const screenHeight = useWindowDimensions();
 	const [inited, setInited] = useState(false);
 	const [refreshing, setRefreshing] = useState(true);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,7 +73,8 @@ export const NewsFavScreen = ({
 	return (
 		<View style={{flex: 1}}>
 			<FlatList
-				style={{margin: 12, marginBottom: 0}}
+				style={{flex: 1, margin: 12, marginBottom: 0}}
+				contentContainerStyle={{flexGrow: 1}}
 				refreshControl={
 					<ThemedRefreshControl
 						refreshing={refreshing}
@@ -91,7 +85,7 @@ export const NewsFavScreen = ({
 					<View
 						style={{
 							margin: 15,
-							height: screenHeight.height * 0.6,
+							flex: 1,
 							justifyContent: "center",
 							alignItems: "center",
 						}}>

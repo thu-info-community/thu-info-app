@@ -1,5 +1,12 @@
-import {StoredSchedule, schedulesInSemester} from "../../redux/scheduleData";
-import {deleteScheduleOccurrences, uploadCustomSchedules, beginScheduleRequest, isLatestScheduleRequest} from "../../redux/scheduleOperations";
+import {FlexGrid} from "../../components/FlexGrid";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {schedulesInSemester} from "../../redux/scheduleData";
+import {
+	deleteScheduleOccurrences,
+	uploadCustomSchedules,
+	beginScheduleRequest,
+	isLatestScheduleRequest,
+} from "../../redux/scheduleOperations";
 import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import {
 	View,
@@ -26,27 +33,16 @@ import React, {
 import {useDispatch, useSelector, useStore} from "react-redux";
 import {
 	ScheduleType,
-	TimeSlice,
 	getWeekFromTime,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
-import {
-	ScheduleBlock,
-	ScheduleTimeAxis,
-	ScheduleGridLines,
-} from "../../components/schedule/schedule";
-import {
-	buildScheduleLayout,
-	scheduleRowAt,
-	scheduleAddTime,
-	ScheduleLayout,
-} from "../../utils/scheduleLayout";
+import {ScheduleTimeAxis} from "../../components/schedule/schedule";
+import {buildScheduleLayout, ScheduleLayout} from "../../utils/scheduleLayout";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
-import md5 from "md5";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
@@ -54,12 +50,17 @@ import IconUpload from "../../assets/icons/IconUpload";
 import {BottomPopupTriggerView} from "../../components/views";
 import {Snackbar} from "react-native-snackbar";
 import {setCalendarConfig} from "../../redux/slices/config";
-import {getStatusBarHeight} from "react-native-safearea-height";
 import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
-import {CalendarData, Semester} from "@thu-info/lib/src/models/schedule/calendar";
+import {
+	CalendarData,
+	Semester,
+} from "@thu-info/lib/src/models/schedule/calendar";
 import {exportScheduleToICS} from "../../utils/calendar";
 import Share from "react-native-share";
-import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
+import {
+	ScheduleAddModal,
+	ScheduleEditParams,
+} from "../../components/schedule/scheduleAdd";
 import {Choice} from "../../redux/slices/schedule";
 import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
@@ -69,29 +70,119 @@ import {useNavigation} from "@react-navigation/native";
 import type {RootNav} from "../../components/Root";
 import {ScheduleSettings} from "../../components/schedule/settings";
 
-interface NormalSliceRenderData {
-	type: "normal";
-	slice: TimeSlice;
-	schedule: StoredSchedule;
-	week: number;
-}
+import {
+	ScheduleWeekPage,
+	ScheduleOccurrence,
+	NewScheduleDefaults,
+} from "../../components/schedule/scheduleWeekPage";
 
-type SliceRenderData = NormalSliceRenderData;
+type SliceRenderData = ScheduleOccurrence;
 
 export {beginTime, endTime} from "../../utils/scheduleLayout";
 
-interface NewScheduleDefaults {
+const SemesterWeekPicker = ({
+	calendar,
+	setCalendar,
+	weekCount,
+	week,
+	weekNumber,
+	onSetWeek,
+	done,
+}: {
+	calendar: CalendarData | undefined;
+	setCalendar: (
+		payload: Semester & {nextSemesterIndex: number | undefined},
+	) => void;
+	weekCount: number;
 	week: number;
-	dayOfWeek: number;
-	periodBegin: number;
-	periodEnd: number;
-	dateIndex: number;
-	beginHour: number;
-	beginMinute: number;
-	endHour: number;
-	endMinute: number;
-	useCustomDateTime: boolean;
-}
+	weekNumber: number;
+	onSetWeek: (week: number) => void;
+	done: () => void;
+}) => {
+	const theme = themes(useColorScheme());
+	return (
+		<>
+			{calendar && (
+				<View style={{marginHorizontal: 12}}>
+					<TouchableOpacity
+						style={{padding: 6}}
+						onPress={() => {
+							if (calendar) {
+								setCalendar({
+									...calendar,
+									nextSemesterIndex: undefined,
+								});
+							}
+						}}>
+						<Text style={{color: theme.colors.text, fontSize: 15}}>
+							{calendar.semesterName}
+						</Text>
+					</TouchableOpacity>
+					{calendar.nextSemesterList.map((semester, id) => (
+						<TouchableOpacity
+							style={{padding: 6}}
+							key={semester.semesterId}
+							onPress={() => {
+								if (calendar) {
+									setCalendar({
+										...calendar.nextSemesterList[id],
+										nextSemesterIndex: id,
+									});
+								}
+							}}>
+							<Text style={{color: theme.colors.text, fontSize: 15}}>
+								{semester.semesterName}
+							</Text>
+						</TouchableOpacity>
+					))}
+				</View>
+			)}
+			<View
+				style={{
+					marginHorizontal: 12,
+					marginTop: 7,
+				}}>
+				<FlexGrid>
+					{Array.from(new Array(weekCount), (_, k) => k + 1).map(
+						(weekButton) => (
+							<TouchableOpacity
+								style={{
+									marginVertical: 4,
+									alignItems: "center",
+									backgroundColor:
+										week === weekButton ? theme.colors.themePurple : undefined,
+									borderRadius: 8,
+								}}
+								onPress={() => {
+									onSetWeek(weekButton);
+									done();
+								}}
+								key={weekButton}>
+								<Text
+									style={{
+										fontSize: 18,
+										lineHeight: 40,
+										fontWeight:
+											week !== weekButton && weekNumber === weekButton
+												? "600"
+												: "normal",
+										color:
+											week === weekButton
+												? "white"
+												: weekNumber === weekButton
+													? theme.colors.themePurple
+													: theme.colors.fontB1,
+									}}>
+									{weekButton}
+								</Text>
+							</TouchableOpacity>
+						),
+					)}
+				</FlexGrid>
+			</View>
+		</>
+	);
+};
 
 const Header = React.forwardRef(
 	(
@@ -103,17 +194,17 @@ const Header = React.forwardRef(
 			onSetWeek,
 			onPressUpload,
 			uploadingCustomSchedule,
-			contentWidth,
 		}: {
 			calendar: CalendarData | undefined;
-			setCalendar: (payload: Semester & {nextSemesterIndex: number | undefined}) => void;
+			setCalendar: (
+				payload: Semester & {nextSemesterIndex: number | undefined},
+			) => void;
 			onChangeSetOpenConfig: Function;
-			onSetWeek: Function;
+			onSetWeek: (week: number) => void;
 			onPressAdd: () => void;
 			onPressUpload: () => void;
 			hasCustomSchedule: boolean;
 			uploadingCustomSchedule: boolean;
-			contentWidth: number;
 		},
 		ref: React.ForwardedRef<{setWeekNumber: (w: number) => void}>,
 	) => {
@@ -144,24 +235,18 @@ const Header = React.forwardRef(
 
 		const hasCustomSchedule = false;
 
-		useImperativeHandle(
-			ref,
-			() => {
-				return {
-					setWeekNumber: (w: number) => {
-						setWeek(w);
-					},
-				};
-			},
-			[setWeek],
-		);
+		useImperativeHandle(ref, () => {
+			return {
+				setWeekNumber: (w: number) => {
+					setWeek(w);
+				},
+			};
+		}, [setWeek]);
 
-		const weekButtonWidth = (contentWidth - 24) / 4 - 6 - 1;
+		const insets = useSafeAreaInsets();
 
 		useEffect(() => {
-			let animation:
-				| Animated.CompositeAnimation
-				| undefined;
+			let animation: Animated.CompositeAnimation | undefined;
 			if (hasCustomSchedule && !uploadingCustomSchedule) {
 				animation = Animated.loop(
 					Animated.sequence([
@@ -198,91 +283,34 @@ const Header = React.forwardRef(
 					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: getStatusBarHeight(),
+					paddingTop: insets.top,
 				}}
 				key={String(darkModeHook)}>
 				<View
 					style={{
 						width: "100%",
+						flexDirection: "row",
+						paddingHorizontal: 12,
+						gap: 8,
 						alignItems: "center",
 						justifyContent: "center",
 					}}>
+					<View style={{flex: 1, minWidth: 88}} />
 					<BottomPopupTriggerView
+						style={{flex: 2, minWidth: 0, alignItems: "center"}}
 						popupTitle={`${getStr("weekNumPrefix")}${week}${getStr(
 							"weekNumSuffix",
 						)}`}
 						popupContent={(done: () => void) => (
-							<>
-							{calendar && <View style={{marginHorizontal: 12}}>
-								<TouchableOpacity style={{padding: 6}} onPress={() => {
-									if (calendar) {
-										setCalendar({ ...calendar, nextSemesterIndex: undefined });
-									}
-								}}>
-									<Text style={{color: theme.colors.text, fontSize: 15}}>
-										{calendar.semesterName}
-									</Text>
-								</TouchableOpacity>
-								{calendar.nextSemesterList.map((semester, id) => (
-									<TouchableOpacity style={{padding: 6}} key={semester.semesterId} onPress={() => {
-										if (calendar) {
-											setCalendar({ ...calendar.nextSemesterList[id], nextSemesterIndex: id });
-										}
-									}}>
-										<Text style={{color: theme.colors.text, fontSize: 15}}>
-											{semester.semesterName}
-										</Text>
-									</TouchableOpacity>
-								))}
-							</View>}
-							<View
-								style={{
-									margin: 12,
-									marginTop: 7,
-									flexDirection: "row",
-									flexWrap: "wrap",
-								}}>
-								{Array.from(new Array(weekCount), (_, k) => k + 1).map(
-									(weekButton) => (
-										<TouchableOpacity
-											style={{
-												width: weekButtonWidth,
-												marginHorizontal: 3,
-												marginVertical: 4,
-												alignItems: "center",
-												backgroundColor:
-													week === weekButton
-														? theme.colors.themePurple
-														: undefined,
-												borderRadius: 8,
-											}}
-											onPress={() => {
-												onSetWeek(weekButton);
-												done();
-											}}
-											key={weekButton}>
-											<Text
-												style={{
-													fontSize: 18,
-													lineHeight: 40,
-													fontWeight:
-														week !== weekButton && weekNumber === weekButton
-															? "600"
-															: "normal",
-													color:
-														week === weekButton
-															? "white"
-															: weekNumber === weekButton
-															? theme.colors.themePurple
-															: theme.colors.fontB1,
-												}}>
-												{weekButton}
-											</Text>
-										</TouchableOpacity>
-									),
-								)}
-							</View>
-							</>
+							<SemesterWeekPicker
+								calendar={calendar}
+								setCalendar={setCalendar}
+								weekCount={weekCount}
+								week={week}
+								weekNumber={weekNumber}
+								onSetWeek={onSetWeek}
+								done={done}
+							/>
 						)}
 						popupCanFulfill={true}
 						popupCancelable={true}
@@ -316,50 +344,59 @@ const Header = React.forwardRef(
 								semesterType === 1
 									? "autumn"
 									: semesterType === 2
-									? "spring"
-									: semesterType === 3
-									? "summer"
-									: "winter",
+										? "spring"
+										: semesterType === 3
+											? "summer"
+											: "winter",
 							)}
 						</Text>
 					</BottomPopupTriggerView>
-					{hasCustomSchedule && (
-						<View
-							style={{
-								position: "absolute",
-								right: 80,
-								flexDirection: "row",
-							}}>
+					<View
+						style={{
+							flex: 1,
+							minWidth: 88,
+							flexDirection: "row",
+							justifyContent: "flex-end",
+							gap: 8,
+						}}>
+						{hasCustomSchedule && (
+							<View
+								style={{
+									flexDirection: "row",
+								}}>
+								<TouchableOpacity
+									onPress={() => onPressUpload()}
+									disabled={uploadingCustomSchedule}
+									activeOpacity={0.7}>
+									<Animated.View
+										style={{
+											transform: [{scale: uploadIconScale}],
+										}}>
+										{uploadingCustomSchedule ? (
+											<ActivityIndicator
+												size="small"
+												color={theme.colors.themePurple}
+											/>
+										) : (
+											<IconUpload width={24} height={24} />
+										)}
+									</Animated.View>
+								</TouchableOpacity>
+							</View>
+						)}
+						<View>
 							<TouchableOpacity
-								onPress={() => onPressUpload()}
-								disabled={uploadingCustomSchedule}
-								activeOpacity={0.7}>
-								<Animated.View
-									style={{
-										transform: [{scale: uploadIconScale}],
-									}}>
-									{uploadingCustomSchedule ? (
-										<ActivityIndicator
-											size="small"
-											color={theme.colors.themePurple}
-										/>
-									) : (
-										<IconUpload width={24} height={24} />
-									)}
-								</Animated.View>
+								accessibilityRole="button"
+								accessibilityLabel={getStr("scheduleSettings")}
+								onPress={() => onChangeSetOpenConfig()}>
+								<IconConfig width={24} height={24} />
 							</TouchableOpacity>
 						</View>
-					)}
-					<View style={{position: "absolute", right: 48, flexDirection: "row"}}>
-						<TouchableOpacity accessibilityRole="button" accessibilityLabel={getStr("scheduleSettings")} onPress={() => onChangeSetOpenConfig()}>
-							<IconConfig width={24} height={24} />
-						</TouchableOpacity>
-					</View>
-					<View style={{position: "absolute", right: 16, flexDirection: "row"}}>
-						<TouchableOpacity
-							onPress={onPressAdd}>
-							<IconAdd width={24} height={24} />
-						</TouchableOpacity>
+						<View>
+							<TouchableOpacity onPress={onPressAdd}>
+								<IconAdd width={24} height={24} />
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
 			</View>
@@ -372,7 +409,7 @@ export const MAX_UNIT_WIDTH = 96;
 
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
-	const {isWide, width: windowWidth, height: windowHeight} = useResponsive();
+	const {isWide} = useResponsive();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
@@ -394,21 +431,46 @@ export const ScheduleScreen = () => {
 		return helper
 			.getSchedule(nextSemesterIndex)
 			.then((result) => {
-				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
+				if (
+					sequence !== requests.sequence ||
+					selectedIndex.current !== nextSemesterIndex ||
+					!isLatestScheduleRequest(reduxStore, version)
+				) {
+					return;
+				}
 				setCalendar(result.calendar);
-				const semester = nextSemesterIndex === undefined || nextSemesterIndex >= result.calendar.nextSemesterList.length ? result.calendar : result.calendar.nextSemesterList[nextSemesterIndex];
+				const semester =
+					nextSemesterIndex === undefined ||
+					nextSemesterIndex >= result.calendar.nextSemesterList.length
+						? result.calendar
+						: result.calendar.nextSemesterList[nextSemesterIndex];
 				dispatch(setCalendarConfig({...semester, nextSemesterIndex}));
-				dispatch(scheduleFetch({schedule: result.schedule, semesterId: semester.semesterId}));
+				dispatch(
+					scheduleFetch({
+						schedule: result.schedule,
+						semesterId: semester.semesterId,
+					}),
+				);
 			})
 			.catch((e) => {
-				if (sequence !== requests.sequence || selectedIndex.current !== nextSemesterIndex || !isLatestScheduleRequest(reduxStore, version)) { return; }
+				if (
+					sequence !== requests.sequence ||
+					selectedIndex.current !== nextSemesterIndex ||
+					!isLatestScheduleRequest(reduxStore, version)
+				) {
+					return;
+				}
 				Snackbar.show({
 					text:
 						typeof e.message === "string" ? e.message : getStr("networkRetry"),
 					duration: Snackbar.LENGTH_SHORT,
 				});
 			})
-			.finally(() => { if (sequence === requests.sequence) { setRefreshing(false); } });
+			.finally(() => {
+				if (sequence === requests.sequence) {
+					setRefreshing(false);
+				}
+			});
 	}, [dispatch, nextSemesterIndex, requests, reduxStore]);
 
 	const handleExportICS = async () => {
@@ -421,8 +483,18 @@ export const ScheduleScreen = () => {
 		}
 
 		try {
-			const semester = nextSemesterIndex === undefined || nextSemesterIndex >= calendar.nextSemesterList.length ? calendar : calendar.nextSemesterList[nextSemesterIndex];
-			const result = await exportScheduleToICS(baseSchedule.map((schedule) => ({...schedule, name: shortenMap[schedule.localId] ?? schedule.name})), semester);
+			const semester =
+				nextSemesterIndex === undefined ||
+				nextSemesterIndex >= calendar.nextSemesterList.length
+					? calendar
+					: calendar.nextSemesterList[nextSemesterIndex];
+			const result = await exportScheduleToICS(
+				baseSchedule.map((schedule) => ({
+					...schedule,
+					name: shortenMap[schedule.localId] ?? schedule.name,
+				})),
+				semester,
+			);
 
 			if (result.success && result.filePath) {
 				if (result.method === "download") {
@@ -438,7 +510,8 @@ export const ScheduleScreen = () => {
 						url: `file://${result.filePath}`,
 						type: "text/calendar",
 						filename: semester.semesterName + ".ics",
-						subject: getStr("scheduleICSFileName") + " - " + semester.semesterName,
+						subject:
+							getStr("scheduleICSFileName") + " - " + semester.semesterName,
 					});
 
 					Snackbar.show({
@@ -486,12 +559,10 @@ export const ScheduleScreen = () => {
 		focusRing: isDarkMode ? "#FFFFFF" : "#2C2A28",
 	};
 
-	const fallbackWidth = Math.floor(windowWidth);
-	const layoutWidth =
-		contentWidth > 0 ? contentWidth : fallbackWidth;
+	const layoutWidth = contentWidth;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
 	const [tableHeight, setTableHeight] = useState(0);
-	const heightForCalc = tableHeight > 0 ? tableHeight : windowHeight - getStatusBarHeight() - 80;
+	const heightForCalc = Math.max(0, tableHeight);
 	// 按上课时间（8:00-21:45）划分为 13.75 小时（表头已移出，可视区域即 ScrollView 高度，不再减 40）
 	const exactHourHeight = heightForCalc / 13.75;
 	const heightMode =
@@ -502,8 +573,9 @@ export const ScheduleScreen = () => {
 	const showCustomSchedule =
 		useSelector((s: State) => s.config.showCustomSchedule) ?? true;
 	// 每小时高度，根据设置进行缩放
-	const useClassPeriods = useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
-	const periodHeight = heightForCalc / 14 * (1 + heightMode * 0.05);
+	const useClassPeriods =
+		useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
+	const periodHeight = (heightForCalc / 14) * (1 + heightMode * 0.05);
 	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
 	// 每分钟高度
 	const minuteHeight = hourHeight / 60;
@@ -512,7 +584,10 @@ export const ScheduleScreen = () => {
 	const timeAxisWidth = 8;
 	const timeStripVerticalPadding = 12; // 时间条上下留白
 	const dayCount = hideWeekend ? 5 : 7;
-	const scheduleBodyWidth = layoutWidth - timeLabelWidth - timeAxisWidth;
+	const scheduleBodyWidth = Math.max(
+		0,
+		layoutWidth - timeLabelWidth - timeAxisWidth,
+	);
 	// 不封顶时，平板/折叠屏展开/三折叠这些宽屏形态会把单日列拉到 150dp 以上，
 	// 一节 45 分钟的课占掉一大片空白。封顶后网格在可用宽度里水平居中。
 	const unitWidth = Math.min(scheduleBodyWidth / dayCount, MAX_UNIT_WIDTH);
@@ -535,10 +610,7 @@ export const ScheduleScreen = () => {
 				if (week >= 1 && week <= weekCount) {
 					const minutes =
 						slice.beginTime.hour() * 60 + slice.beginTime.minute();
-					if (
-						earliestMinutes === null ||
-						minutes < earliestMinutes
-					) {
+					if (earliestMinutes === null || minutes < earliestMinutes) {
 						earliestMinutes = minutes;
 					}
 				}
@@ -554,18 +626,26 @@ export const ScheduleScreen = () => {
 	const [uploadingCustomSchedule, setUploadingCustomSchedule] = useState(false);
 
 	const customSchedulesInCurrentSemester = schedulesInSemester(
-		baseSchedule.filter((schedule) => schedule.type === ScheduleType.CUSTOM), {firstDay, weekCount});
+		baseSchedule.filter((schedule) => schedule.type === ScheduleType.CUSTOM),
+		{firstDay, weekCount},
+	);
 
 	const hasCustomScheduleInCurrentSemester =
 		customSchedulesInCurrentSemester.length > 0;
 
 	const [openConfig, setOpenConfig] = useState(false);
 	const [showAddModal, setShowAddModal] = useState(false);
-	const [editingParams, setEditingParams] = useState<ScheduleEditParams | undefined>(undefined);
-	const [actionTarget, setActionTarget] = useState<ScheduleEditParams | undefined>(undefined);
+	const [editingParams, setEditingParams] = useState<
+		ScheduleEditParams | undefined
+	>(undefined);
+	const [actionTarget, setActionTarget] = useState<
+		ScheduleEditParams | undefined
+	>(undefined);
 	const [deletingAction, setDeletingAction] = useState(false);
 
-	const themeTransition = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current;
+	const themeTransition = useRef(
+		new Animated.Value(isDarkMode ? 1 : 0),
+	).current;
 	const popupAnim = useRef(new Animated.Value(0)).current;
 
 	const popupBaseBackground = themeTransition.interpolate({
@@ -619,7 +699,14 @@ export const ScheduleScreen = () => {
 		}
 		try {
 			setDeletingAction(true);
-			await deleteScheduleOccurrences(helper, reduxStore, actionTarget.localId, actionTarget, choice, {firstDay, weekCount});
+			await deleteScheduleOccurrences(
+				helper,
+				reduxStore,
+				actionTarget.localId,
+				actionTarget,
+				choice,
+				{firstDay, weekCount},
+			);
 			setActionTarget(undefined);
 			if (Platform.OS === "android") {
 				ToastAndroid.showWithGravity(
@@ -629,7 +716,10 @@ export const ScheduleScreen = () => {
 				);
 			}
 		} catch {
-			Snackbar.show({text: getStr("networkRetry"), duration: Snackbar.LENGTH_SHORT});
+			Snackbar.show({
+				text: getStr("networkRetry"),
+				duration: Snackbar.LENGTH_SHORT,
+			});
 		} finally {
 			setDeletingAction(false);
 		}
@@ -655,7 +745,9 @@ export const ScheduleScreen = () => {
 						marginBottom: 4,
 					}}
 					numberOfLines={2}>
-					{nullAlias(actionTarget.alias) ? actionTarget.name : actionTarget.alias}
+					{nullAlias(actionTarget.alias)
+						? actionTarget.name
+						: actionTarget.alias}
 				</Text>
 				<Text
 					style={{
@@ -734,7 +826,9 @@ export const ScheduleScreen = () => {
 
 	useEffect(() => {
 		getSchedule();
-		return () => { requests.sequence++; };
+		return () => {
+			requests.sequence++;
+		};
 	}, [getSchedule, requests]);
 
 	const handleUploadCustomSchedule = () => {
@@ -804,7 +898,13 @@ export const ScheduleScreen = () => {
 		});
 
 		return weekSchedule;
-	}, [baseSchedule, firstDay, weekCount, showCustomSchedule, showOfficialSchedule]);
+	}, [
+		baseSchedule,
+		firstDay,
+		weekCount,
+		showCustomSchedule,
+		showOfficialSchedule,
+	]);
 
 	const flatListRef = useRef<FlatList<ScheduleLayout<SliceRenderData>>>(null);
 	const headerRef = useRef<ElementRef<typeof Header>>(null);
@@ -813,34 +913,52 @@ export const ScheduleScreen = () => {
 		if (weekCount > 0 && currentWeekIndex >= weekCount) {
 			setCurrentWeekIndex(weekCount - 1);
 			headerRef.current?.setWeekNumber(weekCount);
-			flatListRef.current?.scrollToIndex({index: weekCount - 1, animated: false});
+			flatListRef.current?.scrollToIndex({
+				index: weekCount - 1,
+				animated: false,
+			});
 		}
 	}, [currentWeekIndex, weekCount]);
-	const [addDefaults, setAddDefaults] = useState<NewScheduleDefaults | undefined>(
-		undefined,
-	);
+	const [addDefaults, setAddDefaults] = useState<
+		NewScheduleDefaults | undefined
+	>(undefined);
 
 	const weekLayouts = useMemo(
-		() => weekSchedules.map((entries) => buildScheduleLayout(
-			entries.filter((entry) => !hideWeekend || entry.slice.dayOfWeek <= 5),
-			{
-				classPeriods: useClassPeriods,
-				periodHeight,
-				cardMinHeight: unitWidth < 64 ? 64 : 52,
-				minuteHeight,
-				startMinute: displayStartHour * 60,
-			},
-		)),
-		[weekSchedules, hideWeekend, useClassPeriods, periodHeight, minuteHeight, displayStartHour, unitWidth],
+		() =>
+			weekSchedules.map((entries) =>
+				buildScheduleLayout(
+					entries.filter((entry) => !hideWeekend || entry.slice.dayOfWeek <= 5),
+					{
+						classPeriods: useClassPeriods,
+						periodHeight,
+						cardMinHeight: unitWidth < 64 ? 64 : 52,
+						minuteHeight,
+						startMinute: displayStartHour * 60,
+					},
+				),
+			),
+		[
+			weekSchedules,
+			hideWeekend,
+			useClassPeriods,
+			periodHeight,
+			minuteHeight,
+			displayStartHour,
+			unitWidth,
+		],
 	);
-	const activeLayout = weekLayouts[
-		Math.max(0, Math.min(currentWeekIndex, weekLayouts.length - 1))
-	];
+	const activeLayout =
+		weekLayouts[
+			Math.max(0, Math.min(currentWeekIndex, weekLayouts.length - 1))
+		];
 	const contentHeight = activeLayout?.height ?? 14 * periodHeight;
 	const verticalScrollRef = useRef<ElementRef<typeof ScrollView>>(null);
 	const verticalOffset = useRef(0);
 	useEffect(() => {
-		const maxOffset = Math.max(0, contentHeight + timeStripVerticalPadding * 2 - tableHeight);
+		const maxOffset = Math.max(
+			0,
+			contentHeight + timeStripVerticalPadding * 2 - tableHeight,
+		);
 		if (verticalOffset.current > maxOffset) {
 			verticalOffset.current = maxOffset;
 			verticalScrollRef.current?.scrollTo({y: maxOffset, animated: false});
@@ -891,6 +1009,19 @@ export const ScheduleScreen = () => {
 		</Pressable>
 	);
 
+	const openNewSchedule = () => {
+		setEditingParams(undefined);
+		setShowAddModal(true);
+	};
+	const openSchedule = (params: ScheduleEditParams) => {
+		if (isWide) {
+			navigation.navigate("ScheduleDetail", params);
+		} else {
+			setEditingParams(params);
+			setShowAddModal(true);
+		}
+	};
+
 	return (
 		<View
 			testID="schedule-root"
@@ -905,7 +1036,6 @@ export const ScheduleScreen = () => {
 				ref={headerRef}
 				calendar={calendar}
 				setCalendar={(payload) => dispatch(setCalendarConfig(payload))}
-				contentWidth={layoutWidth}
 				onSetWeek={(w: number) => {
 					flatListRef.current?.scrollToIndex({
 						index: w - 1,
@@ -964,12 +1094,11 @@ export const ScheduleScreen = () => {
 											width: 18,
 											height: 2,
 											borderRadius: 1,
-											backgroundColor:
-												dayjs(firstDay)
-													.add(currentWeekIndex * 7 + index, "day")
-													.isSame(current, "day")
-													? theme.colors.themePurple
-													: undefined,
+											backgroundColor: dayjs(firstDay)
+												.add(currentWeekIndex * 7 + index, "day")
+												.isSame(current, "day")
+												? theme.colors.themePurple
+												: undefined,
 										}}
 									/>
 									<Text
@@ -1020,6 +1149,7 @@ export const ScheduleScreen = () => {
 						<View style={{flex: 1, alignItems: "center"}}>
 							{/* Schedule content */}
 							<FlatList<ScheduleLayout<SliceRenderData>>
+								key={gridWidth}
 								testID="schedule-weeks"
 								ref={flatListRef}
 								horizontal={true}
@@ -1032,139 +1162,34 @@ export const ScheduleScreen = () => {
 									index: index,
 								})}
 								data={weekLayouts}
-								renderItem={({item, index: pageIndex}) => (
-									<View
-										testID={`schedule-page-${pageIndex}`}
-										style={{
-											height: item.height,
-											width: gridWidth,
-										}}>
-										<View
-											style={{
-												height: item.height,
-												width: gridWidth,
-											}}>
-											<ScheduleGridLines rows={item.rows} />
-											<TouchableOpacity
-												testID={`schedule-add-${pageIndex}`}
-												activeOpacity={1}
-												style={{
-													position: "absolute",
-													left: 0,
-													right: 0,
-													top: 0,
-													bottom: 0,
-												}}
-												onPressIn={(e) => {
-													const {locationX, locationY} = e.nativeEvent;
-													const totalColumns = dayCount;
-													const columnWidth = unitWidth;
-													let dayIndex = Math.floor(locationX / columnWidth);
-													if (dayIndex < 0) {
-														dayIndex = 0;
-													} else if (dayIndex >= totalColumns) {
-														dayIndex = totalColumns - 1;
-													}
-													const dayOfWeek = dayIndex + 1;
-
-													const row = scheduleRowAt(item.rows, locationY);
-													if (!row) {
-														return;
-													}
-													const defaults = scheduleAddTime(row, locationY);
-													const week = pageIndex + 1;
-													setAddDefaults({
-														week,
-														dayOfWeek,
-														periodBegin: defaults.periodBegin,
-														periodEnd: defaults.periodEnd,
-														dateIndex: (week - 1) * 7 + dayOfWeek - 1,
-														beginHour: Math.floor(defaults.begin / 60),
-														beginMinute: defaults.begin % 60,
-														endHour: Math.floor(defaults.end / 60),
-														endMinute: defaults.end % 60,
-														useCustomDateTime: defaults.custom,
-													});
-												}}
-												onPress={() => {
-													setEditingParams(undefined);
-													setShowAddModal(true);
-												}}
-											/>
-											{item.blocks.map((block, blockIndex) => {
-												const data = block.entry;
-												if (data.type === "normal") {
-													const slice = data.slice;
-													const val = data.schedule;
-													const num = data.week;
-													return (
-														<ScheduleBlock
-															dayOfWeek={slice.dayOfWeek}
-															top={block.top}
-															height={block.height}
-															name={
-																shortenMap[val.localId] ?? val.name
-															}
-															location={val.location}
-															timeLabel={block.timeLabel}
-															compact={block.compact}
-															gridWidth={unitWidth}
-															key={`${val.name}-${num}-${slice.dayOfWeek}-${slice.beginTime.valueOf()}-${blockIndex}`}
-															blockColor={
-																`${colorList[
-																	parseInt(md5(val.name).substr(0, 6), 16) %
-																		colorList.length
-																]}${enableNewUI ? "44" : ""}`
-															}
-															textColor={enableNewUI ? colorList[parseInt(md5(val.name).substr(0, 6), 16) % colorList.length] : "white"}
-															onPress={() => {
-																const detailProps = {
-																	localId: val.localId,
-																	id: slice.id,
-																	name: val.name,
-																	location: val.location,
-																	week: num,
-																	dayOfWeek: slice.dayOfWeek,
-																	beginTime: slice.beginTime,
-																	endTime: slice.endTime,
-																	alias: shortenMap[val.localId] ?? "",
-																	type: val.type,
-																	category: val.category,
-																};
-																if (isWide) {
-																	navigation.navigate("ScheduleDetail", detailProps);
-																} else {
-																	setEditingParams(detailProps);
-																	setShowAddModal(true);
-																}
-															}}
-															onLongPress={() => {
-																setActionTarget({
-																	localId: val.localId,
-																	id: slice.id,
-																	name: val.name,
-																	location: val.location,
-																	week: num,
-																	dayOfWeek: slice.dayOfWeek,
-																	beginTime: slice.beginTime,
-																	endTime: slice.endTime,
-																	alias: shortenMap[val.localId] ?? "",
-																	type: val.type,
-																	category: val.category,
-																});
-															}}
-														/>
-													);
-												}
-											})}
-										</View>
-									</View>
+								renderItem={({item, index}) => (
+									<ScheduleWeekPage
+										layout={item}
+										index={index}
+										gridWidth={gridWidth}
+										dayCount={dayCount}
+										unitWidth={unitWidth}
+										shortenMap={shortenMap}
+										colorList={colorList}
+										enableNewUI={enableNewUI}
+										onAddDefaults={setAddDefaults}
+										onAdd={openNewSchedule}
+										onOpen={openSchedule}
+										onAction={setActionTarget}
+									/>
 								)}
-								initialScrollIndex={nowWeek - 1}
+								initialScrollIndex={Math.max(
+									0,
+									Math.min(currentWeekIndex, weekCount - 1),
+								)}
 								onScroll={({nativeEvent}) => {
-									const index = Math.max(0, Math.min(weekCount - 1, Math.round(
-										nativeEvent.contentOffset.x / gridWidth,
-									)));
+									const index = Math.max(
+										0,
+										Math.min(
+											weekCount - 1,
+											Math.round(nativeEvent.contentOffset.x / gridWidth),
+										),
+									);
 									setCurrentWeekIndex(index);
 									headerRef.current?.setWeekNumber(index + 1);
 								}}
@@ -1219,6 +1244,7 @@ export const ScheduleScreen = () => {
 						bottom: 0,
 						alignItems: "center",
 						justifyContent: "center",
+						padding: 16,
 					}}>
 					<TouchableOpacity
 						activeOpacity={1}
@@ -1236,7 +1262,9 @@ export const ScheduleScreen = () => {
 					/>
 					<Animated.View
 						style={{
-							width: Math.min(400, layoutWidth - 32),
+							width: "100%",
+							maxWidth: 400,
+							maxHeight: "100%",
 							borderRadius: 24,
 							padding: 18,
 							backgroundColor: popupBaseBackground,
@@ -1279,54 +1307,54 @@ export const ScheduleScreen = () => {
 							}}>
 							{renderDetailContent()}
 						</Animated.View>
-							<View>
-								{renderActionButton(
-									(isCustomLike(actionTarget)
-										? getStr("delSchedule")
-										: getStr("hideSchedule")) + getStr("once"),
+						<View>
+							{renderActionButton(
+								(isCustomLike(actionTarget)
+									? getStr("delSchedule")
+									: getStr("hideSchedule")) + getStr("once"),
+								bauhausColors.actionGreen,
+								"rgba(91,140,124,0.10)",
+								"rgba(122,172,150,0.16)",
+								() => {
+									const onceLabel =
+										(isCustomLike(actionTarget)
+											? getStr("delSchedule")
+											: getStr("hideSchedule")) + getStr("once");
+									handleHide(Choice.ONCE, onceLabel);
+								},
+								deletingAction,
+								deletingAction && isCustomLike(actionTarget),
+							)}
+							{!isCustomLike(actionTarget) &&
+								renderActionButton(
+									getStr("hideSchedule") + getStr("repeatly"),
 									bauhausColors.actionGreen,
 									"rgba(91,140,124,0.10)",
 									"rgba(122,172,150,0.16)",
 									() => {
-										const onceLabel =
-											(isCustomLike(actionTarget)
-												? getStr("delSchedule")
-												: getStr("hideSchedule")) + getStr("once");
-										handleHide(Choice.ONCE, onceLabel);
+										const repeatLabel =
+											getStr("hideSchedule") + getStr("repeatly");
+										handleHide(Choice.REPEAT, repeatLabel);
 									},
-									deletingAction,
-									deletingAction && isCustomLike(actionTarget),
 								)}
-								{!isCustomLike(actionTarget) &&
-									renderActionButton(
-										getStr("hideSchedule") + getStr("repeatly"),
-										bauhausColors.actionGreen,
-										"rgba(91,140,124,0.10)",
-										"rgba(122,172,150,0.16)",
-										() => {
-											const repeatLabel =
-												getStr("hideSchedule") + getStr("repeatly");
-											handleHide(Choice.REPEAT, repeatLabel);
-										},
-									)}
-								{renderActionButton(
-									(isCustomLike(actionTarget)
-										? getStr("delSchedule")
-										: getStr("hideSchedule")) + getStr("allTime"),
-									bauhausColors.deleteAccent,
-									"rgba(143,188,143,0.10)",
-									"rgba(216,140,140,0.16)",
-									() => {
-										const allLabel =
-											(isCustomLike(actionTarget)
-												? getStr("delSchedule")
-												: getStr("hideSchedule")) + getStr("allTime");
-										handleHide(Choice.ALL, allLabel);
-									},
-									deletingAction,
-									deletingAction && isCustomLike(actionTarget),
-								)}
-							</View>
+							{renderActionButton(
+								(isCustomLike(actionTarget)
+									? getStr("delSchedule")
+									: getStr("hideSchedule")) + getStr("allTime"),
+								bauhausColors.deleteAccent,
+								"rgba(143,188,143,0.10)",
+								"rgba(216,140,140,0.16)",
+								() => {
+									const allLabel =
+										(isCustomLike(actionTarget)
+											? getStr("delSchedule")
+											: getStr("hideSchedule")) + getStr("allTime");
+									handleHide(Choice.ALL, allLabel);
+								},
+								deletingAction,
+								deletingAction && isCustomLike(actionTarget),
+							)}
+						</View>
 					</Animated.View>
 				</View>
 			)}

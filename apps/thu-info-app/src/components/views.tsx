@@ -14,10 +14,10 @@ import {
 	TouchableOpacity,
 	TouchableOpacityProps,
 	useColorScheme,
-	useWindowDimensions,
 	View,
 	ViewProps,
 } from "react-native";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import themes, {ColorTheme} from "../assets/themes/themes";
 import {getStr} from "../utils/i18n";
 import {styles} from "../ui/settings/settings";
@@ -155,12 +155,13 @@ const BACKDROP_MAX_OPACITY = 0.6;
 export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const screenHeight = useWindowDimensions().height;
+	const insets = useSafeAreaInsets();
+	const [containerHeight, setContainerHeight] = useState(0);
 
 	const [sheetState, setSheetState] = useState<SheetState>("closed");
 	const [visible, setVisible] = useState(false);
 
-	const translateY = useRef(new Animated.Value(screenHeight)).current;
+	const translateY = useRef(new Animated.Value(1)).current;
 	const backdropOpacity = useRef(new Animated.Value(0)).current;
 	const gestureState = useRef<GestureState>({
 		startY: 0,
@@ -173,7 +174,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 		props.popupOnTriggered?.();
 		setVisible(true);
 		setSheetState("opening");
-		translateY.setValue(screenHeight);
+		translateY.setValue(1);
 		backdropOpacity.setValue(0);
 
 		Animated.parallel([
@@ -192,7 +193,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 		]).start(() => {
 			setSheetState("open");
 		});
-	}, [backdropOpacity, props, screenHeight, translateY]);
+	}, [backdropOpacity, props, translateY]);
 
 	const runSpringBackToZero = useCallback(() => {
 		setSheetState("settling");
@@ -245,7 +246,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 
 			Animated.parallel([
 				Animated.timing(translateY, {
-					toValue: screenHeight,
+					toValue: 1,
 					duration,
 					easing,
 					useNativeDriver: true,
@@ -260,11 +261,11 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 				setSheetState("closed");
 				setVisible(false);
 				onFinished();
-				translateY.setValue(screenHeight);
+				translateY.setValue(1);
 				backdropOpacity.setValue(0);
 			});
 		},
-		[backdropOpacity, screenHeight, sheetState, translateY],
+		[backdropOpacity, sheetState, translateY],
 	);
 
 	const handleBackdropClose = useCallback(() => {
@@ -306,10 +307,30 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 	}, [handleSystemClose, visible]);
 
 	// 下拉关闭手势
+	const latestGesture = useRef({
+		sheetState,
+		containerHeight,
+		animateCloseWith,
+		runSpringBackToZero,
+		onCancelled: props.popupOnCancelled,
+		cancelable: props.popupCancelable,
+	});
+	latestGesture.current = {
+		sheetState,
+		containerHeight,
+		animateCloseWith,
+		runSpringBackToZero,
+		onCancelled: props.popupOnCancelled,
+		cancelable: props.popupCancelable,
+	};
 	const panResponder = useRef(
 		PanResponder.create({
 			onMoveShouldSetPanResponder: (_evt: GestureResponderEvent, gestureStateNative: PanResponderGestureState) => {
-				if (sheetState !== "open" && sheetState !== "dragging") {
+				if (
+					!latestGesture.current.cancelable ||
+					(latestGesture.current.sheetState !== "open" &&
+						latestGesture.current.sheetState !== "dragging")
+				) {
 					return false;
 				}
 				const {dy, dx} = gestureStateNative;
@@ -329,18 +350,19 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 				if (!gestureState.current.isDragging) {
 					return;
 				}
+				const height = Math.max(1, latestGesture.current.containerHeight);
 				const rawY = Math.max(0, gestureStateNative.dy);
-				const resistance = 1 - (rawY / screenHeight) * 0.25; // 规范：Rubber Band 阻力
+				const resistance = Math.max(0.25, 1 - (rawY / height) * 0.25);
 				const y = rawY * resistance;
-				const ratio = Math.min(1, Math.max(0, y / screenHeight));
+				const ratio = Math.min(1, Math.max(0, y / height));
 
-				translateY.setValue(y);
+				translateY.setValue(y / height);
 				backdropOpacity.setValue(BACKDROP_MAX_OPACITY * (1 - ratio));
 
 				gestureState.current = {
 					startY: 0,
 					lastY: y,
-					velocityY: gestureStateNative.vy * screenHeight,
+					velocityY: gestureStateNative.vy * 1000,
 					isDragging: true,
 				};
 			},
@@ -353,12 +375,12 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 				const velocityPx = gestureState.current.velocityY;
 
 				const fastClose = velocityPx > 800; // 规范：速度 > 800px/s
-				const farEnough = finalY > screenHeight * 0.35; // 规范：位移 > 35% 屏幕高度
+				const farEnough = finalY > latestGesture.current.containerHeight * 0.35;
 
 				if (fastClose || farEnough) {
-					animateCloseWith(
+					latestGesture.current.animateCloseWith(
 						"pull",
-						props.popupOnCancelled,
+						latestGesture.current.onCancelled,
 						fastClose
 							? {
 									duration: PULL_FAST_CLOSE_DURATION,
@@ -373,13 +395,13 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 					);
 				} else {
 					// 未达阈值：物理弹簧回弹
-					runSpringBackToZero();
+					latestGesture.current.runSpringBackToZero();
 				}
 			},
 			onPanResponderTerminate: () => {
 				if (gestureState.current.isDragging) {
 					gestureState.current.isDragging = false;
-					runSpringBackToZero();
+					latestGesture.current.runSpringBackToZero();
 				}
 			},
 		}),
@@ -394,12 +416,21 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 	return (
 		<>
 			<TouchableOpacity {...triggerProps} />
-			<Modal visible={visible} transparent onRequestClose={handleSystemClose}>
+			<Modal
+				visible={visible}
+				transparent
+				onRequestClose={() => {
+					handleSystemClose();
+				}}>
 				<KeyboardAvoidingScreen
 					keyboardVerticalOffset={0}
+					testID="bottom-popup-viewport"
+					onLayout={({nativeEvent}) =>
+						setContainerHeight(nativeEvent.layout.height)
+					}
 					style={{
-						width: "100%",
-						height: "100%",
+						flex: 1,
+						paddingTop: insets.top,
 						justifyContent: "flex-end",
 						backgroundColor: "transparent",
 					}}>
@@ -423,72 +454,86 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 					/>
 					{/* 抽屉本体，可下拉关闭 */}
 					<Animated.View
-						{...panResponder.panHandlers}
 						style={{
-							transform: [{translateY}],
+							transform: [
+								{
+									translateY: translateY.interpolate({
+										inputRange: [0, 1],
+										outputRange: [0, containerHeight],
+									}),
+								},
+							],
+							width: "100%",
+							maxWidth: 640,
+							maxHeight: "85%",
+							alignSelf: "center",
+							flexShrink: 1,
+							paddingBottom: insets.bottom,
 							backgroundColor: colors.contentBackground,
 							borderTopStartRadius: 12,
 							borderTopEndRadius: 12,
 						}}>
 						<View
+							testID="bottom-popup-handle"
+							{...panResponder.panHandlers}
 							style={{
 								flexDirection: "row",
-								margin: 16,
+								padding: 16,
 								alignItems: "center",
-								justifyContent: "center",
+								gap: 8,
 							}}>
+							<View style={{flex: 1, minWidth: 0}}>
+								<TouchableOpacity
+									onPress={() =>
+										animateCloseWith("backdrop", props.popupOnCancelled)
+									}>
+									<Text style={{color: colors.fontB1, fontSize: 16}}>
+										{getStr("cancel")}
+									</Text>
+								</TouchableOpacity>
+							</View>
 							<Text
 								style={{
+									flex: 2,
+									minWidth: 0,
+									textAlign: "center",
 									color: colors.fontB1,
 									fontSize: 18,
 									fontWeight: "500",
 								}}>
 								{props.popupTitle}
 							</Text>
-							<TouchableOpacity
-								style={{
-									position: "absolute",
-									left: 0,
-								}}
-								onPress={() => {
-									animateCloseWith("backdrop", props.popupOnCancelled);
-								}}>
-								<Text
-									style={{
-										color: colors.fontB1,
-										fontSize: 16,
-										fontWeight: "400",
+							<View style={{flex: 1, minWidth: 0, alignItems: "flex-end"}}>
+								<TouchableOpacity
+									disabled={!props.popupCanFulfill}
+									onPress={() => {
+										if (props.popupCanFulfill)
+											animateCloseWith("backdrop", props.popupOnFulfilled);
 									}}>
-									{getStr("cancel")}
-								</Text>
-							</TouchableOpacity>
-							<TouchableOpacity
-								style={{
-									position: "absolute",
-									right: 0,
-								}}
-								disabled={!props.popupCanFulfill}
-								onPress={() => {
-									if (!props.popupCanFulfill) {
-										return;
-									}
-									animateCloseWith("backdrop", props.popupOnFulfilled);
-								}}>
-								<Text
-									style={{
-										color: props.popupCanFulfill
-											? colors.themePurple
-											: colors.themeGrey,
-										fontSize: 16,
-										fontWeight: "600",
-									}}>
-									{getStr("done")}
-								</Text>
-							</TouchableOpacity>
+									<Text
+										style={{
+											color: props.popupCanFulfill
+												? colors.themePurple
+												: colors.themeGrey,
+											fontSize: 16,
+											fontWeight: "600",
+										}}>
+										{getStr("done")}
+									</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
-						{typeof props.popupContent === "function"
-							? props.popupContent(() => animateCloseWith("backdrop", props.popupOnCancelled))
-							: props.popupContent}
+						<ScrollView
+							style={{flexGrow: 0, flexShrink: 1}}
+							keyboardShouldPersistTaps="handled"
+							nestedScrollEnabled
+							contentContainerStyle={{paddingBottom: 16}}>
+							{typeof props.popupContent === "function"
+								? props.popupContent(() =>
+										animateCloseWith("backdrop", props.popupOnCancelled),
+									)
+								: props.popupContent}
+						</ScrollView>
 					</Animated.View>
 				</KeyboardAvoidingScreen>
 			</Modal>

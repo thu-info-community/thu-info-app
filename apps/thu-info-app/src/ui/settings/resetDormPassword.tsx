@@ -1,5 +1,11 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {TextInput, View, Text, TouchableOpacity} from "react-native";
+import {
+	ScrollView,
+	TextInput,
+	View,
+	Text,
+	TouchableOpacity,
+} from "react-native";
 import {useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -26,55 +32,63 @@ export const ResetDormPasswordScreen = ({
 	const style = styles(themeName);
 
 	return (
-		<KeyboardAvoidingScreen style={style.container}>
-			<RoundedView style={style.inputRounded}>
-				<IconLock width={18} height={18} />
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("password")}
-					placeholderTextColor={theme.colors.fontB3}
-					value={password}
-					onChangeText={setPassword}
-					secureTextEntry
-				/>
-			</RoundedView>
-			<RoundedView style={style.inputRounded}>
-				<IconLock width={18} height={18} />
-				<TextInput
-					style={style.textInputStyle}
-					placeholder={getStr("confirmPassword")}
-					placeholderTextColor={theme.colors.fontB3}
-					value={confirm}
-					onChangeText={setConfirm}
-					secureTextEntry
-				/>
-			</RoundedView>
-			<TouchableOpacity
-				style={style.loginButtonStyle}
-				disabled={processing || password !== confirm || password.length === 0}
-				onPress={() => {
-					setProcessing(true);
-					Snackbar.show({
-						text: getStr("processing"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
-					helper
-						.resetDormPassword(password)
-						.then(() => navigation.pop())
-						.catch(NetworkRetry)
-						.then(() => setProcessing(false));
-				}}>
-				<RoundedView style={style.loginRounded}>
-					<Text style={style.loginButtonTextStyle}>
-						{getStr("resetPassword")}
-					</Text>
-				</RoundedView>
-			</TouchableOpacity>
-			<View style={{margin: 16, marginTop: 12}}>
-				<Text style={{color: theme.colors.fontB3}}>
-					{getStr("resetDormPasswordHint")}
-				</Text>
-			</View>
+		<KeyboardAvoidingScreen style={{flex: 1}}>
+			<ScrollView
+				keyboardShouldPersistTaps="handled"
+				contentContainerStyle={style.container}>
+				<View style={style.form}>
+					<RoundedView style={style.inputRounded}>
+						<IconLock width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("password")}
+							placeholderTextColor={theme.colors.fontB3}
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+						/>
+					</RoundedView>
+					<RoundedView style={style.inputRounded}>
+						<IconLock width={18} height={18} />
+						<TextInput
+							style={style.textInputStyle}
+							placeholder={getStr("confirmPassword")}
+							placeholderTextColor={theme.colors.fontB3}
+							value={confirm}
+							onChangeText={setConfirm}
+							secureTextEntry
+						/>
+					</RoundedView>
+					<TouchableOpacity
+						style={style.loginButtonStyle}
+						disabled={
+							processing || password !== confirm || password.length === 0
+						}
+						onPress={() => {
+							setProcessing(true);
+							Snackbar.show({
+								text: getStr("processing"),
+								duration: Snackbar.LENGTH_SHORT,
+							});
+							helper
+								.resetDormPassword(password)
+								.then(() => navigation.pop())
+								.catch(NetworkRetry)
+								.then(() => setProcessing(false));
+						}}>
+						<RoundedView style={style.loginRounded}>
+							<Text style={style.loginButtonTextStyle}>
+								{getStr("resetPassword")}
+							</Text>
+						</RoundedView>
+					</TouchableOpacity>
+					<View style={{margin: 16, marginTop: 12}}>
+						<Text style={{color: theme.colors.fontB3}}>
+							{getStr("resetDormPasswordHint")}
+						</Text>
+					</View>
+				</View>
+			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
 };

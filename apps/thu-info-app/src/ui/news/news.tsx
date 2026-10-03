@@ -3,7 +3,6 @@ import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Text,
 	View,
-	useWindowDimensions,
 	ScrollView,
 	TextInput,
 	FlatList,
@@ -29,7 +28,7 @@ import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
 import {useResponsive} from "../../utils/useResponsive";
-import {getStatusBarHeight} from "react-native-safearea-height";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
@@ -169,6 +168,7 @@ const newsDedupeAndAdd = (prev: NewsSlice[], next: NewsSlice[]) => {
 };
 
 export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
+	const insets = useSafeAreaInsets();
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -334,13 +334,12 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [deepseekOpen, setDeepseekOpen] = useState(false);
 	const [deepseekInput, setDeepseekInput] = useState("");
 
-	const screenHeight = useWindowDimensions();
 	const {isExpanded} = useResponsive();
 
 	return (
 		<KeyboardAvoidingScreen
 			keyboardVerticalOffset={0}
-			style={{flex: 1, paddingTop: getStatusBarHeight()}}
+			style={{flex: 1, paddingTop: insets.top}}
 			key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView
@@ -514,6 +513,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				// `numColumns` 不允许中途改变，所以宽档切换时连 key 一起换。
 				key={isExpanded ? "news-2" : "news-1"}
 				numColumns={isExpanded ? 2 : 1}
+				contentContainerStyle={{flexGrow: 1}}
 				columnWrapperStyle={isExpanded ? {gap: 12} : undefined}
 				style={{
 					flex: 1,
@@ -533,7 +533,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				ListEmptyComponent={
 					categorySelected === "catSubscribed" ? (
 						subscriptions.length === 1 ? (
-							<View style={{alignItems: "center", marginTop: 100}}>
+							<View
+								style={{
+									flex: 1,
+									justifyContent: "center",
+									alignItems: "center",
+									padding: 16,
+								}}>
 								<IconSubscriptionLogo width={128} height={128} />
 								<TouchableOpacity
 									style={{
@@ -563,7 +569,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<View
 								style={{
 									margin: 15,
-									height: screenHeight.height * 0.6,
+									flex: 1,
 									justifyContent: "center",
 									alignItems: "center",
 								}}>
@@ -583,7 +589,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						<View
 							style={{
 								margin: 15,
-								height: screenHeight.height * 0.6,
+								flex: 1,
 								justifyContent: "center",
 								alignItems: "center",
 							}}>

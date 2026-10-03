@@ -1,7 +1,15 @@
-import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
+import {
+	DeepSeekMessage,
+	splitReasoningAndStatus,
+	systemErrorMessage,
+} from "../../components/home/deepseekMessages";
+import {DeepSeekHistoryDrawer} from "../../components/home/deepseekHistory";
+import {
+	InlineFilterPanel,
+	FilterBackdrop,
+} from "../../components/InlineFilterPanel";
 import {
 	FlatList,
-	Modal,
 	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
@@ -11,11 +19,7 @@ import {
 	useColorScheme,
 	View,
 	Alert,
-	SectionList,
-	ActivityIndicator,
-	Pressable,
 	Animated,
-	useWindowDimensions,
 } from "react-native";
 import {useEffect, useRef, useState} from "react";
 import themes from "../../assets/themes/themes";
@@ -25,7 +29,6 @@ import IconHamburgerMenu from "../../assets/icons/IconHamburgerMenu.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import EventSource from "react-native-sse";
 import {v4 as uuidv4} from "uuid";
-import Markdown from "react-native-markdown-display";
 import dayjs from "dayjs";
 import {helper, State} from "../../redux/store.ts";
 import {
@@ -38,9 +41,6 @@ import {Snackbar} from "react-native-snackbar";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
-import IconCopy from "../../assets/icons/IconCopy.tsx";
-import IconRefresh from "../../assets/icons/IconRefresh.tsx";
-import {getStatusBarHeight} from "react-native-safearea-height";
 import {
 	deepseekClear,
 	deepseekUpdateHistory,
@@ -55,7 +55,6 @@ import {
 import {ChannelTag} from "@thu-info/lib/src/models/news/news.ts";
 import themedStyles from "../../utils/themedStyles.ts";
 import {DeepSeekTabProp} from "../../components/Root.tsx";
-import Clipboard from "@react-native-clipboard/clipboard";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 
@@ -78,50 +77,10 @@ export interface Conversation {
 	timestamp?: number;
 }
 
-const splitReasoningAndStatus = (
-	answer: string,
-): [
-	string,
-	string,
-	"searching" | "reasoning" | "reasoningDone" | "deepseek",
-] => {
-	const beginTag = "<think>";
-	const endTag = "</think>";
-	if (answer.startsWith("嗯，") || answer.startsWith("好的，")) {
-		answer = beginTag + answer;
-	}
-	if (answer.includes(beginTag) && answer.includes(endTag)) {
-		const beginPos = answer.indexOf(beginTag);
-		const endPos = answer.indexOf(endTag);
-		return [
-			answer.substring(beginPos + beginTag.length, endPos).trim(),
-			answer.substring(endPos + endTag.length).trim(),
-			"reasoningDone",
-		];
-	} else if (answer.includes(endTag)) {
-		const endPos = answer.indexOf(endTag);
-		return [
-			answer.substring(0, endPos).trim(),
-			answer.substring(endPos + endTag.length),
-			"reasoningDone",
-		];
-	} else if (answer.includes(beginTag)) {
-		const beginPos = answer.indexOf(beginTag);
-		return [answer.substring(beginPos + beginTag.length), "", "reasoning"];
-	} else {
-		return ["", answer, "deepseek"];
-	}
-};
-
 const models = ["DeepSeek-V4-Flash"];
 
 /** 对话列的最大宽度（dp）。更宽的话一行文字太长，读起来费劲。 */
 const CHAT_MAX_WIDTH = 760;
-/** 历史抽屉占屏宽的比例（窄屏用），以及它在宽屏下的宽度上限（dp）。 */
-const HISTORY_DRAWER_RATIO = 0.62;
-const HISTORY_DRAWER_WIDTH = 320;
-
-const systemErrorMessage = "服务器繁忙,请稍后再试";
 
 const newConversation = (): Conversation => ({
 	id: uuidv4(),
@@ -557,13 +516,11 @@ ${prompt}
 	if (next.messages[next.messages.length - 1].content.length === 0) {
 		next = {
 			...next,
-			messages: next.messages
-				.slice(0, next.messages.length - 1)
-				.concat({
-					role: "assistant",
-					content: systemErrorMessage,
-					timestamp: Date.now(),
-				}),
+			messages: next.messages.slice(0, next.messages.length - 1).concat({
+				role: "assistant",
+				content: systemErrorMessage,
+				timestamp: Date.now(),
+			}),
 		};
 		dispatch(deepseekUpdateHistory(next));
 	}
@@ -611,13 +568,8 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 
 	const [model, setModel] = useState<string>(models[0]);
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [searchKey, setSearchKey] = useState("");
-	const [deleteId, setDeleteId] = useState<string | null>(null);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	// 宽屏上把对话列收窄到可读宽度并居中；窄屏下这两个值都不生效。
-	const {width: windowWidth} = useWindowDimensions();
-	const drawerWidth = Math.min(windowWidth * HISTORY_DRAWER_RATIO, HISTORY_DRAWER_WIDTH);
 	const {deepseekToken, firstDay, weekCount} = useSelector(
 		(s: State) => s.config,
 	);
@@ -779,7 +731,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			style={{
 				flex: 1,
-				paddingTop: getStatusBarHeight(),
+				paddingTop: insets.top,
 				paddingBottom: insets.bottom,
 				flexDirection: "column",
 			}}>
@@ -841,645 +793,251 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					onPress={createConversation}>
 					<IconAdd height={24} width={24} />
 				</TouchableOpacity>
-				<Modal visible={open} transparent>
+			</View>
+			<InlineFilterPanel visible={open} onClose={() => setOpen(false)}>
+				{models.map((item) => (
 					<TouchableOpacity
-						style={{
-							width: "100%",
-							height: "100%",
+						key={item}
+						onPress={() => {
+							setModel(item);
+							setOpen(false);
 						}}
-						activeOpacity={1}
-						onPress={() => setOpen(false)}>
-						<View
-							style={{
-								position: "absolute",
-								backgroundColor: colors.text,
-								opacity: 0.3,
-								width: "100%",
-								top: getStatusBarHeight(true) + 40,
-								bottom: 0,
-							}}
-						/>
-						<View
-							style={{
-								position: "absolute",
-								backgroundColor: colors.contentBackground,
-								width: "100%",
-								top: getStatusBarHeight(true) + 40,
-								borderBottomStartRadius: 12,
-								borderBottomEndRadius: 12,
-							}}>
-							<FlatList
-								data={models}
-								renderItem={({item, index}) => {
-									const showTick = models[index] === model;
-									return (
-										<TouchableOpacity
-											onPress={() => {
-												setModel(models[index]);
-												setOpen(false);
-											}}
-											style={{
-												paddingHorizontal: 12,
-												marginVertical: 8,
-												flexDirection: "row",
-												justifyContent: "space-between",
-											}}>
-											<Text style={{color: colors.text, fontSize: 14}}>
-												{item}
-											</Text>
-											{showTick ? <IconCheck height={18} width={18} /> : null}
-										</TouchableOpacity>
-									);
-								}}
-								keyExtractor={(item) => item}
-							/>
-						</View>
-					</TouchableOpacity>
-				</Modal>
-			</View>
-			<FlatList
-				style={{
-					flex: 1,
-					padding: 16,
-					paddingStart: 8,
-					width: "100%",
-					maxWidth: CHAT_MAX_WIDTH,
-					alignSelf: "center",
-				}}
-				data={conversation.messages}
-				keyExtractor={(item, index) =>
-					item.timestamp?.toString() + item.role + index.toString()
-				}
-				renderItem={({item, index}) => {
-					if (item.role === "user") {
-						return (
-							<View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-								<View
-									style={{
-										flexDirection: "column",
-									}}>
-									<Text
-										style={{
-											color: colors.fontB3,
-											textAlign: "right",
-											fontSize: 13,
-										}}>
-										{new Date(item.timestamp ?? 0).toLocaleString([], {
-											month: "numeric",
-											day: "numeric",
-											hour: "2-digit",
-											minute: "2-digit",
-										})}
-									</Text>
-									<View
-										style={{
-											backgroundColor: colors.themeTransparentPurple,
-											borderRadius: 8,
-											paddingVertical: 8,
-											paddingHorizontal: 12,
-											marginLeft: 40,
-											marginVertical: 4,
-										}}>
-										<Pressable
-											onLongPress={() => {
-												Clipboard.setString(item.content);
-												Snackbar.show({
-													text: getStr("copied"),
-													duration: Snackbar.LENGTH_SHORT,
-												});
-											}}>
-											<Text style={{color: colors.text}}>{item.content}</Text>
-										</Pressable>
-									</View>
-								</View>
-							</View>
-						);
-					} else if (item.role === "assistant") {
-						const [reasoning, answer, statusText] = splitReasoningAndStatus(
-							item.content,
-						);
-						return (
-							<View
-								style={{
-									flexDirection: "row",
-									marginTop: 2,
-									marginBottom: 8,
-									marginEnd: 4,
-									padding: 8,
-								}}>
-								<View
-									style={{
-										height: 20,
-										width: 20,
-										alignItems: "center",
-										justifyContent: "center",
-										flex: 0,
-									}}>
-									<IconDeepSeek width={20} height={20} />
-								</View>
-								<View
-									style={{
-										flex: 1,
-										minWidth: 0,
-										paddingStart: 4,
-										alignItems: "flex-start",
-									}}>
-									<Text style={{color: colors.fontB3}}>
-										{searching && index === conversation.messages.length - 1
-											? getStr("searching")
-											: getStr(statusText)}
-										&nbsp;&nbsp;
-										{new Date(item.timestamp ?? 0).toLocaleString([], {
-											month: "numeric",
-											day: "numeric",
-											hour: "2-digit",
-											minute: "2-digit",
-										})}
-									</Text>
-									{item.content.length !== 0 ? (
-										<View
-											style={{
-												borderRadius: 8,
-												backgroundColor: bubbleMessage
-													? colors.contentBackground
-													: colors.themeBackground,
-												paddingHorizontal: bubbleMessage ? 12 : 0,
-												marginVertical: 4,
-												paddingBottom: 8,
-											}}>
-											{reasoning.trim().length > 0 && (
-												<View
-													style={{
-														marginTop: 8,
-														flexDirection: "row",
-													}}>
-													<View
-														style={{
-															height: "100%",
-															width: 2,
-															marginStart: -2,
-															backgroundColor: colors.fontB3,
-														}}
-													/>
-													<Text
-														style={{
-															color: colors.fontB3,
-															marginLeft: 8,
-															textAlign: "justify",
-														}}>
-														{reasoning}
-													</Text>
-												</View>
-											)}
-											{answer.trim().length > 0 && (
-												<Markdown
-													style={{
-														body: {
-															color: colors.text,
-															backgroundColor: colors.transparent,
-															textAlign: "justify",
-														},
-														fence: {
-															backgroundColor: colors.themeTransparentGrey,
-														},
-														paragraph: {
-															marginBottom: 2,
-															textAlign: "justify",
-														},
-													}}>
-													{answer}
-												</Markdown>
-											)}
-										</View>
-									) : (
-										<ActivityIndicator
-											size="small"
-											color={colors.themeTransparentPurple}
-										/>
-									)}
-									{(index !== conversation.messages.length - 1 ||
-										!generating) &&
-										item.content !== systemErrorMessage && (
-											<View
-												style={{
-													backgroundColor: `${colors.themeLightPurple}33`,
-													borderRadius: 8,
-													borderWidth: 1,
-													borderColor: colors.themePurple,
-													paddingVertical: 8,
-													paddingHorizontal: 12,
-													marginVertical: 4,
-													width: "100%",
-													alignItems: "center",
-													justifyContent: "center",
-												}}>
-												<Text style={{color: colors.themePurple, fontSize: 12}}>
-													{getStr("aigcWarning")}
-												</Text>
-											</View>
-										)}
-									<View
-										style={[
-											{flexDirection: "row"},
-											index === conversation.messages.length - 1 && generating
-												? {display: "none"}
-												: {},
-										]}>
-										<TouchableOpacity
-											style={{
-												padding: 2,
-											}}
-											disabled={generating}
-											onPress={() => {
-												addUsageStat(FunctionType.DeepSeekCopy);
-												Clipboard.setString(answer);
-												Snackbar.show({
-													text: getStr("copied"),
-													duration: Snackbar.LENGTH_SHORT,
-												});
-											}}>
-											<IconCopy height={18} width={18} color={colors.fontB3} />
-										</TouchableOpacity>
-										{index === conversation.messages.length - 1 && (
-											<TouchableOpacity
-												style={{
-													padding: 2,
-												}}
-												disabled={generating}
-												onPress={() => {
-													refreshMessage(index, dataSource);
-												}}>
-												<IconRefresh
-													height={18}
-													width={18}
-													color={colors.fontB3}
-												/>
-											</TouchableOpacity>
-										)}
-									</View>
-								</View>
-							</View>
-						);
-					} else {
-						return null;
-					}
-				}}
-				ListEmptyComponent={
-					<View
 						style={{
+							paddingHorizontal: 16,
+							paddingVertical: 12,
+							flexDirection: "row",
 							alignItems: "center",
-							justifyContent: "center",
-							paddingTop: "50%",
-							marginStart: 8,
+							gap: 8,
 						}}>
-						<IconDeepSeek width={60} height={60} />
-						<Text style={{color: colors.text, fontSize: 16, marginTop: 8}}>
-							{getStr("deepseekWelcomeText")}
+						<Text style={{flex: 1, color: colors.text, fontSize: 14}}>
+							{item}
 						</Text>
-					</View>
-				}
-			/>
-			<View
-				style={{
-					flex: 0,
-					flexDirection: "row",
-					padding: 0,
-					paddingStart: 16,
-				}}>
-				<TouchableOpacity
-					onPress={() =>
-						setDataSource((prev) => (prev === "LM_JWGG" ? null : "LM_JWGG"))
-					}
-					style={[
-						style.capsule,
-						dataSource === "LM_JWGG"
-							? {
-									backgroundColor: colors.themeTransparentPurple,
-									borderColor: colors.transparent,
-								}
-							: {},
-					]}>
-					<Text
-						style={{
-							color: dataSource === "LM_JWGG" ? colors.fontB1 : colors.fontB2,
-							fontSize: 13,
-						}}>
-						{getStr("LM_JWGG")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() =>
-						setDataSource((prev) => (prev === "LM_XSBGGG" ? null : "LM_XSBGGG"))
-					}
-					style={[
-						style.capsule,
-						dataSource === "LM_XSBGGG"
-							? {
-									backgroundColor: colors.themeTransparentPurple,
-									borderColor: colors.transparent,
-								}
-							: {},
-					]}>
-					<Text
-						style={{
-							color: dataSource === "LM_XSBGGG" ? colors.fontB1 : colors.fontB2,
-							fontSize: 13,
-						}}>
-						{getStr("LM_XSBGGG")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() =>
-						setDataSource((prev) => (prev === "LM_BYJYXX" ? null : "LM_BYJYXX"))
-					}
-					style={[
-						style.capsule,
-						dataSource === "LM_BYJYXX"
-							? {
-									backgroundColor: colors.themeTransparentPurple,
-									borderColor: colors.transparent,
-								}
-							: {},
-					]}>
-					<Text
-						style={{
-							color: dataSource === "LM_BYJYXX" ? colors.fontB1 : colors.fontB2,
-							fontSize: 13,
-						}}>
-						{getStr("LM_BYJYXX")}
-					</Text>
-				</TouchableOpacity>
-			</View>
-			<View
-				style={{
-					flex: 0,
-					flexDirection: "row",
-					alignItems: "center",
-					width: "100%",
-					maxWidth: CHAT_MAX_WIDTH,
-					alignSelf: "center",
-				}}>
-				<View
+						{item === model && <IconCheck height={18} width={18} />}
+					</TouchableOpacity>
+				))}
+			</InlineFilterPanel>
+			<View style={{flex: 1}}>
+				<FlatList
 					style={{
 						flex: 1,
-						marginBottom: 4,
-						marginHorizontal: 8,
-						flexDirection: "row",
-						alignItems: "center",
-						borderColor: colors.themePurple,
-						borderWidth: 1.5,
-						borderRadius: 24,
-						overflow: "hidden",
-					}}>
-					<TextInput
-						ref={inputRef}
-						value={input}
-						onChangeText={setInput}
-						style={{
-							flex: 1,
-							textAlignVertical: "center",
-							fontSize: 14,
-							padding: 12,
-							paddingEnd: 36,
-							color: colors.text,
-							maxHeight: 120,
-						}}
-						textAlignVertical="top"
-						multiline={true}
-						underlineColorAndroid="transparent"
-						placeholder={getStr("askDeepSeekPrompt")}
-						placeholderTextColor={colors.fontB3}
-					/>
-				</View>
-				<TouchableOpacity
-					style={{position: "absolute", right: 24, bottom: 16}}
-					disabled={input.trim() === "" || generating}
-					onPress={async () => {
-						if (input.trim() === "" || generating || !deepseekToken) {
-							return;
-						}
-						setInput("");
-						Keyboard.dismiss();
-						setGenerating(true);
-						try {
-							addUsageStat(FunctionType.DeepSeekSend);
-							if (dataSource !== null) {
-								addUsageStat(FunctionType.DeepSeekSendRAG);
-							}
-							await sendDeepSeekMessage({
-								input,
-								conversation,
-								dataSource,
-								setSearching,
-								model,
-								deepseekToken,
-								firstDay,
-								weekCount,
-								dispatch,
-							});
-						} catch (e: any) {
-							Snackbar.show({
-								text: getStr("loginTimeoutRetry") + e?.message,
-								duration: Snackbar.LENGTH_SHORT,
-							});
-						} finally {
-							setDataSource(null);
-							setGenerating(false);
-						}
-					}}>
-					<IconSend
-						height={20}
-						width={20}
-						color={
-							input.trim() === "" || generating ? colors.fontB3 : colors.primary
-						}
-					/>
-				</TouchableOpacity>
-			</View>
-			<Modal visible={sidebarOpen} transparent>
-				<KeyboardAvoidingScreen keyboardVerticalOffset={0}>
-					<Pressable
-						style={{
-							position: "absolute",
-							end: 0,
-							top: 0,
-							width: "100%",
-							height: "100%",
-						}}
-						onPress={() => toggleSidebar(false)}>
-						<Animated.View
-							style={{
-								flex: 1,
-								opacity: sidebarPosition.interpolate({
-									inputRange: [-1, 0],
-									outputRange: [0, 0.75],
-								}),
-								backgroundColor: colors.themeBackground,
-							}}
+						padding: 16,
+						paddingStart: 8,
+						width: "100%",
+						maxWidth: CHAT_MAX_WIDTH,
+						alignSelf: "center",
+					}}
+					data={conversation.messages}
+					keyExtractor={(item, index) =>
+						item.timestamp?.toString() + item.role + index.toString()
+					}
+					renderItem={({item, index}) => (
+						<DeepSeekMessage
+							item={item}
+							colors={colors}
+							isLast={index === conversation.messages.length - 1}
+							searching={searching}
+							generating={generating}
+							bubbleMessage={bubbleMessage}
+							onRefresh={() => refreshMessage(index, dataSource)}
 						/>
-					</Pressable>
-					<Animated.View
-						style={{
-							position: "absolute",
-							top: 0,
-							transform: [
-								{
-									translateX: sidebarPosition.interpolate({
-										inputRange: [-1, 0],
-										outputRange: [-drawerWidth, 0],
-									}),
-								},
-							],
-							backgroundColor: colors.contentBackground,
-							paddingHorizontal: 16,
-							paddingTop: getStatusBarHeight() + 2,
-							paddingBottom: insets.bottom,
-							width: drawerWidth,
-							height: "100%",
-						}}>
+					)}
+					ListEmptyComponent={
 						<View
 							style={{
-								flex: 0,
-								flexDirection: "row",
 								alignItems: "center",
+								justifyContent: "center",
+								paddingTop: "50%",
+								marginStart: 8,
 							}}>
-							<TextInput
-								value={searchKey}
-								onChangeText={setSearchKey}
-								style={{
-									flex: 1,
-									textAlignVertical: "center",
-									fontSize: 14,
-									marginVertical: 4,
-									paddingVertical: 4,
-									paddingHorizontal: 12,
-									backgroundColor: colors.themeBackground,
-									color: colors.text,
-									borderColor: colors.themePurple,
-									borderWidth: 1.5,
-									borderRadius: 18,
-								}}
-								placeholder={getStr("search")}
-								placeholderTextColor={colors.fontB3}
-							/>
+							<IconDeepSeek width={60} height={60} />
+							<Text style={{color: colors.text, fontSize: 16, marginTop: 8}}>
+								{getStr("deepseekWelcomeText")}
+							</Text>
 						</View>
-						<Text style={{color: colors.fontB2, margin: 4, marginTop: 8}}>
-							{getStr("deepseekLocalStorageNotice")}
+					}
+				/>
+				<View
+					style={{
+						flex: 0,
+						flexDirection: "row",
+						padding: 0,
+						paddingStart: 16,
+					}}>
+					<TouchableOpacity
+						onPress={() =>
+							setDataSource((prev) => (prev === "LM_JWGG" ? null : "LM_JWGG"))
+						}
+						style={[
+							style.capsule,
+							dataSource === "LM_JWGG"
+								? {
+										backgroundColor: colors.themeTransparentPurple,
+										borderColor: colors.transparent,
+									}
+								: {},
+						]}>
+						<Text
+							style={{
+								color: dataSource === "LM_JWGG" ? colors.fontB1 : colors.fontB2,
+								fontSize: 13,
+							}}>
+							{getStr("LM_JWGG")}
 						</Text>
-						<SectionList
-							style={{flex: 1, marginTop: 8}}
-							sections={Object.entries(
-								history.reduce(
-									(acc, item) => {
-										const date = new Date(
-											item.timestamp ?? 0,
-										).toLocaleDateString();
-										if (!acc[date]) {
-											acc[date] = [];
-										}
-										acc[date].push(item);
-										return acc;
-									},
-									{} as Record<string, Conversation[]>,
-								),
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() =>
+							setDataSource((prev) =>
+								prev === "LM_XSBGGG" ? null : "LM_XSBGGG",
 							)
-								.sort(
-									([dateA], [dateB]) =>
-										new Date(dateB).getTime() - new Date(dateA).getTime(),
-								)
-								.map(([date, data]) => ({
-									title: date,
-									data,
-								}))}
-							renderItem={({item}) => (
-								<Pressable
-									style={{
-										padding: 8,
-										marginStart: 4,
-										backgroundColor:
-											deleteId === item.id
-												? colors.statusWarningOpacity
-												: item.timestamp === conversation.timestamp
-													? colors.themeTransparentGrey
-													: colors.contentBackground,
-										borderRadius: 8,
-									}}
-									onPress={() => {
-										setCurrentIndex(history.findIndex((c) => c.id === item.id));
-										toggleSidebar(false);
-									}}
-									onLongPress={() => {
-										setDeleteId(item.id);
-										Alert.alert(
-											getStr("delete"),
-											getStr("deleteConversationConfirm"),
-											[
-												{
-													text: getStr("cancel"),
-													style: "cancel",
-													onPress: () => {
-														setDeleteId(null);
-													},
-												},
-												{
-													text: getStr("confirm"),
-													onPress: () => {
-														dispatch(deepseekDeleteConversation(item));
-														setDeleteId(null);
-														toggleSidebar(false);
-													},
-												},
-											],
-											{
-												cancelable: true,
-												onDismiss: () => {
-													setDeleteId(null);
-												},
-											},
-										);
-									}}>
-									<Text style={{color: colors.text}}>{item.title}</Text>
-								</Pressable>
-							)}
-							renderSectionHeader={({section: {title}}) => (
-								<Text
-									style={{
-										color: colors.fontB2,
-										backgroundColor: colors.contentBackground,
-										paddingVertical: 4,
-									}}>
-									{title}
-								</Text>
-							)}
-							keyExtractor={(item) => item.id}
+						}
+						style={[
+							style.capsule,
+							dataSource === "LM_XSBGGG"
+								? {
+										backgroundColor: colors.themeTransparentPurple,
+										borderColor: colors.transparent,
+									}
+								: {},
+						]}>
+						<Text
+							style={{
+								color:
+									dataSource === "LM_XSBGGG" ? colors.fontB1 : colors.fontB2,
+								fontSize: 13,
+							}}>
+							{getStr("LM_XSBGGG")}
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() =>
+							setDataSource((prev) =>
+								prev === "LM_BYJYXX" ? null : "LM_BYJYXX",
+							)
+						}
+						style={[
+							style.capsule,
+							dataSource === "LM_BYJYXX"
+								? {
+										backgroundColor: colors.themeTransparentPurple,
+										borderColor: colors.transparent,
+									}
+								: {},
+						]}>
+						<Text
+							style={{
+								color:
+									dataSource === "LM_BYJYXX" ? colors.fontB1 : colors.fontB2,
+								fontSize: 13,
+							}}>
+							{getStr("LM_BYJYXX")}
+						</Text>
+					</TouchableOpacity>
+				</View>
+				<View
+					style={{
+						flex: 0,
+						flexDirection: "row",
+						alignItems: "center",
+						width: "100%",
+						maxWidth: CHAT_MAX_WIDTH,
+						alignSelf: "center",
+					}}>
+					<View
+						style={{
+							flex: 1,
+							marginBottom: 4,
+							marginHorizontal: 8,
+							flexDirection: "row",
+							alignItems: "center",
+							borderColor: colors.themePurple,
+							borderWidth: 1.5,
+							borderRadius: 24,
+							overflow: "hidden",
+						}}>
+						<TextInput
+							ref={inputRef}
+							value={input}
+							onChangeText={setInput}
+							style={{
+								flex: 1,
+								textAlignVertical: "center",
+								fontSize: 14,
+								padding: 12,
+								paddingEnd: 36,
+								color: colors.text,
+								maxHeight: 120,
+							}}
+							textAlignVertical="top"
+							multiline={true}
+							underlineColorAndroid="transparent"
+							placeholder={getStr("askDeepSeekPrompt")}
+							placeholderTextColor={colors.fontB3}
 						/>
-						<TouchableOpacity
-							style={{
-								paddingVertical: 12,
-								marginTop: 8,
-								borderRadius: 12,
-								backgroundColor: colors.themeTransparentGrey,
-							}}
-							onPress={createConversation}>
-							<Text style={{color: colors.text, textAlign: "center"}}>
-								{getStr("newConversation")}
-							</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							style={{
-								paddingVertical: 12,
-								marginTop: 8,
-								borderRadius: 12,
-								backgroundColor: colors.statusWarningOpacity,
-							}}
-							onPress={deleteAllHistory}>
-							<Text style={{color: colors.statusWarning, textAlign: "center"}}>
-								{getStr("delete") + getStr("all")}
-							</Text>
-						</TouchableOpacity>
-					</Animated.View>
-				</KeyboardAvoidingScreen>
-			</Modal>
+					</View>
+					<TouchableOpacity
+						style={{position: "absolute", right: 24, bottom: 16}}
+						disabled={input.trim() === "" || generating}
+						onPress={async () => {
+							if (input.trim() === "" || generating || !deepseekToken) {
+								return;
+							}
+							setInput("");
+							Keyboard.dismiss();
+							setGenerating(true);
+							try {
+								addUsageStat(FunctionType.DeepSeekSend);
+								if (dataSource !== null) {
+									addUsageStat(FunctionType.DeepSeekSendRAG);
+								}
+								await sendDeepSeekMessage({
+									input,
+									conversation,
+									dataSource,
+									setSearching,
+									model,
+									deepseekToken,
+									firstDay,
+									weekCount,
+									dispatch,
+								});
+							} catch (e: any) {
+								Snackbar.show({
+									text: getStr("loginTimeoutRetry") + e?.message,
+									duration: Snackbar.LENGTH_SHORT,
+								});
+							} finally {
+								setDataSource(null);
+								setGenerating(false);
+							}
+						}}>
+						<IconSend
+							height={20}
+							width={20}
+							color={
+								input.trim() === "" || generating
+									? colors.fontB3
+									: colors.primary
+							}
+						/>
+					</TouchableOpacity>
+				</View>
+				<FilterBackdrop visible={open} onClose={() => setOpen(false)} />
+			</View>
+			<DeepSeekHistoryDrawer
+				visible={sidebarOpen}
+				position={sidebarPosition}
+				history={history}
+				conversation={conversation}
+				colors={colors}
+				onClose={() => toggleSidebar(false)}
+				onCreate={createConversation}
+				onDeleteAll={deleteAllHistory}
+				onSelect={(item) => {
+					setCurrentIndex(history.findIndex((c) => c.id === item.id));
+					toggleSidebar(false);
+				}}
+				onDelete={(item) => dispatch(deepseekDeleteConversation(item))}
+			/>
 		</KeyboardAvoidingView>
 	);
 };

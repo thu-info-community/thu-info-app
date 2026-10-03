@@ -42,13 +42,16 @@ export const EvaluationScreen = roundedRefreshListScreen(
 					alignItems: "center",
 					justifyContent: "space-between",
 					paddingHorizontal: 4,
+					gap: 8,
 				}}
 				onPress={() => navigation.navigate("Form", {name, url})}
 				onLongPress={() => {
 					setFullGrade(url);
 					refresh();
 				}}>
-				<Text style={{color: colors.text, fontSize: 16}} numberOfLines={1}>
+				<Text
+					style={{color: colors.text, fontSize: 16, flex: 1, minWidth: 0}}
+					numberOfLines={2}>
 					{name}
 				</Text>
 				<View
@@ -56,6 +59,7 @@ export const EvaluationScreen = roundedRefreshListScreen(
 						flexDirection: "row",
 						justifyContent: "center",
 						alignItems: "center",
+						flexShrink: 0,
 					}}>
 					<Text
 						style={{

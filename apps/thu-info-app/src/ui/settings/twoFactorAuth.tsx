@@ -1,5 +1,6 @@
+import {CodeInputCell} from "../../components/CodeInputCell";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {View, Text, TouchableOpacity, Linking} from "react-native";
+import {View, ScrollView, Text, TouchableOpacity, Linking} from "react-native";
 import {useEffect, useState} from "react";
 import {futures, helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -11,7 +12,6 @@ import {RoundedView} from "../../components/views.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {
 	CodeField,
-	Cursor,
 	useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 
@@ -22,9 +22,9 @@ export const TwoFactorAuthScreen = ({
 	navigation: RootNav;
 	route: TwoFactorAuthRouteProp;
 }) => {
-	const [method, setMethod] = useState<"wechat" | "mobile" | "totp" | undefined>(
-		undefined,
-	);
+	const [method, setMethod] = useState<
+		"wechat" | "mobile" | "totp" | undefined
+	>(undefined);
 	const [captcha, setCaptcha] = useState("");
 	const [props, getCellOnLayoutHandler] = useClearByFocusCell({
 		value: captcha,
@@ -42,150 +42,155 @@ export const TwoFactorAuthScreen = ({
 		};
 	}, []);
 
+	const handleCaptchaChange = (v: string) => {
+		if (v.match(/^\d{0,6}$/)) {
+			setCaptcha(v);
+			if (v.length === 6) {
+				futures.twoFactorAuthFuture?.(v);
+				futures.twoFactorAuthFuture = undefined;
+				navigation.pop();
+			}
+		}
+	};
+
 	return (
-		<KeyboardAvoidingScreen style={{flex: 1, padding: 12}}>
-			<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
-				{getStr("twoFactorPrompt")}
-			</Text>
-			{(params.hasWeChatBool || params.phone !== null || params.hasTotp) && (
-				<RoundedView style={style.rounded}>
-					{params.hasWeChatBool && (
-						<TouchableOpacity
-							style={style.touchable}
-							disabled={method !== undefined}
-							onPress={() => {
-								setMethod("wechat");
-								futures.twoFactorMethodFuture?.("wechat");
-								futures.twoFactorMethodFuture = undefined;
-							}}>
-							<Text style={style.text}>{getStr("twoFactorWechat")}</Text>
-							{method === "wechat" && <IconCheck width={18} height={18} />}
-						</TouchableOpacity>
-					)}
-
-					{params.hasWeChatBool && params.phone !== null && (
-						<View style={style.separator} />
-					)}
-
-					{params.phone !== null && (
-						<TouchableOpacity
-							style={style.touchable}
-							disabled={method !== undefined}
-							onPress={() => {
-								setMethod("mobile");
-								futures.twoFactorMethodFuture?.("mobile");
-								futures.twoFactorMethodFuture = undefined;
-							}}>
-							<Text style={style.text}>
-								{getStr("twoFactorMobile").format(params.phone.toString())}
-							</Text>
-							{method === "mobile" && <IconCheck width={18} height={18} />}
-						</TouchableOpacity>
-					)}
-
-					{(params.hasWeChatBool || params.phone !== null) && params.hasTotp && (
-						<View style={style.separator} />
-					)}
-
-					{params.hasTotp && (
-						<TouchableOpacity
-							style={style.touchable}
-							disabled={method !== undefined}
-							onPress={() => {
-								setMethod("totp");
-								futures.twoFactorMethodFuture?.("totp");
-								futures.twoFactorMethodFuture = undefined;
-							}}>
-							<Text style={style.text}>{getStr("twoFactorTotp")}</Text>
-							{method === "totp" && <IconCheck width={18} height={18} />}
-						</TouchableOpacity>
-					)}
-				</RoundedView>
-			)}
-
-			<Text
-				style={{
-					color: theme.colors.fontB2,
-					fontSize: 16,
-					margin: 16,
+		<KeyboardAvoidingScreen>
+			<ScrollView
+				style={{flex: 1}}
+				keyboardShouldPersistTaps="handled"
+				contentContainerStyle={{
+					flexGrow: 1,
+					padding: 12,
+					justifyContent: "center",
 				}}>
-				Fingerprint: {helper.fingerprint.substring(0, 3)}***{helper.fingerprint.substring(helper.fingerprint.length - 3)}
-			</Text>
-
-			{method === undefined &&
-				(!params.hasWeChatBool || params.phone === null || !params.hasTotp) && (
-					<TouchableOpacity
-						onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
-						<Text
-							style={{
-								color: theme.colors.primary,
-								fontSize: 16,
-								margin: 16,
-							}}>
-							{!params.hasWeChatBool && params.phone === null && !params.hasTotp
-								? getStr("noTwoFactorMethod")
-								: getStr("missingTwoFactorMethod")}
-						</Text>
-					</TouchableOpacity>
-				)}
-
-			{method !== undefined && (
-				<RoundedView
-					style={{
-						width: "100%",
-						alignItems: "center",
-						marginVertical: 16,
-						borderRadius: 20,
-					}}>
-					<Text style={{color: colors.text, marginBottom: 20, fontSize: 20}}>
-						{getStr("captcha")}
+				<View style={{width: "100%", maxWidth: 480, alignSelf: "center"}}>
+					<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>
+						{getStr("twoFactorPrompt")}
 					</Text>
-					<CodeField
-						{...props}
-						value={captcha}
-						onChangeText={(v) => {
-							if (v.match(/^\d{0,6}$/)) {
-								setCaptcha(v);
-								if (v.length === 6) {
-									futures.twoFactorAuthFuture?.(v);
-									futures.twoFactorAuthFuture = undefined;
-									navigation.pop();
-								}
-							}
-						}}
-						cellCount={6}
-						autoFocus={false}
-						keyboardType="number-pad"
-						textContentType="oneTimeCode"
-						secureTextEntry={false}
-						renderCell={({index, symbol, isFocused}) => (
-							<View
-								key={index}
-								style={{
-									width: "12.5%",
-									aspectRatio: 0.67,
-									paddingHorizontal: "auto",
-									paddingVertical: "auto",
-									borderWidth: 2,
-									borderColor: isFocused ? colors.mainTheme : colors.themeGrey,
-									borderRadius: 12,
-									justifyContent: "center",
-									marginLeft: index === 0 ? 0 : 12,
-								}}>
+					{(params.hasWeChatBool ||
+						params.phone !== null ||
+						params.hasTotp) && (
+						<RoundedView style={style.rounded}>
+							{params.hasWeChatBool && (
+								<TouchableOpacity
+									style={style.touchable}
+									disabled={method !== undefined}
+									onPress={() => {
+										setMethod("wechat");
+										futures.twoFactorMethodFuture?.("wechat");
+										futures.twoFactorMethodFuture = undefined;
+									}}>
+									<Text style={style.text}>{getStr("twoFactorWechat")}</Text>
+									{method === "wechat" && <IconCheck width={18} height={18} />}
+								</TouchableOpacity>
+							)}
+
+							{params.hasWeChatBool && params.phone !== null && (
+								<View style={style.separator} />
+							)}
+
+							{params.phone !== null && (
+								<TouchableOpacity
+									style={style.touchable}
+									disabled={method !== undefined}
+									onPress={() => {
+										setMethod("mobile");
+										futures.twoFactorMethodFuture?.("mobile");
+										futures.twoFactorMethodFuture = undefined;
+									}}>
+									<Text style={style.text}>
+										{getStr("twoFactorMobile").format(params.phone.toString())}
+									</Text>
+									{method === "mobile" && <IconCheck width={18} height={18} />}
+								</TouchableOpacity>
+							)}
+
+							{(params.hasWeChatBool || params.phone !== null) &&
+								params.hasTotp && <View style={style.separator} />}
+
+							{params.hasTotp && (
+								<TouchableOpacity
+									style={style.touchable}
+									disabled={method !== undefined}
+									onPress={() => {
+										setMethod("totp");
+										futures.twoFactorMethodFuture?.("totp");
+										futures.twoFactorMethodFuture = undefined;
+									}}>
+									<Text style={style.text}>{getStr("twoFactorTotp")}</Text>
+									{method === "totp" && <IconCheck width={18} height={18} />}
+								</TouchableOpacity>
+							)}
+						</RoundedView>
+					)}
+
+					<Text
+						style={{
+							color: theme.colors.fontB2,
+							fontSize: 16,
+							margin: 16,
+						}}>
+						Fingerprint: {helper.fingerprint.substring(0, 3)}***
+						{helper.fingerprint.substring(helper.fingerprint.length - 3)}
+					</Text>
+
+					{method === undefined &&
+						(!params.hasWeChatBool ||
+							params.phone === null ||
+							!params.hasTotp) && (
+							<TouchableOpacity
+								onPress={() => Linking.openURL("https://id.tsinghua.edu.cn/")}>
 								<Text
 									style={{
-										fontSize: 32,
-										textAlign: "center",
-										color: colors.primaryLight,
-									}}
-									onLayout={getCellOnLayoutHandler(index)}>
-									{symbol ? symbol : isFocused ? <Cursor /> : null}
+										color: theme.colors.primary,
+										fontSize: 16,
+										margin: 16,
+									}}>
+									{!params.hasWeChatBool &&
+									params.phone === null &&
+									!params.hasTotp
+										? getStr("noTwoFactorMethod")
+										: getStr("missingTwoFactorMethod")}
 								</Text>
-							</View>
+							</TouchableOpacity>
 						)}
-					/>
-				</RoundedView>
-			)}
+
+					{method !== undefined && (
+						<RoundedView
+							style={{
+								width: "100%",
+								alignItems: "center",
+								marginVertical: 16,
+								borderRadius: 20,
+							}}>
+							<Text
+								style={{color: colors.text, marginBottom: 20, fontSize: 20}}>
+								{getStr("captcha")}
+							</Text>
+							<CodeField
+								{...props}
+								value={captcha}
+								onChangeText={handleCaptchaChange}
+								rootStyle={{width: "100%", paddingHorizontal: 16, gap: 8}}
+								cellCount={6}
+								autoFocus={false}
+								keyboardType="number-pad"
+								textContentType="oneTimeCode"
+								secureTextEntry={false}
+								renderCell={({index, symbol, isFocused}) => (
+									<CodeInputCell
+										key={index}
+										symbol={symbol}
+										focused={isFocused}
+										colors={colors}
+										onLayout={getCellOnLayoutHandler(index)}
+									/>
+								)}
+							/>
+						</RoundedView>
+					)}
+				</View>
+			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
 };

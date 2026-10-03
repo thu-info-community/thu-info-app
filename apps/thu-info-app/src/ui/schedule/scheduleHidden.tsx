@@ -1,14 +1,7 @@
 import {scheduleConflicts} from "../../redux/scheduleData";
 import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
 import {useDispatch, useSelector, useStore} from "react-redux";
-import {
-	FlatList,
-	Text,
-	TouchableOpacity,
-	View,
-	useWindowDimensions,
-	Alert,
-} from "react-native";
+import {FlatList, Text, TouchableOpacity, View, Alert} from "react-native";
 import {State, helper} from "../../redux/store";
 import {
 	ScheduleType,
@@ -27,7 +20,6 @@ import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 
 export const ScheduleHiddenScreen = () => {
-	const screenHeight = useWindowDimensions();
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
@@ -66,6 +58,7 @@ export const ScheduleHiddenScreen = () => {
 	return (
 		<FlatList
 			data={getData()}
+			contentContainerStyle={{flexGrow: 1}}
 			renderItem={({item}) => (
 				<View style={{flexDirection: "row", padding: 6, alignItems: "center"}}>
 					<Text
@@ -139,7 +132,7 @@ export const ScheduleHiddenScreen = () => {
 				<View
 					style={{
 						margin: 15,
-						height: screenHeight.height * 0.7,
+						flex: 1,
 						justifyContent: "center",
 						alignItems: "center",
 					}}>

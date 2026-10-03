@@ -11,6 +11,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
+import com.facebook.react.uimanager.DisplayMetricsHolder
 import com.unidy2002.thuinfo.widget.WidgetLaunchStore
 
 class MainActivity : ReactActivity() {
@@ -43,6 +44,9 @@ class MainActivity : ReactActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // ReactHost can outlive an activity. Refresh dp/sp conversions before
+        // the new surface measures text after a display density change.
+        DisplayMetricsHolder.initDisplayMetrics(this)
         super.onCreate(null)
         // Cold start from a schedule widget: remember the launch for JS to consume.
         WidgetLaunchStore.offer(intent)

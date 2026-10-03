@@ -54,7 +54,7 @@ import {configSet} from "../../redux/slices/config";
 import {addUsageStat, FunctionType} from "../../utils/webApi";
 import {useNavigation} from "@react-navigation/native";
 import {setCrTimetable} from "../../redux/slices/timetable";
-import {getStatusBarHeight} from "react-native-safearea-height";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {
 	toggleReadStatus,
 	updateAnnouncements,
@@ -849,6 +849,7 @@ const HomeBalanceChip = ({
 };
 
 export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
+	const insets = useSafeAreaInsets();
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const dispatch = useDispatch();
@@ -1043,14 +1044,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	)?.props.onPress;
 
 	return (
-		<View style={{flex: 1, paddingTop: getStatusBarHeight()}}>
+		<View style={{flex: 1, paddingTop: insets.top}}>
 			{showUpdateBanner && (
 				<View
 					style={{
-						position: "absolute",
-						top: getStatusBarHeight(),
-						left: 12,
-						right: 12,
+						marginHorizontal: 12,
 						zIndex: 10,
 						backgroundColor: theme.colors.contentBackground,
 						borderRadius: 8,
@@ -1110,7 +1108,6 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				style={{
 					backgroundColor: theme.colors.themeBackground,
 				}}
-				contentContainerStyle={showUpdateBanner ? {paddingTop: 76} : undefined}
 				key={String(darkModeHook)}>
 				{isExpanded ? (
 					<View style={{flexDirection: "row", alignItems: "flex-start"}}>
