@@ -95,6 +95,17 @@ yarn android                  # For Android
 npx pod-install && yarn ios   # For iOS
 ```
 
+Local Android builds and branch push / PR CI builds target `arm64-v8a` and `x86_64`. Tag builds, including prerelease tags, produce a single APK containing all four ABIs: `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`. Release downloads keep the filename `THUInfo_release_<tag>.apk`.
+
+To build an Android APK containing all four ABIs locally:
+
+```bash
+cd apps/thu-info-app/android
+./gradlew assembleDebug -PreactNativeArchitectures=armeabi-v7a,arm64-v8a,x86,x86_64
+```
+
+Use `assembleRelease` instead of `assembleDebug` when release signing is configured.
+
 ### Building (HarmonyOS)
 
 ```bash
