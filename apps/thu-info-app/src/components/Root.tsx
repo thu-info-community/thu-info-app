@@ -84,6 +84,8 @@ import {DormScreen} from "../ui/home/dorm";
 import IconLoseCard from "../assets/icons/IconLoseCard";
 import {MyhomeLoginScreen} from "../ui/settings/myhomeLogin";
 import {AccountScreen} from "../ui/settings/account";
+import {IdPersonalInfoScreen} from "../ui/settings/idPersonalInfo";
+import {IdLoginLogsScreen} from "../ui/settings/idLoginLogs";
 import {ReserveScreen} from "../ui/home/reserve";
 import {CrHomeScreen} from "../ui/home/crHome";
 import {CrCoursePlanScreen} from "../ui/home/crCoursePlan";
@@ -406,6 +408,8 @@ type SettingsStackParamList = {
 	Login: undefined;
 	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
 	Account: undefined;
+	IdPersonalInfo: undefined;
+	IdLoginLogs: undefined;
 	DigitalPassword:
 		| {action: "new"}
 		| {action: "confirm"; payload: string}
@@ -953,6 +957,16 @@ export const Root = () => {
 				name="Account"
 				component={AccountScreen}
 				options={{title: getStr("accountAndSecurity")}}
+			/>
+			<Stack.Screen
+				name="IdPersonalInfo"
+				component={IdPersonalInfoScreen}
+				options={{title: getStr("personalInformation")}}
+			/>
+			<Stack.Screen
+				name="IdLoginLogs"
+				component={IdLoginLogsScreen}
+				options={{title: getStr("idLoginLogs")}}
 			/>
 			<Stack.Screen
 				name="FunctionManagement"

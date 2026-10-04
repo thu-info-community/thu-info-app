@@ -15,6 +15,9 @@ yarn add @thu-info/lib
 
 We support a wide range of APIs:
 - `getUserInfo`
+- `getIdAccountInfo`: read ID account details and the last password change time
+- `getIdAuthDevices`: read multi-factor authentication trusted devices
+- `getIdLoginLogs(page = 1)`: read login logs, newest first, with 25 records per page
 - `getReport`
 - Teaching evaluation (`getAssessmentList`, `getAssessmentForm`, `postAssessmentForm`)
 - `getPhysicalExamResult`
@@ -41,6 +44,8 @@ We support a wide range of APIs:
 - MadModel (`getMadModelToken`)
 
 Usages are documented in `dist/index` and also between the codes.
+
+The three ID APIs only read account data. They reuse an existing trusted session and skip device registration after 2FA. `getIdAuthDevices` uses the portal's read-only POST query. Login logs cover the last 30 days; the server fixes the page size at 25 and the optional DataTables `draw` counter is omitted.
 
 ## Quick demo
 
@@ -134,6 +139,8 @@ await helper.login({userId: "", password: ""});
 See [thu-info-app](https://github.com/thu-info-community/thu-info-app) for an example.
 
 ## Testing
+
+The ID parsing and session tests use synthetic fixtures and need no credentials: run `yarn test src/lib/id.test.ts --runInBand` in this package. To verify against the portal, use an already logged-in helper with its existing fingerprint, call all three ID APIs and request log pages 1 and 2. Confirm that the device list is unchanged after the reads. In the app, check Settings → Account and Security → Personal Information / Login Logs, then verify the Manage Account Settings and Forgot Password notices without submitting the login form.
 
 Run `yarn test` for testing. It requires your personal credential since we don't have mocks for these APIs. To do this, you must create a `secrets.json`  under the root folder, with `userId` and `password` as keys.
 

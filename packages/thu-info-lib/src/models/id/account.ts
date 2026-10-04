@@ -12,3 +12,29 @@ export interface UserInfo {
     /** Phone number bound to the account */
     phone: string;
 }
+
+export interface IdAccountInfo extends UserInfo {
+    /** Last password change, in milliseconds since the Unix epoch. */
+    lastPasswordChangedAt: number | null;
+}
+
+export interface IdAuthDevice {
+    id: string;
+    name: string;
+    /** Date strings returned by the ID system. */
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface IdLoginLog {
+    loginTime: string;
+    ipAddress: string;
+    appName: string;
+    targetAppName: string | null;
+    isSingleSignOn: boolean;
+}
+
+export interface IdLoginLogPage {
+    items: IdLoginLog[];
+    total: number;
+}

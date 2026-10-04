@@ -32,6 +32,7 @@ import {updateAnnouncements} from "../../redux/slices/announcement";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
+import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -148,6 +149,14 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							secureTextEntry
 						/>
 					</View>
+					<IdMaintenanceNotice
+						forgotPassword
+						style={{alignSelf: "flex-end", paddingVertical: 8}}
+						testID="forgotPasswordButton">
+						<Text style={{color: theme.colors.primary}}>
+							{getStr("forgotPassword")}
+						</Text>
+					</IdMaintenanceNotice>
 					{privacy312 === true ||
 					Platform.OS === "android" ||
 					Platform.OS === "ios" ? (

@@ -58,8 +58,8 @@ import {
     ClassroomStateError,
     LibError,
     ReportError,
-    UserInfoError,
 } from "../utils/error";
+import {parseIdAccountInfo} from "../utils/id-account";
 import {BankPayment, BankPaymentByMonth, GraduateIncome} from "../models/home/bank";
 import {CalendarData, Semester} from "../models/schedule/calendar";
 import {UserInfo} from "../models/id/account";
@@ -84,32 +84,14 @@ export const systemMessage = "time out用户登陆超时或访问内容不存在
  * what makes `"account"` a safe discriminator.
  */
 export const __parseUserInfoForTest = (html: string): UserInfo => {
-    const accountRes = /"account"\s*:\s*(\{[^}]*\})/.exec(html);
-    if (accountRes === null || accountRes[1] === undefined) {
-        throw new UserInfoError();
-    }
-    let account: any;
-    try {
-        account = JSON.parse(accountRes[1]);
-    } catch {
-        throw new UserInfoError();
-    }
-    // `username` is load-bearing: the library room booking builds an address
-    // from it. A JSON null (not just undefined) must not slip through, or
-    // consumers receive null / `"null@mails.tsinghua.edu.cn"`.
-    if (typeof account.username !== "string" || account.username === "") {
-        throw new UserInfoError();
-    }
-    if (typeof account.realName !== "string") {
-        throw new UserInfoError();
-    }
+    const account = parseIdAccountInfo(html);
     return {
-        userId: account.userId ?? "",
+        userId: account.userId,
         username: account.username,
-        fullName: account.realName,
+        fullName: account.fullName,
         emailName: account.username,
-        deptString: account.deptString ?? "",
-        phone: account.phone ?? "",
+        deptString: account.deptString,
+        phone: account.phone,
     };
 };
 
