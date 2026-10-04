@@ -1,8 +1,10 @@
 import {
+	Platform,
 	Switch,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {useDispatch, useSelector} from "react-redux";
@@ -38,6 +40,30 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const textColor = props.textColor || "white";
 	const margin = props.blockMargin ?? 2;
 	const height = Math.max(1, props.height - margin * 2);
+	const {fontScale} = useWindowDimensions();
+	const harmony = (Platform.OS as string) === "harmony";
+	const paddingVertical = props.compact ? 2 : props.timeLabel ? 4 : 6;
+	const contentHeight = Math.max(0, height - paddingVertical * 2);
+	const locationLines = props.timeLabel
+		? 1
+		: harmony
+			? Math.max(
+					1,
+					Math.min(
+						3,
+						Math.floor((contentHeight - 18 * fontScale) / (10 * fontScale)),
+					),
+				)
+			: 3;
+	// RNOH can paint an uncapped paragraph beyond the height assigned by Yoga.
+	// Bound the lines explicitly so a long title cannot overlap its location.
+	const titleLines = Math.max(
+		1,
+		Math.floor(
+			(contentHeight - (props.location ? locationLines * 10 * fontScale : 0)) /
+				(18 * fontScale),
+		),
+	);
 	return (
 		<TouchableOpacity
 			accessibilityRole="button"
@@ -52,7 +78,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 				height,
 				backgroundColor: props.blockColor || colors.themePurple,
 				borderRadius: 4,
-				paddingVertical: props.compact ? 2 : props.timeLabel ? 4 : 6,
+				paddingVertical,
 				paddingHorizontal: 4,
 				overflow: "hidden",
 				zIndex: props.compact ? 1 : 0,
@@ -60,7 +86,13 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			onPress={props.onPress}
 			onLongPress={props.onLongPress}>
 			<Text
-				numberOfLines={props.compact || props.timeLabel ? 1 : undefined}
+				numberOfLines={
+					props.compact || props.timeLabel
+						? 1
+						: harmony
+							? titleLines
+							: undefined
+				}
 				style={{
 					flexShrink: 1,
 					minHeight: 0,
@@ -82,7 +114,7 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			)}
 			{!props.compact && props.location.length > 0 && (
 				<Text
-					numberOfLines={props.timeLabel ? 1 : 3}
+					numberOfLines={locationLines}
 					style={{
 						color: textColor,
 						fontSize: 8,
