@@ -64,10 +64,11 @@ jobs:
         with:
           build-root-directory: apps/thu-info-app/android
       - name: Build android release
+        working-directory: apps/thu-info-app/android
         env:
           SIGNATURE_DIGEST: ""
         run: |
-          cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
+          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:

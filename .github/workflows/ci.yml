@@ -69,13 +69,18 @@ jobs:
         with:
           build-root-directory: apps/thu-info-app/android
       - name: Build android release
+        working-directory: apps/thu-info-app/android
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           SIGNATURE_DIGEST: ${{ secrets.SIGNATURE_DIGEST }}
         run: |
-          cd apps/thu-info-app/android && ./gradlew assembleRelease && cd ../../..
+          architectures="arm64-v8a,x86_64"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            architectures="armeabi-v7a,arm64-v8a,x86,x86_64"
+          fi
+          ./gradlew assembleRelease "-PreactNativeArchitectures=$architectures"
       - name: Prepare artifact for attestation
         id: prepare_artifact
         run: |
