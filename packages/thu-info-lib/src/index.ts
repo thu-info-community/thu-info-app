@@ -20,6 +20,7 @@ import {
     getMadModelToken,
 } from "./lib/basics";
 import {forgetDevice, login, logout} from "./lib/core";
+import {getIdAccountInfo, getIdAuthDevices, getIdLoginLogs} from "./lib/id";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
 import {
     LibBookRecord,
@@ -348,6 +349,15 @@ export class InfoHelper {
      * number.
      */
     public getUserInfo = async () => getUserInfo(this);
+
+    /** Read ID account details, including the last password change time. */
+    public getIdAccountInfo = async () => getIdAccountInfo(this);
+
+    /** Read the existing multi-factor authentication trusted devices. */
+    public getIdAuthDevices = async () => getIdAuthDevices(this);
+
+    /** Read login logs, newest first; pages start at 1 and contain up to 25 rows. */
+    public getIdLoginLogs = async (page = 1) => getIdLoginLogs(this, page);
 
     /**
      * A naive API that sends an email from the user's Tsinghua mail.
