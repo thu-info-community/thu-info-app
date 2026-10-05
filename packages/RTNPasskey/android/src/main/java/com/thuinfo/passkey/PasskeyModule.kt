@@ -13,6 +13,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import org.json.JSONObject
+import java.io.File
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.security.KeyFactory
@@ -72,8 +73,20 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
         return preferences.getString(name, null)?.let { JSONObject(it) }
     }
 
+    // This is only a risk hint; missing su files do not prove device integrity.
+    private fun rootDetected(): Boolean = listOf(
+        "/system/bin/",
+        "/system/xbin/",
+        "/system/sbin/",
+        "/sbin/",
+        "/vendor/bin/",
+    ).any { path ->
+        try { File(path, "su").exists() }
+        catch (_: Exception) { false }
+    }
+
     override fun getCapabilities(promise: Promise) = operation(promise) {
-        JSONObject().put("available", true).toString()
+        JSONObject().put("available", true).put("rootDetected", rootDetected()).toString()
     }
 
     override fun createCredential(promise: Promise) = operation(promise) {

@@ -1,9 +1,9 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ActivityIndicator, Text, TouchableOpacity, View} from "react-native";
 import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
 import {BottomPopupTriggerView, RoundedView} from "../views";
-import {passkeyAvailable} from "../../utils/passkeyNative";
+import {getPasskeyRootHint, passkeyAvailable} from "../../utils/passkeyNative";
 import {enablePasskey, disablePasskey} from "../../utils/passkey";
 import {getStr} from "../../utils/i18n";
 import type {RootNav} from "../Root";
@@ -18,7 +18,18 @@ type PasskeyDialog = "enable" | "remove" | "reset" | "setupError" | "removeError
 export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
     const auth = useSelector((state: State) => state.auth);
     const [processing, setProcessing] = useState(false);
+    const [checkingRoot, setCheckingRoot] = useState(false);
+    const [rootHint, setRootHint] = useState(false);
     const [dialog, setDialog] = useState<PasskeyDialog | null>(null);
+    const rootHintRequest = useRef(0);
+    const checkingRootRef = useRef(false);
+    useEffect(() => {
+        checkingRootRef.current = false;
+        setCheckingRoot(false);
+        setRootHint(false);
+        setDialog(null);
+        return () => { rootHintRequest.current += 1; };
+    }, [auth.userId]);
     const themeName = useColorScheme();
     const style = styles(themeName);
     const {colors} = themes(themeName);
@@ -29,6 +40,21 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
     const protection = credential?.protectionLevel;
     const protectionText = protection === "software" ? getStr("passkeySystemProtection") :
         protection && ["strongbox", "tee", "hardware"].includes(protection) ? getStr("passkeyDeviceProtection") : getStr("passkeyUnknown");
+    const busy = processing || checkingRoot;
+
+    const openSetupDialog = async (kind: "enable" | "reset") => {
+        if (processing || checkingRootRef.current) return;
+        const request = ++rootHintRequest.current;
+        checkingRootRef.current = true;
+        setCheckingRoot(true);
+        setRootHint(false);
+        const hint = await getPasskeyRootHint().catch(() => false);
+        if (request !== rootHintRequest.current) return;
+        checkingRootRef.current = false;
+        setCheckingRoot(false);
+        setRootHint(hint);
+        setDialog(kind);
+    };
 
     const perform = async (disable: boolean) => {
         setProcessing(true);
@@ -48,14 +74,15 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
     return (
         <>
         <RoundedView style={style.rounded}>
-            <TouchableOpacity accessibilityRole="button" testID="passkeySettings" style={style.touchable} disabled={processing}
+            <TouchableOpacity accessibilityRole="button" testID="passkeySettings" style={style.touchable} disabled={busy}
                 onPress={() => {
                     if (!auth.userId) { navigation.navigate("Login"); return; }
-                    setDialog(credential ? "remove" : "enable");
+                    if (credential) setDialog("remove");
+                    else openSetupDialog("enable");
                 }}>
                 <Text style={style.text}>Passkey</Text>
                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                    {processing ? <ActivityIndicator /> : <Text style={style.version}>{getStr(configured ? "configured" : "notConfigured")}</Text>}
+                    {busy ? <ActivityIndicator /> : <Text style={style.version}>{getStr(configured ? "configured" : "notConfigured")}</Text>}
                     <IconRight height={20} width={20} />
                 </View>
             </TouchableOpacity>
@@ -73,10 +100,10 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
                     <Text style={style.version}>{protectionText}</Text>
                 </View>
                 <View style={style.separator} />
-                <TouchableOpacity accessibilityRole="button" style={style.touchable} disabled={processing}
+                <TouchableOpacity accessibilityRole="button" style={style.touchable} disabled={busy}
                     onPress={() => {
                         if (!auth.userId) { navigation.navigate("Login"); return; }
-                        setDialog("reset");
+                        openSetupDialog("reset");
                     }}>
                     <Text style={style.text}>{getStr("passkeyReset")}</Text>
                     <IconRight height={20} width={20} />
@@ -85,7 +112,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
         </RoundedView>
         <BottomPopupTriggerView
             style={{display: "none"}} disabled popupTitle="Passkey"
-            popupVisible={dialog !== null} popupCanFulfill={!processing} popupCancelable
+            popupVisible={dialog !== null} popupCanFulfill={!busy} popupCancelable
             popupFulfillText={getStr(dialog === "remove" ? "passkeyRemove" : dialog === "reset" ? "passkeyReset" :
                 dialog === "enable" ? "passkeyEnable" : "done")}
             popupContent={<View style={{paddingHorizontal: 20}}>
@@ -93,6 +120,10 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
                     {getStr(dialog === "remove" ? "passkeyRemovePrompt" : dialog === "setupError" ? "passkeySetupFailed" :
                         dialog === "removeError" ? "passkeyRemoveFailed" : "passkeyEnablePrompt")}
                 </Text>
+                {rootHint && (dialog === "enable" || dialog === "reset") &&
+                    <Text style={{color: colors.text, fontSize: 17, lineHeight: 26, marginTop: 16}}>
+                        {getStr("passkeyRootHint")}
+                    </Text>}
             </View>}
             popupOnCancelled={() => setDialog(null)}
             popupOnFulfilled={() => {

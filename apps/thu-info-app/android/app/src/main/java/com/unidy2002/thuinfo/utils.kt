@@ -49,22 +49,3 @@ fun Application.preventEmulator() {
         }
     }
 }
-
-fun Application.preventRoot() {
-    listOf(
-        "/system/bin/",
-        "/system/xbin/",
-        "/system/sbin/",
-        "/sbin/",
-        "/vendor/bin/"
-    ).forEach { path ->
-        try {
-            if (File("${path}su").exists()) {
-                Toast.makeText(applicationContext, "禁止在 Root 设备上运行。", Toast.LENGTH_SHORT).show()
-                exitProcess(3)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}

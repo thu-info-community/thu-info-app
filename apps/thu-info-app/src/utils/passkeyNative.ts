@@ -1,8 +1,19 @@
 import NativePasskey from "rtn-passkey";
+import {Platform} from "react-native";
 import type {PasskeyAuthenticator, PasskeyKey, PasskeyAssertion} from "@thu-info/lib";
 import {PasskeyError} from "@thu-info/lib/src/utils/error";
 
 export const passkeyAvailable = NativePasskey !== null;
+
+export const getPasskeyRootHint = async (): Promise<boolean> => {
+    if (Platform.OS !== "android" || !NativePasskey) return false;
+    try {
+        const capabilities = JSON.parse(await NativePasskey.getCapabilities());
+        return capabilities?.rootDetected === true;
+    } catch {
+        return false;
+    }
+};
 
 const module = () => {
     if (!NativePasskey) throw new PasskeyError("unavailable", "此设备暂不支持 Passkey。");

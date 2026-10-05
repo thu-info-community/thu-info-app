@@ -799,6 +799,7 @@ export default {
 	passkeyDeviceProtection: "设备保护",
 	passkeyProtection: "本机保护",
 	passkeyEnablePrompt: "开启后，此设备可自动登录，无需保存学校密码。",
+	passkeyRootHint: "检测到 Root 迹象。恶意程序可能使用本机 Passkey 登录你的账号，请仅在信任此设备时继续。",
 	passkeyRemovePrompt: "删除后，此设备需要使用学校密码登录。",
 	passkeyEnable: "开启",
 	passkeyRemove: "删除",

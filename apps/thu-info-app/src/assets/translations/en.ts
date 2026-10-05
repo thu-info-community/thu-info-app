@@ -842,6 +842,7 @@ export default {
 	passkeyDeviceProtection: "Device protection",
 	passkeyProtection: "On this device",
 	passkeyEnablePrompt: "This device can sign in automatically without saving your university password.",
+	passkeyRootHint: "Signs of root access were detected. Malicious software may use this device’s Passkey to sign in to your account. Continue only if you trust this device.",
 	passkeyRemovePrompt: "After removal, sign in on this device with your university password.",
 	passkeyEnable: "Enable",
 	passkeyRemove: "Remove",
