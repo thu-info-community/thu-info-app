@@ -9,7 +9,8 @@
 		],
 		"nohoist": [
 			"@thu-info/app/rtn-network-utils",
-			"@thu-info/app/rtn-widget"
+			"@thu-info/app/rtn-widget",
+			"@thu-info/app/rtn-passkey"
 		]
 	},
 	"scripts": {

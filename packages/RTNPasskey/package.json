@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
+  "scripts": {"lint": "exit 0"},
   "peerDependencies": {"react-native": "*"},
+  "harmony": {
+    "alias": "rtn-passkey",
+    "codegenConfig": [{"version": 2, "specPaths": ["./src"]}]
+  },
   "codegenConfig": {
     "name": "RTNPasskeySpec",
     "type": "modules",

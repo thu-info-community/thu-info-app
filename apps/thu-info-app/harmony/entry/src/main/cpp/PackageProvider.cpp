@@ -19,6 +19,7 @@
 #include "GetRandomValuesPackage.h"
 #include "generated/rtn_network_utils/RNOH/generated/BaseRtnNetworkUtilsPackage.h"
 #include "generated/rtn_widget/RNOH/generated/BaseRtnWidgetPackage.h"
+#include "generated/rtn_passkey/RNOH/generated/BaseRtnPasskeyPackage.h"
 
 using namespace rnoh;
 
@@ -43,6 +44,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
         std::make_shared<SliderPackage>(ctx),
         std::make_shared<WebViewPackage>(ctx),
         std::make_shared<BaseRtnNetworkUtilsPackage>(ctx),
-        std::make_shared<BaseRtnWidgetPackage>(ctx)
+        std::make_shared<BaseRtnWidgetPackage>(ctx),
+        std::make_shared<BaseRtnPasskeyPackage>(ctx)
     };
 }
