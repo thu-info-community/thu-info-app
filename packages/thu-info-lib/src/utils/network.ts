@@ -181,11 +181,12 @@ export const stringify = (form: any, paramEncoding = "UTF-8") =>
  */
 export const uFetch = async (
     url: string,
-    post?: object,
+    post?: object | string,
     timeout = 60000,
     paramEncoding = "UTF-8",
     serialized = false,
     requestContentType = CONTENT_TYPE_FORM,
+    requestMethod?: "GET" | "POST" | "PUT" | "DELETE",
 ): Promise<string> => {
     // Prepare request headers
     const defaultHeaders = {
@@ -219,8 +220,9 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: serialized ? (post as never as string) : stringify(post, paramEncoding),
+                body: serialized ? (post as never as string) : stringify(post as object, paramEncoding),
             };
+    if (requestMethod !== undefined) init.method = requestMethod;
 
     // Perform the network request
     try {

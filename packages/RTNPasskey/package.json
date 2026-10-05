@@ -1,0 +1,13 @@
+{
+  "name": "rtn-passkey",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "peerDependencies": {"react-native": "*"},
+  "codegenConfig": {
+    "name": "RTNPasskeySpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {"javaPackageName": "com.thuinfo.passkey"}
+  }
+}

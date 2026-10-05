@@ -1,7 +1,8 @@
 import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
 import { useEffect, useState } from "react";
 import { Device } from "@thu-info/lib/src/models/network/device";
-import { helper } from "../../redux/store";
+import { helper, State } from "../../redux/store";
+import {useSelector} from "react-redux";
 import {Snackbar} from "react-native-snackbar";
 import { getStr } from "../../utils/i18n";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
@@ -128,6 +129,8 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 	const [internetAccess, setInternetAccess] = useState(true);
 
 	const [importIp, setImportIp] = useState("");
+	const [importPassword, setImportPassword] = useState("");
+	const usesPasskey = useSelector((state: State) => state.auth.authMethod === "passkey");
 
 	const headerHeight = useHeaderHeight();
 
@@ -173,6 +176,12 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 						</Text>
 					)}
 				</ScrollView>
+				{usesPasskey && <View style={{paddingHorizontal: 16, backgroundColor: colors.contentBackground}}>
+					<Text style={{color: colors.text}}>{getStr("passkeyNetworkPassword")}</Text>
+					<TextInput value={importPassword} onChangeText={setImportPassword} secureTextEntry
+						placeholder={getStr("password")} placeholderTextColor={colors.fontB2}
+						style={{color: colors.text, paddingVertical: 8}} />
+				</View>}
 				<View
 					style={{
 						flexDirection: "row",
@@ -236,7 +245,7 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 								}
 
 								helper
-									.loginNetworkDevice(importIp, internetAccess)
+									.loginNetworkDevice(importIp, internetAccess, usesPasskey ? importPassword : undefined)
 									.then((s) => {
 										Snackbar.show({
 											text: getStr("importSuccess") + " " + s,
@@ -257,7 +266,8 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 											text: message,
 											duration: Snackbar.LENGTH_SHORT,
 										});
-									});
+									})
+									.finally(() => setImportPassword(""));
 							}}>
 							<Text style={{ color: "white", fontSize: 14 }}>
 								{getStr("proxyImport")}

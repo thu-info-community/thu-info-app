@@ -10,6 +10,12 @@ export class LoginError extends LibError {
     }
 }
 
+export class PasskeyError extends LoginError {
+    constructor(public readonly code: string, message: string) {
+        super(message);
+    }
+}
+
 export class UrlError extends LibError {
 
 }

@@ -1,17 +1,24 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
 import {v4 as uuidv4} from "uuid";
+import type {PasskeyCredential} from "@thu-info/lib";
 
 export interface AuthState {
 	userId: string;
 	password: string;
 	fingerprint: string;
+	authMethod: "password" | "passkey";
+	passkeys: Record<string, PasskeyCredential>;
+	pendingPasskey?: PasskeyCredential;
+	retiredPasskeys?: PasskeyCredential[];
 }
 
 const initialState: AuthState = {
 	userId: "",
 	password: "",
 	fingerprint: uuidv4().replace(/-/g, ""),
+	authMethod: "password",
+	passkeys: {},
 };
 
 export const defaultAuth = initialState;
@@ -30,15 +37,43 @@ export const authSlice = createSlice({
 			}>,
 		) => {
 			state.userId = payload.userId;
-			state.password = payload.password;
+			state.authMethod = state.passkeys[payload.userId] ? "passkey" : "password";
+			state.password = state.authMethod === "passkey" ? "" : payload.password;
+		},
+		setPendingPasskey: (state, {payload}: PayloadAction<PasskeyCredential | undefined>) => {
+			state.pendingPasskey = payload;
+		},
+		loginWithPasskey: (state, {payload}: PayloadAction<PasskeyCredential>) => {
+			const old = state.passkeys[payload.userId];
+			if (old && old.credentialId !== payload.credentialId) {
+				state.retiredPasskeys = [...(state.retiredPasskeys ?? []), old];
+			}
+			state.passkeys[payload.userId] = payload;
+			state.userId = payload.userId;
+			state.password = "";
+			state.authMethod = "passkey";
+			state.pendingPasskey = undefined;
+		},
+		forgetRetiredPasskey: (state, {payload}: PayloadAction<string>) => {
+			state.retiredPasskeys = state.retiredPasskeys?.filter((credential) => credential.credentialId !== payload);
+		},
+		forgetPasskey: (state, {payload}: PayloadAction<string>) => {
+			delete state.passkeys[payload];
+			if (state.pendingPasskey?.userId === payload) state.pendingPasskey = undefined;
+			if (state.userId === payload) {
+				state.userId = "";
+				state.password = "";
+				state.authMethod = "password";
+			}
 		},
 		logout: (state) => {
 			state.userId = "";
 			state.password = "";
+			state.authMethod = "password";
 		},
 	},
 });
 
-export const {login, logout} = authSlice.actions;
+export const {login, logout, loginWithPasskey, setPendingPasskey, forgetPasskey, forgetRetiredPasskey} = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

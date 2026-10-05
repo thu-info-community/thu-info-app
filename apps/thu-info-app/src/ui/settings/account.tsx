@@ -19,6 +19,7 @@ import {configSet} from "../../redux/slices/config";
 import themes from "../../assets/themes/themes";
 import {Snackbar} from "react-native-snackbar";
 import {logout} from "../../redux/slices/auth.ts";
+import {PasskeySettings} from "../../components/settings/passkeySettings";
 import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
 
 export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
@@ -91,6 +92,7 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableOpacity>
 			</RoundedView>
+			<PasskeySettings navigation={navigation} />
 			{Platform.OS === "android" && (
 				<RoundedView style={style.rounded}>
 					<View style={style.touchable}>

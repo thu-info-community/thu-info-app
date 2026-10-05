@@ -7,6 +7,7 @@ import {
 	render,
 	screen,
 	waitFor,
+	within,
 } from "@testing-library/react-native";
 import {Alert, Animated, Linking} from "react-native";
 import type {
@@ -15,14 +16,16 @@ import type {
 	IdLoginLogPage,
 } from "@thu-info/lib/src/models/id/account";
 import type {RootNav} from "../src/components/Root";
+import type {PasskeyCredential} from "@thu-info/lib";
 import {AccountScreen} from "../src/ui/settings/account";
 import {LoginScreen} from "../src/ui/settings/login";
+import {SettingsScreen} from "../src/ui/settings/settings";
 import {IdPersonalInfoScreen} from "../src/ui/settings/idPersonalInfo";
 import {IdLoginLogsScreen} from "../src/ui/settings/idLoginLogs";
 import {helper} from "../src/redux/store";
 
 let mockState = {
-	auth: {userId: "2026000000", password: "synthetic-password"},
+	auth: {userId: "2026000000", password: "synthetic-password", passkeys: {} as Record<string, PasskeyCredential>},
 	credentials: {appSecret: undefined},
 	config: {language: "zh", darkMode: false, privacy312: true},
 };
@@ -35,14 +38,17 @@ jest.mock("react-redux", () => ({
 jest.mock("../src/redux/store", () => ({
 	currState: () => ({config: {language: "zh", darkMode: false}}),
 	helper: {
+		userId: "2026000000",
 		getIdAccountInfo: jest.fn(),
 		getIdAuthDevices: jest.fn(),
 		getIdLoginLogs: jest.fn(),
 		login: jest.fn(),
+		logout: jest.fn(),
 		mocked: () => false,
 	},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
+jest.mock("react-native-snackbar", () => ({Snackbar: {show: jest.fn(), LENGTH_SHORT: 0}}));
 
 const navigation = {navigate: jest.fn(), pop: jest.fn()} as unknown as RootNav;
 const account: IdAccountInfo = {
@@ -85,8 +91,11 @@ const refresh = async (testID: string) => {
 beforeEach(() => {
 	jest.resetAllMocks();
 	mockState.auth.userId = account.userId;
+	mockState.auth.password = "synthetic-password";
+	mockState.auth.passkeys = {};
 	jest.mocked(helper.getIdAccountInfo).mockResolvedValue({...account});
 	jest.mocked(helper.getIdAuthDevices).mockResolvedValue([{...device}]);
+	jest.mocked(helper.logout).mockResolvedValue(undefined);
 	jest
 		.mocked(helper.getIdLoginLogs)
 		.mockResolvedValue({items: [log("WebVPN")], total: 1});
@@ -154,6 +163,83 @@ test("forgot password opens an in-app notice without submitting credentials", as
 	expect(helper.login).not.toHaveBeenCalled();
 	expect(alert).not.toHaveBeenCalled();
 	expect(openURL).not.toHaveBeenCalled();
+});
+
+const openLogoutPopup = async () => {
+	// Complete native animations synchronously so callbacks cannot outlive the test.
+	jest.spyOn(Animated, "parallel").mockImplementation(() => ({
+		start: (callback) => callback?.({finished: true}),
+		stop: () => {},
+		reset: () => {},
+	}) as ReturnType<typeof Animated.parallel>);
+	await render(<SettingsScreen navigation={navigation} />);
+	await fireEvent.press(screen.getByRole("button", {name: "退出登录"}));
+};
+
+test("canceling the app logout confirmation leaves the session and cache intact", async () => {
+	const alert = jest.spyOn(Alert, "alert");
+	await openLogoutPopup();
+	await fireEvent.press(screen.getByText("取消"));
+	await waitFor(() => expect(screen.queryByText("同时清空缓存")).toBeNull());
+	expect(helper.logout).not.toHaveBeenCalled();
+	expect(mockDispatch).not.toHaveBeenCalled();
+	expect(alert).not.toHaveBeenCalled();
+});
+
+test("the app logout confirmation retains cached data by default", async () => {
+	await openLogoutPopup();
+	expect(screen.getByRole("switch", {name: "同时清空缓存"}).props.value).toBe(false);
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: "退出登录"}));
+	await waitFor(() => expect(helper.logout).toHaveBeenCalledTimes(1));
+	expect(mockDispatch.mock.calls.map(([action]) => (action as {type: string}).type)).toEqual(["auth/logout"]);
+});
+
+test("the app logout confirmation clears cached data only when selected", async () => {
+	await openLogoutPopup();
+	await fireEvent(screen.getByRole("switch", {name: "同时清空缓存"}), "valueChange", true);
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: "退出登录"}));
+	await waitFor(() => expect(helper.logout).toHaveBeenCalledTimes(1));
+	expect(mockDispatch.mock.calls.map(([action]) => (action as {type: string}).type)).toEqual([
+		"auth/logout", "credentials/setDormPassword", "schedule/scheduleClear", "deepseek/deepseekClear",
+		"reservation/setActiveLibBookRecord", "reservation/setActiveSportsReservationRecord", "campusCard/setBalance",
+	]);
+});
+
+const localPasskey = (userId: string): PasskeyCredential => ({
+	userId, keyId: "local-key-" + userId, credentialId: "local-credential-" + userId,
+	userHandle: "handle", rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown",
+});
+
+test("after logout the sole local Passkey is ready without entering an account or password", async () => {
+	const credential = localPasskey(account.userId);
+	mockState.auth = {userId: "", password: "", passkeys: {[account.userId]: credential}};
+	jest.mocked(helper.login).mockRejectedValueOnce(new Error("Stop after checking the selected method"));
+	await render(<LoginScreen navigation={navigation} />);
+	expect(screen.getByTestId("loginUserId").props.value).toBe(account.userId);
+	expect(screen.getByTestId("loginPassword").props.value).toBe("");
+	await fireEvent.press(screen.getByTestId("passkeyLoginButton"));
+	await waitFor(() => expect(helper.login).toHaveBeenCalledWith({method: "passkey", credential}));
+});
+
+test("multiple local Passkeys let the user directly select the intended account", async () => {
+	const first = localPasskey(account.userId);
+	const second = localPasskey("2026000001");
+	mockState.auth = {userId: "", password: "", passkeys: {[first.userId]: first, [second.userId]: second}};
+	jest.mocked(helper.login).mockRejectedValueOnce(new Error("Stop after checking the selected method"));
+	await render(<LoginScreen navigation={navigation} />);
+	expect(screen.getByTestId("loginUserId").props.value).toBe("");
+	await fireEvent.press(screen.getByText("使用 Passkey 登录 · " + second.userId));
+	await waitFor(() => expect(helper.login).toHaveBeenCalledWith({method: "passkey", credential: second}));
+});
+
+test("a typed recovery password still selects password login for a Passkey account", async () => {
+	const credential = localPasskey(account.userId);
+	mockState.auth = {userId: "", password: "", passkeys: {[account.userId]: credential}};
+	jest.mocked(helper.login).mockRejectedValueOnce(new Error("Stop after checking the selected method"));
+	await render(<LoginScreen navigation={navigation} />);
+	await fireEvent.changeText(screen.getByTestId("loginPassword"), "transient-test-password");
+	await fireEvent.press(screen.getByTestId("loginButton"));
+	await waitFor(() => expect(helper.login).toHaveBeenCalledWith({userId: account.userId, password: "transient-test-password"}));
 });
 
 test("personal information displays details and explicit missing values", async () => {

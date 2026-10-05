@@ -45,10 +45,12 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
-import { LoginError } from "@thu-info/lib/src/utils/error";
+import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
+import {createPasskeyAuthenticator} from "../utils/passkeyNative";
 import {migrateWasherFavourites} from "./migrations/washerFavourites";
 
 const CookieManager = (() => {
@@ -123,6 +125,7 @@ const rootReducer = combineReducers({
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
+			stateReconciler: (inbound: AuthState, _original: AuthState, reduced: AuthState) => sanitizeAuth({...reduced, ...inbound}),
 		},
 		authReducer,
 	),
@@ -143,28 +146,6 @@ const rootReducer = combineReducers({
 	announcement: announcementReducer,
 	deepseek: deepseekReducer,
 });
-
-const authTransform = createTransform(
-	(a: AuthState) => {
-		const out = {...a};
-		if (!out.fingerprint) {
-			out.fingerprint = helper.fingerprint;
-		}
-		return out;
-	},
-	(a: AuthState) => {
-		helper.userId = a.userId;
-		helper.password = a.password;
-		if (!a.fingerprint) {
-			a.fingerprint = defaultAuth.fingerprint;
-		}
-		helper.fingerprint = a.fingerprint;
-		return a;
-	},
-	{
-		whitelist: ["auth"],
-	},
-);
 
 const configTransform = createTransform(
 	undefined,
@@ -193,12 +174,15 @@ const scheduleTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 9,
+	version: 10,
+	blacklist: ["auth", "credentials"],
 	key: "root",
 	storage: AsyncStorage,
-	transforms: [authTransform, configTransform, scheduleTransform],
-	migrate: (state: any) =>
-		Promise.resolve(
+	transforms: [configTransform, scheduleTransform],
+	migrate: (incoming: any) => {
+		const state = incoming === undefined ? undefined : {...incoming};
+		if (state) { delete state.auth; delete state.credentials; }
+		return Promise.resolve(
 			state === undefined
 				? undefined
 				: {
@@ -230,7 +214,8 @@ const persistConfig = {
 						deepseek: state.deepseek ?? defaultDeepseek,
 						 
 				  },
-		),
+		);
+	},
 };
 
 export const store = configureStore({
@@ -245,7 +230,31 @@ export const store = configureStore({
 		}),
 });
 
-export const persistor = persistStore(store);
+const persistOptions: NonNullable<Parameters<typeof persistStore>[1]> & {manualPersist: boolean} = {manualPersist: true};
+export const persistor = persistStore(store, persistOptions);
+
+helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true);
+let previousAuth: AuthState | undefined;
+store.subscribe(() => {
+	const auth = currState().auth;
+	if (auth === previousAuth) return;
+	previousAuth = auth;
+	helper.userId = auth.userId;
+	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
+	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
+	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys?.[auth.userId] : undefined;
+	helper.passkeyDevice = {
+		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
+		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,
+	};
+});
+
+// Complete the migration before nested and root reducers start reading storage.
+export const authStorageReady = migrateAuthStorage(AsyncStorage, KeychainStorage)
+	.catch(() => {
+		Alert.alert("登录信息", "登录信息未能恢复，请重新登录。");
+	})
+	.then(() => persistor.persist());
 
 export const currState = () => store.getState() as State;
 
@@ -257,13 +266,14 @@ export const navigationRef = createNavigationContainerRef<{
 }>();
 
 helper.loginErrorHook = (e) => {
+	if (e instanceof PasskeyError && e.code === "locked") return;
 	if (e instanceof LoginError && navigationRef.isReady()) {
 		navigationRef.navigate("Login");
 	}
 	setTimeout(
 		() =>
 			Snackbar.show({
-				text: `LoginError: ${e.message}`,
+				text: e.message || "登录未成功，请稍后重试。",
 				duration: Snackbar.LENGTH_SHORT,
 			}),
 		100,
