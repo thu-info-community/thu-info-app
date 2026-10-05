@@ -3,7 +3,7 @@ import {ActivityIndicator, Switch, Text, TouchableOpacity, View} from "react-nat
 import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
 import {BottomPopupTriggerView, RoundedView} from "../views";
-import {getPasskeyRootHint, getPasskeyVerificationAvailability, passkeyAvailable} from "../../utils/passkeyNative";
+import {getPasskeyCapabilities, passkeyAvailable} from "../../utils/passkeyNative";
 import {enablePasskey, disablePasskey} from "../../utils/passkey";
 import {getStr} from "../../utils/i18n";
 import type {RootNav} from "../Root";
@@ -22,59 +22,57 @@ type PasskeyDialog = "enable" | "remove" | "setupError" | "removeError" |
 export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
     const auth = useSelector((state: State) => state.auth);
     const [processing, setProcessing] = useState(false);
-    const [checkingRoot, setCheckingRoot] = useState(false);
+    const [checkingCapabilities, setCheckingCapabilities] = useState(false);
     const [rootHint, setRootHint] = useState(false);
     const [dialog, setDialog] = useState<PasskeyDialog | null>(null);
-    const rootHintRequest = useRef(0);
-    const checkingRootRef = useRef(false);
+    const capabilityRequest = useRef(0);
+    const checkingCapabilitiesRef = useRef(false);
     useEffect(() => {
-        checkingRootRef.current = false;
-        setCheckingRoot(false);
+        checkingCapabilitiesRef.current = false;
+        setCheckingCapabilities(false);
         setRootHint(false);
         setDialog(null);
-        return () => { rootHintRequest.current += 1; };
+        return () => { capabilityRequest.current += 1; };
     }, [auth.userId]);
     const themeName = useColorScheme();
     const style = styles(themeName);
     const {colors} = themes(themeName);
     if (!passkeyAvailable || auth.userId === "8888") return null;
-    const localPasskeys = Object.values(auth.passkeys ?? {});
-    const credential = auth.userId ? auth.passkeys?.[auth.userId] : localPasskeys.length === 1 ? localPasskeys[0] : undefined;
+    const localPasskeys = Object.values(auth.passkeys);
+    const credential = auth.userId ? auth.passkeys[auth.userId] : localPasskeys.length === 1 ? localPasskeys[0] : undefined;
     const configured = !!credential || (!auth.userId && localPasskeys.length > 0);
-    const silent = credential ? (credential.authenticationMode ?? "silent") === "silent" :
-        auth.silentPasskeyLogin?.[auth.userId] === true;
+    const silent = credential ? credential.authenticationMode === "silent" :
+        auth.silentPasskeyLogin[auth.userId] === true;
     const protection = credential?.protectionLevel;
     const protectionText = protection === "software" ? getStr("passkeySystemProtection") :
         protection && ["strongbox", "tee", "hardware"].includes(protection) ? getStr("passkeyDeviceProtection") : getStr("passkeyUnknown");
-    const busy = processing || checkingRoot;
+    const busy = processing || checkingCapabilities;
 
     const openSetupDialog = async () => {
-        if (processing || checkingRootRef.current) return;
-        const request = ++rootHintRequest.current;
-        checkingRootRef.current = true;
-        setCheckingRoot(true);
+        if (processing || checkingCapabilitiesRef.current) return;
+        const request = ++capabilityRequest.current;
+        checkingCapabilitiesRef.current = true;
+        setCheckingCapabilities(true);
         setRootHint(false);
-        const [hint, verification] = await Promise.all([
-            getPasskeyRootHint().catch(() => false), getPasskeyVerificationAvailability(),
-        ]);
-        if (request !== rootHintRequest.current) return;
-        checkingRootRef.current = false;
-        setCheckingRoot(false);
+        const {rootHint: hint, verificationAvailability: verification} = await getPasskeyCapabilities();
+        if (request !== capabilityRequest.current) return;
+        checkingCapabilitiesRef.current = false;
+        setCheckingCapabilities(false);
         setRootHint(hint);
         setDialog(!silent && ["not-configured", "unsupported"].includes(verification) ? "verificationUnavailable" : "enable");
     };
 
     const changeSilent = async (enabled: boolean) => {
         if (!auth.userId) { navigation.navigate("Login"); return; }
-        if (busy || checkingRootRef.current) return;
+        if (processing || checkingCapabilitiesRef.current) return;
         if (enabled) { setDialog("silentEnable"); return; }
-        const request = ++rootHintRequest.current;
-        checkingRootRef.current = true;
-        setCheckingRoot(true);
-        const verification = await getPasskeyVerificationAvailability();
-        if (request !== rootHintRequest.current) return;
-        checkingRootRef.current = false;
-        setCheckingRoot(false);
+        const request = ++capabilityRequest.current;
+        checkingCapabilitiesRef.current = true;
+        setCheckingCapabilities(true);
+        const {verificationAvailability: verification} = await getPasskeyCapabilities();
+        if (request !== capabilityRequest.current) return;
+        checkingCapabilitiesRef.current = false;
+        setCheckingCapabilities(false);
         if (["not-configured", "unsupported"].includes(verification)) setDialog("verificationUnavailable");
         else if (credential) setDialog("silentDisable");
         else {

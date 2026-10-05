@@ -261,7 +261,7 @@ store.subscribe(() => {
 	helper.userId = auth.userId;
 	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
 	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
-	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys?.[auth.userId] : undefined;
+	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys[auth.userId] : undefined;
 	helper.passkeyDevice = {
 		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
 		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,

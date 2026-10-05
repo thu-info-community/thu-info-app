@@ -1,7 +1,7 @@
 import {beforeEach, expect, jest, test} from "@jest/globals";
 import {sm2} from "sm-crypto";
 import {InfoHelper} from "../index";
-import {__idCredentialFormForTest, login, passwordlessEntry, roam, roamingWrapper} from "./core";
+import {__idCredentialFormForTest, login, passwordlessEntry, roam, roamingWrapper, withAuthTransaction} from "./core";
 import {authenticatePasskey} from "./passkey";
 import {PasskeyError} from "../utils/error";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
@@ -263,7 +263,7 @@ test("parallel passwordless logins share one signature and cookie reset", async 
     mockFetch();
     const helper = mockLogin();
     const credential = {keyId: "local", credentialId: "id", userId: "2026000000", userHandle: "handle",
-        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const};
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
     helper.passkeyCredential = credential;
     jest.mocked(authenticatePasskey).mockResolvedValue(credential.userId);
     await Promise.all(Array.from({length: 5}, () => login(helper, credential.userId, "")));
@@ -284,4 +284,31 @@ test("terminal Passkey errors do not retry roaming or fall back to passwords", a
     expect(operation).toHaveBeenCalledTimes(1);
     expect(uFetch).not.toHaveBeenCalled();
     expect(clearCookies).not.toHaveBeenCalled();
+});
+
+test("failed authentication transactions release the queue for the next operation", async () => {
+    let fail!: (error: Error) => void;
+    const first = withAuthTransaction(() => new Promise<void>((_resolve, reject) => { fail = reject; }));
+    const failed = expect(first).rejects.toThrow("offline");
+    const next = jest.fn(async () => "ready");
+    const second = withAuthTransaction(next);
+    await Promise.resolve();
+    expect(next).not.toHaveBeenCalled();
+    fail(new Error("offline"));
+    await failed;
+    await expect(second).resolves.toBe("ready");
+    expect(next).toHaveBeenCalledTimes(1);
+});
+
+test("same-target roaming is shared and releases its pending entry after failure and success", async () => {
+    const helper = mockLogin();
+    const settings = "<title>账号设置</title>";
+    mockFetch({entry: settings});
+    jest.mocked(uFetch).mockRejectedValueOnce(new Error("offline"));
+    await expect(Promise.all([roam(helper, "id_website", ""), roam(helper, "id_website", "")])).rejects.toThrow("offline");
+    expect(uFetch).toHaveBeenCalledTimes(1);
+    await expect(Promise.all([roam(helper, "id_website", ""), roam(helper, "id_website", "")])).resolves.toEqual([settings, settings]);
+    expect(uFetch).toHaveBeenCalledTimes(2);
+    await expect(roam(helper, "id_website", "")).resolves.toBe(settings);
+    expect(uFetch).toHaveBeenCalledTimes(3);
 });

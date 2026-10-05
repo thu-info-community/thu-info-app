@@ -1,11 +1,11 @@
 import {expect, jest, test} from "@jest/globals";
 import {migrateAuthStorage, sanitizeAuth} from "../src/redux/authPersistence";
-import {authReducer, defaultAuth, login, loginWithPasskey, logout, setSilentPasskeyLogin} from "../src/redux/slices/auth";
+import {authReducer, login, loginWithPasskey, logout, setSilentPasskeyLogin} from "../src/redux/slices/auth";
 import type {PasskeyCredential} from "@thu-info/lib";
 
 const credential: PasskeyCredential = {
 	userId: "2026000000", keyId: "local", credentialId: "credential", userHandle: "handle",
-	rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown",
+	rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "silent",
 };
 const authKey = "com.unidy2002.thuinfo.persist.auth.auth";
 const storage = (values: Record<string, string> = {}) => ({
@@ -13,7 +13,8 @@ const storage = (values: Record<string, string> = {}) => ({
 	getItem: jest.fn(async (key: string) => values[key] ?? null),
 	setItem: jest.fn(async (key: string, value: string) => { values[key] = value; }),
 });
-const legacy = {...defaultAuth, userId: credential.userId, password: "test-password"};
+const legacy = {userId: credential.userId, password: "test-password", fingerprint: "test-fingerprint"};
+const passwordAuth = sanitizeAuth(legacy);
 
 test("moves legacy secrets into protected storage before dropping root copies", async () => {
 	const root = storage({"persist:root": JSON.stringify({auth: JSON.stringify(legacy), config: "{}", credentials: JSON.stringify({dormPassword: "test-dorm"})})});
@@ -23,6 +24,9 @@ test("moves legacy secrets into protected storage before dropping root copies", 
 	const nested = JSON.parse(protectedStore.values[authKey]);
 	expect(JSON.parse(nested.password)).toBe("test-password");
 	expect(JSON.parse(nested.passkeys)).toEqual({});
+	expect(JSON.parse(nested.silentPasskeyLogin)).toEqual({});
+	expect(JSON.parse(nested.authMethod)).toBe("password");
+	expect(JSON.parse(nested.fingerprint)).toBe(legacy.fingerprint);
 });
 
 test("existing protected Passkey state wins over a stale root password", async () => {
@@ -46,7 +50,7 @@ test("failed protected writes retain the legacy copy for recovery", async () => 
 });
 
 test("activation and hydration erase passwords while logout retains discoverable credentials", () => {
-	const enabled = authReducer(legacy, loginWithPasskey(credential));
+	const enabled = authReducer(passwordAuth, loginWithPasskey(credential));
 	expect(enabled.password).toBe("");
 	expect(enabled.authMethod).toBe("passkey");
 	expect(sanitizeAuth({...enabled, password: "stale"}).password).toBe("");
@@ -58,12 +62,12 @@ test("activation and hydration erase passwords while logout retains discoverable
 });
 
 test("silent preferences apply per account on this device and survive logout", () => {
-	const first = authReducer(legacy, setSilentPasskeyLogin({userId: credential.userId, enabled: true}));
+	const first = authReducer(passwordAuth, setSilentPasskeyLogin({userId: credential.userId, enabled: true}));
 	const next = authReducer(first, login({userId: "2026000001", password: "synthetic-password"}));
-	expect(next.silentPasskeyLogin?.[next.userId]).toBeUndefined();
-	expect(authReducer(next, logout()).silentPasskeyLogin?.[credential.userId]).toBe(true);
+	expect(next.silentPasskeyLogin[next.userId]).toBeUndefined();
+	expect(authReducer(next, logout()).silentPasskeyLogin[credential.userId]).toBe(true);
 });
-test("hydration retains legacy silent credentials and trusts enrolled policies over preferences", () => {
+test("hydration trusts explicit enrolled policies over preferences", () => {
 	const state = sanitizeAuth({...legacy, passkeys: {
 		[credential.userId]: credential,
 		"2026000001": {...credential, userId: "2026000001", authenticationMode: "required"},
@@ -71,11 +75,11 @@ test("hydration retains legacy silent credentials and trusts enrolled policies o
 	expect(state.silentPasskeyLogin).toEqual({[credential.userId]: true, "2026000001": false});
 });
 test("an enrolled preference changes only with successful credential replacement", () => {
-	const old = authReducer(legacy, loginWithPasskey(credential));
+	const old = authReducer(passwordAuth, loginWithPasskey(credential));
 	const ignored = authReducer(old, setSilentPasskeyLogin({userId: credential.userId, enabled: false}));
-	expect(ignored.silentPasskeyLogin?.[credential.userId]).toBe(true);
+	expect(ignored.silentPasskeyLogin[credential.userId]).toBe(true);
 	const next = authReducer(ignored, loginWithPasskey({...credential, keyId: "new-key", credentialId: "new-credential", authenticationMode: "required"}));
-	expect(next.silentPasskeyLogin?.[credential.userId]).toBe(false);
+	expect(next.silentPasskeyLogin[credential.userId]).toBe(false);
 	expect(next.retiredPasskeys).toEqual([credential]);
 	expect(next.password).toBe("");
 });

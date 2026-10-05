@@ -20,9 +20,8 @@ export interface HuksPasskey {
   publicKeyY: string;
   publicKeyDer: string;
   protectionLevel: string;
-  userAuthType: number;
-  userAuthTypes?: number[];
-  authenticationMode?: string;
+  userAuthTypes: userAuth.UserAuthType[];
+  authenticationMode: string;
 }
 
 export interface HuksAssertion {
@@ -213,7 +212,7 @@ export class HuksPasskeyStore {
         credentialId: encodePasskeyBytes((await random.generateRandom(32)).data),
         publicKeyX: encodePasskeyBytes(coordinate(x)), publicKeyY: encodePasskeyBytes(coordinate(y)),
         publicKeyDer: encodePasskeyBytes(exported), protectionLevel: protection,
-        userAuthType: 0, userAuthTypes: authTypes, authenticationMode: mode,
+        userAuthTypes: authTypes, authenticationMode: mode,
       };
       await this.ensureUnlocked(generation);
       await this.metadata.put(alias, JSON.stringify(credential));
@@ -236,12 +235,10 @@ export class HuksPasskeyStore {
     if (typeof raw !== 'string' || !raw) return null;
     if (!await huks.isKeyItemExist(alias, this.location())) return null;
     const key = JSON.parse(raw) as HuksPasskey;
-    const types = key.userAuthTypes ?? (key.userAuthType ? [key.userAuthType] : []);
-    if (key.keyId !== keyId || ![0, 1, 2, 4].includes(key.userAuthType) || types.some((type: number) => ![1, 2, 4].includes(type))) {
+    if (key.keyId !== keyId || key.userAuthTypes.some((type: number) => ![1, 2, 4].includes(type))) {
       throw new Error('Invalid Passkey metadata');
     }
-    key.userAuthTypes = types;
-    key.authenticationMode = types.length ? 'required' : 'silent';
+    key.authenticationMode = key.userAuthTypes.length ? 'required' : 'silent';
     return key;
   }
 
@@ -301,7 +298,7 @@ export class HuksPasskeyStore {
     const key = await this.getCredential(keyId);
     if (!key) throw new Error('PASSKEY_KEY_INVALIDATED');
     const available = this.availableAuthenticationTypes();
-    const types = (key.userAuthTypes ?? []).filter((type: number) => available.includes(type));
+    const types = key.userAuthTypes.filter((type: number) => available.includes(type));
     if (key.authenticationMode === 'required' && !types.length) throw new Error('PASSKEY_AUTH_UNAVAILABLE');
     const alias = this.alias(keyId);
     const counter = Number(await this.metadata.get(alias + '.counter', 0)) + 1;

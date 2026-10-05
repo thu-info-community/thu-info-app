@@ -37,12 +37,12 @@ import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
-	const localPasskeys = Object.values(auth.passkeys ?? {});
+	const localPasskeys = Object.values(auth.passkeys);
 
 	const [userId, setUserId] = useState(auth.userId || (localPasskeys.length === 1 ? localPasskeys[0].userId : ""));
 	const [password, setPassword] = useState(auth.password);
 	const [processing, setProcessing] = useState(false);
-	const credential = auth.passkeys?.[userId];
+	const credential = auth.passkeys[userId];
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -60,7 +60,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const performLogin = (usePasskey = !!credential && password === "", loginUserId = userId) => {
 		if (processing) return;
 		setProcessing(true);
-		const loginCredential = auth.passkeys?.[loginUserId];
+		const loginCredential = auth.passkeys[loginUserId];
 		helper
 			.login(usePasskey && loginCredential ? {method: "passkey", credential: loginCredential} : {userId: loginUserId, password})
 			.then(() => {

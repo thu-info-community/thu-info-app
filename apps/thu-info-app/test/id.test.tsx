@@ -207,7 +207,7 @@ test("the app logout confirmation clears cached data only when selected", async 
 
 const localPasskey = (userId: string): PasskeyCredential => ({
 	userId, keyId: "local-key-" + userId, credentialId: "local-credential-" + userId,
-	userHandle: "handle", rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown",
+	userHandle: "handle", rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "required",
 });
 
 test("after logout the sole local Passkey is ready without entering an account or password", async () => {

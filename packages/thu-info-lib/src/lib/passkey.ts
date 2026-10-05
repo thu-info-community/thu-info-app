@@ -47,13 +47,18 @@ interface EnrollmentOptions {
     authenticatorSelection?: {userVerification?: string};
 }
 
-export const registrationResponse = (key: PasskeyKey, options: EnrollmentOptions) => {
+const validateEnrollmentOptions = (options: EnrollmentOptions): void => {
     if (options.rp?.id !== PASSKEY_RP_ID || options.attestation !== "none" ||
-        !options.pubKeyCredParams?.some((p) => p.alg === -7) || options.authenticatorSelection?.userVerification === "required") {
+        !options.pubKeyCredParams?.some((p) => p.alg === -7) || options.authenticatorSelection?.userVerification === "required" ||
+        typeof options.user?.id !== "string") {
         throw new PasskeyError("unsupported", "学校当前的登录设置暂不支持此方式。");
     }
     fromBase64url(options.challenge);
     fromBase64url(options.user.id);
+};
+
+export const registrationResponse = (key: PasskeyKey, options: EnrollmentOptions) => {
+    validateEnrollmentOptions(options);
     const x = fromBase64url(key.publicKeyX), y = fromBase64url(key.publicKeyY), id = fromBase64url(key.credentialId);
     if (x.length !== 32 || y.length !== 32 || id.length !== 32) throw new PasskeyError("invalid", "Passkey 数据无效，请重新设置。");
     const cose = cbor(new Map<number, Cbor>([[1, 2], [3, -7], [-1, 1], [-2, x], [-3, y]]));
@@ -90,11 +95,7 @@ export const preparePasskey = async (helper: InfoHelper, creation: PasskeyCreati
     const userId = helper.userId;
     const options: EnrollmentOptions = await getJson("/api/webauthn/enrollment/options");
     // Validate policy before creating a key.
-    if (options.rp?.id !== PASSKEY_RP_ID || options.attestation !== "none" || !options.pubKeyCredParams?.some((p) => p.alg === -7) ||
-        options.authenticatorSelection?.userVerification === "required" || typeof options.user?.id !== "string") {
-        throw new PasskeyError("unsupported", "学校当前的登录设置暂不支持此方式。");
-    }
-    fromBase64url(options.challenge); fromBase64url(options.user.id);
+    validateEnrollmentOptions(options);
     const name = await helper.trustFingerprintNameHook();
     if (helper.userId !== userId) throw new PasskeyError("canceled", "登录已取消。");
     const key = await helper.passkeyAuthenticator.createCredential({authenticationMode: creation.authenticationMode ?? "required"});

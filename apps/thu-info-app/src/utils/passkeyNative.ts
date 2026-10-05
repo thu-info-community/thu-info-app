@@ -5,21 +5,21 @@ import {PasskeyError} from "@thu-info/lib/src/utils/error";
 
 export const passkeyAvailable = NativePasskey !== null;
 export type PasskeyVerificationAvailability = "available" | "not-configured" | "unsupported" | "unknown";
+export interface PasskeyCapabilities {
+    rootHint: boolean;
+    verificationAvailability: PasskeyVerificationAvailability;
+}
 
-export const getPasskeyVerificationAvailability = async (): Promise<PasskeyVerificationAvailability> => {
+export const getPasskeyCapabilities = async (): Promise<PasskeyCapabilities> => {
     try {
-        const value = JSON.parse(await module().getCapabilities()).verificationAvailability;
-        return ["available", "not-configured", "unsupported"].includes(value) ? value : "unknown";
-    } catch { return "unknown"; }
-};
-
-export const getPasskeyRootHint = async (): Promise<boolean> => {
-    if (Platform.OS !== "android" || !NativePasskey) return false;
-    try {
-        const capabilities = JSON.parse(await NativePasskey.getCapabilities());
-        return capabilities?.rootDetected === true;
+        const capabilities = JSON.parse(await module().getCapabilities());
+        const verification = capabilities?.verificationAvailability;
+        return {
+            rootHint: Platform.OS === "android" && capabilities?.rootDetected === true,
+            verificationAvailability: ["available", "not-configured", "unsupported"].includes(verification) ? verification : "unknown",
+        };
     } catch {
-        return false;
+        return {rootHint: false, verificationAvailability: "unknown"};
     }
 };
 
@@ -33,10 +33,10 @@ const parseKey = (raw: string): PasskeyKey | null => {
     for (const field of ["keyId", "credentialId", "publicKeyX", "publicKeyY", "protectionLevel"]) {
         if (typeof key[field] !== "string") throw new PasskeyError("invalid", "此设备的 Passkey 不可用，请重新设置。");
     }
-    if (key.authenticationMode !== undefined && !["required", "silent"].includes(key.authenticationMode)) {
+    if (!["required", "silent"].includes(key.authenticationMode)) {
         throw new PasskeyError("invalid", "Passkey 数据无效，请重新设置。");
     }
-    return {...key, authenticationMode: key.authenticationMode ?? "silent"};
+    return key;
 };
 
 const nativeError = (error: unknown): PasskeyError => {

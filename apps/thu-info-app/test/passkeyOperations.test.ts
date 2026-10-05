@@ -1,7 +1,7 @@
 import {beforeEach, expect, jest, test} from "@jest/globals";
 import type {PasskeyCredential} from "@thu-info/lib";
 import {PasskeyError} from "@thu-info/lib/src/utils/error";
-import {getCsrfToken} from "@thu-info/lib/src/lib/core";
+import {getCsrfToken, roam} from "@thu-info/lib/src/lib/core";
 import {enablePasskey} from "../src/utils/passkey";
 import {helper, persistor, store} from "../src/redux/store";
 import {authReducer, defaultAuth, loginWithPasskey} from "../src/redux/slices/auth";
@@ -24,7 +24,7 @@ jest.mock("../src/redux/store", () => ({
 }));
 const old: PasskeyCredential = {
 	userId: "2026000000", userHandle: "handle", rpId: "tsinghua.edu.cn", name: "THU Info APP (Demo phone)",
-	keyId: "old-key", credentialId: "old-credential", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown",
+	keyId: "old-key", credentialId: "old-credential", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "silent",
 };
 const replacement = (authenticationMode: "required" | "silent"): PasskeyCredential => ({
 	...old, keyId: "new-key", credentialId: "new-credential", authenticationMode,
@@ -52,7 +52,7 @@ test("replaces a silent key only after verified login, portal bootstrap and pers
 	expect(getCsrfToken).toHaveBeenCalledTimes(1);
 	expect(helper.getCalendar).toHaveBeenCalledTimes(1);
 	expect(mockState.auth.passkeys[old.userId]).toEqual(replacement("required"));
-	expect(mockState.auth.silentPasskeyLogin?.[old.userId]).toBe(false);
+	expect(mockState.auth.silentPasskeyLogin[old.userId]).toBe(false);
 	expect(mockState.auth.password).toBe("");
 	expect(helper.removePasskey).toHaveBeenCalledWith(old);
 	expect(helper.removePasskey).toHaveBeenCalledTimes(1);
@@ -63,7 +63,7 @@ test("canceling replacement retains the old key and pending recovery metadata wi
 	jest.mocked(helper.login).mockRejectedValueOnce(new PasskeyError("canceled", "登录已取消。"));
 	await expect(enablePasskey("required")).rejects.toMatchObject({code: "canceled"});
 	expect(mockState.auth.passkeys[old.userId]).toEqual(old);
-	expect(mockState.auth.silentPasskeyLogin?.[old.userId]).toBe(true);
+	expect(mockState.auth.silentPasskeyLogin[old.userId]).toBe(true);
 	expect(mockState.auth.pendingPasskey).toEqual(replacement("required"));
 	expect(helper.passkeyCredential).toEqual(old);
 	expect(helper.login).toHaveBeenCalledTimes(1);
@@ -74,7 +74,7 @@ test("a failed portal bootstrap removes only the attempted key and retains the o
 	jest.mocked(helper.listPasskeys).mockResolvedValue([{credentialId: old.credentialId}, {credentialId: "new-credential"}, {credentialId: "other-device-credential"}]);
 	await expect(enablePasskey("required")).rejects.toThrow("portal unavailable");
 	expect(mockState.auth.passkeys[old.userId]).toEqual(old);
-	expect(mockState.auth.silentPasskeyLogin?.[old.userId]).toBe(true);
+	expect(mockState.auth.silentPasskeyLogin[old.userId]).toBe(true);
 	expect(helper.removePasskey).toHaveBeenCalledWith(replacement("required"));
 	expect(helper.removePasskey).toHaveBeenCalledTimes(1);
 	expect(mockState.auth.pendingPasskey).toBeUndefined();
@@ -108,4 +108,16 @@ test("logging out during replacement does not reactivate an account or trigger r
 	expect(mockState.auth.passkeys[old.userId]).toEqual(old);
 	expect(helper.login).toHaveBeenCalledTimes(1);
 	expect(store.dispatch).not.toHaveBeenCalledWith(loginWithPasskey(replacement("required")));
+});
+
+test("a pending operation rejects duplicates and releases the guard after failure and success", async () => {
+	let cancel!: (error: PasskeyError) => void;
+	jest.mocked(roam).mockImplementationOnce(() => new Promise<string>((_resolve, reject) => { cancel = reject; }));
+	const first = enablePasskey("required");
+	const failed = expect(first).rejects.toMatchObject({code: "canceled"});
+	expect(() => enablePasskey("required")).toThrow("正在设置，请稍候。");
+	cancel(new PasskeyError("canceled", "登录已取消。"));
+	await failed;
+	await expect(enablePasskey("required")).resolves.toEqual(replacement("required"));
+	await expect(enablePasskey("required")).resolves.toEqual(replacement("required"));
 });

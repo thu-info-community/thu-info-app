@@ -8,8 +8,8 @@ export interface PasskeyKey {
     publicKeyX: string;
     publicKeyY: string;
     protectionLevel: PasskeyProtection;
-    /** Missing on legacy silent credentials. The native key policy remains authoritative. */
-    authenticationMode?: PasskeyAuthenticationMode;
+    /** The native key policy remains authoritative. */
+    authenticationMode: PasskeyAuthenticationMode;
 }
 
 export interface PasskeyCredential extends PasskeyKey {

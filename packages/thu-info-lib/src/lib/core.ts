@@ -105,11 +105,10 @@ let authQueue: Promise<unknown> = Promise.resolve();
 const pendingRoams = new Map<string, Promise<string>>();
 const authScope = (helper: InfoHelper) => `${helper.userId}:${helper.fingerprint}:${helper.passkeyCredential?.keyId ?? "password"}`;
 export const withAuthTransaction = <T>(operation: () => Promise<T>): Promise<T> => {
-    const promise = authQueue.then(operation, operation);
+    const promise = authQueue.then(operation);
     authQueue = promise.then(() => undefined, () => undefined);
     return promise;
 };
-const hasAuthentication = (helper: InfoHelper) => helper.userId !== "" && (helper.password !== "" || helper.passkeyCredential?.userId === helper.userId);
 
 /**
  * Builds the credential `POST` body for the unified ID system.
@@ -298,8 +297,9 @@ export const login = async (
     }
     helper.userId = userId;
     helper.password = helper.passkeyCredential ? "" : password;
-    if (!hasAuthentication(helper) || !/^\d+$/.test(userId)) {
-        const error = new LoginError(hasAuthentication(helper) ? "请输入学号。" : "请先登录。");
+    const authenticated = helper.hasAuthentication();
+    if (!authenticated || !/^\d+$/.test(userId)) {
+        const error = new LoginError(authenticated ? "请输入学号。" : "请先登录。");
         helper.loginErrorHook?.(error);
         throw error;
     }
@@ -366,7 +366,7 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
     const promise = withAuthTransaction(() => roamUnlocked(helper, policy, payload));
     pendingRoams.set(key, promise);
     try { return await promise; }
-    finally { if (pendingRoams.get(key) === promise) pendingRoams.delete(key); }
+    finally { pendingRoams.delete(key); }
 };
 
 const roamUnlocked = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<string> => {
@@ -477,7 +477,7 @@ export const roamingWrapper = async <R>(
     payload: string,
     operation: (param?: string) => Promise<R>,
 ): Promise<R> => {
-    if (!hasAuthentication(helper)) {
+    if (!helper.hasAuthentication()) {
         const e = new LoginError("Please login.");
         helper.loginErrorHook && helper.loginErrorHook(e);
         throw e;

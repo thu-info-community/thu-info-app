@@ -9,7 +9,7 @@ export interface AuthState {
 	fingerprint: string;
 	authMethod: "password" | "passkey";
 	passkeys: Record<string, PasskeyCredential>;
-	silentPasskeyLogin?: Record<string, boolean>;
+	silentPasskeyLogin: Record<string, boolean>;
 	pendingPasskey?: PasskeyCredential;
 	retiredPasskeys?: PasskeyCredential[];
 }
@@ -48,7 +48,7 @@ export const authSlice = createSlice({
 		setSilentPasskeyLogin: (state, {payload}: PayloadAction<{userId: string; enabled: boolean}>) => {
 			// Enrolled credentials change mode only through a successful replacement.
 			if (!state.passkeys[payload.userId]) {
-				state.silentPasskeyLogin = {...state.silentPasskeyLogin, [payload.userId]: payload.enabled};
+				state.silentPasskeyLogin[payload.userId] = payload.enabled;
 			}
 		},
 		loginWithPasskey: (state, {payload}: PayloadAction<PasskeyCredential>) => {
@@ -57,7 +57,7 @@ export const authSlice = createSlice({
 				state.retiredPasskeys = [...(state.retiredPasskeys ?? []), old];
 			}
 			state.passkeys[payload.userId] = payload;
-			state.silentPasskeyLogin = {...state.silentPasskeyLogin, [payload.userId]: (payload.authenticationMode ?? "silent") === "silent"};
+			state.silentPasskeyLogin[payload.userId] = payload.authenticationMode === "silent";
 			state.userId = payload.userId;
 			state.password = "";
 			state.authMethod = "passkey";
@@ -68,7 +68,7 @@ export const authSlice = createSlice({
 		},
 		forgetPasskey: (state, {payload}: PayloadAction<string>) => {
 			delete state.passkeys[payload];
-			if (state.silentPasskeyLogin) delete state.silentPasskeyLogin[payload];
+			delete state.silentPasskeyLogin[payload];
 			if (state.pendingPasskey?.userId === payload) state.pendingPasskey = undefined;
 			if (state.userId === payload) {
 				state.userId = "";

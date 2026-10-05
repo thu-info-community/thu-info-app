@@ -1,15 +1,16 @@
 import {defaultAuth} from "./slices/auth";
 import type {AuthState} from "./slices/auth";
 
-export const sanitizeAuth = (auth: AuthState): AuthState => {
-    const passkeys = auth.passkeys ?? {};
-    const method = auth.userId && passkeys[auth.userId] ? "passkey" : "password";
-    const silentPasskeyLogin = {...auth.silentPasskeyLogin};
-    for (const credential of Object.values(passkeys)) {
-        silentPasskeyLogin[credential.userId] = (credential.authenticationMode ?? "silent") === "silent";
+export const sanitizeAuth = (auth: Partial<AuthState>): AuthState => {
+    // Released password-only state has none of the Passkey fields.
+    const state = {...defaultAuth, ...auth};
+    const method = state.userId && state.passkeys[state.userId] ? "passkey" : "password";
+    const silentPasskeyLogin = {...state.silentPasskeyLogin};
+    for (const credential of Object.values(state.passkeys)) {
+        silentPasskeyLogin[credential.userId] = credential.authenticationMode === "silent";
     }
-    return {...auth, fingerprint: auth.fingerprint || defaultAuth.fingerprint, passkeys, silentPasskeyLogin,
-        authMethod: method, password: method === "passkey" ? "" : auth.password ?? ""};
+    return {...state, fingerprint: state.fingerprint || defaultAuth.fingerprint, silentPasskeyLogin,
+        authMethod: method, password: method === "passkey" ? "" : state.password};
 };
 
 interface Storage {

@@ -21,14 +21,14 @@ const singleOperation = <T extends PasskeyCredential | void>(operation: () => Pr
     if (pendingOperation) throw new PasskeyError("busy", "正在设置，请稍候。");
     const promise = operation();
     pendingOperation = promise;
-    return promise.finally(() => { if (pendingOperation === promise) pendingOperation = undefined; });
+    return promise.finally(() => { pendingOperation = undefined; });
 };
 
 export const enablePasskey = (requestedMode?: PasskeyAuthenticationMode): Promise<PasskeyCredential> => singleOperation(async () => {
     const before = currState().auth;
-    const existing = before.passkeys?.[before.userId];
-    const mode = requestedMode ?? (existing ? existing.authenticationMode ?? "silent" :
-        before.silentPasskeyLogin?.[before.userId] ? "silent" : "required");
+    const existing = before.passkeys[before.userId];
+    const mode = requestedMode ?? existing?.authenticationMode ??
+        (before.silentPasskeyLogin[before.userId] ? "silent" : "required");
     if (!before.userId || !helper.hasAuthentication()) throw new PasskeyError("session", "请先登录。");
     let credential = before.pendingPasskey;
     if (credential && credential.userId !== before.userId) throw new PasskeyError("session", "请先登录之前的账号，完成 Passkey 设置。");
@@ -41,7 +41,7 @@ export const enablePasskey = (requestedMode?: PasskeyAuthenticationMode): Promis
     try {
         await roam(helper, "id_website", "");
         ensureCurrentAccount();
-        if (credential && (credential.authenticationMode ?? "silent") !== mode) {
+        if (credential && credential.authenticationMode !== mode) {
             await removeIfRegistered(credential);
             store.dispatch(setPendingPasskey(undefined));
             await persistor.flush();
@@ -56,7 +56,7 @@ export const enablePasskey = (requestedMode?: PasskeyAuthenticationMode): Promis
         if (!nativeKey) {
             throw new PasskeyError("missing", "此设备的 Passkey 不可用，请重新设置。");
         }
-        if ((nativeKey.authenticationMode ?? "silent") !== mode) throw new PasskeyError("invalid", "Passkey 设置未完成，请重新设置。");
+        if (nativeKey.authenticationMode !== mode) throw new PasskeyError("invalid", "Passkey 设置未完成，请重新设置。");
         const registered = await helper.listPasskeys();
         if (!registered.some((item) => item.credentialId === credential!.credentialId)) await helper.registerPasskey(credential);
         credential = {...credential, name: credential.name || await helper.trustFingerprintNameHook()};
@@ -80,10 +80,9 @@ export const enablePasskey = (requestedMode?: PasskeyAuthenticationMode): Promis
         if (activated) throw error;
         ensureCurrentAccount();
         // Preserve the pre-existing mode. A failed server cleanup keeps the pending record for reconciliation.
-        const old = before.passkeys?.[before.userId];
         helper.userId = before.userId;
         helper.password = before.password;
-        helper.passkeyCredential = before.authMethod === "passkey" ? old : undefined;
+        helper.passkeyCredential = before.authMethod === "passkey" ? existing : undefined;
         // Cancellation must not cause a second prompt during rollback. Keep the
         // pending credential for cleanup/reconciliation on the next explicit attempt.
         if (error instanceof PasskeyError && ["canceled", "locked", "interaction-required", "verification-unavailable"].includes(error.code)) throw error;

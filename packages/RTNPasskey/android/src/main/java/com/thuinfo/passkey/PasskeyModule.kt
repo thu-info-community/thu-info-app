@@ -231,7 +231,7 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
         }
         try {
             val strongBox = Build.VERSION.SDK_INT >= 28 && context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-            if (strongBox && Build.VERSION.SDK_INT >= 28) {
+            if (strongBox) {
                 try { generate(true) }
                 catch (error: StrongBoxUnavailableException) { generate(false) }
             } else generate(false)

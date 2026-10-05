@@ -10,7 +10,7 @@ jest.mock("../utils/network", () => ({uFetch: jest.fn(), clearCookies: jest.fn()
 const bytes = (value: number) => base64url(Buffer.alloc(32, value));
 const credential: PasskeyCredential = {
     keyId: "local-key", credentialId: bytes(1), publicKeyX: bytes(2), publicKeyY: bytes(3), protectionLevel: "unknown",
-    userId: "2026000000", userHandle: bytes(4), rpId: "tsinghua.edu.cn",
+    userId: "2026000000", userHandle: bytes(4), rpId: "tsinghua.edu.cn", authenticationMode: "required",
 };
 const options = {rp: {id: credential.rpId}, user: {id: credential.userHandle}, challenge: bytes(5), attestation: "none", pubKeyCredParams: [{alg: -7}]};
 const makeHelper = () => {

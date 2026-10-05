@@ -4,14 +4,15 @@ import {Alert, Animated} from "react-native";
 import {PasskeySettings} from "../src/components/settings/passkeySettings";
 import type {RootNav} from "../src/components/Root";
 import {disablePasskey, enablePasskey} from "../src/utils/passkey";
-import {getPasskeyRootHint, getPasskeyVerificationAvailability} from "../src/utils/passkeyNative";
+import {getPasskeyCapabilities} from "../src/utils/passkeyNative";
+import type {PasskeyCapabilities} from "../src/utils/passkeyNative";
 import {PasskeyError} from "@thu-info/lib/src/utils/error";
 import {persistor, store} from "../src/redux/store";
 import zh from "../src/assets/translations/zh";
 
 const configuredAuth = () => ({
 	userId: "2026000000",
-	passkeys: {"2026000000": {name: "THU Info APP (Pixel 9)", protectionLevel: "unknown"}} as Record<string, {name: string; protectionLevel: string; authenticationMode?: "required" | "silent"}>,
+	passkeys: {"2026000000": {name: "THU Info APP (Pixel 9)", protectionLevel: "unknown", authenticationMode: "silent"}} as Record<string, {name: string; protectionLevel: string; authenticationMode: "required" | "silent"}>,
 	silentPasskeyLogin: {} as Record<string, boolean>,
 });
 let mockState = {
@@ -20,15 +21,15 @@ let mockState = {
 };
 jest.mock("react-redux", () => ({useSelector: (selector: (state: typeof mockState) => unknown) => selector(mockState)}));
 jest.mock("../src/redux/store", () => ({currState: () => mockState ?? {config: {language: "zh"}}, store: {dispatch: jest.fn()}, persistor: {flush: jest.fn()}}));
-jest.mock("../src/utils/passkeyNative", () => ({passkeyAvailable: true, getPasskeyRootHint: jest.fn(), getPasskeyVerificationAvailability: jest.fn()}));
+jest.mock("../src/utils/passkeyNative", () => ({passkeyAvailable: true, getPasskeyCapabilities: jest.fn()}));
 jest.mock("../src/utils/passkey", () => ({enablePasskey: jest.fn(), disablePasskey: jest.fn()}));
 jest.mock("../src/ui/settings/settings", () => ({styles: () => ({})}));
 jest.mock("react-native-snackbar", () => ({Snackbar: {show: jest.fn(), LENGTH_LONG: 0}}));
 const navigation = {navigate: jest.fn()} as unknown as RootNav;
+const capabilities: PasskeyCapabilities = {rootHint: false, verificationAvailability: "available"};
 beforeEach(() => {
 	mockState.auth = configuredAuth();
-	jest.mocked(getPasskeyRootHint).mockResolvedValue(false);
-	jest.mocked(getPasskeyVerificationAvailability).mockResolvedValue("available");
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue(capabilities);
 	// Complete native-driven sheet animations so confirmation callbacks run in Jest.
 	jest.spyOn(Animated, "parallel").mockImplementation(() => ({
 		start: (callback) => callback?.({finished: true}),
@@ -38,9 +39,11 @@ beforeEach(() => {
 });
 afterEach(async () => { await cleanup(); jest.restoreAllMocks(); jest.resetAllMocks(); });
 
-const deferRootHint = () => {
+const deferCapabilities = () => {
 	let resolve!: (hint: boolean) => void;
-	jest.mocked(getPasskeyRootHint).mockReturnValueOnce(new Promise<boolean>((resolveHint) => { resolve = resolveHint; }));
+	jest.mocked(getPasskeyCapabilities).mockReturnValueOnce(new Promise<PasskeyCapabilities>((resolveCapabilities) => {
+		resolve = (rootHint) => resolveCapabilities({...capabilities, rootHint});
+	}));
 	return resolve;
 };
 
@@ -70,18 +73,19 @@ test("canceling the app confirmation leaves the Passkey intact", async () => {
 		await fireEvent.press(screen.getByText("取消"));
 		await waitFor(() => expect(screen.queryByText(zh.passkeyRemovePrompt)).toBeNull());
 		expect(disablePasskey).not.toHaveBeenCalled();
-		expect(getPasskeyRootHint).not.toHaveBeenCalled();
+		expect(getPasskeyCapabilities).not.toHaveBeenCalled();
 		expect(alert).not.toHaveBeenCalled();
 	} finally { alert.mockRestore(); }
 });
 
 test("enabling shows the root hint before allowing setup", async () => {
 	mockState.auth.passkeys = {};
-	jest.mocked(getPasskeyRootHint).mockResolvedValue(true);
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue({...capabilities, rootHint: true});
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	expect(await screen.findByText(zh.passkeyRootHint)).toBeTruthy();
 	expect(screen.getByText(zh.passkeyEnablePrompt)).toBeTruthy();
+	expect(getPasskeyCapabilities).toHaveBeenCalledTimes(1);
 	expect(enablePasskey).not.toHaveBeenCalled();
 	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {
 		name: zh.passkeyEnable,
@@ -91,7 +95,7 @@ test("enabling shows the root hint before allowing setup", async () => {
 
 test("canceling a rooted-device confirmation does not start setup", async () => {
 	mockState.auth.passkeys = {};
-	jest.mocked(getPasskeyRootHint).mockResolvedValue(true);
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue({...capabilities, rootHint: true});
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await screen.findByText(zh.passkeyRootHint);
@@ -103,7 +107,7 @@ test("canceling a rooted-device confirmation does not start setup", async () => 
 
 test("reopening setup checks again and clears the previous root hint", async () => {
 	mockState.auth.passkeys = {};
-	jest.mocked(getPasskeyRootHint).mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+	jest.mocked(getPasskeyCapabilities).mockResolvedValueOnce({...capabilities, rootHint: true}).mockResolvedValueOnce(capabilities);
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await screen.findByText(zh.passkeyRootHint);
@@ -112,14 +116,14 @@ test("reopening setup checks again and clears the previous root hint", async () 
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await screen.findByText(zh.passkeyEnablePrompt);
 	expect(screen.queryByText(zh.passkeyRootHint)).toBeNull();
-	expect(getPasskeyRootHint).toHaveBeenCalledTimes(2);
+	expect(getPasskeyCapabilities).toHaveBeenCalledTimes(2);
 	await fireEvent.press(screen.getByText(zh.passkeyEnable));
 	await waitFor(() => expect(enablePasskey).toHaveBeenCalledTimes(1));
 });
 
-test("a failed root hint check still allows ordinary setup", async () => {
+test("unknown capabilities still allow ordinary setup", async () => {
 	mockState.auth.passkeys = {};
-	jest.mocked(getPasskeyRootHint).mockRejectedValueOnce(new Error("native check unavailable"));
+	jest.mocked(getPasskeyCapabilities).mockResolvedValueOnce({rootHint: false, verificationAvailability: "unknown"});
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await screen.findByText(zh.passkeyEnablePrompt);
@@ -130,12 +134,12 @@ test("a failed root hint check still allows ordinary setup", async () => {
 
 test("a pending root check disables repeated setup actions", async () => {
 	mockState.auth.passkeys = {};
-	const resolve = deferRootHint();
+	const resolve = deferCapabilities();
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	expect(screen.getByTestId("passkeySettings")).toBeDisabled();
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
-	expect(getPasskeyRootHint).toHaveBeenCalledTimes(1);
+	expect(getPasskeyCapabilities).toHaveBeenCalledTimes(1);
 	expect(screen.queryByText(zh.passkeyEnablePrompt)).toBeNull();
 	expect(enablePasskey).not.toHaveBeenCalled();
 	await act(async () => { resolve(true); });
@@ -144,7 +148,7 @@ test("a pending root check disables repeated setup actions", async () => {
 
 test("a pending root hint from a previous account cannot change the new account's confirmation", async () => {
 	mockState.auth.passkeys = {};
-	const resolve = deferRootHint();
+	const resolve = deferCapabilities();
 	const view = await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	mockState.auth.userId = "2026000001";
@@ -154,13 +158,13 @@ test("a pending root hint from a previous account cannot change the new account'
 	await screen.findByText(zh.passkeyEnablePrompt);
 	await act(async () => { resolve(true); });
 	expect(screen.queryByText(zh.passkeyRootHint)).toBeNull();
-	expect(getPasskeyRootHint).toHaveBeenCalledTimes(2);
+	expect(getPasskeyCapabilities).toHaveBeenCalledTimes(2);
 	expect(enablePasskey).not.toHaveBeenCalled();
 });
 
 test("a pending root check is ignored after the settings component unmounts", async () => {
 	mockState.auth.passkeys = {};
-	const resolve = deferRootHint();
+	const resolve = deferCapabilities();
 	const view = await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await view.unmount();
@@ -185,7 +189,7 @@ test("a deletion failure appears inside the app and keeps the configured state",
 	} finally { alert.mockRestore(); }
 });
 
-test("new credentials default to verified mode while existing legacy credentials stay silent", async () => {
+test("new credentials default to verified mode while explicitly silent credentials stay silent", async () => {
 	const view = await render(<PasskeySettings navigation={navigation} />);
 	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(true);
 	mockState.auth.passkeys = {};
@@ -229,7 +233,7 @@ test("switching an existing silent key off requires verified replacement", async
 	await waitFor(() => expect(enablePasskey).toHaveBeenCalledWith("required"));
 });
 test.each(["not-configured", "unsupported"] as const)("%s devices get guidance without silently weakening the key", async (availability) => {
-	jest.mocked(getPasskeyVerificationAvailability).mockResolvedValue(availability);
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue({...capabilities, verificationAvailability: availability});
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
 	expect(await screen.findByText(zh.passkeyVerificationUnavailable)).toBeTruthy();
