@@ -2,23 +2,8 @@
 
 set -e
 
-# Harmony uses Snackbar v2's default export. Convert current sources instead of
-# reversing the v3 migration commit, whose patch conflicts with newer UI edits.
-node <<'NODE'
-const fs = require('node:fs');
-const path = require('node:path');
-const root = 'apps/thu-info-app/src';
-for (const entry of fs.readdirSync(root, {recursive: true})) {
-  if (!/\.tsx?$/.test(entry)) continue;
-  const file = path.join(root, entry);
-  const source = fs.readFileSync(file, 'utf8');
-  const converted = source.replace(
-    /import\s*\{\s*Snackbar\s*\}\s*from\s*(['"])react-native-snackbar\1/g,
-    'import Snackbar from $1react-native-snackbar$1',
-  );
-  if (converted !== source) fs.writeFileSync(file, converted);
-}
-NODE
+# The app's Babel configuration adapts Snackbar exports for Harmony bundles.
+# Keep shared sources intact so incremental builds and Metro use the same code.
 
 yarn workspace @thu-info/lib add cheerio@1.0.0-rc.12
 yarn workspace @thu-info/app add \

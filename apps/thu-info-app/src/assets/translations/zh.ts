@@ -805,7 +805,7 @@ export default {
 	passkeyModeChangePrompt: "更改登录方式需要重新设置本机 Passkey，设置完成后生效。",
 	passkeyVerificationUnavailable: "此设备暂时无法完成验证。请先设置锁屏密码，或开启静默 Passkey 登录。",
 	passkeyRootHint: "检测到 Root 迹象。恶意程序可能使用本机 Passkey 登录你的账号，请仅在信任此设备时继续。",
-	passkeyRemovePrompt: "删除后，此设备需要使用学校密码登录。",
+	passkeyRemovePrompt: "应用没有保存你的学校密码。删除 Passkey 后，需要重新使用学校密码登录。",
 	passkeyEnable: "开启",
 	passkeyRemove: "删除",
 	passkeyEnabled: "Passkey 已开启",
@@ -814,5 +814,4 @@ export default {
 	passkeyRemoveFailed: "未能删除，请检查网络后重试。",
 	passkeyLogin: "使用 Passkey 登录",
 	passkeyNetworkPassword: "此功能需要学校密码，仅用于本次操作。",
-	passkeyReset: "重新设置",
 };

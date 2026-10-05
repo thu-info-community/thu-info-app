@@ -66,34 +66,34 @@ test("canceling the app confirmation leaves the Passkey intact", async () => {
 	try {
 		await render(<PasskeySettings navigation={navigation} />);
 		await fireEvent.press(screen.getByTestId("passkeySettings"));
-		expect(await screen.findByText("删除后，此设备需要使用学校密码登录。")).toBeTruthy();
+		expect(await screen.findByText(zh.passkeyRemovePrompt)).toBeTruthy();
 		await fireEvent.press(screen.getByText("取消"));
-		await waitFor(() => expect(screen.queryByText("删除后，此设备需要使用学校密码登录。")).toBeNull());
+		await waitFor(() => expect(screen.queryByText(zh.passkeyRemovePrompt)).toBeNull());
 		expect(disablePasskey).not.toHaveBeenCalled();
 		expect(getPasskeyRootHint).not.toHaveBeenCalled();
 		expect(alert).not.toHaveBeenCalled();
 	} finally { alert.mockRestore(); }
 });
 
-test.each(["enable", "reset"] as const)("%s shows the root hint before allowing setup", async (kind) => {
-	if (kind === "enable") mockState.auth.passkeys = {};
+test("enabling shows the root hint before allowing setup", async () => {
+	mockState.auth.passkeys = {};
 	jest.mocked(getPasskeyRootHint).mockResolvedValue(true);
 	await render(<PasskeySettings navigation={navigation} />);
-	await fireEvent.press(kind === "enable" ? screen.getByTestId("passkeySettings") : screen.getByText(zh.passkeyReset));
+	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	expect(await screen.findByText(zh.passkeyRootHint)).toBeTruthy();
 	expect(screen.getByText(zh.passkeyEnablePrompt)).toBeTruthy();
 	expect(enablePasskey).not.toHaveBeenCalled();
 	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {
-		name: kind === "enable" ? zh.passkeyEnable : zh.passkeyReset,
+		name: zh.passkeyEnable,
 	}));
 	await waitFor(() => expect(enablePasskey).toHaveBeenCalledTimes(1));
 });
 
-test.each(["enable", "reset"] as const)("canceling a rooted-device %s does not start setup", async (kind) => {
-	if (kind === "enable") mockState.auth.passkeys = {};
+test("canceling a rooted-device confirmation does not start setup", async () => {
+	mockState.auth.passkeys = {};
 	jest.mocked(getPasskeyRootHint).mockResolvedValue(true);
 	await render(<PasskeySettings navigation={navigation} />);
-	await fireEvent.press(kind === "enable" ? screen.getByTestId("passkeySettings") : screen.getByText(zh.passkeyReset));
+	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	await screen.findByText(zh.passkeyRootHint);
 	await fireEvent.press(screen.getByText(zh.cancel));
 	await waitFor(() => expect(screen.queryByText(zh.passkeyRootHint)).toBeNull());
@@ -129,11 +129,11 @@ test("a failed root hint check still allows ordinary setup", async () => {
 });
 
 test("a pending root check disables repeated setup actions", async () => {
+	mockState.auth.passkeys = {};
 	const resolve = deferRootHint();
 	await render(<PasskeySettings navigation={navigation} />);
-	await fireEvent.press(screen.getByText(zh.passkeyReset));
+	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	expect(screen.getByTestId("passkeySettings")).toBeDisabled();
-	await fireEvent.press(screen.getByText(zh.passkeyReset));
 	await fireEvent.press(screen.getByTestId("passkeySettings"));
 	expect(getPasskeyRootHint).toHaveBeenCalledTimes(1);
 	expect(screen.queryByText(zh.passkeyEnablePrompt)).toBeNull();
@@ -177,7 +177,7 @@ test("a deletion failure appears inside the app and keeps the configured state",
 	try {
 		await render(<PasskeySettings navigation={navigation} />);
 		await fireEvent.press(screen.getByTestId("passkeySettings"));
-		await screen.findByText("删除后，此设备需要使用学校密码登录。");
+		await screen.findByText(zh.passkeyRemovePrompt);
 		await fireEvent.press(screen.getByText("删除"));
 		expect(await screen.findByText("未能删除，请检查网络后重试。")).toBeTruthy();
 		expect(screen.getByText("已设置")).toBeTruthy();
@@ -225,7 +225,7 @@ test("switching an existing silent key off requires verified replacement", async
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
 	await screen.findByText(zh.passkeyVerifiedPrompt);
-	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.passkeyReset}));
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.confirm}));
 	await waitFor(() => expect(enablePasskey).toHaveBeenCalledWith("required"));
 });
 test.each(["not-configured", "unsupported"] as const)("%s devices get guidance without silently weakening the key", async (availability) => {
@@ -242,7 +242,7 @@ test("canceling OS verification does not become a setup failure", async () => {
 	await render(<PasskeySettings navigation={navigation} />);
 	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
 	await screen.findByText(zh.passkeyVerifiedPrompt);
-	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.passkeyReset}));
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.confirm}));
 	await waitFor(() => expect(enablePasskey).toHaveBeenCalledTimes(1));
 	expect(screen.queryByText(zh.passkeySetupFailed)).toBeNull();
 	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(true);

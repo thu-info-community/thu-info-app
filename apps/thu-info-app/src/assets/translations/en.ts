@@ -836,7 +836,6 @@ export default {
 	scheduleUploadCustomConfirm: "Upload",
 	scheduleUploadCustomSuccess:
 		"Custom schedules have been uploaded to 网络学堂",
-	passkeyReset: "Set up again",
 	passkeyUnknown: "Unknown",
 	passkeySystemProtection: "System protection",
 	passkeyDeviceProtection: "Device protection",
@@ -848,7 +847,7 @@ export default {
 	passkeyModeChangePrompt: "Changing this option sets up a new Passkey on this device. It takes effect after setup completes.",
 	passkeyVerificationUnavailable: "Device verification is currently unavailable. Set up a screen lock credential, or enable silent Passkey sign-in.",
 	passkeyRootHint: "Signs of root access were detected. Malicious software may use this device’s Passkey to sign in to your account. Continue only if you trust this device.",
-	passkeyRemovePrompt: "After removal, sign in on this device with your university password.",
+	passkeyRemovePrompt: "Your university password isn't saved in the app. After removing Passkey, you'll need to sign in again with your password.",
 	passkeyEnable: "Enable",
 	passkeyRemove: "Remove",
 	passkeyEnabled: "Passkey enabled",

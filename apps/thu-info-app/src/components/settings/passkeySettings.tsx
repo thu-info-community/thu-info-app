@@ -16,7 +16,7 @@ import {currState, persistor, store} from "../../redux/store";
 import {setSilentPasskeyLogin} from "../../redux/slices/auth";
 import {PasskeyError} from "@thu-info/lib/src/utils/error";
 
-type PasskeyDialog = "enable" | "remove" | "reset" | "setupError" | "removeError" |
+type PasskeyDialog = "enable" | "remove" | "setupError" | "removeError" |
     "silentEnable" | "silentDisable" | "verificationUnavailable";
 
 export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
@@ -48,7 +48,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
         protection && ["strongbox", "tee", "hardware"].includes(protection) ? getStr("passkeyDeviceProtection") : getStr("passkeyUnknown");
     const busy = processing || checkingRoot;
 
-    const openSetupDialog = async (kind: "enable" | "reset") => {
+    const openSetupDialog = async () => {
         if (processing || checkingRootRef.current) return;
         const request = ++rootHintRequest.current;
         checkingRootRef.current = true;
@@ -61,7 +61,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
         checkingRootRef.current = false;
         setCheckingRoot(false);
         setRootHint(hint);
-        setDialog(!silent && ["not-configured", "unsupported"].includes(verification) ? "verificationUnavailable" : kind);
+        setDialog(!silent && ["not-configured", "unsupported"].includes(verification) ? "verificationUnavailable" : "enable");
     };
 
     const changeSilent = async (enabled: boolean) => {
@@ -113,7 +113,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
                 onPress={() => {
                     if (!auth.userId) { navigation.navigate("Login"); return; }
                     if (credential) setDialog("remove");
-                    else openSetupDialog("enable");
+                    else openSetupDialog();
                 }}>
                 <Text style={style.text}>Passkey</Text>
                 <View style={{flexDirection: "row", alignItems: "center"}}>
@@ -140,22 +140,13 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
                     <Text style={style.text}>{getStr("passkeyProtection")}</Text>
                     <Text style={style.version}>{protectionText}</Text>
                 </View>
-                <View style={style.separator} />
-                <TouchableOpacity accessibilityRole="button" style={style.touchable} disabled={busy}
-                    onPress={() => {
-                        if (!auth.userId) { navigation.navigate("Login"); return; }
-                        openSetupDialog("reset");
-                    }}>
-                    <Text style={style.text}>{getStr("passkeyReset")}</Text>
-                    <IconRight height={20} width={20} />
-                </TouchableOpacity>
             </>}
         </RoundedView>
         <BottomPopupTriggerView
             style={{display: "none"}} disabled popupTitle="Passkey"
             popupVisible={dialog !== null} popupCanFulfill={!busy} popupCancelable
             popupFulfillText={getStr(dialog === "remove" ? "passkeyRemove" :
-                dialog === "reset" || dialog === "silentDisable" ? "passkeyReset" :
+                dialog === "silentDisable" ? "confirm" :
                     dialog === "enable" || dialog === "silentEnable" ? "passkeyEnable" : "done")}
             popupContent={<View style={{paddingHorizontal: 20}}>
                 <Text style={{color: colors.text, fontSize: 17, lineHeight: 26}}>
@@ -166,7 +157,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
                 </Text>
                 {credential && (dialog === "silentEnable" || dialog === "silentDisable") &&
                     <Text style={{color: colors.text, fontSize: 17, lineHeight: 26, marginTop: 16}}>{getStr("passkeyModeChangePrompt")}</Text>}
-                {rootHint && (dialog === "enable" || dialog === "reset") &&
+                {rootHint && dialog === "enable" &&
                     <Text style={{color: colors.text, fontSize: 17, lineHeight: 26, marginTop: 16}}>
                         {getStr("passkeyRootHint")}
                     </Text>}
@@ -174,7 +165,7 @@ export const PasskeySettings = ({navigation}: {navigation: RootNav}) => {
             popupOnCancelled={() => setDialog(null)}
             popupOnFulfilled={() => {
                 setDialog(null);
-                if (dialog === "enable" || dialog === "remove" || dialog === "reset") perform(dialog === "remove");
+                if (dialog === "enable" || dialog === "remove") perform(dialog === "remove");
                 else if (dialog === "silentEnable" || dialog === "silentDisable") perform(false, dialog === "silentEnable");
             }}
         />
