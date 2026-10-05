@@ -1,6 +1,6 @@
 import {expect, jest, test} from "@jest/globals";
 import {migrateAuthStorage, sanitizeAuth} from "../src/redux/authPersistence";
-import {authReducer, defaultAuth, login, loginWithPasskey, logout} from "../src/redux/slices/auth";
+import {authReducer, defaultAuth, login, loginWithPasskey, logout, setSilentPasskeyLogin} from "../src/redux/slices/auth";
 import type {PasskeyCredential} from "@thu-info/lib";
 
 const credential: PasskeyCredential = {
@@ -55,4 +55,27 @@ test("activation and hydration erase passwords while logout retains discoverable
 	const recovered = authReducer(loggedOut, login({userId: credential.userId, password: "transient"}));
 	expect(recovered.password).toBe("");
 	expect(recovered.authMethod).toBe("passkey");
+});
+
+test("silent preferences apply per account on this device and survive logout", () => {
+	const first = authReducer(legacy, setSilentPasskeyLogin({userId: credential.userId, enabled: true}));
+	const next = authReducer(first, login({userId: "2026000001", password: "synthetic-password"}));
+	expect(next.silentPasskeyLogin?.[next.userId]).toBeUndefined();
+	expect(authReducer(next, logout()).silentPasskeyLogin?.[credential.userId]).toBe(true);
+});
+test("hydration retains legacy silent credentials and trusts enrolled policies over preferences", () => {
+	const state = sanitizeAuth({...legacy, passkeys: {
+		[credential.userId]: credential,
+		"2026000001": {...credential, userId: "2026000001", authenticationMode: "required"},
+	}, silentPasskeyLogin: {[credential.userId]: false, "2026000001": true}});
+	expect(state.silentPasskeyLogin).toEqual({[credential.userId]: true, "2026000001": false});
+});
+test("an enrolled preference changes only with successful credential replacement", () => {
+	const old = authReducer(legacy, loginWithPasskey(credential));
+	const ignored = authReducer(old, setSilentPasskeyLogin({userId: credential.userId, enabled: false}));
+	expect(ignored.silentPasskeyLogin?.[credential.userId]).toBe(true);
+	const next = authReducer(ignored, loginWithPasskey({...credential, keyId: "new-key", credentialId: "new-credential", authenticationMode: "required"}));
+	expect(next.silentPasskeyLogin?.[credential.userId]).toBe(false);
+	expect(next.retiredPasskeys).toEqual([credential]);
+	expect(next.password).toBe("");
 });

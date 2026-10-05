@@ -4,20 +4,23 @@ import {Alert, Animated} from "react-native";
 import {PasskeySettings} from "../src/components/settings/passkeySettings";
 import type {RootNav} from "../src/components/Root";
 import {disablePasskey, enablePasskey} from "../src/utils/passkey";
-import {getPasskeyRootHint} from "../src/utils/passkeyNative";
+import {getPasskeyRootHint, getPasskeyVerificationAvailability} from "../src/utils/passkeyNative";
+import {PasskeyError} from "@thu-info/lib/src/utils/error";
+import {persistor, store} from "../src/redux/store";
 import zh from "../src/assets/translations/zh";
 
 const configuredAuth = () => ({
 	userId: "2026000000",
-	passkeys: {"2026000000": {name: "THU Info APP (Pixel 9)", protectionLevel: "unknown"}} as Record<string, {name: string; protectionLevel: string}>,
+	passkeys: {"2026000000": {name: "THU Info APP (Pixel 9)", protectionLevel: "unknown"}} as Record<string, {name: string; protectionLevel: string; authenticationMode?: "required" | "silent"}>,
+	silentPasskeyLogin: {} as Record<string, boolean>,
 });
 let mockState = {
 	auth: configuredAuth(),
 	config: {language: "zh"},
 };
 jest.mock("react-redux", () => ({useSelector: (selector: (state: typeof mockState) => unknown) => selector(mockState)}));
-jest.mock("../src/redux/store", () => ({currState: () => ({config: {language: "zh"}})}));
-jest.mock("../src/utils/passkeyNative", () => ({passkeyAvailable: true, getPasskeyRootHint: jest.fn()}));
+jest.mock("../src/redux/store", () => ({currState: () => mockState ?? {config: {language: "zh"}}, store: {dispatch: jest.fn()}, persistor: {flush: jest.fn()}}));
+jest.mock("../src/utils/passkeyNative", () => ({passkeyAvailable: true, getPasskeyRootHint: jest.fn(), getPasskeyVerificationAvailability: jest.fn()}));
 jest.mock("../src/utils/passkey", () => ({enablePasskey: jest.fn(), disablePasskey: jest.fn()}));
 jest.mock("../src/ui/settings/settings", () => ({styles: () => ({})}));
 jest.mock("react-native-snackbar", () => ({Snackbar: {show: jest.fn(), LENGTH_LONG: 0}}));
@@ -25,6 +28,7 @@ const navigation = {navigate: jest.fn()} as unknown as RootNav;
 beforeEach(() => {
 	mockState.auth = configuredAuth();
 	jest.mocked(getPasskeyRootHint).mockResolvedValue(false);
+	jest.mocked(getPasskeyVerificationAvailability).mockResolvedValue("available");
 	// Complete native-driven sheet animations so confirmation callbacks run in Jest.
 	jest.spyOn(Animated, "parallel").mockImplementation(() => ({
 		start: (callback) => callback?.({finished: true}),
@@ -179,4 +183,67 @@ test("a deletion failure appears inside the app and keeps the configured state",
 		expect(screen.getByText("已设置")).toBeTruthy();
 		expect(alert).not.toHaveBeenCalled();
 	} finally { alert.mockRestore(); }
+});
+
+test("new credentials default to verified mode while existing legacy credentials stay silent", async () => {
+	const view = await render(<PasskeySettings navigation={navigation} />);
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(true);
+	mockState.auth.passkeys = {};
+	await view.rerender(<PasskeySettings navigation={navigation} />);
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(false);
+});
+test("enabling silent login needs an app warning and leaves the old mode on cancellation", async () => {
+	mockState.auth.passkeys["2026000000"].authenticationMode = "required";
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", true);
+	expect(await screen.findByText(zh.passkeySilentWarning)).toBeTruthy();
+	expect(screen.getByText(zh.passkeyModeChangePrompt)).toBeTruthy();
+	await fireEvent.press(screen.getByText(zh.cancel));
+	expect(enablePasskey).not.toHaveBeenCalled();
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(false);
+});
+test("confirming silent login rotates the enrolled key with the explicit policy", async () => {
+	mockState.auth.passkeys["2026000000"].authenticationMode = "required";
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", true);
+	await screen.findByText(zh.passkeySilentWarning);
+	await fireEvent.press(screen.getByText(zh.passkeyEnable));
+	await waitFor(() => expect(enablePasskey).toHaveBeenCalledWith("silent"));
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(false);
+});
+test("an unenrolled account can select silent mode after the warning", async () => {
+	mockState.auth.passkeys = {};
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", true);
+	await screen.findByText(zh.passkeySilentWarning);
+	await fireEvent.press(screen.getByText(zh.passkeyEnable));
+	await waitFor(() => expect(store.dispatch).toHaveBeenCalledWith(expect.objectContaining({payload: {userId: "2026000000", enabled: true}})));
+	expect(persistor.flush).toHaveBeenCalled();
+	expect(enablePasskey).not.toHaveBeenCalled();
+});
+test("switching an existing silent key off requires verified replacement", async () => {
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
+	await screen.findByText(zh.passkeyVerifiedPrompt);
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.passkeyReset}));
+	await waitFor(() => expect(enablePasskey).toHaveBeenCalledWith("required"));
+});
+test.each(["not-configured", "unsupported"] as const)("%s devices get guidance without silently weakening the key", async (availability) => {
+	jest.mocked(getPasskeyVerificationAvailability).mockResolvedValue(availability);
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
+	expect(await screen.findByText(zh.passkeyVerificationUnavailable)).toBeTruthy();
+	expect(enablePasskey).not.toHaveBeenCalled();
+	expect(store.dispatch).not.toHaveBeenCalled();
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(true);
+});
+test("canceling OS verification does not become a setup failure", async () => {
+	jest.mocked(enablePasskey).mockRejectedValueOnce(new PasskeyError("canceled", "登录已取消。"));
+	await render(<PasskeySettings navigation={navigation} />);
+	await fireEvent(screen.getByTestId("passkeySilentLogin"), "valueChange", false);
+	await screen.findByText(zh.passkeyVerifiedPrompt);
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: zh.passkeyReset}));
+	await waitFor(() => expect(enablePasskey).toHaveBeenCalledTimes(1));
+	expect(screen.queryByText(zh.passkeySetupFailed)).toBeNull();
+	expect(screen.getByTestId("passkeySilentLogin").props.value).toBe(true);
 });

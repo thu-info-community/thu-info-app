@@ -4,6 +4,7 @@ import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
 import {authenticatePasskey, base64url, fromBase64url, preparePasskey, registerPasskey, registrationResponse, renamePasskey} from "./passkey";
 import type {PasskeyCredential} from "../models/id/passkey";
+import {PasskeyError} from "../utils/error";
 
 jest.mock("../utils/network", () => ({uFetch: jest.fn(), clearCookies: jest.fn(), getRedirectUrl: jest.fn()}));
 const bytes = (value: number) => base64url(Buffer.alloc(32, value));
@@ -94,4 +95,57 @@ test("sets a device-specific name through the school's rename endpoint", async (
     await renamePasskey(makeHelper(), credential, "THU Info APP (Pixel 9)");
     expect(uFetch).toHaveBeenCalledWith(expect.stringContaining("/api/webauthn/enrollment/"),
         JSON.stringify({name: "THU Info APP (Pixel 9)"}), 30000, "UTF-8", true, "application/json", "PUT");
+});
+
+test.each([undefined, "silent"] as const)("enrollment forwards policy %s with verified keys as the default", async (mode) => {
+    const helper = makeHelper();
+    jest.mocked(uFetch).mockResolvedValue(JSON.stringify(options));
+    await preparePasskey(helper, {authenticationMode: mode});
+    expect(helper.passkeyAuthenticator!.createCredential).toHaveBeenCalledWith({authenticationMode: mode ?? "required"});
+});
+test("waits for interaction before fetching a challenge", async () => {
+    const helper = makeHelper();
+    let ready!: () => void;
+    helper.passkeyAuthenticator!.prepareAssertion = jest.fn(() => new Promise<void>((resolve) => { ready = resolve; }));
+    jest.mocked(uFetch).mockResolvedValueOnce(JSON.stringify({result: "success", object: {
+        rpId: credential.rpId, challenge: options.challenge, userVerification: "preferred", allowCredentials: [],
+    }})).mockResolvedValueOnce(JSON.stringify({ok: true, username: credential.userId}));
+    const result = authenticatePasskey(helper);
+    await Promise.resolve();
+    expect(uFetch).not.toHaveBeenCalled();
+    ready();
+    await expect(result).resolves.toBe(credential.userId);
+});
+test("canceling verification does not submit an assertion or erase the credential", async () => {
+    const helper = makeHelper();
+    jest.mocked(uFetch).mockResolvedValueOnce(JSON.stringify({result: "success", object: {
+        rpId: credential.rpId, challenge: options.challenge, userVerification: "preferred", allowCredentials: [],
+    }}));
+    jest.mocked(helper.passkeyAuthenticator!.signAssertion).mockRejectedValueOnce(new PasskeyError("canceled", "登录已取消。"));
+    await expect(authenticatePasskey(helper)).rejects.toMatchObject({code: "canceled"});
+    expect(uFetch).toHaveBeenCalledTimes(1);
+    expect(helper.passkeyCredential).toBe(credential);
+});
+test("discarding a login during verification does not send its result to another account", async () => {
+    const helper = makeHelper();
+    jest.mocked(uFetch).mockResolvedValueOnce(JSON.stringify({result: "success", object: {
+        rpId: credential.rpId, challenge: options.challenge, userVerification: "preferred", allowCredentials: [],
+    }}));
+    jest.mocked(helper.passkeyAuthenticator!.signAssertion).mockImplementationOnce(async () => {
+        helper.userId = "2026000001";
+        return {clientDataJSON: bytes(6), authenticatorData: bytes(7), signature: bytes(8)};
+    });
+    await expect(authenticatePasskey(helper)).rejects.toMatchObject({code: "canceled"});
+    expect(uFetch).toHaveBeenCalledTimes(1);
+});
+test("a key created after logout is cleaned up without registering it", async () => {
+    const helper = makeHelper();
+    jest.mocked(uFetch).mockResolvedValue(JSON.stringify(options));
+    jest.mocked(helper.passkeyAuthenticator!.createCredential).mockImplementationOnce(async () => {
+        helper.userId = "";
+        return credential;
+    });
+    await expect(preparePasskey(helper)).rejects.toMatchObject({code: "canceled"});
+    expect(helper.passkeyAuthenticator!.deleteCredential).toHaveBeenCalledWith(credential.keyId);
+    expect(uFetch).toHaveBeenCalledTimes(1);
 });

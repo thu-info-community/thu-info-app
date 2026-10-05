@@ -4,7 +4,12 @@ import type {AuthState} from "./slices/auth";
 export const sanitizeAuth = (auth: AuthState): AuthState => {
     const passkeys = auth.passkeys ?? {};
     const method = auth.userId && passkeys[auth.userId] ? "passkey" : "password";
-    return {...auth, fingerprint: auth.fingerprint || defaultAuth.fingerprint, passkeys, authMethod: method, password: method === "passkey" ? "" : auth.password ?? ""};
+    const silentPasskeyLogin = {...auth.silentPasskeyLogin};
+    for (const credential of Object.values(passkeys)) {
+        silentPasskeyLogin[credential.userId] = (credential.authenticationMode ?? "silent") === "silent";
+    }
+    return {...auth, fingerprint: auth.fingerprint || defaultAuth.fingerprint, passkeys, silentPasskeyLogin,
+        authMethod: method, password: method === "passkey" ? "" : auth.password ?? ""};
 };
 
 interface Storage {

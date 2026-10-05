@@ -9,6 +9,7 @@ export interface AuthState {
 	fingerprint: string;
 	authMethod: "password" | "passkey";
 	passkeys: Record<string, PasskeyCredential>;
+	silentPasskeyLogin?: Record<string, boolean>;
 	pendingPasskey?: PasskeyCredential;
 	retiredPasskeys?: PasskeyCredential[];
 }
@@ -19,6 +20,7 @@ const initialState: AuthState = {
 	fingerprint: uuidv4().replace(/-/g, ""),
 	authMethod: "password",
 	passkeys: {},
+	silentPasskeyLogin: {},
 };
 
 export const defaultAuth = initialState;
@@ -43,12 +45,19 @@ export const authSlice = createSlice({
 		setPendingPasskey: (state, {payload}: PayloadAction<PasskeyCredential | undefined>) => {
 			state.pendingPasskey = payload;
 		},
+		setSilentPasskeyLogin: (state, {payload}: PayloadAction<{userId: string; enabled: boolean}>) => {
+			// Enrolled credentials change mode only through a successful replacement.
+			if (!state.passkeys[payload.userId]) {
+				state.silentPasskeyLogin = {...state.silentPasskeyLogin, [payload.userId]: payload.enabled};
+			}
+		},
 		loginWithPasskey: (state, {payload}: PayloadAction<PasskeyCredential>) => {
 			const old = state.passkeys[payload.userId];
 			if (old && old.credentialId !== payload.credentialId) {
 				state.retiredPasskeys = [...(state.retiredPasskeys ?? []), old];
 			}
 			state.passkeys[payload.userId] = payload;
+			state.silentPasskeyLogin = {...state.silentPasskeyLogin, [payload.userId]: (payload.authenticationMode ?? "silent") === "silent"};
 			state.userId = payload.userId;
 			state.password = "";
 			state.authMethod = "passkey";
@@ -59,6 +68,7 @@ export const authSlice = createSlice({
 		},
 		forgetPasskey: (state, {payload}: PayloadAction<string>) => {
 			delete state.passkeys[payload];
+			if (state.silentPasskeyLogin) delete state.silentPasskeyLogin[payload];
 			if (state.pendingPasskey?.userId === payload) state.pendingPasskey = undefined;
 			if (state.userId === payload) {
 				state.userId = "";
@@ -74,6 +84,6 @@ export const authSlice = createSlice({
 	},
 });
 
-export const {login, logout, loginWithPasskey, setPendingPasskey, forgetPasskey, forgetRetiredPasskey} = authSlice.actions;
+export const {login, logout, loginWithPasskey, setPendingPasskey, setSilentPasskeyLogin, forgetPasskey, forgetRetiredPasskey} = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

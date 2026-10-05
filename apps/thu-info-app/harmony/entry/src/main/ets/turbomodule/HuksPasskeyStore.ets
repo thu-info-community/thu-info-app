@@ -21,6 +21,8 @@ export interface HuksPasskey {
   publicKeyDer: string;
   protectionLevel: string;
   userAuthType: number;
+  userAuthTypes?: number[];
+  authenticationMode?: string;
 }
 
 export interface HuksAssertion {
@@ -71,8 +73,10 @@ export class HuksPasskeyStore {
   private authentication: userAuth.UserAuthInstance | undefined;
   private lockGeneration: number = 0;
   private destroyed: boolean = false;
+  private isForeground: () => boolean;
 
-  constructor(context: common.UIAbilityContext) {
+  constructor(context: common.UIAbilityContext, isForeground: () => boolean = (): boolean => true) {
+    this.isForeground = isForeground;
     this.ready = this.initialize(context);
   }
 
@@ -96,6 +100,26 @@ export class HuksPasskeyStore {
       await this.ready;
       return !this.destroyed && canIUse('SystemCapability.Security.Huks.Core');
     } catch { return false; }
+  }
+
+  availableAuthenticationTypes(): userAuth.UserAuthType[] {
+    const types: userAuth.UserAuthType[] = [];
+    for (const type of [userAuth.UserAuthType.FACE, userAuth.UserAuthType.FINGERPRINT, userAuth.UserAuthType.PIN]) {
+      try { userAuth.getAvailableStatus(type, userAuth.AuthTrustLevel.ATL3); types.push(type); }
+      catch { /* Exclude methods absent, unenrolled, or below the required trust level. */ }
+    }
+    return types;
+  }
+
+  verificationAvailability(): string {
+    if (this.availableAuthenticationTypes().length) return 'available';
+    try { userAuth.getAvailableStatus(userAuth.UserAuthType.PIN, userAuth.AuthTrustLevel.ATL3); }
+    catch (error) {
+      const code = (error as BusinessError).code;
+      if (code === 12500010) return 'not-configured';
+      if (code === 12500005 || code === 12500006) return 'unsupported';
+    }
+    return 'unknown';
   }
 
   async ensureUnlocked(generation?: number): Promise<void> {
@@ -134,9 +158,12 @@ export class HuksPasskeyStore {
     throw new Error('Unsupported authentication type');
   }
 
-  // The interactive mode is exercised separately; the normal app entry remains silent.
-  async createCredential(authType?: userAuth.UserAuthType): Promise<HuksPasskey> {
+  async createCredential(mode: string = 'required'): Promise<HuksPasskey> {
+    if (mode !== 'required' && mode !== 'silent') throw new Error('Invalid authentication mode');
     await this.ensureUnlocked();
+    if (mode === 'required' && !this.isForeground()) throw new Error('PASSKEY_INTERACTION_REQUIRED');
+    const authTypes = mode === 'required' ? this.availableAuthenticationTypes() : [];
+    if (mode === 'required' && !authTypes.length) throw new Error('PASSKEY_AUTH_UNAVAILABLE');
     const generation = this.lockGeneration;
     const random = cryptoFramework.createRandom();
     const identifier = (await random.generateRandom(16)).data;
@@ -144,9 +171,10 @@ export class HuksPasskeyStore {
     for (let i = 0; i < identifier.length; i++) keyId += identifier[i].toString(16).padStart(2, '0');
     const alias = this.alias(keyId);
     const options = this.signOptions();
-    if (authType !== undefined) {
-      userAuth.getAvailableStatus(authType, userAuth.AuthTrustLevel.ATL3);
-      options.properties!.push({tag: huks.HuksTag.HUKS_TAG_USER_AUTH_TYPE, value: this.authenticationType(authType)});
+    if (authTypes.length) {
+      let mask = 0;
+      for (const type of authTypes) mask |= this.authenticationType(type);
+      options.properties!.push({tag: huks.HuksTag.HUKS_TAG_USER_AUTH_TYPE, value: mask});
       options.properties!.push({tag: huks.HuksTag.HUKS_TAG_KEY_AUTH_ACCESS_TYPE,
         value: huks.HuksAuthAccessType.HUKS_AUTH_ACCESS_INVALID_CLEAR_PASSWORD});
       options.properties!.push({tag: huks.HuksTag.HUKS_TAG_CHALLENGE_TYPE,
@@ -185,7 +213,7 @@ export class HuksPasskeyStore {
         credentialId: encodePasskeyBytes((await random.generateRandom(32)).data),
         publicKeyX: encodePasskeyBytes(coordinate(x)), publicKeyY: encodePasskeyBytes(coordinate(y)),
         publicKeyDer: encodePasskeyBytes(exported), protectionLevel: protection,
-        userAuthType: authType === undefined ? 0 : authType,
+        userAuthType: 0, userAuthTypes: authTypes, authenticationMode: mode,
       };
       await this.ensureUnlocked(generation);
       await this.metadata.put(alias, JSON.stringify(credential));
@@ -208,7 +236,12 @@ export class HuksPasskeyStore {
     if (typeof raw !== 'string' || !raw) return null;
     if (!await huks.isKeyItemExist(alias, this.location())) return null;
     const key = JSON.parse(raw) as HuksPasskey;
-    if (key.keyId !== keyId || ![0, 1, 2, 4].includes(key.userAuthType)) throw new Error('Invalid Passkey metadata');
+    const types = key.userAuthTypes ?? (key.userAuthType ? [key.userAuthType] : []);
+    if (key.keyId !== keyId || ![0, 1, 2, 4].includes(key.userAuthType) || types.some((type: number) => ![1, 2, 4].includes(type))) {
+      throw new Error('Invalid Passkey metadata');
+    }
+    key.userAuthTypes = types;
+    key.authenticationMode = types.length ? 'required' : 'silent';
     return key;
   }
 
@@ -233,11 +266,13 @@ export class HuksPasskeyStore {
     await huks.abortSession(handle, this.location()).catch(() => {});
   }
 
-  async authenticate(challenge: Uint8Array, type: userAuth.UserAuthType): Promise<Uint8Array> {
+  async authenticate(challenge: Uint8Array, types: userAuth.UserAuthType[]): Promise<Uint8Array> {
     await this.ensureUnlocked();
+    if (!this.isForeground()) throw new Error('PASSKEY_INTERACTION_REQUIRED');
     if (!challenge.length || challenge.length > 32) throw new Error('Invalid authentication challenge');
     const instance = userAuth.getUserAuthInstance({
-      challenge: challenge, authType: [type], authTrustLevel: userAuth.AuthTrustLevel.ATL3,
+      challenge: challenge, authType: types, authTrustLevel: userAuth.AuthTrustLevel.ATL3,
+      skipLockedBiometricAuth: true,
     }, {title: '使用 Passkey 登录'});
     this.authentication = instance;
     try {
@@ -245,14 +280,15 @@ export class HuksPasskeyStore {
         const callback: userAuth.IAuthCallback = {onResult: (result: userAuth.UserAuthResult): void => {
           try { instance.off('result', callback); } catch { /* The result may already have removed the listener. */ }
           if (result.result === userAuth.UserAuthResultCode.SUCCESS && result.token?.length) resolve(result.token);
-          else reject(new Error('PASSKEY_AUTH_' + result.result.toString()));
+          else reject(new Error(result.result === userAuth.UserAuthResultCode.CANCELED ||
+            result.result === userAuth.UserAuthResultCode.CANCELED_FROM_WIDGET ? 'PASSKEY_CANCELED' : 'PASSKEY_AUTH_UNAVAILABLE'));
         }};
         try {
           instance.on('result', callback);
           instance.start();
         } catch (error) {
           try { instance.off('result', callback); } catch { /* Subscription may not have succeeded. */ }
-          reject(error as Error);
+          reject(new Error('PASSKEY_AUTH_UNAVAILABLE'));
         }
       });
     } finally { this.authentication = undefined; }
@@ -263,7 +299,10 @@ export class HuksPasskeyStore {
     const generation = this.lockGeneration;
     if (!/^[A-Za-z0-9_-]{16,1024}$/.test(challenge)) throw new Error('Invalid challenge');
     const key = await this.getCredential(keyId);
-    if (!key) throw new Error('Missing Passkey');
+    if (!key) throw new Error('PASSKEY_KEY_INVALIDATED');
+    const available = this.availableAuthenticationTypes();
+    const types = (key.userAuthTypes ?? []).filter((type: number) => available.includes(type));
+    if (key.authenticationMode === 'required' && !types.length) throw new Error('PASSKEY_AUTH_UNAVAILABLE');
     const alias = this.alias(keyId);
     const counter = Number(await this.metadata.get(alias + '.counter', 0)) + 1;
     if (!Number.isInteger(counter) || counter < 1 || counter > 0xffffffff) throw new Error('Invalid counter');
@@ -279,7 +318,7 @@ export class HuksPasskeyStore {
     const data = concatenate(authenticator, await sha256(client));
     const session = await this.initSigning(keyId);
     try {
-      const token = key.userAuthType ? await this.authenticate(session.challenge!, key.userAuthType) : undefined;
+      const token = types.length ? await this.authenticate(session.challenge!, types) : undefined;
       await this.ensureUnlocked(generation);
       const signature = await this.finishSigning(session.handle, data, token);
       await this.ensureUnlocked(generation);

@@ -1,4 +1,4 @@
-import type {PasskeyCredential} from "@thu-info/lib";
+import type {PasskeyCredential, PasskeyAuthenticationMode} from "@thu-info/lib";
 import {PasskeyError} from "@thu-info/lib/src/utils/error";
 import {getCsrfToken, roam} from "@thu-info/lib/src/lib/core";
 import {currState, helper, persistor, store} from "../redux/store";
@@ -24,28 +24,44 @@ const singleOperation = <T extends PasskeyCredential | void>(operation: () => Pr
     return promise.finally(() => { if (pendingOperation === promise) pendingOperation = undefined; });
 };
 
-export const enablePasskey = (): Promise<PasskeyCredential> => singleOperation(async () => {
+export const enablePasskey = (requestedMode?: PasskeyAuthenticationMode): Promise<PasskeyCredential> => singleOperation(async () => {
     const before = currState().auth;
+    const existing = before.passkeys?.[before.userId];
+    const mode = requestedMode ?? (existing ? existing.authenticationMode ?? "silent" :
+        before.silentPasskeyLogin?.[before.userId] ? "silent" : "required");
     if (!before.userId || !helper.hasAuthentication()) throw new PasskeyError("session", "请先登录。");
     let credential = before.pendingPasskey;
     if (credential && credential.userId !== before.userId) throw new PasskeyError("session", "请先登录之前的账号，完成 Passkey 设置。");
     const previousHook = helper.loginErrorHook;
     helper.loginErrorHook = undefined;
+    const ensureCurrentAccount = () => {
+        if (currState().auth.userId !== before.userId) throw new PasskeyError("canceled", "登录已取消。");
+    };
     let activated = false;
     try {
         await roam(helper, "id_website", "");
+        ensureCurrentAccount();
+        if (credential && (credential.authenticationMode ?? "silent") !== mode) {
+            await removeIfRegistered(credential);
+            store.dispatch(setPendingPasskey(undefined));
+            await persistor.flush();
+            credential = undefined;
+        }
         if (!credential) {
-            credential = await helper.preparePasskey();
+            credential = await helper.preparePasskey({authenticationMode: mode});
             store.dispatch(setPendingPasskey(credential));
             await persistor.flush();
         }
-        if (!await helper.passkeyAuthenticator?.getCredential(credential.keyId)) {
+        const nativeKey = await helper.passkeyAuthenticator?.getCredential(credential.keyId);
+        if (!nativeKey) {
             throw new PasskeyError("missing", "此设备的 Passkey 不可用，请重新设置。");
         }
+        if ((nativeKey.authenticationMode ?? "silent") !== mode) throw new PasskeyError("invalid", "Passkey 设置未完成，请重新设置。");
         const registered = await helper.listPasskeys();
         if (!registered.some((item) => item.credentialId === credential!.credentialId)) await helper.registerPasskey(credential);
         credential = {...credential, name: credential.name || await helper.trustFingerprintNameHook()};
         await helper.renamePasskey(credential, credential.name!);
+        ensureCurrentAccount();
 
         // Full login clears both JS/native cookies; do not remove the password before this succeeds.
         await helper.login({method: "passkey", credential});
@@ -53,6 +69,7 @@ export const enablePasskey = (): Promise<PasskeyCredential> => singleOperation(a
         if (account.userId !== before.userId) throw new PasskeyError("invalid", "登录账号不一致，请重新登录。");
         await getCsrfToken();
         await helper.getCalendar();
+        ensureCurrentAccount();
         store.dispatch(loginWithPasskey(credential));
         activated = true;
         await persistor.flush();
@@ -61,11 +78,15 @@ export const enablePasskey = (): Promise<PasskeyCredential> => singleOperation(a
         return credential;
     } catch (error) {
         if (activated) throw error;
+        ensureCurrentAccount();
         // Preserve the pre-existing mode. A failed server cleanup keeps the pending record for reconciliation.
         const old = before.passkeys?.[before.userId];
         helper.userId = before.userId;
         helper.password = before.password;
         helper.passkeyCredential = before.authMethod === "passkey" ? old : undefined;
+        // Cancellation must not cause a second prompt during rollback. Keep the
+        // pending credential for cleanup/reconciliation on the next explicit attempt.
+        if (error instanceof PasskeyError && ["canceled", "locked", "interaction-required", "verification-unavailable"].includes(error.code)) throw error;
         try {
             await helper.login();
             await roam(helper, "id_website", "");

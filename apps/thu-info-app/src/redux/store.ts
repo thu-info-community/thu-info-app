@@ -17,7 +17,7 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "@thu-info/lib";
-import {uses24HourClock} from "react-native-localize";
+import {getLocales, uses24HourClock} from "react-native-localize";
 import {restoreScheduleState, serializeScheduleState, decodeScheduleState} from "./scheduleData";
 import type {ScheduleState} from "./scheduleData";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
@@ -51,6 +51,9 @@ import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepse
 import {getSerializableEntries, isSerializable} from "./serializable";
 import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
 import {createPasskeyAuthenticator} from "../utils/passkeyNative";
+import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
+import zh from "../assets/translations/zh";
+import en from "../assets/translations/en";
 import {migrateWasherFavourites} from "./migrations/washerFavourites";
 
 const CookieManager = (() => {
@@ -233,7 +236,16 @@ export const store = configureStore({
 const persistOptions: NonNullable<Parameters<typeof persistStore>[1]> & {manualPersist: boolean} = {manualPersist: true};
 export const persistor = persistStore(store, persistOptions);
 
-helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true);
+helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true, (keyId) =>
+	waitForPasskeyInteraction(keyId, () => ({
+		loggedInUserId: currState().auth.userId, selectedUserId: helper.userId,
+		keyId: helper.passkeyCredential?.keyId, foreground: AppState.currentState === "active",
+		appLocked: currState().config.appLocked === true,
+	}), (check) => {
+		const unsubscribe = store.subscribe(check);
+		const subscription = AppState.addEventListener("change", check);
+		return () => { unsubscribe(); subscription.remove(); };
+	}));
 let previousAuth: AuthState | undefined;
 store.subscribe(() => {
 	const auth = currState().auth;
@@ -266,7 +278,13 @@ export const navigationRef = createNavigationContainerRef<{
 }>();
 
 helper.loginErrorHook = (e) => {
-	if (e instanceof PasskeyError && e.code === "locked") return;
+	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;
+	if (e instanceof PasskeyError && e.code === "verification-unavailable") {
+		const language = currState().config.language;
+		const strings = language === "zh" || (language !== "en" && getLocales()[0].languageTag.startsWith("zh")) ? zh : en;
+		Snackbar.show({text: strings.passkeyVerificationUnavailable, duration: Snackbar.LENGTH_LONG});
+		return;
+	}
 	if (e instanceof LoginError && navigationRef.isReady()) {
 		navigationRef.navigate("Login");
 	}

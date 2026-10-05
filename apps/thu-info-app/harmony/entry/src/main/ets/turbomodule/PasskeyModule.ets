@@ -1,9 +1,10 @@
-import { TurboModule } from '@rnoh/react-native-openharmony/ts';
+import { TurboModule, LifecycleState } from '@rnoh/react-native-openharmony/ts';
 import { TM } from '@rnoh/react-native-openharmony/generated/ts';
 import { HuksPasskeyStore } from './HuksPasskeyStore';
 
 export class PasskeyModule extends TurboModule implements TM.RTNPasskey.Spec {
-  private keys = new HuksPasskeyStore(this.ctx.uiAbilityContext);
+  private keys = new HuksPasskeyStore(this.ctx.uiAbilityContext, (): boolean =>
+    this.ctx.rnInstance.getLifecycleState() === LifecycleState.READY);
   private pending: Promise<void> = Promise.resolve();
 
   private operation<T>(action: () => Promise<T>): Promise<T> {
@@ -13,11 +14,11 @@ export class PasskeyModule extends TurboModule implements TM.RTNPasskey.Spec {
   }
 
   async getCapabilities(): Promise<string> {
-    return JSON.stringify({available: await this.keys.available()});
+    return JSON.stringify({available: await this.keys.available(), verificationAvailability: this.keys.verificationAvailability()});
   }
 
-  createCredential(): Promise<string> {
-    return this.operation(async (): Promise<string> => JSON.stringify(await this.keys.createCredential()));
+  createCredential(mode: string): Promise<string> {
+    return this.operation(async (): Promise<string> => JSON.stringify(await this.keys.createCredential(mode)));
   }
 
   getCredential(keyId: string): Promise<string> {

@@ -4,7 +4,7 @@ import type {InfoHelper} from "../index";
 import {ID_HOST_URL} from "../constants/strings";
 import {uFetch} from "../utils/network";
 import {PasskeyError} from "../utils/error";
-import type {PasskeyCredential, PasskeyKey} from "../models/id/passkey";
+import type {PasskeyCredential, PasskeyKey, PasskeyCreationOptions} from "../models/id/passkey";
 
 export const PASSKEY_RP_ID = "tsinghua.edu.cn";
 export const PASSKEY_ORIGIN = "https://id.tsinghua.edu.cn";
@@ -85,8 +85,9 @@ export const listPasskeys = async (): Promise<{credentialId: string}[]> => {
 };
 
 /** Create metadata before POST so the caller can reconcile an interrupted registration. */
-export const preparePasskey = async (helper: InfoHelper): Promise<PasskeyCredential> => {
+export const preparePasskey = async (helper: InfoHelper, creation: PasskeyCreationOptions = {}): Promise<PasskeyCredential> => {
     if (!helper.passkeyAuthenticator || !helper.userId) throw new PasskeyError("unavailable", "此设备暂不支持 Passkey。");
+    const userId = helper.userId;
     const options: EnrollmentOptions = await getJson("/api/webauthn/enrollment/options");
     // Validate policy before creating a key.
     if (options.rp?.id !== PASSKEY_RP_ID || options.attestation !== "none" || !options.pubKeyCredParams?.some((p) => p.alg === -7) ||
@@ -95,8 +96,13 @@ export const preparePasskey = async (helper: InfoHelper): Promise<PasskeyCredent
     }
     fromBase64url(options.challenge); fromBase64url(options.user.id);
     const name = await helper.trustFingerprintNameHook();
-    const key = await helper.passkeyAuthenticator.createCredential();
-    return {...key, userId: helper.userId, userHandle: options.user.id, rpId: PASSKEY_RP_ID, name};
+    if (helper.userId !== userId) throw new PasskeyError("canceled", "登录已取消。");
+    const key = await helper.passkeyAuthenticator.createCredential({authenticationMode: creation.authenticationMode ?? "required"});
+    if (helper.userId !== userId) {
+        await helper.passkeyAuthenticator.deleteCredential(key.keyId).catch(() => undefined);
+        throw new PasskeyError("canceled", "登录已取消。");
+    }
+    return {...key, userId, userHandle: options.user.id, rpId: PASSKEY_RP_ID, name};
 };
 
 export const registerPasskey = async (helper: InfoHelper, credential: PasskeyCredential): Promise<void> => {
@@ -131,6 +137,14 @@ export const authenticatePasskey = async (helper: InfoHelper): Promise<string> =
     if (!key || key.credentialId !== credential.credentialId || key.publicKeyX !== credential.publicKeyX || key.publicKeyY !== credential.publicKeyY) {
         throw new PasskeyError("missing", "此设备的 Passkey 不可用，请重新设置。");
     }
+    const ensureCurrentAccount = () => {
+        if (helper.passkeyCredential?.keyId !== credential.keyId ||
+            helper.passkeyCredential?.credentialId !== credential.credentialId || helper.userId !== credential.userId) {
+            throw new PasskeyError("canceled", "登录已取消。");
+        }
+    };
+    await helper.passkeyAuthenticator.prepareAssertion?.(credential.keyId);
+    ensureCurrentAccount();
     const result = await getJson("/api/webauthn/login/options?username=" + encodeURIComponent(helper.userId));
     const options = result.object;
     if (result.result !== "success" || options?.rpId !== PASSKEY_RP_ID || typeof options?.challenge !== "string" || options.userVerification === "required") {
@@ -140,11 +154,14 @@ export const authenticatePasskey = async (helper: InfoHelper): Promise<string> =
     if (!Array.isArray(options.allowCredentials) || (options.allowCredentials.length && !options.allowCredentials.some((c: {id: string}) => c.id === credential.credentialId))) {
         throw new PasskeyError("revoked", "此设备的 Passkey 已不可用，请重新设置。");
     }
+    ensureCurrentAccount();
     const assertion = await helper.passkeyAuthenticator.signAssertion(credential.keyId, options.challenge);
+    ensureCurrentAccount();
     const verified = await postJson("/api/webauthn/login/verify", {
         device: device(helper), username: helper.userId, id: credential.credentialId, rawId: credential.credentialId, type: "public-key",
         response: {...assertion, userHandle: credential.userHandle},
     });
+    ensureCurrentAccount();
     if (verified.ok !== true) throw new PasskeyError("revoked", "Passkey 登录未成功，请重试或重新设置。");
     if (verified.username !== helper.userId) throw new PasskeyError("invalid", "登录账号不一致，请重新登录。");
     return verified.username;

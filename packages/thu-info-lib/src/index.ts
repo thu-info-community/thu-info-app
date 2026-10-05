@@ -153,9 +153,9 @@ import {CardRechargeType} from "./models/card/recharge";
 import { Device } from "./models/network/device";
 import { SportsReservationRecord } from "./models/home/sports";
 import { Schedule } from "./models/schedule/schedule";
-import type {PasskeyAuthenticator, PasskeyCredential, PasskeyDevice} from "./models/id/passkey";
+import type {PasskeyAuthenticator, PasskeyCredential, PasskeyDevice, PasskeyCreationOptions} from "./models/id/passkey";
 import {preparePasskey, registerPasskey, listPasskeys, removePasskey, renamePasskey} from "./lib/passkey";
-export type {PasskeyAuthenticator, PasskeyCredential, PasskeyKey, PasskeyAssertion, PasskeyProtection} from "./models/id/passkey";
+export type {PasskeyAuthenticator, PasskeyCredential, PasskeyKey, PasskeyAssertion, PasskeyProtection, PasskeyAuthenticationMode, PasskeyCreationOptions} from "./models/id/passkey";
 
 export class InfoHelper {
     public userId = "";
@@ -165,7 +165,7 @@ export class InfoHelper {
     public passkeyCredential: PasskeyCredential | undefined;
     public passkeyDevice: PasskeyDevice | undefined;
     public hasAuthentication = () => this.userId !== "" && (this.password !== "" || this.passkeyCredential?.userId === this.userId);
-    public preparePasskey = async () => withAuthTransaction(() => preparePasskey(this));
+    public preparePasskey = async (options?: PasskeyCreationOptions) => withAuthTransaction(() => preparePasskey(this, options));
     public registerPasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => registerPasskey(this, credential));
     public listPasskeys = async () => withAuthTransaction(() => listPasskeys());
     public removePasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => removePasskey(credential));
