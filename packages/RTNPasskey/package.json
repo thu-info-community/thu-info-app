@@ -13,6 +13,11 @@
     "name": "RTNPasskeySpec",
     "type": "modules",
     "jsSrcsDir": "src",
-    "android": {"javaPackageName": "com.thuinfo.passkey"}
+    "android": {"javaPackageName": "com.thuinfo.passkey"},
+    "ios": {
+      "modules": {
+        "RTNPasskey": {"className": "RTNPasskey", "unstableRequiresMainQueueSetup": true}
+      }
+    }
   }
 }

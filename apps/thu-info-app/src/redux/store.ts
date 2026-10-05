@@ -74,7 +74,14 @@ helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
 
+let lastNonInactiveAppState = AppState.currentState;
 AppState.addEventListener("change", (state) => {
+	// iOS system authentication temporarily makes the app inactive. Apply the
+	// app-lock timeout when returning from background, not from Face ID / Touch ID.
+	if (Platform.OS === "ios" && state === "inactive") return;
+	const resumedWithoutBackground = Platform.OS === "ios" && state === "active" && lastNonInactiveAppState === "active";
+	lastNonInactiveAppState = state;
+	if (resumedWithoutBackground) return;
 	if (state === "active") {
 		if (!persistor.getState().bootstrapped) {
 			return;
