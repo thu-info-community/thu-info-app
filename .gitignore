@@ -48,6 +48,10 @@ local.properties
 .classpath
 .project
 
+# Claude Code
+#
+.claude/
+
 # node.js
 #
 node_modules/
