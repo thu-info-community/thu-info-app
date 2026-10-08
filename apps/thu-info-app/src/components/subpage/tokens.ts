@@ -31,3 +31,24 @@ export const separatorStyle = (colors: ColorTheme) => ({
 	borderBottomWidth: StyleSheet.hairlineWidth,
 	borderBottomColor: colors.themeGrey,
 });
+
+/**
+ * The rounded card sheet a scrollable list sits on — the look every list
+ * sub-page should share. Use it as a `FlatList`/`ScrollView`'s
+ * `contentContainerStyle`, with `style={{flex: 1, margin: spacing.md}}` on the
+ * list itself and a `Separator` (from `./rows`) between rows.
+ *
+ * Pass `hasContent`: the sheet is skipped entirely when the list has nothing to
+ * sit on, because an empty card is nothing but its own padding — a stray white
+ * strip on top of an otherwise blank page. A list that is empty either has a
+ * `ListHeaderComponent` to carry the sheet (pass `true`), or should explain
+ * itself with an `EmptyState` on the page background (`false`).
+ */
+export const roundedListContent = (colors: ColorTheme, hasContent: boolean) =>
+	hasContent
+		? {
+				backgroundColor: colors.contentBackground,
+				borderRadius: radius.card,
+				padding: spacing.lg,
+		  }
+		: undefined;

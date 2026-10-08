@@ -1,7 +1,6 @@
 import {RootNav} from "../../components/Root";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {
-	TextInput,
 	TouchableOpacity,
 	useColorScheme,
 	View,
@@ -20,6 +19,9 @@ import {getStr} from "../../utils/i18n";
 import IconSearch from "../../assets/icons/IconSearch";
 import {SearchResultItem} from "@thu-info/lib/src/models/home/reserves-lib";
 import {check, PERMISSIONS, request, RESULTS} from "react-native-permissions";
+import {ThemedTextInput} from "../../components/subpage/fields";
+import {Separator} from "../../components/subpage/rows";
+import {radius} from "../../components/subpage/tokens";
 
 const BookItem = ({
 	book,
@@ -85,11 +87,14 @@ export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 			search.length === 0
 				? []
 				: (await helper.searchReservesLib(search, page)).data,
-		(book, _, {navigation}) => (
-			<BookItem
-				book={book}
-				onPress={() => navigation.navigate("ReservesLibPDF", {book})}
-			/>
+		(book, _, {navigation}, _theme, index) => (
+			<>
+				{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+				<BookItem
+					book={book}
+					onPress={() => navigation.navigate("ReservesLibPDF", {book})}
+				/>
+			</>
 		),
 		({bookId}) => bookId,
 		undefined,
@@ -101,20 +106,18 @@ export const ReservesLibWelcomeScreen = (props: {navigation: RootNav}) => {
 						alignItems: "center",
 						justifyContent: "space-between",
 					}}>
-					<TextInput
+					<ThemedTextInput
 						style={{
 							fontSize: 15,
 							flex: 1,
 							backgroundColor: colors.themeBackground,
-							color: colors.text,
 							textAlign: "left",
 							borderColor: colors.inputBorder,
 							borderWidth: 1,
-							borderRadius: 5,
+							borderRadius: radius.control,
 							padding: 6,
 						}}
 						placeholder={getStr("search")}
-						placeholderTextColor={colors.fontB3}
 						value={search}
 						onChangeText={setSearch}
 					/>

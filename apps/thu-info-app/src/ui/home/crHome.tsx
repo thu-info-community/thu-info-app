@@ -12,6 +12,8 @@ import {helper} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {CrSemester} from "@thu-info/lib/src/models/cr/cr";
+import {Separator} from "../../components/subpage/rows";
+import {roundedListContent, spacing} from "../../components/subpage/tokens";
 
 export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const [semesters, setSemesters] = useState<CrSemester[]>([]);
@@ -32,29 +34,36 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<FlatList
-			style={{flex: 1}}
+			style={{flex: 1, margin: spacing.md}}
 			data={semesters}
+			contentContainerStyle={roundedListContent(colors, semesters.length > 0)}
 			refreshControl={
 				<ThemedRefreshControl
 					refreshing={refreshing}
 					onRefresh={refresh}
 				/>
 			}
-			renderItem={({item: {id, name}}) => (
-				<TouchableOpacity
-					onPress={() => navigation.navigate("CrCoursePlan", {semesterId: id})}
-					style={{
-						padding: 15,
-						flexDirection: "row",
-						justifyContent: "space-between",
-					}}>
-					<View style={{flex: 2, alignItems: "flex-start"}}>
-						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-							{name}
-						</Text>
-						<Text style={{color: colors.fontB2, marginVertical: 2}}>{id}</Text>
-					</View>
-				</TouchableOpacity>
+			renderItem={({item: {id, name}, index}) => (
+				<>
+					{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+					<TouchableOpacity
+						onPress={() =>
+							navigation.navigate("CrCoursePlan", {semesterId: id})
+						}
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}>
+						<View style={{flex: 2, alignItems: "flex-start"}}>
+							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+								{name}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{id}
+							</Text>
+						</View>
+					</TouchableOpacity>
+				</>
 			)}
 			keyExtractor={({id}) => id}
 		/>
