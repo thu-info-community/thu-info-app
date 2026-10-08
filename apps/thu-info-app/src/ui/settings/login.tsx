@@ -125,12 +125,11 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={{width: "100%", maxWidth: 400, alignItems: "center"}}>
 					<IconMain width={108} height={108} />
 					<View style={{height: 20}} />
-					{!userId && localPasskeys.map((item) => <TouchableOpacity
-						key={item.credentialId} accessibilityRole="button"
+					{!userId && localPasskeys.map((item) => <PrimaryButton
+						key={item.credentialId}
 						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
-						onPress={() => { setUserId(item.userId); setPassword(""); performLogin(true, item.userId); }}>
-						<Text numberOfLines={1} style={style.loginButtonTextStyle}>{getStr("passkeyLogin")} · {item.userId}</Text>
-					</TouchableOpacity>)}
+						numberOfLines={1} text={`${getStr("passkeyLogin")} · ${item.userId}`}
+						onPress={() => { setUserId(item.userId); setPassword(""); performLogin(true, item.userId); }} />)}
 					<View
 						style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
 						<IconPerson width={18} height={18} />
@@ -162,9 +161,10 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							secureTextEntry
 						/>
 					</View>
-					{credential && <TouchableOpacity accessibilityRole="button" style={[style.loginButtonStyle, style.passkeyButtonStyle]} testID="passkeyLoginButton" disabled={processing} onPress={() => performLogin(true)}>
-						<Text numberOfLines={1} style={style.loginButtonTextStyle}>{getStr("passkeyLogin")}</Text>
-					</TouchableOpacity>}
+					{credential && <PrimaryButton
+						testID="passkeyLoginButton" text={getStr("passkeyLogin")}
+						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
+						onPress={() => performLogin(true)} />}
 					<IdMaintenanceNotice
 						forgotPassword
 						style={{alignSelf: "flex-end", paddingVertical: 8}}
@@ -274,18 +274,8 @@ const styles = themedStyles((theme) => {
 			marginTop: 20,
 			marginBottom: 20,
 		},
-		loginButtonTextStyle: {
-			color: "white",
-			fontWeight: "bold",
-		},
 		passkeyButtonStyle: {
 			width: "100%",
-			height: 44,
-			paddingHorizontal: 16,
-			backgroundColor: theme.colors.themePurple,
-			justifyContent: "center",
-			alignItems: "center",
-			borderRadius: 8,
 		},
 
 		feedbackTextStyle: {
