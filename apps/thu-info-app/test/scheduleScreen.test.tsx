@@ -26,6 +26,7 @@ import {
 	Schedule,
 	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
+import {scheduleHeaderGlyphAdvanceEm} from "../src/utils/scheduleHeaderFont";
 
 const mockNavigate = jest.fn();
 const mockSnackbar = jest.fn();
@@ -337,4 +338,42 @@ test("failed refresh retains the current schedule and reports the failure", asyn
 	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
 	expect(mockSnackbar).toHaveBeenCalledWith(expect.objectContaining({text: "offline"}));
 	expect(screen.getByTestId("schedule-scroll").props.refreshControl.props.refreshing).toBe(false);
+});
+
+const headerLabel = (text: string) => {
+	const node = screen.getByText(text);
+	return {
+		fontSize: StyleSheet.flatten(node.props.style).fontSize as number,
+		allowFontScaling: node.props.allowFontScaling,
+		numberOfLines: node.props.numberOfLines,
+	};
+};
+
+test("the frozen date and weekday labels shrink to fit a narrow phone instead of clipping", async () => {
+	// 280dp leaves (280 − 40 − 8) / 7 ≈ 33.1dp per column; the shipped 9pt/12pt,
+	// still multiplied by the system font, used to spill past the cell and cut
+	// "10/02" down to "10/0".
+	await setup([plan(1, 1)], 280);
+	const dateText = dayjs(firstDay).format("MM/DD");
+	const date = headerLabel(dateText);
+	const weekday = headerLabel(getStr("dayOfWeek")[1]);
+	// The system multiplier is off, so the computed size is the rendered size on
+	// every platform -- the label has to be sized to the cell instead.
+	expect(date.allowFontScaling).toBe(false);
+	expect(date.numberOfLines).toBe(1);
+	expect(weekday.allowFontScaling).toBe(false);
+	expect(weekday.numberOfLines).toBe(1);
+	// Shrunk below the shipped 9pt/12pt (the exact values bind on the cell width,
+	// not the font scale), and every glyph still lands inside the column.
+	const cellWidth = (280 - 48) / 7;
+	expect(date.fontSize).toBe(7);
+	expect(weekday.fontSize).toBe(11.5);
+	expect(date.fontSize * scheduleHeaderGlyphAdvanceEm(dateText) + 8).toBeLessThanOrEqual(cellWidth);
+	expect(weekday.fontSize * scheduleHeaderGlyphAdvanceEm(getStr("dayOfWeek")[1]) + 8).toBeLessThanOrEqual(cellWidth);
+});
+
+test("a wide screen keeps the shipped header font sizes", async () => {
+	await setup([plan(1, 1)], 750);
+	expect(headerLabel(dayjs(firstDay).format("MM/DD")).fontSize).toBe(9);
+	expect(headerLabel(getStr("dayOfWeek")[1]).fontSize).toBe(12);
 });
