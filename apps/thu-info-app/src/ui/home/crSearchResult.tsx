@@ -103,18 +103,18 @@ export const CrSearchResultScreen = ({
 						<Text style={{marginVertical: 2, color: colors.text}}>
 							{teacher}
 						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
+						<Text style={{color: colors.fontB2, marginVertical: 2}}>
 							{id}-{seq} ({credits} cr)
 						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
+						<Text style={{color: colors.fontB2, marginVertical: 2}}>
 							{getStr("courseTime")} {time}
 						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
+						<Text style={{color: colors.fontB2, marginVertical: 2}}>
 							{getStr("courseRemaining")}{" "}
 							{Number.isFinite(remaining) ? remaining : "--"}/
 							{Number.isFinite(capacity) ? capacity : "--"}
 						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
+						<Text style={{color: colors.fontB2, marginVertical: 2}}>
 							{getStr("courseQueue")} {Number.isFinite(queue) ? queue : "--"}
 						</Text>
 					</View>

@@ -104,10 +104,10 @@ export const CrCoursePlanScreen = ({
 							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 								[{property}] {name}
 							</Text>
-							<Text style={{color: "grey", marginVertical: 2}}>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
 								{id} ({credit} cr)
 							</Text>
-							<Text style={{color: "grey", marginVertical: 2}}>{group}</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>{group}</Text>
 						</View>
 					</TouchableOpacity>
 				)}

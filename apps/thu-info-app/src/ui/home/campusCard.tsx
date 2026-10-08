@@ -270,7 +270,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											style={{
 												color:
 													moneyQuickSelected === price
-														? "#FFFFFF"
+														? colors.contentBackground
 														: colors.fontB2,
 											}}>
 											{price} 元
@@ -450,7 +450,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											color:
 												valid && !processing
-													? "#FFFFFF"
+													? colors.contentBackground
 													: colors.themeLightGrey,
 											fontSize: 16,
 										}}>

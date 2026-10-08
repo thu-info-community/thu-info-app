@@ -7,6 +7,7 @@ import {styles} from "./settings";
 import {configSet} from "../../redux/slices/config";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav} from "../../components/Root";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const AppSecretSelectLockTimeScreen = ({
 	navigation,
@@ -22,7 +23,7 @@ export const AppSecretSelectLockTimeScreen = ({
 	const dispatch = useDispatch();
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
@@ -53,6 +54,6 @@ export const AppSecretSelectLockTimeScreen = ({
 					</View>
 				))}
 			</RoundedView>
-		</View>
+		</SubPageScreen>
 	);
 };

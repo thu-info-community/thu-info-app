@@ -78,7 +78,7 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{tx.name}
 				</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>
 					{dayjs(tx.timestamp).format("YYYY-MM-DD HH:mm")}
 				</Text>
 			</View>

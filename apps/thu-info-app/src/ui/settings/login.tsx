@@ -33,6 +33,7 @@ import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
+import {PrimaryButton} from "../../components/subpage/buttons";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -160,25 +161,19 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					{privacy312 === true ||
 					Platform.OS === "android" ||
 					Platform.OS === "ios" ? (
-						<TouchableOpacity
+						<PrimaryButton
 							style={style.loginButtonStyle}
 							testID="loginButton"
-							onPress={() => {
-								performLogin();
-							}}>
-							<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-						</TouchableOpacity>
+							text={getStr("login")}
+							onPress={performLogin}
+						/>
 					) : (
-						<TouchableOpacity
+						<PrimaryButton
 							style={style.loginButtonStyle}
 							testID="loginButton"
-							onPress={() => {
-								navigation.navigate("Privacy");
-							}}>
-							<Text style={style.loginButtonTextStyle}>
-								{getStr("privacyPolicy")}
-							</Text>
-						</TouchableOpacity>
+							text={getStr("privacyPolicy")}
+							onPress={() => navigation.navigate("Privacy")}
+						/>
 					)}
 					<Text style={style.credentialNoteStyle}>
 						{getStr(
@@ -249,12 +244,6 @@ const styles = themedStyles((theme) => {
 			right: 0,
 		},
 
-		appIconStyle: {
-			marginBottom: 15,
-			resizeMode: "contain",
-			height: 140,
-		},
-
 		textInputStyle: {
 			color: theme.colors.primary,
 			flex: 1,
@@ -264,19 +253,8 @@ const styles = themedStyles((theme) => {
 		},
 
 		loginButtonStyle: {
-			height: 35,
-			width: 100,
-			backgroundColor: theme.colors.themePurple,
 			marginTop: 20,
 			marginBottom: 20,
-			justifyContent: "center",
-			alignItems: "center",
-			borderRadius: 8,
-		},
-
-		loginButtonTextStyle: {
-			color: "white",
-			fontWeight: "bold",
 		},
 
 		feedbackTextStyle: {

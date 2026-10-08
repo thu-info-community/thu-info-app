@@ -10,6 +10,8 @@ import {RootNav} from "../../components/Root";
 import {configSet} from "../../redux/slices/config";
 import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
+import {SubPageScreen} from "../../components/subpage/containers";
+import {HeaderActionButton} from "../../components/subpage/headerAction";
 
 export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -24,8 +26,7 @@ export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity
-					style={{paddingHorizontal: 16, margin: 4}}
+				<HeaderActionButton
 					onPress={() => {
 						navigation.pop();
 						dispatch(configSet({key: "language", value: language}));
@@ -42,14 +43,14 @@ export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 					<Text style={{color: colors.primaryLight, fontSize: 16}}>
 						{getStr("done")}
 					</Text>
-				</TouchableOpacity>
+				</HeaderActionButton>
 			),
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [navigation, language, dispatch]);
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
@@ -74,6 +75,6 @@ export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 					{language === "en" && <IconCheck width={18} height={18} />}
 				</TouchableOpacity>
 			</RoundedView>
-		</View>
+		</SubPageScreen>
 	);
 };

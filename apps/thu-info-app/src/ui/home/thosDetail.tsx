@@ -12,6 +12,7 @@ import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../../components/views";
+import {DetailRow} from "../../components/subpage/rows";
 import type {RootNav} from "../../components/Root";
 import type {
 	ThosService,
@@ -60,18 +61,8 @@ function useDetail<T>(initial: T, accountId: string, read: () => Promise<T>) {
 	return {data, allowed, busy, error, refresh};
 }
 
-const Fact = ({label, value}: {label: string; value?: string}) => {
-	const {colors} = themes(useColorScheme());
-	if (!value) return null;
-	return (
-		<View style={{paddingVertical: 12, gap: 6}}>
-			<Text style={{color: colors.fontB2, fontSize: 13}}>{label}</Text>
-			<Text selectable style={{color: colors.text, fontSize: 16}}>
-				{value}
-			</Text>
-		</View>
-	);
-};
+const Fact = ({label, value}: {label: string; value?: string}) =>
+	value ? <DetailRow label={label} value={value} /> : null;
 
 const DetailPage = ({
 	title,

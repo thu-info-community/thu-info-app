@@ -15,6 +15,7 @@ import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
 import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
 import {helper, State} from "../../redux/store";
+import {HeaderActionButton} from "../../components/subpage/headerAction";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {
@@ -46,13 +47,11 @@ export const ScheduleDetailScreen = ({
 		navigation.setOptions({
 			title: getStr("scheduleDetail"),
 			headerRight: () => (
-				<TouchableOpacity
-					style={{paddingHorizontal: 16, margin: 4}}
-					onPress={() => setEditPopupShow(true)}>
+				<HeaderActionButton onPress={() => setEditPopupShow(true)}>
 					<Text style={{color: colors.themePurple, fontSize: 16}}>
 						{getStr("edit")}
 					</Text>
-				</TouchableOpacity>
+				</HeaderActionButton>
 			),
 		});
 	}, [navigation, colors.themePurple]);

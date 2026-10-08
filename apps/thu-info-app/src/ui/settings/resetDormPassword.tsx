@@ -1,11 +1,5 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {
-	ScrollView,
-	TextInput,
-	View,
-	Text,
-	TouchableOpacity,
-} from "react-native";
+import {ScrollView, View, Text} from "react-native";
 import {useState} from "react";
 import {helper} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -16,6 +10,8 @@ import {RootNav} from "../../components/Root";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
+import {PrimaryButton} from "../../components/subpage/buttons";
+import {ThemedTextInput} from "../../components/subpage/fields";
 import {styles} from "./myhomeLogin";
 
 export const ResetDormPasswordScreen = ({
@@ -39,10 +35,9 @@ export const ResetDormPasswordScreen = ({
 				<View style={style.form}>
 					<RoundedView style={style.inputRounded}>
 						<IconLock width={18} height={18} />
-						<TextInput
+						<ThemedTextInput
 							style={style.textInputStyle}
 							placeholder={getStr("password")}
-							placeholderTextColor={theme.colors.fontB3}
 							value={password}
 							onChangeText={setPassword}
 							secureTextEntry
@@ -50,17 +45,17 @@ export const ResetDormPasswordScreen = ({
 					</RoundedView>
 					<RoundedView style={style.inputRounded}>
 						<IconLock width={18} height={18} />
-						<TextInput
+						<ThemedTextInput
 							style={style.textInputStyle}
 							placeholder={getStr("confirmPassword")}
-							placeholderTextColor={theme.colors.fontB3}
 							value={confirm}
 							onChangeText={setConfirm}
 							secureTextEntry
 						/>
 					</RoundedView>
-					<TouchableOpacity
+					<PrimaryButton
 						style={style.loginButtonStyle}
+						text={getStr("resetPassword")}
 						disabled={
 							processing || password !== confirm || password.length === 0
 						}
@@ -75,13 +70,8 @@ export const ResetDormPasswordScreen = ({
 								.then(() => navigation.pop())
 								.catch(NetworkRetry)
 								.then(() => setProcessing(false));
-						}}>
-						<RoundedView style={style.loginRounded}>
-							<Text style={style.loginButtonTextStyle}>
-								{getStr("resetPassword")}
-							</Text>
-						</RoundedView>
-					</TouchableOpacity>
+						}}
+					/>
 					<View style={{margin: 16, marginTop: 12}}>
 						<Text style={{color: theme.colors.fontB3}}>
 							{getStr("resetDormPasswordHint")}

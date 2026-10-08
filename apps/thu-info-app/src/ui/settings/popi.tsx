@@ -17,7 +17,7 @@ export const PopiScreen = simpleRefreshListScreen<Feedback>(
 				}}>
 				{"Q: " + content}
 			</Text>
-			<View style={{backgroundColor: "grey", height: 1}} />
+			<View style={{backgroundColor: colors.themeGrey, height: 1}} />
 			<Text style={{marginTop: 10, lineHeight: 17, color: colors.text}}>
 				{"A: " + reply}
 			</Text>

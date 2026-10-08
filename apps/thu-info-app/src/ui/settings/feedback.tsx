@@ -1,11 +1,9 @@
 import {
-	GestureResponderEvent,
 	KeyboardAvoidingView,
 	Platform,
 	ScrollView,
 	Text,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import {useEffect, useState} from "react";
@@ -19,6 +17,7 @@ import {
 	SettingsMiddleText,
 	SettingsSeparator,
 } from "../../components/settings/items";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import QRCode from "react-native-qrcode-svg";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
@@ -33,31 +32,16 @@ const BottomButton = ({
 	disabled,
 }: {
 	text: keyof typeof zh;
-	onPress: (event: GestureResponderEvent) => void;
+	onPress: () => void;
 	disabled: boolean;
 }) => {
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
 	return (
-		<TouchableOpacity
-			style={{
-				backgroundColor: colors.themePurple,
-				flex: 1,
-				borderRadius: 5,
-				opacity: disabled ? 0.5 : 1,
-			}}
+		<PrimaryButton
+			text={getStr(text)}
+			onPress={onPress}
 			disabled={disabled}
-			onPress={(e) => !disabled && onPress(e)}>
-			<Text
-				style={{
-					textAlign: "center",
-					padding: 12,
-					color: "white",
-					fontSize: 15,
-				}}>
-				{getStr(text)}
-			</Text>
-		</TouchableOpacity>
+			style={{flex: 1}}
+		/>
 	);
 };
 

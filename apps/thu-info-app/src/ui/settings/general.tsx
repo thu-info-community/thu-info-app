@@ -6,6 +6,7 @@ import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {useSelector} from "react-redux";
 import {styles} from "./settings";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -24,7 +25,7 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 			: getStr("autoFollow");
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
@@ -47,6 +48,6 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableOpacity>
 			</RoundedView>
-		</View>
+		</SubPageScreen>
 	);
 };

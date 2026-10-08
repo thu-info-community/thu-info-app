@@ -25,8 +25,8 @@ export const LibBookRecordScreen = roundedRefreshListScreen(
 					<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 						{lib}
 					</Text>
-					<Text style={{color: "grey", marginVertical: 2}}>{seat}</Text>
-					<Text style={{color: "grey", marginVertical: 2}}>{time}</Text>
+					<Text style={{color: colors.fontB2, marginVertical: 2}}>{seat}</Text>
+					<Text style={{color: colors.fontB2, marginVertical: 2}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 16, color: colors.text}}>{status}</Text>
@@ -66,7 +66,7 @@ export const LibBookRecordScreen = roundedRefreshListScreen(
 									{cancelable: true},
 								)
 							}>
-							<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+							<Text style={{color: colors.statusError}}>{getStr("cancelBooking")}</Text>
 						</TouchableOpacity>
 					)}
 				</View>

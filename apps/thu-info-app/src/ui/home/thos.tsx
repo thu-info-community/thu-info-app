@@ -44,6 +44,7 @@ import IconRefreshNavBar from "../../assets/icons/IconRefreshNavBar";
 import IconBrowser from "../../assets/icons/IconBrowser";
 import IconStar from "../../assets/icons/IconStar";
 import IconStarActive from "../../assets/icons/IconStarActive";
+import {HeaderActionButton} from "../../components/subpage/headerAction";
 
 const getTaskLabel = (kind: ThosTaskKind): string => {
 	switch (kind) {
@@ -166,19 +167,13 @@ export const useThosBrowserHeader = (
 		navigation.setOptions({
 			headerRight: visible
 				? () => (
-						<TouchableOpacity
+						<HeaderActionButton
 							testID="thos-open-website"
-							accessibilityRole="button"
 							accessibilityLabel={getStr("thosOpenWebsite")}
 							disabled={disabled}
-							onPress={onPress}
-							style={{
-								paddingHorizontal: 16,
-								marginHorizontal: 4,
-								opacity: disabled ? 0.5 : 1,
-							}}>
+							onPress={onPress}>
 							<IconBrowser width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					)
 				: undefined,
 		});
@@ -761,19 +756,13 @@ export const ThosPortalScreen = ({
 		if (!navigation.setOptions) return;
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity
+				<HeaderActionButton
 					testID="thos-portal-refresh"
-					accessibilityRole="button"
 					accessibilityLabel={getStr("thosRefresh")}
 					disabled={busy}
-					onPress={prepare}
-					style={{
-						paddingHorizontal: 16,
-						marginHorizontal: 4,
-						opacity: busy ? 0.5 : 1,
-					}}>
+					onPress={prepare}>
 					<IconRefreshNavBar width={24} height={24} />
-				</TouchableOpacity>
+				</HeaderActionButton>
 			),
 		});
 	}, [busy, navigation, prepare]);

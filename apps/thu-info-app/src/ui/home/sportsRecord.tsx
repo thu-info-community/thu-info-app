@@ -32,8 +32,8 @@ export const SportsRecordScreen = roundedRefreshListScreen(
 					<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 						{name}
 					</Text>
-					<Text style={{color: "grey", marginVertical: 2}}>{field}</Text>
-					<Text style={{color: "grey", marginVertical: 2}}>{time}</Text>
+					<Text style={{color: colors.fontB2, marginVertical: 2}}>{field}</Text>
+					<Text style={{color: colors.fontB2, marginVertical: 2}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 16, color: colors.text}}>{price}</Text>

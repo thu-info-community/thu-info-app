@@ -150,7 +150,7 @@ export const ScheduleHiddenScreen = () => {
 						style={{
 							fontSize: 16,
 							alignSelf: "center",
-							color: "gray",
+							color: theme.colors.fontB2,
 							margin: 5,
 						}}>
 						{getStr("hiddenLessonTip")}

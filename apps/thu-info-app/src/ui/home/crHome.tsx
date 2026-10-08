@@ -52,7 +52,7 @@ export const CrHomeScreen = ({navigation}: {navigation: RootNav}) => {
 						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 							{name}
 						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>{id}</Text>
+						<Text style={{color: colors.fontB2, marginVertical: 2}}>{id}</Text>
 					</View>
 				</TouchableOpacity>
 			)}

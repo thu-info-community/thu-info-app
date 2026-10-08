@@ -11,6 +11,7 @@ import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";
 import {State} from "../../redux/store";
 import {configSet} from "../../redux/slices/config";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const DeepSeekSettingsScreen = () => {
 	const themeName = useColorScheme();
@@ -22,7 +23,7 @@ export const DeepSeekSettingsScreen = () => {
 	);
 	const dispatch = useDispatch();
     return (
-        <View style={{flex: 1, padding: 12, paddingTop: 0}}>
+        <SubPageScreen scroll={false} contentStyle={{paddingTop: 0}}>
 		<RoundedView style={style.rounded}>
 			<View style={style.touchable}>
 				<Text style={style.text}>{getStr("enableBubbleMessage")}</Text>
@@ -51,6 +52,6 @@ export const DeepSeekSettingsScreen = () => {
 				{getStr("bubbleMessageHint")}
 			</Text>
             </RoundedView>
-        </View>
+        </SubPageScreen>
 	);
 };

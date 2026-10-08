@@ -6,6 +6,7 @@ import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {styles} from "./settings";
 import {configSet} from "../../redux/slices/config";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const AppSecretCustomizeScreen = () => {
 	const themeName = useColorScheme();
@@ -20,7 +21,7 @@ export const AppSecretCustomizeScreen = () => {
 	const dispatch = useDispatch();
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("report")}</Text>
@@ -70,6 +71,6 @@ export const AppSecretCustomizeScreen = () => {
 					/>
 				</View>
 			</RoundedView>
-		</View>
+		</SubPageScreen>
 	);
 };
