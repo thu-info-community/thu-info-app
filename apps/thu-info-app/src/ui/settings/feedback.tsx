@@ -25,17 +25,25 @@ const BottomButton = ({
 	text,
 	onPress,
 	disabled,
+	grow,
 }: {
 	text: keyof typeof zh;
 	onPress: () => void;
 	disabled: boolean;
+	/**
+	 * Fill the remaining width. Only for a button sharing a row with a field:
+	 * as a plain child of the page's column the same `flex: 1` makes the button
+	 * absorb the page's free vertical space, which on the first frame — before
+	 * the slow sections land — is most of the screen.
+	 */
+	grow?: boolean;
 }) => {
 	return (
 		<PrimaryButton
 			text={getStr(text)}
 			onPress={onPress}
 			disabled={disabled}
-			style={{flex: 1}}
+			style={grow ? {flex: 1} : undefined}
 		/>
 	);
 };
@@ -168,6 +176,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						placeholder={getStr("contact")}
 					/>
 					<BottomButton
+						grow
 						text="submit"
 						onPress={() => {
 							setProcessing(true);
