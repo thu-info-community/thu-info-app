@@ -101,6 +101,8 @@ interface PopupProps {
 	popupOnCancelled: () => void;
 	popupOnTriggered?: () => void;
 	popupCancelable?: boolean;
+	popupVisible?: boolean;
+	popupFulfillText?: string;
 }
 
 type SheetState =
@@ -294,6 +296,12 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 		animateCloseWith("system", props.popupOnCancelled);
 		return true;
 	}, [animateCloseWith, props]);
+
+	useEffect(() => {
+		if (props.popupVisible === undefined) return;
+		if (props.popupVisible && !visible) handleOpen();
+		else if (!props.popupVisible && visible && sheetState === "open") handleSystemClose();
+	}, [props.popupVisible, visible, sheetState, handleOpen, handleSystemClose]);
 
 	// Android 实体返回键映射为系统关闭动效
 	useEffect(() => {
@@ -505,6 +513,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 							</Text>
 							<View style={{flex: 1, minWidth: 0, alignItems: "flex-end"}}>
 								<TouchableOpacity
+									accessibilityRole="button"
 									disabled={!props.popupCanFulfill}
 									onPress={() => {
 										if (props.popupCanFulfill)
@@ -518,7 +527,7 @@ export const BottomPopupTriggerView = (props: TouchableOpacityProps & PopupProps
 											fontSize: 16,
 											fontWeight: "600",
 										}}>
-										{getStr("done")}
+										{props.popupFulfillText ?? getStr("done")}
 									</Text>
 								</TouchableOpacity>
 							</View>

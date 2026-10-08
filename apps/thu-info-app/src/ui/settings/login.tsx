@@ -21,7 +21,7 @@ import IconPerson from "../../assets/icons/IconPerson";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
-import {login} from "../../redux/slices/auth";
+import {login, loginWithPasskey} from "../../redux/slices/auth";
 import {
 	setActiveLibBookRecord,
 	setActiveSportsReservationRecord,
@@ -38,10 +38,12 @@ import {PrimaryButton} from "../../components/subpage/buttons";
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
+	const localPasskeys = Object.values(auth.passkeys);
 
-	const [userId, setUserId] = useState(auth.userId);
+	const [userId, setUserId] = useState(auth.userId || (localPasskeys.length === 1 ? localPasskeys[0].userId : ""));
 	const [password, setPassword] = useState(auth.password);
 	const [processing, setProcessing] = useState(false);
+	const credential = auth.passkeys[userId];
 
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -56,12 +58,16 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		gt(latestVersion, VersionNumber.appVersion) &&
 		gt(latestVersion, doNotRemindSemver);
 
-	const performLogin = () => {
+	const performLogin = (usePasskey = !!credential && password === "", loginUserId = userId) => {
+		if (processing) return;
 		setProcessing(true);
+		const loginCredential = auth.passkeys[loginUserId];
 		helper
-			.login({userId, password})
+			.login(usePasskey && loginCredential ? {method: "passkey", credential: loginCredential} : {userId: loginUserId, password})
 			.then(() => {
-				dispatch(login({userId, password}));
+				if (loginCredential) dispatch(loginWithPasskey(loginCredential));
+				else dispatch(login({userId: loginUserId, password}));
+				setPassword("");
 			})
 			.then(() =>
 				helper
@@ -119,6 +125,11 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={{width: "100%", maxWidth: 400, alignItems: "center"}}>
 					<IconMain width={108} height={108} />
 					<View style={{height: 20}} />
+					{!userId && localPasskeys.map((item) => <PrimaryButton
+						key={item.credentialId}
+						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
+						numberOfLines={1} text={`${getStr("passkeyLogin")} · ${item.userId}`}
+						onPress={() => { setUserId(item.userId); setPassword(""); performLogin(true, item.userId); }} />)}
 					<View
 						style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
 						<IconPerson width={18} height={18} />
@@ -150,6 +161,10 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							secureTextEntry
 						/>
 					</View>
+					{credential && <PrimaryButton
+						testID="passkeyLoginButton" text={getStr("passkeyLogin")}
+						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
+						onPress={() => performLogin(true)} />}
 					<IdMaintenanceNotice
 						forgotPassword
 						style={{alignSelf: "flex-end", paddingVertical: 8}}
@@ -158,14 +173,17 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("forgotPassword")}
 						</Text>
 					</IdMaintenanceNotice>
-					{privacy312 === true ||
+					{(!credential || password !== "") && (privacy312 === true ||
 					Platform.OS === "android" ||
 					Platform.OS === "ios" ? (
 						<PrimaryButton
 							style={style.loginButtonStyle}
 							testID="loginButton"
+							disabled={processing}
 							text={getStr("login")}
-							onPress={performLogin}
+							onPress={() => {
+								performLogin();
+							}}
 						/>
 					) : (
 						<PrimaryButton
@@ -174,7 +192,7 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							text={getStr("privacyPolicy")}
 							onPress={() => navigation.navigate("Privacy")}
 						/>
-					)}
+					))}
 					<Text style={style.credentialNoteStyle}>
 						{getStr(
 							Platform.OS === "android" || Platform.OS === "ios"
@@ -255,6 +273,9 @@ const styles = themedStyles((theme) => {
 		loginButtonStyle: {
 			marginTop: 20,
 			marginBottom: 20,
+		},
+		passkeyButtonStyle: {
+			width: "100%",
 		},
 
 		feedbackTextStyle: {

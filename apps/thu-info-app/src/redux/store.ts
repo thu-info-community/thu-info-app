@@ -17,7 +17,7 @@ import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "@thu-info/lib";
-import {uses24HourClock} from "react-native-localize";
+import {getLocales, uses24HourClock} from "react-native-localize";
 import {restoreScheduleState, serializeScheduleState, decodeScheduleState} from "./scheduleData";
 import type {ScheduleState} from "./scheduleData";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
@@ -45,10 +45,15 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
-import { LoginError } from "@thu-info/lib/src/utils/error";
+import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
+import {createPasskeyAuthenticator} from "../utils/passkeyNative";
+import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
+import zh from "../assets/translations/zh";
+import en from "../assets/translations/en";
 import {migrateWasherFavourites} from "./migrations/washerFavourites";
 
 const CookieManager = (() => {
@@ -69,7 +74,14 @@ helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
 
+let lastNonInactiveAppState = AppState.currentState;
 AppState.addEventListener("change", (state) => {
+	// iOS system authentication temporarily makes the app inactive. Apply the
+	// app-lock timeout when returning from background, not from Face ID / Touch ID.
+	if (Platform.OS === "ios" && state === "inactive") return;
+	const resumedWithoutBackground = Platform.OS === "ios" && state === "active" && lastNonInactiveAppState === "active";
+	lastNonInactiveAppState = state;
+	if (resumedWithoutBackground) return;
 	if (state === "active") {
 		if (!persistor.getState().bootstrapped) {
 			return;
@@ -123,6 +135,7 @@ const rootReducer = combineReducers({
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
+			stateReconciler: (inbound: AuthState, _original: AuthState, reduced: AuthState) => sanitizeAuth({...reduced, ...inbound}),
 		},
 		authReducer,
 	),
@@ -143,28 +156,6 @@ const rootReducer = combineReducers({
 	announcement: announcementReducer,
 	deepseek: deepseekReducer,
 });
-
-const authTransform = createTransform(
-	(a: AuthState) => {
-		const out = {...a};
-		if (!out.fingerprint) {
-			out.fingerprint = helper.fingerprint;
-		}
-		return out;
-	},
-	(a: AuthState) => {
-		helper.userId = a.userId;
-		helper.password = a.password;
-		if (!a.fingerprint) {
-			a.fingerprint = defaultAuth.fingerprint;
-		}
-		helper.fingerprint = a.fingerprint;
-		return a;
-	},
-	{
-		whitelist: ["auth"],
-	},
-);
 
 const configTransform = createTransform(
 	undefined,
@@ -193,12 +184,15 @@ const scheduleTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 9,
+	version: 10,
+	blacklist: ["auth", "credentials"],
 	key: "root",
 	storage: AsyncStorage,
-	transforms: [authTransform, configTransform, scheduleTransform],
-	migrate: (state: any) =>
-		Promise.resolve(
+	transforms: [configTransform, scheduleTransform],
+	migrate: (incoming: any) => {
+		const state = incoming === undefined ? undefined : {...incoming};
+		if (state) { delete state.auth; delete state.credentials; }
+		return Promise.resolve(
 			state === undefined
 				? undefined
 				: {
@@ -230,7 +224,8 @@ const persistConfig = {
 						deepseek: state.deepseek ?? defaultDeepseek,
 						 
 				  },
-		),
+		);
+	},
 };
 
 export const store = configureStore({
@@ -245,7 +240,40 @@ export const store = configureStore({
 		}),
 });
 
-export const persistor = persistStore(store);
+const persistOptions: NonNullable<Parameters<typeof persistStore>[1]> & {manualPersist: boolean} = {manualPersist: true};
+export const persistor = persistStore(store, persistOptions);
+
+helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true, (keyId) =>
+	waitForPasskeyInteraction(keyId, () => ({
+		loggedInUserId: currState().auth.userId, selectedUserId: helper.userId,
+		keyId: helper.passkeyCredential?.keyId, foreground: AppState.currentState === "active",
+		appLocked: currState().config.appLocked === true,
+	}), (check) => {
+		const unsubscribe = store.subscribe(check);
+		const subscription = AppState.addEventListener("change", check);
+		return () => { unsubscribe(); subscription.remove(); };
+	}));
+let previousAuth: AuthState | undefined;
+store.subscribe(() => {
+	const auth = currState().auth;
+	if (auth === previousAuth) return;
+	previousAuth = auth;
+	helper.userId = auth.userId;
+	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
+	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
+	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys[auth.userId] : undefined;
+	helper.passkeyDevice = {
+		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
+		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,
+	};
+});
+
+// Complete the migration before nested and root reducers start reading storage.
+export const authStorageReady = migrateAuthStorage(AsyncStorage, KeychainStorage)
+	.catch(() => {
+		Alert.alert("登录信息", "登录信息未能恢复，请重新登录。");
+	})
+	.then(() => persistor.persist());
 
 export const currState = () => store.getState() as State;
 
@@ -257,13 +285,20 @@ export const navigationRef = createNavigationContainerRef<{
 }>();
 
 helper.loginErrorHook = (e) => {
+	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;
+	if (e instanceof PasskeyError && e.code === "verification-unavailable") {
+		const language = currState().config.language;
+		const strings = language === "zh" || (language !== "en" && getLocales()[0].languageTag.startsWith("zh")) ? zh : en;
+		Snackbar.show({text: strings.passkeyVerificationUnavailable, duration: Snackbar.LENGTH_LONG});
+		return;
+	}
 	if (e instanceof LoginError && navigationRef.isReady()) {
 		navigationRef.navigate("Login");
 	}
 	setTimeout(
 		() =>
 			Snackbar.show({
-				text: `LoginError: ${e.message}`,
+				text: e.message || "登录未成功，请稍后重试。",
 				duration: Snackbar.LENGTH_SHORT,
 			}),
 		100,

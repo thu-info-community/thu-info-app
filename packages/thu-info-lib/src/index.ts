@@ -19,7 +19,7 @@ import {
     getBankPaymentParellize,
     getMadModelToken,
 } from "./lib/basics";
-import {forgetDevice, login, logout} from "./lib/core";
+import {forgetDevice, login, logout, withAuthTransaction} from "./lib/core";
 import {getIdAccountInfo, getIdAuthDevices, getIdLoginLogs} from "./lib/id";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
 import {
@@ -151,11 +151,23 @@ import {CardRechargeType} from "./models/card/recharge";
 import { Device } from "./models/network/device";
 import { SportsReservationRecord } from "./models/home/sports";
 import { Schedule } from "./models/schedule/schedule";
+import type {PasskeyAuthenticator, PasskeyCredential, PasskeyDevice, PasskeyCreationOptions} from "./models/id/passkey";
+import {preparePasskey, registerPasskey, listPasskeys, removePasskey, renamePasskey} from "./lib/passkey";
+export type {PasskeyAuthenticator, PasskeyCredential, PasskeyKey, PasskeyAssertion, PasskeyProtection, PasskeyAuthenticationMode, PasskeyCreationOptions} from "./models/id/passkey";
 
 export class InfoHelper {
     public userId = "";
     public password = "";
     public fingerprint = "";
+    public passkeyAuthenticator: PasskeyAuthenticator | undefined;
+    public passkeyCredential: PasskeyCredential | undefined;
+    public passkeyDevice: PasskeyDevice | undefined;
+    public hasAuthentication = () => this.userId !== "" && (this.password !== "" || this.passkeyCredential?.userId === this.userId);
+    public preparePasskey = async (options?: PasskeyCreationOptions) => withAuthTransaction(() => preparePasskey(this, options));
+    public registerPasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => registerPasskey(this, credential));
+    public listPasskeys = async () => withAuthTransaction(() => listPasskeys());
+    public removePasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => removePasskey(credential));
+    public renamePasskey = async (credential: PasskeyCredential, name: string) => withAuthTransaction(() => renamePasskey(this, credential, name));
 
     /**
      * Whether to ask the unified ID system to trust this install.
@@ -261,8 +273,15 @@ export class InfoHelper {
         auth: {
             userId?: string;
             password?: string;
-        },
-    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password);
+        } | {method: "passkey"; credential: PasskeyCredential} = {},
+    ): Promise<void> => {
+        if ("method" in auth) {
+            this.passkeyCredential = auth.credential;
+            return login(this, auth.credential.userId, "");
+        }
+        if (auth.password !== undefined) this.passkeyCredential = undefined;
+        return login(this, auth.userId ?? this.userId, auth.password ?? this.password);
+    };
 
     /**
      * Log out and clear fields `userId` and `password` of this `InfoHelper` instance
@@ -1027,7 +1046,7 @@ export class InfoHelper {
 
     public logoutNetworkDevice = async (device: Device) => logoutNetwork(this, device);
 
-    public loginNetworkDevice = async (ip: string, internet: boolean) => loginNetwork(this, ip, internet);
+    public loginNetworkDevice = async (ip: string, internet: boolean, password?: string) => loginNetwork(this, ip, internet, password);
 
     public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
     public prepareThosSession = async () => prepareThosSession(this);

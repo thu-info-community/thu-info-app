@@ -3,20 +3,19 @@ import {getStr} from "../../utils/i18n";
 import {RootNav, RootStackParamList} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {
-	Alert,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
 	View,
-	Platform,
 	ScrollView,
 	StyleSheet,
+	Switch,
 } from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
 import {scheduleClear} from "../../redux/slices/schedule";
-import {login, logout} from "../../redux/slices/auth";
-import {RoundedView} from "../../components/views";
+import {logout} from "../../redux/slices/auth";
+import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
 import VersionNumber from "react-native-version-number";
@@ -56,7 +55,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
-	const {userId, password} = useSelector((s: State) => s.auth);
+	const {userId} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
 
 	const handleNavigate = (name: keyof RootStackParamList) => {
@@ -72,6 +71,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 		gt(latestVersion, doNotRemindSemver);
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
+	const [clearLogoutCache, setClearLogoutCache] = useState(false);
 	return (
 		<ScrollView>
 			<View
@@ -156,11 +156,8 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									text: getStr("processing"),
 									duration: Snackbar.LENGTH_SHORT,
 								});
-								try {
-									await helper.logout();
-								} catch {}
-								dispatch(login({userId, password}));
-								await helper.login({userId, password});
+								if (!userId) { setForceLoginDisabled(false); navigation.navigate("Login"); return; }
+								await helper.login();
 								Snackbar.show({
 									text: getStr("success"),
 									duration: Snackbar.LENGTH_SHORT,
@@ -181,41 +178,32 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				</RoundedView>
 				{helper.userId && (
 					<RoundedView style={style.rounded}>
-						<TouchableOpacity
+						<BottomPopupTriggerView
+							accessibilityRole="button"
 							style={style.touchable}
-							onPress={() => {
-								Alert.alert(
-									getStr("logout"),
-									getStr("confirmLogout"),
-									[
-										...(Platform.OS === "android" || Platform.OS === "ios"
-											? [{text: getStr("cancel")}]
-											: []),
-										{
-											text: getStr("no"),
-											onPress: () => {
-												performLogout();
-												dispatch(logout());
-											},
-										},
-										{
-											text: getStr("yes"),
-											onPress: () => {
-												helper.userId = "";
-												helper.password = "";
-												performLogout();
-												dispatch(logout());
-												dispatch(setDormPassword(""));
-												dispatch(scheduleClear());
-												dispatch(deepseekClear());
-												dispatch(setActiveLibBookRecord([]));
-												dispatch(setActiveSportsReservationRecord([]));
-												dispatch(setBalance(0));
-											},
-										},
-									],
-									{cancelable: true},
-								);
+							popupTitle={getStr("logout")} popupFulfillText={getStr("logout")}
+							popupCancelable popupCanFulfill
+							popupOnTriggered={() => setClearLogoutCache(false)}
+							popupOnCancelled={() => {}}
+							popupContent={<View style={{paddingHorizontal: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+								<Text style={style.text}>{getStr("clearLogoutCache")}</Text>
+								<Switch value={clearLogoutCache} onValueChange={setClearLogoutCache}
+									accessibilityLabel={getStr("clearLogoutCache")}
+									ios_backgroundColor={theme.colors.inputBorder}
+									thumbColor={theme.colors.themeLightGrey}
+									trackColor={{false: theme.colors.inputBorder, true: theme.colors.themePurple}} />
+							</View>}
+							popupOnFulfilled={() => {
+								performLogout();
+								dispatch(logout());
+								if (clearLogoutCache) {
+									dispatch(setDormPassword(""));
+									dispatch(scheduleClear());
+									dispatch(deepseekClear());
+									dispatch(setActiveLibBookRecord([]));
+									dispatch(setActiveSportsReservationRecord([]));
+									dispatch(setBalance(0));
+								}
 							}}>
 							<Text
 								style={[
@@ -228,7 +216,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								]}>
 								{getStr("logout")}
 							</Text>
-						</TouchableOpacity>
+						</BottomPopupTriggerView>
 					</RoundedView>
 				)}
 				<View style={{height: 80}} />

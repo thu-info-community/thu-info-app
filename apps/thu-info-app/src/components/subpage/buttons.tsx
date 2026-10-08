@@ -17,6 +17,7 @@ type ButtonProps = {
 	style?: StyleProp<ViewStyle>;
 	accessibilityLabel?: string;
 	testID?: string;
+	numberOfLines?: number;
 };
 
 const AppButton = ({
@@ -27,6 +28,7 @@ const AppButton = ({
 	style,
 	accessibilityLabel,
 	testID,
+	numberOfLines,
 	fill,
 }: ButtonProps & {fill: string}) => {
 	const {colors} = themes(useColorScheme());
@@ -55,6 +57,7 @@ const AppButton = ({
 				<ActivityIndicator color={colors.contentBackground} />
 			) : (
 				<Text
+					numberOfLines={numberOfLines}
 					style={{
 						color: inactive ? colors.fontB3 : colors.contentBackground,
 						fontSize: 18,
@@ -88,6 +91,7 @@ export const SecondaryButton = ({
 	style,
 	accessibilityLabel,
 	testID,
+	numberOfLines,
 }: ButtonProps) => {
 	const {colors} = themes(useColorScheme());
 	const inactive = disabled || loading;
@@ -116,7 +120,9 @@ export const SecondaryButton = ({
 			{loading ? (
 				<ActivityIndicator color={colors.text} />
 			) : (
-				<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
+				<Text
+					numberOfLines={numberOfLines}
+					style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
 					{text}
 				</Text>
 			)}

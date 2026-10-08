@@ -161,7 +161,7 @@ export const logoutNetwork = async (helper: InfoHelper, device: Device): Promise
         }
     });
 
-export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean): Promise<string> =>
+export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boolean, password = helper.password): Promise<string> =>
     roamingWrapper(helper, "default", NETWORK_ROAM_ID, async () => {
         await ensureNetworkLoggedIn();
 
@@ -171,7 +171,7 @@ export const loginNetwork = async (helper: InfoHelper, ip: string, internet: boo
         const resp = cheerio.load(await uFetch(NETWORK_IMPORT_DEVICE_URL, {
             "_csrf-8800": csrfToken,
             "CertificationForm[ip]": ip,
-            "CertificationForm[password]": helper.password,
+            "CertificationForm[password]": password,
             "CertificationForm[type]": internet ? "out" : "in",
         }));
 

@@ -1,7 +1,9 @@
 import {beforeEach, expect, jest, test} from "@jest/globals";
 import {sm2} from "sm-crypto";
 import {InfoHelper} from "../index";
-import {__idCredentialFormForTest, login, passwordlessEntry, roam} from "./core";
+import {__idCredentialFormForTest, login, passwordlessEntry, roam, roamingWrapper, withAuthTransaction} from "./core";
+import {authenticatePasskey} from "./passkey";
+import {PasskeyError} from "../utils/error";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {
     GET_COOKIE_URL,
@@ -20,6 +22,7 @@ jest.mock("../utils/network", () => ({
     getRedirectUrl: jest.fn(),
     uFetch: jest.fn(),
 }));
+jest.mock("./passkey", () => ({authenticatePasskey: jest.fn()}));
 
 const PUBLIC_KEY = sm2.generateKeyPairHex().publicKey;
 
@@ -247,4 +250,65 @@ test("the mocked account never touches the network", async () => {
     expect(helper.mocked()).toEqual(true);
     expect(jest.mocked(uFetch)).not.toHaveBeenCalled();
     expect(clearCookies).not.toHaveBeenCalled();
+});
+
+test("an already authenticated ID website skips the login form", async () => {
+    const settings = "<title>账号设置 - 清华大学用户电子身份服务系统</title><body>账号设置</body>";
+    mockFetch({entry: settings});
+    expect(await roam(mockLogin(), "id_website", "")).toBe(settings);
+    expect(postedTo(ID_WEBSITE_LOGIN_URL)).toBeUndefined();
+});
+
+test("parallel passwordless logins share one signature and cookie reset", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    const credential = {keyId: "local", credentialId: "id", userId: "2026000000", userHandle: "handle",
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
+    helper.passkeyCredential = credential;
+    jest.mocked(authenticatePasskey).mockResolvedValue(credential.userId);
+    await Promise.all(Array.from({length: 5}, () => login(helper, credential.userId, "")));
+    expect(clearCookies).toHaveBeenCalledTimes(1);
+    // One WebVPN login and one independent portal bootstrap, both use the selected mode.
+    expect(authenticatePasskey).toHaveBeenCalledTimes(2);
+    expect(helper.password).toBe("");
+    expect(helper.hasAuthentication()).toBe(true);
+});
+
+test("terminal Passkey errors do not retry roaming or fall back to passwords", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    helper.userId = "2026000000";
+    helper.passkeyCredential = {keyId: "local", userId: helper.userId} as NonNullable<InfoHelper["passkeyCredential"]>;
+    const operation = jest.fn(async () => { throw new PasskeyError("missing", "请重新设置。"); });
+    await expect(roamingWrapper(helper, "id", "", operation)).rejects.toMatchObject({code: "missing"});
+    expect(operation).toHaveBeenCalledTimes(1);
+    expect(uFetch).not.toHaveBeenCalled();
+    expect(clearCookies).not.toHaveBeenCalled();
+});
+
+test("failed authentication transactions release the queue for the next operation", async () => {
+    let fail!: (error: Error) => void;
+    const first = withAuthTransaction(() => new Promise<void>((_resolve, reject) => { fail = reject; }));
+    const failed = expect(first).rejects.toThrow("offline");
+    const next = jest.fn(async () => "ready");
+    const second = withAuthTransaction(next);
+    await Promise.resolve();
+    expect(next).not.toHaveBeenCalled();
+    fail(new Error("offline"));
+    await failed;
+    await expect(second).resolves.toBe("ready");
+    expect(next).toHaveBeenCalledTimes(1);
+});
+
+test("same-target roaming is shared and releases its pending entry after failure and success", async () => {
+    const helper = mockLogin();
+    const settings = "<title>账号设置</title>";
+    mockFetch({entry: settings});
+    jest.mocked(uFetch).mockRejectedValueOnce(new Error("offline"));
+    await expect(Promise.all([roam(helper, "id_website", ""), roam(helper, "id_website", "")])).rejects.toThrow("offline");
+    expect(uFetch).toHaveBeenCalledTimes(1);
+    await expect(Promise.all([roam(helper, "id_website", ""), roam(helper, "id_website", "")])).resolves.toEqual([settings, settings]);
+    expect(uFetch).toHaveBeenCalledTimes(2);
+    await expect(roam(helper, "id_website", "")).resolves.toBe(settings);
+    expect(uFetch).toHaveBeenCalledTimes(3);
 });

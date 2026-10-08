@@ -47,7 +47,7 @@
 		</dict>
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use Face ID for biometric authentication.</string>
+	<string>Use Face ID to unlock the app and sign in with Passkey.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

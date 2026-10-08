@@ -43,6 +43,7 @@
         "url": "https://github.com/thu-info-community/thu-info-app.git"
     },
     "dependencies": {
+        "buffer": "6.0.3",
         "abort-controller": "3.0.0",
         "cheerio": "1.2.0",
         "cross-fetch": "4.1.0",

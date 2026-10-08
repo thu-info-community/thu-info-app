@@ -63,7 +63,6 @@ jobs:
           SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
         run: |
           openssl aes-256-cbc -k "$SECRET_PASSWORD" -in apps/thu-info-app/android/app/THUInfo.jks.enc -out apps/thu-info-app/android/app/THUInfo.jks -d
-          sed -i "/preventRoot/d" apps/thu-info-app/android/app/src/main/java/com/unidy2002/thuinfo/MainApplication.kt
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
