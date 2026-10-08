@@ -111,8 +111,6 @@ import {
     searchProjects,
 } from "./lib/gitlab";
 import {CalendarData} from "./models/schedule/calendar";
-import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-lib";
-import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
 import {getDegreeProgramCompletion, getFullDegreeProgram} from "./lib/program";
@@ -1035,12 +1033,6 @@ export class InfoHelper {
     public getGitProjectFileBlob = async (id: number, sha: string) => getProjectFileBlob(this, id, sha);
 
     public renderGitMarkdown = async (text: string) => renderMarkdown(this, text);
-
-    public searchReservesLib = async (bookName: string, page?: number) => searchReservesLib(this, bookName, page);
-
-    public getReservesLibBookDetail = async (bookId: string) => bookDetail(this, bookId);
-
-    public reservesLibDownloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void) => downloadChapters(chapters, setCompletion);
 
     public getDegreeProgramCompletion = async () => getDegreeProgramCompletion(this);
 

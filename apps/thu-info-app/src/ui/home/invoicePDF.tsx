@@ -1,8 +1,7 @@
 import {RootStackParamList} from "../../components/Root";
-import {useColorScheme, View} from "react-native";
 import Pdf from "react-native-pdf";
 import {RouteProp} from "@react-navigation/native";
-import themedStyles from "../../utils/themedStyles";
+import {ViewerContainer} from "../../components/subpage/viewer";
 
 export const InvoicePDFScreen = ({
 	route: {
@@ -11,26 +10,12 @@ export const InvoicePDFScreen = ({
 }: {
 	route: RouteProp<RootStackParamList, "InvoicePDF">;
 }) => {
-	const themeName = useColorScheme();
-	const style = styles(themeName);
 	return (
-		<View style={style.container}>
+		<ViewerContainer>
 			<Pdf
-				style={style.pdf}
+				style={{flex: 1}}
 				source={{uri: `data:application/pdf;base64,${base64}`}}
 			/>
-		</View>
+		</ViewerContainer>
 	);
 };
-
-const styles = themedStyles((theme) => ({
-	container: {
-		flex: 1,
-		justifyContent: "flex-start",
-		alignItems: "stretch",
-	},
-	pdf: {
-		flex: 1,
-		backgroundColor: theme.colors.themeBackground,
-	},
-}));

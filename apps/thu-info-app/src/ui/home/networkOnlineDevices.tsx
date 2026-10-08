@@ -22,6 +22,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { styles } from "../settings/settings";
 import { NetworkRetry } from "../../components/easySnackbars.ts";
 import { RootNav } from "../../components/Root.tsx";
+import {PrimaryButton} from "../../components/subpage/buttons";
 
 const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) => {
 	const themeName = useColorScheme();
@@ -224,56 +225,43 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							trackColor={{ false: colors.inputBorder, true: colors.themePurple }}
 						/>
 					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							padding: 4,
-							backgroundColor: colors.themePurple,
-						}}>
-						<TouchableOpacity
-							style={{
-								padding: 8,
-							}}
-							onPress={() => {
-								if (importIp === "") {
+					<PrimaryButton
+						text={getStr("proxyImport")}
+						onPress={() => {
+							if (importIp === "") {
+								Snackbar.show({
+									text: getStr("ipAddrEmpty"),
+									duration: Snackbar.LENGTH_SHORT,
+								});
+								return;
+							}
+
+							helper
+								.loginNetworkDevice(importIp, internetAccess, usesPasskey ? importPassword : undefined)
+								.then((s) => {
 									Snackbar.show({
-										text: getStr("ipAddrEmpty"),
+										text: getStr("importSuccess") + " " + s,
 										duration: Snackbar.LENGTH_SHORT,
 									});
-									return;
-								}
+								})
+								.then(refresh)
+								.catch((e) => {
+									let message = e?.message;
 
-								helper
-									.loginNetworkDevice(importIp, internetAccess, usesPasskey ? importPassword : undefined)
-									.then((s) => {
-										Snackbar.show({
-											text: getStr("importSuccess") + " " + s,
-											duration: Snackbar.LENGTH_SHORT,
-										});
-									})
-									.then(refresh)
-									.catch((e) => {
-										let message = e?.message;
+									if (message === "ip_already_online_error") {
+										message = getStr("importAlreadyOnline");
+									} else if (!/E\d+:/g.test(message)) {
+										message = getStr("networkRetry") + message;
+									}
 
-										if (message === "ip_already_online_error") {
-											message = getStr("importAlreadyOnline");
-										} else if (!/E\d+:/g.test(message)) {
-											message = getStr("networkRetry") + message;
-										}
-
-										Snackbar.show({
-											text: message,
-											duration: Snackbar.LENGTH_SHORT,
-										});
-									})
-									.finally(() => setImportPassword(""));
-							}}>
-							<Text style={{ color: "white", fontSize: 14 }}>
-								{getStr("proxyImport")}
-							</Text>
-						</TouchableOpacity>
-					</View>
+									Snackbar.show({
+										text: message,
+										duration: Snackbar.LENGTH_SHORT,
+									});
+								})
+								.finally(() => setImportPassword(""));
+						}}
+					/>
 				</View>
 			</GestureHandlerRootView>
 		</KeyboardAvoidingView>

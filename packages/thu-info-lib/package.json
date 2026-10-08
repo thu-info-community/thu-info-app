@@ -49,17 +49,20 @@
         "cross-fetch": "4.1.0",
         "crypto-js": "4.2.0",
         "dayjs": "1.11.23",
-        "he": "^1.2.0",
+        "he": "^2.0.0",
         "iconv-lite": "0.7.3",
         "sm-crypto": "^0.5.0"
     },
     "devDependencies": {
+        "@babel/core": "7.29.7",
+        "@babel/preset-env": "7.29.7",
         "@types/crypto-js": "4.2.2",
         "@types/he": "1.2.3",
         "@types/jest": "^30.0.0",
         "@types/sm-crypto": "^0.3.4",
         "@typescript-eslint/eslint-plugin": "*",
         "@typescript-eslint/parser": "*",
+        "babel-jest": "30.5.2",
         "eslint": "8.57.1",
         "esm": "3.2.25",
         "jest": "30.5.2",
@@ -74,6 +77,15 @@
     },
     "jest": {
         "preset": "ts-jest",
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "transform": {
+            "^.+\\.mjs$": [
+                "babel-jest",
+                {
+                    "presets": [["@babel/preset-env", {"targets": {"node": "current"}}]]
+                }
+            ]
+        },
+        "transformIgnorePatterns": ["node_modules/(?!he/)"]
     }
 }

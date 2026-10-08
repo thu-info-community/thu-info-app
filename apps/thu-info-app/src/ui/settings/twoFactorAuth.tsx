@@ -59,9 +59,11 @@ export const TwoFactorAuthScreen = ({
 				style={{flex: 1}}
 				keyboardShouldPersistTaps="handled"
 				contentContainerStyle={{
+					// Top-aligned, like every other form sub-page: this is a step the
+					// user is walked through, not a splash, so the prompt belongs right
+					// under the header instead of floating in the middle of the screen.
 					flexGrow: 1,
 					padding: 12,
-					justifyContent: "center",
 				}}>
 				<View style={{width: "100%", maxWidth: 480, alignSelf: "center"}}>
 					<Text style={{marginLeft: 8, color: colors.fontB2, marginTop: 12}}>

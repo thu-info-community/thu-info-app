@@ -1,13 +1,8 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import {useEffect, useState} from "react";
-import {
-	Text,
-	View,
-	TextInput,
-	ScrollView,
-	TouchableOpacity,
-} from "react-native";
+import {Text, View, TextInput, ScrollView} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {StarRating} from "../../components/home/form";
@@ -238,18 +233,12 @@ export const FormScreen = ({
 				{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
 				{evaluationForm &&
 					renderEvaluation(evaluationForm.assistants, "assistant")}
-				<TouchableOpacity
-					style={[
-						style.buttonStyle,
-						{
-							backgroundColor:
-								evaluationForm === undefined ? "lightgrey" : colors.primaryLight,
-						},
-					]}
+				<PrimaryButton
+					text={getStr("post")}
 					onPress={post}
-					disabled={evaluationForm === undefined}>
-					<Text style={style.buttonTextStyle}>{getStr("post")}</Text>
-				</TouchableOpacity>
+					disabled={evaluationForm === undefined}
+					style={{alignSelf: "flex-end", marginVertical: 40}}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
@@ -310,21 +299,5 @@ const styles = themedStyles(({colors}) => ({
 		alignSelf: "center",
 		marginVertical: 5,
 		color: colors.text,
-	},
-
-	buttonStyle: {
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		justifyContent: "center",
-		alignItems: "center",
-		borderRadius: 4,
-		alignSelf: "flex-end",
-		marginVertical: 40,
-	},
-
-	buttonTextStyle: {
-		color: "white",
-		fontWeight: "bold",
-		fontSize: 20,
 	},
 }));

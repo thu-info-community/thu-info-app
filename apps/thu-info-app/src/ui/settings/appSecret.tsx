@@ -20,6 +20,7 @@ import {configSet} from "../../redux/slices/config";
 import ReactNativeBiometrics from "react-native-biometrics";
 import {Snackbar} from "react-native-snackbar";
 import {clearAppSecret} from "../../redux/slices/config";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -63,7 +64,7 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 			: getStr("enter") + protectedText + getStr("when");
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
@@ -215,6 +216,6 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 					</RoundedView>}
 				</>
 			)}
-		</View>
+		</SubPageScreen>
 	);
 };

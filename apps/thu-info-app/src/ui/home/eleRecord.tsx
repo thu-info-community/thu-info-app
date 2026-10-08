@@ -24,7 +24,7 @@ export const EleRecordScreen = roundedRefreshListScreen(
 					<Text style={{fontSize: 16, marginBottom: 3, color: colors.text}}>
 						{status}
 					</Text>
-					<Text style={{color: "grey"}}>{time}</Text>
+					<Text style={{color: colors.fontB2}}>{time}</Text>
 				</View>
 				<View style={{flex: 1, alignItems: "flex-end"}}>
 					<Text style={{fontSize: 20, color: colors.text}}>{value}</Text>

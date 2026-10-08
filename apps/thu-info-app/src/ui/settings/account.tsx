@@ -4,7 +4,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {
 	Alert,
 	Platform,
-	ScrollView,
 	Switch,
 	Text,
 	TouchableOpacity,
@@ -15,6 +14,7 @@ import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
+import {SubPageScreen} from "../../components/subpage/containers";
 import {configSet} from "../../redux/slices/config";
 import themes from "../../assets/themes/themes";
 import {Snackbar} from "react-native-snackbar";
@@ -35,13 +35,7 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 
 	return (
-		<ScrollView
-			contentContainerStyle={{
-				padding: 12,
-				width: "100%",
-				maxWidth: 640,
-				alignSelf: "center",
-			}}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("infoAccount")}</Text>
@@ -147,6 +141,6 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 					</TouchableOpacity>
 				</RoundedView>
 			)}
-		</ScrollView>
+		</SubPageScreen>
 	);
 };

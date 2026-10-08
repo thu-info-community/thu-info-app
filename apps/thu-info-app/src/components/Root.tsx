@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
-import {TouchableOpacity, useColorScheme, View} from "react-native";
+import {useColorScheme, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {FloatingTabBar, TAB_BAR_CLEARANCE} from "./FloatingTabBar";
 import {useResponsive} from "../utils/useResponsive";
@@ -22,7 +22,6 @@ import {
 	LibrarySection,
 	LibRoomRes,
 } from "@thu-info/lib/src/models/home/library";
-import {SearchResultItem} from "@thu-info/lib/src/models/home/reserves-lib";
 import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
 import {
 	ScheduleDetailProps,
@@ -47,8 +46,6 @@ import {LibRoomBookRecordScreen} from "../ui/home/libRoomBookRecord";
 import {DormScoreScreen} from "../ui/home/dormScore";
 import {InvoiceScreen} from "../ui/home/invoice";
 import {InvoicePDFScreen} from "../ui/home/invoicePDF";
-import {ReservesLibWelcomeScreen} from "../ui/home/reservesLibWelcome";
-import {ReservesLibPDFScreen} from "../ui/home/reservesLibPDF";
 import {SportsScreen} from "../ui/home/sports";
 import {SportsDetailScreen} from "../ui/home/sportsDetail";
 import {SportsSelectParams, SportsSelectScreen} from "../ui/home/sportsSelect";
@@ -297,8 +294,6 @@ type HomeStackParamList = {
 	Invoice: undefined;
 	InvoicePDF: {base64: string; filename: string};
 	Income: undefined;
-	ReservesLibWelcome: undefined;
-	ReservesLibPDF: {book: SearchResultItem};
 	Qzyq: QzyqSelectParams;
 	WaterSelectBrand: undefined;
 	WaterSelectTicketNumber: QzyqSelectParams;
@@ -347,11 +342,6 @@ export type LibRoomPerformBookProp = RouteProp<
 	HomeStackParamList,
 	"LibRoomPerformBook"
 >;
-export type ReservesLibPDFProp = RouteProp<
-	HomeStackParamList,
-	"ReservesLibPDF"
->;
-
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
@@ -450,6 +440,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 export type RootNav = StackNavigationProp<RootStackParamList>;
 
+import {HeaderActionButton} from "./subpage/headerAction";
+
 export const Root = () => {
 	return (
 		<Stack.Navigator>
@@ -495,13 +487,10 @@ export const Root = () => {
 				options={({navigation}) => ({
 					title: getStr("campusCard"),
 					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("LoseCard")}>
-								<IconLoseCard width={24} height={24} />
-							</TouchableOpacity>
-						</View>
+						<HeaderActionButton
+							onPress={() => navigation.navigate("LoseCard")}>
+							<IconLoseCard width={24} height={24} />
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -546,11 +535,10 @@ export const Root = () => {
 				options={({navigation}) => ({
 					title: getStr("library"),
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+						<HeaderActionButton
 							onPress={() => navigation.navigate("LibBookRecord")}>
 							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -560,11 +548,10 @@ export const Root = () => {
 				options={({route, navigation}) => ({
 					title: route.params.library.zhName,
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+						<HeaderActionButton
 							onPress={() => navigation.navigate("LibBookRecord")}>
 							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -574,13 +561,10 @@ export const Root = () => {
 				options={({route, navigation}) => ({
 					title: route.params.floor.zhName,
 					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 8, marginHorizontal: 4}}
-								onPress={() => navigation.navigate("LibraryMap", route.params)}>
-								<IconLocal width={24} height={24} />
-							</TouchableOpacity>
-						</View>
+						<HeaderActionButton
+							onPress={() => navigation.navigate("LibraryMap", route.params)}>
+							<IconLocal width={24} height={24} />
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -590,15 +574,12 @@ export const Root = () => {
 				options={({route, navigation}) => ({
 					title: route.params.section.zhName,
 					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 8, marginHorizontal: 4}}
-								onPress={() =>
-									navigation.navigate("LibrarySeatMap", route.params)
-								}>
-								<IconLocal width={24} height={24} />
-							</TouchableOpacity>
-						</View>
+						<HeaderActionButton
+							onPress={() =>
+								navigation.navigate("LibrarySeatMap", route.params)
+							}>
+							<IconLocal width={24} height={24} />
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -623,11 +604,10 @@ export const Root = () => {
 				options={({navigation}) => ({
 					title: getStr("libRoomBook"),
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+						<HeaderActionButton
 							onPress={() => navigation.navigate("LibRoomBookRecord")}>
 							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -671,18 +651,15 @@ export const Root = () => {
 				}) => ({
 					title: getStr("invoice"),
 					headerRight: () => (
-						<View style={{flexDirection: "row"}}>
-							<TouchableOpacity
-								style={{paddingHorizontal: 16, marginHorizontal: 4}}
-								onPress={() => {
-									Share.open({
-										url: `data:application/pdf;base64,${base64}`,
-										filename,
-									});
-								}}>
-								<IconShare height={24} width={24} />
-							</TouchableOpacity>
-						</View>
+						<HeaderActionButton
+							onPress={() => {
+								Share.open({
+									url: `data:application/pdf;base64,${base64}`,
+									filename,
+								});
+							}}>
+							<IconShare height={24} width={24} />
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -692,26 +669,15 @@ export const Root = () => {
 				options={{title: getStr("graduateIncome")}}
 			/>
 			<Stack.Screen
-				name="ReservesLibWelcome"
-				component={ReservesLibWelcomeScreen}
-				options={{title: getStr("reservesLib")}}
-			/>
-			<Stack.Screen
-				name="ReservesLibPDF"
-				component={ReservesLibPDFScreen}
-				options={({route}) => ({title: route.params.book.title})}
-			/>
-			<Stack.Screen
 				name="Sports"
 				component={SportsScreen}
 				options={({navigation}) => ({
 					title: getStr("sportsBook"),
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, marginHorizontal: 4}}
+						<HeaderActionButton
 							onPress={() => navigation.navigate("SportsRecord")}>
 							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					),
 				})}
 			/>
@@ -793,11 +759,10 @@ export const Root = () => {
 				options={({navigation}) => ({
 					title: getStr("electricity"),
 					headerRight: () => (
-						<TouchableOpacity
-							style={{paddingHorizontal: 16, margin: 4}}
+						<HeaderActionButton
 							onPress={() => navigation.navigate("EleRecord")}>
 							<IconHistory width={24} height={24} />
-						</TouchableOpacity>
+						</HeaderActionButton>
 					),
 				})}
 			/>

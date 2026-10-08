@@ -1,5 +1,6 @@
 import {WebView} from "react-native-webview";
-import {BackHandler, Platform, Text, TouchableOpacity, View} from "react-native";
+import {BackHandler, Platform, View} from "react-native";
+import {PrimaryButton, SecondaryButton} from "../../components/subpage/buttons";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
@@ -60,60 +61,32 @@ export const PrivacyScreen = ({navigation}: {navigation: RootNav}) => {
 				/>
 			</View>
 			{(privacy312 !== true && !(Platform.OS === "android" || Platform.OS === "ios")) && <View style={{flex: 0, flexDirection: "row"}}>
-				<TouchableOpacity
-					style={{
-						padding: 8,
-						marginTop: 8,
-						marginBottom: 24,
-						marginHorizontal: 8,
-						flex: 1,
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: 4,
-						alignSelf: "flex-end",
-						backgroundColor: theme.colors.themePurple,
-					}}
+				<PrimaryButton
+					text={getStr("accept")}
 					onPress={() => {
 						dispatch(configSet({key: "privacy312", value: true}));
 						navigation.pop();
-					}}>
-					<Text
-						style={{
-							color: "white",
-							fontWeight: "400",
-							fontSize: 16,
-							lineHeight: 20,
-						}}>
-						{getStr("accept")}
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
+					}}
 					style={{
-						padding: 8,
+						flex: 1,
+						marginHorizontal: 8,
 						marginTop: 8,
 						marginBottom: 24,
-						marginHorizontal: 8,
-						flex: 1,
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: 4,
-						alignSelf: "flex-end",
-						backgroundColor: theme.colors.themePurple,
 					}}
+				/>
+				<SecondaryButton
+					text={getStr("decline")}
 					onPress={() => {
 						dispatch(configSet({key: "privacy312", value: false}));
 						BackHandler.exitApp();
-					}}>
-					<Text
-						style={{
-							color: "white",
-							fontWeight: "400",
-							fontSize: 16,
-							lineHeight: 20,
-						}}>
-						{getStr("decline")}
-					</Text>
-				</TouchableOpacity>
+					}}
+					style={{
+						flex: 1,
+						marginHorizontal: 8,
+						marginTop: 8,
+						marginBottom: 24,
+					}}
+				/>
 			</View>}
 		</>
 	);

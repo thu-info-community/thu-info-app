@@ -1,15 +1,9 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {getStr} from "../../utils/i18n";
-import {
-	Text,
-	ScrollView,
-	TextInput,
-	TouchableOpacity,
-	useColorScheme,
-} from "react-native";
+import {Text, ScrollView, TextInput, useColorScheme} from "react-native";
 import {helper} from "../../redux/store";
 import themes from "../../assets/themes/themes";
-import {RoundedView} from "../../components/views";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import {useState} from "react";
 import {Snackbar} from "react-native-snackbar";
 
@@ -78,9 +72,8 @@ export const PeekScoreScreen = () => {
 					}}>
 					{getStr("peekScorePrompt")}
 				</Text>
-				<TouchableOpacity
-					style={{marginTop: 32}}
-					disabled={querying}
+				<PrimaryButton
+					text={getStr(querying ? "querying" : "query")}
 					onPress={() => {
 						setQuerying(true);
 						helper
@@ -96,19 +89,10 @@ export const PeekScoreScreen = () => {
 								}),
 							)
 							.then(() => setQuerying(false));
-					}}>
-					<RoundedView
-						style={{
-							backgroundColor: colors.statusWarning,
-							paddingVertical: 8,
-							paddingHorizontal: 32,
-							borderRadius: 4,
-						}}>
-						<Text style={{color: "white", fontSize: 16}}>
-							{getStr(querying ? "querying" : "query")}
-						</Text>
-					</RoundedView>
-				</TouchableOpacity>
+					}}
+					disabled={querying}
+					style={{alignSelf: "center", marginTop: 32}}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);

@@ -1,17 +1,10 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {
-	ScrollView,
-	View,
-	TextInput,
-	Text,
-	TouchableOpacity,
-} from "react-native";
+import {ScrollView, View} from "react-native";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
-import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
 import IconLock from "../../assets/icons/IconLock";
 import IconPerson from "../../assets/icons/IconPerson";
@@ -21,13 +14,14 @@ import {NetworkRetry} from "../../components/easySnackbars";
 import {Snackbar} from "react-native-snackbar";
 import {DormAuthError} from "@thu-info/lib/src/utils/error";
 import {RoundedView} from "../../components/views";
+import {PrimaryButton, SecondaryButton} from "../../components/subpage/buttons";
+import {ThemedTextInput} from "../../components/subpage/fields";
 
 export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const [password, setPassword] = useState("");
 	const [processing, setProcessing] = useState(false);
 
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
 	const style = styles(themeName);
 
 	const userId = useSelector((s: State) => s.auth.userId);
@@ -41,27 +35,26 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={style.form}>
 					<RoundedView style={style.inputRounded}>
 						<IconPerson width={18} height={18} />
-						<TextInput
+						<ThemedTextInput
 							style={style.textInputStyle}
 							placeholder={getStr("userId")}
-							placeholderTextColor={theme.colors.fontB3}
 							value={userId}
 							editable={false}
 						/>
 					</RoundedView>
 					<RoundedView style={style.inputRounded}>
 						<IconLock width={18} height={18} />
-						<TextInput
+						<ThemedTextInput
 							style={style.textInputStyle}
 							placeholder={getStr("password")}
-							placeholderTextColor={theme.colors.fontB3}
 							value={password}
 							onChangeText={setPassword}
 							secureTextEntry
 						/>
 					</RoundedView>
-					<TouchableOpacity
+					<PrimaryButton
 						style={style.loginButtonStyle}
+						text={getStr("login")}
 						disabled={processing}
 						onPress={() => {
 							setProcessing(true);
@@ -86,28 +79,21 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 									}
 								})
 								.then(() => setProcessing(false));
-						}}>
-						<RoundedView style={style.loginRounded}>
-							<Text style={style.loginButtonTextStyle}>{getStr("login")}</Text>
-						</RoundedView>
-					</TouchableOpacity>
-					<TouchableOpacity
+						}}
+					/>
+					<SecondaryButton
 						style={style.resetButtonStyle}
+						text={getStr("resetPassword")}
 						disabled={processing}
-						onPress={() => navigation.navigate("ResetDormPassword")}>
-						<RoundedView style={style.loginRounded}>
-							<Text style={style.loginButtonTextStyle}>
-								{getStr("resetPassword")}
-							</Text>
-						</RoundedView>
-					</TouchableOpacity>
+						onPress={() => navigation.navigate("ResetDormPassword")}
+					/>
 				</View>
 			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
 };
 
-export const styles = themedStyles((theme) => {
+export const styles = themedStyles(() => {
 	return {
 		container: {
 			flexGrow: 1,
@@ -126,7 +112,6 @@ export const styles = themedStyles((theme) => {
 		},
 
 		textInputStyle: {
-			color: theme.colors.text,
 			flex: 1,
 			textAlign: "left",
 			marginLeft: 16,
@@ -134,27 +119,11 @@ export const styles = themedStyles((theme) => {
 		},
 
 		loginButtonStyle: {
-			flexDirection: "row",
 			marginTop: 24,
-			justifyContent: "center",
-			alignItems: "center",
-		},
-
-		loginRounded: {
-			flex: 1,
-			justifyContent: "center",
-			alignItems: "center",
-		},
-
-		loginButtonTextStyle: {
-			color: theme.colors.themePurple,
 		},
 
 		resetButtonStyle: {
-			flexDirection: "row",
 			marginTop: 12,
-			justifyContent: "center",
-			alignItems: "center",
 		},
 	};
 });

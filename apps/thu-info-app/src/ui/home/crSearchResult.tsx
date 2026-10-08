@@ -15,6 +15,8 @@ import themes from "../../assets/themes/themes";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {CrSearchResultInfo} from "@thu-info/lib/src/models/cr/cr";
 import {CourseTimeQuickGlance} from "../../components/home/cr";
+import {Separator} from "../../components/subpage/rows";
+import {roundedListContent, spacing} from "../../components/subpage/tokens";
 
 export const CrSearchResultScreen = ({
 	route,
@@ -62,8 +64,9 @@ export const CrSearchResultScreen = ({
 	return (
 		<FlatList
 			testID="cr-search-results"
-			style={{flex: 1}}
+			style={{flex: 1, margin: spacing.md}}
 			data={searchResult}
+			contentContainerStyle={roundedListContent(colors, searchResult.length > 0)}
 			refreshControl={
 				<ThemedRefreshControl
 					refreshing={refreshing}
@@ -82,47 +85,54 @@ export const CrSearchResultScreen = ({
 					time,
 					credits,
 				},
+				index,
 			}) => (
-				<TouchableOpacity
-					onPress={() => {
-						Snackbar.show({
-							text: "选课功能还在开发中，敬请期待……",
-							duration: Snackbar.LENGTH_SHORT,
-						});
-					}}
-					style={{
-						paddingHorizontal: 15,
-						paddingVertical: 6,
-						flexDirection: "row",
-						justifyContent: "space-between",
-					}}>
-					<View style={{flex: 2, alignItems: "flex-start"}}>
-						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-							{name}
-						</Text>
-						<Text style={{marginVertical: 2, color: colors.text}}>
-							{teacher}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{id}-{seq} ({credits} cr)
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseTime")} {time}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseRemaining")}{" "}
-							{Number.isFinite(remaining) ? remaining : "--"}/
-							{Number.isFinite(capacity) ? capacity : "--"}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseQueue")} {Number.isFinite(queue) ? queue : "--"}
-						</Text>
-					</View>
-					<View
-						style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-						<CourseTimeQuickGlance time={time} width={7 * 15} height={6 * 15} />
-					</View>
-				</TouchableOpacity>
+				<>
+					{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+					<TouchableOpacity
+						onPress={() => {
+							Snackbar.show({
+								text: "选课功能还在开发中，敬请期待……",
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						}}
+						style={{
+							paddingVertical: spacing.sm,
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}>
+						<View style={{flex: 2, alignItems: "flex-start"}}>
+							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+								{name}
+							</Text>
+							<Text style={{marginVertical: 2, color: colors.text}}>
+								{teacher}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{id}-{seq} ({credits} cr)
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseTime")} {time}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseRemaining")}{" "}
+								{Number.isFinite(remaining) ? remaining : "--"}/
+								{Number.isFinite(capacity) ? capacity : "--"}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseQueue")} {Number.isFinite(queue) ? queue : "--"}
+							</Text>
+						</View>
+						<View
+							style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+							<CourseTimeQuickGlance
+								time={time}
+								width={7 * 15}
+								height={6 * 15}
+							/>
+						</View>
+					</TouchableOpacity>
+				</>
 			)}
 			keyExtractor={({id, seq}) => `${id}-${seq}`}
 			onEndReached={() => refresh(false)}
