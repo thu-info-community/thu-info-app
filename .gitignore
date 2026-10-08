@@ -85,3 +85,6 @@ yarn-error.log
 
 # HarmonyOS linux buildkit
 .hvigor/
+
+# Impeccable tool state (matches at any depth, so both .impeccable dirs)
+.impeccable/
