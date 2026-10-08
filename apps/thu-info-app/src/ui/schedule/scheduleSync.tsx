@@ -27,7 +27,7 @@ const styles = themedStyles((theme) => ({
 		marginHorizontal: 10,
 		marginVertical: 5,
 		textAlign: "left",
-		color: "red",
+		color: theme.colors.statusError,
 	},
 	tokenStyle: {
 		margin: 10,
@@ -56,7 +56,7 @@ const styles = themedStyles((theme) => ({
 		borderRadius: 8,
 	},
 	buttonTextStyle: {
-		color: "white",
+		color: theme.colors.contentBackground,
 		fontWeight: "bold",
 	},
 }));

@@ -39,10 +39,11 @@ import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
 import {ScheduleTimeAxis} from "../../components/schedule/schedule";
 import {buildScheduleLayout, ScheduleLayout} from "../../utils/scheduleLayout";
+import {scheduleHeaderFontSize} from "../../utils/scheduleHeaderFont";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
-import {useColorScheme} from "react-native";
+import {useColorScheme, useWindowDimensions} from "react-native";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconDown from "../../assets/icons/IconDown";
@@ -410,6 +411,7 @@ export const MAX_UNIT_WIDTH = 96;
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
 	const {isWide} = useResponsive();
+	const {fontScale} = useWindowDimensions();
 	const [contentWidth, setContentWidth] = useState(0);
 	const {baseSchedule, shortenMap} = useSelector((s: State) => s.schedule);
 	const {firstDay, weekCount, nextSemesterIndex} = useSelector(
@@ -1081,10 +1083,20 @@ export const ScheduleScreen = () => {
 										justifyContent: "center",
 									}}
 									key={`frozen-${index + 1}`}>
+									{/* 格子宽度由屏幕算出，所以这两个标签得自己适配它：大系统字体下固定字号
+									    会撑破格子，把日期的最后一位裁掉（10/02 → 10/0）。 */}
 									<Text
+										allowFontScaling={false}
+										maxFontSizeMultiplier={1}
+										numberOfLines={1}
 										style={{
 											textAlign: "center",
-											fontSize: 12,
+											fontSize: scheduleHeaderFontSize({
+												unitWidth,
+												text: getStr("dayOfWeek")[index + 1],
+												baseSize: 12,
+												fontScale,
+											}).fontSize,
 											color: theme.colors.fontB1,
 										}}>
 										{getStr("dayOfWeek")[index + 1]}
@@ -1102,9 +1114,19 @@ export const ScheduleScreen = () => {
 										}}
 									/>
 									<Text
+										allowFontScaling={false}
+										maxFontSizeMultiplier={1}
+										numberOfLines={1}
 										style={{
 											textAlign: "center",
-											fontSize: 9,
+											fontSize: scheduleHeaderFontSize({
+												unitWidth,
+												text: dayjs(firstDay)
+													.add(currentWeekIndex * 7 + index, "day")
+													.format("MM/DD"),
+												baseSize: 9,
+												fontScale,
+											}).fontSize,
 											color: theme.colors.fontB1,
 										}}>
 										{dayjs(firstDay)

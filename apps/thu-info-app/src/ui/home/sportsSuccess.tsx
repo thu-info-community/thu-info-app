@@ -1,15 +1,10 @@
-import {
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	useColorScheme,
-	View,
-} from "react-native";
+import {ScrollView, Text, useColorScheme, View} from "react-native";
 import {RootNav, SportsSuccessProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../../components/views";
 import IconSuccess from "../../assets/icons/IconSuccess";
+import {PrimaryButton} from "../../components/subpage/buttons";
 
 const Row = ({left, right}: {left: string; right: string}) => {
 	const themeName = useColorScheme();
@@ -93,28 +88,13 @@ export const SportsSuccessScreen = ({
 						/>
 					)}
 					<View style={{height: 12}} />
-					<TouchableOpacity
-						style={{
-							padding: 8,
-							justifyContent: "center",
-							alignItems: "center",
-							borderRadius: 4,
-							alignSelf: "flex-end",
-							backgroundColor: colors.themePurple,
-						}}
+					<PrimaryButton
+						text={getStr("pay")}
 						onPress={() => {
 							navigation.replace("SportsRecord");
-						}}>
-						<Text
-							style={{
-								color: "white",
-								fontWeight: "400",
-								fontSize: 16,
-								lineHeight: 20,
-							}}>
-							{getStr("pay")}
-						</Text>
-					</TouchableOpacity>
+						}}
+						style={{alignSelf: "flex-end"}}
+					/>
 				</View>
 			</RoundedView>
 		</ScrollView>

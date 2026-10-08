@@ -18,6 +18,7 @@ import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
 import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
@@ -291,22 +292,9 @@ export const SportsSelectScreen = ({
 					{getStr("needToPay")}
 					{field?.cost ?? 0}
 				</Text>
-				<TouchableOpacity
-					style={{
-						padding: 8,
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: 4,
-						alignSelf: "flex-end",
-						margin: 12,
-						backgroundColor:
-							field === undefined ||
-							(!helper.mocked() &&
-								(captcha.trim().length === 0 ||
-									phoneNumber.trim().length === 0))
-								? "lightgrey"
-								: colors.themePurple,
-					}}
+				<PrimaryButton
+					text={getStr("submitOrder")}
+					style={{alignSelf: "flex-end", margin: 12}}
 					onPress={() => {
 						if (field && field.cost > 42) {
 							Alert.alert(
@@ -359,17 +347,8 @@ export const SportsSelectScreen = ({
 						processing ||
 						(!helper.mocked() &&
 							(captcha.trim().length === 0 || phoneNumber.trim().length === 0))
-					}>
-					<Text
-						style={{
-							color: "white",
-							fontWeight: "400",
-							fontSize: 20,
-							lineHeight: 24,
-						}}>
-						{getStr("submitOrder")}
-					</Text>
-				</TouchableOpacity>
+					}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

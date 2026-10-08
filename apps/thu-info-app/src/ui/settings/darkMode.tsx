@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {styles} from "./settings";
 import IconCheck from "../../assets/icons/IconCheck";
 import {configSet} from "../../redux/slices/config";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const DarkModeScreen = () => {
 	const themeName = useColorScheme();
@@ -15,7 +16,7 @@ export const DarkModeScreen = () => {
 	const dispatch = useDispatch();
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen scroll={false}>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
@@ -35,6 +36,6 @@ export const DarkModeScreen = () => {
 					{darkMode === true && <IconCheck width={18} height={18} />}
 				</TouchableOpacity>
 			</RoundedView>
-		</View>
+		</SubPageScreen>
 	);
 };

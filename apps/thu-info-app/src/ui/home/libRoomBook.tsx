@@ -48,7 +48,7 @@ export const LibRoomBookScreen = roundedRefreshListScreen(
 						color:
 							item.kindName.indexOf("暂未开放") === -1
 								? theme.colors.text
-								: "gray",
+								: theme.colors.fontB3,
 						fontSize: 18,
 						marginBottom: 4,
 						textDecorationLine:
@@ -59,7 +59,7 @@ export const LibRoomBookScreen = roundedRefreshListScreen(
 					{item.roomName}
 					{item.maxUser > 1 ? ` (${item.minUser}~${item.maxUser})` : ""}
 				</Text>
-				<Text style={{color: "grey", marginBottom: 4}}>{item.kindName}</Text>
+				<Text style={{color: theme.colors.fontB2, marginBottom: 4}}>{item.kindName}</Text>
 				<LibRoomBookTimeIndicator res={item} />
 			</View>
 		</TouchableOpacity>
