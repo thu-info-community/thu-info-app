@@ -26,7 +26,6 @@ import {useResponsive} from "../../utils/useResponsive";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
-import IconBook from "../../assets/icons/IconBook";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
 import IconInvoice from "../../assets/icons/IconInvoice";
 import IconIncome from "../../assets/icons/IconIncome";
@@ -450,7 +449,6 @@ export type HomeFunction =
 	| "cr"
 	| "library"
 	| "libRoomBook"
-	| "reservesLib"
 	| "expenditure"
 	| "finance"
 	| "campusCard"
@@ -590,15 +588,6 @@ const getHomeFunctions = (
 			navigate("LibRoomSelect");
 		}}>
 		<IconLibRoom width={iconSize} height={iconSize} />
-	</HomeIcon>,
-	<HomeIcon
-		key="reservesLib"
-		title="reservesLib"
-		onPress={() => {
-			updateTop5("reservesLib");
-			navigate("ReservesLibWelcome");
-		}}>
-		<IconBook width={iconSize} height={iconSize} />
 	</HomeIcon>,
 	<HomeIcon
 		key="campusCard"

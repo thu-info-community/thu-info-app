@@ -312,7 +312,6 @@ export default {
 	schedule: "Schedule",
 	study: "Academic and Score",
 	resources: "Resources",
-	reservesLib: "Course Reserve",
 	invoice: "Fapiao",
 	graduateIncome: "Graduate Income",
 	eCard: "E-Card",

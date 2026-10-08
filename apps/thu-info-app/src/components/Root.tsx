@@ -22,7 +22,6 @@ import {
 	LibrarySection,
 	LibRoomRes,
 } from "@thu-info/lib/src/models/home/library";
-import {SearchResultItem} from "@thu-info/lib/src/models/home/reserves-lib";
 import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
 import {
 	ScheduleDetailProps,
@@ -47,8 +46,6 @@ import {LibRoomBookRecordScreen} from "../ui/home/libRoomBookRecord";
 import {DormScoreScreen} from "../ui/home/dormScore";
 import {InvoiceScreen} from "../ui/home/invoice";
 import {InvoicePDFScreen} from "../ui/home/invoicePDF";
-import {ReservesLibWelcomeScreen} from "../ui/home/reservesLibWelcome";
-import {ReservesLibPDFScreen} from "../ui/home/reservesLibPDF";
 import {SportsScreen} from "../ui/home/sports";
 import {SportsDetailScreen} from "../ui/home/sportsDetail";
 import {SportsSelectParams, SportsSelectScreen} from "../ui/home/sportsSelect";
@@ -297,8 +294,6 @@ type HomeStackParamList = {
 	Invoice: undefined;
 	InvoicePDF: {base64: string; filename: string};
 	Income: undefined;
-	ReservesLibWelcome: undefined;
-	ReservesLibPDF: {book: SearchResultItem};
 	Qzyq: QzyqSelectParams;
 	WaterSelectBrand: undefined;
 	WaterSelectTicketNumber: QzyqSelectParams;
@@ -347,11 +342,6 @@ export type LibRoomPerformBookProp = RouteProp<
 	HomeStackParamList,
 	"LibRoomPerformBook"
 >;
-export type ReservesLibPDFProp = RouteProp<
-	HomeStackParamList,
-	"ReservesLibPDF"
->;
-
 export type SportsDetailProp = RouteProp<HomeStackParamList, "SportsDetail">;
 
 export type SportsSelectProp = RouteProp<HomeStackParamList, "SportsSelect">;
@@ -677,16 +667,6 @@ export const Root = () => {
 				name="Income"
 				component={IncomeScreen}
 				options={{title: getStr("graduateIncome")}}
-			/>
-			<Stack.Screen
-				name="ReservesLibWelcome"
-				component={ReservesLibWelcomeScreen}
-				options={{title: getStr("reservesLib")}}
-			/>
-			<Stack.Screen
-				name="ReservesLibPDF"
-				component={ReservesLibPDFScreen}
-				options={({route}) => ({title: route.params.book.title})}
 			/>
 			<Stack.Screen
 				name="Sports"

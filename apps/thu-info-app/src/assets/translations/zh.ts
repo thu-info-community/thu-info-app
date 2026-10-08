@@ -302,7 +302,6 @@ export default {
 	schedule: "日程",
 	study: "学习与成绩",
 	resources: "资源",
-	reservesLib: "教参平台",
 	invoice: "电子发票",
 	graduateIncome: "研究生收入",
 	eCard: "校园卡相关",
