@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Mirror of src/assets/colors/dark.ts (`primary`). -->
+	<color name="theme_primary">#7A2694</color>
+</resources>

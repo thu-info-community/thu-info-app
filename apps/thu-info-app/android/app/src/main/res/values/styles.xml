@@ -6,6 +6,11 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Native accent (AlertDialog buttons, switches, ...) follows the app theme color. -->
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary</item>
+        <item name="colorAccent">@color/theme_primary</item>
+        <item name="android:colorAccent">@color/theme_primary</item>
     </style>
 
 </resources>
