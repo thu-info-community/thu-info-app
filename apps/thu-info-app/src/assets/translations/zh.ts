@@ -785,6 +785,7 @@ export default {
 	scheduleHeightLabel: "日程高度",
 	enableNewUI: "使用半透明 UI",
 	rechargeSuccess: "充值成功",
+	redirectToAlipay: "正在跳转到支付宝充值……",
 	deepseekWelcomeText: "可以向我询问任何感兴趣的问题 ！",
 	enableBubbleMessage: "DeepSeek消息以气泡模式显示",
 	bubbleMessageHint: "关闭后将以列表模式显示",
