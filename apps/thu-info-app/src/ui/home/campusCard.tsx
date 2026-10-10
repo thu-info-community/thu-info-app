@@ -131,15 +131,26 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							date: dayjs().format("YYYY-MM-DD"),
 						}),
 					);
-					Snackbar.show({
-						text: getStr("rechargeSuccess"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
 					setMoney("");
 					setMoneyQuickSelected(undefined);
 					refresh();
 					if (typeof r === "string") {
-						Linking.openURL(r);
+						Snackbar.show({
+							text: getStr("redirectToAlipay"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
+						Linking.openURL(r).catch(() =>
+							Snackbar.show({
+								text: getStr("alipayRequired"),
+								duration: Snackbar.LENGTH_INDEFINITE,
+								action: {text: getStr("ok")},
+							}),
+						);
+					} else {
+						Snackbar.show({
+							text: getStr("rechargeSuccess"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
 					}
 				})
 				.catch((e) => {
