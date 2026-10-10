@@ -96,7 +96,7 @@
 		"@types/semver": "7.8.0",
 		"babel-jest": "30.5.2",
 		"babel-plugin-transform-remove-console": "6.9.4",
-		"dotenv": "18.0.6",
+		"dotenv": "18.0.7",
 		"eslint": "8.57.1",
 		"jest": "30.5.2",
 		"patch-package": "8.0.1",
