@@ -828,6 +828,7 @@ export default {
 	scheduleHeightLabel: "Schedule height",
 	enableNewUI: "Use translucent UI",
 	rechargeSuccess: "Recharge succeeded.",
+	redirectToAlipay: "Redirecting to Alipay to complete the recharge...",
 	deepseekWelcomeText: "Ask me anything!",
 	enableBubbleMessage: "Show DeepSeek messages in bubble",
 	bubbleMessageHint: "Turn off to show its messages in list",
