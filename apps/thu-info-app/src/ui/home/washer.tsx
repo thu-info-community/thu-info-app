@@ -1,13 +1,20 @@
-import { FlatList, ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+	FlatList,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import themes from "../../assets/themes/themes";
-import { useEffect, useState } from "react";
-import { getStr } from "../../utils/i18n";
-import type { RootNav } from "../../components/Root";
-import { IconStarButton } from "../../components/news/IconStarButton";
-import { useDispatch, useSelector } from "react-redux";
-import { configSet } from "../../redux/slices/config";
-import type { State } from "../../redux/store";
-import { NetworkRetry } from "../../components/easySnackbars.ts";
+import {useEffect, useState} from "react";
+import {getStr} from "../../utils/i18n";
+import type {RootNav} from "../../components/Root";
+import {IconStarButton} from "../../components/news/IconStarButton";
+import {useDispatch, useSelector} from "react-redux";
+import {configSet} from "../../redux/slices/config";
+import type {State} from "../../redux/store";
+import {NetworkRetry} from "../../components/easySnackbars.ts";
 import {
 	fetchJieliBuildings,
 	fetchJieliFloors,
@@ -16,7 +23,13 @@ import {
 	fetchXiaolanFloors,
 	isWasherFavourite,
 } from "../../utils/washer";
-import type {WasherBuilding as building, WasherBuildingGroup, Washer, WasherFloor as Floor, WasherProvider} from "../../utils/washer";
+import type {
+	WasherBuilding as building,
+	WasherBuildingGroup,
+	Washer,
+	WasherFloor as Floor,
+	WasherProvider,
+} from "../../utils/washer";
 
 type buildingGroup = WasherBuildingGroup;
 
@@ -37,10 +50,12 @@ const WASHER_STATUS_LABELS = {
 	unknown: "washerUnknown",
 } as const;
 
-export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
+export const WasherScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
-	const [selectedProvider, setSelectedProvider] = useState<WasherProvider | "all">("all");
+	const [selectedProvider, setSelectedProvider] = useState<
+		WasherProvider | "all"
+	>("all");
 
 	const currentFavourites = useSelector(
 		(s: State) => s.config.washerFavourites ?? [],
@@ -54,22 +69,30 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	useEffect(() => {
 		const controller = new AbortController();
 		setFetchedBuildingGroups([]);
-		fetchJieliBuildings(controller.signal).then((groups) => {
-			if (!controller.signal.aborted) setFetchedBuildingGroups(groups);
-		}).catch((error) => {
-			if (!controller.signal.aborted) NetworkRetry(error);
-		});
-		fetchHaileBuildings(controller.signal).then((groups) => {
-			if (!controller.signal.aborted) setHaileGroups(groups);
-		}).catch((error) => {
-			if (!controller.signal.aborted) NetworkRetry(error);
-		});
+		fetchJieliBuildings(controller.signal)
+			.then((groups) => {
+				if (!controller.signal.aborted) setFetchedBuildingGroups(groups);
+			})
+			.catch((error) => {
+				if (!controller.signal.aborted) NetworkRetry(error);
+			});
+		fetchHaileBuildings(controller.signal)
+			.then((groups) => {
+				if (!controller.signal.aborted) setHaileGroups(groups);
+			})
+			.catch((error) => {
+				if (!controller.signal.aborted) NetworkRetry(error);
+			});
 		return () => controller.abort();
 	}, []);
 
 	let buildingGroups: buildingGroup[] = [
-		...(selectedProvider === "all" || selectedProvider === "jieli" ? fetchedBuildingGroups : []),
-		...(selectedProvider === "all" || selectedProvider === "haile" ? haileGroups : []),
+		...(selectedProvider === "all" || selectedProvider === "jieli"
+			? fetchedBuildingGroups
+			: []),
+		...(selectedProvider === "all" || selectedProvider === "haile"
+			? haileGroups
+			: []),
 	];
 	const favouriteBuildings = new Map<string, building>();
 	for (const favourite of currentFavourites) {
@@ -89,8 +112,8 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	}
 
 	const renderBuildingGroup = ({name, buildings}: buildingGroup) => (
-		<View style={{ flexDirection: "column", marginBottom: 32 }}>
-			<View style={{ flexDirection: "row", marginHorizontal: 16 }}>
+		<View style={{flexDirection: "column", marginBottom: 32}}>
+			<View style={{flexDirection: "row", marginHorizontal: 16}}>
 				<View
 					style={{
 						flex: 1,
@@ -140,7 +163,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 								padding: 16,
 								marginBottom: 8,
 								marginHorizontal: 8,
-								width: 170,
+								minWidth: 170,
 							}}>
 							<Text
 								style={{
@@ -158,7 +181,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	);
 
 	const renderCredit = () => (
-		<View style={{ marginHorizontal: 24, marginBottom: 32 }}>
+		<View style={{marginHorizontal: 24, marginBottom: 32}}>
 			<Text
 				style={{
 					color: theme.colors.primary,
@@ -170,7 +193,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 	);
 
 	return (
-		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
+		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<ScrollView
 				horizontal
 				showsHorizontalScrollIndicator={false}
@@ -194,22 +217,27 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 								alignItems: "center",
 								justifyContent: "center",
 							}}>
-							<Text style={{
-								color: selected ? theme.colors.primary : theme.colors.fontB2,
-								fontSize: 16,
-								fontWeight: "600",
-								textAlign: "center",
-							}}>
+							<Text
+								style={{
+									color: selected ? theme.colors.primary : theme.colors.fontB2,
+									fontSize: 16,
+									fontWeight: "600",
+									textAlign: "center",
+								}}>
 								{getStr(label)}
 							</Text>
-							<View style={{
-								position: "absolute",
-								bottom: 4,
-								width: 24,
-								height: 3,
-								borderRadius: 2,
-								backgroundColor: selected ? theme.colors.primary : "transparent",
-							}} />
+							<View
+								style={{
+									position: "absolute",
+									bottom: 4,
+									width: 24,
+									height: 3,
+									borderRadius: 2,
+									backgroundColor: selected
+										? theme.colors.primary
+										: "transparent",
+								}}
+							/>
 						</TouchableOpacity>
 					);
 				})}
@@ -218,7 +246,7 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 				key={selectedProvider}
 				ListFooterComponent={renderCredit()}
 				data={buildingGroups}
-				renderItem={({ item }) => renderBuildingGroup(item)}
+				renderItem={({item}) => renderBuildingGroup(item)}
 				keyExtractor={(item) => item.name}
 			/>
 		</View>
@@ -227,8 +255,10 @@ export const WasherScreen = ({ navigation }: { navigation: RootNav }) => {
 
 export type WasherDetailProps = building;
 
-export const WasherDetailScreen = ({ route }: {
-	route: { params: WasherDetailProps };
+export const WasherDetailScreen = ({
+	route,
+}: {
+	route: {params: WasherDetailProps};
 }) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
@@ -249,13 +279,17 @@ export const WasherDetailScreen = ({ route }: {
 		const controller = new AbortController();
 		setXiaolanLoading(true);
 		setXiaolanError(false);
-		fetchXiaolanFloors(id, controller.signal).then((detail) => {
-			if (!controller.signal.aborted) setXiaolanDetail({buildingId: id, ...detail});
-		}).catch(() => {
-			if (!controller.signal.aborted) setXiaolanError(true);
-		}).finally(() => {
-			if (!controller.signal.aborted) setXiaolanLoading(false);
-		});
+		fetchXiaolanFloors(id, controller.signal)
+			.then((detail) => {
+				if (!controller.signal.aborted)
+					setXiaolanDetail({buildingId: id, ...detail});
+			})
+			.catch(() => {
+				if (!controller.signal.aborted) setXiaolanError(true);
+			})
+			.finally(() => {
+				if (!controller.signal.aborted) setXiaolanLoading(false);
+			});
 		return () => controller.abort();
 	}, [id, provider, xiaolanReload]);
 
@@ -268,21 +302,30 @@ export const WasherDetailScreen = ({ route }: {
 		if (provider === "xiaolan") return;
 		const controller = new AbortController();
 		setFetchedFloors([]);
-		const fetchFloors = provider === "jieli" ? fetchJieliFloors : fetchHaileFloors;
-		fetchFloors(id, controller.signal).then((floors) => {
-			if (!controller.signal.aborted) setFetchedFloors(floors);
-		}).catch((error) => {
-			if (!controller.signal.aborted) NetworkRetry(error);
-		});
+		const fetchFloors =
+			provider === "jieli" ? fetchJieliFloors : fetchHaileFloors;
+		fetchFloors(id, controller.signal)
+			.then((floors) => {
+				if (!controller.signal.aborted) setFetchedFloors(floors);
+			})
+			.catch((error) => {
+				if (!controller.signal.aborted) NetworkRetry(error);
+			});
 		return () => controller.abort();
 	}, [id, provider]);
 
-	const currentDetail = xiaolanDetail?.buildingId === id ? xiaolanDetail : undefined;
-	const sourceFloors = provider === "xiaolan" ? currentDetail?.floors ?? [] : fetchedFloors;
-	const floors = sourceFloors.map((floor) => ({
-		...floor,
-		favourite: currentFavourites.some((value) => isWasherFavourite(value, route.params, floor.id ?? floor.name)),
-	})).sort((a, b) => Number(b.favourite) - Number(a.favourite));
+	const currentDetail =
+		xiaolanDetail?.buildingId === id ? xiaolanDetail : undefined;
+	const sourceFloors =
+		provider === "xiaolan" ? (currentDetail?.floors ?? []) : fetchedFloors;
+	const floors = sourceFloors
+		.map((floor) => ({
+			...floor,
+			favourite: currentFavourites.some((value) =>
+				isWasherFavourite(value, route.params, floor.id ?? floor.name),
+			),
+		}))
+		.sort((a, b) => Number(b.favourite) - Number(a.favourite));
 
 	const RenderFloor = (
 		name: string,
@@ -291,8 +334,8 @@ export const WasherDetailScreen = ({ route }: {
 		roomId: string,
 	) => {
 		return (
-			<View key={roomId} style={{ flexDirection: "column", marginBottom: 16 }}>
-				<View style={{ flexDirection: "row", margin: 16 }}>
+			<View key={roomId} style={{flexDirection: "column", marginBottom: 16}}>
+				<View style={{flexDirection: "row", margin: 16}}>
 					<View
 						style={{
 							flex: 1,
@@ -312,8 +355,13 @@ export const WasherDetailScreen = ({ route }: {
 							active={favourite}
 							onPress={() => {
 								const updatedFavourites = favourite
-									? currentFavourites.filter((f) => !isWasherFavourite(f, route.params, roomId))
-									: [...currentFavourites, {building: {...route.params}, roomId}];
+									? currentFavourites.filter(
+											(f) => !isWasherFavourite(f, route.params, roomId),
+										)
+									: [
+											...currentFavourites,
+											{building: {...route.params}, roomId},
+										];
 
 								dispatch(
 									configSet({
@@ -359,7 +407,7 @@ export const WasherDetailScreen = ({ route }: {
 								borderRadius: 16,
 								padding: 16,
 								margin: 8,
-								width: 170,
+								minWidth: 170,
 								justifyContent: "center",
 							}}>
 							<Text
@@ -376,8 +424,7 @@ export const WasherDetailScreen = ({ route }: {
 										color: theme.colors.fontB2,
 										fontSize: 12,
 										textAlign: "center",
-									}}
-								>
+									}}>
 									{item.name}
 								</Text>
 							)}
@@ -395,11 +442,20 @@ export const WasherDetailScreen = ({ route }: {
 								}}>
 								{item.status === "working" && provider === "jieli"
 									? item.eta + " " + getStr("minutesAbbr")
-									: getStr(WASHER_STATUS_LABELS[item.status] ?? "washerUnknown")}
+									: getStr(
+											WASHER_STATUS_LABELS[item.status] ?? "washerUnknown",
+										)}
 							</Text>
 							{item.status === "working" && item.estimatedCompleteTime && (
-								<Text style={{color: theme.colors.fontB2, fontSize: 12, textAlign: "center"}}>
-									{getStr("washerEstimatedEnd") + " " + item.estimatedCompleteTime.toLocaleString()}
+								<Text
+									style={{
+										color: theme.colors.fontB2,
+										fontSize: 12,
+										textAlign: "center",
+									}}>
+									{getStr("washerEstimatedEnd") +
+										" " +
+										item.estimatedCompleteTime.toLocaleString()}
 								</Text>
 							)}
 							{provider === "jieli" && item.updateTime && (
@@ -423,33 +479,55 @@ export const WasherDetailScreen = ({ route }: {
 	};
 
 	return (
-		<View style={{ backgroundColor: theme.colors.themeBackground, flex: 1 }}>
+		<View style={{backgroundColor: theme.colors.themeBackground, flex: 1}}>
 			<FlatList
 				data={floors}
 				keyExtractor={(item) => item.id ?? item.name}
 				refreshing={provider === "xiaolan" && xiaolanLoading}
-				onRefresh={provider === "xiaolan" ? () => setXiaolanReload((n) => n + 1) : undefined}
-				ListHeaderComponent={provider === "xiaolan" ? (
-					<View style={{alignItems: "center", padding: 16}}>
-						{currentDetail?.fetchedAt && (
-							<Text style={{color: theme.colors.fontB2}}>
-								{getStr("updateTime") + " " + currentDetail.fetchedAt.toLocaleString()}
-							</Text>
-						)}
-						{xiaolanLoading && <Text style={{color: theme.colors.text}}>{getStr("loading")}</Text>}
-						{xiaolanError && !xiaolanLoading && (
-							<TouchableOpacity onPress={() => setXiaolanReload((n) => n + 1)} style={{padding: 12}}>
-								<Text style={{color: theme.colors.primary}}>
-									{getStr(currentDetail ? "washerRefreshFailed" : "loadFail") + " · " + getStr("washerRetry")}
+				onRefresh={
+					provider === "xiaolan"
+						? () => setXiaolanReload((n) => n + 1)
+						: undefined
+				}
+				ListHeaderComponent={
+					provider === "xiaolan" ? (
+						<View style={{alignItems: "center", padding: 16}}>
+							{currentDetail?.fetchedAt && (
+								<Text style={{color: theme.colors.fontB2}}>
+									{getStr("updateTime") +
+										" " +
+										currentDetail.fetchedAt.toLocaleString()}
 								</Text>
-							</TouchableOpacity>
-						)}
-					</View>
-				) : null}
-				ListEmptyComponent={provider === "xiaolan" && !xiaolanLoading && !xiaolanError ? (
-					<Text style={{color: theme.colors.text, textAlign: "center"}}>{getStr("noData")}</Text>
-				) : null}
-				renderItem={({ item }) =>
+							)}
+							{xiaolanLoading && (
+								<Text style={{color: theme.colors.text}}>
+									{getStr("loading")}
+								</Text>
+							)}
+							{xiaolanError && !xiaolanLoading && (
+								<TouchableOpacity
+									onPress={() => setXiaolanReload((n) => n + 1)}
+									style={{padding: 12}}>
+									<Text style={{color: theme.colors.primary}}>
+										{getStr(
+											currentDetail ? "washerRefreshFailed" : "loadFail",
+										) +
+											" · " +
+											getStr("washerRetry")}
+									</Text>
+								</TouchableOpacity>
+							)}
+						</View>
+					) : null
+				}
+				ListEmptyComponent={
+					provider === "xiaolan" && !xiaolanLoading && !xiaolanError ? (
+						<Text style={{color: theme.colors.text, textAlign: "center"}}>
+							{getStr("noData")}
+						</Text>
+					) : null
+				}
+				renderItem={({item}) =>
 					RenderFloor(
 						item.name,
 						item.washers,

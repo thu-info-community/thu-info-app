@@ -13,7 +13,7 @@ import {helper} from "../../redux/store";
 import {Form, Person} from "@thu-info/lib/src/models/home/assessment";
 import themedStyles from "../../utils/themedStyles";
 import {RoundedView} from "../../components/views";
-import { styles as settingsStyle } from "../../ui/settings/settings";
+import {styles as settingsStyle} from "../../ui/settings/settings";
 
 export const FormScreen = ({
 	route,
@@ -87,11 +87,7 @@ export const FormScreen = ({
 				<RoundedView key={`Person${i}Questions`}>
 					{person.inputGroups.map((inputGroup, index) => (
 						<View key={`Person${i}Question${index}`}>
-							{index > 0 && (
-								<View
-									style={separatorStyle}
-								/>
-							)}
+							{index > 0 && <View style={separatorStyle} />}
 							<View style={{marginHorizontal: 12}}>
 								<Text style={style.questionTextStyle}>
 									{inputGroup.question ?? ""}
@@ -109,7 +105,7 @@ export const FormScreen = ({
 					style={{marginTop: 8, padding: 16}}>
 					<TextInput
 						style={{
-							height: 100,
+							minHeight: 100,
 							textAlign: "left",
 							alignSelf: "stretch",
 							textAlignVertical: "top",
@@ -182,11 +178,7 @@ export const FormScreen = ({
 			<ScrollView
 				style={style.container}
 				showsVerticalScrollIndicator={false}
-				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-					/>
-				}>
+				refreshControl={<ThemedRefreshControl refreshing={refreshing} />}>
 				<View style={[style.titleContainer, {marginTop: 16}]}>
 					<View
 						style={[style.titleIcon, {backgroundColor: colors.statusWarning}]}
@@ -213,7 +205,7 @@ export const FormScreen = ({
 				<RoundedView style={{marginTop: 8, padding: 16}}>
 					<TextInput
 						style={{
-							height: 100,
+							minHeight: 100,
 							textAlign: "left",
 							alignSelf: "stretch",
 							textAlignVertical: "top",

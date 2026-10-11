@@ -57,6 +57,10 @@ export const LibraryReservationCard = () => {
 						style={{
 							padding: 10,
 							flexDirection: "row",
+							// The seat string and the 取消预约 link together exceed the
+							// card at a large font; let the link drop to its own line.
+							flexWrap: "wrap",
+							justifyContent: "center",
 							alignItems: "center",
 						}}>
 						<Text
@@ -155,10 +159,7 @@ export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}>
 			<>
 				{libraryList.length > 0 && (
@@ -195,6 +196,8 @@ export const LibraryScreen = ({navigation}: {navigation: RootNav}) => {
 									<Text
 										style={{
 											fontSize: 16,
+											flex: 1,
+											minWidth: 0,
 											color: library.valid ? colors.text : colors.fontB2,
 										}}>
 										{library.zhName}

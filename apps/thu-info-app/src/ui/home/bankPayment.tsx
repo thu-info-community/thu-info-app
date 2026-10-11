@@ -116,9 +116,10 @@ const BankPaymentMonth = ({
 				flexDirection: "row",
 				justifyContent: "space-between",
 				alignItems: "center",
+				flexWrap: "wrap",
+				columnGap: 8,
 			}}>
 			<Text
-				numberOfLines={1}
 				style={{
 					fontSize: 16,
 					color: colors.text,
@@ -127,11 +128,11 @@ const BankPaymentMonth = ({
 				{month}
 			</Text>
 			<Text
-				numberOfLines={1}
 				style={{
 					fontSize: 16,
 					color: colors.text,
 					marginRight: 16,
+					flexShrink: 1,
 				}}>
 				￥{payment.reduce((acc, {total}) => acc + Number(total), 0).toFixed(2)}
 			</Text>

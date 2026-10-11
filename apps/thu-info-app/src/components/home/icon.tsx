@@ -36,7 +36,7 @@ export const HomeIcon = ({title, onPress, children}: HomeIconProps) => {
 					textAlign: "center",
 				}}
 				ellipsizeMode="tail"
-				numberOfLines={1}>
+				numberOfLines={2}>
 				{getStr(title)}
 			</Text>
 		</TouchableOpacity>

@@ -7,6 +7,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {
@@ -30,6 +31,7 @@ import {
 } from "../../components/Root";
 import {styles} from "../settings/settings";
 import IconCheck from "../../assets/icons/IconCheck";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export interface QzyqSelectParams {
 	ticketNumber: number;
@@ -54,6 +56,7 @@ export const WaterScreen = ({
 	const [correspondent, setCorrespondent] = useState("");
 	const [address, setAddress] = useState("");
 	const [waterNumber, setWaterNumber] = useState(1);
+	const {fontScale} = useWindowDimensions();
 
 	const load = () => {
 		if (waterId !== undefined) {
@@ -81,12 +84,14 @@ export const WaterScreen = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							档案号
 						</Text>
@@ -96,7 +101,7 @@ export const WaterScreen = ({
 								color: colors.fontB3,
 								textAlign: "right",
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 								padding: 0,
 							}}
 							value={waterId ?? ""}
@@ -121,12 +126,14 @@ export const WaterScreen = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							联系人
 						</Text>
@@ -134,7 +141,7 @@ export const WaterScreen = ({
 							style={{
 								color: colors.fontB3,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{correspondent}
 						</Text>
@@ -152,12 +159,14 @@ export const WaterScreen = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							送水地址
 						</Text>
@@ -165,7 +174,7 @@ export const WaterScreen = ({
 							style={{
 								color: colors.fontB3,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{address}
 						</Text>
@@ -177,12 +186,14 @@ export const WaterScreen = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							订水量
 						</Text>
@@ -199,8 +210,8 @@ export const WaterScreen = ({
 								<Text
 									style={{
 										color: waterNumber <= 0 ? colors.fontB3 : colors.text,
-										width: 24,
-										height: 24,
+										minWidth: 24,
+										minHeight: 24,
 										textAlign: "center",
 										textAlignVertical: "center",
 										fontSize: 16,
@@ -212,8 +223,8 @@ export const WaterScreen = ({
 							<Text
 								style={{
 									color: colors.text,
-									width: 40,
-									height: 24,
+									minWidth: 40,
+									minHeight: 24,
 									textAlign: "center",
 									textAlignVertical: "center",
 									fontSize: 16,
@@ -225,8 +236,8 @@ export const WaterScreen = ({
 								<Text
 									style={{
 										color: colors.text,
-										width: 24,
-										height: 24,
+										minWidth: 24,
+										minHeight: 24,
 										textAlign: "center",
 										textAlignVertical: "center",
 										fontSize: 16,
@@ -250,12 +261,14 @@ export const WaterScreen = ({
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							订水品牌
 						</Text>
@@ -264,7 +277,7 @@ export const WaterScreen = ({
 								style={{
 									color: colors.fontB3,
 									fontSize: 16,
-									lineHeight: 24,
+									lineHeight: scaledLineHeight(24, fontScale),
 								}}>
 								{waterBrandIdToName[waterBrand]}
 							</Text>
@@ -280,17 +293,21 @@ export const WaterScreen = ({
 						]}
 					/>
 					<TouchableOpacity
-						onPress={() => navigation.navigate("WaterSelectTicketNumber", params)}
+						onPress={() =>
+							navigation.navigate("WaterSelectTicketNumber", params)
+						}
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
 							justifyContent: "space-between",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							订水票量
 						</Text>
@@ -299,7 +316,7 @@ export const WaterScreen = ({
 								style={{
 									color: colors.fontB3,
 									fontSize: 16,
-									lineHeight: 24,
+									lineHeight: scaledLineHeight(24, fontScale),
 								}}>
 								{params.ticketNumber} 张
 							</Text>

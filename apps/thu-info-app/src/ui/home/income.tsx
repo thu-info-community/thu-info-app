@@ -6,6 +6,7 @@ import {helper} from "../../redux/store";
 import {BottomPopupTriggerView} from "../../components/views";
 import dayjs from "dayjs";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
 import {GraduateIncome} from "@thu-info/lib/src/models/home/bank.ts";
 import {NetworkRetry} from "../../components/easySnackbars.ts";
 import {Separator} from "../../components/subpage/rows";
@@ -30,71 +31,71 @@ export const BottomPopup = ({
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// The wheel lays each option in a row of exactly `itemHeight` pixels; the
+	// option text scales with the system font, so the row must scale too.
+	const pickerItemHeight = useScaledSize(48);
 
-	return <View style={{flex: 1, alignItems: "center"}}><BottomPopupTriggerView
-		popupTitle={`${popupYear}.${popupMonth}`}
-		popupContent={
-			<View style={{flexDirection: "row"}}>
-				<ScrollPicker
-					style={{flex: 1}}
-					dataSource={Array.from(
-						new Array(today.year() - 1911 + 1),
-						(_, k) => String(k + 1911),
-					).reverse()}
-					selectedIndex={today.year() - popupYear}
-					renderItem={(data) => (
-						<Text
-							style={{color: colors.fontB1, fontSize: 20}}
-							key={data}>
-							{data}
-						</Text>
-					)}
-					onValueChange={(_, selectedIndex) => {
-						setPopupYear(today.year() - selectedIndex);
-					}}
-					wrapperHeight={200}
-					wrapperBackground={colors.contentBackground}
-					itemHeight={48}
-					highlightColor={colors.themeGrey}
-					highlightBorderWidth={1}
-				/>
-				<ScrollPicker
-					style={{flex: 1}}
-					dataSource={Array.from(
-						new Array(12),
-						(_, k) => String(k + 1),
-					)}
-					selectedIndex={popupMonth - 1}
-					renderItem={(data) => (
-						<Text
-							style={{color: colors.fontB1, fontSize: 20}}
-							key={data}>
-							{data}
-						</Text>
-					)}
-					onValueChange={(_, selectedIndex) => {
-						setPopupMonth(selectedIndex + 1);
-					}}
-					wrapperHeight={200}
-					wrapperBackground={colors.contentBackground}
-					itemHeight={48}
-					highlightColor={colors.themeGrey}
-					highlightBorderWidth={1}
-				/>
-			</View>
-		}
-		popupCanFulfill={true}
-		popupOnFulfilled={() => {
-			setYear(popupYear);
-			setMonth(popupMonth);
-		}}
-		popupOnCancelled={() => {}}>
-		<View style={{flexDirection: "row", alignItems: "center"}}>
-			<Text style={{color: colors.fontB1, fontSize: 16, flex: 0}}>
-				{`${year}.${month}`}
-			</Text>
+	return (
+		<View style={{flexGrow: 1, flexShrink: 0, alignItems: "center"}}>
+			<BottomPopupTriggerView
+				popupTitle={`${popupYear}.${popupMonth}`}
+				popupContent={
+					<View style={{flexDirection: "row"}}>
+						<ScrollPicker
+							style={{flex: 1}}
+							dataSource={Array.from(
+								new Array(today.year() - 1911 + 1),
+								(_, k) => String(k + 1911),
+							).reverse()}
+							selectedIndex={today.year() - popupYear}
+							renderItem={(data) => (
+								<Text style={{color: colors.fontB1, fontSize: 20}} key={data}>
+									{data}
+								</Text>
+							)}
+							onValueChange={(_, selectedIndex) => {
+								setPopupYear(today.year() - selectedIndex);
+							}}
+							wrapperHeight={pickerItemHeight * 4}
+							wrapperBackground={colors.contentBackground}
+							itemHeight={pickerItemHeight}
+							highlightColor={colors.themeGrey}
+							highlightBorderWidth={1}
+						/>
+						<ScrollPicker
+							style={{flex: 1}}
+							dataSource={Array.from(new Array(12), (_, k) => String(k + 1))}
+							selectedIndex={popupMonth - 1}
+							renderItem={(data) => (
+								<Text style={{color: colors.fontB1, fontSize: 20}} key={data}>
+									{data}
+								</Text>
+							)}
+							onValueChange={(_, selectedIndex) => {
+								setPopupMonth(selectedIndex + 1);
+							}}
+							wrapperHeight={pickerItemHeight * 4}
+							wrapperBackground={colors.contentBackground}
+							itemHeight={pickerItemHeight}
+							highlightColor={colors.themeGrey}
+							highlightBorderWidth={1}
+						/>
+					</View>
+				}
+				popupCanFulfill={true}
+				popupOnFulfilled={() => {
+					setYear(popupYear);
+					setMonth(popupMonth);
+				}}
+				popupOnCancelled={() => {}}>
+				<View style={{flexDirection: "row", alignItems: "center"}}>
+					<Text style={{color: colors.fontB1, fontSize: 16, flex: 0}}>
+						{`${year}.${month}`}
+					</Text>
+				</View>
+			</BottomPopupTriggerView>
 		</View>
-	</BottomPopupTriggerView></View>;
+	);
 };
 
 export const IncomeScreen = () => {
@@ -112,13 +113,31 @@ export const IncomeScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	const valid = beginYear < endYear || beginYear === endYear && beginMonth <= endMonth;
+	const valid =
+		beginYear < endYear || (beginYear === endYear && beginMonth <= endMonth);
 
 	return (
 		<View style={{flex: 1, backgroundColor: colors.themeBackground}}>
-			<View style={{margin: spacing.md, flexDirection: "row", alignItems: "center"}}>
-				<BottomPopup year={beginYear} setYear={setBeginYear} month={beginMonth} setMonth={setBeginMonth}/>
-				<BottomPopup year={endYear} setYear={setEndYear} month={endMonth} setMonth={setEndMonth}/>
+			<View
+				style={{
+					margin: spacing.md,
+					flexDirection: "row",
+					alignItems: "center",
+					flexWrap: "wrap",
+					rowGap: 8,
+				}}>
+				<BottomPopup
+					year={beginYear}
+					setYear={setBeginYear}
+					month={beginMonth}
+					setMonth={setBeginMonth}
+				/>
+				<BottomPopup
+					year={endYear}
+					setYear={setEndYear}
+					month={endMonth}
+					setMonth={setEndMonth}
+				/>
 				<PrimaryButton
 					text={getStr(processing ? "processing" : "query")}
 					disabled={!valid}
