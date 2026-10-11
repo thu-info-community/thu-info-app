@@ -20,6 +20,7 @@ import {
 	Alert,
 	ActivityIndicator,
 	Pressable,
+	ScrollView as RNScrollView,
 } from "react-native";
 import React, {
 	useState,
@@ -39,10 +40,13 @@ import {helper, State} from "../../redux/store";
 import {scheduleFetch} from "../../redux/slices/schedule";
 import {ScheduleTimeAxis} from "../../components/schedule/schedule";
 import {buildScheduleLayout, ScheduleLayout} from "../../utils/scheduleLayout";
-import {scheduleHeaderFontSize} from "../../utils/scheduleHeaderFont";
+import {minCellWidthForLabels} from "../../utils/textMetrics";
+import {computeGridGeometry} from "../../utils/gridGeometry";
+import {layoutScale} from "../../utils/fontScale";
+import {scaledLineHeight} from "../../utils/scaledText";
 import dayjs from "dayjs";
 import {getStr} from "../../utils/i18n";
-import themes from "../../assets/themes/themes";
+import themes, {Theme} from "../../assets/themes/themes";
 import {useColorScheme, useWindowDimensions} from "react-native";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
@@ -101,6 +105,7 @@ const SemesterWeekPicker = ({
 	done: () => void;
 }) => {
 	const theme = themes(useColorScheme());
+	const {fontScale} = useWindowDimensions();
 	return (
 		<>
 			{calendar && (
@@ -162,7 +167,7 @@ const SemesterWeekPicker = ({
 								<Text
 									style={{
 										fontSize: 18,
-										lineHeight: 40,
+										lineHeight: scaledLineHeight(40, fontScale),
 										fontWeight:
 											week !== weekButton && weekNumber === weekButton
 												? "600"
@@ -296,9 +301,11 @@ const Header = React.forwardRef(
 						alignItems: "center",
 						justifyContent: "center",
 					}}>
-					<View style={{flex: 1, minWidth: 88}} />
+					{/* 两侧等权重的可收缩空位把标题居中；它们 basis 为 0，标题放不下时
+					    只会压标题、不会把两侧压成负值。 */}
+					<View style={{flex: 1, minWidth: 0}} />
 					<BottomPopupTriggerView
-						style={{flex: 2, minWidth: 0, alignItems: "center"}}
+						style={{flexShrink: 1, minWidth: 0}}
 						popupTitle={`${getStr("weekNumPrefix")}${week}${getStr(
 							"weekNumSuffix",
 						)}`}
@@ -317,45 +324,52 @@ const Header = React.forwardRef(
 						popupCancelable={true}
 						popupOnFulfilled={() => {}}
 						popupOnCancelled={() => {}}>
+						{/* 周次和学期放在同一行、同一基线上：大字体下这一行横向有空间时
+						    就不再折成两三行（原来学期强制换到周次下面）。 */}
 						<View
 							style={{
 								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "center",
+								flexWrap: "wrap",
+								alignItems: "baseline",
+								columnGap: 8,
+								rowGap: 2,
 							}}>
+							<View style={{flexDirection: "row", alignItems: "center"}}>
+								<Text
+									numberOfLines={2}
+									style={{
+										fontSize: 18,
+										fontWeight: "bold",
+										color: theme.colors.fontB1,
+									}}>
+									{getStr("weekNumPrefix")}
+									{week}
+									{getStr("weekNumSuffix")}
+								</Text>
+								<IconDown width={16} height={16} />
+							</View>
 							<Text
+								numberOfLines={2}
 								style={{
-									fontSize: 18,
-									fontWeight: "bold",
-									color: theme.colors.fontB1,
+									fontSize: 12,
+									color: theme.colors.fontB2,
 								}}>
-								{getStr("weekNumPrefix")}
-								{week}
-								{getStr("weekNumSuffix")}
+								{getStr(
+									semesterType === 1
+										? "autumn"
+										: semesterType === 2
+											? "spring"
+											: semesterType === 3
+												? "summer"
+												: "winter",
+								)}
 							</Text>
-							<IconDown width={16} height={16} />
 						</View>
-						<Text
-							style={{
-								fontSize: 12,
-								color: theme.colors.fontB2,
-								paddingStart: 2,
-							}}>
-							{getStr(
-								semesterType === 1
-									? "autumn"
-									: semesterType === 2
-										? "spring"
-										: semesterType === 3
-											? "summer"
-											: "winter",
-							)}
-						</Text>
 					</BottomPopupTriggerView>
 					<View
 						style={{
 							flex: 1,
-							minWidth: 88,
+							minWidth: 0,
 							flexDirection: "row",
 							justifyContent: "flex-end",
 							gap: 8,
@@ -385,7 +399,7 @@ const Header = React.forwardRef(
 								</TouchableOpacity>
 							</View>
 						)}
-						<View>
+						<View style={{flexShrink: 0}}>
 							<TouchableOpacity
 								accessibilityRole="button"
 								accessibilityLabel={getStr("scheduleSettings")}
@@ -393,7 +407,7 @@ const Header = React.forwardRef(
 								<IconConfig width={24} height={24} />
 							</TouchableOpacity>
 						</View>
-						<View>
+						<View style={{flexShrink: 0}}>
 							<TouchableOpacity onPress={onPressAdd}>
 								<IconAdd width={24} height={24} />
 							</TouchableOpacity>
@@ -407,6 +421,97 @@ const Header = React.forwardRef(
 
 /** 单日列宽上限（dp）。再宽一节课的卡片就会显得空旷。 */
 export const MAX_UNIT_WIDTH = 96;
+
+/**
+ * 冷冻表头：周一…周日 + 日期。
+ *
+ * 列宽由 `computeGridGeometry` 保证不窄于最宽标签，所以这里的标签正常跟随系统
+ * 字体缩放即可，不会再被压小。`align` 决定网格窄于可用宽度时居中显示、还是
+ * overflow 时贴左（配合外层横向滚动）。
+ */
+const FrozenDayStrip = ({
+	dayCount,
+	unitWidth,
+	gridWidth,
+	gutterWidth,
+	weekdays,
+	weekStartOffset,
+	firstDay,
+	current,
+	theme,
+	align,
+}: {
+	dayCount: number;
+	unitWidth: number;
+	gridWidth: number;
+	gutterWidth: number;
+	weekdays: string[];
+	weekStartOffset: number;
+	firstDay: ReturnType<typeof dayjs>;
+	current: ReturnType<typeof dayjs>;
+	theme: Theme;
+	align: "center" | "flex-start";
+}) => (
+	<View
+		style={{
+			flexDirection: "row",
+			minHeight: 40,
+			backgroundColor: theme.colors.contentBackground,
+		}}>
+		<View style={{width: gutterWidth}} />
+		<View style={{flex: 1, alignItems: align}}>
+			<View style={{flexDirection: "row", width: gridWidth}}>
+				{Array.from(new Array(dayCount)).map((_, index) => (
+					<View
+						style={{
+							width: unitWidth,
+							padding: 4,
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+						key={`frozen-${index + 1}`}>
+						<Text
+							// 冻结日条的列宽由 minCellWidthForLabels 精确算过，标签必须保持单行
+							// eslint-disable-next-line no-restricted-syntax
+							numberOfLines={1}
+							style={{
+								textAlign: "center",
+								fontSize: 12,
+								color: theme.colors.fontB1,
+							}}>
+							{weekdays[index + 1]}
+						</Text>
+						<View
+							style={{
+								width: 18,
+								height: 2,
+								borderRadius: 1,
+								backgroundColor: dayjs(firstDay)
+									.add(weekStartOffset + index, "day")
+									.isSame(current, "day")
+									? theme.colors.themePurple
+									: undefined,
+							}}
+						/>
+						<Text
+							// 冻结日条的列宽由 minCellWidthForLabels 精确算过，标签必须保持单行
+							// eslint-disable-next-line no-restricted-syntax
+							numberOfLines={1}
+							style={{
+								textAlign: "center",
+								fontSize: 9,
+								color: theme.colors.fontB1,
+							}}>
+							{dayjs(firstDay)
+								.add(weekStartOffset + index, "day")
+								.format("MM/DD")}
+						</Text>
+					</View>
+				))}
+			</View>
+		</View>
+	</View>
+);
 
 export const ScheduleScreen = () => {
 	const navigation = useNavigation<RootNav>();
@@ -564,6 +669,8 @@ export const ScheduleScreen = () => {
 	const layoutWidth = contentWidth;
 	// 仅用 onLayout 得到的实际高度，避免首屏用估错的高度算出过大的 scrollY
 	const [tableHeight, setTableHeight] = useState(0);
+	// overflow 模式下横向滚动容器内容的定高用（见下面的渲染分支）。
+	const [boardHeight, setBoardHeight] = useState(0);
 	const heightForCalc = Math.max(0, tableHeight);
 	// 按上课时间（8:00-21:45）划分为 13.75 小时（表头已移出，可视区域即 ScrollView 高度，不再减 40）
 	const exactHourHeight = heightForCalc / 13.75;
@@ -574,26 +681,54 @@ export const ScheduleScreen = () => {
 		useSelector((s: State) => s.config.showOfficialSchedule) ?? true;
 	const showCustomSchedule =
 		useSelector((s: State) => s.config.showCustomSchedule) ?? true;
+	// 大系统字体下所有随字号变大的量都要按 layoutScale 放大：时间轴标签、左侧
+	// 时间列、以及每一格的行高。行高不放大时，放大的节次号 + 起止时间会挤在
+	// 固定行高里互相重叠（横线同一格塞下三行文字），课程卡的行预算也会被压到 0。
+	// 放大后网格整体变高、纵向滚动，但每一行都放得下。
+	const layoutFactor = layoutScale(fontScale);
 	// 每小时高度，根据设置进行缩放
 	const useClassPeriods =
 		useSelector((s: State) => s.config.scheduleUseClassPeriods) ?? true;
-	const periodHeight = (heightForCalc / 14) * (1 + heightMode * 0.05);
-	const hourHeight = exactHourHeight * (1 + heightMode * 0.05);
+	const periodHeight =
+		(heightForCalc / 14) * (1 + heightMode * 0.05) * layoutFactor;
+	const hourHeight = exactHourHeight * (1 + heightMode * 0.05) * layoutFactor;
 	// 每分钟高度
 	const minuteHeight = hourHeight / 60;
-	// 左侧时间列宽度和中间纵向时间轴宽度
-	const timeLabelWidth = 40;
-	const timeAxisWidth = 8;
+	// 左侧时间列宽度和中间纵向时间轴宽度；大系统字体下时间轴标签会变宽变高，
+	// 所以按 layoutScale 放大这条固定列，否则标签会撑破它。
+	const timeLabelWidth = Math.round(40 * layoutFactor);
+	const timeAxisWidth = Math.round(8 * layoutFactor);
 	const timeStripVerticalPadding = 12; // 时间条上下留白
 	const dayCount = hideWeekend ? 5 : 7;
-	const scheduleBodyWidth = Math.max(
-		0,
-		layoutWidth - timeLabelWidth - timeAxisWidth,
+	// 冷冻表头里最宽的标签决定单日列能缩到多窄。缩不下去时网格改成横向滚动，
+	// 而不是把字号压小——大字体下压小就等于看不全。宽屏不封顶时单日列会被拉到
+	// 150dp 以上，所以仍封顶在 MAX_UNIT_WIDTH，网格在可用宽度里水平居中。
+	const minCellWidth = Math.max(
+		minCellWidthForLabels({
+			labels: getStr("dayOfWeek").slice(1, 8),
+			baseFontSize: 12,
+			fontScale,
+			cellPadding: 4,
+		}),
+		minCellWidthForLabels({
+			labels: Array.from(new Array(7)).map((_, index) =>
+				dayjs(firstDay).add(index, "day").format("MM/DD"),
+			),
+			baseFontSize: 9,
+			fontScale,
+			cellPadding: 4,
+		}),
 	);
-	// 不封顶时，平板/折叠屏展开/三折叠这些宽屏形态会把单日列拉到 150dp 以上，
-	// 一节 45 分钟的课占掉一大片空白。封顶后网格在可用宽度里水平居中。
-	const unitWidth = Math.min(scheduleBodyWidth / dayCount, MAX_UNIT_WIDTH);
-	const gridWidth = unitWidth * dayCount;
+	const gridGeometry = computeGridGeometry({
+		contentWidth: layoutWidth,
+		dayCount,
+		maxUnitWidth: MAX_UNIT_WIDTH,
+		minCellWidth,
+		gutterWidth: timeLabelWidth + timeAxisWidth,
+	});
+	const unitWidth = gridGeometry.unitWidth;
+	const gridWidth = gridGeometry.gridWidth;
+	const gridScrollable = gridGeometry.scrollable;
 	const enableNewUI = useSelector((s: State) => s.config.scheduleEnableNewUI);
 
 	// 不展示早于 min(用户本学期最早日程开始时间, 8:00)（向下取整到整点）的时间段
@@ -933,7 +1068,10 @@ export const ScheduleScreen = () => {
 					{
 						classPeriods: useClassPeriods,
 						periodHeight,
-						cardMinHeight: unitWidth < 64 ? 64 : 52,
+						cardMinHeight: Math.round(
+							(unitWidth < 64 ? 64 : 52) * layoutFactor,
+						),
+						compactCardHeight: Math.round(28 * layoutFactor),
 						minuteHeight,
 						startMinute: displayStartHour * 60,
 					},
@@ -947,6 +1085,7 @@ export const ScheduleScreen = () => {
 			minuteHeight,
 			displayStartHour,
 			unitWidth,
+			layoutFactor,
 		],
 	);
 	const activeLayout =
@@ -1024,6 +1163,119 @@ export const ScheduleScreen = () => {
 		}
 	};
 
+	// 网格放不下时不再用分页 FlatList 左右切周（会和外层横向滚动抢手势），
+	// 改成渲染当前这一周、由表头的周次选择器切周。
+	const renderGridBody = () => (
+		<View
+			style={{
+				flexDirection: "row",
+				paddingVertical: timeStripVerticalPadding,
+			}}>
+			<ScheduleTimeAxis
+				rows={activeLayout?.rows ?? []}
+				height={contentHeight}
+				classPeriods={useClassPeriods}
+				heightMode={heightMode}
+				timeLabelWidth={timeLabelWidth}
+				timeAxisWidth={timeAxisWidth}
+			/>
+			{/* Main content */}
+			{gridScrollable ? (
+				activeLayout ? (
+					<View>
+						<ScheduleWeekPage
+							layout={activeLayout}
+							index={Math.max(0, Math.min(currentWeekIndex, weekCount - 1))}
+							gridWidth={gridWidth}
+							dayCount={dayCount}
+							unitWidth={unitWidth}
+							shortenMap={shortenMap}
+							colorList={colorList}
+							enableNewUI={enableNewUI}
+							onAddDefaults={setAddDefaults}
+							onAdd={openNewSchedule}
+							onOpen={openSchedule}
+							onAction={setActionTarget}
+						/>
+					</View>
+				) : null
+			) : (
+				<View style={{flex: 1, alignItems: "center"}}>
+					{/* Schedule content */}
+					<FlatList<ScheduleLayout<SliceRenderData>>
+						key={gridWidth}
+						testID="schedule-weeks"
+						ref={flatListRef}
+						horizontal={true}
+						showsHorizontalScrollIndicator={false}
+						style={{width: gridWidth, height: contentHeight}}
+						initialNumToRender={3}
+						getItemLayout={(_, index) => ({
+							length: gridWidth,
+							offset: gridWidth * index,
+							index: index,
+						})}
+						data={weekLayouts}
+						renderItem={({item, index}) => (
+							<ScheduleWeekPage
+								layout={item}
+								index={index}
+								gridWidth={gridWidth}
+								dayCount={dayCount}
+								unitWidth={unitWidth}
+								shortenMap={shortenMap}
+								colorList={colorList}
+								enableNewUI={enableNewUI}
+								onAddDefaults={setAddDefaults}
+								onAdd={openNewSchedule}
+								onOpen={openSchedule}
+								onAction={setActionTarget}
+							/>
+						)}
+						initialScrollIndex={Math.max(
+							0,
+							Math.min(currentWeekIndex, weekCount - 1),
+						)}
+						onScroll={({nativeEvent}) => {
+							const index = Math.max(
+								0,
+								Math.min(
+									weekCount - 1,
+									Math.round(nativeEvent.contentOffset.x / gridWidth),
+								),
+							);
+							setCurrentWeekIndex(index);
+							headerRef.current?.setWeekNumber(index + 1);
+						}}
+						pagingEnabled={true}
+					/>
+				</View>
+			)}
+		</View>
+	);
+
+	const renderVerticalScroller = () => (
+		<ScrollView
+			testID="schedule-scroll"
+			ref={verticalScrollRef}
+			onScroll={({nativeEvent}) => {
+				verticalOffset.current = nativeEvent.contentOffset.y;
+			}}
+			scrollEventThrottle={16}
+			style={{flex: 1}}
+			onLayout={({nativeEvent}) => {
+				setTableHeight(nativeEvent.layout.height);
+			}}
+			refreshControl={
+				<ThemedGestureRefreshControl
+					refreshing={refreshing}
+					onRefresh={getSchedule}
+				/>
+			}>
+			{renderGridBody()}
+		</ScrollView>
+	);
+
 	return (
 		<View
 			testID="schedule-root"
@@ -1039,9 +1291,15 @@ export const ScheduleScreen = () => {
 				calendar={calendar}
 				setCalendar={(payload) => dispatch(setCalendarConfig(payload))}
 				onSetWeek={(w: number) => {
-					flatListRef.current?.scrollToIndex({
-						index: w - 1,
-					});
+					if (gridScrollable) {
+						// overflow 模式没有分页 FlatList，直接换当前周并同步表头。
+						setCurrentWeekIndex(w - 1);
+						headerRef.current?.setWeekNumber(w);
+					} else {
+						flatListRef.current?.scrollToIndex({
+							index: w - 1,
+						});
+					}
 				}}
 				onChangeSetOpenConfig={() => {
 					setOpenConfig((v) => !v);
@@ -1055,171 +1313,57 @@ export const ScheduleScreen = () => {
 				hasCustomSchedule={hasCustomScheduleInCurrentSemester}
 				uploadingCustomSchedule={uploadingCustomSchedule}
 			/>
-			<GestureHandlerRootView style={{flex: 1}}>
-				{/* 冷冻第一行：周一、周二、周三……固定在顶部，垂直滚动时保持可见 */}
-				<View
-					style={{
-						flexDirection: "row",
-						height: 40,
-						backgroundColor: theme.colors.contentBackground,
-					}}>
-					<View style={{width: timeLabelWidth + timeAxisWidth}} />
-					<View
-						style={{
-							flex: 1,
-							alignItems: "center",
-						}}>
+			<GestureHandlerRootView
+				style={{flex: 1}}
+				onLayout={({nativeEvent}) => setBoardHeight(nativeEvent.layout.height)}>
+				{/* 冷冻第一行：周一、周二、周三……固定在顶部，垂直滚动时保持可见。拆不出
+				    足够列宽（大字体）时，表头 + 网格 + 时间轴一起放进横向滚动里，
+				    表头跟着网格横向平移，保持列对齐。 */}
+				{gridScrollable ? (
+					<ScrollView
+						testID="schedule-weeks-scroll"
+						horizontal={true}
+						showsHorizontalScrollIndicator={true}
+						style={{flex: 1}}>
+						{/* 高度必须定死：里面那个 flex:1 的纵向滚动器要靠这一列的高度才能撑开，
+						    列高度为 auto 时它会塌成 0。 */}
 						<View
 							style={{
-								flexDirection: "row",
-								width: gridWidth,
+								width: timeLabelWidth + timeAxisWidth + gridWidth,
+								height: boardHeight || undefined,
 							}}>
-							{Array.from(new Array(dayCount)).map((_, index) => (
-								<View
-									style={{
-										width: unitWidth,
-										padding: 4,
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-									key={`frozen-${index + 1}`}>
-									{/* 格子宽度由屏幕算出，所以这两个标签得自己适配它：大系统字体下固定字号
-									    会撑破格子，把日期的最后一位裁掉（10/02 → 10/0）。 */}
-									<Text
-										allowFontScaling={false}
-										maxFontSizeMultiplier={1}
-										numberOfLines={1}
-										style={{
-											textAlign: "center",
-											fontSize: scheduleHeaderFontSize({
-												unitWidth,
-												text: getStr("dayOfWeek")[index + 1],
-												baseSize: 12,
-												fontScale,
-											}).fontSize,
-											color: theme.colors.fontB1,
-										}}>
-										{getStr("dayOfWeek")[index + 1]}
-									</Text>
-									<View
-										style={{
-											width: 18,
-											height: 2,
-											borderRadius: 1,
-											backgroundColor: dayjs(firstDay)
-												.add(currentWeekIndex * 7 + index, "day")
-												.isSame(current, "day")
-												? theme.colors.themePurple
-												: undefined,
-										}}
-									/>
-									<Text
-										allowFontScaling={false}
-										maxFontSizeMultiplier={1}
-										numberOfLines={1}
-										style={{
-											textAlign: "center",
-											fontSize: scheduleHeaderFontSize({
-												unitWidth,
-												text: dayjs(firstDay)
-													.add(currentWeekIndex * 7 + index, "day")
-													.format("MM/DD"),
-												baseSize: 9,
-												fontScale,
-											}).fontSize,
-											color: theme.colors.fontB1,
-										}}>
-										{dayjs(firstDay)
-											.add(currentWeekIndex * 7 + index, "day")
-											.format("MM/DD")}
-									</Text>
-								</View>
-							))}
-						</View>
-					</View>
-				</View>
-				<ScrollView
-					testID="schedule-scroll"
-					ref={verticalScrollRef}
-					onScroll={({nativeEvent}) => {
-						verticalOffset.current = nativeEvent.contentOffset.y;
-					}}
-					scrollEventThrottle={16}
-					style={{flex: 1}}
-					onLayout={({nativeEvent}) => {
-						setTableHeight(nativeEvent.layout.height);
-					}}
-					refreshControl={
-						<ThemedGestureRefreshControl
-							refreshing={refreshing}
-							onRefresh={getSchedule}
-						/>
-					}>
-					<View
-						style={{
-							flexDirection: "row",
-							paddingVertical: timeStripVerticalPadding,
-						}}>
-						<ScheduleTimeAxis
-							rows={activeLayout?.rows ?? []}
-							height={contentHeight}
-							classPeriods={useClassPeriods}
-							heightMode={heightMode}
-						/>
-
-						{/* Main content */}
-						<View style={{flex: 1, alignItems: "center"}}>
-							{/* Schedule content */}
-							<FlatList<ScheduleLayout<SliceRenderData>>
-								key={gridWidth}
-								testID="schedule-weeks"
-								ref={flatListRef}
-								horizontal={true}
-								showsHorizontalScrollIndicator={false}
-								style={{width: gridWidth, height: contentHeight}}
-								initialNumToRender={3}
-								getItemLayout={(_, index) => ({
-									length: gridWidth,
-									offset: gridWidth * index,
-									index: index,
-								})}
-								data={weekLayouts}
-								renderItem={({item, index}) => (
-									<ScheduleWeekPage
-										layout={item}
-										index={index}
-										gridWidth={gridWidth}
-										dayCount={dayCount}
-										unitWidth={unitWidth}
-										shortenMap={shortenMap}
-										colorList={colorList}
-										enableNewUI={enableNewUI}
-										onAddDefaults={setAddDefaults}
-										onAdd={openNewSchedule}
-										onOpen={openSchedule}
-										onAction={setActionTarget}
-									/>
-								)}
-								initialScrollIndex={Math.max(
-									0,
-									Math.min(currentWeekIndex, weekCount - 1),
-								)}
-								onScroll={({nativeEvent}) => {
-									const index = Math.max(
-										0,
-										Math.min(
-											weekCount - 1,
-											Math.round(nativeEvent.contentOffset.x / gridWidth),
-										),
-									);
-									setCurrentWeekIndex(index);
-									headerRef.current?.setWeekNumber(index + 1);
-								}}
-								pagingEnabled={true}
+							<FrozenDayStrip
+								dayCount={dayCount}
+								unitWidth={unitWidth}
+								gridWidth={gridWidth}
+								gutterWidth={timeLabelWidth + timeAxisWidth}
+								weekdays={getStr("dayOfWeek")}
+								weekStartOffset={currentWeekIndex * 7}
+								firstDay={firstDay}
+								current={current}
+								theme={theme}
+								align="flex-start"
 							/>
+							{renderVerticalScroller()}
 						</View>
-					</View>
-				</ScrollView>
+					</ScrollView>
+				) : (
+					<>
+						<FrozenDayStrip
+							dayCount={dayCount}
+							unitWidth={unitWidth}
+							gridWidth={gridWidth}
+							gutterWidth={timeLabelWidth + timeAxisWidth}
+							weekdays={getStr("dayOfWeek")}
+							weekStartOffset={currentWeekIndex * 7}
+							firstDay={firstDay}
+							current={current}
+							theme={theme}
+							align="center"
+						/>
+						{renderVerticalScroller()}
+					</>
+				)}
 				{openConfig && (
 					<ScheduleSettings
 						onClose={() => setOpenConfig(false)}
@@ -1308,75 +1452,81 @@ export const ScheduleScreen = () => {
 								},
 							],
 						}}>
-						<Text
-							style={{
-								textAlign: "center",
-								fontSize: 16,
-								fontWeight: "600",
-								color: bauhausColors.primaryText,
-								marginBottom: 12,
-							}}>
-							{"日程详情"}
-						</Text>
-						<Animated.View
-							style={{
-								backgroundColor: popupSurfaceBackground,
-								borderRadius: 16,
-								padding: 16,
-								borderWidth: 1,
-								borderColor: bauhausColors.border,
-								marginBottom: 16,
-							}}>
-							{renderDetailContent()}
-						</Animated.View>
-						<View>
-							{renderActionButton(
-								(isCustomLike(actionTarget)
-									? getStr("delSchedule")
-									: getStr("hideSchedule")) + getStr("once"),
-								bauhausColors.actionGreen,
-								"rgba(91,140,124,0.10)",
-								"rgba(122,172,150,0.16)",
-								() => {
-									const onceLabel =
-										(isCustomLike(actionTarget)
-											? getStr("delSchedule")
-											: getStr("hideSchedule")) + getStr("once");
-									handleHide(Choice.ONCE, onceLabel);
-								},
-								deletingAction,
-								deletingAction && isCustomLike(actionTarget),
-							)}
-							{!isCustomLike(actionTarget) &&
-								renderActionButton(
-									getStr("hideSchedule") + getStr("repeatly"),
+						{/* 卡片高度受屏幕限制；大字体下内容会超出，交给内部滚动，
+						    保证「日程详情」的全部内容都可达。 */}
+						<RNScrollView
+							showsVerticalScrollIndicator={false}
+							style={{flexShrink: 1}}>
+							<Text
+								style={{
+									textAlign: "center",
+									fontSize: 16,
+									fontWeight: "600",
+									color: bauhausColors.primaryText,
+									marginBottom: 12,
+								}}>
+								{"日程详情"}
+							</Text>
+							<Animated.View
+								style={{
+									backgroundColor: popupSurfaceBackground,
+									borderRadius: 16,
+									padding: 16,
+									borderWidth: 1,
+									borderColor: bauhausColors.border,
+									marginBottom: 16,
+								}}>
+								{renderDetailContent()}
+							</Animated.View>
+							<View>
+								{renderActionButton(
+									(isCustomLike(actionTarget)
+										? getStr("delSchedule")
+										: getStr("hideSchedule")) + getStr("once"),
 									bauhausColors.actionGreen,
 									"rgba(91,140,124,0.10)",
 									"rgba(122,172,150,0.16)",
 									() => {
-										const repeatLabel =
-											getStr("hideSchedule") + getStr("repeatly");
-										handleHide(Choice.REPEAT, repeatLabel);
+										const onceLabel =
+											(isCustomLike(actionTarget)
+												? getStr("delSchedule")
+												: getStr("hideSchedule")) + getStr("once");
+										handleHide(Choice.ONCE, onceLabel);
 									},
+									deletingAction,
+									deletingAction && isCustomLike(actionTarget),
 								)}
-							{renderActionButton(
-								(isCustomLike(actionTarget)
-									? getStr("delSchedule")
-									: getStr("hideSchedule")) + getStr("allTime"),
-								bauhausColors.deleteAccent,
-								"rgba(143,188,143,0.10)",
-								"rgba(216,140,140,0.16)",
-								() => {
-									const allLabel =
-										(isCustomLike(actionTarget)
-											? getStr("delSchedule")
-											: getStr("hideSchedule")) + getStr("allTime");
-									handleHide(Choice.ALL, allLabel);
-								},
-								deletingAction,
-								deletingAction && isCustomLike(actionTarget),
-							)}
-						</View>
+								{!isCustomLike(actionTarget) &&
+									renderActionButton(
+										getStr("hideSchedule") + getStr("repeatly"),
+										bauhausColors.actionGreen,
+										"rgba(91,140,124,0.10)",
+										"rgba(122,172,150,0.16)",
+										() => {
+											const repeatLabel =
+												getStr("hideSchedule") + getStr("repeatly");
+											handleHide(Choice.REPEAT, repeatLabel);
+										},
+									)}
+								{renderActionButton(
+									(isCustomLike(actionTarget)
+										? getStr("delSchedule")
+										: getStr("hideSchedule")) + getStr("allTime"),
+									bauhausColors.deleteAccent,
+									"rgba(143,188,143,0.10)",
+									"rgba(216,140,140,0.16)",
+									() => {
+										const allLabel =
+											(isCustomLike(actionTarget)
+												? getStr("delSchedule")
+												: getStr("hideSchedule")) + getStr("allTime");
+										handleHide(Choice.ALL, allLabel);
+									},
+									deletingAction,
+									deletingAction && isCustomLike(actionTarget),
+								)}
+							</View>
+						</RNScrollView>
 					</Animated.View>
 				</View>
 			)}

@@ -96,6 +96,8 @@ export function buildScheduleLayout<T extends ScheduleLayoutEntry>(
 		classPeriods: boolean;
 		periodHeight: number;
 		cardMinHeight?: number;
+		/** Height of the thin "only the name fits" card; grows with the font. */
+		compactCardHeight?: number;
 		minuteHeight: number;
 		startMinute: number;
 	},
@@ -215,10 +217,14 @@ export function buildScheduleLayout<T extends ScheduleLayoutEntry>(
 				(row) => row.kind === "gap" && begin < row.end && end > row.begin,
 			);
 			if (gap) {
+				const compactHeight = options.compactCardHeight ?? 28;
 				blocks.push({
 					entry,
-					top: Math.max(0, Math.min(top - 28, gap.top - 14)),
-					height: 28,
+					top: Math.max(
+						0,
+						Math.min(top - compactHeight, gap.top - compactHeight / 2),
+					),
+					height: compactHeight,
 					compact: true,
 					timeLabel: `${entry.slice.beginTime.format("HH:mm")}–${entry.slice.endTime.format("HH:mm")}`,
 				});

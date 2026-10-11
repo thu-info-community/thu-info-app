@@ -1,5 +1,11 @@
 import {serializeScheduleState} from "../../redux/scheduleData";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {ScheduleSyncReceiving, ScheduleSyncSending} from "../../utils/webApi";
 import {currState, store} from "../../redux/store";
 import {useRef, useState} from "react";
@@ -40,7 +46,7 @@ const styles = themedStyles((theme) => ({
 	buttonStyle: {
 		marginHorizontal: 10,
 		marginVertical: 5,
-		height: 40,
+		minHeight: 40,
 		backgroundColor: theme.colors.accent,
 		justifyContent: "center",
 		alignItems: "center",
@@ -49,7 +55,7 @@ const styles = themedStyles((theme) => ({
 	secondaryButtonStyle: {
 		marginHorizontal: 10,
 		marginVertical: 5,
-		height: 40,
+		minHeight: 40,
 		backgroundColor: theme.colors.themeDarkGrey,
 		justifyContent: "center",
 		alignItems: "center",
@@ -79,11 +85,7 @@ type DoneStage = {
 };
 /// Type-safe state machine for schedule synchronization.
 type ScheduleSyncStage =
-	| InitialStage
-	| WaitOtherStage
-	| ToConfirmStage
-	| WaitSyncStage
-	| DoneStage;
+	InitialStage | WaitOtherStage | ToConfirmStage | WaitSyncStage | DoneStage;
 
 function ProgressIndicator(props: {stage: ScheduleSyncStage}) {
 	const themeName = useColorScheme();
@@ -165,7 +167,8 @@ export function ScheduleSyncScreen(props: any) {
 	}
 
 	return (
-		<>
+		// 大字体下标题、说明和按钮加起来可能超过一屏，整屏可滚动。
+		<ScrollView style={{flex: 1}}>
 			<ProgressIndicator stage={state} />
 			<View style={{padding: 5, flex: 0}}>
 				<Text style={style.title}>
@@ -289,7 +292,9 @@ export function ScheduleSyncScreen(props: any) {
 												switch (currentClient.kind) {
 													case "send":
 														await currentClient.confirmAndSend(
-															JSON.stringify(serializeScheduleState(currState().schedule)),
+															JSON.stringify(
+																serializeScheduleState(currState().schedule),
+															),
 															() => {
 																setState({state: "done"});
 															},
@@ -299,7 +304,13 @@ export function ScheduleSyncScreen(props: any) {
 														await currentClient.confirmAndReceive(
 															(json: string) => {
 																try {
-																	store.dispatch(scheduleSync(JSON.parse(json), currState().config.firstDay, currState().config.semesterId));
+																	store.dispatch(
+																		scheduleSync(
+																			JSON.parse(json),
+																			currState().config.firstDay,
+																			currState().config.semesterId,
+																		),
+																	);
 																	setState({state: "done"});
 																} catch {
 																	setState({state: "initial"});
@@ -336,6 +347,6 @@ export function ScheduleSyncScreen(props: any) {
 					}
 				})()}
 			</View>
-		</>
+		</ScrollView>
 	);
 }

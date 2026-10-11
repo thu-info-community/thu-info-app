@@ -61,12 +61,20 @@ const ScheduleFormHeader = ({
 		}}>
 		<TouchableOpacity
 			onPress={onClose}
-			style={{paddingHorizontal: 8, paddingVertical: 4}}>
+			style={{paddingHorizontal: 8, paddingVertical: 4, flexShrink: 0}}>
 			<Text style={{color: colors.formText, fontSize: 16, fontWeight: "600"}}>
 				{getStr("cancel")}
 			</Text>
 		</TouchableOpacity>
-		<Text style={{color: colors.formTitle, fontSize: 18, fontWeight: "700"}}>
+		<Text
+			style={{
+				color: colors.formTitle,
+				fontSize: 18,
+				fontWeight: "700",
+				flex: 1,
+				minWidth: 0,
+				textAlign: "center",
+			}}>
 			{getStr(editing ? "scheduleEdit" : "scheduleAddCustom")}
 		</Text>
 		<TouchableOpacity
@@ -76,6 +84,7 @@ const ScheduleFormHeader = ({
 				opacity: valid ? 1 : 0.5,
 				paddingHorizontal: 8,
 				paddingVertical: 4,
+				flexShrink: 0,
 			}}>
 			<Text
 				style={{
@@ -231,12 +240,18 @@ export const ScheduleTimeFields = ({
 						paddingVertical: 6,
 						paddingHorizontal: 12,
 						borderRadius: 16,
+						// Share the pill evenly and let each label wrap inside its
+						// half — at a large font the two labels are wider than the row.
+						flex: 1,
+						minWidth: 0,
+						alignItems: "center",
 						backgroundColor:
 							customDateTime === custom ? colors.selectedTab : "transparent",
 					}}>
 					<Text
 						style={{
 							fontSize: 14,
+							textAlign: "center",
 							color:
 								customDateTime === custom
 									? colors.selectedTabText
