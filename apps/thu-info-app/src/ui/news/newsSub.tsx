@@ -61,10 +61,11 @@ const NewsSubItem = ({
 					style={{
 						color: theme.colors.fontB1,
 						fontSize: 16,
+						flex: 1,
+						minWidth: 0,
 					}}>
 					{makeStr()}
 				</Text>
-				<View style={{flex: 1}} />
 				<TouchableOpacity
 					onPress={() => {
 						helper
@@ -152,13 +153,23 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 								});
 							}}>
 							<View style={{flexDirection: "row", alignItems: "center"}}>
-								<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
+								<Text
+									style={{
+										color: theme.colors.fontB1,
+										fontSize: 16,
+										flexShrink: 0,
+									}}>
 									{getStr("newsSource")}
 								</Text>
-								<View style={{flex: 1}} />
 								<Text
-									style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
-									numberOfLines={1}>
+									style={{
+										color: theme.colors.fontB3,
+										fontSize: 16,
+										flex: 1,
+										minWidth: 0,
+										textAlign: "right",
+										marginHorizontal: 8,
+									}}>
 									{sourceSelected.sourceName}
 								</Text>
 								<IconRight height={24} width={24} />
@@ -180,13 +191,23 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 								});
 							}}>
 							<View style={{flexDirection: "row", alignItems: "center"}}>
-								<Text style={{color: theme.colors.fontB1, fontSize: 16, flex: 0}}>
+								<Text
+									style={{
+										color: theme.colors.fontB1,
+										fontSize: 16,
+										flexShrink: 0,
+									}}>
 									{getStr("newsChannel")}
 								</Text>
-								<View style={{flex: 1}} />
 								<Text
-									style={{color: theme.colors.fontB3, fontSize: 16, flex: 0}}
-									numberOfLines={1}>
+									style={{
+										color: theme.colors.fontB3,
+										fontSize: 16,
+										flex: 1,
+										minWidth: 0,
+										textAlign: "right",
+										marginHorizontal: 8,
+									}}>
 									{channelSelected.title}
 								</Text>
 								<IconRight height={24} width={24} />
@@ -238,7 +259,8 @@ export const NewsSubScreen = ({navigation}: {navigation: RootNav}) => {
 								marginRight: 12,
 							}}
 							disabled={
-								sourceSelected.sourceId === "" && channelSelected.id === undefined
+								sourceSelected.sourceId === "" &&
+								channelSelected.id === undefined
 							}
 							onPress={() => {
 								helper

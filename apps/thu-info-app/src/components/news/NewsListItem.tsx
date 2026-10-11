@@ -7,6 +7,7 @@ import {getStr, hasStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {IconStarButton} from "./IconStarButton";
+import {useFontScale} from "../../utils/useFontScale";
 import md5 from "md5";
 
 export const NewsListItem = ({
@@ -23,8 +24,10 @@ export const NewsListItem = ({
 	reloadFunc?: any;
 }) => {
 	const [inFav, setInFav] = useState(item.inFav);
+	const {isLargeText} = useFontScale();
 	const colorList: string[] = theme.colors.courseItemColorList;
-	const channelColor = colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
+	const channelColor =
+		colorList[parseInt(md5(item.channel).slice(0, 6), 16) % colorList.length];
 	// Channels come from the news API, so a new one can appear before it has a
 	// translation. `getStr` would render the raw id (`LM_BM_207_TZGG`) — hide the
 	// badge instead, and keep the source line with it (see below).
@@ -52,19 +55,28 @@ export const NewsListItem = ({
 				borderRadius: 8,
 			}}
 			onPress={handlePress}>
+			{/* No literal lineHeight: at a large system font the glyphs scale but a
+			    fixed 20pt line box would not, smearing the lines together. Letting
+			    React Native derive it keeps the lines separated at any scale. */}
 			<Text
 				numberOfLines={3}
 				style={{
 					fontSize: 16,
 					fontWeight: "600",
-					lineHeight: 20,
 					color: theme.colors.fontB1,
 				}}>
 				{item.name.trim()}
 			</Text>
+			{/* At a large system font the source + channel can no longer share a line
+			    with the date and favourite star (the date alone is ~148dp at 2.0x), so
+			    the row is allowed to wrap and the labels keep the full card width —
+			    otherwise 「国家大学生文化素质教育基地」 is squeezed to 3 glyphs a line
+			    (or ellipsized). At font scale 1 the row is a plain nowrap row, exactly
+			    as before. */}
 			<View
 				style={{
 					flexDirection: "row",
+					flexWrap: isLargeText ? "wrap" : "nowrap",
 					alignItems: "center",
 					marginTop: 12,
 					gap: 8,
@@ -72,14 +84,19 @@ export const NewsListItem = ({
 				<View
 					style={{
 						flexDirection: "row",
-						flex: 1,
+						...(isLargeText
+							? {flexGrow: 1, flexShrink: 0, flexBasis: "auto"}
+							: {flex: 1}),
 						minWidth: 0,
 						alignItems: "center",
 					}}>
 					{item.source.length > 0 && (
 						<>
+							{/* No `numberOfLines`: the source is a short, bounded name (a
+							    publisher/department), so at a large system font it should
+							    wrap onto a third line rather than ellipsize — 「国家大学生
+							    文化素质教育基地」 was rendering as 「国家大 / 学生文…」. */}
 							<Text
-								numberOfLines={2}
 								style={{
 									flexShrink: 1,
 									fontWeight: "600",
@@ -102,8 +119,9 @@ export const NewsListItem = ({
 						</>
 					)}
 					{showChannel && (
+						// No `numberOfLines`: the channel is a label, so at a large
+						// system font it wraps instead of being ellipsized away.
 						<Text
-							numberOfLines={1}
 							style={{
 								flexShrink: 1,
 								fontWeight: "600",
@@ -137,9 +155,7 @@ export const NewsListItem = ({
 						flexShrink: 0,
 						alignItems: "center",
 					}}>
-					<Text
-						numberOfLines={1}
-						style={{color: theme.colors.fontB2, fontSize: 12}}>
+					<Text style={{color: theme.colors.fontB2, fontSize: 12}}>
 						{item.date.slice(0, 10)}
 					</Text>
 					<IconStarButton

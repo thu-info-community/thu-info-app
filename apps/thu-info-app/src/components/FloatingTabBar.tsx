@@ -10,13 +10,15 @@ import {
 } from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import themes from "../assets/themes/themes";
+import {AdaptiveBadge} from "./adaptive/badge";
+import {useScaledSize} from "./adaptive/scaledBox";
+import {useFontScale} from "../utils/useFontScale";
+import {layoutScale} from "../utils/fontScale";
 
 /** 浮岛尺寸（dp）。 */
 const ITEM_WIDTH = 96;
-const BAR_HEIGHT = 56;
-const BAR_RADIUS = 28;
+const BAR_HEIGHT_BASE = 56;
 const ICON_SIZE = 24;
-const BADGE_SIZE = 9;
 /** 浮岛与屏幕左右边缘的最小间距，窄屏时用它把浮岛压窄。 */
 const SIDE_MARGIN = 16;
 /** 浮岛内部左右留白（项目宽 96 × 项数之外的部分）。 */
@@ -25,10 +27,17 @@ const BAR_PADDING = 12;
 const BOTTOM_GAP = 10;
 
 /**
- * 浮岛占掉的高度（不含安全区）。浮岛是 absolute 的，会盖在 tab 根屏的正文上，
- * 所以各根屏要自己让出这块高度——见 `RootTabs` 的 `sceneStyle`。
+ * 浮岛占掉的高度（不含安全区），随系统字体缩放：大字体下标签换行会把浮岛撑高，
+ * 各根屏必须让出同样的高度，否则浮岛会盖住正文——见 `RootTabs` 的 `sceneStyle`。
  */
-export const TAB_BAR_CLEARANCE = BAR_HEIGHT + BOTTOM_GAP;
+export const tabBarClearance = (fontScale: number): number =>
+	Math.round(BAR_HEIGHT_BASE * layoutScale(fontScale)) + BOTTOM_GAP;
+
+/** 当前系统字体下浮岛占掉的高度。 */
+export const useTabBarClearance = (): number => {
+	const {fontScale} = useFontScale();
+	return tabBarClearance(fontScale);
+};
 
 const labelOf = (
 	options: {tabBarLabel?: unknown; title?: string},
@@ -47,6 +56,9 @@ const labelOf = (
  *
  * 所有可配置项都从 `descriptors` 里读（`screenOptions` 已经并进了每个 screen 的
  * options），所以 `RootTabs` 里原有的图标、配色、红点、tabPress 监听都不需要改。
+ *
+ * 浮岛高度随系统字体缩放，标签也允许换行：固定 56dp 高度配字号 11 的标签在大字体下
+ * 会被裁掉，现在浮岛长高、标签最多两行，一直可读。
  */
 export const FloatingTabBar = ({
 	state,
@@ -57,6 +69,8 @@ export const FloatingTabBar = ({
 	const {colors} = themes(themeName);
 	const navigationTheme: Theme = useTheme();
 	const insets = useSafeAreaInsets();
+	const barHeight = useScaledSize(BAR_HEIGHT_BASE);
+	const clearance = useTabBarClearance();
 
 	return (
 		<View
@@ -66,7 +80,7 @@ export const FloatingTabBar = ({
 				left: 0,
 				right: 0,
 				bottom: 0,
-				height: TAB_BAR_CLEARANCE + insets.bottom,
+				height: clearance + insets.bottom,
 				alignItems: "center",
 				justifyContent: "flex-end",
 				paddingBottom: insets.bottom + BOTTOM_GAP,
@@ -77,10 +91,10 @@ export const FloatingTabBar = ({
 					width: "100%",
 					maxWidth: state.routes.length * ITEM_WIDTH + BAR_PADDING * 2,
 					paddingHorizontal: BAR_PADDING,
-					height: BAR_HEIGHT,
+					height: barHeight,
 					flexDirection: "row",
 					justifyContent: "center",
-					borderRadius: BAR_RADIUS,
+					borderRadius: barHeight / 2,
 					backgroundColor: colors.contentBackground,
 					borderWidth: StyleSheet.hairlineWidth,
 					borderColor: colors.themeGrey,
@@ -120,6 +134,7 @@ export const FloatingTabBar = ({
 
 					const badge = options.tabBarBadge;
 					const showBadge = badge !== undefined && badge !== null;
+					const badgeOffset = {position: "absolute" as const, top: -2, right: -6};
 
 					return (
 						<TouchableOpacity
@@ -134,7 +149,7 @@ export const FloatingTabBar = ({
 							style={{
 								flex: 1,
 								minWidth: 0,
-								height: BAR_HEIGHT,
+								height: barHeight,
 								alignItems: "center",
 								justifyContent: "center",
 							}}>
@@ -144,43 +159,23 @@ export const FloatingTabBar = ({
 									color,
 									size: ICON_SIZE,
 								})}
-								{showBadge && (
-									<View
-										style={[
-											{
-												position: "absolute",
-												top: -2,
-												right: -6,
-												minWidth: BADGE_SIZE,
-												height: BADGE_SIZE,
-												borderRadius: BADGE_SIZE / 2,
-												backgroundColor: navigationTheme.colors.notification,
-												alignItems: "center",
-												justifyContent: "center",
-											},
-											options.tabBarBadgeStyle,
-										]}>
-										{typeof badge === "string" || typeof badge === "number" ? (
-											badge === "" ? null : (
-												<Text
-													style={{
-														color: "white",
-														fontSize: 9,
-														lineHeight: BADGE_SIZE,
-													}}>
-													{badge}
-												</Text>
-											)
-										) : (
-											badge
-										)}
-									</View>
-								)}
+								{showBadge &&
+									(typeof badge === "string" || typeof badge === "number" ? (
+										<AdaptiveBadge
+											label={badge === "" ? undefined : String(badge)}
+											color={navigationTheme.colors.notification}
+											style={[badgeOffset, options.tabBarBadgeStyle]}
+										/>
+									) : (
+										<View style={[badgeOffset, options.tabBarBadgeStyle]}>
+											{badge}
+										</View>
+									))}
 							</View>
 							<Text
-								numberOfLines={1}
+								numberOfLines={2}
 								style={[
-									{fontSize: 11, color, marginTop: 2},
+									{fontSize: 11, color, marginTop: 2, textAlign: "center"},
 									options.tabBarLabelStyle,
 								]}>
 								{labelOf(options, route.name, {focused, color})}
