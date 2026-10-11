@@ -50,7 +50,7 @@ export const LanguageScreen = ({navigation}: {navigation: RootNav}) => {
 	}, [navigation, language, dispatch]);
 
 	return (
-		<SubPageScreen scroll={false}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

@@ -42,15 +42,16 @@ export const SettingsItem = ({
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
-			<View style={{flexDirection: "row", alignItems: "center"}}>
+			<View style={{flexDirection: "row", alignItems: "center", flexShrink: 1, minWidth: 0}}>
 				{setIconWidth(icon, colors)}
+				{/* No `numberOfLines`: at a large system font the label wraps and the
+				    row grows, instead of being truncated to one line. */}
 				<Text
 					style={
 						normalText
 							? {color: colors.text}
 							: {fontSize: 17, marginHorizontal: 10, color: colors.text}
-					}
-					numberOfLines={1}>
+					}>
 					{text}
 					{badge && <Text style={{color: "red", fontSize: 12}}>[{badge}]</Text>}
 				</Text>

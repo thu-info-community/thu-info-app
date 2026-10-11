@@ -27,7 +27,7 @@ import {
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
-import { deepseekClear } from "../../redux/slices/deepseek.ts";
+import {deepseekClear} from "../../redux/slices/deepseek.ts";
 
 /** 设置项的宽度上限（dp）：宽屏下居中，免得一行设置横跨整个屏幕。 */
 const SETTINGS_MAX_WIDTH = 640;
@@ -107,14 +107,16 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 				</RoundedView>
-				{helper.userId === "" || helper.mocked() ? null : <RoundedView style={style.rounded}>
-					<TouchableOpacity
-						style={style.touchable}
-						onPress={() => handleNavigate("DeepSeekSettings")}>
-						<Text style={style.text}>{getStr("deepseek")}</Text>
-						<IconRight height={20} width={20} />
-					</TouchableOpacity>
-				</RoundedView>}
+				{helper.userId === "" || helper.mocked() ? null : (
+					<RoundedView style={style.rounded}>
+						<TouchableOpacity
+							style={style.touchable}
+							onPress={() => handleNavigate("DeepSeekSettings")}>
+							<Text style={style.text}>{getStr("deepseek")}</Text>
+							<IconRight height={20} width={20} />
+						</TouchableOpacity>
+					</RoundedView>
+				)}
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
@@ -134,7 +136,13 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						style={style.touchable}
 						onPress={() => handleNavigate("About")}>
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								flexShrink: 1,
+								minWidth: 0,
+							}}>
 							<Text style={style.version}>
 								{getStr("version")}{" "}
 								{newVersionAvailable
@@ -156,7 +164,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									text: getStr("processing"),
 									duration: Snackbar.LENGTH_SHORT,
 								});
-								if (!userId) { setForceLoginDisabled(false); navigation.navigate("Login"); return; }
+								if (!userId) {
+									setForceLoginDisabled(false);
+									navigation.navigate("Login");
+									return;
+								}
 								await helper.login();
 								Snackbar.show({
 									text: getStr("success"),
@@ -181,18 +193,34 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<BottomPopupTriggerView
 							accessibilityRole="button"
 							style={style.touchable}
-							popupTitle={getStr("logout")} popupFulfillText={getStr("logout")}
-							popupCancelable popupCanFulfill
+							popupTitle={getStr("logout")}
+							popupFulfillText={getStr("logout")}
+							popupCancelable
+							popupCanFulfill
 							popupOnTriggered={() => setClearLogoutCache(false)}
 							popupOnCancelled={() => {}}
-							popupContent={<View style={{paddingHorizontal: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-								<Text style={style.text}>{getStr("clearLogoutCache")}</Text>
-								<Switch value={clearLogoutCache} onValueChange={setClearLogoutCache}
-									accessibilityLabel={getStr("clearLogoutCache")}
-									ios_backgroundColor={theme.colors.inputBorder}
-									thumbColor={theme.colors.themeLightGrey}
-									trackColor={{false: theme.colors.inputBorder, true: theme.colors.themePurple}} />
-							</View>}
+							popupContent={
+								<View
+									style={{
+										paddingHorizontal: 20,
+										flexDirection: "row",
+										alignItems: "center",
+										justifyContent: "space-between",
+									}}>
+									<Text style={style.text}>{getStr("clearLogoutCache")}</Text>
+									<Switch
+										value={clearLogoutCache}
+										onValueChange={setClearLogoutCache}
+										accessibilityLabel={getStr("clearLogoutCache")}
+										ios_backgroundColor={theme.colors.inputBorder}
+										thumbColor={theme.colors.themeLightGrey}
+										trackColor={{
+											false: theme.colors.inputBorder,
+											true: theme.colors.themePurple,
+										}}
+									/>
+								</View>
+							}
 							popupOnFulfilled={() => {
 								performLogout();
 								dispatch(logout());
@@ -235,13 +263,20 @@ export const styles = themedStyles(({colors}) => ({
 		justifyContent: "space-between",
 		paddingHorizontal: 16,
 	},
+	// The label and value shrink and wrap instead of keeping their intrinsic width:
+	// React Native defaults `flexShrink` to 0, so at a large system font a long
+	// label used to push the trailing control (switch/check/chevron) off-screen.
 	text: {
 		color: colors.text,
 		fontSize: 16,
+		flexShrink: 1,
+		minWidth: 0,
 	},
 	version: {
 		color: colors.fontB3,
 		fontSize: 16,
+		flexShrink: 1,
+		minWidth: 0,
 	},
 	separator: {
 		borderBottomWidth: StyleSheet.hairlineWidth,

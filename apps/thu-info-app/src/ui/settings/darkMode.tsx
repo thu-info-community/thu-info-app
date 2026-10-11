@@ -16,7 +16,7 @@ export const DarkModeScreen = () => {
 	const dispatch = useDispatch();
 
 	return (
-		<SubPageScreen scroll={false}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}

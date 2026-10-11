@@ -46,7 +46,9 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 				<TouchableOpacity
 					accessibilityRole="button"
 					style={style.touchable}
-					onPress={() => navigation.navigate(userId ? "IdPersonalInfo" : "Login")}>
+					onPress={() =>
+						navigation.navigate(userId ? "IdPersonalInfo" : "Login")
+					}>
 					<Text style={style.text}>{getStr("personalInformation")}</Text>
 					<IconRight height={20} width={20} />
 				</TouchableOpacity>
@@ -78,7 +80,13 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 						}
 					}}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							flexShrink: 1,
+							minWidth: 0,
+						}}>
 						<Text style={style.version}>
 							{getStr(appSecret === undefined ? "notConfigured" : "configured")}
 						</Text>
@@ -119,19 +127,22 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 								getStr("deleteAccountConfirm"),
 								getStr("deleteAccountPrompt"),
 								[
-									{text: getStr("confirm"), onPress: () => {
-										helper.logout();
-										dispatch(logout());
-										navigation.pop();
-										setTimeout(() => {
-											Snackbar.show({
-												text: getStr("accountDeleted"),
-												duration: Snackbar.LENGTH_LONG,
-											});
-										}, 800);
-									}},
+									{
+										text: getStr("confirm"),
+										onPress: () => {
+											helper.logout();
+											dispatch(logout());
+											navigation.pop();
+											setTimeout(() => {
+												Snackbar.show({
+													text: getStr("accountDeleted"),
+													duration: Snackbar.LENGTH_LONG,
+												});
+											}, 800);
+										},
+									},
 									{text: getStr("cancel")},
-								]
+								],
 							);
 						}}>
 						<Text style={style.text}>{getStr("deleteAccount")}</Text>

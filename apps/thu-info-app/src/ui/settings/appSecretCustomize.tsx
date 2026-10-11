@@ -21,7 +21,7 @@ export const AppSecretCustomizeScreen = () => {
 	const dispatch = useDispatch();
 
 	return (
-		<SubPageScreen scroll={false}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("report")}</Text>

@@ -21,17 +21,23 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 		language === "zh"
 			? "简体中文"
 			: language === "en"
-			? "English"
-			: getStr("autoFollow");
+				? "English"
+				: getStr("autoFollow");
 
 	return (
-		<SubPageScreen scroll={false}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
 					style={style.touchable}
 					onPress={() => navigation.navigate("DarkMode")}>
 					<Text style={style.text}>{getStr("darkMode")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							flexShrink: 1,
+							minWidth: 0,
+						}}>
 						<Text style={style.version}>{colorString}</Text>
 						<IconRight height={20} width={20} />
 					</View>
@@ -42,7 +48,13 @@ export const GeneralScreen = ({navigation}: {navigation: RootNav}) => {
 					style={style.touchable}
 					onPress={() => navigation.navigate("Language")}>
 					<Text style={style.text}>{getStr("language")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							flexShrink: 1,
+							minWidth: 0,
+						}}>
 						<Text style={style.version}>{languageString}</Text>
 						<IconRight height={20} width={20} />
 					</View>
