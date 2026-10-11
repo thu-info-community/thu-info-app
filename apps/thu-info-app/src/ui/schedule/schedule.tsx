@@ -286,10 +286,13 @@ const Header = React.forwardRef(
 		return (
 			<View
 				style={{
-					paddingVertical: 4,
 					alignItems: "center",
 					backgroundColor: theme.colors.contentBackground,
-					paddingTop: insets.top,
+					// 表头上下留白。旧版学期标签独占一行时，那一行本身就是表头与下方
+					// 冻结日条之间的视觉间隔；学期并到周次那行后这段间隔消失，表头显得
+					// 贴住日条，故在此补回。
+					paddingTop: insets.top + 8,
+					paddingBottom: 12,
 				}}
 				key={String(darkModeHook)}>
 				<View
