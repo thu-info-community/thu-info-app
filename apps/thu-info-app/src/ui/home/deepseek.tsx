@@ -738,7 +738,7 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 			<View
 				style={{
 					flexDirection: "row",
-					height: 40,
+					minHeight: 40,
 					padding: 4,
 					alignItems: "center",
 				}}>
@@ -860,6 +860,8 @@ export const DeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 					style={{
 						flex: 0,
 						flexDirection: "row",
+						flexWrap: "wrap",
+						alignItems: "center",
 						padding: 0,
 						paddingStart: 16,
 					}}>

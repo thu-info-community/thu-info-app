@@ -1,11 +1,6 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {Fragment, useEffect, useState} from "react";
-import {
-	SectionList,
-	Text,
-	useColorScheme,
-	View,
-} from "react-native";
+import {SectionList, Text, useColorScheme, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
@@ -16,6 +11,7 @@ import {
 import {BottomPopupTriggerView} from "../../components/views";
 import IconDown from "../../assets/icons/IconDown";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 import IconRice from "../../assets/icons/IconRice";
@@ -74,7 +70,7 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 			<View style={{padding: 4, marginRight: 4, alignSelf: "center"}}>
 				{icon}
 			</View>
-			<View style={{flex: 2, alignItems: "flex-start"}}>
+			<View style={{flex: 1, minWidth: 0, alignItems: "flex-start"}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{tx.name}
 				</Text>
@@ -82,7 +78,7 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 					{dayjs(tx.timestamp).format("YYYY-MM-DD HH:mm")}
 				</Text>
 			</View>
-			<View style={{flex: 1, alignItems: "flex-end"}}>
+			<View style={{flexShrink: 0, alignItems: "flex-end"}}>
 				<Text style={{fontSize: 20, color: colors.text}}>
 					{sign}
 					{Math.abs(tx.amount).toFixed(2)}
@@ -116,6 +112,9 @@ export const ExpenditureScreen = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// The wheel lays each option in a row of exactly `itemHeight` pixels; the
+	// option text scales with the system font, so the row must scale too.
+	const pickerItemHeight = useScaledSize(48);
 
 	const years = Array.from(
 		new Array(today.year() - 2023 + 1),
@@ -230,9 +229,9 @@ export const ExpenditureScreen = () => {
 									onValueChange={(_, selectedIndex) => {
 										setPopupYear(years[selectedIndex]);
 									}}
-									wrapperHeight={200}
+									wrapperHeight={pickerItemHeight * 4}
 									wrapperBackground={colors.contentBackground}
-									itemHeight={48}
+									itemHeight={pickerItemHeight}
 									highlightColor={colors.themeGrey}
 									highlightBorderWidth={1}
 								/>
@@ -250,9 +249,9 @@ export const ExpenditureScreen = () => {
 									onValueChange={(_, selectedIndex) => {
 										setPopupMonth(months[selectedIndex]);
 									}}
-									wrapperHeight={200}
+									wrapperHeight={pickerItemHeight * 4}
 									wrapperBackground={colors.contentBackground}
-									itemHeight={48}
+									itemHeight={pickerItemHeight}
 									highlightColor={colors.themeGrey}
 									highlightBorderWidth={1}
 								/>

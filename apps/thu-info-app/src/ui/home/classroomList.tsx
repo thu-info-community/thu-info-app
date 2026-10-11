@@ -1,10 +1,5 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
-import {
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useState} from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
@@ -37,10 +32,7 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<ScrollView
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}
 			style={{
 				paddingHorizontal: spacing.sm,
@@ -60,8 +52,8 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 							padding: 5,
 							marginHorizontal: spacing.sm,
 							marginTop: spacing.md,
-							width: 100,
-							height: 50,
+							minWidth: 100,
+							minHeight: 50,
 							justifyContent: "center",
 							borderRadius: radius.hub,
 						}}

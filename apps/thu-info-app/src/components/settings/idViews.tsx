@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
+import {useFontScale} from "../../utils/useFontScale";
 import {RoundedView} from "../views";
 
 export const IdSection = ({
@@ -52,15 +53,24 @@ export const IdField = ({label, value}: {label?: string; value: string}) => {
 export const IdFieldRow = ({
 	children,
 	columnWeights,
-}: PropsWithChildren<{columnWeights?: number[]}>) => (
-	<View style={{flexDirection: "row", gap: 16}}>
-		{Children.map(children, (child, index) => (
-			<View style={{flex: columnWeights?.[index] ?? 1, minWidth: 0}}>
-				{child}
-			</View>
-		))}
-	</View>
-);
+}: PropsWithChildren<{columnWeights?: number[]}>) => {
+	const {isLargeText} = useFontScale();
+	// At a large system font the weighted columns are far too narrow for a
+	// timestamp or an SSO label, which then wrap mid-token; stack the fields
+	// full width instead so each reads as one label/value block.
+	if (isLargeText) {
+		return <View style={{gap: 12}}>{children}</View>;
+	}
+	return (
+		<View style={{flexDirection: "row", gap: 16}}>
+			{Children.map(children, (child, index) => (
+				<View style={{flex: columnWeights?.[index] ?? 1, minWidth: 0}}>
+					{child}
+				</View>
+			))}
+		</View>
+	);
+};
 
 export const IdLoading = () => {
 	const {colors} = themes(useColorScheme());

@@ -1,5 +1,11 @@
 import {Fragment, useEffect, useState} from "react";
-import {Platform, Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	Platform,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
@@ -17,6 +23,7 @@ import DeviceInfo from "react-native-device-info";
 import {Feedback} from "@thu-info/lib/src/models/app/feedback";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {formatTimestamp} from "../../utils/time";
+import {useFontScale} from "../../utils/useFontScale";
 
 const replyAttribution = ({replierName, repliedTime}: Feedback) =>
 	[replierName, formatTimestamp(repliedTime)].filter((s) => !!s).join(" · ");
@@ -56,6 +63,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 	const [processing, setProcessing] = useState(false);
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const {isLargeText} = useFontScale();
 
 	useEffect(() => {
 		helper.getFeedbackReplies().then(setFeedbackData).catch(NetworkRetry);
@@ -72,36 +80,34 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 					<EmptyState title={getStr("popiEmpty")} />
 				) : (
 					<>
-						{feedbackData
-							.slice(0, 5)
-							.map((item, index) => {
-								const attribution = replyAttribution(item);
-								return (
-									<Fragment key={`${index}:${item.content.slice(0, 32)}`}>
-										{index > 0 && <Separator style={{marginHorizontal: 0}} />}
-										<TouchableOpacity
-											accessibilityRole="button"
-											onPress={() => navigation.navigate("Popi")}
-											style={{paddingVertical: spacing.sm}}>
+						{feedbackData.slice(0, 5).map((item, index) => {
+							const attribution = replyAttribution(item);
+							return (
+								<Fragment key={`${index}:${item.content.slice(0, 32)}`}>
+									{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+									<TouchableOpacity
+										accessibilityRole="button"
+										onPress={() => navigation.navigate("Popi")}
+										style={{paddingVertical: spacing.sm}}>
+										<Text
+											numberOfLines={2}
+											style={{color: colors.text, fontSize: 16}}>
+											{item.content}
+										</Text>
+										{attribution.length > 0 ? (
 											<Text
-												numberOfLines={2}
-												style={{color: colors.text, fontSize: 16}}>
-												{item.content}
+												style={{
+													color: colors.fontB3,
+													fontSize: 13,
+													marginTop: spacing.xs,
+												}}>
+												{attribution}
 											</Text>
-											{attribution.length > 0 ? (
-												<Text
-													style={{
-														color: colors.fontB3,
-														fontSize: 13,
-														marginTop: spacing.xs,
-													}}>
-													{attribution}
-												</Text>
-											) : null}
-										</TouchableOpacity>
-									</Fragment>
-								);
-							})}
+										) : null}
+									</TouchableOpacity>
+								</Fragment>
+							);
+						})}
 						<Separator style={{marginHorizontal: 0}} />
 						<TouchableOpacity
 							accessibilityRole="button"
@@ -154,18 +160,21 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 				/>
 				<View
 					style={{
-						flexDirection: "row",
-						alignItems: "center",
+						// At a large font the field and the submit button cannot share a
+						// row without the button becoming a lopsided column, so stack.
+						flexDirection: isLargeText ? "column" : "row",
+						alignItems: isLargeText ? "stretch" : "center",
 						marginTop: spacing.md,
+						rowGap: spacing.sm,
 					}}>
 					<ThemedTextInput
 						value={contact}
 						onChangeText={setContact}
 						style={{
-							flex: 3,
+							flex: isLargeText ? undefined : 3,
 							textAlignVertical: "center",
 							fontSize: 15,
-							marginEnd: spacing.sm,
+							marginEnd: isLargeText ? undefined : spacing.sm,
 							paddingHorizontal: spacing.md,
 							paddingVertical: spacing.md - 1, // minus border width
 							backgroundColor: colors.themeBackground,
@@ -176,7 +185,7 @@ export const FeedbackScreen = ({navigation}: {navigation: RootNav}) => {
 						placeholder={getStr("contact")}
 					/>
 					<BottomButton
-						grow
+						grow={!isLargeText}
 						text="submit"
 						onPress={() => {
 							setProcessing(true);

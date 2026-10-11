@@ -1,5 +1,4 @@
 import {
-	Platform,
 	Switch,
 	Text,
 	TouchableOpacity,
@@ -18,6 +17,7 @@ import {
 	formatScheduleMinute,
 	ScheduleRow,
 } from "../../utils/scheduleLayout";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 interface ScheduleBlockProps {
 	dayOfWeek: number;
@@ -41,27 +41,31 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 	const margin = props.blockMargin ?? 2;
 	const height = Math.max(1, props.height - margin * 2);
 	const {fontScale} = useWindowDimensions();
-	const harmony = (Platform.OS as string) === "harmony";
 	const paddingVertical = props.compact ? 2 : props.timeLabel ? 4 : 6;
 	const contentHeight = Math.max(0, height - paddingVertical * 2);
+	// 行高跟随系统字体缩放，否则大字体下字形翻倍、行框不变，行与行会糊在一起。
+	const titleLineHeight = scaledLineHeight(18, fontScale);
+	const timeLabelLineHeight = scaledLineHeight(12, fontScale);
+	const locationLineHeight = scaledLineHeight(10, fontScale);
+	// RNOH can paint an uncapped paragraph beyond the height assigned by Yoga.
+	// Bound the lines explicitly so a long title cannot overlap its location. 行数预算
+	// 对所有平台都算：大字体下可容纳的行数本来就变少，交给 overflow:"hidden" 裁掉
+	// 剩余部分，而不是让文字互相覆盖。
 	const locationLines = props.timeLabel
 		? 1
-		: harmony
-			? Math.max(
-					1,
-					Math.min(
-						3,
-						Math.floor((contentHeight - 18 * fontScale) / (10 * fontScale)),
-					),
-				)
-			: 3;
-	// RNOH can paint an uncapped paragraph beyond the height assigned by Yoga.
-	// Bound the lines explicitly so a long title cannot overlap its location.
+		: Math.max(
+				1,
+				Math.min(
+					3,
+					Math.floor((contentHeight - titleLineHeight) / locationLineHeight),
+				),
+			);
 	const titleLines = Math.max(
 		1,
 		Math.floor(
-			(contentHeight - (props.location ? locationLines * 10 * fontScale : 0)) /
-				(18 * fontScale),
+			(contentHeight -
+				(props.location ? locationLines * locationLineHeight : 0)) /
+				titleLineHeight,
 		),
 	);
 	return (
@@ -86,18 +90,12 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			onPress={props.onPress}
 			onLongPress={props.onLongPress}>
 			<Text
-				numberOfLines={
-					props.compact || props.timeLabel
-						? 1
-						: harmony
-							? titleLines
-							: undefined
-				}
+				numberOfLines={props.compact || props.timeLabel ? 1 : titleLines}
 				style={{
 					flexShrink: 1,
 					minHeight: 0,
 					color: textColor,
-					lineHeight: 18,
+					lineHeight: titleLineHeight,
 					fontWeight: "bold",
 					fontSize: 13,
 				}}>
@@ -106,7 +104,11 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 			{!props.compact && props.timeLabel && (
 				<Text
 					numberOfLines={props.gridWidth < 64 ? 2 : 1}
-					style={{color: textColor, fontSize: 9, lineHeight: 12}}>
+					style={{
+						color: textColor,
+						fontSize: 9,
+						lineHeight: timeLabelLineHeight,
+					}}>
 					{props.gridWidth < 64
 						? props.timeLabel.replace("–", "\n")
 						: props.timeLabel}
@@ -118,9 +120,12 @@ export const ScheduleBlock = (props: ScheduleBlockProps) => {
 					style={{
 						color: textColor,
 						fontSize: 8,
-						lineHeight: 10,
+						lineHeight: locationLineHeight,
 						flexShrink: 0,
-						maxHeight: Math.max(0, height - 30),
+						maxHeight: Math.max(
+							0,
+							height - titleLineHeight - paddingVertical * 2,
+						),
 					}}>
 					{"@" + props.location}
 				</Text>
@@ -167,15 +172,23 @@ export const ScheduleTimeAxis = ({
 	height,
 	classPeriods,
 	heightMode,
+	timeLabelWidth = 40,
+	timeAxisWidth = 8,
 }: {
 	rows: ScheduleRow[];
 	height: number;
 	classPeriods: boolean;
 	heightMode: number;
+	/** 时间标签列宽；大系统字体下由调用方按 layoutScale 放大。 */
+	timeLabelWidth?: number;
+	/** 标签右侧留给刻度轴的宽度。 */
+	timeAxisWidth?: number;
 }) => {
 	const {colors} = themes(useColorScheme());
 	return (
-		<View testID="schedule-time-axis" style={{width: 48, height}}>
+		<View
+			testID="schedule-time-axis"
+			style={{width: timeLabelWidth + timeAxisWidth, height}}>
 			{rows
 				.filter((row) => row.height > 0)
 				.map((row) => (
@@ -185,7 +198,7 @@ export const ScheduleTimeAxis = ({
 							position: "absolute",
 							top: row.top,
 							height: row.height,
-							width: 40,
+							width: timeLabelWidth,
 							alignItems: "center",
 							justifyContent: classPeriods ? "center" : "flex-start",
 						}}>
@@ -220,7 +233,7 @@ export const ScheduleTimeAxis = ({
 						style={{
 							position: "absolute",
 							top: height - 6,
-							width: 40,
+							width: timeLabelWidth,
 							textAlign: "center",
 							color: colors.fontB1,
 							fontSize: 9,
@@ -230,7 +243,7 @@ export const ScheduleTimeAxis = ({
 					<View
 						style={{
 							position: "absolute",
-							left: 44,
+							left: timeLabelWidth + 4,
 							top: 0,
 							bottom: 0,
 							width: 1,
@@ -246,7 +259,7 @@ export const ScheduleTimeAxis = ({
 								key={index}
 								style={{
 									position: "absolute",
-									left: 41,
+									left: timeLabelWidth + 1,
 									top: y - 3,
 									width: 6,
 									height: 6,

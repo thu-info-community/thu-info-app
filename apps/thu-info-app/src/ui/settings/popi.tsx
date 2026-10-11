@@ -4,6 +4,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {Snackbar} from "react-native-snackbar";
@@ -26,9 +27,11 @@ import {PrimaryButton} from "../../components/subpage/buttons";
 import {layout, spacing} from "../../components/subpage/tokens";
 import IconRight from "../../assets/icons/IconRight";
 import {RootNav} from "../../components/Root";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 const QuestionCard = ({feedback}: {feedback: Feedback}) => {
 	const {colors} = themes(useColorScheme());
+	const {fontScale} = useWindowDimensions();
 	const [expanded, setExpanded] = useState(false);
 
 	const {content, reply, replierName, repliedTime} = feedback;
@@ -58,7 +61,7 @@ const QuestionCard = ({feedback}: {feedback: Feedback}) => {
 							color: colors.text,
 							fontSize: 16,
 							fontWeight: "600",
-							lineHeight: 22,
+							lineHeight: scaledLineHeight(22, fontScale),
 						}}>
 						{content}
 					</Text>
@@ -92,7 +95,11 @@ const QuestionCard = ({feedback}: {feedback: Feedback}) => {
 					</Text>
 					<Text
 						selectable
-						style={{color: colors.text, fontSize: 16, lineHeight: 24}}>
+						style={{
+							color: colors.text,
+							fontSize: 16,
+							lineHeight: scaledLineHeight(24, fontScale),
+						}}>
 						{hasReply ? reply : "—"}
 					</Text>
 				</>
@@ -103,6 +110,7 @@ const QuestionCard = ({feedback}: {feedback: Feedback}) => {
 
 export const PopiScreen = ({navigation}: {navigation: RootNav}) => {
 	const {colors} = themes(useColorScheme());
+	const {fontScale} = useWindowDimensions();
 
 	const [data, setData] = useState<Feedback[]>([]);
 	const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
@@ -146,7 +154,12 @@ export const PopiScreen = ({navigation}: {navigation: RootNav}) => {
 				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}>
 			<SectionCard title={getStr("askBox")}>
-				<Text style={{color: colors.fontB2, fontSize: 13, lineHeight: 18}}>
+				<Text
+					style={{
+						color: colors.fontB2,
+						fontSize: 13,
+						lineHeight: scaledLineHeight(18, fontScale),
+					}}>
 					{getStr("popiIntro")}
 				</Text>
 				<PrimaryButton

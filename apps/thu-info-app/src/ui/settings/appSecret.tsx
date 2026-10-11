@@ -64,7 +64,7 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 			: getStr("enter") + protectedText + getStr("when");
 
 	return (
-		<SubPageScreen scroll={false}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
@@ -106,7 +106,13 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 								navigation.navigate("DigitalPassword", {action: "new"})
 							}>
 							<Text style={style.text}>{getStr("digitalPassword")}</Text>
-							<View style={{flexDirection: "row", alignItems: "center"}}>
+							<View
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									flexShrink: 1,
+									minWidth: 0,
+								}}>
 								<Text style={style.version}>{getStr("changePassword")}</Text>
 								<IconRight height={20} width={20} />
 							</View>
@@ -116,7 +122,13 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 							style={style.touchable}
 							onPress={() => navigation.navigate("AppSecretSelectLockTime")}>
 							<Text style={style.text}>{getStr("lockTime")}</Text>
-							<View style={{flexDirection: "row", alignItems: "center"}}>
+							<View
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									flexShrink: 1,
+									minWidth: 0,
+								}}>
 								<Text style={style.version}>{lockText}</Text>
 								<IconRight height={20} width={20} />
 							</View>
@@ -131,7 +143,10 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 							<Switch
 								ios_backgroundColor={colors.inputBorder}
 								thumbColor={colors.themeLightGrey}
-								trackColor={{false: colors.inputBorder, true: colors.themePurple}}
+								trackColor={{
+									false: colors.inputBorder,
+									true: colors.themePurple,
+								}}
 								value={verifyPasswordBeforeEnterApp === true}
 								onValueChange={(value) => {
 									dispatch(
@@ -176,44 +191,55 @@ export const AppSecretScreen = ({navigation}: {navigation: RootNav}) => {
 								]}>
 								{getStr("custom")}
 							</Text>
-							<View style={{flexDirection: "row", alignItems: "center"}}>
+							<View
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									flexShrink: 1,
+									minWidth: 0,
+								}}>
 								<Text style={style.version}>{customizeText}</Text>
 								<IconRight height={20} width={20} />
 							</View>
 						</TouchableOpacity>
 					</RoundedView>
-					{(Platform.OS === "android" || Platform.OS === "ios") && <RoundedView style={style.rounded}>
-						<View style={style.touchable}>
-							<Text style={style.text}>{getStr("useBiometrics")}</Text>
-							<Switch
-								ios_backgroundColor={colors.inputBorder}
-								thumbColor={colors.themeLightGrey}
-								trackColor={{false: colors.inputBorder, true: colors.themePurple}}
-								value={useBiometrics === true}
-								onValueChange={(enable) => {
-									if (enable) {
-										rnBiometrics
-											.simplePrompt({promptMessage: getStr("useBiometrics")})
-											.then(({success}) => {
-												if (success) {
-													dispatch(
-														configSet({key: "useBiometrics", value: true}),
-													);
-												}
-											})
-											.catch((e) => {
-												Snackbar.show({
-													text: e?.message,
-													duration: Snackbar.LENGTH_SHORT,
+					{(Platform.OS === "android" || Platform.OS === "ios") && (
+						<RoundedView style={style.rounded}>
+							<View style={style.touchable}>
+								<Text style={style.text}>{getStr("useBiometrics")}</Text>
+								<Switch
+									ios_backgroundColor={colors.inputBorder}
+									thumbColor={colors.themeLightGrey}
+									trackColor={{
+										false: colors.inputBorder,
+										true: colors.themePurple,
+									}}
+									value={useBiometrics === true}
+									onValueChange={(enable) => {
+										if (enable) {
+											rnBiometrics
+												.simplePrompt({promptMessage: getStr("useBiometrics")})
+												.then(({success}) => {
+													if (success) {
+														dispatch(
+															configSet({key: "useBiometrics", value: true}),
+														);
+													}
+												})
+												.catch((e) => {
+													Snackbar.show({
+														text: e?.message,
+														duration: Snackbar.LENGTH_SHORT,
+													});
 												});
-											});
-									} else {
-										dispatch(configSet({key: "useBiometrics", value: false}));
-									}
-								}}
-							/>
-						</View>
-					</RoundedView>}
+										} else {
+											dispatch(configSet({key: "useBiometrics", value: false}));
+										}
+									}}
+								/>
+							</View>
+						</RoundedView>
+					)}
 				</>
 			)}
 		</SubPageScreen>

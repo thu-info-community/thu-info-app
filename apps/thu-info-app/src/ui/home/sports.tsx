@@ -3,6 +3,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {sportsIdInfoList} from "@thu-info/lib/src/lib/sports";
@@ -15,6 +16,7 @@ import {getStr} from "../../utils/i18n";
 import {useSelector} from "react-redux";
 import {State} from "../../redux/store";
 import {useNavigation} from "@react-navigation/native";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export const SportsReservationCard = () => {
 	const themeName = useColorScheme();
@@ -82,6 +84,7 @@ export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
+	const {fontScale} = useWindowDimensions();
 
 	return (
 		<ScrollView style={{flex: 1}}>
@@ -112,7 +115,9 @@ export const SportsScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									color: colors.text,
 									fontSize: 16,
-									lineHeight: 24,
+									flex: 1,
+									minWidth: 0,
+									lineHeight: scaledLineHeight(24, fontScale),
 								}}>
 								{info.name}
 							</Text>

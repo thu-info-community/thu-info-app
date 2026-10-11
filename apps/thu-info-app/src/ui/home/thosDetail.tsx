@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {useSelector} from "react-redux";
@@ -23,6 +24,7 @@ import {
 	getThosTaskStatusLabel,
 	useThosBrowserHeader,
 } from "./thos";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export type ThosTaskDetailParams = {task: ThosTask; accountId: string};
 export type ThosServiceDetailParams = {service: ThosService; accountId: string};
@@ -90,10 +92,7 @@ const DetailPage = ({
 			testID="thos-native-detail"
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={busy}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={busy} onRefresh={refresh} />
 			}
 			contentContainerStyle={{
 				padding: 16,
@@ -277,6 +276,7 @@ export const ThosServiceDetailScreen = ({
 	navigation: RootNav;
 }) => {
 	const {colors} = themes(useColorScheme());
+	const {fontScale} = useWindowDimensions();
 	const {service: initial, accountId} = route.params;
 	const detail = useDetail(initial, accountId, async () => {
 		const page = await helper.getThosServices();
@@ -319,7 +319,12 @@ export const ThosServiceDetailScreen = ({
 				<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
 					{getStr("thosHowToHandle")}
 				</Text>
-				<Text style={{color: colors.fontB1, marginTop: 12, lineHeight: 24}}>
+				<Text
+					style={{
+						color: colors.fontB1,
+						marginTop: 12,
+						lineHeight: scaledLineHeight(24, fontScale),
+					}}>
 					{service.kind === "group"
 						? getStr("thosServiceGroupDescription")
 						: getStr("thosServiceDescription")}

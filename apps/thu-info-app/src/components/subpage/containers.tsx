@@ -49,6 +49,7 @@ export const SubPageScreen = ({
 	);
 	const body = scroll ? (
 		<ScrollView
+			testID="subpage-scroll"
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			keyboardShouldPersistTaps="handled"
 			contentContainerStyle={{flexGrow: 1}}>

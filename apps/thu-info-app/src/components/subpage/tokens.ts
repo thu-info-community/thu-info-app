@@ -7,6 +7,10 @@ import {ColorTheme} from "../../assets/themes/themes";
  * These encode dimensions the app already uses (12/16/24 screen padding, radius
  * 12/20, font sizes 13-20) so migrating a screen onto the shared kit is pixel
  * neutral. Do not introduce a token that changes an existing on-screen value.
+ *
+ * These values are base sizes at font scale 1: never fix the height/width of a box
+ * that holds this text, or a large system font clips it. For the adaptive
+ * behaviour import from `./adaptive` instead.
  */
 export const spacing = {xs: 4, sm: 8, md: 12, lg: 16, xl: 24} as const;
 

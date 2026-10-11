@@ -11,7 +11,7 @@ import {
 } from "@testing-library/react-native";
 import {Provider} from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
-import {StyleSheet, Alert} from "react-native";
+import {StyleSheet, Alert, Dimensions} from "react-native";
 import {getStr} from "../src/utils/i18n";
 import dayjs from "dayjs";
 import {MAX_UNIT_WIDTH, ScheduleScreen} from "../src/ui/schedule/schedule";
@@ -26,11 +26,17 @@ import {
 	Schedule,
 	ScheduleType,
 } from "@thu-info/lib/src/models/schedule/schedule";
-import {scheduleHeaderGlyphAdvanceEm} from "../src/utils/scheduleHeaderFont";
+import {textGlyphAdvanceEm} from "../src/utils/textMetrics";
 
 const mockNavigate = jest.fn();
 const mockSnackbar = jest.fn();
-jest.mock("react-native-snackbar", () => ({Snackbar: {show: (...args: unknown[]) => mockSnackbar(...args), LENGTH_SHORT: 0, LENGTH_LONG: 0}}));
+jest.mock("react-native-snackbar", () => ({
+	Snackbar: {
+		show: (...args: unknown[]) => mockSnackbar(...args),
+		LENGTH_SHORT: 0,
+		LENGTH_LONG: 0,
+	},
+}));
 const mockGetSchedule = jest.fn<(...args: any[]) => Promise<any>>();
 let mockScheduleResponses: ((result: any) => void)[] = [];
 let mockIsWide = false;
@@ -72,19 +78,29 @@ jest.mock("../src/components/schedule/scheduleAdd", () => ({
 		}),
 }));
 
+// The renderer's default window carries a non-1 `fontScale`; pin it so the shipped
+// 1x geometry stays the baseline, and restore whatever was there afterwards.
+const originalWindow = Dimensions.get("window");
+
 beforeEach(() => {
 	jest.useFakeTimers();
 	mockScheduleResponses = [];
-	mockGetSchedule.mockReset().mockImplementation(() => new Promise((resolve) => mockScheduleResponses.push(resolve)));
+	mockGetSchedule
+		.mockReset()
+		.mockImplementation(
+			() => new Promise((resolve) => mockScheduleResponses.push(resolve)),
+		);
 	mockNavigate.mockClear();
 	mockSnackbar.mockClear();
 	mockIsWide = false;
+	Dimensions.set({window: {...originalWindow, fontScale: 1}});
 });
 afterEach(async () => {
 	await cleanup();
 	jest.clearAllTimers();
 	jest.useRealTimers();
 	jest.restoreAllMocks();
+	Dimensions.set({window: originalWindow});
 });
 
 const firstDay = dayjs().startOf("day").format("YYYY-MM-DD");
@@ -115,7 +131,10 @@ const setup = async (plans: Schedule[], width = 750) => {
 		preloadedState: {
 			config: {...defaultConfig, firstDay, weekCount: 2},
 			schedule: {
-				baseSchedule: plans.map((entry) => ({...storeSchedule(entry), localId: entry.hash})),
+				baseSchedule: plans.map((entry) => ({
+					...storeSchedule(entry),
+					localId: entry.hash,
+				})),
 				overrides: {},
 				pendingUploads: [],
 				shortenMap: {},
@@ -196,7 +215,11 @@ test("folding preserves the selected week and realigns the horizontal page", asy
 	const pager = screen.getByTestId("schedule-weeks");
 	const width = StyleSheet.flatten(pager.props.style).width;
 	await fireEvent(pager, "scroll", {
-		nativeEvent: {contentOffset: {x: width, y: 0}, contentSize: {width: width * 2, height: 630}, layoutMeasurement: {width, height: 630}},
+		nativeEvent: {
+			contentOffset: {x: width, y: 0},
+			contentSize: {width: width * 2, height: 630},
+			layoutMeasurement: {width, height: 630},
+		},
 	});
 	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
 		nativeEvent: {layout: {height: 883, width: 400}},
@@ -205,7 +228,9 @@ test("folding preserves the selected week and realigns the horizontal page", asy
 	expect(StyleSheet.flatten(foldedPager.props.style).width).toBe(352);
 	expect(foldedPager.props.initialScrollIndex).toBe(1);
 	expect(foldedPager.props.getItemLayout(undefined, 1).offset).toBe(352);
-	expect(screen.getByText(`${getStr("weekNumPrefix")}2${getStr("weekNumSuffix")}`)).toBeTruthy();
+	expect(
+		screen.getByText(`${getStr("weekNumPrefix")}2${getStr("weekNumSuffix")}`),
+	).toBeTruthy();
 });
 
 test("day columns stop widening at the cap, and the grid stays uncapped on a phone", async () => {
@@ -307,15 +332,30 @@ test("a course tap opens the edit modal on a phone", async () => {
 	expect(screen.getByTestId("add-modal").props.visible).toBe(true);
 });
 
-
 test("a stale semester response cannot overwrite the latest selection", async () => {
 	const store = await setup([]);
-	await act(() => {store.dispatch(setCalendarConfig({...autumn, semesterName: "秋季", nextSemesterIndex: 0}));});
+	await act(() => {
+		store.dispatch(
+			setCalendarConfig({
+				...autumn,
+				semesterName: "秋季",
+				nextSemesterIndex: 0,
+			}),
+		);
+	});
 	expect(mockScheduleResponses).toHaveLength(2);
-	const calendar = {...summer, semesterName: "夏季", nextSemesterList: [{...autumn, semesterName: "秋季"}]};
-	await act(async () => {mockScheduleResponses[1]({calendar, schedule: []});});
+	const calendar = {
+		...summer,
+		semesterName: "夏季",
+		nextSemesterList: [{...autumn, semesterName: "秋季"}],
+	};
+	await act(async () => {
+		mockScheduleResponses[1]({calendar, schedule: []});
+	});
 	expect(store.getState().schedule.semesterId).toBe(autumn.semesterId);
-	await act(async () => {mockScheduleResponses[0]({calendar, schedule: [customPlan()]});});
+	await act(async () => {
+		mockScheduleResponses[0]({calendar, schedule: [customPlan()]});
+	});
 	expect(store.getState().config.semesterId).toBe(autumn.semesterId);
 	expect(store.getState().schedule.baseSchedule).toEqual([]);
 });
@@ -323,21 +363,32 @@ test("a stale semester response cannot overwrite the latest selection", async ()
 test("the same persisted summer Sunday is absent from the autumn grid", async () => {
 	const store = await setup([]);
 	await act(() => {
-		store.dispatch(setCalendarConfig({...autumn, semesterName: "秋季", nextSemesterIndex: undefined}));
-		store.dispatch(scheduleAddCustom(customPlan([time("2025-09-14")], {name: "夏季周日"})));
+		store.dispatch(
+			setCalendarConfig({
+				...autumn,
+				semesterName: "秋季",
+				nextSemesterIndex: undefined,
+			}),
+		);
+		store.dispatch(
+			scheduleAddCustom(customPlan([time("2025-09-14")], {name: "夏季周日"})),
+		);
 	});
 	expect(screen.queryByText("夏季周日")).toBeNull();
 	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
 });
-
 
 test("failed refresh retains the current schedule and reports the failure", async () => {
 	mockGetSchedule.mockRejectedValueOnce(new Error("offline"));
 	const store = await setup([plan(1, 1)]);
 	await act(async () => {});
 	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
-	expect(mockSnackbar).toHaveBeenCalledWith(expect.objectContaining({text: "offline"}));
-	expect(screen.getByTestId("schedule-scroll").props.refreshControl.props.refreshing).toBe(false);
+	expect(mockSnackbar).toHaveBeenCalledWith(
+		expect.objectContaining({text: "offline"}),
+	);
+	expect(
+		screen.getByTestId("schedule-scroll").props.refreshControl.props.refreshing,
+	).toBe(false);
 });
 
 const headerLabel = (text: string) => {
@@ -349,31 +400,39 @@ const headerLabel = (text: string) => {
 	};
 };
 
-test("the frozen date and weekday labels shrink to fit a narrow phone instead of clipping", async () => {
-	// 280dp leaves (280 − 40 − 8) / 7 ≈ 33.1dp per column; the shipped 9pt/12pt,
-	// still multiplied by the system font, used to spill past the cell and cut
-	// "10/02" down to "10/0".
-	await setup([plan(1, 1)], 280);
-	const dateText = dayjs(firstDay).format("MM/DD");
-	const date = headerLabel(dateText);
+test("the frozen labels keep the shipped size and scale, and an over-wide grid scrolls", async () => {
+	// 大字体 + 窄屏：列宽缩不到最宽标签以下，于是网格转入横向滚动，标签保持出厂
+	// 字号并正常跟随系统字体缩放（不再被压小、也不再关掉缩放）。
+	Dimensions.set({window: {...Dimensions.get("window"), fontScale: 2}});
+	await setup([plan(1, 1)], 400);
+	// overflow：分页 FlatList 让位给整块横向滚动容器。
+	expect(screen.queryByTestId("schedule-weeks")).toBeNull();
+	expect(screen.getByTestId("schedule-weeks-scroll")).toBeTruthy();
+	const date = headerLabel(dayjs(firstDay).format("MM/DD"));
 	const weekday = headerLabel(getStr("dayOfWeek")[1]);
-	// The system multiplier is off, so the computed size is the rendered size on
-	// every platform -- the label has to be sized to the cell instead.
-	expect(date.allowFontScaling).toBe(false);
-	expect(date.numberOfLines).toBe(1);
-	expect(weekday.allowFontScaling).toBe(false);
-	expect(weekday.numberOfLines).toBe(1);
-	// Shrunk below the shipped 9pt/12pt (the exact values bind on the cell width,
-	// not the font scale), and every glyph still lands inside the column.
-	const cellWidth = (280 - 48) / 7;
-	expect(date.fontSize).toBe(7);
-	expect(weekday.fontSize).toBe(11.5);
-	expect(date.fontSize * scheduleHeaderGlyphAdvanceEm(dateText) + 8).toBeLessThanOrEqual(cellWidth);
-	expect(weekday.fontSize * scheduleHeaderGlyphAdvanceEm(getStr("dayOfWeek")[1]) + 8).toBeLessThanOrEqual(cellWidth);
+	expect(date.allowFontScaling).not.toBe(false);
+	expect(weekday.allowFontScaling).not.toBe(false);
+	expect(date.fontSize).toBe(9);
+	expect(weekday.fontSize).toBe(12);
+	// 装箱宽度已按 2 倍字号给足：最宽标签仍落在列里。
+	const cellWidth = (400 - 80 - 16) / 7;
+	expect(cellWidth).toBeLessThan(66);
+	expect(
+		9 * 2 * textGlyphAdvanceEm(dayjs(firstDay).format("MM/DD")) + 8,
+	).toBeLessThanOrEqual(66);
+	expect(
+		12 * 2 * textGlyphAdvanceEm(getStr("dayOfWeek")[1]) + 8,
+	).toBeLessThanOrEqual(66);
 });
 
 test("a wide screen keeps the shipped header font sizes", async () => {
 	await setup([plan(1, 1)], 750);
-	expect(headerLabel(dayjs(firstDay).format("MM/DD")).fontSize).toBe(9);
-	expect(headerLabel(getStr("dayOfWeek")[1]).fontSize).toBe(12);
+	const date = headerLabel(dayjs(firstDay).format("MM/DD"));
+	const weekday = headerLabel(getStr("dayOfWeek")[1]);
+	expect(date.fontSize).toBe(9);
+	expect(weekday.fontSize).toBe(12);
+	// 宽屏是 fit 模式，仍用分页 FlatList。
+	expect(screen.getByTestId("schedule-weeks")).toBeTruthy();
+	expect(date.allowFontScaling).not.toBe(false);
+	expect(weekday.allowFontScaling).not.toBe(false);
 });

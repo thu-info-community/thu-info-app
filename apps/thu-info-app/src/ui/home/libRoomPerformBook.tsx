@@ -28,6 +28,7 @@ import {ThemedTextInput} from "../../components/subpage/fields";
 import {PrimaryButton} from "../../components/subpage/buttons";
 import {radius} from "../../components/subpage/tokens";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 
@@ -50,6 +51,10 @@ export const LibRoomPerformBookScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// The wheel picker lays each option out in a row of exactly `itemHeight`
+	// pixels; the option text scales with the system font, so the row must too,
+	// or at a large font the (unclipped) glyphs bleed into the neighbouring rows.
+	const pickerItemHeight = useScaledSize(30);
 
 	const today = dayjs().format("YYYY-MM-DD");
 	const now = dayjs().format("HH:mm");
@@ -95,11 +100,11 @@ export const LibRoomPerformBookScreen = ({
 	};
 
 	const [begValue, setBegValue] = useState<string | null>(
-		validBegs.length > 0 ? validBegs[0].start ?? null : null,
+		validBegs.length > 0 ? (validBegs[0].start ?? null) : null,
 	);
 	const validEnds = begValue ? genValidEnds(begValue) : [];
 	const [endValue, setEndValue] = useState<string | null>(
-		validEnds.length > 0 ? validEnds[0].start ?? null : null,
+		validEnds.length > 0 ? (validEnds[0].start ?? null) : null,
 	);
 
 	const rightScrollRef = useRef<ElementRef<typeof ScrollPicker>>(null);
@@ -182,6 +187,8 @@ export const LibRoomPerformBookScreen = ({
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{marginHorizontal: 8, color: colors.fontB3, fontSize: 16}}>
@@ -205,6 +212,8 @@ export const LibRoomPerformBookScreen = ({
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
@@ -227,6 +236,8 @@ export const LibRoomPerformBookScreen = ({
 										wrapperBackground={colors.contentBackground}
 										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
+										itemHeight={pickerItemHeight}
+										wrapperHeight={pickerItemHeight * 5}
 										dataSource={validBegs.map((val) => val.start)}
 										selectedIndex={validBegs.findIndex(
 											(val) => val.start === begValue,
@@ -250,6 +261,8 @@ export const LibRoomPerformBookScreen = ({
 										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
 										ref={rightScrollRef}
+										itemHeight={pickerItemHeight}
+										wrapperHeight={pickerItemHeight * 5}
 										dataSource={validEnds.map((val) => val.start)}
 										selectedIndex={validEnds.findIndex(
 											(val) => val.start === endValue,
@@ -289,6 +302,8 @@ export const LibRoomPerformBookScreen = ({
 								style={{
 									flexDirection: "row",
 									alignItems: "center",
+									flexWrap: "wrap",
+									rowGap: 4,
 								}}>
 								<Text
 									style={{
@@ -389,7 +404,7 @@ export const LibRoomPerformBookScreen = ({
 												style={{
 													backgroundColor: colors.contentBackground,
 													borderColor: colors.inputBorder,
-										borderRadius: radius.control,
+													borderRadius: radius.control,
 													borderWidth: 1,
 													paddingHorizontal: 4,
 													margin: 4,
@@ -442,7 +457,7 @@ export const LibRoomPerformBookScreen = ({
 													style={{
 														backgroundColor: colors.contentBackground,
 														borderColor: colors.fontB2,
-										borderRadius: radius.control,
+														borderRadius: radius.control,
 														borderWidth: 1,
 														paddingHorizontal: 4,
 														margin: 4,
@@ -498,7 +513,7 @@ export const LibRoomPerformBookScreen = ({
 										style={{
 											backgroundColor: colors.contentBackground,
 											borderColor: colors.inputBorder,
-										borderRadius: radius.control,
+											borderRadius: radius.control,
 											borderWidth: 1,
 											paddingHorizontal: 4,
 											margin: 4,
@@ -518,11 +533,11 @@ export const LibRoomPerformBookScreen = ({
 							justifyContent: "center",
 							marginVertical: 24,
 						}}>
-							<PrimaryButton
-								text={getStr(processing ? "processing" : "submit")}
-								disabled={!canSubmit}
-								onPress={performBook}
-							/>
+						<PrimaryButton
+							text={getStr(processing ? "processing" : "submit")}
+							disabled={!canSubmit}
+							onPress={performBook}
+						/>
 					</View>
 				</SectionCard>
 			</ScrollView>

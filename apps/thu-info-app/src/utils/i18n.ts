@@ -2,6 +2,7 @@ import {getLocales} from "react-native-localize";
 import en from "../assets/translations/en";
 import zh from "../assets/translations/zh";
 import {currState} from "../redux/store";
+import {hyphenateLatinWords} from "./hyphenate";
 
 export const getLocale = () => {
 	const preferredLocales = getLocales();
@@ -26,7 +27,7 @@ export function getStr<K extends keyof typeof zh>(key: K): string {
 	}
 
 	// @ts-ignore
-	return translations[key];
+	return hyphenateLatinWords(translations[key]);
 }
 
 /**

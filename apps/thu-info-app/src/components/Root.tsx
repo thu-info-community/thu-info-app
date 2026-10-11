@@ -5,7 +5,7 @@ import {addUsageStat, FunctionType} from "../utils/webApi";
 import themes from "../assets/themes/themes";
 import {useColorScheme, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {FloatingTabBar, TAB_BAR_CLEARANCE} from "./FloatingTabBar";
+import {FloatingTabBar, useTabBarClearance} from "./FloatingTabBar";
 import {useResponsive} from "../utils/useResponsive";
 import {HomeScreen} from "../ui/home/home";
 import {NewsScreen} from "../ui/news/news";
@@ -158,6 +158,7 @@ const RootTabs = () => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 	const {isWide} = useResponsive();
+	const tabBarClearance = useTabBarClearance();
 	const insets = useSafeAreaInsets();
 
 	const doNotRemindSemver =
@@ -175,7 +176,7 @@ const RootTabs = () => {
 			screenOptions={({route}) => ({
 				// 浮岛是 absolute 的，不占布局，各根屏得自己让出它盖住的那一条。
 				sceneStyle: isWide
-					? {paddingBottom: TAB_BAR_CLEARANCE + insets.bottom}
+					? {paddingBottom: tabBarClearance + insets.bottom}
 					: undefined,
 				tabBarIcon: ({focused, size}) => {
 					switch (route.name) {

@@ -1,5 +1,11 @@
 import {Dispatch, SetStateAction} from "react";
-import {Switch, Text, TouchableOpacity, View} from "react-native";
+import {
+	Switch,
+	Text,
+	TouchableOpacity,
+	useWindowDimensions,
+	View,
+} from "react-native";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
 import dayjs from "dayjs";
 import IconRight from "../../assets/icons/IconRight";
@@ -9,6 +15,8 @@ import {getStr} from "../../utils/i18n";
 import {explainPeriod, explainWeekList} from "../../utils/calendar";
 import {beginTime, endTime} from "../../utils/scheduleLayout";
 import {FlexGrid} from "../FlexGrid";
+import {scaledLineHeight} from "../../utils/scaledText";
+import {useScaledSize} from "../adaptive/scaledBox";
 import {BottomPopupTriggerView} from "../views";
 import {ScheduleFormColors} from "./scheduleAddForm";
 
@@ -25,9 +33,18 @@ const ScheduleFieldSummary = ({
 	valueColor?: string;
 }) => (
 	<View style={{flexDirection: "row", alignItems: "center"}}>
-		<Text style={{color: colors.formText, fontSize: 16, flex: 0}}>{label}</Text>
-		<View style={{flex: 1}} />
-		<Text style={{color: valueColor, fontSize: 16, flex: 0}} numberOfLines={1}>
+		<Text style={{color: colors.formText, fontSize: 16, flexShrink: 0}}>
+			{label}
+		</Text>
+		<Text
+			style={{
+				color: valueColor,
+				fontSize: 16,
+				flex: 1,
+				minWidth: 0,
+				textAlign: "right",
+				marginHorizontal: 8,
+			}}>
 			{value}
 		</Text>
 		<IconRight height={24} width={24} />
@@ -45,26 +62,31 @@ const SchedulePickerWheel = ({
 	index: number;
 	onChange: (index: number) => void;
 	textColor?: string;
-}) => (
-	<ScrollPicker
-		style={{flex: 1}}
-		dataSource={data}
-		selectedIndex={index}
-		renderItem={(item, itemIndex) => (
-			<Text
-				style={{color: textColor, fontSize: 20}}
-				key={`${item}-${itemIndex}`}>
-				{item}
-			</Text>
-		)}
-		onValueChange={(_, selectedIndex) => onChange(selectedIndex)}
-		wrapperHeight={200}
-		wrapperBackground={colors.contentBackground}
-		itemHeight={48}
-		highlightColor={colors.themeGrey}
-		highlightBorderWidth={1}
-	/>
-);
+}) => {
+	// The wheel lays each option in a row of exactly `itemHeight` pixels; the
+	// option text scales with the system font, so the row must scale too.
+	const itemHeight = useScaledSize(48);
+	return (
+		<ScrollPicker
+			style={{flex: 1}}
+			dataSource={data}
+			selectedIndex={index}
+			renderItem={(item, itemIndex) => (
+				<Text
+					style={{color: textColor, fontSize: 20}}
+					key={`${item}-${itemIndex}`}>
+					{item}
+				</Text>
+			)}
+			onValueChange={(_, selectedIndex) => onChange(selectedIndex)}
+			wrapperHeight={itemHeight * 4}
+			wrapperBackground={colors.contentBackground}
+			itemHeight={itemHeight}
+			highlightColor={colors.themeGrey}
+			highlightBorderWidth={1}
+		/>
+	);
+};
 
 const WeekPreset = ({
 	colors,
@@ -105,6 +127,7 @@ const WeekPicker = ({
 	weeks: number[];
 	onChange: Dispatch<SetStateAction<number[]>>;
 }) => {
+	const {fontScale} = useWindowDimensions();
 	const allWeeks = Array.from({length: count}, (_, k) => k + 1);
 	const presets = [
 		{
@@ -145,7 +168,7 @@ const WeekPicker = ({
 								style={{
 									color: weeks.includes(week) ? "white" : colors.formText,
 									fontSize: 18,
-									lineHeight: 40,
+									lineHeight: scaledLineHeight(40, fontScale),
 								}}>
 								{week}
 							</Text>
@@ -164,8 +187,11 @@ const WeekPicker = ({
 			<View
 				style={{
 					flexDirection: "row",
+					flexWrap: "wrap",
 					alignItems: "center",
 					justifyContent: "center",
+					columnGap: 8,
+					rowGap: 8,
 					marginBottom: 32,
 				}}>
 				{presets.map((preset) => (

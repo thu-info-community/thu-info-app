@@ -54,12 +54,17 @@ export const CrCoursePlanScreen = ({
 				data={coursePlan}
 				contentContainerStyle={roundedListContent(colors, true)} // sheet carries the search row
 				ListHeaderComponent={
-					<View style={{flexDirection: "row"}}>
+					<View style={{flexDirection: "row", flexWrap: "wrap", rowGap: 8}}>
 						<ThemedTextInput
 							value={searchKey}
 							onChangeText={setSearchKey}
 							style={{
-								flex: 3,
+								// Keep a usable field; at a large font the search button
+								// wraps below instead of squeezing the input to nothing.
+								flexGrow: 1,
+								flexShrink: 1,
+								flexBasis: 200,
+								minWidth: 0,
 								marginLeft: 12,
 								textAlignVertical: "center",
 								fontSize: 15,
@@ -86,10 +91,7 @@ export const CrCoursePlanScreen = ({
 					</View>
 				}
 				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-						onRefresh={refresh}
-					/>
+					<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 				}
 				renderItem={({item: {id, name, property, credit, group}, index}) => (
 					<>
@@ -105,13 +107,16 @@ export const CrCoursePlanScreen = ({
 								});
 							}}>
 							<View style={{flex: 2, alignItems: "flex-start"}}>
-								<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+								<Text
+									style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 									[{property}] {name}
 								</Text>
 								<Text style={{color: colors.fontB2, marginVertical: 2}}>
 									{id} ({credit} cr)
 								</Text>
-								<Text style={{color: colors.fontB2, marginVertical: 2}}>{group}</Text>
+								<Text style={{color: colors.fontB2, marginVertical: 2}}>
+									{group}
+								</Text>
 							</View>
 						</TouchableOpacity>
 					</>

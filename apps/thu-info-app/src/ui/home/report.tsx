@@ -263,17 +263,16 @@ const ReportCourseRow = ({
 				}}>
 				<ReportIcon grade={course.grade} />
 				<Text
-					numberOfLines={1}
 					style={{
 						fontSize: 16,
-						flex: 2,
+						flex: 1,
+						minWidth: 0,
 						color: colors.text,
 						marginLeft: 8,
 					}}>
 					{showSemester ? `[${course.semester}] ${course.name}` : course.name}
 				</Text>
 				<Text
-					numberOfLines={1}
 					style={{
 						fontSize: 16,
 						flex: 0,
@@ -297,17 +296,16 @@ const ReportSemester = ({
 		<RoundedView key={section.semester} style={{marginBottom: 16}}>
 			<View style={{flexDirection: "row", marginHorizontal: 12}}>
 				<Text
-					numberOfLines={1}
 					style={{
 						fontSize: 16,
 						fontWeight: "bold",
 						color: colors.text,
 						flex: 1,
+						minWidth: 0,
 					}}>
 					{section.semester}
 				</Text>
 				<Text
-					numberOfLines={1}
 					style={{
 						fontSize: 16,
 						fontWeight: "bold",
@@ -440,6 +438,11 @@ export const ReportScreen = () => {
 			<View
 				style={{
 					flexDirection: "row",
+					// At a large system font the two filter labels alone fill the
+					// toolbar, pushing the split/gather button off the edge; let it
+					// drop to its own line instead.
+					flexWrap: "wrap",
+					rowGap: 4,
 					minHeight: 40,
 					alignItems: "center",
 					backgroundColor: colors.contentBackground,
@@ -454,7 +457,11 @@ export const ReportScreen = () => {
 							flex: 0,
 						}}>
 						<Text
-							style={{color: open === "flag" ? colors.primary : colors.fontB2}}>
+							style={{
+								color: open === "flag" ? colors.primary : colors.fontB2,
+								flexShrink: 1,
+								minWidth: 0,
+							}}>
 							{getStr(`reportFlag${flag}`)}
 						</Text>
 						<View style={{marginLeft: 6}}>
@@ -474,7 +481,12 @@ export const ReportScreen = () => {
 						alignItems: "center",
 						flex: 0,
 					}}>
-					<Text style={{color: open === "bx" ? colors.primary : colors.fontB2}}>
+					<Text
+						style={{
+							color: open === "bx" ? colors.primary : colors.fontB2,
+							flexShrink: 1,
+							minWidth: 0,
+						}}>
 						{getStr(bx ? (helper.graduate() ? "xwk" : "bx") : "bxr")}
 					</Text>
 					<View style={{marginLeft: 6}}>

@@ -23,7 +23,7 @@ export const DeepSeekSettingsScreen = () => {
 	);
 	const dispatch = useDispatch();
     return (
-        <SubPageScreen scroll={false} contentStyle={{paddingTop: 0}}>
+        <SubPageScreen contentStyle={{paddingTop: 0}}>
 		<RoundedView style={style.rounded}>
 			<View style={style.touchable}>
 				<Text style={style.text}>{getStr("enableBubbleMessage")}</Text>

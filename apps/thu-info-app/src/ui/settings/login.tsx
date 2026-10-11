@@ -40,7 +40,9 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 	const localPasskeys = Object.values(auth.passkeys);
 
-	const [userId, setUserId] = useState(auth.userId || (localPasskeys.length === 1 ? localPasskeys[0].userId : ""));
+	const [userId, setUserId] = useState(
+		auth.userId || (localPasskeys.length === 1 ? localPasskeys[0].userId : ""),
+	);
 	const [password, setPassword] = useState(auth.password);
 	const [processing, setProcessing] = useState(false);
 	const credential = auth.passkeys[userId];
@@ -58,12 +60,19 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		gt(latestVersion, VersionNumber.appVersion) &&
 		gt(latestVersion, doNotRemindSemver);
 
-	const performLogin = (usePasskey = !!credential && password === "", loginUserId = userId) => {
+	const performLogin = (
+		usePasskey = !!credential && password === "",
+		loginUserId = userId,
+	) => {
 		if (processing) return;
 		setProcessing(true);
 		const loginCredential = auth.passkeys[loginUserId];
 		helper
-			.login(usePasskey && loginCredential ? {method: "passkey", credential: loginCredential} : {userId: loginUserId, password})
+			.login(
+				usePasskey && loginCredential
+					? {method: "passkey", credential: loginCredential}
+					: {userId: loginUserId, password},
+			)
 			.then(() => {
 				if (loginCredential) dispatch(loginWithPasskey(loginCredential));
 				else dispatch(login({userId: loginUserId, password}));
@@ -77,7 +86,11 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(() => {
 				if (Platform.OS === "ios" || Platform.OS === "android") {
 					helper
-						.appStartUp(Platform.OS, currState().config.uuid, VersionNumber.appVersion)
+						.appStartUp(
+							Platform.OS,
+							currState().config.uuid,
+							VersionNumber.appVersion,
+						)
 						.then(
 							({
 								bookingRecords,
@@ -125,11 +138,20 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 				<View style={{width: "100%", maxWidth: 400, alignItems: "center"}}>
 					<IconMain width={108} height={108} />
 					<View style={{height: 20}} />
-					{!userId && localPasskeys.map((item) => <PrimaryButton
-						key={item.credentialId}
-						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
-						numberOfLines={1} text={`${getStr("passkeyLogin")} · ${item.userId}`}
-						onPress={() => { setUserId(item.userId); setPassword(""); performLogin(true, item.userId); }} />)}
+					{!userId &&
+						localPasskeys.map((item) => (
+							<PrimaryButton
+								key={item.credentialId}
+								style={[style.loginButtonStyle, style.passkeyButtonStyle]}
+								disabled={processing}
+								text={`${getStr("passkeyLogin")} · ${item.userId}`}
+								onPress={() => {
+									setUserId(item.userId);
+									setPassword("");
+									performLogin(true, item.userId);
+								}}
+							/>
+						))}
 					<View
 						style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
 						<IconPerson width={18} height={18} />
@@ -161,10 +183,15 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							secureTextEntry
 						/>
 					</View>
-					{credential && <PrimaryButton
-						testID="passkeyLoginButton" text={getStr("passkeyLogin")}
-						style={[style.loginButtonStyle, style.passkeyButtonStyle]} disabled={processing}
-						onPress={() => performLogin(true)} />}
+					{credential && (
+						<PrimaryButton
+							testID="passkeyLoginButton"
+							text={getStr("passkeyLogin")}
+							style={[style.loginButtonStyle, style.passkeyButtonStyle]}
+							disabled={processing}
+							onPress={() => performLogin(true)}
+						/>
+					)}
 					<IdMaintenanceNotice
 						forgotPassword
 						style={{alignSelf: "flex-end", paddingVertical: 8}}
@@ -173,26 +200,27 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("forgotPassword")}
 						</Text>
 					</IdMaintenanceNotice>
-					{(!credential || password !== "") && (privacy312 === true ||
-					Platform.OS === "android" ||
-					Platform.OS === "ios" ? (
-						<PrimaryButton
-							style={style.loginButtonStyle}
-							testID="loginButton"
-							disabled={processing}
-							text={getStr("login")}
-							onPress={() => {
-								performLogin();
-							}}
-						/>
-					) : (
-						<PrimaryButton
-							style={style.loginButtonStyle}
-							testID="loginButton"
-							text={getStr("privacyPolicy")}
-							onPress={() => navigation.navigate("Privacy")}
-						/>
-					))}
+					{(!credential || password !== "") &&
+						(privacy312 === true ||
+						Platform.OS === "android" ||
+						Platform.OS === "ios" ? (
+							<PrimaryButton
+								style={style.loginButtonStyle}
+								testID="loginButton"
+								disabled={processing}
+								text={getStr("login")}
+								onPress={() => {
+									performLogin();
+								}}
+							/>
+						) : (
+							<PrimaryButton
+								style={style.loginButtonStyle}
+								testID="loginButton"
+								text={getStr("privacyPolicy")}
+								onPress={() => navigation.navigate("Privacy")}
+							/>
+						))}
 					<Text style={style.credentialNoteStyle}>
 						{getStr(
 							Platform.OS === "android" || Platform.OS === "ios"

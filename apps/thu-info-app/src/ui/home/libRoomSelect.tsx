@@ -6,6 +6,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {getStr} from "../../utils/i18n";
@@ -16,6 +17,7 @@ import {RoundedView} from "../../components/views";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {LibRoomInfo} from "@thu-info/lib/src/models/home/library";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 	const [libraries, setLibraries] = useState<LibRoomInfo[]>([]);
@@ -26,6 +28,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
+	const {fontScale} = useWindowDimensions();
 
 	const validDateNum = 5;
 	const format = "YYYY-MM-DD";
@@ -45,10 +48,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}>
 			<RoundedView
 				style={{marginHorizontal: 12, marginVertical: 24, padding: 16}}>
@@ -74,7 +74,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 								style={{
 									color: colors.text,
 									fontSize: 16,
-									lineHeight: 24,
+									lineHeight: scaledLineHeight(24, fontScale),
 								}}>
 								{lib.kindName}
 							</Text>
@@ -105,7 +105,7 @@ export const LibRoomSelectScreen = ({navigation}: {navigation: RootNav}) => {
 												marginLeft: 16,
 												color: colors.text,
 												fontSize: 16,
-												lineHeight: 24,
+												lineHeight: scaledLineHeight(24, fontScale),
 											}}>
 											{date.format(format)} {getStr("dayOfWeek")[date.day()]}
 										</Text>

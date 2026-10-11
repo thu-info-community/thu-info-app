@@ -97,11 +97,18 @@ test("encoded images give the zoom viewer their decoded dimensions", async () =>
 	await fireEvent(screen.getByTestId("encoded-image-loader"), "load", {
 		nativeEvent: {source: {width: 900, height: 500}},
 	});
-	expect(screen.getByTestId("zoom-image").props.imageUrls).toEqual([{url, width: 900, height: 500}]);
+	expect(screen.getByTestId("zoom-image").props.imageUrls).toEqual([
+		{url, width: 900, height: 500},
+	]);
 	expect(screen.queryByTestId("encoded-image-loader")).toBeNull();
 });
 
 test("map markers follow the actual image when its aspect ratio and container change", async () => {
+	// Pin the font scale to 1: the RN test window defaults to 2, where the
+	// markers deliberately give way to the full-width legend list below.
+	await act(() => {
+		Dimensions.set({window: {...originalWindow, fontScale: 1}});
+	});
 	await render(
 		<LibraryFloorMap
 			uri="https://example.invalid/floor.jpg"
@@ -150,6 +157,35 @@ test("map markers follow the actual image when its aspect ratio and container ch
 			screen.getByTestId("library-map-image-frame").props.style,
 		).aspectRatio,
 	).toBe(1);
+});
+
+test("library map shows a full-width legend instead of the markers at a large font", async () => {
+	await act(() => {
+		Dimensions.set({window: {...originalWindow, fontScale: 2}});
+	});
+	await render(
+		<LibraryFloorMap
+			uri="https://example.invalid/floor.jpg"
+			sections={[
+				{
+					id: 1,
+					zhName: "A区",
+					enName: "A",
+					zhNameTrace: "A区",
+					enNameTrace: "A",
+					valid: true,
+					total: 10,
+					available: 5,
+					posX: 25,
+					posY: 60,
+				},
+			]}
+		/>,
+	);
+	// The absolutely-positioned markers would grow in place and overlap, so at a
+	// large font the names move to a normal-flow legend under the image.
+	expect(screen.getByTestId("library-map-legend")).toBeTruthy();
+	expect(screen.getByText("A区")).toBeTruthy();
 });
 
 test("inline filters retain selection and consume Back only while open", async () => {

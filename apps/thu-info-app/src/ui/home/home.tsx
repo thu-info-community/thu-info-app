@@ -8,6 +8,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {ReactElement, useEffect, useState} from "react";
@@ -23,6 +24,7 @@ import zh from "../../assets/translations/zh";
 import {getLocale, getStr} from "../../utils/i18n";
 import themedStyles from "../../utils/themedStyles";
 import {useResponsive} from "../../utils/useResponsive";
+import {layoutScale} from "../../utils/fontScale";
 import IconWasher from "../../assets/icons/IconWasher";
 import IconWater from "../../assets/icons/IconWater";
 import IconSports from "../../assets/icons/IconSports";
@@ -81,17 +83,23 @@ const DEFAULT_FUNCTION_COLUMNS = 5;
 /**
  * 一行摆几格。用宫格自己的宽度算（不是窗口宽度）：宽屏下它可能只占半屏，
  * 拿窗口宽度算会把每格挤到 47dp。
+ *
+ * 大字体下每格的可用宽度要跟着字号长：同样 62dp 的格子，2.0x 时只够放两三个
+ * 汉字，标题就会被省略号截掉。传入随 fontScale 放大的 minItemWidth/minColumns
+ * 后，大字号时一行少摆几格、每格更宽，标题就完整了。
  */
-const functionColumnsFor = (availableWidth: number): number =>
+const functionColumnsFor = (
+	availableWidth: number,
+	minItemWidth: number,
+	minColumns: number,
+	initialColumns: number,
+): number =>
 	availableWidth <= 0
-		? DEFAULT_FUNCTION_COLUMNS
+		? Math.max(minColumns, initialColumns)
 		: Math.min(
 				MAX_FUNCTION_COLUMNS,
-				Math.max(
-					MIN_FUNCTION_COLUMNS,
-					Math.floor(availableWidth / MIN_FUNCTION_ITEM_WIDTH),
-				),
-		  );
+				Math.max(minColumns, Math.floor(availableWidth / minItemWidth)),
+			);
 
 export const HomeFunctionSection = ({
 	title,
@@ -103,13 +111,27 @@ export const HomeFunctionSection = ({
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const [contentWidth, setContentWidth] = useState(0);
+	const {fontScale} = useWindowDimensions();
+	const layoutFactor = layoutScale(fontScale);
+	// 大字体时一行少摆几格（每格更宽），否则标题会被截成「研读间…」。
+	const minItemWidth = Math.round(MIN_FUNCTION_ITEM_WIDTH * layoutFactor);
+	const minColumns = Math.max(
+		1,
+		Math.round(MIN_FUNCTION_COLUMNS / layoutFactor),
+	);
 	// 固定 5 列时，平板/折叠屏展开会把每个图标撑到 160dp，一行只有五个孤零零的方块。
 	// 改成按可用宽度排满：图标大小和手机上一致，宽屏只是每行多摆几个。
-	const columns = functionColumnsFor(contentWidth);
+	const columns = functionColumnsFor(
+		contentWidth,
+		minItemWidth,
+		minColumns,
+		Math.max(1, Math.round(DEFAULT_FUNCTION_COLUMNS / layoutFactor)),
+	);
 	const functionItems = Array.isArray(children)
-		? children.filter((child: ReactElement | undefined): child is ReactElement =>
-				child !== undefined,
-		  )
+		? children.filter(
+				(child: ReactElement | undefined): child is ReactElement =>
+					child !== undefined,
+			)
 		: undefined;
 
 	return (
@@ -146,14 +168,14 @@ export const HomeFunctionSection = ({
 												</View>
 											))}
 											{Array.from(
-													{length: columns - rowItems.length},
-													(_spacer, itemIndex) => (
-														<View
-															key={`function-spacer-${rowIndex}-${itemIndex}`}
-															style={style.functionSectionItem}
-														/>
-													),
-												)}
+												{length: columns - rowItems.length},
+												(_spacer, itemIndex) => (
+													<View
+														key={`function-spacer-${rowIndex}-${itemIndex}`}
+														style={style.functionSectionItem}
+													/>
+												),
+											)}
 										</View>
 									);
 								},
@@ -199,12 +221,23 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 					style={{
 						width: 4,
 						backgroundColor: schedule.color,
-						height: 50,
+						alignSelf: "stretch",
 						borderRadius: 4,
 					}}
 				/>
-				<View style={{marginLeft: 8, flex: 1, flexDirection: "column"}}>
-					<View style={{flex: 1, flexDirection: "row-reverse"}}>
+				<View
+					style={{
+						marginLeft: 8,
+						flex: 1,
+						minWidth: 0,
+						flexDirection: "column",
+					}}>
+					<View
+						style={{
+							flex: 1,
+							flexDirection: "row-reverse",
+							alignItems: "center",
+						}}>
 						<Text
 							style={{
 								alignSelf: "center",
@@ -214,23 +247,25 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 							}}>
 							{schedule.from}
 						</Text>
-						<View style={{flex: 1}}>
-							<Text
-								style={{
-									position: "absolute",
-									alignSelf: "center",
-									left: 0,
-									right: 0,
-									fontWeight: "bold",
-									fontSize: 16,
-									color: theme.colors.fontB0,
-								}}
-								numberOfLines={1}>
-								{schedule.name}
-							</Text>
-						</View>
+						{/* 课名/地点是必要信息：横向排开、让格子随字体长大并换行，不再因为
+						    绝对定位 + numberOfLines=1 在大字体下被裁掉。 */}
+						<Text
+							style={{
+								flex: 1,
+								minWidth: 0,
+								fontWeight: "bold",
+								fontSize: 16,
+								color: theme.colors.fontB0,
+							}}>
+							{schedule.name}
+						</Text>
 					</View>
-					<View style={{flex: 1, flexDirection: "row-reverse"}}>
+					<View
+						style={{
+							flex: 1,
+							flexDirection: "row-reverse",
+							alignItems: "center",
+						}}>
 						<Text
 							style={{
 								alignSelf: "center",
@@ -240,20 +275,15 @@ const HomeSchedule = ({schedule}: {schedule: ScheduleViewModel}) => {
 							}}>
 							{schedule.to}
 						</Text>
-						<View style={{flex: 1}}>
-							<Text
-								style={{
-									position: "absolute",
-									alignSelf: "center",
-									left: 0,
-									right: 0,
-									fontWeight: "bold",
-									color: theme.colors.fontB2,
-								}}
-								numberOfLines={1}>
-								{schedule.location}
-							</Text>
-						</View>
+						<Text
+							style={{
+								flex: 1,
+								minWidth: 0,
+								fontWeight: "bold",
+								color: theme.colors.fontB2,
+							}}>
+							{schedule.location}
+						</Text>
 					</View>
 				</View>
 			</View>
@@ -266,13 +296,14 @@ export const AnnouncementSection = () => {
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
 	const dispatch = useDispatch();
-	const announcements = useSelector((s: State) => s.announcement.announcements).filter(
-		({visibleNotAfter, visibleExact}) => (
+	const announcements = useSelector(
+		(s: State) => s.announcement.announcements,
+	).filter(
+		({visibleNotAfter, visibleExact}) =>
 			visibleNotAfter === undefined ||
 			visibleExact === undefined ||
 			!gt(VersionNumber.appVersion, visibleNotAfter) ||
-			visibleExact.split(",").includes(VersionNumber.appVersion)
-		)
+			visibleExact.split(",").includes(VersionNumber.appVersion),
 	);
 	if (announcements.length === 0) {
 		return null;
@@ -282,19 +313,17 @@ export const AnnouncementSection = () => {
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("announcements")}</Text>
 			<View style={style.SectionContentContainer}>
-				{announcements.map(
-					({id, read, title, content}) => (
-						<TouchableOpacity
-							onPress={() => dispatch(toggleReadStatus(id))}
-							style={{marginTop: 8, marginHorizontal: 8}}
-							key={id}>
-							<Text style={{fontWeight: "bold", color: colors.text}}>
-								{title} {read ? "(已读)" : ""}
-							</Text>
-							{!read && <Text style={{color: colors.fontB2}}>{content}</Text>}
-						</TouchableOpacity>
-					)
-				)}
+				{announcements.map(({id, read, title, content}) => (
+					<TouchableOpacity
+						onPress={() => dispatch(toggleReadStatus(id))}
+						style={{marginTop: 8, marginHorizontal: 8}}
+						key={id}>
+						<Text style={{fontWeight: "bold", color: colors.text}}>
+							{title} {read ? "(已读)" : ""}
+						</Text>
+						{!read && <Text style={{color: colors.fontB2}}>{content}</Text>}
+					</TouchableOpacity>
+				))}
 			</View>
 		</View>
 	);
@@ -383,10 +412,7 @@ export const HomeScheduleSection = () => {
 	return (
 		<View style={style.SectionContainer}>
 			<Text style={style.SectionTitle}>{getStr("schedulePreview")}</Text>
-			<View style={[
-					style.SectionContentContainer,
-					{ paddingHorizontal: 20 },
-				]}>
+			<View style={[style.SectionContentContainer, {paddingHorizontal: 20}]}>
 				<Text style={style.scheduleSectionContentPrimaryTitle}>
 					{getLocale() === zh
 						? `${now.month() + 1}月${now.date()}日 ${dayZh[today]}`
@@ -560,15 +586,19 @@ const getHomeFunctions = (
 		}}>
 		<IconReserve width={iconSize} height={iconSize} />
 	</HomeIcon>,
-		...Platform.OS === "android" || Platform.OS === "ios" ? [<HomeIcon
-		key="cr"
-		title="courseRegistration"
-		onPress={() => {
-			updateTop5("cr");
-			navigate("CrHome");
-		}}>
-		<IconCr width={iconSize} height={iconSize} />
-	</HomeIcon>] : [],
+	...(Platform.OS === "android" || Platform.OS === "ios"
+		? [
+				<HomeIcon
+					key="cr"
+					title="courseRegistration"
+					onPress={() => {
+						updateTop5("cr");
+						navigate("CrHome");
+					}}>
+					<IconCr width={iconSize} height={iconSize} />
+				</HomeIcon>,
+			]
+		: []),
 	<HomeIcon
 		key="library"
 		title="library"
@@ -809,11 +839,7 @@ const getHomeFunctions = (
  * 宽屏右栏顶部的校园卡余额。余额由 Home 挂载时的 `helper.appStartUp` 带回并写进
  * redux（见下面 `dispatch(setBalance(balance))`），所以这里不发额外的请求。
  */
-const HomeBalanceChip = ({
-	onPress,
-}: {
-	onPress?: (event: any) => void;
-}) => {
+const HomeBalanceChip = ({onPress}: {onPress?: (event: any) => void}) => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const balance = useSelector((s: State) => s.campusCard.balance);
@@ -829,7 +855,7 @@ const HomeBalanceChip = ({
 				disabled={onPress === undefined}
 				onPress={onPress}>
 				<Text style={style.balanceChipTitle}>{getStr("campusCard")}</Text>
-				<Text style={style.balanceChipValue} numberOfLines={1}>
+				<Text style={style.balanceChipValue}>
 					{getStr("remainder")} ¥{balance.toFixed(2)}
 				</Text>
 			</TouchableOpacity>
@@ -869,13 +895,13 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	// the store if the function is ever reintroduced.
 	const sunsetFunctions: HomeFunction[] = ["expenditure", "campusMap"];
 
-	const homeFunctions = getHomeFunctions(
-		navigateWithDetail,
-		(func) => dispatch(top5Update(func)),
+	const homeFunctions = getHomeFunctions(navigateWithDetail, (func) =>
+		dispatch(top5Update(func)),
 	);
 	const top5 = top5Functions.map((x) => homeFunctions.find((y) => y.key === x));
 	let needToShowFunctionNames: HomeFunction[] = [];
-	if (!(disabledList ?? []).includes("thos")) needToShowFunctionNames.push("thos");
+	if (!(disabledList ?? []).includes("thos"))
+		needToShowFunctionNames.push("thos");
 	["physicalExam", "teachingEvaluation", "report", "classroomState"].forEach(
 		(i) => {
 			if (!(disabledList ?? []).includes(i as HomeFunction)) {
@@ -923,7 +949,10 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	}
 
 	const top5Filtered = top5.filter(
-		(f) => f && !sunsetFunctions.includes((f as any).key) && !(disabledList ?? []).includes((f as any).key),
+		(f) =>
+			f &&
+			!sunsetFunctions.includes((f as any).key) &&
+			!(disabledList ?? []).includes((f as any).key),
 	);
 
 	const needToShowFunctions = needToShowFunctionNames.map((x) =>
@@ -948,10 +977,17 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	useEffect(() => {
 		// @ts-ignore
-		if (Platform.OS !== "ios" && Platform.OS !== "android" && Platform.OS !== "harmony") {
+		if (
+			Platform.OS !== "ios" &&
+			Platform.OS !== "android" &&
+			Platform.OS !== "harmony"
+		) {
 			return;
 		}
-		if (!(Platform.OS === "android" || Platform.OS === "ios") && privacy312 !== true) {
+		if (
+			!(Platform.OS === "android" || Platform.OS === "ios") &&
+			privacy312 !== true
+		) {
 			Alert.alert(
 				getStr("privacyPolicy"),
 				getStr("privacyPolicyPrompt"),
@@ -978,7 +1014,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		};
 
 		helper
-			.appStartUp(Platform.OS, currState().config.uuid, VersionNumber.appVersion)
+			.appStartUp(
+				Platform.OS,
+				currState().config.uuid,
+				VersionNumber.appVersion,
+			)
 			.then(
 				({
 					bookingRecords,
@@ -992,16 +1032,26 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
 					dispatch(setCrTimetable(crTimetable));
 					dispatch(
-						configSet({key: "latestVersion", value: startupVersion.versionName}),
+						configSet({
+							key: "latestVersion",
+							value: startupVersion.versionName,
+						}),
 					);
 					dispatch(updateAnnouncements(latestAnnounces));
 					dispatch(setBalance(balance));
-					if (fingerprintSecure !== true && invalidHelper.userId !== "" && invalidHelper.password !== "") {
-						invalidHelper.forgetDevice().then(() => {
-							dispatch(configSet({key: "fingerprintSecure", value: true}));
-						}).catch(() => {
-							// no-op
-						});
+					if (
+						fingerprintSecure !== true &&
+						invalidHelper.userId !== "" &&
+						invalidHelper.password !== ""
+					) {
+						invalidHelper
+							.forgetDevice()
+							.then(() => {
+								dispatch(configSet({key: "fingerprintSecure", value: true}));
+							})
+							.catch(() => {
+								// no-op
+							});
 					}
 				},
 			);
@@ -1012,7 +1062,13 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const recentlyUsedSection = (
 		<HomeFunctionSection title="recentlyUsedFunction">
 			{top5Filtered.length === 0 ? (
-				<View style={{flex: 1, marginTop: 16 - 8, alignItems: "center", justifyContent: "center"}}>
+				<View
+					style={{
+						flex: 1,
+						marginTop: 16 - 8,
+						alignItems: "center",
+						justifyContent: "center",
+					}}>
 					<Text style={{color: theme.colors.text}}>
 						{getStr("recentUseHint")}
 					</Text>
@@ -1028,9 +1084,8 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		</HomeFunctionSection>
 	);
 	// 复用宫格里「校园卡」那一项的 onPress，密码校验 / 埋点 / top5 都跟着走。
-	const campusCardOnPress: ((event: any) => void) | undefined = homeFunctions.find(
-		(f) => f.props.title === "campusCard",
-	)?.props.onPress;
+	const campusCardOnPress: ((event: any) => void) | undefined =
+		homeFunctions.find((f) => f.props.title === "campusCard")?.props.onPress;
 
 	return (
 		<View style={{flex: 1, paddingTop: insets.top}}>
@@ -1057,7 +1112,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 						hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
 						style={{position: "absolute", right: 10, top: 10, zIndex: 1}}
 						onPress={() => setUpdateBannerDismissed(true)}>
-						<Text style={{fontSize: 20, color: theme.colors.text, lineHeight: 24}}>×</Text>
+						<Text style={{fontSize: 20, color: theme.colors.text}}>×</Text>
 					</TouchableOpacity>
 					<Text
 						style={{
@@ -1070,7 +1125,12 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 						{getStr("updateBannerTitle")}
 					</Text>
 					<TouchableOpacity
-						style={{alignSelf: "flex-end", flexDirection: "row", alignItems: "center", gap: 4}}
+						style={{
+							alignSelf: "flex-end",
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 4,
+						}}
 						onPress={() =>
 							navigation.navigate("About", {openCheckUpdate: true})
 						}>

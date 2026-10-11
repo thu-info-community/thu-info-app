@@ -1,5 +1,13 @@
 import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
-import {View, Text, TouchableOpacity, Modal, Alert} from "react-native";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	Modal,
+	Alert,
+	ScrollView,
+	useWindowDimensions,
+} from "react-native";
 import {useLayoutEffect, useState} from "react";
 import {Choice} from "../../redux/slices/schedule";
 import {useStore} from "react-redux";
@@ -13,9 +21,13 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
-import {ScheduleAddModal, ScheduleEditParams} from "../../components/schedule/scheduleAdd";
+import {
+	ScheduleAddModal,
+	ScheduleEditParams,
+} from "../../components/schedule/scheduleAdd";
 import {helper, State} from "../../redux/store";
 import {HeaderActionButton} from "../../components/subpage/headerAction";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {
@@ -40,6 +52,7 @@ export const ScheduleDetailScreen = ({
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const {fontScale} = useWindowDimensions();
 
 	const reduxStore = useStore<State>();
 
@@ -63,16 +76,19 @@ export const ScheduleDetailScreen = ({
 		if (props.type === ScheduleType.EXAM) {
 			return null;
 		}
-		const verbText: string =
-			isCustomLike
-				? getStr("delSchedule")
-				: getStr("hideSchedule");
+		const verbText: string = isCustomLike
+			? getStr("delSchedule")
+			: getStr("hideSchedule");
 		const buttonText: string =
 			choice === Choice.ALL
 				? verbText + getStr("allTime")
 				: choice === Choice.REPEAT
-				? verbText + getStr("repeatly")
-				: verbText + getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix") + getStr("once");
+					? verbText + getStr("repeatly")
+					: verbText +
+						getStr("weekNumPrefix") +
+						props.week +
+						getStr("weekNumSuffix") +
+						getStr("once");
 		const showLoading = deleting && isCustomLike;
 		return (
 			<TouchableOpacity
@@ -83,7 +99,14 @@ export const ScheduleDetailScreen = ({
 					}
 					try {
 						setDeleting(true);
-						await deleteScheduleOccurrences(helper, reduxStore, props.localId, props, choice, reduxStore.getState().config);
+						await deleteScheduleOccurrences(
+							helper,
+							reduxStore,
+							props.localId,
+							props,
+							choice,
+							reduxStore.getState().config,
+						);
 						setDelPopupShow(false);
 						navigation.pop();
 					} catch {
@@ -108,8 +131,8 @@ export const ScheduleDetailScreen = ({
 		<View
 			style={[
 				styles(themeName).separator,
-				{ marginHorizontal: 0 },
-				thick ? { borderBottomWidth: 1 } : {},
+				{marginHorizontal: 0},
+				thick ? {borderBottomWidth: 1} : {},
 			]}
 		/>
 	);
@@ -117,56 +140,81 @@ export const ScheduleDetailScreen = ({
 	return (
 		<RoundedView
 			style={{margin: 8, paddingHorizontal: 16, paddingVertical: 8, flex: 1}}>
-			<Text
-				style={{
-					fontSize: 20,
-					lineHeight: 28,
-					color: colors.fontB1,
-					fontWeight: "bold",
-				}}
-				numberOfLines={2}>
-				{nullAlias(props.alias) ? props.name : props.alias}
-			</Text>
-			<Text style={{fontSize: 14, color: colors.themePurple}}>
-				{props.location === "" ? getStr("locationUnset") : props.location}
-			</Text>
-			<View style={{flexDirection: "row", marginTop: 22, alignItems: "center"}}>
-				<IconTime height={15} width={15} />
-				<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-					{getStr("dayOfWeek")[props.dayOfWeek]}
-					{(getStr("mark") === "CH" ? "（" : "(") +
-						  props.beginTime.format("HH:mm") +
-						  " ~ " +
-						  props.endTime.format("HH:mm") +
-						  (getStr("mark") === "CH" ? "）" : ")")}
+			{/* 大字体下正文可能比可视高度还高；正文可滚动，删除按钮始终留在底部。 */}
+			<ScrollView style={{flex: 1}}>
+				<Text
+					style={{
+						fontSize: 20,
+						lineHeight: scaledLineHeight(28, fontScale),
+						color: colors.fontB1,
+						fontWeight: "bold",
+					}}
+					numberOfLines={2}>
+					{nullAlias(props.alias) ? props.name : props.alias}
 				</Text>
-			</View>
-			<View style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
-				<IconBoard height={15} width={15} />
-				<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-					{getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix")}
+				<Text style={{fontSize: 14, color: colors.themePurple}}>
+					{props.location === "" ? getStr("locationUnset") : props.location}
 				</Text>
-			</View>
-			{nullAlias(props.alias) ? null : (
 				<View
-					style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
-					<IconTrademark height={15} width={15} />
-					<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-						{props.name}
-						{getStr("lp")}
-						{getStr("originalName")}
-						{getStr("rp")}
+					style={{flexDirection: "row", marginTop: 22, alignItems: "center"}}>
+					<IconTime height={15} width={15} />
+					<Text
+						style={{
+							flex: 1,
+							minWidth: 0,
+							marginLeft: 12,
+							color: colors.fontB2,
+							fontSize: 14,
+						}}>
+						{getStr("dayOfWeek")[props.dayOfWeek]}
+						{(getStr("mark") === "CH" ? "（" : "(") +
+							props.beginTime.format("HH:mm") +
+							" ~ " +
+							props.endTime.format("HH:mm") +
+							(getStr("mark") === "CH" ? "）" : ")")}
 					</Text>
 				</View>
-			)}
-			<View
-				style={{
-					backgroundColor: colors.themeGrey,
-					height: 1,
-					marginTop: 12,
-				}}
-			/>
-			<View style={{flex: 1}} />
+				<View
+					style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
+					<IconBoard height={15} width={15} />
+					<Text
+						style={{
+							flex: 1,
+							minWidth: 0,
+							marginLeft: 12,
+							color: colors.fontB2,
+							fontSize: 14,
+						}}>
+						{getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix")}
+					</Text>
+				</View>
+				{nullAlias(props.alias) ? null : (
+					<View
+						style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
+						<IconTrademark height={15} width={15} />
+						<Text
+							style={{
+								flex: 1,
+								minWidth: 0,
+								marginLeft: 12,
+								color: colors.fontB2,
+								fontSize: 14,
+							}}>
+							{props.name}
+							{getStr("lp")}
+							{getStr("originalName")}
+							{getStr("rp")}
+						</Text>
+					</View>
+				)}
+				<View
+					style={{
+						backgroundColor: colors.themeGrey,
+						height: 1,
+						marginTop: 12,
+					}}
+				/>
+			</ScrollView>
 			<TouchableOpacity
 				onPress={() => setDelPopupShow(true)}
 				style={{
@@ -205,7 +253,10 @@ export const ScheduleDetailScreen = ({
 						}}
 					/>
 					<RoundedView
-						style={{marginHorizontal: 7, backgroundColor: colors.contentBackground}}>
+						style={{
+							marginHorizontal: 7,
+							backgroundColor: colors.contentBackground,
+						}}>
 						<Text
 							style={{
 								color: colors.text,
