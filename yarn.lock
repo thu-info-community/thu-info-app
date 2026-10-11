@@ -6273,6 +6273,18 @@ husky@9.1.7:
   resolved "https://registry.yarnpkg.com/husky/-/husky-9.1.7.tgz#d46a38035d101b46a70456a850ff4201344c0b2d"
   integrity sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==
 
+hyphenated-en-us@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/hyphenated-en-us/-/hyphenated-en-us-1.2.0.tgz#03f9e227de7ad302e9c3ffad6fd9a2dbaae1340e"
+  integrity sha512-Tz9OMog//SSMnIOK18MmRumfI+r0goJZZAAVJ1Itho7r9GSZcGrGiIZNYfScAW1hqvFJLu2yRh7haa0YF+8i/Q==
+
+hyphenated@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/hyphenated/-/hyphenated-1.2.0.tgz#60a52092604f2fbf2913d555dc56ce4e09adefd2"
+  integrity sha512-VxoFV6d2UFvniIBMEaWtVTZYYWJcPE5p8iGdO3GAfHd5q1qootRXTa43YHdW+Q0gdBr3WAwWRIJPkuWardc9wQ==
+  dependencies:
+    hyphenated-en-us "^1.2.0"
+
 iconv-lite@0.6.3, iconv-lite@^0.6.3:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.6.3.tgz#a52f80bf38da1952eb5c681790719871a1a72501"

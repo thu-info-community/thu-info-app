@@ -1,6 +1,7 @@
 import {ReactNode} from "react";
 import {StyleProp, Text, useColorScheme, View, ViewStyle} from "react-native";
 import themes from "../../assets/themes/themes";
+import {ANDROID_HYPHENATION} from "../../utils/scaledText";
 
 /**
  * A row that keeps its text visible under a large system font.
@@ -73,10 +74,13 @@ export const AdaptiveLabelValueRow = ({
 			trailing={trailing}
 			style={style}>
 			<View style={{flexDirection: "row", alignItems: "center"}}>
-				<Text style={{flexShrink: 1, minWidth: 0, color: colors.text, fontSize: 16}}>
+				<Text
+					{...ANDROID_HYPHENATION}
+					style={{flexShrink: 1, minWidth: 0, color: colors.text, fontSize: 16}}>
 					{label}
 				</Text>
 				<Text
+					{...ANDROID_HYPHENATION}
 					numberOfLines={valueNumberOfLines}
 					style={{
 						flexShrink: 0,

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import themes from "../assets/themes/themes";
+import {ANDROID_HYPHENATION} from "../utils/scaledText";
 import {AdaptiveBadge} from "./adaptive/badge";
 import {useScaledSize} from "./adaptive/scaledBox";
 import {useFontScale} from "../utils/useFontScale";
@@ -173,6 +174,7 @@ export const FloatingTabBar = ({
 									))}
 							</View>
 							<Text
+								{...ANDROID_HYPHENATION}
 								numberOfLines={2}
 								style={[
 									{fontSize: 11, color, marginTop: 2, textAlign: "center"},

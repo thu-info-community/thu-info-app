@@ -31,7 +31,13 @@ const isFullWidth = (codePoint: number): boolean =>
 export const textGlyphAdvanceEm = (text: string): number => {
 	let advance = 0;
 	for (const glyph of text) {
-		advance += isFullWidth(glyph.codePointAt(0) ?? 0)
+		const codePoint = glyph.codePointAt(0) ?? 0;
+		// A soft hyphen (U+00AD) is invisible and takes no space; hyphenated
+		// labels must measure the same as their plain form.
+		if (codePoint === 0x00ad) {
+			continue;
+		}
+		advance += isFullWidth(codePoint)
 			? FULL_WIDTH_ADVANCE_EM
 			: HALF_WIDTH_ADVANCE_EM;
 	}

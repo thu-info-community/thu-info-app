@@ -55,6 +55,19 @@ test("the width is that of the widest requested label", () => {
 	expect(wide).toBeGreaterThanOrEqual(narrow);
 });
 
+test("a soft hyphen takes no space, so a hyphenated label measures as its plain form", () => {
+	const hyphenated = "Dor\u00ADmi\u00ADto\u00ADry";
+	expect(textGlyphAdvanceEm(hyphenated)).toBeCloseTo(
+		textGlyphAdvanceEm("Dormitory"),
+		5,
+	);
+	expect(
+		minCellWidthForLabels({labels: [hyphenated], baseFontSize: 9, fontScale: 1}),
+	).toBe(
+		minCellWidthForLabels({labels: ["Dormitory"], baseFontSize: 9, fontScale: 1}),
+	);
+});
+
 test("a non-finite scale is treated as 1", () => {
 	expect(
 		minCellWidthForLabels({labels: [DATE], baseFontSize: 9, fontScale: Number.NaN}),

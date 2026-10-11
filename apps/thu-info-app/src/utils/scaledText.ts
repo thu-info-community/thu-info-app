@@ -22,3 +22,20 @@ export const scaledLineHeight = (
 	baseLineHeight: number,
 	fontScale: number,
 ): number => Math.round(baseLineHeight * safeFontScale(fontScale));
+
+/**
+ * Android only. Spread onto a `Text` that renders a label which can wrap.
+ *
+ * React Native pins every Android `Text` to `BREAK_STRATEGY_SIMPLE` +
+ * `HYPHENATION_FREQUENCY_NONE` (see `ReactTextView`), and that legacy breaker has
+ * no break opportunity inside a word: when a word is wider than the line it is
+ * cut at an arbitrary character (`Dormitor` / `y`). `highQuality` switches to the
+ * ICU breaker and `full` turns on its hyphenator, so the break lands on a syllable
+ * and carries a hyphen (`Dormi-` / `tory`). It also means Android ignores the soft
+ * hyphens `hyphenateLatinWords` inserts -- those cover the other platforms, where
+ * this prop is a no-op.
+ */
+export const ANDROID_HYPHENATION = {
+	textBreakStrategy: "highQuality",
+	android_hyphenationFrequency: "full",
+} as const;
