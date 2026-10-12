@@ -11,6 +11,7 @@ import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
+	Keyboard,
 	Modal,
 	Pressable,
 	ScrollView,
@@ -89,7 +90,7 @@ export const AgentDeepSeekScreen = ({
 	const account = useSelector((state: State) => state.auth.userId);
 	const {colors} = themes(useColorScheme());
 	const insets = useSafeAreaInsets();
-	const {fontScale} = useWindowDimensions();
+	const {fontScale, height} = useWindowDimensions();
 	const styles = useMemo(() => agentChatStyles(fontScale), [fontScale]);
 	useSyncExternalStore(
 		runtime?.subscribe ?? noSubscription,
@@ -195,6 +196,10 @@ export const AgentDeepSeekScreen = ({
 	const pending =
 		checkpoint?.approvals.filter((item) => !item.decision && !item.consumed) ??
 		[];
+	const approval = pending[0];
+	useEffect(() => {
+		if (approval?.id) Keyboard.dismiss();
+	}, [approval?.id]);
 	const ready =
 		runtime?.session.header.account === account &&
 		!!account &&
@@ -508,47 +513,6 @@ export const AgentDeepSeekScreen = ({
 								))}
 							</View>
 						)}
-						{pending.map((approval) => (
-							<View
-								key={approval.id}
-								style={[
-									styles.panel,
-									{backgroundColor: colors.themeTransparentGrey},
-								]}>
-								<View style={styles.actionRow}>
-									<IconLock width={22} height={22} />
-									<Text style={[styles.panelTitle, {color: colors.fontB0}]}>
-										{agentText("Review this action", "需要你确认")}
-									</Text>
-								</View>
-								<Text
-									selectable
-									style={[styles.panelBody, {color: colors.fontB1}]}>
-									{approval.preview}
-								</Text>
-								<Text style={[styles.caption, {color: colors.fontB2}]}>
-									{agentText("Valid until", "有效期至")}{" "}
-									{new Date(approval.expiresAt).toLocaleTimeString()}
-								</Text>
-								<View style={styles.actionRow}>
-									{button(
-										agentText("Approve once", "仅批准这一次"),
-										() => {
-											void perform(() => runtime!.respond(approval.id, true));
-										},
-										running || busy || !config.agentEnabled,
-										true,
-									)}
-									{button(
-										agentText("Reject", "拒绝"),
-										() => {
-											void perform(() => runtime!.respond(approval.id, false));
-										},
-										running || busy || !config.agentEnabled,
-									)}
-								</View>
-							</View>
-						))}
 						{checkpoint?.pendingInput && (
 							<View
 								style={[
@@ -605,6 +569,62 @@ export const AgentDeepSeekScreen = ({
 				}
 			/>
 			<View style={[styles.column, styles.composer]}>
+				{approval && (
+					<View
+						accessibilityLabel={agentText("Action approval", "操作确认")}
+						style={[
+							styles.panel,
+							{backgroundColor: colors.themeTransparentGrey, marginBottom: 12},
+						]}>
+						<View style={styles.actionRow}>
+							<IconLock width={22} height={22} />
+							<Text
+								accessibilityRole="header"
+								style={[styles.panelTitle, {color: colors.fontB0}]}>
+								{agentText("Review this action", "需要你确认")}
+							</Text>
+							{pending.length > 1 && (
+								<Text style={[styles.caption, {color: colors.fontB2}]}>
+									{agentText(
+										`${pending.length} remaining`,
+										`还有 ${pending.length} 项`,
+									)}
+								</Text>
+							)}
+						</View>
+						<ScrollView
+							key={approval.id}
+							style={{maxHeight: Math.max(100, height * 0.28)}}
+							keyboardShouldPersistTaps="handled">
+							<Text
+								selectable
+								style={[styles.panelBody, {color: colors.fontB1}]}>
+								{approval.preview}
+							</Text>
+						</ScrollView>
+						<Text style={[styles.caption, {color: colors.fontB2}]}>
+							{agentText("Valid until", "有效期至")}{" "}
+							{new Date(approval.expiresAt).toLocaleTimeString()}
+						</Text>
+						<View style={styles.actionRow}>
+							{button(
+								agentText("Approve once", "仅批准这一次"),
+								() => {
+									void perform(() => runtime!.respond(approval.id, true));
+								},
+								running || busy || !config.agentEnabled,
+								true,
+							)}
+							{button(
+								agentText("Reject", "拒绝"),
+								() => {
+									void perform(() => runtime!.respond(approval.id, false));
+								},
+								running || busy || !config.agentEnabled,
+							)}
+						</View>
+					</View>
+				)}
 				{(running ||
 					needsResume ||
 					pending.length > 0 ||

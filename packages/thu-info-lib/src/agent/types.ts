@@ -24,7 +24,7 @@ export interface ToolPolicy {
     lock?: "report" | "finance" | "physicalExam";
     route?: string;
     reason?: string;
-    /** A native flow owns the entire operation; these parameters never reach the model. */
+    /** A native flow or reviewed app wrapper supplies these parameters; they never reach the model. */
     privateArgs?: string[];
     result?: "json" | "document" | "news" | "schedule";
 }

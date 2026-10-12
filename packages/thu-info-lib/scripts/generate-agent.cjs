@@ -108,14 +108,22 @@ for (const member of checker.getPropertiesOfType(helperType)) {
     if (["saveCustomSchedule", "deleteCustomSchedule"].includes(member.name)) {
         inputSchema = {type: "object", properties: {scheduleIds: {type: "array", items: {type: "string"}, minItems: 1, maxItems: 20}}, required: ["scheduleIds"], additionalProperties: false};
     }
+    if (member.name === "rechargeCampusCard") {
+        inputSchema.properties.amount.minimum = 10;
+        inputSchema.properties.amount.maximum = 200;
+        // Match the payment methods currently offered by the native campus-card screen.
+        inputSchema.properties.type = {type: "integer", enum: [0, 1], description: "0: linked bank card transfer; 1: Alipay (user completes payment)"};
+    }
     const resultType = checker.getAwaitedType(checker.getReturnTypeOfSignature(signature));
-    const outputSchema = policy.mode === "interactive" ? {type: "object", properties: {status: {type: "string"}, route: {type: "string"}}} : schemaFor(resultType, false);
+    const outputSchema = member.name === "rechargeCampusCard"
+        ? {type: "object", properties: {status: {type: "string"}, amount: {type: "number"}, paymentMethod: {type: "string"}, completed: {type: "boolean"}}, required: ["status", "amount", "paymentMethod", "completed"], additionalProperties: true}
+        : policy.mode === "interactive" ? {type: "object", properties: {status: {type: "string"}, route: {type: "string"}}} : schemaFor(resultType, false);
     const doc = ts.displayPartsToString(member.getDocumentationComment(checker)).replace(/<[^>]*>/g, "");
     const description = `${policy.description}${doc ? `. ${doc}` : ""}`;
     const version = crypto.createHash("sha256").update(JSON.stringify({policy, inputSchema, outputSchema, description})).digest("hex").slice(0, 16);
     catalog.push({...policy, description, name: member.name, path: `${policy.category}.${member.name}`, parameters, inputSchema, outputSchema, version});
     // Only statically enumerated direct/JSON-compatible wrappers can call InfoHelper.
-    if (policy.mode !== "interactive" && !["saveCustomSchedule", "deleteCustomSchedule"].includes(member.name)) {
+    if (policy.mode !== "interactive" && !policy.privateArgs?.length && !["saveCustomSchedule", "deleteCustomSchedule"].includes(member.name)) {
         bindings.push(`    ${member.name}: (helper${parameters.length ? ", args" : ""}) => helper.${member.name}(${parameters.map((p, i) => `args[${JSON.stringify(p)}] as Parameters<InfoHelper["${member.name}"]>[${i}]`).join(", ")}),`);
     }
 }

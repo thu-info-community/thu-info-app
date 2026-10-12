@@ -157,5 +157,5 @@ export const agentMetadata = {
     modifyCampusCardMaxTransactionAmount: native("card", "Change campus card spending limits", "CampusCard", ["transactionPassword"]),
     reportCampusCardLoss: native("card", "Report campus card lost", "CampusCard", ["transactionPassword"]),
     cancelCampusCardLoss: native("card", "Cancel campus card loss report", "CampusCard", ["transactionPassword"]),
-    rechargeCampusCard: native("card", "Recharge the campus card", "CampusCard", ["transactionPassword"]),
+    rechargeCampusCard: write("card", "Recharge the campus card after approval: 10–200 yuan, at most two decimal places. Ask for the amount and payment method if unspecified: type 0 transfers from the linked bank card; type 1 creates an Alipay payment that the user must complete. Never ask for a transaction password", {mode: "wrapper", lock: "finance", privateArgs: ["transactionPassword"]}),
 } satisfies Partial<Record<keyof InfoHelper, ToolPolicy>>;

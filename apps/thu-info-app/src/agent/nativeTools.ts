@@ -1,12 +1,16 @@
 import dayjs from "dayjs";
+import {Linking} from "react-native";
 import {agentBindings, agentCatalog} from "@thu-info/lib/src/agent";
 import type {ToolDescriptor} from "@thu-info/lib/src/agent";
 import type {InfoHelper} from "@thu-info/lib";
 import type {LibrarySection, LibrarySeat, LibRoomRes} from "@thu-info/lib/src/models/home/library";
 import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
+import {CardRechargeType} from "@thu-info/lib/src/models/card/recharge";
 import {currState, helper, navigationRef, store} from "../redux/store";
 import {scheduleAddCustom, scheduleSync} from "../redux/slices/schedule";
 import {deepseekInvalidateNews} from "../redux/slices/deepseek";
+import {setBalance, updateRechargeAmount} from "../redux/slices/campusCard";
+import {getStr, langCode} from "../utils/i18n";
 import {
 	setActiveLibBookRecord,
 	setActiveSportsReservationRecord,
@@ -143,8 +147,42 @@ export const createNativeToolContext = (
 			createScheduleFromToolArgs(args, currState().config.firstDay, currState().config.weekCount),
 			"Invalid or incomplete schedule date/time. Ask the user to clarify.",
 		);
+	const rechargeDetails = (args: Record<string, unknown>) => {
+		if (helper.mocked()) {
+			throw new AgentToolError("Campus card recharge is unavailable for the demo account.");
+		}
+		const amount = args.amount;
+		const type = args.type;
+		if (
+			typeof amount !== "number" ||
+			!Number.isFinite(amount) ||
+			amount < 10 ||
+			amount > 200 ||
+			!/^\d+(\.\d{1,2})?$/.test(String(amount)) ||
+			(type !== CardRechargeType.Bank && type !== CardRechargeType.Alipay)
+		) {
+			throw new AgentToolError(
+				"Choose 10–200 yuan with at most two decimal places, and bank card (0) or Alipay (1).",
+			);
+		}
+		return {amount, type};
+	};
 	const preview = async (tool: ToolDescriptor, args: Record<string, unknown>) => {
 		assertAccess(tool);
+		if (tool.name === "rechargeCampusCard") {
+			const {amount, type} = rechargeDetails(args);
+			const bank = type === CardRechargeType.Bank;
+			const card = currState().campusCard;
+			const rechargedToday = card.lastRechargeDate === dayjs().format("YYYY-MM-DD")
+				? card.todayRechargeAmount
+				: 0;
+			if (rechargedToday >= 400) {
+				throw new AgentToolError(getStr("depositExceedLimit"));
+			}
+			return langCode === "zh"
+				? `校园卡充值 ¥${amount.toFixed(2)}\n账号：${account}\n支付方式：${bank ? "绑定银行卡圈存" : "支付宝"}\n${bank ? "批准后将立即从绑定银行卡转入校园卡。" : "批准后创建支付订单并打开支付宝，付款完成后才算充值成功。"}\n${rechargedToday > 0 ? getStr("depositRepeatedWarning") + "\n" : ""}\n${getStr("depositHint")}`
+				: `Campus card recharge: ¥${amount.toFixed(2)}\nAccount: ${account}\nPayment: ${bank ? "linked bank card" : "Alipay"}\n${bank ? "Approval transfers the amount from your linked bank card immediately." : "Approval creates an order and opens Alipay. Recharge completes only after you pay."}\n${rechargedToday > 0 ? getStr("depositRepeatedWarning") + "\n" : ""}\n${getStr("depositHint")}`;
+		}
 		let target: unknown;
 		switch (tool.name) {
 			case "create_schedule":
@@ -342,6 +380,45 @@ export const createNativeToolContext = (
 				};
 			}
 			switch (tool.name) {
+				case "rechargeCampusCard": {
+					const {amount, type} = rechargeDetails(args);
+					// Match the native card screen: the current bank-transfer API uses no PIN.
+					const paymentURL = await helper.rechargeCampusCard(amount, "", type);
+					try {
+						// Count both transfers and payment orders, as the native screen does.
+						// A local refresh failure must not turn a completed request into a retry.
+						assertAccess(tool);
+						store.dispatch(updateRechargeAmount({amount, date: dayjs().format("YYYY-MM-DD")}));
+					} catch {
+						// The executor still records the known remote result below.
+					}
+					if (type === CardRechargeType.Bank) {
+						return {status: "succeeded", amount, paymentMethod: "bank", completed: true};
+					}
+					let opened = false;
+					if (typeof paymentURL === "string" && paymentURL.startsWith("alipayqr://")) {
+						try {
+							await Linking.openURL(paymentURL);
+							opened = true;
+						} catch {
+							// The order exists even if Alipay cannot open; never create another automatically.
+						}
+					}
+					return {
+						status: "handoff",
+						amount,
+						paymentMethod: "alipay",
+						completed: false,
+						opened,
+						question: langCode === "zh"
+							? opened
+								? "请在支付宝完成付款，再告诉我结果。创建订单不代表充值成功，请勿重复充值。"
+								: "充值订单已创建，但未能打开支付宝。请检查支付宝是否安装，并查看校园卡充值记录；请勿重复充值。"
+							: opened
+								? "Complete payment in Alipay, then tell me the outcome. Creating an order does not confirm recharge; do not repeat it."
+								: "The recharge order was created, but Alipay could not open. Check that Alipay is installed and review campus-card records; do not repeat the recharge.",
+					};
+				}
 				case "list_local_schedules":
 					return currState().schedule.baseSchedule.map((item) => ({
 						id: scheduleId(item),
@@ -458,6 +535,11 @@ export const createNativeToolContext = (
 		},
 		async onMutation(tool) {
 			assertAccess(tool);
+			if (tool.name === "rechargeCampusCard") {
+				const card = await helper.getCampusCardInfo();
+				assertAccess(tool);
+				store.dispatch(setBalance(card.balance));
+			}
 			if (tool.category === "news") {
 				store.dispatch(deepseekInvalidateNews());
 			}

@@ -7655,11 +7655,11 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "card",
-        "description": "Recharge the campus card. Recharge the campus card.",
+        "description": "Recharge the campus card after approval: 10–200 yuan, at most two decimal places. Ask for the amount and payment method if unspecified: type 0 transfers from the linked bank card; type 1 creates an Alipay payment that the user must complete. Never ask for a transaction password. Recharge the campus card.",
         "effect": "write",
         "impact": "confirm",
-        "mode": "interactive",
-        "route": "CampusCard",
+        "mode": "wrapper",
+        "lock": "finance",
         "privateArgs": [
             "transactionPassword"
         ],
@@ -7675,16 +7675,17 @@ export const agentCatalog: ToolDescriptor[] = [
             "properties": {
                 "amount": {
                     "type": "number",
-                    "description": "in yuan"
+                    "description": "in yuan",
+                    "minimum": 10,
+                    "maximum": 200
                 },
                 "type": {
-                    "type": "number",
+                    "type": "integer",
                     "enum": [
                         0,
-                        1,
-                        2
+                        1
                     ],
-                    "description": "0 for Bank Card, 1 for Alipay, 2 for Wechat Pay"
+                    "description": "0: linked bank card transfer; 1: Alipay (user completes payment)"
                 }
             },
             "required": [
@@ -7699,12 +7700,25 @@ export const agentCatalog: ToolDescriptor[] = [
                 "status": {
                     "type": "string"
                 },
-                "route": {
+                "amount": {
+                    "type": "number"
+                },
+                "paymentMethod": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean"
                 }
-            }
+            },
+            "required": [
+                "status",
+                "amount",
+                "paymentMethod",
+                "completed"
+            ],
+            "additionalProperties": true
         },
-        "version": "f4b5d76e1d062bb4"
+        "version": "0f9e077b276741b7"
     }
 ];
 

@@ -239,6 +239,9 @@ export class AgentRuntime {
 		if (this.running || !this.session.checkpoint.pendingInput || !text.trim()) {
 			return;
 		}
+		this.assertSessionAccess();
+		this.maintainDetails();
+		this.recoverExchanges();
 		this.session.checkpoint.pendingInput = undefined;
 		this.session.checkpoint.messages.push({role: "user", content: text.trim()});
 		this.session.messages.push({
@@ -305,11 +308,14 @@ export class AgentRuntime {
 				}
 			}
 		}
-		const results: Extract<ModelMessage, {role: "tool"}>["content"] = [];
-		for (const message of checkpoint.messages) {
+		const repaired: ModelMessage[] = [];
+		for (let index = 0; index < checkpoint.messages.length; index++) {
+			const message = checkpoint.messages[index];
+			repaired.push(message);
 			if (message.role !== "assistant" || !Array.isArray(message.content)) {
 				continue;
 			}
+			const results: Extract<ModelMessage, {role: "tool"}>["content"] = [];
 			for (const part of message.content) {
 				if (part.type !== "tool-call" || resolved.has(part.toolCallId)) {
 					continue;
@@ -351,11 +357,18 @@ export class AgentRuntime {
 							: "Interrupted before a durable result. A read may be retried; writes require reviewing the operation records.",
 					},
 				});
+				resolved.add(part.toolCallId);
+			}
+			// Keep restored results next to their calls, before later user/assistant turns.
+			// Putting every recovered result at the end leaves old exchanges incomplete.
+			while (checkpoint.messages[index + 1]?.role === "tool") {
+				repaired.push(checkpoint.messages[++index]);
+			}
+			if (results.length) {
+				repaired.push({role: "tool", content: results});
 			}
 		}
-		if (results.length) {
-			checkpoint.messages.push({role: "tool", content: results});
-		}
+		checkpoint.messages = repaired;
 	}
 
 	private instructions(restoreCatalog = false) {
@@ -549,13 +562,16 @@ export class AgentRuntime {
 						),
 			prepareStep: async ({messages}) => {
 				this.assertSessionAccess();
+				// Approval resumes execute tools before the SDK's first model step.
+				// Save their results even when a handoff/background transition paused the run.
+				this.session.checkpoint.messages = [...messages];
+				await this.persist();
 				if (
 					this.abort?.signal.aborted ||
 					this.session.checkpoint.status !== "running"
 				) {
 					throw new Error("Run paused");
 				}
-				this.session.checkpoint.messages = [...messages];
 				await compactContext(
 					this.session.checkpoint,
 					this.capabilities,

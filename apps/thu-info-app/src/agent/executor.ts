@@ -307,7 +307,9 @@ export class ToolExecutor {
 					this.session.checkpoint.pendingInput = {
 						toolCallId,
 						question:
-							"Complete the operation in the opened screen, then tell me its outcome. Opening the screen does not confirm completion.",
+							"question" in output && typeof output.question === "string"
+								? output.question
+								: "Complete the operation in the opened screen, then tell me its outcome. Opening the screen does not confirm completion.",
 					};
 				}
 				await this.persist();
