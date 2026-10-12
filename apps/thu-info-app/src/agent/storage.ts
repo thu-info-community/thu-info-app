@@ -22,6 +22,9 @@ interface StoredMessage {
 	detail?: {key: string; createdAt: number};
 }
 
+/** One damaged conversation must not prevent access to other conversations. */
+export class SessionDataError extends Error {}
+
 /** Shared by disk maintenance and a runner kept open across the retention boundary. */
 export const expireSessionDetails = (
 	session: AgentSession,
@@ -129,7 +132,27 @@ export class SessionStore {
 	}
 	private async json<T>(key: string): Promise<T | null> {
 		const text = await this.storage.read(key);
-		return text === null ? null : (JSON.parse(text) as T);
+		if (text === null) return null;
+		try {
+			return JSON.parse(text) as T;
+		} catch {
+			throw new SessionDataError("Saved conversation data is invalid");
+		}
+	}
+	private async manifest(key: string): Promise<Manifest | null> {
+		const manifest = await this.json<Manifest>(key);
+		if (
+			manifest &&
+			(typeof manifest.header?.id !== "string" ||
+				typeof manifest.header.account !== "string" ||
+				typeof manifest.header.title !== "string" ||
+				typeof manifest.checkpoint !== "string" ||
+				!Array.isArray(manifest.pages) ||
+				manifest.pages.some((page) => typeof page !== "string"))
+		) {
+			throw new SessionDataError("Saved conversation index is invalid");
+		}
+		return manifest;
 	}
 	private async chunk(value: unknown): Promise<string> {
 		const text = JSON.stringify(value);
@@ -148,7 +171,13 @@ export class SessionStore {
 		);
 		const headers: SessionHeader[] = [];
 		for (const key of keys) {
-			const manifest = await this.json<Manifest>(key);
+			let manifest: Manifest | null;
+			try {
+				manifest = await this.manifest(key);
+			} catch (error) {
+				if (error instanceof SessionDataError) continue;
+				throw error;
+			}
 			if (
 				manifest?.header.account === this.account &&
 				manifest.header.title.toLowerCase().includes(search.toLowerCase())
@@ -166,24 +195,36 @@ export class SessionStore {
 		return this.loadUnsafe(id);
 	}
 	private async loadUnsafe(id: string): Promise<AgentSession | null> {
-		const manifest = await this.json<Manifest>(this.key(id));
+		const manifest = await this.manifest(this.key(id));
 		if (!manifest || manifest.header.account !== this.account) {
 			return null;
 		}
 		const checkpoint = await this.json<AgentCheckpoint>(manifest.checkpoint);
-		if (!checkpoint || checkpoint.version !== 1) {
-			throw new Error("Unsupported or incomplete agent checkpoint");
+		if (
+			!checkpoint ||
+			checkpoint.version !== 1 ||
+			!Array.isArray(checkpoint.messages) ||
+			!Array.isArray(checkpoint.operations) ||
+			!Array.isArray(checkpoint.approvals) ||
+			!Array.isArray(checkpoint.activeTools)
+		) {
+			throw new SessionDataError("Unsupported or incomplete agent checkpoint");
 		}
 		const messages: Message[] = [];
 		for (const page of manifest.pages) {
 			const entries = await this.json<string[]>(page);
-			if (!entries) {
-				throw new Error("Conversation page is missing");
+			if (
+				!Array.isArray(entries) ||
+				entries.some((key) => typeof key !== "string")
+			) {
+				throw new SessionDataError("Conversation page is missing or invalid");
 			}
 			for (const key of entries) {
 				const stored = await this.json<StoredMessage>(key);
-				if (!stored) {
-					throw new Error("Conversation message is missing");
+				if (!stored?.message || typeof stored.message.content !== "string") {
+					throw new SessionDataError(
+						"Conversation message is missing or invalid",
+					);
 				}
 				let reasoning: string | undefined;
 				if (
@@ -250,7 +291,11 @@ export class SessionStore {
 		);
 		this.writes += 1;
 		if (this.writes % 20 === 0) {
-			await this.collectUnsafe();
+			try {
+				await this.collectUnsafe();
+			} catch {
+				// The manifest was committed. Optional GC must not fail the saved request.
+			}
 		}
 	}
 
@@ -323,14 +368,16 @@ export class SessionStore {
 				key.startsWith(`pointer/${this.prefix()}`),
 			);
 			for (const key of pointers) {
-				const manifest = await this.json<Manifest>(key);
-				if (!manifest || manifest.header.status === "running") {
-					continue;
+				let session: AgentSession | null;
+				try {
+					const manifest = await this.manifest(key);
+					if (!manifest || manifest.header.status === "running") continue;
+					session = await this.loadUnsafe(manifest.header.id);
+				} catch (error) {
+					if (error instanceof SessionDataError) continue;
+					throw error;
 				}
-				const session = await this.loadUnsafe(manifest.header.id);
-				if (!session) {
-					continue;
-				}
+				if (!session) continue;
 				expireSessionDetails(session, this.now(), clearAllDetails);
 				await this.saveUnsafe(session);
 			}
@@ -344,20 +391,30 @@ export class SessionStore {
 		for (const key of keys.filter((k) =>
 			k.startsWith(`pointer/${this.prefix()}`),
 		)) {
-			const manifest = await this.json<Manifest>(key);
-			if (!manifest) {
-				continue;
-			}
-			reachable.add(manifest.checkpoint);
-			for (const page of manifest.pages) {
-				reachable.add(page);
-				for (const message of (await this.json<string[]>(page)) ?? []) {
-					reachable.add(message);
-					const stored = await this.json<StoredMessage>(message);
-					if (stored?.detail) {
-						reachable.add(stored.detail.key);
+			try {
+				const manifest = await this.manifest(key);
+				if (!manifest) continue;
+				if (!(await this.json<AgentCheckpoint>(manifest.checkpoint))) return;
+				reachable.add(manifest.checkpoint);
+				for (const page of manifest.pages) {
+					reachable.add(page);
+					const entries = await this.json<string[]>(page);
+					if (
+						!Array.isArray(entries) ||
+						entries.some((entry) => typeof entry !== "string")
+					)
+						return;
+					for (const message of entries) {
+						reachable.add(message);
+						const stored = await this.json<StoredMessage>(message);
+						if (!stored?.message) return;
+						if (stored.detail) reachable.add(stored.detail.key);
 					}
 				}
+			} catch (error) {
+				// A damaged graph may hide references. Preserve chunks for later recovery.
+				if (error instanceof SessionDataError) return;
+				throw error;
 			}
 		}
 		for (const key of keys) {

@@ -3,12 +3,13 @@ import {currState, helper, store} from "../redux/store";
 import {configSet} from "../redux/slices/config";
 import {deepseekMigrationComplete} from "../redux/slices/deepseek";
 import {AgentRuntime} from "./runtime";
-import {newSession, SessionStore} from "./storage";
+import {newSession, SessionDataError, SessionStore} from "./storage";
 import {nativeSessionStorage} from "./nativeStorage";
 import {nativeCompletionTransport} from "./nativeTransport";
 import {createNativeToolContext, sessionNeedsUnlock} from "./nativeTools";
 import {probeToolSupport} from "./probe";
 import {campusModel} from "./types";
+import type {AgentSession} from "./types";
 
 /** At most one active runner. Native portal cookies belong to the logged-in account. */
 class AgentService {
@@ -124,28 +125,43 @@ class AgentService {
 				await this.current.stopAndWait();
 				this.current.executor.results.clear();
 			}
-			// Crash-interrupted running checkpoints must become paused before maintenance.
-			for (const header of await sessions.list(0, Number.MAX_SAFE_INTEGER)) {
-				if (header.status === "running") {
-					const interrupted = await sessions.load(header.id);
-					if (interrupted) {
-						await sessions.save(interrupted);
+			let session: AgentSession | null;
+			if (create) {
+				// Creating a conversation never depends on loading, migrating or cleaning history.
+				session = newSession(account, "New conversation");
+			} else {
+				// Crash-interrupted running checkpoints must become paused before maintenance.
+				for (const header of await sessions.list(0, Number.MAX_SAFE_INTEGER)) {
+					if (header.status === "running") {
+						try {
+							const interrupted = await sessions.load(header.id);
+							if (interrupted) await sessions.save(interrupted);
+						} catch (error) {
+							if (!(error instanceof SessionDataError)) throw error;
+						}
 					}
 				}
+				try {
+					await sessions.migrate(currState().deepseek.history);
+					if (currState().auth.userId !== account) {
+						throw new Error(
+							"Account changed during migration; original history was retained",
+						);
+					}
+					store.dispatch(deepseekMigrationComplete());
+				} catch (error) {
+					// Preserve the legacy payload when any conversation cannot be verified.
+					if (!(error instanceof SessionDataError)) throw error;
+				}
+				await sessions.cleanup();
+				const target = id ?? (await sessions.list(0, 1))[0]?.id;
+				session = target
+					? await sessions.load(target)
+					: newSession(account, "New conversation");
 			}
-			await sessions.migrate(currState().deepseek.history);
 			if (currState().auth.userId !== account) {
-				throw new Error(
-					"Account changed during migration; original history was retained",
-				);
+				throw new Error("Account changed while opening the conversation");
 			}
-			store.dispatch(deepseekMigrationComplete());
-			await sessions.cleanup();
-			const target =
-				id ?? (create ? undefined : (await sessions.list(0, 1))[0]?.id);
-			const session = target
-				? await sessions.load(target)
-				: newSession(account, "New conversation");
 			if (!session) {
 				throw new Error("Conversation no longer exists");
 			}

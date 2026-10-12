@@ -437,6 +437,38 @@ export const AgentDeepSeekScreen = ({
 								inputRef.current?.focus();
 							}}
 						/>
+					) : error ? (
+						<View style={styles.centered}>
+							<Text
+								accessibilityRole="header"
+								style={[styles.panelTitle, {color: colors.fontB0}]}>
+								{agentText(
+									"Unable to load this conversation",
+									"这条对话未能载入",
+								)}
+							</Text>
+							<Text
+								accessibilityRole="alert"
+								selectable
+								style={[styles.panelBody, {color: colors.fontB2}]}>
+								{error}
+							</Text>
+							<Text style={[styles.panelBody, {color: colors.fontB2}]}>
+								{agentText(
+									"You can start a new conversation or choose another from history.",
+									"可以直接新建对话，或从历史记录中选择其他对话。",
+								)}
+							</Text>
+							<View style={styles.actionRow}>
+								{button(
+									getStr("newConversation"),
+									() => open(undefined, true),
+									busy,
+									true,
+								)}
+								{button(agentText("Retry", "重试"), () => open(), busy)}
+							</View>
+						</View>
 					) : (
 						<View style={styles.centered}>
 							<ActivityIndicator color={colors.themePurple} />
@@ -540,7 +572,7 @@ export const AgentDeepSeekScreen = ({
 								</View>
 							</View>
 						)}
-						{!!(error || checkpoint?.error) && (
+						{!!runtime && !!(error || checkpoint?.error) && (
 							<View
 								accessibilityRole="alert"
 								style={[
@@ -863,6 +895,21 @@ export const AgentDeepSeekScreen = ({
 					<ScrollView
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={{paddingBottom: 24}}>
+						{!!error && (
+							<View style={[styles.panel, {marginHorizontal: 16}]}>
+								<Text
+									accessibilityRole="alert"
+									style={[styles.panelBody, {color: colors.fontB1}]}>
+									{error}
+								</Text>
+								{button(
+									getStr("newConversation"),
+									() => open(undefined, true),
+									busy,
+									true,
+								)}
+							</View>
+						)}
 						{!history.length && (
 							<Text
 								style={[styles.panelBody, {color: colors.fontB2, padding: 28}]}>
