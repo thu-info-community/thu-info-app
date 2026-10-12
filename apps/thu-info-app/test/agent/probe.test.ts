@@ -7,6 +7,7 @@ test("gateway probe requires an actual valid forced function call, never prose",
 		{calls: [call("agent_compatibility_probe", {value: "ok"})]},
 	]);
 	expect(await probeToolSupport(valid.transport, campusModel)).toBe(true);
+	expect(valid.bodies[0].model).toBe("DeepSeek-V4.1-Flash");
 	expect(valid.bodies[0].tool_choice).toEqual({
 		type: "function",
 		function: {name: "agent_compatibility_probe"},

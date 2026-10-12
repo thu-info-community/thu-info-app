@@ -8,7 +8,7 @@ import type {
 } from "@ai-sdk/provider";
 import type {AssistantModelMessage, ModelMessage} from "ai";
 import type {ModelCapabilities, ThinkingLevel} from "./types";
-import {byteLength} from "./util";
+import {byteLength, sanitize, truncateBytes} from "./util";
 
 export interface ChatWireMessage {
 	role: "system" | "user" | "assistant" | "tool";
@@ -108,6 +108,29 @@ const emptyUsage = (): LanguageModelV4Usage => ({
 	outputTokens: {total: undefined, text: undefined, reasoning: undefined},
 });
 
+/** Keep gateway diagnostics without retaining raw responses or credential fields. */
+export const getCompletionError = (payload: unknown): Error | undefined => {
+	if (!payload || typeof payload !== "object") {
+		return;
+	}
+	const response = payload as Record<string, unknown>;
+	if (!response.error && !response.errorMessage) {
+		return;
+	}
+	const error = response.error && typeof response.error === "object"
+		? response.error as Record<string, unknown>
+		: undefined;
+	const field = (value: unknown) =>
+		typeof value === "string" || typeof value === "number"
+			? truncateBytes(sanitize(String(value).trim()) as string, 512)
+			: "";
+	const code = field(error?.code ?? error?.type ?? response.errorCode);
+	const message = field(error?.message) || field(response.errorMessage) || field(response.error);
+	return new Error(
+		`Campus model returned an error${code ? ` [${code}]` : ""}${message ? `: ${message}` : ""}`,
+	);
+};
+
 /** Stateful SSE decoder. No executable tool call is emitted until a complete finish. */
 export class CompletionDecoder {
 	text = "";
@@ -130,8 +153,9 @@ export class CompletionDecoder {
 			return;
 		}
 		const chunk = JSON.parse(data);
-		if (chunk.error || chunk.errorMessage) {
-			throw new Error("Campus model returned an error");
+		const error = getCompletionError(chunk);
+		if (error) {
+			throw error;
 		}
 		if (chunk.usage) {
 			this.usage = {

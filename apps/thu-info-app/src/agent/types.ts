@@ -1,5 +1,6 @@
 import type {ModelMessage} from "ai";
 import type {JsonSchema, ToolDescriptor} from "@thu-info/lib/src/agent";
+import {campusModelName} from "../utils/campusModel";
 
 export type ThinkingLevel = "default" | "off" | "low" | "high" | "max";
 export type RunStatus =
@@ -22,8 +23,8 @@ export interface ModelCapabilities {
 }
 
 export const campusModel: ModelCapabilities = {
-	model: "DeepSeek-V4-Flash",
-	contextTokens: 16384,
+	model: campusModelName,
+	contextTokens: 131072,
 	maxOutputTokens: 4096,
 	thinkingLevels: ["default"],
 	verified: false,
@@ -105,6 +106,8 @@ export interface AgentCheckpoint {
 	status: RunStatus;
 	messages: ModelMessage[];
 	activeTools: string[];
+	/** Public catalog discovery survives protocol compaction; these are not active tools. */
+	catalogPaths?: string[];
 	summary: string;
 	request: string;
 	steps: number;

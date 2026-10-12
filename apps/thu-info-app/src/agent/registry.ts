@@ -96,12 +96,29 @@ export class ToolRegistry {
 		}
 		return tool;
 	}
+	overview() {
+		const all = this.all();
+		return [...new Set(all.map((tool) => tool.category))].map((category) => {
+			const tools = all.filter((tool) => tool.category === category);
+			const reads = tools.filter((tool) => tool.effect === "read");
+			const writes = tools.filter((tool) => tool.effect === "write");
+			const examples = [
+				reads[0] ?? writes[0],
+				writes.find((tool) => tool.impact === "routine") ?? writes[0] ?? reads[1],
+			].filter((tool, index, selected) => tool && selected.indexOf(tool) === index);
+			return {
+				path: category,
+				tools: tools.length,
+				examples: examples.map(({name, description}, index) => ({
+					name,
+					...(index === 0 ? {description: truncateBytes(description, 60)} : {}),
+				})),
+			};
+		});
+	}
 	import(path: string) {
 		if (!path) {
-			return [...new Set(this.all().map((tool) => tool.category))].map((category) => ({
-				path: category,
-				tools: this.all().filter((tool) => tool.category === category).length,
-			}));
+			return this.overview();
 		}
 		const leaf = this.all().find((tool) => tool.path === path);
 		if (leaf) {

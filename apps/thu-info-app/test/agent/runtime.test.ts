@@ -1,7 +1,24 @@
 import {AgentRuntime} from "../../src/agent/runtime";
 import {call, fixture, scripted} from "./fixtures";
 import {agentCatalog} from "@thu-info/lib/src/agent";
-import {DETAIL_TTL} from "../../src/agent/types";
+import {campusModel, DETAIL_TTL} from "../../src/agent/types";
+
+test("gateway failures preserve their reason in the conversation without executing tools", async () => {
+	const {session, sessions, context} = fixture();
+	const models: unknown[] = [];
+	const runtime = new AgentRuntime(session, sessions, context, async (body, _signal, emit) => {
+		models.push(body.model);
+		emit(JSON.stringify({error: {code: "model_not_found", message: "The requested model does not exist"}}));
+	});
+	await runtime.send("Question");
+	expect(models).toEqual(["DeepSeek-V4.1-Flash"]);
+	expect(session.checkpoint.status).toBe("failed");
+	expect(session.checkpoint.error).toBe(
+		"Campus model returned an error [model_not_found]: The requested model does not exist",
+	);
+	expect((await sessions.load(session.header.id))?.checkpoint.error).toBe(session.checkpoint.error);
+	expect(context.invoke).not.toHaveBeenCalled();
+});
 
 test.each(["<think>", ""])(
 	"tagged thinking (opening token %s) is hidden but retained verbatim in the wire protocol",
@@ -70,6 +87,64 @@ test("SDK discovers, imports and executes reads, then returns an answer with rea
 			.filter((message) => message.role === "assistant")
 			.every((message) => message.reasoning_content === "consider"),
 	).toBe(true);
+});
+
+test("a capabilities answer needs only one root overview and does not trigger compaction or campus calls", async () => {
+	const {session, sessions, context} = fixture();
+	const {transport, bodies} = scripted([
+		{calls: [call("import_tools", {path: ""}, "overview")]},
+		{text: "I can read your school calendar and create local schedules."},
+	]);
+	await new AgentRuntime(session, sessions, context, transport).send("What can you do");
+	expect(session.checkpoint.error).toBeUndefined();
+	expect(session.checkpoint.status).toBe("completed");
+	expect(session.checkpoint.compactions).toBe(0);
+	expect(bodies).toHaveLength(2);
+	const result = (bodies[1].messages as any[]).find((message) => message.role === "tool");
+	expect(JSON.parse(result.content)).toEqual(
+		expect.arrayContaining([
+			expect.objectContaining({
+				path: "schedule",
+				examples: expect.arrayContaining([expect.objectContaining({name: "create_schedule"})]),
+			}),
+		]),
+	);
+	expect(session.checkpoint.catalogPaths).toEqual([""]);
+	expect(context.invoke).not.toHaveBeenCalled();
+});
+
+test("parallel discovery of every category survives compaction and restart without losing catalog progress", async () => {
+	const {session, sessions, context} = fixture();
+	// Force compaction without depending on the larger production context budget.
+	const capabilities = {...campusModel, contextTokens: 16384};
+	const categories = [...new Set(agentCatalog.map((tool) => tool.category))];
+	const {transport, bodies} = scripted([
+		{calls: [call("import_tools", {path: ""}, "overview")]},
+		{calls: categories.map((path, index) => call("import_tools", {path}, `category${index}`, index))},
+		{text: "Earlier conversation summary without any catalog facts."},
+		{text: "Here is an overview of the available campus capabilities."},
+		{text: "I can also help with your campus card."},
+	]);
+	await new AgentRuntime(session, sessions, context, transport, capabilities).send("What can you do");
+	expect(session.checkpoint.error).toBeUndefined();
+	expect(session.checkpoint.status).toBe("completed");
+	expect(session.checkpoint.compactions).toBe(1);
+	expect(bodies).toHaveLength(4);
+	expect(session.checkpoint.catalogPaths).toEqual(["", ...categories]);
+	const continuation = bodies[3].messages as any[];
+	const system = continuation.find((message) => message.role === "system").content;
+	expect(system).toContain("Catalog listings already retrieved");
+	for (const name of agentCatalog.map((tool) => tool.name)) {
+		expect(system).toContain(`"${name}"`);
+	}
+	expect(context.invoke).not.toHaveBeenCalled();
+	const restored = (await sessions.load(session.header.id))!;
+	expect(restored.checkpoint.catalogPaths).toEqual(["", ...categories]);
+	await new AgentRuntime(restored, sessions, context, transport, capabilities).send("What about campus cards?");
+	expect(restored.checkpoint.error).toBeUndefined();
+	expect(restored.checkpoint.status).toBe("completed");
+	expect((bodies.at(-1)!.messages as any[]).find((message) => message.role === "system").content)
+		.toContain('"getCampusCardInfo"');
 });
 
 test("approval survives restart and invokes exactly once through the real SDK resume path", async () => {

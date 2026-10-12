@@ -21,10 +21,10 @@ const start = async () => {
 	const source = (EventSource as unknown as jest.Mock).mock.results.at(
 		-1,
 	)!.value;
-	const event = (type: string, data?: string) =>
+	const event = (type: string, data?: string, details: Record<string, unknown> = {}) =>
 		source.addEventListener.mock.calls.find(
 			([name]: string[]) => name === type,
-		)[1]({data});
+		)[1]({type, data, ...details});
 	return {abort, emit, request, source, event};
 };
 
@@ -61,4 +61,36 @@ test("idle timeout closes the connection without leaking raw transport errors", 
 	jest.advanceTimersByTime(90000);
 	await rejected;
 	expect(source.close).toHaveBeenCalledTimes(1);
+});
+
+test("HTTP gateway errors retain the structured error code and message", async () => {
+	const {request, event, source} = await start();
+	const rejected = expect(request).rejects.toThrow(
+		"Campus model returned an error [model_not_found]: The requested model does not exist",
+	);
+	event("error", undefined, {
+		xhrStatus: 404,
+		message: JSON.stringify({error: {code: "model_not_found", message: "The requested model does not exist"}}),
+	});
+	await rejected;
+	expect(source.close).toHaveBeenCalledTimes(1);
+	expect(source.removeAllEventListeners).toHaveBeenCalledTimes(1);
+});
+
+test("non-JSON HTTP errors show the status without exposing raw response bodies", async () => {
+	const {request, event} = await start();
+	const rejected = expect(request).rejects.toThrow(
+		"Campus model connection failed (HTTP 502); check login and connection",
+	);
+	event("error", undefined, {xhrStatus: 502, message: "<html>private-response</html>"});
+	await rejected;
+});
+
+test("native exceptions do not expose raw connection details", async () => {
+	const {request, event} = await start();
+	const rejected = expect(request).rejects.toThrow(
+		"Campus model connection failed; check login and connection",
+	);
+	event("error", undefined, {type: "exception", message: "private-connection-detail"});
+	await rejected;
 });

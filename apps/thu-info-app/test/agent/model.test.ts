@@ -1,4 +1,4 @@
-import {CompletionDecoder, createCampusModel, toChatMessages} from "../../src/agent/model";
+import {CompletionDecoder, createCampusModel, getCompletionError, toChatMessages} from "../../src/agent/model";
 import {campusModel} from "../../src/agent/types";
 import {call, chunk, scripted} from "./fixtures";
 
@@ -80,8 +80,38 @@ test("only sends campus chat/completions parameters and rejects unverified think
 	const {transport, bodies} = scripted([{text: "ok"}]);
 	const model = createCampusModel(campusModel, transport);
 	await model.doGenerate({prompt: [{role: "user", content: [{type: "text", text: "hi"}]}]});
-	expect(bodies[0]).toMatchObject({model: "DeepSeek-V4-Flash", stream: true});
+	expect(bodies[0]).toMatchObject({model: "DeepSeek-V4.1-Flash", stream: true});
 	expect(bodies[0]).not.toHaveProperty("reasoning_effort");
 	expect(bodies[0]).not.toHaveProperty("thinking");
 	expect(() => createCampusModel(campusModel, transport, "high")).toThrow();
+});
+
+test.each([
+	{error: {code: "model_not_found", message: "The requested model does not exist"}},
+	{errorCode: "model_not_found", errorMessage: "The requested model does not exist"},
+	{error: "The requested model does not exist"},
+])("completion errors retain the gateway's reason: %j", (payload) => {
+	const decoder = new CompletionDecoder();
+	expect(() => decoder.push(JSON.stringify(payload))).toThrow("The requested model does not exist");
+	if (typeof payload.error === "object" || "errorCode" in payload) {
+		expect(() => decoder.push(JSON.stringify(payload))).toThrow("model_not_found");
+	}
+});
+
+test("gateway diagnostics are bounded, redact bearer credentials and omit unrelated fields", () => {
+	const error = getCompletionError({
+		error: {
+			code: "invalid_api_key",
+			message: "Authorization failed: Bearer fixture-token " + "x".repeat(2000),
+			token: "private-token-field",
+			request: {messages: [{content: "private-prompt"}]},
+		},
+	});
+	expect(error?.message).toContain("invalid_api_key");
+	expect(error?.message).toContain("[credential omitted]");
+	expect(error?.message).not.toMatch(/fixture-token|private-token-field|private-prompt/);
+	expect(error!.message.length).toBeLessThan(600);
+	expect(getCompletionError(null)).toBeUndefined();
+	expect(getCompletionError({choices: []})).toBeUndefined();
+	expect(getCompletionError({error: {}})?.message).toBe("Campus model returned an error");
 });

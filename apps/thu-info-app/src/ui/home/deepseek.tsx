@@ -58,6 +58,7 @@ import {DeepSeekTabProp} from "../../components/Root.tsx";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 import {AgentDeepSeekScreen} from "./agentDeepseek";
+import {campusModelName} from "../../utils/campusModel";
 
 export interface Message {
 	role: "system" | "user" | "assistant" | "tool";
@@ -78,7 +79,7 @@ export interface Conversation {
 	timestamp?: number;
 }
 
-const models = ["DeepSeek-V4.1-Flash", "qwen3.8-27b"];
+const models = [campusModelName, "qwen3.8-27b"];
 
 /** 对话列的最大宽度（dp）。更宽的话一行文字太长，读起来费劲。 */
 const CHAT_MAX_WIDTH = 760;

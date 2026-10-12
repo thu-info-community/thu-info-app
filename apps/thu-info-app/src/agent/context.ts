@@ -132,6 +132,7 @@ export const compactContext = async (
 	schemas: unknown,
 	instructions: string,
 	summarize: (text: string) => Promise<string>,
+	compactedInstructions = instructions,
 ): Promise<boolean> => {
 	const budget = capabilities.contextTokens - capabilities.maxOutputTokens;
 	if (
@@ -180,10 +181,10 @@ export const compactContext = async (
 	} catch {
 		// Offline/error fallback is deterministic and retains external operation state.
 	}
-	// Reserve root schemas and framing, as well as instructions and the current request.
+	// Reserve root schemas, framing and any catalog inventory restored after compaction.
 	const remaining =
 		budget * 0.85 -
-		estimateContext(tail, [], instructions) -
+		estimateContext(tail, [], compactedInstructions) -
 		byteLength(checkpoint.request) -
 		1500;
 	if (remaining < 400) {
@@ -193,7 +194,7 @@ export const compactContext = async (
 	resetProtocol(checkpoint, truncateBytes(memory, memoryBudget));
 	checkpoint.messages.push(...tail);
 	if (
-		estimateContext(checkpoint.messages, [], instructions) + 1000 >=
+		estimateContext(checkpoint.messages, [], compactedInstructions) + 1000 >=
 		budget * 0.95
 	) {
 		throw new Error(

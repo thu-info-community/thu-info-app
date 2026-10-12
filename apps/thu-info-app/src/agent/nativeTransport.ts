@@ -1,6 +1,6 @@
 import EventSource from "react-native-sse";
 import {MADMODEL_BASE_URL} from "@thu-info/lib/src/constants/strings";
-import type {CompletionTransport} from "./model";
+import {getCompletionError, type CompletionTransport} from "./model";
 
 /** Native SSE retains the app's WebVPN cookie behavior on all three platforms. */
 export const nativeCompletionTransport =
@@ -51,9 +51,23 @@ export const nativeCompletionTransport =
 					finish(error instanceof Error ? error : new Error("Invalid completion stream"));
 				}
 			});
-			source.addEventListener("error", () =>
-				finish(new Error("Campus model connection failed; check login and connection")),
-			);
+			source.addEventListener("error", (event) => {
+				if (event.type === "error") {
+					try {
+						const error = getCompletionError(JSON.parse(event.message));
+						if (error) {
+							finish(error);
+							return;
+						}
+					} catch {
+						// Non-JSON responses may contain login HTML or raw transport details.
+					}
+				}
+				const status = event.type === "error" && event.xhrStatus > 0
+					? ` (HTTP ${event.xhrStatus})`
+					: "";
+				finish(new Error(`Campus model connection failed${status}; check login and connection`));
+			});
 			source.addEventListener("close", () => finish());
 		});
 	};
