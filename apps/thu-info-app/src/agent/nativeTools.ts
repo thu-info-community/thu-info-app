@@ -40,9 +40,8 @@ const handoffs = {
 	ResetDormPassword: () => navigationRef.navigate("ResetDormPassword"),
 	Sports: () => navigationRef.navigate("Sports"),
 	SportsRecord: () => navigationRef.navigate("SportsRecord"),
-	ReservesLibWelcome: () => navigationRef.navigate("ReservesLibWelcome"),
-	NetworkLogin: () => navigationRef.navigate("NetworkLogin"),
-	ECard: () => navigationRef.navigate("ECard"),
+	OnlineDevices: () => navigationRef.navigate("OnlineDevices"),
+	CampusCard: () => navigationRef.navigate("CampusCard"),
 	Invoice: () => navigationRef.navigate("Invoice"),
 	SchoolCalendar: () => navigationRef.navigate("SchoolCalendar"),
 	DormScore: () => navigationRef.navigate("DormScore"),
@@ -54,13 +53,13 @@ export const openAgentHandoff = (route: string) => {
 		throw new AgentToolError("Sign in and unlock the app first");
 	}
 	if (
-		["Invoice", "ECard"].includes(route) &&
+		["Invoice", "CampusCard"].includes(route) &&
 		config.verifyPasswordBeforeEnterFinance &&
 		!config.subFunctionUnlocked
 	) {
 		navigationRef.navigate("DigitalPassword", {
 			action: "verify",
-			target: route === "Invoice" ? "Invoice" : "ECard",
+			target: route === "Invoice" ? "Invoice" : "CampusCard",
 		});
 		return;
 	}
@@ -333,7 +332,7 @@ export const createNativeToolContext = (
 					getInvoicePDF: "Invoice",
 					getCalendarImageUrl: "SchoolCalendar",
 					getDormScore: "DormScore",
-					getCampusCardPhotoUrl: "ECard",
+					getCampusCardPhotoUrl: "CampusCard",
 				}[tool.name];
 				return {
 					document: true,

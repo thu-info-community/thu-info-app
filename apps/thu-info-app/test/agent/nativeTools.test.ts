@@ -57,11 +57,26 @@ test("native privacy locks apply to reads, previously read conversations and doc
 		action: "verify",
 		target: "Invoice",
 	});
+	openAgentHandoff("CampusCard");
+	expect(navigationRef.navigate).toHaveBeenCalledWith("DigitalPassword", {
+		action: "verify",
+		target: "CampusCard",
+	});
 	currState().config.subFunctionUnlocked = true;
+	openAgentHandoff("CampusCard");
+	expect(navigationRef.navigate).toHaveBeenCalledWith("CampusCard");
 	expect(sessionNeedsUnlock(checkpoint)).toBe(false);
 	expect(() => context.assertAccess(descriptor("getBankPayment"))).not.toThrow();
 	helper.userId = "another";
 	expect(() => context.assertAccess()).toThrow("Account changed");
+});
+
+test("network handoff uses the online device screen and rejects removed routes", () => {
+	openAgentHandoff("OnlineDevices");
+	expect(navigationRef.navigate).toHaveBeenCalledWith("OnlineDevices");
+	for (const route of ["NetworkLogin", "ReservesLibWelcome", "ECard"]) {
+		expect(() => openAgentHandoff(route)).toThrow("not available");
+	}
 });
 
 test("authenticated news reads require an observed source and never expose HTML or PDF bytes", async () => {

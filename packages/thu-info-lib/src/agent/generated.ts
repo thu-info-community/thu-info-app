@@ -312,7 +312,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "account",
-        "description": "Read the current student's profile. Get the user's full name and email name (i.e. username for email\naccount)",
+        "description": "Read the current student's profile. Get the identity information of the logged-in user from the THU\nunified ID system: full name, email name (i.e. username for email\naccount), student / staff ID, account name, department and phone\nnumber.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -328,20 +328,215 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "object",
             "properties": {
+                "userId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
                 "fullName": {
                     "type": "string"
                 },
                 "emailName": {
                     "type": "string"
+                },
+                "deptString": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
                 }
             },
             "required": [
+                "userId",
+                "username",
                 "fullName",
-                "emailName"
+                "emailName",
+                "deptString",
+                "phone"
             ],
             "additionalProperties": false
         },
-        "version": "13e39562770af633"
+        "version": "e16bcd4d443d4673"
+    },
+    {
+        "category": "account",
+        "description": "Read unified ID account details. Read ID account details, including the last password change time.",
+        "effect": "read",
+        "impact": "routine",
+        "mode": "direct",
+        "name": "getIdAccountInfo",
+        "path": "account.getIdAccountInfo",
+        "parameters": [],
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        },
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "lastPasswordChangedAt": {
+                    "anyOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ]
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "emailName": {
+                    "type": "string"
+                },
+                "deptString": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "lastPasswordChangedAt",
+                "userId",
+                "username",
+                "fullName",
+                "emailName",
+                "deptString",
+                "phone"
+            ],
+            "additionalProperties": false
+        },
+        "version": "03b0a23e538d0287"
+    },
+    {
+        "category": "account",
+        "description": "List unified ID trusted authentication devices. Read the existing multi-factor authentication trusted devices.",
+        "effect": "read",
+        "impact": "routine",
+        "mode": "direct",
+        "name": "getIdAuthDevices",
+        "path": "account.getIdAuthDevices",
+        "parameters": [],
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        },
+        "outputSchema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "createdAt",
+                    "updatedAt"
+                ],
+                "additionalProperties": false
+            }
+        },
+        "version": "5b35aef8d7bd1201"
+    },
+    {
+        "category": "account",
+        "description": "Read unified ID login logs. Read login logs, newest first; pages start at 1 and contain up to 25 rows.",
+        "effect": "read",
+        "impact": "routine",
+        "mode": "direct",
+        "name": "getIdLoginLogs",
+        "path": "account.getIdLoginLogs",
+        "parameters": [
+            "page"
+        ],
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "number",
+                    "description": "Default: 1"
+                }
+            },
+            "required": [],
+            "additionalProperties": false
+        },
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "loginTime": {
+                                "type": "string"
+                            },
+                            "ipAddress": {
+                                "type": "string"
+                            },
+                            "appName": {
+                                "type": "string"
+                            },
+                            "targetAppName": {
+                                "anyOf": [
+                                    {
+                                        "type": "null"
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
+                            },
+                            "isSingleSignOn": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "loginTime",
+                            "ipAddress",
+                            "appName",
+                            "targetAppName",
+                            "isSingleSignOn"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "total": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "items",
+                "total"
+            ],
+            "additionalProperties": false
+        },
+        "version": "0cc02a84ef0d885b"
     },
     {
         "category": "app",
@@ -3727,27 +3922,6 @@ export const agentCatalog: ToolDescriptor[] = [
                     "items": {
                         "type": "object",
                         "properties": {
-                            "name": {
-                                "type": "string"
-                            },
-                            "location": {
-                                "type": "string"
-                            },
-                            "hash": {
-                                "type": "string"
-                            },
-                            "type": {
-                                "type": "number",
-                                "enum": [
-                                    0,
-                                    1,
-                                    2,
-                                    3
-                                ]
-                            },
-                            "category": {
-                                "type": "string"
-                            },
                             "activeTime": {
                                 "type": "object",
                                 "properties": {
@@ -3784,6 +3958,27 @@ export const agentCatalog: ToolDescriptor[] = [
                                     "base"
                                 ],
                                 "additionalProperties": false
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "location": {
+                                "type": "string"
+                            },
+                            "hash": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "number",
+                                "enum": [
+                                    0,
+                                    1,
+                                    2,
+                                    3
+                                ]
+                            },
+                            "category": {
+                                "type": "string"
                             },
                             "delOrHideTime": {
                                 "type": "object",
@@ -3824,11 +4019,11 @@ export const agentCatalog: ToolDescriptor[] = [
                             }
                         },
                         "required": [
+                            "activeTime",
                             "name",
                             "location",
                             "hash",
                             "type",
-                            "activeTime",
                             "delOrHideTime"
                         ],
                         "additionalProperties": false
@@ -3893,7 +4088,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "e30fb39b98ea826a"
+        "version": "d6fcf9a7f412ab36"
     },
     {
         "category": "schedule",
@@ -6470,225 +6665,6 @@ export const agentCatalog: ToolDescriptor[] = [
         "version": "5e061ad90001de5b"
     },
     {
-        "category": "library",
-        "description": "Search course reserve books",
-        "effect": "read",
-        "impact": "routine",
-        "mode": "direct",
-        "name": "searchReservesLib",
-        "path": "library.searchReservesLib",
-        "parameters": [
-            "bookName",
-            "page"
-        ],
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "bookName": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "bookName"
-            ],
-            "additionalProperties": false
-        },
-        "outputSchema": {
-            "type": "object",
-            "properties": {
-                "bookCount": {
-                    "type": "number"
-                },
-                "pageCount": {
-                    "type": "number"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "bookId": {
-                                "type": "string"
-                            },
-                            "img": {
-                                "type": "string"
-                            },
-                            "title": {
-                                "type": "string"
-                            },
-                            "ISBN": {
-                                "type": "string"
-                            },
-                            "author": {
-                                "type": "string"
-                            },
-                            "publisher": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "bookId",
-                            "img",
-                            "title",
-                            "ISBN",
-                            "author",
-                            "publisher"
-                        ],
-                        "additionalProperties": false
-                    }
-                }
-            },
-            "required": [
-                "bookCount",
-                "pageCount",
-                "data"
-            ],
-            "additionalProperties": false
-        },
-        "version": "5e9c07c2e271d424"
-    },
-    {
-        "category": "library",
-        "description": "Read course reserve book details",
-        "effect": "read",
-        "impact": "routine",
-        "mode": "direct",
-        "name": "getReservesLibBookDetail",
-        "path": "library.getReservesLibBookDetail",
-        "parameters": [
-            "bookId"
-        ],
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "bookId": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "bookId"
-            ],
-            "additionalProperties": false
-        },
-        "outputSchema": {
-            "type": "object",
-            "properties": {
-                "img": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "author": {
-                    "type": "string"
-                },
-                "publisher": {
-                    "type": "string"
-                },
-                "ISBN": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "volume": {
-                    "type": "string"
-                },
-                "chapters": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "title": {
-                                "type": "string"
-                            },
-                            "href": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "title",
-                            "href"
-                        ],
-                        "additionalProperties": false
-                    }
-                }
-            },
-            "required": [
-                "img",
-                "title",
-                "author",
-                "publisher",
-                "ISBN",
-                "version",
-                "volume",
-                "chapters"
-            ],
-            "additionalProperties": false
-        },
-        "version": "8e8c0acd8ea09d9d"
-    },
-    {
-        "category": "library",
-        "description": "Download reserve book chapters in the native library screen",
-        "effect": "write",
-        "impact": "confirm",
-        "mode": "interactive",
-        "route": "ReservesLibWelcome",
-        "privateArgs": [
-            "setCompletion"
-        ],
-        "name": "reservesLibDownloadChapters",
-        "path": "library.reservesLibDownloadChapters",
-        "parameters": [
-            "chapters",
-            "setCompletion"
-        ],
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "chapters": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "title": {
-                                "type": "string"
-                            },
-                            "href": {
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "title",
-                            "href"
-                        ],
-                        "additionalProperties": false
-                    }
-                }
-            },
-            "required": [
-                "chapters"
-            ],
-            "additionalProperties": false
-        },
-        "outputSchema": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string"
-                },
-                "route": {
-                    "type": "string"
-                }
-            }
-        },
-        "version": "5a689c0565b2451b"
-    },
-    {
         "category": "academics",
         "description": "Read degree program completion",
         "effect": "read",
@@ -6969,13 +6945,16 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "NetworkLogin",
-        "privateArgs": [],
+        "route": "OnlineDevices",
+        "privateArgs": [
+            "password"
+        ],
         "name": "loginNetworkDevice",
         "path": "network.loginNetworkDevice",
         "parameters": [
             "ip",
-            "internet"
+            "internet",
+            "password"
         ],
         "inputSchema": {
             "type": "object",
@@ -7004,7 +6983,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "7f9acd92762b0ede"
+        "version": "f388a1c320047928"
     },
     {
         "category": "thos",
@@ -7530,7 +7509,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "ECard",
+        "route": "CampusCard",
         "privateArgs": [
             "oldPassword",
             "newPassword"
@@ -7558,7 +7537,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "9712845147e193da"
+        "version": "f472e49c815987d2"
     },
     {
         "category": "card",
@@ -7566,7 +7545,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "ECard",
+        "route": "CampusCard",
         "privateArgs": [
             "transactionPassword"
         ],
@@ -7604,7 +7583,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "35621e8f6f2e3202"
+        "version": "f05cb98f269aacb9"
     },
     {
         "category": "card",
@@ -7612,7 +7591,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "ECard",
+        "route": "CampusCard",
         "privateArgs": [
             "transactionPassword"
         ],
@@ -7638,7 +7617,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "dc72e3be66b4ca17"
+        "version": "7db1b64b75a8d74d"
     },
     {
         "category": "card",
@@ -7646,7 +7625,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "ECard",
+        "route": "CampusCard",
         "privateArgs": [
             "transactionPassword"
         ],
@@ -7672,7 +7651,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "83d032e04e02b57f"
+        "version": "0bc83b59469f5222"
     },
     {
         "category": "card",
@@ -7680,7 +7659,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
-        "route": "ECard",
+        "route": "CampusCard",
         "privateArgs": [
             "transactionPassword"
         ],
@@ -7725,7 +7704,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 }
             }
         },
-        "version": "ee372b2aa2ff86c8"
+        "version": "f4b5d76e1d062bb4"
     }
 ];
 
@@ -7738,6 +7717,9 @@ export const agentBindings: Record<string, (helper: InfoHelper, args: Record<str
     getPrivacyUrl: (helper) => helper.getPrivacyUrl(),
     switchLang: (helper, args) => helper.switchLang(args["lang"] as Parameters<InfoHelper["switchLang"]>[0]),
     getUserInfo: (helper) => helper.getUserInfo(),
+    getIdAccountInfo: (helper) => helper.getIdAccountInfo(),
+    getIdAuthDevices: (helper) => helper.getIdAuthDevices(),
+    getIdLoginLogs: (helper, args) => helper.getIdLoginLogs(args["page"] as Parameters<InfoHelper["getIdLoginLogs"]>[0]),
     naiveSendMail: (helper, args) => helper.naiveSendMail(args["subject"] as Parameters<InfoHelper["naiveSendMail"]>[0], args["content"] as Parameters<InfoHelper["naiveSendMail"]>[1], args["recipient"] as Parameters<InfoHelper["naiveSendMail"]>[2]),
     getReport: (helper, args) => helper.getReport(args["bx"] as Parameters<InfoHelper["getReport"]>[0], args["newGPA"] as Parameters<InfoHelper["getReport"]>[1], args["flag"] as Parameters<InfoHelper["getReport"]>[2]),
     getAssessmentList: (helper) => helper.getAssessmentList(),
@@ -7813,8 +7795,6 @@ export const agentBindings: Record<string, (helper: InfoHelper, args: Record<str
     getGitProjectTree: (helper, args) => helper.getGitProjectTree(args["id"] as Parameters<InfoHelper["getGitProjectTree"]>[0], args["path"] as Parameters<InfoHelper["getGitProjectTree"]>[1], args["ref"] as Parameters<InfoHelper["getGitProjectTree"]>[2], args["page"] as Parameters<InfoHelper["getGitProjectTree"]>[3]),
     getGitProjectBranches: (helper, args) => helper.getGitProjectBranches(args["id"] as Parameters<InfoHelper["getGitProjectBranches"]>[0]),
     getGitProjectFileBlob: (helper, args) => helper.getGitProjectFileBlob(args["id"] as Parameters<InfoHelper["getGitProjectFileBlob"]>[0], args["sha"] as Parameters<InfoHelper["getGitProjectFileBlob"]>[1]),
-    searchReservesLib: (helper, args) => helper.searchReservesLib(args["bookName"] as Parameters<InfoHelper["searchReservesLib"]>[0], args["page"] as Parameters<InfoHelper["searchReservesLib"]>[1]),
-    getReservesLibBookDetail: (helper, args) => helper.getReservesLibBookDetail(args["bookId"] as Parameters<InfoHelper["getReservesLibBookDetail"]>[0]),
     getDegreeProgramCompletion: (helper) => helper.getDegreeProgramCompletion(),
     getFullDegreeProgram: (helper, args) => helper.getFullDegreeProgram(args["degreeId"] as Parameters<InfoHelper["getFullDegreeProgram"]>[0], args["skippedSet"] as Parameters<InfoHelper["getFullDegreeProgram"]>[1]),
     getOnlineDevices: (helper) => helper.getOnlineDevices(),

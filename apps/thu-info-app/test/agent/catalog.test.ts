@@ -42,6 +42,29 @@ test("generated schemas reject unknown keys, invalid enums and prototype keys", 
 	expect(validateSchema({type: "number"}, Infinity)).toBeDefined();
 });
 
+test("catalog follows current portal APIs and keeps passkey credentials in account settings", () => {
+	for (const name of ["getIdAccountInfo", "getIdAuthDevices", "getIdLoginLogs"]) {
+		expect(agentCatalog.find((tool) => tool.name === name)).toMatchObject({
+			category: "account",
+			effect: "read",
+			mode: "direct",
+		});
+	}
+	for (const name of [
+		"hasAuthentication", "preparePasskey", "registerPasskey", "listPasskeys",
+		"removePasskey", "renamePasskey", "searchReservesLib",
+		"getReservesLibBookDetail", "reservesLibDownloadChapters",
+		"getNetworkVerificationImageUrl", "loginUsereg",
+	]) {
+		expect(agentCatalog.find((tool) => tool.name === name)).toBeUndefined();
+		expect(agentBindings).not.toHaveProperty(name);
+	}
+	expect(agentCatalog.find((tool) => tool.name === "loginNetworkDevice")).toMatchObject({
+		mode: "interactive",
+		route: "OnlineDevices",
+	});
+});
+
 test("results are paginated, bounded, redacted and transient", () => {
 	const results = new ResultStore();
 	const page = results.put(
