@@ -1,41 +1,63 @@
 import {
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 	useSyncExternalStore,
+	type ReactNode,
 } from "react";
 import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
-	Linking,
 	Modal,
 	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
 	useColorScheme,
+	useWindowDimensions,
+	type TextInputInstance,
 	View,
 } from "react-native";
 import {useSelector} from "react-redux";
 import {useFocusEffect} from "@react-navigation/native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import Markdown from "react-native-markdown-display";
-import Clipboard from "@react-native-clipboard/clipboard";
 import {agentService} from "../../agent/service";
 import type {AgentRuntime} from "../../agent/runtime";
-import type {Message, SessionHeader} from "../../agent/types";
+import type {SessionHeader} from "../../agent/types";
 import {openAgentHandoff, sessionNeedsUnlock} from "../../agent/nativeTools";
 import {helper, navigationRef, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {getStr, langCode} from "../../utils/i18n";
 import type {DeepSeekTabProp} from "../../components/Root";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
-import {presentMessage} from "../../agent/context";
+import {
+	AgentAction,
+	AgentMessageTurn,
+	AgentWelcome,
+	agentChatStyles,
+} from "../../components/home/agentChat";
+import {
+	agentText,
+	agentStatusText,
+	operationStatusText,
+	agentProgressText,
+	groupAgentMessages,
+	type AgentTurn,
+} from "../../components/home/agentChatPresentation";
+import IconHamburgerMenu from "../../assets/icons/IconHamburgerMenu";
+import IconAdd from "../../assets/icons/IconAdd";
+import IconConfig from "../../assets/icons/IconConfig";
+import IconSend from "../../assets/icons/IconSend";
+import IconDown from "../../assets/icons/IconDown";
+import IconSearch from "../../assets/icons/IconSearch";
+import IconLock from "../../assets/icons/IconLock";
+import IconCheck from "../../assets/icons/IconCheck";
+import {campusModelName} from "../../utils/campusModel";
 
-export const agentText = (en: string, zh: string) =>
-	langCode === "zh" ? zh : en;
+export {agentText} from "../../components/home/agentChatPresentation";
 const noSubscription = () => () => {};
 const zero = () => 0;
 
@@ -47,23 +69,28 @@ export const AgentDeepSeekScreen = ({
 	const [runtime, setRuntime] = useState<AgentRuntime>();
 	const [input, setInput] = useState("");
 	const [source, setSource] = useState<string | null>(null);
+	const [sourceTitle, setSourceTitle] = useState("");
 	const [history, setHistory] = useState<SessionHeader[]>([]);
 	const [historyOpen, setHistoryOpen] = useState(false);
 	const [search, setSearch] = useState("");
 	const [limit, setLimit] = useState(30);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
-	const [showReasoning, setShowReasoning] = useState(false);
+	const [recordsExpanded, setRecordsExpanded] = useState(false);
+	const [elapsed, setElapsed] = useState(0);
 	const [usage, setUsage] = useState(0);
 	const [sources, setSources] = useState<{id: string; title: string}[] | null>(
 		null,
 	);
-	const listRef = useRef<FlatList<Message>>(null);
+	const listRef = useRef<FlatList<AgentTurn>>(null);
+	const inputRef = useRef<TextInputInstance>(null);
 	const nearEnd = useRef(true);
 	const config = useSelector((state: State) => state.config);
 	const account = useSelector((state: State) => state.auth.userId);
 	const {colors} = themes(useColorScheme());
 	const insets = useSafeAreaInsets();
+	const {fontScale} = useWindowDimensions();
+	const styles = useMemo(() => agentChatStyles(fontScale), [fontScale]);
 	useSyncExternalStore(
 		runtime?.subscribe ?? noSubscription,
 		runtime?.getRevision ?? zero,
@@ -115,6 +142,7 @@ export const AgentDeepSeekScreen = ({
 		if (params) {
 			setInput(params.prompt);
 			setSource(params.dataSource);
+			setSourceTitle("");
 		}
 	}, [params]);
 	useEffect(() => {
@@ -134,19 +162,36 @@ export const AgentDeepSeekScreen = ({
 			disposed = true;
 		};
 	}, [historyOpen, account, search, limit]);
-	const button = (label: string, action: () => void, disabled = false) => (
-		<Pressable
-			accessibilityRole="button"
-			accessibilityLabel={label}
-			accessibilityState={{disabled}}
-			disabled={disabled}
+	const button = (
+		label: string,
+		action: () => void,
+		disabled = false,
+		primary = false,
+	) => (
+		<AgentAction
+			label={label}
 			onPress={action}
-			style={{padding: 10, opacity: disabled ? 0.4 : 1}}>
-			<Text style={{color: colors.themePurple}}>{label}</Text>
-		</Pressable>
+			disabled={disabled}
+			primary={primary}
+			colors={colors}
+		/>
 	);
 	const checkpoint = runtime?.session.checkpoint;
 	const running = runtime?.isRunning() ?? false;
+	const turns = groupAgentMessages(runtime?.session.messages ?? []);
+	useEffect(() => {
+		if (!running) return;
+		const started =
+			[...(runtime?.session.messages ?? [])]
+				.reverse()
+				.find((message) => message.role === "user")?.timestamp ?? Date.now();
+		setElapsed(Math.max(0, Math.floor((Date.now() - started) / 1000)));
+		const timer = setInterval(
+			() => setElapsed(Math.floor((Date.now() - started) / 1000)),
+			1000,
+		);
+		return () => clearInterval(timer);
+	}, [running, runtime]);
 	const pending =
 		checkpoint?.approvals.filter((item) => !item.decision && !item.consumed) ??
 		[];
@@ -175,22 +220,111 @@ export const AgentDeepSeekScreen = ({
 			setRuntime(await agentService.open(id, create));
 			setHistoryOpen(false);
 		});
-	if (!ready && runtime) {
+	const iconButton = (
+		label: string,
+		icon: ReactNode,
+		action: () => void,
+		disabled = false,
+	) => (
+		<Pressable
+			accessibilityRole="button"
+			accessibilityLabel={label}
+			accessibilityState={{disabled}}
+			disabled={disabled}
+			onPress={action}
+			style={({pressed}) => [
+				styles.iconButton,
+				{
+					backgroundColor: pressed ? colors.themeTransparentGrey : undefined,
+					opacity: disabled ? 0.4 : 1,
+				},
+			]}>
+			{icon}
+		</Pressable>
+	);
+	const records = checkpoint?.operations.slice(-20) ?? [];
+	const visibleRecords = recordsExpanded
+		? records
+		: records.filter(
+				({status}) => status === "unknown" || status === "dispatching",
+			);
+	const needsResume =
+		checkpoint &&
+		["paused", "failed"].includes(checkpoint.status) &&
+		!pending.length &&
+		!checkpoint.pendingInput;
+	const selectSource = (id: string | null, title = "") => {
+		setSource(id);
+		setSourceTitle(title);
+		setSources(null);
+	};
+	const openDocument = (documentRoute: string) => {
+		try {
+			openAgentHandoff(documentRoute);
+		} catch (e) {
+			setError(String(e));
+		}
+	};
+	const reconcile = (operationId: string) =>
+		Alert.alert(
+			agentText("Record your observation", "记录你查看到的结果"),
+			agentText(
+				"This records your observation only, and does not retry the operation.",
+				"此操作仅记录你观察到的结果，不会重试。",
+			),
+			[
+				{text: getStr("cancel"), style: "cancel"},
+				{
+					text: agentText("It succeeded", "已成功"),
+					onPress: () => {
+						void perform(() => runtime!.reconcile(operationId, "succeeded"));
+					},
+				},
+				{
+					text: agentText("It did not happen", "未执行成功"),
+					onPress: () => {
+						void perform(() => runtime!.reconcile(operationId, "failed"));
+					},
+				},
+			],
+		);
+	if (!account || (!ready && runtime)) {
 		return (
-			<View style={{padding: 20}}>
-				<Text style={{color: colors.text}}>
+			<View
+				style={[
+					styles.centered,
+					{backgroundColor: colors.contentBackground, paddingTop: insets.top},
+				]}>
+				<IconLock width={40} height={40} />
+				<Text
+					accessibilityRole="header"
+					style={[styles.panelTitle, {color: colors.fontB0}]}>
+					{account
+						? agentText("Unlock this conversation", "解锁后查看对话")
+						: agentText("Your campus assistant", "你的校园助手")}
+				</Text>
+				<Text
+					style={[
+						styles.panelBody,
+						{color: colors.fontB2, textAlign: "center"},
+					]}>
 					{agentText(
 						"Sign in and unlock protected data to view this conversation.",
 						"请登录并解锁受保护的数据后查看对话。",
 					)}
 				</Text>
-				{account &&
-					button(agentText("Unlock", "解锁"), () =>
-						navigationRef.navigate("DigitalPassword", {
-							action: "verify",
-							target: "RootTabs",
-						}),
-					)}
+				{button(
+					account ? agentText("Unlock", "解锁") : getStr("login"),
+					() =>
+						account
+							? navigationRef.navigate("DigitalPassword", {
+									action: "verify",
+									target: "RootTabs",
+								})
+							: navigationRef.navigate("Login"),
+					false,
+					true,
+				)}
 			</View>
 		);
 	}
@@ -199,73 +333,71 @@ export const AgentDeepSeekScreen = ({
 			style={{
 				flex: 1,
 				paddingTop: insets.top,
-				backgroundColor: colors.themeBackground,
+				backgroundColor: colors.contentBackground,
 			}}
 			keyboardVerticalOffset={0}>
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-				}}>
-				{button(agentText("History", "历史"), () => setHistoryOpen(true))}
-				<Text style={{color: colors.text, fontWeight: "600"}}>
-					DeepSeek · Agent
-				</Text>
-				{button(getStr("newConversation"), () => open(undefined, true), busy)}
-				{button(getStr("settings"), () =>
-					navigationRef.navigate("DeepSeekSettings"),
+			<View style={[styles.column, styles.header]}>
+				{iconButton(
+					agentText("History", "历史记录"),
+					<IconHamburgerMenu width={24} height={24} />,
+					() => setHistoryOpen(true),
+				)}
+				<View style={{flex: 1, minWidth: 0}}>
+					<Text
+						accessibilityRole="header"
+						style={[styles.headerTitle, {color: colors.fontB0}]}>
+						DeepSeek
+					</Text>
+					<Text style={[styles.headerSubtitle, {color: colors.fontB2}]}>
+						{agentText("Campus assistant", "校园助手")} ·{" "}
+						{campusModelName.replace("DeepSeek-", "").replace(/-/g, " ")}
+					</Text>
+				</View>
+				{iconButton(
+					getStr("newConversation"),
+					<IconAdd width={24} height={24} />,
+					() => open(undefined, true),
+					busy,
+				)}
+				{iconButton(
+					getStr("settings"),
+					<IconConfig width={24} height={24} />,
+					() => navigationRef.navigate("DeepSeekSettings"),
 				)}
 			</View>
 			{!config.agentEnabled && (
-				<Text style={{color: colors.fontB3, padding: 12}}>
-					{agentText(
-						"Agent mode is disabled. History is still available; enable it in settings to continue.",
-						"智能体模式已关闭。历史记录仍可查看，启用后可继续对话。",
+				<View
+					style={[
+						styles.column,
+						styles.panel,
+						{backgroundColor: colors.themeTransparentGrey},
+					]}>
+					<Text style={[styles.panelBody, {color: colors.fontB2}]}>
+						{agentText(
+							"Agent mode is disabled. History is still available; enable it in settings to continue.",
+							"智能体模式已关闭。历史记录仍可查看，启用后可继续对话。",
+						)}
+					</Text>
+					{button(getStr("settings"), () =>
+						navigationRef.navigate("DeepSeekSettings"),
 					)}
-				</Text>
-			)}
-			{usage >= 50 * 1024 * 1024 && (
-				<Text
-					style={{
-						color: colors.statusWarning,
-						padding: 8,
-					}}>{`${(usage / 1024 / 1024).toFixed(1)} MiB · ${agentText(usage >= 100 * 1024 * 1024 ? "Large history: review storage in settings." : "History storage is growing; details can be cleared in settings.", "历史记录占用较大，可在设置中清理详情。")}`}</Text>
-			)}
-			<View style={{flexDirection: "row", alignItems: "center"}}>
-				{button(
-					agentText("News source", "新闻来源"),
-					() =>
-						void perform(async () => {
-							setSources(await helper.getNewsChannelList(langCode !== "zh"));
-						}),
-					running || busy || !account,
-				)}
-				{!source && (
-					<Text style={{color: colors.fontB3}}>
-						{agentText("Auto", "自动")}
-					</Text>
-				)}
-			</View>
-			{source && (
-				<View style={{flexDirection: "row", alignItems: "center"}}>
-					<Text style={{color: colors.text, paddingLeft: 12}}>
-						{agentText("News source", "新闻来源")}: {source}
-					</Text>
-					{button("×", () => setSource(null), running)}
 				</View>
 			)}
-			<Text style={{color: colors.fontB3, paddingHorizontal: 12, fontSize: 12}}>
-				{agentText("Thinking", "思考强度")}: {config.agentThinking ?? "default"}{" "}
-				· {checkpoint?.status ?? "loading"} · {checkpoint?.compactions ?? 0}{" "}
-				{agentText("compactions", "次压缩")}
-			</Text>
+			{usage >= 50 * 1024 * 1024 && (
+				<View
+					style={[styles.column, {paddingHorizontal: 24, paddingVertical: 8}]}>
+					<Text style={[styles.caption, {color: colors.fontB2}]}>
+						{`${(usage / 1024 / 1024).toFixed(1)} MiB · ${agentText(usage >= 100 * 1024 * 1024 ? "Large history: review storage in settings." : "History storage is growing; details can be cleared in settings.", "历史记录占用较大，可在设置中清理详情。")}`}
+					</Text>
+				</View>
+			)}
 			<FlatList
 				ref={listRef}
+				style={{flex: 1}}
+				keyboardShouldPersistTaps="handled"
+				keyboardDismissMode="on-drag"
 				onContentSizeChange={() => {
-					if (nearEnd.current) {
-						listRef.current?.scrollToEnd({animated: false});
-					}
+					if (nearEnd.current) listRef.current?.scrollToEnd({animated: false});
 				}}
 				onScroll={({nativeEvent}) => {
 					nearEnd.current =
@@ -275,190 +407,143 @@ export const AgentDeepSeekScreen = ({
 						120;
 				}}
 				scrollEventThrottle={100}
-				data={runtime?.session.messages ?? []}
-				keyExtractor={(item, index) => item.id ?? String(index)}
+				data={turns}
+				keyExtractor={(item) => item.id}
 				initialNumToRender={15}
 				windowSize={7}
-				contentContainerStyle={{padding: 12, gap: 12}}
-				renderItem={({item}) => {
-					const visible = presentMessage(item);
-					return (
-						<View
-							style={{
-								padding: 12,
-								borderRadius: 12,
-								backgroundColor:
-									item.role === "user" && config.bubbleMessage
-										? colors.contentBackground
-										: undefined,
-							}}>
-							<Text style={{color: colors.fontB3, fontSize: 12}}>
-								{item.role === "user" ? agentText("You", "你") : "DeepSeek"}
-							</Text>
-							{!!visible.reasoning && (
-								<>
-									{button(agentText("Thinking details", "思考详情"), () =>
-										setShowReasoning(!showReasoning),
-									)}
-									{showReasoning && (
-										<Text selectable style={{color: colors.fontB3}}>
-											{visible.reasoning}
-										</Text>
-									)}
-								</>
-							)}
-							<Markdown
-								rules={{image: () => null}}
-								style={{
-									body: {color: colors.text},
-									link: {color: colors.themePurple},
-									code_inline: {
-										color: colors.text,
-										backgroundColor: colors.contentBackground,
-									},
-									code_block: {
-										color: colors.text,
-										backgroundColor: colors.contentBackground,
-									},
-									fence: {
-										color: colors.text,
-										backgroundColor: colors.contentBackground,
-									},
-								}}
-								onLinkPress={(url) => {
-									if (/^https?:\/\//i.test(url)) {
-										Alert.alert(agentText("Open source", "打开来源"), url, [
-											{text: getStr("cancel")},
-											{
-												text: getStr("confirm"),
-												onPress: () => {
-													void Linking.openURL(url).catch((e) =>
-														setError(String(e)),
-													);
-												},
-											},
-										]);
-									}
-									return false;
-								}}>
-								{visible.text}
-							</Markdown>
-							{item.documents?.map((document) => (
-								<View key={document.tool}>
-									{button(agentText("Open document", "打开文档"), () => {
-										try {
-											openAgentHandoff(document.route);
-										} catch (e) {
-											setError(String(e));
-										}
-									})}
-								</View>
-							))}
-							{!!visible.text &&
-								button(agentText("Copy", "复制"), () =>
-									Clipboard.setString(visible.text),
-								)}
-						</View>
-					);
-				}}
+				contentContainerStyle={styles.listContent}
+				renderItem={({item, index}) => (
+					<AgentMessageTurn
+						turn={item}
+						colors={colors}
+						bubbleMessage={!!config.bubbleMessage}
+						active={running && index === turns.length - 1}
+						onDocument={openDocument}
+						onError={setError}
+					/>
+				)}
 				ListEmptyComponent={
-					<Text style={{color: colors.fontB3, padding: 20}}>
-						{agentText(
-							"Ask about your campus data or request an action. Bookings, course changes and other consequential writes require your approval. Never paste passwords or captchas.",
-							"可以查询校园信息或请求执行操作。预约、选课等重要操作需要确认。请勿在对话中输入密码或验证码。",
-						)}
-					</Text>
+					runtime ? (
+						<AgentWelcome
+							colors={colors}
+							disabled={!canSend}
+							onSelect={(prompt) => {
+								setInput(prompt);
+								inputRef.current?.focus();
+							}}
+						/>
+					) : (
+						<View style={styles.centered}>
+							<ActivityIndicator color={colors.themePurple} />
+							<Text style={{color: colors.fontB2}}>{agentStatusText()}</Text>
+						</View>
+					)
 				}
 				ListFooterComponent={
-					<View style={{gap: 10}}>
-						{checkpoint?.operations.slice(-20).map((operation) => (
-							<View
-								key={operation.id}
-								style={{
-									backgroundColor: colors.contentBackground,
-									padding: 12,
-									borderRadius: 8,
-								}}>
-								<Text
-									selectable
-									style={{
-										color:
-											operation.status === "unknown"
-												? colors.statusWarning
-												: colors.text,
-									}}>
-									{operation.tool} · {operation.status}
-									{"\n"}
-									{operation.result}
-								</Text>
-								{operation.status === "unknown" &&
-									button(
-										agentText(
-											"I checked the native record",
-											"我已查看原生页面记录",
-										),
-										() =>
-											Alert.alert(
+					<View style={styles.footer}>
+						{!!records.length && (
+							<View>
+								<Pressable
+									accessibilityRole="button"
+									accessibilityState={{expanded: recordsExpanded}}
+									onPress={() => setRecordsExpanded(!recordsExpanded)}
+									style={[styles.actionRow, {minHeight: 48}]}>
+									<Text style={{color: colors.fontB2, fontSize: 13}}>
+										{agentText("Action records", "操作记录")} · {records.length}
+									</Text>
+									<View
+										style={{
+											transform: [
+												{rotate: recordsExpanded ? "180deg" : "0deg"},
+											],
+										}}>
+										<IconDown width={18} height={18} />
+									</View>
+								</Pressable>
+								{visibleRecords.map((operation) => (
+									<View
+										key={operation.id}
+										style={[
+											styles.panel,
+											{
+												backgroundColor: colors.themeTransparentGrey,
+												marginBottom: 8,
+											},
+										]}>
+										<Text
+											style={[
+												styles.panelTitle,
+												{
+													color:
+														operation.status === "unknown" ||
+														operation.status === "failed"
+															? colors.statusWarning
+															: colors.fontB0,
+												},
+											]}>
+											{operationStatusText(operation.status)}
+										</Text>
+										<Text
+											selectable
+											style={[styles.caption, {color: colors.fontB2}]}>
+											{operation.label || operation.tool}
+										</Text>
+										{!!operation.result && (
+											<Text
+												selectable
+												style={[styles.panelBody, {color: colors.fontB1}]}>
+												{operation.result}
+											</Text>
+										)}
+										{operation.status === "unknown" &&
+											button(
 												agentText(
-													"Record your observation",
-													"记录你查看到的结果",
+													"I checked the native record",
+													"我已查看原生页面记录",
 												),
-												agentText(
-													"This records your observation only, and does not retry the operation.",
-													"此操作仅记录你观察到的结果，不会重试。",
-												),
-												[
-													{text: getStr("cancel"), style: "cancel"},
-													{
-														text: agentText("It succeeded", "已成功"),
-														onPress: () =>
-															void perform(() =>
-																runtime!.reconcile(operation.id, "succeeded"),
-															),
-													},
-													{
-														text: agentText("It did not happen", "未执行成功"),
-														onPress: () =>
-															void perform(() =>
-																runtime!.reconcile(operation.id, "failed"),
-															),
-													},
-												],
-											),
-										running || busy || !config.agentEnabled,
-									)}
+												() => reconcile(operation.id),
+												running || busy || !config.agentEnabled,
+											)}
+									</View>
+								))}
 							</View>
-						))}
+						)}
 						{pending.map((approval) => (
 							<View
 								key={approval.id}
-								style={{
-									borderWidth: 1,
-									borderColor: colors.themePurple,
-									padding: 12,
-									borderRadius: 8,
-								}}>
-								<Text style={{color: colors.text, fontWeight: "600"}}>
-									{agentText("Review action", "确认操作")}
-								</Text>
-								<Text selectable style={{color: colors.text}}>
+								style={[
+									styles.panel,
+									{backgroundColor: colors.themeTransparentGrey},
+								]}>
+								<View style={styles.actionRow}>
+									<IconLock width={22} height={22} />
+									<Text style={[styles.panelTitle, {color: colors.fontB0}]}>
+										{agentText("Review this action", "需要你确认")}
+									</Text>
+								</View>
+								<Text
+									selectable
+									style={[styles.panelBody, {color: colors.fontB1}]}>
 									{approval.preview}
 								</Text>
-								<Text style={{color: colors.fontB3}}>
-									{agentText("Valid until", "有效期至")}:{" "}
+								<Text style={[styles.caption, {color: colors.fontB2}]}>
+									{agentText("Valid until", "有效期至")}{" "}
 									{new Date(approval.expiresAt).toLocaleTimeString()}
 								</Text>
-								<View style={{flexDirection: "row"}}>
+								<View style={styles.actionRow}>
 									{button(
 										agentText("Approve once", "仅批准这一次"),
-										() =>
-											void perform(() => runtime!.respond(approval.id, true)),
+										() => {
+											void perform(() => runtime!.respond(approval.id, true));
+										},
 										running || busy || !config.agentEnabled,
+										true,
 									)}
 									{button(
 										agentText("Reject", "拒绝"),
-										() =>
-											void perform(() => runtime!.respond(approval.id, false)),
+										() => {
+											void perform(() => runtime!.respond(approval.id, false));
+										},
 										running || busy || !config.agentEnabled,
 									)}
 								</View>
@@ -466,107 +551,253 @@ export const AgentDeepSeekScreen = ({
 						))}
 						{checkpoint?.pendingInput && (
 							<View
-								style={{
-									padding: 12,
-									backgroundColor: colors.contentBackground,
-								}}>
-								<Text style={{color: colors.text}}>
+								style={[
+									styles.panel,
+									{backgroundColor: colors.themeTransparentGrey},
+								]}>
+								<Text style={[styles.caption, {color: colors.themePurple}]}>
+									{agentText("One more detail", "还需要一点信息")}
+								</Text>
+								<Text style={[styles.panelTitle, {color: colors.fontB0}]}>
 									{checkpoint.pendingInput.question}
 								</Text>
-								{checkpoint.pendingInput.choices?.map((choice) => (
-									<View key={choice}>
-										{button(
-											choice,
-											() => void perform(() => runtime!.answer(choice)),
-											running || busy || !config.agentEnabled,
-										)}
-									</View>
-								))}
+								<View style={styles.actionRow}>
+									{checkpoint.pendingInput.choices?.map((choice) => (
+										<AgentAction
+											key={choice}
+											colors={colors}
+											label={choice}
+											onPress={() => {
+												void perform(() => runtime!.answer(choice));
+											}}
+											disabled={running || busy || !config.agentEnabled}
+										/>
+									))}
+								</View>
 							</View>
 						)}
-						{(error || checkpoint?.error) && (
-							<Text
-								selectable
+						{!!(error || checkpoint?.error) && (
+							<View
 								accessibilityRole="alert"
-								style={{color: colors.statusWarning}}>
-								{error || checkpoint?.error}
-							</Text>
+								style={[
+									styles.panel,
+									{backgroundColor: colors.statusWarningOpacity},
+								]}>
+								<Text style={[styles.panelTitle, {color: colors.fontB0}]}>
+									{agentText("This request was interrupted", "这次请求中断了")}
+								</Text>
+								<Text
+									selectable
+									style={[styles.panelBody, {color: colors.fontB1}]}>
+									{error || checkpoint?.error}
+								</Text>
+							</View>
 						)}
-						{running && <ActivityIndicator color={colors.themePurple} />}
-						{running
-							? button(
-									agentText("Stop", "停止"),
-									() => void perform(() => runtime!.stop()),
-								)
-							: checkpoint &&
-								  ["paused", "failed"].includes(checkpoint.status) &&
-								  !pending.length &&
-								  !checkpoint.pendingInput
-								? button(
-										agentText("Continue safely", "继续"),
-										() => void perform(() => runtime!.resume()),
-										busy || !config.agentEnabled,
-									)
-								: null}
 						{checkpoint?.status === "completed" &&
 							button(
-								agentText(
-									"Regenerate answer (no writes)",
-									"重新生成回答（不重复操作）",
-								),
-								() => void perform(() => runtime!.regenerate()),
+								agentText("Regenerate answer", "重新生成回答"),
+								() => {
+									void perform(() => runtime!.regenerate());
+								},
 								busy || !config.agentEnabled,
 							)}
 					</View>
 				}
 			/>
-			<View
-				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					padding: 10,
-					gap: 6,
-				}}>
-				<TextInput
-					accessibilityLabel={agentText("Message", "消息")}
-					placeholder={agentText("What would you like to do?", "需要做什么？")}
-					placeholderTextColor={colors.fontB3}
-					value={input}
-					onChangeText={setInput}
-					multiline
-					maxLength={12000}
-					style={{
-						flex: 1,
-						maxHeight: 140,
-						borderRadius: 12,
-						padding: 12,
-						color: colors.text,
-						backgroundColor: colors.contentBackground,
-					}}
-				/>
-				{button(agentText("Send", "发送"), send, !canSend || !input.trim())}
+			<View style={[styles.column, styles.composer]}>
+				{(running ||
+					needsResume ||
+					pending.length > 0 ||
+					checkpoint?.pendingInput) && (
+					<View style={styles.progress}>
+						{running && (
+							<ActivityIndicator size="small" color={colors.themePurple} />
+						)}
+						<Text
+							accessibilityLiveRegion="polite"
+							style={[styles.progressText, {color: colors.fontB2}]}>
+							{agentProgressText(checkpoint)}
+						</Text>
+						{running && (
+							<Text
+								style={[
+									styles.caption,
+									{color: colors.fontB2, fontVariant: ["tabular-nums"]},
+								]}>
+								{elapsed}s
+							</Text>
+						)}
+						{needsResume &&
+							button(
+								agentText("Continue safely", "继续"),
+								() => {
+									void perform(() => runtime!.resume());
+								},
+								busy || !config.agentEnabled,
+							)}
+					</View>
+				)}
+				<View
+					style={[
+						styles.composerField,
+						{
+							backgroundColor: colors.themeTransparentGrey,
+							borderColor: colors.inputBorder,
+						},
+					]}>
+					<TextInput
+						ref={inputRef}
+						accessibilityLabel={agentText("Message", "消息")}
+						placeholder={
+							checkpoint?.pendingInput
+								? agentText("Add the missing details…", "补充一下…")
+								: agentText("Ask your campus assistant…", "问点校园里的事…")
+						}
+						placeholderTextColor={colors.fontB2}
+						value={input}
+						onChangeText={setInput}
+						multiline
+						maxLength={12000}
+						editable={ready && config.agentEnabled}
+						style={[styles.input, {color: colors.fontB0}]}
+					/>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel={
+							running ? agentText("Stop", "停止") : agentText("Send", "发送")
+						}
+						accessibilityState={{
+							disabled: !running && (!canSend || !input.trim()),
+						}}
+						disabled={!running && (!canSend || !input.trim())}
+						onPress={
+							running
+								? () => {
+										void perform(() => runtime!.stop());
+									}
+								: send
+						}
+						style={({pressed}) => [
+							styles.iconButton,
+							{
+								backgroundColor:
+									running || (canSend && input.trim())
+										? colors.primary
+										: colors.themeTransparentGrey,
+								opacity: pressed ? 0.7 : 1,
+							},
+						]}>
+						{running ? (
+							<View
+								style={{
+									width: 16,
+									height: 16,
+									borderRadius: 3,
+									backgroundColor: "#FFFFFF",
+								}}
+							/>
+						) : (
+							<IconSend
+								width={22}
+								height={22}
+								color={canSend && input.trim() ? "#FFFFFF" : colors.fontB2}
+							/>
+						)}
+					</Pressable>
+				</View>
+				<View style={styles.composerMeta}>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel={agentText("Choose news source", "选择新闻来源")}
+						accessibilityState={{disabled: running || busy}}
+						disabled={running || busy}
+						onPress={() => {
+							void perform(async () =>
+								setSources(await helper.getNewsChannelList(langCode !== "zh")),
+							);
+						}}
+						style={({pressed}) => [
+							styles.actionRow,
+							{
+								minHeight: 48,
+								flexShrink: 1,
+								opacity: running || busy ? 0.5 : pressed ? 0.6 : 1,
+							},
+						]}>
+						<Text
+							style={[styles.caption, {color: colors.fontB2, flexShrink: 1}]}>
+							{agentText("News", "新闻来源")} ·{" "}
+							{source
+								? sourceTitle || agentText("Selected source", "已选来源")
+								: agentText("Auto", "自动")}
+						</Text>
+						<IconDown width={16} height={16} />
+					</Pressable>
+					<Text
+						style={[
+							styles.caption,
+							{color: colors.fontB2, flexShrink: 1, textAlign: "right"},
+						]}>
+						{agentText("Review important actions", "重要操作需确认")}
+					</Text>
+				</View>
 			</View>
 			<Modal
 				visible={sources !== null}
 				animationType="slide"
 				onRequestClose={() => setSources(null)}>
-				<ScrollView
-					contentContainerStyle={{padding: 16, paddingTop: insets.top + 16}}
-					style={{backgroundColor: colors.themeBackground}}>
-					{button(getStr("cancel"), () => setSources(null))}
-					{button(agentText("Auto", "自动"), () => {
-						setSource(null);
-						setSources(null);
-					})}
-					{sources?.map((item) => (
-						<View key={item.id}>
-							{button(item.title, () => {
-								setSource(item.id);
-								setSources(null);
-							})}
-						</View>
-					))}
-				</ScrollView>
+				<View
+					style={[
+						styles.modal,
+						{
+							backgroundColor: colors.contentBackground,
+							paddingTop: insets.top + 16,
+							paddingBottom: insets.bottom,
+						},
+					]}>
+					<View style={styles.modalHeader}>
+						<Text
+							accessibilityRole="header"
+							style={[styles.modalTitle, {color: colors.fontB0}]}>
+							{agentText("News sources", "新闻来源")}
+						</Text>
+						{button(getStr("cancel"), () => setSources(null))}
+					</View>
+					<ScrollView
+						contentContainerStyle={{paddingHorizontal: 12, paddingBottom: 24}}
+						keyboardShouldPersistTaps="handled">
+						{[
+							{id: null, title: agentText("Auto", "自动选择")},
+							...(sources ?? []),
+						].map((item) => (
+							<Pressable
+								key={item.id ?? "auto"}
+								accessibilityRole="button"
+								accessibilityState={{selected: source === item.id}}
+								onPress={() => selectSource(item.id, item.title)}
+								style={({pressed}) => [
+									styles.historyRow,
+									{
+										padding: 16,
+										minHeight: 56,
+										backgroundColor:
+											source === item.id || pressed
+												? colors.themeTransparentGrey
+												: undefined,
+									},
+								]}>
+								<Text
+									style={[
+										styles.historyTitle,
+										{color: colors.fontB1, flex: 1},
+									]}>
+									{item.title}
+								</Text>
+								{source === item.id && <IconCheck width={20} height={20} />}
+							</Pressable>
+						))}
+					</ScrollView>
+				</View>
 			</Modal>
 			<Modal
 				visible={historyOpen}
@@ -576,46 +807,96 @@ export const AgentDeepSeekScreen = ({
 					keyboardVerticalOffset={0}
 					style={{
 						flex: 1,
-						padding: 16,
 						paddingTop: insets.top + 16,
-						backgroundColor: colors.themeBackground,
+						paddingBottom: insets.bottom,
+						backgroundColor: colors.contentBackground,
 					}}>
-					{button(getStr("cancel"), () => setHistoryOpen(false))}
-					<TextInput
-						accessibilityLabel={agentText(
-							"Search conversation titles",
-							"搜索对话标题",
+					<View style={styles.modalHeader}>
+						<Text
+							accessibilityRole="header"
+							style={[styles.modalTitle, {color: colors.fontB0}]}>
+							{agentText("Conversations", "对话记录")}
+						</Text>
+						{button(getStr("cancel"), () => setHistoryOpen(false))}
+					</View>
+					<View
+						style={[
+							styles.search,
+							{backgroundColor: colors.themeTransparentGrey},
+						]}>
+						<IconSearch width={20} height={20} />
+						<TextInput
+							accessibilityLabel={agentText(
+								"Search conversation titles",
+								"搜索对话标题",
+							)}
+							value={search}
+							onChangeText={(value) => {
+								setSearch(value);
+								setLimit(30);
+							}}
+							placeholder={agentText("Search conversations", "搜索对话")}
+							placeholderTextColor={colors.fontB2}
+							style={[styles.searchInput, {color: colors.fontB0}]}
+						/>
+					</View>
+					<ScrollView
+						keyboardShouldPersistTaps="handled"
+						contentContainerStyle={{paddingBottom: 24}}>
+						{!history.length && (
+							<Text
+								style={[styles.panelBody, {color: colors.fontB2, padding: 28}]}>
+								{search
+									? agentText("No matching conversations", "没有匹配的对话")
+									: agentText(
+											"Your conversations will appear here.",
+											"聊过的内容会保存在这里。",
+										)}
+							</Text>
 						)}
-						value={search}
-						onChangeText={setSearch}
-						placeholder={agentText(
-							"Search conversation titles",
-							"搜索对话标题",
-						)}
-						placeholderTextColor={colors.fontB3}
-						style={{color: colors.text, padding: 12}}
-					/>
-					<ScrollView>
 						{history.map((header) => (
 							<View
 								key={header.id}
-								style={{flexDirection: "row", alignItems: "center"}}>
-								<View style={{flex: 1}}>
-									{button(header.title, () => open(header.id), busy)}
-									<Text style={{color: colors.fontB3}}>
-										{new Date(header.updatedAt).toLocaleString()} ·{" "}
-										{header.status}
+								style={[
+									styles.historyRow,
+									{
+										backgroundColor:
+											header.id === runtime?.session.header.id
+												? colors.themeTransparentGrey
+												: undefined,
+									},
+								]}>
+								<Pressable
+									accessibilityRole="button"
+									accessibilityState={{
+										selected: header.id === runtime?.session.header.id,
+										disabled: busy,
+									}}
+									disabled={busy}
+									onPress={() => open(header.id)}
+									style={({pressed}) => [
+										styles.historyEntry,
+										{opacity: pressed || busy ? 0.5 : 1},
+									]}>
+									<Text
+										numberOfLines={2}
+										style={[styles.historyTitle, {color: colors.fontB0}]}>
+										{header.title}
 									</Text>
-								</View>
+									<Text style={[styles.caption, {color: colors.fontB2}]}>
+										{new Date(header.updatedAt).toLocaleDateString()} ·{" "}
+										{agentStatusText(header.status)}
+									</Text>
+								</Pressable>
 								{button(
 									getStr("delete"),
 									() =>
 										Alert.alert(getStr("delete"), header.title, [
-											{text: getStr("cancel")},
+											{text: getStr("cancel"), style: "cancel"},
 											{
 												text: getStr("confirm"),
 												style: "destructive",
-												onPress: () =>
+												onPress: () => {
 													void perform(async () => {
 														await agentService.remove(header.id);
 														setHistory(
@@ -623,8 +904,10 @@ export const AgentDeepSeekScreen = ({
 																.forAccount()
 																.list(0, limit, search),
 														);
-														setRuntime(await agentService.open());
-													}),
+														if (header.id === runtime?.session.header.id)
+															setRuntime(await agentService.open());
+													});
+												},
 											},
 										]),
 									busy,
