@@ -1,10 +1,11 @@
 import {ThemedGestureRefreshControl} from "../../components/themedRefreshControl";
-import { useEffect, useState } from "react";
-import { Device } from "@thu-info/lib/src/models/network/device";
-import { helper } from "../../redux/store";
+import {useEffect, useState} from "react";
+import {Device} from "@thu-info/lib/src/models/network/device";
+import {helper, State} from "../../redux/store";
+import {useSelector} from "react-redux";
 import {Snackbar} from "react-native-snackbar";
-import { getStr } from "../../utils/i18n";
-import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
+import {getStr} from "../../utils/i18n";
+import {GestureHandlerRootView, ScrollView} from "react-native-gesture-handler";
 import {
 	KeyboardAvoidingView,
 	Platform,
@@ -16,18 +17,18 @@ import {
 	View,
 } from "react-native";
 import themes from "../../assets/themes/themes";
-import { RoundedView } from "../../components/views";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { styles } from "../settings/settings";
-import { UseregAuthError } from "@thu-info/lib/src/utils/error.ts";
-import { NetworkRetry } from "../../components/easySnackbars.ts";
-import { RootNav } from "../../components/Root.tsx";
+import {RoundedView} from "../../components/views";
+import {useHeaderHeight} from "@react-navigation/elements";
+import {styles} from "../settings/settings";
+import {NetworkRetry} from "../../components/easySnackbars.ts";
+import {RootNav} from "../../components/Root.tsx";
+import {PrimaryButton} from "../../components/subpage/buttons";
 
-const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) => {
+const DeviceCard = ({device, refresh}: {device: Device; refresh: Function}) => {
 	const themeName = useColorScheme();
-	const { colors } = themes(themeName);
+	const {colors} = themes(themeName);
 
-	const Item = ({ left, right }: { left: string; right: string }) => {
+	const Item = ({left, right}: {left: string; right: string}) => {
 		return (
 			<View
 				style={{
@@ -64,9 +65,15 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 	};
 
 	return (
-		<RoundedView style={{ margin: 8, borderRadius: 16 + 12 }}>
-			<View style={{ marginHorizontal: 16 }}>
-				<Text style={{ fontSize: 16, marginVertical: 2, color: colors.text, fontWeight: "bold" }}>
+		<RoundedView style={{margin: 8, borderRadius: 16 + 12}}>
+			<View style={{marginHorizontal: 16}}>
+				<Text
+					style={{
+						fontSize: 16,
+						marginVertical: 2,
+						color: colors.text,
+						fontWeight: "bold",
+					}}>
 					{device.ip4}
 				</Text>
 				<View
@@ -78,10 +85,7 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 				<Item left={getStr("ip6")} right={device.ip6} />
 				<Item left={getStr("loggedAt")} right={device.loggedAt} />
 				<Item left={getStr("mac")} right={device.mac} />
-				<Item
-					left={getStr("authType")}
-					right={device.authPermission}
-				/>
+				<Item left={getStr("authType")} right={device.authPermission} />
 				<RoundedView
 					style={{
 						backgroundColor: colors.statusWarningOpacity,
@@ -118,9 +122,13 @@ const DeviceCard = ({ device, refresh }: { device: Device; refresh: Function }) 
 	);
 };
 
-export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) => {
+export const NetworkOnlineDevicesScreen = ({
+	navigation,
+}: {
+	navigation: RootNav;
+}) => {
 	const themeName = useColorScheme();
-	const { colors } = themes(themeName);
+	const {colors} = themes(themeName);
 
 	const [devices, setDevices] = useState<Device[]>([]);
 
@@ -129,6 +137,10 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 	const [internetAccess, setInternetAccess] = useState(true);
 
 	const [importIp, setImportIp] = useState("");
+	const [importPassword, setImportPassword] = useState("");
+	const usesPasskey = useSelector(
+		(state: State) => state.auth.authMethod === "passkey",
+	);
 
 	const headerHeight = useHeaderHeight();
 
@@ -136,22 +148,16 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 		helper
 			.getOnlineDevices()
 			.then(setDevices)
-			.catch((e) => {
-				if (e instanceof UseregAuthError) {
-					navigation.navigate("NetworkLogin");
-				} else {
-					NetworkRetry(e);
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
 	useEffect(refresh, [navigation]);
 	return (
 		<KeyboardAvoidingView
-			style={{ flex: 1 }}
+			style={{flex: 1}}
 			behavior={Platform.OS === "android" ? "height" : "padding"}
 			keyboardVerticalOffset={headerHeight}>
-			<GestureHandlerRootView style={{ flex: 1, flexDirection: "column" }}>
+			<GestureHandlerRootView style={{flex: 1, flexDirection: "column"}}>
 				<ScrollView
 					refreshControl={
 						<ThemedGestureRefreshControl
@@ -159,15 +165,10 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							onRefresh={refresh}
 						/>
 					}
-					contentContainerStyle={{ padding: 8 }}
-				>
+					contentContainerStyle={{padding: 8}}>
 					{devices.length > 0 ? (
 						devices.map((d) => (
-							<DeviceCard
-								refresh={refresh}
-								device={d}
-								key={d.ip4}
-							/>
+							<DeviceCard refresh={refresh} device={d} key={d.ip4} />
 						))
 					) : (
 						<Text
@@ -180,13 +181,42 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 						</Text>
 					)}
 				</ScrollView>
+				{usesPasskey && (
+					<View
+						style={{
+							paddingHorizontal: 16,
+							backgroundColor: colors.contentBackground,
+						}}>
+						<Text style={{color: colors.text}}>
+							{getStr("passkeyNetworkPassword")}
+						</Text>
+						<TextInput
+							value={importPassword}
+							onChangeText={setImportPassword}
+							secureTextEntry
+							placeholder={getStr("password")}
+							placeholderTextColor={colors.fontB2}
+							style={{color: colors.text, paddingVertical: 8}}
+						/>
+					</View>
+				)}
 				<View
 					style={{
 						flexDirection: "row",
+						flexWrap: "wrap",
+						alignItems: "center",
 						backgroundColor: colors.contentBackground,
 						columnGap: 16,
+						rowGap: 8,
 					}}>
-					<View style={{ flex: 1, flexDirection: "row", paddingStart: 16 }}>
+					<View
+						style={{
+							flex: 1,
+							minWidth: 160,
+							flexDirection: "row",
+							alignItems: "center",
+							paddingStart: 16,
+						}}>
 						<Text
 							style={{
 								verticalAlign: "middle",
@@ -206,7 +236,7 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							placeholderTextColor={colors.fontB2}
 						/>
 					</View>
-					<View style={{ flexDirection: "row" }}>
+					<View style={{flexDirection: "row", alignItems: "center"}}>
 						<Text
 							style={{
 								verticalAlign: "middle",
@@ -219,58 +249,50 @@ export const NetworkOnlineDevicesScreen = ({navigation}: {navigation: RootNav}) 
 							value={internetAccess}
 							onValueChange={setInternetAccess}
 							thumbColor={colors.themeLightGrey}
-							trackColor={{ false: colors.inputBorder, true: colors.themePurple }}
+							trackColor={{false: colors.inputBorder, true: colors.themePurple}}
 						/>
 					</View>
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							padding: 4,
-							backgroundColor: colors.themePurple,
-						}}>
-						<TouchableOpacity
-							style={{
-								padding: 8,
-							}}
-							onPress={() => {
-								if (importIp === "") {
+					<PrimaryButton
+						text={getStr("proxyImport")}
+						onPress={() => {
+							if (importIp === "") {
+								Snackbar.show({
+									text: getStr("ipAddrEmpty"),
+									duration: Snackbar.LENGTH_SHORT,
+								});
+								return;
+							}
+
+							helper
+								.loginNetworkDevice(
+									importIp,
+									internetAccess,
+									usesPasskey ? importPassword : undefined,
+								)
+								.then((s) => {
 									Snackbar.show({
-										text: getStr("ipAddrEmpty"),
+										text: getStr("importSuccess") + " " + s,
 										duration: Snackbar.LENGTH_SHORT,
 									});
-									return;
-								}
+								})
+								.then(refresh)
+								.catch((e) => {
+									let message = e?.message;
 
-								helper
-									.loginNetworkDevice(importIp, internetAccess)
-									.then((s) => {
-										Snackbar.show({
-											text: getStr("importSuccess") + " " + s,
-											duration: Snackbar.LENGTH_SHORT,
-										});
-									})
-									.then(refresh)
-									.catch((e) => {
-										let message = e?.message;
+									if (message === "ip_already_online_error") {
+										message = getStr("importAlreadyOnline");
+									} else if (!/E\d+:/g.test(message)) {
+										message = getStr("networkRetry") + message;
+									}
 
-										if (message === "ip_already_online_error") {
-											message = getStr("importAlreadyOnline");
-										} else if (!/E\d+:/g.test(message)) {
-											message = getStr("networkRetry") + message;
-										}
-
-										Snackbar.show({
-											text: message,
-											duration: Snackbar.LENGTH_SHORT,
-										});
+									Snackbar.show({
+										text: message,
+										duration: Snackbar.LENGTH_SHORT,
 									});
-							}}>
-							<Text style={{ color: "white", fontSize: 14 }}>
-								{getStr("proxyImport")}
-							</Text>
-						</TouchableOpacity>
-					</View>
+								})
+								.finally(() => setImportPassword(""));
+						}}
+					/>
 				</View>
 			</GestureHandlerRootView>
 		</KeyboardAvoidingView>

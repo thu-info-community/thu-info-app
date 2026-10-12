@@ -8,6 +8,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {getStr} from "../../utils/i18n";
@@ -16,6 +17,7 @@ import {styles} from "../../ui/settings/settings";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 import {RoundedView} from "../../components/views";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 interface TimePeriod {
 	description: string;
@@ -41,6 +43,7 @@ export const SportsDetailScreen = ({
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 	const style = styles(themeName);
+	const {fontScale} = useWindowDimensions();
 
 	const validDateNum = 4;
 	const format = "YYYY-MM-DD";
@@ -112,10 +115,7 @@ export const SportsDetailScreen = ({
 		<ScrollView
 			style={{flex: 1}}
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}>
 			<RoundedView
 				style={{marginHorizontal: 12, marginVertical: 24, padding: 16}}>
@@ -142,7 +142,7 @@ export const SportsDetailScreen = ({
 									style={{
 										color: colors.text,
 										fontSize: 16,
-										lineHeight: 24,
+										lineHeight: scaledLineHeight(24, fontScale),
 									}}>
 									{date.format(format)} {getStr("dayOfWeek")[date.day()]}
 								</Text>
@@ -177,7 +177,7 @@ export const SportsDetailScreen = ({
 															? colors.fontB3
 															: colors.text,
 													fontSize: 16,
-													lineHeight: 24,
+													lineHeight: scaledLineHeight(24, fontScale),
 												}}>
 												{item.description} ({item.availableFields.length}/
 												{item.total})

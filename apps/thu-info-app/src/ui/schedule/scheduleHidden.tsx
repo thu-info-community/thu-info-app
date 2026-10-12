@@ -1,41 +1,41 @@
-import {useDispatch, useSelector} from "react-redux";
+import {scheduleConflicts} from "../../redux/scheduleData";
+import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
+import {useDispatch, useSelector, useStore} from "react-redux";
+import {FlatList, Text, TouchableOpacity, View, Alert} from "react-native";
+import {State, helper} from "../../redux/store";
 import {
-	FlatList,
-	Text,
-	TouchableOpacity,
-	View,
-	Dimensions,
-	Alert,
-} from "react-native";
-import {State} from "../../redux/store";
-import {
-	getOverlappedBlock,
 	ScheduleType,
 	TimeSlice,
 	getBeginPeriod,
 	getEndPeriod,
 	getWeekFromTime,
+	isInSemester,
 } from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {
 	Choice,
-	scheduleDelOrHide,
 	scheduleRemoveHiddenRule,
 } from "../../redux/slices/schedule";
 import themes from "../../assets/themes/themes";
 import {useColorScheme} from "react-native";
+import {EmptyState, Separator} from "../../components/subpage/rows";
+import {
+	roundedListContent,
+	spacing,
+} from "../../components/subpage/tokens";
 
 export const ScheduleHiddenScreen = () => {
-	let screenHeight = Dimensions.get("window");
 	const themeName = useColorScheme();
-	const theme = themes(themeName);
+	const {colors} = themes(themeName);
 
 	const baseSchedule = useSelector((s: State) => s.schedule.baseSchedule);
-	const firstDay = useSelector((s: State) => s.config.firstDay);
+	const {firstDay, weekCount} = useSelector((s: State) => s.config);
+	const reduxStore = useStore<State>();
 	const dispatch = useDispatch();
 
 	const getData = () => {
 		let res: {
+			localId: string;
 			name: string;
 			type: ScheduleType;
 			time: TimeSlice;
@@ -45,9 +45,11 @@ export const ScheduleHiddenScreen = () => {
 			.filter((val) => val.delOrHideTime.base.length !== 0)
 			.forEach((val) => {
 				val.delOrHideTime.base.forEach((e) => {
+					if (!isInSemester(e.beginTime, firstDay, weekCount)) { return; }
 					const week = getWeekFromTime(e.beginTime, firstDay);
 					const resStr = getStr("weekNumPrefix") + week + getStr("weekNumSuffix");
 					res.push({
+						localId: val.localId,
 						name: val.name,
 						type: val.type,
 						time: e,
@@ -58,123 +60,93 @@ export const ScheduleHiddenScreen = () => {
 		return res;
 	};
 
+	const data = getData();
+
 	return (
 		<FlatList
-			data={getData()}
-			renderItem={({item}) => (
-				<View style={{flexDirection: "row", padding: 6, alignItems: "center"}}>
-					<Text
-						style={{
-							flex: 1,
-							marginHorizontal: 5,
-							fontSize: 15,
-							color: theme.colors.text,
-						}}>
-						{`${item.weekPrefix} ${item.name} ${
-							getStr("dayOfWeek")[item.time.dayOfWeek]
-						} [${item.time.beginTime.format("HH:mm")}, ${item.time.endTime.format(
-							"HH:mm",
-						)}]`}
-					</Text>
-					<TouchableOpacity
-						style={{padding: 5, marginHorizontal: 6}}
-						onPress={() => {
-							let overlapList: [string, ScheduleType, TimeSlice][] =
-								getOverlappedBlock(
-									{
-										name: item.name,
-										location: "",
-										activeTime: {base: [item.time]},
-										delOrHideTime: {base: []},
-										type: ScheduleType.PRIMARY,
-										hash: "",
-									},
-									baseSchedule,
-								);
-							if (overlapList.length) {
-								Alert.alert(
-									getStr("scheduleConflict"),
-									getStr("unhideIntro") +
-										overlapList
-											.map(
-												(val) =>
-													"「" + val[0] + "」\n" +
-													getStr("weekNumPrefix") +
-													getWeekFromTime(val[2].beginTime, firstDay) +
-													getStr("weekNumSuffix") +
-													" " +
-													getStr("dayOfWeek")[val[2].dayOfWeek] +
-													" " +
-													getStr("periodNumPrefix") +
-													getBeginPeriod(val[2].beginTime) +
-													(getBeginPeriod(val[2].beginTime) === getEndPeriod(val[2].endTime)
-														? ""
-														: " ~ " + getEndPeriod(val[2].endTime)) +
-													getStr("periodNumSuffix"),
-											)
-											.join("\n\n") +
-										getStr("unhideText"),
-									[
-										{
-											text: getStr("confirm"),
-											onPress: () => {
-												dispatch(
-													scheduleRemoveHiddenRule([item.name, item.time]),
-												);
-												overlapList.forEach((val) => {
-													dispatch(
-														scheduleDelOrHide([val[0], val[2], Choice.ONCE]),
-													);
-												});
+			data={data}
+			style={{flex: 1, margin: spacing.md}}
+			contentContainerStyle={roundedListContent(colors, data.length > 0)}
+			renderItem={({item, index}) => (
+				<>
+					{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+					<View style={{flexDirection: "row", alignItems: "center"}}>
+						<Text
+							style={{
+								flex: 1,
+								marginHorizontal: 5,
+								fontSize: 15,
+								color: colors.text,
+							}}>
+							{`${item.weekPrefix} ${item.name} ${
+								getStr("dayOfWeek")[item.time.dayOfWeek]
+							} [${item.time.beginTime.format("HH:mm")}, ${item.time.endTime.format(
+								"HH:mm",
+							)}]`}
+						</Text>
+						<TouchableOpacity
+							style={{padding: 5, marginHorizontal: 6}}
+							onPress={() => {
+								const conflicts = scheduleConflicts({name: item.name, location: "", hash: "",
+									type: item.type, activeTime: {base: [item.time]}, delOrHideTime: {base: []}}, baseSchedule);
+								const overlapList = conflicts.map(({schedule, slice}): [string, ScheduleType, TimeSlice] => [schedule.name, schedule.type, slice]);
+								if (overlapList.length) {
+									Alert.alert(
+										getStr("scheduleConflict"),
+										getStr("unhideIntro") +
+											overlapList
+												.map(
+													(val) =>
+														"「" + val[0] + "」\n" +
+														getStr("weekNumPrefix") +
+														getWeekFromTime(val[2].beginTime, firstDay) +
+														getStr("weekNumSuffix") +
+														" " +
+														getStr("dayOfWeek")[val[2].dayOfWeek] +
+														" " +
+														getStr("periodNumPrefix") +
+														getBeginPeriod(val[2].beginTime) +
+														(getBeginPeriod(val[2].beginTime) === getEndPeriod(val[2].endTime)
+															? ""
+															: " ~ " + getEndPeriod(val[2].endTime)) +
+														getStr("periodNumSuffix"),
+												)
+												.join("\n\n") +
+											getStr("unhideText"),
+										[
+											{
+												text: getStr("confirm"),
+												onPress: async () => {
+													try {
+														for (const {schedule, slice} of conflicts) {
+															await deleteScheduleOccurrences(helper, reduxStore, schedule.localId, slice, Choice.ONCE, {firstDay, weekCount});
+														}
+														dispatch(scheduleRemoveHiddenRule([item.localId, item.time]));
+													} catch { Alert.alert(getStr("networkRetry")); }
+												},
 											},
-										},
-										{
-											text: getStr("cancel"),
-										},
-									],
-								);
-							} else {
-								dispatch(scheduleRemoveHiddenRule([item.name, item.time]));
-							}
-						}}>
-						<Text style={{color: theme.colors.themePurple}}>解除隐藏</Text>
-					</TouchableOpacity>
-				</View>
+											{
+												text: getStr("cancel"),
+											},
+										],
+									);
+								} else {
+									dispatch(scheduleRemoveHiddenRule([item.localId, item.time]));
+								}
+							}}>
+							<Text style={{color: colors.themePurple}}>解除隐藏</Text>
+						</TouchableOpacity>
+					</View>
+				</>
 			)}
 			ListEmptyComponent={
-				<View
-					style={{
-						margin: 15,
-						height: screenHeight.height * 0.7,
-						justifyContent: "center",
-						alignItems: "center",
-					}}>
-					<Text
-						style={{
-							fontSize: 18,
-							fontWeight: "bold",
-							alignSelf: "center",
-							margin: 5,
-							color: theme.colors.text,
-						}}>
-						{getStr("noHiddenLesson")}
-					</Text>
-					<Text
-						style={{
-							fontSize: 16,
-							alignSelf: "center",
-							color: "gray",
-							margin: 5,
-						}}>
-						{getStr("hiddenLessonTip")}
-					</Text>
-				</View>
+				<EmptyState
+					title={getStr("noHiddenLesson")}
+					hint={getStr("hiddenLessonTip")}
+				/>
 			}
-			style={{
-				padding: 5,
-			}}
 			keyExtractor={(item) =>
-				`${item.name}.${item.time.dayOfWeek}.[${item.time.beginTime.toDate()}-${item.time.endTime.toDate()}]`
+				`${item.localId}.${item.time.dayOfWeek}.[${item.time.beginTime.toDate()}-${item.time.endTime.toDate()}]`
 			}
 		/>
 	);

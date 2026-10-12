@@ -128,7 +128,12 @@ export function libraryRefreshListScreen<
 									style={{
 										color: item.valid ? colors.text : colors.fontB2,
 										fontSize: 16,
-										flex: 0,
+										// The name must shrink and wrap, not keep its intrinsic
+										// width: at a large system font a `flex: 0` label pushes
+										// the trailing status/chevron off-screen.
+										flexGrow: 0,
+										flexShrink: 1,
+										minWidth: 0,
 										marginLeft: 8,
 									}}>
 									{item.zhName + moreInformation}

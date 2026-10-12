@@ -1,5 +1,5 @@
 import {getStr} from "../../utils/i18n";
-import {Text, useColorScheme, View} from "react-native";
+import {ScrollView, Text, useColorScheme, View} from "react-native";
 import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
@@ -36,7 +36,7 @@ const EnterPin = ({
 				}
 			}}
 			cellCount={6}
-			rootStyle={{margin: 16}}
+			rootStyle={{margin: 16, gap: 6}}
 			keyboardType="number-pad"
 			textContentType="oneTimeCode"
 			secureTextEntry={true}
@@ -44,15 +44,15 @@ const EnterPin = ({
 				<View
 					key={index}
 					style={{
-						width: 42,
-						height: 56,
-						paddingHorizontal: 12,
+						flex: 1,
+						minWidth: 0,
+						maxWidth: 42,
+						minHeight: 56,
 						paddingVertical: 8,
 						borderWidth: 2,
 						borderColor: isFocused ? colors.mainTheme : colors.themeGrey,
 						borderRadius: 8,
 						justifyContent: "center",
-						marginLeft: index === 0 ? 0 : 6,
 					}}>
 					<Text
 						style={{
@@ -75,19 +75,19 @@ export const LoseCardScreen = () => {
 	const [pin, setPin] = useState("");
 
 	return (
-		<View
+		<ScrollView
+			contentContainerStyle={{flexGrow: 1, alignItems: "center", padding: 24}}
 			style={{
 				flex: 1,
 				marginHorizontal: 12,
 				marginTop: 16,
 				backgroundColor: colors.contentBackground,
-				alignItems: "center",
 			}}>
-			<View style={{marginTop: 56}}>
+			<View>
 				<IconExclamation width={128} height={128} />
 			</View>
 			<BottomPopupTriggerView
-				style={{marginTop: 64}}
+				style={{marginTop: 32}}
 				popupTitle={getStr("enterCardPin")}
 				popupContent={<EnterPin pin={pin} setPin={setPin} />}
 				popupCanFulfill={pin.length === 6}
@@ -122,14 +122,15 @@ export const LoseCardScreen = () => {
 				style={{
 					color: colors.text,
 					fontSize: 14,
-					marginHorizontal: 92,
-					marginTop: 36,
+					width: "100%",
+					maxWidth: 480,
+					marginTop: 24,
 					textAlign: "center",
 				}}>
 				{getStr("loseCardHint")}
 			</Text>
 			<BottomPopupTriggerView
-				style={{marginTop: 64}}
+				style={{marginTop: 32}}
 				popupTitle={getStr("enterCardPin")}
 				popupContent={<EnterPin pin={pin} setPin={setPin} />}
 				popupCanFulfill={pin.length === 6}
@@ -152,6 +153,6 @@ export const LoseCardScreen = () => {
 					{getStr("cancelLossReport")}
 				</Text>
 			</BottomPopupTriggerView>
-		</View>
+		</ScrollView>
 	);
 };

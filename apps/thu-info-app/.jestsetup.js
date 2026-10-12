@@ -140,3 +140,9 @@ jest.mock("./src/utils/webApi", () => ({
 	addUsageStat: () => {},
 	addStartupStat: ()=> {},
 }));
+
+// Native insets are supplied by the OS; screen tests provide their own viewport.
+jest.mock("react-native-safe-area-context", () => ({
+	...jest.requireActual("react-native-safe-area-context"),
+	useSafeAreaInsets: () => ({top: 0, right: 0, bottom: 0, left: 0}),
+}));

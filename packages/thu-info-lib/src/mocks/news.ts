@@ -12,7 +12,9 @@ const url8 = "https://webvpn.tsinghua.edu.cn/http/77726476706e697374686562657374
 const url9 = "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e0f852882e3e6e5f301c9aa596522b2043f84ba24ebecaf8/node/279661";
 export const newsHtml = {} as {[key: string]: string};
 
-const sampleHtml = "<h1>Test accounts are not allowed to view news of Tsinghua University.</h1>";
+const sampleHtml = "<h1>新闻功能介绍</h1>"
+    + "<p>这里汇集校园通知和活动资讯。你可以按分类浏览、使用关键词搜索，并点击条目阅读新闻详情。</p>"
+    + "<p>由于校园新闻属于内部信息，未登录账号时无法获取。当前为测试账号演示页面，请使用个人账号登录后查看校园新闻内容。</p>";
 
 newsHtml[url0] = sampleHtml;
 newsHtml[url1] = sampleHtml;

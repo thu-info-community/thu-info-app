@@ -28,7 +28,7 @@ import {CardTransactionType} from "@thu-info/lib/src/models/card/transaction";
 import {CardRechargeType} from "@thu-info/lib/src/models/card/recharge";
 import IconDown from "../../assets/icons/IconDown";
 import {RootNav} from "../../components/Root";
-import { styles } from "../settings/settings";
+import {styles} from "../settings/settings";
 
 export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
@@ -120,8 +120,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 					paymentMethod === "alipay"
 						? CardRechargeType.Alipay
 						: paymentMethod === "wechat"
-						? CardRechargeType.Wechat
-						: CardRechargeType.Bank,
+							? CardRechargeType.Wechat
+							: CardRechargeType.Bank,
 				)
 				.then((r) => {
 					setProcessing(false);
@@ -131,15 +131,26 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							date: dayjs().format("YYYY-MM-DD"),
 						}),
 					);
-					Snackbar.show({
-						text: getStr("rechargeSuccess"),
-						duration: Snackbar.LENGTH_SHORT,
-					});
 					setMoney("");
 					setMoneyQuickSelected(undefined);
 					refresh();
 					if (typeof r === "string") {
-						Linking.openURL(r);
+						Snackbar.show({
+							text: getStr("redirectToAlipay"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
+						Linking.openURL(r).catch(() =>
+							Snackbar.show({
+								text: getStr("alipayRequired"),
+								duration: Snackbar.LENGTH_INDEFINITE,
+								action: {text: getStr("ok")},
+							}),
+						);
+					} else {
+						Snackbar.show({
+							text: getStr("rechargeSuccess"),
+							duration: Snackbar.LENGTH_SHORT,
+						});
 					}
 				})
 				.catch((e) => {
@@ -247,8 +258,14 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("deposit")}
 						</Text>
 						<RoundedView style={{marginTop: 8, width: "100%", padding: 16}}>
-							<View style={{flexDirection: "row"}}>
-								{[10, 50, 100].map((price, index) => (
+							<View
+								style={{
+									flexDirection: "row",
+									flexWrap: "wrap",
+									columnGap: 16,
+									rowGap: 8,
+								}}>
+								{[10, 50, 100].map((price) => (
 									<TouchableOpacity
 										style={{
 											borderRadius: 4,
@@ -258,7 +275,6 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												moneyQuickSelected === price
 													? colors.themePurple
 													: colors.inputBorder,
-											marginLeft: index === 0 ? 0 : 16,
 										}}
 										onPress={() => {
 											setMoneyQuickSelected(price);
@@ -270,7 +286,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 											style={{
 												color:
 													moneyQuickSelected === price
-														? "#FFFFFF"
+														? colors.contentBackground
 														: colors.fontB2,
 											}}>
 											{price} 元
@@ -311,7 +327,12 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 								}}
 							/>
 							<View
-								style={{flexDirection: "row", justifyContent: "space-between"}}>
+								style={{
+									flexDirection: "row",
+									justifyContent: "space-between",
+									flexWrap: "wrap",
+									rowGap: 4,
+								}}>
 								<Text style={{color: colors.fontB2}}>
 									{getStr("paymentMethod")}
 								</Text>
@@ -391,8 +412,8 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 												paymentMethod === "alipay"
 													? "payViaAlipay"
 													: paymentMethod === "wechat"
-													? "payViaWechat"
-													: "bankTransfer",
+														? "payViaWechat"
+														: "bankTransfer",
 											)}
 										</Text>
 										<IconDown height={18} width={18} />
@@ -450,7 +471,7 @@ export const CampusCardScreen = ({navigation}: {navigation: RootNav}) => {
 										style={{
 											color:
 												valid && !processing
-													? "#FFFFFF"
+													? colors.contentBackground
 													: colors.themeLightGrey,
 											fontSize: 16,
 										}}>

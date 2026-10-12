@@ -3,7 +3,6 @@ import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	Text,
 	View,
-	Dimensions,
 	ScrollView,
 	TextInput,
 	FlatList,
@@ -28,11 +27,15 @@ import {NewsListItem} from "../../components/news/NewsListItem";
 import {IconStarButton} from "../../components/news/IconStarButton";
 import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
-import {getStatusBarHeight} from "react-native-safearea-height";
+import {useResponsive} from "../../utils/useResponsive";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 import {useNewsInvalidation} from "../../agent/useNewsInvalidation";
+
+/** 列表宽度上限（dp）：宽屏下把阅读列收窄并居中，而不是让一行文字横跨整个屏幕。 */
+const NEWS_LIST_MAX_WIDTH = 720;
 
 type Category =
 	| "catSubscribed"
@@ -166,6 +169,7 @@ const newsDedupeAndAdd = (prev: NewsSlice[], next: NewsSlice[]) => {
 };
 
 export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
+	const insets = useSafeAreaInsets();
 	const [newsList, setNewsList] = useState<NewsSlice[]>([]);
 	const [refreshing, setRefreshing] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -335,12 +339,12 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 	const [deepseekOpen, setDeepseekOpen] = useState(false);
 	const [deepseekInput, setDeepseekInput] = useState("");
 
-	let screenHeight = Dimensions.get("window");
+	const {isExpanded} = useResponsive();
 
 	return (
 		<KeyboardAvoidingScreen
 			keyboardVerticalOffset={0}
-			style={{flex: 1, paddingTop: getStatusBarHeight()}}
+			style={{flex: 1, paddingTop: insets.top}}
 			key={darkModeHook}>
 			<View style={{flex: 0}}>
 				<ScrollView
@@ -511,7 +515,20 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 			})()}
 			<FlatList
-				style={{flex: 1, paddingHorizontal: 12, marginVertical: 12, marginBottom: 0}}
+				// `numColumns` 不允许中途改变，所以宽档切换时连 key 一起换。
+				key={isExpanded ? "news-2" : "news-1"}
+				numColumns={isExpanded ? 2 : 1}
+				contentContainerStyle={{flexGrow: 1}}
+				columnWrapperStyle={isExpanded ? {gap: 12} : undefined}
+				style={{
+					flex: 1,
+					paddingHorizontal: 12,
+					marginVertical: 12,
+					marginBottom: 0,
+					width: "100%",
+					maxWidth: NEWS_LIST_MAX_WIDTH,
+					alignSelf: "center",
+				}}
 				refreshControl={
 					<ThemedRefreshControl
 						refreshing={refreshing}
@@ -521,7 +538,13 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				ListEmptyComponent={
 					categorySelected === "catSubscribed" ? (
 						subscriptions.length === 1 ? (
-							<View style={{alignItems: "center", marginTop: 100}}>
+							<View
+								style={{
+									flex: 1,
+									justifyContent: "center",
+									alignItems: "center",
+									padding: 16,
+								}}>
 								<IconSubscriptionLogo width={128} height={128} />
 								<TouchableOpacity
 									style={{
@@ -551,7 +574,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<View
 								style={{
 									margin: 15,
-									height: screenHeight.height * 0.6,
+									flex: 1,
 									justifyContent: "center",
 									alignItems: "center",
 								}}>
@@ -571,7 +594,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						<View
 							style={{
 								margin: 15,
-								height: screenHeight.height * 0.6,
+								flex: 1,
 								justifyContent: "center",
 								alignItems: "center",
 							}}>
@@ -590,9 +613,16 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				}
 				data={newsList}
 				keyExtractor={(item) => item.url}
-				renderItem={({item}) => (
-					<NewsListItem item={item} theme={theme} navigation={navigation} />
-				)}
+				renderItem={({item}) =>
+					isExpanded ? (
+						// flex 平分一行；maxWidth 让落单的最后一张仍占半栏而不是整栏。
+						<View style={{flex: 1, maxWidth: "50%"}}>
+							<NewsListItem item={item} theme={theme} navigation={navigation} />
+						</View>
+					) : (
+						<NewsListItem item={item} theme={theme} navigation={navigation} />
+					)
+				}
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>

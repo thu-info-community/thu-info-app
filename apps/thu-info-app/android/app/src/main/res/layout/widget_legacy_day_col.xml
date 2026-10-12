@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets legacyDayColumn() (index != 0): transparent, 2dp gaps. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_legacy_col"
+	android:layout_width="0dp"
+	android:layout_height="match_parent"
+	android:layout_weight="1"
+	android:orientation="vertical"
+	android:divider="@drawable/widget_divider_v_2"
+	android:showDividers="middle" />

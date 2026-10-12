@@ -8,6 +8,29 @@
         "quotes": [
             "error",
             "double"
+        ],
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "JSXAttribute[name.name='allowFontScaling'][value.value=false]",
+                "message": "allowFontScaling={false} 会禁用系统字体缩放。请改用 minHeight/minWidth，让容器随文字尺寸增长。"
+            },
+            {
+                "selector": "JSXAttribute[name.name='maxFontSizeMultiplier']",
+                "message": "maxFontSizeMultiplier 会为文字的最大缩放倍数封顶。请改由布局适配系统字体缩放。"
+            },
+            {
+                "selector": "JSXAttribute[name.name='adjustsFontSizeToFit']",
+                "message": "adjustsFontSizeToFit 会缩小文字以迁就容器。除纯装饰性内容外不应使用。"
+            },
+            {
+                "selector": "Property[key.name='lineHeight']:not([value.callee.name='scaledLineHeight']):not([value.name=/LineHeight$/])",
+                "message": "行高不应写为固定数值：字号随系统缩放后，固定行高会压缩文字。请使用 scaledLineHeight(base, fontScale)；确为装饰性图形时方可豁免。"
+            },
+            {
+                "selector": "JSXAttribute[name.name='numberOfLines'][value.expression.value=1]",
+                "message": "numberOfLines={1} 在大字号下会截断必要信息。请允许容器换行或可滚动；仅定长短标签（日期、编号等）可豁免。"
+            }
         ]
     }
 }

@@ -3,20 +3,20 @@ import {getStr} from "../../utils/i18n";
 import {RootNav, RootStackParamList} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {
-	Alert,
 	Text,
 	TouchableOpacity,
 	useColorScheme,
 	View,
-	Platform,
 	ScrollView,
 	StyleSheet,
+	Switch,
+	Alert,
 } from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
 import {scheduleClear} from "../../redux/slices/schedule";
-import {login, logout} from "../../redux/slices/auth";
-import {RoundedView} from "../../components/views";
+import {logout} from "../../redux/slices/auth";
+import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import themedStyles from "../../utils/themedStyles";
 import IconRight from "../../assets/icons/IconRight";
 import VersionNumber from "react-native-version-number";
@@ -28,10 +28,11 @@ import {
 } from "../../redux/slices/reservation";
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
-import { deepseekClear } from "../../redux/slices/deepseek.ts";
+import {deepseekClear} from "../../redux/slices/deepseek.ts";
 import {agentService} from "../../agent/service";
-import useDetailNavigator from "../../utils/useDetailNavigator";
-import {StackActions} from "@react-navigation/native";
+
+/** 设置项的宽度上限（dp）：宽屏下居中，免得一行设置横跨整个屏幕。 */
+const SETTINGS_MAX_WIDTH = 640;
 
 const performLogout = () => {
 	helper
@@ -56,20 +57,11 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 	const dark = useSelector((s: State) => s.config.darkMode);
 	const darkModeHook = dark || themeName === "dark";
-	const {userId, password} = useSelector((s: State) => s.auth);
+	const {userId} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
-	const detailNavigator = useDetailNavigator();
 
 	const handleNavigate = (name: keyof RootStackParamList) => {
-		if (detailNavigator) {
-			detailNavigator.dispatch(
-				StackActions.replace(name, {
-					disableAnimation: true,
-				}),
-			);
-		} else {
-			navigation.navigate(name);
-		}
+		navigation.navigate(name);
 	};
 
 	const doNotRemindSemver =
@@ -81,9 +73,19 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 		gt(latestVersion, doNotRemindSemver);
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
+	const [clearLogoutCache, setClearLogoutCache] = useState(false);
 	return (
 		<ScrollView>
-			<View style={{flex: 1, padding: 12}} key={String(darkModeHook)}>
+			<View
+				// 宽屏下收窄到 640dp 并居中；窄屏下这两个值都不生效。
+				style={{
+					flex: 1,
+					padding: 12,
+					width: "100%",
+					maxWidth: SETTINGS_MAX_WIDTH,
+					alignSelf: "center",
+				}}
+				key={String(darkModeHook)}>
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
@@ -107,22 +109,16 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 				</RoundedView>
-				{helper.userId === "" || helper.mocked() ? null : <RoundedView style={style.rounded}>
-					<TouchableOpacity
-						style={style.touchable}
-						onPress={() => handleNavigate("DeepSeekSettings")}>
-						<Text style={style.text}>{getStr("deepseek")}</Text>
-						<IconRight height={20} width={20} />
-					</TouchableOpacity>
-				</RoundedView>}
-				<RoundedView style={style.rounded}>
-					<TouchableOpacity
-						style={style.touchable}
-						onPress={() => handleNavigate("ScheduleSettings")}>
-						<Text style={style.text}>{getStr("schedule")}</Text>
-						<IconRight height={20} width={20} />
-					</TouchableOpacity>
-				</RoundedView>
+				{helper.userId === "" || helper.mocked() ? null : (
+					<RoundedView style={style.rounded}>
+						<TouchableOpacity
+							style={style.touchable}
+							onPress={() => handleNavigate("DeepSeekSettings")}>
+							<Text style={style.text}>{getStr("deepseek")}</Text>
+							<IconRight height={20} width={20} />
+						</TouchableOpacity>
+					</RoundedView>
+				)}
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
@@ -142,7 +138,13 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						style={style.touchable}
 						onPress={() => handleNavigate("About")}>
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "center",
+								flexShrink: 1,
+								minWidth: 0,
+							}}>
 							<Text style={style.version}>
 								{getStr("version")}{" "}
 								{newVersionAvailable
@@ -164,11 +166,12 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									text: getStr("processing"),
 									duration: Snackbar.LENGTH_SHORT,
 								});
-								try {
-									await helper.logout();
-								} catch {}
-								dispatch(login({userId, password}));
-								await helper.login({userId, password});
+								if (!userId) {
+									setForceLoginDisabled(false);
+									navigation.navigate("Login");
+									return;
+								}
+								await helper.login();
 								Snackbar.show({
 									text: getStr("success"),
 									duration: Snackbar.LENGTH_SHORT,
@@ -189,47 +192,56 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				</RoundedView>
 				{helper.userId && (
 					<RoundedView style={style.rounded}>
-						<TouchableOpacity
+						<BottomPopupTriggerView
+							accessibilityRole="button"
 							style={style.touchable}
-							onPress={() => {
-								Alert.alert(
-									getStr("logout"),
-									getStr("confirmLogout"),
-									[
-										...(Platform.OS === "android" || Platform.OS === "ios"
-											? [{text: getStr("cancel")}]
-											: []),
-										{
-											text: getStr("no"),
-											onPress: () => {
-												performLogout();
-												dispatch(logout());
-											},
-										},
-										{
-											text: getStr("yes"),
-											onPress: async () => {
-												try {
-													await agentService.clear(helper.userId);
-												} catch {
-													Alert.alert("THUInfo", "Unable to clear agent history. Please retry before signing out.");
-													return;
-												}
-												helper.userId = "";
-												helper.password = "";
-												performLogout();
-												dispatch(logout());
-												dispatch(setDormPassword(""));
-												dispatch(scheduleClear());
-												dispatch(deepseekClear());
-												dispatch(setActiveLibBookRecord([]));
-												dispatch(setActiveSportsReservationRecord([]));
-												dispatch(setBalance(0));
-											},
-										},
-									],
-									{cancelable: true},
-								);
+							popupTitle={getStr("logout")}
+							popupFulfillText={getStr("logout")}
+							popupCancelable
+							popupCanFulfill
+							popupOnTriggered={() => setClearLogoutCache(false)}
+							popupOnCancelled={() => {}}
+							popupContent={
+								<View
+									style={{
+										paddingHorizontal: 20,
+										flexDirection: "row",
+										alignItems: "center",
+										justifyContent: "space-between",
+									}}>
+									<Text style={style.text}>{getStr("clearLogoutCache")}</Text>
+									<Switch
+										value={clearLogoutCache}
+										onValueChange={setClearLogoutCache}
+										accessibilityLabel={getStr("clearLogoutCache")}
+										ios_backgroundColor={theme.colors.inputBorder}
+										thumbColor={theme.colors.themeLightGrey}
+										trackColor={{
+											false: theme.colors.inputBorder,
+											true: theme.colors.themePurple,
+										}}
+									/>
+								</View>
+							}
+							popupOnFulfilled={async () => {
+								if (clearLogoutCache) {
+									try {
+										await agentService.clear(helper.userId);
+									} catch {
+										Alert.alert("THUInfo", "Unable to clear agent history. Please retry before signing out.");
+										return;
+									}
+								}
+								performLogout();
+								dispatch(logout());
+								if (clearLogoutCache) {
+									dispatch(setDormPassword(""));
+									dispatch(scheduleClear());
+									dispatch(deepseekClear());
+									dispatch(setActiveLibBookRecord([]));
+									dispatch(setActiveSportsReservationRecord([]));
+									dispatch(setBalance(0));
+								}
 							}}>
 							<Text
 								style={[
@@ -242,7 +254,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 								]}>
 								{getStr("logout")}
 							</Text>
-						</TouchableOpacity>
+						</BottomPopupTriggerView>
 					</RoundedView>
 				)}
 				<View style={{height: 80}} />
@@ -261,13 +273,20 @@ export const styles = themedStyles(({colors}) => ({
 		justifyContent: "space-between",
 		paddingHorizontal: 16,
 	},
+	// The label and value shrink and wrap instead of keeping their intrinsic width:
+	// React Native defaults `flexShrink` to 0, so at a large system font a long
+	// label used to push the trailing control (switch/check/chevron) off-screen.
 	text: {
 		color: colors.text,
 		fontSize: 16,
+		flexShrink: 1,
+		minWidth: 0,
 	},
 	version: {
 		color: colors.fontB3,
 		fontSize: 16,
+		flexShrink: 1,
+		minWidth: 0,
 	},
 	separator: {
 		borderBottomWidth: StyleSheet.hairlineWidth,

@@ -1,13 +1,8 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import {useEffect, useState} from "react";
-import {
-	Text,
-	View,
-	TextInput,
-	ScrollView,
-	TouchableOpacity,
-} from "react-native";
+import {Text, View, TextInput, ScrollView} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {StarRating} from "../../components/home/form";
@@ -18,7 +13,7 @@ import {helper} from "../../redux/store";
 import {Form, Person} from "@thu-info/lib/src/models/home/assessment";
 import themedStyles from "../../utils/themedStyles";
 import {RoundedView} from "../../components/views";
-import { styles as settingsStyle } from "../../ui/settings/settings";
+import {styles as settingsStyle} from "../../ui/settings/settings";
 
 export const FormScreen = ({
 	route,
@@ -92,11 +87,7 @@ export const FormScreen = ({
 				<RoundedView key={`Person${i}Questions`}>
 					{person.inputGroups.map((inputGroup, index) => (
 						<View key={`Person${i}Question${index}`}>
-							{index > 0 && (
-								<View
-									style={separatorStyle}
-								/>
-							)}
+							{index > 0 && <View style={separatorStyle} />}
 							<View style={{marginHorizontal: 12}}>
 								<Text style={style.questionTextStyle}>
 									{inputGroup.question ?? ""}
@@ -114,7 +105,7 @@ export const FormScreen = ({
 					style={{marginTop: 8, padding: 16}}>
 					<TextInput
 						style={{
-							height: 100,
+							minHeight: 100,
 							textAlign: "left",
 							alignSelf: "stretch",
 							textAlignVertical: "top",
@@ -187,11 +178,7 @@ export const FormScreen = ({
 			<ScrollView
 				style={style.container}
 				showsVerticalScrollIndicator={false}
-				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-					/>
-				}>
+				refreshControl={<ThemedRefreshControl refreshing={refreshing} />}>
 				<View style={[style.titleContainer, {marginTop: 16}]}>
 					<View
 						style={[style.titleIcon, {backgroundColor: colors.statusWarning}]}
@@ -218,7 +205,7 @@ export const FormScreen = ({
 				<RoundedView style={{marginTop: 8, padding: 16}}>
 					<TextInput
 						style={{
-							height: 100,
+							minHeight: 100,
 							textAlign: "left",
 							alignSelf: "stretch",
 							textAlignVertical: "top",
@@ -238,18 +225,12 @@ export const FormScreen = ({
 				{evaluationForm && renderEvaluation(evaluationForm.teachers, "teacher")}
 				{evaluationForm &&
 					renderEvaluation(evaluationForm.assistants, "assistant")}
-				<TouchableOpacity
-					style={[
-						style.buttonStyle,
-						{
-							backgroundColor:
-								evaluationForm === undefined ? "lightgrey" : colors.primaryLight,
-						},
-					]}
+				<PrimaryButton
+					text={getStr("post")}
 					onPress={post}
-					disabled={evaluationForm === undefined}>
-					<Text style={style.buttonTextStyle}>{getStr("post")}</Text>
-				</TouchableOpacity>
+					disabled={evaluationForm === undefined}
+					style={{alignSelf: "flex-end", marginVertical: 40}}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingScreen>
 	);
@@ -271,6 +252,8 @@ const styles = themedStyles(({colors}) => ({
 	},
 
 	titleStyle: {
+		flex: 1,
+		minWidth: 0,
 		fontWeight: "bold",
 		fontSize: 16,
 		marginHorizontal: 8,
@@ -308,21 +291,5 @@ const styles = themedStyles(({colors}) => ({
 		alignSelf: "center",
 		marginVertical: 5,
 		color: colors.text,
-	},
-
-	buttonStyle: {
-		paddingHorizontal: 16,
-		paddingVertical: 8,
-		justifyContent: "center",
-		alignItems: "center",
-		borderRadius: 4,
-		alignSelf: "flex-end",
-		marginVertical: 40,
-	},
-
-	buttonTextStyle: {
-		color: "white",
-		fontWeight: "bold",
-		fontSize: 20,
 	},
 }));

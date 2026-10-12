@@ -6,7 +6,6 @@ import {
 	View,
 	Alert,
 	Pressable,
-	ScrollView,
 } from "react-native";
 import {useEffect, useState} from "react";
 import {RoundedView} from "../../components/views";
@@ -19,6 +18,7 @@ import {agentService} from "../../agent/service";
 import {campusModel} from "../../agent/types";
 import {agentText} from "../home/agentDeepseek";
 import {deepseekClear} from "../../redux/slices/deepseek";
+import {SubPageScreen} from "../../components/subpage/containers";
 
 export const DeepSeekSettingsScreen = () => {
 	const themeName = useColorScheme();
@@ -72,7 +72,7 @@ export const DeepSeekSettingsScreen = () => {
 			],
 		);
 	return (
-		<ScrollView contentContainerStyle={{padding: 12, paddingTop: 0}}>
+		<SubPageScreen contentStyle={{paddingTop: 0}}>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>
@@ -261,6 +261,6 @@ export const DeepSeekSettingsScreen = () => {
 					{getStr("bubbleMessageHint")}
 				</Text>
 			</RoundedView>
-		</ScrollView>
+		</SubPageScreen>
 	);
 };

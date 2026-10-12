@@ -38,11 +38,12 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 						flexDirection: "row",
 						alignItems: "center",
 						justifyContent: "space-between",
+						gap: 12,
 					}}>
-					<Text style={{fontSize: 16, color: colors.fontB1}}>
+					<Text style={{fontSize: 16, color: colors.fontB1, flex: 1}}>
 						{invoice.financial_item_name}
 					</Text>
-					<Text style={{fontSize: 16, color: colors.fontB1}}>
+					<Text style={{fontSize: 16, color: colors.fontB1, flexShrink: 0}}>
 						{invoice.inv_amount.toFixed(2)}
 					</Text>
 				</View>
@@ -52,11 +53,12 @@ export const InvoiceScreen = paginatedRefreshListScreen(
 						alignItems: "center",
 						justifyContent: "space-between",
 						marginTop: 4,
+						gap: 12,
 					}}>
-					<Text style={{fontSize: 14, color: colors.fontB3}}>
+					<Text style={{fontSize: 14, color: colors.fontB3, flex: 1}}>
 						{invoice.inv_no}
 					</Text>
-					<Text style={{fontSize: 14, color: colors.fontB3}}>
+					<Text style={{fontSize: 14, color: colors.fontB3, flex: 1, textAlign: "right"}}>
 						{invoice.financial_dept_name}/{invoice.payment_item_type_name}
 					</Text>
 				</View>

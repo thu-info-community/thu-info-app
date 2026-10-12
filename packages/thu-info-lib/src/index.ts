@@ -19,7 +19,8 @@ import {
     getBankPaymentParellize,
     getMadModelToken,
 } from "./lib/basics";
-import {forgetDevice, login, logout} from "./lib/core";
+import {forgetDevice, login, logout, withAuthTransaction} from "./lib/core";
+import {getIdAccountInfo, getIdAuthDevices, getIdLoginLogs} from "./lib/id";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
 import {
     LibBookRecord,
@@ -110,8 +111,6 @@ import {
     searchProjects,
 } from "./lib/gitlab";
 import {CalendarData} from "./models/schedule/calendar";
-import {bookDetail, downloadChapters, searchReservesLib} from "./lib/reserves-lib";
-import {BookChapter} from "./models/home/reserves-lib";
 import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
 import {getDegreeProgramCompletion, getFullDegreeProgram} from "./lib/program";
@@ -130,11 +129,9 @@ import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {
     getNetworkBalance,
     getNetworkAccountInfo,
-    getNetworkVerificationImageUrl,
     getOnlineDevices,
     loginNetwork,
     logoutNetwork,
-    loginUsereg,
 } from "./lib/network";
 import {getScoreByCourseId} from "./lib/thos";
 import {prepareThosSession, getThosTasks, getThosServices} from "./lib/thos-services";
@@ -154,11 +151,37 @@ import {CardRechargeType} from "./models/card/recharge";
 import { Device } from "./models/network/device";
 import { SportsReservationRecord } from "./models/home/sports";
 import { Schedule } from "./models/schedule/schedule";
+import type {PasskeyAuthenticator, PasskeyCredential, PasskeyDevice, PasskeyCreationOptions} from "./models/id/passkey";
+import {preparePasskey, registerPasskey, listPasskeys, removePasskey, renamePasskey} from "./lib/passkey";
+export type {PasskeyAuthenticator, PasskeyCredential, PasskeyKey, PasskeyAssertion, PasskeyProtection, PasskeyAuthenticationMode, PasskeyCreationOptions} from "./models/id/passkey";
 
 export class InfoHelper {
     public userId = "";
     public password = "";
     public fingerprint = "";
+    public passkeyAuthenticator: PasskeyAuthenticator | undefined;
+    public passkeyCredential: PasskeyCredential | undefined;
+    public passkeyDevice: PasskeyDevice | undefined;
+    public hasAuthentication = () => this.userId !== "" && (this.password !== "" || this.passkeyCredential?.userId === this.userId);
+    public preparePasskey = async (options?: PasskeyCreationOptions) => withAuthTransaction(() => preparePasskey(this, options));
+    public registerPasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => registerPasskey(this, credential));
+    public listPasskeys = async () => withAuthTransaction(() => listPasskeys());
+    public removePasskey = async (credential: PasskeyCredential) => withAuthTransaction(() => removePasskey(credential));
+    public renamePasskey = async (credential: PasskeyCredential, name: string) => withAuthTransaction(() => renamePasskey(this, credential, name));
+
+    /**
+     * Whether to ask the unified ID system to trust this install.
+     *
+     * The upstream login form checks "信任浏览器" by default: it makes the
+     * resulting ID session reusable by other campus systems without entering
+     * the account and password again, which is what allows `roam()` to enter a
+     * subsystem without re-sending the password.
+     *
+     * Mirror the upstream default by leaving this `true`. Setting it to `false`
+     * makes the ID session a one-shot one, and roaming falls back to submitting
+     * the password again.
+     */
+    public trustBrowser = true;
 
     /**
      * Mock account and password.
@@ -250,8 +273,15 @@ export class InfoHelper {
         auth: {
             userId?: string;
             password?: string;
-        },
-    ): Promise<void> => login(this, auth.userId ?? this.userId, auth.password ?? this.password);
+        } | {method: "passkey"; credential: PasskeyCredential} = {},
+    ): Promise<void> => {
+        if ("method" in auth) {
+            this.passkeyCredential = auth.credential;
+            return login(this, auth.credential.userId, "");
+        }
+        if (auth.password !== undefined) this.passkeyCredential = undefined;
+        return login(this, auth.userId ?? this.userId, auth.password ?? this.password);
+    };
 
     /**
      * Log out and clear fields `userId` and `password` of this `InfoHelper` instance
@@ -330,10 +360,21 @@ export class InfoHelper {
     public switchLang = async (lang: "zh" | "en"): Promise<void> => switchLang(this, lang);
 
     /**
-     * Get the user's full name and email name (i.e. username for email
-     * account)
+     * Get the identity information of the logged-in user from the THU
+     * unified ID system: full name, email name (i.e. username for email
+     * account), student / staff ID, account name, department and phone
+     * number.
      */
     public getUserInfo = async () => getUserInfo(this);
+
+    /** Read ID account details, including the last password change time. */
+    public getIdAccountInfo = async () => getIdAccountInfo(this);
+
+    /** Read the existing multi-factor authentication trusted devices. */
+    public getIdAuthDevices = async () => getIdAuthDevices(this);
+
+    /** Read login logs, newest first; pages start at 1 and contain up to 25 rows. */
+    public getIdLoginLogs = async (page = 1) => getIdLoginLogs(this, page);
 
     /**
      * A naive API that sends an email from the user's Tsinghua mail.
@@ -993,19 +1034,9 @@ export class InfoHelper {
 
     public renderGitMarkdown = async (text: string) => renderMarkdown(this, text);
 
-    public searchReservesLib = async (bookName: string, page?: number) => searchReservesLib(this, bookName, page);
-
-    public getReservesLibBookDetail = async (bookId: string) => bookDetail(this, bookId);
-
-    public reservesLibDownloadChapters = async (chapters: BookChapter[], setCompletion?: (total: number, complete: number) => void) => downloadChapters(chapters, setCompletion);
-
     public getDegreeProgramCompletion = async () => getDegreeProgramCompletion(this);
 
     public getFullDegreeProgram = async (degreeId?: number, skippedSet?: string[]) => getFullDegreeProgram(this, degreeId, skippedSet);
-
-    public getNetworkVerificationImageUrl = async () => getNetworkVerificationImageUrl(this);
-
-    public loginUsereg = async (code: string) => loginUsereg(this, code);
 
     public getOnlineDevices = async () => getOnlineDevices(this);
 
@@ -1013,9 +1044,9 @@ export class InfoHelper {
 
     public getNetworkAccountInfo = async () => getNetworkAccountInfo(this);
 
-    public logoutNetworkDevice = async (device: Device) => logoutNetwork(device);
+    public logoutNetworkDevice = async (device: Device) => logoutNetwork(this, device);
 
-    public loginNetworkDevice = async (ip: string, internet: boolean) => loginNetwork(this, ip, internet);
+    public loginNetworkDevice = async (ip: string, internet: boolean, password?: string) => loginNetwork(this, ip, internet, password);
 
     public getScoreByCourseId = async (courseId: string) => getScoreByCourseId(this, courseId);
     public prepareThosSession = async () => prepareThosSession(this);

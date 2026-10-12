@@ -24,15 +24,15 @@ export const LibRoomBookRecordScreen = roundedRefreshListScreen(
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{devName}
 				</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>{kindName}</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>{owner}</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>{kindName}</Text>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>{owner}</Text>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>
 					{members.map(({name, userId}) => `${name}(${userId})`).join(", ")}
 				</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>
 					{dayjs(begin).format("HH:mm")} - {dayjs(end).format("HH:mm")}
 				</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>{date}</Text>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>{date}</Text>
 			</View>
 			<View style={{flex: 1, alignItems: "flex-end"}}>
 				{uuid !== undefined && (
@@ -64,7 +64,7 @@ export const LibRoomBookRecordScreen = roundedRefreshListScreen(
 							)
 						}>
 						{!helper.mocked() && (
-							<Text style={{color: "red"}}>{getStr("cancelBooking")}</Text>
+							<Text style={{color: colors.statusError}}>{getStr("cancelBooking")}</Text>
 						)}
 					</TouchableOpacity>
 				)}

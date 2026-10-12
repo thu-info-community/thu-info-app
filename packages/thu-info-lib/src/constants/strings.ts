@@ -14,6 +14,10 @@ export const DOUBLE_AUTH_URL = "https://id.tsinghua.edu.cn/b/doubleAuth/login";
 export const SAVE_FINGER_URL = "https://id.tsinghua.edu.cn/b/doubleAuth/personal/saveFinger";
 export const ID_WEBSITE_BASE_URL = "https://id.tsinghua.edu.cn/f/login";
 export const ID_WEBSITE_LOGIN_URL = "https://id.tsinghua.edu.cn/security_check";
+// Account settings page of the unified ID system. Also the page returned by
+// `roam(helper, "id_website", "")` after a successful `/security_check` POST.
+export const ID_ACCOUNT_SETTINGS_URL = "https://id.tsinghua.edu.cn/f/account/settings";
+export const ID_LOGIN_LOG_DATA_URL = "https://id.tsinghua.edu.cn/f/account/loginLog/data";
 export const CHECK_CURRENT_DEVICE_URL = "https://id.tsinghua.edu.cn/b/account/checkCurrentDeviceIfNeedAdd?currentFinger={fingerprint}&device_gen_finger_print=null";
 export const GET_DEVICE_LIST_URL = "https://id.tsinghua.edu.cn/b/account/getDeviceList";
 export const DELETE_DEVICE_URL = "https://id.tsinghua.edu.cn/b/account/deleteDevice";
@@ -250,10 +254,6 @@ export const GITLAB_AUTH_URL =
     "https://git.tsinghua.edu.cn/users/auth/thuid";
 export const GITLAB_API_BASE_URL =
     "https://git.tsinghua.edu.cn/api/v4";
-export const RESERVES_LIB_SEARCH =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e2f2529935266d43300480aed641303c455d43259619a3eaf6eebb99/Search/ResBooks";
-export const RESERVES_LIB_DETAIL =
-    "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421e2f2529935266d43300480aed641303c455d43259619a3eaf6eebb99/Search/BookDetail";
 export const PROGRAM_URL =
     "https://webvpn.tsinghua.edu.cn/http/77726476706e69737468656265737421eaff4b8b69336153301c9aa596522b20bc86e6e559a9b290/jhBks.by_fascjgmxb_gr.do?m=queryFaScjgmx_gr&xsViewFlag=pyfa&pathContent=%E5%9F%B9%E5%85%BB%E6%96%B9%E6%A1%88%E5%AE%8C%E6%88%90%E6%83%85%E5%86%B5";
 export const PROGRAM_LIST_URL =
@@ -278,12 +278,8 @@ export const APP_SOCKET_STATUS_URL =
     "https://app.cs.tsinghua.edu.cn/api/socket";
 export const APP_PRIVACY_URL =
     "https://app.cs.tsinghua.edu.cn/privacy";
-export const NETWORK_VERIFICATION_CODE_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/site/captcha";
 export const NETWORK_LOGIN_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/login";
-export const NETWORK_VALIDATE_USER_URL =
-    "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/site/validate-user";
 export const NETWORK_HOME_URL =
     "https://webvpn.tsinghua.edu.cn/https/77726476706e69737468656265737421e5e4448e223726446d0187ab9040227b54b6c80fcd73/home";
 export const NETWORK_HOME_DELETE_URL =

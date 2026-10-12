@@ -1,10 +1,5 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
-import {
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useState} from "react";
 import {RootNav} from "../../components/Root";
 import {useColorScheme} from "react-native";
@@ -12,6 +7,7 @@ import themes from "../../assets/themes/themes";
 import {Classroom} from "@thu-info/lib/src/models/home/classroom";
 import {helper} from "../../redux/store";
 import {NetworkRetry} from "../../components/easySnackbars";
+import {radius, spacing} from "../../components/subpage/tokens";
 
 export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 	const [classrooms, setClassrooms] = useState<Classroom[]>([]);
@@ -36,14 +32,11 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 	return (
 		<ScrollView
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={refreshing}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 			}
 			style={{
-				paddingHorizontal: 10,
-				marginBottom: 20,
+				paddingHorizontal: spacing.sm,
+				marginBottom: spacing.lg,
 			}}>
 			<View
 				style={{
@@ -55,16 +48,14 @@ export const ClassroomListScreen = ({navigation}: {navigation: RootNav}) => {
 					<TouchableOpacity
 						key={classroom.name}
 						style={{
-							backgroundColor: colors.themeBackground,
+							backgroundColor: colors.contentBackground,
 							padding: 5,
-							marginHorizontal: 10,
-							marginTop: 10,
-							width: 100,
-							height: 50,
+							marginHorizontal: spacing.sm,
+							marginTop: spacing.md,
+							minWidth: 100,
+							minHeight: 50,
 							justifyContent: "center",
-							borderRadius: 8,
-							borderColor: colors.themeGrey,
-							borderWidth: 2,
+							borderRadius: radius.hub,
 						}}
 						onPress={() => navigation.navigate("ClassroomDetail", classroom)}>
 						<Text style={{textAlign: "center", color: colors.text}}>

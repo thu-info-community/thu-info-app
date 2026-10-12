@@ -9,7 +9,7 @@ import {
     JXRL_YJS_URL,
     SECONDARY_URL,
 } from "../constants/strings";
-import {mergeSchedules, parseJSON, parseScript, Schedule, ScheduleType} from "../models/schedule/schedule";
+import {mergeSchedules, parseJSON, parseScript, Schedule, ScheduleType, isInSemester} from "../models/schedule/schedule";
 import {Semester} from "../models/schedule/calendar";
 import {InfoHelper} from "../index";
 import {uFetch} from "../utils/network";
@@ -33,7 +33,7 @@ const getPrimary = (helper: InfoHelper, {firstDay, weekCount}: Semester) =>
                     (helper.graduate() ? JXRL_YJS_PREFIX : JXRL_BKS_PREFIX) +
                     dayjs(firstDay).add((id * GROUP_SIZE) * 7, "day").format("YYYYMMDD") +
                     JXRL_MIDDLE +
-                    dayjs(firstDay).add(((id + 1) * GROUP_SIZE - 1) * 7 + 6, "day").format("YYYYMMDD") +
+                    dayjs(firstDay).add(Math.min((id + 1) * GROUP_SIZE, weekCount) * 7 - 1, "day").format("YYYYMMDD") +
                     JXRL_SUFFIX,
                 ),
             ),
@@ -87,7 +87,7 @@ export const getSchedule = async (helper: InfoHelper, nextSemesterIndex: number 
     }
 
     return {
-        schedule: mergeSchedules(scheduleList),
+        schedule: mergeSchedules(scheduleList).map((schedule) => ({...schedule, activeTime: {base: schedule.activeTime.base.filter((slice) => isInSemester(slice.beginTime, semester.firstDay, semester.weekCount))}})).filter((schedule) => schedule.activeTime.base.length > 0),
         calendar: calendarData,
     };
 };
@@ -101,7 +101,7 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
             const $ = cheerio.load(await uFetch(helper.graduate() ? JXRL_YJS_URL : JXRL_BKS_URL));
             let form = $("form[action=\"jxmh.do\"]");
             if (form.length === 0) {
-                throw new Error();
+                throw new ScheduleError("Invalid personal calendar response");
             }
             for (const schedule of schedules) {
                 if (schedule.type !== ScheduleType.CUSTOM) {
@@ -116,7 +116,7 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
                     const p_start_time = time.beginTime.format("HH:mm");
                     const p_end_time = time.endTime.format("HH:mm");
                     if (!token) {
-                        return;
+                        throw new ScheduleError("Missing personal calendar token");
                     }
                     const result = await uFetch(JXMH_URL, {
                         m: "saveGrrl",
@@ -132,7 +132,7 @@ export const saveCustomSchedule = async (helper: InfoHelper, schedules: Schedule
                     }, 60000, "GBK");
                     form = cheerio.load(result)("form[action=\"jxmh.do\"]");
                     if (form.length === 0) {
-                        return;
+                        throw new ScheduleError("Invalid personal calendar response");
                     }
                 }
             }
@@ -149,7 +149,7 @@ export const deleteCustomSchedule = async (helper: InfoHelper, schedules: Schedu
             const $ = cheerio.load(await uFetch(helper.graduate() ? JXRL_YJS_URL : JXRL_BKS_URL));
             let form = $("form[action=\"jxmh.do\"]");
             if (form.length === 0) {
-                throw new Error();
+                throw new ScheduleError("Invalid personal calendar response");
             }
             for (const schedule of schedules) {
                 if (schedule.type !== ScheduleType.PRIMARY || schedule.category !== "个人日历") {
@@ -161,11 +161,11 @@ export const deleteCustomSchedule = async (helper: InfoHelper, schedules: Schedu
                     const role = form.find("input[name=\"role\"]").attr("value");
                     const token = form.find("input[name=\"token\"]").attr("value");
                     if (!token) {
-                        return;
+                        throw new ScheduleError("Missing personal calendar token");
                     }
                     const grrlID = time.id;
                     if (!grrlID) {
-                        return;
+                        throw new ScheduleError("Missing personal calendar ID; refresh and try again");
                     }
                     const result = await uFetch(JXMH_URL, {
                         m: "deleteGrrl",
@@ -178,7 +178,7 @@ export const deleteCustomSchedule = async (helper: InfoHelper, schedules: Schedu
                     }, 60000, "GBK");
                     form = cheerio.load(result)("form[action=\"jxmh.do\"]");
                     if (form.length === 0) {
-                        return;
+                        throw new ScheduleError("Invalid personal calendar response");
                     }
                 }
             }

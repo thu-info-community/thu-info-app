@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NextCard.ets strip() (1*2): course on the left, time range on the right. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layoutDirection="ltr"
+	android:orientation="vertical"
+	android:background="@drawable/widget_bg"
+	android:gravity="center_vertical"
+	android:paddingStart="12dp"
+	android:paddingEnd="12dp">
+
+	<TextView
+		android:id="@+id/widget_next_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="12sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:maxLines="1"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_next_strip_row"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<LinearLayout
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/widget_next_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				android:textColor="@color/widget_text_primary"
+				android:maxLines="1"
+				android:ellipsize="end" />
+
+			<TextView
+				android:id="@+id/widget_next_loc"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="2dp"
+				android:textSize="11sp"
+				android:textColor="@color/widget_text_tertiary"
+				android:maxLines="1" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:orientation="vertical"
+			android:gravity="end">
+
+			<TextView
+				android:id="@+id/widget_next_from"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="14sp"
+				android:fontFamily="sans-serif-medium"
+				android:textColor="@color/widget_text_primary" />
+
+			<TextView
+				android:id="@+id/widget_next_to"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="2dp"
+				android:textSize="11sp"
+				android:textColor="@color/widget_text_secondary" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>

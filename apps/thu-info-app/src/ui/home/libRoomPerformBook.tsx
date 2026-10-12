@@ -12,7 +12,6 @@ import {
 	Platform,
 	ScrollView,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	useColorScheme,
 	View,
@@ -23,7 +22,13 @@ import {helper} from "../../redux/store";
 import {LibFuzzySearchResult} from "@thu-info/lib/src/models/home/library";
 import themes from "../../assets/themes/themes";
 import {BottomPopupTriggerView} from "../../components/views";
+import {SectionCard} from "../../components/subpage/containers";
+import {Separator} from "../../components/subpage/rows";
+import {ThemedTextInput} from "../../components/subpage/fields";
+import {PrimaryButton} from "../../components/subpage/buttons";
+import {radius} from "../../components/subpage/tokens";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 
@@ -46,6 +51,10 @@ export const LibRoomPerformBookScreen = ({
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// The wheel picker lays each option out in a row of exactly `itemHeight`
+	// pixels; the option text scales with the system font, so the row must too,
+	// or at a large font the (unclipped) glyphs bleed into the neighbouring rows.
+	const pickerItemHeight = useScaledSize(30);
 
 	const today = dayjs().format("YYYY-MM-DD");
 	const now = dayjs().format("HH:mm");
@@ -91,11 +100,11 @@ export const LibRoomPerformBookScreen = ({
 	};
 
 	const [begValue, setBegValue] = useState<string | null>(
-		validBegs.length > 0 ? validBegs[0].start ?? null : null,
+		validBegs.length > 0 ? (validBegs[0].start ?? null) : null,
 	);
 	const validEnds = begValue ? genValidEnds(begValue) : [];
 	const [endValue, setEndValue] = useState<string | null>(
-		validEnds.length > 0 ? validEnds[0].start ?? null : null,
+		validEnds.length > 0 ? (validEnds[0].start ?? null) : null,
 	);
 
 	const rightScrollRef = useRef<ElementRef<typeof ScrollPicker>>(null);
@@ -173,30 +182,13 @@ export const LibRoomPerformBookScreen = ({
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			style={{flex: 1}}>
 			<ScrollView style={{padding: 16}}>
-				<Text
-					style={{
-						textAlign: "left",
-						fontSize: 15,
-						marginTop: 18,
-						marginLeft: 12,
-						marginBottom: 8,
-						fontWeight: "bold",
-						color: colors.text,
-					}}>
-					{getStr("occupation")}
-				</Text>
-				<View
-					style={{
-						backgroundColor: colors.contentBackground,
-						shadowColor: "grey",
-						borderRadius: 20,
-						paddingHorizontal: 12,
-						paddingVertical: 16,
-					}}>
+				<SectionCard title={getStr("occupation")}>
 					<View
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{marginHorizontal: 8, color: colors.fontB3, fontSize: 16}}>
@@ -214,31 +206,14 @@ export const LibRoomPerformBookScreen = ({
 					<View style={{margin: 12}}>
 						<LibRoomBookTimeIndicator res={res} />
 					</View>
-				</View>
-				<Text
-					style={{
-						textAlign: "left",
-						fontSize: 15,
-						marginTop: 18,
-						marginLeft: 12,
-						marginBottom: 8,
-						fontWeight: "bold",
-						color: colors.text,
-					}}>
-					{getStr("libRoomBookInfo")}
-				</Text>
-				<View
-					style={{
-						backgroundColor: colors.contentBackground,
-						shadowColor: "grey",
-						borderRadius: 20,
-						paddingHorizontal: 12,
-						paddingVertical: 16,
-					}}>
+				</SectionCard>
+				<SectionCard title={getStr("libRoomBookInfo")}>
 					<View
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
+							flexWrap: "wrap",
+							rowGap: 4,
 						}}>
 						<Text
 							style={{
@@ -261,6 +236,8 @@ export const LibRoomPerformBookScreen = ({
 										wrapperBackground={colors.contentBackground}
 										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
+										itemHeight={pickerItemHeight}
+										wrapperHeight={pickerItemHeight * 5}
 										dataSource={validBegs.map((val) => val.start)}
 										selectedIndex={validBegs.findIndex(
 											(val) => val.start === begValue,
@@ -284,6 +261,8 @@ export const LibRoomPerformBookScreen = ({
 										highlightColor={colors.inputBorder}
 										style={{flex: 1}}
 										ref={rightScrollRef}
+										itemHeight={pickerItemHeight}
+										wrapperHeight={pickerItemHeight * 5}
 										dataSource={validEnds.map((val) => val.start)}
 										selectedIndex={validEnds.findIndex(
 											(val) => val.start === endValue,
@@ -318,13 +297,13 @@ export const LibRoomPerformBookScreen = ({
 					</View>
 					{res.maxUser > 1 && (
 						<View>
-							<View
-								style={{backgroundColor: colors.inputBorder, height: 1, margin: 8}}
-							/>
+							<Separator style={{marginHorizontal: 0}} />
 							<View
 								style={{
 									flexDirection: "row",
 									alignItems: "center",
+									flexWrap: "wrap",
+									rowGap: 4,
 								}}>
 								<Text
 									style={{
@@ -353,14 +332,13 @@ export const LibRoomPerformBookScreen = ({
 									alignItems: "center",
 									marginBottom: 12,
 								}}>
-								<TextInput
+								<ThemedTextInput
 									style={{
 										backgroundColor: colors.themeBackground,
-										color: colors.text,
 										textAlign: "left",
 										borderColor: colors.inputBorder,
 										borderWidth: 1,
-										borderRadius: 5,
+										borderRadius: radius.control,
 										padding: 6,
 										flex: 1,
 										fontSize: 16,
@@ -426,7 +404,7 @@ export const LibRoomPerformBookScreen = ({
 												style={{
 													backgroundColor: colors.contentBackground,
 													borderColor: colors.inputBorder,
-													borderRadius: 5,
+													borderRadius: radius.control,
 													borderWidth: 1,
 													paddingHorizontal: 4,
 													margin: 4,
@@ -479,7 +457,7 @@ export const LibRoomPerformBookScreen = ({
 													style={{
 														backgroundColor: colors.contentBackground,
 														borderColor: colors.fontB2,
-														borderRadius: 5,
+														borderRadius: radius.control,
 														borderWidth: 1,
 														paddingHorizontal: 4,
 														margin: 4,
@@ -535,7 +513,7 @@ export const LibRoomPerformBookScreen = ({
 										style={{
 											backgroundColor: colors.contentBackground,
 											borderColor: colors.inputBorder,
-											borderRadius: 5,
+											borderRadius: radius.control,
 											borderWidth: 1,
 											paddingHorizontal: 4,
 											margin: 4,
@@ -555,31 +533,13 @@ export const LibRoomPerformBookScreen = ({
 							justifyContent: "center",
 							marginVertical: 24,
 						}}>
-						<TouchableOpacity
-							style={{
-								backgroundColor: canSubmit
-									? colors.primaryLight
-									: colors.mainTheme,
-								alignItems: "center",
-								justifyContent: "center",
-								paddingVertical: 8,
-								paddingHorizontal: 24,
-								borderRadius: 4,
-							}}
+						<PrimaryButton
+							text={getStr(processing ? "processing" : "submit")}
 							disabled={!canSubmit}
-							onPress={performBook}>
-							<Text
-								style={{
-									color: canSubmit
-										? colors.contentBackground
-										: colors.themeGrey,
-									fontSize: 16,
-								}}>
-								{getStr(processing ? "processing" : "submit")}
-							</Text>
-						</TouchableOpacity>
+							onPress={performBook}
+						/>
 					</View>
-				</View>
+				</SectionCard>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

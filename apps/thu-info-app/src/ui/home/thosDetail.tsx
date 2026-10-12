@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {useSelector} from "react-redux";
@@ -12,6 +13,7 @@ import {helper, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {RoundedView} from "../../components/views";
+import {DetailRow} from "../../components/subpage/rows";
 import type {RootNav} from "../../components/Root";
 import type {
 	ThosService,
@@ -22,6 +24,7 @@ import {
 	getThosTaskStatusLabel,
 	useThosBrowserHeader,
 } from "./thos";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export type ThosTaskDetailParams = {task: ThosTask; accountId: string};
 export type ThosServiceDetailParams = {service: ThosService; accountId: string};
@@ -60,18 +63,8 @@ function useDetail<T>(initial: T, accountId: string, read: () => Promise<T>) {
 	return {data, allowed, busy, error, refresh};
 }
 
-const Fact = ({label, value}: {label: string; value?: string}) => {
-	const {colors} = themes(useColorScheme());
-	if (!value) return null;
-	return (
-		<View style={{paddingVertical: 12, gap: 6}}>
-			<Text style={{color: colors.fontB2, fontSize: 13}}>{label}</Text>
-			<Text selectable style={{color: colors.text, fontSize: 16}}>
-				{value}
-			</Text>
-		</View>
-	);
-};
+const Fact = ({label, value}: {label: string; value?: string}) =>
+	value ? <DetailRow label={label} value={value} /> : null;
 
 const DetailPage = ({
 	title,
@@ -99,10 +92,7 @@ const DetailPage = ({
 			testID="thos-native-detail"
 			style={{flex: 1, backgroundColor: colors.themeBackground}}
 			refreshControl={
-				<ThemedRefreshControl
-					refreshing={busy}
-					onRefresh={refresh}
-				/>
+				<ThemedRefreshControl refreshing={busy} onRefresh={refresh} />
 			}
 			contentContainerStyle={{
 				padding: 16,
@@ -286,6 +276,7 @@ export const ThosServiceDetailScreen = ({
 	navigation: RootNav;
 }) => {
 	const {colors} = themes(useColorScheme());
+	const {fontScale} = useWindowDimensions();
 	const {service: initial, accountId} = route.params;
 	const detail = useDetail(initial, accountId, async () => {
 		const page = await helper.getThosServices();
@@ -328,7 +319,12 @@ export const ThosServiceDetailScreen = ({
 				<Text style={{color: colors.text, fontSize: 18, fontWeight: "600"}}>
 					{getStr("thosHowToHandle")}
 				</Text>
-				<Text style={{color: colors.fontB1, marginTop: 12, lineHeight: 24}}>
+				<Text
+					style={{
+						color: colors.fontB1,
+						marginTop: 12,
+						lineHeight: scaledLineHeight(24, fontScale),
+					}}>
 					{service.kind === "group"
 						? getStr("thosServiceGroupDescription")
 						: getStr("thosServiceDescription")}

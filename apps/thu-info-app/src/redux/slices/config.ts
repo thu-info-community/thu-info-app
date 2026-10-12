@@ -5,6 +5,7 @@ import {HomeFunction} from "../../ui/home/home";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import { v4 as uuidv4 } from "uuid";
 import type {ThinkingLevel} from "../../agent/types";
+import type {WasherFavourite} from "../../utils/washer";
 
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
@@ -41,8 +42,9 @@ export interface ConfigState {
 	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
-	washerFavourites: string[] | undefined;
+	washerFavourites: WasherFavourite[] | undefined;
 	fingerprintSecure: boolean | undefined;
+	scheduleUseClassPeriods: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
 	showOfficialSchedule: boolean | undefined;
 	showCustomSchedule: boolean | undefined;
@@ -52,7 +54,6 @@ export interface ConfigState {
 	agentEnabled: boolean;
 	agentThinking: ThinkingLevel;
 	uuid: string;
-	tabletMode: boolean | undefined;
 }
 
 const initialState: ConfigState = {
@@ -92,6 +93,7 @@ const initialState: ConfigState = {
 	is24Hour: false,
 	washerFavourites: [],
 	fingerprintSecure: false,
+	scheduleUseClassPeriods: true,
 	scheduleEnableNewUI: true,
 	showOfficialSchedule: true,
 	showCustomSchedule: true,
@@ -101,7 +103,6 @@ const initialState: ConfigState = {
 	agentEnabled: false,
 	agentThinking: "default",
 	uuid: uuidv4(),
-	tabletMode: true,
 };
 
 export const defaultConfig = initialState;

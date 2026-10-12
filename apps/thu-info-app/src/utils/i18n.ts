@@ -2,6 +2,7 @@ import {getLocales} from "react-native-localize";
 import en from "../assets/translations/en";
 import zh from "../assets/translations/zh";
 import {currState} from "../redux/store";
+import {hyphenateLatinWords} from "./hyphenate";
 
 export const getLocale = () => {
 	const preferredLocales = getLocales();
@@ -26,5 +27,19 @@ export function getStr<K extends keyof typeof zh>(key: K): string {
 	}
 
 	// @ts-ignore
-	return translations[key];
+	return hyphenateLatinWords(translations[key]);
+}
+
+/**
+ * Whether a translation exists for `key`. Use this for keys that originate from
+ * the server rather than from the bundle — news channels in particular, whose
+ * `LM_BM_<dept>_<code>` ids are returned by the news API and gain new members
+ * over time. `getStr` only echoes the raw key in that case, which is fine as a
+ * last resort but not something to put in front of the user.
+ */
+export function hasStr(key: string): boolean {
+	return (
+		(translations as unknown as Record<string, string | undefined>)[key] !==
+		undefined
+	);
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sized for the Android grid: one row tall shows the strip, two rows the
+	tile; width spans 2-4 cells. Taller is pointless for a single "next item"
+	card. Launchers convert dp to cell spans with
+	ceil((size + widgetPadding + cellSpacing) / (cell + cellSpacing))
+	(LauncherAppWidgetProviderInfo.getSpan), so 100dp still spans 2 rows and
+	230dp spans 3 — these caps keep the strip reachable and the tile the
+	tallest shape on typical ~90-105dp cells. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+	android:minWidth="110dp"
+	android:minHeight="100dp"
+	android:minResizeWidth="210dp"
+	android:minResizeHeight="80dp"
+	android:maxResizeWidth="350dp"
+	android:maxResizeHeight="180dp"
+	android:targetCellWidth="2"
+	android:targetCellHeight="2"
+	android:updatePeriodMillis="3600000"
+	android:initialLayout="@layout/widget_next_tile"
+	android:previewLayout="@layout/widget_next_tile"
+	android:resizeMode="horizontal|vertical"
+	android:widgetCategory="home_screen"
+	android:description="@string/widget_next_desc" />

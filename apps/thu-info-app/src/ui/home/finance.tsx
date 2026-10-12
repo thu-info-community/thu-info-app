@@ -1,5 +1,5 @@
 import {RootNav} from "../../components/Root";
-import {Platform, useColorScheme, View} from "react-native";
+import {Platform, ScrollView, useColorScheme, View} from "react-native";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconExpenditure from "../../assets/icons/IconExpenditure";
 import IconBankPayment from "../../assets/icons/IconBankPayment";
@@ -13,7 +13,9 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 	const style = styles(themeName);
 	const disabledFunction = currState().config.homeFunctionDisabled;
 	return (
-		<View style={style.SecondaryRootView}>
+		<ScrollView
+			style={{flex: 1}}
+			contentContainerStyle={style.SecondaryRootView}>
 			<View style={style.SecondaryContentView}>
 				{!disabledFunction.includes("campusCard") && (
 					<SecondaryItem
@@ -60,6 +62,6 @@ export const FinanceScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				)}
 			</View>
-		</View>
+		</ScrollView>
 	);
 };

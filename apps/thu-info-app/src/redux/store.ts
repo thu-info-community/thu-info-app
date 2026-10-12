@@ -12,18 +12,14 @@ import {
 	REGISTER,
 	REHYDRATE,
 } from "redux-persist";
-import {scheduleReducer, ScheduleState} from "./slices/schedule";
+import {scheduleReducer} from "./slices/schedule";
 import {createKeychainStorage} from "redux-persist-keychain-storage";
 import createTransform from "redux-persist/es/createTransform";
 import {credentialsReducer, CredentialsState} from "./slices/credentials";
 import {InfoHelper} from "@thu-info/lib";
-import {uses24HourClock} from "react-native-localize";
-import {
-	Schedule,
-	ScheduleTime,
-	ScheduleType,
-} from "@thu-info/lib/src/models/schedule/schedule";
-import dayjs from "dayjs";
+import {getLocales, uses24HourClock} from "react-native-localize";
+import {restoreScheduleState, serializeScheduleState, decodeScheduleState} from "./scheduleData";
+import type {ScheduleState} from "./scheduleData";
 import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
 import {
 	defaultReservation,
@@ -49,11 +45,17 @@ import {
 	CampusCardState,
 	defaultCampusCard,
 } from "./slices/campusCard";
-import { LoginError } from "@thu-info/lib/src/utils/error";
+import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
 import type {RootStackParamList} from "../components/Root";
+import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
+import {createPasskeyAuthenticator} from "../utils/passkeyNative";
+import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
+import zh from "../assets/translations/zh";
+import en from "../assets/translations/en";
+import {migrateWasherFavourites} from "./migrations/washerFavourites";
 
 const CookieManager = (() => {
 	try {
@@ -73,7 +75,14 @@ helper.clearCookieHandler = async () => {
 	await CookieManager.clearAll();
 };
 
+let lastNonInactiveAppState = AppState.currentState;
 AppState.addEventListener("change", (state) => {
+	// iOS system authentication temporarily makes the app inactive. Apply the
+	// app-lock timeout when returning from background, not from Face ID / Touch ID.
+	if (Platform.OS === "ios" && state === "inactive") return;
+	const resumedWithoutBackground = Platform.OS === "ios" && state === "active" && lastNonInactiveAppState === "active";
+	lastNonInactiveAppState = state;
+	if (resumedWithoutBackground) return;
 	if (state === "active") {
 		if (!persistor.getState().bootstrapped) {
 			return;
@@ -127,6 +136,7 @@ const rootReducer = combineReducers({
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
+			stateReconciler: (inbound: AuthState, _original: AuthState, reduced: AuthState) => sanitizeAuth({...reduced, ...inbound}),
 		},
 		authReducer,
 	),
@@ -147,28 +157,6 @@ const rootReducer = combineReducers({
 	announcement: announcementReducer,
 	deepseek: deepseekReducer,
 });
-
-const authTransform = createTransform(
-	(a: AuthState) => {
-		const out = {...a};
-		if (!out.fingerprint) {
-			out.fingerprint = helper.fingerprint;
-		}
-		return out;
-	},
-	(a: AuthState) => {
-		helper.userId = a.userId;
-		helper.password = a.password;
-		if (!a.fingerprint) {
-			a.fingerprint = defaultAuth.fingerprint;
-		}
-		helper.fingerprint = a.fingerprint;
-		return a;
-	},
-	{
-		whitelist: ["auth"],
-	},
-);
 
 const configTransform = createTransform(
 	undefined,
@@ -191,118 +179,43 @@ const configTransform = createTransform(
 );
 
 const scheduleTransform = createTransform(
-	(s: ScheduleState) => {
-		const transform = (scheduleTime: ScheduleTime) => ({
-			base: scheduleTime.base.map((slice) => ({
-				dayOfWeek: slice.dayOfWeek,
-				beginTime: slice.beginTime.valueOf(),
-				endTime: slice.endTime.valueOf(),
-			} as never)),
-		});
-		return {
-			...s,
-			baseSchedule: s.baseSchedule.map((schedule) => ({
-				...schedule,
-				activeTime: transform(schedule.activeTime),
-				delOrHideTime: transform(schedule.delOrHideTime),
-			})),
-		};
-	},
-	(s: ScheduleState) => {
-		const transform = (scheduleTime: any) => ({
-			base: scheduleTime.base.map((slice: any) => slice.beginTime ? {
-				dayOfWeek: slice.dayOfWeek,
-				beginTime: dayjs(slice.beginTime),
-				endTime: dayjs(slice.endTime),
-			} : slice),
-		} as ScheduleTime);
-		return {
-			...s,
-			baseSchedule: s.baseSchedule.map((schedule) => ({
-				...schedule,
-				activeTime: transform(schedule.activeTime),
-				delOrHideTime: transform(schedule.delOrHideTime),
-			})),
-		};
-	},
-	{
-		whitelist: ["schedule"],
-	},
+	serializeScheduleState,
+	decodeScheduleState,
+	{whitelist: ["schedule"]},
 );
 
-const stripCustomPrefix = (schedule: Schedule): Schedule => ({
-	...schedule,
-	name:
-		schedule.type === ScheduleType.CUSTOM
-			? schedule.name.replace(/^\d{6}/, "")
-			: schedule.name,
-});
-
-// 该函数用于计划部分数据库重构后的数据迁移（包括旧版名称前缀清理）
-const migrateSchedule = (old: Schedule, semesterFirstDay: string): Schedule => {
-	const transform = (scheduleTime: any) => ({
-		base: scheduleTime.base.flatMap((oldSlice: any) => oldSlice.activeWeeks.map((week: number) => {
-			const beginTimes = ["", "08:00", "08:50", "09:50", "10:40", "11:30", "13:30", "14:20", "15:20", "16:10", "17:05", "17:55", "19:20", "20:10", "21:00"];
-			const endTimes = ["", "08:45", "09:35", "10:35", "11:25", "12:15", "14:15", "15:05", "16:05", "16:55", "17:50", "18:40", "20:05", "20:55", "21:45"];
-			const date = dayjs(semesterFirstDay).add((week - 1) * 7 + oldSlice.dayOfWeek - 1, "day").format("YYYY-MM-DD");
-			return {
-				dayOfWeek: oldSlice.dayOfWeek,
-				beginTime: dayjs(`${date} ${beginTimes[oldSlice.begin]}`),
-				endTime: dayjs(`${date} ${endTimes[oldSlice.end]}`),
-			};
-		})),
-	} as ScheduleTime);
-	return stripCustomPrefix({
-		...old,
-		activeTime: transform(old.activeTime),
-		delOrHideTime: transform(old.delOrHideTime),
-	});
-};
-
 const persistConfig = {
-	version: 6,
+	version: 10,
+	blacklist: ["auth", "credentials"],
 	key: "root",
 	storage: AsyncStorage,
-	transforms: [authTransform, configTransform, scheduleTransform],
-	migrate: (state: any) =>
-		Promise.resolve(
+	transforms: [configTransform, scheduleTransform],
+	migrate: (incoming: any) => {
+		const state = incoming === undefined ? undefined : {...incoming};
+		if (state) { delete state.auth; delete state.credentials; }
+		return Promise.resolve(
 			state === undefined
 				? undefined
 				: {
 						...state,
 						config: {
 							...state.config,
+							washerFavourites: (state._persist?.version ?? -1) < 7
+								? migrateWasherFavourites(state.config.washerFavourites)
+								: state.config.washerFavourites,
+							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
 							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
 							uuid: state.config.uuid ?? defaultConfig.uuid,
+							// `tabletMode` is gone — the layout is driven by width now.
+							// `undefined` drops the flag from the persisted JSON on the
+							// next write.
+							tabletMode: undefined,
 						},
 						schedule: state.schedule
-							? {
-									...state.schedule,
-									baseSchedule:
-										state.schedule.baseSchedule?.[0]?.activeTime?.base?.[0]
-											?.beginTime === undefined
-											? state.schedule.baseSchedule?.map(
-													(schedule: Schedule) =>
-														migrateSchedule(
-															schedule,
-															state.config.firstDay ??
-																defaultConfig.firstDay,
-														),
-											  ) ?? []
-											: state.schedule.baseSchedule?.map((schedule: Schedule) =>
-													stripCustomPrefix(schedule),
-											  ),
-									shortenMap: Object.fromEntries(
-										Object.entries(state.schedule.shortenMap ?? {}).map(
-											([key, value]) => [
-												key.replace(/^\d{6}/, ""),
-												value,
-											],
-										),
-									),
-								}
+							? restoreScheduleState(state.schedule, state.config.firstDay ?? defaultConfig.firstDay,
+								state.config.semesterId ?? defaultConfig.semesterId)
 							: state.schedule,
 						top5: state.top5 ?? defaultTop5,
 						reservation: state.reservation ?? defaultReservation,
@@ -312,7 +225,8 @@ const persistConfig = {
 						deepseek: state.deepseek ?? defaultDeepseek,
 						 
 				  },
-		),
+		);
+	},
 };
 
 export const store = configureStore({
@@ -327,20 +241,60 @@ export const store = configureStore({
 		}),
 });
 
-export const persistor = persistStore(store);
+const persistOptions: NonNullable<Parameters<typeof persistStore>[1]> & {manualPersist: boolean} = {manualPersist: true};
+export const persistor = persistStore(store, persistOptions);
+
+helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true, (keyId) =>
+	waitForPasskeyInteraction(keyId, () => ({
+		loggedInUserId: currState().auth.userId, selectedUserId: helper.userId,
+		keyId: helper.passkeyCredential?.keyId, foreground: AppState.currentState === "active",
+		appLocked: currState().config.appLocked === true,
+	}), (check) => {
+		const unsubscribe = store.subscribe(check);
+		const subscription = AppState.addEventListener("change", check);
+		return () => { unsubscribe(); subscription.remove(); };
+	}));
+let previousAuth: AuthState | undefined;
+store.subscribe(() => {
+	const auth = currState().auth;
+	if (auth === previousAuth) return;
+	previousAuth = auth;
+	helper.userId = auth.userId;
+	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
+	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
+	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys[auth.userId] : undefined;
+	helper.passkeyDevice = {
+		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
+		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,
+	};
+});
+
+// Complete the migration before nested and root reducers start reading storage.
+export const authStorageReady = migrateAuthStorage(AsyncStorage, KeychainStorage)
+	.catch(() => {
+		Alert.alert("登录信息", "登录信息未能恢复，请重新登录。");
+	})
+	.then(() => persistor.persist());
 
 export const currState = () => store.getState() as State;
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 helper.loginErrorHook = (e) => {
+	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;
+	if (e instanceof PasskeyError && e.code === "verification-unavailable") {
+		const language = currState().config.language;
+		const strings = language === "zh" || (language !== "en" && getLocales()[0].languageTag.startsWith("zh")) ? zh : en;
+		Snackbar.show({text: strings.passkeyVerificationUnavailable, duration: Snackbar.LENGTH_LONG});
+		return;
+	}
 	if (e instanceof LoginError && navigationRef.isReady()) {
 		navigationRef.navigate("Login");
 	}
 	setTimeout(
 		() =>
 			Snackbar.show({
-				text: `LoginError: ${e.message}`,
+				text: e.message || "登录未成功，请稍后重试。",
 				duration: Snackbar.LENGTH_SHORT,
 			}),
 		100,

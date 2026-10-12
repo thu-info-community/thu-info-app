@@ -58,6 +58,9 @@ export const ElectricityScreen = () => {
 				<RoundedView
 					style={{
 						paddingVertical: 12,
+						// Leave room for the absolutely-positioned refresh control so
+						// the balance does not run under it at a large font.
+						paddingRight: 44,
 						alignItems: "center",
 						justifyContent: "center",
 					}}>

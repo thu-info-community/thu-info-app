@@ -24,8 +24,9 @@ import {
 import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
-import {IdAuthError, LibError, LoginError, UrlError} from "../utils/error";
+import {IdAuthError, LibError, LoginError, PasskeyError, UrlError} from "../utils/error";
 import {sm2} from "sm-crypto";
+import {authenticatePasskey} from "./passkey";
 
 let getRedirectLocation: ((url: string) => Promise<string | null | undefined>) | undefined = undefined;
 try {
@@ -98,6 +99,135 @@ export const getCsrfToken = async () => {
 };
 
 let outstandingLoginPromise: Promise<void> | undefined = undefined;
+let loginOwner = "";
+let sessionGeneration = 0;
+let authQueue: Promise<unknown> = Promise.resolve();
+const pendingRoams = new Map<string, Promise<string>>();
+const authScope = (helper: InfoHelper) => `${helper.userId}:${helper.fingerprint}:${helper.passkeyCredential?.keyId ?? "password"}`;
+export const withAuthTransaction = <T>(operation: () => Promise<T>): Promise<T> => {
+    const promise = authQueue.then(operation);
+    authQueue = promise.then(() => undefined, () => undefined);
+    return promise;
+};
+
+/**
+ * Builds the credential `POST` body for the unified ID system.
+ *
+ * `scheme` selects the field names: `/do/off/ui/auth/login/check` expects
+ * `i_user` / `i_pass`, while `/security_check` (the `id_website` policy) expects
+ * `username` / `password`. Mixing them up silently breaks the target system, so
+ * the mapping lives here rather than at every call site.
+ *
+ * The upstream login form also carries the "trusted browser" checkbox
+ * `singleLogin` — checked by default, labelled "本次登录使用信任浏览器访问校内其他系统时
+ * 不必再输入账号密码（统一登录）" — which makes the resulting ID session reusable by
+ * other campus systems without a password (see {@link passwordlessEntry}).
+ * `fingerGenPrint` is deliberately left empty: the field is a browser-only
+ * device token that the ID platform does not require for the trusted flow, and
+ * this library has no browser to generate a stable one from.
+ */
+export const __idCredentialFormForTest = async (
+    helper: InfoHelper,
+    publicKey: string,
+    password: string,
+    scheme: "i_user" | "username",
+): Promise<{ [key: string]: string }> => {
+    const form: { [key: string]: string } = {
+        [scheme === "i_user" ? "i_user" : "username"]: helper.userId,
+        [scheme === "i_user" ? "i_pass" : "password"]: SM2_MAGIC_NUMBER + sm2.doEncrypt(password, publicKey),
+        fingerPrint: helper.fingerprint,
+        fingerGenPrint: "",
+        i_captcha: "",
+    };
+    if (helper.trustBrowser) {
+        // A checked checkbox submits "on". Both fields must be absent rather
+        // than `undefined`: `stringify` iterates over the keys and would
+        // otherwise serialize the literal string "undefined".
+        form.singleLogin = "on";
+        form.deviceName = await helper.trustFingerprintNameHook();
+    }
+    return form;
+};
+
+/**
+ * Logs in without a password, reusing the trusted-browser state of a live ID
+ * session.
+ *
+ * When the session was created with `singleLogin`, the ID platform answers the
+ * login entry page with a small auto-submitting form instead of the credential
+ * form: the OAuth entry targets `/do/off/ui/auth/login/checkSingle`, the `/f/`
+ * entry (`id_website`) targets `/security_check`. Neither accepts a password —
+ * the fingerprint registered as a trusted device is enough — so the submission
+ * is built from the page itself rather than from a hard-coded URL, which also
+ * keeps the two entries working without knowing which one we were served. This
+ * is what keeps `roam()` from re-sending the password for every campus system it
+ * enters.
+ *
+ * The response has the same shape as the one from `ID_LOGIN_URL`, so callers can
+ * follow their usual redirect/`<a href>` handling. Returns `null` when the
+ * platform did not grant the passwordless path — no trusted-browser form on the
+ * page, or the fingerprint was not accepted — in which case the caller keeps its
+ * previous behaviour (throwing, as there is no public key to encrypt with).
+ */
+export const passwordlessEntry = async (helper: InfoHelper, entryHtml: string): Promise<string | null> => {
+    if (!helper.trustBrowser) {
+        return null;
+    }
+    const $ = cheerio.load(entryHtml);
+    const form = $("form")
+        .filter((_i, f) => $(f).find("input[name='fingerPrint']").length > 0)
+        .first();
+    const action = form.attr("action");
+    if (action === undefined) {
+        return null;
+    }
+    // The form submits itself with a script that fills in the fingerprint, so
+    // take the field list from the markup: `checkSingle` carries `i_rememberme=on`
+    // on top of the fingerprint, `/security_check` carries nothing else.
+    const body: { [key: string]: string } = {};
+    form.find("input[name]").each((_i, input) => {
+        const name = $(input).attr("name")!;
+        body[name] = name === "fingerPrint" ? helper.fingerprint : $(input).attr("value") ?? "";
+    });
+    let response: string;
+    try {
+        // Resolved against the ID platform rather than the entry page: the action
+        // is root-relative, and this is where the ID session cookie lives (the
+        // `cr` entry is served through WebVPN, so the two differ).
+        response = await uFetch(action.startsWith("/") ? ID_HOST_URL + action : action, body);
+    } catch {
+        return null;
+    }
+    // A fingerprint the platform does not trust is answered with the credential
+    // form again, i.e. nothing was granted.
+    return response.includes("sm2publicKey") ? null : response;
+};
+
+/**
+ * Obtains the login response for the unified ID system, preferring the
+ * passwordless path when the live session is trusted.
+ *
+ * `entryHtml` is the login entry page the caller has already fetched: an empty
+ * public key means the platform served the trusted-browser form instead of the
+ * credential form, so there is nothing to encrypt a password with.
+ */
+const idLoginResponse = async (
+    helper: InfoHelper,
+    entryHtml: string,
+    idLoginUrl: string,
+    scheme: "i_user" | "username",
+): Promise<string> => {
+    const sm2PublicKey = cheerio.load(entryHtml)("#sm2publicKey").text();
+    if (sm2PublicKey === "") {
+        const passwordless = await passwordlessEntry(helper, entryHtml);
+        if (passwordless === null) {
+            throw new LoginError("Failed to get public key.");
+        }
+        return passwordless;
+    }
+    const secret = helper.passkeyCredential ? await authenticatePasskey(helper) : helper.password;
+    return await uFetch(idLoginUrl, await __idCredentialFormForTest(helper, sm2PublicKey, secret, scheme));
+};
 
 const twoFactorAuth = async (helper: InfoHelper): Promise<string> => {
     const { result: r1, msg: m1, object: o1 } = JSON.parse(await uFetch(DOUBLE_AUTH_URL, {
@@ -160,80 +290,59 @@ export const login = async (
     userId: string,
     password: string,
 ): Promise<void> => {
+    const owner = `${userId}:${helper.fingerprint}:${helper.passkeyCredential?.keyId ?? "password"}`;
+    if (outstandingLoginPromise) {
+        if (loginOwner === owner) return outstandingLoginPromise;
+        await outstandingLoginPromise.catch(() => undefined);
+    }
     helper.userId = userId;
-    helper.password = password;
-    if (helper.userId === "" || helper.password === "") {
-        const e = new LoginError("Please login.");
-        helper.loginErrorHook && helper.loginErrorHook(e);
-        throw e;
+    helper.password = helper.passkeyCredential ? "" : password;
+    const authenticated = helper.hasAuthentication();
+    if (!authenticated || !/^\d+$/.test(userId)) {
+        const error = new LoginError(authenticated ? "请输入学号。" : "请先登录。");
+        helper.loginErrorHook?.(error);
+        throw error;
     }
-    if (!helper.userId.match(/^\d+$/)) {
-        const e = new LoginError("请输入学号。");
-        helper.loginErrorHook && helper.loginErrorHook(e);
-        throw e;
-    }
-    if (!helper.mocked()) {
+    if (helper.mocked()) return;
+    loginOwner = owner;
+    const promise = withAuthTransaction(async () => {
+        // Cookie clearing belongs inside the shared authentication transaction.
         clearCookies();
         await helper.clearCookieHandler();
-        if (outstandingLoginPromise === undefined) {
-            outstandingLoginPromise = new Promise<void>((resolve, reject) => {
-                setTimeout(() => {
-                    reject(new LoginError("Login timeout."));
-                }, 3 * 60 * 1000);
-                (async () => {
-                    await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
-                    let sm2PublicKey = "";
-                    if (getRedirectLocation) {
-                        // Patch for OpenHarmony
-                        const oauthUrl = await getRedirectLocation(WEB_VPN_OAUTH_LOGIN_URL);
-                        if (!oauthUrl) {
-                            throw new LoginError("Failed to get oauth url.");
-                        }
-                        await uFetch(oauthUrl);
-                        const idUrl = await getRedirectLocation(oauthUrl);
-                        if (!idUrl) {
-                            throw new LoginError("Failed to get id url.");
-                        }
-                        sm2PublicKey = cheerio.load(await uFetch(idUrl))("#sm2publicKey").text();
-                    } else {
-                        sm2PublicKey = cheerio.load(await uFetch(WEB_VPN_OAUTH_LOGIN_URL))("#sm2publicKey").text();
-                    }
-                    if (sm2PublicKey === "") {
-                        throw new LoginError("Failed to get public key.");
-                    }
-                    let response = await uFetch(ID_LOGIN_URL, {
-                        i_user: helper.userId,
-                        i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                        fingerPrint: helper.fingerprint,
-                        fingerGenPrint: "",
-                        i_captcha: "",
-                    });
-                    if (response.includes("二次认证")) {
-                        response = await twoFactorAuth(helper);
-                    }
-                    if (!response.includes("登录成功。正在重定向到")) {
-                        const $ = cheerio.load(response);
-                        const message = $("#msg_note").text().trim();
-                        throw new LoginError(message);
-                    }
-                    const callbackUrl = cheerio.load(response)("a").attr()!.href;
-                    const redirectUrl = await (getRedirectLocation ?? getRedirectUrl)(callbackUrl);
-                    if (redirectUrl === LOGIN_URL || redirectUrl == null) {
-                        throw new LoginError("登录失败，请稍后重试。");
-                    }
-                    if (getRedirectLocation) {
-                        await uFetch(redirectUrl);
-                    }
-                    await roam(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
-                    outstandingLoginPromise = undefined;
-                })().then(resolve, (e: any) => {
-                    helper.loginErrorHook && helper.loginErrorHook(e);
-                    outstandingLoginPromise = undefined;
-                    reject(e);
-                });
-            });
+        await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
+        let entryHtml: string;
+        if (getRedirectLocation) {
+            const oauthUrl = await getRedirectLocation(WEB_VPN_OAUTH_LOGIN_URL);
+            if (!oauthUrl) throw new LoginError("Failed to get oauth url.");
+            await uFetch(oauthUrl);
+            const idUrl = await getRedirectLocation(oauthUrl);
+            if (!idUrl) throw new LoginError("Failed to get id url.");
+            entryHtml = await uFetch(idUrl);
+        } else {
+            entryHtml = await uFetch(WEB_VPN_OAUTH_LOGIN_URL);
         }
-        await outstandingLoginPromise;
+        let response = await idLoginResponse(helper, entryHtml, ID_LOGIN_URL, "i_user");
+        if (response.includes("二次认证")) response = await twoFactorAuth(helper);
+        if (!response.includes("登录成功。正在重定向到")) {
+            throw new LoginError(cheerio.load(response)("#msg_note").text().trim() || "登录失败，请稍后重试。");
+        }
+        const callbackUrl = cheerio.load(response)("a").attr("href");
+        if (!callbackUrl) throw new LoginError("登录失败，请稍后重试。");
+        const redirectUrl = await (getRedirectLocation ?? getRedirectUrl)(callbackUrl);
+        if (redirectUrl === LOGIN_URL || !redirectUrl) throw new LoginError("登录失败，请稍后重试。");
+        if (getRedirectLocation) await uFetch(redirectUrl);
+        // This is a sub-step of the existing transaction, not a second queued login.
+        await roamUnlocked(helper, "id", "10000ea055dd8d81d09d5a1ba55d39ad");
+        sessionGeneration++;
+    });
+    outstandingLoginPromise = promise;
+    try {
+        await promise;
+    } catch (error) {
+        helper.loginErrorHook?.(error as LoginError);
+        throw error;
+    } finally {
+        if (outstandingLoginPromise === promise) outstandingLoginPromise = undefined;
     }
 };
 
@@ -241,6 +350,7 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
     if (!helper.mocked()) {
         helper.userId = "";
         helper.password = "";
+        helper.passkeyCredential = undefined;
         await uFetch(LOGOUT_URL);
     } else {
         helper.userId = "";
@@ -249,6 +359,17 @@ export const logout = async (helper: InfoHelper): Promise<void> => {
 };
 
 export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<string> => {
+    if (outstandingLoginPromise) await outstandingLoginPromise;
+    const key = `${authScope(helper)}:${sessionGeneration}:${policy}:${payload}`;
+    const existing = pendingRoams.get(key);
+    if (existing) return existing;
+    const promise = withAuthTransaction(() => roamUnlocked(helper, policy, payload));
+    pendingRoams.set(key, promise);
+    try { return await promise; }
+    finally { pendingRoams.delete(key); }
+};
+
+const roamUnlocked = async (helper: InfoHelper, policy: RoamingPolicy, payload: string): Promise<string> => {
     switch (policy) {
     case "default": {
         const csrf = await getCsrfToken();
@@ -282,27 +403,11 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         let response = "";
         const target = policy === "id_website" ? "账号设置" : "登录成功。正在重定向到";
         for (let i = 0; i < 2; i++) {
-            const sm2PublicKey = cheerio.load(await uFetch(policy === "cr" ? CR_LOGIN_HOME_URL : (idBaseUrl + payload)))("#sm2publicKey").text();
-            if (sm2PublicKey === "") {
-                throw new LoginError("Failed to get public key.");
-            }
-            if (policy === "id_website") {
-                response = await uFetch(idLoginUrl, {
-                    username: helper.userId,
-                    password:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                    fingerPrint: helper.fingerprint,
-                    fingerGenPrint: "",
-                    i_captcha: "",
-                });
-            } else {
-                response = await uFetch(idLoginUrl, {
-                    i_user: helper.userId,
-                    i_pass:  SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-                    fingerPrint: helper.fingerprint,
-                    fingerGenPrint: "",
-                    i_captcha: "",
-                });
-            }
+            const entryHtml = await uFetch(policy === "cr" ? CR_LOGIN_HOME_URL : (idBaseUrl + payload));
+            // /f/login redirects an already authenticated session straight to account settings.
+            response = policy === "id_website" && !entryHtml.includes("sm2publicKey") &&
+                cheerio.load(entryHtml)("title").text().includes("账号设置") ? entryHtml :
+                await idLoginResponse(helper, entryHtml, idLoginUrl, policy === "id_website" ? "username" : "i_user");
             if (response.includes("二次认证")) {
                 response = await twoFactorAuth(helper);
             }
@@ -334,17 +439,8 @@ export const roam = async (helper: InfoHelper, policy: RoamingPolicy, payload: s
         const data = await uFetch(GITLAB_LOGIN_URL);
         if (data.includes("sign_out")) return data;
         const authenticity_token = cheerio.load(data)("[name=authenticity_token]").attr()!.value;
-        const sm2PublicKey = cheerio.load(await uFetch(GITLAB_AUTH_URL, {authenticity_token}))("#sm2publicKey").text();
-        if (sm2PublicKey === "") {
-            throw new LoginError("Failed to get public key.");
-        }
-        let response = await uFetch(ID_LOGIN_URL, {
-            i_user: helper.userId,
-            i_pass: SM2_MAGIC_NUMBER + sm2.doEncrypt(helper.password, sm2PublicKey),
-            fingerPrint: helper.fingerprint,
-            fingerGenPrint: "",
-            i_captcha: "",
-        });
+        const entryHtml = await uFetch(GITLAB_AUTH_URL, {authenticity_token});
+        let response = await idLoginResponse(helper, entryHtml, ID_LOGIN_URL, "i_user");
         if (response.includes("二次认证")) {
             response = await twoFactorAuth(helper);
         }
@@ -381,20 +477,24 @@ export const roamingWrapper = async <R>(
     payload: string,
     operation: (param?: string) => Promise<R>,
 ): Promise<R> => {
-    if (helper.userId === "" || helper.password === "") {
+    if (!helper.hasAuthentication()) {
         const e = new LoginError("Please login.");
         helper.loginErrorHook && helper.loginErrorHook(e);
         throw e;
     }
+    if (outstandingLoginPromise) await outstandingLoginPromise;
+    const generation = sessionGeneration;
     try {
         if (policy) {
             try {
                 return await operation();
-            } catch {
+            } catch (error) {
+                if (error instanceof PasskeyError) throw error;
                 let result: string;
                 try {
                     result = await roam(helper, policy, payload);
-                } catch {
+                } catch (roamError) {
+                    if (roamError instanceof PasskeyError) throw roamError;
                     result = await roam(helper, policy, payload);
                 }
                 return await operation(result);
@@ -403,7 +503,8 @@ export const roamingWrapper = async <R>(
             return await operation();
         }
     } catch (e) {
-        if (await verifyAndReLogin(helper)) {
+        if (e instanceof PasskeyError) throw e;
+        if (generation !== sessionGeneration || await verifyAndReLogin(helper)) {
             if (policy) {
                 const result = await roam(helper, policy, payload);
                 return await operation(result);

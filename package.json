@@ -8,7 +8,9 @@
 			"packages/*"
 		],
 		"nohoist": [
-			"@thu-info/app/rtn-network-utils"
+			"@thu-info/app/rtn-network-utils",
+			"@thu-info/app/rtn-widget",
+			"@thu-info/app/rtn-passkey"
 		]
 	},
 	"scripts": {
@@ -19,12 +21,13 @@
 		"test": "yarn workspaces run test",
 		"lint": "yarn workspaces run lint",
 		"fix": "yarn workspaces run fix",
+		"postinstall": "patch-package --error-on-fail",
 		"prepare": "husky",
 		"preversion": "git pull --rebase && node -e \"require('editor')('release-notes.md')\" && git add release-notes.md"
 	},
 	"dependencies": {
 		"editor": "1.0.0",
 		"husky": "9.1.7",
-		"lerna": "10.0.1"
+		"lerna": "10.1.0"
 	}
 }

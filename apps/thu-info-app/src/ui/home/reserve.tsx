@@ -1,5 +1,5 @@
 import {RootNav} from "../../components/Root";
-import {useColorScheme, View} from "react-native";
+import {ScrollView, useColorScheme, View} from "react-native";
 import {SecondaryItem, styles} from "../../components/home/secondaryItems";
 import IconLibrary from "../../assets/icons/IconLibrary";
 import IconSports from "../../assets/icons/IconSports";
@@ -12,7 +12,9 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 	const style = styles(themeName);
 	const disabledFunction = currState().config.homeFunctionDisabled;
 	return (
-		<View style={style.SecondaryRootView}>
+		<ScrollView
+			style={{flex: 1}}
+			contentContainerStyle={style.SecondaryRootView}>
 			<View style={style.SecondaryContentView}>
 				{!disabledFunction.includes("library") && (
 					<SecondaryItem
@@ -48,6 +50,6 @@ export const ReserveScreen = ({navigation}: {navigation: RootNav}) => {
 					/>
 				)}
 			</View>
-		</View>
+		</ScrollView>
 	);
 };

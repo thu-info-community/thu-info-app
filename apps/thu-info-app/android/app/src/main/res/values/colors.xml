@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- App accent color, mirroring src/assets/colors/light.ts (`primary`).
+	     Colors native surfaces such as AlertDialog buttons so native dialogs
+	     match the app theme. -->
+	<color name="theme_primary">#671E7F</color>
+</resources>

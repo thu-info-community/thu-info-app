@@ -1,0 +1,438 @@
+import {autumn, summer, plan as customPlan, time} from "./fixtures/schedules";
+import {storeSchedule} from "../src/redux/scheduleData";
+import React from "react";
+import {expect, jest, test, beforeEach, afterEach} from "@jest/globals";
+import {
+	act,
+	render,
+	screen,
+	fireEvent,
+	cleanup,
+} from "@testing-library/react-native";
+import {Provider} from "react-redux";
+import {configureStore} from "@reduxjs/toolkit";
+import {StyleSheet, Alert, Dimensions} from "react-native";
+import {getStr} from "../src/utils/i18n";
+import dayjs from "dayjs";
+import {MAX_UNIT_WIDTH, ScheduleScreen} from "../src/ui/schedule/schedule";
+import {
+	configReducer,
+	configSet,
+	defaultConfig,
+	setCalendarConfig,
+} from "../src/redux/slices/config";
+import {scheduleReducer, scheduleAddCustom} from "../src/redux/slices/schedule";
+import {
+	Schedule,
+	ScheduleType,
+} from "@thu-info/lib/src/models/schedule/schedule";
+import {textGlyphAdvanceEm} from "../src/utils/textMetrics";
+
+const mockNavigate = jest.fn();
+const mockSnackbar = jest.fn();
+jest.mock("react-native-snackbar", () => ({
+	Snackbar: {
+		show: (...args: unknown[]) => mockSnackbar(...args),
+		LENGTH_SHORT: 0,
+		LENGTH_LONG: 0,
+	},
+}));
+const mockGetSchedule = jest.fn<(...args: any[]) => Promise<any>>();
+let mockScheduleResponses: ((result: any) => void)[] = [];
+let mockIsWide = false;
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual<typeof import("@react-navigation/native")>(
+		"@react-navigation/native",
+	),
+	useNavigation: () => ({navigate: mockNavigate}),
+}));
+jest.mock("uuid", () => ({v4: () => "schedule-screen-test"}));
+jest.mock("../src/redux/store", () => ({
+	currState: () => ({config: {language: "zh", darkMode: false}}),
+	helper: {getSchedule: (...args: any[]) => mockGetSchedule(...args)},
+}));
+jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
+// The breakpoints come from the window, which the test renderer does not set up,
+// so pin the tier directly.
+jest.mock("../src/utils/useResponsive", () => ({
+	useResponsive: () => ({
+		width: mockIsWide ? 900 : 390,
+		height: mockIsWide ? 1000 : 844,
+		formFactor: mockIsWide ? "expanded" : "compact",
+		isWide: mockIsWide,
+		isExpanded: mockIsWide,
+	}),
+}));
+jest.mock("../src/utils/calendar", () => ({exportScheduleToICS: jest.fn()}));
+jest.mock("../src/components/themedRefreshControl", () => ({
+	ThemedGestureRefreshControl: () => null,
+}));
+jest.mock("../src/components/views", () => ({
+	BottomPopupTriggerView: ({children}: {children: React.ReactNode}) => children,
+}));
+jest.mock("../src/components/schedule/scheduleAdd", () => ({
+	ScheduleAddModal: (props: object) =>
+		require("react").createElement(require("react-native").View, {
+			...props,
+			testID: "add-modal",
+		}),
+}));
+
+// The renderer's default window carries a non-1 `fontScale`; pin it so the shipped
+// 1x geometry stays the baseline, and restore whatever was there afterwards.
+const originalWindow = Dimensions.get("window");
+
+beforeEach(() => {
+	jest.useFakeTimers();
+	mockScheduleResponses = [];
+	mockGetSchedule
+		.mockReset()
+		.mockImplementation(
+			() => new Promise((resolve) => mockScheduleResponses.push(resolve)),
+		);
+	mockNavigate.mockClear();
+	mockSnackbar.mockClear();
+	mockIsWide = false;
+	Dimensions.set({window: {...originalWindow, fontScale: 1}});
+});
+afterEach(async () => {
+	await cleanup();
+	jest.clearAllTimers();
+	jest.useRealTimers();
+	jest.restoreAllMocks();
+	Dimensions.set({window: originalWindow});
+});
+
+const firstDay = dayjs().startOf("day").format("YYYY-MM-DD");
+const plan = (day: number, week: number): Schedule => {
+	const date = dayjs(firstDay).add((week - 1) * 7 + day - 1, "day");
+	return {
+		name: `午间计划-${day}-${week}`,
+		type: ScheduleType.CUSTOM,
+		location: "教室",
+		hash: `plan-${day}-${week}`,
+		activeTime: {
+			base: [
+				{
+					dayOfWeek: day,
+					beginTime: date.hour(12).minute(20),
+					endTime: date.hour(12).minute(40),
+				},
+			],
+		},
+		delOrHideTime: {base: []},
+	};
+};
+const height = (id: string) =>
+	StyleSheet.flatten(screen.getByTestId(id).props.style).height as number;
+const setup = async (plans: Schedule[], width = 750) => {
+	const store = configureStore({
+		reducer: {config: configReducer, schedule: scheduleReducer},
+		preloadedState: {
+			config: {...defaultConfig, firstDay, weekCount: 2},
+			schedule: {
+				baseSchedule: plans.map((entry) => ({
+					...storeSchedule(entry),
+					localId: entry.hash,
+				})),
+				overrides: {},
+				pendingUploads: [],
+				shortenMap: {},
+				customCnt: 1,
+				semesterId: defaultConfig.semesterId,
+			},
+		},
+	});
+	await render(
+		<Provider store={store}>
+			<ScheduleScreen />
+		</Provider>,
+	);
+	await fireEvent(screen.getByTestId("schedule-scroll"), "layout", {
+		nativeEvent: {layout: {height: 630, width: 700}},
+	});
+	// The grid width comes from the wrapper that owns the screen, not the scroller.
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width}},
+	});
+	return store;
+};
+
+test("week paging synchronizes the axis height and gap additions use the clicked page's date", async () => {
+	const store = await setup([plan(1, 1)]);
+	const withGap = height("schedule-page-0");
+	const withoutGap = height("schedule-page-1");
+	expect(withGap - withoutGap).toBeCloseTo(52);
+	expect(height("schedule-time-axis")).toBe(withGap);
+	const pager = screen.getByTestId("schedule-weeks");
+	const width = StyleSheet.flatten(pager.props.style).width;
+	await fireEvent(pager, "scroll", {
+		nativeEvent: {
+			contentOffset: {x: width, y: 0},
+			contentSize: {width: width * 2, height: withGap},
+			layoutMeasurement: {width, height: withGap},
+		},
+	});
+	expect(height("schedule-time-axis")).toBe(withoutGap);
+	expect(height("schedule-weeks")).toBe(withoutGap);
+	await fireEvent(screen.getByTestId("schedule-add-0"), "pressIn", {
+		nativeEvent: {locationX: 5, locationY: 260},
+	});
+	await fireEvent.press(screen.getByTestId("schedule-add-0"));
+	expect(screen.getByTestId("add-modal").props).toMatchObject({
+		visible: true,
+		defaultUseCustomDateTime: true,
+		defaultDateIndex: 0,
+		defaultBeginHour: 12,
+		defaultBeginMinute: 15,
+		defaultEndMinute: 45,
+	});
+	await act(() => {
+		store.dispatch(configSet({key: "scheduleUseClassPeriods", value: false}));
+	});
+	expect(screen.getByText("24:00")).toBeTruthy();
+});
+
+test("hidden weekends and filtered custom plans no longer contribute empty gap space", async () => {
+	const store = await setup([plan(6, 1)]);
+	const expanded = height("schedule-page-0");
+	await act(() => {
+		store.dispatch(configSet({key: "hideWeekend", value: true}));
+	});
+	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
+	await act(() => {
+		store.dispatch(configSet({key: "hideWeekend", value: false}));
+	});
+	expect(height("schedule-page-0")).toBe(expanded);
+	await act(() => {
+		store.dispatch(configSet({key: "showCustomSchedule", value: false}));
+	});
+	expect(height("schedule-page-0")).toBeCloseTo(expanded - 52);
+});
+
+test("folding preserves the selected week and realigns the horizontal page", async () => {
+	await setup([plan(1, 1)], 900);
+	const pager = screen.getByTestId("schedule-weeks");
+	const width = StyleSheet.flatten(pager.props.style).width;
+	await fireEvent(pager, "scroll", {
+		nativeEvent: {
+			contentOffset: {x: width, y: 0},
+			contentSize: {width: width * 2, height: 630},
+			layoutMeasurement: {width, height: 630},
+		},
+	});
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width: 400}},
+	});
+	const foldedPager = screen.getByTestId("schedule-weeks");
+	expect(StyleSheet.flatten(foldedPager.props.style).width).toBe(352);
+	expect(foldedPager.props.initialScrollIndex).toBe(1);
+	expect(foldedPager.props.getItemLayout(undefined, 1).offset).toBe(352);
+	expect(
+		screen.getByText(`${getStr("weekNumPrefix")}2${getStr("weekNumSuffix")}`),
+	).toBeTruthy();
+});
+
+test("day columns stop widening at the cap, and the grid stays uncapped on a phone", async () => {
+	const store = await setup([plan(1, 1)], 1200);
+	const pagerWidth = () =>
+		StyleSheet.flatten(screen.getByTestId("schedule-weeks").props.style)
+			.width as number;
+	// 1200 − 40 − 8 = 1152 for the grid; 1152 / 7 = 164.6 without the cap.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 7);
+	await act(() => {
+		store.dispatch(configSet({key: "hideWeekend", value: true}));
+	});
+	// Five days would stretch to 230dp each; the cap holds them at 96.
+	expect(pagerWidth()).toBe(MAX_UNIT_WIDTH * 5);
+	await fireEvent(screen.getByTestId("schedule-root"), "layout", {
+		nativeEvent: {layout: {height: 883, width: 400}},
+	});
+	// 400 − 48 = 352, below 5 × 96, so the columns fill the width as before.
+	expect(pagerWidth()).toBe(352);
+});
+
+const openSettings = async () => {
+	await fireEvent.press(
+		screen.getByRole("button", {name: getStr("scheduleSettings")}),
+	);
+};
+
+test("all schedule preferences live in the scrollable popup and controls keep it open", async () => {
+	const store = await setup([]);
+	await openSettings();
+	expect(screen.getByTestId("schedule-settings-scroll")).toBeTruthy();
+	expect(screen.getAllByText("按节次显示")).toHaveLength(1);
+	expect(screen.getByText("日程高度")).toBeTruthy();
+	expect(screen.getByText("使用半透明 UI")).toBeTruthy();
+	await fireEvent(
+		screen.getByRole("switch", {name: getStr("enableNewUI")}),
+		"valueChange",
+		false,
+	);
+	expect(store.getState().config.scheduleEnableNewUI).toBe(false);
+	await act(() => {
+		store.dispatch(configSet({key: "scheduleEnableNewUI", value: undefined}));
+	});
+	expect(
+		screen.getByRole("switch", {name: getStr("enableNewUI")}).props.value,
+	).toBe(false);
+	expect(screen.getByTestId("schedule-settings")).toBeTruthy();
+	await fireEvent.press(screen.getByTestId("schedule-settings-backdrop"));
+	expect(screen.queryByTestId("schedule-settings")).toBeNull();
+});
+
+test("hidden schedule management closes the popup and navigates", async () => {
+	await setup([]);
+	await openSettings();
+	await fireEvent.press(
+		screen.getByRole("button", {name: getStr("scheduleHidden")}),
+	);
+	expect(mockNavigate).toHaveBeenCalledWith("ScheduleHidden");
+	expect(screen.queryByTestId("schedule-settings")).toBeNull();
+});
+
+test.each([true, false])(
+	"schedule sync retains sending=%s and closes only after choosing a role",
+	async (isSending) => {
+		const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+		await setup([]);
+		await openSettings();
+		await fireEvent.press(
+			screen.getByRole("button", {name: getStr("scheduleSync")}),
+		);
+		expect(screen.getByTestId("schedule-settings")).toBeTruthy();
+		const buttons = alert.mock.calls[0][2]!;
+		await act(() => {
+			buttons[isSending ? 0 : 1].onPress!();
+		});
+		expect(mockNavigate).toHaveBeenCalledWith("ScheduleSync", {isSending});
+		expect(screen.queryByTestId("schedule-settings")).toBeNull();
+	},
+);
+
+test("a course tap pushes the detail screen when there is room for it", async () => {
+	mockIsWide = true;
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.objectContaining({name: "午间计划-1-1"}),
+	);
+	expect(screen.getByTestId("add-modal").props.visible).toBe(false);
+});
+
+test("a course tap opens the edit modal on a phone", async () => {
+	await setup([plan(1, 1)]);
+	await fireEvent.press(screen.getByText("午间计划-1-1"));
+	expect(mockNavigate).not.toHaveBeenCalledWith(
+		"ScheduleDetail",
+		expect.anything(),
+	);
+	expect(screen.getByTestId("add-modal").props.visible).toBe(true);
+});
+
+test("a stale semester response cannot overwrite the latest selection", async () => {
+	const store = await setup([]);
+	await act(() => {
+		store.dispatch(
+			setCalendarConfig({
+				...autumn,
+				semesterName: "秋季",
+				nextSemesterIndex: 0,
+			}),
+		);
+	});
+	expect(mockScheduleResponses).toHaveLength(2);
+	const calendar = {
+		...summer,
+		semesterName: "夏季",
+		nextSemesterList: [{...autumn, semesterName: "秋季"}],
+	};
+	await act(async () => {
+		mockScheduleResponses[1]({calendar, schedule: []});
+	});
+	expect(store.getState().schedule.semesterId).toBe(autumn.semesterId);
+	await act(async () => {
+		mockScheduleResponses[0]({calendar, schedule: [customPlan()]});
+	});
+	expect(store.getState().config.semesterId).toBe(autumn.semesterId);
+	expect(store.getState().schedule.baseSchedule).toEqual([]);
+});
+
+test("the same persisted summer Sunday is absent from the autumn grid", async () => {
+	const store = await setup([]);
+	await act(() => {
+		store.dispatch(
+			setCalendarConfig({
+				...autumn,
+				semesterName: "秋季",
+				nextSemesterIndex: undefined,
+			}),
+		);
+		store.dispatch(
+			scheduleAddCustom(customPlan([time("2025-09-14")], {name: "夏季周日"})),
+		);
+	});
+	expect(screen.queryByText("夏季周日")).toBeNull();
+	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
+});
+
+test("failed refresh retains the current schedule and reports the failure", async () => {
+	mockGetSchedule.mockRejectedValueOnce(new Error("offline"));
+	const store = await setup([plan(1, 1)]);
+	await act(async () => {});
+	expect(store.getState().schedule.baseSchedule).toHaveLength(1);
+	expect(mockSnackbar).toHaveBeenCalledWith(
+		expect.objectContaining({text: "offline"}),
+	);
+	expect(
+		screen.getByTestId("schedule-scroll").props.refreshControl.props.refreshing,
+	).toBe(false);
+});
+
+const headerLabel = (text: string) => {
+	const node = screen.getByText(text);
+	return {
+		fontSize: StyleSheet.flatten(node.props.style).fontSize as number,
+		allowFontScaling: node.props.allowFontScaling,
+		numberOfLines: node.props.numberOfLines,
+	};
+};
+
+test("the frozen labels keep the shipped size and scale, and an over-wide grid scrolls", async () => {
+	// 大字体 + 窄屏：列宽缩不到最宽标签以下，于是网格转入横向滚动，标签保持出厂
+	// 字号并正常跟随系统字体缩放（不再被压小、也不再关掉缩放）。
+	Dimensions.set({window: {...Dimensions.get("window"), fontScale: 2}});
+	await setup([plan(1, 1)], 400);
+	// overflow：分页 FlatList 让位给整块横向滚动容器。
+	expect(screen.queryByTestId("schedule-weeks")).toBeNull();
+	expect(screen.getByTestId("schedule-weeks-scroll")).toBeTruthy();
+	const date = headerLabel(dayjs(firstDay).format("MM/DD"));
+	const weekday = headerLabel(getStr("dayOfWeek")[1]);
+	expect(date.allowFontScaling).not.toBe(false);
+	expect(weekday.allowFontScaling).not.toBe(false);
+	expect(date.fontSize).toBe(9);
+	expect(weekday.fontSize).toBe(12);
+	// 装箱宽度已按 2 倍字号给足：最宽标签仍落在列里。
+	const cellWidth = (400 - 80 - 16) / 7;
+	expect(cellWidth).toBeLessThan(66);
+	expect(
+		9 * 2 * textGlyphAdvanceEm(dayjs(firstDay).format("MM/DD")) + 8,
+	).toBeLessThanOrEqual(66);
+	expect(
+		12 * 2 * textGlyphAdvanceEm(getStr("dayOfWeek")[1]) + 8,
+	).toBeLessThanOrEqual(66);
+});
+
+test("a wide screen keeps the shipped header font sizes", async () => {
+	await setup([plan(1, 1)], 750);
+	const date = headerLabel(dayjs(firstDay).format("MM/DD"));
+	const weekday = headerLabel(getStr("dayOfWeek")[1]);
+	expect(date.fontSize).toBe(9);
+	expect(weekday.fontSize).toBe(12);
+	// 宽屏是 fit 模式，仍用分页 FlatList。
+	expect(screen.getByTestId("schedule-weeks")).toBeTruthy();
+	expect(date.allowFontScaling).not.toBe(false);
+	expect(weekday.allowFontScaling).not.toBe(false);
+});

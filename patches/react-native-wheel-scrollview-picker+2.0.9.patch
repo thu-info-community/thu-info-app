@@ -1,0 +1,146 @@
+diff --git a/node_modules/react-native-wheel-scrollview-picker/index.tsx b/node_modules/react-native-wheel-scrollview-picker/index.tsx
+index ee1f9c9..8be182c 100644
+--- a/node_modules/react-native-wheel-scrollview-picker/index.tsx
++++ b/node_modules/react-native-wheel-scrollview-picker/index.tsx
+@@ -72,15 +72,26 @@ export type ScrollPickerHandle = {
+ 
+ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<ItemT> & { ref?: Ref<ScrollPickerHandle> }): ReactNode } = React.forwardRef((propsState, ref) => {
+   const { itemHeight = 30, style, scrollViewComponent, ...props } = propsState;
+-  const [initialized, setInitialized] = useState(false);
+   const [selectedIndex, setSelectedIndex] = useState(
+     props.selectedIndex && props.selectedIndex >= 0 ? props.selectedIndex : 0
+   );
+   const sView = useRef<ScrollView>(null);
+-  const [isScrollTo, setIsScrollTo] = useState(false);
+-  const [dragStarted, setDragStarted] = useState(false);
+-  const [momentumStarted, setMomentumStarted] = useState(false);
+-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
++  // Native drag and momentum events can arrive in the same React batch.
++  // Keep their flags and the pending timer synchronous so a release cannot
++  // snap back to an old offset while the native ScrollView is still moving.
++  const isScrollTo = useRef(false);
++  const dragStarted = useRef(false);
++  const momentumStarted = useRef(false);
++  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
++  const initialPosition = useRef(itemHeight * selectedIndex);
++  const scrollToEmitsMomentum = ["ios", "harmony"].includes(Platform.OS);
++
++  const clearScrollTimer = () => {
++    if (timer.current !== null) {
++      clearTimeout(timer.current);
++      timer.current = null;
++    }
++  };
+ 
+   useImperativeHandle(ref, () => ({
+     scrollToTargetIndex: (val: number) => {
+@@ -96,22 +107,16 @@ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<I
+       : 0) ||
+     itemHeight * 5;
+ 
+-  useEffect(
+-    function initialize() {
+-      if (initialized) return;
+-      setInitialized(true);
++  useEffect(() => {
++    const initializeTimer = setTimeout(() => {
++      sView.current?.scrollTo({ y: initialPosition.current, animated: false });
++    }, 0);
+ 
+-      setTimeout(() => {
+-        const y = itemHeight * selectedIndex;
+-        sView?.current?.scrollTo({ y: y });
+-      }, 0);
+-
+-      return () => {
+-        timer && clearTimeout(timer);
+-      };
+-    },
+-    [initialized, itemHeight, selectedIndex, sView, timer]
+-  );
++    return () => {
++      clearTimeout(initializeTimer);
++      clearScrollTimer();
++    };
++  }, []);
+ 
+   const renderPlaceHolder = () => {
+     const h = (wrapperHeight - itemHeight) / 2;
+@@ -159,10 +164,12 @@ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<I
+       const _selectedIndex = Math.round(y / h);
+ 
+       const _y = _selectedIndex * h;
+-      if (_y !== y) {
+-        // using scrollTo in ios, onMomentumScrollEnd will be invoked
+-        if (Platform.OS === "ios") {
+-          setIsScrollTo(true);
++      // Native offsets can have subpixel rounding at the content boundary.
++      // Repeatedly animating to an unreachable exact offset causes a snap loop.
++      if (Math.abs(_y - y) > 0.5) {
++        // iOS and Harmony emit momentum events for programmatic scrollTo too.
++        if (scrollToEmitsMomentum) {
++          isScrollTo.current = true;
+         }
+         sView?.current?.scrollTo({ y: _y });
+       }
+@@ -176,41 +183,42 @@ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<I
+         props.onValueChange(selectedValue, _selectedIndex);
+       }
+     },
+-    [itemHeight, props, selectedIndex]
++    [itemHeight, props, selectedIndex, scrollToEmitsMomentum]
+   );
+ 
+   const onScrollBeginDrag = () => {
+-    setDragStarted(true);
++    dragStarted.current = true;
++    momentumStarted.current = false;
+ 
+-    if (Platform.OS === "ios") {
+-      setIsScrollTo(false);
++    if (scrollToEmitsMomentum) {
++      isScrollTo.current = false;
+     }
+-    timer && clearTimeout(timer);
++    clearScrollTimer();
+   };
+ 
+   const onScrollEndDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+-    setDragStarted(false);
++    dragStarted.current = false;
+ 
+     // if not used, event will be garbaged
+     const _e: NativeSyntheticEvent<NativeScrollEvent> = { ...e };
+-    timer && clearTimeout(timer);
+-    setTimer(
+-      setTimeout(() => {
+-        if (!momentumStarted) {
+-          scrollFix(_e);
+-        }
+-      }, 50)
+-    );
++    clearScrollTimer();
++    timer.current = setTimeout(() => {
++      timer.current = null;
++      if (!momentumStarted.current && !dragStarted.current) {
++        scrollFix(_e);
++      }
++    }, 50);
+   };
+   const onMomentumScrollBegin = () => {
+-    setMomentumStarted(true);
+-    timer && clearTimeout(timer);
++    momentumStarted.current = true;
++    clearScrollTimer();
+   };
+ 
+   const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+-    setMomentumStarted(false);
++    momentumStarted.current = false;
++    clearScrollTimer();
+ 
+-    if (!isScrollTo && !dragStarted) {
++    if (!isScrollTo.current && !dragStarted.current) {
+       scrollFix(e);
+     }
+   };

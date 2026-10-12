@@ -6,7 +6,7 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {Snackbar} from "react-native-snackbar";
 import {helper} from "../../redux/store";
@@ -15,6 +15,8 @@ import themes from "../../assets/themes/themes";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {CrSearchResultInfo} from "@thu-info/lib/src/models/cr/cr";
 import {CourseTimeQuickGlance} from "../../components/home/cr";
+import {Separator} from "../../components/subpage/rows";
+import {roundedListContent, spacing} from "../../components/subpage/tokens";
 
 export const CrSearchResultScreen = ({
 	route,
@@ -26,14 +28,19 @@ export const CrSearchResultScreen = ({
 	const [page, setPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number | undefined>();
 	const [refreshing, setRefreshing] = useState(false);
+	const requestInFlight = useRef(false);
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
 	const refresh = (force: boolean) => {
-		if (!force && totalPage !== undefined && page >= totalPage) {
+		if (
+			requestInFlight.current ||
+			(!force && (totalPage === undefined || page >= totalPage))
+		) {
 			return;
 		}
+		requestInFlight.current = true;
 		setRefreshing(true);
 		helper
 			.searchCrCourses({
@@ -46,15 +53,20 @@ export const CrSearchResultScreen = ({
 				setPage(r.currPage);
 			})
 			.catch(NetworkRetry)
-			.then(() => setRefreshing(false));
+			.finally(() => {
+				requestInFlight.current = false;
+				setRefreshing(false);
+			});
 	};
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => refresh(true), []);
 
 	return (
 		<FlatList
-			style={{flex: 1}}
+			testID="cr-search-results"
+			style={{flex: 1, margin: spacing.md}}
 			data={searchResult}
+			contentContainerStyle={roundedListContent(colors, searchResult.length > 0)}
 			refreshControl={
 				<ThemedRefreshControl
 					refreshing={refreshing}
@@ -73,45 +85,54 @@ export const CrSearchResultScreen = ({
 					time,
 					credits,
 				},
+				index,
 			}) => (
-				<TouchableOpacity
-					onPress={() => {
-						Snackbar.show({
-							text: "选课功能还在开发中，敬请期待……",
-							duration: Snackbar.LENGTH_SHORT,
-						});
-					}}
-					style={{
-						paddingHorizontal: 15,
-						paddingVertical: 6,
-						flexDirection: "row",
-						justifyContent: "space-between",
-					}}>
-					<View style={{flex: 2, alignItems: "flex-start"}}>
-						<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-							{name}
-						</Text>
-						<Text style={{marginVertical: 2, color: colors.text}}>
-							{teacher}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{id}-{seq} ({credits} cr)
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseTime")} {time}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseRemaining")} {remaining}/{capacity}
-						</Text>
-						<Text style={{color: "grey", marginVertical: 2}}>
-							{getStr("courseQueue")} {queue}
-						</Text>
-					</View>
-					<View
-						style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-						<CourseTimeQuickGlance time={time} width={7 * 15} height={6 * 15} />
-					</View>
-				</TouchableOpacity>
+				<>
+					{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+					<TouchableOpacity
+						onPress={() => {
+							Snackbar.show({
+								text: "选课功能还在开发中，敬请期待……",
+								duration: Snackbar.LENGTH_SHORT,
+							});
+						}}
+						style={{
+							paddingVertical: spacing.sm,
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}>
+						<View style={{flex: 2, alignItems: "flex-start"}}>
+							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+								{name}
+							</Text>
+							<Text style={{marginVertical: 2, color: colors.text}}>
+								{teacher}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{id}-{seq} ({credits} cr)
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseTime")} {time}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseRemaining")}{" "}
+								{Number.isFinite(remaining) ? remaining : "--"}/
+								{Number.isFinite(capacity) ? capacity : "--"}
+							</Text>
+							<Text style={{color: colors.fontB2, marginVertical: 2}}>
+								{getStr("courseQueue")} {Number.isFinite(queue) ? queue : "--"}
+							</Text>
+						</View>
+						<View
+							style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+							<CourseTimeQuickGlance
+								time={time}
+								width={7 * 15}
+								height={6 * 15}
+							/>
+						</View>
+					</TouchableOpacity>
+				</>
 			)}
 			keyExtractor={({id, seq}) => `${id}-${seq}`}
 			onEndReached={() => refresh(false)}

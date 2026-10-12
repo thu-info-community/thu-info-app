@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
 import {WebView} from "react-native-webview";
-import {View, ActivityIndicator, Dimensions} from "react-native";
+import {View, ActivityIndicator} from "react-native";
 import {NewsDetailRouteProp} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {USER_AGENT} from "@thu-info/lib/src/constants/strings";
@@ -47,7 +47,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 	useEffect(fetchHtml, []);
 
 	const adaptedHtml = `<head>
-		<meta name="viewport" content="width=100, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 			body {
 				padding: 10px;
@@ -57,12 +57,12 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				background-color: ${theme.colors.themeBackground} !important;
 				color: ${theme.colors.text} !important;
 			}
-			
+
 			h1,h2,h3,h4,h5,h6 {
 				color: ${theme.colors.primary} !important;
 				text-align: center;
 			}
-			
+
 			a {
 				color: ${theme.colors.themePurple} !important;
 			}
@@ -80,7 +80,7 @@ export const NewsDetailScreen = ({route}: {route: NewsDetailRouteProp}) => {
 				max-width: 100%;
 				border-collapse: collapse;
 			}
-				
+
 			table, th, td {
 				border: 1px solid ${theme.colors.text} !important;
 			}
@@ -139,7 +139,5 @@ const styles = themedStyles((theme) => ({
 
 	pdf: {
 		flex: 1,
-		width: Dimensions.get("window").width,
-		height: Dimensions.get("window").height,
 	},
 }));

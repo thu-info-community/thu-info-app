@@ -1,0 +1,22 @@
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {
+    reactNativeDir = file("../../../node_modules/react-native")
+    codegenDir = file("../../../node_modules/@react-native/codegen")
+    jsRootDir = file("../")
+    libraryName = "RTNPasskeySpec"
+    codegenJavaPackageName = "com.thuinfo.passkey"
+}
+
+android {
+    namespace "com.thuinfo.passkey"
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig { minSdkVersion rootProject.ext.minSdkVersion }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("androidx.biometric:biometric:1.1.0")
+}

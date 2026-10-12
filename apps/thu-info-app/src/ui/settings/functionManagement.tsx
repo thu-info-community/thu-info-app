@@ -1,11 +1,12 @@
 import {useState} from "react";
 import {getStr} from "../../utils/i18n";
 import {State} from "../../redux/store";
-import {ScrollView, Switch, Text, useColorScheme, View} from "react-native";
+import {Switch, Text, useColorScheme, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
 import {configSet} from "../../redux/slices/config";
 import {RoundedView} from "../../components/views";
+import {SubPageScreen} from "../../components/subpage/containers";
 import {styles} from "./settings";
 import {HomeFunction} from "../home/home";
 import {top5Set} from "../../redux/slices/top5";
@@ -118,11 +119,11 @@ export const FunctionManagementScreen = () => {
 	};
 
 	return (
-		<ScrollView style={{flex: 1, padding: 12}}>
+		<SubPageScreen>
 			{Object.keys(functions).map((name) =>
 				FunctionGroup(name as functionGroups),
 			)}
 			<View style={{height: 32}} />
-		</ScrollView>
+		</SubPageScreen>
 	);
 };

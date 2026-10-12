@@ -1,14 +1,8 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
-import {useEffect, useState} from "react";
-import {
-	SectionList,
-	Text,
-	useColorScheme,
-	View,
-} from "react-native";
+import {Fragment, useEffect, useState} from "react";
+import {SectionList, Text, useColorScheme, View} from "react-native";
 import {getStr} from "../../utils/i18n";
 import themes from "../../assets/themes/themes";
-import {styles} from "../../ui/settings/settings";
 import {helper} from "../../redux/store";
 import {
 	CardTransaction,
@@ -17,6 +11,7 @@ import {
 import {BottomPopupTriggerView} from "../../components/views";
 import IconDown from "../../assets/icons/IconDown";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
 import {NetworkRetry} from "../../components/easySnackbars";
 import dayjs from "dayjs";
 import IconRice from "../../assets/icons/IconRice";
@@ -30,6 +25,8 @@ import IconHamburger from "../../assets/icons/IconHamburger";
 import IconNoodles from "../../assets/icons/IconNoodles";
 import IconShopping from "../../assets/icons/IconShopping";
 import IconSwim from "../../assets/icons/IconSwim";
+import {Separator} from "../../components/subpage/rows";
+import {roundedListContent, spacing} from "../../components/subpage/tokens";
 
 const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	const themeName = useColorScheme();
@@ -67,22 +64,21 @@ const TransactionItem = ({tx}: {tx: CardTransaction}) => {
 	return (
 		<View
 			style={{
-				marginHorizontal: 16,
 				flexDirection: "row",
 				justifyContent: "space-between",
 			}}>
 			<View style={{padding: 4, marginRight: 4, alignSelf: "center"}}>
 				{icon}
 			</View>
-			<View style={{flex: 2, alignItems: "flex-start"}}>
+			<View style={{flex: 1, minWidth: 0, alignItems: "flex-start"}}>
 				<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
 					{tx.name}
 				</Text>
-				<Text style={{color: "grey", marginVertical: 2}}>
+				<Text style={{color: colors.fontB2, marginVertical: 2}}>
 					{dayjs(tx.timestamp).format("YYYY-MM-DD HH:mm")}
 				</Text>
 			</View>
-			<View style={{flex: 1, alignItems: "flex-end"}}>
+			<View style={{flexShrink: 0, alignItems: "flex-end"}}>
 				<Text style={{fontSize: 20, color: colors.text}}>
 					{sign}
 					{Math.abs(tx.amount).toFixed(2)}
@@ -116,7 +112,9 @@ export const ExpenditureScreen = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
-	const style = styles(themeName);
+	// The wheel lays each option in a row of exactly `itemHeight` pixels; the
+	// option text scales with the system font, so the row must scale too.
+	const pickerItemHeight = useScaledSize(48);
 
 	const years = Array.from(
 		new Array(today.year() - 2023 + 1),
@@ -161,9 +159,21 @@ export const ExpenditureScreen = () => {
 
 	useEffect(refresh, [ym]);
 
+	// The month header is sticky and carries its own inset, so the sheet must
+	// not add a second one on top of it -- otherwise the header ends up with
+	// far more room above it than below.
+	const sheet = roundedListContent(
+		colors,
+		txList.some(({data}) => data.length > 0),
+	);
+
 	return (
 		<SectionList
+			style={{flex: 1, margin: spacing.md}}
 			sections={txList}
+			contentContainerStyle={
+				sheet === undefined ? undefined : {...sheet, paddingTop: 0}
+			}
 			refreshControl={
 				<ThemedRefreshControl
 					refreshing={refreshing}
@@ -187,14 +197,16 @@ export const ExpenditureScreen = () => {
 			renderSectionHeader={({section}) => (
 				<View
 					style={{
-						padding: 8,
+						// The sheet already insets its contents horizontally, so the
+						// header only carries its own vertical breathing room.
+						paddingTop: spacing.md,
+						paddingBottom: spacing.md,
 						backgroundColor: colors.contentBackground,
 					}}>
 					<BottomPopupTriggerView
 						style={{
 							flexDirection: "row",
 							alignItems: "center",
-							marginLeft: 8,
 						}}
 						popupTitle={`${popupYear} 年 ${popupMonth} 月`}
 						popupOnTriggered={() => {
@@ -217,9 +229,9 @@ export const ExpenditureScreen = () => {
 									onValueChange={(_, selectedIndex) => {
 										setPopupYear(years[selectedIndex]);
 									}}
-									wrapperHeight={200}
+									wrapperHeight={pickerItemHeight * 4}
 									wrapperBackground={colors.contentBackground}
-									itemHeight={48}
+									itemHeight={pickerItemHeight}
 									highlightColor={colors.themeGrey}
 									highlightBorderWidth={1}
 								/>
@@ -237,9 +249,9 @@ export const ExpenditureScreen = () => {
 									onValueChange={(_, selectedIndex) => {
 										setPopupMonth(months[selectedIndex]);
 									}}
-									wrapperHeight={200}
+									wrapperHeight={pickerItemHeight * 4}
 									wrapperBackground={colors.contentBackground}
-									itemHeight={48}
+									itemHeight={pickerItemHeight}
 									highlightColor={colors.themeGrey}
 									highlightBorderWidth={1}
 								/>
@@ -255,7 +267,7 @@ export const ExpenditureScreen = () => {
 						</Text>
 						<IconDown height={18} width={18} />
 					</BottomPopupTriggerView>
-					<Text style={{color: colors.fontB2, fontSize: 14, marginLeft: 8}}>
+					<Text style={{color: colors.fontB2, fontSize: 14}}>
 						{getStr("outgo")} ￥ {section.expenditure.toFixed(2)}
 						{"  "}
 						{getStr("income")} ￥ {section.income.toFixed(2)}
@@ -263,19 +275,11 @@ export const ExpenditureScreen = () => {
 				</View>
 			)}
 			renderItem={({item, index}) => (
-				<View key={item.id}>
-					{index > 0 && (
-						<View
-							style={style.separator}
-						/>
-					)}
+				<Fragment key={item.id}>
+					{index > 0 && <Separator style={{marginHorizontal: 0}} />}
 					<TransactionItem tx={item} />
-				</View>
+				</Fragment>
 			)}
-			contentContainerStyle={{
-				backgroundColor: colors.contentBackground,
-				padding: 16,
-			}}
 		/>
 	);
 };

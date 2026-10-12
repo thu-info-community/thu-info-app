@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets mirroredWeek(): header, day headings, precise block grid. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layoutDirection="ltr"
+	android:orientation="vertical"
+	android:background="@drawable/widget_bg"
+	android:padding="12dp">
+
+	<TextView
+		android:id="@+id/widget_week_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:textSize="12sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_week_header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false"
+		android:visibility="gone">
+
+		<TextView
+			android:id="@+id/widget_week_title"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/widget_week_header"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			android:textColor="@color/widget_text_primary" />
+
+		<TextView
+			android:id="@+id/widget_week_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="11sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/widget_week_headings"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:layout_marginBottom="3dp"
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:visibility="gone">
+
+		<FrameLayout
+			android:id="@+id/widget_week_axis_spacer"
+			android:layout_width="38dp"
+			android:layout_height="match_parent"
+			android:visibility="gone" />
+
+		<LinearLayout
+			android:id="@+id/widget_week_headings_row"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:orientation="horizontal"
+			android:gravity="center_vertical" />
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/widget_week_none"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:gravity="center_horizontal"
+		android:textSize="12sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_week_grid"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="horizontal"
+		android:visibility="gone">
+
+		<FrameLayout
+			android:id="@+id/widget_week_axis"
+			android:layout_width="38dp"
+			android:layout_height="match_parent"
+			android:visibility="gone" />
+
+		<FrameLayout
+			android:id="@+id/widget_week_grid_cells"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1" />
+	</LinearLayout>
+</LinearLayout>

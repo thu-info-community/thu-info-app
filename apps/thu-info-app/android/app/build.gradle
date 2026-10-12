@@ -146,6 +146,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 afterEvaluate {

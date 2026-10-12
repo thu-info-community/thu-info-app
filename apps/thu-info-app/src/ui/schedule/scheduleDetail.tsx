@@ -1,9 +1,17 @@
-import dayjs from "dayjs";
-import {View, Text, TouchableOpacity, Modal} from "react-native";
+import {deleteScheduleOccurrences} from "../../redux/scheduleOperations";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	Modal,
+	Alert,
+	ScrollView,
+	useWindowDimensions,
+} from "react-native";
 import {useLayoutEffect, useState} from "react";
-import {Choice, scheduleDelOrHide} from "../../redux/slices/schedule";
-import {useDispatch, useSelector} from "react-redux";
-import {ScheduleType, Schedule} from "@thu-info/lib/src/models/schedule/schedule";
+import {Choice} from "../../redux/slices/schedule";
+import {useStore} from "react-redux";
+import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
@@ -13,8 +21,13 @@ import IconTime from "../../assets/icons/IconTime";
 import IconBoard from "../../assets/icons/IconBoard";
 import IconTrademark from "../../assets/icons/IconTrademark";
 import {styles} from "../settings/settings";
-import {ScheduleAddModal} from "../../components/schedule/scheduleAdd";
+import {
+	ScheduleAddModal,
+	ScheduleEditParams,
+} from "../../components/schedule/scheduleAdd";
 import {helper, State} from "../../redux/store";
+import {HeaderActionButton} from "../../components/subpage/headerAction";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 const nullAlias = (str: string) => {
 	if (str === undefined) {
@@ -23,18 +36,7 @@ const nullAlias = (str: string) => {
 	return str.length === 0;
 };
 
-export interface ScheduleDetailProps {
-	name: string;
-	location: string;
-	week: number;
-	dayOfWeek: number;
-	beginTime: dayjs.Dayjs;
-	endTime: dayjs.Dayjs;
-	alias: string;
-	type: ScheduleType;
-	activeWeeks?: number[];
-	category?: string;
-}
+export type ScheduleDetailProps = ScheduleEditParams;
 
 export const ScheduleDetailScreen = ({
 	navigation,
@@ -50,21 +52,19 @@ export const ScheduleDetailScreen = ({
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	const {fontScale} = useWindowDimensions();
 
-	const dispatch = useDispatch();
-	const {baseSchedule} = useSelector((s: State) => s.schedule);
+	const reduxStore = useStore<State>();
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			title: getStr("scheduleDetail"),
 			headerRight: () => (
-				<TouchableOpacity
-					style={{paddingHorizontal: 16, margin: 4}}
-					onPress={() => setEditPopupShow(true)}>
+				<HeaderActionButton onPress={() => setEditPopupShow(true)}>
 					<Text style={{color: colors.themePurple, fontSize: 16}}>
 						{getStr("edit")}
 					</Text>
-				</TouchableOpacity>
+				</HeaderActionButton>
 			),
 		});
 	}, [navigation, colors.themePurple]);
@@ -72,65 +72,23 @@ export const ScheduleDetailScreen = ({
 	const isCustomLike =
 		props.type === ScheduleType.CUSTOM || props.category === "个人日历";
 
-	const buildSchedulesForDeletion = (
-		target: ScheduleDetailProps,
-		choice: Choice,
-		base: Schedule[],
-	): Schedule[] => {
-		const matchedSchedule = base.find(
-			(s) =>
-				s.name === target.name &&
-				s.location === target.location &&
-				s.type === target.type &&
-				(target.category === undefined || s.category === target.category),
-		);
-
-		if (!matchedSchedule) {
-			return [];
-		}
-
-		if (choice === Choice.ALL) {
-			return [matchedSchedule];
-		}
-
-		if (choice === Choice.ONCE) {
-			const matchedSlice = matchedSchedule.activeTime.base.find(
-				(slice) =>
-					slice.dayOfWeek === target.dayOfWeek &&
-					slice.beginTime.isSame(target.beginTime, "minute") &&
-					slice.endTime.isSame(target.endTime, "minute"),
-			);
-
-			if (!matchedSlice) {
-				return [];
-			}
-
-			return [
-				{
-					...matchedSchedule,
-					activeTime: {base: [matchedSlice]},
-					delOrHideTime: {base: []},
-				},
-			];
-		}
-
-		return [];
-	};
-
 	const delButton = (choice: Choice) => {
 		if (props.type === ScheduleType.EXAM) {
 			return null;
 		}
-		const verbText: string =
-			isCustomLike
-				? getStr("delSchedule")
-				: getStr("hideSchedule");
+		const verbText: string = isCustomLike
+			? getStr("delSchedule")
+			: getStr("hideSchedule");
 		const buttonText: string =
 			choice === Choice.ALL
 				? verbText + getStr("allTime")
 				: choice === Choice.REPEAT
-				? verbText + getStr("repeatly")
-				: verbText + getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix") + getStr("once");
+					? verbText + getStr("repeatly")
+					: verbText +
+						getStr("weekNumPrefix") +
+						props.week +
+						getStr("weekNumSuffix") +
+						getStr("once");
 		const showLoading = deleting && isCustomLike;
 		return (
 			<TouchableOpacity
@@ -140,30 +98,19 @@ export const ScheduleDetailScreen = ({
 						return;
 					}
 					try {
-						if (isCustomLike) {
-							setDeleting(true);
-							const schedulesToDelete = buildSchedulesForDeletion(
-								props,
-								choice,
-								baseSchedule,
-							);
-							if (schedulesToDelete.length > 0) {
-								await helper.deleteCustomSchedule(schedulesToDelete);
-							}
-						}
-						setDelPopupShow(false);
-						dispatch(
-							scheduleDelOrHide([
-								props.name,
-								{
-									dayOfWeek: props.dayOfWeek,
-									beginTime: props.beginTime,
-									endTime: props.endTime,
-								},
-								choice,
-							]),
+						setDeleting(true);
+						await deleteScheduleOccurrences(
+							helper,
+							reduxStore,
+							props.localId,
+							props,
+							choice,
+							reduxStore.getState().config,
 						);
+						setDelPopupShow(false);
 						navigation.pop();
+					} catch {
+						Alert.alert(getStr("networkRetry"));
 					} finally {
 						setDeleting(false);
 					}
@@ -184,8 +131,8 @@ export const ScheduleDetailScreen = ({
 		<View
 			style={[
 				styles(themeName).separator,
-				{ marginHorizontal: 0 },
-				thick ? { borderBottomWidth: 1 } : {},
+				{marginHorizontal: 0},
+				thick ? {borderBottomWidth: 1} : {},
 			]}
 		/>
 	);
@@ -193,56 +140,81 @@ export const ScheduleDetailScreen = ({
 	return (
 		<RoundedView
 			style={{margin: 8, paddingHorizontal: 16, paddingVertical: 8, flex: 1}}>
-			<Text
-				style={{
-					fontSize: 20,
-					lineHeight: 28,
-					color: colors.fontB1,
-					fontWeight: "bold",
-				}}
-				numberOfLines={2}>
-				{nullAlias(props.alias) ? props.name : props.alias}
-			</Text>
-			<Text style={{fontSize: 14, color: colors.themePurple}}>
-				{props.location === "" ? getStr("locationUnset") : props.location}
-			</Text>
-			<View style={{flexDirection: "row", marginTop: 22, alignItems: "center"}}>
-				<IconTime height={15} width={15} />
-				<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-					{getStr("dayOfWeek")[props.dayOfWeek]}
-					{(getStr("mark") === "CH" ? "（" : "(") +
-						  props.beginTime.format("HH:mm") +
-						  " ~ " +
-						  props.endTime.format("HH:mm") +
-						  (getStr("mark") === "CH" ? "）" : ")")}
+			{/* 大字体下正文可能比可视高度还高；正文可滚动，删除按钮始终留在底部。 */}
+			<ScrollView style={{flex: 1}}>
+				<Text
+					style={{
+						fontSize: 20,
+						lineHeight: scaledLineHeight(28, fontScale),
+						color: colors.fontB1,
+						fontWeight: "bold",
+					}}
+					numberOfLines={2}>
+					{nullAlias(props.alias) ? props.name : props.alias}
 				</Text>
-			</View>
-			<View style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
-				<IconBoard height={15} width={15} />
-				<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-					{getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix")}
+				<Text style={{fontSize: 14, color: colors.themePurple}}>
+					{props.location === "" ? getStr("locationUnset") : props.location}
 				</Text>
-			</View>
-			{nullAlias(props.alias) ? null : (
 				<View
-					style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
-					<IconTrademark height={15} width={15} />
-					<Text style={{marginLeft: 12, color: colors.fontB2, fontSize: 14}}>
-						{props.name}
-						{getStr("lp")}
-						{getStr("originalName")}
-						{getStr("rp")}
+					style={{flexDirection: "row", marginTop: 22, alignItems: "center"}}>
+					<IconTime height={15} width={15} />
+					<Text
+						style={{
+							flex: 1,
+							minWidth: 0,
+							marginLeft: 12,
+							color: colors.fontB2,
+							fontSize: 14,
+						}}>
+						{getStr("dayOfWeek")[props.dayOfWeek]}
+						{(getStr("mark") === "CH" ? "（" : "(") +
+							props.beginTime.format("HH:mm") +
+							" ~ " +
+							props.endTime.format("HH:mm") +
+							(getStr("mark") === "CH" ? "）" : ")")}
 					</Text>
 				</View>
-			)}
-			<View
-				style={{
-					backgroundColor: colors.themeGrey,
-					height: 1,
-					marginTop: 12,
-				}}
-			/>
-			<View style={{flex: 1}} />
+				<View
+					style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
+					<IconBoard height={15} width={15} />
+					<Text
+						style={{
+							flex: 1,
+							minWidth: 0,
+							marginLeft: 12,
+							color: colors.fontB2,
+							fontSize: 14,
+						}}>
+						{getStr("weekNumPrefix") + props.week + getStr("weekNumSuffix")}
+					</Text>
+				</View>
+				{nullAlias(props.alias) ? null : (
+					<View
+						style={{flexDirection: "row", marginTop: 5, alignItems: "center"}}>
+						<IconTrademark height={15} width={15} />
+						<Text
+							style={{
+								flex: 1,
+								minWidth: 0,
+								marginLeft: 12,
+								color: colors.fontB2,
+								fontSize: 14,
+							}}>
+							{props.name}
+							{getStr("lp")}
+							{getStr("originalName")}
+							{getStr("rp")}
+						</Text>
+					</View>
+				)}
+				<View
+					style={{
+						backgroundColor: colors.themeGrey,
+						height: 1,
+						marginTop: 12,
+					}}
+				/>
+			</ScrollView>
 			<TouchableOpacity
 				onPress={() => setDelPopupShow(true)}
 				style={{
@@ -281,7 +253,10 @@ export const ScheduleDetailScreen = ({
 						}}
 					/>
 					<RoundedView
-						style={{marginHorizontal: 7, backgroundColor: colors.contentBackground}}>
+						style={{
+							marginHorizontal: 7,
+							backgroundColor: colors.contentBackground,
+						}}>
 						<Text
 							style={{
 								color: colors.text,

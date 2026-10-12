@@ -1,12 +1,13 @@
 import {Text, useColorScheme, View} from "react-native";
 import {helper, State} from "../../redux/store";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import themes from "../../assets/themes/themes";
 import {getStr} from "../../utils/i18n";
 import {BottomPopupTriggerView, RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import ScrollPicker from "react-native-wheel-scrollview-picker";
-import ImageViewer from "react-native-image-zoom-viewer";
+import {useScaledSize} from "../../components/adaptive/scaledBox";
+import {ResponsiveImageViewer} from "../../components/ResponsiveImageViewer";
 import {saveImg} from "../../utils/saveImg";
 import {useSelector} from "react-redux";
 
@@ -37,6 +38,9 @@ export const SchoolCalendar = () => {
 
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
+	// The wheel lays each option in a row of exactly `itemHeight` pixels; the
+	// option text scales with the system font, so the row must scale too.
+	const pickerItemHeight = useScaledSize(48);
 
 	useEffect(() => {
 		helper.getCalendarYear().then((r) => {
@@ -54,7 +58,7 @@ export const SchoolCalendar = () => {
 		<View style={{flex: 1, padding: 16}}>
 			<RoundedView style={{marginVertical: 16, flex: 1}}>
 				{src !== "" && !error && (
-					<ImageViewer
+					<ResponsiveImageViewer
 						imageUrls={[{url: src}]}
 						style={{marginHorizontal: 10, borderRadius: 8}}
 						backgroundColor={colors.contentBackground}
@@ -87,9 +91,9 @@ export const SchoolCalendar = () => {
 								onValueChange={(_, index) => {
 									setYearSelection(index + firstYear);
 								}}
-								wrapperHeight={200}
+								wrapperHeight={pickerItemHeight * 4}
 								wrapperBackground={colors.contentBackground}
-								itemHeight={48}
+								itemHeight={pickerItemHeight}
 								highlightColor={colors.themeGrey}
 								highlightBorderWidth={1}
 							/>
@@ -106,9 +110,9 @@ export const SchoolCalendar = () => {
 								onValueChange={(_, index) => {
 									setSemesterSelection(index);
 								}}
-								wrapperHeight={200}
+								wrapperHeight={pickerItemHeight * 4}
 								wrapperBackground={colors.contentBackground}
-								itemHeight={48}
+								itemHeight={pickerItemHeight}
 								highlightColor={colors.themeGrey}
 								highlightBorderWidth={1}
 							/>
@@ -124,13 +128,18 @@ export const SchoolCalendar = () => {
 					}}
 					popupOnCancelled={() => {}}>
 					<View style={{flexDirection: "row", alignItems: "center"}}>
-						<Text style={{color: colors.fontB1, fontSize: 16, flex: 0}}>
+						<Text style={{color: colors.fontB1, fontSize: 16, flexShrink: 0}}>
 							{getStr("selectSemester")}
 						</Text>
-						<View style={{flex: 1}} />
 						<Text
-							style={{color: colors.fontB3, fontSize: 16, flex: 0}}
-							numberOfLines={1}>
+							style={{
+								color: colors.fontB3,
+								fontSize: 16,
+								flex: 1,
+								minWidth: 0,
+								textAlign: "right",
+								marginHorizontal: 8,
+							}}>
 							{year - 1} - {year} {getStr(semester)}
 						</Text>
 						<IconRight height={24} width={24} />

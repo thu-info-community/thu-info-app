@@ -10,3 +10,5 @@
 NSPhotoLibraryUsageDescription = "我们只会在将课程表存储到照片图库的时候使用您的照片数据。";
 
 NSPhotoLibraryAddUsageDescription = "我们只会在将课程表存储到照片图库的时候使用您的照片数据。";
+
+NSFaceIDUsageDescription = "使用面容 ID 解锁应用和完成 Passkey 登录。";

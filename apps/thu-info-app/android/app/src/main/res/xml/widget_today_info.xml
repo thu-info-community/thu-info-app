@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mirrors harmony schedule_form_config.json for the today card (2*4
+	default = wide-short compact, resizable to the 4*4 detailed variant). -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+	android:minWidth="250dp"
+	android:minHeight="110dp"
+	android:targetCellWidth="4"
+	android:targetCellHeight="2"
+	android:updatePeriodMillis="7200000"
+	android:initialLayout="@layout/widget_today_compact"
+	android:previewLayout="@layout/widget_today_compact"
+	android:resizeMode="horizontal|vertical"
+	android:widgetCategory="home_screen"
+	android:description="@string/widget_today_desc" />

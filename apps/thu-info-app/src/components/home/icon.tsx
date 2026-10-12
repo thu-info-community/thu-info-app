@@ -4,16 +4,15 @@ import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {useColorScheme} from "react-native";
 import themes from "../../assets/themes/themes";
+import {ANDROID_HYPHENATION} from "../../utils/scaledText";
 
-export const HomeIcon = ({
-	title,
-	onPress,
-	children,
-}: {
+export interface HomeIconProps {
 	title: keyof typeof zh;
 	onPress: (event: GestureResponderEvent) => void;
 	children: ReactElement;
-}) => {
+}
+
+export const HomeIcon = ({title, onPress, children}: HomeIconProps) => {
 	const themeName = useColorScheme();
 	const theme = themes(themeName);
 
@@ -37,8 +36,9 @@ export const HomeIcon = ({
 					width: "100%",
 					textAlign: "center",
 				}}
+				{...ANDROID_HYPHENATION}
 				ellipsizeMode="tail"
-				numberOfLines={1}>
+				numberOfLines={2}>
 				{getStr(title)}
 			</Text>
 		</TouchableOpacity>

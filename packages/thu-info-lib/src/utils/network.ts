@@ -181,11 +181,12 @@ export const stringify = (form: any, paramEncoding = "UTF-8") =>
  */
 export const uFetch = async (
     url: string,
-    post?: object,
+    post?: object | string,
     timeout = 60000,
     paramEncoding = "UTF-8",
     serialized = false,
     requestContentType = CONTENT_TYPE_FORM,
+    requestMethod?: "GET" | "POST" | "PUT" | "DELETE",
 ): Promise<string> => {
     // Prepare request headers
     const defaultHeaders = {
@@ -219,8 +220,9 @@ export const uFetch = async (
             : {
                 ...defaultInit,
                 method: "POST",
-                body: serialized ? (post as never as string) : stringify(post, paramEncoding),
+                body: serialized ? (post as never as string) : stringify(post as object, paramEncoding),
             };
+    if (requestMethod !== undefined) init.method = requestMethod;
 
     // Perform the network request
     try {
@@ -321,6 +323,36 @@ export const getRedirectUrl = async (
     timeout = 60000
 ): Promise<string> => {
     if (global.FileReader) {
+        let native: {getRedirectResponse?: (url: string, timeoutMs: number) => Promise<{
+            status: number;
+            location: string | null;
+        }>} | null = null;
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+            native = require("rtn-network-utils").RTNNetworkUtils;
+        } catch { /* Browser/Android/iOS do not provide the Harmony module. */ }
+        if (native !== null && typeof native.getRedirectResponse === "function") {
+            let location = url;
+            const deadline = Date.now() + timeout;
+            for (let i = 0; i < 10; i++) {
+                const remaining = deadline - Date.now();
+                if (remaining <= 0) {
+                    throw new ResponseStatusError("Redirect request timeout.");
+                }
+                const response = await native.getRedirectResponse(location, remaining);
+                if (![301, 302, 303, 307, 308].includes(response.status)) {
+                    return location;
+                }
+                if (!response.location || response.location.trim() === "") {
+                    throw new ResponseStatusError("Redirect response missing location header.");
+                }
+                location = resolveRedirectUrl(response.location, location);
+            }
+            throw new ResponseStatusError("Max redirect times reached.");
+        }
+        if (native !== null) {
+            throw new Error("RTNNetworkUtils does not support getRedirectResponse.");
+        }
         // For browser and react-native
         return new Promise((resolve) => {
             const req = new XMLHttpRequest();

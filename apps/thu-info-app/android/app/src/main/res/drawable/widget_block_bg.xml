@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard mirrored block background: a plain white shape tinted at render
+	time with setBackgroundTintList (a RemoteViews-callable setter on API 31+,
+	the only place the mirrored week card renders). The tint color carries the
+	alpha itself, so translucent (#44...) and opaque fills share this shape. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle">
+	<corners android:radius="3dp" />
+	<solid android:color="#FFFFFFFF" />
+</shape>

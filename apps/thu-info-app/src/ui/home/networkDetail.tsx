@@ -1,8 +1,6 @@
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {useEffect, useState} from "react";
 import {helper} from "../../redux/store";
-import {Text, View, useColorScheme} from "react-native";
-import themes from "../../assets/themes/themes";
 import {NetworkRetry} from "../../components/easySnackbars";
 import {getStr} from "../../utils/i18n";
 import {
@@ -10,8 +8,8 @@ import {
 	ScrollView,
 } from "react-native-gesture-handler";
 import {useIsFocused} from "@react-navigation/native";
-import {RoundedView} from "../../components/views";
-import {UseregAuthError} from "@thu-info/lib/src/utils/error";
+import {SectionCard} from "../../components/subpage/containers";
+import {DetailRow} from "../../components/subpage/rows";
 import {RootNav} from "../../components/Root";
 import {Balance} from "@thu-info/lib/src/models/network/balance";
 import {AccountInfo} from "@thu-info/lib/src/models/network/account";
@@ -23,29 +21,22 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 	const [refreshing, setRefreshing] = useState(false);
 	const isFocused = useIsFocused();
 
-	const themeName = useColorScheme();
-	const {colors} = themes(themeName);
-
 	const refresh = () => {
 		if (!isFocused) {
 			return;
 		}
 		setRefreshing(true);
 		(async () => {
-			const [b, a] = await Promise.all([
-				helper.getNetworkBalance(),
-				helper.getNetworkAccountInfo(),
-			]);
+			// Sequential on purpose: on a cold usereg session both calls would fail
+			// their login probe and roam into usereg concurrently, and two parallel
+			// SSO entries can invalidate each other. The first call establishes the
+			// session for the second.
+			const b = await helper.getNetworkBalance();
+			const a = await helper.getNetworkAccountInfo();
 			setBalance(b);
 			setAccountInfo(a);
 		})()
-			.catch((e) => {
-				if (e instanceof UseregAuthError) {
-					navigation.navigate("NetworkLogin");
-				} else {
-					NetworkRetry(e);
-				}
-			})
+			.catch(NetworkRetry)
 			.then(() => setRefreshing(false));
 	};
 
@@ -57,28 +48,7 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 	}
 
 	const Row = ({left, right}: RowProps) => (
-		<View
-			style={{
-				flexDirection: "row",
-				justifyContent: "space-between",
-				margin: 8,
-				marginHorizontal: 16,
-			}}>
-			<Text
-				style={{
-					color: colors.fontB3,
-					fontSize: 16,
-				}}>
-				{left}
-			</Text>
-			<Text
-				style={{
-					color: colors.text,
-					fontSize: 16,
-				}}>
-				{right}
-			</Text>
-		</View>
+		<DetailRow label={left} value={right} />
 	);
 
 	return (
@@ -90,7 +60,7 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 						onRefresh={refresh}
 					/>
 				}>
-				<RoundedView style={{margin: 24, paddingVertical: 8}}>
+				<SectionCard>
 					<Row
 						left={getStr("networkUsername")}
 						right={accountInfo?.username ?? "-"}
@@ -140,7 +110,7 @@ export const NetworkDetailScreen = ({navigation}: {navigation: RootNav}) => {
 						left={getStr("networkAllowedDevices")}
 						right={accountInfo?.allowedDevices.toString() ?? "-"}
 					/>
-				</RoundedView>
+				</SectionCard>
 			</ScrollView>
 		</GestureHandlerRootView>
 	);

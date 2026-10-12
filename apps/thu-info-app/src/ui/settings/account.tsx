@@ -14,10 +14,13 @@ import {RootNav} from "../../components/Root";
 import {RoundedView} from "../../components/views";
 import IconRight from "../../assets/icons/IconRight";
 import {styles} from "./settings";
+import {SubPageScreen} from "../../components/subpage/containers";
 import {configSet} from "../../redux/slices/config";
 import themes from "../../assets/themes/themes";
 import {Snackbar} from "react-native-snackbar";
 import {logout} from "../../redux/slices/auth.ts";
+import {PasskeySettings} from "../../components/settings/passkeySettings";
+import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
 
 export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 	const themeName = useColorScheme();
@@ -32,12 +35,36 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 	const dispatch = useDispatch();
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<SubPageScreen>
 			<RoundedView style={style.rounded}>
 				<View style={style.touchable}>
 					<Text style={style.text}>{getStr("infoAccount")}</Text>
 					<Text style={style.version}>{userId}</Text>
 				</View>
+			</RoundedView>
+			<RoundedView style={style.rounded}>
+				<TouchableOpacity
+					accessibilityRole="button"
+					style={style.touchable}
+					onPress={() =>
+						navigation.navigate(userId ? "IdPersonalInfo" : "Login")
+					}>
+					<Text style={style.text}>{getStr("personalInformation")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+				<View style={style.separator} />
+				<TouchableOpacity
+					accessibilityRole="button"
+					style={style.touchable}
+					onPress={() => navigation.navigate(userId ? "IdLoginLogs" : "Login")}>
+					<Text style={style.text}>{getStr("idLoginLogs")}</Text>
+					<IconRight height={20} width={20} />
+				</TouchableOpacity>
+				<View style={style.separator} />
+				<IdMaintenanceNotice style={style.touchable}>
+					<Text style={style.text}>{getStr("idManageAccountSettings")}</Text>
+					<IconRight height={20} width={20} />
+				</IdMaintenanceNotice>
 			</RoundedView>
 			<RoundedView style={style.rounded}>
 				<TouchableOpacity
@@ -53,7 +80,13 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 						}
 					}}>
 					<Text style={style.text}>{getStr("appSecret")}</Text>
-					<View style={{flexDirection: "row", alignItems: "center"}}>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							flexShrink: 1,
+							minWidth: 0,
+						}}>
 						<Text style={style.version}>
 							{getStr(appSecret === undefined ? "notConfigured" : "configured")}
 						</Text>
@@ -61,6 +94,7 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 					</View>
 				</TouchableOpacity>
 			</RoundedView>
+			<PasskeySettings navigation={navigation} />
 			{Platform.OS === "android" && (
 				<RoundedView style={style.rounded}>
 					<View style={style.touchable}>
@@ -93,19 +127,22 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 								getStr("deleteAccountConfirm"),
 								getStr("deleteAccountPrompt"),
 								[
-									{text: getStr("confirm"), onPress: () => {
-										helper.logout();
-										dispatch(logout());
-										navigation.pop();
-										setTimeout(() => {
-											Snackbar.show({
-												text: getStr("accountDeleted"),
-												duration: Snackbar.LENGTH_LONG,
-											});
-										}, 800);
-									}},
+									{
+										text: getStr("confirm"),
+										onPress: () => {
+											helper.logout();
+											dispatch(logout());
+											navigation.pop();
+											setTimeout(() => {
+												Snackbar.show({
+													text: getStr("accountDeleted"),
+													duration: Snackbar.LENGTH_LONG,
+												});
+											}, 800);
+										},
+									},
 									{text: getStr("cancel")},
-								]
+								],
 							);
 						}}>
 						<Text style={style.text}>{getStr("deleteAccount")}</Text>
@@ -115,6 +152,6 @@ export const AccountScreen = ({navigation}: {navigation: RootNav}) => {
 					</TouchableOpacity>
 				</RoundedView>
 			)}
-		</View>
+		</SubPageScreen>
 	);
 };

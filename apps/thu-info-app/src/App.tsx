@@ -2,22 +2,19 @@ import "./utils/extensions";
 import {Provider, useDispatch, useSelector} from "react-redux";
 import {navigationRef, persistor, State, store} from "./redux/store";
 import {PersistGate} from "redux-persist/integration/react";
-import {useEffect, useRef} from "react";
+import {useEffect} from "react";
 import {
 	DarkTheme,
 	DefaultTheme,
 	NavigationContainer,
-	NavigationContainerRef,
-	NavigationIndependentTree,
 } from "@react-navigation/native";
-import {Alert, Dimensions, StatusBar, useColorScheme} from "react-native";
+import {Alert, StatusBar, useColorScheme} from "react-native";
 import themes from "./assets/themes/themes";
 import {configSet} from "./redux/slices/config";
 import {DigitalPasswordScreen} from "./ui/settings/digitalPassword";
 import {Root} from "./components/Root";
 import {getStr} from "./utils/i18n";
-import {SplitViewProvider} from "./components/SplitView";
-import DeviceInfo from "react-native-device-info";
+import {initWidgetSync} from "./utils/scheduleWidget";
 
 const RootComponent = () => {
 	const themeName = useColorScheme();
@@ -38,14 +35,7 @@ const RootComponent = () => {
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const studentNotified = useSelector((s: State) => s.config.studentNotified);
-	const tabletMode = useSelector((s: State) => s.config.tabletMode);
 	const dispatch = useDispatch();
-
-	const detailNavigationContainerRef = useRef<NavigationContainerRef<{}>>(null);
-
-	const windowWidth = Dimensions.get("window").width;
-	const showDetail = windowWidth >= 400;
-	const splitEnabled = (tabletMode ?? false) && DeviceInfo.isTablet();
 
 	useEffect(() => {
 		if (studentNotified !== true) {
@@ -73,40 +63,25 @@ const RootComponent = () => {
 				backgroundColor={darkModeHook ? "black" : "white"}
 				animated
 			/>
-			<SplitViewProvider
-				splitEnabled={splitEnabled}
-				detailNavigationContainerRef={
-					showDetail ? detailNavigationContainerRef : null
-				}
-				showDetail={showDetail}>
-				<NavigationContainer
-					ref={navigationRef}
-					theme={navigationTheme}>
-					{appLocked === true ? (
-						<DigitalPasswordScreen
-							navigation={undefined}
-							// @ts-ignore
-							route={{params: {action: "verify"}}}
-						/>
-					) : (
-						<Root showRootTabs />
-					)}
-				</NavigationContainer>
-				{splitEnabled && (
-					<NavigationIndependentTree>
-						<NavigationContainer
-							ref={detailNavigationContainerRef}
-							theme={navigationTheme}>
-							<Root showRootTabs={false} />
-						</NavigationContainer>
-					</NavigationIndependentTree>
+			<NavigationContainer ref={navigationRef} theme={navigationTheme}>
+				{appLocked === true ? (
+					<DigitalPasswordScreen
+						navigation={undefined}
+						// @ts-ignore
+						route={{params: {action: "verify"}}}
+					/>
+				) : (
+					<Root />
 				)}
-			</SplitViewProvider>
+			</NavigationContainer>
 		</>
 	);
 };
 
 export const App = () => {
+	// No-op on platforms without schedule widgets; pushes the schedule snapshot
+	// to the home-screen cards on harmony and Android.
+	initWidgetSync();
 	return (
 		<Provider store={store}>
 			<PersistGate persistor={persistor}>

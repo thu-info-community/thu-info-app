@@ -66,11 +66,16 @@ export function paginatedRefreshListScreen<T, R>(
 			<FlatList
 				style={{flex: 1, margin: 12}}
 				data={data}
-				contentContainerStyle={{
-					backgroundColor: theme.colors.contentBackground,
-					padding: 16,
-					...(containerStyles as object),
-				}}
+				contentContainerStyle={
+					data.length === 0 && !header
+						? undefined
+						: {
+								backgroundColor: theme.colors.contentBackground,
+								borderRadius: 12,
+								padding: 16,
+								...(containerStyles as object),
+						  }
+				}
 				refreshControl={
 					<ThemedRefreshControl
 						refreshing={refreshing}

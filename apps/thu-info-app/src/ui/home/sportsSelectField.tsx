@@ -1,5 +1,11 @@
 import {useState} from "react";
-import {Text, TouchableOpacity, useColorScheme, View} from "react-native";
+import {
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	useColorScheme,
+	View,
+} from "react-native";
 import {RoundedView} from "../../components/views";
 import IconCheck from "../../assets/icons/IconCheck";
 import {RootNav, SportsSelectFieldProp} from "../../components/Root";
@@ -20,7 +26,7 @@ export const SportsSelectFieldScreen = ({
 	);
 
 	return (
-		<View style={{flex: 1, padding: 12}}>
+		<ScrollView style={{flex: 1}} contentContainerStyle={{padding: 12}}>
 			<RoundedView style={style.rounded}>
 				{params.availableFields.map(({id, name, cost}, index) => (
 					<View key={id}>
@@ -43,12 +49,16 @@ export const SportsSelectFieldScreen = ({
 									});
 								}
 							}}>
-							<Text style={style.text}>{`${name}（${cost}元）`}</Text>
+							<Text
+								style={[
+									style.text,
+									{flex: 1, minWidth: 0},
+								]}>{`${name}（${cost}元）`}</Text>
 							{index === indexSelected && <IconCheck width={18} height={18} />}
 						</TouchableOpacity>
 					</View>
 				))}
 			</RoundedView>
-		</View>
+		</ScrollView>
 	);
 };

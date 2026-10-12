@@ -12,11 +12,13 @@ export const PhysicalExamScreen = roundedRefreshListScreen(
 				flexDirection: "row",
 				alignItems: "center",
 				justifyContent: "space-between",
+				gap: 12,
 			}}>
 			<Text
 				style={{
 					fontSize: 16,
 					color: colors.text,
+					flex: 1,
 				}}>
 				{key}
 			</Text>
@@ -24,6 +26,8 @@ export const PhysicalExamScreen = roundedRefreshListScreen(
 				style={{
 					fontSize: 16,
 					color: colors.fontB3,
+					flex: 2,
+					textAlign: "right",
 				}}>
 				{value}
 			</Text>

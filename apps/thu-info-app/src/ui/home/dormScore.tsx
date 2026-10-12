@@ -1,7 +1,7 @@
 import {View, useColorScheme} from "react-native";
 import {useEffect, useState} from "react";
 import {NetworkRetry} from "../../components/easySnackbars";
-import ImageViewer from "react-native-image-zoom-viewer";
+import {ResponsiveImageViewer} from "../../components/ResponsiveImageViewer";
 import {helper, State} from "../../redux/store";
 import {useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
@@ -20,7 +20,7 @@ export const DormScoreScreen = () => {
 	return (
 		<View style={{flex: 1}}>
 			{base64 && (
-				<ImageViewer
+				<ResponsiveImageViewer
 					imageUrls={[{ url: `data:image/png;base64,${base64}` }]}
 					backgroundColor={colors.themeBackground}
 					saveToLocalByLongPress={false}

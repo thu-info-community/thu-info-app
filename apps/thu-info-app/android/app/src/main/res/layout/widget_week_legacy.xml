@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WeekCard.ets legacyWeek(): flow layout for pre-weekView snapshots
+	(and, on Android, pre-API-31 devices). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/widget_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layoutDirection="ltr"
+	android:orientation="vertical"
+	android:background="@drawable/widget_bg"
+	android:padding="12dp">
+
+	<TextView
+		android:id="@+id/widget_week_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:textSize="12sp"
+		android:textColor="@color/widget_text_tertiary"
+		android:visibility="gone" />
+
+	<LinearLayout
+		android:id="@+id/widget_week_header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:baselineAligned="false">
+
+		<TextView
+			android:id="@+id/widget_week_title"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/widget_week_header"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			android:textColor="@color/widget_text_primary" />
+
+		<TextView
+			android:id="@+id/widget_week_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="11sp"
+			android:textColor="@color/widget_text_secondary"
+			android:maxLines="1" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/widget_legacy_headings"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="6dp"
+		android:orientation="horizontal" />
+
+	<ImageView
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_marginTop="4dp"
+		android:layout_marginBottom="4dp"
+		android:background="@drawable/widget_line" />
+
+	<LinearLayout
+		android:id="@+id/widget_legacy_row"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="horizontal"
+		android:divider="@drawable/widget_divider_h_2"
+		android:showDividers="middle" />
+</LinearLayout>

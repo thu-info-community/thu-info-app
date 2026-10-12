@@ -9,6 +9,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 	useColorScheme,
+	useWindowDimensions,
 	View,
 } from "react-native";
 import {RootNav, SportsSelectProp} from "../../components/Root";
@@ -18,11 +19,13 @@ import {getStr} from "../../utils/i18n";
 import {helper} from "../../redux/store";
 import {Snackbar} from "react-native-snackbar";
 import {RoundedView} from "../../components/views";
+import {PrimaryButton} from "../../components/subpage/buttons";
 import IconRight from "../../assets/icons/IconRight";
 import {SportsIdInfo} from "@thu-info/lib/src/models/home/sports";
 import {setActiveSportsReservationRecord} from "../../redux/slices/reservation";
 import {uFetch} from "@thu-info/lib/src/utils/network";
 import {useDispatch} from "react-redux";
+import {scaledLineHeight} from "../../utils/scaledText";
 
 export interface SportsSelectParams {
 	info: SportsIdInfo;
@@ -48,6 +51,7 @@ export const SportsSelectScreen = ({
 		availableFields,
 		selectedFieldIndex,
 	} = params;
+	const {fontScale} = useWindowDimensions();
 
 	const dispatch = useDispatch();
 
@@ -90,7 +94,8 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								flexShrink: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{getStr("gym")}
 						</Text>
@@ -98,18 +103,21 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.fontB3,
 								fontSize: 16,
-								lineHeight: 24,
+								flex: 1,
+								minWidth: 0,
+								textAlign: "right",
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{name}
 						</Text>
 					</View>
 					<View
 						style={[
-						style.separator,
-						{
-							marginHorizontal: 0,
-						},
-					]}
+							style.separator,
+							{
+								marginHorizontal: 0,
+							},
+						]}
 					/>
 					<View
 						style={{
@@ -121,7 +129,8 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								flexShrink: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{getStr("date")}
 						</Text>
@@ -129,18 +138,21 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.fontB3,
 								fontSize: 16,
-								lineHeight: 24,
+								flex: 1,
+								minWidth: 0,
+								textAlign: "right",
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{date}
 						</Text>
 					</View>
 					<View
 						style={[
-						style.separator,
-						{
-							marginHorizontal: 0,
-						},
-					]}
+							style.separator,
+							{
+								marginHorizontal: 0,
+							},
+						]}
 					/>
 					<View
 						style={{
@@ -152,7 +164,8 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								flexShrink: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{getStr("duration")}
 						</Text>
@@ -160,18 +173,21 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.fontB3,
 								fontSize: 16,
-								lineHeight: 24,
+								flex: 1,
+								minWidth: 0,
+								textAlign: "right",
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{period}
 						</Text>
 					</View>
 					<View
 						style={[
-						style.separator,
-						{
-							marginHorizontal: 0,
-						},
-					]}
+							style.separator,
+							{
+								marginHorizontal: 0,
+							},
+						]}
 					/>
 					<TouchableOpacity
 						onPress={() => navigation.navigate("SportsSelectField", params)}
@@ -184,16 +200,27 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								flexShrink: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{getStr("field")}
 						</Text>
-						<View style={{flexDirection: "row", alignItems: "center"}}>
+						<View
+							style={{
+								flex: 1,
+								minWidth: 0,
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "flex-end",
+							}}>
 							<Text
 								style={{
 									color: colors.fontB3,
 									fontSize: 16,
-									lineHeight: 24,
+									flexShrink: 1,
+									minWidth: 0,
+									textAlign: "right",
+									lineHeight: scaledLineHeight(24, fontScale),
 								}}>
 								{field === undefined
 									? getStr("pleaseSelect")
@@ -214,7 +241,8 @@ export const SportsSelectScreen = ({
 							style={{
 								color: colors.text,
 								fontSize: 16,
-								lineHeight: 24,
+								flexShrink: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}>
 							{getStr("phoneNumber")}
 						</Text>
@@ -223,7 +251,9 @@ export const SportsSelectScreen = ({
 								color: colors.text,
 								padding: 0,
 								fontSize: 16,
-								lineHeight: 24,
+								flex: 1,
+								minWidth: 0,
+								lineHeight: scaledLineHeight(24, fontScale),
 								textAlign: "right",
 							}}
 							value={phoneNumber}
@@ -241,7 +271,7 @@ export const SportsSelectScreen = ({
 								color: colors.text,
 								padding: 0,
 								fontSize: 16,
-								lineHeight: 24,
+								lineHeight: scaledLineHeight(24, fontScale),
 							}}
 							value={captcha}
 							onChangeText={setCaptcha}
@@ -261,6 +291,8 @@ export const SportsSelectScreen = ({
 								flexDirection: "row",
 								justifyContent: "space-between",
 								alignItems: "center",
+								flexWrap: "wrap",
+								rowGap: 8,
 							}}>
 							<Image
 								source={{uri: `data:image/jpg;base64,${imageBase64}`}}
@@ -272,7 +304,7 @@ export const SportsSelectScreen = ({
 									style={{
 										color: colors.themePurple,
 										fontSize: 16,
-										lineHeight: 24,
+										lineHeight: scaledLineHeight(24, fontScale),
 									}}>
 									{getStr("clickToRefresh")}
 								</Text>
@@ -291,22 +323,9 @@ export const SportsSelectScreen = ({
 					{getStr("needToPay")}
 					{field?.cost ?? 0}
 				</Text>
-				<TouchableOpacity
-					style={{
-						padding: 8,
-						justifyContent: "center",
-						alignItems: "center",
-						borderRadius: 4,
-						alignSelf: "flex-end",
-						margin: 12,
-						backgroundColor:
-							field === undefined ||
-							(!helper.mocked() &&
-								(captcha.trim().length === 0 ||
-									phoneNumber.trim().length === 0))
-								? "lightgrey"
-								: colors.themePurple,
-					}}
+				<PrimaryButton
+					text={getStr("submitOrder")}
+					style={{alignSelf: "flex-end", margin: 12}}
 					onPress={() => {
 						if (field && field.cost > 42) {
 							Alert.alert(
@@ -359,17 +378,8 @@ export const SportsSelectScreen = ({
 						processing ||
 						(!helper.mocked() &&
 							(captcha.trim().length === 0 || phoneNumber.trim().length === 0))
-					}>
-					<Text
-						style={{
-							color: "white",
-							fontWeight: "400",
-							fontSize: 20,
-							lineHeight: 24,
-						}}>
-						{getStr("submitOrder")}
-					</Text>
-				</TouchableOpacity>
+					}
+				/>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

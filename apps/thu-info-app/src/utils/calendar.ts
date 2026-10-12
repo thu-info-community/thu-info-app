@@ -1,8 +1,8 @@
+import {schedulesInSemester, StoredSchedule} from "../redux/scheduleData";
 import {getStr} from "./i18n";
-import {Schedule, ScheduleType, TimeSlice, getBeginPeriod, getEndPeriod} from "@thu-info/lib/src/models/schedule/schedule";
+import {Schedule, ScheduleType, TimeSlice, getBeginPeriod, getEndPeriod, getWeekFromTime} from "@thu-info/lib/src/models/schedule/schedule";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import {createEvent} from "ics";
-import dayjs from "dayjs";
 import {Platform} from "react-native";
 import ReactNativeBlobUtil from "react-native-blob-util";
 
@@ -112,16 +112,15 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 	};
 
 	const events: string[] = [];
-	const semesterStartDate = dayjs(semester.firstDay);
 
-	schedules.forEach((schedule) => {
+	schedulesInSemester(schedules, semester).forEach((schedule) => {
 		schedule.activeTime.base.forEach((timeSlice: TimeSlice) => {
 			// Use beginTime and endTime directly
 			const startDateTime = timeSlice.beginTime;
 			const endDateTime = timeSlice.endTime;
 			
 			// Calculate week number from beginTime
-			const week = Math.floor(timeSlice.beginTime.diff(semesterStartDate, "day") / 7) + 1;
+			const week = getWeekFromTime(timeSlice.beginTime, semester.firstDay);
 			
 			// Get period numbers for description
 			const beginPeriod = getBeginPeriod(timeSlice.beginTime);
@@ -155,7 +154,7 @@ export const generateScheduleICS = (schedules: Schedule[], semester: Semester): 
 					`${getStr("scheduleICSTimeSlot")}: ${getStr("scheduleICSPeriod").replace("{0}", beginPeriod.toString()).replace("{1}", endPeriod.toString())}\n` +
 					`${getStr("dayOfWeek")[0]}: ${getStr("dayOfWeek")[timeSlice.dayOfWeek]}\n` +
 					`${getStr("weekNumPrefix")}: ${getStr("scheduleICSWeekPrefix")}${week}${getStr("scheduleICSWeekSuffix")}`,
-				uid: `${schedule.hash}-${week}-${timeSlice.dayOfWeek}-${beginPeriod}@thu-info-app`,
+				uid: `${encodeURIComponent(JSON.stringify([(schedule as Partial<StoredSchedule>).localId ?? [schedule.type, schedule.category, schedule.name, schedule.location], timeSlice.beginTime.valueOf(), timeSlice.endTime.valueOf(), timeSlice.id]))}@thu-info-app`,
 			});
 
 			if (!eventResult.error && eventResult.value) {

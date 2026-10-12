@@ -3,7 +3,6 @@ import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {
 	FlatList,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	useColorScheme,
 	View,
@@ -15,7 +14,14 @@ import {helper} from "../../redux/store";
 import {CrCoursePlanRouteProp, RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {CoursePlan} from "@thu-info/lib/src/models/cr/cr";
-import {SettingsLargeButton} from "../../components/settings/items";
+import {ThemedTextInput} from "../../components/subpage/fields";
+import {PrimaryButton} from "../../components/subpage/buttons";
+import {Separator} from "../../components/subpage/rows";
+import {
+	radius,
+	roundedListContent,
+	spacing,
+} from "../../components/subpage/tokens";
 
 export const CrCoursePlanScreen = ({
 	route,
@@ -44,29 +50,33 @@ export const CrCoursePlanScreen = ({
 	return (
 		<KeyboardAvoidingScreen>
 			<FlatList
-				style={{flex: 1}}
+				style={{flex: 1, margin: spacing.md}}
 				data={coursePlan}
+				contentContainerStyle={roundedListContent(colors, true)} // sheet carries the search row
 				ListHeaderComponent={
-					<View style={{flexDirection: "row"}}>
-						<TextInput
+					<View style={{flexDirection: "row", flexWrap: "wrap", rowGap: 8}}>
+						<ThemedTextInput
 							value={searchKey}
 							onChangeText={setSearchKey}
 							style={{
-								flex: 3,
+								// Keep a usable field; at a large font the search button
+								// wraps below instead of squeezing the input to nothing.
+								flexGrow: 1,
+								flexShrink: 1,
+								flexBasis: 200,
+								minWidth: 0,
 								marginLeft: 12,
 								textAlignVertical: "center",
 								fontSize: 15,
 								paddingHorizontal: 12,
 								backgroundColor: colors.themeBackground,
-								color: colors.text,
 								borderColor: colors.inputBorder,
 								borderWidth: 1,
-								borderRadius: 5,
+								borderRadius: radius.control,
 							}}
 							placeholder={getStr("searchCourseName")}
-							placeholderTextColor={colors.fontB3}
 						/>
-						<SettingsLargeButton
+						<PrimaryButton
 							text={getStr("search")}
 							onPress={() => {
 								navigation.navigate("CrSearchResult", {
@@ -77,39 +87,39 @@ export const CrCoursePlanScreen = ({
 								});
 							}}
 							disabled={searchKey.length === 0}
-							redText={false}
 						/>
 					</View>
 				}
 				refreshControl={
-					<ThemedRefreshControl
-						refreshing={refreshing}
-						onRefresh={refresh}
-					/>
+					<ThemedRefreshControl refreshing={refreshing} onRefresh={refresh} />
 				}
-				renderItem={({item: {id, name, property, credit, group}}) => (
-					<TouchableOpacity
-						style={{
-							paddingHorizontal: 15,
-							paddingVertical: 6,
-							flexDirection: "row",
-							justifyContent: "space-between",
-						}}
-						onPress={() => {
-							navigation.navigate("CrSearchResult", {
-								searchParams: {semester: route.params.semesterId, id},
-							});
-						}}>
-						<View style={{flex: 2, alignItems: "flex-start"}}>
-							<Text style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
-								[{property}] {name}
-							</Text>
-							<Text style={{color: "grey", marginVertical: 2}}>
-								{id} ({credit} cr)
-							</Text>
-							<Text style={{color: "grey", marginVertical: 2}}>{group}</Text>
-						</View>
-					</TouchableOpacity>
+				renderItem={({item: {id, name, property, credit, group}, index}) => (
+					<>
+						{index > 0 && <Separator style={{marginHorizontal: 0}} />}
+						<TouchableOpacity
+							style={{
+								flexDirection: "row",
+								justifyContent: "space-between",
+							}}
+							onPress={() => {
+								navigation.navigate("CrSearchResult", {
+									searchParams: {semester: route.params.semesterId, id},
+								});
+							}}>
+							<View style={{flex: 2, alignItems: "flex-start"}}>
+								<Text
+									style={{fontSize: 16, marginVertical: 2, color: colors.text}}>
+									[{property}] {name}
+								</Text>
+								<Text style={{color: colors.fontB2, marginVertical: 2}}>
+									{id} ({credit} cr)
+								</Text>
+								<Text style={{color: colors.fontB2, marginVertical: 2}}>
+									{group}
+								</Text>
+							</View>
+						</TouchableOpacity>
+					</>
 				)}
 				keyExtractor={({id}) => id}
 			/>
