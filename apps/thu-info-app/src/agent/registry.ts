@@ -15,8 +15,6 @@ const local = (
 	category: "schedule",
 	description,
 	inputSchema,
-	outputSchema: {},
-	parameters: Object.keys(inputSchema.properties ?? {}),
 	effect,
 	impact,
 	mode: "wrapper",

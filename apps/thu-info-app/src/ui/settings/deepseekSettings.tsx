@@ -9,9 +9,7 @@ import {
 } from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import themes from "../../assets/themes/themes";
-import IconCheck from "../../assets/icons/IconCheck";
 import {agentService} from "../../agent/service";
-import {campusModel, type ThinkingLevel} from "../../agent/types";
 import {agentText} from "../../components/home/agentChatPresentation";
 import {AdaptiveRow, useFontScale} from "../../components/subpage/adaptive";
 import {SubPageScreen} from "../../components/subpage/containers";
@@ -29,21 +27,12 @@ type StorageUsage = {account: string} & (
 );
 type ClearKind = "details" | "all";
 
-const thinkingLabel = (level: ThinkingLevel) =>
-	({
-		default: agentText("Model default", "模型默认"),
-		off: agentText("Off", "关闭"),
-		low: agentText("Low", "低强度"),
-		high: agentText("High", "高强度"),
-		max: agentText("Maximum", "最高强度"),
-	})[level];
-
 export const DeepSeekSettingsScreen = () => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const {colors} = themes(themeName);
 	const {isLargeText} = useFontScale();
-	const {bubbleMessage, agentThinking} = useSelector((s: State) => s.config);
+	const bubbleMessage = useSelector((s: State) => s.config.bubbleMessage);
 	const account = useSelector((s: State) => s.auth.userId);
 	const dispatch = useDispatch();
 	const [usage, setUsage] = useState<StorageUsage>();
@@ -202,35 +191,6 @@ export const DeepSeekSettingsScreen = () => {
 					)}
 				</Text>
 			</View>
-
-			{campusModel.thinkingLevels.length > 1 && (
-				<View style={style.section}>
-					<Text style={style.heading} accessibilityRole="header">
-						{agentText("Thinking level", "思考强度")}
-					</Text>
-					<RoundedView style={style.group} accessibilityRole="radiogroup">
-						{campusModel.thinkingLevels.map((level, index) => (
-							<Fragment key={level}>
-								{index > 0 && <Separator style={style.separator} />}
-								<Pressable
-									accessibilityRole="radio"
-									accessibilityState={{
-										checked: level === (agentThinking ?? "default"),
-									}}
-									style={({pressed}) => [style.row, pressed && style.pressed]}
-									onPress={() =>
-										dispatch(configSet({key: "agentThinking", value: level}))
-									}>
-									<Text style={style.text}>{thinkingLabel(level)}</Text>
-									{level === (agentThinking ?? "default") && (
-										<IconCheck width={18} height={18} />
-									)}
-								</Pressable>
-							</Fragment>
-						))}
-					</RoundedView>
-				</View>
-			)}
 
 			<View style={style.section}>
 				<Text style={style.heading} accessibilityRole="header">

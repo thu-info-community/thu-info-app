@@ -76,14 +76,13 @@ test("replays reasoning across user turns and requires complete exchanges", () =
 	expect(() => toChatMessages([prompt[1]])).toThrow("Orphan");
 });
 
-test("only sends campus chat/completions parameters and rejects unverified thinking", async () => {
+test("only sends campus chat/completions parameters using provider defaults", async () => {
 	const {transport, bodies} = scripted([{text: "ok"}]);
 	const model = createCampusModel(campusModel, transport);
 	await model.doGenerate({prompt: [{role: "user", content: [{type: "text", text: "hi"}]}]});
 	expect(bodies[0]).toMatchObject({model: "DeepSeek-V4.1-Flash", stream: true});
 	expect(bodies[0]).not.toHaveProperty("reasoning_effort");
 	expect(bodies[0]).not.toHaveProperty("thinking");
-	expect(() => createCampusModel(campusModel, transport, "high")).toThrow();
 });
 
 test.each([

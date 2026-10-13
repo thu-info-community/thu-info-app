@@ -7,7 +7,7 @@ import type {
 	LanguageModelV4Usage,
 } from "@ai-sdk/provider";
 import type {AssistantModelMessage, ModelMessage} from "ai";
-import type {ModelCapabilities, ThinkingLevel} from "./types";
+import type {ModelCapabilities} from "./types";
 import {byteLength, sanitize, truncateBytes} from "./util";
 
 export interface ChatWireMessage {
@@ -284,16 +284,9 @@ export class CompletionDecoder {
 export const createCampusModel = (
 	capabilities: ModelCapabilities,
 	transport: CompletionTransport,
-	thinking: ThinkingLevel = "default",
 	onAssistant?: (message: ModelMessage) => Promise<void>,
 ): LanguageModelV4 => {
-	if (!capabilities.thinkingLevels.includes(thinking)) {
-		throw new Error("This thinking level has not been verified for the campus endpoint");
-	}
 	const body = (options: LanguageModelV4CallOptions): Record<string, unknown> => {
-		if (!capabilities.thinkingLevels.includes(thinking)) {
-			throw new Error("This thinking level has not been verified for the campus endpoint");
-		}
 		const tools = options.tools?.map((tool) => {
 			if (tool.type !== "function") {
 				throw new Error("Only local function tools are supported");
@@ -317,11 +310,6 @@ export const createCampusModel = (
 								: (options.toolChoice?.type ?? "auto"),
 					}
 				: {}),
-			...(thinking === "off"
-				? {thinking: {type: "disabled"}}
-				: thinking === "default"
-					? {}
-					: {thinking: {type: "enabled"}, reasoning_effort: thinking}),
 		};
 	};
 	return {

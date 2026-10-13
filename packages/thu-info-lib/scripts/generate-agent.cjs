@@ -28,10 +28,9 @@ const sportsIds = sportsSource.statements.flatMap((statement) => ts.isVariableSt
     .find((declaration) => declaration.name.getText(sportsSource) === "sportsIdInfoList");
 const sportsFacilities = vm.runInNewContext(`(${sportsIds.initializer.getText(sportsSource)})`);
 
-function schemaFor(type, input, seen = new Set()) {
+function schemaFor(type, seen = new Set()) {
     if (type.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown)) {
-        if (input) throw new Error(`Exposed input needs an explicit JSON wrapper: ${checker.typeToString(type)}`);
-        return {}; // Upstream untyped result: the app still bounds and sanitizes it.
+        throw new Error(`Exposed input needs an explicit JSON wrapper: ${checker.typeToString(type)}`);
     }
     if (type.flags & (ts.TypeFlags.Void | ts.TypeFlags.Undefined)) return {type: "null"};
     if (type.flags & ts.TypeFlags.Null) return {type: "null"};
@@ -43,7 +42,7 @@ function schemaFor(type, input, seen = new Set()) {
     if (type.flags & ts.TypeFlags.Boolean) return {type: "boolean"};
     if (type.isUnion()) {
         const branches = type.types.filter((t) => !(t.flags & ts.TypeFlags.Undefined));
-        const schemas = branches.map((t) => schemaFor(t, input, seen));
+        const schemas = branches.map((t) => schemaFor(t, seen));
         if (schemas.length === 1) return schemas[0];
         if (schemas.every((s) => s.type === schemas[0].type && s.enum)) {
             return {type: schemas[0].type, enum: schemas.flatMap((s) => s.enum)};
@@ -54,12 +53,11 @@ function schemaFor(type, input, seen = new Set()) {
     if (name === "Date" || name === "Dayjs") return {type: "string", description: "ISO 8601 date/time"};
     if (checker.isTupleType(type)) {
         const args = checker.getTypeArguments(type);
-        return {type: "array", items: args.map((t) => schemaFor(t, input, seen)), minItems: type.target.minLength, maxItems: args.length};
+        return {type: "array", items: args.map((t) => schemaFor(t, seen)), minItems: type.target.minLength, maxItems: args.length};
     }
-    if (checker.isArrayType(type)) return {type: "array", items: schemaFor(checker.getTypeArguments(type)[0], input, seen)};
+    if (checker.isArrayType(type)) return {type: "array", items: schemaFor(checker.getTypeArguments(type)[0], seen)};
     if (seen.has(type)) {
-        if (input) throw new Error(`Recursive input requires a wrapper: ${name}`);
-        return {};
+        throw new Error(`Recursive input requires a wrapper: ${name}`);
     }
     const nested = new Set(seen).add(type);
     const properties = {};
@@ -70,14 +68,13 @@ function schemaFor(type, input, seen = new Set()) {
         if (ts.getCombinedModifierFlags(declaration) & (ts.ModifierFlags.Private | ts.ModifierFlags.Protected)) continue;
         const propertyType = checker.getTypeOfSymbolAtLocation(property, declaration);
         if (checker.getSignaturesOfType(propertyType, ts.SignatureKind.Call).length) {
-            if (input) throw new Error(`Class input requires a wrapper: ${name}.${property.name}`);
-            continue;
+            throw new Error(`Class input requires a wrapper: ${name}.${property.name}`);
         }
-        properties[property.name] = schemaFor(propertyType, input, nested);
+        properties[property.name] = schemaFor(propertyType, nested);
         if (!(property.flags & ts.SymbolFlags.Optional) && !(propertyType.isUnion() && propertyType.types.some((t) => t.flags & ts.TypeFlags.Undefined))) required.push(property.name);
     }
     const index = checker.getIndexTypeOfType(type, ts.IndexKind.String);
-    return {type: "object", properties, required, additionalProperties: index ? schemaFor(index, input, nested) : false};
+    return {type: "object", properties, required, additionalProperties: index ? schemaFor(index, nested) : false};
 }
 
 const catalog = [];
@@ -99,7 +96,7 @@ for (const member of checker.getPropertiesOfType(helperType)) {
         parameters.push(parameter.name);
         if (policy.privateArgs?.includes(parameter.name)) continue;
         const type = checker.getTypeOfSymbolAtLocation(parameter, node);
-        properties[parameter.name] = schemaFor(type, true);
+        properties[parameter.name] = schemaFor(type);
         const doc = ts.displayPartsToString(parameter.getDocumentationComment(checker));
         if (doc) properties[parameter.name].description = doc.replace(/<[^>]*>/g, "");
         if (node.initializer && (ts.isNumericLiteral(node.initializer) || node.initializer.kind === ts.SyntaxKind.TrueKeyword || node.initializer.kind === ts.SyntaxKind.FalseKeyword || ts.isStringLiteral(node.initializer))) {
@@ -129,24 +126,11 @@ for (const member of checker.getPropertiesOfType(helperType)) {
         // Match the payment methods currently offered by the native campus-card screen.
         inputSchema.properties.type = {type: "integer", enum: [0, 1], description: "0: linked bank card transfer; 1: Alipay (user completes payment)"};
     }
-    const resultType = checker.getAwaitedType(checker.getReturnTypeOfSignature(signature));
-    const outputSchema = policy.outputSchema ?? (member.name === "rechargeCampusCard"
-        ? {type: "object", properties: {status: {type: "string"}, amount: {type: "number"}, paymentMethod: {type: "string"}, completed: {type: "boolean"}}, required: ["status", "amount", "paymentMethod", "completed"], additionalProperties: true}
-        : policy.mode === "interactive" ? {type: "object", properties: {status: {type: "string", enum: ["handoff"]}, route: {type: "string"}, completed: {type: "boolean", enum: [false]}}, required: ["status", "route", "completed"], additionalProperties: false}
-            : policy.result === "document" ? {type: "object", properties: {document: {type: "boolean", enum: [true]}, route: {type: "string"}, instruction: {type: "string"}}, required: ["document", "route", "instruction"], additionalProperties: false}
-                : schemaFor(resultType, false));
-    if (["searchCrRemaining", "searchCrCourses"].includes(member.name)) {
-        // These parsers explicitly use NaN for unknown counts; JSON emits null.
-        for (const key of ["capacity", "remaining", "queue"]) {
-            const fields = outputSchema.properties.courses.items.properties;
-            fields[key] = {anyOf: [fields[key], {type: "null"}]};
-        }
-    }
     const doc = policy.mode === "direct" && policy.result !== "document"
         ? ts.displayPartsToString(member.getDocumentationComment(checker)).replace(/<[^>]*>/g, "") : "";
     const description = `${policy.description}${doc ? `. ${doc}` : ""}${policy.mode === "interactive" ? ". Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen." : ""}`;
-    const version = crypto.createHash("sha256").update(JSON.stringify({policy, inputSchema, outputSchema, description})).digest("hex").slice(0, 16);
-    catalog.push({...policy, description, name: member.name, path: `${policy.category}.${member.name}`, parameters, inputSchema, outputSchema, version});
+    const version = crypto.createHash("sha256").update(JSON.stringify({policy, inputSchema, description})).digest("hex").slice(0, 16);
+    catalog.push({...policy, description, name: member.name, path: `${policy.category}.${member.name}`, inputSchema, version});
     // Only statically enumerated direct/JSON-compatible wrappers can call InfoHelper.
     if (policy.mode !== "interactive" && !policy.privateArgs?.length && !["saveCustomSchedule", "deleteCustomSchedule"].includes(member.name)) {
         bindings.push(`    ${member.name}: (helper${parameters.length ? ", args" : ""}) => helper.${member.name}(${parameters.map((p, i) => `args[${JSON.stringify(p)}] as Parameters<InfoHelper["${member.name}"]>[${i}]`).join(", ")}),`);

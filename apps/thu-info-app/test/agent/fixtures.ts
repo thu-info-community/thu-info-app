@@ -3,6 +3,8 @@ import type {SessionStorage, ToolContext} from "../../src/agent/types";
 import {canonical} from "../../src/agent/util";
 import type {CompletionTransport} from "../../src/agent/model";
 
+export const mailArgs = {subject: "hello", content: "body", recipient: "recipient@example.com"};
+
 export const memoryStorage = () => {
 	const entries = new Map<string, string>();
 	const storage: SessionStorage = {

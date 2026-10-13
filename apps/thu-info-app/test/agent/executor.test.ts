@@ -1,6 +1,6 @@
 import {ToolExecutor} from "../../src/agent/executor";
 import {ToolRegistry} from "../../src/agent/registry";
-import {fixture} from "./fixtures";
+import {fixture, mailArgs} from "./fixtures";
 
 const setup = () => {
 	const data = fixture();
@@ -13,22 +13,9 @@ const setup = () => {
 	);
 	return {...data, registry, executor};
 };
-// Discover actual parameter names from generated schema so drift fails loudly.
-const mail = {subject: "hello", content: "body", to: "recipient@example.com"};
-
 test("writes are persisted before dispatch and use single-use approval", async () => {
-	const {executor, session, context, sessions, registry} = setup();
-	const descriptor = registry.get("naiveSendMail")!;
-	const args = Object.fromEntries(
-		descriptor.parameters.map((key) => [
-			key,
-			key.toLowerCase().includes("subject")
-				? mail.subject
-				: key.toLowerCase().includes("content")
-					? mail.content
-					: mail.to,
-		]),
-	);
+	const {executor, session, context, sessions} = setup();
+	const args = mailArgs;
 	await expect(executor.approvalStatus("naiveSendMail", args, "c")).resolves.toBe("user-approval");
 	expect(context.invoke).not.toHaveBeenCalled();
 	await expect(executor.execute("naiveSendMail", args, "c")).rejects.toThrow("approval");
@@ -81,12 +68,15 @@ test("unknown outcomes block retry after details expire and restart, and regener
 	);
 });
 
-test("changed preview, expired approval, account lock and unimported tools fail closed", async () => {
+test("changed policy or preview, expired approval, account lock and unimported tools fail closed", async () => {
 	const {executor, registry, context, session, sessions} = setup();
-	const args = Object.fromEntries(
-		registry.get("naiveSendMail")!.parameters.map((key) => [key, "test"]),
-	);
+	const args = mailArgs;
 	await executor.approvalStatus("naiveSendMail", args, "c");
+	const tool = registry.get("naiveSendMail")!;
+	const version = tool.version;
+	tool.version = "updated-policy";
+	await expect(executor.decide("c", true)).rejects.toThrow("expired");
+	tool.version = version;
 	(context.prepare as jest.Mock).mockResolvedValue("changed target");
 	await expect(executor.decide("c", true)).rejects.toThrow("changed");
 	session.checkpoint.approvals[0].expiresAt = 0;

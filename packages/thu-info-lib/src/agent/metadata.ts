@@ -1,15 +1,5 @@
 import type {InfoHelper} from "../index";
-import type {JsonSchema, ToolPolicy} from "./types";
-
-const object = (properties: Record<string, JsonSchema>, required = Object.keys(properties)): JsonSchema =>
-    ({type: "object", properties, required, additionalProperties: false});
-const assessmentPerson = object({name: {type: "string"}, questions: {type: "array", items: {type: "string"}}});
-const courseResult = object({
-    status: {type: "string", enum: ["succeeded", "failed", "unknown"]},
-    message: {},
-    verified: {type: "boolean"},
-    instruction: {type: "string"},
-}, ["status", "message"]);
+import type {ToolPolicy} from "./types";
 
 const read = (category: string, description: string, extra: Partial<ToolPolicy> = {}): ToolPolicy =>
     ({category, description, effect: "read", impact: "routine", mode: "direct", ...extra});
@@ -63,11 +53,6 @@ export const agentMetadata = {
     getAssessmentList: read("academics", "List teaching assessments"),
     getAssessmentForm: read("academics", "Read an assessment form using the URL at index 2 of a tuple returned by getAssessmentList. Returns overall score/suggestion and teachers'/assistants' names and questions; hidden form fields are omitted", {
         mode: "wrapper",
-        outputSchema: object({
-            overall: object({score: {type: "string"}, suggestion: {type: "string"}}),
-            teachers: {type: "array", items: assessmentPerson},
-            assistants: {type: "array", items: assessmentPerson},
-        }),
     }),
     postAssessmentForm: native("academics", "Complete and submit a teaching assessment in the native screen", "Evaluation", ["form"]),
     getPhysicalExamResult: read("health", "Read physical fitness test results, not medical examination records", {lock: "physicalExam"}),
@@ -94,7 +79,6 @@ export const agentMetadata = {
     toggleSocketState: write("library", "Report whether a library seat has a power socket: available means present, unavailable means absent. This updates the shared presence report and does not switch physical power or test whether a socket works"),
     bookLibrarySeat: write("library", "Reserve an available seat using the exact seat and section returned by library queries; dateChoice 0 is today, 1 is tomorrow. Returns succeeded/failed and the portal message", {
         mode: "wrapper",
-        outputSchema: object({status: {type: "string", enum: ["succeeded", "failed"]}, message: {type: "string"}}),
     }),
     getBookingRecords: read("library", "Read library seat bookings"),
     cancelBooking: write("library", "Cancel a library seat booking. Pass the cancellable record's delId as id, not its display id", {mode: "wrapper"}),
@@ -118,10 +102,6 @@ export const agentMetadata = {
     getNewsListBySubscription: read("news", "Read news for a subscription"),
     getNewsDetail: read("news", "Read an exact article URL previously returned by a news list/search. Returns title, plain text and source URL; cite that URL. PDF articles return a document notice without PDF bytes", {
         mode: "wrapper", result: "news",
-        outputSchema: {anyOf: [
-            object({title: {type: "string"}, text: {type: "string"}, source: {type: "string"}}),
-            object({document: {type: "boolean", enum: [true]}, source: {type: "string"}, instruction: {type: "string"}}),
-        ]},
     }),
     addNewsToFavor: write("news", "Favorite a requested news article", {impact: "routine"}),
     removeNewsFromFavor: write("news", "Remove one requested news favorite", {impact: "routine"}),
@@ -137,10 +117,10 @@ export const agentMetadata = {
     searchCrRemaining: read("courses", "Search courses with remaining places. capacity/remaining/queue may be null when the portal does not provide a number; null means unknown, not zero"),
     searchCrPrimaryOpen: read("courses", "Search open primary courses"),
     searchCrCourses: read("courses", "Search course registration offerings. capacity/remaining/queue may be null when unavailable; null means unknown, not zero"),
-    selectCourse: write("courses", "Select a course; review semester, course, section, priority and will. Returns succeeded only when the portal accepts and the course appears in selected courses; failed/unknown is not success", {mode: "wrapper", outputSchema: courseResult}),
-    deleteCourse: write("courses", "Drop a selected course. Returns succeeded only when the portal accepts and the course is absent from selected courses; failed/unknown is not success", {mode: "wrapper", outputSchema: courseResult}),
+    selectCourse: write("courses", "Select a course; review semester, course, section, priority and will. Returns succeeded only when the portal accepts and the course appears in selected courses; failed/unknown is not success", {mode: "wrapper"}),
+    deleteCourse: write("courses", "Drop a selected course. Returns succeeded only when the portal accepts and the course is absent from selected courses; failed/unknown is not success", {mode: "wrapper"}),
     getSelectedCourses: read("courses", "Read selected courses for a semester"),
-    changeCourseWill: write("courses", "Change course selection preference (will 1, 2 or 3). Returns succeeded only when the portal accepts and the selected course has the requested will; failed/unknown is not success", {mode: "wrapper", outputSchema: courseResult}),
+    changeCourseWill: write("courses", "Change course selection preference (will 1, 2 or 3). Returns succeeded only when the portal accepts and the selected course has the requested will; failed/unknown is not success", {mode: "wrapper"}),
     getCrCurrentStage: read("courses", "Read the course registration stage"),
     searchCoursePriorityMeta: read("courses", "Read course priority metadata"),
     searchCoursePriorityInformation: read("courses", "Read course priority details. Each bxSelected/xxSelected/rxSelected tuple is [priority, first-choice, second-choice, third-choice] registration counts for compulsory/restricted elective/elective courses respectively"),

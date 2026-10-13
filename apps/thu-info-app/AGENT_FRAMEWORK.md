@@ -2,13 +2,13 @@
 
 ## Enable and rollout
 
-The **Assistant / 助手** uses the on-device agent implementation. **Settings → Assistant** offers message display preferences and storage management. Thinking settings appear only when the model capability descriptor offers multiple levels. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
+The **Assistant / 助手** uses the on-device agent implementation. **Settings → Assistant** offers message display preferences and storage management. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
 
 The first activation migrates Redux conversations from `master`, verifies their persisted message counts, and only then clears the Redux payload. Migration is restartable and preserves IDs, titles, visible text and timestamps. These histories had no account identity; the migration assigns them to the currently signed-in account. New history is account-separated.
 
 Treat `master` → branch tip as one atomic change. Agent checkpoints always contain `catalogPaths` and `protectedTools` arrays, including when empty; every operation contains its `targetFingerprint` when recorded, including denied actions. Session loading rejects incomplete checkpoints through `SessionDataError`, without backfilling fields or rewriting saved data. Intermediate branch formats are unsupported. The storage path and checkpoint version remain unchanged. Main's history migration and persisted model-token removal remain part of the upgrade.
 
-`src/utils/campusModel.ts` defines the assistant's default model name: `DeepSeek-V4.1-Flash`. `src/agent/types.ts` contains its capability descriptor, with a 128K (131,072) context token budget and a 4,096 output token limit. These gateway limits remain **unverified**. Only **Provider default** is enabled; it sends neither `thinking` nor `reasoning_effort`. Add a thinking choice only after checking its actual behavior on the campus gateway, not merely whether a request accepts the parameter. The settings UI follows this descriptor and hides the group when there is no choice.
+`src/utils/campusModel.ts` defines the assistant's default model name: `DeepSeek-V4.1-Flash`. `src/agent/types.ts` contains its capability descriptor, with a 128K (131,072) context token budget and a 4,096 output token limit. These gateway limits remain **unverified**. Requests use the provider default and send neither `thinking` nor `reasoning_effort`. Thinking controls are not exposed in settings.
 
 ## Boundaries
 
@@ -23,14 +23,14 @@ DeepSeek screen / native approval UI
 ```
 
 - Portal access stays in `@thu-info/lib`; no portal endpoints, login, redirect or cookie algorithms were changed.
-- `packages/thu-info-lib/src/agent/metadata.ts` explicitly classifies all 137 public callables/hooks: 112 discoverable tools and 25 internal-only entries. Three app-local schedule tools are added by the registry.
+- `packages/thu-info-lib/src/agent/metadata.ts` explicitly classifies all public callables/hooks as discoverable tools or internal-only entries. Three app-local schedule tools are added by the registry.
 - Library credentials, authentication hooks, captchas and opaque mutable form objects are not tools. Secret-dependent flows and assessment submission use allowlisted native screens, never model-supplied navigation destinations. Campus-card recharge has a reviewed app wrapper: approved bank transfers use the existing library API without a PIN, while Alipay requires the user to finish payment in Alipay. Payment URLs come only from the library and are not returned to the model.
 - App/account locks are checked before preparation, dispatch and result delivery. Conversations that have read locked data retain that protection, including after compaction. Backgrounding, changing accounts or locking the app pauses execution. Native requests already dispatched cannot be remotely “un-sent.”
 
 ## Adding or changing a tool
 
 1. Add/change its typed `InfoHelper` method using the library guide. Add a reviewed policy entry: category, real business effect, approval impact, direct/wrapper/native/internal mode, privacy lock, result handling and any private arguments. Do not infer effects from names or HTTP methods: `getEleRechargePayCode`, for example, creates an order.
-2. The build-time TypeScript reflection pass generates `packages/thu-info-lib/src/agent/catalog.generated.ts` from types, JSDoc and reviewed policies. It derives parameter/result schemas and descriptions, emits static calls, and hashes the reviewed descriptor. It rejects unclassified callables, stale policies and unsupported exposed input types. A small shared JSON-schema-subset validator consumes these artifacts without runtime compilation or `eval`. The generated file is ignored by Git and included in published library packages.
+2. The build-time TypeScript reflection pass generates `packages/thu-info-lib/src/agent/catalog.generated.ts` from types, JSDoc and reviewed policies. It derives input schemas and descriptions, emits static calls, and hashes the reviewed descriptor. It rejects unclassified callables, stale policies and unsupported exposed input types. A small shared JSON-schema-subset validator consumes these artifacts without runtime compilation or `eval`. The generated file is ignored by Git and included in published library packages.
 3. Implement any semantic adapter in `src/agent/nativeTools.ts`. Wrappers must use the same dispatcher and approval gate as generated tools. Examples: local schedule IDs → Dayjs schedules, current room availability and participants, fresh course-selection targets, assessment question projection, observed news URLs → text-only article, document → native document screen.
 4. Add positive/negative tests. Root dependency installation, library build/watch/test commands, and app start/Android/iOS/Harmony bundle/test commands generate the catalog before starting. CI generates and checks it before lint and tests; library packing regenerates it before publication. There is no continuous source watcher: after changing types, JSDoc or policies during a running development session, restart the command or run `yarn workspace @thu-info/lib agent:generate`. Unchanged output is not rewritten. Changing write semantics also requires changing the reviewed descriptor/version; do not leave pending approvals valid across a policy change.
 
@@ -75,37 +75,9 @@ The agent suite uses the real SDK with scripted Chat Completions streams and moc
 
 Verify on **Android, iOS and HarmonyOS**:
 
-1. Campus gateway streaming: fragmented reasoning/content, indexed parallel calls, `finish_reason`, `[DONE]`, usage and errors. Run several tool rounds and a subsequent user turn with reasoning enabled. Confirm context/output limits and each exposed thinking option.
+1. Campus gateway streaming: fragmented reasoning/content, indexed parallel calls, `finish_reason`, `[DONE]`, usage and errors. Run several tool rounds and a subsequent user turn. Confirm reasoning replay and context/output limits.
 2. Book a deliberately chosen test resource only after native approval; cancel only after a separate approval. Change/expire a target while its card is open. Repeat for a course change in a suitable test environment. Test rejected business responses, not only HTTP success.
 3. Stop/background/kill the app before dispatch, during a dispatched write, while awaiting approval and after the remote response. Restart: no automatic write replay; unknown outcomes require review. Test two approvals, native handoff return and regeneration.
 4. Switch accounts and exercise app/grade/finance/physical-exam locks both before reads and after data already exists in conversation memory. Verify no protected data flashes on screen or enters another model request.
 5. Migrate a large legacy history, simulate storage failures, expire details, search old titles, delete individual sessions/details/all, and exercise logout with and without clearing data. Confirm disk usage settles after repeated long streams.
 6. Check keyboard, scrolling, history modal, document links, action cards, source selection, text sizes and accessibility in both languages/themes. Native bundle success alone does not verify filesystem/SSE behavior on a device.
-
-Local verification on Node 24.21.0: 47 agent tests and 29 existing app tests pass (one existing test skipped); Android/iOS Metro bundles built; the library typecheck passes with `--skipLibCheck`. Full app typecheck still has existing React Native/Harmony typing errors; no new agent-file errors were found. The Harmony CLI command is unavailable in this environment.
-
-Android emulator inspection covered the chat composer above the keyboard, thinking/answer separation, new conversation and settings in dark mode. It caught legacy responses that omit the opening thinking delimiter, and unreadable default Markdown code colors; both are handled. Device filesystem persistence survived a JavaScript reload without clearing login.
-
-### Live gateway limitation observed on 2026-09-09
-
-A catalog-only request returned prose instead of native tool calls. Its saved checkpoint contained no tool exchange, and a separate direct non-streaming Chat Completions capture also had `tool_calls: null` with `finish_reason: "stop"`. Direct synthetic probes tested default/disabled thinking, forced/required function selection, legacy `functions`, structured text messages, Codex-style request fields and the captured generic Codex system prompt (personal memory/context excluded). None returned a native tool call. Some emitted function-shaped JSON in `content`; schema-only names/markers were not used correctly. Synthetic tool results were readable on a subsequent turn. This suggests a declaration/adapter issue on the public route, not an SDK stream-decoding problem; server-side behavior is not independently verified. The user's working Codex setup enters through Responses, not this public Chat Completions route. No campus writes or local schedule writes were dispatched in these checks.
-
-Settings previously included side-effect-free native function-call diagnostics for provider-default and explicitly disabled thinking. This debugging feature and its probe implementation were removed on 2026-10-13. A valid single call was only an initial compatibility check, not proof of complete multi-round support. Live write/approval/recovery flows still need validation; do not turn prose or arbitrary JSON into executable calls as a workaround. A separate strict action-protocol adapter would be an explicit compatibility choice, not something this implementation silently enables. Never commit authenticated request captures or bearer tokens.
-
-### Capabilities discovery loop observed and fixed on 2026-10-12
-
-The latest Android trace for “What can you do” had reached 22 steps and 11 compactions: the model repeatedly expanded all 15 categories, lost the oversized exchange during compaction, and started discovery again. Native tool calls and catalog results were present. The root overview now supplies capability examples, instructions request one overview for a broad question, and catalog progress survives compaction independently of generated summaries.
-
-A live Android check with `DeepSeek-V4.1-Flash` completed in 7.8 seconds with one `import_tools` call, two model requests and no compaction. The diagnostic session stayed in memory and disabled campus operations. The 60 agent tests and 263 existing app tests pass (one skipped); lint has no errors and 20 existing warnings. Live iOS/HarmonyOS and write/approval flows were not checked in this investigation.
-
-### Always-enabled assistant on 2026-10-13
-
-The assistant tab opens the agent screen directly. Existing Redux conversations from master migrate to account-scoped session storage; migration failures retain the original history for retry. Master's persisted model tokens are dropped during rehydration. Authorization tokens remain in the account-scoped in-memory cache.
-
-The 70 agent tests and 278 app tests passed at rollout (one existing test skipped). Regression coverage included history migration and migration failure, app/privacy locks, account changes and action approval. Lint had no errors and 18 existing warnings. Full app typecheck still reports React Native/Harmony and other existing errors outside the changed files. No native device or live gateway verification was performed for this change.
-
-### Assistant settings redesign on 2026-10-13
-
-Settings use the app's grouped native list style, with message display first and conversation storage below. The thinking group is hidden unless the model offers multiple levels. Manual gateway checks, the probe implementation and its dedicated tests have been removed. Storage usage distinguishes loading, failure and signed-out states; reads can be retried. Cleanup retains its confirmation and history-preservation behavior, shows progress and blocks duplicate operations. Stale reads, confirmations and completed deletions cannot update another account's displayed usage or Redux history.
-
-In an isolated worktree, 68 agent tests and 294 app tests pass (one existing test skipped), including 16 settings interaction regressions. Lint has no errors and 17 existing warnings. Full app typecheck still reports existing React Native/Harmony and other errors outside the changed files. Android, iOS and HarmonyOS visual/device verification was unavailable; no live gateway request was made.

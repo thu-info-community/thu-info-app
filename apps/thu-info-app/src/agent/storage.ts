@@ -102,7 +102,6 @@ export const newCheckpoint = (): AgentCheckpoint => ({
 	compactions: 0,
 	updatedAt: Date.now(),
 	protocolCreatedAt: Date.now(),
-	thinking: "default",
 	approvals: [],
 	operations: [],
 });

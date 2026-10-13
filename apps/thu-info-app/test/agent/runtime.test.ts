@@ -1,6 +1,6 @@
 import {findToolInvocation} from "../../src/agent/activity";
 import {AgentRuntime} from "../../src/agent/runtime";
-import {call, fixture, scripted} from "./fixtures";
+import {call, fixture, mailArgs, scripted} from "./fixtures";
 import {agentCatalog} from "@thu-info/lib/src/agent";
 import {campusModel, DETAIL_TTL, type AgentSession} from "../../src/agent/types";
 
@@ -218,11 +218,7 @@ test("parallel discovery of every category survives compaction and restart witho
 
 test("approval survives restart and invokes exactly once through the real SDK resume path", async () => {
 	const {session, sessions, context} = fixture();
-	const args = Object.fromEntries(
-		agentCatalog
-			.find((tool) => tool.name === "naiveSendMail")!
-			.parameters.map((key) => [key, "test"]),
-	);
+	const args = mailArgs;
 	const {transport, bodies} = scripted([
 		{calls: [call("import_tools", {path: "app.naiveSendMail"}, "import")]},
 		{calls: [call("naiveSendMail", args, "mail")]},
@@ -255,14 +251,8 @@ test("approval survives restart and invokes exactly once through the real SDK re
 
 test("multiple approvals resume as one SDK approval batch; rejection cannot execute", async () => {
 	const {session, sessions, context} = fixture();
-	const args = Object.fromEntries(
-		agentCatalog
-			.find((tool) => tool.name === "naiveSendMail")!
-			.parameters.map((key) => [key, "test"]),
-	);
-	const second = Object.fromEntries(
-		Object.keys(args).map((key) => [key, "different"]),
-	);
+	const args = mailArgs;
+	const second = {...args, subject: "different"};
 	const {transport} = scripted([
 		{calls: [call("import_tools", {path: "app.naiveSendMail"}, "import")]},
 		{
@@ -344,11 +334,7 @@ test("truncated tool call cannot execute, even after continue", async () => {
 
 test("crash after approval preparation but before the SDK step checkpoint can resume", async () => {
 	const {session, sessions, context} = fixture();
-	const args = Object.fromEntries(
-		agentCatalog
-			.find((tool) => tool.name === "naiveSendMail")!
-			.parameters.map((key) => [key, "test"]),
-	);
+	const args = mailArgs;
 	const {transport} = scripted([{text: "Sent after approval."}]);
 	const beforeCrash = new AgentRuntime(session, sessions, context, transport);
 	beforeCrash.registry.import("app.naiveSendMail");

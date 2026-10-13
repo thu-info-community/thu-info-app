@@ -18,7 +18,8 @@ import {
 	groupAgentMessages,
 	turnContent,
 } from "../src/components/home/agentChatPresentation";
-import type {AgentCheckpoint, Message} from "../src/agent/types";
+import type {Message} from "../src/agent/types";
+import {newCheckpoint} from "../src/agent/storage";
 import {colorLight} from "../src/assets/colors/light";
 import {agentService} from "../src/agent/service";
 
@@ -66,11 +67,6 @@ jest.mock("../src/agent/nativeTools", () => ({
 }));
 jest.mock("../src/redux/store", () => ({
 	navigationRef: {navigate: jest.fn()},
-	helper: {
-		getNewsChannelList: jest.fn(async () => [
-			{id: "campus", title: "校园新闻"},
-		]),
-	},
 }));
 jest.mock("react-redux", () => ({
 	useSelector: (selector: (state: unknown) => unknown) => selector(mockState),
@@ -87,7 +83,6 @@ const mockState = {
 	config: {
 		appLocked: false,
 		bubbleMessage: true,
-		agentThinking: "default",
 	},
 };
 const message = (id: string, content: string, reasoning?: string): Message => ({
@@ -96,29 +91,22 @@ const message = (id: string, content: string, reasoning?: string): Message => ({
 	content,
 	reasoning,
 });
-const checkpoint = (): AgentCheckpoint => ({
-	version: 1,
-	runId: "run",
-	status: "idle",
-	messages: [],
-	activeTools: [],
-	catalogPaths: [],
-	protectedTools: [],
-	summary: "",
-	request: "",
-	steps: 0,
-	compactions: 0,
-	updatedAt: 0,
-	protocolCreatedAt: Date.now(),
-	thinking: "default",
-	approvals: [],
-	operations: [],
-});
+type TurnProps = React.ComponentProps<typeof AgentMessageTurn>;
+const Turn = (props: Pick<TurnProps, "turn"> & Partial<TurnProps>) => (
+	<AgentMessageTurn
+		colors={colorLight}
+		bubbleMessage={false}
+		active={false}
+		onDocument={() => {}}
+		onError={() => {}}
+		{...props}
+	/>
+);
 const runtime = () => ({
 	session: {
 		header: {id: "conversation", account: "student"},
 		messages: [] as Message[],
-		checkpoint: checkpoint(),
+		checkpoint: newCheckpoint(),
 	},
 	subscribe: () => () => {},
 	getRevision: () => 0,
@@ -182,7 +170,7 @@ test("an unfinished step keeps previous prose in the process instead of presenti
 });
 
 test("progress uses actual unresolved tool calls and does not claim success from model prose", () => {
-	const cp = checkpoint();
+	const cp = newCheckpoint();
 	cp.status = "running";
 	cp.messages = [
 		{
@@ -226,22 +214,8 @@ test.each([true, false])(
 		])[0];
 		await render(
 			<>
-				<AgentMessageTurn
-					turn={one}
-					colors={colorLight}
-					bubbleMessage={bubbleMessage}
-					active={false}
-					onDocument={() => {}}
-					onError={() => {}}
-				/>
-				<AgentMessageTurn
-					turn={two}
-					colors={colorLight}
-					bubbleMessage={bubbleMessage}
-					active={false}
-					onDocument={() => {}}
-					onError={() => {}}
-				/>
+				<Turn turn={one} bubbleMessage={bubbleMessage} />
+				<Turn turn={two} bubbleMessage={bubbleMessage} />
 			</>,
 		);
 		expect(screen.queryByText("First reasoning")).toBeNull();
@@ -271,16 +245,7 @@ test("completed activity is collapsed, with interleaved thoughts and expandable 
 		lookup,
 		message("answer", "Final answer", "Ready to answer"),
 	])[0];
-	await render(
-		<AgentMessageTurn
-			turn={turn}
-			colors={colorLight}
-			bubbleMessage={false}
-			active={false}
-			onDocument={() => {}}
-			onError={() => {}}
-		/>,
-	);
+	await render(<Turn turn={turn} />);
 	expect(screen.getByText("Final answer")).toBeTruthy();
 	expect(screen.queryByText("getCalendar")).toBeNull();
 	await fireEvent.press(
@@ -314,13 +279,10 @@ test.each([
 		];
 		const turn = groupAgentMessages([current])[0];
 		await render(
-			<AgentMessageTurn
+			<Turn
 				turn={turn}
-				colors={colorLight}
 				bubbleMessage
 				active={status === "running"}
-				onDocument={() => {}}
-				onError={() => {}}
 			/>,
 		);
 		expect(screen.getByText("getCalendar")).toBeTruthy();
@@ -339,15 +301,11 @@ test("unknown writes keep their native verification action outside collapsed det
 	];
 	const reconcile = jest.fn();
 	await render(
-		<AgentMessageTurn
+		<Turn
 			turn={groupAgentMessages([current])[0]}
-			colors={colorLight}
 			bubbleMessage
-			active={false}
 			onReconcile={reconcile}
 			reconcilableIds={new Set(["write"])}
-			onDocument={() => {}}
-			onError={() => {}}
 		/>,
 	);
 	await fireEvent.press(
@@ -364,13 +322,9 @@ test("English activity uses plural tool counts and cleared details remain inspec
 		{id: "read", tool: "read_result", status: "succeeded", timestamp: 1},
 	];
 	await render(
-		<AgentMessageTurn
+		<Turn
 			turn={groupAgentMessages([current])[0]}
-			colors={colorLight}
 			bubbleMessage
-			active={false}
-			onDocument={() => {}}
-			onError={() => {}}
 		/>,
 	);
 	await fireEvent.press(
@@ -387,16 +341,7 @@ test("answer links require native confirmation and Markdown images never load", 
 	const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
 	const open = jest.spyOn(Linking, "openURL").mockResolvedValue();
 	const turn = groupAgentMessages([message("answer", "Answer")])[0];
-	await render(
-		<AgentMessageTurn
-			turn={turn}
-			colors={colorLight}
-			bubbleMessage
-			active={false}
-			onDocument={() => {}}
-			onError={() => {}}
-		/>,
-	);
+	await render(<Turn turn={turn} bubbleMessage />);
 	const markdown = screen.getByTestId("answer-markdown");
 	expect(markdown.props.rules.image()).toBeNull();
 	expect(markdown.props.onLinkPress("https://example.org/source")).toBe(false);
@@ -439,16 +384,17 @@ test.each([
 	},
 );
 
-test("the composer sends the user's message with the selected settings", async () => {
+test.each([null, "LM_JWGG"])("the composer sends the user's message with news source %s", async (source) => {
 	const runner = runtime();
 	(agentService.open as jest.Mock).mockResolvedValue(runner);
-	await render(<AgentDeepSeekScreen route={route} />);
+	const params = source ? {prompt: "", dataSource: source} : undefined;
+	await render(<AgentDeepSeekScreen route={{params} as any} />);
 	await fireEvent.changeText(
 		await screen.findByLabelText("消息"),
 		"看看我的日程",
 	);
 	await fireEvent.press(screen.getByRole("button", {name: "发送"}));
-	expect(runner.send).toHaveBeenCalledWith("看看我的日程", "default", null);
+	expect(runner.send).toHaveBeenCalledWith("看看我的日程", source);
 });
 
 test("a locked conversation remains hidden when the assistant is always enabled", async () => {

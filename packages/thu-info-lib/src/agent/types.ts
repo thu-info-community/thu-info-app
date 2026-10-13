@@ -27,15 +27,11 @@ export interface ToolPolicy {
     /** A native flow or reviewed app wrapper supplies these parameters; they never reach the model. */
     privateArgs?: string[];
     result?: "json" | "document" | "news" | "schedule";
-    /** Reviewed JSON returned by an app wrapper instead of the underlying library method. */
-    outputSchema?: JsonSchema;
 }
 
 export interface ToolDescriptor extends ToolPolicy {
     name: string;
     path: string;
-    parameters: string[];
     inputSchema: JsonSchema;
-    outputSchema: JsonSchema;
     version: string;
 }

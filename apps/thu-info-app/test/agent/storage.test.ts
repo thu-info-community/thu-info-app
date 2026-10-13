@@ -86,40 +86,7 @@ test.each([
 	expect(await sessions.load(healthy.header.id)).not.toBeNull();
 });
 
-test("expired details are collected without deleting conversation text or receipts", async () => {
-	const {storage, session, entries} = fixture();
-	let time = Date.now();
-	const sessions = new SessionStore(storage, "student", () => time);
-	session.checkpoint.status = "completed";
-	session.messages = [
-		{
-			id: "m",
-			role: "assistant",
-			content: "Durable answer",
-			reasoning: "LONG-THINKING",
-			timestamp: time,
-		},
-	];
-	session.checkpoint.messages = [
-		{
-			role: "assistant",
-			content: [
-				{type: "reasoning", text: "LONG-THINKING"},
-				{type: "text", text: "Durable answer"},
-			],
-		},
-	];
-	await sessions.save(session);
-	time += DETAIL_TTL + 1;
-	await sessions.cleanup();
-	const restored = (await sessions.load(session.header.id))!;
-	expect(restored.messages[0].content).toBe("Durable answer");
-	expect(restored.messages[0].reasoning).toBeUndefined();
-	expect([...entries.values()].join("\n")).not.toContain("LONG-THINKING");
-	expect(restored.checkpoint.compactions).toBe(1);
-});
-
-test("tool detail chunks expire while compact receipts and counts remain", async () => {
+test("reasoning, tool details and protocol expire while conversation text and receipts remain", async () => {
 	const {storage, session, entries} = fixture();
 	let time = Date.now();
 	const sessions = new SessionStore(storage, "student", () => time);
@@ -144,6 +111,13 @@ test("tool detail chunks expire while compact receipts and counts remain", async
 			],
 		},
 	];
+	session.checkpoint.messages = [{
+		role: "assistant",
+		content: [
+			{type: "reasoning", text: "REASONING-DETAIL"},
+			{type: "text", text: "Answer"},
+		],
+	}];
 	await sessions.save(session);
 	expect(
 		(await sessions.load(session.header.id))!.messages[0].toolInvocations?.[0]
@@ -152,6 +126,8 @@ test("tool detail chunks expire while compact receipts and counts remain", async
 	time += DETAIL_TTL + 1;
 	await sessions.cleanup();
 	const restored = (await sessions.load(session.header.id))!;
+	expect(restored.messages[0].reasoning).toBeUndefined();
+	expect(restored.checkpoint.compactions).toBe(1);
 	expect(restored.messages[0]).toMatchObject({
 		content: "Answer",
 		processingStatus: "completed",

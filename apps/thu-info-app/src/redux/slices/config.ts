@@ -4,7 +4,6 @@ import {ValidReceiptTypes} from "@thu-info/lib/src/lib/sports";
 import {HomeFunction} from "../../ui/home/home";
 import {Semester} from "@thu-info/lib/src/models/schedule/calendar";
 import { v4 as uuidv4 } from "uuid";
-import type {ThinkingLevel} from "../../agent/types";
 import type {WasherFavourite} from "../../utils/washer";
 
 export interface ConfigState {
@@ -50,7 +49,6 @@ export interface ConfigState {
 	showCustomSchedule: boolean | undefined;
 	privacy312: boolean | undefined;
 	bubbleMessage: boolean | undefined;
-	agentThinking: ThinkingLevel;
 	uuid: string;
 }
 
@@ -97,7 +95,6 @@ const initialState: ConfigState = {
 	showCustomSchedule: true,
 	privacy312: false,
 	bubbleMessage: true,
-	agentThinking: "default",
 	uuid: uuidv4(),
 };
 

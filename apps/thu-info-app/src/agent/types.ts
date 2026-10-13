@@ -1,8 +1,7 @@
 import type {ModelMessage} from "ai";
-import type {JsonSchema, ToolDescriptor} from "@thu-info/lib/src/agent";
+import type {ToolDescriptor} from "@thu-info/lib/src/agent";
 import {campusModelName} from "../utils/campusModel";
 
-export type ThinkingLevel = "default" | "off" | "low" | "high" | "max";
 export type RunStatus =
 	| "idle"
 	| "running"
@@ -17,17 +16,12 @@ export interface ModelCapabilities {
 	model: string;
 	contextTokens: number;
 	maxOutputTokens: number;
-	thinkingLevels: ThinkingLevel[];
-	/** Only reviewed gateway settings belong here; accepting a parameter is not proof it works. */
-	verified: boolean;
 }
 
 export const campusModel: ModelCapabilities = {
 	model: campusModelName,
 	contextTokens: 131072,
 	maxOutputTokens: 4096,
-	thinkingLevels: ["default"],
-	verified: false,
 };
 
 export interface Message {
@@ -39,8 +33,6 @@ export interface Message {
 	processingStatus?: RunStatus;
 	toolInvocations?: ToolInvocation[];
 	documents?: {tool: string; route: string}[];
-	tool_calls?: {id: string; type: "function"; function: {name: string; arguments: string}}[];
-	tool_call_id?: string;
 }
 
 export interface ToolInvocation {
@@ -136,7 +128,6 @@ export interface AgentCheckpoint {
 	compactions: number;
 	updatedAt: number;
 	protocolCreatedAt: number;
-	thinking: ThinkingLevel;
 	newsSource?: string | null;
 	approvals: Approval[];
 	operations: Operation[];
@@ -161,10 +152,6 @@ export interface ToolContext {
 	confirmationRequired?: (tool: ToolDescriptor, args: Record<string, unknown>) => boolean;
 	invoke: (tool: ToolDescriptor, args: Record<string, unknown>) => Promise<unknown>;
 	onMutation: (tool: ToolDescriptor) => Promise<void>;
-}
-
-export interface LocalTool extends ToolDescriptor {
-	inputSchema: JsonSchema;
 }
 
 export interface SessionStorage {

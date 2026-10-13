@@ -1,13 +1,12 @@
 import "./polyfills";
 import {generateText, jsonSchema, stepCountIs, tool, ToolLoopAgent} from "ai";
-import type {AssistantModelMessage, ModelMessage, ToolSet} from "ai";
+import type {ModelMessage, ToolSet} from "ai";
 import {validateSchema} from "@thu-info/lib/src/agent";
 import type {JsonSchema} from "@thu-info/lib/src/agent";
 import {v4 as uuid} from "uuid";
 import type {
 	AgentSession,
 	ModelCapabilities,
-	ThinkingLevel,
 	ToolContext,
 } from "./types";
 import {campusModel} from "./types";
@@ -15,7 +14,7 @@ import {createCampusModel, CompletionTransport} from "./model";
 import {ToolRegistry} from "./registry";
 import {ToolExecutor} from "./executor";
 import {expireSessionDetails, SessionStore} from "./storage";
-import {compactContext, messageText, splitTaggedThinking} from "./context";
+import {compactContext, splitTaggedThinking} from "./context";
 import {AgentPaused, AgentToolError, truncateBytes} from "./util";
 import {
 	findToolInvocation,
@@ -121,11 +120,7 @@ export class AgentRuntime {
 		}
 	}
 
-	async send(
-		text: string,
-		thinking: ThinkingLevel = "default",
-		newsSource?: string | null,
-	) {
+	async send(text: string, newsSource?: string | null) {
 		if (this.running || !text.trim()) {
 			return;
 		}
@@ -148,14 +143,10 @@ export class AgentRuntime {
 				"Approve or reject pending actions before sending a new request",
 			);
 		}
-		if (!this.capabilities.thinkingLevels.includes(thinking)) {
-			throw new Error("Choose a thinking level supported by this gateway");
-		}
 		this.assertSessionAccess();
 		this.recoverExchanges();
 		this.session.checkpoint.runId = uuid();
 		this.session.checkpoint.request = text.trim();
-		this.session.checkpoint.thinking = thinking;
 		this.session.checkpoint.newsSource = newsSource;
 		this.session.checkpoint.approvals = [];
 		this.session.checkpoint.pendingInput = undefined;
@@ -434,15 +425,6 @@ export class AgentRuntime {
 		}
 		this.assertSessionAccess();
 		this.maintainDetails();
-		if (
-			!this.capabilities.thinkingLevels.includes(
-				this.session.checkpoint.thinking,
-			)
-		) {
-			throw new Error(
-				"This session's thinking level is no longer available. Start a new request using Provider default.",
-			);
-		}
 		this.running = true;
 		this.error = undefined;
 		this.abort = new AbortController();
@@ -453,7 +435,6 @@ export class AgentRuntime {
 		const model = createCampusModel(
 			this.capabilities,
 			this.transport,
-			this.session.checkpoint.thinking,
 			async (message) => {
 				const knownIds = new Set(
 					stepBase.flatMap((entry) =>
@@ -811,6 +792,3 @@ export class AgentRuntime {
 		}
 	}
 }
-
-export const assistantText = (message: AssistantModelMessage) =>
-	messageText(message);

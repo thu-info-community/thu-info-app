@@ -9,12 +9,11 @@ import {
 import {Alert} from "react-native";
 import {DeepSeekSettingsScreen} from "../src/ui/settings/deepseekSettings";
 import {agentService} from "../src/agent/service";
-import {campusModel, type ThinkingLevel} from "../src/agent/types";
 
 let mockLanguage: "zh" | "en" = "zh";
 const mockState = {
 	auth: {userId: "student"},
-	config: {bubbleMessage: true, agentThinking: "default", darkMode: false},
+	config: {bubbleMessage: true, darkMode: false},
 };
 const mockDispatch = jest.fn();
 const mockUsage = jest.fn(async (_account: string) => 0);
@@ -69,10 +68,8 @@ beforeEach(() => {
 	mockState.auth.userId = "student";
 	mockState.config = {
 		bubbleMessage: true,
-		agentThinking: "default",
 		darkMode: false,
 	};
-	campusModel.thinkingLevels = ["default"];
 	mockUsage.mockReset().mockResolvedValue(0);
 	jest.mocked(agentService.clear).mockReset().mockResolvedValue();
 	jest.mocked(agentService.clearDetails).mockReset().mockResolvedValue();
@@ -80,7 +77,6 @@ beforeEach(() => {
 });
 afterEach(async () => {
 	await cleanup();
-	campusModel.thinkingLevels = ["default"];
 	jest.restoreAllMocks();
 });
 
@@ -101,25 +97,6 @@ test.each(["zh", "en"] as const)(
 		).toBeNull();
 	},
 );
-
-test("thinking choices appear only when multiple levels are available and persist selection", async () => {
-	campusModel.thinkingLevels = [
-		"default",
-		"off",
-		"high",
-	] satisfies ThinkingLevel[];
-	const view = await render(<DeepSeekSettingsScreen />);
-	expect(screen.getByRole("radio", {name: "模型默认"})).toBeChecked();
-	await fireEvent.press(screen.getByRole("radio", {name: "高强度"}));
-	expect(mockDispatch).toHaveBeenCalledWith({
-		type: "config/configSet",
-		payload: {key: "agentThinking", value: "high"},
-	});
-	mockState.config.agentThinking = "high";
-	await view.rerender(<DeepSeekSettingsScreen />);
-	expect(screen.getByRole("radio", {name: "高强度"})).toBeChecked();
-	expect(screen.getByRole("radio", {name: "模型默认"})).not.toBeChecked();
-});
 
 test("storage starts loading and displays zero only after it has been read", async () => {
 	const read = deferred<number>();
@@ -159,22 +136,6 @@ test("signed-out storage cannot be cleared, while message preferences remain ava
 	expect(mockDispatch).toHaveBeenCalled();
 });
 
-test("cancelling a clear leaves storage untouched", async () => {
-	await render(<DeepSeekSettingsScreen />);
-	await fireEvent.press(
-		screen.getByRole("button", {name: "清理详情，保留对话"}),
-	);
-	const [title, message, buttons] = jest.mocked(Alert.alert).mock.calls[0];
-	expect(title).toBe("确认");
-	expect(message).toContain("保留对话文本及操作记录");
-	expect(message).toContain("待确认的操作将失效");
-	await act(async () =>
-		buttons?.find((button) => button.style === "cancel")?.onPress?.(),
-	);
-	expect(agentService.clearDetails).not.toHaveBeenCalled();
-	expect(agentService.clear).not.toHaveBeenCalled();
-});
-
 test("clearing details blocks duplicate clears, preserves history and refreshes usage", async () => {
 	const pending = deferred<void>();
 	mockUsage
@@ -186,6 +147,12 @@ test("clearing details blocks duplicate clears, preserves history and refreshes 
 		screen.getByRole("button", {name: "清理详情，保留对话"}),
 	);
 	const accept = confirm();
+	const [title, message] = jest.mocked(Alert.alert).mock.calls[0];
+	expect(title).toBe("确认");
+	expect(message).toContain("保留对话文本及操作记录");
+	expect(message).toContain("待确认的操作将失效");
+	expect(agentService.clearDetails).not.toHaveBeenCalled();
+	expect(agentService.clear).not.toHaveBeenCalled();
 	let done: unknown;
 	await act(async () => {
 		done = accept();
@@ -212,6 +179,7 @@ test("deleting all conversations clears legacy history only after successful con
 	expect(jest.mocked(Alert.alert).mock.calls[0][1]).toBe(
 		"确定删除所有历史记录吗？",
 	);
+	expect(agentService.clear).not.toHaveBeenCalled();
 	let done: unknown;
 	await act(async () => {
 		done = confirm()();

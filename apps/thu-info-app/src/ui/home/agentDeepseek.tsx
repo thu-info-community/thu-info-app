@@ -55,7 +55,6 @@ import IconSearch from "../../assets/icons/IconSearch";
 import IconLock from "../../assets/icons/IconLock";
 import {campusModelName} from "../../utils/campusModel";
 
-export {agentText} from "../../components/home/agentChatPresentation";
 const noSubscription = () => () => {};
 const zero = () => 0;
 
@@ -206,7 +205,7 @@ export const AgentDeepSeekScreen = ({
 		void perform(() =>
 			checkpoint?.pendingInput
 				? runtime.answer(request)
-				: runtime.send(request, config.agentThinking ?? "default", source),
+				: runtime.send(request, source),
 		);
 	};
 	const open = (id?: string, create = false) =>
