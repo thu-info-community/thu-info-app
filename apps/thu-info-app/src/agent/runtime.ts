@@ -95,7 +95,10 @@ export class AgentRuntime {
 		this.session.checkpoint.activeTools = this.registry.activeNames();
 		this.session.header.status = this.session.checkpoint.status;
 		this.session.header.messageCount = this.session.messages.length;
-		await this.store.save(this.session);
+		// Draft lifecycle and detail maintenance must not create empty histories.
+		if (this.session.messages.length) {
+			await this.store.save(this.session);
+		}
 		this.emit();
 	}
 	private maintainDetails() {

@@ -75,6 +75,106 @@ const setup = () => {
 };
 beforeEach(() => jest.resetModules());
 
+test("opening and repeatedly creating drafts never writes empty histories", async () => {
+	const {agentService} = setup();
+	const {nativeSessionStorage} = jest.requireMock(
+		"../../src/agent/nativeStorage",
+	);
+	const write = jest.spyOn(nativeSessionStorage, "write");
+	const first = await agentService.open();
+	expect(await agentService.open()).toBe(first);
+	const ids = new Set([first.session.header.id]);
+	for (let i = 0; i < 3; i++) {
+		const draft = await agentService.open(undefined, true);
+		ids.add(draft.session.header.id);
+		expect(draft.session.messages).toEqual([]);
+	}
+	expect(ids.size).toBe(4);
+	expect(write).not.toHaveBeenCalled();
+	expect(await nativeSessionStorage.keys()).toEqual([]);
+	expect(await agentService.forAccount().list()).toEqual([]);
+	expect(await agentService.forAccount().usage()).toBe(0);
+});
+
+test("the first send persists before authorization and later turns use the same history", async () => {
+	const {agentService, helper} = setup();
+	const runner = await agentService.open(undefined, true);
+	const sessions = agentService.forAccount();
+	helper.getMadModelToken.mockImplementationOnce(async () => {
+		expect(
+			(await sessions.load(runner.session.header.id))?.messages.filter(
+				({role}) => role === "user",
+			),
+		).toEqual([
+			expect.objectContaining({role: "user", content: "First question"}),
+		]);
+		return "fresh-account-token";
+	});
+	await runner.send("  First question  ");
+	await runner.send("Follow-up");
+	expect(helper.getMadModelToken).toHaveBeenCalledTimes(1);
+	expect(runner.session.checkpoint.status).toBe("completed");
+	expect(await sessions.list()).toEqual([
+		expect.objectContaining({
+			id: runner.session.header.id,
+			title: "First question",
+			messageCount: 4,
+		}),
+	]);
+	const draft = await agentService.open(undefined, true);
+	expect(await agentService.open(runner.session.header.id)).not.toBe(draft);
+	expect(await sessions.list()).toHaveLength(1);
+	expect(await sessions.load(draft.session.header.id)).toBeNull();
+});
+
+test("existing empty histories remain listed and legacy empty histories still migrate", async () => {
+	const {agentService, state} = setup();
+	const {newSession} =
+		require("../../src/agent/storage") as typeof import("../../src/agent/storage");
+	const sessions = agentService.forAccount();
+	const existing = newSession("student", "Existing empty history");
+	await sessions.save(existing);
+	state.deepseek.history = [
+		{id: "legacy-empty", title: "Legacy empty history", messages: []},
+	];
+	const opened = await agentService.open(existing.header.id);
+	expect(opened.session.messages).toEqual([]);
+	expect(state.deepseek.history).toEqual([]);
+	expect((await sessions.list()).map(({id}) => id).sort()).toEqual(
+		[existing.header.id, "legacy-empty"].sort(),
+	);
+	await agentService.open(undefined, true);
+	expect((await agentService.open("legacy-empty")).session.messages).toEqual(
+		[],
+	);
+	expect(await sessions.list()).toHaveLength(2);
+});
+
+test("switching accounts discards an empty draft without saving it to either account", async () => {
+	const {agentService, state, helper, store} = setup();
+	const draft = await agentService.open();
+	state.auth.userId = "another";
+	helper.userId = "another";
+	store.notify();
+	const next = await agentService.open();
+	expect(next.session.header.account).toBe("another");
+	expect(next.session.header.id).not.toBe(draft.session.header.id);
+	expect(await agentService.forAccount("student").list()).toEqual([]);
+	expect(await agentService.forAccount("another").list()).toEqual([]);
+});
+
+test("signed-out users cannot create a persisted or in-memory conversation", async () => {
+	const {agentService, state} = setup();
+	state.auth.userId = "";
+	await expect(agentService.open(undefined, true)).rejects.toThrow(
+		"Sign in to use agent conversations",
+	);
+	const {nativeSessionStorage} = jest.requireMock(
+		"../../src/agent/nativeStorage",
+	);
+	expect(await nativeSessionStorage.keys()).toEqual([]);
+});
+
 test.each([undefined, false, true])(
 	"migrates history and runs without the retired preview flag (%s)",
 	async (legacyEnabled) => {

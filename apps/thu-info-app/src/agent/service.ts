@@ -100,6 +100,7 @@ class AgentService {
 				this.current.executor.results.clear();
 			}
 			let session: AgentSession | null;
+			let newConversation = create;
 			if (create) {
 				// Creating a conversation never depends on loading, migrating or cleaning history.
 				session = newSession(account, "New conversation");
@@ -129,6 +130,7 @@ class AgentService {
 				}
 				await sessions.cleanup();
 				const target = id ?? (await sessions.list(0, 1))[0]?.id;
+				newConversation = !target;
 				session = target
 					? await sessions.load(target)
 					: newSession(account, "New conversation");
@@ -139,7 +141,10 @@ class AgentService {
 			if (!session) {
 				throw new Error("Conversation no longer exists");
 			}
-			await sessions.save(session);
+			// Keep new drafts in memory; existing histories still get checkpoint recovery.
+			if (!newConversation) {
+				await sessions.save(session);
+			}
 			this.current = new AgentRuntime(
 				session,
 				sessions,

@@ -1,7 +1,61 @@
 import {AgentRuntime} from "../../src/agent/runtime";
 import {call, fixture, scripted} from "./fixtures";
 import {agentCatalog} from "@thu-info/lib/src/agent";
-import {campusModel, DETAIL_TTL} from "../../src/agent/types";
+import {campusModel, DETAIL_TTL, type AgentSession} from "../../src/agent/types";
+
+test("blank sends and stopping an empty draft do not create history", async () => {
+	const {session, sessions, context, entries} = fixture();
+	const transport = jest.fn();
+	const runtime = new AgentRuntime(session, sessions, context, transport);
+	const listener = jest.fn();
+	runtime.subscribe(listener);
+	await runtime.send(" \n\t ");
+	await runtime.stop();
+	await sessions.cleanup();
+	expect(transport).not.toHaveBeenCalled();
+	expect(listener).toHaveBeenCalled();
+	expect(session.header.messageCount).toBe(0);
+	expect(await sessions.list()).toEqual([]);
+	expect(entries.size).toBe(0);
+});
+
+test("stopping the first reply retains the user message saved before the request", async () => {
+	const {session, sessions, context} = fixture();
+	let started!: (saved: AgentSession | null) => void;
+	const requestStarted = new Promise<AgentSession | null>((resolve) => {
+		started = resolve;
+	});
+	let release!: () => void;
+	const blocked = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	const runtime = new AgentRuntime(
+		session,
+		sessions,
+		context,
+		async (_body, signal) => {
+			started(await sessions.load(session.header.id));
+			await blocked;
+			if (signal?.aborted) throw new Error("aborted");
+		},
+	);
+	const sending = runtime.send("First question");
+	const savedBeforeRequest = await requestStarted;
+	await runtime.stop();
+	release();
+	await sending;
+	expect(savedBeforeRequest?.messages).toEqual(
+		expect.arrayContaining([
+			expect.objectContaining({role: "user", content: "First question"}),
+		]),
+	);
+	expect(await sessions.list()).toHaveLength(1);
+	const restored = await sessions.load(session.header.id);
+	expect(restored?.messages).toEqual([
+		expect.objectContaining({role: "user", content: "First question"}),
+	]);
+	expect(restored?.checkpoint.status).toBe("paused");
+});
 
 test("gateway failures preserve their reason in the conversation without executing tools", async () => {
 	const {session, sessions, context} = fixture();
@@ -17,6 +71,11 @@ test("gateway failures preserve their reason in the conversation without executi
 		"Campus model returned an error [model_not_found]: The requested model does not exist",
 	);
 	expect((await sessions.load(session.header.id))?.checkpoint.error).toBe(session.checkpoint.error);
+	expect(await sessions.list()).toHaveLength(1);
+	expect((await sessions.load(session.header.id))?.messages[0]).toMatchObject({
+		role: "user",
+		content: "Question",
+	});
 	expect(context.invoke).not.toHaveBeenCalled();
 });
 
@@ -44,11 +103,20 @@ test.each(["<think>", ""])(
 
 test("simultaneous sends cannot start a second run during detail maintenance", async () => {
 	const {session, sessions, context} = fixture();
+	const originalSave = sessions.save.bind(sessions);
+	const save = jest.spyOn(sessions, "save");
+	const messageCounts: number[] = [];
+	save.mockImplementation((snapshot) => {
+		messageCounts.push(snapshot.messages.length);
+		return originalSave(snapshot);
+	});
 	session.checkpoint.protocolCreatedAt = Date.now() - DETAIL_TTL - 1;
 	const {transport, bodies} = scripted([{text: "One response"}]);
 	const runtime = new AgentRuntime(session, sessions, context, transport);
 	await Promise.all([runtime.send("First"), runtime.send("Second")]);
 	expect(bodies).toHaveLength(1);
+	expect(messageCounts.length).toBeGreaterThan(0);
+	expect(messageCounts.every((count) => count > 0)).toBe(true);
 	expect(
 		session.messages
 			.filter((message) => message.role === "user")
@@ -270,6 +338,7 @@ test("crash after approval preparation but before the SDK step checkpoint can re
 	beforeCrash.registry.import("app.naiveSendMail");
 	session.checkpoint.activeTools = beforeCrash.registry.activeNames();
 	session.checkpoint.status = "running";
+	session.messages = [{role: "user", content: "Send email"}];
 	session.checkpoint.messages = [
 		{role: "user", content: "Send email"},
 		{
