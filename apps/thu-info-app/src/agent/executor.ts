@@ -272,7 +272,12 @@ export class ToolExecutor {
 				this.session.checkpoint.operations[this.session.checkpoint.operations.length - 1];
 			try {
 				const output = await this.context.invoke(tool, args);
-				const result = this.results.put(output);
+				// Void library writes complete normally without a payload. Give the model
+				// the same known outcome we record, rather than an ambiguous JSON null.
+				const result = this.results.put(output === undefined ? {
+					status: "succeeded",
+					message: "The library call completed without error and returns no payload. This is not an independent verification of downstream processing.",
+				} : output);
 				const handoff =
 					output !== null &&
 					typeof output === "object" &&
@@ -309,7 +314,9 @@ export class ToolExecutor {
 						question:
 							"question" in output && typeof output.question === "string"
 								? output.question
-								: "Complete the operation in the opened screen, then tell me its outcome. Opening the screen does not confirm completion.",
+								: tool.name === "getEleRechargePayCode"
+									? "Opened the electricity screen. Recharge controls are currently disabled; no order was created or paid. Check the dormitory system for available payment methods."
+									: "Complete the operation in the opened screen, then tell me its outcome. Opening the screen does not confirm completion.",
 					};
 				}
 				await this.persist();

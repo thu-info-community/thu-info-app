@@ -23,6 +23,10 @@ vm.runInNewContext(ts.transpileModule(metadataSource, {
     compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020},
 }).outputText, {exports: metadataModule.exports, module: metadataModule});
 const metadata = metadataModule.exports.agentMetadata;
+const sportsSource = ts.createSourceFile("sports.ts", fs.readFileSync(path.join(root, "src/lib/sports.ts"), "utf8"), ts.ScriptTarget.Latest, true);
+const sportsIds = sportsSource.statements.flatMap((statement) => ts.isVariableStatement(statement) ? [...statement.declarationList.declarations] : [])
+    .find((declaration) => declaration.name.getText(sportsSource) === "sportsIdInfoList");
+const sportsFacilities = vm.runInNewContext(`(${sportsIds.initializer.getText(sportsSource)})`);
 
 function schemaFor(type, input, seen = new Set()) {
     if (type.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown)) {
@@ -108,6 +112,17 @@ for (const member of checker.getPropertiesOfType(helperType)) {
     if (["saveCustomSchedule", "deleteCustomSchedule"].includes(member.name)) {
         inputSchema = {type: "object", properties: {scheduleIds: {type: "array", items: {type: "string"}, minItems: 1, maxItems: 20}}, required: ["scheduleIds"], additionalProperties: false};
     }
+    if (policy.mode === "interactive" || policy.result === "document") {
+        // Native handoffs/document buttons do not forward arguments to the destination.
+        inputSchema = {type: "object", properties: {}, required: [], additionalProperties: false};
+    }
+    if (member.name === "getSportsResources") {
+        inputSchema.properties.gymId.description = `Supported facilities (name, gymId, itemId): ${sportsFacilities.map(({name, gymId, itemId}) => `${name}: ${gymId}, ${itemId}`).join("; ")}. Use the matching pair; do not invent IDs.`;
+        inputSchema.properties.itemId.description = "Use the itemId paired with the selected facility in gymId's description";
+    }
+    if (member.name === "toggleSocketState") {
+        inputSchema.properties.target = {type: "string", enum: ["available", "unavailable"], description: "available: has a socket; unavailable: no socket. This is a shared presence report, not a power switch or working-condition report"};
+    }
     if (member.name === "rechargeCampusCard") {
         inputSchema.properties.amount.minimum = 10;
         inputSchema.properties.amount.maximum = 200;
@@ -115,11 +130,21 @@ for (const member of checker.getPropertiesOfType(helperType)) {
         inputSchema.properties.type = {type: "integer", enum: [0, 1], description: "0: linked bank card transfer; 1: Alipay (user completes payment)"};
     }
     const resultType = checker.getAwaitedType(checker.getReturnTypeOfSignature(signature));
-    const outputSchema = member.name === "rechargeCampusCard"
+    const outputSchema = policy.outputSchema ?? (member.name === "rechargeCampusCard"
         ? {type: "object", properties: {status: {type: "string"}, amount: {type: "number"}, paymentMethod: {type: "string"}, completed: {type: "boolean"}}, required: ["status", "amount", "paymentMethod", "completed"], additionalProperties: true}
-        : policy.mode === "interactive" ? {type: "object", properties: {status: {type: "string"}, route: {type: "string"}}} : schemaFor(resultType, false);
-    const doc = ts.displayPartsToString(member.getDocumentationComment(checker)).replace(/<[^>]*>/g, "");
-    const description = `${policy.description}${doc ? `. ${doc}` : ""}`;
+        : policy.mode === "interactive" ? {type: "object", properties: {status: {type: "string", enum: ["handoff"]}, route: {type: "string"}, completed: {type: "boolean", enum: [false]}}, required: ["status", "route", "completed"], additionalProperties: false}
+            : policy.result === "document" ? {type: "object", properties: {document: {type: "boolean", enum: [true]}, route: {type: "string"}, instruction: {type: "string"}}, required: ["document", "route", "instruction"], additionalProperties: false}
+                : schemaFor(resultType, false));
+    if (["searchCrRemaining", "searchCrCourses"].includes(member.name)) {
+        // These parsers explicitly use NaN for unknown counts; JSON emits null.
+        for (const key of ["capacity", "remaining", "queue"]) {
+            const fields = outputSchema.properties.courses.items.properties;
+            fields[key] = {anyOf: [fields[key], {type: "null"}]};
+        }
+    }
+    const doc = policy.mode === "direct" && policy.result !== "document"
+        ? ts.displayPartsToString(member.getDocumentationComment(checker)).replace(/<[^>]*>/g, "") : "";
+    const description = `${policy.description}${doc ? `. ${doc}` : ""}${policy.mode === "interactive" ? ". Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen." : ""}`;
     const version = crypto.createHash("sha256").update(JSON.stringify({policy, inputSchema, outputSchema, description})).digest("hex").slice(0, 16);
     catalog.push({...policy, description, name: member.name, path: `${policy.category}.${member.name}`, parameters, inputSchema, outputSchema, version});
     // Only statically enumerated direct/JSON-compatible wrappers can call InfoHelper.

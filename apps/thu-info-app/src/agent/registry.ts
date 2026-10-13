@@ -105,13 +105,17 @@ export class ToolRegistry {
 			const examples = [
 				reads[0] ?? writes[0],
 				writes.find((tool) => tool.impact === "routine") ?? writes[0] ?? reads[1],
-			].filter((tool, index, selected) => tool && selected.indexOf(tool) === index);
+				// Sending mail is otherwise hidden behind the generic "app" category.
+				tools.find((tool) => tool.name === "naiveSendMail"),
+			].filter((tool, index, selected): tool is ToolDescriptor =>
+				!!tool && selected.indexOf(tool) === index,
+			);
 			return {
 				path: category,
 				tools: tools.length,
-				examples: examples.map(({name, description}, index) => ({
+				examples: examples.map(({name, description}) => ({
 					name,
-					...(index === 0 ? {description: truncateBytes(description, 60)} : {}),
+					description: truncateBytes(description, 60),
 				})),
 			};
 		});

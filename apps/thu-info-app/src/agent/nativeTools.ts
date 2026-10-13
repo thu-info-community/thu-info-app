@@ -340,7 +340,9 @@ export const createNativeToolContext = (
 			}
 		}
 		assertAccess(tool);
-		const text = `${tool.description.split("\n")[0]}\n${tool.mode === "interactive" ? "Opens the native screen only; review and complete the operation there.\n" : ""}${JSON.stringify(sanitize({account, arguments: args, currentTarget: target}), null, 2)}`;
+		// Saved approval arguments are canonicalized; key order cannot change a preview.
+		const details = JSON.parse(canonical(sanitize({account, arguments: args, currentTarget: target})));
+		const text = `${tool.description.split("\n")[0]}\n${tool.mode === "interactive" ? "Opens the native screen only; review and complete the operation there.\n" : ""}${JSON.stringify(details, null, 2)}`;
 		// Never silently truncate recipients, body text, costs or booking targets in an approval.
 		if (byteLength(text) > 24 * 1024) {
 			throw new AgentToolError(
@@ -530,6 +532,14 @@ export const createNativeToolContext = (
 			}
 			if (tool.name === "getAssessmentList") {
 				rememberURLs(result, assessmentURLs);
+				for (const row of result as Awaited<ReturnType<InfoHelper["getAssessmentList"]>>) {
+					if (Array.isArray(row) && typeof row[2] === "string" && row[2].length < 4096) {
+						assessmentURLs.add(row[2]);
+					}
+				}
+				while (assessmentURLs.size > 2000) {
+					assessmentURLs.delete(assessmentURLs.values().next().value!);
+				}
 			}
 			return result;
 		},

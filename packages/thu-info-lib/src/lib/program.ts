@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
 import {FULL_PROGRAM_URL_PREFIX, PROGRAM_LIST_URL, PROGRAM_URL} from "../constants/strings";
 import {InfoHelper} from "../index";
-import {MOCK_PROGRAM} from "../mocks/program";
+import {MOCK_FULL_PROGRAM, MOCK_PROGRAM} from "../mocks/program";
 import {
     CourseItemCompletion,
     CourseSetCompletion,
@@ -18,7 +18,7 @@ import {systemMessage} from "./basics";
 import {roamingWrapper, roamingWrapperWithMocks} from "./core";
 import type {Element} from "domhandler";
 
-export const getDegreeProgramCompletion = async (helper: InfoHelper) =>
+export const getDegreeProgramCompletion = async (helper: InfoHelper): Promise<ProgramCompletion> =>
     roamingWrapperWithMocks(
         helper,
         "default",
@@ -226,7 +226,7 @@ export const getFullDegreeProgram = async (
     helper: InfoHelper,
     degreeId?: number,
     skippedSet?: string[],
-) => {
+): Promise<ProgramFull> => {
     let id: number = degreeId === undefined ? -1 : degreeId;
 
     if (degreeId === undefined) {
@@ -315,6 +315,6 @@ export const getFullDegreeProgram = async (
 
             return program;
         }),
-        MOCK_PROGRAM, // TODO: Mock!
+        MOCK_FULL_PROGRAM,
     );
 };

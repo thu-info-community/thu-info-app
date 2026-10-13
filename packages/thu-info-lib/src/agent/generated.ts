@@ -5,7 +5,7 @@ import type {ToolDescriptor} from "./types";
 export const agentCatalog: ToolDescriptor[] = [
     {
         "category": "account",
-        "description": "Forget this trusted device. THIS METHOD IS INTENDED FOR APP USE ONLY.",
+        "description": "Forget this trusted device. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -24,18 +24,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "c0fa3f07cb46599b"
+        "version": "990cf58110f64c06"
     },
     {
         "category": "app",
-        "description": "Read THUInfo announcements",
+        "description": "Read THUInfo application announcements; createdAt is milliseconds since the Unix epoch. These are app announcements, not campus news",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -89,7 +104,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "fc4247f0185cb0d1"
+        "version": "2f2a4b6dcf51c4e7"
     },
     {
         "category": "app",
@@ -361,7 +376,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "account",
-        "description": "Read unified ID account details. Read ID account details, including the last password change time.",
+        "description": "Read unified ID account details; lastPasswordChangedAt is milliseconds since the Unix epoch, or null when unavailable. Read ID account details, including the last password change time.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -417,7 +432,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "03b0a23e538d0287"
+        "version": "5069a567b0af67fd"
     },
     {
         "category": "account",
@@ -540,7 +555,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "app",
-        "description": "Send an email; confirm recipient, subject and full body. A naive API that sends an email from the user's Tsinghua mail.",
+        "description": "Send an email (outgoing only; cannot read/manage mailboxes); confirm recipient, subject and full body. A naive API that sends an email from the user's Tsinghua mail.",
         "effect": "write",
         "impact": "confirm",
         "mode": "direct",
@@ -577,7 +592,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "26d0a9a1cf7db72e"
+        "version": "4f1b30a6f61533a3"
     },
     {
         "category": "academics",
@@ -686,28 +701,10 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "academics",
-        "description": "Read an assessment form. Get the evaluation form of a course from its url.",
+        "description": "Read an assessment form using the URL at index 2 of a tuple returned by getAssessmentList. Returns overall score/suggestion and teachers'/assistants' names and questions; hidden form fields are omitted",
         "effect": "read",
         "impact": "routine",
         "mode": "wrapper",
-        "name": "getAssessmentForm",
-        "path": "academics.getAssessmentForm",
-        "parameters": [
-            "url"
-        ],
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string",
-                    "description": "the corresponding form url to the course to evaluate"
-                }
-            },
-            "required": [
-                "url"
-            ],
-            "additionalProperties": false
-        },
         "outputSchema": {
             "type": "object",
             "properties": {
@@ -715,16 +712,7 @@ export const agentCatalog: ToolDescriptor[] = [
                     "type": "object",
                     "properties": {
                         "score": {
-                            "type": "object",
-                            "properties": {
-                                "value": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": [
-                                "value"
-                            ],
-                            "additionalProperties": false
+                            "type": "string"
                         },
                         "suggestion": {
                             "type": "string"
@@ -744,71 +732,16 @@ export const agentCatalog: ToolDescriptor[] = [
                             "name": {
                                 "type": "string"
                             },
-                            "inputGroups": {
+                            "questions": {
                                 "type": "array",
                                 "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "question": {
-                                            "type": "string"
-                                        },
-                                        "suggestion": {
-                                            "type": "object",
-                                            "properties": {
-                                                "value": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "value"
-                                            ],
-                                            "additionalProperties": false
-                                        },
-                                        "score": {
-                                            "type": "object",
-                                            "properties": {
-                                                "value": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "value"
-                                            ],
-                                            "additionalProperties": false
-                                        },
-                                        "others": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "value": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "value"
-                                                ],
-                                                "additionalProperties": false
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "question",
-                                        "suggestion",
-                                        "score",
-                                        "others"
-                                    ],
-                                    "additionalProperties": false
+                                    "type": "string"
                                 }
-                            },
-                            "suggestion": {
-                                "type": "string"
                             }
                         },
                         "required": [
                             "name",
-                            "inputGroups",
-                            "suggestion"
+                            "questions"
                         ],
                         "additionalProperties": false
                     }
@@ -821,71 +754,16 @@ export const agentCatalog: ToolDescriptor[] = [
                             "name": {
                                 "type": "string"
                             },
-                            "inputGroups": {
+                            "questions": {
                                 "type": "array",
                                 "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "question": {
-                                            "type": "string"
-                                        },
-                                        "suggestion": {
-                                            "type": "object",
-                                            "properties": {
-                                                "value": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "value"
-                                            ],
-                                            "additionalProperties": false
-                                        },
-                                        "score": {
-                                            "type": "object",
-                                            "properties": {
-                                                "value": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": [
-                                                "value"
-                                            ],
-                                            "additionalProperties": false
-                                        },
-                                        "others": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "value": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                "required": [
-                                                    "value"
-                                                ],
-                                                "additionalProperties": false
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "question",
-                                        "suggestion",
-                                        "score",
-                                        "others"
-                                    ],
-                                    "additionalProperties": false
+                                    "type": "string"
                                 }
-                            },
-                            "suggestion": {
-                                "type": "string"
                             }
                         },
                         "required": [
                             "name",
-                            "inputGroups",
-                            "suggestion"
+                            "questions"
                         ],
                         "additionalProperties": false
                     }
@@ -898,11 +776,29 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "aca0686419950a87"
+        "name": "getAssessmentForm",
+        "path": "academics.getAssessmentForm",
+        "parameters": [
+            "url"
+        ],
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "description": "the corresponding form url to the course to evaluate"
+                }
+            },
+            "required": [
+                "url"
+            ],
+            "additionalProperties": false
+        },
+        "version": "04b7a1ffd5549c89"
     },
     {
         "category": "academics",
-        "description": "Complete and submit a teaching assessment in the native screen. Submit the evaluation form.",
+        "description": "Complete and submit a teaching assessment in the native screen. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -925,18 +821,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "5b907bd871fcb7db"
+        "version": "1dbc484cc2798569"
     },
     {
         "category": "health",
-        "description": "Read physical examination results. Get the physical exam score of the user.",
+        "description": "Read physical fitness test results, not medical examination records. Get the physical exam score of the user.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -966,7 +877,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 "maxItems": 2
             }
         },
-        "version": "97dfce5583a2cb55"
+        "version": "e9de1ba05eeb2582"
     },
     {
         "category": "academics",
@@ -1010,7 +921,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "academics",
-        "description": "Find classroom availability. Get the classroom state of specific classroom building and week number.",
+        "description": "Find classroom availability. Each classroom's status array has 42 entries: Monday through Sunday, six time slots per day in order. Codes: 0 teaching, 1 exam, 2 borrowed, 3 disabled, 4 reserved for compatibility, 5 available. Use returned currentWeekNumber and datesOfCurrentWeek; do not infer availability from other codes. Get the classroom state of specific classroom building and week number.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1117,7 +1028,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "522868628fb640d1"
+        "version": "cc4bfa5049e2e828"
     },
     {
         "category": "finance",
@@ -1288,7 +1199,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "finance",
-        "description": "Open an invoice PDF. Get the invoice PDF in base64 format.",
+        "description": "Provide an Open document button for the native invoice screen; no PDF bytes are returned and the screen does not automatically select the supplied invoice",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1301,20 +1212,34 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        },
+        "outputSchema": {
+            "type": "object",
             "properties": {
-                "uuid": {
+                "document": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "route": {
+                    "type": "string"
+                },
+                "instruction": {
                     "type": "string"
                 }
             },
             "required": [
-                "uuid"
+                "document",
+                "route",
+                "instruction"
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "string"
-        },
-        "version": "2d4f45b1a11924c2"
+        "version": "069acf9eb3cd8f1e"
     },
     {
         "category": "finance",
@@ -1592,7 +1517,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "schedule",
-        "description": "Get the school calendar image link. Get the school calendar image url",
+        "description": "Provide an Open document button for the native school calendar screen; no image URL is returned and year/semester/language must be selected there",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1606,36 +1531,34 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "year": {
-                    "type": "number"
-                },
-                "semester": {
-                    "type": "string",
-                    "enum": [
-                        "spring",
-                        "autumn"
-                    ]
-                },
-                "lang": {
-                    "type": "string",
-                    "enum": [
-                        "zh",
-                        "en"
-                    ]
-                }
-            },
-            "required": [
-                "year",
-                "semester",
-                "lang"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+                "document": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "route": {
+                    "type": "string"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "document",
+                "route",
+                "instruction"
+            ],
+            "additionalProperties": false
         },
-        "version": "b3fe0d8beb24dbd7"
+        "version": "733a1e7cea3c42f0"
     },
     {
         "category": "schedule",
@@ -1662,7 +1585,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "dorm",
-        "description": "Open dormitory score image. Get the dorm score image, in base64 format.",
+        "description": "Provide an Open document button for the native dormitory score image; no image bytes are returned",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1677,13 +1600,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "additionalProperties": false
         },
         "outputSchema": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+                "document": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "route": {
+                    "type": "string"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "document",
+                "route",
+                "instruction"
+            ],
+            "additionalProperties": false
         },
-        "version": "13cedddee2f05e34"
+        "version": "dcee341c1be31842"
     },
     {
         "category": "dorm",
-        "description": "Create an electricity recharge order and pay in the native screen. Make an electricity recharge payment order, and get the pay-code of the\norder.\n\nIf you want to use the pay-code on mobile devices, the url link to the\nAlipay payment page will be\n`\"alipayqr://platformapi/startapp?saId=10000007&qrcode=https%3A%2F%2Fqr.alipay.com%2F\" + payCode`\n\nYou can also call `genAlipayUrl(payCode)` in `dist/utils/alipay` to get\nthe Alipay url.",
+        "description": "Electricity recharge is disabled in the native screen. This handoff only opens that screen; it cannot create or pay for an electricity order. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -1696,33 +1639,41 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "money": {
-                    "type": "number",
-                    "description": "a number representing the amount of money to be paid\n(in yuan, must be integer)"
-                }
-            },
-            "required": [
-                "money"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "b7dd3189f2358aa6"
+        "version": "b6d65e93c71cdde6"
     },
     {
         "category": "dorm",
-        "description": "Read electricity payment records. Get the recent ele-recharge records.",
+        "description": "Read electricity payment records. Each row is [name, record ID, time, channel, amount, status]; rows are data, not a header. Get the recent ele-recharge records.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1764,7 +1715,7 @@ export const agentCatalog: ToolDescriptor[] = [
                 "maxItems": 6
             }
         },
-        "version": "3852fcd50267f5bd"
+        "version": "0c4096ca7b8105f4"
     },
     {
         "category": "dorm",
@@ -1801,7 +1752,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "account",
-        "description": "Change dormitory account password. Reset dorm password.\n\nThis method works on the basis that myhome.tsinghua.edu.cn can be logged\nin with INFO account, and the dorm password can therefore be reset,\nwithout the need of a original password.",
+        "description": "Change dormitory account password. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -1824,18 +1775,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "0cf1a926699e4acc"
+        "version": "a04d4e7f13d37643"
     },
     {
         "category": "library",
-        "description": "List libraries",
+        "description": "List libraries and their names/IDs for seat reservations",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1883,11 +1849,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "613ba1649d52979a"
+        "version": "510bc3198b7f878a"
     },
     {
         "category": "library",
-        "description": "List library sections for a floor and day",
+        "description": "List library sections using a floor returned by getLibraryFloorList; dateChoice 0 is today, 1 is tomorrow",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -1903,6 +1869,15 @@ export const agentCatalog: ToolDescriptor[] = [
                 "libraryFloor": {
                     "type": "object",
                     "properties": {
+                        "parentId": {
+                            "type": "number"
+                        },
+                        "available": {
+                            "type": "number"
+                        },
+                        "total": {
+                            "type": "number"
+                        },
                         "id": {
                             "type": "number"
                         },
@@ -1997,11 +1972,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "aaf59d801ac79111"
+        "version": "5dc82b91846cca6a"
     },
     {
         "category": "library",
-        "description": "List library floors for a library and day",
+        "description": "List library floors using a library returned by getLibraryList; dateChoice 0 is today, 1 is tomorrow",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -2065,6 +2040,15 @@ export const agentCatalog: ToolDescriptor[] = [
             "items": {
                 "type": "object",
                 "properties": {
+                    "parentId": {
+                        "type": "number"
+                    },
+                    "available": {
+                        "type": "number"
+                    },
+                    "total": {
+                        "type": "number"
+                    },
                     "id": {
                         "type": "number"
                     },
@@ -2095,11 +2079,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "5c949c40d7ca211e"
+        "version": "65afffe7ab7de742"
     },
     {
         "category": "library",
-        "description": "List seats and their availability",
+        "description": "List seats using a section returned by getLibrarySectionList; dateChoice 0 is today, 1 is tomorrow. valid indicates seat availability. status reports socket presence: available means has a socket, unavailable means no socket, unknown/omitted means unreported. type has no documented meaning",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -2221,11 +2205,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "8071bc9f7bb29582"
+        "version": "a078f2379d3e5b95"
     },
     {
         "category": "library",
-        "description": "Switch a library seat power socket",
+        "description": "Report whether a library seat has a power socket: available means present, unavailable means absent. This updates the shared presence report and does not switch physical power or test whether a socket works",
         "effect": "write",
         "impact": "confirm",
         "mode": "direct",
@@ -2245,9 +2229,9 @@ export const agentCatalog: ToolDescriptor[] = [
                     "type": "string",
                     "enum": [
                         "available",
-                        "unavailable",
-                        "unknown"
-                    ]
+                        "unavailable"
+                    ],
+                    "description": "available: has a socket; unavailable: no socket. This is a shared presence report, not a power switch or working-condition report"
                 }
             },
             "required": [
@@ -2259,14 +2243,34 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "7b75ec19b1450d40"
+        "version": "2d6a04d6e75f6374"
     },
     {
         "category": "library",
-        "description": "Reserve a library seat. Use this API to book library seats.",
+        "description": "Reserve an available seat using the exact seat and section returned by library queries; dateChoice 0 is today, 1 is tomorrow. Returns succeeded/failed and the portal message",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "succeeded",
+                        "failed"
+                    ]
+                },
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status",
+                "message"
+            ],
+            "additionalProperties": false
+        },
         "name": "bookLibrarySeat",
         "path": "library.bookLibrarySeat",
         "parameters": [
@@ -2384,23 +2388,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "number"
-                },
-                "msg": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "status",
-                "msg"
-            ],
-            "additionalProperties": false
-        },
-        "version": "c516e86fa783408c"
+        "version": "3b4452456c6c515b"
     },
     {
         "category": "library",
@@ -2451,7 +2439,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "library",
-        "description": "Cancel a library seat booking. Pass the cancellable record's delId as id, not its display id. Use this API to cancel booking.",
+        "description": "Cancel a library seat booking. Pass the cancellable record's delId as id, not its display id",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -2465,7 +2453,7 @@ export const agentCatalog: ToolDescriptor[] = [
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "the `id` from `LibBookRecord`"
+                    "description": "the `delId` from a cancellable `LibBookRecord`, not its display `id`"
                 }
             },
             "required": [
@@ -2476,7 +2464,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "905e15a57d9fc0e8"
+        "version": "e59a1da78d6a0356"
     },
     {
         "category": "library",
@@ -2747,7 +2735,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "library",
-        "description": "Reserve a library room. The wrapper includes the current user automatically; additional members must come from fuzzySearchLibraryId. Performs a booking request of a library room.",
+        "description": "Reserve a library room returned by getLibraryRoomBookingResourceList. Use future start/end on one day in YYYY-MM-DD HH:mm:ss format, five-minute increments and zero seconds. The wrapper adds the current user; memberList contains numeric IDs from exact-name fuzzySearchLibraryId lookups. Rechecks availability, duration and participant limits",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -2889,18 +2877,18 @@ export const agentCatalog: ToolDescriptor[] = [
                 },
                 "start": {
                     "type": "string",
-                    "description": "the beginning time of booking, in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`"
+                    "description": "the beginning time of booking, in format `yyyy-MM-dd HH:mm:ss`; minutes must be a multiple of 5 and seconds must be `00`"
                 },
                 "end": {
                     "type": "string",
-                    "description": "the ending time of booking, in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`"
+                    "description": "the ending time of booking, in format `yyyy-MM-dd HH:mm:ss`; minutes must be a multiple of 5 and seconds must be `00`"
                 },
                 "memberList": {
                     "type": "array",
                     "items": {
                         "type": "number"
                     },
-                    "description": "a list of strings"
+                    "description": "numeric member IDs returned by `fuzzySearchLibraryId`"
                 }
             },
             "required": [
@@ -2914,11 +2902,11 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "7748b6390b58363f"
+        "version": "12c0ff96463220eb"
     },
     {
         "category": "library",
-        "description": "Read library room bookings. Returns all active booking records.",
+        "description": "Read library room bookings from today through six days from today. date is YYYYMMDD; begin/end are ISO timestamps. This is a bounded date window, not full booking history. Returns library room booking records from today through six days from today.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -3000,11 +2988,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "edacc231efd748a3"
+        "version": "2c9cfe549cd937bf"
     },
     {
         "category": "library",
-        "description": "Cancel a library room booking. Cancels a specific library booking record.",
+        "description": "Cancel a library room booking",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -3029,7 +3017,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "9bfd9881a79a073b"
+        "version": "67e7bdf623e48871"
     },
     {
         "category": "library",
@@ -3593,11 +3581,58 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "news",
-        "description": "Read a news article and cite its source URL. Get the detailed news with the url provided.",
+        "description": "Read an exact article URL previously returned by a news list/search. Returns title, plain text and source URL; cite that URL. PDF articles return a document notice without PDF bytes",
         "effect": "read",
         "impact": "routine",
         "mode": "wrapper",
         "result": "news",
+        "outputSchema": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "text": {
+                            "type": "string"
+                        },
+                        "source": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "title",
+                        "text",
+                        "source"
+                    ],
+                    "additionalProperties": false
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "document": {
+                            "type": "boolean",
+                            "enum": [
+                                true
+                            ]
+                        },
+                        "source": {
+                            "type": "string"
+                        },
+                        "instruction": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "document",
+                        "source",
+                        "instruction"
+                    ],
+                    "additionalProperties": false
+                }
+            ]
+        },
         "name": "getNewsDetail",
         "path": "news.getNewsDetail",
         "parameters": [
@@ -3616,23 +3651,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "array",
-            "items": [
-                {
-                    "type": "string"
-                },
-                {
-                    "type": "string"
-                },
-                {
-                    "type": "string"
-                }
-            ],
-            "minItems": 3,
-            "maxItems": 3
-        },
-        "version": "5d56a7792a770d07"
+        "version": "5bff3f18ae17fa60"
     },
     {
         "category": "news",
@@ -4092,7 +4111,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "schedule",
-        "description": "Synchronize selected local schedules to the portal",
+        "description": "Synchronize selected custom local schedules to the portal; use distinct scheduleIds returned by list_local_schedules",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -4121,11 +4140,11 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "d6decbb8c8ab488d"
+        "version": "9e4f045190676581"
     },
     {
         "category": "schedule",
-        "description": "Delete selected custom schedules from the portal",
+        "description": "Delete selected custom schedules from the portal; use distinct scheduleIds returned by list_local_schedules. This does not delete the local schedules",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -4154,7 +4173,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "49c58f9be87982ff"
+        "version": "3715d7b5de43db51"
     },
     {
         "category": "courses",
@@ -4321,7 +4340,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "courses",
-        "description": "Search courses with remaining places. Search courses for registration remaining data",
+        "description": "Search courses with remaining places. capacity/remaining/queue may be null when the portal does not provide a number; null means unknown, not zero. Search courses for registration remaining data",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -4393,13 +4412,34 @@ export const agentCatalog: ToolDescriptor[] = [
                                 "type": "string"
                             },
                             "capacity": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "remaining": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "queue": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "teacher": {
                                 "type": "string"
@@ -4430,7 +4470,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "352cc1c997a71d9a"
+        "version": "e1ec0d541277808d"
     },
     {
         "category": "courses",
@@ -4579,7 +4619,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "courses",
-        "description": "Search course registration offerings. Search courses for registration",
+        "description": "Search course registration offerings. capacity/remaining/queue may be null when unavailable; null means unknown, not zero. Search courses for registration",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -4651,13 +4691,34 @@ export const agentCatalog: ToolDescriptor[] = [
                                 "type": "string"
                             },
                             "capacity": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "remaining": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "queue": {
-                                "type": "number"
+                                "anyOf": [
+                                    {
+                                        "type": "number"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ]
                             },
                             "teacher": {
                                 "type": "string"
@@ -4732,14 +4793,39 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "b9a0cda3dbc06eb5"
+        "version": "e914c9b8656a8fbd"
     },
     {
         "category": "courses",
-        "description": "Select a course; review semester, course, section and priority. Select a course.",
+        "description": "Select a course; review semester, course, section, priority and will. Returns succeeded only when the portal accepts and the course appears in selected courses; failed/unknown is not success",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "succeeded",
+                        "failed",
+                        "unknown"
+                    ]
+                },
+                "message": {},
+                "verified": {
+                    "type": "boolean"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status",
+                "message"
+            ],
+            "additionalProperties": false
+        },
         "name": "selectCourse",
         "path": "courses.selectCourse",
         "parameters": [
@@ -4768,7 +4854,7 @@ export const agentCatalog: ToolDescriptor[] = [
                         "tyk",
                         "cx"
                     ],
-                    "description": "\"bx\" | \"xx\" | \"rx\" | \"ty\" | \"cx\""
+                    "description": "\"bx\" | \"xx\" | \"rx\" | \"ty\" | \"xwk\" | \"fxwk\" | \"tyk\" | \"cx\""
                 },
                 "courseId": {
                     "type": "string",
@@ -4797,17 +4883,39 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "string"
-        },
-        "version": "5a204bf169e78ec2"
+        "version": "0ffd274a8df78d15"
     },
     {
         "category": "courses",
-        "description": "Drop a selected course. Delete a course",
+        "description": "Drop a selected course. Returns succeeded only when the portal accepts and the course is absent from selected courses; failed/unknown is not success",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "succeeded",
+                        "failed",
+                        "unknown"
+                    ]
+                },
+                "message": {},
+                "verified": {
+                    "type": "boolean"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status",
+                "message"
+            ],
+            "additionalProperties": false
+        },
         "name": "deleteCourse",
         "path": "courses.deleteCourse",
         "parameters": [
@@ -4835,10 +4943,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "string"
-        },
-        "version": "c31e3fbadc0b4292"
+        "version": "f6dd8c7698bce8fd"
     },
     {
         "category": "courses",
@@ -4919,10 +5024,35 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "courses",
-        "description": "Change course selection preference. Change a will of a course",
+        "description": "Change course selection preference (will 1, 2 or 3). Returns succeeded only when the portal accepts and the selected course has the requested will; failed/unknown is not success",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
+        "outputSchema": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "succeeded",
+                        "failed",
+                        "unknown"
+                    ]
+                },
+                "message": {},
+                "verified": {
+                    "type": "boolean"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "status",
+                "message"
+            ],
+            "additionalProperties": false
+        },
         "name": "changeCourseWill",
         "path": "courses.changeCourseWill",
         "parameters": [
@@ -4960,10 +5090,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "outputSchema": {
-            "type": "string"
-        },
-        "version": "7459a3a4e6fd743c"
+        "version": "8ce4b6317f6d3e0c"
     },
     {
         "category": "courses",
@@ -5053,7 +5180,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "courses",
-        "description": "Read course priority details. Gets the course registration data for remaining position",
+        "description": "Read course priority details. Each bxSelected/xxSelected/rxSelected tuple is [priority, first-choice, second-choice, third-choice] registration counts for compulsory/restricted elective/elective courses respectively. Gets the course registration data for remaining position",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -5224,11 +5351,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "769b5936459f4fd0"
+        "version": "b98409a9aabc835e"
     },
     {
         "category": "courses",
-        "description": "Read course registration queue information. Gets course registration queue info",
+        "description": "Read course registration queue information. inQueue is the number of people in the queue, not a boolean; position is the current user's queue position. Gets course registration queue info",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -5301,11 +5428,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "dc0c2fcd2b405d37"
+        "version": "85b41203ff335e90"
     },
     {
         "category": "courses",
-        "description": "Cancel a course pass/fail request. Cancel PF registration for a course",
+        "description": "Cancel a course pass/fail request",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -5334,11 +5461,11 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "64bd86b5c890e493"
+        "version": "4645914359d73210"
     },
     {
         "category": "courses",
-        "description": "Request pass/fail grading for a course. Set PF mark for a course",
+        "description": "Request pass/fail grading for a course",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -5367,11 +5494,11 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "917782e12f61298b"
+        "version": "7210d96509b58458"
     },
     {
         "category": "sports",
-        "description": "Find available sports resources. Gets all available sports resources.\n\n`gymId` and `itemId` can be found in `sportsIdInfoList` from `dist/lib/sports`.",
+        "description": "Find sports resources using a supported facility ID pair. count is the user's maximum reservable fields, not the number of available fields. init <= 0 means booking is unavailable; when count is 0, positive init counts unpaid orders. Inspect each resource's canNetBook, locked, bookId and paymentStatus before describing availability. Gets all available sports resources.\n\n`gymId` and `itemId` can be found in `sportsIdInfoList` from `dist/lib/sports`.",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -5386,10 +5513,12 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "gymId": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Supported facilities (name, gymId, itemId): 气膜馆羽毛球场: 3998000, 4045681; 气膜馆乒乓球场: 3998000, 4037036; 综体篮球场: 4797914, 4797898; 综体羽毛球场: 4797914, 4797899; 西体羽毛球场: 4836273, 4836196; 西体台球: 4836273, 14567218; 紫荆网球场: 5843934, 5845263; 西网球场: 5843934, 10120539. Use the matching pair; do not invent IDs."
                 },
                 "itemId": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Use the itemId paired with the selected facility in gymId's description"
                 },
                 "date": {
                     "type": "string",
@@ -5481,7 +5610,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "96a131106fb7e740"
+        "version": "63bdfd209fdf9a17"
     },
     {
         "category": "sports",
@@ -5513,7 +5642,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "sports",
-        "description": "Reserve a sports facility with native captcha and payment. Makes a sports reservation and gets the alipay pay-code if payment is\nrequired.\n\nIf you want to use the pay-code on mobile devices, the url link to the\nAlipay payment page will be\n`\"alipayqr://platformapi/startapp?saId=10000007&qrcode=https%3A%2F%2Fqr.alipay.com%2F\" + payCode`\n\nYou can also call `genAlipayUrl(payCode)` in `dist/utils/alipay` to get\nthe Alipay url.",
+        "description": "Reserve a sports facility with native captcha and payment. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -5536,67 +5665,37 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "totalCost": {
-                    "type": "number",
-                    "description": "a number indicating the total cost of the reservation"
-                },
-                "phone": {
-                    "type": "string",
-                    "description": "a string representing the user's phone number"
-                },
-                "receiptTitle": {
-                    "type": "string",
-                    "enum": [
-                        "清华大学",
-                        "清华大学工会",
-                        "清华大学教育基金会"
-                    ],
-                    "description": "a string representing the title of the receipt, or `undefined` if a receipt is not needed"
-                },
-                "gymId": {
-                    "type": "string",
-                    "description": "a string representing the ID of the gym"
-                },
-                "itemId": {
-                    "type": "string",
-                    "description": "a string representing the ID of the item"
-                },
-                "date": {
-                    "type": "string",
-                    "description": "a string in the format of `yyyy-MM-dd`"
-                },
-                "resHashId": {
-                    "type": "string",
-                    "description": "a string representing the hash of the resource"
-                },
-                "skipPayment": {
-                    "type": "boolean",
-                    "description": "whether to skip payment (and pay later) Default: false"
-                }
-            },
-            "required": [
-                "totalCost",
-                "phone",
-                "gymId",
-                "itemId",
-                "date",
-                "resHashId"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "949aaac2ec8c7916"
+        "version": "2fdf3f2dea0827be"
     },
     {
         "category": "sports",
@@ -5657,7 +5756,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "sports",
-        "description": "Pay for a sports reservation. Make sports reservation payment with a payId.",
+        "description": "Pay for a sports reservation. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -5671,40 +5770,41 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "payId": {
-                    "type": "string"
-                },
-                "receiptTitle": {
-                    "type": "string",
-                    "enum": [
-                        "清华大学",
-                        "清华大学工会",
-                        "清华大学教育基金会"
-                    ]
-                }
-            },
-            "required": [
-                "payId"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "b2092fb432401c32"
+        "version": "f32c104ffa46c68d"
     },
     {
         "category": "sports",
-        "description": "Cancel an unpaid sports reservation. Cancel a sports reservation if payment has not been made",
+        "description": "Cancel an unpaid sports reservation",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -5729,7 +5829,7 @@ export const agentCatalog: ToolDescriptor[] = [
         "outputSchema": {
             "type": "null"
         },
-        "version": "ead8a01e83caa4cb"
+        "version": "7b7230ffc018e42d"
     },
     {
         "category": "gitlab",
@@ -6666,7 +6766,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "academics",
-        "description": "Read degree program completion",
+        "description": "Read degree program completion. Course group type: 0 compulsory, 1 restricted elective, 2 elective, 3 outside the program. Course state: 0 completed, 1 selected/in progress, 2 not completed. Missing grade/point values are unavailable, not zero",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -6682,15 +6782,121 @@ export const agentCatalog: ToolDescriptor[] = [
         },
         "outputSchema": {
             "type": "object",
-            "properties": {},
-            "required": [],
+            "properties": {
+                "courseSet": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "course": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "point": {
+                                            "type": "number"
+                                        },
+                                        "grade": {
+                                            "type": "string"
+                                        },
+                                        "state": {
+                                            "type": "number",
+                                            "enum": [
+                                                0,
+                                                1,
+                                                2
+                                            ]
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "credit": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "state",
+                                        "id",
+                                        "name",
+                                        "credit"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "requiredCredit": {
+                                "type": "number"
+                            },
+                            "completedCredit": {
+                                "type": "number"
+                            },
+                            "requiredCourseNum": {
+                                "type": "number"
+                            },
+                            "completedCourseNum": {
+                                "type": "number"
+                            },
+                            "fullCompleted": {
+                                "type": "boolean"
+                            },
+                            "setName": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "number",
+                                "enum": [
+                                    0,
+                                    1,
+                                    2,
+                                    3
+                                ]
+                            }
+                        },
+                        "required": [
+                            "course",
+                            "fullCompleted",
+                            "setName",
+                            "type"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "completedCredit": {
+                    "type": "number"
+                },
+                "compulsoryCredit": {
+                    "type": "number"
+                },
+                "restrictedCredit": {
+                    "type": "number"
+                },
+                "electiveCredit": {
+                    "type": "number"
+                },
+                "duplicatedCourse": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "courseSet",
+                "completedCredit",
+                "compulsoryCredit",
+                "restrictedCredit",
+                "electiveCredit",
+                "duplicatedCourse"
+            ],
             "additionalProperties": false
         },
-        "version": "a37dde921e64249b"
+        "version": "bc18d61c08cb1fa5"
     },
     {
         "category": "academics",
-        "description": "Read the degree program requirements",
+        "description": "Read the degree program requirements. Course group type: 0 compulsory, 1 restricted elective, 2 elective, 3 outside the program",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -6718,11 +6924,66 @@ export const agentCatalog: ToolDescriptor[] = [
         },
         "outputSchema": {
             "type": "object",
-            "properties": {},
-            "required": [],
+            "properties": {
+                "courseSet": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "course": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "dumb": {
+                                            "type": "null"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "credit": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "name",
+                                        "credit"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "setName": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "number",
+                                "enum": [
+                                    0,
+                                    1,
+                                    2,
+                                    3
+                                ]
+                            }
+                        },
+                        "required": [
+                            "course",
+                            "setName",
+                            "type"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [
+                "courseSet"
+            ],
             "additionalProperties": false
         },
-        "version": "7c7f0706e7bf9877"
+        "version": "cee74de29e79f27d"
     },
     {
         "category": "network",
@@ -6778,7 +7039,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "network",
-        "description": "Read network balance",
+        "description": "Read campus network package, traffic usage, online duration and account balance",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -6819,11 +7080,11 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "4674c47a8d349796"
+        "version": "c84474a4c7b066b7"
     },
     {
         "category": "network",
-        "description": "Read network account usage",
+        "description": "Read campus network account profile, status and allowed device count; getNetworkBalance provides traffic usage and balance",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -6880,7 +7141,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "1c8c00a003b95b10"
+        "version": "1a26ab93b708ea53"
     },
     {
         "category": "network",
@@ -6941,7 +7202,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "network",
-        "description": "Connect a network device",
+        "description": "Connect a network device. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -6958,32 +7219,37 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "ip": {
-                    "type": "string"
-                },
-                "internet": {
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "ip",
-                "internet"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "f388a1c320047928"
+        "version": "273fda6a0b5753f7"
     },
     {
         "category": "thos",
@@ -7033,7 +7299,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "thos",
-        "description": "Read THOS workflow tasks",
+        "description": "Read THOS workflow tasks; this does not process tasks or change their status",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -7218,11 +7484,11 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "72efcab583766681"
+        "version": "154a8874095ef2f7"
     },
     {
         "category": "thos",
-        "description": "List THOS services",
+        "description": "List THOS services and their portal links. Applications must be completed in THOS; this tool only reads the listing",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -7295,7 +7561,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": false
         },
-        "version": "7103e3d76a064c66"
+        "version": "bf0f77bbab7e6f0a"
     },
     {
         "category": "card",
@@ -7396,7 +7662,7 @@ export const agentCatalog: ToolDescriptor[] = [
     },
     {
         "category": "card",
-        "description": "Open campus card photo",
+        "description": "Provide an Open document button for the native campus card screen to view the photo; no photo URL is returned",
         "effect": "read",
         "impact": "routine",
         "mode": "direct",
@@ -7411,9 +7677,29 @@ export const agentCatalog: ToolDescriptor[] = [
             "additionalProperties": false
         },
         "outputSchema": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+                "document": {
+                    "type": "boolean",
+                    "enum": [
+                        true
+                    ]
+                },
+                "route": {
+                    "type": "string"
+                },
+                "instruction": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "document",
+                "route",
+                "instruction"
+            ],
+            "additionalProperties": false
         },
-        "version": "323341dc697a6b37"
+        "version": "dd7ca4fc618515e0"
     },
     {
         "category": "card",
@@ -7448,7 +7734,7 @@ export const agentCatalog: ToolDescriptor[] = [
                         2,
                         3
                     ],
-                    "description": "-1 for all (1-3), 1 for consumption, 2 for recharge, 3 for subsidy, 0 for ALL (?)"
+                    "description": "-1 for all, 1 for consumption, 2 for recharge, 3 for subsidy"
                 }
             },
             "required": [
@@ -7501,11 +7787,11 @@ export const agentCatalog: ToolDescriptor[] = [
                 "additionalProperties": false
             }
         },
-        "version": "10a038cba159f94c"
+        "version": "cbc529671f5d4f38"
     },
     {
         "category": "card",
-        "description": "Change campus card password",
+        "description": "Change campus card password. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -7530,18 +7816,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "f472e49c815987d2"
+        "version": "a119345a867ba829"
     },
     {
         "category": "card",
-        "description": "Change campus card spending limits",
+        "description": "Change campus card spending limits. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -7558,36 +7859,41 @@ export const agentCatalog: ToolDescriptor[] = [
         ],
         "inputSchema": {
             "type": "object",
-            "properties": {
-                "maxDailyAmount": {
-                    "type": "number"
-                },
-                "maxOneTimeAmount": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "maxDailyAmount",
-                "maxOneTimeAmount"
-            ],
+            "properties": {},
+            "required": [],
             "additionalProperties": false
         },
         "outputSchema": {
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "f05cb98f269aacb9"
+        "version": "6bd4053e35be3d0e"
     },
     {
         "category": "card",
-        "description": "Report campus card lost",
+        "description": "Report campus card lost. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -7610,18 +7916,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "7db1b64b75a8d74d"
+        "version": "55027e7fd18f169b"
     },
     {
         "category": "card",
-        "description": "Cancel campus card loss report",
+        "description": "Cancel campus card loss report. Only opens the native screen after approval; supported operations must be completed there. It does not complete the operation or pass arguments to that screen.",
         "effect": "write",
         "impact": "confirm",
         "mode": "interactive",
@@ -7644,18 +7965,33 @@ export const agentCatalog: ToolDescriptor[] = [
             "type": "object",
             "properties": {
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "handoff"
+                    ]
                 },
                 "route": {
                     "type": "string"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "enum": [
+                        false
+                    ]
                 }
-            }
+            },
+            "required": [
+                "status",
+                "route",
+                "completed"
+            ],
+            "additionalProperties": false
         },
-        "version": "0bc83b59469f5222"
+        "version": "e567bccd1cce35e5"
     },
     {
         "category": "card",
-        "description": "Recharge the campus card after approval: 10–200 yuan, at most two decimal places. Ask for the amount and payment method if unspecified: type 0 transfers from the linked bank card; type 1 creates an Alipay payment that the user must complete. Never ask for a transaction password. Recharge the campus card.",
+        "description": "Recharge the campus card after approval: 10–200 yuan, at most two decimal places. Ask for the amount and payment method if unspecified: type 0 transfers from the linked bank card; type 1 creates an Alipay payment that the user must complete. Never ask for a transaction password",
         "effect": "write",
         "impact": "confirm",
         "mode": "wrapper",
@@ -7718,7 +8054,7 @@ export const agentCatalog: ToolDescriptor[] = [
             ],
             "additionalProperties": true
         },
-        "version": "0f9e077b276741b7"
+        "version": "963763b60836b8bf"
     }
 ];
 

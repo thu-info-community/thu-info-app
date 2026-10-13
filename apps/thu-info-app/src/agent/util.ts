@@ -49,7 +49,10 @@ export const sanitize = (value: unknown, depth = 0): unknown => {
 	if (typeof value === "string") {
 		return value.replace(/Bearer\s+[A-Za-z0-9._~+/-]+/gi, "[credential omitted]");
 	}
-	if (typeof value === "number" || typeof value === "boolean") {
+	if (typeof value === "number") {
+		return Number.isFinite(value) ? value : null;
+	}
+	if (typeof value === "boolean") {
 		return value;
 	}
 	if (value instanceof Date) {
@@ -67,7 +70,10 @@ export const sanitize = (value: unknown, depth = 0): unknown => {
 			Object.entries(object)
 				.filter(
 					([key, item]) =>
-						!sensitiveKey.test(key) &&
+						(!sensitiveKey.test(key) ||
+							(key === "lastPasswordChangedAt" &&
+								(item === null || (typeof item === "number" && Number.isFinite(item))))) &&
+						item !== undefined &&
 						typeof item !== "function" &&
 						!["__proto__", "constructor", "prototype"].includes(key),
 				)
