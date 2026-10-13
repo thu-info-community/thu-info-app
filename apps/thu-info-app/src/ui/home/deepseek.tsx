@@ -38,7 +38,7 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import {configSet} from "../../redux/slices/config.ts";
 import {Snackbar} from "react-native-snackbar";
-import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
+import IconAssistant from "../../assets/icons/IconAssistant.tsx";
 import IconDropdown from "../../assets/icons/IconDropdown.tsx";
 import IconCheck from "../../assets/icons/IconCheck.tsx";
 import {
@@ -856,7 +856,7 @@ const LegacyDeepSeekScreen = ({route: {params}}: {route: DeepSeekTabProp}) => {
 								paddingTop: "50%",
 								marginStart: 8,
 							}}>
-							<IconDeepSeek width={60} height={60} />
+							<IconAssistant width={60} height={60} />
 							<Text style={{color: colors.text, fontSize: 16, marginTop: 8}}>
 								{getStr("deepseekWelcomeText")}
 							</Text>

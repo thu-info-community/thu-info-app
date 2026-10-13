@@ -9,7 +9,7 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import Markdown from "react-native-markdown-display";
 import {Snackbar} from "react-native-snackbar";
 import themes from "../../assets/themes/themes";
-import IconDeepSeek from "../../assets/icons/IconDeepSeek";
+import IconAssistant from "../../assets/icons/IconAssistant";
 import IconCopy from "../../assets/icons/IconCopy";
 import IconRefresh from "../../assets/icons/IconRefresh";
 import {getStr} from "../../utils/i18n";
@@ -249,7 +249,7 @@ const DeepSeekAssistantMessage = ({
 					justifyContent: "center",
 					flex: 0,
 				}}>
-				<IconDeepSeek width={20} height={20} />
+				<IconAssistant width={20} height={20} />
 			</View>
 			<View
 				style={{

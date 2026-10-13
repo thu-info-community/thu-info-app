@@ -12,7 +12,7 @@ import Markdown from "react-native-markdown-display";
 import Clipboard from "@react-native-clipboard/clipboard";
 import {Snackbar} from "react-native-snackbar";
 import type {ColorTheme} from "../../assets/themes/themes";
-import IconDeepSeek from "../../assets/icons/IconDeepSeek";
+import IconAssistant from "../../assets/icons/IconAssistant";
 import IconCopy from "../../assets/icons/IconCopy";
 import IconDown from "../../assets/icons/IconDown";
 import IconCalendar from "../../assets/icons/IconCalendar";
@@ -287,13 +287,13 @@ export const AgentWelcome = ({
 		{
 			title: agentText("Explore what I can do", "你能帮我做什么"),
 			prompt: agentText("What can you help me with?", "你能帮我做什么？"),
-			icon: <IconDeepSeek width={22} height={22} />,
+			icon: <IconAssistant width={22} height={22} />,
 		},
 	];
 	return (
 		<View style={s.welcome}>
 			<View style={s.welcomeIntro}>
-				<IconDeepSeek width={28} height={28} />
+				<IconAssistant width={28} height={28} />
 				<Text
 					accessibilityRole="header"
 					style={[s.welcomeTitle, {color: colors.fontB0}]}>

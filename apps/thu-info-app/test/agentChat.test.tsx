@@ -22,18 +22,22 @@ import type {AgentCheckpoint, Message} from "../src/agent/types";
 import {colorLight} from "../src/assets/colors/light";
 import {agentService} from "../src/agent/service";
 
+let mockLanguage: "zh" | "en" = "zh";
+let mockCampusModelName = "DeepSeek-V4.1-Flash";
+
 jest.mock("../src/utils/i18n", () => ({
-	langCode: "zh",
+	get langCode() {
+		return mockLanguage;
+	},
 	getStr: (key: string) =>
-		({
-			cancel: "取消",
-			login: "登录",
-			settings: "设置",
-			newConversation: "新对话",
-			confirm: "确认",
-			delete: "删除",
-			copied: "已复制",
-		})[key] ?? key,
+		(mockLanguage === "zh"
+			? require("../src/assets/translations/zh").default
+			: require("../src/assets/translations/en").default)[key] ?? key,
+}));
+jest.mock("../src/utils/campusModel", () => ({
+	get campusModelName() {
+		return mockCampusModelName;
+	},
 }));
 jest.mock("../src/assets/themes/themes", () => ({
 	__esModule: true,
@@ -128,6 +132,8 @@ const runtime = () => ({
 const route = {params: undefined} as any;
 beforeEach(() => {
 	jest.clearAllMocks();
+	mockLanguage = "zh";
+	mockCampusModelName = "DeepSeek-V4.1-Flash";
 	mockState.auth.userId = "student";
 	mockState.config.agentEnabled = true;
 });
@@ -278,6 +284,24 @@ test("large text increases line height without narrowing the conversation column
 	);
 	expect(agentChatStyles(2).column.maxWidth).toBe(760);
 });
+
+test.each([
+	{language: "zh", title: "助手", model: "DeepSeek-V4.1-Flash"},
+	{language: "zh", title: "助手", model: "qwen3.8-27b"},
+	{language: "en", title: "Assistant", model: "DeepSeek-V4.1-Flash"},
+	{language: "en", title: "Assistant", model: "qwen3.8-27b"},
+] as const)(
+	"the $language assistant identity is independent of model $model",
+	async ({language, title, model}) => {
+		mockLanguage = language;
+		mockCampusModelName = model;
+		(agentService.open as jest.Mock).mockResolvedValue(runtime());
+		await render(<AgentDeepSeekScreen route={route} />);
+		expect(screen.getByRole("header", {name: title})).toBeTruthy();
+		expect(screen.getByText(model)).toBeTruthy();
+		expect(screen.queryByRole("header", {name: "DeepSeek"})).toBeNull();
+	},
+);
 
 test("the composer sends the draft with the existing model settings", async () => {
 	const runner = runtime();

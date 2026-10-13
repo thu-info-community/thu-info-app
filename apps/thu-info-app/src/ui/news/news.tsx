@@ -29,7 +29,7 @@ import {useSelector} from "react-redux";
 import IconSubscription from "../../assets/icons/IconSubscription";
 import {useResponsive} from "../../utils/useResponsive";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import IconDeepSeek from "../../assets/icons/IconDeepSeek.tsx";
+import IconAssistant from "../../assets/icons/IconAssistant.tsx";
 import IconSend from "../../assets/icons/IconSend.tsx";
 import {addUsageStat, FunctionType} from "../../utils/webApi.ts";
 import {useNewsInvalidation} from "../../agent/useNewsInvalidation";
@@ -675,7 +675,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 							<IconSend height={32} width={32} color={deepseekInput.trim() === "" ? theme.colors.themeGrey : theme.colors.primary} />
 						</View>
 						</View>
-						: <View style={{padding: 8}}><IconDeepSeek width={32} height={32} /></View>}
+						: <View style={{padding: 8}}><IconAssistant width={32} height={32} /></View>}
 					</View>
 				</TouchableWithoutFeedback>
 			</View>

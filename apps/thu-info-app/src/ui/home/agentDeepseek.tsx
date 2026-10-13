@@ -295,7 +295,7 @@ export const AgentDeepSeekScreen = ({
 					style={[styles.panelTitle, {color: colors.fontB0}]}>
 					{account
 						? agentText("Unlock this conversation", "解锁后查看对话")
-						: agentText("Your campus assistant", "你的校园助手")}
+						: getStr("deepseek")}
 				</Text>
 				<Text
 					style={[
@@ -340,11 +340,10 @@ export const AgentDeepSeekScreen = ({
 					<Text
 						accessibilityRole="header"
 						style={[styles.headerTitle, {color: colors.fontB0}]}>
-						DeepSeek
+						{getStr("deepseek")}
 					</Text>
 					<Text style={[styles.headerSubtitle, {color: colors.fontB2}]}>
-						{agentText("Campus assistant", "校园助手")} ·{" "}
-						{campusModelName.replace("DeepSeek-", "").replace(/-/g, " ")}
+						{campusModelName}
 					</Text>
 				</View>
 				{iconButton(
