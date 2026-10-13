@@ -1,3 +1,3 @@
-export {agentCatalog, agentBindings} from "./generated";
+export {agentCatalog, agentBindings} from "./catalog.generated";
 export {validateSchema} from "./schema";
 export type {JsonSchema, ToolDescriptor, ToolPolicy} from "./types";

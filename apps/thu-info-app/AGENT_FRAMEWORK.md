@@ -30,9 +30,9 @@ DeepSeek screen / native approval UI
 ## Adding or changing a tool
 
 1. Add/change its typed `InfoHelper` method using the library guide. Add a reviewed policy entry: category, real business effect, approval impact, direct/wrapper/native/internal mode, privacy lock, result handling and any private arguments. Do not infer effects from names or HTTP methods: `getEleRechargePayCode`, for example, creates an order.
-2. Run `yarn workspace @thu-info/lib agent:generate`. The build-time TypeScript reflection pass derives parameter/result schemas and descriptions from types and JSDoc, emits static calls, and hashes the reviewed descriptor. It rejects unclassified callables, stale policies and unsupported exposed input types. A small shared JSON-schema-subset validator consumes these artifacts without runtime compilation or `eval`.
+2. The build-time TypeScript reflection pass generates `packages/thu-info-lib/src/agent/catalog.generated.ts` from types, JSDoc and reviewed policies. It derives parameter/result schemas and descriptions, emits static calls, and hashes the reviewed descriptor. It rejects unclassified callables, stale policies and unsupported exposed input types. A small shared JSON-schema-subset validator consumes these artifacts without runtime compilation or `eval`. The generated file is ignored by Git and included in published library packages.
 3. Implement any semantic adapter in `src/agent/nativeTools.ts`. Wrappers must use the same dispatcher and approval gate as generated tools. Examples: local schedule IDs → Dayjs schedules, current room availability and participants, fresh course-selection targets, assessment question projection, observed news URLs → text-only article, document → native document screen.
-4. Add positive/negative tests and regenerate the catalog. `agent:check` in CI fails if the artifact drifts. Changing write semantics also requires changing the reviewed descriptor/version; do not leave pending approvals valid across a policy change.
+4. Add positive/negative tests. Root dependency installation, library build/watch/test commands, and app start/Android/iOS/Harmony bundle/test commands generate the catalog before starting. CI generates and checks it before lint and tests; library packing regenerates it before publication. There is no continuous source watcher: after changing types, JSDoc or policies during a running development session, restart the command or run `yarn workspace @thu-info/lib agent:generate`. Unchanged output is not rewritten. Changing write semantics also requires changing the reviewed descriptor/version; do not leave pending approvals valid across a policy change.
 
 The model sees only three root tools initially. The root overview includes real example functions and fits one result page, so a general capabilities question does not require expanding every category or executing campus services. Category discovery returns short leaf descriptions; importing a leaf activates its generated schema on subsequent steps. At most 16 leaves are active (LRU); unimported names cannot execute. Internal methods cannot be reached through generic property access.
 
@@ -65,6 +65,7 @@ The model sees only three root tools initially. The root overview includes real 
 ## Validation
 
 ```sh
+yarn workspace @thu-info/lib agent:generate
 yarn workspace @thu-info/lib agent:check
 yarn workspace @thu-info/app test:agent
 yarn workspace @thu-info/app test --runInBand

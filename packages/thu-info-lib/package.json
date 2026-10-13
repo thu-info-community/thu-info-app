@@ -5,20 +5,26 @@
     "main": "src/index.ts",
     "files": [
         "dist/**/*",
-        "src/**/*"
+        "src/**/*",
+        "src/agent/catalog.generated.ts"
     ],
     "scripts": {
         "agent:generate": "node scripts/generate-agent.cjs",
         "agent:check": "node scripts/generate-agent.cjs --check",
+        "prebuild": "yarn agent:generate",
         "build": "tsc",
+        "pretest": "yarn agent:generate",
         "test": "OPENSSL_CONF=${PWD}/openssl.cnf jest",
         "play": "OPENSSL_CONF=${PWD}/openssl.cnf node -r esm --experimental-repl-await",
         "demo": "OPENSSL_CONF=${PWD}/openssl.cnf node -r esm demo.js",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
         "preversion": "yarn lint",
+        "prepack": "yarn agent:generate",
         "prepare:ci": "sed -i 's/\"main\": \"src\\/index.ts\"/\"main\": \"dist\\/index.js\"/g' package.json",
+        "prebuild-dist": "yarn agent:generate",
         "build-dist": "webpack --config webpack.config.js",
+        "prewatch-dist": "yarn agent:generate",
         "watch-dist": "webpack -w --config webpack.config.js"
     },
     "keywords": [
