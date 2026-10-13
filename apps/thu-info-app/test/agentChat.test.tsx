@@ -205,38 +205,41 @@ test("progress uses actual unresolved tool calls and does not claim success from
 	expect(agentProgressText(cp)).toBe("等待你确认");
 });
 
-test("thought disclosure is independent for each answer and keeps reasoning hidden initially", async () => {
-	const one = groupAgentMessages([
-		message("one", "First answer", "First reasoning"),
-	])[0];
-	const two = groupAgentMessages([
-		message("two", "Second answer", "Second reasoning"),
-	])[0];
-	await render(
-		<>
-			<AgentMessageTurn
-				turn={one}
-				colors={colorLight}
-				bubbleMessage
-				active={false}
-				onDocument={() => {}}
-				onError={() => {}}
-			/>
-			<AgentMessageTurn
-				turn={two}
-				colors={colorLight}
-				bubbleMessage
-				active={false}
-				onDocument={() => {}}
-				onError={() => {}}
-			/>
-		</>,
-	);
-	expect(screen.queryByText("First reasoning")).toBeNull();
-	await fireEvent.press(screen.getAllByRole("button", {name: "思考过程"})[0]);
-	expect(screen.getByText("First reasoning")).toBeTruthy();
-	expect(screen.queryByText("Second reasoning")).toBeNull();
-});
+test.each([true, false])(
+	"thought disclosure stays independent with bubble messages %s",
+	async (bubbleMessage) => {
+		const one = groupAgentMessages([
+			message("one", "First answer", "First reasoning"),
+		])[0];
+		const two = groupAgentMessages([
+			message("two", "Second answer", "Second reasoning"),
+		])[0];
+		await render(
+			<>
+				<AgentMessageTurn
+					turn={one}
+					colors={colorLight}
+					bubbleMessage={bubbleMessage}
+					active={false}
+					onDocument={() => {}}
+					onError={() => {}}
+				/>
+				<AgentMessageTurn
+					turn={two}
+					colors={colorLight}
+					bubbleMessage={bubbleMessage}
+					active={false}
+					onDocument={() => {}}
+					onError={() => {}}
+				/>
+			</>,
+		);
+		expect(screen.queryByText("First reasoning")).toBeNull();
+		await fireEvent.press(screen.getAllByRole("button", {name: "思考过程"})[0]);
+		expect(screen.getByText("First reasoning")).toBeTruthy();
+		expect(screen.queryByText("Second reasoning")).toBeNull();
+	},
+);
 
 test("answer links require native confirmation and Markdown images never load", async () => {
 	const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});

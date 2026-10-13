@@ -29,9 +29,9 @@ import {agentService} from "../../agent/service";
 import type {AgentRuntime} from "../../agent/runtime";
 import type {SessionHeader} from "../../agent/types";
 import {openAgentHandoff, sessionNeedsUnlock} from "../../agent/nativeTools";
-import {helper, navigationRef, State} from "../../redux/store";
+import {navigationRef, State} from "../../redux/store";
 import themes from "../../assets/themes/themes";
-import {getStr, langCode} from "../../utils/i18n";
+import {getStr} from "../../utils/i18n";
 import type {DeepSeekTabProp} from "../../components/Root";
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {
@@ -55,7 +55,6 @@ import IconSend from "../../assets/icons/IconSend";
 import IconDown from "../../assets/icons/IconDown";
 import IconSearch from "../../assets/icons/IconSearch";
 import IconLock from "../../assets/icons/IconLock";
-import IconCheck from "../../assets/icons/IconCheck";
 import {campusModelName} from "../../utils/campusModel";
 
 export {agentText} from "../../components/home/agentChatPresentation";
@@ -70,7 +69,6 @@ export const AgentDeepSeekScreen = ({
 	const [runtime, setRuntime] = useState<AgentRuntime>();
 	const [input, setInput] = useState("");
 	const [source, setSource] = useState<string | null>(null);
-	const [sourceTitle, setSourceTitle] = useState("");
 	const [history, setHistory] = useState<SessionHeader[]>([]);
 	const [historyOpen, setHistoryOpen] = useState(false);
 	const [search, setSearch] = useState("");
@@ -80,9 +78,6 @@ export const AgentDeepSeekScreen = ({
 	const [recordsExpanded, setRecordsExpanded] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
 	const [usage, setUsage] = useState(0);
-	const [sources, setSources] = useState<{id: string; title: string}[] | null>(
-		null,
-	);
 	const listRef = useRef<FlatList<AgentTurn>>(null);
 	const inputRef = useRef<TextInputInstance>(null);
 	const nearEnd = useRef(true);
@@ -143,7 +138,6 @@ export const AgentDeepSeekScreen = ({
 		if (params) {
 			setInput(params.prompt);
 			setSource(params.dataSource);
-			setSourceTitle("");
 		}
 	}, [params]);
 	useEffect(() => {
@@ -258,11 +252,6 @@ export const AgentDeepSeekScreen = ({
 		["paused", "failed"].includes(checkpoint.status) &&
 		!pending.length &&
 		!checkpoint.pendingInput;
-	const selectSource = (id: string | null, title = "") => {
-		setSource(id);
-		setSourceTitle(title);
-		setSources(null);
-	};
 	const openDocument = (documentRoute: string) => {
 		try {
 			openAgentHandoff(documentRoute);
@@ -298,7 +287,7 @@ export const AgentDeepSeekScreen = ({
 			<View
 				style={[
 					styles.centered,
-					{backgroundColor: colors.contentBackground, paddingTop: insets.top},
+					{backgroundColor: colors.themeBackground, paddingTop: insets.top},
 				]}>
 				<IconLock width={40} height={40} />
 				<Text
@@ -338,7 +327,7 @@ export const AgentDeepSeekScreen = ({
 			style={{
 				flex: 1,
 				paddingTop: insets.top,
-				backgroundColor: colors.contentBackground,
+				backgroundColor: colors.themeBackground,
 			}}
 			keyboardVerticalOffset={0}>
 			<View style={[styles.column, styles.header]}>
@@ -375,7 +364,7 @@ export const AgentDeepSeekScreen = ({
 					style={[
 						styles.column,
 						styles.panel,
-						{backgroundColor: colors.themeTransparentGrey},
+						{backgroundColor: colors.contentBackground},
 					]}>
 					<Text style={[styles.panelBody, {color: colors.fontB2}]}>
 						{agentText(
@@ -503,7 +492,7 @@ export const AgentDeepSeekScreen = ({
 										style={[
 											styles.panel,
 											{
-												backgroundColor: colors.themeTransparentGrey,
+												backgroundColor: colors.contentBackground,
 												marginBottom: 8,
 											},
 										]}>
@@ -549,7 +538,7 @@ export const AgentDeepSeekScreen = ({
 							<View
 								style={[
 									styles.panel,
-									{backgroundColor: colors.themeTransparentGrey},
+									{backgroundColor: colors.contentBackground},
 								]}>
 								<Text style={[styles.caption, {color: colors.themePurple}]}>
 									{agentText("One more detail", "还需要一点信息")}
@@ -606,7 +595,7 @@ export const AgentDeepSeekScreen = ({
 						accessibilityLabel={agentText("Action approval", "操作确认")}
 						style={[
 							styles.panel,
-							{backgroundColor: colors.themeTransparentGrey, marginBottom: 12},
+							{backgroundColor: colors.contentBackground, marginBottom: 12},
 						]}>
 						<View style={styles.actionRow}>
 							<IconLock width={22} height={22} />
@@ -693,7 +682,7 @@ export const AgentDeepSeekScreen = ({
 					style={[
 						styles.composerField,
 						{
-							backgroundColor: colors.themeTransparentGrey,
+							backgroundColor: colors.contentBackground,
 							borderColor: colors.inputBorder,
 						},
 					]}>
@@ -705,13 +694,15 @@ export const AgentDeepSeekScreen = ({
 								? agentText("Add the missing details…", "补充一下…")
 								: agentText("Ask your campus assistant…", "问点校园里的事…")
 						}
-						placeholderTextColor={colors.fontB2}
+						placeholderTextColor={colors.fontB3}
+						selectionColor={colors.primary}
+						underlineColorAndroid="transparent"
 						value={input}
 						onChangeText={setInput}
 						multiline
 						maxLength={12000}
 						editable={ready && config.agentEnabled}
-						style={[styles.input, {color: colors.fontB0}]}
+						style={[styles.input, {color: colors.text}]}
 					/>
 					<Pressable
 						accessibilityRole="button"
@@ -730,11 +721,11 @@ export const AgentDeepSeekScreen = ({
 								: send
 						}
 						style={({pressed}) => [
-							styles.iconButton,
+							styles.sendButton,
 							{
 								backgroundColor:
 									running || (canSend && input.trim())
-										? colors.primary
+										? colors.primaryLight
 										: colors.themeTransparentGrey,
 								opacity: pressed ? 0.7 : 1,
 							},
@@ -757,100 +748,7 @@ export const AgentDeepSeekScreen = ({
 						)}
 					</Pressable>
 				</View>
-				<View style={styles.composerMeta}>
-					<Pressable
-						accessibilityRole="button"
-						accessibilityLabel={agentText("Choose news source", "选择新闻来源")}
-						accessibilityState={{disabled: running || busy}}
-						disabled={running || busy}
-						onPress={() => {
-							void perform(async () =>
-								setSources(await helper.getNewsChannelList(langCode !== "zh")),
-							);
-						}}
-						style={({pressed}) => [
-							styles.actionRow,
-							{
-								minHeight: 48,
-								flexShrink: 1,
-								opacity: running || busy ? 0.5 : pressed ? 0.6 : 1,
-							},
-						]}>
-						<Text
-							style={[styles.caption, {color: colors.fontB2, flexShrink: 1}]}>
-							{agentText("News", "新闻来源")} ·{" "}
-							{source
-								? sourceTitle || agentText("Selected source", "已选来源")
-								: agentText("Auto", "自动")}
-						</Text>
-						<IconDown width={16} height={16} />
-					</Pressable>
-					<Text
-						style={[
-							styles.caption,
-							{color: colors.fontB2, flexShrink: 1, textAlign: "right"},
-						]}>
-						{agentText("Review important actions", "重要操作需确认")}
-					</Text>
-				</View>
 			</View>
-			<Modal
-				visible={sources !== null}
-				animationType="slide"
-				onRequestClose={() => setSources(null)}>
-				<View
-					style={[
-						styles.modal,
-						{
-							backgroundColor: colors.contentBackground,
-							paddingTop: insets.top + 16,
-							paddingBottom: insets.bottom,
-						},
-					]}>
-					<View style={styles.modalHeader}>
-						<Text
-							accessibilityRole="header"
-							style={[styles.modalTitle, {color: colors.fontB0}]}>
-							{agentText("News sources", "新闻来源")}
-						</Text>
-						{button(getStr("cancel"), () => setSources(null))}
-					</View>
-					<ScrollView
-						contentContainerStyle={{paddingHorizontal: 12, paddingBottom: 24}}
-						keyboardShouldPersistTaps="handled">
-						{[
-							{id: null, title: agentText("Auto", "自动选择")},
-							...(sources ?? []),
-						].map((item) => (
-							<Pressable
-								key={item.id ?? "auto"}
-								accessibilityRole="button"
-								accessibilityState={{selected: source === item.id}}
-								onPress={() => selectSource(item.id, item.title)}
-								style={({pressed}) => [
-									styles.historyRow,
-									{
-										padding: 16,
-										minHeight: 56,
-										backgroundColor:
-											source === item.id || pressed
-												? colors.themeTransparentGrey
-												: undefined,
-									},
-								]}>
-								<Text
-									style={[
-										styles.historyTitle,
-										{color: colors.fontB1, flex: 1},
-									]}>
-									{item.title}
-								</Text>
-								{source === item.id && <IconCheck width={20} height={20} />}
-							</Pressable>
-						))}
-					</ScrollView>
-				</View>
-			</Modal>
 			<Modal
 				visible={historyOpen}
 				animationType="slide"
@@ -861,7 +759,7 @@ export const AgentDeepSeekScreen = ({
 						flex: 1,
 						paddingTop: insets.top + 16,
 						paddingBottom: insets.bottom,
-						backgroundColor: colors.contentBackground,
+						backgroundColor: colors.themeBackground,
 					}}>
 					<View style={styles.modalHeader}>
 						<Text
@@ -874,7 +772,10 @@ export const AgentDeepSeekScreen = ({
 					<View
 						style={[
 							styles.search,
-							{backgroundColor: colors.themeTransparentGrey},
+							{
+								backgroundColor: colors.contentBackground,
+								borderColor: colors.inputBorder,
+							},
 						]}>
 						<IconSearch width={20} height={20} />
 						<TextInput
@@ -888,8 +789,10 @@ export const AgentDeepSeekScreen = ({
 								setLimit(30);
 							}}
 							placeholder={agentText("Search conversations", "搜索对话")}
-							placeholderTextColor={colors.fontB2}
-							style={[styles.searchInput, {color: colors.fontB0}]}
+							placeholderTextColor={colors.fontB3}
+							selectionColor={colors.primary}
+							underlineColorAndroid="transparent"
+							style={[styles.searchInput, {color: colors.text}]}
 						/>
 					</View>
 					<ScrollView
@@ -927,10 +830,11 @@ export const AgentDeepSeekScreen = ({
 								style={[
 									styles.historyRow,
 									{
+										borderBottomColor: colors.themeGrey,
 										backgroundColor:
 											header.id === runtime?.session.header.id
-												? colors.themeTransparentGrey
-												: undefined,
+												? colors.themeTransparentPurple
+												: colors.transparent,
 									},
 								]}>
 								<Pressable
