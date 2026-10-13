@@ -392,6 +392,13 @@ export const AgentDeepSeekScreen = ({
 						onReconcile={reconcile}
 						reconcilableIds={reconcilableIds}
 						disabled={running || busy}
+						onRegenerate={
+							index === turns.length - 1 && checkpoint?.status === "completed"
+								? () => {
+										void perform(() => runtime!.regenerate());
+									}
+								: undefined
+						}
 						onDocument={openDocument}
 						onError={setError}
 					/>
@@ -491,14 +498,6 @@ export const AgentDeepSeekScreen = ({
 								</Text>
 							</View>
 						)}
-						{checkpoint?.status === "completed" &&
-							button(
-								agentText("Regenerate answer", "重新生成回答"),
-								() => {
-									void perform(() => runtime!.regenerate());
-								},
-								busy,
-							)}
 					</View>
 				}
 			/>

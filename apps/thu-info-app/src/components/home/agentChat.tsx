@@ -15,6 +15,7 @@ import {Snackbar} from "react-native-snackbar";
 import type {ColorTheme} from "../../assets/themes/themes";
 import IconAssistant from "../../assets/icons/IconAssistant";
 import IconCopy from "../../assets/icons/IconCopy";
+import IconRefresh from "../../assets/icons/IconRefresh";
 import IconDown from "../../assets/icons/IconDown";
 import IconCalendar from "../../assets/icons/IconCalendar";
 import IconNewsTab from "../../assets/icons/IconNewsTab";
@@ -40,6 +41,7 @@ export const AgentAction = ({
 	onPress,
 	disabled = false,
 	icon,
+	iconOnly = false,
 	primary = false,
 	colors,
 }: {
@@ -47,6 +49,7 @@ export const AgentAction = ({
 	onPress: () => void;
 	disabled?: boolean;
 	icon?: ReactNode;
+	iconOnly?: boolean;
 	primary?: boolean;
 	colors: ColorTheme;
 }) => {
@@ -60,6 +63,7 @@ export const AgentAction = ({
 			onPress={onPress}
 			style={({pressed}) => [
 				s.action,
+				iconOnly && s.iconAction,
 				{
 					backgroundColor: primary
 						? colors.primaryLight
@@ -70,10 +74,12 @@ export const AgentAction = ({
 				},
 			]}>
 			{icon}
-			<Text
-				style={[s.actionLabel, {color: primary ? "#FFFFFF" : colors.fontB2}]}>
-				{label}
-			</Text>
+			{!iconOnly && (
+				<Text
+					style={[s.actionLabel, {color: primary ? "#FFFFFF" : colors.fontB2}]}>
+					{label}
+				</Text>
+			)}
 		</Pressable>
 	);
 };
@@ -178,6 +184,7 @@ export const AgentMessageTurn = ({
 	onReconcile,
 	reconcilableIds,
 	disabled = false,
+	onRegenerate,
 	onDocument,
 	onError,
 }: {
@@ -189,6 +196,7 @@ export const AgentMessageTurn = ({
 	onReconcile?: (id: string) => void;
 	reconcilableIds?: ReadonlySet<string>;
 	disabled?: boolean;
+	onRegenerate?: () => void;
 	onDocument: (route: string) => void;
 	onError: (message: string) => void;
 }) => {
@@ -374,14 +382,28 @@ export const AgentMessageTurn = ({
 					onPress={() => onDocument(document.route)}
 				/>
 			))}
-			{!!answer && !active && (
-				<View style={s.copyRow}>
-					<AgentAction
-						colors={colors}
-						label={agentText("Copy", "复制")}
-						onPress={copy}
-						icon={<IconCopy width={16} height={16} color={colors.fontB2} />}
-					/>
+			{!active && (!!answer || onRegenerate) && (
+				<View style={s.answerActions}>
+					{!!answer && (
+						<AgentAction
+							colors={colors}
+							label={agentText("Copy", "复制")}
+							onPress={copy}
+							icon={<IconCopy width={16} height={16} color={colors.fontB2} />}
+						/>
+					)}
+					{onRegenerate && (
+						<AgentAction
+							colors={colors}
+							label={agentText("Regenerate answer", "重新生成回答")}
+							onPress={onRegenerate}
+							disabled={disabled}
+							icon={
+								<IconRefresh width={18} height={18} color={colors.fontB2} />
+							}
+							iconOnly
+						/>
+					)}
 				</View>
 			)}
 		</View>
@@ -635,6 +657,7 @@ const messageStyles = (fontScale: number) =>
 			fontWeight: "500",
 			flexShrink: 1,
 		},
+		iconAction: {minWidth: 48, flexShrink: 0},
 		userRow: {alignItems: "flex-end", paddingLeft: 24},
 		userBubble: {
 			maxWidth: "92%",
@@ -687,7 +710,7 @@ const messageStyles = (fontScale: number) =>
 		},
 		detailGroup: {gap: spacing.xs},
 		detailText: {fontSize: 14, lineHeight: scaledLineHeight(23, fontScale)},
-		copyRow: {flexDirection: "row"},
+		answerActions: {flexDirection: "row", alignItems: "center"},
 		welcome: {paddingTop: spacing.lg, gap: spacing.lg},
 		welcomeIntro: {
 			alignItems: "center",
