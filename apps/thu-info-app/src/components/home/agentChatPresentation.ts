@@ -2,7 +2,7 @@ import type {
 	AgentCheckpoint,
 	Message,
 	RunStatus,
-	ActionReceipt,
+	ToolInvocation,
 } from "../../agent/types";
 import {presentMessage} from "../../agent/context";
 import {langCode} from "../../utils/i18n";
@@ -58,24 +58,65 @@ export const agentStatusText = (status?: RunStatus): string => {
 	}
 };
 
-export const operationStatusText = (
-	status: ActionReceipt["status"],
-): string => {
+export const toolLabel = (name: string): string => {
+	switch (name) {
+		case "import_tools":
+			return agentText("Find tools", "查找可用工具");
+		case "read_result":
+			return agentText("Read results", "读取结果");
+		case "request_user_input":
+			return agentText("Ask for details", "询问补充信息");
+		default:
+			return name;
+	}
+};
+
+export const toolStatusText = (status: ToolInvocation["status"]): string => {
 	switch (status) {
-		case "dispatching":
-			return agentText("In progress", "正在执行");
+		case "pending":
+			return agentText("Queued", "等待执行");
+		case "running":
+			return agentText("Running", "正在执行");
+		case "awaiting_approval":
+			return agentText("Needs approval", "等待确认");
+		case "awaiting_input":
+			return agentText("Needs your reply", "等待补充");
 		case "succeeded":
-			return agentText("Succeeded", "已成功");
+			return agentText("Completed", "已完成");
 		case "failed":
-			return agentText("Failed", "未成功");
+			return agentText("Failed", "失败");
 		case "unknown":
 			return agentText("Needs verification", "结果待核实");
 		case "denied":
 			return agentText("Declined", "已拒绝");
 		case "handoff":
 			return agentText("Opened in app", "已打开原生页面");
+		case "interrupted":
+			return agentText("Interrupted", "已中断");
 	}
 };
+
+export const activitySummary = (status: RunStatus, count: number): string => {
+	const label =
+		status === "running"
+			? agentText("Thinking", "思考中")
+			: agentStatusText(status);
+	return count
+		? `${label} · ${count} ${agentText(count === 1 ? "tool call" : "tool calls", "次工具调用")}`
+		: label;
+};
+
+export const isVisibleTool = ({status}: ToolInvocation) =>
+	[
+		"pending",
+		"running",
+		"awaiting_approval",
+		"awaiting_input",
+		"failed",
+		"unknown",
+		"interrupted",
+		"denied",
+	].includes(status);
 
 /** Describe observed activity, without interpreting model prose as an action. */
 export const agentProgressText = (checkpoint?: AgentCheckpoint): string => {
@@ -104,18 +145,40 @@ export const agentProgressText = (checkpoint?: AgentCheckpoint): string => {
 	return agentText("Thinking and preparing a reply", "正在思考并整理回答");
 };
 
+export type TurnActivity =
+	| {kind: "thought"; id: string; text: string}
+	| {kind: "tool"; id: string; invocation: ToolInvocation};
+
 export const turnContent = (turn: AgentTurn) => {
 	const last = turn.messages.at(-1)!;
-	const answer = presentMessage(last);
-	const steps = turn.messages.flatMap((message, index) => {
+	const answer = last.toolInvocations?.length ? "" : presentMessage(last).text;
+	const seen = new Set<string>();
+	const activities = turn.messages.flatMap<TurnActivity>((message, index) => {
 		const visible = presentMessage(message);
 		const text = [
 			visible.reasoning,
-			index < turn.messages.length - 1 ? visible.text : "",
+			index < turn.messages.length - 1 || message.toolInvocations?.length
+				? visible.text
+				: "",
 		]
 			.filter(Boolean)
 			.join("\n\n");
-		return text ? [{id: message.id ?? String(index), text}] : [];
+		const thought: TurnActivity[] = text
+			? [{kind: "thought", id: message.id ?? String(index), text}]
+			: [];
+		return thought.concat(
+			(message.toolInvocations ?? []).flatMap((invocation): TurnActivity[] => {
+				const id = `${message.id ?? index}/${invocation.id}`;
+				if (seen.has(id)) return [];
+				seen.add(id);
+				return [{kind: "tool", id, invocation}];
+			}),
+		);
 	});
-	return {answer: answer.text, steps};
+	return {
+		answer,
+		activities,
+		toolCount: seen.size,
+		status: last.processingStatus ?? "completed",
+	};
 };

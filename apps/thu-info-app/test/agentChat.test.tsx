@@ -156,11 +156,13 @@ test("groups consecutive model steps without changing stored messages or losing 
 	expect(turns[1].id).toBe("one");
 	expect(turnContent(turns[1])).toEqual({
 		answer: "Final answer",
-		steps: [
-			{id: "one", text: "First thought\n\nLooking up tools"},
-			{id: "two", text: "Second thought"},
-			{id: "three", text: "Final thought"},
+		activities: [
+			{kind: "thought", id: "one", text: "First thought\n\nLooking up tools"},
+			{kind: "thought", id: "two", text: "Second thought"},
+			{kind: "thought", id: "three", text: "Final thought"},
 		],
+		toolCount: 0,
+		status: "completed",
 	});
 	expect(JSON.stringify(messages)).toBe(original);
 	expect(groupAgentMessages([])).toEqual([]);
@@ -172,10 +174,11 @@ test("an unfinished step keeps previous prose in the process instead of presenti
 		message("two", "<think>Still working"),
 	]);
 	expect(turnContent(turn).answer).toBe("");
-	expect(turnContent(turn).steps.map(({text}) => text)).toEqual([
-		"I'll look up your grades.",
-		"Still working",
-	]);
+	expect(
+		turnContent(turn).activities.flatMap((activity) =>
+			activity.kind === "thought" ? [activity.text] : [],
+		),
+	).toEqual(["I'll look up your grades.", "Still working"]);
 });
 
 test("progress uses actual unresolved tool calls and does not claim success from model prose", () => {
@@ -242,11 +245,143 @@ test.each([true, false])(
 			</>,
 		);
 		expect(screen.queryByText("First reasoning")).toBeNull();
-		await fireEvent.press(screen.getAllByRole("button", {name: "思考过程"})[0]);
+		await fireEvent.press(screen.getAllByRole("button", {name: "已完成"})[0]);
 		expect(screen.getByText("First reasoning")).toBeTruthy();
 		expect(screen.queryByText("Second reasoning")).toBeNull();
 	},
 );
+
+test("completed activity is collapsed, with interleaved thoughts and expandable tool details", async () => {
+	const lookup = message(
+		"lookup",
+		"I'll check your calendar.",
+		"Need the calendar",
+	);
+	lookup.toolInvocations = [
+		{
+			id: "read",
+			tool: "getCalendar",
+			status: "succeeded",
+			timestamp: 1,
+			input: "{}",
+			output: "Calendar result",
+		},
+	];
+	const turn = groupAgentMessages([
+		lookup,
+		message("answer", "Final answer", "Ready to answer"),
+	])[0];
+	await render(
+		<AgentMessageTurn
+			turn={turn}
+			colors={colorLight}
+			bubbleMessage={false}
+			active={false}
+			onDocument={() => {}}
+			onError={() => {}}
+		/>,
+	);
+	expect(screen.getByText("Final answer")).toBeTruthy();
+	expect(screen.queryByText("getCalendar")).toBeNull();
+	await fireEvent.press(
+		screen.getByRole("button", {name: "已完成 · 1 次工具调用"}),
+	);
+	expect(
+		screen.getByText("Need the calendar\n\nI'll check your calendar."),
+	).toBeTruthy();
+	expect(screen.getByText("Ready to answer")).toBeTruthy();
+	expect(screen.queryByText(/Step|步骤|Thought process/)).toBeNull();
+	expect(screen.queryByText("Calendar result")).toBeNull();
+	await fireEvent.press(
+		screen.getByRole("button", {name: "getCalendar · 已完成"}),
+	);
+	expect(screen.getByText("参数")).toBeTruthy();
+	expect(screen.getByText("Calendar result")).toBeTruthy();
+});
+
+test.each([
+	"running",
+	"failed",
+	"awaiting_approval",
+	"unknown",
+	"interrupted",
+] as const)(
+	"tool status %s stays visible while activity is collapsed",
+	async (status) => {
+		const current = message("lookup", "", "Hidden thinking");
+		current.toolInvocations = [
+			{id: "read", tool: "getCalendar", status, timestamp: 1},
+		];
+		const turn = groupAgentMessages([current])[0];
+		await render(
+			<AgentMessageTurn
+				turn={turn}
+				colors={colorLight}
+				bubbleMessage
+				active={status === "running"}
+				onDocument={() => {}}
+				onError={() => {}}
+			/>,
+		);
+		expect(screen.getByText("getCalendar")).toBeTruthy();
+		expect(screen.queryByText("Hidden thinking")).toBeNull();
+		if (status === "running")
+			expect(
+				screen.getByRole("button", {name: "思考中 · 1 次工具调用"}),
+			).toBeTruthy();
+	},
+);
+
+test("unknown writes keep their native verification action outside collapsed details", async () => {
+	const current = message("write", "");
+	current.toolInvocations = [
+		{id: "write", tool: "create_schedule", status: "unknown", timestamp: 1},
+	];
+	const reconcile = jest.fn();
+	await render(
+		<AgentMessageTurn
+			turn={groupAgentMessages([current])[0]}
+			colors={colorLight}
+			bubbleMessage
+			active={false}
+			onReconcile={reconcile}
+			reconcilableIds={new Set(["write"])}
+			onDocument={() => {}}
+			onError={() => {}}
+		/>,
+	);
+	await fireEvent.press(
+		screen.getByRole("button", {name: "我已查看原生页面记录"}),
+	);
+	expect(reconcile).toHaveBeenCalledWith("write");
+});
+
+test("English activity uses plural tool counts and cleared details remain inspectable", async () => {
+	mockLanguage = "en";
+	const current = message("lookup", "");
+	current.toolInvocations = [
+		{id: "import", tool: "import_tools", status: "succeeded", timestamp: 1},
+		{id: "read", tool: "read_result", status: "succeeded", timestamp: 1},
+	];
+	await render(
+		<AgentMessageTurn
+			turn={groupAgentMessages([current])[0]}
+			colors={colorLight}
+			bubbleMessage
+			active={false}
+			onDocument={() => {}}
+			onError={() => {}}
+		/>,
+	);
+	await fireEvent.press(
+		screen.getByRole("button", {name: "Completed · 2 tool calls"}),
+	);
+	await fireEvent.press(
+		screen.getByRole("button", {name: "Find tools · Completed"}),
+	);
+	expect(screen.getByText("import_tools")).toBeTruthy();
+	expect(screen.getByText("Details have been cleared")).toBeTruthy();
+});
 
 test("answer links require native confirmation and Markdown images never load", async () => {
 	const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});

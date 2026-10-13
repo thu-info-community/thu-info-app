@@ -10,6 +10,7 @@ import type {
 import {DETAIL_TTL} from "./types";
 import {byteLength, fingerprint, truncateBytes} from "./util";
 import {extractMemory, presentMessage, resetProtocol} from "./context";
+import {syncToolActivity} from "./activity";
 
 interface Manifest {
 	header: SessionHeader;
@@ -20,6 +21,11 @@ interface Manifest {
 interface StoredMessage {
 	message: Message;
 	detail?: {key: string; createdAt: number};
+}
+
+interface MessageDetail {
+	reasoning?: string;
+	toolDetails?: {id: string; input?: string; output?: string}[];
 }
 
 /** One damaged conversation must not prevent access to other conversations. */
@@ -64,7 +70,12 @@ export const expireSessionDetails = (
 		) {
 			changed ||= message.reasoning !== undefined;
 			delete message.reasoning;
-			(message.actions ?? []).forEach(shrink);
+			for (const invocation of message.toolInvocations ?? []) {
+				changed ||=
+					invocation.input !== undefined || invocation.output !== undefined;
+				delete invocation.input;
+				delete invocation.output;
+			}
 		}
 	}
 	for (const operation of session.checkpoint.operations) {
@@ -233,15 +244,21 @@ export class SessionStore {
 						"Conversation message is missing or invalid",
 					);
 				}
-				let reasoning: string | undefined;
-				if (
-					stored.detail &&
-					this.now() - stored.detail.createdAt < DETAIL_TTL
-				) {
-					reasoning = (await this.json<{reasoning: string}>(stored.detail.key))
-						?.reasoning;
-				}
-				messages.push({...stored.message, ...(reasoning ? {reasoning} : {})});
+				const detail =
+					stored.detail && this.now() - stored.detail.createdAt < DETAIL_TTL
+						? await this.json<MessageDetail>(stored.detail.key)
+						: null;
+				const message = {
+					...stored.message,
+					...(detail?.reasoning ? {reasoning: detail.reasoning} : {}),
+				};
+				message.toolInvocations = message.toolInvocations?.map(
+					(invocation) => ({
+						...invocation,
+						...detail?.toolDetails?.find((entry) => entry.id === invocation.id),
+					}),
+				);
+				messages.push(message);
 			}
 		}
 		for (const operation of checkpoint.operations) {
@@ -254,11 +271,13 @@ export class SessionStore {
 		if (checkpoint.status === "running") {
 			checkpoint.status = "paused";
 		}
-		return {
+		const session = {
 			header: {...manifest.header, status: checkpoint.status},
 			checkpoint,
 			messages,
 		};
+		syncToolActivity(session, this.now());
+		return session;
 	}
 
 	save(session: AgentSession): Promise<void> {
@@ -276,9 +295,19 @@ export class SessionStore {
 			const durable = {...message, content: text};
 			delete durable.reasoning;
 			const createdAt = message.timestamp ?? session.header.createdAt;
+			const toolDetails = message.toolInvocations?.flatMap(
+				({id, input, output}) =>
+					input !== undefined || output !== undefined
+						? [{id, input, output}]
+						: [],
+			);
+			durable.toolInvocations = message.toolInvocations?.map(
+				({input: _input, output: _output, ...invocation}) => invocation,
+			);
 			const detail =
-				reasoning && this.now() - createdAt < DETAIL_TTL
-					? {key: await this.chunk({reasoning}), createdAt}
+				(reasoning || toolDetails?.length) &&
+				this.now() - createdAt < DETAIL_TTL
+					? {key: await this.chunk({reasoning, toolDetails}), createdAt}
 					: undefined;
 			messageKeys.push(
 				await this.chunk({message: durable, ...(detail ? {detail} : {})}),

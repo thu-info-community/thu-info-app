@@ -16,7 +16,13 @@ import {ToolRegistry} from "./registry";
 import {ToolExecutor} from "./executor";
 import {expireSessionDetails, SessionStore} from "./storage";
 import {compactContext, messageText, splitTaggedThinking} from "./context";
-import {truncateBytes} from "./util";
+import {AgentPaused, AgentToolError, truncateBytes} from "./util";
+import {
+	findToolInvocation,
+	resultStatus,
+	syncToolActivity,
+	toolDetail,
+} from "./activity";
 
 const inputSchema = (schema: JsonSchema) =>
 	jsonSchema<Record<string, unknown>>(
@@ -91,6 +97,7 @@ export class AgentRuntime {
 		this.listeners.forEach((listener) => listener());
 	}
 	private async persist() {
+		syncToolActivity(this.session);
 		this.session.checkpoint.updatedAt = Date.now();
 		this.session.checkpoint.activeTools = this.registry.activeNames();
 		this.session.header.status = this.session.checkpoint.status;
@@ -457,9 +464,8 @@ export class AgentRuntime {
 							: [],
 					),
 				);
-				for (const operation of this.session.checkpoint.operations) {
+				for (const operation of this.session.checkpoint.operations)
 					knownIds.add(operation.id);
-				}
 				if (
 					Array.isArray(message.content) &&
 					message.content.some(
@@ -472,6 +478,24 @@ export class AgentRuntime {
 					);
 				}
 				this.session.checkpoint.messages = [...stepBase, message];
+				const current = this.session.messages.find(
+					({id}) => id === this.currentAssistantId,
+				);
+				if (current && Array.isArray(message.content)) {
+					current.toolInvocations = message.content.flatMap((part) =>
+						part.type === "tool-call"
+							? [
+									{
+										id: part.toolCallId,
+										tool: part.toolName,
+										status: "pending" as const,
+										timestamp: Date.now(),
+										input: toolDetail(part.input),
+									},
+								]
+							: [],
+					);
+				}
 				await this.persist();
 			},
 		);
@@ -558,14 +582,59 @@ export class AgentRuntime {
 				stepCountIs(24),
 				() => this.session.checkpoint.status !== "running",
 			],
-			toolApproval: ({toolCall}) =>
-				roots.includes(toolCall.toolName)
+			toolApproval: async ({toolCall}) => {
+				const decision = roots.includes(toolCall.toolName)
 					? "not-applicable"
-					: this.executor.approvalStatus(
+					: await this.executor.approvalStatus(
 							toolCall.toolName,
 							toolCall.input as Record<string, unknown>,
 							toolCall.toolCallId,
-						),
+						);
+				const invocation = findToolInvocation(
+					this.session,
+					toolCall.toolCallId,
+				);
+				if (invocation && decision !== "not-applicable") {
+					invocation.status =
+						decision === "denied" ? "denied" : "awaiting_approval";
+					await this.persist();
+				}
+				return decision;
+			},
+			onToolExecutionStart: async ({toolCall}) => {
+				const invocation = findToolInvocation(
+					this.session,
+					toolCall.toolCallId,
+				);
+				if (invocation) {
+					invocation.status = "running";
+					delete invocation.completedAt;
+					await this.persist();
+				}
+			},
+			onToolExecutionEnd: async ({toolCall, toolOutput}) => {
+				const invocation = findToolInvocation(
+					this.session,
+					toolCall.toolCallId,
+				);
+				if (!invocation) return;
+				if (toolOutput.type === "tool-result") {
+					invocation.status = resultStatus(toolOutput.output);
+					invocation.output = toolDetail(toolOutput.output);
+				} else {
+					invocation.status =
+						toolOutput.error instanceof AgentPaused ||
+						this.abort?.signal.aborted
+							? "interrupted"
+							: "failed";
+					invocation.output = toolDetail(
+						toolOutput.error instanceof AgentToolError
+							? toolOutput.error.message
+							: "Tool execution did not complete. Check the corresponding app screen before retrying.",
+					);
+				}
+				await this.persist();
+			},
 			prepareStep: async ({messages}) => {
 				this.assertSessionAccess();
 				// Approval resumes execute tools before the SDK's first model step.
@@ -639,29 +708,6 @@ export class AgentRuntime {
 							? [{tool: result.toolName, route: output.route}]
 							: [];
 					});
-					current.actions = this.session.checkpoint.operations
-						.filter((operation) =>
-							step.toolCalls.some((call) => call.toolCallId === operation.id),
-						)
-						.map(
-							({
-								id,
-								tool: name,
-								label,
-								status,
-								preview,
-								timestamp,
-								result,
-							}) => ({
-								id,
-								tool: name,
-								label,
-								status,
-								preview,
-								timestamp,
-								result,
-							}),
-						);
 				}
 				for (const message of step.response.messages) {
 					if (message.role === "assistant" && Array.isArray(message.content)) {
@@ -696,6 +742,17 @@ export class AgentRuntime {
 			for await (const part of stream.fullStream) {
 				if (part.type === "error") {
 					this.error = part.error;
+				}
+				if (part.type === "tool-error" || part.type === "tool-output-denied") {
+					const invocation = findToolInvocation(this.session, part.toolCallId);
+					if (
+						invocation &&
+						["pending", "running"].includes(invocation.status)
+					) {
+						invocation.status =
+							part.type === "tool-output-denied" ? "denied" : "failed";
+						await this.persist();
+					}
 				}
 				const current = this.session.messages.find(
 					(message) => message.id === this.currentAssistantId,
@@ -745,7 +802,7 @@ export class AgentRuntime {
 					message.role !== "assistant" ||
 					message.content ||
 					message.reasoning ||
-					message.actions?.length ||
+					message.toolInvocations?.length ||
 					message.documents?.length,
 			);
 			await this.persist();

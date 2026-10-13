@@ -36,10 +36,32 @@ export interface Message {
 	content: string;
 	timestamp?: number;
 	reasoning?: string;
-	actions?: ActionReceipt[];
+	processingStatus?: RunStatus;
+	toolInvocations?: ToolInvocation[];
 	documents?: {tool: string; route: string}[];
 	tool_calls?: {id: string; type: "function"; function: {name: string; arguments: string}}[];
 	tool_call_id?: string;
+}
+
+export interface ToolInvocation {
+	id: string;
+	tool: string;
+	status:
+		| "pending"
+		| "running"
+		| "awaiting_approval"
+		| "awaiting_input"
+		| "succeeded"
+		| "failed"
+		| "denied"
+		| "interrupted"
+		| "unknown"
+		| "handoff";
+	timestamp: number;
+	completedAt?: number;
+	/** Redacted, bounded detail; expires independently of the invocation receipt. */
+	input?: string;
+	output?: string;
 }
 
 /** Also accepts the old Redux history for migration. */

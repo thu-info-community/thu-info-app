@@ -1,3 +1,4 @@
+import {findToolInvocation} from "../../src/agent/activity";
 import {AgentRuntime} from "../../src/agent/runtime";
 import {call, fixture, scripted} from "./fixtures";
 import {agentCatalog} from "@thu-info/lib/src/agent";
@@ -232,12 +233,19 @@ test("approval survives restart and invokes exactly once through the real SDK re
 	expect(session.checkpoint.error).toBeUndefined();
 	expect(session.checkpoint.status).toBe("awaiting_approval");
 	expect(context.invoke).not.toHaveBeenCalled();
+	expect(findToolInvocation(session, "mail")?.status).toBe("awaiting_approval");
 	const restored = (await sessions.load(session.header.id))!;
 	const resumed = new AgentRuntime(restored, sessions, context, transport);
 	await resumed.respond(restored.checkpoint.approvals[0].id, true);
 	expect(restored.checkpoint.error).toBeUndefined();
 	expect(context.invoke).toHaveBeenCalledTimes(1);
 	expect(restored.checkpoint.status).toBe("completed");
+	expect(findToolInvocation(restored, "mail")?.status).toBe("succeeded");
+	expect(
+		restored.messages
+			.flatMap((message) => message.toolInvocations ?? [])
+			.filter(({id}) => id === "mail"),
+	).toHaveLength(1);
 	expect(
 		(bodies.at(-1)!.messages as any[]).some(
 			(message) => message.role === "tool" && message.tool_call_id === "mail",
@@ -274,6 +282,8 @@ test("multiple approvals resume as one SDK approval batch; rejection cannot exec
 	expect(session.checkpoint.error).toBeUndefined();
 	expect(context.invoke).toHaveBeenCalledTimes(1);
 	expect(session.checkpoint.status).toBe("completed");
+	expect(findToolInvocation(session, "mail1")?.status).toBe("succeeded");
+	expect(findToolInvocation(session, "mail2")?.status).toBe("denied");
 });
 
 test("clarification pauses without another model request, and answer continues the same run", async () => {
@@ -293,11 +303,17 @@ test("clarification pauses without another model request, and answer continues t
 	await runtime.send("Find a classroom");
 	expect(session.checkpoint.status).toBe("awaiting_input");
 	expect(bodies).toHaveLength(1);
+	expect(findToolInvocation(session, "call1")?.status).toBe("awaiting_input");
 	const run = session.checkpoint.runId;
 	await runtime.answer("Tomorrow");
 	expect(session.checkpoint.error).toBeUndefined();
 	expect(session.checkpoint.status).toBe("completed");
 	expect(session.checkpoint.runId).toBe(run);
+	expect(findToolInvocation(session, "call1")?.status).toBe("succeeded");
+	expect(
+		session.messages.find((message) => message.toolInvocations?.length)
+			?.processingStatus,
+	).toBe("completed");
 });
 
 test("truncated tool call cannot execute, even after continue", async () => {

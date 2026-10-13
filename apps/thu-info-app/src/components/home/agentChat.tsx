@@ -1,5 +1,6 @@
 import {useMemo, useState, type ReactNode} from "react";
 import {
+	ActivityIndicator,
 	Alert,
 	Linking,
 	Pressable,
@@ -21,7 +22,16 @@ import IconRight from "../../assets/icons/IconRight";
 import {getStr} from "../../utils/i18n";
 import {scaledLineHeight} from "../../utils/scaledText";
 import {fontSize, radius, spacing} from "../subpage/tokens";
-import {agentText, turnContent, type AgentTurn} from "./agentChatPresentation";
+import {
+	activitySummary,
+	agentText,
+	isVisibleTool,
+	toolLabel,
+	toolStatusText,
+	turnContent,
+	type AgentTurn,
+} from "./agentChatPresentation";
+import type {RunStatus, ToolInvocation} from "../../agent/types";
 
 export const AGENT_CHAT_MAX_WIDTH = 760;
 
@@ -68,11 +78,106 @@ export const AgentAction = ({
 	);
 };
 
+const AgentToolRow = ({
+	invocation,
+	colors,
+	onReconcile,
+	disabled,
+}: {
+	invocation: ToolInvocation;
+	colors: ColorTheme;
+	onReconcile?: () => void;
+	disabled: boolean;
+}) => {
+	const {s} = useMessageStyles();
+	const [expanded, setExpanded] = useState(false);
+	const label = toolLabel(invocation.tool);
+	const status = toolStatusText(invocation.status);
+	const warning = ["failed", "unknown", "interrupted"].includes(
+		invocation.status,
+	);
+	return (
+		<View>
+			<Pressable
+				accessibilityRole="button"
+				accessibilityLabel={`${label} · ${status}`}
+				accessibilityState={{expanded}}
+				onPress={() => setExpanded(!expanded)}
+				style={({pressed}) => [s.toolRow, {opacity: pressed ? 0.6 : 1}]}>
+				{invocation.status === "running" && (
+					<ActivityIndicator size="small" color={colors.themePurple} />
+				)}
+				<Text style={[s.toolName, {color: colors.fontB1}]}>{label}</Text>
+				<Text
+					style={[
+						s.caption,
+						{color: warning ? colors.statusWarning : colors.fontB2},
+					]}>
+					{status}
+				</Text>
+				<View style={{transform: [{rotate: expanded ? "180deg" : "0deg"}]}}>
+					<IconDown width={16} height={16} />
+				</View>
+			</Pressable>
+			{expanded && (
+				<View style={[s.toolDetails, {borderColor: colors.inputBorder}]}>
+					{label !== invocation.tool && (
+						<Text selectable style={[s.caption, {color: colors.fontB2}]}>
+							{invocation.tool}
+						</Text>
+					)}
+					{invocation.input !== undefined && (
+						<View style={s.detailGroup}>
+							<Text style={[s.caption, {color: colors.fontB2}]}>
+								{agentText("Parameters", "参数")}
+							</Text>
+							<Text selectable style={[s.detailText, {color: colors.fontB1}]}>
+								{invocation.input}
+							</Text>
+						</View>
+					)}
+					{invocation.output !== undefined && (
+						<View style={s.detailGroup}>
+							<Text style={[s.caption, {color: colors.fontB2}]}>
+								{agentText("Result summary", "结果摘要")}
+							</Text>
+							<Text selectable style={[s.detailText, {color: colors.fontB1}]}>
+								{invocation.output}
+							</Text>
+						</View>
+					)}
+					{invocation.input === undefined &&
+						invocation.output === undefined && (
+							<Text style={[s.caption, {color: colors.fontB2}]}>
+								{agentText("Details have been cleared", "详情已清理")}
+							</Text>
+						)}
+				</View>
+			)}
+			{invocation.status === "unknown" && onReconcile && (
+				<AgentAction
+					colors={colors}
+					label={agentText(
+						"I checked the native record",
+						"我已查看原生页面记录",
+					)}
+					onPress={onReconcile}
+					disabled={disabled}
+				/>
+			)}
+		</View>
+	);
+};
+
 export const AgentMessageTurn = ({
 	turn,
 	colors,
 	bubbleMessage,
 	active,
+	status,
+	onReconcile,
+	reconcilableIds,
+	disabled = false,
 	onDocument,
 	onError,
 }: {
@@ -80,12 +185,31 @@ export const AgentMessageTurn = ({
 	colors: ColorTheme;
 	bubbleMessage: boolean;
 	active: boolean;
+	status?: RunStatus;
+	onReconcile?: (id: string) => void;
+	reconcilableIds?: ReadonlySet<string>;
+	disabled?: boolean;
 	onDocument: (route: string) => void;
 	onError: (message: string) => void;
 }) => {
 	const {s, fontScale} = useMessageStyles();
 	const [expanded, setExpanded] = useState(false);
-	const {answer, steps} = turnContent(turn);
+	const {
+		answer,
+		activities,
+		toolCount,
+		status: savedStatus,
+	} = turnContent(turn);
+	const summary = activitySummary(
+		status ?? (active ? "running" : savedStatus),
+		toolCount,
+	);
+	const visibleActivities = expanded
+		? activities
+		: activities.filter(
+				(activity) =>
+					activity.kind === "tool" && isVisibleTool(activity.invocation),
+			);
 	const copy = () => {
 		Clipboard.setString(answer);
 		Snackbar.show({text: getStr("copied"), duration: Snackbar.LENGTH_SHORT});
@@ -111,39 +235,46 @@ export const AgentMessageTurn = ({
 	const documents = turn.messages.flatMap((message) => message.documents ?? []);
 	return (
 		<View style={s.assistantTurn}>
-			{!!steps.length && (
+			{(!!activities.length || active) && (
 				<Pressable
 					accessibilityRole="button"
-					accessibilityLabel={agentText("Thought process", "思考过程")}
+					accessibilityLabel={summary}
 					accessibilityState={{expanded}}
 					onPress={() => setExpanded(!expanded)}
 					style={({pressed}) => [
 						s.thinkingButton,
 						{opacity: pressed ? 0.6 : 1},
 					]}>
-					<Text style={[s.caption, {color: colors.fontB2}]}>
-						{active
-							? agentText("Thinking", "思考中")
-							: agentText("Thought process", "思考过程")}
-						{` · ${steps.length}`}
-					</Text>
+					<Text style={[s.caption, {color: colors.fontB2}]}>{summary}</Text>
 					<View style={{transform: [{rotate: expanded ? "180deg" : "0deg"}]}}>
 						<IconDown width={16} height={16} />
 					</View>
 				</Pressable>
 			)}
-			{expanded && (
+			{!!visibleActivities.length && (
 				<View style={[s.thinkingDetails, {borderColor: colors.inputBorder}]}>
-					{steps.map((step, index) => (
-						<View key={step.id} style={s.thinkingStep}>
-							<Text style={[s.caption, {color: colors.themePurple}]}>
-								{agentText("Step", "步骤")} {index + 1}
+					{visibleActivities.map((activity) =>
+						activity.kind === "thought" ? (
+							<Text
+								key={`thought-${activity.id}`}
+								selectable
+								style={[s.detailText, {color: colors.fontB2}]}>
+								{activity.text}
 							</Text>
-							<Text selectable style={[s.detailText, {color: colors.fontB2}]}>
-								{step.text}
-							</Text>
-						</View>
-					))}
+						) : (
+							<AgentToolRow
+								key={`tool-${activity.id}`}
+								invocation={activity.invocation}
+								colors={colors}
+								disabled={disabled}
+								onReconcile={
+									onReconcile && reconcilableIds?.has(activity.invocation.id)
+										? () => onReconcile(activity.invocation.id)
+										: undefined
+								}
+							/>
+						),
+					)}
 				</View>
 			)}
 			{!!answer && (
@@ -418,7 +549,11 @@ export const agentChatStyles = (fontScale: number) =>
 			fontSize: 13,
 			lineHeight: scaledLineHeight(19, fontScale),
 		},
-		caption: {fontSize: 12, lineHeight: scaledLineHeight(18, fontScale)},
+		caption: {
+			fontSize: 13,
+			lineHeight: scaledLineHeight(20, fontScale),
+			flexShrink: 1,
+		},
 		panel: {padding: spacing.lg, borderRadius: radius.card, gap: spacing.sm},
 		panelTitle: {
 			fontSize: 16,
@@ -521,7 +656,11 @@ const messageStyles = (fontScale: number) =>
 			paddingHorizontal: spacing.sm,
 			alignSelf: "flex-start",
 		},
-		caption: {fontSize: 12, lineHeight: scaledLineHeight(18, fontScale)},
+		caption: {
+			fontSize: 13,
+			lineHeight: scaledLineHeight(20, fontScale),
+			flexShrink: 1,
+		},
 		thinkingDetails: {
 			borderLeftWidth: StyleSheet.hairlineWidth,
 			paddingLeft: spacing.md,
@@ -529,7 +668,24 @@ const messageStyles = (fontScale: number) =>
 			marginBottom: spacing.sm,
 			gap: spacing.md,
 		},
-		thinkingStep: {gap: 4},
+		toolRow: {
+			minHeight: 48,
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacing.sm,
+		},
+		toolName: {
+			fontSize: 14,
+			lineHeight: scaledLineHeight(21, fontScale),
+			flex: 1,
+			minWidth: 0,
+		},
+		toolDetails: {
+			borderTopWidth: StyleSheet.hairlineWidth,
+			paddingVertical: spacing.sm,
+			gap: spacing.sm,
+		},
+		detailGroup: {gap: spacing.xs},
 		detailText: {fontSize: 14, lineHeight: scaledLineHeight(23, fontScale)},
 		copyRow: {flexDirection: "row"},
 		welcome: {paddingTop: spacing.lg, gap: spacing.lg},

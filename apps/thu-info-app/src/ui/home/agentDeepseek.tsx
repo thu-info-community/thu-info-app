@@ -43,7 +43,6 @@ import {
 import {
 	agentText,
 	agentStatusText,
-	operationStatusText,
 	agentProgressText,
 	groupAgentMessages,
 	type AgentTurn,
@@ -52,7 +51,6 @@ import IconHamburgerMenu from "../../assets/icons/IconHamburgerMenu";
 import IconAdd from "../../assets/icons/IconAdd";
 import IconConfig from "../../assets/icons/IconConfig";
 import IconSend from "../../assets/icons/IconSend";
-import IconDown from "../../assets/icons/IconDown";
 import IconSearch from "../../assets/icons/IconSearch";
 import IconLock from "../../assets/icons/IconLock";
 import {campusModelName} from "../../utils/campusModel";
@@ -75,7 +73,6 @@ export const AgentDeepSeekScreen = ({
 	const [limit, setLimit] = useState(30);
 	const [error, setError] = useState("");
 	const [busy, setBusy] = useState(false);
-	const [recordsExpanded, setRecordsExpanded] = useState(false);
 	const [elapsed, setElapsed] = useState(0);
 	const [usage, setUsage] = useState(0);
 	const listRef = useRef<FlatList<AgentTurn>>(null);
@@ -240,12 +237,11 @@ export const AgentDeepSeekScreen = ({
 			{icon}
 		</Pressable>
 	);
-	const records = checkpoint?.operations.slice(-20) ?? [];
-	const visibleRecords = recordsExpanded
-		? records
-		: records.filter(
-				({status}) => status === "unknown" || status === "dispatching",
-			);
+	const reconcilableIds = new Set(
+		checkpoint?.operations
+			.filter(({status}) => status === "unknown")
+			.map(({id}) => id),
+	);
 	const needsResume =
 		checkpoint &&
 		["paused", "failed"].includes(checkpoint.status) &&
@@ -392,6 +388,10 @@ export const AgentDeepSeekScreen = ({
 						colors={colors}
 						bubbleMessage={!!config.bubbleMessage}
 						active={running && index === turns.length - 1}
+						status={index === turns.length - 1 ? checkpoint?.status : undefined}
+						onReconcile={reconcile}
+						reconcilableIds={reconcilableIds}
+						disabled={running || busy}
 						onDocument={openDocument}
 						onError={setError}
 					/>
@@ -447,73 +447,6 @@ export const AgentDeepSeekScreen = ({
 				}
 				ListFooterComponent={
 					<View style={styles.footer}>
-						{!!records.length && (
-							<View>
-								<Pressable
-									accessibilityRole="button"
-									accessibilityState={{expanded: recordsExpanded}}
-									onPress={() => setRecordsExpanded(!recordsExpanded)}
-									style={[styles.actionRow, {minHeight: 48}]}>
-									<Text style={{color: colors.fontB2, fontSize: 13}}>
-										{agentText("Action records", "操作记录")} · {records.length}
-									</Text>
-									<View
-										style={{
-											transform: [
-												{rotate: recordsExpanded ? "180deg" : "0deg"},
-											],
-										}}>
-										<IconDown width={18} height={18} />
-									</View>
-								</Pressable>
-								{visibleRecords.map((operation) => (
-									<View
-										key={operation.id}
-										style={[
-											styles.panel,
-											{
-												backgroundColor: colors.contentBackground,
-												marginBottom: 8,
-											},
-										]}>
-										<Text
-											style={[
-												styles.panelTitle,
-												{
-													color:
-														operation.status === "unknown" ||
-														operation.status === "failed"
-															? colors.statusWarning
-															: colors.fontB0,
-												},
-											]}>
-											{operationStatusText(operation.status)}
-										</Text>
-										<Text
-											selectable
-											style={[styles.caption, {color: colors.fontB2}]}>
-											{operation.label || operation.tool}
-										</Text>
-										{!!operation.result && (
-											<Text
-												selectable
-												style={[styles.panelBody, {color: colors.fontB1}]}>
-												{operation.result}
-											</Text>
-										)}
-										{operation.status === "unknown" &&
-											button(
-												agentText(
-													"I checked the native record",
-													"我已查看原生页面记录",
-												),
-												() => reconcile(operation.id),
-												running || busy,
-											)}
-									</View>
-								))}
-							</View>
-						)}
 						{checkpoint?.pendingInput && (
 							<View
 								style={[

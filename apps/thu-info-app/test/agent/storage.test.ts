@@ -119,6 +119,55 @@ test("expired details are collected without deleting conversation text or receip
 	expect(restored.checkpoint.compactions).toBe(1);
 });
 
+test("tool detail chunks expire while compact receipts and counts remain", async () => {
+	const {storage, session, entries} = fixture();
+	let time = Date.now();
+	const sessions = new SessionStore(storage, "student", () => time);
+	session.checkpoint.status = "completed";
+	session.messages = [
+		{
+			id: "answer",
+			role: "assistant",
+			content: "Answer",
+			timestamp: time,
+			processingStatus: "completed",
+			reasoning: "REASONING-DETAIL",
+			toolInvocations: [
+				{
+					id: "read",
+					tool: "getCalendar",
+					status: "succeeded",
+					timestamp: time,
+					input: "ARGUMENT-DETAIL",
+					output: "RESULT-DETAIL",
+				},
+			],
+		},
+	];
+	await sessions.save(session);
+	expect(
+		(await sessions.load(session.header.id))!.messages[0].toolInvocations?.[0]
+			.output,
+	).toBe("RESULT-DETAIL");
+	time += DETAIL_TTL + 1;
+	await sessions.cleanup();
+	const restored = (await sessions.load(session.header.id))!;
+	expect(restored.messages[0]).toMatchObject({
+		content: "Answer",
+		processingStatus: "completed",
+	});
+	expect(restored.messages[0].toolInvocations).toEqual([
+		{
+			id: "read",
+			tool: "getCalendar",
+			status: "succeeded",
+			timestamp: expect.any(Number),
+			completedAt: expect.any(Number),
+		},
+	]);
+	expect([...entries.values()].join()).not.toContain("DETAIL");
+});
+
 test("failed atomic pointer write leaves old conversation intact and orphan chunks collectible", async () => {
 	const {sessions, storage, session, entries} = fixture();
 	session.messages = [{role: "user", content: "Original"}];
