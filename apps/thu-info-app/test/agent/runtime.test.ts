@@ -386,7 +386,7 @@ test("switching sessions does not turn a completed conversation into a paused ta
 	expect(session.checkpoint.status).toBe("completed");
 });
 
-test("locking previously read private data prevents another model request", async () => {
+test("private data stays locked after compaction and restart without another model request", async () => {
 	const {session, sessions, context} = fixture();
 	const {transport, bodies} = scripted([
 		{calls: [call("import_tools", {path: "finance.getBankPayment"}, "import")]},
@@ -396,12 +396,17 @@ test("locking previously read private data prevents another model request", asyn
 	const runtime = new AgentRuntime(session, sessions, context, transport);
 	await runtime.send("Show payments");
 	expect(session.checkpoint.protectedTools).toContain("getBankPayment");
+	await sessions.cleanup(true);
+	const restored = (await sessions.load(session.header.id))!;
+	expect(restored.checkpoint.protectedTools).toEqual(["getBankPayment"]);
+	const afterRestart = new AgentRuntime(restored, sessions, context, transport);
 	(context.assertAccess as jest.Mock).mockImplementation((tool) => {
 		if (tool?.lock) {
 			throw new Error("locked");
 		}
 	});
 	await expect(runtime.send("Repeat the result")).rejects.toThrow("locked");
+	await expect(afterRestart.send("Repeat the result")).rejects.toThrow("locked");
 	expect(bodies).toHaveLength(3);
 });
 

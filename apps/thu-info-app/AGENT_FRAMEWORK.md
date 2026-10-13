@@ -2,9 +2,11 @@
 
 ## Enable and rollout
 
-The **Assistant / 助手** always uses the agent implementation; there is no preview switch or legacy chat fallback. **Settings → Assistant** offers message display preferences and storage management. Thinking settings appear only when the model capability descriptor offers multiple levels. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
+The **Assistant / 助手** uses the on-device agent implementation. **Settings → Assistant** offers message display preferences and storage management. Thinking settings appear only when the model capability descriptor offers multiple levels. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
 
-The first activation migrates legacy Redux conversations, verifies their persisted message counts, and only then clears the legacy payload. Migration is restartable and preserves IDs, titles, visible text and timestamps. Legacy histories had no account identity; the first migration assigns them to the currently signed-in account. New history is account-separated.
+The first activation migrates Redux conversations from `master`, verifies their persisted message counts, and only then clears the Redux payload. Migration is restartable and preserves IDs, titles, visible text and timestamps. These histories had no account identity; the migration assigns them to the currently signed-in account. New history is account-separated.
+
+Treat `master` → branch tip as one atomic change. Agent checkpoints always contain `catalogPaths` and `protectedTools` arrays, including when empty; every operation contains its `targetFingerprint` when recorded, including denied actions. Session loading rejects incomplete checkpoints through `SessionDataError`, without backfilling fields or rewriting saved data. Intermediate branch formats are unsupported. The storage path and checkpoint version remain unchanged. Main's history migration and persisted model-token removal remain part of the upgrade.
 
 `src/utils/campusModel.ts` defines the assistant's default model name: `DeepSeek-V4.1-Flash`. `src/agent/types.ts` contains its capability descriptor, with a 128K (131,072) context token budget and a 4,096 output token limit. These gateway limits remain **unverified**. Only **Provider default** is enabled; it sends neither `thinking` nor `reasoning_effort`. Add a thinking choice only after checking its actual behavior on the campus gateway, not merely whether a request accepts the parameter. The settings UI follows this descriptor and hides the group when there is no choice.
 
@@ -23,7 +25,7 @@ DeepSeek screen / native approval UI
 - Portal access stays in `@thu-info/lib`; no portal endpoints, login, redirect or cookie algorithms were changed.
 - `packages/thu-info-lib/src/agent/metadata.ts` explicitly classifies all 137 public callables/hooks: 112 discoverable tools and 25 internal-only entries. Three app-local schedule tools are added by the registry.
 - Library credentials, authentication hooks, captchas and opaque mutable form objects are not tools. Secret-dependent flows and assessment submission use allowlisted native screens, never model-supplied navigation destinations. Campus-card recharge has a reviewed app wrapper: approved bank transfers use the existing library API without a PIN, while Alipay requires the user to finish payment in Alipay. Payment URLs come only from the library and are not returned to the model.
-- App/account locks are checked before preparation, dispatch and result delivery. Conversations that have read locked data retain that protection, including after compaction. Backgrounding, changing accounts or disabling the feature pauses execution. Native requests already dispatched cannot be remotely “un-sent.”
+- App/account locks are checked before preparation, dispatch and result delivery. Conversations that have read locked data retain that protection, including after compaction. Backgrounding, changing accounts or locking the app pauses execution. Native requests already dispatched cannot be remotely “un-sent.”
 
 ## Adding or changing a tool
 
@@ -95,9 +97,9 @@ A live Android check with `DeepSeek-V4.1-Flash` completed in 7.8 seconds with on
 
 ### Always-enabled assistant on 2026-10-13
 
-The assistant tab now opens the agent screen directly. The preview switch, legacy screen, streaming/tool loop, message/history components and Redux history editing actions have been removed. Existing Redux conversations still migrate to account-scoped session storage; migration failures retain the original history for retry. Persisted preview flags and legacy model tokens are dropped during rehydration. Authorization tokens remain in the account-scoped in-memory cache.
+The assistant tab opens the agent screen directly. Existing Redux conversations from master migrate to account-scoped session storage; migration failures retain the original history for retry. Master's persisted model tokens are dropped during rehydration. Authorization tokens remain in the account-scoped in-memory cache.
 
-The 70 agent tests and 278 app tests pass (one existing test skipped). Regression coverage includes missing/false/true legacy preview flags, history migration and migration failure, app/privacy locks, account changes and action approval. Lint has no errors and 18 existing warnings. Full app typecheck still reports React Native/Harmony and other existing errors outside the changed files. No native device or live gateway verification was performed for this change.
+The 70 agent tests and 278 app tests passed at rollout (one existing test skipped). Regression coverage included history migration and migration failure, app/privacy locks, account changes and action approval. Lint had no errors and 18 existing warnings. Full app typecheck still reports React Native/Harmony and other existing errors outside the changed files. No native device or live gateway verification was performed for this change.
 
 ### Assistant settings redesign on 2026-10-13
 

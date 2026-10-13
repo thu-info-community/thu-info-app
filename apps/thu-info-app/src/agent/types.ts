@@ -74,7 +74,7 @@ export interface Operation extends ActionReceipt {
 	runId: string;
 	account: string;
 	fingerprint: string;
-	targetFingerprint?: string;
+	targetFingerprint: string;
 	args: Record<string, unknown>;
 }
 
@@ -107,7 +107,7 @@ export interface AgentCheckpoint {
 	messages: ModelMessage[];
 	activeTools: string[];
 	/** Public catalog discovery survives protocol compaction; these are not active tools. */
-	catalogPaths?: string[];
+	catalogPaths: string[];
 	summary: string;
 	request: string;
 	steps: number;
@@ -119,7 +119,7 @@ export interface AgentCheckpoint {
 	approvals: Approval[];
 	operations: Operation[];
 	/** A conversation that has read locked data stays subject to that lock. */
-	protectedTools?: string[];
+	protectedTools: string[];
 	pendingInput?: PendingInput;
 	error?: string;
 	/** Regeneration may revise prose, but cannot perform business writes. */

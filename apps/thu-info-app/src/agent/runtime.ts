@@ -62,7 +62,7 @@ export class AgentRuntime {
 	isRunning = () => this.running;
 	private assertSessionAccess() {
 		this.context.assertAccess();
-		for (const name of this.session.checkpoint.protectedTools ?? []) {
+		for (const name of this.session.checkpoint.protectedTools) {
 			const descriptor = this.registry.get(name);
 			if (!descriptor) {
 				throw new Error("A protected tool is no longer available");
@@ -375,7 +375,7 @@ export class AgentRuntime {
 	}
 
 	private instructions(restoreCatalog = false) {
-		const catalogPaths = new Set(this.session.checkpoint.catalogPaths ?? []);
+		const catalogPaths = new Set(this.session.checkpoint.catalogPaths);
 		// Avoid duplicating an overview still in the protocol; rebuild it after compaction.
 		const retainedCatalog = this.session.checkpoint.messages.some((message) =>
 			message.role === "tool" &&
@@ -498,7 +498,7 @@ export class AgentRuntime {
 				const result = this.registry.import(path);
 				if (!path.includes(".")) {
 					this.session.checkpoint.catalogPaths = [
-						...new Set([...(this.session.checkpoint.catalogPaths ?? []), path]),
+						...new Set([...this.session.checkpoint.catalogPaths, path]),
 					];
 				}
 				return result;

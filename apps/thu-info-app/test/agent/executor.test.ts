@@ -58,25 +58,31 @@ test("routine writes run directly; bulk writes require confirmation", async () =
 	);
 });
 
-test("unknown outcomes block retry even in a new run, and regeneration cannot write", async () => {
-	const {executor, context, session} = setup();
+test("unknown outcomes block retry after details expire and restart, and regeneration cannot write", async () => {
+	const {executor, context, session, sessions, registry} = setup();
 	const args = {title: "event", date: "2026-09-10", beginTime: "14:00", endTime: "15:00"};
 	(context.invoke as jest.Mock).mockRejectedValue(new Error("timeout"));
 	await executor.execute("create_schedule", args, "c");
 	expect(session.checkpoint.operations[0].status).toBe("unknown");
-	session.checkpoint.runId = "new-run";
-	session.checkpoint.status = "running";
-	expect(await executor.approvalStatus("create_schedule", args, "c2")).toBe("denied");
-	await executor.execute("create_schedule", args, "c2");
+	const targetFingerprint = session.checkpoint.operations[0].targetFingerprint;
+	await sessions.cleanup(true);
+	const restored = (await sessions.load(session.header.id))!;
+	expect(restored.checkpoint.operations[0].args).toEqual({});
+	expect(restored.checkpoint.operations[0].targetFingerprint).toBe(targetFingerprint);
+	restored.checkpoint.runId = "new-run";
+	restored.checkpoint.status = "running";
+	const recovered = new ToolExecutor(restored, registry, context, () => sessions.save(restored));
+	expect(await recovered.approvalStatus("create_schedule", args, "c2")).toBe("denied");
+	await recovered.execute("create_schedule", args, "c2");
 	expect(context.invoke).toHaveBeenCalledTimes(1);
-	session.checkpoint.answerOnly = true;
-	expect(await executor.approvalStatus("create_schedule", {...args, title: "new"}, "c3")).toBe(
+	restored.checkpoint.answerOnly = true;
+	expect(await recovered.approvalStatus("create_schedule", {...args, title: "new"}, "c3")).toBe(
 		"denied",
 	);
 });
 
 test("changed preview, expired approval, account lock and unimported tools fail closed", async () => {
-	const {executor, registry, context, session} = setup();
+	const {executor, registry, context, session, sessions} = setup();
 	const args = Object.fromEntries(
 		registry.get("naiveSendMail")!.parameters.map((key) => [key, "test"]),
 	);
@@ -86,6 +92,10 @@ test("changed preview, expired approval, account lock and unimported tools fail 
 	session.checkpoint.approvals[0].expiresAt = 0;
 	await expect(executor.decide("c", true)).rejects.toThrow("expired");
 	await executor.decide("c", false);
+	expect((await sessions.load(session.header.id))!.checkpoint.operations[0]).toMatchObject({
+		status: "denied",
+		targetFingerprint: expect.any(String),
+	});
 	expect(await executor.approvalStatus("naiveSendMail", args, "c2")).toBe("denied");
 	await expect(executor.execute("getCalendar", {}, "read")).rejects.toThrow("import");
 	(context.assertAccess as jest.Mock).mockImplementation(() => {

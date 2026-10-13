@@ -1,4 +1,4 @@
-import {expireSessionDetails, SessionStore} from "../../src/agent/storage";
+import {expireSessionDetails, newSession, SessionDataError, SessionStore} from "../../src/agent/storage";
 import {DETAIL_TTL} from "../../src/agent/types";
 import {fixture} from "./fixtures";
 
@@ -55,7 +55,35 @@ test("migration is idempotent, preserves text/title/timestamp and omits hidden l
 		"Answer",
 	]);
 	expect(session.messages[0].timestamp).toBe(100);
+	expect(session.checkpoint.catalogPaths).toEqual([]);
+	expect(session.checkpoint.protectedTools).toEqual([]);
 	expect(JSON.stringify(session)).not.toContain("large trace");
+});
+
+test.each([
+	["catalogPaths", undefined],
+	["protectedTools", undefined],
+	["catalogPaths", [null]],
+	["protectedTools", [42]],
+	["operations", [{status: "unknown", args: {title: "event"}}]],
+])("invalid checkpoint field %s is rejected without changing saved data", async (field, value) => {
+	const {sessions, session, entries} = fixture();
+	session.messages = [{role: "user", content: "Keep this conversation"}];
+	await sessions.save(session);
+	const pointer = [...entries.keys()].find((key) => key.startsWith("pointer/"))!;
+	const manifest = JSON.parse(entries.get(pointer)!);
+	const checkpoint = JSON.parse(entries.get(manifest.checkpoint)!);
+	checkpoint[field as string] = value;
+	entries.set(manifest.checkpoint, JSON.stringify(checkpoint));
+	const healthy = newSession("student", "Healthy conversation");
+	await sessions.save(healthy);
+	const saved = new Map(entries);
+
+	await expect(sessions.load(session.header.id)).rejects.toBeInstanceOf(SessionDataError);
+	await sessions.cleanup();
+	expect(entries).toEqual(saved);
+	expect((await sessions.list()).map(({id}) => id)).toContain(healthy.header.id);
+	expect(await sessions.load(healthy.header.id)).not.toBeNull();
 });
 
 test("expired details are collected without deleting conversation text or receipts", async () => {

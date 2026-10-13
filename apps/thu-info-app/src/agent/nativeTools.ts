@@ -23,7 +23,7 @@ export const sessionNeedsUnlock = (checkpoint: AgentCheckpoint) => {
 	const config = currState().config;
 	return (
 		!config.subFunctionUnlocked &&
-		(checkpoint.protectedTools ?? []).some((name) => {
+		checkpoint.protectedTools.some((name) => {
 			const lock = agentCatalog.find((tool) => tool.name === name)?.lock;
 			return lock === "report"
 				? config.verifyPasswordBeforeEnterReport

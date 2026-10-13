@@ -69,9 +69,7 @@ export const expireSessionDetails = (
 	}
 	for (const operation of session.checkpoint.operations) {
 		if (force || now - operation.timestamp >= DETAIL_TTL) {
-			changed ||=
-				!operation.targetFingerprint || Object.keys(operation.args).length > 0;
-			operation.targetFingerprint ??= fingerprint(operation.args);
+			changed ||= Object.keys(operation.args).length > 0;
 			operation.args = {};
 			shrink(operation);
 		}
@@ -85,6 +83,8 @@ export const newCheckpoint = (): AgentCheckpoint => ({
 	status: "idle",
 	messages: [],
 	activeTools: [],
+	catalogPaths: [],
+	protectedTools: [],
 	summary: "",
 	request: "",
 	steps: 0,
@@ -206,7 +206,14 @@ export class SessionStore {
 			!Array.isArray(checkpoint.messages) ||
 			!Array.isArray(checkpoint.operations) ||
 			!Array.isArray(checkpoint.approvals) ||
-			!Array.isArray(checkpoint.activeTools)
+			!Array.isArray(checkpoint.activeTools) ||
+			!Array.isArray(checkpoint.catalogPaths) ||
+			checkpoint.catalogPaths.some((path) => typeof path !== "string") ||
+			!Array.isArray(checkpoint.protectedTools) ||
+			checkpoint.protectedTools.some((name) => typeof name !== "string") ||
+			checkpoint.operations.some(
+				(operation) => typeof operation?.targetFingerprint !== "string",
+			)
 		) {
 			throw new SessionDataError("Unsupported or incomplete agent checkpoint");
 		}

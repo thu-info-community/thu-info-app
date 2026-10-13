@@ -9,7 +9,6 @@ jest.mock("../../src/redux/store", () => {
 		auth: {userId: "student"},
 		config: {
 			appLocked: false,
-			agentEnabled: undefined as boolean | undefined,
 			deepseekToken: "stale-legacy-token",
 		},
 		deepseek: {history: [] as Conversation[]},
@@ -175,41 +174,37 @@ test("signed-out users cannot create a persisted or in-memory conversation", asy
 	expect(await nativeSessionStorage.keys()).toEqual([]);
 });
 
-test.each([undefined, false, true])(
-	"migrates history and runs without the retired preview flag (%s)",
-	async (legacyEnabled) => {
-		const {agentService, state, helper, store} = setup();
-		state.config.agentEnabled = legacyEnabled;
-		state.deepseek.history = [
-			{
-				id: "legacy",
-				title: "Saved conversation",
-				timestamp: 123,
-				messages: [
-					{role: "user", content: "Original question", timestamp: 100},
-				],
-			},
-		];
-		const runner = await agentService.open();
-		expect(runner.session.header).toMatchObject({
+test("migrates main's history and authorizes new turns with a fresh account token", async () => {
+	const {agentService, state, helper, store} = setup();
+	state.deepseek.history = [
+		{
 			id: "legacy",
 			title: "Saved conversation",
-			createdAt: 123,
-		});
-		expect(runner.session.messages[0]).toMatchObject({
-			content: "Original question",
-			timestamp: 100,
-		});
-		expect(state.deepseek.history).toEqual([]);
-		await runner.send("New question");
-		expect(runner.session.checkpoint.status).toBe("completed");
-		expect(runner.session.messages.at(-1)?.content).toBe("Answer");
-		expect(helper.getMadModelToken).toHaveBeenCalledTimes(1);
-		expect(store.dispatch).not.toHaveBeenCalledWith(
-			expect.objectContaining({type: "config/configSet"}),
-		);
-	},
-);
+			timestamp: 123,
+			messages: [
+				{role: "user", content: "Original question", timestamp: 100},
+			],
+		},
+	];
+	const runner = await agentService.open();
+	expect(runner.session.header).toMatchObject({
+		id: "legacy",
+		title: "Saved conversation",
+		createdAt: 123,
+	});
+	expect(runner.session.messages[0]).toMatchObject({
+		content: "Original question",
+		timestamp: 100,
+	});
+	expect(state.deepseek.history).toEqual([]);
+	await runner.send("New question");
+	expect(runner.session.checkpoint.status).toBe("completed");
+	expect(runner.session.messages.at(-1)?.content).toBe("Answer");
+	expect(helper.getMadModelToken).toHaveBeenCalledTimes(1);
+	expect(store.dispatch).not.toHaveBeenCalledWith(
+		expect.objectContaining({type: "config/configSet"}),
+	);
+});
 
 test("account changes and privacy locks still stop an active runner", async () => {
 	const {agentService, state, store} = setup();

@@ -212,8 +212,7 @@ const persistConfig = {
 							// `undefined` drops the flag from the persisted JSON on the
 							// next write.
 							tabletMode: undefined,
-							// The assistant is always enabled and keeps account-scoped tokens in memory.
-							agentEnabled: undefined,
+							// Drop main's persisted model token; authorization is now account-scoped in memory.
 							deepseekToken: undefined,
 						},
 						schedule: state.schedule

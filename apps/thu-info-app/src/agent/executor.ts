@@ -49,7 +49,7 @@ export class ToolExecutor {
 				(["unknown", "dispatching"].includes(op.status) &&
 					op.account === this.context.account &&
 					op.tool === tool.name &&
-					(op.targetFingerprint ?? fingerprint(op.args)) === fingerprint(args)),
+					op.targetFingerprint === fingerprint(args)),
 		);
 	}
 	private assertRunning(tool: ToolDescriptor) {
@@ -183,6 +183,7 @@ export class ToolExecutor {
 					runId: approval.runId,
 					account: approval.account,
 					fingerprint: this.operationKey(tool, approval.args),
+					targetFingerprint: fingerprint(approval.args),
 					args: approval.args,
 				});
 			}
@@ -198,7 +199,7 @@ export class ToolExecutor {
 			if (tool.effect === "read") {
 				if (tool.lock) {
 					this.session.checkpoint.protectedTools = [
-						...new Set([...(this.session.checkpoint.protectedTools ?? []), name]),
+						...new Set([...this.session.checkpoint.protectedTools, name]),
 					];
 					await this.persist();
 				}

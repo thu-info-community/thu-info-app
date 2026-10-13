@@ -85,7 +85,6 @@ jest.mock("../src/agent/service", () => ({
 const mockState = {
 	auth: {userId: "student"},
 	config: {
-		agentEnabled: undefined as boolean | undefined,
 		appLocked: false,
 		bubbleMessage: true,
 		agentThinking: "default",
@@ -103,6 +102,8 @@ const checkpoint = (): AgentCheckpoint => ({
 	status: "idle",
 	messages: [],
 	activeTools: [],
+	catalogPaths: [],
+	protectedTools: [],
 	summary: "",
 	request: "",
 	steps: 0,
@@ -135,7 +136,6 @@ beforeEach(() => {
 	mockLanguage = "zh";
 	mockCampusModelName = "DeepSeek-V4.1-Flash";
 	mockState.auth.userId = "student";
-	mockState.config.agentEnabled = undefined;
 	mockState.config.appLocked = false;
 });
 afterEach(async () => {
@@ -304,21 +304,17 @@ test.each([
 	},
 );
 
-test.each([undefined, false, true])(
-	"the composer sends regardless of the retired preview flag (%s)",
-	async (legacyEnabled) => {
-		mockState.config.agentEnabled = legacyEnabled;
-		const runner = runtime();
-		(agentService.open as jest.Mock).mockResolvedValue(runner);
-		await render(<AgentDeepSeekScreen route={route} />);
-		await fireEvent.changeText(
-			await screen.findByLabelText("消息"),
-			"看看我的日程",
-		);
-		await fireEvent.press(screen.getByRole("button", {name: "发送"}));
-		expect(runner.send).toHaveBeenCalledWith("看看我的日程", "default", null);
-	},
-);
+test("the composer sends the user's message with the selected settings", async () => {
+	const runner = runtime();
+	(agentService.open as jest.Mock).mockResolvedValue(runner);
+	await render(<AgentDeepSeekScreen route={route} />);
+	await fireEvent.changeText(
+		await screen.findByLabelText("消息"),
+		"看看我的日程",
+	);
+	await fireEvent.press(screen.getByRole("button", {name: "发送"}));
+	expect(runner.send).toHaveBeenCalledWith("看看我的日程", "default", null);
+});
 
 test("a locked conversation remains hidden when the assistant is always enabled", async () => {
 	mockState.config.appLocked = true;
