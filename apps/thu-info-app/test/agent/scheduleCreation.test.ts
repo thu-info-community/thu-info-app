@@ -1,6 +1,6 @@
 import {expect, test} from "@jest/globals";
 import dayjs from "dayjs";
-import {createScheduleFromToolArgs} from "../src/ui/home/deepseek";
+import {createScheduleFromToolArgs} from "../../src/agent/schedules";
 import {ScheduleType} from "@thu-info/lib/src/models/schedule/schedule";
 
 const firstDay = "2025-09-15";

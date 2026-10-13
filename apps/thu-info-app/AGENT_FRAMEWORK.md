@@ -2,7 +2,7 @@
 
 ## Enable and rollout
 
-Enable **Settings → DeepSeek → Agent mode (preview)**. It is off by default until the campus gateway and real devices pass the checklist below. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
+The **Assistant / 助手** always uses the agent implementation; there is no preview switch or legacy chat fallback. **Settings → Assistant** offers gateway diagnostics, thinking settings, storage management and message display preferences. The implementation uses **AI SDK Core 7 `ToolLoopAgent`**, running on the device, with a custom model provider that calls only the existing campus **`/v1/chat/completions`** endpoint. It does not use Responses, Codex CLI, a shell, a new backend, or an upstream DeepSeek API key.
 
 The first activation migrates legacy Redux conversations, verifies their persisted message counts, and only then clears the legacy payload. Migration is restartable and preserves IDs, titles, visible text and timestamps. Legacy histories had no account identity; the first migration assigns them to the currently signed-in account. New history is account-separated. Disabling the preview after migration pauses execution and leaves history readable; it does not copy large histories back into Redux.
 
@@ -68,7 +68,7 @@ yarn workspace @thu-info/app test --runInBand
 
 The agent suite uses the real SDK with scripted Chat Completions streams and mocked portal/native boundaries. It covers hierarchy, schema validation, approvals/restart, multiple approvals, denials, replay prevention, malformed streams, reasoning replay, compaction, migration, account separation, privacy locks, redaction and storage growth. No real write or authenticated gateway request is made by these tests.
 
-Before enabling by default, verify on **Android, iOS and HarmonyOS**:
+Verify on **Android, iOS and HarmonyOS**:
 
 1. Campus gateway streaming: fragmented reasoning/content, indexed parallel calls, `finish_reason`, `[DONE]`, usage and errors. Run several tool rounds and a subsequent user turn with reasoning enabled. Confirm context/output limits and each exposed thinking option.
 2. Book a deliberately chosen test resource only after native approval; cancel only after a separate approval. Change/expire a target while its card is open. Repeat for a course change in a suitable test environment. Test rejected business responses, not only HTTP success.
@@ -85,10 +85,16 @@ Android emulator inspection covered the chat composer above the keyboard, thinki
 
 A catalog-only request returned prose instead of native tool calls. Its saved checkpoint contained no tool exchange, and a separate direct non-streaming Chat Completions capture also had `tool_calls: null` with `finish_reason: "stop"`. Direct synthetic probes tested default/disabled thinking, forced/required function selection, legacy `functions`, structured text messages, Codex-style request fields and the captured generic Codex system prompt (personal memory/context excluded). None returned a native tool call. Some emitted function-shaped JSON in `content`; schema-only names/markers were not used correctly. Synthetic tool results were readable on a subsequent turn. This suggests a declaration/adapter issue on the public route, not an SDK stream-decoding problem; server-side behavior is not independently verified. The user's working Codex setup enters through Responses, not this public Chat Completions route. No campus writes or local schedule writes were dispatched in these checks.
 
-Settings now include side-effect-free native function-call diagnostics, using the normal output budget, for provider-default and explicitly disabled thinking. They do not execute tools, change thinking settings or persist raw responses. A valid single call is only an initial compatibility check, not proof of complete multi-round support. Live write/approval/recovery flows still need validation. Gateway configuration/model compatibility must be resolved before rollout; do not turn prose or arbitrary JSON into executable calls as a workaround. A separate strict action-protocol adapter would be an explicit compatibility choice, not something this implementation silently enables. The feature remains opt-in. Never commit authenticated request captures or bearer tokens.
+Settings now include side-effect-free native function-call diagnostics, using the normal output budget, for provider-default and explicitly disabled thinking. They do not execute tools, change thinking settings or persist raw responses. A valid single call is only an initial compatibility check, not proof of complete multi-round support. Live write/approval/recovery flows still need validation. Gateway configuration/model compatibility must be resolved before rollout; do not turn prose or arbitrary JSON into executable calls as a workaround. A separate strict action-protocol adapter would be an explicit compatibility choice, not something this implementation silently enables. Never commit authenticated request captures or bearer tokens.
 
 ### Capabilities discovery loop observed and fixed on 2026-10-12
 
 The latest Android trace for “What can you do” had reached 22 steps and 11 compactions: the model repeatedly expanded all 15 categories, lost the oversized exchange during compaction, and started discovery again. Native tool calls and catalog results were present. The root overview now supplies capability examples, instructions request one overview for a broad question, and catalog progress survives compaction independently of generated summaries.
 
 A live Android check with `DeepSeek-V4.1-Flash` completed in 7.8 seconds with one `import_tools` call, two model requests and no compaction. The diagnostic session stayed in memory and disabled campus operations. The 60 agent tests and 263 existing app tests pass (one skipped); lint has no errors and 20 existing warnings. Live iOS/HarmonyOS and write/approval flows were not checked in this investigation.
+
+### Always-enabled assistant on 2026-10-13
+
+The assistant tab now opens the agent screen directly. The preview switch, legacy screen, streaming/tool loop, message/history components and Redux history editing actions have been removed. Existing Redux conversations still migrate to account-scoped session storage; migration failures retain the original history for retry. Persisted preview flags and legacy model tokens are dropped during rehydration. Authorization tokens remain in the account-scoped in-memory cache.
+
+The 70 agent tests and 278 app tests pass (one existing test skipped). Regression coverage includes missing/false/true legacy preview flags, history migration and migration failure, app/privacy locks, account changes and action approval. Lint has no errors and 18 existing warnings. Full app typecheck still reports React Native/Harmony and other existing errors outside the changed files. No native device or live gateway verification was performed for this change.

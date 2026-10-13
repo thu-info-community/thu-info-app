@@ -113,8 +113,8 @@ export const createNativeToolContext = (
 		if (!account || helper.userId !== account || state.auth.userId !== account) {
 			throw new AgentToolError("Account changed. Open a conversation for the signed-in account.");
 		}
-		if (state.config.appLocked || !state.config.agentEnabled) {
-			throw new AgentToolError("Unlock the app and enable agent mode before continuing.");
+		if (state.config.appLocked) {
+			throw new AgentToolError("Unlock the app before continuing.");
 		}
 		const needsUnlock =
 			tool?.lock === "report"

@@ -1,6 +1,5 @@
 import {AppState} from "react-native";
 import {currState, helper, store} from "../redux/store";
-import {configSet} from "../redux/slices/config";
 import {deepseekMigrationComplete} from "../redux/slices/deepseek";
 import {AgentRuntime} from "./runtime";
 import {newSession, SessionDataError, SessionStore} from "./storage";
@@ -43,7 +42,6 @@ class AgentService {
 			if (
 				state.auth.userId !== this.current?.session.header.account ||
 				state.config.appLocked ||
-				!state.config.agentEnabled ||
 				(this.current && sessionNeedsUnlock(this.current.session.checkpoint))
 			) {
 				pause();
@@ -76,7 +74,7 @@ class AgentService {
 		) {
 			return this.token.value;
 		}
-		// Legacy persisted tokens are not account-tagged; never reuse one across accounts.
+		// Fetch a fresh token for this account; authorization is never persisted in Redux.
 		const value = await helper.getMadModelToken().catch(() => {
 			throw new Error(
 				"Unable to authorize the campus model. Check your login and connection.",
@@ -86,7 +84,6 @@ class AgentService {
 			throw new Error("Account changed");
 		}
 		this.token = {account, value, checkedAt: Date.now()};
-		store.dispatch(configSet({key: "deepseekToken", value}));
 		return value;
 	}
 	probeToolSupport(disableThinking = false) {

@@ -126,7 +126,7 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
-import {DeepSeekScreen} from "../ui/home/deepseek";
+import {AgentDeepSeekScreen} from "../ui/home/agentDeepseek";
 import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
@@ -226,7 +226,7 @@ const RootTabs = () => {
 			/>
 			{helper.userId === "" || helper.mocked() ? null : <Tab.Screen
 				name="DeepSeekTab"
-				component={DeepSeekScreen}
+				component={AgentDeepSeekScreen}
 				options={{title: getStr("deepseek"), headerShown: false}}
 				listeners={() => ({
 					tabPress: () => {

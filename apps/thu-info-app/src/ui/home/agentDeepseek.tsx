@@ -199,8 +199,7 @@ export const AgentDeepSeekScreen = ({
 		!!account &&
 		!config.appLocked &&
 		(!checkpoint || !sessionNeedsUnlock(checkpoint));
-	const canSend =
-		ready && config.agentEnabled && !running && !busy && !pending.length;
+	const canSend = ready && !running && !busy && !pending.length;
 	const send = () => {
 		if (!runtime || !canSend || !input.trim()) {
 			return;
@@ -358,24 +357,6 @@ export const AgentDeepSeekScreen = ({
 					() => navigationRef.navigate("DeepSeekSettings"),
 				)}
 			</View>
-			{!config.agentEnabled && (
-				<View
-					style={[
-						styles.column,
-						styles.panel,
-						{backgroundColor: colors.contentBackground},
-					]}>
-					<Text style={[styles.panelBody, {color: colors.fontB2}]}>
-						{agentText(
-							"Agent mode is disabled. History is still available; enable it in settings to continue.",
-							"智能体模式已关闭。历史记录仍可查看，启用后可继续对话。",
-						)}
-					</Text>
-					{button(getStr("settings"), () =>
-						navigationRef.navigate("DeepSeekSettings"),
-					)}
-				</View>
-			)}
 			{usage >= 50 * 1024 * 1024 && (
 				<View
 					style={[styles.column, {paddingHorizontal: 24, paddingVertical: 8}]}>
@@ -527,7 +508,7 @@ export const AgentDeepSeekScreen = ({
 													"我已查看原生页面记录",
 												),
 												() => reconcile(operation.id),
-												running || busy || !config.agentEnabled,
+												running || busy,
 											)}
 									</View>
 								))}
@@ -554,7 +535,7 @@ export const AgentDeepSeekScreen = ({
 											onPress={() => {
 												void perform(() => runtime!.answer(choice));
 											}}
-											disabled={running || busy || !config.agentEnabled}
+											disabled={running || busy}
 										/>
 									))}
 								</View>
@@ -583,7 +564,7 @@ export const AgentDeepSeekScreen = ({
 								() => {
 									void perform(() => runtime!.regenerate());
 								},
-								busy || !config.agentEnabled,
+								busy,
 							)}
 					</View>
 				}
@@ -632,7 +613,7 @@ export const AgentDeepSeekScreen = ({
 								() => {
 									void perform(() => runtime!.respond(approval.id, true));
 								},
-								running || busy || !config.agentEnabled,
+								running || busy,
 								true,
 							)}
 							{button(
@@ -640,7 +621,7 @@ export const AgentDeepSeekScreen = ({
 								() => {
 									void perform(() => runtime!.respond(approval.id, false));
 								},
-								running || busy || !config.agentEnabled,
+								running || busy,
 							)}
 						</View>
 					</View>
@@ -673,7 +654,7 @@ export const AgentDeepSeekScreen = ({
 								() => {
 									void perform(() => runtime!.resume());
 								},
-								busy || !config.agentEnabled,
+								busy,
 							)}
 					</View>
 				)}
@@ -700,7 +681,7 @@ export const AgentDeepSeekScreen = ({
 						onChangeText={setInput}
 						multiline
 						maxLength={12000}
-						editable={ready && config.agentEnabled}
+						editable={ready}
 						style={[styles.input, {color: colors.text}]}
 					/>
 					<Pressable

@@ -1,8 +1,9 @@
+jest.mock("react-native", () => ({Linking: {openURL: jest.fn()}}));
+jest.mock("../../src/utils/i18n", () => ({getStr: (key: string) => key, langCode: "en"}));
 jest.mock("../../src/redux/store", () => {
 	const state = {
 		auth: {userId: "student"},
 		config: {
-			agentEnabled: true,
 			appLocked: false,
 			subFunctionUnlocked: false,
 			verifyPasswordBeforeEnterFinance: true,
@@ -44,6 +45,16 @@ afterEach(() => {
 	currState().config.appLocked = false;
 	currState().config.subFunctionUnlocked = false;
 	helper.userId = "student";
+});
+
+test("native tools are available by default and still require sign-in and an unlocked app", () => {
+	const context = createNativeToolContext("student");
+	expect(() => context.assertAccess()).not.toThrow();
+	currState().config.appLocked = true;
+	expect(() => context.assertAccess()).toThrow("Unlock the app");
+	currState().config.appLocked = false;
+	helper.userId = "";
+	expect(() => context.assertAccess()).toThrow("Account changed");
 });
 
 test("native privacy locks apply to reads, previously read conversations and document buttons", () => {

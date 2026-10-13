@@ -16,7 +16,7 @@ import {State} from "../../redux/store";
 import {configSet} from "../../redux/slices/config";
 import {agentService} from "../../agent/service";
 import {campusModel} from "../../agent/types";
-import {agentText} from "../home/agentDeepseek";
+import {agentText} from "../../components/home/agentChatPresentation";
 import {deepseekClear} from "../../redux/slices/deepseek";
 import {SubPageScreen} from "../../components/subpage/containers";
 
@@ -27,7 +27,7 @@ export const DeepSeekSettingsScreen = () => {
 
 	const enableBubbleMessage = useSelector((s: State) => s.config.bubbleMessage);
 	const dispatch = useDispatch();
-	const {agentEnabled, agentThinking} = useSelector((s: State) => s.config);
+	const {agentThinking} = useSelector((s: State) => s.config);
 	const account = useSelector((s: State) => s.auth.userId);
 	const [usage, setUsage] = useState(0);
 	const [busy, setBusy] = useState(false);
@@ -74,26 +74,10 @@ export const DeepSeekSettingsScreen = () => {
 	return (
 		<SubPageScreen contentStyle={{paddingTop: 0}}>
 			<RoundedView style={style.rounded}>
-				<View style={style.touchable}>
-					<Text style={style.text}>
-						{agentText("Agent mode (preview)", "智能体模式（预览）")}
-					</Text>
-					<Switch
-						accessibilityLabel="Agent mode"
-						ios_backgroundColor={colors.inputBorder}
-						thumbColor={colors.themeLightGrey}
-						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
-						value={agentEnabled ?? false}
-						disabled={busy || !account}
-						onValueChange={(value) => {
-							dispatch(configSet({key: "agentEnabled", value}));
-						}}
-					/>
-				</View>
 				<Text style={{color: colors.fontB3, padding: 16}}>
 					{agentText(
-						"Runs on this device through the campus Chat Completions gateway. Requested local schedules, favorites and subscriptions may be updated directly. Bookings, course changes, messages, payments, account changes and bulk writes require approval. Secrets and payments stay in native screens. Preview remains opt-in until gateway and device verification is complete.",
-						"通过校园 Chat Completions 接口在本机运行。明确要求的本地日程、收藏、订阅可直接更新；预约、选课、发送消息、支付、账号变更及批量操作需确认。密码和支付在原生页面完成。完成接口及真机验证前需手动启用预览。",
+						"Runs on this device through the campus Chat Completions gateway. Requested local schedules, favorites and subscriptions may be updated directly. Bookings, course changes, messages, payments, account changes and bulk writes require approval. Secrets and payments stay in native screens.",
+						"通过校园 Chat Completions 接口在本机运行。明确要求的本地日程、收藏、订阅可直接更新；预约、选课、发送消息、支付、账号变更及批量操作需确认。密码和支付在原生页面完成。",
 					)}
 				</Text>
 				<Pressable

@@ -85,7 +85,7 @@ jest.mock("../src/agent/service", () => ({
 const mockState = {
 	auth: {userId: "student"},
 	config: {
-		agentEnabled: true,
+		agentEnabled: undefined as boolean | undefined,
 		appLocked: false,
 		bubbleMessage: true,
 		agentThinking: "default",
@@ -135,7 +135,8 @@ beforeEach(() => {
 	mockLanguage = "zh";
 	mockCampusModelName = "DeepSeek-V4.1-Flash";
 	mockState.auth.userId = "student";
-	mockState.config.agentEnabled = true;
+	mockState.config.agentEnabled = undefined;
+	mockState.config.appLocked = false;
 });
 afterEach(async () => {
 	await cleanup();
@@ -303,16 +304,28 @@ test.each([
 	},
 );
 
-test("the composer sends the draft with the existing model settings", async () => {
-	const runner = runtime();
-	(agentService.open as jest.Mock).mockResolvedValue(runner);
+test.each([undefined, false, true])(
+	"the composer sends regardless of the retired preview flag (%s)",
+	async (legacyEnabled) => {
+		mockState.config.agentEnabled = legacyEnabled;
+		const runner = runtime();
+		(agentService.open as jest.Mock).mockResolvedValue(runner);
+		await render(<AgentDeepSeekScreen route={route} />);
+		await fireEvent.changeText(
+			await screen.findByLabelText("消息"),
+			"看看我的日程",
+		);
+		await fireEvent.press(screen.getByRole("button", {name: "发送"}));
+		expect(runner.send).toHaveBeenCalledWith("看看我的日程", "default", null);
+	},
+);
+
+test("a locked conversation remains hidden when the assistant is always enabled", async () => {
+	mockState.config.appLocked = true;
+	(agentService.open as jest.Mock).mockResolvedValue(runtime());
 	await render(<AgentDeepSeekScreen route={route} />);
-	await fireEvent.changeText(
-		await screen.findByLabelText("消息"),
-		"看看我的日程",
-	);
-	await fireEvent.press(screen.getByRole("button", {name: "发送"}));
-	expect(runner.send).toHaveBeenCalledWith("看看我的日程", "default", null);
+	expect(await screen.findByRole("button", {name: "解锁"})).toBeTruthy();
+	expect(screen.queryByRole("textbox", {name: "消息"})).toBeNull();
 });
 
 test("Stop remains accessible while many reasoning steps are collapsed", async () => {
