@@ -823,8 +823,6 @@ export default {
 	enableNewUI: "Use translucent UI",
 	rechargeSuccess: "Recharge succeeded.",
 	redirectToAlipay: "Redirecting to Alipay to complete the recharge...",
-	enableBubbleMessage: "Show assistant messages in bubbles",
-	bubbleMessageHint: "Turn off to show its messages in list",
 	deleteAllHistoryConfirm: "Are you sure to delete all conversations?",
 	copied: "Copied",
 	scheduleUploadCustomTitle: "Upload custom schedules to 网络学堂",

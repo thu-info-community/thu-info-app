@@ -780,8 +780,6 @@ export default {
 	enableNewUI: "使用半透明 UI",
 	rechargeSuccess: "充值成功",
 	redirectToAlipay: "正在跳转到支付宝充值……",
-	enableBubbleMessage: "助手消息以气泡显示",
-	bubbleMessageHint: "关闭后将以列表模式显示",
 	deleteAllHistoryConfirm: "确定删除所有历史记录吗？",
 	copied: "已复制",
 	scheduleUploadCustomTitle: "上传自定义日程到网络学堂",

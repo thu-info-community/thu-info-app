@@ -1,250 +1,363 @@
-import {getStr} from "../../utils/i18n";
+import {Fragment, useCallback, useEffect, useRef, useState} from "react";
 import {
+	Alert,
+	Pressable,
 	Switch,
 	Text,
 	useColorScheme,
 	View,
-	Alert,
-	Pressable,
 } from "react-native";
-import {useEffect, useState} from "react";
-import {RoundedView} from "../../components/views";
-import {styles} from "./settings";
-import themes from "../../assets/themes/themes";
 import {useDispatch, useSelector} from "react-redux";
-import {State} from "../../redux/store";
-import {configSet} from "../../redux/slices/config";
+import themes from "../../assets/themes/themes";
+import IconCheck from "../../assets/icons/IconCheck";
 import {agentService} from "../../agent/service";
-import {campusModel} from "../../agent/types";
+import {campusModel, type ThinkingLevel} from "../../agent/types";
 import {agentText} from "../../components/home/agentChatPresentation";
-import {deepseekClear} from "../../redux/slices/deepseek";
+import {AdaptiveRow, useFontScale} from "../../components/subpage/adaptive";
 import {SubPageScreen} from "../../components/subpage/containers";
+import {Separator} from "../../components/subpage/rows";
+import {fontSize, spacing} from "../../components/subpage/tokens";
+import {RoundedView} from "../../components/views";
+import {configSet} from "../../redux/slices/config";
+import {deepseekClear} from "../../redux/slices/deepseek";
+import {currState, type State} from "../../redux/store";
+import {getStr} from "../../utils/i18n";
+import themedStyles from "../../utils/themedStyles";
+
+type StorageUsage = {account: string} & (
+	{status: "loading" | "error"} | {status: "ready"; bytes: number}
+);
+type ClearKind = "details" | "all";
+
+const thinkingLabel = (level: ThinkingLevel) =>
+	({
+		default: agentText("Model default", "模型默认"),
+		off: agentText("Off", "关闭"),
+		low: agentText("Low", "低强度"),
+		high: agentText("High", "高强度"),
+		max: agentText("Maximum", "最高强度"),
+	})[level];
 
 export const DeepSeekSettingsScreen = () => {
 	const themeName = useColorScheme();
 	const style = styles(themeName);
 	const {colors} = themes(themeName);
-
-	const enableBubbleMessage = useSelector((s: State) => s.config.bubbleMessage);
-	const dispatch = useDispatch();
-	const {agentThinking} = useSelector((s: State) => s.config);
+	const {isLargeText} = useFontScale();
+	const {bubbleMessage, agentThinking} = useSelector((s: State) => s.config);
 	const account = useSelector((s: State) => s.auth.userId);
-	const [usage, setUsage] = useState(0);
-	const [busy, setBusy] = useState(false);
-	const refresh = () =>
-		account
-			? agentService.forAccount(account).usage().then(setUsage)
-			: Promise.resolve();
+	const dispatch = useDispatch();
+	const [usage, setUsage] = useState<StorageUsage>();
+	const [operation, setOperation] = useState<{
+		account: string;
+		kind: ClearKind;
+	} | null>(null);
+	const requestId = useRef(0);
+	const mounted = useRef(false);
+	const clearing = useRef(false);
+
+	const refresh = useCallback(async () => {
+		const request = ++requestId.current;
+		if (!account) {
+			setUsage(undefined);
+			return;
+		}
+		setUsage({account, status: "loading"});
+		const isCurrent = () =>
+			mounted.current &&
+			request === requestId.current &&
+			currState().auth.userId === account;
+		try {
+			const bytes = await agentService.forAccount(account).usage();
+			if (isCurrent()) setUsage({account, status: "ready", bytes});
+		} catch {
+			if (isCurrent()) setUsage({account, status: "error"});
+		}
+	}, [account]);
+
 	useEffect(() => {
-		void refresh().catch(() => {});
-	}, [account]); // eslint-disable-line react-hooks/exhaustive-deps
-	const clear = (all: boolean) =>
+		mounted.current = true;
+		refresh();
+		return () => {
+			mounted.current = false;
+		};
+	}, [refresh]);
+
+	const clear = (kind: ClearKind) => {
+		if (!account || clearing.current || currState().auth.userId !== account) {
+			return;
+		}
 		Alert.alert(
 			getStr("confirm"),
-			all
+			kind === "all"
 				? getStr("deleteAllHistoryConfirm")
 				: agentText(
 						"Remove reasoning, tool detail and resumable model context. Conversation text and action receipts are kept. Pending approvals will be invalidated.",
 						"清除思考内容、工具详情和模型上下文，保留对话文本及操作记录。待确认的操作将失效。",
 					),
 			[
-				{text: getStr("cancel")},
+				{text: getStr("cancel"), style: "cancel"},
 				{
 					text: getStr("confirm"),
 					style: "destructive",
 					onPress: async () => {
-						setBusy(true);
+						// A confirmation can outlive this screen or its signed-in account.
+						if (
+							!mounted.current ||
+							clearing.current ||
+							currState().auth.userId !== account
+						) {
+							return;
+						}
+						clearing.current = true;
+						setOperation({account, kind});
 						try {
-							if (all) {
+							if (kind === "all") {
 								await agentService.clear(account);
-								dispatch(deepseekClear());
+								if (currState().auth.userId === account) {
+									dispatch(deepseekClear());
+								}
 							} else {
 								await agentService.clearDetails();
 							}
-							await refresh();
-						} catch (e) {
-							Alert.alert("THUInfo", String(e));
+							if (mounted.current && currState().auth.userId === account) {
+								await refresh();
+							}
+						} catch (error) {
+							if (mounted.current && currState().auth.userId === account) {
+								Alert.alert(
+									agentText("Couldn't clear conversations", "清理失败"),
+									String(error),
+								);
+							}
 						} finally {
-							setBusy(false);
+							clearing.current = false;
+							if (mounted.current) setOperation(null);
 						}
 					},
 				},
 			],
 		);
+	};
+
+	const currentUsage = usage?.account === account ? usage : undefined;
+	const bytes =
+		currentUsage?.status === "ready" ? currentUsage.bytes : undefined;
+	const usageText = !account
+		? "—"
+		: bytes !== undefined
+			? `${(bytes / 1024 / 1024).toFixed(1)} MiB`
+			: currentUsage?.status === "error"
+				? agentText("Couldn't load", "读取失败")
+				: agentText("Loading…", "正在读取…");
+	const actions = [
+		{
+			kind: "details" as const,
+			label: agentText(
+				"Clear details, keep conversations",
+				"清理详情，保留对话",
+			),
+			pending: agentText("Clearing details…", "正在清理详情…"),
+		},
+		{
+			kind: "all" as const,
+			label: agentText("Delete all conversations", "删除全部对话"),
+			pending: agentText("Deleting conversations…", "正在删除对话…"),
+		},
+	];
+	const disabled = !account || operation !== null;
+
 	return (
-		<SubPageScreen contentStyle={{paddingTop: 0}}>
-			<RoundedView style={style.rounded}>
-				<Text style={{color: colors.fontB3, padding: 16}}>
-					{agentText(
-						"Runs on this device through the campus Chat Completions gateway. Requested local schedules, favorites and subscriptions may be updated directly. Bookings, course changes, messages, payments, account changes and bulk writes require approval. Secrets and payments stay in native screens.",
-						"通过校园 Chat Completions 接口在本机运行。明确要求的本地日程、收藏、订阅可直接更新；预约、选课、发送消息、支付、账号变更及批量操作需确认。密码和支付在原生页面完成。",
-					)}
+		<SubPageScreen>
+			<View style={style.section}>
+				<Text style={style.heading} accessibilityRole="header">
+					{agentText("Message display", "消息显示")}
 				</Text>
-				<Pressable
-					style={style.touchable}
-					disabled={busy || !account}
-					onPress={async () => {
-						setBusy(true);
-						try {
-							const supported = await agentService.probeToolSupport();
-							Alert.alert(
-								agentText("Gateway tool check", "接口工具检查"),
-								supported
-									? agentText(
-											"The gateway returned a valid native tool call. This check did not execute a tool or access campus data.",
-											"接口返回了有效的原生工具调用。本次检查未执行工具或访问校园数据。",
-										)
-									: agentText(
-											"The gateway did not return the required native tool call. Agent actions cannot be verified on this gateway. No tool was executed; ask the gateway administrator to enable function calling.",
-											"接口未返回指定的原生工具调用，无法确认当前接口支持智能体操作。未执行任何工具，请联系接口管理员启用函数调用支持。",
-										),
-							);
-						} catch (e) {
-							Alert.alert(
-								agentText("Gateway tool check", "接口工具检查"),
-								String(e),
-							);
-						} finally {
-							setBusy(false);
-						}
-					}}>
-					<Text style={style.text}>
-						{agentText(
-							busy ? "Checking…" : "Check gateway tool support",
-							busy ? "正在检查…" : "检查接口工具支持",
-						)}
-					</Text>
-				</Pressable>
-				<Pressable
-					style={style.touchable}
-					disabled={busy || !account}
-					onPress={async () => {
-						setBusy(true);
-						try {
-							const supported = await agentService.probeToolSupport(true);
-							Alert.alert(
-								agentText("Non-thinking tool check", "关闭思考的工具检查"),
-								supported
-									? agentText(
-											"A valid native tool call was returned with thinking disabled. This diagnostic does not change your thinking setting or execute any tool.",
-											"请求关闭思考时返回了有效的原生工具调用。本次诊断不会修改思考设置或执行工具。",
-										)
-									: agentText(
-											"No valid native tool call was returned with thinking disabled either. No tool or campus write was executed.",
-											"请求关闭思考后仍未返回有效的原生工具调用。未执行任何工具或校园写入。",
-										),
-							);
-						} catch (e) {
-							Alert.alert(
-								agentText("Non-thinking tool check", "关闭思考的工具检查"),
-								String(e),
-							);
-						} finally {
-							setBusy(false);
-						}
-					}}>
-					<Text style={style.text}>
-						{agentText(
-							"Check tools with thinking disabled",
-							"请求关闭思考并检查工具",
-						)}
-					</Text>
-				</Pressable>
-			</RoundedView>
-			<RoundedView style={style.rounded}>
-				<Text style={[style.text, {padding: 16}]}>
-					{agentText("Thinking level", "思考强度")}
-				</Text>
-				{campusModel.thinkingLevels.map((level) => (
-					<Pressable
-						key={level}
-						accessibilityRole="radio"
-						accessibilityState={{
-							checked: level === (agentThinking ?? "default"),
-						}}
-						style={style.touchable}
-						onPress={() =>
-							dispatch(configSet({key: "agentThinking", value: level}))
+				<RoundedView style={style.group}>
+					<AdaptiveRow
+						style={style.row}
+						trailing={
+							<Switch
+								accessibilityLabel={agentText("Message bubbles", "消息气泡")}
+								ios_backgroundColor={colors.inputBorder}
+								thumbColor={colors.themeLightGrey}
+								trackColor={{
+									false: colors.inputBorder,
+									true: colors.themePurple,
+								}}
+								value={bubbleMessage}
+								onValueChange={(value) => {
+									dispatch(configSet({key: "bubbleMessage", value}));
+								}}
+							/>
 						}>
 						<Text style={style.text}>
-							{level === "default"
-								? agentText("Provider default", "模型默认")
-								: level}
-							{level === (agentThinking ?? "default") ? " ✓" : ""}
+							{agentText("Message bubbles", "消息气泡")}
 						</Text>
-					</Pressable>
-				))}
-				<Text style={{color: colors.fontB3, padding: 16}}>
+					</AdaptiveRow>
+				</RoundedView>
+				<Text style={style.hint}>
 					{agentText(
-						"Only levels verified on the campus gateway are offered. Default sends no reasoning override.",
-						"仅显示校园接口已验证支持的强度。默认不发送思考强度参数。",
+						"Show a bubble background behind assistant replies.",
+						"为助手回复显示气泡背景。",
 					)}
 				</Text>
-			</RoundedView>
-			<RoundedView style={style.rounded}>
-				<Text style={[style.text, {padding: 16}]}>
-					{agentText("Conversation storage", "对话存储")}:{" "}
-					{(usage / 1024 / 1024).toFixed(1)} MiB
-				</Text>
-				<Text
-					style={{
-						color:
-							usage >= 50 * 1024 * 1024 ? colors.statusWarning : colors.fontB3,
-						padding: 16,
-					}}>
-					{agentText(
-						"Conversation text is kept until you delete it. Reasoning and model traces expire after 7 days; cleanup runs when the agent is used. Large tool results are transient. Warnings appear at 50 and 100 MiB; there is no automatic text deletion or fixed storage cap.",
-						"对话文本保留至手动删除。思考内容和模型详情保留 7 天，使用智能体时清理；大型工具结果仅临时缓存。50 和 100 MiB 时提示，不设固定上限，不自动删除对话文本。",
-					)}
-				</Text>
-				<Pressable
-					style={style.touchable}
-					disabled={busy || !account}
-					onPress={() => clear(false)}>
-					<Text style={style.text}>
-						{agentText(
-							"Clear details, keep conversations",
-							"清理详情，保留对话",
-						)}
+			</View>
+
+			{campusModel.thinkingLevels.length > 1 && (
+				<View style={style.section}>
+					<Text style={style.heading} accessibilityRole="header">
+						{agentText("Thinking level", "思考强度")}
 					</Text>
-				</Pressable>
-				<Pressable
-					style={style.touchable}
-					disabled={busy || !account}
-					onPress={() => clear(true)}>
-					<Text style={[style.text, {color: colors.statusWarning}]}>
-						{agentText("Delete all conversations", "删除全部对话")}
-					</Text>
-				</Pressable>
-			</RoundedView>
-			<RoundedView style={style.rounded}>
-				<View style={style.touchable}>
-					<Text style={style.text}>{getStr("enableBubbleMessage")}</Text>
-					<Switch
-						ios_backgroundColor={colors.inputBorder}
-						thumbColor={colors.themeLightGrey}
-						trackColor={{false: colors.inputBorder, true: colors.themePurple}}
-						value={enableBubbleMessage}
-						onValueChange={(value: boolean) => {
-							dispatch(
-								configSet({
-									key: "bubbleMessage",
-									value: value,
-								}),
-							);
-						}}
-					/>
+					<RoundedView style={style.group} accessibilityRole="radiogroup">
+						{campusModel.thinkingLevels.map((level, index) => (
+							<Fragment key={level}>
+								{index > 0 && <Separator style={style.separator} />}
+								<Pressable
+									accessibilityRole="radio"
+									accessibilityState={{
+										checked: level === (agentThinking ?? "default"),
+									}}
+									style={({pressed}) => [style.row, pressed && style.pressed]}
+									onPress={() =>
+										dispatch(configSet({key: "agentThinking", value: level}))
+									}>
+									<Text style={style.text}>{thinkingLabel(level)}</Text>
+									{level === (agentThinking ?? "default") && (
+										<IconCheck width={18} height={18} />
+									)}
+								</Pressable>
+							</Fragment>
+						))}
+					</RoundedView>
 				</View>
-				<Text
-					style={{
-						marginHorizontal: 16,
-						marginTop: 8,
-						color: colors.fontB3,
-						fontSize: 12,
-					}}>
-					{getStr("bubbleMessageHint")}
+			)}
+
+			<View style={style.section}>
+				<Text style={style.heading} accessibilityRole="header">
+					{agentText("Conversation storage", "对话存储")}
 				</Text>
-			</RoundedView>
+				<RoundedView style={style.group}>
+					<View style={[style.row, isLargeText && style.stackedRow]}>
+						<Text style={style.text}>
+							{agentText("Used space", "已用空间")}
+						</Text>
+						<Text style={style.value} accessibilityLiveRegion="polite">
+							{usageText}
+						</Text>
+					</View>
+					{currentUsage?.status === "error" && (
+						<Pressable
+							accessibilityRole="button"
+							accessibilityState={{disabled}}
+							disabled={disabled}
+							style={({pressed}) => [
+								style.row,
+								pressed && style.pressed,
+								disabled && style.disabled,
+							]}
+							onPress={refresh}>
+							<Text style={[style.text, style.link]}>
+								{agentText("Retry loading", "重新读取")}
+							</Text>
+						</Pressable>
+					)}
+					{actions.map(({kind, label, pending}) => {
+						const busy =
+							operation?.account === account && operation.kind === kind;
+						return (
+							<Fragment key={kind}>
+								<Separator style={style.separator} />
+								<Pressable
+									accessibilityRole="button"
+									accessibilityLabel={label}
+									accessibilityState={{disabled, busy}}
+									disabled={disabled}
+									style={({pressed}) => [
+										style.row,
+										pressed && style.pressed,
+										disabled && style.disabled,
+									]}
+									onPress={() => clear(kind)}>
+									<Text
+										style={[style.text, kind === "all" && style.destructive]}
+										accessibilityLiveRegion="polite">
+										{busy ? pending : label}
+									</Text>
+								</Pressable>
+							</Fragment>
+						);
+					})}
+				</RoundedView>
+				<Text style={style.hint}>
+					{account
+						? agentText(
+								"Conversations are stored on this device until you delete them. Reasoning and model details expire after 7 days and are cleared when you use the assistant.",
+								"对话保存在本机，保留至手动删除。思考与模型详情保留 7 天，使用助手时清理。",
+							)
+						: agentText(
+								"Sign in to view and manage conversations stored on this device.",
+								"登录后可查看和管理本机对话。",
+							)}
+				</Text>
+				{bytes !== undefined && bytes >= 50 * 1024 * 1024 && (
+					<Text style={[style.hint, style.destructive]}>
+						{bytes >= 100 * 1024 * 1024
+							? agentText(
+									"Storage has reached 100 MiB. Clear details to free space while keeping your conversations.",
+									"存储已达 100 MiB，可清理详情释放空间，对话文本将保留。",
+								)
+							: agentText(
+									"Storage has reached 50 MiB. You can clear details to free space.",
+									"存储已达 50 MiB，可清理详情释放空间。",
+								)}
+					</Text>
+				)}
+			</View>
 		</SubPageScreen>
 	);
 };
+
+const styles = themedStyles(({colors}) => ({
+	section: {marginBottom: spacing.xl},
+	heading: {
+		color: colors.fontB2,
+		fontSize: fontSize.caption,
+		fontWeight: "500",
+		marginHorizontal: spacing.lg,
+		marginBottom: spacing.sm,
+	},
+	group: {paddingVertical: 0, overflow: "hidden"},
+	row: {
+		minHeight: 44,
+		paddingHorizontal: spacing.lg,
+		paddingVertical: spacing.md,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		gap: spacing.sm,
+	},
+	stackedRow: {flexDirection: "column", alignItems: "flex-start"},
+	text: {
+		color: colors.text,
+		fontSize: fontSize.body,
+		flexShrink: 1,
+		minWidth: 0,
+	},
+	value: {
+		color: colors.fontB2,
+		fontSize: fontSize.body,
+		fontVariant: ["tabular-nums"],
+		flexShrink: 1,
+	},
+	hint: {
+		color: colors.fontB2,
+		fontSize: fontSize.caption,
+		marginHorizontal: spacing.lg,
+		marginTop: spacing.sm,
+	},
+	separator: {marginVertical: 0},
+	pressed: {backgroundColor: colors.themeTransparentGrey},
+	disabled: {opacity: 0.45},
+	destructive: {color: colors.statusWarning},
+	link: {color: colors.themePurple},
+}));

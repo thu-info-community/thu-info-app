@@ -6,8 +6,6 @@ import {newSession, SessionDataError, SessionStore} from "./storage";
 import {nativeSessionStorage} from "./nativeStorage";
 import {nativeCompletionTransport} from "./nativeTransport";
 import {createNativeToolContext, sessionNeedsUnlock} from "./nativeTools";
-import {probeToolSupport} from "./probe";
-import {campusModel} from "./types";
 import type {AgentSession} from "./types";
 
 /** At most one active runner. Native portal cookies belong to the logged-in account. */
@@ -85,27 +83,6 @@ class AgentService {
 		}
 		this.token = {account, value, checkedAt: Date.now()};
 		return value;
-	}
-	probeToolSupport(disableThinking = false) {
-		const account = currState().auth.userId;
-		return this.serial(async () => {
-			if (
-				!account ||
-				currState().auth.userId !== account ||
-				currState().config.appLocked ||
-				this.current?.isRunning()
-			) {
-				throw new Error(
-					"Sign in, unlock the app and stop the current run before testing the gateway",
-				);
-			}
-			return probeToolSupport(
-				nativeCompletionTransport(() => this.getToken(account)),
-				campusModel,
-				undefined,
-				disableThinking,
-			);
-		});
 	}
 	open(id?: string, create = false): Promise<AgentRuntime> {
 		const account = currState().auth.userId;
