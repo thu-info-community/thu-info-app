@@ -36,7 +36,7 @@
 		"ics": "^3.8.1",
 		"md5": "2.3.0",
 		"moment": "2.31.0",
-		"react": "19.3.0",
+		"react": "19.3.1",
 		"react-native": "0.87.1",
 		"react-native-biometrics": "3.0.1",
 		"react-native-blob-util": "0.25.1",
