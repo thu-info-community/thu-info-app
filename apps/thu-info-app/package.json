@@ -4,18 +4,26 @@
 	"build": 127,
 	"private": true,
 	"scripts": {
+		"preandroid": "yarn workspace @thu-info/lib agent:generate",
 		"android": "react-native run-android",
+		"preios": "yarn workspace @thu-info/lib agent:generate",
 		"ios": "react-native run-ios",
+		"prestart": "yarn workspace @thu-info/lib agent:generate",
 		"start": "react-native start",
+		"pretest": "yarn workspace @thu-info/lib agent:generate",
 		"test": "jest",
+		"pretest:agent": "yarn workspace @thu-info/lib agent:generate",
+		"test:agent": "jest --config test/agent/jest.config.cjs --runInBand",
 		"lint": "eslint src --ext .js,.jsx,.ts,.tsx",
 		"fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
 		"codegen-harmony": "react-native codegen-harmony --cpp-output-path ./harmony/entry/src/main/cpp/generated --rnoh-module-path ./harmony/entry/oh_modules/@rnoh/react-native-openharmony",
+		"prebundle-harmony": "yarn workspace @thu-info/lib agent:generate",
 		"bundle-harmony": "react-native bundle-harmony --dev false",
 		"preversion": "yarn lint && yarn test",
 		"version": "node .increment.js"
 	},
 	"dependencies": {
+		"@ai-sdk/provider": "4.0.11",
 		"@microsoft/signalr": "10.0.11",
 		"@preeternal/react-native-cookie-manager": "7.0.0",
 		"@react-native-async-storage/async-storage": "3.1.1",
@@ -27,7 +35,8 @@
 		"@react-navigation/native": "7.5.1",
 		"@react-navigation/stack": "7.12.1",
 		"@reduxjs/toolkit": "2.13.0",
-		"@thu-info/lib": "^3.20.0",
+		"@thu-info/lib": "*",
+		"ai": "7.0.95",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
 		"dayjs": "1.11.23",
@@ -77,7 +86,8 @@
 		"text-encoding": "0.7.0",
 		"util": "0.12.5",
 		"uuid": "14.0.3",
-		"web-streams-polyfill": "3.3.3"
+		"web-streams-polyfill": "3.3.3",
+		"zod": "4.1.13"
 	},
 	"devDependencies": {
 		"@babel/core": "7.29.7",

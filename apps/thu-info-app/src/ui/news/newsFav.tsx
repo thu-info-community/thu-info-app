@@ -8,6 +8,7 @@ import {useState} from "react";
 import {NewsSlice} from "@thu-info/lib/src/models/news/news";
 import themes from "../../assets/themes/themes";
 import {helper} from "../../redux/store";
+import {useNewsInvalidation} from "../../agent/useNewsInvalidation";
 
 export const NewsFavScreen = ({
 	navigation,
@@ -69,6 +70,7 @@ export const NewsFavScreen = ({
 	if (!inited) {
 		fetchNewsList(true);
 	}
+	useNewsInvalidation(() => fetchNewsList(true));
 
 	return (
 		<View style={{flex: 1}}>

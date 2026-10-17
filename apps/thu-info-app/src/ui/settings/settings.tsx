@@ -10,6 +10,7 @@ import {
 	ScrollView,
 	StyleSheet,
 	Switch,
+	Alert,
 } from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {setDormPassword} from "../../redux/slices/credentials";
@@ -28,6 +29,7 @@ import {
 import {gt} from "semver";
 import {setBalance} from "../../redux/slices/campusCard";
 import {deepseekClear} from "../../redux/slices/deepseek.ts";
+import {agentService} from "../../agent/service";
 
 /** 设置项的宽度上限（dp）：宽屏下居中，免得一行设置横跨整个屏幕。 */
 const SETTINGS_MAX_WIDTH = 640;
@@ -221,7 +223,15 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 									/>
 								</View>
 							}
-							popupOnFulfilled={() => {
+							popupOnFulfilled={async () => {
+								if (clearLogoutCache) {
+									try {
+										await agentService.clear(helper.userId);
+									} catch {
+										Alert.alert("THUInfo", "Unable to clear agent history. Please retry before signing out.");
+										return;
+									}
+								}
 								performLogout();
 								dispatch(logout());
 								if (clearLogoutCache) {

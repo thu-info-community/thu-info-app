@@ -126,12 +126,12 @@ import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDeta
 import {NetworkOnlineDevicesScreen as NetworkOnlineDevicesScreen} from "../ui/home/networkOnlineDevices";
 import {PeekScoreScreen} from "../ui/home/peekScore";
 import {SchoolCalendar} from "../ui/home/schoolCalendar";
-import {DeepSeekScreen} from "../ui/home/deepseek";
+import {AgentDeepSeekScreen} from "../ui/home/agentDeepseek";
 import { DeepSeekSettingsScreen } from "../ui/settings/deepseekSettings.tsx";
 import {CampusCardScreen} from "../ui/home/campusCard";
 import {TwoFactorAuthScreen} from "../ui/settings/twoFactorAuth.tsx";
 import { IncomeScreen } from "../ui/home/income.tsx";
-import IconDeepSeekTab from "../assets/icons/IconDeepSeekTab.tsx";
+import IconAssistantTab from "../assets/icons/IconAssistantTab.tsx";
 import {ThosScreen, ThosPortalScreen} from "../ui/home/thos";
 import {ThosServiceDetailScreen, ThosTaskDetailScreen} from "../ui/home/thosDetail";
 import type {
@@ -187,7 +187,7 @@ const RootTabs = () => {
 							return <IconNewsTab size={size} active={focused} />;
 						}
 						case "DeepSeekTab": {
-							return <IconDeepSeekTab size={size} active={focused} />;
+							return <IconAssistantTab size={size} active={focused} />;
 						}
 						case "ScheduleTab": {
 							return <IconScheduleTab size={size} active={focused} />;
@@ -226,7 +226,7 @@ const RootTabs = () => {
 			/>
 			{helper.userId === "" || helper.mocked() ? null : <Tab.Screen
 				name="DeepSeekTab"
-				component={DeepSeekScreen}
+				component={AgentDeepSeekScreen}
 				options={{title: getStr("deepseek"), headerShown: false}}
 				listeners={() => ({
 					tabPress: () => {

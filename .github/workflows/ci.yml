@@ -25,8 +25,11 @@ jobs:
           yarn
       - name: Run tests
         run: |
+          yarn workspace @thu-info/lib agent:generate
+          yarn workspace @thu-info/lib agent:check
           yarn workspace @thu-info/app lint
           yarn workspace @thu-info/app test
+          yarn workspace @thu-info/app test:agent
   build-android:
     needs: install-and-test
     runs-on: ubuntu-latest

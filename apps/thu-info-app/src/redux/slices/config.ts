@@ -48,7 +48,6 @@ export interface ConfigState {
 	showOfficialSchedule: boolean | undefined;
 	showCustomSchedule: boolean | undefined;
 	privacy312: boolean | undefined;
-	deepseekToken: string | undefined;
 	bubbleMessage: boolean | undefined;
 	uuid: string;
 }
@@ -95,7 +94,6 @@ const initialState: ConfigState = {
 	showOfficialSchedule: true,
 	showCustomSchedule: true,
 	privacy312: false,
-	deepseekToken: undefined,
 	bubbleMessage: true,
 	uuid: uuidv4(),
 };

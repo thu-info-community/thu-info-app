@@ -49,6 +49,7 @@ import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import type {RootStackParamList} from "../components/Root";
 import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
 import {createPasskeyAuthenticator} from "../utils/passkeyNative";
 import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
@@ -211,6 +212,8 @@ const persistConfig = {
 							// `undefined` drops the flag from the persisted JSON on the
 							// next write.
 							tabletMode: undefined,
+							// Drop main's persisted model token; authorization is now account-scoped in memory.
+							deepseekToken: undefined,
 						},
 						schedule: state.schedule
 							? restoreScheduleState(state.schedule, state.config.firstDay ?? defaultConfig.firstDay,
@@ -277,12 +280,7 @@ export const authStorageReady = migrateAuthStorage(AsyncStorage, KeychainStorage
 
 export const currState = () => store.getState() as State;
 
-export const navigationRef = createNavigationContainerRef<{
-	Login: undefined;
-	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
-	RootTabs: undefined;
-	ScheduleTab: undefined;
-}>();
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 helper.loginErrorHook = (e) => {
 	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;

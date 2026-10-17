@@ -607,7 +607,7 @@ export class InfoHelper {
 
     /**
      * Use this API to cancel booking.
-     * @param id  the `id` from `LibBookRecord`
+     * @param id  the `delId` from a cancellable `LibBookRecord`, not its display `id`
      */
     public cancelBooking = async (id: string): Promise<void> =>
         cancelBooking(this, id);
@@ -662,9 +662,9 @@ export class InfoHelper {
      * Performs a booking request of a library room.
      *
      * @param roomRes     a `LibRoomRes` object referring to the room that is requested for booking
-     * @param start       the beginning time of booking, <b>in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`</b>
-     * @param end         the ending time of booking, <b>in format `yyyy-MM-dd HH:mm:SS` where `mm` should be a multiple of 5 and `SS` should be `00`</b>
-     * @param memberList  a list of strings
+     * @param start       the beginning time of booking, in format `yyyy-MM-dd HH:mm:ss`; minutes must be a multiple of 5 and seconds must be `00`
+     * @param end         the ending time of booking, in format `yyyy-MM-dd HH:mm:ss`; minutes must be a multiple of 5 and seconds must be `00`
+     * @param memberList  numeric member IDs returned by `fuzzySearchLibraryId`
      */
     public bookLibraryRoom = async (
         roomRes: LibRoomRes,
@@ -674,7 +674,7 @@ export class InfoHelper {
     ) => bookLibraryRoom(this, roomRes, start, end, memberList);
 
     /**
-     * Returns all active booking records.
+     * Returns library room booking records from today through six days from today.
      */
     public getLibraryRoomBookingRecord = async (): Promise<LibRoomBookRecord[]> => getLibraryRoomBookingRecord(this);
 
@@ -757,8 +757,8 @@ export class InfoHelper {
     /**
      * Get the detailed news with the url provided.
      * @param url  the url of the queried news
-     * @return  Returns `[string, string, string][]`, where the three `string`s
-     *          represent title, content and abstract respectively.
+     * @return  Returns `[title, HTML content, plain text]`; PDF articles return
+     *          `["PdF", PDF data, "PdF"]`.
      */
     public getNewsDetail = async (
         url: string,
@@ -786,8 +786,8 @@ export class InfoHelper {
     /**
      * Get the schedules of the user.
      * @param nextSemesterIndex if provided, specifies a semester from the `nextSemesterList`
-     * @return  Returns `Schedule[]`, containing all the schedules(including
-     *          exams) of the user.
+     * @return  Returns `{schedule, calendar}`; `schedule` contains the user's
+     *          schedules, including exams.
      */
     public getSchedule = async (nextSemesterIndex?: number) => getSchedule(this, nextSemesterIndex);
 
@@ -842,7 +842,7 @@ export class InfoHelper {
     /**
      * Select a course.
      * @param semesterId  semester id
-     * @param priority    "bx" | "xx" | "rx" | "ty" | "cx"
+     * @param priority    "bx" | "xx" | "rx" | "ty" | "xwk" | "fxwk" | "tyk" | "cx"
      * @param courseId    course id
      * @param courseSeq   course seq number
      * @param will        1 | 2 | 3
@@ -1063,7 +1063,7 @@ export class InfoHelper {
      * Get the campus card transactions.
      * @param start YYYY-MM-DD
      * @param end YYYY-MM-DD
-     * @param type -1 for all (1-3), 1 for consumption, 2 for recharge, 3 for subsidy, 0 for ALL (?)
+     * @param type -1 for all, 1 for consumption, 2 for recharge, 3 for subsidy
      */
     public getCampusCardTransactions = async (start: string, end: string, type: CardTransactionType) =>
         cardGetTransactions(this, start, end, type);
