@@ -9313,10 +9313,10 @@ react-native-gesture-handler@3.4.0:
     "@types/react-test-renderer" "^19.1.0"
     invariant "^2.2.4"
 
-react-native-get-random-values@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-2.0.0.tgz#21b6e40601d297a342378792a8cb9c8f853bff66"
-  integrity sha512-wx7/aPqsUIiWsG35D+MsUJd8ij96e3JKddklSdrdZUrheTx89gPtz3Q2yl9knBArj5u26Cl23T88ai+Q0vypdQ==
+react-native-get-random-values@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-2.1.0.tgz#8b08da2c01dd03e05167aa5a81092705cbceec22"
+  integrity sha512-ooSUj9zTICGZ/eDFzNCnC+Pyb0SxE6y2QtC8S8z/BBJY+9dUjjNWD0DgRCSfXuC/c2k9V03xLMF6y/yUYEk4ew==
   dependencies:
     fast-base64-decode "^1.0.0"
 
