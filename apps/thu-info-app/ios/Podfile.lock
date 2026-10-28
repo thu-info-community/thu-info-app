@@ -1466,7 +1466,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-get-random-values (2.0.0):
+  - react-native-get-random-values (2.1.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2722,7 +2722,7 @@ SPEC CHECKSUMS:
   react-native-blob-util: e22eb07265c4933bf9e0a508a2fcd2defaaafc17
   react-native-blur: 254822bc4914840053487e453703186c5930bf2c
   react-native-cameraroll: 6a7f0cae784ce8f4e028909bb736b9bdd4c3bdab
-  react-native-get-random-values: 40c89d9412420d41cbfa332a774ff4a207283d24
+  react-native-get-random-values: 625b34d7f8a66d85c594071603f748d756bd90da
   react-native-pdf: 4367fe3940668c9549ac90b44998312b99e53f7d
   react-native-safe-area-context: b1c9f15a36e597e9cef4c5526e209ef2645bc2e0
   react-native-slider: 5f655882a4ec96c21d705abb305419c257a2f12b
