@@ -72,7 +72,7 @@
 		"rtn-passkey": "0.1.0",
 		"rtn-widget": "^3.18.0",
 		"safer-buffer": "2.1.2",
-		"semver": "7.8.5",
+		"semver": "7.8.6",
 		"stream": "0.0.3",
 		"text-encoding": "0.7.0",
 		"util": "0.12.5",
