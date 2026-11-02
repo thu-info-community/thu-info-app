@@ -742,6 +742,8 @@ export default {
 	calendarNoCurrentLang: "暂无当前语言的校历",
 	calendarNotFound: "未找到校历",
 	deepseek: "DeepSeek",
+	enableDeepSeek: "启用 DeepSeek",
+	enableDeepSeekHint: "关闭后隐藏底部标签和资讯页快捷入口，保留会话记录",
 	askDeepSeekPrompt: "想聊些什么呀？",
 	searching: "正在搜索",
 	reasoning: "正在深度思考",
