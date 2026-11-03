@@ -160,6 +160,7 @@ const RootTabs = () => {
 	const {isWide} = useResponsive();
 	const tabBarClearance = useTabBarClearance();
 	const insets = useSafeAreaInsets();
+	const deepseekEnabled = useSelector((s: State) => s.config.deepseekEnabled) ?? true;
 
 	const doNotRemindSemver =
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
@@ -224,7 +225,7 @@ const RootTabs = () => {
 					},
 				})}
 			/>
-			{helper.userId === "" || helper.mocked() ? null : <Tab.Screen
+			{!deepseekEnabled || helper.userId === "" || helper.mocked() ? null : <Tab.Screen
 				name="DeepSeekTab"
 				component={DeepSeekScreen}
 				options={{title: getStr("deepseek"), headerShown: false}}

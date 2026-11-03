@@ -784,6 +784,8 @@ export default {
 	calendarNoCurrentLang: "No calendar for current language",
 	calendarNotFound: "Calendar not found",
 	deepseek: "DeepSeek",
+	enableDeepSeek: "Enable DeepSeek",
+	enableDeepSeekHint: "Turn off to hide the tab and news shortcut. Conversations are kept.",
 	askDeepSeekPrompt: "Please enter your question",
 	searching: "Searching...",
 	reasoning: "Reasoning...",

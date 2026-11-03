@@ -203,6 +203,7 @@ const persistConfig = {
 								? migrateWasherFavourites(state.config.washerFavourites)
 								: state.config.washerFavourites,
 							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
+							deepseekEnabled: state.config.deepseekEnabled ?? defaultConfig.deepseekEnabled,
 							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
 							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
 							semesterId: state.config.semesterId ?? defaultConfig.semesterId,

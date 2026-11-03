@@ -107,7 +107,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 				</RoundedView>
-				{helper.userId === "" || helper.mocked() ? null : (
+				{userId === "" || helper.mocked() ? null : (
 					<RoundedView style={style.rounded}>
 						<TouchableOpacity
 							style={style.touchable}
