@@ -9332,10 +9332,10 @@ react-native-image-zoom-viewer@3.0.1:
   dependencies:
     react-native-image-pan-zoom "^2.1.12"
 
-react-native-keychain@10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-10.0.0.tgz#1de6f54d27b2376deaac4d51883c066f53b7be7b"
-  integrity sha512-YzPKSAnSzGEJ12IK6CctNLU79T1W15WDrElRQ+1/FsOazGX9ucFPTQwgYe8Dy8jiSEDJKM4wkVa3g4lD2Z+Pnw==
+react-native-keychain@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-11.0.0.tgz#72a57da7733ef9fd83d4b33955c7c9dcf85edbd0"
+  integrity sha512-MjN452c9d4Sqnte6U87uDrYgZmlyylojAJWuqde19w2dGEkHgXUUO98krBFEFWvx/2KDBNFsbzzqKlo9QfnyYg==
 
 react-native-localize@3.7.2:
   version "3.7.2"
