@@ -2096,7 +2096,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNKeychain (10.0.0):
+  - RNKeychain (11.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2768,7 +2768,7 @@ SPEC CHECKSUMS:
   RNCClipboard: efcb0fcabe40529a32cb0c75fcef4f9c73052c2e
   RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNGestureHandler: 747442c7d5da16953c43ad69f222b0eaa40506bb
-  RNKeychain: 990ea9078621f2617a9cdabdb4cfb485a8c1560d
+  RNKeychain: 8dcecf6c80b6f6d949e87ce0fa09a7e507bf8582
   RNLocalize: 6b1ada941cb6116aace7d9f508a9fdd24d792ff8
   RNPermissions: 78184fe87c4eada4e289f62769e602ba0b90ad22
   RNScreens: f15a5bda1ddeff8575b8ce41d83885b67129f84b
