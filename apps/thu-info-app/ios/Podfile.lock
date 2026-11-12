@@ -1397,7 +1397,7 @@ PODS:
     - Yoga
   - react-native-biometrics (3.0.1):
     - React-Core
-  - react-native-blob-util (0.25.3):
+  - react-native-blob-util (1.1.1):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2719,7 +2719,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 0207d6133274a7cbfc3d0dae326e3055c8cfcf9e
   React-mutationobservernativemodule: b97a67c29f724d18a92379e7390f24350acb433a
   react-native-biometrics: 43ed5b828646a7862dbc7945556446be00798e7d
-  react-native-blob-util: 775b78a1e19075ad3ad9a664b3812770761a314f
+  react-native-blob-util: d6d697d317d909e343fdd36ff6bdfac72586aff4
   react-native-blur: 254822bc4914840053487e453703186c5930bf2c
   react-native-cameraroll: 6a7f0cae784ce8f4e028909bb736b9bdd4c3bdab
   react-native-get-random-values: 625b34d7f8a66d85c594071603f748d756bd90da
