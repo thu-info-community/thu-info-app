@@ -45,12 +45,13 @@ import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
 import { deepseekReducer, DeepseekState } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
+import type {RootStackParamList} from "../components/Root";
 import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
 import {createPasskeyAuthenticator} from "../utils/passkeyNative";
 import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
 import zh from "../assets/translations/zh";
 import en from "../assets/translations/en";
-import {migrateWasherFavourites} from "./migrations/washerFavourites";
+import {migrateDeepseekState} from "./migrations/deepseek";
 import {PASSKEY_RP_ID} from "@thu-info/lib/src/lib/passkey";
 import {requirePasskeyRenewal} from "./slices/auth";
 
@@ -183,7 +184,7 @@ const scheduleTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 10,
+	version: 11,
 	blacklist: ["auth", "credentials"],
 	key: "root",
 	storage: AsyncStorage,
@@ -198,16 +199,11 @@ const persistConfig = {
 						...state,
 						config: {
 							...state.config,
-							washerFavourites: (state._persist?.version ?? -1) < 7
-								? migrateWasherFavourites(state.config.washerFavourites)
-								: state.config.washerFavourites,
-							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
 							deepseekEnabled: state.config.deepseekEnabled ?? defaultConfig.deepseekEnabled,
-							// `tabletMode` is gone — the layout is driven by width now.
-							// `undefined` drops the flag from the persisted JSON on the
-							// next write.
-							tabletMode: undefined,
+							// Drop main's persisted model token; authorization is now account-scoped in memory.
+							deepseekToken: undefined,
 						},
+						deepseek: state._persist.version < 11 ? migrateDeepseekState(state.deepseek) : state.deepseek,
 						schedule: state.schedule
 							? restoreScheduleState(state.schedule, state.config.firstDay, state.config.semesterId)
 							: state.schedule,
@@ -268,12 +264,7 @@ export const authStorageReady = migrateAuthStorage(AsyncStorage, KeychainStorage
 
 export const currState = () => store.getState() as State;
 
-export const navigationRef = createNavigationContainerRef<{
-	Login: undefined;
-	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
-	RootTabs: undefined;
-	ScheduleTab: undefined;
-}>();
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 helper.loginErrorHook = (e) => {
 	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;

@@ -9,7 +9,12 @@ export interface LibraryBase {
 
 export type Library = LibraryBase;
 
-export type LibraryFloor = LibraryBase;
+export interface LibraryFloor extends LibraryBase {
+    // List responses include these fields; optional for base-only floor objects.
+    parentId?: number;
+    available?: number;
+    total?: number;
+}
 
 export interface LibraryDate {
     day: string;         // yyyy-MM-dd

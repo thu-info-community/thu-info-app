@@ -1,9 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit";
-import type {Conversation} from "../../ui/home/deepseek.tsx";
+import type {Conversation} from "../../agent/types";
+import type {CampusModelCache} from "../../utils/campusModel";
 
 export interface DeepseekState {
 	history: Conversation[];
+	newsRevision?: number;
+	modelCache?: CampusModelCache;
 }
 
 const initialState: DeepseekState = {
@@ -14,29 +17,14 @@ export const deepseekSlice = createSlice({
 	name: "deepseek",
 	initialState,
 	reducers: {
-		deepseekUpdateHistory: (
-			state,
-			{payload}: PayloadAction<Conversation>,
-		) => {
-			const index = state.history.findIndex(
-				(conversation) => conversation.id === payload.id,
-			);
-			if (index >= 0) {
-				state.history[index] = payload;
-			} else {
-				state.history.splice(0, 0, payload);
-			}
+		deepseekModelsReceived: (state, {payload}: PayloadAction<CampusModelCache>) => {
+			state.modelCache = payload;
 		},
-		deepseekDeleteConversation: (
-			state,
-			{payload}: PayloadAction<Conversation>,
-		) => {
-			const index = state.history.findIndex(
-				(conversation) => conversation.id === payload.id,
-			);
-			if (index >= 0) {
-				state.history.splice(index, 1);
-			}
+		deepseekInvalidateNews: (state) => {
+			state.newsRevision = (state.newsRevision ?? 0) + 1;
+		},
+		deepseekMigrationComplete: (state) => {
+			state.history = [];
 		},
 		deepseekClear: (state: DeepseekState) => {
 			state.history = [];
@@ -44,6 +32,11 @@ export const deepseekSlice = createSlice({
 	},
 });
 
-export const {deepseekUpdateHistory, deepseekClear, deepseekDeleteConversation} = deepseekSlice.actions;
+export const {
+	deepseekModelsReceived,
+	deepseekClear,
+	deepseekMigrationComplete,
+	deepseekInvalidateNews,
+} = deepseekSlice.actions;
 
 export const deepseekReducer = deepseekSlice.reducer;

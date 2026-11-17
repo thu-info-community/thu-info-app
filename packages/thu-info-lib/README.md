@@ -82,6 +82,10 @@ After that, install the dependencies that this project requires.
 yarn install
 ```
 
+Installing from the monorepo root automatically generates `src/agent/catalog.generated.ts` after applying dependency patches. This local build artifact is ignored by Git and included in published packages. Library build, watch and test commands also generate it before starting; packing regenerates it before publication.
+
+After changing `InfoHelper` types, JSDoc or `src/agent/metadata.ts` during a running development session, restart the command or run `yarn workspace @thu-info/lib agent:generate` from the monorepo. Run `yarn workspace @thu-info/lib agent:check` to check the current artifact without changing it. Generation does not continuously watch source files.
+
 Go on to the corresponding section depending on the JS environment you will be using.
 
 **Note that due to various reasons, some operations might fail from time to time. Retrying might solve the problem.**

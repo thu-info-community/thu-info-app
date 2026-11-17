@@ -23,6 +23,7 @@ import {SettingsScreen} from "../src/ui/settings/settings";
 import {IdPersonalInfoScreen} from "../src/ui/settings/idPersonalInfo";
 import {IdLoginLogsScreen} from "../src/ui/settings/idLoginLogs";
 import {helper} from "../src/redux/store";
+import {agentService} from "../src/agent/service";
 
 let mockState = {
 	auth: {userId: "2026000000", password: "synthetic-password", passkeys: {} as Record<string, PasskeyCredential>},
@@ -48,6 +49,7 @@ jest.mock("../src/redux/store", () => ({
 	},
 }));
 jest.mock("../src/utils/easterEgg", () => ({enableEasterEgg: () => false}));
+jest.mock("../src/agent/service", () => ({agentService: {clear: jest.fn()}}));
 jest.mock("react-native-snackbar", () => ({Snackbar: {show: jest.fn(), LENGTH_SHORT: 0}}));
 
 const navigation = {navigate: jest.fn(), pop: jest.fn()} as unknown as RootNav;
@@ -96,6 +98,7 @@ beforeEach(() => {
 	jest.mocked(helper.getIdAccountInfo).mockResolvedValue({...account});
 	jest.mocked(helper.getIdAuthDevices).mockResolvedValue([{...device}]);
 	jest.mocked(helper.logout).mockResolvedValue(undefined);
+	jest.mocked(agentService.clear).mockResolvedValue(undefined);
 	jest
 		.mocked(helper.getIdLoginLogs)
 		.mockResolvedValue({items: [log("WebVPN")], total: 1});
@@ -182,6 +185,7 @@ test("canceling the app logout confirmation leaves the session and cache intact"
 	await fireEvent.press(screen.getByText("取消"));
 	await waitFor(() => expect(screen.queryByText("同时清空缓存")).toBeNull());
 	expect(helper.logout).not.toHaveBeenCalled();
+	expect(agentService.clear).not.toHaveBeenCalled();
 	expect(mockDispatch).not.toHaveBeenCalled();
 	expect(alert).not.toHaveBeenCalled();
 });
@@ -191,6 +195,7 @@ test("the app logout confirmation retains cached data by default", async () => {
 	expect(screen.getByRole("switch", {name: "同时清空缓存"}).props.value).toBe(false);
 	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: "退出登录"}));
 	await waitFor(() => expect(helper.logout).toHaveBeenCalledTimes(1));
+	expect(agentService.clear).not.toHaveBeenCalled();
 	expect(mockDispatch.mock.calls.map(([action]) => (action as {type: string}).type)).toEqual(["auth/logout"]);
 });
 
@@ -199,10 +204,25 @@ test("the app logout confirmation clears cached data only when selected", async 
 	await fireEvent(screen.getByRole("switch", {name: "同时清空缓存"}), "valueChange", true);
 	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: "退出登录"}));
 	await waitFor(() => expect(helper.logout).toHaveBeenCalledTimes(1));
+	expect(agentService.clear).toHaveBeenCalledWith(account.userId);
 	expect(mockDispatch.mock.calls.map(([action]) => (action as {type: string}).type)).toEqual([
 		"auth/logout", "credentials/setDormPassword", "schedule/scheduleClear", "deepseek/deepseekClear",
 		"reservation/setActiveLibBookRecord", "reservation/setActiveSportsReservationRecord", "campusCard/setBalance",
 	]);
+});
+
+test("a failed agent history cleanup keeps the session and cached data intact", async () => {
+	jest.mocked(agentService.clear).mockRejectedValueOnce(new Error("Storage unavailable"));
+	const alert = jest.spyOn(Alert, "alert");
+	await openLogoutPopup();
+	await fireEvent(screen.getByRole("switch", {name: "同时清空缓存"}), "valueChange", true);
+	await fireEvent.press(within(screen.getByTestId("bottom-popup-handle")).getByRole("button", {name: "退出登录"}));
+	await waitFor(() => expect(alert).toHaveBeenCalledWith(
+		"THUInfo", "Unable to clear agent history. Please retry before signing out.",
+	));
+	expect(agentService.clear).toHaveBeenCalledWith(account.userId);
+	expect(helper.logout).not.toHaveBeenCalled();
+	expect(mockDispatch).not.toHaveBeenCalled();
 });
 
 const localPasskey = (userId: string): PasskeyCredential => ({

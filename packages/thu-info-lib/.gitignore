@@ -4,6 +4,7 @@
 /node_modules
 /demo/index.js
 /dist
+/src/agent/catalog.generated.ts
 yarn-error.log
 secrets.json
 demo.zip

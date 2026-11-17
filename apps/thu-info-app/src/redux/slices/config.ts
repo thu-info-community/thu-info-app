@@ -46,7 +46,7 @@ export interface ConfigState {
 	showCustomSchedule: boolean | undefined;
 	privacy312: boolean | undefined;
 	deepseekEnabled: boolean | undefined;
-	deepseekToken: string | undefined;
+	deepseekModelName: string | undefined;
 	bubbleMessage: boolean | undefined;
 	uuid: string;
 }
@@ -91,7 +91,7 @@ const initialState: ConfigState = {
 	showCustomSchedule: true,
 	privacy312: false,
 	deepseekEnabled: true,
-	deepseekToken: undefined,
+	deepseekModelName: undefined,
 	bubbleMessage: true,
 	uuid: uuidv4(),
 };
