@@ -19,7 +19,8 @@ import {
     getBankPaymentParellize,
     getMadModelToken,
 } from "./lib/basics";
-import {forgetDevice, login, logout, withAuthTransaction} from "./lib/core";
+import {forgetDevice, login, logout, roam, withAuthTransaction} from "./lib/core";
+import {withLegacyPasskeyMigration} from "./lib/passkeyMigration";
 import {getIdAccountInfo, getIdAuthDevices, getIdLoginLogs} from "./lib/id";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
 import {
@@ -282,6 +283,18 @@ export class InfoHelper {
         if (auth.password !== undefined) this.passkeyCredential = undefined;
         return login(this, auth.userId ?? this.userId, auth.password ?? this.password);
     };
+
+    /** Establish the identity session needed to replace a v3.20.0 apex credential. */
+    public loginForPasskeyMigration = async (credential: PasskeyCredential): Promise<void> =>
+        withLegacyPasskeyMigration(this, credential, async () => {
+            this.passkeyCredential = credential;
+            try {
+                await login(this, credential.userId, "");
+                await roam(this, "id_website", "");
+            } finally {
+                if (this.passkeyCredential === credential) this.passkeyCredential = undefined;
+            }
+        });
 
     /**
      * Log out and clear fields `userId` and `password` of this `InfoHelper` instance

@@ -8,8 +8,9 @@ import {
 	Linking,
 	Platform,
 	ScrollView,
+	Switch,
 } from "react-native";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {currState, helper, State} from "../../redux/store";
 import {getStr} from "../../utils/i18n";
@@ -21,7 +22,12 @@ import IconPerson from "../../assets/icons/IconPerson";
 import IconMain from "../../assets/icons/IconMain";
 import {useColorScheme} from "react-native";
 import {RootNav} from "../../components/Root";
-import {login, loginWithPasskey} from "../../redux/slices/auth";
+import {
+	login,
+	loginWithPasskey,
+	requirePasskeyRenewal,
+} from "../../redux/slices/auth";
+import {needsPasskeyRenewal} from "../../redux/passkeyMigration";
 import {
 	setActiveLibBookRecord,
 	setActiveSportsReservationRecord,
@@ -34,6 +40,9 @@ import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
 import {PrimaryButton} from "../../components/subpage/buttons";
+import {passkeyAvailable} from "../../utils/passkeyNative";
+import {PasskeySettings} from "../../components/settings/passkeySettings";
+import {cleanupRetiredPasskeys} from "../../utils/passkey";
 
 export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const auth = useSelector((s: State) => s.auth);
@@ -45,6 +54,9 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	);
 	const [password, setPassword] = useState(auth.password);
 	const [processing, setProcessing] = useState(false);
+	const [enablePasskeyOnLogin, setEnablePasskeyOnLogin] = useState(true);
+	const [settingUpPasskey, setSettingUpPasskey] = useState(false);
+	const finishPasskeySetup = useRef<(() => void) | undefined>(undefined);
 	const credential = auth.passkeys[userId];
 
 	const themeName = useColorScheme();
@@ -65,8 +77,18 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 		loginUserId = userId,
 	) => {
 		if (processing) return;
-		setProcessing(true);
 		const loginCredential = auth.passkeys[loginUserId];
+		if (
+			usePasskey &&
+			loginCredential &&
+			needsPasskeyRenewal(auth, loginUserId)
+		) {
+			dispatch(requirePasskeyRenewal(loginUserId));
+			return;
+		}
+		setProcessing(true);
+		const renewAfterPassword =
+			!!loginCredential && needsPasskeyRenewal(auth, loginUserId);
 		helper
 			.login(
 				usePasskey && loginCredential
@@ -74,16 +96,37 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 					: {userId: loginUserId, password},
 			)
 			.then(() => {
-				if (loginCredential) dispatch(loginWithPasskey(loginCredential));
+				if (usePasskey && loginCredential)
+					dispatch(loginWithPasskey(loginCredential));
 				else dispatch(login({userId: loginUserId, password}));
 				setPassword("");
+				if (renewAfterPassword) {
+					dispatch(requirePasskeyRenewal(loginUserId));
+					setProcessing(false);
+					return;
+				}
+				if (
+					passkeyAvailable &&
+					enablePasskeyOnLogin &&
+					!loginCredential &&
+					loginUserId !== "8888"
+				) {
+					return new Promise<void>((resolve) => {
+						finishPasskeySetup.current = resolve;
+						setSettingUpPasskey(true);
+					});
+				}
 			})
 			.then(() =>
-				helper
-					.switchLang(getStr("mark") === "CH" ? "zh" : "en")
-					.catch(() => {}),
+				renewAfterPassword
+					? undefined
+					: helper
+							.switchLang(getStr("mark") === "CH" ? "zh" : "en")
+							.catch(() => {}),
 			)
-			.then(() => {
+			.then(async () => {
+				if (renewAfterPassword) return;
+				if (currState().auth?.retiredPasskeys?.length) await cleanupRetiredPasskeys().catch(() => undefined);
 				if (Platform.OS === "ios" || Platform.OS === "android") {
 					helper
 						.appStartUp(
@@ -200,6 +243,31 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 							{getStr("forgotPassword")}
 						</Text>
 					</IdMaintenanceNotice>
+					{passkeyAvailable && !credential && userId !== "8888" && (
+						<View style={{width: "100%", marginTop: 12}}>
+							<View
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									minHeight: 48,
+								}}>
+								<Text
+									style={{flex: 1, color: theme.colors.text, marginRight: 16}}>
+									{getStr("passkeyEnableOnLogin")}
+								</Text>
+								<Switch
+									testID="enablePasskeyOnLogin"
+									accessibilityLabel={getStr("passkeyEnableOnLogin")}
+									value={enablePasskeyOnLogin}
+									onValueChange={setEnablePasskeyOnLogin}
+									disabled={processing}
+								/>
+							</View>
+							<Text style={{color: theme.colors.text}}>
+								{getStr("passkeyEnablePrompt")}
+							</Text>
+						</View>
+					)}
 					{(!credential || password !== "") &&
 						(privacy312 === true ||
 						Platform.OS === "android" ||
@@ -257,9 +325,24 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 						blurAmount={10}
 					/>
 					<ActivityIndicator size="large" color={theme.colors.primary} />
-					<Text style={style.loggingInCaptionStyle}>{getStr("loggingIn")}</Text>
+					<Text style={style.loggingInCaptionStyle}>
+						{getStr(settingUpPasskey ? "passkeySettingUp" : "loggingIn")}
+					</Text>
 				</View>
 			) : null}
+			{settingUpPasskey && (
+				<PasskeySettings
+					navigation={navigation}
+					setup={{
+						mode: "automatic",
+						onFinished: () => {
+							setSettingUpPasskey(false);
+							finishPasskeySetup.current?.();
+							finishPasskeySetup.current = undefined;
+						},
+					}}
+				/>
+			)}
 		</KeyboardAvoidingScreen>
 	);
 };

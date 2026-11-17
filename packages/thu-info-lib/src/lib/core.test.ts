@@ -4,6 +4,7 @@ import {InfoHelper} from "../index";
 import {__idCredentialFormForTest, login, passwordlessEntry, roam, roamingWrapper, withAuthTransaction} from "./core";
 import {authenticatePasskey} from "./passkey";
 import {PasskeyError} from "../utils/error";
+import {isLegacyPasskeyMigration} from "./passkeyMigration";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {
     GET_COOKIE_URL,
@@ -274,13 +275,13 @@ test("parallel passwordless logins share one signature and cookie reset", async 
     expect(helper.hasAuthentication()).toBe(true);
 });
 
-test("terminal Passkey errors do not retry roaming or fall back to passwords", async () => {
+test.each(["missing", "unsupported"])("terminal Passkey error %s does not retry roaming or fall back to passwords", async (code) => {
     mockFetch();
     const helper = mockLogin();
     helper.userId = "2026000000";
     helper.passkeyCredential = {keyId: "local", userId: helper.userId} as NonNullable<InfoHelper["passkeyCredential"]>;
-    const operation = jest.fn(async () => { throw new PasskeyError("missing", "请重新设置。"); });
-    await expect(roamingWrapper(helper, "id", "", operation)).rejects.toMatchObject({code: "missing"});
+    const operation = jest.fn(async () => { throw new PasskeyError(code, "请重新设置。"); });
+    await expect(roamingWrapper(helper, "id", "", operation)).rejects.toMatchObject({code});
     expect(operation).toHaveBeenCalledTimes(1);
     expect(uFetch).not.toHaveBeenCalled();
     expect(clearCookies).not.toHaveBeenCalled();
@@ -298,6 +299,33 @@ test("failed authentication transactions release the queue for the next operatio
     await failed;
     await expect(second).resolves.toBe("ready");
     expect(next).toHaveBeenCalledTimes(1);
+});
+
+test("the migration API scopes legacy authentication through WebVPN, portal and identity bootstrap", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    const credential = {keyId: "legacy-key", credentialId: "legacy-id", userId: "2026000000", userHandle: "handle",
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
+    jest.mocked(authenticatePasskey).mockImplementation(async (selected) => {
+        expect(isLegacyPasskeyMigration(selected, credential)).toBe(true);
+        return credential.userId;
+    });
+    await helper.loginForPasskeyMigration(credential);
+    expect(authenticatePasskey).toHaveBeenCalledTimes(3);
+    expect(isLegacyPasskeyMigration(helper, credential)).toBe(false);
+    expect(helper.passkeyCredential).toBeUndefined();
+    expect(clearCookies).toHaveBeenCalledTimes(1);
+});
+
+test("failed migration bootstrap clears both the scope and selected legacy credential", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    const credential = {keyId: "legacy-key", credentialId: "legacy-id", userId: "2026000000", userHandle: "handle",
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
+    jest.mocked(authenticatePasskey).mockRejectedValueOnce(new PasskeyError("canceled", "canceled"));
+    await expect(helper.loginForPasskeyMigration(credential)).rejects.toMatchObject({code: "canceled"});
+    expect(isLegacyPasskeyMigration(helper, credential)).toBe(false);
+    expect(helper.passkeyCredential).toBeUndefined();
 });
 
 test("same-target roaming is shared and releases its pending entry after failure and success", async () => {

@@ -1,6 +1,7 @@
 import {expect, jest, test} from "@jest/globals";
 import {migrateAuthStorage, sanitizeAuth} from "../src/redux/authPersistence";
-import {authReducer, login, loginWithPasskey, logout, setSilentPasskeyLogin} from "../src/redux/slices/auth";
+import {authReducer, defaultAuth, dismissPasskeyUpgrade, login, loginWithPasskey, logout, setSilentPasskeyLogin, requirePasskeyRenewal} from "../src/redux/slices/auth";
+import {needsPasskeyRenewal} from "../src/redux/passkeyMigration";
 import type {PasskeyCredential} from "@thu-info/lib";
 
 const credential: PasskeyCredential = {
@@ -27,6 +28,43 @@ test("moves legacy secrets into protected storage before dropping root copies", 
 	expect(JSON.parse(nested.silentPasskeyLogin)).toEqual({});
 	expect(JSON.parse(nested.authMethod)).toBe("password");
 	expect(JSON.parse(nested.fingerprint)).toBe(legacy.fingerprint);
+	expect(JSON.parse(nested.passkeyUpgradePending)).toBe(true);
+});
+
+test("only an upgraded password account gets the one-time Passkey reminder", () => {
+	expect(sanitizeAuth(legacy).passkeyUpgradePending).toBe(true);
+	expect(sanitizeAuth(defaultAuth).passkeyUpgradePending).toBe(false);
+	expect(sanitizeAuth({}).passkeyUpgradePending).toBe(false);
+	expect(sanitizeAuth({...legacy, userId: "8888"}).passkeyUpgradePending).toBe(false);
+	expect(sanitizeAuth({...legacy, passkeys: {[credential.userId]: credential}}).passkeyUpgradePending).toBe(false);
+	const dismissed = authReducer(sanitizeAuth(legacy), dismissPasskeyUpgrade());
+	expect(sanitizeAuth(dismissed).passkeyUpgradePending).toBe(false);
+	const loggedIn = authReducer(defaultAuth, login(legacy));
+	expect(sanitizeAuth(loggedIn).passkeyUpgradePending).toBe(false);
+});
+
+test("the released v3.20.0 credential is migrated per account without relabeling its RP", () => {
+	const released = {...legacy, authMethod: "passkey" as const, passkeys: {[credential.userId]: credential}, silentPasskeyLogin: {[credential.userId]: true}};
+	const hydrated = sanitizeAuth(released);
+	expect(needsPasskeyRenewal(hydrated)).toBe(true);
+	expect(hydrated.passkeys[credential.userId].rpId).toBe("tsinghua.edu.cn");
+	const signedOut = authReducer(hydrated, logout());
+	expect(needsPasskeyRenewal(signedOut)).toBe(false);
+	const selected = authReducer(signedOut, requirePasskeyRenewal(credential.userId));
+	expect(needsPasskeyRenewal(selected)).toBe(true);
+	expect(selected.userId).toBe(credential.userId);
+});
+
+test("persisted replacement acknowledges migration on restart while keeping failed cleanup metadata", () => {
+	const old = authReducer(sanitizeAuth(legacy), loginWithPasskey(credential));
+	const required = authReducer(old, requirePasskeyRenewal(credential.userId));
+	const replacement = {...credential, rpId: "id.tsinghua.edu.cn", keyId: "new-key", credentialId: "new-id"};
+	const activated = authReducer(required, loginWithPasskey(replacement));
+	expect(needsPasskeyRenewal(activated)).toBe(true);
+	const restored = sanitizeAuth(activated);
+	expect(needsPasskeyRenewal(restored)).toBe(false);
+	expect(restored.retiredPasskeys).toEqual([credential]);
+	expect(restored.password).toBe("");
 });
 
 test("existing protected Passkey state wins over a stale root password", async () => {
@@ -57,8 +95,11 @@ test("activation and hydration erase passwords while logout retains discoverable
 	const loggedOut = authReducer(enabled, logout());
 	expect(loggedOut.passkeys[credential.userId]).toEqual(credential);
 	const recovered = authReducer(loggedOut, login({userId: credential.userId, password: "transient"}));
-	expect(recovered.password).toBe("");
-	expect(recovered.authMethod).toBe("passkey");
+	expect(recovered.password).toBe("transient");
+	expect(recovered.authMethod).toBe("password");
+	expect(recovered.passkeys[credential.userId]).toEqual(credential);
+	expect(sanitizeAuth(recovered).authMethod).toBe("password");
+	expect(sanitizeAuth(recovered).password).toBe("transient");
 });
 
 test("silent preferences apply per account on this device and survive logout", () => {
