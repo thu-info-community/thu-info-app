@@ -8,6 +8,7 @@ import {
     GITLAB_AUTH_URL,
     GITLAB_LOGIN_URL,
     ID_BASE_URL,
+    ID_ACCOUNT_SETTINGS_URL,
     ID_HOST_URL,
     ID_LOGIN_URL,
     ID_WEBSITE_BASE_URL,
@@ -24,7 +25,8 @@ import {
 import * as cheerio from "cheerio";
 import {InfoHelper} from "../index";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
-import {IdAuthError, LibError, LoginError, PasskeyError, UrlError} from "../utils/error";
+import {IdAuthError, LibError, LoginError, PasskeyError, ResponseStatusError, UrlError} from "../utils/error";
+import {parseIdAccountInfo} from "../utils/id-account";
 import {sm2} from "sm-crypto";
 import {authenticatePasskey} from "./passkey";
 
@@ -189,14 +191,25 @@ export const passwordlessEntry = async (helper: InfoHelper, entryHtml: string): 
         const name = $(input).attr("name")!;
         body[name] = name === "fingerPrint" ? helper.fingerprint : $(input).attr("value") ?? "";
     });
+    const postUrl = action.startsWith("/") ? ID_HOST_URL + action : action;
     let response: string;
     try {
         // Resolved against the ID platform rather than the entry page: the action
         // is root-relative, and this is where the ID session cookie lives (the
         // `cr` entry is served through WebVPN, so the two differ).
-        response = await uFetch(action.startsWith("/") ? ID_HOST_URL + action : action, body);
-    } catch {
-        return null;
+        response = await uFetch(postUrl, body);
+    } catch (error) {
+        if (postUrl !== ID_WEBSITE_LOGIN_URL || !(error instanceof ResponseStatusError) ||
+            !/^Unexpected response status code: 500\b/.test(error.message)) return null;
+        // Harmony can preserve POST through the /security_check redirect to
+        // account settings, which returns 500 for POST after login succeeds.
+        // Read the destination with GET and confirm the account; do not repeat
+        // the completion POST or the Passkey assertion.
+        try {
+            const settings = await uFetch(ID_ACCOUNT_SETTINGS_URL);
+            if (parseIdAccountInfo(settings).userId === helper.userId) return settings;
+        } catch { /* Report the original failure when session confirmation fails. */ }
+        throw error;
     }
     // A fingerprint the platform does not trust is answered with the credential
     // form again, i.e. nothing was granted.
