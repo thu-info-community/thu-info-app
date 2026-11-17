@@ -87,7 +87,7 @@
 		"util": "0.12.5",
 		"uuid": "14.0.3",
 		"web-streams-polyfill": "3.3.3",
-		"zod": "4.1.13"
+		"zod": "4.6.6"
 	},
 	"devDependencies": {
 		"@babel/core": "7.29.13",
