@@ -1,10 +1,7 @@
 import {
-    CHECK_CURRENT_DEVICE_URL,
     CR_LOGIN_HOME_URL,
-    DELETE_DEVICE_URL,
     DOUBLE_AUTH_URL,
     GET_COOKIE_URL,
-    GET_DEVICE_LIST_URL,
     GITLAB_AUTH_URL,
     GITLAB_LOGIN_URL,
     ID_BASE_URL,
@@ -540,29 +537,3 @@ export const roamingWrapperWithMocks = async <R>(
     helper.mocked()
         ? Promise.resolve(fallback)
         : roamingWrapper(helper, policy, payload, operation);
-
-export const forgetDevice = async (helper: InfoHelper): Promise<void> => {
-    await roam(helper, "id_website", "");
-    for (let i = 0; i < 10; i++) {
-        const {result: r1, msg: m1, object: o1} = JSON.parse(await uFetch(CHECK_CURRENT_DEVICE_URL.replace("{fingerprint}", helper.fingerprint), {}));
-        if (r1 != "success") {
-            throw new LibError(m1);
-        }
-        if (o1 === false) {
-            break;
-        }
-        const {result: r2, msg: m2, object: o2} = JSON.parse(await uFetch(GET_DEVICE_LIST_URL, {}));
-        if (r2 != "success") {
-            throw new LibError(m2);
-        }
-        const ourDeviceList = o2.filter(({name}: any) => name.startsWith("THU Info APP"));
-        if (ourDeviceList.length > 0) {
-            const {result: r3, msg: m3} = JSON.parse(await uFetch(DELETE_DEVICE_URL, {uuid: ourDeviceList[ourDeviceList.length - 1].id}));
-            if (r3 != "success") {
-                throw new LibError(m3);
-            }
-        } else {
-            throw new LibError("No matching device.");
-        }
-    }
-};

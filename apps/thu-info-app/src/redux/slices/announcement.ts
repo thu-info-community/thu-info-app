@@ -14,8 +14,6 @@ const initialState: AnnouncementState = {
 	announcements: [],
 };
 
-export const defaultAnnouncement = initialState;
-
 export const announcementSlice = createSlice({
 	name: "announcement",
 	initialState,

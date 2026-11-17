@@ -19,7 +19,7 @@ import {
     getBankPaymentParellize,
     getMadModelToken,
 } from "./lib/basics";
-import {forgetDevice, login, logout, roam, withAuthTransaction} from "./lib/core";
+import {login, logout, roam, withAuthTransaction} from "./lib/core";
 import {withLegacyPasskeyMigration} from "./lib/passkeyMigration";
 import {getIdAccountInfo, getIdAuthDevices, getIdLoginLogs} from "./lib/id";
 import {getDormScore, getElePayRecord, getEleRechargePayCode, getEleRemainder, resetDormPassword} from "./lib/dorm";
@@ -300,11 +300,6 @@ export class InfoHelper {
      * Log out and clear fields `userId` and `password` of this `InfoHelper` instance
      */
     public logout = async (): Promise<void> => logout(this);
-
-    /**
-     * THIS METHOD IS INTENDED FOR APP USE ONLY.
-     */
-    public forgetDevice = async (): Promise<void> => forgetDevice(this);
 
     /**
      * THIS METHOD IS INTENDED FOR APP USE ONLY.

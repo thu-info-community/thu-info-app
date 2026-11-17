@@ -9,7 +9,6 @@ import type {WasherFavourite} from "../../utils/washer";
 export interface ConfigState {
 	doNotRemindSemver: string | undefined;
 	latestVersion: string | undefined;
-	lastSelfVersion: number;
 	firstDay: string;
 	weekCount: number;
 	semesterId: string;
@@ -37,12 +36,10 @@ export interface ConfigState {
 	exitTimestamp: number | undefined;
 	subFunctionUnlocked: boolean | undefined;
 	homeFunctionDisabled: HomeFunction[];
-	beta3Notified: boolean | undefined;
 	studentNotified: boolean | undefined;
 	disableBackgroundSecurityWarning: boolean | undefined;
 	is24Hour: boolean | undefined;
 	washerFavourites: WasherFavourite[] | undefined;
-	fingerprintSecure: boolean | undefined;
 	scheduleUseClassPeriods: boolean | undefined;
 	scheduleEnableNewUI: boolean | undefined;
 	showOfficialSchedule: boolean | undefined;
@@ -57,7 +54,6 @@ export interface ConfigState {
 const initialState: ConfigState = {
 	doNotRemindSemver: "0.0.0",
 	latestVersion: "3.0.0",
-	lastSelfVersion: 0,
 	firstDay: "2025-09-15",
 	weekCount: 18,
 	semesterId: "2025-2026-1",
@@ -85,12 +81,10 @@ const initialState: ConfigState = {
 	exitTimestamp: 0,
 	subFunctionUnlocked: false,
 	homeFunctionDisabled: [],
-	beta3Notified: false,
 	studentNotified: false,
 	disableBackgroundSecurityWarning: false,
 	is24Hour: false,
 	washerFavourites: [],
-	fingerprintSecure: false,
 	scheduleUseClassPeriods: true,
 	scheduleEnableNewUI: true,
 	showOfficialSchedule: true,
