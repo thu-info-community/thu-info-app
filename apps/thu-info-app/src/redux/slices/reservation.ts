@@ -13,8 +13,6 @@ const initialState: ReservationState = {
 	activeSportsReservationRecords: [],
 };
 
-export const defaultReservation = initialState;
-
 export const reservationSlice = createSlice({
 	name: "reservation",
 	initialState,

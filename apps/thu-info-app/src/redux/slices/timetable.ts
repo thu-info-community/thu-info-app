@@ -10,8 +10,6 @@ const initialState: TimetableState = {
 	crTimetable: [],
 };
 
-export const defaultTimetable = initialState;
-
 export const timetableSlice = createSlice({
 	name: "timetable",
 	initialState,

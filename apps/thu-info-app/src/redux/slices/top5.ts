@@ -8,8 +8,6 @@ const initialState: Top5State = {
 	top5Functions: [],
 };
 
-export const defaultTop5 = initialState;
-
 export const top5Slice = createSlice({
 	name: "top5",
 	initialState,

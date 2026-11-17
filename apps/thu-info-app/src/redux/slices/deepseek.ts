@@ -10,8 +10,6 @@ const initialState: DeepseekState = {
 	history: [],
 };
 
-export const defaultDeepseek = initialState;
-
 export const deepseekSlice = createSlice({
 	name: "deepseek",
 	initialState,

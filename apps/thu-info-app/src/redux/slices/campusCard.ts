@@ -17,8 +17,6 @@ const initialState: CampusCardState = {
 	lastRechargeDate: "",
 };
 
-export const defaultCampusCard = initialState;
-
 export const campusCardSlice = createSlice({
 	name: "campusCard",
 	initialState,

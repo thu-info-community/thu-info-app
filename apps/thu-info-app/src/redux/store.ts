@@ -20,9 +20,8 @@ import {InfoHelper} from "@thu-info/lib";
 import {getLocales, uses24HourClock} from "react-native-localize";
 import {restoreScheduleState, serializeScheduleState, decodeScheduleState} from "./scheduleData";
 import type {ScheduleState} from "./scheduleData";
-import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
+import {top5Reducer, Top5State} from "./slices/top5";
 import {
-	defaultReservation,
 	reservationReducer,
 	ReservationState,
 } from "./slices/reservation";
@@ -31,23 +30,20 @@ import { Alert, AppState, Linking, Platform, ToastAndroid } from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";
 import {
-	defaultTimetable,
 	timetableReducer,
 	TimetableState,
 } from "./slices/timetable";
 import {
 	announcementReducer,
 	AnnouncementState,
-	defaultAnnouncement,
 } from "./slices/announcement";
 import {
 	campusCardReducer,
 	CampusCardState,
-	defaultCampusCard,
 } from "./slices/campusCard";
 import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
-import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
+import { deepseekReducer, DeepseekState } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
 import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
 import {createPasskeyAuthenticator} from "../utils/passkeyNative";
@@ -204,27 +200,15 @@ const persistConfig = {
 								: state.config.washerFavourites,
 							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
 							deepseekEnabled: state.config.deepseekEnabled ?? defaultConfig.deepseekEnabled,
-							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
-							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
-							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
-							uuid: state.config.uuid ?? defaultConfig.uuid,
 							// `tabletMode` is gone — the layout is driven by width now.
 							// `undefined` drops the flag from the persisted JSON on the
 							// next write.
 							tabletMode: undefined,
 						},
 						schedule: state.schedule
-							? restoreScheduleState(state.schedule, state.config.firstDay ?? defaultConfig.firstDay,
-								state.config.semesterId ?? defaultConfig.semesterId)
+							? restoreScheduleState(state.schedule, state.config.firstDay, state.config.semesterId)
 							: state.schedule,
-						top5: state.top5 ?? defaultTop5,
-						reservation: state.reservation ?? defaultReservation,
-						campusCard: state.campusCard ?? defaultCampusCard,
-						timetable: state.timetable ?? defaultTimetable,
-						announcement: state.announcement ?? defaultAnnouncement,
-						deepseek: state.deepseek ?? defaultDeepseek,
-						 
-				  },
+					},
 		);
 	},
 };
