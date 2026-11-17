@@ -44,7 +44,7 @@ const helper = () => {
     return value;
 };
 
-const mockSession = (override?: (url: string, post?: object) => string | undefined) => {
+const mockSession = (override?: (url: string, post?: Parameters<typeof uFetch>[1]) => string | undefined) => {
     jest.mocked(uFetch).mockImplementation(async (url, post) => {
         const overridden = override?.(url, post);
         if (overridden !== undefined) return overridden;

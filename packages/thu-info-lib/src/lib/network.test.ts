@@ -37,7 +37,7 @@ const HOME_HTML = [
 const DELETE_HTML = "<div id=\"w5-success-0\"></div>";
 
 const mockFetch = (home = HOME_HTML, login = "<html></html>") => {
-    jest.mocked(uFetch).mockImplementation(async (url: string, post?: object) => {
+    jest.mocked(uFetch).mockImplementation(async (url: string, post?: Parameters<typeof uFetch>[1]) => {
         if (url === NETWORK_LOGIN_URL) {
             return login;
         }

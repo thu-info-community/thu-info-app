@@ -1,7 +1,7 @@
 {
 	"name": "@thu-info/app",
-	"version": "3.20.0",
-	"build": 127,
+	"version": "3.21.0",
+	"build": 128,
 	"private": true,
 	"scripts": {
 		"preandroid": "yarn workspace @thu-info/lib agent:generate",
