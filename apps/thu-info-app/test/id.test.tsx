@@ -227,7 +227,7 @@ test("a failed agent history cleanup keeps the session and cached data intact", 
 
 const localPasskey = (userId: string): PasskeyCredential => ({
 	userId, keyId: "local-key-" + userId, credentialId: "local-credential-" + userId,
-	userHandle: "handle", rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "required",
+	userHandle: "handle", rpId: "id.tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "required",
 });
 
 test("after logout the sole local Passkey is ready without entering an account or password", async () => {

@@ -53,7 +53,7 @@ import IconConfig from "../../assets/icons/IconConfig";
 import IconSend from "../../assets/icons/IconSend";
 import IconSearch from "../../assets/icons/IconSearch";
 import IconLock from "../../assets/icons/IconLock";
-import {campusModelName} from "../../utils/campusModel";
+import {CampusModelSelector} from "../../components/home/campusModelSelector";
 
 const noSubscription = () => () => {};
 const zero = () => 0;
@@ -331,14 +331,12 @@ export const AgentDeepSeekScreen = ({
 					() => setHistoryOpen(true),
 				)}
 				<View style={{flex: 1, minWidth: 0}}>
-					<Text
-						accessibilityRole="header"
-						style={[styles.headerTitle, {color: colors.fontB0}]}>
-						{getStr("deepseek")}
-					</Text>
-					<Text style={[styles.headerSubtitle, {color: colors.fontB2}]}>
-						{campusModelName}
-					</Text>
+					<CampusModelSelector
+						disabled={busy || !!runtime?.isRunning()}
+						activeModel={runtime?.isRunning() ? runtime.modelName : undefined}
+						titleStyle={styles.headerTitle}
+						subtitleStyle={styles.headerSubtitle}
+					/>
 				</View>
 				{iconButton(
 					getStr("newConversation"),

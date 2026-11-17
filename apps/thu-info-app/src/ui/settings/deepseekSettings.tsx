@@ -32,6 +32,8 @@ export const DeepSeekSettingsScreen = () => {
 	const style = styles(themeName);
 	const {colors} = themes(themeName);
 	const {isLargeText} = useFontScale();
+	const deepseekEnabled =
+		useSelector((s: State) => s.config.deepseekEnabled) ?? true;
 	const bubbleMessage = useSelector((s: State) => s.config.bubbleMessage);
 	const account = useSelector((s: State) => s.auth.userId);
 	const dispatch = useDispatch();
@@ -157,6 +159,31 @@ export const DeepSeekSettingsScreen = () => {
 
 	return (
 		<SubPageScreen>
+			<View style={style.section}>
+				<RoundedView style={style.group}>
+					<AdaptiveRow
+						style={style.row}
+						trailing={
+							<Switch
+								accessibilityLabel={getStr("enableDeepSeek")}
+								accessibilityHint={getStr("enableDeepSeekHint")}
+								ios_backgroundColor={colors.inputBorder}
+								thumbColor={colors.themeLightGrey}
+								trackColor={{
+									false: colors.inputBorder,
+									true: colors.themePurple,
+								}}
+								value={deepseekEnabled}
+								onValueChange={(value) => {
+									dispatch(configSet({key: "deepseekEnabled", value}));
+								}}
+							/>
+						}>
+						<Text style={style.text}>{getStr("enableDeepSeek")}</Text>
+					</AdaptiveRow>
+				</RoundedView>
+				<Text style={style.hint}>{getStr("enableDeepSeekHint")}</Text>
+			</View>
 			<View style={style.section}>
 				<Text style={style.heading} accessibilityRole="header">
 					{agentText("Message display", "消息显示")}

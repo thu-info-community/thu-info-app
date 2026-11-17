@@ -10,6 +10,8 @@ export interface PasskeyKey {
     protectionLevel: PasskeyProtection;
     /** The native key policy remains authoritative. */
     authenticationMode: PasskeyAuthenticationMode;
+    /** Absent in v3.20.0 native metadata; only the migration entry may use those keys. */
+    rpId?: string;
 }
 
 export interface PasskeyCredential extends PasskeyKey {
@@ -32,6 +34,8 @@ export interface PasskeyAuthenticator {
     prepareAssertion?(keyId: string): Promise<void>;
     getCredential(keyId: string): Promise<PasskeyKey | null>;
     signAssertion(keyId: string, challenge: string): Promise<PasskeyAssertion>;
+    /** Temporary, v3.20.0-only entry. Never used by normal sign-in. */
+    signLegacyAssertionForMigration?(keyId: string, challenge: string): Promise<PasskeyAssertion>;
     deleteCredential(keyId: string): Promise<void>;
 }
 

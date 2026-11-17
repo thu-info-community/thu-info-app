@@ -9,7 +9,8 @@ export default ({size, active}: {size: number; active: boolean}) => {
 		<IconAssistant
 			width={size}
 			height={size}
-			color={active ? colors.themePurple : colors.fontB2}
+			color={colors.fontB1}
+			backgroundColor={active ? colors.mainTheme : colors.transparent}
 		/>
 	);
 };

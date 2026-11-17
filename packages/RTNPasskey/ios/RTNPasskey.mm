@@ -11,7 +11,8 @@
 static NSString *const PKService = @"thuinfo.passkey.metadata";
 static NSString *const PKPrefix = @"thuinfo.passkey.";
 static NSString *const PKErrorDomain = @"RTNPasskey";
-static NSString *const PKRPID = @"tsinghua.edu.cn";
+static NSString *const PKRPID = @"id.tsinghua.edu.cn";
+static NSString *const PKMigrationRPID = @"tsinghua.edu.cn";
 static NSString *const PKOrigin = @"https://id.tsinghua.edu.cn";
 
 static NSError *PKFailure(NSString *code)
@@ -264,6 +265,10 @@ RCT_EXPORT_MODULE(RTNPasskey)
     return nil;
   }
   NSMutableDictionary *metadata = parsed;
+  if (metadata[@"rpId"] && ![metadata[@"rpId"] isEqual:PKRPID]) {
+    *error = PKFailure(@"PASSKEY_KEY_INVALIDATED");
+    return nil;
+  }
   for (NSString *field in @[@"keyId", @"credentialId", @"publicKeyX", @"publicKeyY", @"protectionLevel", @"authenticationMode"]) {
     if (![metadata[field] isKindOfClass:NSString.class]) {
       *error = PKFailure(@"PASSKEY_KEY_INVALIDATED");
@@ -377,13 +382,14 @@ RCT_EXPORT_MODULE(RTNPasskey)
 - (void)createCredential:(NSString *)mode resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
   [self perform:resolve reject:reject action:^id(NSError **error) {
-    if (![@[@"required", @"silent"] containsObject:mode]) {
+    NSString *authenticationMode = mode;
+    if (![@[@"required", @"silent"] containsObject:authenticationMode]) {
       *error = PKFailure(@"PASSKEY_UNAVAILABLE");
       return nil;
     }
     uint64_t generation = self->_generation.load();
     if (![self ensureUnlocked:error]) return nil;
-    if ([mode isEqualToString:@"required"]) {
+    if ([authenticationMode isEqualToString:@"required"]) {
       if (![self ensureForeground:error]) return nil;
       if (![[self verificationAvailability] isEqualToString:@"available"]) {
         *error = PKFailure(@"PASSKEY_AUTH_UNAVAILABLE");
@@ -396,7 +402,7 @@ RCT_EXPORT_MODULE(RTNPasskey)
     // authentication, entitlement, lock, or generic availability failure.
     BOOL hardware = !TARGET_OS_SIMULATOR;
     NSError *failure = nil;
-    id privateKey = [self generatePrivateKey:keyID mode:mode hardware:hardware error:&failure];
+    id privateKey = [self generatePrivateKey:keyID mode:authenticationMode hardware:hardware error:&failure];
     if (!privateKey && hardware && [failure.domain isEqualToString:NSOSStatusErrorDomain] && failure.code == errSecUnimplemented) {
       NSError *cleanupError = nil;
       if (![self deleteLocalCredential:keyID error:&cleanupError]) {
@@ -405,7 +411,7 @@ RCT_EXPORT_MODULE(RTNPasskey)
       }
       hardware = NO;
       failure = nil;
-      privateKey = [self generatePrivateKey:keyID mode:mode hardware:NO error:&failure];
+      privateKey = [self generatePrivateKey:keyID mode:authenticationMode hardware:NO error:&failure];
     }
     if (!privateKey) {
       *error = PKPlatformFailure(failure);
@@ -427,11 +433,12 @@ RCT_EXPORT_MODULE(RTNPasskey)
       }
       NSMutableDictionary *metadata = [@{
         @"keyId": keyID,
+        @"rpId": PKRPID,
         @"credentialId": PKEncode([NSData dataWithBytes:credential length:sizeof(credential)]),
         @"publicKeyX": PKEncode([point subdataWithRange:NSMakeRange(1, 32)]),
         @"publicKeyY": PKEncode([point subdataWithRange:NSMakeRange(33, 32)]),
         @"protectionLevel": hardware ? @"hardware" : @"software",
-        @"authenticationMode": mode,
+        @"authenticationMode": authenticationMode,
         @"counter": @0,
       } mutableCopy];
       if (![self saveMetadata:metadata create:YES error:error] || ![self ensureGeneration:generation error:error]) return nil;
@@ -458,6 +465,18 @@ RCT_EXPORT_MODULE(RTNPasskey)
 - (void)signAssertion:(NSString *)keyID challenge:(NSString *)challenge
               resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
+  [self sign:keyID challenge:challenge migration:NO resolve:resolve reject:reject];
+}
+
+- (void)signLegacyAssertionForMigration:(NSString *)keyID challenge:(NSString *)challenge
+              resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
+{
+  [self sign:keyID challenge:challenge migration:YES resolve:resolve reject:reject];
+}
+
+- (void)sign:(NSString *)keyID challenge:(NSString *)challenge migration:(BOOL)migration
+              resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
+{
   [self perform:resolve reject:reject action:^id(NSError **error) {
     uint64_t generation = self->_generation.load();
     if (![self ensureUnlocked:error]) return nil;
@@ -470,6 +489,10 @@ RCT_EXPORT_MODULE(RTNPasskey)
     NSMutableDictionary *metadata = [self readMetadata:keyID error:error];
     if (!metadata) {
       if (!*error) *error = PKFailure(@"PASSKEY_KEY_INVALIDATED");
+      return nil;
+    }
+    if (migration != (metadata[@"rpId"] == nil)) {
+      *error = PKFailure(@"PASSKEY_KEY_INVALIDATED");
       return nil;
     }
     BOOL required = [metadata[@"authenticationMode"] isEqualToString:@"required"];
@@ -496,9 +519,11 @@ RCT_EXPORT_MODULE(RTNPasskey)
       *error = PKFailure(@"PASSKEY_UNAVAILABLE");
       return nil;
     }
-    NSMutableData *authenticator = [PKHash([PKRPID dataUsingEncoding:NSUTF8StringEncoding]) mutableCopy];
-    // The school's current validator requires UP and UV. Silent mode declares
-    // these flags in software; it does not verify the user for each signature.
+    NSString *rpID = migration ? PKMigrationRPID : PKRPID;
+    NSMutableData *authenticator = [PKHash([rpID dataUsingEncoding:NSUTF8StringEncoding]) mutableCopy];
+    // 产品约定：将用户访问和使用本应用视为应用级用户验证，
+    // 因而为兼容学校的要求，在协议响应中声明 UV。
+    // 静默模式下，这不代表本次执行了原生指纹、人脸或设备密码验证。
     const unsigned char suffix[] = {0x05, (unsigned char)(counter >> 24), (unsigned char)(counter >> 16),
       (unsigned char)(counter >> 8), (unsigned char)counter};
     [authenticator appendBytes:suffix length:sizeof(suffix)];

@@ -37,6 +37,9 @@ jest.mock("../../src/redux/store", () => {
 jest.mock("../../src/agent/nativeStorage", () => ({
 	nativeSessionStorage: require("./fixtures").memoryStorage().storage,
 }));
+jest.mock("../../src/agent/modelCatalog", () => ({
+	resolveCampusModel: async () => require("../../src/agent/types").campusModel,
+}));
 jest.mock("../../src/agent/nativeTools", () => ({
 	createNativeToolContext: (account: string) => ({
 		...require("./fixtures").fixture().context,

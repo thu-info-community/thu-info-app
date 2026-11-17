@@ -12,7 +12,7 @@ import {
 import {useState, useEffect} from "react";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
-import {helper} from "../../redux/store";
+import {helper, State} from "../../redux/store";
 import {RootNav} from "../../components/Root";
 import themes from "../../assets/themes/themes";
 import {
@@ -198,6 +198,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	// @ts-ignore
 	const dark = useSelector((s) => s.config.darkMode);
+	const deepseekEnabled = useSelector((s: State) => s.config.deepseekEnabled) ?? true;
 	const darkModeHook = dark || themeName === "dark";
 
 	const fetchNewsList = (
@@ -338,6 +339,11 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const [deepseekOpen, setDeepseekOpen] = useState(false);
 	const [deepseekInput, setDeepseekInput] = useState("");
+	useEffect(() => {
+		if (!deepseekEnabled) {
+			setDeepseekOpen(false);
+		}
+	}, [deepseekEnabled]);
 
 	const {isExpanded} = useResponsive();
 
@@ -626,10 +632,10 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 				onEndReached={() => fetchNewsList(false)}
 				onEndReachedThreshold={0.6}
 			/>
-			{deepseekOpen ? <TouchableWithoutFeedback onPress={() => setDeepseekOpen(false)}>
+			{deepseekEnabled && deepseekOpen ? <TouchableWithoutFeedback onPress={() => setDeepseekOpen(false)}>
 				<View style={{ position: "absolute", width: "100%", height: "100%" }}/>
 			</TouchableWithoutFeedback> : null}
-			<View style={{
+			{deepseekEnabled && <View style={{
 				position: "absolute",
 				width: "100%",
 				bottom: 0,
@@ -678,7 +684,7 @@ export const NewsScreen = ({navigation}: {navigation: RootNav}) => {
 						: <View style={{padding: 8}}><IconAssistant width={32} height={32} /></View>}
 					</View>
 				</TouchableWithoutFeedback>
-			</View>
+			</View>}
 		</KeyboardAvoidingScreen>
 	);
 };

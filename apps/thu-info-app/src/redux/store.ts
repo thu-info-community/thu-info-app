@@ -20,9 +20,8 @@ import {InfoHelper} from "@thu-info/lib";
 import {getLocales, uses24HourClock} from "react-native-localize";
 import {restoreScheduleState, serializeScheduleState, decodeScheduleState} from "./scheduleData";
 import type {ScheduleState} from "./scheduleData";
-import {defaultTop5, top5Reducer, Top5State} from "./slices/top5";
+import {top5Reducer, Top5State} from "./slices/top5";
 import {
-	defaultReservation,
 	reservationReducer,
 	ReservationState,
 } from "./slices/reservation";
@@ -31,23 +30,20 @@ import { Alert, AppState, Linking, Platform, ToastAndroid } from "react-native";
 import {createNavigationContainerRef} from "@react-navigation/native";
 import {configSet, configReducer, ConfigState, defaultConfig} from "./slices/config";
 import {
-	defaultTimetable,
 	timetableReducer,
 	TimetableState,
 } from "./slices/timetable";
 import {
 	announcementReducer,
 	AnnouncementState,
-	defaultAnnouncement,
 } from "./slices/announcement";
 import {
 	campusCardReducer,
 	CampusCardState,
-	defaultCampusCard,
 } from "./slices/campusCard";
 import { LoginError, PasskeyError } from "@thu-info/lib/src/utils/error";
 import DeviceInfo from "react-native-device-info";
-import { deepseekReducer, DeepseekState, defaultDeepseek } from "./slices/deepseek.ts";
+import { deepseekReducer, DeepseekState } from "./slices/deepseek.ts";
 import {getSerializableEntries, isSerializable} from "./serializable";
 import type {RootStackParamList} from "../components/Root";
 import {sanitizeAuth, migrateAuthStorage} from "./authPersistence";
@@ -55,7 +51,9 @@ import {createPasskeyAuthenticator} from "../utils/passkeyNative";
 import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
 import zh from "../assets/translations/zh";
 import en from "../assets/translations/en";
-import {migrateWasherFavourites} from "./migrations/washerFavourites";
+import {migrateDeepseekState} from "./migrations/deepseek";
+import {PASSKEY_RP_ID} from "@thu-info/lib/src/lib/passkey";
+import {requirePasskeyRenewal} from "./slices/auth";
 
 const CookieManager = (() => {
 	try {
@@ -136,7 +134,8 @@ const rootReducer = combineReducers({
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
-			stateReconciler: (inbound: AuthState, _original: AuthState, reduced: AuthState) => sanitizeAuth({...reduced, ...inbound}),
+			// Missing persisted fields must remain detectable by the upgrade migration.
+			stateReconciler: (inbound: AuthState) => sanitizeAuth(inbound),
 		},
 		authReducer,
 	),
@@ -185,7 +184,7 @@ const scheduleTransform = createTransform(
 );
 
 const persistConfig = {
-	version: 10,
+	version: 11,
 	blacklist: ["auth", "credentials"],
 	key: "root",
 	storage: AsyncStorage,
@@ -200,33 +199,15 @@ const persistConfig = {
 						...state,
 						config: {
 							...state.config,
-							washerFavourites: (state._persist?.version ?? -1) < 7
-								? migrateWasherFavourites(state.config.washerFavourites)
-								: state.config.washerFavourites,
-							scheduleUseClassPeriods: state.config.scheduleUseClassPeriods ?? defaultConfig.scheduleUseClassPeriods,
-							firstDay: state.config.firstDay ?? defaultConfig.firstDay,
-							weekCount: state.config.weekCount ?? defaultConfig.weekCount,
-							semesterId: state.config.semesterId ?? defaultConfig.semesterId,
-							uuid: state.config.uuid ?? defaultConfig.uuid,
-							// `tabletMode` is gone — the layout is driven by width now.
-							// `undefined` drops the flag from the persisted JSON on the
-							// next write.
-							tabletMode: undefined,
+							deepseekEnabled: state.config.deepseekEnabled ?? defaultConfig.deepseekEnabled,
 							// Drop main's persisted model token; authorization is now account-scoped in memory.
 							deepseekToken: undefined,
 						},
+						deepseek: state._persist.version < 11 ? migrateDeepseekState(state.deepseek) : state.deepseek,
 						schedule: state.schedule
-							? restoreScheduleState(state.schedule, state.config.firstDay ?? defaultConfig.firstDay,
-								state.config.semesterId ?? defaultConfig.semesterId)
+							? restoreScheduleState(state.schedule, state.config.firstDay, state.config.semesterId)
 							: state.schedule,
-						top5: state.top5 ?? defaultTop5,
-						reservation: state.reservation ?? defaultReservation,
-						campusCard: state.campusCard ?? defaultCampusCard,
-						timetable: state.timetable ?? defaultTimetable,
-						announcement: state.announcement ?? defaultAnnouncement,
-						deepseek: state.deepseek ?? defaultDeepseek,
-						 
-				  },
+					},
 		);
 	},
 };
@@ -249,7 +230,9 @@ export const persistor = persistStore(store, persistOptions);
 helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true, (keyId) =>
 	waitForPasskeyInteraction(keyId, () => ({
 		loggedInUserId: currState().auth.userId, selectedUserId: helper.userId,
-		keyId: helper.passkeyCredential?.keyId, foreground: AppState.currentState === "active",
+		keyId: helper.passkeyCredential?.keyId === keyId ? keyId :
+			currState().auth.pendingPasskey?.keyId === keyId && currState().auth.pendingPasskey?.userId === helper.userId ? keyId : undefined,
+		foreground: AppState.currentState === "active",
 		appLocked: currState().config.appLocked === true,
 	}), (check) => {
 		const unsubscribe = store.subscribe(check);
@@ -264,7 +247,8 @@ store.subscribe(() => {
 	helper.userId = auth.userId;
 	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
 	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
-	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys[auth.userId] : undefined;
+	const credential = auth.passkeys[auth.userId];
+	helper.passkeyCredential = auth.authMethod === "passkey" && credential?.rpId === PASSKEY_RP_ID ? credential : undefined;
 	helper.passkeyDevice = {
 		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
 		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,
@@ -284,6 +268,10 @@ export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 helper.loginErrorHook = (e) => {
 	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;
+	if (e instanceof PasskeyError && ["rp-changed", "migration-required"].includes(e.code) && currState().auth.passkeys[helper.userId]) {
+		store.dispatch(requirePasskeyRenewal(helper.userId));
+		return;
+	}
 	if (e instanceof PasskeyError && e.code === "verification-unavailable") {
 		const language = currState().config.language;
 		const strings = language === "zh" || (language !== "en" && getLocales()[0].languageTag.startsWith("zh")) ? zh : en;

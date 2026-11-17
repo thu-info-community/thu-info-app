@@ -4,6 +4,62 @@ import {call, fixture, mailArgs, scripted} from "./fixtures";
 import {agentCatalog} from "@thu-info/lib/src/agent";
 import {campusModel, DETAIL_TTL, type AgentSession} from "../../src/agent/types";
 
+test("each run snapshots the selected model across tool steps and resolves again for the next turn", async () => {
+	const {session, sessions, context} = fixture();
+	const selected = {...campusModel, model: "first"};
+	const resolve = jest.fn(async () => selected);
+	const {transport, bodies} = scripted([
+		{calls: [call("import_tools", {path: ""}, "discover")]},
+		{text: "Answer"},
+		{text: "Follow-up"},
+	]);
+	const runtime = new AgentRuntime(session, sessions, context, async (...args) => {
+		await transport(...args);
+		selected.model = "second";
+	}, campusModel, resolve);
+	await runtime.send("Question");
+	expect(bodies.map((body) => body.model)).toEqual(["first", "first"]);
+	expect(runtime.modelName).toBe("first");
+	await runtime.send("Follow-up");
+	expect(bodies.map((body) => body.model)).toEqual(["first", "first", "second"]);
+	expect(resolve).toHaveBeenCalledTimes(2);
+});
+
+test("model-list failures keep the first message and release the running state", async () => {
+	const {session, sessions, context} = fixture();
+	const transport = jest.fn();
+	const runtime = new AgentRuntime(session, sessions, context, transport, campusModel, async () => {
+		throw new Error("Unable to load models");
+	});
+	await runtime.send("Question");
+	expect(transport).not.toHaveBeenCalled();
+	expect(runtime.isRunning()).toBe(false);
+	expect(session.checkpoint.status).toBe("failed");
+	expect((await sessions.load(session.header.id))?.messages[0].content).toBe("Question");
+});
+
+test("stopping while the model list loads prevents a later completion request", async () => {
+	const {session, sessions, context} = fixture();
+	const transport = jest.fn();
+	let release!: () => void;
+	let started!: () => void;
+	const ready = new Promise<void>((resolve) => { started = resolve; });
+	const waiting = new Promise<void>((resolve) => { release = resolve; });
+	const runtime = new AgentRuntime(session, sessions, context, transport, campusModel, async () => {
+		started();
+		await waiting;
+		return campusModel;
+	});
+	const sending = runtime.send("Question");
+	await ready;
+	await runtime.stop();
+	release();
+	await sending;
+	expect(transport).not.toHaveBeenCalled();
+	expect(session.checkpoint.status).toBe("paused");
+	expect(runtime.isRunning()).toBe(false);
+});
+
 test("blank sends and stopping an empty draft do not create history", async () => {
 	const {session, sessions, context, entries} = fixture();
 	const transport = jest.fn();

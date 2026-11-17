@@ -69,7 +69,7 @@ import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
-import {InfoHelper} from "@thu-info/lib";
+import {PasskeyUpgradeNotice} from "../../components/settings/passkeyUpgradeNotice";
 
 const iconSize = 40;
 
@@ -959,10 +959,6 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		homeFunctions.find((y) => y.key === x),
 	);
 
-	const fingerprintSecure: boolean | undefined = useSelector(
-		(state: State) => state.config.fingerprintSecure,
-	);
-
 	const privacy312 = useSelector((s: State) => s.config.privacy312);
 
 	const doNotRemindSemver =
@@ -1004,15 +1000,6 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				{cancelable: false},
 			);
 		}
-		const invalidHelper = new InfoHelper();
-		invalidHelper.userId = helper.userId;
-		invalidHelper.password = helper.password;
-		invalidHelper.fingerprint = String(undefined);
-		invalidHelper.twoFactorMethodHook = async () => {
-			dispatch(configSet({key: "fingerprintSecure", value: true}));
-			return undefined;
-		};
-
 		helper
 			.appStartUp(
 				Platform.OS,
@@ -1039,20 +1026,6 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 					);
 					dispatch(updateAnnouncements(latestAnnounces));
 					dispatch(setBalance(balance));
-					if (
-						fingerprintSecure !== true &&
-						invalidHelper.userId !== "" &&
-						invalidHelper.password !== ""
-					) {
-						invalidHelper
-							.forgetDevice()
-							.then(() => {
-								dispatch(configSet({key: "fingerprintSecure", value: true}));
-							})
-							.catch(() => {
-								// no-op
-							});
-					}
 				},
 			);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1089,6 +1062,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={{flex: 1, paddingTop: insets.top}}>
+			<PasskeyUpgradeNotice navigation={navigation} />
 			{showUpdateBanner && (
 				<View
 					style={{

@@ -5,6 +5,8 @@ import {AgentRuntime} from "./runtime";
 import {newSession, SessionDataError, SessionStore} from "./storage";
 import {nativeSessionStorage} from "./nativeStorage";
 import {nativeCompletionTransport} from "./nativeTransport";
+import {resolveCampusModel} from "./modelCatalog";
+import {campusModel} from "./types";
 import {createNativeToolContext, sessionNeedsUnlock} from "./nativeTools";
 import type {AgentSession} from "./types";
 
@@ -150,6 +152,8 @@ class AgentService {
 				sessions,
 				createNativeToolContext(account, () => session.checkpoint.newsSource),
 				nativeCompletionTransport(() => this.getToken(account)),
+				campusModel,
+				resolveCampusModel,
 			);
 			return this.current;
 		});

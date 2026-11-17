@@ -8,6 +8,24 @@ import {HttpTransportType} from "@microsoft/signalr";
 
 const rootUrl = "https://app.cs.tsinghua.edu.cn";
 
+export const fetchCampusModels = async (): Promise<string[]> => {
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), 10000);
+	try {
+		const response = await fetch(`${rootUrl}/Api/DeepSeekModels`, {
+			signal: controller.signal,
+		});
+		if (!response.ok) throw new Error("Unable to load campus models");
+		const models: unknown = await response.json();
+		if (!Array.isArray(models) || models.some((model) => typeof model !== "string")) {
+			throw new Error("Invalid campus model list");
+		}
+		return [...new Set((models as string[]).map((model) => model.trim()).filter(Boolean))];
+	} finally {
+		clearTimeout(timeout);
+	}
+};
+
 export enum FunctionType {
 	PhysicalExam,
 	TeachingEvaluation,

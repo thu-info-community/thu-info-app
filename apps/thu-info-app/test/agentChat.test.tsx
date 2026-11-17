@@ -25,6 +25,8 @@ import {agentService} from "../src/agent/service";
 
 let mockLanguage: "zh" | "en" = "zh";
 let mockCampusModelName = "DeepSeek-V4.1-Flash";
+let mockCampusModels: string[] | undefined;
+const mockDispatch = jest.fn();
 
 jest.mock("../src/utils/i18n", () => ({
 	get langCode() {
@@ -36,9 +38,13 @@ jest.mock("../src/utils/i18n", () => ({
 			: require("../src/assets/translations/en").default)[key] ?? key,
 }));
 jest.mock("../src/utils/campusModel", () => ({
+	...jest.requireActual("../src/utils/campusModel"),
 	get campusModelName() {
 		return mockCampusModelName;
 	},
+}));
+jest.mock("../src/agent/modelCatalog", () => ({
+	getCampusModels: jest.fn(async () => mockCampusModels ?? [mockCampusModelName]),
 }));
 jest.mock("../src/assets/themes/themes", () => ({
 	__esModule: true,
@@ -70,6 +76,7 @@ jest.mock("../src/redux/store", () => ({
 }));
 jest.mock("react-redux", () => ({
 	useSelector: (selector: (state: unknown) => unknown) => selector(mockState),
+	useDispatch: () => mockDispatch,
 }));
 jest.mock("../src/agent/service", () => ({
 	agentService: {
@@ -83,6 +90,12 @@ const mockState = {
 	config: {
 		appLocked: false,
 		bubbleMessage: true,
+		deepseekModelName: undefined as string | undefined,
+	},
+	deepseek: {
+		get modelCache() {
+			return {models: mockCampusModels ?? [mockCampusModelName], fetchedAt: Date.now()};
+		},
 	},
 };
 const message = (id: string, content: string, reasoning?: string): Message => ({
@@ -123,6 +136,8 @@ beforeEach(() => {
 	jest.clearAllMocks();
 	mockLanguage = "zh";
 	mockCampusModelName = "DeepSeek-V4.1-Flash";
+	mockCampusModels = undefined;
+	mockState.config.deepseekModelName = undefined;
 	mockState.auth.userId = "student";
 	mockState.config.appLocked = false;
 });
@@ -395,6 +410,33 @@ test.each([null, "LM_JWGG"])("the composer sends the user's message with news so
 	);
 	await fireEvent.press(screen.getByRole("button", {name: "发送"}));
 	expect(runner.send).toHaveBeenCalledWith("看看我的日程", source);
+});
+
+test("the header lists configured models and persists the chosen model", async () => {
+	mockCampusModels = ["first", "second"];
+	(agentService.open as jest.Mock).mockResolvedValue(runtime());
+	const view = await render(<AgentDeepSeekScreen route={route} />);
+	await fireEvent.press(screen.getByRole("button", {name: "选择模型, first"}));
+	expect(screen.getByRole("radio", {name: "first"}).props.accessibilityState.checked).toBe(true);
+	await fireEvent.press(screen.getByRole("radio", {name: "second"}));
+	expect(mockDispatch).toHaveBeenCalledWith({type: "config/configSet", payload: {key: "deepseekModelName", value: "second"}});
+	mockState.config.deepseekModelName = "second";
+	await view.rerender(<AgentDeepSeekScreen route={route} />);
+	expect(screen.getByRole("button", {name: "选择模型, second"})).toBeTruthy();
+});
+
+test("an empty model list offers a refresh and running tasks disable model selection", async () => {
+	mockCampusModels = [];
+	const runner = runtime();
+	(agentService.open as jest.Mock).mockResolvedValue(runner);
+	const view = await render(<AgentDeepSeekScreen route={route} />);
+	expect(screen.getByText("暂无可用模型")).toBeTruthy();
+	await fireEvent.press(screen.getByRole("button", {name: "选择模型"}));
+	expect(screen.getByRole("button", {name: "刷新模型列表"})).toBeTruthy();
+	await fireEvent.press(screen.getAllByRole("button", {name: "取消"}).at(-1)!);
+	runner.isRunning = () => true;
+	await view.rerender(<AgentDeepSeekScreen route={route} />);
+	expect(screen.getByRole("button", {name: "选择模型"}).props.accessibilityState.disabled).toBe(true);
 });
 
 test("a locked conversation remains hidden when the assistant is always enabled", async () => {
