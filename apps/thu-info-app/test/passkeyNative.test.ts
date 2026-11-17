@@ -4,7 +4,7 @@ import NativePasskey, * as PasskeyModule from "rtn-passkey";
 import {createPasskeyAuthenticator, getPasskeyCapabilities} from "../src/utils/passkeyNative";
 
 jest.mock("rtn-passkey", () => ({__esModule: true, default: {
-	getCapabilities: jest.fn(), createCredential: jest.fn(), getCredential: jest.fn(), signAssertion: jest.fn(), deleteCredential: jest.fn(),
+	getCapabilities: jest.fn(), createCredential: jest.fn(), getCredential: jest.fn(), signAssertion: jest.fn(), signLegacyAssertionForMigration: jest.fn(), deleteCredential: jest.fn(),
 }}));
 const getCapabilities = jest.mocked(NativePasskey!.getCapabilities);
 
@@ -42,7 +42,7 @@ test.each(["ios", "harmony"])("%s reports verification capabilities without the 
 	expect(getCapabilities).toHaveBeenCalledTimes(1);
 });
 
-const key = {keyId: "local-key", credentialId: "credential", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "required"};
+const key = {keyId: "local-key", credentialId: "credential", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown", authenticationMode: "required", rpId: "id.tsinghua.edu.cn"};
 const assertion = {clientDataJSON: "YQ", authenticatorData: "Yg", signature: "Yw"};
 test.each(["available", "not-configured", "unsupported", "unknown"])("reports native verification availability %s", async (value) => {
 	getCapabilities.mockResolvedValue(JSON.stringify({verificationAvailability: value}));
@@ -54,7 +54,7 @@ test("an unconfirmed native capability remains unknown", async () => {
 });
 test.each([undefined, "silent"] as const)("creates keys with the requested native policy %s", async (mode) => {
 	const expected = mode ?? "required";
-	jest.mocked(NativePasskey!.createCredential).mockResolvedValue(JSON.stringify({...key, authenticationMode: expected}));
+	jest.mocked(NativePasskey!.createCredential).mockResolvedValue(JSON.stringify({...key, authenticationMode: expected, rpId: "id.tsinghua.edu.cn"}));
 	expect((await createPasskeyAuthenticator(() => false).createCredential({authenticationMode: mode})).authenticationMode).toBe(expected);
 	expect(NativePasskey!.createCredential).toHaveBeenCalledWith(expected);
 });
@@ -63,6 +63,22 @@ test("rejects a key whose native policy differs from the requested policy", asyn
 	jest.mocked(NativePasskey!.deleteCredential).mockResolvedValue(undefined);
 	await expect(createPasskeyAuthenticator(() => false).createCredential()).rejects.toMatchObject({code: "invalid"});
 	expect(NativePasskey!.deleteCredential).toHaveBeenCalledWith(key.keyId);
+});
+test("v3.20.0 metadata keeps its absent RP until migration", async () => {
+    jest.mocked(NativePasskey!.getCredential).mockResolvedValue(JSON.stringify({...key, rpId: undefined}));
+    expect((await createPasskeyAuthenticator(() => false).getCredential(key.keyId))?.rpId).toBeUndefined();
+});
+test("a native key without the new fixed RP is deleted instead of registering it", async () => {
+    jest.mocked(NativePasskey!.createCredential).mockResolvedValue(JSON.stringify({...key, rpId: undefined}));
+    jest.mocked(NativePasskey!.deleteCredential).mockResolvedValue(undefined);
+    await expect(createPasskeyAuthenticator(() => false).createCredential()).rejects.toMatchObject({code: "invalid"});
+    expect(NativePasskey!.deleteCredential).toHaveBeenCalledWith(key.keyId);
+});
+test("the migration bridge is separate from normal signing", async () => {
+    jest.mocked(NativePasskey!.signLegacyAssertionForMigration).mockResolvedValue(JSON.stringify(assertion));
+    await createPasskeyAuthenticator(() => false).signLegacyAssertionForMigration!(key.keyId, "challenge");
+    expect(NativePasskey!.signLegacyAssertionForMigration).toHaveBeenCalledWith(key.keyId, "challenge");
+    expect(NativePasskey!.signAssertion).not.toHaveBeenCalled();
 });
 test.each(["silent", "required"] as const)("only required credentials wait for foreground interaction: %s", async (mode) => {
 	const wait = jest.fn(async () => {});

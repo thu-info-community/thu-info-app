@@ -69,6 +69,7 @@ import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
 import Svg, {Path} from "react-native-svg";
+import {PasskeyUpgradeNotice} from "../../components/settings/passkeyUpgradeNotice";
 
 const iconSize = 40;
 
@@ -1061,6 +1062,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	return (
 		<View style={{flex: 1, paddingTop: insets.top}}>
+			<PasskeyUpgradeNotice navigation={navigation} />
 			{showUpdateBanner && (
 				<View
 					style={{

@@ -29,6 +29,10 @@ export class PasskeyModule extends TurboModule implements TM.RTNPasskey.Spec {
     return this.operation(async (): Promise<string> => JSON.stringify(await this.keys.signAssertion(keyId, challenge)));
   }
 
+  signLegacyAssertionForMigration(keyId: string, challenge: string): Promise<string> {
+    return this.operation(async (): Promise<string> => JSON.stringify(await this.keys.signLegacyAssertionForMigration(keyId, challenge)));
+  }
+
   deleteCredential(keyId: string): Promise<void> {
     return this.operation(async (): Promise<void> => this.keys.deleteCredential(keyId));
   }

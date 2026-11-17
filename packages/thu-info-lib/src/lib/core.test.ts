@@ -4,10 +4,12 @@ import {InfoHelper} from "../index";
 import {__idCredentialFormForTest, login, passwordlessEntry, roam, roamingWrapper, withAuthTransaction} from "./core";
 import {authenticatePasskey} from "./passkey";
 import {PasskeyError} from "../utils/error";
+import {isLegacyPasskeyMigration} from "./passkeyMigration";
 import {clearCookies, getRedirectUrl, uFetch} from "../utils/network";
 import {
     GET_COOKIE_URL,
     ID_BASE_URL,
+    ID_ACCOUNT_SETTINGS_URL,
     ID_HOST_URL,
     ID_LOGIN_URL,
     ID_WEBSITE_BASE_URL,
@@ -15,7 +17,7 @@ import {
     ROAMING_URL,
     WEB_VPN_OAUTH_LOGIN_URL,
 } from "../constants/strings";
-import {LoginError} from "../utils/error";
+import {LoginError, ResponseStatusError} from "../utils/error";
 
 jest.mock("../utils/network", () => ({
     clearCookies: jest.fn(),
@@ -223,6 +225,58 @@ test("roam into id_website posts the /security_check field names", async () => {
     expect(postedTo(ID_LOGIN_URL)).toBeUndefined();
 });
 
+test("trusted ID website login confirms the session after a failed completion response", async () => {
+    const failure = new ResponseStatusError("Unexpected response status code: 500 (security_check)");
+    const settings = "<title>账号设置</title><script>$.extend(uidm, {\"ss\":{\"account\":{\"userId\":\"2026000000\",\"username\":\"demo\",\"realName\":\"张三\"}}});</script>";
+    const helper = mockLogin();
+    helper.userId = "2026000000";
+    jest.mocked(uFetch).mockImplementation(async (url) => {
+        if (url === ID_WEBSITE_BASE_URL) return TRUSTED_WEBSITE_ENTRY_HTML;
+        if (url === ID_WEBSITE_LOGIN_URL) throw failure;
+        if (url === ID_ACCOUNT_SETTINGS_URL) return settings;
+        throw new Error("Unexpected request");
+    });
+
+    expect(await roam(helper, "id_website", "")).toBe(settings);
+    expect(jest.mocked(uFetch).mock.calls.map(([url]) => url)).toEqual([
+        ID_WEBSITE_BASE_URL, ID_WEBSITE_LOGIN_URL, ID_ACCOUNT_SETTINGS_URL,
+    ]);
+    expect(authenticatePasskey).not.toHaveBeenCalled();
+});
+
+test.each([
+    {kind: "login page", recovery: CREDENTIAL_ENTRY_HTML},
+    {kind: "error page", recovery: "<title>服务异常</title>"},
+    {kind: "title without account", recovery: "<title>账号设置</title>"},
+    {kind: "another account", recovery: "<script>{\"account\":{\"userId\":\"2026000001\",\"username\":\"other\",\"realName\":\"李四\"}}</script>"},
+    {kind: "offline", recovery: null},
+])(
+    "failed ID website completion preserves its error after $kind", async ({recovery}) => {
+        const failure = new ResponseStatusError("Unexpected response status code: 500 (security_check)");
+        const helper = mockLogin();
+        helper.userId = "2026000000";
+        jest.mocked(uFetch).mockImplementation(async (url) => {
+            if (url === ID_WEBSITE_LOGIN_URL) throw failure;
+            if (url === ID_ACCOUNT_SETTINGS_URL && recovery !== null) return recovery;
+            throw new Error("offline");
+        });
+
+        await expect(passwordlessEntry(helper, TRUSTED_WEBSITE_ENTRY_HTML)).rejects.toBe(failure);
+        expect(uFetch).toHaveBeenCalledTimes(2);
+        expect(authenticatePasskey).not.toHaveBeenCalled();
+    },
+);
+
+test("trusted completion recovery is limited to HTTP 500 on the ID website", async () => {
+    jest.mocked(uFetch).mockRejectedValue(new ResponseStatusError("Unexpected response status code: 403 (security_check)"));
+    expect(await passwordlessEntry(mockLogin(), TRUSTED_WEBSITE_ENTRY_HTML)).toBeNull();
+    expect(uFetch).toHaveBeenCalledTimes(1);
+
+    jest.mocked(uFetch).mockReset().mockRejectedValue(new ResponseStatusError("Unexpected response status code: 500 (checkSingle)"));
+    expect(await passwordlessEntry(mockLogin(), TRUSTED_ENTRY_HTML)).toBeNull();
+    expect(uFetch).toHaveBeenCalledTimes(1);
+});
+
 test("passwordlessEntry declines when the browser is not trusted", async () => {
     mockFetch({entry: TRUSTED_ENTRY_HTML});
     const helper = mockLogin();
@@ -274,13 +328,13 @@ test("parallel passwordless logins share one signature and cookie reset", async 
     expect(helper.hasAuthentication()).toBe(true);
 });
 
-test("terminal Passkey errors do not retry roaming or fall back to passwords", async () => {
+test.each(["missing", "unsupported"])("terminal Passkey error %s does not retry roaming or fall back to passwords", async (code) => {
     mockFetch();
     const helper = mockLogin();
     helper.userId = "2026000000";
     helper.passkeyCredential = {keyId: "local", userId: helper.userId} as NonNullable<InfoHelper["passkeyCredential"]>;
-    const operation = jest.fn(async () => { throw new PasskeyError("missing", "请重新设置。"); });
-    await expect(roamingWrapper(helper, "id", "", operation)).rejects.toMatchObject({code: "missing"});
+    const operation = jest.fn(async () => { throw new PasskeyError(code, "请重新设置。"); });
+    await expect(roamingWrapper(helper, "id", "", operation)).rejects.toMatchObject({code});
     expect(operation).toHaveBeenCalledTimes(1);
     expect(uFetch).not.toHaveBeenCalled();
     expect(clearCookies).not.toHaveBeenCalled();
@@ -298,6 +352,33 @@ test("failed authentication transactions release the queue for the next operatio
     await failed;
     await expect(second).resolves.toBe("ready");
     expect(next).toHaveBeenCalledTimes(1);
+});
+
+test("the migration API scopes legacy authentication through WebVPN, portal and identity bootstrap", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    const credential = {keyId: "legacy-key", credentialId: "legacy-id", userId: "2026000000", userHandle: "handle",
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
+    jest.mocked(authenticatePasskey).mockImplementation(async (selected) => {
+        expect(isLegacyPasskeyMigration(selected, credential)).toBe(true);
+        return credential.userId;
+    });
+    await helper.loginForPasskeyMigration(credential);
+    expect(authenticatePasskey).toHaveBeenCalledTimes(3);
+    expect(isLegacyPasskeyMigration(helper, credential)).toBe(false);
+    expect(helper.passkeyCredential).toBeUndefined();
+    expect(clearCookies).toHaveBeenCalledTimes(1);
+});
+
+test("failed migration bootstrap clears both the scope and selected legacy credential", async () => {
+    mockFetch();
+    const helper = mockLogin();
+    const credential = {keyId: "legacy-key", credentialId: "legacy-id", userId: "2026000000", userHandle: "handle",
+        rpId: "tsinghua.edu.cn", publicKeyX: "x", publicKeyY: "y", protectionLevel: "unknown" as const, authenticationMode: "required" as const};
+    jest.mocked(authenticatePasskey).mockRejectedValueOnce(new PasskeyError("canceled", "canceled"));
+    await expect(helper.loginForPasskeyMigration(credential)).rejects.toMatchObject({code: "canceled"});
+    expect(isLegacyPasskeyMigration(helper, credential)).toBe(false);
+    expect(helper.passkeyCredential).toBeUndefined();
 });
 
 test("same-target roaming is shared and releases its pending entry after failure and success", async () => {

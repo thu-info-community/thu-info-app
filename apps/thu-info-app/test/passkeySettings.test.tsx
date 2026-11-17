@@ -47,6 +47,59 @@ const deferCapabilities = () => {
 	return resolve;
 };
 
+test("automatic setup enrolls after checking capabilities without an extra confirmation", async () => {
+	mockState.auth.passkeys = {};
+	const onFinished = jest.fn();
+	await render(<PasskeySettings navigation={navigation} setup={{mode: "automatic", onFinished}} />);
+	await waitFor(() => expect(onFinished).toHaveBeenCalledTimes(1));
+	expect(getPasskeyCapabilities).toHaveBeenCalledTimes(1);
+	expect(enablePasskey).toHaveBeenCalledTimes(1);
+	expect(screen.queryByTestId("passkeySettings")).toBeNull();
+});
+
+test("automatic setup still requires confirmation on a rooted device", async () => {
+	mockState.auth.passkeys = {};
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue({...capabilities, rootHint: true});
+	const onFinished = jest.fn();
+	await render(<PasskeySettings navigation={navigation} setup={{mode: "automatic", onFinished}} />);
+	await screen.findByText(zh.passkeyRootHint);
+	expect(enablePasskey).not.toHaveBeenCalled();
+	await fireEvent.press(screen.getByText(zh.cancel));
+	await waitFor(() => expect(onFinished).toHaveBeenCalledTimes(1));
+	expect(enablePasskey).not.toHaveBeenCalled();
+});
+
+test("unavailable device verification allows default enrollment to select its silent fallback", async () => {
+	mockState.auth.passkeys = {};
+	jest.mocked(getPasskeyCapabilities).mockResolvedValue({...capabilities, verificationAvailability: "not-configured"});
+	const onFinished = jest.fn();
+	await render(<PasskeySettings navigation={navigation} setup={{mode: "automatic", onFinished}} />);
+	await waitFor(() => expect(onFinished).toHaveBeenCalledTimes(1));
+	expect(enablePasskey).toHaveBeenCalledTimes(1);
+	expect(enablePasskey).toHaveBeenCalledWith(undefined);
+	expect(screen.queryByText(zh.passkeyVerificationUnavailable)).toBeNull();
+});
+
+test("failed automatic setup offers an acknowledgement before login finishes", async () => {
+	mockState.auth.passkeys = {};
+	jest.mocked(enablePasskey).mockRejectedValueOnce(new Error("offline"));
+	const onFinished = jest.fn();
+	await render(<PasskeySettings navigation={navigation} setup={{mode: "automatic", onFinished}} />);
+	await screen.findByText(zh.passkeySetupFailed);
+	expect(onFinished).not.toHaveBeenCalled();
+	await fireEvent.press(screen.getByText(zh.done));
+	await waitFor(() => expect(onFinished).toHaveBeenCalledTimes(1));
+});
+
+test("canceling native verification during automatic setup finishes without an error dialog", async () => {
+	mockState.auth.passkeys = {};
+	jest.mocked(enablePasskey).mockRejectedValueOnce(new PasskeyError("canceled", "登录已取消。"));
+	const onFinished = jest.fn();
+	await render(<PasskeySettings navigation={navigation} setup={{mode: "automatic", onFinished}} />);
+	await waitFor(() => expect(onFinished).toHaveBeenCalledTimes(1));
+	expect(screen.queryByText(zh.passkeySetupFailed)).toBeNull();
+});
+
 test("uses a device name and plain unknown text for an unconfirmed protection level", async () => {
 	await render(<PasskeySettings navigation={navigation} />);
 	expect(screen.getByText("THU Info APP (Pixel 9)")).toBeTruthy();

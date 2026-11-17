@@ -9,7 +9,8 @@ import deviceInfo from '@ohos.deviceInfo';
 import screenLock from '@ohos.screenLock';
 import commonEventManager from '@ohos.commonEventManager';
 
-const RP_ID = 'tsinghua.edu.cn';
+const RP_ID = 'id.tsinghua.edu.cn';
+const MIGRATION_RP_ID = 'tsinghua.edu.cn';
 const ORIGIN = 'https://id.tsinghua.edu.cn';
 const PREFIX = 'thuinfo.passkey.';
 
@@ -22,6 +23,7 @@ export interface HuksPasskey {
   protectionLevel: string;
   userAuthTypes: userAuth.UserAuthType[];
   authenticationMode: string;
+  rpId?: string;
 }
 
 export interface HuksAssertion {
@@ -213,6 +215,7 @@ export class HuksPasskeyStore {
         publicKeyX: encodePasskeyBytes(coordinate(x)), publicKeyY: encodePasskeyBytes(coordinate(y)),
         publicKeyDer: encodePasskeyBytes(exported), protectionLevel: protection,
         userAuthTypes: authTypes, authenticationMode: mode,
+        rpId: RP_ID,
       };
       await this.ensureUnlocked(generation);
       await this.metadata.put(alias, JSON.stringify(credential));
@@ -235,6 +238,7 @@ export class HuksPasskeyStore {
     if (typeof raw !== 'string' || !raw) return null;
     if (!await huks.isKeyItemExist(alias, this.location())) return null;
     const key = JSON.parse(raw) as HuksPasskey;
+    if (key.rpId !== undefined && key.rpId !== RP_ID) throw new Error('Invalid Passkey RP ID');
     if (key.keyId !== keyId || key.userAuthTypes.some((type: number) => ![1, 2, 4].includes(type))) {
       throw new Error('Invalid Passkey metadata');
     }
@@ -292,11 +296,20 @@ export class HuksPasskeyStore {
   }
 
   async signAssertion(keyId: string, challenge: string): Promise<HuksAssertion> {
+    return this.sign(keyId, challenge, false);
+  }
+
+  async signLegacyAssertionForMigration(keyId: string, challenge: string): Promise<HuksAssertion> {
+    return this.sign(keyId, challenge, true);
+  }
+
+  private async sign(keyId: string, challenge: string, migration: boolean): Promise<HuksAssertion> {
     await this.ensureUnlocked();
     const generation = this.lockGeneration;
     if (!/^[A-Za-z0-9_-]{16,1024}$/.test(challenge)) throw new Error('Invalid challenge');
     const key = await this.getCredential(keyId);
     if (!key) throw new Error('PASSKEY_KEY_INVALIDATED');
+    if (migration !== (key.rpId === undefined)) throw new Error('PASSKEY_KEY_INVALIDATED');
     const available = this.availableAuthenticationTypes();
     const types = key.userAuthTypes.filter((type: number) => available.includes(type));
     if (key.authenticationMode === 'required' && !types.length) throw new Error('PASSKEY_AUTH_UNAVAILABLE');
@@ -308,10 +321,12 @@ export class HuksPasskeyStore {
     await this.metadata.flush();
     const client = utf8(JSON.stringify({type: 'webauthn.get', challenge: challenge, origin: ORIGIN, crossOrigin: false}));
     const suffix = new Uint8Array(5);
-    // Silent mode declares UP/UV in software. Only protected keys actually verify the user for each signature.
+    // 产品约定：将用户访问和使用本应用视为应用级用户验证，
+    // 因而为兼容学校的要求，在协议响应中声明 UV。
+    // 静默模式下，这不代表本次执行了原生指纹、人脸或设备密码验证。
     suffix[0] = 0x05;
     new DataView(suffix.buffer).setUint32(1, counter, false);
-    const authenticator = concatenate(await sha256(utf8(RP_ID)), suffix);
+    const authenticator = concatenate(await sha256(utf8(migration ? MIGRATION_RP_ID : RP_ID)), suffix);
     const data = concatenate(authenticator, await sha256(client));
     const session = await this.initSigning(keyId);
     try {

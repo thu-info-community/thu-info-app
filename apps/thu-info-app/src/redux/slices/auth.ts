@@ -10,6 +10,9 @@ export interface AuthState {
 	authMethod: "password" | "passkey";
 	passkeys: Record<string, PasskeyCredential>;
 	silentPasskeyLogin: Record<string, boolean>;
+	passkeyUpgradePending: boolean;
+	/** Account -> credential ID that must be replaced; cleared only after durable activation. */
+	passkeyRenewalRequired: Record<string, string>;
 	pendingPasskey?: PasskeyCredential;
 	retiredPasskeys?: PasskeyCredential[];
 }
@@ -21,6 +24,8 @@ const initialState: AuthState = {
 	authMethod: "password",
 	passkeys: {},
 	silentPasskeyLogin: {},
+	passkeyUpgradePending: false,
+	passkeyRenewalRequired: {},
 };
 
 export const defaultAuth = initialState;
@@ -39,8 +44,26 @@ export const authSlice = createSlice({
 			}>,
 		) => {
 			state.userId = payload.userId;
-			state.authMethod = state.passkeys[payload.userId] ? "passkey" : "password";
-			state.password = state.authMethod === "passkey" ? "" : payload.password;
+			// Explicit password recovery must not immediately select the failing Passkey again.
+			state.authMethod = "password";
+			state.password = payload.password;
+			state.passkeyUpgradePending = false;
+		},
+		dismissPasskeyUpgrade: (state) => {
+			state.passkeyUpgradePending = false;
+		},
+		requirePasskeyRenewal: (state, {payload}: PayloadAction<string>) => {
+			const credential = state.passkeys[payload];
+			if (!credential) return;
+			state.passkeyRenewalRequired[payload] ??= credential.credentialId;
+			if (state.userId !== payload) {
+				state.userId = payload;
+				state.password = "";
+				state.authMethod = "password";
+			}
+		},
+		completePasskeyRenewal: (state, {payload}: PayloadAction<string>) => {
+			delete state.passkeyRenewalRequired[payload];
 		},
 		setPendingPasskey: (state, {payload}: PayloadAction<PasskeyCredential | undefined>) => {
 			state.pendingPasskey = payload;
@@ -62,6 +85,7 @@ export const authSlice = createSlice({
 			state.password = "";
 			state.authMethod = "passkey";
 			state.pendingPasskey = undefined;
+			state.passkeyUpgradePending = false;
 		},
 		forgetRetiredPasskey: (state, {payload}: PayloadAction<string>) => {
 			state.retiredPasskeys = state.retiredPasskeys?.filter((credential) => credential.credentialId !== payload);
@@ -69,6 +93,7 @@ export const authSlice = createSlice({
 		forgetPasskey: (state, {payload}: PayloadAction<string>) => {
 			delete state.passkeys[payload];
 			delete state.silentPasskeyLogin[payload];
+			delete state.passkeyRenewalRequired[payload];
 			if (state.pendingPasskey?.userId === payload) state.pendingPasskey = undefined;
 			if (state.userId === payload) {
 				state.userId = "";
@@ -84,6 +109,6 @@ export const authSlice = createSlice({
 	},
 });
 
-export const {login, logout, loginWithPasskey, setPendingPasskey, setSilentPasskeyLogin, forgetPasskey, forgetRetiredPasskey} = authSlice.actions;
+export const {login, logout, loginWithPasskey, setPendingPasskey, setSilentPasskeyLogin, forgetPasskey, forgetRetiredPasskey, dismissPasskeyUpgrade, requirePasskeyRenewal, completePasskeyRenewal} = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

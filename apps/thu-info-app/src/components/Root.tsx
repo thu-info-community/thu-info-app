@@ -1,4 +1,7 @@
 import {useState} from "react";
+import {needsPasskeyRenewal} from "../redux/passkeyMigration";
+import {LEGACY_PASSKEY_RP_ID} from "@thu-info/lib/src/lib/passkeyMigration";
+import {PasskeyMigrationScreen} from "../ui/settings/passkeyMigration";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {getStr} from "../utils/i18n";
 import {addUsageStat, FunctionType} from "../utils/webApi";
@@ -398,6 +401,7 @@ export type ScheduleDetailRouteProp = RouteProp<
 
 type SettingsStackParamList = {
 	Login: undefined;
+	PasskeyMigration: {userId: string; reason: "upgrade" | "rp-changed"};
 	TwoFactorAuth: {hasWeChatBool: boolean; phone: string | null; hasTotp: boolean};
 	Account: undefined;
 	IdPersonalInfo: undefined;
@@ -432,6 +436,8 @@ export type DigitalPasswordRouteProp = RouteProp<
 	"DigitalPassword"
 >;
 
+export type PasskeyMigrationRouteProp = RouteProp<SettingsStackParamList, "PasskeyMigration">;
+
 export type RootStackParamList = {RootTabs: undefined} & HomeStackParamList &
 	NewsStackParamList &
 	DeepSeekStackParamList &
@@ -445,8 +451,17 @@ export type RootNav = StackNavigationProp<RootStackParamList>;
 import {HeaderActionButton} from "./subpage/headerAction";
 
 export const Root = () => {
+	const auth = useSelector((state: State) => state.auth);
+	if (needsPasskeyRenewal(auth)) {
+		return <Stack.Navigator key={`passkey-renewal-${auth.userId}`}>
+			<Stack.Screen name="PasskeyMigration" component={PasskeyMigrationScreen}
+				initialParams={{userId: auth.userId, reason: auth.passkeys[auth.userId].rpId === LEGACY_PASSKEY_RP_ID ? "upgrade" : "rp-changed"}}
+				options={{title: getStr("passkeyMigrationTitle"), gestureEnabled: false, headerLeft: () => null}} />
+			<Stack.Screen name="TwoFactorAuth" component={TwoFactorAuthScreen} options={{title: getStr("twoFactorAuth")}} />
+		</Stack.Navigator>;
+	}
 	return (
-		<Stack.Navigator>
+		<Stack.Navigator key="normal-root">
 			<Stack.Screen
 				name="RootTabs"
 				component={RootTabs}

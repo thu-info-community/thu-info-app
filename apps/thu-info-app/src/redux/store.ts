@@ -51,6 +51,8 @@ import {waitForPasskeyInteraction} from "../utils/passkeyInteraction";
 import zh from "../assets/translations/zh";
 import en from "../assets/translations/en";
 import {migrateWasherFavourites} from "./migrations/washerFavourites";
+import {PASSKEY_RP_ID} from "@thu-info/lib/src/lib/passkey";
+import {requirePasskeyRenewal} from "./slices/auth";
 
 const CookieManager = (() => {
 	try {
@@ -131,7 +133,8 @@ const rootReducer = combineReducers({
 			keyPrefix: "com.unidy2002.thuinfo.persist.auth.",
 			storage: KeychainStorage,
 			key: "auth",
-			stateReconciler: (inbound: AuthState, _original: AuthState, reduced: AuthState) => sanitizeAuth({...reduced, ...inbound}),
+			// Missing persisted fields must remain detectable by the upgrade migration.
+			stateReconciler: (inbound: AuthState) => sanitizeAuth(inbound),
 		},
 		authReducer,
 	),
@@ -231,7 +234,9 @@ export const persistor = persistStore(store, persistOptions);
 helper.passkeyAuthenticator = createPasskeyAuthenticator(() => currState().config.appLocked === true, (keyId) =>
 	waitForPasskeyInteraction(keyId, () => ({
 		loggedInUserId: currState().auth.userId, selectedUserId: helper.userId,
-		keyId: helper.passkeyCredential?.keyId, foreground: AppState.currentState === "active",
+		keyId: helper.passkeyCredential?.keyId === keyId ? keyId :
+			currState().auth.pendingPasskey?.keyId === keyId && currState().auth.pendingPasskey?.userId === helper.userId ? keyId : undefined,
+		foreground: AppState.currentState === "active",
 		appLocked: currState().config.appLocked === true,
 	}), (check) => {
 		const unsubscribe = store.subscribe(check);
@@ -246,7 +251,8 @@ store.subscribe(() => {
 	helper.userId = auth.userId;
 	helper.password = auth.authMethod === "passkey" ? "" : auth.password;
 	helper.fingerprint = auth.fingerprint || defaultAuth.fingerprint;
-	helper.passkeyCredential = auth.authMethod === "passkey" ? auth.passkeys[auth.userId] : undefined;
+	const credential = auth.passkeys[auth.userId];
+	helper.passkeyCredential = auth.authMethod === "passkey" && credential?.rpId === PASSKEY_RP_ID ? credential : undefined;
 	helper.passkeyDevice = {
 		browser: "THU Info", os: Platform.OS, deviceType: "mobile",
 		deviceModel: DeviceInfo.getModel(), uaString: "THUInfo", deviceId: helper.fingerprint,
@@ -271,6 +277,10 @@ export const navigationRef = createNavigationContainerRef<{
 
 helper.loginErrorHook = (e) => {
 	if (e instanceof PasskeyError && ["locked", "canceled", "interaction-required"].includes(e.code)) return;
+	if (e instanceof PasskeyError && ["rp-changed", "migration-required"].includes(e.code) && currState().auth.passkeys[helper.userId]) {
+		store.dispatch(requirePasskeyRenewal(helper.userId));
+		return;
+	}
 	if (e instanceof PasskeyError && e.code === "verification-unavailable") {
 		const language = currState().config.language;
 		const strings = language === "zh" || (language !== "en" && getLocales()[0].languageTag.startsWith("zh")) ? zh : en;

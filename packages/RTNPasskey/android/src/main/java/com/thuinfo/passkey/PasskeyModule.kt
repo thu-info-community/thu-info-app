@@ -47,7 +47,8 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
     companion object {
         const val NAME = "RTNPasskey"
         private const val PREFIX = "thuinfo.passkey."
-        private const val RP_ID = "tsinghua.edu.cn"
+        private const val RP_ID = "id.tsinghua.edu.cn"
+        private const val MIGRATION_RP_ID = "tsinghua.edu.cn"
         private const val ORIGIN = "https://id.tsinghua.edu.cn"
     }
     private val executor = Executors.newSingleThreadExecutor()
@@ -181,7 +182,11 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
         val name = alias(keyId)
         if (!store.containsAlias(name)) return null
         return preferences.getString(name, null)?.let {
-            JSONObject(it).put("authenticationMode", if (keyInfo(name).isUserAuthenticationRequired) "required" else "silent")
+            JSONObject(it).apply {
+                // v3.20.0 metadata has no RP. Only the migration signer accepts it.
+                require(!has("rpId") || getString("rpId") == RP_ID)
+                put("authenticationMode", if (keyInfo(name).isUserAuthenticationRequired) "required" else "silent")
+            }
         }
     }
 
@@ -203,9 +208,10 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
     }
 
     override fun createCredential(mode: String, promise: Promise) = operation(promise) {
-        require(mode == "required" || mode == "silent")
+        val authenticationMode = mode
+        require(authenticationMode == "required" || authenticationMode == "silent")
         ensureUnlocked()
-        if (mode == "required") {
+        if (authenticationMode == "required") {
             ensureForeground()
             if (verificationAvailability() != "available") throw Failure("PASSKEY_AUTH_UNAVAILABLE")
         }
@@ -216,8 +222,8 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
             val builder = KeyGenParameterSpec.Builder(name, KeyProperties.PURPOSE_SIGN)
                 .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
                 .setDigests(KeyProperties.DIGEST_SHA256)
-                .setUserAuthenticationRequired(mode == "required")
-            if (mode == "required") {
+                .setUserAuthenticationRequired(authenticationMode == "required")
+            if (authenticationMode == "required") {
                 if (Build.VERSION.SDK_INT >= 30) {
                     builder.setUserAuthenticationParameters(0, KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL)
                 } else {
@@ -250,12 +256,13 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
                 if (info.isInsideSecureHardware) "hardware" else "software"
             }
             val metadata = JSONObject().put("keyId", keyId)
+                .put("rpId", RP_ID)
                 .put("credentialId", encode(ByteArray(32).also { SecureRandom().nextBytes(it) }))
                 .put("publicKeyX", encode(coordinate(publicKey.w.affineX)))
                 .put("publicKeyY", encode(coordinate(publicKey.w.affineY)))
                 .put("protectionLevel", protection)
                 .put("authenticationMode", if (info.isUserAuthenticationRequired) "required" else "silent")
-            check(metadata.getString("authenticationMode") == mode)
+            check(metadata.getString("authenticationMode") == authenticationMode)
             check(preferences.edit().putString(name, metadata.toString()).putLong(name + ".counter", 0).commit())
             metadata.toString()
         } catch (error: Exception) {
@@ -268,10 +275,21 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
     override fun getCredential(keyId: String, promise: Promise) = operation(promise) { read(keyId)?.toString() ?: "null" }
 
     override fun signAssertion(keyId: String, challenge: String, promise: Promise) = operation(promise) {
+        sign(keyId, challenge, false)
+    }
+
+    override fun signLegacyAssertionForMigration(keyId: String, challenge: String, promise: Promise) = operation(promise) {
+        sign(keyId, challenge, true)
+    }
+
+    private fun sign(keyId: String, challenge: String, migration: Boolean): String {
         ensureUnlocked()
         val generation = lockGeneration.get()
         require(challenge.length in 16..1024 && Regex("^[A-Za-z0-9_-]+$").matches(challenge))
         val metadata = read(keyId) ?: throw Failure("PASSKEY_KEY_INVALIDATED")
+        if (migration != !metadata.has("rpId")) throw Failure("PASSKEY_KEY_INVALIDATED")
+        val rpId = if (migration) MIGRATION_RP_ID else RP_ID
+        val requiresVerification = metadata.getString("authenticationMode") == "required"
         val name = alias(keyId)
         val counter = preferences.getLong(name + ".counter", 0) + 1
         require(counter in 1..0xffffffffL)
@@ -279,17 +297,18 @@ class PasskeyModule(private val context: ReactApplicationContext) : NativePasske
         check(preferences.edit().putLong(name + ".counter", counter).commit())
         val client = JSONObject().put("type", "webauthn.get").put("challenge", challenge)
             .put("origin", ORIGIN).put("crossOrigin", false).toString().toByteArray(Charsets.UTF_8)
-        // The school's current validator requires UP and UV. Silent mode declares
-        // those flags in software: this is NOT evidence of per-use PIN/biometry.
-        val authenticator = sha256(RP_ID.toByteArray(Charsets.UTF_8)) + byteArrayOf(0x05) + ByteBuffer.allocate(4).putInt(counter.toInt()).array()
+        // 产品约定：将用户访问和使用本应用视为应用级用户验证，
+        // 因而为兼容学校的要求，在协议响应中声明 UV。
+        // 静默模式下，这不代表本次执行了原生指纹、人脸或设备密码验证。
+        val authenticator = sha256(rpId.toByteArray(Charsets.UTF_8)) + byteArrayOf(0x05) + ByteBuffer.allocate(4).putInt(counter.toInt()).array()
         var signer = Signature.getInstance("SHA256withECDSA")
         signer.initSign(store.getKey(name, null) as PrivateKey)
-        if (metadata.getString("authenticationMode") == "required") signer = authorize(signer)
+        if (requiresVerification) signer = authorize(signer)
         signer.update(authenticator + sha256(client))
         val signature = signer.sign()
         ensureUnlocked()
         if (lockGeneration.get() != generation) throw Failure("PASSKEY_CANCELED")
-        JSONObject().put("clientDataJSON", encode(client)).put("authenticatorData", encode(authenticator))
+        return JSONObject().put("clientDataJSON", encode(client)).put("authenticatorData", encode(authenticator))
             .put("signature", encode(signature)).toString()
     }
 

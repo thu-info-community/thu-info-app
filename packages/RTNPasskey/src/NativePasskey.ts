@@ -7,6 +7,7 @@ export interface Spec extends TurboModule {
     createCredential(mode: string): Promise<string>;
     getCredential(keyId: string): Promise<string>;
     signAssertion(keyId: string, challenge: string): Promise<string>;
+    signLegacyAssertionForMigration(keyId: string, challenge: string): Promise<string>;
     deleteCredential(keyId: string): Promise<void>;
 }
 
