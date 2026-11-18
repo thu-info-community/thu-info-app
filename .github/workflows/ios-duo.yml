@@ -1,0 +1,140 @@
+name: iPhone Duo smoke test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-ios-duo:
+    runs-on: xcode-27
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Select Xcode 27.1
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.1'
+      - name: Verify simulator SDK and runtime
+        run: |
+          xcodebuild -version
+          simulator_sdk="$(xcrun --sdk iphonesimulator --show-sdk-version)"
+          echo "iPhone Simulator SDK: $simulator_sdk"
+          test "$simulator_sdk" = 27.1
+          xcrun simctl list runtimes --json | jq -e '
+            .runtimes | any(.identifier == "com.apple.CoreSimulator.SimRuntime.iOS-27-1" and .isAvailable)
+          '
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.9'
+          bundler: '2.6.2'
+          bundler-cache: true
+      - name: Install JavaScript dependencies
+        run: yarn install --frozen-lockfile
+      - name: Install CocoaPods dependencies
+        working-directory: apps/thu-info-app/ios
+        run: bundle exec pod install
+      - name: Build simulator app
+        working-directory: apps/thu-info-app/ios
+        run: |
+          xcodebuild -workspace thu_info.xcworkspace -scheme thu_info \
+            -configuration Release -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/thu-info-build" \
+            CODE_SIGNING_ALLOWED=NO -quiet build
+      - name: Install simulator automation
+        run: npm install --global agent-device@0.21.38
+      - name: Test folding and capture both displays
+        run: |
+          set -euo pipefail
+          app="$RUNNER_TEMP/thu-info-build/Build/Products/Release-iphonesimulator/thu_info.app"
+          screenshots="$RUNNER_TEMP/duo-screenshots"
+          mkdir -p "$screenshots"
+          test -s "$app/main.jsbundle"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")"
+          udid="$(xcrun simctl create 'THU Info iPhone Duo' \
+            com.apple.CoreSimulator.SimDeviceType.iPhone-Duo \
+            com.apple.CoreSimulator.SimRuntime.iOS-27-1)"
+          echo "DUO_UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          xcrun simctl spawn "$udid" defaults write NSGlobalDomain AppleLanguages -array zh-Hans
+          xcrun simctl ui "$udid" appearance light
+          xcrun simctl status_bar "$udid" override --time '9:41' --dataNetwork wifi \
+            --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4 \
+            --batteryState charged --batteryLevel 100
+          xcrun simctl install "$udid" "$app"
+
+          drive() {
+            agent-device "$@" --platform ios --udid "$udid"
+          }
+
+          app_pid() {
+            xcrun simctl spawn "$udid" launchctl list | awk -v bundle="$bundle_id" '
+              $1 ~ /^[0-9]+$/ && index($3, "UIKitApplication:" bundle "[") == 1 { print $1 }
+            '
+          }
+
+          assert_same_process() {
+            local current_pid
+            current_pid="$(app_pid)"
+            if [[ "$current_pid" != "$launch_pid" ]]; then
+              echo "Expected app PID $launch_pid, found ${current_pid:-no running process}" >&2
+              return 1
+            fi
+          }
+
+          capture() {
+            local name="$1" display="$2" short_edge="$3" long_edge="$4"
+            local image="$RUNNER_TEMP/duo-$name.png"
+            local width height
+            xcrun simctl io "$udid" screenshot --display="$display" "$image"
+            width="$(sips -g pixelWidth "$image" | awk '/pixelWidth:/ { print $2 }')"
+            height="$(sips -g pixelHeight "$image" | awk '/pixelHeight:/ { print $2 }')"
+            echo "$name: ${width}x${height}"
+            if [[ "$width"x"$height" != "$short_edge"x"$long_edge" && \
+                  "$width"x"$height" != "$long_edge"x"$short_edge" ]]; then
+              echo "Unexpected $name screenshot dimensions" >&2
+              return 1
+            fi
+            mv "$image" "$screenshots/$name.png"
+          }
+
+          drive fold closed
+          drive open "$bundle_id" --launch-console "$RUNNER_TEMP/duo-launch.log"
+          drive wait text '有问题？Help!' 45000
+          drive alert accept
+          drive wait text '最近使用' 45000
+          launch_pid="$(app_pid)"
+          [[ "$launch_pid" =~ ^[0-9]+$ ]]
+          capture folded primary 1398 2034
+
+          drive fold open
+          drive wait text '最近使用' 45000
+          assert_same_process
+          capture unfolded primary-1 2007 2853
+          drive click 'label="设置"'
+          drive wait text '通用' 45000
+
+          drive fold closed
+          drive wait text '通用' 45000
+          assert_same_process
+      - name: Upload App Store screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: iphone-duo-screenshots
+          path: ${{ runner.temp }}/duo-screenshots/*.png
+      - name: Print app diagnostics on failure
+        if: ${{ failure() && env.DUO_UDID != '' }}
+        run: |
+          if [[ -f "$RUNNER_TEMP/duo-launch.log" ]]; then
+            tail -n 100 "$RUNNER_TEMP/duo-launch.log"
+          fi
+          xcrun simctl spawn "$DUO_UDID" log show --last 5m --style compact \
+            --predicate 'process == "thu_info" AND (messageType == error OR messageType == fault)' || true

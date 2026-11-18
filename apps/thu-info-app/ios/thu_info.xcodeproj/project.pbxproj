@@ -12,6 +12,7 @@
 		232AFBCF1E59C027EBF1E4DA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */; };
 		57B92B80AE971F6909E47DF5 /* libPods-thu_info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 218D1AD92244712A33494ECE /* libPods-thu_info.a */; };
 		95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D69E112D92B04800E89447 /* AppDelegate.swift */; };
+		95D69E142D92B04800E89447 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D69E132D92B04800E89447 /* SceneDelegate.swift */; };
 		F311085D24DAC95B00D20197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F311085F24DAC95B00D20197 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		914A3326A08A41E7A0671969 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		95C7B8822BD755AE004A9AA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = thu_info/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		95D69E112D92B04800E89447 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		95D69E132D92B04800E89447 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		D12476EB077346729CF67BF3 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		DA430ABA7860579CD9215FC3 /* Pods-thu_info.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-thu_info.debug.xcconfig"; path = "Target Support Files/Pods-thu_info/Pods-thu_info.debug.xcconfig"; sourceTree = "<group>"; };
 		DB03922170714F8DAC9C10B9 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				95D69E112D92B04800E89447 /* AppDelegate.swift */,
+				95D69E132D92B04800E89447 /* SceneDelegate.swift */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -318,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95D69E122D92B04800E89447 /* AppDelegate.swift in Sources */,
+				95D69E142D92B04800E89447 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
