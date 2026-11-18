@@ -202,19 +202,25 @@ jobs:
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
-      - name: Update beta
-        run: cd apps/thu-info-app/ios && bundle exec fastlane beta
+      - name: Build iOS IPA
+        working-directory: apps/thu-info-app/ios
+        run: bundle exec fastlane build_release_ipa
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           CCACHE_SLOPPINESS: "clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros"
           CCACHE_FILECLONE: "true"
           CCACHE_DEPEND: "true"
           CCACHE_INODECACHE: "true"
       - name: Check iOS artifact
         run: test -s apps/thu-info-app/ios/thu_info.ipa
+      - name: Upload to TestFlight
+        if: github.ref == 'refs/heads/master'
+        working-directory: apps/thu-info-app/ios
+        run: bundle exec fastlane upload_beta
+        env:
+          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPSTORE_API_PRIVATE_KEY_ID: ${{ secrets.APPSTORE_API_PRIVATE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
       - name: Attest iOS IPA
         uses: actions/attest@v4
         with:

@@ -23,6 +23,11 @@ platform :ios do
   end
 
   lane :beta do
+    build_release_ipa
+    upload_beta
+  end
+
+  lane :build_release_ipa do
     increment_build_number(
       build_number: ENV["GITHUB_RUN_NUMBER"],
       xcodeproj: "thu_info.xcodeproj"
@@ -31,8 +36,10 @@ platform :ios do
     setup_ci
     sync_code_signing
     match(type: "appstore", git_basic_authorization: ENV["MATCH_PASSWORD"])
-    build_app(derived_data_path: "./DerivedData")
+    build_app(derived_data_path: "./DerivedData", output_name: "thu_info.ipa")
+  end
 
+  lane :upload_beta do
     api_key = app_store_connect_api_key(
       key_id: ENV["APPSTORE_API_PRIVATE_KEY_ID"],
       issuer_id: ENV["APPSTORE_ISSUER_ID"],
@@ -40,6 +47,6 @@ platform :ios do
       duration: 1200,
       in_house: false
     )
-    upload_to_testflight(api_key: api_key, skip_waiting_for_build_processing: true)
+    upload_to_testflight(ipa: "./thu_info.ipa", api_key: api_key, skip_waiting_for_build_processing: true)
   end
 end

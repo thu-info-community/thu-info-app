@@ -20,7 +20,7 @@ HarmonyOS: [AppGallery](https://appgallery.huawei.com/app/detail?id=com.unidy200
 
 ### Verify downloads
 
-Push builds generate GitHub build provenance attestations for the Android APK, iOS IPA, and signed HarmonyOS HAP and APP artifacts. These attestations identify the source revision and workflow that produced the exact downloaded bytes. They apply to CI artifacts, including APKs distributed through GitHub Releases and mirrors, provided the file is unchanged. They do not cover binaries subsequently processed by app stores. iOS attestation runs after the existing TestFlight upload.
+Push builds generate GitHub build provenance attestations for the Android APK, iOS IPA, and signed HarmonyOS HAP and APP artifacts. These attestations identify the source revision and workflow that produced the exact downloaded bytes. They apply to CI artifacts, including APKs distributed through GitHub Releases and mirrors, provided the file is unchanged. They do not cover binaries subsequently processed by app stores. The iOS build on `master` uploads to TestFlight before generating the IPA attestation.
 
 Install the [GitHub CLI](https://cli.github.com/) and authenticate with `gh auth login`. To verify an Android release download, set the tag and local file path:
 
