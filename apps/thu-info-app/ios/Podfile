@@ -39,5 +39,20 @@ target 'thu_info' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => true
     )
+
+    # CocoaPods resource bundles use deployment targets from their podspecs.
+    minimum_ios_version = Gem::Version.new(min_ios_version_supported)
+    pod_results = installer.target_installation_results.pod_target_installation_results
+    pod_results.values.flat_map(&:resource_bundle_targets).each do |bundle|
+      bundle.build_configurations.each do |build_config|
+        settings = build_config.build_settings
+        deployment_target = settings['IPHONEOS_DEPLOYMENT_TARGET']
+        next unless deployment_target && Gem::Version.correct?(deployment_target)
+
+        if Gem::Version.new(deployment_target) < minimum_ios_version
+          settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimum_ios_version.to_s
+        end
+      end
+    end
   end
 end
