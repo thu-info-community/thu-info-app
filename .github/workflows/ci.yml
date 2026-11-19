@@ -158,7 +158,7 @@ jobs:
         id: setup-ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "4.0.9"
+          ruby-version: "4.0.10"
           bundler: "2.6.2"
           bundler-cache: true
       - name: Export Ruby path
