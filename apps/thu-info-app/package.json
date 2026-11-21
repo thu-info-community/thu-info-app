@@ -36,7 +36,7 @@
 		"@react-navigation/stack": "7.12.2",
 		"@reduxjs/toolkit": "2.15.0",
 		"@thu-info/lib": "*",
-		"ai": "7.0.95",
+		"ai": "7.0.179",
 		"base-64": "1.0.0",
 		"buffer": "6.0.3",
 		"dayjs": "1.11.23",
