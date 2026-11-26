@@ -143,13 +143,21 @@ jobs:
           make_latest: ${{ contains(github.ref_name, '-') && 'false' || 'legacy' }}
   build-ios:
     needs: install-and-test
-    runs-on: macos-26
+    runs-on: xcode-27
     permissions:
       contents: write
       id-token: write
       attestations: write
     steps:
       - uses: actions/checkout@v7
+      - name: Select Xcode 27.2
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.2'
+      - name: Print Xcode and iOS SDK versions
+        run: |
+          xcodebuild -version
+          xcodebuild -version -sdk iphoneos SDKVersion
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
@@ -198,10 +206,6 @@ jobs:
       - name: SSH setting up
         run: |
           echo "${{ secrets.CERTIFICATE_REPO_PRIVATE_KEY }}" | tr -d "\r" | ssh-add - > /dev/null
-      - name: Select Xcode 16
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
       - name: Update beta
         run: cd apps/thu-info-app/ios && bundle exec fastlane beta
         env:

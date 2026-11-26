@@ -4,36 +4,36 @@ import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+  // Some native modules still look up the window through the app delegate.
+  weak var window: UIWindow?
+}
+
+final class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate {
   var window: UIWindow?
+  private var reactNativeFactory: RCTReactNativeFactory?
 
-  var reactNativeDelegate: ReactNativeDelegate?
-  var reactNativeFactory: RCTReactNativeFactory?
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    guard let windowScene = scene as? UIWindowScene else { return }
 
-  func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-  ) -> Bool {
-    let delegate = ReactNativeDelegate()
-    let factory = RCTReactNativeFactory(delegate: delegate)
-    delegate.dependencyProvider = RCTAppDependencyProvider()
-
-    reactNativeDelegate = delegate
+    let window = UIWindow(windowScene: windowScene)
+    let factory = RCTReactNativeFactory(delegate: self)
+    dependencyProvider = RCTAppDependencyProvider()
+    self.window = window
+    (UIApplication.shared.delegate as? AppDelegate)?.window = window
     reactNativeFactory = factory
-
-    window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
       withModuleName: "thu_info",
       in: window,
-      launchOptions: launchOptions
+      connectionOptions: connectionOptions
     )
-
-    return true
   }
-}
 
-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   override func sourceURL(for bridge: RCTBridge) -> URL? {
     self.bundleURL()
   }
