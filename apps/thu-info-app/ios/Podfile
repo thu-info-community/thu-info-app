@@ -39,5 +39,20 @@ target 'thu_info' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => true
     )
+
+    # React Native raises deployment targets for native pod targets. Resource
+    # bundles also need a supported deployment target when building with Xcode 27.
+    minimum_ios = Gem::Version.new(min_ios_version_supported)
+    installer.target_installation_results.pod_target_installation_results.each_value do |result|
+      result.resource_bundle_targets.each do |target|
+        target.build_configurations.each do |configuration|
+          settings = configuration.build_settings
+          deployment_target = settings['IPHONEOS_DEPLOYMENT_TARGET']
+          if deployment_target && Gem::Version.new(deployment_target) < minimum_ios
+            settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimum_ios.to_s
+          end
+        end
+      end
+    end
   end
 end
