@@ -518,14 +518,14 @@ export const WasherDetailScreen = ({
 								</TouchableOpacity>
 							)}
 						</View>
-					) : null
+					) : undefined
 				}
 				ListEmptyComponent={
 					provider === "xiaolan" && !xiaolanLoading && !xiaolanError ? (
 						<Text style={{color: theme.colors.text, textAlign: "center"}}>
 							{getStr("noData")}
 						</Text>
-					) : null
+					) : undefined
 				}
 				renderItem={({item}) =>
 					RenderFloor(

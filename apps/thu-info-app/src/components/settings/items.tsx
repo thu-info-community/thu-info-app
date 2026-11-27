@@ -1,6 +1,8 @@
 import {
 	GestureResponderEvent,
 	Platform,
+	StyleProp,
+	TextStyle,
 	Text,
 	TouchableHighlight,
 	TouchableNativeFeedback,
@@ -14,7 +16,9 @@ import themes, {ColorTheme} from "../../assets/themes/themes";
 import {State} from "../../redux/store";
 import {useSelector} from "react-redux";
 
-const setIconWidth = (icon: ReactElement | undefined, colors: ColorTheme) =>
+type SettingsIcon = ReactElement<{style?: StyleProp<TextStyle>}>;
+
+const setIconWidth = (icon: SettingsIcon | undefined, colors: ColorTheme) =>
 	icon === undefined
 		? undefined
 		: cloneElement(icon, {style: {width: 20, color: colors.text}});
@@ -28,7 +32,7 @@ export const SettingsItem = ({
 }: {
 	text: string;
 	onPress: (event: GestureResponderEvent) => void;
-	icon: ReactElement | undefined;
+	icon: SettingsIcon | undefined;
 	badge?: string;
 	normalText?: boolean;
 }) => {

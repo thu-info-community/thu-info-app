@@ -1,7 +1,16 @@
 diff --git a/node_modules/react-native-wheel-scrollview-picker/index.tsx b/node_modules/react-native-wheel-scrollview-picker/index.tsx
-index ee1f9c9..8be182c 100644
+index ee1f9c9..4e2a4bf 100644
 --- a/node_modules/react-native-wheel-scrollview-picker/index.tsx
 +++ b/node_modules/react-native-wheel-scrollview-picker/index.tsx
+@@ -52,7 +52,7 @@ export type ScrollPickerProps<ItemT extends string | number> = {
+     data: ItemT,
+     index: number,
+     isSelected: boolean
+-  ) => JSX.Element;
++  ) => React.JSX.Element;
+   highlightColor?: string;
+   highlightBorderWidth?: number;
+   itemTextStyle?: object;
 @@ -72,15 +72,26 @@ export type ScrollPickerHandle = {
  
  const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<ItemT> & { ref?: Ref<ScrollPickerHandle> }): ReactNode } = React.forwardRef((propsState, ref) => {
@@ -10,11 +19,12 @@ index ee1f9c9..8be182c 100644
    const [selectedIndex, setSelectedIndex] = useState(
      props.selectedIndex && props.selectedIndex >= 0 ? props.selectedIndex : 0
    );
-   const sView = useRef<ScrollView>(null);
+-  const sView = useRef<ScrollView>(null);
 -  const [isScrollTo, setIsScrollTo] = useState(false);
 -  const [dragStarted, setDragStarted] = useState(false);
 -  const [momentumStarted, setMomentumStarted] = useState(false);
 -  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
++  const sView = useRef<React.ComponentRef<typeof ScrollView>>(null);
 +  // Native drag and momentum events can arrive in the same React batch.
 +  // Keep their flags and the pending timer synchronous so a release cannot
 +  // snap back to an old offset while the native ScrollView is still moving.
@@ -66,7 +76,19 @@ index ee1f9c9..8be182c 100644
  
    const renderPlaceHolder = () => {
      const h = (wrapperHeight - itemHeight) / 2;
-@@ -159,10 +164,12 @@ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<I
+@@ -150,19 +155,21 @@ const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<I
+     );
+   };
+   const scrollFix = useCallback(
+-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
++    (e: NativeScrollEvent) => {
+       let y = 0;
+       const h = itemHeight;
+-      if (e.nativeEvent.contentOffset) {
+-        y = e.nativeEvent.contentOffset.y;
++      if (e.contentOffset) {
++        y = e.contentOffset.y;
+       }
        const _selectedIndex = Math.round(y / h);
  
        const _y = _selectedIndex * h;
@@ -109,8 +131,8 @@ index ee1f9c9..8be182c 100644
 -    setDragStarted(false);
 +    dragStarted.current = false;
  
-     // if not used, event will be garbaged
-     const _e: NativeSyntheticEvent<NativeScrollEvent> = { ...e };
+-    // if not used, event will be garbaged
+-    const _e: NativeSyntheticEvent<NativeScrollEvent> = { ...e };
 -    timer && clearTimeout(timer);
 -    setTimer(
 -      setTimeout(() => {
@@ -119,11 +141,13 @@ index ee1f9c9..8be182c 100644
 -        }
 -      }, 50)
 -    );
++    // Save the native payload before the synthetic event is released.
++    const nativeEvent = e.nativeEvent;
 +    clearScrollTimer();
 +    timer.current = setTimeout(() => {
 +      timer.current = null;
 +      if (!momentumStarted.current && !dragStarted.current) {
-+        scrollFix(_e);
++        scrollFix(nativeEvent);
 +      }
 +    }, 50);
    };
@@ -140,7 +164,8 @@ index ee1f9c9..8be182c 100644
 +    clearScrollTimer();
  
 -    if (!isScrollTo && !dragStarted) {
+-      scrollFix(e);
 +    if (!isScrollTo.current && !dragStarted.current) {
-       scrollFix(e);
++      scrollFix(e.nativeEvent);
      }
    };

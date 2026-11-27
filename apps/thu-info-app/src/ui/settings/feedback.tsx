@@ -6,7 +6,6 @@ import {
 	useColorScheme,
 	View,
 } from "react-native";
-import zh from "../../assets/translations/zh";
 import {getStr} from "../../utils/i18n";
 import {RootNav} from "../../components/Root";
 import {Snackbar} from "react-native-snackbar";
@@ -34,7 +33,7 @@ const BottomButton = ({
 	disabled,
 	grow,
 }: {
-	text: keyof typeof zh;
+	text: "submit" | "feishuFeedback";
 	onPress: () => void;
 	disabled: boolean;
 	/**

@@ -161,7 +161,7 @@ export const BankPaymentScreen = () => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);
 
-	const cancelLastFetch = useRef<() => void | null>();
+	const cancelLastFetch = useRef<(() => void) | null>(null);
 
 	const fetchData = () => {
 		setRefreshing(true);

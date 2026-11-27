@@ -18,7 +18,7 @@
 		"ios": "yarn workspace @thu-info/app ios",
 		"start": "yarn workspace @thu-info/app start",
 		"build": "yarn workspace @thu-info/lib build",
-		"test": "yarn workspaces run test",
+		"test": "yarn workspace @thu-info/app test && yarn workspace @thu-info/app test:agent && yarn workspace @thu-info/lib test",
 		"lint": "yarn workspaces run lint",
 		"fix": "yarn workspaces run fix",
 		"postinstall": "patch-package --error-on-fail && yarn workspace @thu-info/lib agent:generate",

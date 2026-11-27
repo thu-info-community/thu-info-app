@@ -63,7 +63,7 @@ export const MyhomeLoginScreen = ({navigation}: {navigation: RootNav}) => {
 								duration: Snackbar.LENGTH_SHORT,
 							});
 							helper
-								.getDormScore(password)
+								.getDormScore()
 								.then(() => {
 									navigation.pop();
 									dispatch(setDormPassword(password));

@@ -250,9 +250,12 @@ export const LibRoomPerformBookScreen = ({
 											</Text>
 										)}
 										onValueChange={(value) => {
+											if (value === undefined) {
+												return;
+											}
 											setBegValue(value);
 											const newValidEnds = genValidEnds(value);
-											setEndValue(newValidEnds[0].start ?? null);
+											setEndValue(newValidEnds[0]?.start ?? null);
 											rightScrollRef.current?.scrollToTargetIndex(0);
 										}}
 									/>
@@ -275,7 +278,7 @@ export const LibRoomPerformBookScreen = ({
 											</Text>
 										)}
 										onValueChange={(value) => {
-											setEndValue(value);
+											setEndValue(value ?? null);
 										}}
 									/>
 								</View>

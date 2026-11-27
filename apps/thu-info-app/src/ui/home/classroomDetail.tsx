@@ -239,8 +239,8 @@ export const ClassroomDetailScreen = ({
 		dayOfWeek,
 		[],
 	]);
-	const prev = useRef<[number, ClassroomState[], string[]]>();
-	const next = useRef<[number, ClassroomState[], string[]]>();
+	const prev = useRef<[number, ClassroomState[], string[]]>(undefined);
+	const next = useRef<[number, ClassroomState[], string[]]>(undefined);
 	const currWeek = data[0];
 	const currDay = data[1];
 	const [refreshing, setRefreshing] = useState(false);

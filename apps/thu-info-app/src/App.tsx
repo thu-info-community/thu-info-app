@@ -32,6 +32,8 @@ const RootComponent = () => {
 			border: theme.colors.inputBorder,
 		},
 	};
+	// Preserve the background prop for platform runtimes that still support it.
+	const statusBarBackground = {backgroundColor: darkModeHook ? "black" : "white"};
 
 	const appLocked = useSelector((s: State) => s.config.appLocked);
 	const studentNotified = useSelector((s: State) => s.config.studentNotified);
@@ -60,7 +62,7 @@ const RootComponent = () => {
 		<>
 			<StatusBar
 				barStyle={darkModeHook ? "light-content" : "dark-content"}
-				backgroundColor={darkModeHook ? "black" : "white"}
+				{...statusBarBackground}
 				animated
 			/>
 			<NavigationContainer ref={navigationRef} theme={navigationTheme}>

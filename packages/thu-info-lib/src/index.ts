@@ -116,6 +116,7 @@ import {Invoice} from "./models/home/invoice";
 import {LoginError} from "./utils/error";
 import {getDegreeProgramCompletion, getFullDegreeProgram} from "./lib/program";
 import {Classroom, ClassroomStateResult} from "./models/home/classroom";
+import type {AppPlatform} from "./models/app/version";
 import {
     appStartupStat,
     appUsageStat,
@@ -306,7 +307,7 @@ export class InfoHelper {
      *
      * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
      */
-    public appStartUp = async (platform: "ios" | "android", uuid: string, version?: string) => {
+    public appStartUp = async (platform: AppPlatform, uuid: string, version?: string) => {
         if (this.userId === "") {
             return {
                 bookingRecords: [],
@@ -341,7 +342,7 @@ export class InfoHelper {
 
     public getLatestAnnounces = async (version?: string) => getLatestAnnounces(this, version);
 
-    public getLatestVersion = async (platform: "ios" | "android") => getLatestVersion(this, platform);
+    public getLatestVersion = async (platform: AppPlatform) => getLatestVersion(this, platform);
 
     public submitFeedback = async (
         content: string,

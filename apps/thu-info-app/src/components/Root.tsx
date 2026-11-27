@@ -74,7 +74,7 @@ import {FeedbackScreen} from "../ui/settings/feedback";
 import {FeishuFeedbackScreen} from "../ui/settings/feishuFeedback";
 import {PopiScreen} from "../ui/settings/popi";
 import {AboutScreen} from "../ui/settings/about";
-import {RouteProp} from "@react-navigation/native";
+import {NavigatorScreenParams, RouteProp} from "@react-navigation/native";
 import IconHomeTab from "../assets/icons/IconHomeTab";
 import IconNewsTab from "../assets/icons/IconNewsTab";
 import IconScheduleTab from "../assets/icons/IconScheduleTab";
@@ -399,6 +399,18 @@ export type ScheduleDetailRouteProp = RouteProp<
 	"ScheduleDetail"
 >;
 
+type DigitalPasswordTarget =
+	| "RootTabs"
+	| "AppSecret"
+	| "Report"
+	| "PhysicalExam"
+	| "CampusCard"
+	| "Expenditure"
+	| "Finance"
+	| "BankPayment"
+	| "Invoice"
+	| "Income";
+
 type SettingsStackParamList = {
 	Login: undefined;
 	PasskeyMigration: {userId: string; reason: "upgrade" | "rp-changed"};
@@ -409,7 +421,7 @@ type SettingsStackParamList = {
 	DigitalPassword:
 		| {action: "new"}
 		| {action: "confirm"; payload: string}
-		| {action: "verify"; target: keyof RootStackParamList};
+		| {action: "verify"; target: DigitalPasswordTarget};
 	AppSecret: undefined;
 	AppSecretCustomize: undefined;
 	AppSecretSelectLockTime: undefined;
@@ -423,7 +435,7 @@ type SettingsStackParamList = {
 	FeishuFeedback: undefined;
 	Feedback: undefined;
 	Popi: undefined;
-	About: {openCheckUpdate?: boolean};
+	About: {openCheckUpdate?: boolean} | undefined;
 };
 
 export type TwoFactorAuthRouteProp = RouteProp<
@@ -438,7 +450,7 @@ export type DigitalPasswordRouteProp = RouteProp<
 
 export type PasskeyMigrationRouteProp = RouteProp<SettingsStackParamList, "PasskeyMigration">;
 
-export type RootStackParamList = {RootTabs: undefined} & HomeStackParamList &
+export type RootStackParamList = {RootTabs: NavigatorScreenParams<RootTabParamList> | undefined} & HomeStackParamList &
 	NewsStackParamList &
 	DeepSeekStackParamList &
 	ScheduleStackParamList &

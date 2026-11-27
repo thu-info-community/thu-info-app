@@ -20,14 +20,15 @@ const translations = getLocale() as typeof zh;
 
 export const langCode = translations === zh ? "zh" : "en";
 
-export function getStr<K extends keyof typeof zh>(key: K): string {
-	if (translations[key] === undefined) {
+export function getStr<K extends keyof typeof zh>(key: K): (typeof zh)[K];
+export function getStr(key: keyof typeof zh): string | string[] {
+	const translation = translations[key];
+	if (translation === undefined) {
 		console.warn(`Missing translation for key ${key}, language ${langCode}`);
 		return key;
 	}
 
-	// @ts-ignore
-	return hyphenateLatinWords(translations[key]);
+	return Array.isArray(translation) ? translation : hyphenateLatinWords(translation);
 }
 
 /**

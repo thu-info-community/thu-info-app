@@ -6,6 +6,7 @@ import {ScrollView, Text, useColorScheme, View} from "react-native";
 import themes from "../../assets/themes/themes";
 import {RoundedView} from "../../components/views";
 import {DigitalPasswordRouteProp, RootNav} from "../../components/Root";
+import {StackActions} from "@react-navigation/native";
 import {
 	CodeField,
 	useClearByFocusCell,
@@ -63,7 +64,7 @@ export const DigitalPasswordScreen = ({
 				.then(({success}) => {
 					if (success) {
 						if (navigation) {
-							navigation.replace(params.target);
+							navigation.dispatch(StackActions.replace(params.target));
 							dispatch(configSet({key: "subFunctionUnlocked", value: true}));
 						} else {
 							dispatch(configSet({key: "appLocked", value: false}));
@@ -92,7 +93,7 @@ export const DigitalPasswordScreen = ({
 						}
 					} else if (params.action === "verify") {
 						if (appSecret === v) {
-							navigation.replace(params.target);
+							navigation.dispatch(StackActions.replace(params.target));
 							dispatch(
 								configSet({
 									key: "subFunctionUnlocked",

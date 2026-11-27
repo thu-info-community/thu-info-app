@@ -450,7 +450,7 @@ const FrozenDayStrip = ({
 	gutterWidth: number;
 	weekdays: string[];
 	weekStartOffset: number;
-	firstDay: ReturnType<typeof dayjs>;
+	firstDay: string;
 	current: ReturnType<typeof dayjs>;
 	theme: Theme;
 	align: "center" | "flex-start";
