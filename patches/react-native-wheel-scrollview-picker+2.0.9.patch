@@ -1,7 +1,16 @@
 diff --git a/node_modules/react-native-wheel-scrollview-picker/index.tsx b/node_modules/react-native-wheel-scrollview-picker/index.tsx
-index ee1f9c9..5efaa0d 100644
+index ee1f9c9..4e2a4bf 100644
 --- a/node_modules/react-native-wheel-scrollview-picker/index.tsx
 +++ b/node_modules/react-native-wheel-scrollview-picker/index.tsx
+@@ -52,7 +52,7 @@ export type ScrollPickerProps<ItemT extends string | number> = {
+     data: ItemT,
+     index: number,
+     isSelected: boolean
+-  ) => JSX.Element;
++  ) => React.JSX.Element;
+   highlightColor?: string;
+   highlightBorderWidth?: number;
+   itemTextStyle?: object;
 @@ -72,15 +72,26 @@ export type ScrollPickerHandle = {
  
  const ScrollPicker: { <ItemT extends string | number>(props: ScrollPickerProps<ItemT> & { ref?: Ref<ScrollPickerHandle> }): ReactNode } = React.forwardRef((propsState, ref) => {
@@ -10,11 +19,12 @@ index ee1f9c9..5efaa0d 100644
    const [selectedIndex, setSelectedIndex] = useState(
      props.selectedIndex && props.selectedIndex >= 0 ? props.selectedIndex : 0
    );
-   const sView = useRef<ScrollView>(null);
+-  const sView = useRef<ScrollView>(null);
 -  const [isScrollTo, setIsScrollTo] = useState(false);
 -  const [dragStarted, setDragStarted] = useState(false);
 -  const [momentumStarted, setMomentumStarted] = useState(false);
 -  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
++  const sView = useRef<React.ComponentRef<typeof ScrollView>>(null);
 +  // Native drag and momentum events can arrive in the same React batch.
 +  // Keep their flags and the pending timer synchronous so a release cannot
 +  // snap back to an old offset while the native ScrollView is still moving.

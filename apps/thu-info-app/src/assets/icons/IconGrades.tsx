@@ -1,6 +1,9 @@
-import Svg, {Path} from "react-native-svg";
+import Svg, {Path, type PathProps} from "react-native-svg";
+import type {ReactElement} from "react";
 import {useColorScheme} from "react-native";
 import themes from "../themes/themes";
+
+type GradePath = ReactElement<PathProps, typeof Path>;
 
 const Grade = ({
 	borderColor,
@@ -9,7 +12,7 @@ const Grade = ({
 }: {
 	borderColor: string;
 	dashed?: boolean | undefined;
-	children?: JSX.Element | JSX.Element[];
+	children?: GradePath | GradePath[];
 }) => {
 	const themeName = useColorScheme();
 	const {colors} = themes(themeName);

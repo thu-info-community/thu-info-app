@@ -12,7 +12,7 @@ import {
     APP_USAGE_STAT_URL,
 } from "../constants/strings";
 import {Announcement} from "../models/app/announcement";
-import {Version} from "../models/app/version";
+import {AppPlatform, Version} from "../models/app/version";
 import {
     MOCK_APP_PRIVACY_URL,
     MOCK_FEEDBACK_REPLIES,
@@ -74,7 +74,7 @@ export const getLatestAnnounces = async (helper: InfoHelper, version?: string): 
         MOCK_LATEST_ANNOUNCEMENTS,
     );
 
-export const getLatestVersion = async (helper: InfoHelper, platform: "ios" | "android"): Promise<Version> =>
+export const getLatestVersion = async (helper: InfoHelper, platform: AppPlatform): Promise<Version> =>
     roamingWrapperWithMocks(
         helper,
         undefined,

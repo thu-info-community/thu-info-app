@@ -1,7 +1,7 @@
 import {KeyboardAvoidingScreen} from "../../components/keyboardAvoidingScreen";
 import {ThemedRefreshControl} from "../../components/themedRefreshControl";
 import {PrimaryButton} from "../../components/subpage/buttons";
-import {useEffect, useState} from "react";
+import {type ReactElement, useEffect, useState} from "react";
 import {Text, View, TextInput, ScrollView} from "react-native";
 import {Snackbar} from "react-native-snackbar";
 import {getStr} from "../../utils/i18n";
@@ -54,7 +54,7 @@ export const FormScreen = ({
 		personList: Person[],
 		personType: "teacher" | "assistant",
 	) => {
-		let evaluationList: JSX.Element[] = [];
+		let evaluationList: ReactElement[] = [];
 		personList.forEach((person, i) => {
 			evaluationList.push(
 				<View

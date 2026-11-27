@@ -972,18 +972,11 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 	const showUpdateBanner = newVersionAvailable && !updateBannerDismissed;
 
 	useEffect(() => {
-		// @ts-ignore
-		if (
-			Platform.OS !== "ios" &&
-			Platform.OS !== "android" &&
-			Platform.OS !== "harmony"
-		) {
+		const platform: string = Platform.OS;
+		if (platform !== "ios" && platform !== "android" && platform !== "harmony") {
 			return;
 		}
-		if (
-			!(Platform.OS === "android" || Platform.OS === "ios") &&
-			privacy312 !== true
-		) {
+		if (platform === "harmony" && privacy312 !== true) {
 			Alert.alert(
 				getStr("privacyPolicy"),
 				getStr("privacyPolicyPrompt"),
@@ -1002,7 +995,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 		}
 		helper
 			.appStartUp(
-				Platform.OS,
+				platform,
 				currState().config.uuid,
 				VersionNumber.appVersion,
 			)

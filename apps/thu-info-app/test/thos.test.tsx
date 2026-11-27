@@ -48,7 +48,7 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 		setItem: jest.fn(async () => {}),
 	},
 }));
-const setOptions = jest.fn();
+const setOptions = jest.fn<RootNav["setOptions"]>();
 const nav = {navigate: jest.fn(), goBack: jest.fn(), setOptions} as unknown as RootNav;
 const portal = () => (
 	<ThosPortalScreen route={{params: {url: THOS_HOME}}} navigation={nav} />
@@ -364,9 +364,11 @@ test("native task detail shows actual node and unknown progress until explicit w
 	expect(helper.prepareThosSession).not.toHaveBeenCalled();
 	expect(nav.navigate).not.toHaveBeenCalled();
 	const headerRight = setOptions.mock.calls[setOptions.mock.calls.length - 1]?.[0]
-		.headerRight?.();
-	expect(headerRight).toBeTruthy();
-	await act(async () => headerRight?.props.onPress());
+		.headerRight?.({});
+	if (!React.isValidElement<{onPress: () => void}>(headerRight)) {
+		throw new Error("Expected an actionable header element");
+	}
+	await act(async () => headerRight.props.onPress());
 	expect(nav.navigate).toHaveBeenCalledWith("ThosPortal", {url: THOS_HOME});
 });
 

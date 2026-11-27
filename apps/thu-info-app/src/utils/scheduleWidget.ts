@@ -430,7 +430,7 @@ const navigateWhenReady = () => {
 	let attempts = 0;
 	const attempt = () => {
 		if (navigationRef.isReady()) {
-			navigationRef.navigate("ScheduleTab");
+			navigationRef.navigate("RootTabs", {screen: "ScheduleTab"});
 		} else if (++attempts < 50) {
 			setTimeout(attempt, 100);
 		}

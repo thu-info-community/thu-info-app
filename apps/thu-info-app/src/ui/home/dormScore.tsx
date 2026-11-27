@@ -13,7 +13,7 @@ export const DormScoreScreen = () => {
 	const {colors} = themes(themeName);
 	useEffect(() => {
 		helper
-			.getDormScore(dormPassword)
+			.getDormScore()
 			.then(setBase64)
 			.catch(NetworkRetry);
 	}, [dormPassword]);

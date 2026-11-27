@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {getStr} from "../../utils/i18n";
-import {RootNav, RootStackParamList} from "../../components/Root";
+import {RootNav} from "../../components/Root";
 import {helper, State} from "../../redux/store";
 import {
 	Text,
@@ -60,10 +60,6 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const {userId} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
 
-	const handleNavigate = (name: keyof RootStackParamList) => {
-		navigation.navigate(name);
-	};
-
 	const doNotRemindSemver =
 		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
 	const latestVersion =
@@ -89,7 +85,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("Account")}>
+						onPress={() => navigation.navigate("Account")}>
 						<Text style={style.text}>{getStr("accountAndSecurity")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
@@ -97,14 +93,14 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("FunctionManagement")}>
+						onPress={() => navigation.navigate("FunctionManagement")}>
 						<Text style={style.text}>{getStr("functionManagement")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("General")}>
+						onPress={() => navigation.navigate("General")}>
 						<Text style={style.text}>{getStr("general")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
@@ -113,7 +109,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 					<RoundedView style={style.rounded}>
 						<TouchableOpacity
 							style={style.touchable}
-							onPress={() => handleNavigate("DeepSeekSettings")}>
+							onPress={() => navigation.navigate("DeepSeekSettings")}>
 							<Text style={style.text}>{getStr("deepseek")}</Text>
 							<IconRight height={20} width={20} />
 						</TouchableOpacity>
@@ -122,21 +118,21 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 				<RoundedView style={style.rounded}>
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("Privacy")}>
+						onPress={() => navigation.navigate("Privacy")}>
 						<Text style={style.text}>{getStr("privacy")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("HelpAndFeedback")}>
+						onPress={() => navigation.navigate("HelpAndFeedback")}>
 						<Text style={style.text}>{getStr("helpAndFeedback")}</Text>
 						<IconRight height={20} width={20} />
 					</TouchableOpacity>
 					<View style={style.separator} />
 					<TouchableOpacity
 						style={style.touchable}
-						onPress={() => handleNavigate("About")}>
+						onPress={() => navigation.navigate("About")}>
 						<Text style={style.text}>{getStr("aboutApp")}</Text>
 						<View
 							style={{

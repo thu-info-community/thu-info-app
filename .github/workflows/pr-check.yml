@@ -17,9 +17,9 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          key: cache-${{ runner.OS }}-patches-${{ hashFiles('patches/*.patch') }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-patches-${{ hashFiles('patches/*.patch') }}-
       - name: Install dependencies
         run: |
           yarn
@@ -50,9 +50,9 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: cache-${{ runner.OS }}-${{ hashFiles('**/*.lock') }}
+          key: cache-${{ runner.OS }}-patches-${{ hashFiles('patches/*.patch') }}-${{ hashFiles('**/*.lock') }}
           restore-keys: |
-            cache-${{ runner.OS }}-
+            cache-${{ runner.OS }}-patches-${{ hashFiles('patches/*.patch') }}-
       - name: Install dependencies
         run: |
           yarn
