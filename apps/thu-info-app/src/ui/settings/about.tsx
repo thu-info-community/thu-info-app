@@ -1,4 +1,4 @@
-import {Linking, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Linking, Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {useEffect} from "react";
 import {useRoute} from "@react-navigation/native";
 import type {RouteProp} from "@react-navigation/native";
@@ -61,11 +61,13 @@ export const AboutScreen = () => {
 					京ICP备2021021102号-3A
 				</Text>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={() => checkUpdate(true)}>
-				<Text style={[style.textStyle, {color: theme.colors.primaryLight}]}>
-					{getStr("checkUpdate")}
-				</Text>
-			</TouchableOpacity>
+			{Platform.OS === "android" && (
+				<TouchableOpacity onPress={() => checkUpdate(true)}>
+					<Text style={[style.textStyle, {color: theme.colors.primaryLight}]}>
+						{getStr("checkUpdate")}
+					</Text>
+				</TouchableOpacity>
+			)}
 			<View style={{height: 10}} />
 			<Text style={[style.textStyle, {color: theme.colors.text}]}>
 				{getStr("maintainers")}

@@ -262,6 +262,8 @@ export const APP_ANNOUNCEMENT_URL =
     "https://app.cs.tsinghua.edu.cn/api/announce?page=1&version=";
 export const APP_LATEST_VERSION_URL =
     "https://app.cs.tsinghua.edu.cn/api/version";
+export const APP_STORE_VERSION_URL =
+    "https://app.cs.tsinghua.edu.cn/api/store-version";
 export const APP_STARTUP_STAT_URL =
     "https://app.cs.tsinghua.edu.cn/stat/startup";
 export const APP_USAGE_STAT_URL =

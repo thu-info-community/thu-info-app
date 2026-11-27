@@ -127,7 +127,6 @@ import {
     getWeChatGroupQRCodeContent,
     submitFeedback,
 } from "./lib/app";
-import {MOCK_LATEST_VERSION} from "./mocks/app";
 import {
     getNetworkBalance,
     getNetworkAccountInfo,
@@ -307,7 +306,7 @@ export class InfoHelper {
      *
      * ANY BREAKING CHANGES SHALL NOT BE DOCUMENTED.
      */
-    public appStartUp = async (platform: AppPlatform, uuid: string, version?: string) => {
+    public appStartUp = async (uuid: string, version?: string) => {
         if (this.userId === "") {
             return {
                 bookingRecords: [],
@@ -315,11 +314,9 @@ export class InfoHelper {
                 crTimetable: [],
                 balance: 0,
                 latestAnnounces: [],
-                latestVersion: MOCK_LATEST_VERSION,
             };
         }
         const latestAnnounces = await getLatestAnnounces(this, version);
-        const latestVersion = await getLatestVersion(this, platform);
         let bookingRecords: LibBookRecord[] = [];
         const sportsReservationRecords: SportsReservationRecord[] = [];
         let balance: number = 0;
@@ -333,7 +330,7 @@ export class InfoHelper {
         }
         appStartupStat(this, uuid).catch(() => {
         });
-        return {bookingRecords, sportsReservationRecords, crTimetable, balance, latestAnnounces, latestVersion};
+        return {bookingRecords, sportsReservationRecords, crTimetable, balance, latestAnnounces};
     };
 
     public appUsageStat = async (usage: number, uuid: string) => {

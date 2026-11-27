@@ -19,6 +19,7 @@ import {
 	loginWithPasskey,
 } from "../src/redux/slices/auth";
 import {sanitizeAuth} from "../src/redux/authPersistence";
+import {updateAnnouncements} from "../src/redux/slices/announcement";
 import {helper, persistor, store as mockStore} from "../src/redux/store";
 import type {Dispatch, UnknownAction} from "redux";
 import {enablePasskey} from "../src/utils/passkey";
@@ -33,6 +34,7 @@ let mockState = {
 		studentNotified: true,
 		privacy312: true,
 		appLocked: false,
+		latestVersion: "3.0.0",
 	},
 };
 let mockFocused = true;
@@ -48,7 +50,13 @@ jest.mock("../src/redux/store", () => ({
 	currState: () => mockState ?? {config: {language: "zh"}},
 	store: {dispatch: jest.fn()},
 	persistor: {flush: jest.fn()},
-	helper: {login: jest.fn(), switchLang: jest.fn(), appStartUp: jest.fn()},
+	helper: {
+		login: jest.fn(),
+		switchLang: jest.fn(),
+		appStartUp: jest.fn(),
+		hasAuthentication: jest.fn(),
+		getLatestVersion: jest.fn(),
+	},
 }));
 jest.mock("../src/utils/passkeyNative", () => ({
 	__esModule: true,
@@ -92,6 +100,7 @@ beforeEach(() => {
 			studentNotified: true,
 			privacy312: true,
 			appLocked: false,
+			latestVersion: "3.0.0",
 		},
 	};
 	jest
@@ -103,12 +112,17 @@ beforeEach(() => {
 	jest.mocked(helper.login).mockResolvedValue(undefined);
 	jest.mocked(persistor.flush).mockResolvedValue(undefined);
 	jest.mocked(helper.switchLang).mockResolvedValue(undefined);
+	jest.mocked(helper.hasAuthentication).mockReturnValue(true);
+	jest.mocked(helper.getLatestVersion).mockResolvedValue({
+		versionName: "3.20.0",
+		releaseNote: "",
+		downloadUrl: "",
+	});
 	jest.mocked(helper.appStartUp).mockResolvedValue({
 		bookingRecords: [],
 		sportsReservationRecords: [],
 		crTimetable: [],
 		balance: 0,
-		latestVersion: {versionName: "3.20.0"},
 		latestAnnounces: [],
 	} as unknown as Awaited<ReturnType<typeof helper.appStartUp>>);
 	jest.mocked(passkeyNative.getPasskeyCapabilities).mockResolvedValue({
@@ -232,6 +246,35 @@ test("devices without the native module keep normal password login", async () =>
 	await waitFor(() => expect(navigation.pop).toHaveBeenCalledTimes(1));
 	expect(enablePasskey).not.toHaveBeenCalled();
 });
+
+test.each(["ios", "harmony", "android"])(
+	"%s login loads announcements independently of app version checks",
+	async (platform) => {
+		jest.replaceProperty(Platform, "OS", platform as typeof Platform.OS);
+		jest.replaceProperty(passkeyNative, "passkeyAvailable", false);
+		mockState.config.latestVersion = "9.0.0";
+		jest.mocked(helper.getLatestVersion).mockRejectedValue(new Error("Version service unavailable"));
+		const announcements = [{
+			id: 73, title: "Announcement", content: "", createdAt: 0,
+			visibleNotAfter: "3.21.0", visibleExact: "",
+		}];
+		jest.mocked(helper.appStartUp).mockResolvedValue({
+			bookingRecords: [],
+			sportsReservationRecords: [],
+			crTimetable: [],
+			balance: 0,
+			latestAnnounces: announcements,
+		});
+
+		await render(<LoginScreen navigation={navigation} />);
+		expect(screen.queryByText(zh.newVersionAvailableClick) !== null).toBe(platform === "android");
+		await passwordLogin();
+		await waitFor(() =>
+			expect(mockStore.dispatch).toHaveBeenCalledWith(updateAnnouncements(announcements)),
+		);
+		expect(helper.getLatestVersion).toHaveBeenCalledTimes(platform === "android" ? 1 : 0);
+	},
+);
 
 test("an upgraded account can skip the reminder and does not see it after rehydration", async () => {
 	mockState.auth = sanitizeAuth(legacy);

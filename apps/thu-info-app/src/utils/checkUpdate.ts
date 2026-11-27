@@ -1,11 +1,37 @@
 import {currState, helper, store} from "../redux/store";
 import {Alert, Linking, Platform} from "react-native";
+import {useSelector} from "react-redux";
+import type {State} from "../redux/store";
 import {getStr} from "./i18n";
 import {configSet} from "../redux/slices/config";
 import {Snackbar} from "react-native-snackbar";
 import VersionNumber from "react-native-version-number";
-import {gt, lt} from "semver";
+import {gt, lt, valid} from "semver";
 import {NetworkRetry} from "../components/easySnackbars";
+
+export const useHasAppUpdate = () =>
+	useSelector(({config}: State) => {
+		const {latestVersion, doNotRemindSemver} = config;
+		return (
+			Platform.OS === "android" &&
+			latestVersion !== undefined &&
+			valid(latestVersion) !== null &&
+			gt(latestVersion, VersionNumber.appVersion) &&
+			gt(latestVersion, doNotRemindSemver ?? "0.0.0")
+		);
+	});
+
+export const refreshLatestVersion = async () => {
+	if (Platform.OS !== "android" || !helper.hasAuthentication()) return;
+	try {
+		const {versionName} = await helper.getLatestVersion("android");
+		if (valid(versionName)) {
+			store.dispatch(configSet({key: "latestVersion", value: versionName}));
+		}
+	} catch {
+		// The next startup or manual check can retry.
+	}
+};
 
 export const openUpdateDownload = async (downloadUrl: string) => {
 	try {
@@ -16,10 +42,14 @@ export const openUpdateDownload = async (downloadUrl: string) => {
 };
 
 export const checkUpdate = (force: boolean = false) => {
-	if (Platform.OS !== "ios" && Platform.OS !== "android") {
+	if (Platform.OS !== "android") {
 		return;
 	}
-	helper.getLatestVersion(Platform.OS).then((r) => {
+	helper.getLatestVersion("android").then((r) => {
+		if (!valid(r.versionName)) {
+			NetworkRetry();
+			return;
+		}
 		if (
 			gt(r.versionName, VersionNumber.appVersion) &&
 			(force ||
@@ -52,5 +82,5 @@ export const checkUpdate = (force: boolean = false) => {
 				duration: Snackbar.LENGTH_SHORT,
 			});
 		}
-	});
+	}).catch(NetworkRetry);
 };

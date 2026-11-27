@@ -121,8 +121,7 @@ import {AppSecretSelectLockTimeScreen} from "../ui/settings/appSecretSelectLockT
 import {ScheduleSyncScreen} from "../ui/schedule/scheduleSync";
 import {LoginScreen} from "../ui/settings/login";
 import {useSelector} from "react-redux";
-import {gt} from "semver";
-import VersionNumber from "react-native-version-number";
+import {useHasAppUpdate} from "../utils/checkUpdate";
 import Share from "react-native-share";
 import {NetworkScreen} from "../ui/home/network";
 import {NetworkDetailScreen as NetworkDetailScreen} from "../ui/home/networkDetail";
@@ -165,13 +164,7 @@ const RootTabs = () => {
 	const insets = useSafeAreaInsets();
 	const deepseekEnabled = useSelector((s: State) => s.config.deepseekEnabled) ?? true;
 
-	const doNotRemindSemver =
-		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
-	const latestVersion =
-		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
-	const shouldShowBadge =
-		gt(latestVersion, VersionNumber.appVersion) &&
-		gt(latestVersion, doNotRemindSemver);
+	const shouldShowBadge = useHasAppUpdate();
 
 	return (
 		<Tab.Navigator
