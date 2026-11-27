@@ -8,6 +8,7 @@ import {
     APP_PRIVACY_URL,
     APP_QRCODE_URL,
     APP_STARTUP_STAT_URL,
+    APP_STORE_VERSION_URL,
     APP_SUBMIT_FEEDBACK_URL,
     APP_USAGE_STAT_URL,
 } from "../constants/strings";
@@ -74,14 +75,11 @@ export const getLatestAnnounces = async (helper: InfoHelper, version?: string): 
         MOCK_LATEST_ANNOUNCEMENTS,
     );
 
-export const getLatestVersion = async (helper: InfoHelper, platform: AppPlatform): Promise<Version> =>
-    roamingWrapperWithMocks(
-        helper,
-        undefined,
-        "",
-        () => uFetch(`${APP_LATEST_VERSION_URL}/${platform}`).then(JSON.parse),
-        MOCK_LATEST_VERSION,
-    );
+export const getLatestVersion = async (helper: InfoHelper, platform: AppPlatform): Promise<Version> => {
+    if (helper.mocked()) return MOCK_LATEST_VERSION;
+    const baseUrl = platform === "android" ? APP_LATEST_VERSION_URL : APP_STORE_VERSION_URL;
+    return uFetch(`${baseUrl}/${platform}`).then(JSON.parse);
+};
 
 export const submitFeedback = async (
     helper: InfoHelper,

@@ -68,6 +68,7 @@ import IconThos from "../../assets/icons/IconThos";
 import {setBalance} from "../../redux/slices/campusCard";
 import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
+import {refreshLatestVersion, useHasAppUpdate} from "../../utils/checkUpdate";
 import Svg, {Path} from "react-native-svg";
 import {PasskeyUpgradeNotice} from "../../components/settings/passkeyUpgradeNotice";
 
@@ -961,13 +962,7 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 
 	const privacy312 = useSelector((s: State) => s.config.privacy312);
 
-	const doNotRemindSemver =
-		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
-	const latestVersion =
-		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
-	const newVersionAvailable =
-		gt(latestVersion, VersionNumber.appVersion) &&
-		gt(latestVersion, doNotRemindSemver);
+	const newVersionAvailable = useHasAppUpdate();
 	const [updateBannerDismissed, setUpdateBannerDismissed] = useState(false);
 	const showUpdateBanner = newVersionAvailable && !updateBannerDismissed;
 
@@ -993,34 +988,27 @@ export const HomeScreen = ({navigation}: {navigation: RootNav}) => {
 				{cancelable: false},
 			);
 		}
+		refreshLatestVersion();
 		helper
-			.appStartUp(
-				platform,
-				currState().config.uuid,
-				VersionNumber.appVersion,
-			)
+			.appStartUp(currState().config.uuid, VersionNumber.appVersion)
 			.then(
 				({
 					bookingRecords,
 					sportsReservationRecords,
 					crTimetable,
 					balance,
-					latestVersion: startupVersion,
 					latestAnnounces,
 				}) => {
 					dispatch(setActiveLibBookRecord(bookingRecords));
 					dispatch(setActiveSportsReservationRecord(sportsReservationRecords));
 					dispatch(setCrTimetable(crTimetable));
-					dispatch(
-						configSet({
-							key: "latestVersion",
-							value: startupVersion.versionName,
-						}),
-					);
 					dispatch(updateAnnouncements(latestAnnounces));
 					dispatch(setBalance(balance));
 				},
-			);
+			)
+			.catch(() => {
+				// Leave cached startup data available when the request fails.
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

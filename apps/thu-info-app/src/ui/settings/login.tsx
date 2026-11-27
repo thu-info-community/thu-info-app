@@ -33,11 +33,10 @@ import {
 	setActiveSportsReservationRecord,
 } from "../../redux/slices/reservation";
 import {setCrTimetable} from "../../redux/slices/timetable";
-import {configSet} from "../../redux/slices/config";
 import {updateAnnouncements} from "../../redux/slices/announcement";
 import {setBalance} from "../../redux/slices/campusCard";
-import {gt} from "semver";
 import VersionNumber from "react-native-version-number";
+import {refreshLatestVersion, useHasAppUpdate} from "../../utils/checkUpdate";
 import {IdMaintenanceNotice} from "../../components/settings/idMaintenanceNotice";
 import {PrimaryButton} from "../../components/subpage/buttons";
 import {passkeyAvailable} from "../../utils/passkeyNative";
@@ -63,14 +62,8 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 	const theme = themes(themeName);
 	const style = styles(themeName);
 
-	const doNotRemindSemver =
-		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
-	const latestVersion =
-		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
 	const privacy312 = useSelector((s: State) => s.config.privacy312);
-	const haveNewerVersion =
-		gt(latestVersion, VersionNumber.appVersion) &&
-		gt(latestVersion, doNotRemindSemver);
+	const haveNewerVersion = useHasAppUpdate();
 
 	const performLogin = (
 		usePasskey = !!credential && password === "",
@@ -127,20 +120,17 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 			.then(async () => {
 				if (renewAfterPassword) return;
 				if (currState().auth?.retiredPasskeys?.length) await cleanupRetiredPasskeys().catch(() => undefined);
-				if (Platform.OS === "ios" || Platform.OS === "android") {
+				const platform: string = Platform.OS;
+				if (platform === "ios" || platform === "android" || platform === "harmony") {
+					refreshLatestVersion();
 					helper
-						.appStartUp(
-							Platform.OS,
-							currState().config.uuid,
-							VersionNumber.appVersion,
-						)
+						.appStartUp(currState().config.uuid, VersionNumber.appVersion)
 						.then(
 							({
 								bookingRecords,
 								sportsReservationRecords,
 								crTimetable,
 								balance,
-								latestVersion: {versionName},
 								latestAnnounces,
 							}) => {
 								dispatch(setActiveLibBookRecord(bookingRecords));
@@ -148,16 +138,13 @@ export const LoginScreen = ({navigation}: {navigation: RootNav}) => {
 									setActiveSportsReservationRecord(sportsReservationRecords),
 								);
 								dispatch(setCrTimetable(crTimetable));
-								dispatch(
-									configSet({
-										key: "latestVersion",
-										value: versionName,
-									}),
-								);
 								dispatch(updateAnnouncements(latestAnnounces));
 								dispatch(setBalance(balance));
 							},
-						);
+						)
+						.catch(() => {
+							// Leave cached startup data available when the request fails.
+						});
 				}
 				setProcessing(false);
 				navigation.pop();

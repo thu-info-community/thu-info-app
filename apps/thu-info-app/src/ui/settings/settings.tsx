@@ -26,7 +26,7 @@ import {
 	setActiveLibBookRecord,
 	setActiveSportsReservationRecord,
 } from "../../redux/slices/reservation";
-import {gt} from "semver";
+import {useHasAppUpdate} from "../../utils/checkUpdate";
 import {setBalance} from "../../redux/slices/campusCard";
 import {deepseekClear} from "../../redux/slices/deepseek.ts";
 import {agentService} from "../../agent/service";
@@ -60,13 +60,7 @@ export const SettingsScreen = ({navigation}: {navigation: RootNav}) => {
 	const {userId} = useSelector((s: State) => s.auth);
 	const dispatch = useDispatch();
 
-	const doNotRemindSemver =
-		useSelector((s: State) => s.config.doNotRemindSemver) ?? "0.0.0";
-	const latestVersion =
-		useSelector((s: State) => s.config.latestVersion) ?? "3.0.0";
-	const newVersionAvailable =
-		gt(latestVersion, VersionNumber.appVersion) &&
-		gt(latestVersion, doNotRemindSemver);
+	const newVersionAvailable = useHasAppUpdate();
 
 	const [forceLoginDisabled, setForceLoginDisabled] = useState(false);
 	const [clearLogoutCache, setClearLogoutCache] = useState(false);
