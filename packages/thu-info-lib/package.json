@@ -63,7 +63,7 @@
         "sm-crypto": "^0.5.0"
     },
     "devDependencies": {
-        "@babel/core": "7.29.13",
+        "@babel/core": "7.29.16",
         "@babel/preset-env": "7.29.14",
         "@types/crypto-js": "4.2.2",
         "@types/he": "1.2.3",
